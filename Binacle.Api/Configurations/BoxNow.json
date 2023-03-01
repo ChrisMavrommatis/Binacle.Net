@@ -1,0 +1,25 @@
+{
+  "BoxNowConfiguration": {
+    "Lockers": [
+      {
+        "Size": 1,
+        "Length": 8,
+        "Width": 45,
+        "Height": 62
+      },
+      {
+        "Size": 2,
+        "Length": 17,
+        "Width": 45,
+        "Height": 62
+      },
+      {
+        "Size": 3,
+        "Length": 36,
+        "Width": 45,
+        "Height": 62
+      }
+    ]
+  }
+
+}

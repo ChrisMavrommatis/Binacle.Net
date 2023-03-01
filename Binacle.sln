@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33417.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Api", "Binacle.Api\Binacle.Api.csproj", "{AE3E5ECD-B7D9-4EC3-953C-F1CD95C7D0D4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE3E5ECD-B7D9-4EC3-953C-F1CD95C7D0D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE3E5ECD-B7D9-4EC3-953C-F1CD95C7D0D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE3E5ECD-B7D9-4EC3-953C-F1CD95C7D0D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE3E5ECD-B7D9-4EC3-953C-F1CD95C7D0D4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}
+	EndGlobalSection
+EndGlobal
