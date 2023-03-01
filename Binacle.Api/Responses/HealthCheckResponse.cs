@@ -1,6 +1,8 @@
-﻿namespace Binacle.Api.Responses
+﻿using System.Runtime.Serialization;
+
+namespace Binacle.Api.Responses
 {
-    public class HealthCheckResponse
+    public class HealthCheckResponse : ApiResponseBase
     {
         public HealthCheckResponse(string version, string section)
         {

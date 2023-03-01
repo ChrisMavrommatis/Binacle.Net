@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Binacle.Api
+namespace Binacle.Api.Configuration
 {
     public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
     {
@@ -11,18 +11,18 @@ namespace Binacle.Api
 
         public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider)
         {
-            this._provider = provider;
+            _provider = provider;
         }
         public void Configure(string? name, SwaggerGenOptions options)
         {
-            this.Configure(options);
+            Configure(options);
         }
 
         public void Configure(SwaggerGenOptions options)
         {
             foreach (var description in _provider.ApiVersionDescriptions)
             {
-                options.SwaggerDoc(description.GroupName, this.CreateVersionInfo(description));
+                options.SwaggerDoc(description.GroupName, CreateVersionInfo(description));
             }
         }
 

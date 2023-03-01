@@ -1,6 +1,7 @@
-
-using Binacle.Api.BoxNow;
+using Binacle.Api.BoxNow.Configuration;
+using Binacle.Api.Configuration;
 using Binacle.Api.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -12,6 +13,13 @@ namespace Binacle.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Configuration
+                .SetBasePath($"{Directory.GetCurrentDirectory()}/App_Data")
+                .AddJsonFile(BoxNowOptions.Path, optional: false, reloadOnChange: true);
+
+
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 
             // Add services to the container.
             builder.Services.AddControllers();
@@ -36,8 +44,13 @@ namespace Binacle.Api
             });
 
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
-            
-            builder.AddBoxNowConfiguration();
+
+
+            builder.Services
+                .AddOptions<BoxNowOptions>()
+                .Bind(builder.Configuration.GetSection(BoxNowOptions.SectionName))
+                .ValidateFluently()
+                .ValidateOnStart();
 
             builder.Services.AddSingleton<ILockerService, LockerService>();
 
