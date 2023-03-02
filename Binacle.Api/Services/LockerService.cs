@@ -1,9 +1,7 @@
-﻿namespace Binacle.Api.Services
-{
-    public interface ILockerService
-    {
+﻿using Binacle.Api.Components.Services;
 
-    }
+namespace Binacle.Api.Services
+{
     public class LockerService : ILockerService
     {
     }

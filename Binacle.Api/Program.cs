@@ -1,10 +1,6 @@
-using Binacle.Api.BoxNow.Configuration;
-using Binacle.Api.Configuration;
-using Binacle.Api.Services;
-using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
+using Binacle.Api.Components.Application;
+using Binacle.Api.Components.Helpers;
+using System.Reflection;
 
 namespace Binacle.Api
 {
@@ -12,73 +8,30 @@ namespace Binacle.Api
     {
         public static void Main(string[] args)
         {
+            //var rootAssembly = Assembly.GetEntryAssembly();
+            
+
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            //var references = Assembly.GetReferrencedAssemblies()
+
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Configuration
-                .SetBasePath($"{Directory.GetCurrentDirectory()}/App_Data")
-                .AddJsonFile(BoxNowOptions.Path, optional: false, reloadOnChange: true);
+            var builderSetupActions = ReflectionHelpers.GetInstancesOf<IBuilderSetup>(assemblies)
+                .OrderBy(x => x.SequenceOrder)
+                .ToList();
 
-
-            builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
-
-            // Add services to the container.
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            builder.Services.AddApiVersioning(setup =>
-            {
-                setup.DefaultApiVersion = new ApiVersion(1, 0);
-                setup.AssumeDefaultVersionWhenUnspecified = true;
-                setup.ReportApiVersions = true;
-                setup.ApiVersionReader = ApiVersionReader.Combine(
-                    new UrlSegmentApiVersionReader()
-                    );
-            });
-
-            builder.Services.AddVersionedApiExplorer(setup =>
-            {
-                setup.GroupNameFormat = "'v'VVV";
-                setup.SubstituteApiVersionInUrl = true;
-            });
-
-            builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
-
-
-            builder.Services
-                .AddOptions<BoxNowOptions>()
-                .Bind(builder.Configuration.GetSection(BoxNowOptions.SectionName))
-                .ValidateFluently()
-                .ValidateOnStart();
-
-            builder.Services.AddSingleton<ILockerService, LockerService>();
+            foreach (var builderSetupAction in builderSetupActions)
+                builderSetupAction.Execute(builder);
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+            var appStartupActions = ReflectionHelpers.GetInstancesOf<IApplicationStartup>(assemblies)
+                .OrderBy(x => x.SequenceOrder)
+                .ToList();
 
-                app.UseSwagger();
-                app.UseSwaggerUI(options =>
-                {
-                    options.RoutePrefix = string.Empty;
-                    foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-                    {
-                        options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
-                    }
-                });
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-
-            app.MapControllers();
+            foreach (var appStartupAction in appStartupActions)
+                appStartupAction.Execute(app);
 
             app.Run();
         }
