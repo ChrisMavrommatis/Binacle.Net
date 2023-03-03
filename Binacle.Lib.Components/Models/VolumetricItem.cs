@@ -1,4 +1,6 @@
-﻿namespace Binacle.Lib.Components.Models
+﻿using Binacle.Lib.Components.Exceptions;
+
+namespace Binacle.Lib.Components.Models
 {
     public class VolumetricItem 
     {
@@ -21,6 +23,13 @@
 
         public VolumetricItem(decimal length, decimal width, decimal height)
         {
+            if (length <= 0)
+                throw new DimensionException(nameof(length));
+            if (width <= 0)
+                throw new DimensionException(nameof(width));
+            if (height <= 0)
+                throw new DimensionException(nameof(height));
+
             this.length = length;
             this.width = width;
             this.height = height;

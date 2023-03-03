@@ -8,5 +8,8 @@ namespace Binacle.Api.Components.Api.Responses
         [JsonPropertyOrder(0)]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ApiResponseResult Result { get; set; }
+
+        public string Message { get; set; }
+
     }
 }

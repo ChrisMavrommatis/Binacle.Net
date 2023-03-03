@@ -70,6 +70,8 @@ namespace Binacle.Api.BoxNow.Controllers
             return this.Ok(new BoxNowLockerQueryResponse()
             {
                 Locker = response.Result == BinFitResult.Success ? Models.LockerBin.From(response.FoundBin!) : null,
+                Result = response.Result == BinFitResult.Success ? Components.Models.ApiResponseResult.Success: Components.Models.ApiResponseResult.Error,
+                Message = response.Result == BinFitResult.Fail ? $"Failed to find bin. Reason: {response.Reason.ToString()}" : null,
             }) ;
         }
 
@@ -78,6 +80,7 @@ namespace Binacle.Api.BoxNow.Controllers
         {
             return this.BadRequest(new ApiErrorResponse
             {
+                Message = "One or More Validation errors occured",
                 Errors = result.Errors.Select(x => $"{x.PropertyName}: {x.ErrorMessage}").ToList()
             });
         }
