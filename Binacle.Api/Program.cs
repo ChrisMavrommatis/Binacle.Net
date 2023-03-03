@@ -8,13 +8,7 @@ namespace Binacle.Api
     {
         public static void Main(string[] args)
         {
-            //var rootAssembly = Assembly.GetEntryAssembly();
-            
-
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            //var references = Assembly.GetReferrencedAssemblies()
-
             var builder = WebApplication.CreateBuilder(args);
 
             var builderSetupActions = ReflectionHelpers.GetInstancesOf<IBuilderSetup>(assemblies)

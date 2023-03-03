@@ -1,4 +1,4 @@
-﻿namespace Binacle.Api.Components.Models
+﻿namespace Binacle.Lib.Components.Models
 {
 
     public interface IWithDimensions

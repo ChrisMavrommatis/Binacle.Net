@@ -8,6 +8,8 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Binacle.Api.Components.Services;
+using Binacle.Lib.Components.Models;
 
 namespace Binacle.Api.BoxNow.Controllers
 {
@@ -17,14 +19,17 @@ namespace Binacle.Api.BoxNow.Controllers
     {
         private readonly IOptions<BoxNowOptions> options;
         private readonly IValidator<BoxNowLockerQueryRequest> validator;
+        private readonly ILockerService lockerService;
 
         public BoxNowController(
             IOptions<BoxNowOptions> options, 
-            IValidator<BoxNowLockerQueryRequest> validator
+            IValidator<BoxNowLockerQueryRequest> validator,
+            ILockerService lockerService
             )
         {
             this.options = options;
             this.validator = validator;
+            this.lockerService = lockerService;
         }
 
         [HttpGet]
@@ -57,10 +62,15 @@ namespace Binacle.Api.BoxNow.Controllers
                 }
                 return this.ValidationError(result);
             }
+
+            var bins = this.options.Value.Lockers.Select(x => new Bin(x.Size.ToString(), x)).ToList();
+            var items = request.Items.Select(x => new Item(x.ID, x)).ToList();
+            var response = this.lockerService.FindFittingBin(bins, items);
+
             return this.Ok(new BoxNowLockerQueryResponse()
             {
-                Locker = this.options.Value.Lockers.FirstOrDefault()
-            });
+                Locker = response.Result == BinFitResult.Success ? Models.LockerBin.From(response.FoundBin!) : null,
+            }) ;
         }
 
         [NonAction]

@@ -17,4 +17,8 @@
 	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Binacle.Lib.Components\Binacle.Lib.Components.csproj" />
+	</ItemGroup>
 </Project>

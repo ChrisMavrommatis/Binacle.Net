@@ -1,4 +1,4 @@
-﻿using Binacle.Api.Components.Models;
+﻿using Binacle.Lib.Components.Models;
 
 namespace Binacle.Api.BoxNow.Models
 {
