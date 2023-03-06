@@ -1,10 +1,11 @@
-﻿using FluentValidation;
+﻿using Binacle.Api.Glockers.Models;
+using FluentValidation;
 
-namespace Binacle.Api.BoxNow.Configuration
+namespace Binacle.Api.Glockers.Validators
 {
-    public class BoxNowOptionsValidator: AbstractValidator<BoxNowOptions>
+    public class GlockersOptionsOptionsValidator : AbstractValidator<GlockersOptions>
     {
-        public BoxNowOptionsValidator()
+        public GlockersOptionsOptionsValidator()
         {
             RuleFor(x => x.Lockers)
                 .NotNull().NotEmpty();
@@ -16,7 +17,7 @@ namespace Binacle.Api.BoxNow.Configuration
                 validator.RuleFor(x => x.Width).GreaterThan(0).WithMessage($"Width in Locker must be greater than 0");
                 validator.RuleFor(x => x.Length).GreaterThan(0).WithMessage($"Length in Locker must be greater than 0");
             });
-                
+
         }
     }
 }

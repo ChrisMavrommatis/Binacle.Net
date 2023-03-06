@@ -17,10 +17,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Binacle.Api.BoxNow\Binacle.Api.BoxNow.csproj" />
     <ProjectReference Include="..\Binacle.Api.Components\Binacle.Api.Components.csproj" />
+    <ProjectReference Include="..\Binacle.Api.Glockers\Binacle.Api.Glockers.csproj" />
     <ProjectReference Include="..\Binacle.Lib.Components\Binacle.Lib.Components.csproj" />
     <ProjectReference Include="..\Binacle.Lib\Binacle.Lib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

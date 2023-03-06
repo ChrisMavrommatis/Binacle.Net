@@ -1,5 +1,5 @@
-﻿using Binacle.Api.BoxNow;
-using Binacle.Api.Components.Application;
+﻿using Binacle.Api.Components.Application;
+using Binacle.Api.Glockers;
 
 namespace Binacle.Api.Startup
 {
@@ -9,7 +9,7 @@ namespace Binacle.Api.Startup
 
         public void Execute(WebApplicationBuilder builder)
         {
-            builder.UseBoxNow();
+            builder.UseGlockers();
         }
     }
 }

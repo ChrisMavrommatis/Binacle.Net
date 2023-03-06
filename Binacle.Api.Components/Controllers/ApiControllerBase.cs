@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Binacle.Api.Components.Api.Responses;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -28,6 +30,17 @@ namespace Binacle.Api.Components.Controllers
             }
 
             return this.Ok(new Api.Responses.HealthCheckResponse(version ?? "N/A", section));
+        }
+
+
+        [NonAction]
+        public IActionResult ValidationError(ValidationResult validationResult)
+        {
+            return this.BadRequest(new ApiErrorResponse
+            {
+                Message = "One or More Validation errors occured",
+                Errors = validationResult.Errors.Select(x => $"{x.PropertyName}: {x.ErrorMessage}").ToList()
+            });
         }
     }
 }

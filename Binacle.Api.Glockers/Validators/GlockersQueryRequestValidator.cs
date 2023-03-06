@@ -1,11 +1,11 @@
-﻿using Binacle.Api.BoxNow.Requests;
+﻿using Binacle.Api.Glockers.Models;
 using FluentValidation;
 
-namespace Binacle.Api.BoxNow.Validators
+namespace Binacle.Api.Glockers.Validators
 {
-    public class BoxNowLockerQueryRequestValidator : AbstractValidator<BoxNowLockerQueryRequest>
+    public class GlockersQueryRequestValidator : AbstractValidator<GlockersQueryRequest>
     {
-        public BoxNowLockerQueryRequestValidator()
+        public GlockersQueryRequestValidator()
         {
             RuleFor(x => x.Items)
                 .NotEmpty();

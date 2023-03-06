@@ -1,12 +1,12 @@
 ﻿using Binacle.Lib.Components.Models;
 
-namespace Binacle.Api.BoxNow.Models
+namespace Binacle.Api.Glockers.Models
 {
-    public class LockerBin : IWithDimensions
+    public class Locker : IWithDimensions
     {
-        public static LockerBin From(Bin bin)
+        public static Locker From(Bin bin)
         {
-            return new LockerBin()
+            return new Locker()
             {
                 Size = int.Parse(bin.ID),
                 Length = bin.Length,

@@ -1,6 +1,6 @@
 ﻿namespace Binacle.Lib.Components.Models
 {
-    public enum BinFitResult
+    public enum BinFitResultStatus
     {
         Fail,
         Success

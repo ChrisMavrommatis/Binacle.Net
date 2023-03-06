@@ -1,8 +1,8 @@
 ﻿using Binacle.Lib.Components.Models;
 
-namespace Binacle.Api.BoxNow.Models
+namespace Binacle.Api.Glockers.Models
 {
-    public class BoxItem: IWithID, IWithDimensions
+    public class Item : IWithID, IWithDimensions
     {
         public string ID { get; set; }
         public decimal Length { get; set; }

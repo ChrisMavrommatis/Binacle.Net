@@ -7,16 +7,16 @@
         }
 
 
-        public BinFitResult Result { get; private set; }
+        public BinFitResultStatus Status { get; private set; }
         public BinFitFailedResultReason? Reason { get; private set; }
         public Bin FoundBin { get; private set; }
         public List<Item> FittedItems { get; private set; }
 
-        public static BinFittingOperationResult CreateFailedResult(BinFitFailedResultReason? reason = null, List<Item> fittedItems = null, List<Item> notFittedItems = null)
+        public static BinFittingOperationResult CreateFailedResult(BinFitFailedResultReason? reason = null, List<Item>? fittedItems = null, List<Item>? notFittedItems = null)
         {
             return new BinFittingOperationResult()
             {
-                Result =  BinFitResult.Fail,
+                Status = BinFitResultStatus.Fail,
                 Reason = reason.HasValue ? reason.Value : BinFitFailedResultReason.Unspecified,
                 FittedItems = (fittedItems?.Any() ?? false) ? fittedItems : new List<Item>()
             };
@@ -33,7 +33,7 @@
 
             return new BinFittingOperationResult()
             {
-                Result =  BinFitResult.Success,
+                Status = BinFitResultStatus.Success,
                 FoundBin = foundBin,
                 FittedItems = (fittedItems?.Any() ?? false) ? fittedItems : new List<Item>(),
             };
