@@ -6,11 +6,11 @@
     },
     {
       "ID": "C2",
-      "Side": 20
+      "Length": 20
     },
     {
       "ID": "C3",
-      "Side": 30
+      "Length": 30
     }
   ],
   "RectangularCuboids": [
