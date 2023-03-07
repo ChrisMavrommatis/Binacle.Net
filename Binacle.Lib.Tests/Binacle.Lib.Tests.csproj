@@ -26,4 +26,8 @@
     <ProjectReference Include="..\Binacle.Lib\Binacle.Lib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TestData\" />
+  </ItemGroup>
+
 </Project>
