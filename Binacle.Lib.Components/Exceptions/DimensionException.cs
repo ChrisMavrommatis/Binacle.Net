@@ -2,7 +2,8 @@
 {
     public class DimensionException : Exception
     {
-        public string PropertyName { get; }
+        public string? PropertyName { get; }
+        
         public DimensionException()
         {
         }
@@ -21,6 +22,5 @@
         {
             this.PropertyName = propName;
         }
-
     }
 }

@@ -1,6 +1,4 @@
-﻿using Binacle.Lib.Components.Extensions;
-
-namespace Binacle.Lib.Components.Models
+﻿namespace Binacle.Lib.Components.Models
 {
     public class Item : VolumetricItem, IWithID
     {

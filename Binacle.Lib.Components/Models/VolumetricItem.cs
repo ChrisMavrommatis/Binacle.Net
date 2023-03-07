@@ -23,13 +23,6 @@ namespace Binacle.Lib.Components.Models
 
         public VolumetricItem(decimal length, decimal width, decimal height)
         {
-            if (length <= 0)
-                throw new DimensionException(nameof(length));
-            if (width <= 0)
-                throw new DimensionException(nameof(width));
-            if (height <= 0)
-                throw new DimensionException(nameof(height));
-
             this.length = length;
             this.width = width;
             this.height = height;

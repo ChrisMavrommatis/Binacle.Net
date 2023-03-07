@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Binacle.Lib.Components\Binacle.Lib.Components.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(ProjectName).Tests"/>
+	</ItemGroup>
+
 </Project>

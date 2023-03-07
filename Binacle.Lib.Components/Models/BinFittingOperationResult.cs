@@ -6,7 +6,6 @@
         {
         }
 
-
         public BinFitResultStatus Status { get; private set; }
         public BinFitFailedResultReason? Reason { get; private set; }
         public Bin FoundBin { get; private set; }

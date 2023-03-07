@@ -13,6 +13,7 @@ namespace Binacle.Api.Configuration
         {
             _provider = provider;
         }
+
         public void Configure(string? name, SwaggerGenOptions options)
         {
             Configure(options);

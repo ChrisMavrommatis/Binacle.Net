@@ -11,7 +11,6 @@ namespace Binacle.Lib.Strategies
         IBinFittingStrategyWithBinsAndItems,
         IBinFittingOperation
     {
-
         private List<VolumetricItem> availableSpace;
         private List<Item> fittedItems;
         private IEnumerable<Bin> bins;
@@ -52,7 +51,7 @@ namespace Binacle.Lib.Strategies
 
         public BinFittingOperationResult Execute()
         {
-            Bin foundBin = null;
+            Bin? foundBin = null;
             int totalItemsToFit = this.items.Count();
 
             var largestBinByVolume = (this.bins.OrderByDescending(x => x.Volume).FirstOrDefault())!;
@@ -95,7 +94,6 @@ namespace Binacle.Lib.Strategies
             return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.DidNotFit, fittedItems: this.fittedItems);
         }
 
-
         public bool TryFit(Item item)
         {
             foreach (var orientation in item.GetOrientations())
@@ -110,7 +108,7 @@ namespace Binacle.Lib.Strategies
             return false;
         }
 
-        private VolumetricItem FindAvailableSpace(VolumetricItem orientation)
+        private VolumetricItem? FindAvailableSpace(VolumetricItem orientation)
         {
             return this.availableSpace.FirstOrDefault(x => x.Length >= orientation.Length && x.Width >= orientation.Width && x.Height >= orientation.Height);
         }

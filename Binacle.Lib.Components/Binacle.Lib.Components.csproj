@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(ProjectName).Tests"/>
+		<InternalsVisibleTo Include="Binacle.Lib.Tests"/>
+		<InternalsVisibleTo Include="Binacle.Lib"/>
+	</ItemGroup>
+
 </Project>

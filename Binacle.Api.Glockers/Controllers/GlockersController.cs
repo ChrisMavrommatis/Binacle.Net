@@ -54,10 +54,9 @@ namespace Binacle.Api.Glockers.Controllers
                 return this.ValidationError(validationResult);
             }
 
-            var result = await this.lockerService.FindFittingBinAsync(
-                this.options.Value.GetBinsForService(),
-                request.GetItemsForService()
-                );
+            var bins = this.options.Value.GetBinsForService();
+            var items = request.GetItemsForService();
+            var result = await this.lockerService.FindFittingBinAsync(bins, items);
 
             return this.Ok(GlockersQueryResponse.CreateFrom(result));
         }

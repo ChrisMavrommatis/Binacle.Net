@@ -6,5 +6,4 @@
         public const string Path = "Glockers.json";
         public List<Locker> Lockers { get; set; }
     }
-    
 }
