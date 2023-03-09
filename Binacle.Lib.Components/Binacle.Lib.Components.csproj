@@ -7,9 +7,8 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="$(ProjectName).Tests"/>
-		<InternalsVisibleTo Include="Binacle.Lib.Tests"/>
-		<InternalsVisibleTo Include="Binacle.Lib"/>
+		<InternalsVisibleTo Include="Binacle.Lib.UnitTests" />
+		<InternalsVisibleTo Include="Binacle.Lib" />
 	</ItemGroup>
 
 </Project>

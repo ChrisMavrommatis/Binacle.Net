@@ -2,6 +2,6 @@
 {
     public class GlockersQueryRequest
     {
-        public List<Item> Items { get; set; }
+        public List<BoxItem> Items { get; set; }
     }
 }

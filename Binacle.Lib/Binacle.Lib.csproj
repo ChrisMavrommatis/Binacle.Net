@@ -11,7 +11,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="$(ProjectName).Tests"/>
+		<InternalsVisibleTo Include="$(ProjectName).UnitTests"/>
 	</ItemGroup>
 
 </Project>

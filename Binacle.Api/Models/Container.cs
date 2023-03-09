@@ -1,22 +1,22 @@
 ﻿using Binacle.Lib.Components.Extensions;
 using Binacle.Lib.Components.Models;
 
-namespace Binacle.Api.Glockers.Models
+namespace Binacle.Api.Models
 {
-    public class Locker : IWithDimensions
+    public class Container : IWithID, IWithDimensions
     {
-        public Locker()
+        public Container()
         {
-            
+
         }
 
-        public Locker(int size, IWithDimensions item)
+        public Container(string id, IWithDimensions item)
         {
-            this.Size = size;
+            this.ID = id;
             this.CopyDimensionsFrom(item);
         }
 
-        public int Size { get; set; }
+        public string ID { get; set; }
         public decimal Length { get; set; }
         public decimal Width { get; set; }
         public decimal Height { get; set; }

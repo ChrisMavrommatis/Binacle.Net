@@ -1,19 +1,24 @@
 ﻿using Binacle.Api.Components.Api.Responses;
+using Binacle.Api.Glockers.Models;
 using Binacle.Lib.Components.Models;
 
-namespace Binacle.Api.Glockers.Models
+namespace Binacle.Api.Models
 {
-    public class GlockersQueryResponse : ApiResponseBase
+    public class QueryResponse : ApiResponseBase
     {
-        public Locker Locker { get; set; }
-
-        internal static GlockersQueryResponse CreateFrom(BinFittingOperationResult result)
+        private QueryResponse()
         {
-            var response = new GlockersQueryResponse();
+            
+        }
+        public Container Container { get; set; }
+
+        public static QueryResponse CreateFrom(BinFittingOperationResult result)
+        {
+            var response = new QueryResponse();
 
             if (result.Status == BinFitResultStatus.Success)
             {
-                response.Locker = new Locker(int.Parse(result.FoundBin.ID), (Dimensions)result.FoundBin!);
+                response.Container = new Container(result.FoundBin.ID, (Dimensions)result.FoundBin);
                 response.Result = Components.Models.ApiResponseResult.Success;
                 return response;
             }

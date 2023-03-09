@@ -13,6 +13,7 @@ namespace Binacle.Api.Glockers.Validators
             RuleForEach(x => x.Items).ChildRules(v =>
             {
                 v.RuleFor(x => x.ID).NotNull().NotEmpty();
+                v.RuleFor(x => x.Quantity).NotNull().GreaterThan(0);
                 v.RuleFor(x => x.Length).NotNull().GreaterThan(0);
                 v.RuleFor(x => x.Width).NotNull().GreaterThan(0);
                 v.RuleFor(x => x.Height).NotNull().GreaterThan(0);
