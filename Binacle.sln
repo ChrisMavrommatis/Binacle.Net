@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9811251B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib.UnitTests", "Binacle.Lib.UnitTests\Binacle.Lib.UnitTests.csproj", "{26FBDCCD-AC62-4EEE-8DB7-AA2DC22014AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binacle.Lib.Benchmarks", "Binacle.Lib.Benchmarks\Binacle.Lib.Benchmarks.csproj", "{8F594130-2C5F-4989-9564-2239F2A9B3D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{26FBDCCD-AC62-4EEE-8DB7-AA2DC22014AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26FBDCCD-AC62-4EEE-8DB7-AA2DC22014AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26FBDCCD-AC62-4EEE-8DB7-AA2DC22014AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F594130-2C5F-4989-9564-2239F2A9B3D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F594130-2C5F-4989-9564-2239F2A9B3D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F594130-2C5F-4989-9564-2239F2A9B3D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F594130-2C5F-4989-9564-2239F2A9B3D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{75EC5DC1-8A28-42CB-989D-B76E23F5BC8F} = {EBE1FF36-023B-4BFC-93C4-4DFB9C19CBCD}
 		{DC87E729-22DB-448F-87D6-552A936BAE37} = {B93B15CC-ACB4-4DB0-89F7-EFA05EFDB829}
 		{26FBDCCD-AC62-4EEE-8DB7-AA2DC22014AE} = {9811251B-4BAE-4BBD-BDD5-DE6AC10DF58E}
+		{8F594130-2C5F-4989-9564-2239F2A9B3D7} = {9811251B-4BAE-4BBD-BDD5-DE6AC10DF58E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}
