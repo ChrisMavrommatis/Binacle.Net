@@ -5,15 +5,12 @@ namespace Binacle.Lib.Benchmarks.Strategies
 {
     [RankColumn]
     [MemoryDiagnoser]
-    [Orderer(BenchmarkDotNet.Order.SummaryOrderPolicy.SlowestToFastest)]
+    //[Orderer(BenchmarkDotNet.Order.SummaryOrderPolicy.SlowestToFastest)]
     public class DecreasingVolumeSizeFirstFittingOrientationBenchmarks
     {
         private readonly StrategyFactory strategyFactory;
         private readonly List<Item> items_10_5x5x5;
-        private readonly List<Item> items_20_5x5x5;
-        private readonly List<Item> items_40_5x5x5;
-        private readonly List<Item> items_60_5x5x5;
-        private readonly List<Item> items_80_5x5x5;
+        private readonly List<Item> items_50_5x5x5;
         private readonly List<Item> items_100_5x5x5;
         private readonly List<Bin> bins;
 
@@ -24,10 +21,7 @@ namespace Binacle.Lib.Benchmarks.Strategies
             var _5x5x5 = new Dimensions(5, 5, 5);
 
             this.items_10_5x5x5 = Enumerable.Range(1, 10).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
-            this.items_20_5x5x5 = Enumerable.Range(1, 20).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
-            this.items_40_5x5x5 = Enumerable.Range(1, 40).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
-            this.items_60_5x5x5 = Enumerable.Range(1, 60).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
-            this.items_80_5x5x5 = Enumerable.Range(1, 80).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
+            this.items_50_5x5x5 = Enumerable.Range(1, 50).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
             this.items_100_5x5x5 = Enumerable.Range(1, 100).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
 
             this.bins = new List<Bin>()
@@ -41,7 +35,7 @@ namespace Binacle.Lib.Benchmarks.Strategies
         [Benchmark]
         public void With_10_5x5x5()
         {
-            var strategy = this.strategyFactory.Create(Components.Strategies.BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation)
+            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation()
                 .WithBins(this.bins)
                 .AndItems(this.items_10_5x5x5)
                 .Build();
@@ -50,44 +44,35 @@ namespace Binacle.Lib.Benchmarks.Strategies
         }
 
         [Benchmark]
-        public void With_20_5x5x5()
+        public void With_10_5x5x5_v2()
         {
-            var strategy = this.strategyFactory.Create(Components.Strategies.BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation)
+            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
                 .WithBins(this.bins)
-                .AndItems(this.items_20_5x5x5)
+                .AndItems(this.items_10_5x5x5)
                 .Build();
 
             var result = strategy.Execute();
         }
 
+
         [Benchmark]
-        public void With_40_5x5x5()
+        public void With_50_5x5x5()
         {
-            var strategy = this.strategyFactory.Create(Components.Strategies.BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation)
+            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation()
                 .WithBins(this.bins)
-                .AndItems(this.items_40_5x5x5)
+                .AndItems(this.items_50_5x5x5)
                 .Build();
 
             var result = strategy.Execute();
         }
 
-        [Benchmark]
-        public void With_60_5x5x5()
-        {
-            var strategy = this.strategyFactory.Create(Components.Strategies.BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation)
-                .WithBins(this.bins)
-                .AndItems(this.items_60_5x5x5)
-                .Build();
-
-            var result = strategy.Execute();
-        }
 
         [Benchmark]
-        public void With_80_5x5x5()
+        public void With_50_5x5x5_v2()
         {
-            var strategy = this.strategyFactory.Create(Components.Strategies.BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation)
+            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
                 .WithBins(this.bins)
-                .AndItems(this.items_80_5x5x5)
+                .AndItems(this.items_50_5x5x5)
                 .Build();
 
             var result = strategy.Execute();
@@ -96,7 +81,19 @@ namespace Binacle.Lib.Benchmarks.Strategies
         [Benchmark]
         public void With_100_5x5x5()
         {
-            var strategy = this.strategyFactory.Create(Components.Strategies.BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation)
+            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation()
+                .WithBins(this.bins)
+                .AndItems(this.items_100_5x5x5)
+                .Build();
+
+            var result = strategy.Execute();
+        }
+
+
+        [Benchmark]
+        public void With_100_5x5x5_v2()
+        {
+            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
                 .WithBins(this.bins)
                 .AndItems(this.items_100_5x5x5)
                 .Build();
