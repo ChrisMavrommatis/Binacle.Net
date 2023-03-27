@@ -112,14 +112,15 @@ namespace Binacle.Lib.Strategies
 
         public bool TryFit(Item item)
         {
-            foreach (var orientation in item.GetOrientations())
+            for(var i = 0; i < Item.TotalOrientations; i++)
             {
-                var availableSpaceQuadrant = this.FindAvailableSpace(orientation);
+                var availableSpaceQuadrant = this.FindAvailableSpace(item);
                 if (availableSpaceQuadrant != null)
                 {
-                    this.Fit(availableSpaceQuadrant, orientation, item);
+                    this.Fit(availableSpaceQuadrant, item);
                     return true;
                 }
+                item.Rotate();
             }
             return false;
         }
@@ -135,9 +136,9 @@ namespace Binacle.Lib.Strategies
             return null;
         }
 
-        private void Fit(VolumetricItem spaceQuadrant, VolumetricItem orientation, Item item)
+        private void Fit(VolumetricItem spaceQuadrant, Item item)
         {
-            var newAvailableSpaces = this.SplitSpaceQuadrant(spaceQuadrant, orientation);
+            var newAvailableSpaces = this.SplitSpaceQuadrant(spaceQuadrant, item);
             this.availableSpace.Remove(spaceQuadrant);
             if (newAvailableSpaces.Any())
             {
