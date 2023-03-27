@@ -8,8 +8,9 @@
 
         public BinFitResultStatus Status { get; private set; }
         public BinFitFailedResultReason? Reason { get; private set; }
-        public Bin FoundBin { get; private set; }
+        public Item FoundBin { get; private set; }
         public List<Item> FittedItems { get; private set; }
+        public List<Item> NotFittedItems { get; private set; }
 
         public static BinFittingOperationResult CreateFailedResult(BinFitFailedResultReason? reason = null, List<Item>? fittedItems = null, List<Item>? notFittedItems = null)
         {
@@ -17,11 +18,12 @@
             {
                 Status = BinFitResultStatus.Fail,
                 Reason = reason.HasValue ? reason.Value : BinFitFailedResultReason.Unspecified,
-                FittedItems = (fittedItems?.Any() ?? false) ? fittedItems : new List<Item>()
+                FittedItems = (fittedItems?.Any() ?? false) ? fittedItems : new List<Item>(),
+                NotFittedItems = (notFittedItems?.Any() ?? false) ? notFittedItems : new List<Item>(),
             };
         }
 
-        public static BinFittingOperationResult CreateSuccessfullResult(Bin foundBin, List<Item> fittedItems)
+        public static BinFittingOperationResult CreateSuccessfullResult(Item foundBin, List<Item> fittedItems)
         {
             if (foundBin == null)
                 throw new ArgumentNullException(nameof(foundBin));

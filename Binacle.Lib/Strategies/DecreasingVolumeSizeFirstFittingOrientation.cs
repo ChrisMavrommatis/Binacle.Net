@@ -2,6 +2,9 @@
 using Binacle.Lib.Components.Models;
 using Binacle.Lib.Components.Strategies;
 using Binacle.Lib.Extensions;
+using Binacle.Lib.Models;
+using ExternalItem = Binacle.Lib.Components.Models.Item;
+using Item = Binacle.Lib.Models.Item;
 
 namespace Binacle.Lib.Strategies
 {
@@ -20,15 +23,15 @@ namespace Binacle.Lib.Strategies
         {
         }
 
-        public IBinFittingStrategyWithBins WithBins(List<Bin> bins)
+        public IBinFittingStrategyWithBins WithBins(IEnumerable<ExternalItem> bins)
         {
-            this.bins = bins;
+            this.bins = bins.Select(x => new Bin(x.ID, x)).ToList();
             return this;
         }
 
-        public IBinFittingStrategyWithBinsAndItems AndItems(List<Item> items)
+        public IBinFittingStrategyWithBinsAndItems AndItems(IEnumerable<ExternalItem> items)
         {
-            this.items = items;
+            this.items = items.Select(x => new Item(x.ID, x)).ToList();
             return this;
         }
 
@@ -55,12 +58,12 @@ namespace Binacle.Lib.Strategies
             int totalItemsToFit = this.items.Count();
 
             var largestBinByVolume = (this.bins.OrderByDescending(x => x.Volume).FirstOrDefault())!;
-            if(this.items.Sum(x => x.Volume) > largestBinByVolume.Volume)
+            if (this.items.Sum(x => x.Volume) > largestBinByVolume.Volume)
                 return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.TotalVolumeExceeded);
 
-            var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > largestBinByVolume.LongestDimension).ToList();
+            var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > largestBinByVolume.LongestDimension);
             if(itemsNotFittingDueToLongestDimension.Any())
-                return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.ItemDimensionExceeded, notFittedItems: itemsNotFittingDueToLongestDimension);
+                return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.ItemDimensionExceeded, this.Convert(itemsNotFittingDueToLongestDimension));
 
             this.bins = this.bins.OrderBy(x => x.Volume);
             this.items = this.items.OrderByDescending(x => x.Volume);
@@ -88,10 +91,23 @@ namespace Binacle.Lib.Strategies
 
             if(foundBin != null)
             {
-                return BinFittingOperationResult.CreateSuccessfullResult(foundBin, this.fittedItems);
+                return BinFittingOperationResult.CreateSuccessfullResult(this.Convert(foundBin), this.Convert(this.fittedItems));
             }
 
-            return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.DidNotFit, fittedItems: this.fittedItems);
+            return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.DidNotFit, fittedItems: this.Convert(this.fittedItems));
+        }
+
+        private ExternalItem Convert(Bin bin)
+        {
+            return new ExternalItem(bin.ID, bin);
+        }
+
+        private List<ExternalItem> Convert(IEnumerable<Item> items)
+        {
+            if (!(items?.Any() ?? false))
+                return new List<ExternalItem>();
+
+            return items.Select(x => new ExternalItem(x.ID, x)).ToList();
         }
 
         public bool TryFit(Item item)
@@ -128,9 +144,9 @@ namespace Binacle.Lib.Strategies
         {
             var newAvailableSpaces = new List<VolumetricItem>();
 
-            var remainingLength = spaceQuadrant.Length - orientation.Length;
-            var remainingWidth = spaceQuadrant.Width - orientation.Width;
-            var remainingHeight = spaceQuadrant.Height - orientation.Height;
+            var remainingLength = (ushort)(spaceQuadrant.Length - orientation.Length);
+            var remainingWidth = (ushort)(spaceQuadrant.Width - orientation.Width);
+            var remainingHeight = (ushort)(spaceQuadrant.Height - orientation.Height);
 
             if (remainingLength > 0)
                 newAvailableSpaces.Add(new VolumetricItem(remainingLength, spaceQuadrant.Width, spaceQuadrant.Height));

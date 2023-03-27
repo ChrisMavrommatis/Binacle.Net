@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using Binacle.Lib.Components.Abstractions.Models;
 using Binacle.Lib.Components.Exceptions;
 using Binacle.Lib.Components.Models;
 using Binacle.Lib.Tests.Models;
@@ -15,7 +16,7 @@ namespace Binacle.Lib.Tests
         {
             this.Fixture = fixture;
             this.AutoFixture = new AutoFixture.Fixture();
-            this.AutoFixture.Customize<IWithDimensions>(x => x.FromFactory(() => new TestItemWithDimensions()));
+            this.AutoFixture.Customize<IWithReadOnlyDimensions<ushort>>(x => x.FromFactory(() => new TestItemWithDimensions()));
         }
 
         [Fact]
@@ -41,12 +42,12 @@ namespace Binacle.Lib.Tests
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation()
-                .WithBins(new List<Bin>())
+                .WithBins(new List<Item>())
                 .AndItems(items)
                 .Build();
             });
 
-            var bins = testItems.Select(x => new Bin(x.ID, x)).ToList();
+            var bins = testItems.Select(x => new Item(x.ID, x)).ToList();
 
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -73,7 +74,7 @@ namespace Binacle.Lib.Tests
                 .With(x => x.Width, 0)
                 .CreateMany(2);
 
-            var binsWith0Dimension = testItemsWith0Dimension.Select(x => new Bin(x.ID, x)).ToList();
+            var binsWith0Dimension = testItemsWith0Dimension.Select(x => new Item(x.ID, x)).ToList();
             var items = testItems.Select(x => new Item(x.ID, x)).ToList();
 
             Assert.Throws<DimensionException>(() =>
@@ -84,7 +85,7 @@ namespace Binacle.Lib.Tests
                 .Build();
             });
 
-            var bins = testItems.Select(x => new Bin(x.ID, x)).ToList();
+            var bins = testItems.Select(x => new Item(x.ID, x)).ToList();
             var itemsWith0Dimension = testItemsWith0Dimension.Select(x => new Item(x.ID, x)).ToList();
 
             Assert.Throws<DimensionException>(() =>
@@ -103,7 +104,7 @@ namespace Binacle.Lib.Tests
         [InlineData(110, "Medium")]
         public void Glockers_Baseline_X_5x5x5_FitOn_Y(int x, string y)
         {
-            var _5x5x5 = new Dimensions(5, 5, 5);
+            var _5x5x5 = new Dimensions<ushort>(5, 5, 5);
             var _items_x_5x5x5 = Enumerable.Range(1, x).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
 
             var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation()

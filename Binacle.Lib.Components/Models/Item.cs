@@ -1,12 +1,17 @@
-﻿namespace Binacle.Lib.Components.Models
+﻿using Binacle.Lib.Components.Abstractions.Models;
+
+namespace Binacle.Lib.Components.Models
 {
-    public class Item : VolumetricItem, IWithID
+    public class Item : BaseItem<ushort, uint>
     {
-        public Item(string id, IWithDimensions item) : base(item)
+        public Item(string id, IWithReadOnlyDimensions<ushort> item) : base(id, item)
         {
-            this.ID = id;
+                
         }
 
-        public string ID { get; set; }
+        public Item(string id, ushort length, ushort width, ushort height) : base(id, length, width, height)
+        {
+                
+        }
     }
 }

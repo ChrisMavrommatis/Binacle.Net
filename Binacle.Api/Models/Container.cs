@@ -1,24 +1,24 @@
-﻿using Binacle.Lib.Components.Extensions;
-using Binacle.Lib.Components.Models;
+﻿using Binacle.Lib.Components.Abstractions.Models;
+using Binacle.Lib.Components.Extensions;
 
 namespace Binacle.Api.Models
 {
-    public class Container : IWithID, IWithDimensions
+    public class Container : IWithID, IWithDimensions<ushort>
     {
-        public Container()
+        public Container(string iD)
         {
 
         }
 
-        public Container(string id, IWithDimensions item)
+        public Container(string id, IWithReadOnlyDimensions<ushort> item)
         {
             this.ID = id;
             this.CopyDimensionsFrom(item);
         }
 
         public string ID { get; set; }
-        public decimal Length { get; set; }
-        public decimal Width { get; set; }
-        public decimal Height { get; set; }
+        public ushort Length { get; set; }
+        public ushort Width { get; set; }
+        public ushort Height { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace Binacle.Api.Models
 
             if (result.Status == BinFitResultStatus.Success)
             {
-                response.Container = new Container(result.FoundBin.ID, (Dimensions)result.FoundBin);
+                response.Container = new Container(result.FoundBin.ID, result.FoundBin);
                 response.Result = Components.Models.ApiResponseResult.Success;
                 return response;
             }

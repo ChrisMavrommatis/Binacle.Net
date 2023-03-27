@@ -1,24 +1,16 @@
-﻿using Binacle.Lib.Components.Models;
+﻿using Binacle.Lib.Components.Abstractions.Models;
+using System.Numerics;
 
 namespace Binacle.Lib.Components.Extensions
 {
     public static class DimensionExtensions
     {
-        public static void CopyDimensionsFrom(this IWithDimensions target, IWithDimensions source)
+        public static void CopyDimensionsFrom<T>(this IWithDimensions<T> target, IWithReadOnlyDimensions<T> source)
+            where T: struct, IBinaryInteger<T>
         {
             target.Length = source.Length;
             target.Width = source.Width;
             target.Height = source.Height;
-        }
-
-        public static Dimensions ToDimensions(this VolumetricItem item)
-        {
-            return new Dimensions
-            {
-                Length = item.Length,
-                Width = item.Width,
-                Height = item.Height
-            };
         }
     }
 }

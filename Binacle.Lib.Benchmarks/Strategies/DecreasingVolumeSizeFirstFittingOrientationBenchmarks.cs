@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Binacle.Lib.Benchmarks.Models;
 using Binacle.Lib.Components.Models;
 
 namespace Binacle.Lib.Benchmarks.Strategies
@@ -12,23 +13,23 @@ namespace Binacle.Lib.Benchmarks.Strategies
         private readonly List<Item> items_10_5x5x5;
         private readonly List<Item> items_50_5x5x5;
         private readonly List<Item> items_100_5x5x5;
-        private readonly List<Bin> bins;
+        private readonly List<Item> bins;
 
         public DecreasingVolumeSizeFirstFittingOrientationBenchmarks()
         {
             this.strategyFactory = new Binacle.Lib.StrategyFactory();
 
-            var _5x5x5 = new Dimensions(5, 5, 5);
+            var _5x5x5 = new Dimensions<ushort>(5, 5, 5);
 
             this.items_10_5x5x5 = Enumerable.Range(1, 10).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
             this.items_50_5x5x5 = Enumerable.Range(1, 50).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
             this.items_100_5x5x5 = Enumerable.Range(1, 100).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
 
-            this.bins = new List<Bin>()
+            this.bins = new List<Item>()
             {
-                new Bin("Small", new Dimensions(8,45,62)),
-                new Bin("Medium", new Dimensions(17,45,62)),
-                new Bin("Large", new Dimensions(36,45,62))
+                new Item("Small", new Dimensions<ushort>(8,45,62)),
+                new Item("Medium", new Dimensions<ushort>(17,45,62)),
+                new Item("Large", new Dimensions<ushort>(36,45,62))
             };
         }
 

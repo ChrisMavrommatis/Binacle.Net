@@ -1,4 +1,4 @@
-﻿using Binacle.Lib.Components.Models;
+﻿using Binacle.Lib.Components.Abstractions.Models;
 using FluentValidation;
 
 namespace Binacle.Api.Components.Validators

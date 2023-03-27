@@ -1,8 +1,8 @@
-﻿using Binacle.Lib.Components.Models;
+﻿using Binacle.Lib.Components.Abstractions.Models;
 
 namespace Binacle.Api.Glockers.Models
 {
-    public class BoxItem : IWithID, IWithDimensions
+    public class BoxItem : IWithID
     {
         public string ID { get; set; }
         public int Quantity { get; set; }

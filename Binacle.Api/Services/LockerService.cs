@@ -12,7 +12,7 @@ namespace Binacle.Api.Services
             this.strategyFactory = new Binacle.Lib.StrategyFactory();
         }
 
-        public Task<BinFittingOperationResult> FindFittingBinAsync(List<Bin> bins, List<Item> items)
+        public Task<BinFittingOperationResult> FindFittingBinAsync(List<Item> bins, List<Item> items)
         {
             var strategy = this.strategyFactory.Create(Lib.Components.Strategies.BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation);
 

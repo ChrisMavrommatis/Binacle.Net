@@ -4,6 +4,6 @@ namespace Binacle.Api.Components.Services
 {
     public interface ILockerService
     {
-        public Task<BinFittingOperationResult> FindFittingBinAsync(List<Bin> bins, List<Item> items);
+        public Task<BinFittingOperationResult> FindFittingBinAsync(List<Item> bins, List<Item> items);
     }
 }

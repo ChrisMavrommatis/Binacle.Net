@@ -13,7 +13,7 @@ namespace Binacle.Api.Glockers.Models
 
             if (result.Status == BinFitResultStatus.Success)
             {
-                response.Locker = new Locker(int.Parse(result.FoundBin.ID), (Dimensions)result.FoundBin!);
+                response.Locker = new Locker(int.Parse(result.FoundBin.ID), result.FoundBin!);
                 response.Result = Components.Models.ApiResponseResult.Success;
                 return response;
             }

@@ -2,6 +2,9 @@
 using Binacle.Lib.Components.Models;
 using Binacle.Lib.Components.Strategies;
 using Binacle.Lib.Extensions;
+using Binacle.Lib.Models;
+using ExternalItem = Binacle.Lib.Components.Models.Item;
+using Item = Binacle.Lib.Models.Item;
 
 namespace Binacle.Lib.Strategies
 {
@@ -11,6 +14,8 @@ namespace Binacle.Lib.Strategies
         IBinFittingStrategyWithBinsAndItems,
         IBinFittingOperation
     {
+        private List<VolumetricItem> availableSpace;
+        private List<Item> fittedItems;
         private IEnumerable<Bin> bins;
         private IEnumerable<Item> items;
 
@@ -18,15 +23,15 @@ namespace Binacle.Lib.Strategies
         {
         }
 
-        public IBinFittingStrategyWithBins WithBins(List<Bin> bins)
+        public IBinFittingStrategyWithBins WithBins(IEnumerable<ExternalItem> bins)
         {
-            this.bins = bins;
+            this.bins = bins.Select(x => new Bin(x.ID, x)).ToList();
             return this;
         }
 
-        public IBinFittingStrategyWithBinsAndItems AndItems(List<Item> items)
+        public IBinFittingStrategyWithBinsAndItems AndItems(IEnumerable<ExternalItem> items)
         {
-            this.items = items;
+            this.items = items.Select(x => new Item(x.ID, x)).ToList();
             return this;
         }
 
@@ -49,78 +54,116 @@ namespace Binacle.Lib.Strategies
 
         public BinFittingOperationResult Execute()
         {
+            Bin? foundBin = null;
             int totalItemsToFit = this.items.Count();
 
             var largestBinByVolume = (this.bins.OrderByDescending(x => x.Volume).FirstOrDefault())!;
             if (this.items.Sum(x => x.Volume) > largestBinByVolume.Volume)
                 return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.TotalVolumeExceeded);
 
-            var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > largestBinByVolume.LongestDimension).ToList();
+            var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > largestBinByVolume.LongestDimension);
             if (itemsNotFittingDueToLongestDimension.Any())
-                return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.ItemDimensionExceeded, notFittedItems: itemsNotFittingDueToLongestDimension);
+                return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.ItemDimensionExceeded, this.Convert(itemsNotFittingDueToLongestDimension));
 
             this.bins = this.bins.OrderBy(x => x.Volume);
             this.items = this.items.OrderByDescending(x => x.Volume);
 
             foreach (var bin in this.bins)
             {
-                var fittedItems = this.Fit(bin, items);
-               
-                if (fittedItems.Count == totalItemsToFit)
+                this.availableSpace = new List<VolumetricItem>
                 {
-                    return BinFittingOperationResult.CreateSuccessfullResult(bin, fittedItems);
-                }
-            }
-            return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.DidNotFit, fittedItems: new List<Item>());
-        }
-
-        private List<Item> Fit(Bin bin, IEnumerable<Item> items)
-        {
-            var availableSpace = new List<VolumetricItemStruct>
-                {
-                    new VolumetricItemStruct(bin)
+                    new VolumetricItem(bin)
                 };
 
-            var fittedItems = new List<Item>();
+                this.fittedItems = new List<Item>();
 
-            foreach (var item in items)
-            {
-                var fitted = false;
-                foreach (var orientation in item.GetOrientationsStruct())
+                foreach (var item in this.items)
                 {
-                    var availableSpaceQuadrant = availableSpace.FirstOrDefault(x => x.Length >= orientation.Length && x.Width >= orientation.Width && x.Height >= orientation.Height);
-                    if (availableSpaceQuadrant.HasDimensions)
-                    {
-                        var newAvailableSpaces = new List<VolumetricItemStruct>();
-
-                        var remainingLength = availableSpaceQuadrant.Length - orientation.Length;
-                        var remainingWidth = availableSpaceQuadrant.Width - orientation.Width;
-                        var remainingHeight = availableSpaceQuadrant.Height - orientation.Height;
-
-                        if (remainingLength > 0)
-                            newAvailableSpaces.Add(new VolumetricItemStruct(remainingLength, availableSpaceQuadrant.Width, availableSpaceQuadrant.Height));
-
-                        if (remainingWidth > 0)
-                            newAvailableSpaces.Add(new VolumetricItemStruct(orientation.Length, remainingWidth, availableSpaceQuadrant.Height));
-
-                        if (remainingHeight > 0)
-                            newAvailableSpaces.Add(new VolumetricItemStruct(orientation.Length, orientation.Width, remainingHeight));
-
-                        availableSpace.Remove(availableSpaceQuadrant);
-                        if (newAvailableSpaces.Any())
-                        {
-                            availableSpace.AddRange(newAvailableSpaces);
-                        }
-                        fitted = true;
-                        fittedItems.Add(item);
+                    if (!this.TryFit(item))
                         break;
-                    }
                 }
-                if (!fitted)
+                if (this.fittedItems.Count == totalItemsToFit)
+                {
+                    foundBin = bin;
                     break;
+                }
             }
 
-            return fittedItems;
+            if (foundBin != null)
+            {
+                return BinFittingOperationResult.CreateSuccessfullResult(this.Convert(foundBin), this.Convert(this.fittedItems));
+            }
+
+            return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.DidNotFit, fittedItems: this.Convert(this.fittedItems));
+        }
+
+        private ExternalItem Convert(Bin bin)
+        {
+            return new ExternalItem(bin.ID, bin);
+        }
+
+        private List<ExternalItem> Convert(IEnumerable<Item> items)
+        {
+            if (!(items?.Any() ?? false))
+                return new List<ExternalItem>();
+
+            return items.Select(x => new ExternalItem(x.ID, x)).ToList();
+        }
+
+        public bool TryFit(Item item)
+        {
+            foreach (var orientation in item.GetOrientations())
+            {
+                var availableSpaceQuadrant = this.FindAvailableSpace(orientation);
+                if (availableSpaceQuadrant != null)
+                {
+                    this.Fit(availableSpaceQuadrant, orientation, item);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private VolumetricItem? FindAvailableSpace(VolumetricItem orientation)
+        {
+            foreach(var space in this.availableSpace)
+            {
+                if (space.Length >= orientation.Length && space.Width >= orientation.Width && space.Height >= orientation.Height)
+                    return space;
+            }
+
+            return null;
+        }
+
+        private void Fit(VolumetricItem spaceQuadrant, VolumetricItem orientation, Item item)
+        {
+            var newAvailableSpaces = this.SplitSpaceQuadrant(spaceQuadrant, orientation);
+            this.availableSpace.Remove(spaceQuadrant);
+            if (newAvailableSpaces.Any())
+            {
+                this.availableSpace.AddRange(newAvailableSpaces);
+            }
+            this.fittedItems.Add(item);
+        }
+
+        private List<VolumetricItem> SplitSpaceQuadrant(VolumetricItem spaceQuadrant, VolumetricItem orientation)
+        {
+            var newAvailableSpaces = new List<VolumetricItem>();
+
+            var remainingLength = (ushort)(spaceQuadrant.Length - orientation.Length);
+            var remainingWidth = (ushort)(spaceQuadrant.Width - orientation.Width);
+            var remainingHeight = (ushort)(spaceQuadrant.Height - orientation.Height);
+
+            if (remainingLength > 0)
+                newAvailableSpaces.Add(new VolumetricItem(remainingLength, spaceQuadrant.Width, spaceQuadrant.Height));
+
+            if (remainingWidth > 0)
+                newAvailableSpaces.Add(new VolumetricItem(orientation.Length, remainingWidth, spaceQuadrant.Height));
+
+            if (remainingHeight > 0)
+                newAvailableSpaces.Add(new VolumetricItem(orientation.Length, orientation.Width, remainingHeight));
+
+            return newAvailableSpaces;
         }
     }
 }

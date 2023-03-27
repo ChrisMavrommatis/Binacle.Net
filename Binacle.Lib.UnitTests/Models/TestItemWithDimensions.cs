@@ -1,13 +1,13 @@
-﻿using Binacle.Lib.Components.Models;
+﻿using Binacle.Lib.Components.Abstractions.Models;
 
 namespace Binacle.Lib.Tests.Models
 {
-    public class TestItemWithDimensions : IWithID, IWithDimensions
+    public class TestItemWithDimensions : IWithID, IWithDimensions<ushort>
     {
         public string ID { get; set; }
-        public decimal Length { get; set; }
-        public decimal Width { get; set; }
-        public decimal Height { get; set; }
+        public ushort Length { get; set; }
+        public ushort Width { get; set; }
+        public ushort Height { get; set; }
     }
 
 }
