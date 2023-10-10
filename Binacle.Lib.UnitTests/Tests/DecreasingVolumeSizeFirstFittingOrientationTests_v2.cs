@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
-using Binacle.Lib.Components.Abstractions.Models;
-using Binacle.Lib.Components.Exceptions;
-using Binacle.Lib.Components.Models;
+using Binacle.Lib.Abstractions.Models;
+using Binacle.Lib.Exceptions;
+using Binacle.Lib.Models;
 using Binacle.Lib.Tests.Models;
 using Xunit;
 
@@ -33,7 +33,7 @@ namespace Binacle.Lib.Tests
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
+                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSize_v2()
                 .WithBins(null)
                 .AndItems(items)
                 .Build();
@@ -41,7 +41,7 @@ namespace Binacle.Lib.Tests
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
+                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSize_v2()
                 .WithBins(new List<Item>())
                 .AndItems(items)
                 .Build();
@@ -51,7 +51,7 @@ namespace Binacle.Lib.Tests
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
+                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSize_v2()
                 .WithBins(bins)
                 .AndItems(null)
                 .Build();
@@ -59,7 +59,7 @@ namespace Binacle.Lib.Tests
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
+                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSize_v2()
                 .WithBins(bins)
                 .AndItems(new List<Item>())
                 .Build();
@@ -79,7 +79,7 @@ namespace Binacle.Lib.Tests
 
             Assert.Throws<DimensionException>(() =>
             {
-                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
+                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSize_v2()
                 .WithBins(binsWith0Dimension)
                 .AndItems(items)
                 .Build();
@@ -90,7 +90,7 @@ namespace Binacle.Lib.Tests
 
             Assert.Throws<DimensionException>(() =>
             {
-                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
+                var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSize_v2()
                 .WithBins(bins)
                 .AndItems(itemsWith0Dimension)
                 .Build();
@@ -107,8 +107,8 @@ namespace Binacle.Lib.Tests
             var _5x5x5 = new Dimensions<ushort>(5, 5, 5);
             var _items_x_5x5x5 = Enumerable.Range(1, x).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
 
-            var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
-                .WithBins(this.Fixture.GlockersBins)
+            var strategy = new Binacle.Lib.Strategies.DecreasingVolumeSize_v2()
+                .WithBins(this.Fixture.Bins)
                 .AndItems(_items_x_5x5x5)
                 .Build();
 

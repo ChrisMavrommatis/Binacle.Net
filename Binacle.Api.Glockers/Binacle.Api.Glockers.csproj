@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Binacle.Api.Components\Binacle.Api.Components.csproj" />
-    <ProjectReference Include="..\Binacle.Lib.Components\Binacle.Lib.Components.csproj" />
   </ItemGroup>
 
 </Project>

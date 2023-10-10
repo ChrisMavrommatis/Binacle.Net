@@ -1,4 +1,5 @@
-﻿using Binacle.Lib.Components.Strategies;
+﻿using Binacle.Lib.Abstractions.Strategies;
+using Binacle.Lib.Strategies;
 
 namespace Binacle.Lib
 {
@@ -9,7 +10,7 @@ namespace Binacle.Lib
             switch (strategyType)
             {
                 case BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation:
-                    return new Strategies.DecreasingVolumeSizeFirstFittingOrientation();
+                    return new Strategies.DecreasingVolumeSize_v1();
                 default:
                     throw new NotImplementedException($"No Bin Fitting Strategy exists for {strategyType}");
             }

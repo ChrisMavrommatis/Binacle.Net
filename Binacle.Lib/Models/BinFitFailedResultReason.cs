@@ -1,4 +1,4 @@
-﻿namespace Binacle.Lib.Components.Models
+﻿namespace Binacle.Lib.Models
 {
     public enum BinFitFailedResultReason
     {

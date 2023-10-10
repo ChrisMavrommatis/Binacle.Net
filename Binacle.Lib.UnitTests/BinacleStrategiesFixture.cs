@@ -1,15 +1,15 @@
-﻿using Binacle.Lib.Components.Models;
+﻿using Binacle.Lib.Models;
 using Binacle.Lib.Tests.Models;
 
 namespace Binacle.Lib.Tests
 {
     public class BinacleStrategiesFixture : IDisposable
     {
-        public readonly List<Item> GlockersBins;
+        public readonly List<Item> Bins;
 
         public BinacleStrategiesFixture()
         {
-            this.GlockersBins = new List<Item>()
+            this.Bins = new List<Item>()
             {
                 new Item("Small", new Dimensions<ushort>(8,45,62)),
                 new Item("Medium", new Dimensions<ushort>(17,45,62)),

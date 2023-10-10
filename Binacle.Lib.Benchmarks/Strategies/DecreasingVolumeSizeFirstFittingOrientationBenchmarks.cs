@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Binacle.Lib.Benchmarks.Models;
-using Binacle.Lib.Components.Models;
+using Binacle.Lib.Models;
 
 namespace Binacle.Lib.Benchmarks.Strategies
 {
@@ -34,9 +34,9 @@ namespace Binacle.Lib.Benchmarks.Strategies
         }
 
         [Benchmark]
-        public void With_10_5x5x5()
+        public void With_10_5x5x5_v1()
         {
-            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation()
+            var strategy = new Lib.Strategies.DecreasingVolumeSize_v1()
                 .WithBins(this.bins)
                 .AndItems(this.items_10_5x5x5)
                 .Build();
@@ -47,7 +47,7 @@ namespace Binacle.Lib.Benchmarks.Strategies
         [Benchmark]
         public void With_10_5x5x5_v2()
         {
-            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
+            var strategy = new Lib.Strategies.DecreasingVolumeSize_v2()
                 .WithBins(this.bins)
                 .AndItems(this.items_10_5x5x5)
                 .Build();
@@ -57,9 +57,9 @@ namespace Binacle.Lib.Benchmarks.Strategies
 
 
         [Benchmark]
-        public void With_50_5x5x5()
+        public void With_50_5x5x5_v1()
         {
-            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation()
+            var strategy = new Lib.Strategies.DecreasingVolumeSize_v1()
                 .WithBins(this.bins)
                 .AndItems(this.items_50_5x5x5)
                 .Build();
@@ -71,7 +71,7 @@ namespace Binacle.Lib.Benchmarks.Strategies
         [Benchmark]
         public void With_50_5x5x5_v2()
         {
-            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
+            var strategy = new Lib.Strategies.DecreasingVolumeSize_v2()
                 .WithBins(this.bins)
                 .AndItems(this.items_50_5x5x5)
                 .Build();
@@ -80,9 +80,9 @@ namespace Binacle.Lib.Benchmarks.Strategies
         }
 
         [Benchmark]
-        public void With_100_5x5x5()
+        public void With_100_5x5x5_v1()
         {
-            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation()
+            var strategy = new Lib.Strategies.DecreasingVolumeSize_v1()
                 .WithBins(this.bins)
                 .AndItems(this.items_100_5x5x5)
                 .Build();
@@ -94,7 +94,7 @@ namespace Binacle.Lib.Benchmarks.Strategies
         [Benchmark]
         public void With_100_5x5x5_v2()
         {
-            var strategy = new Lib.Strategies.DecreasingVolumeSizeFirstFittingOrientation_v2()
+            var strategy = new Lib.Strategies.DecreasingVolumeSize_v2()
                 .WithBins(this.bins)
                 .AndItems(this.items_100_5x5x5)
                 .Build();

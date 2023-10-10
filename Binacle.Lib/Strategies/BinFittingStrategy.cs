@@ -1,4 +1,4 @@
-﻿namespace Binacle.Lib.Components.Strategies
+﻿namespace Binacle.Lib.Strategies
 {
     public enum BinFittingStrategy
     {

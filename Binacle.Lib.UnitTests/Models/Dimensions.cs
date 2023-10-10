@@ -1,4 +1,4 @@
-﻿using Binacle.Lib.Components.Abstractions.Models;
+﻿using Binacle.Lib.Abstractions.Models;
 using System.Numerics;
 
 namespace Binacle.Lib.Tests.Models

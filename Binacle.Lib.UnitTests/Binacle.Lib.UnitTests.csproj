@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Binacle.Lib.Components\Binacle.Lib.Components.csproj" />
     <ProjectReference Include="..\Binacle.Lib\Binacle.Lib.csproj" />
   </ItemGroup>
 

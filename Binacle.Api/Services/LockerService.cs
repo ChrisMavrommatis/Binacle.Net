@@ -1,5 +1,5 @@
 ﻿using Binacle.Api.Components.Services;
-using Binacle.Lib.Components.Models;
+using Binacle.Lib.Models;
 
 namespace Binacle.Api.Services
 {
@@ -14,7 +14,7 @@ namespace Binacle.Api.Services
 
         public Task<BinFittingOperationResult> FindFittingBinAsync(List<Item> bins, List<Item> items)
         {
-            var strategy = this.strategyFactory.Create(Lib.Components.Strategies.BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation);
+            var strategy = this.strategyFactory.Create(Lib.Strategies.BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation);
 
             var operation = strategy
                 .WithBins(bins)

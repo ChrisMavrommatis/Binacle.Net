@@ -1,6 +1,5 @@
-﻿namespace Binacle.Lib.Components.Abstractions.Models
+﻿namespace Binacle.Lib.Abstractions.Models
 {
-
     public interface IWithDimensions<T> : IWithReadOnlyDimensions<T>
          where T : struct
     {

@@ -1,9 +1,9 @@
-﻿namespace Binacle.Lib.Components.Exceptions
+﻿namespace Binacle.Lib.Exceptions
 {
     public class DimensionException : Exception
     {
         public string? PropertyName { get; }
-        
+
         public DimensionException()
         {
         }

@@ -1,35 +1,27 @@
-﻿using Binacle.Lib.Components.Exceptions;
-using Binacle.Lib.Components.Models;
-using Binacle.Lib.Components.Strategies;
-using Binacle.Lib.Extensions;
+﻿using Binacle.Lib.Abstractions.Strategies;
+using Binacle.Lib.Exceptions;
 using Binacle.Lib.Models;
-using ExternalItem = Binacle.Lib.Components.Models.Item;
-using Item = Binacle.Lib.Models.Item;
+using Binacle.Lib.Strategies.Models;
 
 namespace Binacle.Lib.Strategies
 {
-    internal sealed class DecreasingVolumeSizeFirstFittingOrientation_v2 :
-        IBinFittingStrategy,
-        IBinFittingStrategyWithBins,
-        IBinFittingStrategyWithBinsAndItems,
-        IBinFittingOperation
+    internal sealed partial class DecreasingVolumeSize_v2 : IBinFittingStrategy
     {
         private List<VolumetricItem> availableSpace;
         private List<Item> fittedItems;
         private IEnumerable<Bin> bins;
         private IEnumerable<Item> items;
 
-        internal DecreasingVolumeSizeFirstFittingOrientation_v2()
+        internal DecreasingVolumeSize_v2()
         {
         }
-
-        public IBinFittingStrategyWithBins WithBins(IEnumerable<ExternalItem> bins)
+        public IBinFittingStrategyWithBins WithBins(IEnumerable<Lib.Models.Item> bins)
         {
             this.bins = bins.Select(x => new Bin(x.ID, x)).ToList();
             return this;
         }
 
-        public IBinFittingStrategyWithBinsAndItems AndItems(IEnumerable<ExternalItem> items)
+        public IBinFittingStrategyWithBinsAndItems AndItems(IEnumerable<Lib.Models.Item> items)
         {
             this.items = items.Select(x => new Item(x.ID, x)).ToList();
             return this;
@@ -63,7 +55,7 @@ namespace Binacle.Lib.Strategies
 
             var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > largestBinByVolume.LongestDimension);
             if (itemsNotFittingDueToLongestDimension.Any())
-                return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.ItemDimensionExceeded, this.Convert(itemsNotFittingDueToLongestDimension));
+                return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.ItemDimensionExceeded, this.Convert(itemsNotFittingDueToLongestDimension).ToList());
 
             this.bins = this.bins.OrderBy(x => x.Volume);
             this.items = this.items.OrderByDescending(x => x.Volume);
@@ -91,28 +83,28 @@ namespace Binacle.Lib.Strategies
 
             if (foundBin != null)
             {
-                return BinFittingOperationResult.CreateSuccessfullResult(this.Convert(foundBin), this.Convert(this.fittedItems));
+                return BinFittingOperationResult.CreateSuccessfullResult(this.Convert(foundBin), this.Convert(this.fittedItems).ToList());
             }
 
-            return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.DidNotFit, fittedItems: this.Convert(this.fittedItems));
+            return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.DidNotFit, fittedItems: this.Convert(this.fittedItems).ToList());
         }
 
-        private ExternalItem Convert(Bin bin)
+        private Lib.Models.Item Convert(Bin bin)
         {
-            return new ExternalItem(bin.ID, bin);
+            return new Lib.Models.Item(bin.ID, bin);
         }
 
-        private List<ExternalItem> Convert(IEnumerable<Item> items)
+        private IEnumerable<Lib.Models.Item> Convert(IEnumerable<Item> items)
         {
             if (!(items?.Any() ?? false))
-                return new List<ExternalItem>();
+                return Enumerable.Empty<Lib.Models.Item>();
 
-            return items.Select(x => new ExternalItem(x.ID, x)).ToList();
+            return items.Select(x => new Lib.Models.Item(x.ID, x));
         }
 
-        public bool TryFit(Item item)
+        private bool TryFit(Item item)
         {
-            for(var i = 0; i < Item.TotalOrientations; i++)
+            for (var i = 0; i < Item.TotalOrientations; i++)
             {
                 var availableSpaceQuadrant = this.FindAvailableSpace(item);
                 if (availableSpaceQuadrant != null)
@@ -127,7 +119,7 @@ namespace Binacle.Lib.Strategies
 
         private VolumetricItem? FindAvailableSpace(VolumetricItem orientation)
         {
-            foreach(var space in this.availableSpace)
+            foreach (var space in this.availableSpace)
             {
                 if (space.Length >= orientation.Length && space.Width >= orientation.Width && space.Height >= orientation.Height)
                     return space;

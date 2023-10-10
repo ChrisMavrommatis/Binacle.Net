@@ -1,10 +1,10 @@
-﻿using System.Numerics;
+﻿using Binacle.Lib.Abstractions.Models;
+using System.Numerics;
 
-namespace Binacle.Lib.Components.Abstractions.Models
+namespace Binacle.Lib.Models
 {
-    public abstract class BaseItem<TDimensions, TVolume> : IWithID, IWithDimensions<TDimensions>
-        where TDimensions : struct, IBinaryInteger<TDimensions>
-        where TVolume : struct, IBinaryInteger<TVolume>
+    public abstract class BaseItem<TDimensions> : IWithID, IWithDimensions<TDimensions>
+        where TDimensions : struct, INumber<TDimensions>
     {
         public BaseItem(string id, IWithReadOnlyDimensions<TDimensions> item) :
             this(id, item.Length, item.Width, item.Height)
@@ -23,6 +23,5 @@ namespace Binacle.Lib.Components.Abstractions.Models
         public TDimensions Length { get; set; }
         public TDimensions Width { get; set; }
         public TDimensions Height { get; set; }
-
     }
 }

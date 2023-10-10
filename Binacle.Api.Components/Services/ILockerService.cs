@@ -1,4 +1,5 @@
-﻿using Binacle.Lib.Components.Models;
+﻿
+using Binacle.Lib.Models;
 
 namespace Binacle.Api.Components.Services
 {

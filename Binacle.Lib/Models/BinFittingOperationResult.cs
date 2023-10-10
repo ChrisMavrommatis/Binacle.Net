@@ -1,5 +1,6 @@
-﻿namespace Binacle.Lib.Components.Models
+﻿namespace Binacle.Lib.Models
 {
+
     public class BinFittingOperationResult
     {
         private BinFittingOperationResult()
@@ -28,7 +29,7 @@
             if (foundBin == null)
                 throw new ArgumentNullException(nameof(foundBin));
 
-            if(!(fittedItems?.Any() ?? false))
+            if (!(fittedItems?.Any() ?? false))
                 throw new ArgumentNullException(nameof(fittedItems));
 
 
