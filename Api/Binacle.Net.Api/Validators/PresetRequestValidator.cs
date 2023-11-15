@@ -3,21 +3,10 @@ using FluentValidation;
 
 namespace Binacle.Net.Api.Validators
 {
-    public class QueryRequestValidator : AbstractValidator<QueryRequest>
+    public class PresetRequestValidator : AbstractValidator<PresetQueryRequest>
     {
-        public QueryRequestValidator()
+        public PresetRequestValidator()
         {
-            RuleFor(x => x.Containers)
-               .NotNull()
-               .NotEmpty()
-               .WithMessage(Constants.ErrorMessages.IsRequired);
-
-            RuleForEach(x => x.Containers).ChildRules(containerValidator =>
-            {
-                containerValidator.Include(new ItemWithDimensionsValidator());
-                containerValidator.Include(new ItemWithIDValidator());
-            });
-
             RuleFor(x => x.Items)
                 .NotNull()
                 .NotEmpty()

@@ -2,8 +2,10 @@
 {
     public class BinPresetOptions
     {
-        public const string SectionName = "BinPresets";
+        public const string SectionName = "PresetOptions";
         public const string Path = "Presets.json";
-        public BinPresetOption Sample { get; set; }
+
+
+        public Dictionary<string, BinPresetOption> Presets { get; set; }
     }
 }

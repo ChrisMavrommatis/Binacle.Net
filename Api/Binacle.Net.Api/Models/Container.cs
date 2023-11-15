@@ -2,24 +2,24 @@
 
 namespace Binacle.Net.Api.Models
 {
-    public class Container : IWithID, IWithDimensions<ushort>
+    public class Container : IWithID, IWithDimensions<int>
     {
-        public Container(string iD)
+        public Container()
         {
 
         }
 
-        public Container(string id, IWithReadOnlyDimensions<ushort> item)
+        public Container(string id, int length, int width, int height)
         {
             this.ID = id;
-            this.Length = item.Length;
-            this.Width = item.Width;
-            this.Height = item.Height;
+            this.Length = length;
+            this.Width = width;
+            this.Height = height;
         }
 
         public string ID { get; set; }
-        public ushort Length { get; set; }
-        public ushort Width { get; set; }
-        public ushort Height { get; set; }
+        public int Length { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
     }
 }

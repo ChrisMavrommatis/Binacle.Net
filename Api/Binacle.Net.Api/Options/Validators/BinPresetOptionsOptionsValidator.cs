@@ -7,19 +7,23 @@ namespace Binacle.Net.Api.Options.Validators
     {
         public BinPresetOptionsOptionsValidator()
         {
-            RuleFor(x => x.Sample)
-                .NotNull();
-
-            RuleFor(x => x.Sample.Bins)
+            RuleFor(x => x.Presets)
                 .NotNull()
                 .NotEmpty();
 
-            RuleForEach(x => x.Sample.Bins).ChildRules(validator =>
+
+            RuleForEach(x => x.Presets).ChildRules(presetValidator =>
             {
-                validator.RuleFor(x => x.Size).GreaterThan(0).WithMessage($"Size in Bin must be greater than 0");
-                validator.RuleFor(x => x.Height).GreaterThan(0).WithMessage($"Height in Bin must be greater than 0");
-                validator.RuleFor(x => x.Width).GreaterThan(0).WithMessage($"Width in Bin must be greater than 0");
-                validator.RuleFor(x => x.Length).GreaterThan(0).WithMessage($"Length in LockBiner must be greater than 0");
+                presetValidator.RuleFor(x => x.Value.Bins)
+                    .NotNull()
+                    .NotEmpty();
+
+                presetValidator.RuleForEach(x => x.Value.Bins).ChildRules(binValidator =>
+                {
+                    binValidator.RuleFor(x => x.Height).GreaterThan(0).WithMessage($"Height in Bin must be greater than 0");
+                    binValidator.RuleFor(x => x.Width).GreaterThan(0).WithMessage($"Width in Bin must be greater than 0");
+                    binValidator.RuleFor(x => x.Length).GreaterThan(0).WithMessage($"Length in Bin must be greater than 0");
+                });
             });
 
         }

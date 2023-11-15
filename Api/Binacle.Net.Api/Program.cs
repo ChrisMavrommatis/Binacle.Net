@@ -6,6 +6,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using System.Reflection;
 
 namespace Binacle.Net.Api
 {
@@ -26,7 +27,10 @@ namespace Binacle.Net.Api
                .ValidateFluently()
                .ValidateOnStart();
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+            });
 
             builder.Services.AddEndpointsApiExplorer();
 
@@ -48,8 +52,23 @@ namespace Binacle.Net.Api
 
             builder.Services.AddSingleton<ILockerService, LockerService>();
 
-            builder.Services.AddSwaggerGen();
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
+            builder.Services.AddSwaggerGen(options =>
+            {
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            });
+
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+            builder.Services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseQueryStrings = true;
+                options.LowercaseUrls = true;
+            });
 
             var app = builder.Build();
 

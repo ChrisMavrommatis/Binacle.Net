@@ -7,6 +7,6 @@ namespace Binacle.Net.Api.Responses
         new public ApiResponseResultType Result { get; set; } = ApiResponseResultType.Error;
 
         [JsonPropertyOrder(99)]
-        public List<string> Errors { get; set; }
+        public List<IApiError> Errors { get; set; }
     }
 }

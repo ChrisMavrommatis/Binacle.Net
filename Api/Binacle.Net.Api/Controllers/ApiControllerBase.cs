@@ -1,17 +1,39 @@
 ﻿using Binacle.Net.Api.Responses;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Binacle.Net.Api.Controllers
 {
     [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]/[action]")]
+    [Route("api/[controller]")]
     public abstract class ApiControllerBase : ControllerBase
     {
         [NonAction]
-        public IActionResult HealthCheckResult([CallerMemberName] string caller = "")
+        public ApiErrorResponse ValidationErrorResponse(string message = "One or More Validation errors occurred.")
+        {
+            var errors = new List<IApiError>();
+            foreach (var kvp in this.ModelState)
+            {
+                if (kvp.Value?.ValidationState == ModelValidationState.Invalid)
+                {
+                    foreach (var error in kvp.Value.Errors)
+                    {
+                        errors.Add(new FieldError() { Field = kvp.Key, Mesasage = error.ErrorMessage });
+                    }
+                }
+            }
+
+            return new ApiErrorResponse
+            {
+                Message = message,
+                Errors = errors
+            };
+        }
+
+        [NonAction]
+        public IActionResult SectionAndVersionResult([CallerMemberName] string caller = "")
         {
             string? version = null;
             var controllerType = this.GetType();
@@ -32,15 +54,9 @@ namespace Binacle.Net.Api.Controllers
             return this.Ok(new Api.Responses.HealthCheckResponse(version ?? "N/A", section));
         }
 
-
-        [NonAction]
-        public IActionResult ValidationError(ValidationResult validationResult)
+        protected void AddModelStateError(string propertyName, string message)
         {
-            return this.BadRequest(new ApiErrorResponse
-            {
-                Message = "One or More Validation errors occured",
-                Errors = validationResult.Errors.Select(x => $"{x.PropertyName}: {x.ErrorMessage}").ToList()
-            });
+            this.ModelState.AddModelError(propertyName, message);
         }
     }
 }

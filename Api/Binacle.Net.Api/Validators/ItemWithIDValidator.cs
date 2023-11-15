@@ -7,7 +7,7 @@ namespace Binacle.Net.Api.Validators
     {
         public ItemWithIDValidator()
         {
-            RuleFor(x => x.ID).NotNull().NotEmpty();
+            RuleFor(x => x.ID).NotNull().NotEmpty().WithMessage(Constants.ErrorMessages.IsRequired);
         }
     }
 }
