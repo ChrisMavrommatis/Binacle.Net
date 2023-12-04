@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Asp.Versioning.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -17,6 +18,7 @@ namespace Binacle.Net.Api.Configuration
         public void Configure(string? name, SwaggerGenOptions options)
         {
             Configure(options);
+            //options.OperationFilter<ExamplesOperationFilter>();
         }
 
         public void Configure(SwaggerGenOptions options)

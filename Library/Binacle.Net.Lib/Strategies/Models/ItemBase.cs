@@ -4,12 +4,12 @@ namespace Binacle.Net.Lib.Strategies.Models
 {
     internal abstract class ItemBase : VolumetricItem, IWithID
     {
-        internal ItemBase(string id, IWithReadOnlyDimensions<ushort> item) : base(item)
+        internal ItemBase(string id, IWithReadOnlyDimensions<int> item) : base(item)
         {
             ID = id;
         }
 
-        internal ItemBase(string id, ushort length, ushort width, ushort height)
+        internal ItemBase(string id, int length, int width, int height)
             : base(length, width, height)
         {
             ID = id;
@@ -17,4 +17,6 @@ namespace Binacle.Net.Lib.Strategies.Models
 
         public string ID { get; set; }
     }
+
+
 }

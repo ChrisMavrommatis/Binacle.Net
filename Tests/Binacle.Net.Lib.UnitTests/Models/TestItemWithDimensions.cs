@@ -2,12 +2,12 @@
 
 namespace Binacle.Net.Lib.Tests.Models
 {
-    public class TestItemWithDimensions : IWithID, IWithDimensions<ushort>
+    public class TestItemWithDimensions : IWithID, IWithDimensions<int>
     {
         public string ID { get; set; }
-        public ushort Length { get; set; }
-        public ushort Width { get; set; }
-        public ushort Height { get; set; }
+        public int Length { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
     }
 
 }

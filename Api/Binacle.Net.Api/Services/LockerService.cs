@@ -1,4 +1,7 @@
-﻿using Binacle.Net.Lib.Models;
+﻿using Binacle.Net.Api.Models;
+using Binacle.Net.Api.Responses;
+using Binacle.Net.Lib.Abstractions.Models;
+using Binacle.Net.Lib.Models;
 
 namespace Binacle.Net.Api.Services
 {
@@ -11,7 +14,9 @@ namespace Binacle.Net.Api.Services
             this.strategyFactory = new Lib.StrategyFactory();
         }
 
-        public Task<BinFittingOperationResult> FindFittingBinAsync(List<Item> bins, List<Item> items)
+        public QueryResponse FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
+            where TBin : class, IWithID, IWithReadOnlyDimensions<int>
+            where TBox : class, IWithID, IWithReadOnlyDimensions<int>, IWithQuantity<int>
         {
             var strategy = this.strategyFactory.Create(Lib.Strategies.BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation);
 
@@ -20,7 +25,25 @@ namespace Binacle.Net.Api.Services
                 .AndItems(items)
                 .Build();
 
-            return Task.FromResult(operation.Execute());
+            var operationResult = operation.Execute();
+
+            var response = new QueryResponse();
+
+            if (operationResult.Status == BinFitResultStatus.Success)
+            {
+                response.Container = new Container(operationResult.FoundBin.ID, operationResult.FoundBin);
+                response.Result = ApiResponseResultType.Success;
+            }
+            else
+            {
+                response.Result = ApiResponseResultType.Error;
+                response.Message = $"Failed to find bin. Reason: {operationResult.Reason.ToString()}";
+            }
+            
+            return response;
         }
+
+
+       
     }
 }

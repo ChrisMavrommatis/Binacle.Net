@@ -1,10 +1,12 @@
-﻿namespace Binacle.Net.Api.Options.Models
+﻿using Binacle.Net.Lib.Abstractions.Models;
+
+namespace Binacle.Net.Api.Options.Models
 {
-    public class BinOption
+    public class BinOption : IWithID, IWithDimensions<int>
     {
-        public int Size { get; set; }
-        public decimal Length { get; set; }
-        public decimal Width { get; set; }
-        public decimal Height { get; set; }
+        public string ID { get; set; }
+        public int Length { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
     }
 }

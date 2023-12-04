@@ -1,11 +1,12 @@
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Binacle.Net.Api.Configuration;
 using Binacle.Net.Api.ExtensionMethods;
+using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Options.Models;
 using Binacle.Net.Api.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using System.Reflection;
 
 namespace Binacle.Net.Api
@@ -34,12 +35,6 @@ namespace Binacle.Net.Api
 
             builder.Services.AddEndpointsApiExplorer();
 
-            builder.Services.AddVersionedApiExplorer(setup =>
-            {
-                setup.GroupNameFormat = "'v'VVV";
-                setup.SubstituteApiVersionInUrl = true;
-            });
-
             builder.Services.AddApiVersioning(setup =>
             {
                 setup.DefaultApiVersion = new ApiVersion(1, 0);
@@ -48,6 +43,10 @@ namespace Binacle.Net.Api
                 setup.ApiVersionReader = ApiVersionReader.Combine(
                     new UrlSegmentApiVersionReader()
                     );
+            }).AddApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
             });
 
             builder.Services.AddSingleton<ILockerService, LockerService>();
@@ -58,7 +57,12 @@ namespace Binacle.Net.Api
             {
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                //options.OperationFilter<ExamplesOperationFilter>();
+                options.SchemaFilter<PresetQueryRequestSchemaFilter>();
+                //options.SchemaFilter<QueryRequestSchemaFilter>();
             });
+            // Swashbuckle.AspNetCore.Filters
+            // builder.Services.AddSwaggerExamples();
 
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {

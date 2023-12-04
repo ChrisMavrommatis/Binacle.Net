@@ -4,19 +4,19 @@
       "sample": {
         "Bins": [
           {
-            "Size": 1,
+            "ID": "Small",
             "Length": 8,
             "Width": 45,
             "Height": 62
           },
           {
-            "Size": 2,
+            "ID": "Medium",
             "Length": 17,
             "Width": 45,
             "Height": 62
           },
           {
-            "Size": 3,
+            "ID": "Large",
             "Length": 36,
             "Width": 45,
             "Height": 62

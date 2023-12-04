@@ -1,9 +1,13 @@
-﻿namespace Binacle.Net.Lib.Models
+﻿using Binacle.Net.Lib.Abstractions.Models;
+
+namespace Binacle.Net.Lib.Models
 {
+
+
 
     public class BinFittingOperationResult
     {
-        private BinFittingOperationResult()
+        internal BinFittingOperationResult()
         {
         }
 

@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Api.Responses;
+﻿using Asp.Versioning;
+using Binacle.Net.Api.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Reflection;

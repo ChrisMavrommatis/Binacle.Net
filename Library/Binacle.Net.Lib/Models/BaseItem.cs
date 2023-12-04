@@ -6,12 +6,12 @@ namespace Binacle.Net.Lib.Models
     public abstract class BaseItem<TDimensions> : IWithID, IWithDimensions<TDimensions>
         where TDimensions : struct, INumber<TDimensions>
     {
-        public BaseItem(string id, IWithReadOnlyDimensions<TDimensions> item) :
+        internal BaseItem(string id, IWithReadOnlyDimensions<TDimensions> item) :
             this(id, item.Length, item.Width, item.Height)
         {
         }
 
-        public BaseItem(string id, TDimensions length, TDimensions width, TDimensions height)
+        internal BaseItem(string id, TDimensions length, TDimensions width, TDimensions height)
         {
             this.ID = id;
             this.Length = length;

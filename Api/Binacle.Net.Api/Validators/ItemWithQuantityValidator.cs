@@ -8,8 +8,8 @@ namespace Binacle.Net.Api.Validators
         public ItemWithQuantityValidator()
         {
             RuleFor(x => x.Quantity).NotNull().WithMessage(Constants.ErrorMessages.IsRequired);
+            RuleFor(x => x.Quantity).GreaterThan(0).WithMessage(Constants.ErrorMessages.GreaterThanZero);
             RuleFor(x => x.Quantity).LessThanOrEqualTo(ushort.MaxValue).WithMessage(Constants.ErrorMessages.LessThanUShortMaxValue);
-            RuleFor(x => x.Quantity).GreaterThan(ushort.MinValue).WithMessage(Constants.ErrorMessages.GreaterThanZero);
         }
     }
 }

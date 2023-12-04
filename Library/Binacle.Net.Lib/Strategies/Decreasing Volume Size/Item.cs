@@ -8,11 +8,11 @@ namespace Binacle.Net.Lib.Strategies
     {
         private sealed class Item : ItemBase
         {
-            internal Item(string id, IWithReadOnlyDimensions<ushort> item) : base(id, item)
+            internal Item(string id, IWithReadOnlyDimensions<int> item) : base(id, item)
             {
             }
 
-            internal Item(string id, ushort length, ushort width, ushort height)
+            internal Item(string id, int length, int width, int height)
                 : base(id, length, width, height)
             {
             }

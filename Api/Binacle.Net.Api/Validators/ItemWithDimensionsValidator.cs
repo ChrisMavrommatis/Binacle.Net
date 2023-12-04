@@ -14,6 +14,10 @@ namespace Binacle.Net.Api.Validators
             RuleFor(x => x.Length).GreaterThan(0).WithMessage(Constants.ErrorMessages.GreaterThanZero);
             RuleFor(x => x.Width).GreaterThan(0).WithMessage(Constants.ErrorMessages.GreaterThanZero);
             RuleFor(x => x.Height).GreaterThan(0).WithMessage(Constants.ErrorMessages.GreaterThanZero);
+
+            RuleFor(x => x.Length).LessThanOrEqualTo(ushort.MaxValue).WithMessage(Constants.ErrorMessages.LessThanUShortMaxValue);
+            RuleFor(x => x.Width).LessThanOrEqualTo(ushort.MaxValue).WithMessage(Constants.ErrorMessages.LessThanUShortMaxValue);
+            RuleFor(x => x.Height).LessThanOrEqualTo(ushort.MaxValue).WithMessage(Constants.ErrorMessages.LessThanUShortMaxValue);
         }
     }
 }

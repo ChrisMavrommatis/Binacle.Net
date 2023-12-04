@@ -1,7 +1,9 @@
-﻿namespace Binacle.Net.Lib.Abstractions.Models
+﻿using System.Numerics;
+
+namespace Binacle.Net.Lib.Abstractions.Models
 {
     public interface IWithReadOnlyDimensions<T>
-        where T : struct
+        where T : INumber<T>
     {
         T Length { get; }
         T Width { get; }

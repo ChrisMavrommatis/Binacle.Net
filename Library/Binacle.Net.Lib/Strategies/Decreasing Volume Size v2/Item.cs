@@ -7,28 +7,25 @@ namespace Binacle.Net.Lib.Strategies
     {
         private sealed class Item : ItemBase
         {
-            private ushort originalLength;
-            private ushort originalWidth;
-            private ushort originalHeight;
+            private readonly int originalLength;
+            private readonly int originalWidth;
+            private readonly int originalHeight;
 
             private ushort currentOrientation;
             internal static ushort TotalOrientations = 6;
 
-            internal Item(string id, IWithReadOnlyDimensions<ushort> item) : base(id, item)
+            internal Item(string id, IWithReadOnlyDimensions<int> item) : base(id, item)
             {
                 this.currentOrientation = 0;
-                this.PopulateOriginalDimensions(item.Length, item.Width, item.Height);
+                this.originalLength = item.Length;
+                this.originalWidth = item.Width;
+                this.originalHeight = item.Height;
             }
 
-            internal Item(string id, ushort length, ushort width, ushort height)
+            internal Item(string id, int length, int width, int height)
                 : base(id, length, width, height)
             {
                 this.currentOrientation = 0;
-                this.PopulateOriginalDimensions(length, width, height);
-            }
-
-            private void PopulateOriginalDimensions(ushort length, ushort width, ushort height)
-            {
                 this.originalLength = length;
                 this.originalWidth = width;
                 this.originalHeight = height;

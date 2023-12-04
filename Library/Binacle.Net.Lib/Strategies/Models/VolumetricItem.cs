@@ -2,18 +2,18 @@
 
 namespace Binacle.Net.Lib.Strategies.Models
 {
-    internal class VolumetricItem : VolumetricItemBase<ushort, uint>
+    internal class VolumetricItem : VolumetricItemBase<int, int>
     {
-        internal VolumetricItem(IWithReadOnlyDimensions<ushort> item) : base(item)
+        internal VolumetricItem(IWithReadOnlyDimensions<int> item) : base(item)
         {
 
         }
 
-        internal VolumetricItem(ushort length, ushort width, ushort height) : base(length, width, height)
+        internal VolumetricItem(int length, int width, int height) : base(length, width, height)
         {
         }
 
-        internal override ushort CalculateLongestDimension()
+        internal override int CalculateLongestDimension()
         {
             var largestDimension = length;
 
@@ -26,7 +26,7 @@ namespace Binacle.Net.Lib.Strategies.Models
             return largestDimension;
         }
 
-        internal override ushort CalculateShortestDimension()
+        internal override int CalculateShortestDimension()
         {
             var shortestDimension = length;
 
@@ -39,9 +39,9 @@ namespace Binacle.Net.Lib.Strategies.Models
             return shortestDimension;
         }
 
-        internal override uint CalculateVolume()
+        internal override int CalculateVolume()
         {
-            return (uint)Length * Width * Height;
+            return Length * Width * Height;
         }
     }
 }

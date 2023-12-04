@@ -16,7 +16,7 @@ namespace Binacle.Net.Lib.Tests
         {
             this.Fixture = fixture;
             this.AutoFixture = new AutoFixture.Fixture();
-            this.AutoFixture.Customize<IWithReadOnlyDimensions<ushort>>(x => x.FromFactory(() => new TestItemWithDimensions()));
+            this.AutoFixture.Customize<IWithReadOnlyDimensions<int>>(x => x.FromFactory(() => new TestItemWithDimensions()));
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace Binacle.Net.Lib.Tests
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var strategy = new Binacle.Net.Lib.Strategies.DecreasingVolumeSize_v2()
-                .WithBins(null)
+                .WithBins((IEnumerable<Item>)null)
                 .AndItems(items)
                 .Build();
             });
@@ -53,7 +53,7 @@ namespace Binacle.Net.Lib.Tests
             {
                 var strategy = new Binacle.Net.Lib.Strategies.DecreasingVolumeSize_v2()
                 .WithBins(bins)
-                .AndItems(null)
+                .AndItems((IEnumerable<Item>)null)
                 .Build();
             });
 
@@ -104,7 +104,7 @@ namespace Binacle.Net.Lib.Tests
         [InlineData(110, "Medium")]
         public void Glockers_Baseline_X_5x5x5_FitOn_Y(int x, string y)
         {
-            var _5x5x5 = new Dimensions<ushort>(5, 5, 5);
+            var _5x5x5 = new Dimensions<int>(5, 5, 5);
             var _items_x_5x5x5 = Enumerable.Range(1, x).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
 
             var strategy = new Binacle.Net.Lib.Strategies.DecreasingVolumeSize_v2()

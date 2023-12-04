@@ -2,9 +2,9 @@
 
 namespace Binacle.Net.Lib.Abstractions.Models
 {
-    public interface IWithQuantity<T> 
+    public interface IItemWithReadOnlyDimensions<T> : IWithID, IWithReadOnlyDimensions<T>
         where T : INumber<T>
     {
-        T Quantity { get; set; }
+
     }
 }

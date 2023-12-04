@@ -7,10 +7,10 @@ namespace Binacle.Net.Lib.Strategies
     {
         private sealed class Bin : BinBase
         {
-            public Bin(string id, IWithReadOnlyDimensions<ushort> item) : base(id, item)
+            public Bin(string id, IWithReadOnlyDimensions<int> item) : base(id, item)
             {
             }
-            public Bin(string id, ushort length, ushort width, ushort height) : base(id, length, width, height)
+            public Bin(string id, int length, int width, int height) : base(id, length, width, height)
             {
 
             }

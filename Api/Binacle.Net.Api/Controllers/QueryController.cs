@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Api.Models;
+﻿using Asp.Versioning;
+using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Options.Models;
 using Binacle.Net.Api.Responses;
 using Binacle.Net.Api.Services;
@@ -38,21 +39,29 @@ namespace Binacle.Net.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Index(QueryRequest request)
         {
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ValidationErrorResponse());
+            }
+
             var validationResult = await this.queryRequestValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
                 foreach (var error in validationResult.Errors)
                 {
-                    this.ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                    this.AddModelStateError(error.PropertyName, error.ErrorMessage);
                 }
+            }
+
+            if (!this.ModelState.IsValid)
+            {
                 return this.BadRequest(this.ValidationErrorResponse());
             }
 
-            var items = request.GetItemsForService();
-            var bins = request.GetBinsForService();
-            var result = await this.lockerService.FindFittingBinAsync(bins, items);
+            var response = this.lockerService.FindFittingBin(request.Containers, request.Items);
 
-            return this.Ok(QueryResponse.CreateFrom(result));
+
+            return this.Ok(response);
         }
 
         /// <summary>
@@ -98,15 +107,23 @@ namespace Binacle.Net.Api.Controllers
         [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        // Swashbuckle.AspNetCore.Filters
+        // [SwaggerRequestExample(typeof(PresetQueryRequest), typeof(PresetQueryRequestExampleProvider))]
         public async Task<IActionResult> Preset(
             [DefaultValue("sample")] string preset, 
-            PresetQueryRequest request
+            [FromBody] PresetQueryRequest request
             )
         {
             if (string.IsNullOrWhiteSpace(preset))
             {
                 this.AddModelStateError(nameof(preset), Constants.ErrorMessages.IsRequired);
             }
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ValidationErrorResponse());
+            }
+
             var validationResult = await this.presetQueryRequestValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
@@ -121,13 +138,15 @@ namespace Binacle.Net.Api.Controllers
                 return this.BadRequest(this.ValidationErrorResponse());
             }
 
-            if (!this.presetOptions.Value.Presets.TryGetValue(preset, out var presetOptions))
+            if (!this.presetOptions.Value.Presets.TryGetValue(preset, out var presetOption))
             {
                 this.AddModelStateError(nameof(preset), string.Format("preset '{0}' does not exist.", preset));
                 return this.NotFound(this.ValidationErrorResponse("preset not found."));
             }
 
-            return this.Ok(presetOptions);
+            var response = this.lockerService.FindFittingBin(presetOption.Bins, request.Items);
+
+            return this.Ok(response);
         }
 
         [HttpGet]

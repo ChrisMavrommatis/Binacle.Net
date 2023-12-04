@@ -19,7 +19,7 @@ namespace Binacle.Net.Lib.Benchmarks.Strategies
         {
             this.strategyFactory = new Binacle.Net.Lib.StrategyFactory();
 
-            var _5x5x5 = new Dimensions<ushort>(5, 5, 5);
+            var _5x5x5 = new Dimensions<int>(5, 5, 5);
 
             this.items_10_5x5x5 = Enumerable.Range(1, 10).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
             this.items_50_5x5x5 = Enumerable.Range(1, 50).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
@@ -27,9 +27,9 @@ namespace Binacle.Net.Lib.Benchmarks.Strategies
 
             this.bins = new List<Item>()
             {
-                new Item("Small", new Dimensions<ushort>(8,45,62)),
-                new Item("Medium", new Dimensions<ushort>(17,45,62)),
-                new Item("Large", new Dimensions<ushort>(36,45,62))
+                new Item("Small", new Dimensions<int>(8,45,62)),
+                new Item("Medium", new Dimensions<int>(17,45,62)),
+                new Item("Large", new Dimensions<int>(36,45,62))
             };
         }
 

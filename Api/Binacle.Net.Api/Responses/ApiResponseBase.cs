@@ -9,6 +9,5 @@ namespace Binacle.Net.Api.Responses
         public ApiResponseResultType Result { get; set; }
 
         public string Message { get; set; }
-
     }
 }
