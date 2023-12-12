@@ -10,10 +10,10 @@ namespace Binacle.Net.Lib.Benchmarks.Strategies
     public class DecreasingVolumeSizeFirstFittingOrientationBenchmarks
     {
         private readonly StrategyFactory strategyFactory;
-        private readonly List<Item> items_10_5x5x5;
-        private readonly List<Item> items_50_5x5x5;
-        private readonly List<Item> items_100_5x5x5;
-        private readonly List<Item> bins;
+        private readonly List<TestItem> items_10_5x5x5;
+        private readonly List<TestItem> items_50_5x5x5;
+        private readonly List<TestItem> items_100_5x5x5;
+        private readonly List<TestBin> bins;
 
         public DecreasingVolumeSizeFirstFittingOrientationBenchmarks()
         {
@@ -21,15 +21,15 @@ namespace Binacle.Net.Lib.Benchmarks.Strategies
 
             var _5x5x5 = new Dimensions<int>(5, 5, 5);
 
-            this.items_10_5x5x5 = Enumerable.Range(1, 10).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
-            this.items_50_5x5x5 = Enumerable.Range(1, 50).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
-            this.items_100_5x5x5 = Enumerable.Range(1, 100).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
+            this.items_10_5x5x5 = Enumerable.Range(1, 10).Select(x => new TestItem(x.ToString(), _5x5x5)).ToList();
+            this.items_50_5x5x5 = Enumerable.Range(1, 50).Select(x => new TestItem(x.ToString(), _5x5x5)).ToList();
+            this.items_100_5x5x5 = Enumerable.Range(1, 100).Select(x => new TestItem(x.ToString(), _5x5x5)).ToList();
 
-            this.bins = new List<Item>()
+            this.bins = new List<TestBin>()
             {
-                new Item("Small", new Dimensions<int>(8,45,62)),
-                new Item("Medium", new Dimensions<int>(17,45,62)),
-                new Item("Large", new Dimensions<int>(36,45,62))
+                new TestBin("Small", new Dimensions<int>(8,45,62)),
+                new TestBin("Medium", new Dimensions<int>(17,45,62)),
+                new TestBin("Large", new Dimensions<int>(36,45,62))
             };
         }
 

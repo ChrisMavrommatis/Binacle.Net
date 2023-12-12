@@ -2,7 +2,7 @@
 
 namespace Binacle.Net.Api.Models
 {
-    public class Box : IWithID, IWithDimensions<int>, IWithQuantity<int>
+    public class Box : IItemWithDimensions<int>, IWithQuantity<int>
     {
         public string ID { get; set; }
         public int Quantity { get; set; }

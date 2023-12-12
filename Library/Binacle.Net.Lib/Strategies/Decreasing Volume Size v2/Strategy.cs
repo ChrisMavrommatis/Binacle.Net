@@ -1,7 +1,6 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Abstractions.Strategies;
 using Binacle.Net.Lib.Exceptions;
-using Binacle.Net.Lib.Models;
 using Binacle.Net.Lib.Strategies.Models;
 
 namespace Binacle.Net.Lib.Strategies
@@ -25,11 +24,14 @@ namespace Binacle.Net.Lib.Strategies
         {
             var _bins = new List<Bin>();
 
-            foreach(var incomingBin in bins)
+            if(bins is not null)
             {
-                _bins.Add(new Bin(incomingBin));
+                foreach (var incomingBin in bins)
+                {
+                    _bins.Add(new Bin(incomingBin.ID, incomingBin));
+                }
             }
-
+           
             this.bins = _bins;
             return this;
         }
@@ -38,14 +40,24 @@ namespace Binacle.Net.Lib.Strategies
             where TItem : class, IItemWithReadOnlyDimensions<int>
 
         {
-            this.items = items.Select(x => new Item(x.ID, x)).ToList();
+            var _items = new List<Item>();
+
+            if(items is not null)
+            {
+                foreach (var incomingItem in items)
+                {
+                    _items.Add(new Item(incomingItem.ID, incomingItem));
+                }
+            }
+
+            this.items = _items;
             return this;
         }
 
         public IBinFittingOperation Build()
         {
             if (!(this.bins?.Any() ?? false))
-                throw new System.ArgumentNullException($"{nameof(bins)} is empty. At least one bin is required");
+                throw new ArgumentNullException($"{nameof(bins)} is empty. At least one bin is required");
 
             if (!(this.items?.Any() ?? false))
                 throw new ArgumentNullException($"{nameof(items)} is empty. At least one item is required");

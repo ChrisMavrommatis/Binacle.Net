@@ -2,7 +2,7 @@
 
 namespace Binacle.Net.Api.Options.Models
 {
-    public class BinOption : IWithID, IWithDimensions<int>
+    public class BinOption : IItemWithDimensions<int>
     {
         public string ID { get; set; }
         public int Length { get; set; }

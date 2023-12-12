@@ -16,7 +16,7 @@ namespace Binacle.Net.Lib.Tests
         {
             this.Fixture = fixture;
             this.AutoFixture = new AutoFixture.Fixture();
-            this.AutoFixture.Customize<IWithReadOnlyDimensions<int>>(x => x.FromFactory(() => new TestItemWithDimensions()));
+            //this.AutoFixture.Customize<IWithReadOnlyDimensions<int>>(x => x.FromFactory(() => new TestItem()));
         }
 
         [Fact]
@@ -28,40 +28,38 @@ namespace Binacle.Net.Lib.Tests
         [Fact]
         public void WithBinsAndItems_NullOrEmpty_OnBuildThrows_ArgumentNullException()
         {
-            var testItems = this.AutoFixture.CreateMany<TestItemWithDimensions>(2);
-            var items = testItems.Select(x => new Item(x.ID, x)).ToList();
+            var testItems = this.AutoFixture.CreateMany<TestItem>(2);
+            var testBins = this.AutoFixture.CreateMany<TestBin>(2);
 
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var strategy = new Binacle.Net.Lib.Strategies.DecreasingVolumeSize_v1()
-                .WithBins((IEnumerable<Item>)null)
-                .AndItems(items)
+                .WithBins((IEnumerable<TestBin>)null)
+                .AndItems(testItems)
                 .Build();
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var strategy = new Binacle.Net.Lib.Strategies.DecreasingVolumeSize_v1()
-                .WithBins(new List<Item>())
-                .AndItems(items)
-                .Build();
-            });
-
-            var bins = testItems.Select(x => new Item(x.ID, x)).ToList();
-
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var strategy = new Binacle.Net.Lib.Strategies.DecreasingVolumeSize_v1()
-                .WithBins(bins)
-                .AndItems((IEnumerable<Item>)null)
+                .WithBins(new List<TestBin>())
+                .AndItems(testItems)
                 .Build();
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var strategy = new Binacle.Net.Lib.Strategies.DecreasingVolumeSize_v1()
-                .WithBins(bins)
-                .AndItems(new List<Item>())
+                .WithBins(testBins)
+                .AndItems((IEnumerable<TestItem>)null)
+                .Build();
+            });
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var strategy = new Binacle.Net.Lib.Strategies.DecreasingVolumeSize_v1()
+                .WithBins(testBins)
+                .AndItems(new List<TestItem>())
                 .Build();
             });
         }
@@ -69,30 +67,29 @@ namespace Binacle.Net.Lib.Tests
         [Fact]
         public void With0DimensionBinsAndItems_OnBuildThrows_DimensionException()
         {
-            var testItems = this.AutoFixture.CreateMany<TestItemWithDimensions>(2);
-            var testItemsWith0Dimension = this.AutoFixture.Build<TestItemWithDimensions>()
+            var testItems = this.AutoFixture.CreateMany<TestItem>(2);
+            var testBins = this.AutoFixture.CreateMany<TestBin>(2);
+            var testItemsWith0Dimension = this.AutoFixture.Build<TestItem>()
                 .With(x => x.Width, 0)
                 .CreateMany(2);
 
-            var binsWith0Dimension = testItemsWith0Dimension.Select(x => new Item(x.ID, x)).ToList();
-            var items = testItems.Select(x => new Item(x.ID, x)).ToList();
+            var testBinsWith0Dimension = this.AutoFixture.Build<TestBin>()
+               .With(x => x.Width, 0)
+               .CreateMany(2);
 
             Assert.Throws<DimensionException>(() =>
             {
                 var strategy = new Binacle.Net.Lib.Strategies.DecreasingVolumeSize_v1()
-                .WithBins(binsWith0Dimension)
-                .AndItems(items)
+                .WithBins(testBinsWith0Dimension)
+                .AndItems(testItems)
                 .Build();
             });
 
-            var bins = testItems.Select(x => new Item(x.ID, x)).ToList();
-            var itemsWith0Dimension = testItemsWith0Dimension.Select(x => new Item(x.ID, x)).ToList();
-
             Assert.Throws<DimensionException>(() =>
             {
                 var strategy = new Binacle.Net.Lib.Strategies.DecreasingVolumeSize_v1()
-                .WithBins(bins)
-                .AndItems(itemsWith0Dimension)
+                .WithBins(testBins)
+                .AndItems(testItemsWith0Dimension)
                 .Build();
             });
         }
@@ -105,7 +102,7 @@ namespace Binacle.Net.Lib.Tests
         public void Glockers_Baseline_X_5x5x5_FitOn_Y(int x, string y)
         {
             var _5x5x5 = new Dimensions<int>(5, 5, 5);
-            var _items_x_5x5x5 = Enumerable.Range(1, x).Select(x => new Item(x.ToString(), _5x5x5)).ToList();
+            var _items_x_5x5x5 = Enumerable.Range(1, x).Select(x => new TestItem(x.ToString(), _5x5x5)).ToList();
 
             var strategy = new Binacle.Net.Lib.Strategies.DecreasingVolumeSize_v1()
                 .WithBins(this.Fixture.Bins)

@@ -15,8 +15,8 @@ namespace Binacle.Net.Api.Services
         }
 
         public QueryResponse FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
-            where TBin : class, IWithID, IWithReadOnlyDimensions<int>
-            where TBox : class, IWithID, IWithReadOnlyDimensions<int>, IWithQuantity<int>
+            where TBin : class, IItemWithReadOnlyDimensions<int>
+            where TBox : class, IItemWithReadOnlyDimensions<int>, IWithQuantity<int>
         {
             var strategy = this.strategyFactory.Create(Lib.Strategies.BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation);
 

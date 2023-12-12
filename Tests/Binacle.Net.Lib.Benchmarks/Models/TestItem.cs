@@ -1,12 +1,12 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 
-namespace Binacle.Net.Api.Models
+namespace Binacle.Net.Lib.Benchmarks.Models
 {
-    public class Container : IItemWithDimensions<int>
+    internal class TestItem : IItemWithReadOnlyDimensions<int>
     {
         private readonly IWithReadOnlyDimensions<int> item;
 
-        public Container(string id, IWithReadOnlyDimensions<int> item)
+        public TestItem(string id, IWithReadOnlyDimensions<int> item)
         {
             this.ID = id;
             this.item = item;
