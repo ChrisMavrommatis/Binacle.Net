@@ -15,7 +15,13 @@ namespace Binacle.Net.Api
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var builder = WebApplication.CreateSlimBuilder(args);
+
+            // Slim builder
+            builder.WebHost.UseKestrelHttpsConfiguration();
+
+            // Slim builder
+            builder.WebHost.UseQuic(); //HTTP 3 support
 
             builder.Configuration.SetBasePath($"{Directory.GetCurrentDirectory()}/App_Data");
 
@@ -75,6 +81,9 @@ namespace Binacle.Net.Api
             });
 
             var app = builder.Build();
+
+            // Slim builder
+            app.UseHttpsRedirection();
 
             if (app.Environment.IsDevelopment())
             {
