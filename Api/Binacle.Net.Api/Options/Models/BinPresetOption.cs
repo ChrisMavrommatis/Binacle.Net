@@ -1,7 +1,6 @@
-﻿namespace Binacle.Net.Api.Options.Models
+﻿namespace Binacle.Net.Api.Options.Models;
+
+public class BinPresetOption
 {
-    public class BinPresetOption
-    {
-        public List<BinOption> Bins { get; set; }
-    }
+    public List<BinOption> Bins { get; set; }
 }

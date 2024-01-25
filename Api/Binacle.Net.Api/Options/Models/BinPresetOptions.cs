@@ -1,11 +1,9 @@
-﻿namespace Binacle.Net.Api.Options.Models
+﻿namespace Binacle.Net.Api.Options.Models;
+
+public class BinPresetOptions
 {
-    public class BinPresetOptions
-    {
-        public const string SectionName = "PresetOptions";
-        public const string Path = "Presets.json";
+    public const string SectionName = "PresetOptions";
+    public const string Path = "Presets.json";
 
-
-        public Dictionary<string, BinPresetOption> Presets { get; set; }
-    }
+    public Dictionary<string, BinPresetOption> Presets { get; set; }
 }

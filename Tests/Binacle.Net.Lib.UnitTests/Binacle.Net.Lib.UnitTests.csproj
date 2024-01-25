@@ -21,11 +21,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TestData\" />
+    <ProjectReference Include="..\..\Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
+    <Folder Include="Attributes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestData\DecreasingVolumeSize\Bins\PerfectCubes.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

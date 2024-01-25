@@ -2,6 +2,6 @@
 {
     public enum BinFittingStrategy
     {
-        DecreasingVolumeSizeFirstFittingOrientation
+        DecreasingVolumeSize
     }
 }

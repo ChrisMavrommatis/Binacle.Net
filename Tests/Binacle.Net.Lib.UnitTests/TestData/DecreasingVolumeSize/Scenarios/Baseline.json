@@ -1,0 +1,64 @@
+[
+  {
+    "Name": "1_5x5x5_Fits_Small",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Small",
+    "Items": [
+      {
+        "Length": 5,
+        "Width": 5,
+        "Height": 5
+      }
+    ]
+  },
+  {
+    "Name": "1_10x10x10_Fits_Medium",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Medium",
+    "Items": [
+      {
+        "Length": 10,
+        "Width": 10,
+        "Height": 10
+      }
+    ]
+  },
+  {
+    "Name": "1_20x20x20_Fits_Large",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Large",
+    "Items": [
+      {
+        "Length": 20,
+        "Width": 20,
+        "Height": 20
+      }
+    ]
+  },
+  {
+    "Name": "1_40x40x40_DoesNotFit",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "None",
+    "Items": [
+      {
+        "Length": 40,
+        "Width": 40,
+        "Height": 40
+      }
+    ]
+
+  },
+  {
+    "Name": "1_5x5x80_TooLong_DoesNotFit",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "None",
+    "Items": [
+      {
+        "Length": 5,
+        "Width": 5,
+        "Height": 80
+      }
+    ]
+  }
+
+]

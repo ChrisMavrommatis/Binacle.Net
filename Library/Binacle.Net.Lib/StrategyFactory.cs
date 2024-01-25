@@ -10,7 +10,7 @@ namespace Binacle.Net.Lib
             
             var strategy = (IBinFittingStrategy)(strategyType switch
             {
-                BinFittingStrategy.DecreasingVolumeSizeFirstFittingOrientation => new Strategies.DecreasingVolumeSize_v1(),
+                BinFittingStrategy.DecreasingVolumeSize => new Strategies.DecreasingVolumeSize_v1(),
                 _ => throw new NotImplementedException($"No Bin Fitting Strategy exists for {strategyType}")
             });
 
