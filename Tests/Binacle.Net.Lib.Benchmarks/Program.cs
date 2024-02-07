@@ -1,12 +1,11 @@
 ﻿using BenchmarkDotNet.Running;
 
-namespace Binacle.Net.Lib.Benchmarks
+namespace Binacle.Net.Lib.Benchmarks;
+
+internal class Program
 {
-    internal class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            BenchmarkRunner.Run<Strategies.DecreasingVolumeSizeFirstFittingOrientationBenchmarks>();
-        }
+        BenchmarkRunner.Run<DecreasingVolumeSize.VersionTests>();
     }
 }

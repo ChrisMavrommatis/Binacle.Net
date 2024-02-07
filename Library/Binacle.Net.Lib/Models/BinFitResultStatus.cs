@@ -1,8 +1,7 @@
-﻿namespace Binacle.Net.Lib.Models
+﻿namespace Binacle.Net.Lib.Models;
+
+public enum BinFitResultStatus
 {
-    public enum BinFitResultStatus
-    {
-        Fail,
-        Success
-    }
+    Fail,
+    Success
 }

@@ -3,5 +3,5 @@
 public class ParameterError : IApiError
 {
     public string Parameter { get; set; }
-    public string Mesasage { get; set; }
+    public string Message { get; set; }
 }

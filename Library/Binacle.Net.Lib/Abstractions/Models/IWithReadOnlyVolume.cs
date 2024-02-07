@@ -1,9 +1,8 @@
 ﻿using System.Numerics;
 
-namespace Binacle.Net.Lib.Abstractions.Models
+namespace Binacle.Net.Lib.Abstractions.Models;
+
+public interface IWithReadOnlyVolume<T> where T : INumber<T>
 {
-    public interface IWithReadOnlyVolume<T> where T : INumber<T>
-    {
-        T Volume { get; }
-    }
+    T Volume { get; }
 }

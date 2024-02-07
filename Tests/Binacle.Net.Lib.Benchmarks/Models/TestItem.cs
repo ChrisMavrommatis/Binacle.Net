@@ -1,20 +1,23 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 
-namespace Binacle.Net.Lib.Benchmarks.Models
+namespace Binacle.Net.Lib.Benchmarks.Models;
+
+internal class TestItem : IItemWithDimensions<int>
 {
-    internal class TestItem : IItemWithReadOnlyDimensions<int>
+    public TestItem()
     {
-        private readonly IWithReadOnlyDimensions<int> item;
 
-        public TestItem(string id, IWithReadOnlyDimensions<int> item)
-        {
-            this.ID = id;
-            this.item = item;
-        }
-
-        public string ID { get; set; }
-        public int Length { get => this.item.Length; }
-        public int Width { get => this.item.Width; }
-        public int Height { get => this.item.Height; }
     }
+
+    public TestItem(string id, IWithReadOnlyDimensions<int> item)
+    {
+        this.ID = id;
+        this.Length = item.Length;
+        this.Width = item.Width;
+        this.Height = item.Height;
+    }
+    public string ID { get; set; }
+    public int Length { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
 }

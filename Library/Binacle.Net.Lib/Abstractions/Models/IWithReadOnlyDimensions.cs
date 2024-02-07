@@ -1,12 +1,11 @@
 ﻿using System.Numerics;
 
-namespace Binacle.Net.Lib.Abstractions.Models
+namespace Binacle.Net.Lib.Abstractions.Models;
+
+public interface IWithReadOnlyDimensions<T>
+    where T : INumber<T>
 {
-    public interface IWithReadOnlyDimensions<T>
-        where T : INumber<T>
-    {
-        T Length { get; }
-        T Width { get; }
-        T Height { get; }
-    }
+    T Length { get; }
+    T Width { get; }
+    T Height { get; }
 }

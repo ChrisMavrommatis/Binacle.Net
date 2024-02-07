@@ -1,7 +1,6 @@
-﻿namespace Binacle.Net.Lib.Abstractions.Models
+﻿namespace Binacle.Net.Lib.Abstractions.Models;
+
+public interface IWithID
 {
-    public interface IWithID
-    {
-        string ID { get; set; }
-    }
+    string ID { get; set; }
 }

@@ -18,7 +18,7 @@ public class LockerService : ILockerService
         where TBin : class, IItemWithReadOnlyDimensions<int>
         where TBox : class, IItemWithReadOnlyDimensions<int>, IWithQuantity<int>
     {
-        var strategy = this.strategyFactory.Create(Lib.Strategies.BinFittingStrategy.DecreasingVolumeSize);
+        var strategy = this.strategyFactory.Create(Lib.BinFittingStrategy.DecreasingVolumeSize);
 
         var operation = strategy
             .WithBins(bins)

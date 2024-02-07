@@ -1,11 +1,10 @@
-﻿namespace Binacle.Net.Lib.Models
+﻿namespace Binacle.Net.Lib.Models;
+
+public enum BinFitFailedResultReason
 {
-    public enum BinFitFailedResultReason
-    {
-        Unspecified,
-        GeneralError,
-        TotalVolumeExceeded,
-        ItemDimensionExceeded,
-        DidNotFit
-    }
+    Unspecified,
+    GeneralError,
+    TotalVolumeExceeded,
+    ItemDimensionExceeded,
+    DidNotFit
 }

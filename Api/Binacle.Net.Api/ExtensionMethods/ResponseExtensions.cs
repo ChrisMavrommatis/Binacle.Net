@@ -31,7 +31,7 @@ public static class ResponseExtensions
 
     public static ErrorResponse AddParameterError(this ErrorResponse response, string parameter, string message)
     {
-        response.Errors.Add(new ParameterError { Parameter = parameter, Mesasage = message });
+        response.Errors.Add(new ParameterError { Parameter = parameter, Message = message });
 
         return response;
     }
