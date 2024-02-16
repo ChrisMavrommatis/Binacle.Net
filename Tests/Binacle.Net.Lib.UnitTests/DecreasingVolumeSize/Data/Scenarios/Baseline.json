@@ -12,26 +12,26 @@
     ]
   },
   {
-    "Name": "1_10x10x10_Fits_Medium",
+    "Name": "1_15x15x15_Fits_Medium",
     "BinCollection": "RectangularCuboids",
     "ExpectedSize": "Medium",
     "Items": [
       {
-        "Length": 10,
-        "Width": 10,
-        "Height": 10
+        "Length": 15,
+        "Width": 15,
+        "Height": 15
       }
     ]
   },
   {
-    "Name": "1_20x20x20_Fits_Large",
+    "Name": "1_25x25x25_Fits_Large",
     "BinCollection": "RectangularCuboids",
     "ExpectedSize": "Large",
     "Items": [
       {
-        "Length": 20,
-        "Width": 20,
-        "Height": 20
+        "Length": 25,
+        "Width": 25,
+        "Height": 25
       }
     ]
   },
