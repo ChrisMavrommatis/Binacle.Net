@@ -2,7 +2,7 @@
 
 internal class ComplexTestDataProvider : ScenarioFileTestDataProvider
 {
-    public ComplexTestDataProvider() : base($"{DecreasingVolumeSizeFixture.BaseBath}\\Scenarios\\Complex.json")
+    public ComplexTestDataProvider() : base($"{DecreasingVolumeSizeFixture.BaseBath}/Scenarios/Complex.json")
     {
 
     }

@@ -5,7 +5,7 @@ namespace Binacle.Net.Lib.UnitTests.DecreasingVolumeSize;
 
 public sealed class DecreasingVolumeSizeFixture : IDisposable
 {
-    public const string BaseBath = "..\\..\\..\\DecreasingVolumeSize\\Data";
+    public const string BaseBath = "../../../DecreasingVolumeSize/Data";
 
     public readonly Dictionary<string, List<Models.TestBin>> Bins;
     public readonly Dictionary<string, Models.Scenario> Scenarios;
@@ -15,7 +15,7 @@ public sealed class DecreasingVolumeSizeFixture : IDisposable
     public DecreasingVolumeSizeFixture()
     {
         this.Bins = new Dictionary<string, List<Models.TestBin>>();
-        var binsDirectoryInfo = new System.IO.DirectoryInfo($"{BaseBath}\\Bins");
+        var binsDirectoryInfo = new System.IO.DirectoryInfo($"{BaseBath}/Bins");
         foreach (var binCollectionFileInfo in binsDirectoryInfo.GetFiles())
         {
             var binCollectionName = Path.GetFileNameWithoutExtension(binCollectionFileInfo.Name);
@@ -27,7 +27,7 @@ public sealed class DecreasingVolumeSizeFixture : IDisposable
         }
 
         this.Scenarios = new Dictionary<string, Models.Scenario>();
-        var scenariosDirectoryInfo = new System.IO.DirectoryInfo($"{BaseBath}\\Scenarios");
+        var scenariosDirectoryInfo = new System.IO.DirectoryInfo($"{BaseBath}/Scenarios");
         foreach (var scenarioCollectionFileInfo in scenariosDirectoryInfo.GetFiles())
         {
             var scenarioCollectionName = Path.GetFileNameWithoutExtension(scenarioCollectionFileInfo.Name);

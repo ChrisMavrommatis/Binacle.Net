@@ -2,7 +2,7 @@
 
 internal class BaselineTestDataProvider : ScenarioFileTestDataProvider
 {
-    public BaselineTestDataProvider() : base($"{DecreasingVolumeSizeFixture.BaseBath}\\Scenarios\\Baseline.json")
+    public BaselineTestDataProvider() : base($"{DecreasingVolumeSizeFixture.BaseBath}/Scenarios/Baseline.json")
     {
        
     }
