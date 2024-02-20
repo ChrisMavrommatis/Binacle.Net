@@ -1,8 +1,8 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 
-namespace Binacle.Net.Lib.Benchmarks.Models;
+namespace Binacle.Net.Lib.UnitTests.Models;
 
-internal class TestBin : IItemWithDimensions<int>
+public sealed class TestBin : IItemWithDimensions<int>
 {
     public TestBin()
     {

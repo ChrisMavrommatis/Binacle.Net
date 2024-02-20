@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="DecreasingVolumeSize\Data\Bins\PerfectCubes.json">
+    <None Update="Data\Bins\PerfectCubes.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

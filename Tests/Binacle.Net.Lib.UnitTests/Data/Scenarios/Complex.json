@@ -1,0 +1,33 @@
+[
+  {
+    "Name": "ComplexScenario_FitsInSmall_1",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Small",
+    "Items": [
+      {
+        "Quantity": 2,
+        "Length": 5,
+        "Width": 5,
+        "Height": 5
+      },
+      {
+        "Quantity": 1,
+        "Length": 15,
+        "Width": 10,
+        "Height": 15
+      },
+      {
+        "Quantity": 1,
+        "Length": 10,
+        "Width": 10,
+        "Height": 10
+      },
+      {
+        "Quantity": 1,
+        "Length": 40,
+        "Width": 10,
+        "Height": 10
+      }
+    ]
+  }
+]

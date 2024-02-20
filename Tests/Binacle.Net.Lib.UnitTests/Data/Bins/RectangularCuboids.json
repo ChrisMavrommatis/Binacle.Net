@@ -1,0 +1,20 @@
+[
+  {
+    "ID": "Small",
+    "Length": 10,
+    "Width": 40,
+    "Height": 60
+  },
+  {
+    "ID": "Medium",
+    "Length": 20,
+    "Width": 40,
+    "Height": 60
+  },
+  {
+    "ID": "Large",
+    "Length": 30,
+    "Width": 40,
+    "Height": 60
+  }
+]

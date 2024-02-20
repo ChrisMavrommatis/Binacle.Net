@@ -1,0 +1,66 @@
+[
+  {
+    "Name": "2Same_FitInSmall",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Small",
+    "Items": [
+      {
+        "Quantity": 2,
+        "Length": 25,
+        "Width": 25,
+        "Height": 10
+      }
+    ]
+  },
+  {
+    "Name": "2Same_FitInMedium",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Medium",
+    "Items": [
+      {
+        "Quantity": 2,
+        "Length": 15,
+        "Width": 22,
+        "Height": 15
+      }
+    ]
+  },
+  {
+    "Name": "2Same_1Rotated_FitInSmall",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Small",
+    "Items": [
+      {
+        "Quantity": 1,
+        "Length": 25,
+        "Width": 25,
+        "Height": 10
+      },
+      {
+        "Quantity": 1,
+        "Length": 10,
+        "Width": 25,
+        "Height": 25
+      }
+    ]
+  },
+  {
+    "Name": "2Same_1Rotated_FitInMedium",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Medium",
+    "Items": [
+      {
+        "Quantity": 1,
+        "Length": 15,
+        "Width": 22,
+        "Height": 15
+      },
+      {
+        "Quantity": 1,
+        "Length": 22,
+        "Width": 15,
+        "Height": 15
+      }
+    ]
+  }
+]

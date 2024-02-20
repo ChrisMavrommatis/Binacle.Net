@@ -9,7 +9,7 @@ public class StrategyFactory
         
         var strategy = (IBinFittingStrategy)(strategyType switch
         {
-            BinFittingStrategy.DecreasingVolumeSize => new Strategies.DecreasingVolumeSize_v1(),
+            BinFittingStrategy.FirstFitDecreasing => new Strategies.FirstFitDecreasing_v1(),
             _ => throw new NotImplementedException($"No Bin Fitting Strategy exists for {strategyType}")
         });
 
