@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Lib.UnitTests.Models;
+﻿using Binacle.Net.Lib.Tests.Models;
+using Binacle.Net.Lib.UnitTests.Models;
 using Newtonsoft.Json;
 
 namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;

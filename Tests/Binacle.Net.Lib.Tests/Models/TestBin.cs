@@ -1,12 +1,20 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 
-namespace Binacle.Net.Lib.UnitTests.Models;
+namespace Binacle.Net.Lib.Tests.Models;
 
 public sealed class TestBin : IItemWithDimensions<int>
 {
     public TestBin()
     {
 
+    }
+
+    public TestBin(string id, IWithReadOnlyDimensions<int> item)
+    {
+        this.ID = id;
+        this.Length = item.Length;
+        this.Width = item.Width;
+        this.Height = item.Height;
     }
 
     public string ID { get; set; }

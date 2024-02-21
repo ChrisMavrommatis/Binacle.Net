@@ -13,9 +13,10 @@ internal sealed partial class FirstFitDecreasing_v2 :
     {
         Bin? foundBin = null;
         int totalItemsToFit = this.items.Count();
+        var totalItemsVolume = this.items.Sum(x => x.Volume);
 
         var largestBinByVolume = (this.bins.OrderByDescending(x => x.Volume).FirstOrDefault())!;
-        if (this.items.Sum(x => x.Volume) > largestBinByVolume.Volume)
+        if (totalItemsVolume > largestBinByVolume.Volume)
             return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.TotalVolumeExceeded);
 
         var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > largestBinByVolume.LongestDimension);
@@ -27,6 +28,11 @@ internal sealed partial class FirstFitDecreasing_v2 :
 
         foreach (var bin in this.bins)
         {
+            if(bin.Volume < totalItemsVolume)
+            {
+                continue;
+            }
+
             this.availableSpace = new List<VolumetricItem>
             {
                 new VolumetricItem(bin)

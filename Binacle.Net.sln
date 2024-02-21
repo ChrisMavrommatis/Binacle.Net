@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.UnitTests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.Benchmarks", "Tests\Binacle.Net.Lib.Benchmarks\Binacle.Net.Lib.Benchmarks.csproj", "{8F594130-2C5F-4989-9564-2239F2A9B3D7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binacle.Net.Lib.Tests", "Tests\Binacle.Net.Lib.Tests\Binacle.Net.Lib.Tests.csproj", "{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{8F594130-2C5F-4989-9564-2239F2A9B3D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F594130-2C5F-4989-9564-2239F2A9B3D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F594130-2C5F-4989-9564-2239F2A9B3D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{DC104286-5FE7-4060-8ABB-EF1F2B28FD14} = {EBE1FF36-023B-4BFC-93C4-4DFB9C19CBCD}
 		{26FBDCCD-AC62-4EEE-8DB7-AA2DC22014AE} = {9811251B-4BAE-4BBD-BDD5-DE6AC10DF58E}
 		{8F594130-2C5F-4989-9564-2239F2A9B3D7} = {9811251B-4BAE-4BBD-BDD5-DE6AC10DF58E}
+		{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD} = {9811251B-4BAE-4BBD-BDD5-DE6AC10DF58E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}

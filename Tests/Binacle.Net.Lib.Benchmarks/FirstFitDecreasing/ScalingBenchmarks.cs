@@ -1,51 +1,72 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Binacle.Net.Lib.Benchmarks.Data.Providers;
+using Binacle.Net.Lib.Benchmarks.Data;
+using Binacle.Net.Lib.Tests.Data.Providers;
+using Binacle.Net.Lib.Tests.Models;
+using System.Runtime.CompilerServices;
 
 namespace Binacle.Net.Lib.Benchmarks.FirstFitDecreasing;
 
 [MemoryDiagnoser]
 public class ScalingBenchmarks
 {
-    private BinsDataProvider binsDataProvider;
-
-    public ScalingBenchmarks()
+    static string BaseDirPath([CallerFilePath] string callerFilePath = "")
     {
-        
+        //go ../../ from callerFilePath
+        var callerDirectory = Path.GetDirectoryName(callerFilePath);
+        var baseDir = Path.GetFullPath(Path.Combine(callerDirectory, ".."));
+        return baseDir;
     }
+
+    [ParamsSource(nameof(NoOfItemsParamsSourceAccessor))]
+    public int NoOfItems { get; set; }
+
+    public static IEnumerable<int> NoOfItemsParamsSourceAccessor() => BenchmarkScalingTestsDataProvider.GetNoOfItems();
 
     [GlobalSetup]
     public void GlobalSetup()
     {
-        this.binsDataProvider = new Data.Providers.BinsDataProvider();
+        var _5x5x5 = BenchmarkScalingTestsDataProvider.GetDimensions();
+
+        this.rundataProvider = new Data.BenchmarksDataProvider(basePath: BaseDirPath());
+        this.bins = this.rundataProvider.GetBinCollection(BenchmarkScalingTestsDataProvider.BinCollectionName);
+        this.items = Enumerable.Range(1, this.NoOfItems).Select(x => new TestItem(x.ToString(), _5x5x5)).ToList();
     }
 
+    [GlobalCleanup]
+    public void GlobalCleanup()
+    {
+        this.rundataProvider = null;
+        this.items = null;
+        this.bins = null;
+    }
 
-    //[GlobalSetup(Targets = new[] { nameof(Full_v1), nameof(Full_v2) })]
-    //public void FullGlobalSetup()
-    //{
-    //    this.items = Enumerable.Range(1, NumberOfItems).Select(x => new TestItem(x.ToString(), _5x5x5)).ToList();
-    //}
+    private List<TestBin> bins;
+    private List<TestItem> items;
+    private BenchmarksDataProvider rundataProvider;
 
-    //[Benchmark(Baseline = true)]
-    //public Lib.Models.BinFittingOperationResult Full_v1()
-    //{
-    //    var strategy = new Strategies.FirstFitDecreasing_v1()
-    //        .WithBins()
-    //        .AndItems(this.items)
-    //        .Build();
+    [Benchmark(Baseline = true)]
+    public Lib.Models.BinFittingOperationResult V1_5x5x5()
+    {
+        var strategy = new Strategies.FirstFitDecreasing_v1()
+            .WithBins(this.bins)
+            .AndItems(this.items)
+            .Build();
 
-    //    return strategy.Execute();
-    //}
+        var result = strategy.Execute();
+        BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, this.NoOfItems);
+        return result;
+    }
 
-    //[Benchmark]
-    //public Lib.Models.BinFittingOperationResult Full_v2()
-    //{
-    //    var strategy = new Strategies.FirstFitDecreasing_v2()
-    //        .WithBins(this.bins)
-    //        .AndItems(this.items)
-    //        .Build();
+    [Benchmark]
+    public Lib.Models.BinFittingOperationResult V2_5x5x5()
+    {
+        var strategy = new Strategies.FirstFitDecreasing_v2()
+            .WithBins(this.bins)
+            .AndItems(this.items)
+            .Build();
 
-    //    return strategy.Execute();
-    //}
-
+        var result = strategy.Execute();
+        BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, this.NoOfItems);
+        return result;
+    }
 }

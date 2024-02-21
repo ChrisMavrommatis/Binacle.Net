@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
+    <ProjectReference Include="..\Binacle.Net.Lib.Tests\Binacle.Net.Lib.Tests.csproj" />
   </ItemGroup>
 
   <ItemGroup>

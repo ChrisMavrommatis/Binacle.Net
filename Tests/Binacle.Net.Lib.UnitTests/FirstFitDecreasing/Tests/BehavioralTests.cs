@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using Binacle.Net.Lib.Exceptions;
-using Binacle.Net.Lib.UnitTests.Models;
+using Binacle.Net.Lib.Tests.Models;
 using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;

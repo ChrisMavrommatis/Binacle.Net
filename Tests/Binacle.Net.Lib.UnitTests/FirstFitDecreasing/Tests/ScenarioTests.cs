@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using Binacle.Net.Lib.Abstractions.Strategies;
+﻿using Binacle.Net.Lib.Abstractions.Strategies;
 using Binacle.Net.Lib.UnitTests.Models;
 using Xunit;
 
@@ -45,19 +44,6 @@ public class ScenarioTests : IClassFixture<FirstFitDecreasingFixture>
     [ClassData(typeof(Data.Providers.ComplexTestDataProvider))]
     public void Complex_v2(Scenario scenario)
         => this.RunScenarioTest(new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v2(), scenario);
-
-
-    // Benchmark Scenarios V1
-    [Theory]
-    [ClassData(typeof(Data.Providers.BenchmarkTestDataProvider))]
-    public void Benchmark_v1(Scenario scenario)
-       => this.RunScenarioTest(new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v1(), scenario);
-
-    // Benchmark Scenarios V2
-    [Theory]
-    [ClassData(typeof(Data.Providers.BenchmarkTestDataProvider))]
-    public void Benchmark_v2(Scenario scenario)
-       => this.RunScenarioTest(new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v2(), scenario);
 
     private void RunScenarioTest<TStrategy>(TStrategy strategy, Scenario scenario)
         where TStrategy : class, IBinFittingStrategy

@@ -1,4 +1,6 @@
-﻿namespace Binacle.Net.Lib.UnitTests.Models;
+﻿using Binacle.Net.Lib.Tests.Models;
+
+namespace Binacle.Net.Lib.UnitTests.Models;
 
 public sealed class Scenario
 {

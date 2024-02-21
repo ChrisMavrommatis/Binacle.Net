@@ -4,7 +4,7 @@ using System.Numerics;
 namespace Binacle.Net.Lib.Tests.Models;
 
 internal class Dimensions<T> : IWithDimensions<T>
-    where T : struct, IBinaryInteger<T>
+   where T : struct, INumber<T>
 {
     public Dimensions()
     {
