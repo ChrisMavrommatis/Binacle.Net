@@ -17,7 +17,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.UnitTests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.Benchmarks", "Tests\Binacle.Net.Lib.Benchmarks\Binacle.Net.Lib.Benchmarks.csproj", "{8F594130-2C5F-4989-9564-2239F2A9B3D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binacle.Net.Lib.Tests", "Tests\Binacle.Net.Lib.Tests\Binacle.Net.Lib.Tests.csproj", "{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.Tests", "Tests\Binacle.Net.Lib.Tests\Binacle.Net.Lib.Tests.csproj", "{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{7256ACAF-2309-4EA2-BF59-A399CC89D812}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

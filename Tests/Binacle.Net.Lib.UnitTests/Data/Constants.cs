@@ -2,5 +2,7 @@
 
 public static class Constants
 {
-    public const string BasePath = "../../../Data";
+    public const string ProjectRootPath = "../../../";
+    public static string DataBasePath = Path.Combine(ProjectRootPath, "Data");
+    public static string SolutionRootBasePath = Path.Combine(ProjectRootPath, "..", "..");
 }

@@ -10,7 +10,7 @@ internal abstract class ScenarioFileTestDataProvider : IEnumerable<object[]>
 
     public ScenarioFileTestDataProvider(string filePath)
     {
-        scenarios = new Dictionary<string, Scenario>();
+        this.scenarios = new Dictionary<string, Scenario>();
         var scenarioFileInfo = new FileInfo(filePath);
         using (var sr = new StreamReader(scenarioFileInfo.OpenRead()))
         {
@@ -24,7 +24,7 @@ internal abstract class ScenarioFileTestDataProvider : IEnumerable<object[]>
 
     public IEnumerator<object[]> GetEnumerator()
     {
-        foreach (var scenario in scenarios.Values)
+        foreach (var scenario in this.scenarios.Values)
         {
             yield return new object[] { scenario };
         }

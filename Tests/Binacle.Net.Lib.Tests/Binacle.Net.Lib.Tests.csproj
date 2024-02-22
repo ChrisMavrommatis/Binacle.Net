@@ -12,7 +12,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\..\Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Data\Bins\PerfectCubes.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Lib.Tests.Models;
+﻿using Binacle.Net.Lib.Tests.Data.Providers;
+using Binacle.Net.Lib.Tests.Models;
 using Binacle.Net.Lib.UnitTests.Models;
 using Newtonsoft.Json;
 
@@ -6,25 +7,18 @@ namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
 
 public sealed class FirstFitDecreasingFixture : IDisposable
 {
-    public readonly Dictionary<string, List<TestBin>> Bins;
+    private readonly BinTestDataProvider binTestDataProvider;
+    
+    public Dictionary<string, List<TestBin>> Bins => this.binTestDataProvider.Bins;
+
     public readonly Dictionary<string, Scenario> Scenarios;
 
     public FirstFitDecreasingFixture()
     {
-        this.Bins = new Dictionary<string, List<TestBin>>();
-        var binsDirectoryInfo = new System.IO.DirectoryInfo($"{Data.Constants.BasePath}/Bins");
-        foreach (var binCollectionFileInfo in binsDirectoryInfo.GetFiles())
-        {
-            var binCollectionName = Path.GetFileNameWithoutExtension(binCollectionFileInfo.Name);
-            using (var sr = new StreamReader(binCollectionFileInfo.OpenRead()))
-            {
-                var binCollection = JsonConvert.DeserializeObject<List<TestBin>>(sr.ReadToEnd());
-                this.Bins.Add(binCollectionName, binCollection);
-            }
-        }
-
+        this.binTestDataProvider = new BinTestDataProvider(Data.Constants.SolutionRootBasePath);
+        
         this.Scenarios = new Dictionary<string, Scenario>();
-        var scenariosDirectoryInfo = new System.IO.DirectoryInfo($"{Data.Constants.BasePath}/Scenarios");
+        var scenariosDirectoryInfo = new System.IO.DirectoryInfo($"{Data.Constants.DataBasePath}/Scenarios");
         foreach (var scenarioCollectionFileInfo in scenariosDirectoryInfo.GetFiles())
         {
             var scenarioCollectionName = Path.GetFileNameWithoutExtension(scenarioCollectionFileInfo.Name);

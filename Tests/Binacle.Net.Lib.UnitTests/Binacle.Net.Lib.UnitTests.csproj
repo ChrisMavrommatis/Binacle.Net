@@ -35,10 +35,4 @@
     <Folder Include="Attributes\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Data\Bins\PerfectCubes.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

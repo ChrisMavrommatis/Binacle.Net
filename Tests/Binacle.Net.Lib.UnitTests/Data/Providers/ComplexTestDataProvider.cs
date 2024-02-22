@@ -1,10 +1,8 @@
-﻿using Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
-
-namespace Binacle.Net.Lib.UnitTests.Data.Providers;
+﻿namespace Binacle.Net.Lib.UnitTests.Data.Providers;
 
 internal class ComplexTestDataProvider : ScenarioFileTestDataProvider
 {
-    public ComplexTestDataProvider() : base($"{Constants.BasePath}/Scenarios/Complex.json")
+    public ComplexTestDataProvider() : base($"{Constants.DataBasePath}/Scenarios/Complex.json")
     {
 
     }
