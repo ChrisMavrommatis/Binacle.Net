@@ -1,29 +1,72 @@
-{
-  "PresetOptions": {
-    "Presets": {
-      "sample": {
-        "Bins": [
-          {
-            "ID": "Small",
-            "Length": 8,
-            "Width": 45,
-            "Height": 62
-          },
-          {
-            "ID": "Medium",
-            "Length": 17,
-            "Width": 45,
-            "Height": 62
-          },
-          {
-            "ID": "Large",
-            "Length": 36,
-            "Width": 45,
-            "Height": 62
-          }
-        ]
-      }
-    }
-  }
-
+﻿{
+	"PresetOptions": {
+		"Presets": {
+			"perfect-cubes": {
+				"Bins": [
+					{
+						"ID": "Small",
+						"Length": 10,
+						"Width": 10,
+						"Height": 10
+					},
+					{
+						"ID": "Medium",
+						"Length": 20,
+						"Width": 20,
+						"Height": 20
+					},
+					{
+						"ID": "Large",
+						"Length": 30,
+						"Width": 30,
+						"Height": 30
+					}
+				],
+			},
+			"rectangular-cuboids": {
+				"Bins": [
+					{
+						"ID": "Small",
+						"Length": 10,
+						"Width": 40,
+						"Height": 60
+					},
+					{
+						"ID": "Medium",
+						"Length": 20,
+						"Width": 40,
+						"Height": 60
+					},
+					{
+						"ID": "Large",
+						"Length": 30,
+						"Width": 40,
+						"Height": 60
+					}
+				],
+			},
+			"sample": {
+				"Bins": [
+					{
+						"ID": "Small",
+						"Length": 8,
+						"Width": 45,
+						"Height": 62
+					},
+					{
+						"ID": "Medium",
+						"Length": 17,
+						"Width": 45,
+						"Height": 62
+					},
+					{
+						"ID": "Large",
+						"Length": 36,
+						"Width": 45,
+						"Height": 62
+					}
+				]
+			}
+		}
+	}
 }

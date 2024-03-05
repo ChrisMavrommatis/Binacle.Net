@@ -5,8 +5,8 @@ namespace Binacle.Net.Api.Validators;
 
 public class ItemWithIDValidator : AbstractValidator<IWithID>
 {
-    public ItemWithIDValidator()
-    {
-        RuleFor(x => x.ID).NotNull().NotEmpty().WithMessage(Constants.ErrorMessages.IsRequired);
-    }
+	public ItemWithIDValidator()
+	{
+		RuleFor(x => x.ID).NotNull().NotEmpty().WithMessage(Constants.ErrorMessages.IsRequired);
+	}
 }

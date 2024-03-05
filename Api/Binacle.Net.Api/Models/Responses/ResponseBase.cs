@@ -4,9 +4,9 @@ namespace Binacle.Net.Api.Models.Responses;
 
 public abstract class ResponseBase
 {
-    [JsonPropertyOrder(0)]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ResultType Result { get; set; }
+	[JsonPropertyOrder(0)]
+	[JsonConverter(typeof(JsonStringEnumConverter))]
+	public ResultType Result { get; set; }
 
-    public string Message { get; set; }
+	public string Message { get; set; }
 }

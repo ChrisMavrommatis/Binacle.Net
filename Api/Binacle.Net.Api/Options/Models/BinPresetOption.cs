@@ -2,5 +2,5 @@
 
 public class BinPresetOption
 {
-    public List<BinOption> Bins { get; set; }
+	public List<BinOption> Bins { get; set; }
 }

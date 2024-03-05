@@ -1,8 +1,8 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 
-namespace Binacle.Net.Api.Options.Models;
+namespace Binacle.Net.Api.Models;
 
-public class BinOption : IItemWithDimensions<int>
+public class Bin : IItemWithDimensions<int>
 {
 	public string ID { get; set; }
 	public int Length { get; set; }

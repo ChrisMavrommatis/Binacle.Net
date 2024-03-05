@@ -1,10 +1,8 @@
-
-###
-// Get all presets
+﻿
+### Get all presets
 GET https://{{Host}}/api/v1/query/presets
 
-###
-// Query a preset
+### Query based on a preset
 @preset = sample
 
 POST https://{{Host}}/api/v1/query/presets/{{preset}}
@@ -28,8 +26,8 @@ Content-Type: application/json
         }
     ]
 }
-###
-// Query using custom containers
+
+### Query using custom containers
 POST https://{{Host}}/api/v1/query/
 Content-Type: application/json
 

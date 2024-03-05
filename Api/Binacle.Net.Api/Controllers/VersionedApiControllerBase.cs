@@ -6,5 +6,5 @@ namespace Binacle.Net.Api.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public abstract class VersionedApiControllerBase : ApiControllerBase
 {
-    
+
 }

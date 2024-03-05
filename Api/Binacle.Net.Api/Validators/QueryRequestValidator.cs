@@ -7,15 +7,15 @@ public class QueryRequestValidator : AbstractValidator<QueryRequest>
 {
     public QueryRequestValidator()
     {
-        RuleFor(x => x.Containers)
+        RuleFor(x => x.Bins)
            .NotNull()
            .NotEmpty()
            .WithMessage(Constants.ErrorMessages.IsRequired);
 
-        RuleForEach(x => x.Containers).ChildRules(containerValidator =>
+        RuleForEach(x => x.Bins).ChildRules(binValidator =>
         {
-            containerValidator.Include(new ItemWithDimensionsValidator());
-            containerValidator.Include(new ItemWithIDValidator());
+			binValidator.Include(new ItemWithDimensionsValidator());
+			binValidator.Include(new ItemWithIDValidator());
         });
 
         RuleFor(x => x.Items)

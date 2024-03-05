@@ -2,5 +2,5 @@
 
 public class QueryResponse : ResponseBase
 {
-    public Container? Container { get; set; }
+    public Bin? Bin { get; set; }
 }

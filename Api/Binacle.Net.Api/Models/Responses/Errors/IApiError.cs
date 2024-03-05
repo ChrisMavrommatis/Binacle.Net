@@ -11,6 +11,9 @@ namespace Binacle.Net.Api.Models.Responses.Errors;
 
 [JsonDerivedType(typeof(ParameterError), nameof(ParameterError))]
 [SwaggerSubType(typeof(ParameterError), DiscriminatorValue = nameof(ParameterError))]
+
+[JsonDerivedType(typeof(ExceptionError), nameof(ExceptionError))]
+[SwaggerSubType(typeof(ExceptionError), DiscriminatorValue = nameof(ExceptionError))]
 public interface IApiError
 {
     public static string TypeName { get; set; }
