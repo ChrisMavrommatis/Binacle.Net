@@ -2,8 +2,8 @@
 
 internal class SimpleTestDataProvider : ScenarioFileTestDataProvider
 {
-    public SimpleTestDataProvider() : base($"{Constants.DataBasePath}/Scenarios/Simple.json")
-    {
+	public SimpleTestDataProvider() : base($"{Constants.DataBasePath}/Scenarios/Simple.json")
+	{
 
-    }
+	}
 }

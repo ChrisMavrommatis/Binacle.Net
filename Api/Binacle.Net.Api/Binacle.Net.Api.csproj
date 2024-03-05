@@ -21,4 +21,8 @@
 		<ProjectReference Include="..\..\Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EditorConfigFiles Remove="R:\github\Binacle.Net\Api\Binacle.Net.Api\.editorconfig" />
+	</ItemGroup>
+
 </Project>

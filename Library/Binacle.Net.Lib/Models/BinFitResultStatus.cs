@@ -2,6 +2,6 @@
 
 public enum BinFitResultStatus
 {
-    Fail,
-    Success
+	Fail,
+	Success
 }

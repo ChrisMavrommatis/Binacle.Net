@@ -2,9 +2,9 @@
 
 public enum BinFitFailedResultReason
 {
-    Unspecified,
-    GeneralError,
-    TotalVolumeExceeded,
-    ItemDimensionExceeded,
-    DidNotFit
+	Unspecified,
+	GeneralError,
+	TotalVolumeExceeded,
+	ItemDimensionExceeded,
+	DidNotFit
 }

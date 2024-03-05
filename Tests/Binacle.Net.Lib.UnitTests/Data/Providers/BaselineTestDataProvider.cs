@@ -2,8 +2,8 @@
 
 internal class BaselineTestDataProvider : ScenarioFileTestDataProvider
 {
-    public BaselineTestDataProvider() : base($"{Constants.DataBasePath}/Scenarios/Baseline.json")
-    {
+	public BaselineTestDataProvider() : base($"{Constants.DataBasePath}/Scenarios/Baseline.json")
+	{
 
-    }
+	}
 }

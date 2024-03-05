@@ -4,5 +4,5 @@ namespace Binacle.Net.Lib.Abstractions.Models;
 
 public interface IWithReadOnlyVolume<T> where T : INumber<T>
 {
-    T Volume { get; }
+	T Volume { get; }
 }

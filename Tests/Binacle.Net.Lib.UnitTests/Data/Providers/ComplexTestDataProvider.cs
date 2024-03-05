@@ -2,8 +2,8 @@
 
 internal class ComplexTestDataProvider : ScenarioFileTestDataProvider
 {
-    public ComplexTestDataProvider() : base($"{Constants.DataBasePath}/Scenarios/Complex.json")
-    {
+	public ComplexTestDataProvider() : base($"{Constants.DataBasePath}/Scenarios/Complex.json")
+	{
 
-    }
+	}
 }

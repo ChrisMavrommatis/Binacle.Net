@@ -5,14 +5,14 @@ namespace Binacle.Net.Lib.Strategies;
 
 internal sealed partial class FirstFitDecreasing_v2
 {
-    private sealed class Bin : BinBase
-    {
-        public Bin(string id, IWithReadOnlyDimensions<int> item) : base(id, item)
-        {
-        }
-        public Bin(string id, int length, int width, int height) : base(id, length, width, height)
-        {
+	private sealed class Bin : BinBase
+	{
+		public Bin(string id, IWithReadOnlyDimensions<int> item) : base(id, item)
+		{
+		}
+		public Bin(string id, int length, int width, int height) : base(id, length, width, height)
+		{
 
-        }
-    }
+		}
+	}
 }

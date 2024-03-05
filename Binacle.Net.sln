@@ -24,6 +24,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{E27FF03C-A921-4A21-BED7-4B3F08B975FD}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Performance Results", "Performance Results", "{7440450A-0323-4A7D-B24C-2E00F92605FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scaling Benchmarks", "Scaling Benchmarks", "{B27DB9A6-FA36-47A8-B3FE-3F503FAC7AE8}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\Performance Results\Scaling Benchmarks\Initial Public Run.md = Resources\Performance Results\Scaling Benchmarks\Initial Public Run.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Requests", "Requests", "{E22F4DA6-AC28-43CA-B4EB-9BC9C4BFF4A2}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\Requests\Api-Query.http = Resources\Requests\Api-Query.http
+		Resources\Requests\http-client.env.json = Resources\Requests\http-client.env.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +78,10 @@ Global
 		{26FBDCCD-AC62-4EEE-8DB7-AA2DC22014AE} = {9811251B-4BAE-4BBD-BDD5-DE6AC10DF58E}
 		{8F594130-2C5F-4989-9564-2239F2A9B3D7} = {9811251B-4BAE-4BBD-BDD5-DE6AC10DF58E}
 		{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD} = {9811251B-4BAE-4BBD-BDD5-DE6AC10DF58E}
+		{7256ACAF-2309-4EA2-BF59-A399CC89D812} = {E27FF03C-A921-4A21-BED7-4B3F08B975FD}
+		{7440450A-0323-4A7D-B24C-2E00F92605FE} = {E27FF03C-A921-4A21-BED7-4B3F08B975FD}
+		{B27DB9A6-FA36-47A8-B3FE-3F503FAC7AE8} = {7440450A-0323-4A7D-B24C-2E00F92605FE}
+		{E22F4DA6-AC28-43CA-B4EB-9BC9C4BFF4A2} = {E27FF03C-A921-4A21-BED7-4B3F08B975FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}
