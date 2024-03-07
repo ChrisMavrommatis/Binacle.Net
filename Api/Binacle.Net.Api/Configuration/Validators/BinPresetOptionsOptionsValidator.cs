@@ -1,7 +1,7 @@
-﻿using Binacle.Net.Api.Options.Models;
+﻿using Binacle.Net.Api.Configuration.Models;
 using FluentValidation;
 
-namespace Binacle.Net.Api.Options.Validators;
+namespace Binacle.Net.Api.Configuration.Validators;
 
 public class BinPresetOptionsOptionsValidator : AbstractValidator<BinPresetOptions>
 {

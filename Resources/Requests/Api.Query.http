@@ -1,21 +1,23 @@
-﻿
+﻿// Sample Requests
+
+### Variables
+@preset = rectangular-cuboids
+
+
 ### Get all presets
 GET https://{{Host}}/api/v1/query/presets
 
 ### Query based on a preset
-@preset = sample
-
 POST https://{{Host}}/api/v1/query/presets/{{preset}}
 Content-Type: application/json
 
 {
     "items": [
-        {
+      {
             "id": "box_1",
             "quantity": 2,
             "length": 2,
             "width": 5,
-            "height": 10
         },
         {
             "id": "box_2",
@@ -70,4 +72,5 @@ Content-Type: application/json
       }
   ]
 }
-###
+
+

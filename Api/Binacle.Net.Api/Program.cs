@@ -1,8 +1,8 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Binacle.Net.Api.Configuration;
+using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.ExtensionMethods;
-using Binacle.Net.Api.Options.Models;
 using Binacle.Net.Api.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +24,7 @@ public class Program
 		builder.Configuration.SetBasePath($"{Directory.GetCurrentDirectory()}/App_Data");
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton);
-
+		builder.Services.AddHealthChecks();
 		builder.Configuration.AddJsonFile(BinPresetOptions.Path, optional: false, reloadOnChange: true);
 		builder.Services
 		   .AddOptions<BinPresetOptions>()
@@ -79,6 +79,10 @@ public class Program
 			app.UseDeveloperExceptionPage();
 		}
 
+		// Middleware are in order
+		// Registered before Swagger because I don't want swagger to know about it
+		app.MapHealthChecks("/_health");
+
 		if (app.Environment.IsDevelopment())
 		{
 			var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
@@ -97,7 +101,6 @@ public class Program
 		app.UseHttpsRedirection();
 		app.UseAuthorization();
 		app.MapControllers();
-
 		app.Run();
 	}
 }

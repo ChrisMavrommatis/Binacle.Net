@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.Api.Options.Models;
+﻿namespace Binacle.Net.Api.Configuration.Models;
 
 public class BinPresetOptions
 {

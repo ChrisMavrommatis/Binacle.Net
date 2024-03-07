@@ -6,13 +6,18 @@ namespace Binacle.Net.Api.Models.Responses;
 
 public class ErrorResponse : ResponseBase
 {
-    public ErrorResponse()
-    {
-        this.Result = ResultType.Error;
-        this.Errors = new List<IApiError>();
-    }
+	public ErrorResponse()
+	{
+		this.Result = ResultType.Error;
+		this.Errors = new List<IApiError>();
+	}
 
-    [JsonPropertyOrder(99)]
+	public static ErrorResponse Create(string? message = null)
+	{
+		return new ErrorResponse { Message = message };
+	}
+
+	[JsonPropertyOrder(99)]
     public List<IApiError> Errors { get; set; }
 
 	public ErrorResponse AddModelStateErrors(ModelStateDictionary modelState)
@@ -49,6 +54,5 @@ public class ErrorResponse : ResponseBase
 	{
 		this.Errors.Add(new ExceptionError() { ExceptionType = ex.GetType().Name, Message = ex.Message, StackTrace = ex.StackTrace });
 		return this;
-
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 
-namespace Binacle.Net.Api.Options.Models;
+namespace Binacle.Net.Api.Configuration.Models;
 
 public class BinOption : IItemWithDimensions<int>
 {

@@ -1,0 +1,4 @@
+﻿
+### Healthcheck
+GET https://{{Host}}/_health
+
