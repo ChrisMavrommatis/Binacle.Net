@@ -1,12 +1,23 @@
 ﻿using Asp.Versioning;
+using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.Api.Controllers;
 
-public partial class QueryController
+[ApiVersion("1.0")]
+public class PresetsController : VersionedApiControllerBase
 {
+	private readonly IOptions<BinPresetOptions> presetOptions;
+	public PresetsController(
+		IOptions<BinPresetOptions> presetOptions
+	  )
+	{
+		this.presetOptions = presetOptions;
+	}
+
 	/// <summary>
 	/// Lists the presets present in configuration
 	/// </summary>
@@ -14,13 +25,12 @@ public partial class QueryController
 	/// <response code="200">Returns the all of the configured presets wth the associated bins</response>
 	/// <response code="500">If an unexpected error occurs</response>
 	[HttpGet]
-	[Route("presets")]
 	[Consumes("application/json")]
 	[Produces("application/json")]
 	[MapToApiVersion("1.0")]
 	[ProducesResponseType(typeof(Dictionary<string, List<Bin>>), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-	public async Task<IActionResult> PresetsList()
+	public async Task<IActionResult> Index()
 	{
 		try
 		{
