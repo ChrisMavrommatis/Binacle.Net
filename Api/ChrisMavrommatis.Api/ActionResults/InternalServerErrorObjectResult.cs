@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Binacle.Net.Api.ActionResults;
+namespace Microsoft.AspNetCore.Mvc;
 
 /// <summary>
 /// An <see cref="ObjectResult"/> that when executed will produce a Internal Server Error (500) response.
@@ -19,18 +18,6 @@ public class InternalServerErrorObjectResult : ObjectResult
 	public InternalServerErrorObjectResult([ActionResultObjectValue] object? error)
 		: base(error)
 	{
-		StatusCode = DefaultStatusCode;
-	}
-
-	/// <summary>
-	/// Creates a new <see cref="BadRequestObjectResult"/> instance.
-	/// </summary>
-	/// <param name="modelState"><see cref="ModelStateDictionary"/> containing the validation errors.</param>
-	public InternalServerErrorObjectResult([ActionResultObjectValue] ModelStateDictionary modelState)
-		: base(new SerializableError(modelState))
-	{
-		ArgumentNullException.ThrowIfNull(modelState);
-
 		StatusCode = DefaultStatusCode;
 	}
 }

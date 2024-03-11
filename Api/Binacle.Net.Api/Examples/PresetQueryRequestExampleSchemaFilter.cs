@@ -1,5 +1,5 @@
-﻿using Binacle.Net.Api.Models;
-using Binacle.Net.Api.Models.Requests;
+﻿using Binacle.Net.Api.Endpoints.Query;
+using Binacle.Net.Api.Models;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;

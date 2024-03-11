@@ -26,6 +26,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
+		<ProjectReference Include="..\ChrisMavrommatis.Api\ChrisMavrommatis.Api.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

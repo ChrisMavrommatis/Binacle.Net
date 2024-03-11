@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Attributes\**" />
     <Compile Remove="TestData\**" />
+    <EmbeddedResource Remove="Attributes\**" />
     <EmbeddedResource Remove="TestData\**" />
+    <None Remove="Attributes\**" />
     <None Remove="TestData\**" />
   </ItemGroup>
 
@@ -29,10 +32,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
     <ProjectReference Include="..\Binacle.Net.Lib.Tests\Binacle.Net.Lib.Tests.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Attributes\" />
   </ItemGroup>
 
 </Project>

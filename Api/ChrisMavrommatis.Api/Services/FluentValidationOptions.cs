@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Options;
 
-namespace Binacle.Net.Api.Services;
+namespace ChrisMavrommatis.Api.Services;
 
-public class FluentValidationOptions<TOptions> : IValidateOptions<TOptions> where TOptions : class
+internal class FluentValidationOptions<TOptions> : IValidateOptions<TOptions> where TOptions : class
 {
 	private readonly IValidator<TOptions> validator;
 

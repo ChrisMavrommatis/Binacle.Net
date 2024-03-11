@@ -40,8 +40,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Requests", "Requests", "{E2
 	ProjectSection(SolutionItems) = preProject
 		Resources\Requests\Api.Meta.http = Resources\Requests\Api.Meta.http
 		Resources\Requests\http-client.env.json = Resources\Requests\http-client.env.json
-		Resources\Requests\Api.Query.http = Resources\Requests\Api.Query.http
+		Resources\Requests\Api.Requests.http = Resources\Requests\Api.Requests.http
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Api", "Api\ChrisMavrommatis.Api\ChrisMavrommatis.Api.csproj", "{CE104668-6A28-4A62-B5A2-5554986B1754}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0DD5EE2-C6AF-4CF2-92D5-1D39995B31BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE104668-6A28-4A62-B5A2-5554986B1754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE104668-6A28-4A62-B5A2-5554986B1754}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE104668-6A28-4A62-B5A2-5554986B1754}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE104668-6A28-4A62-B5A2-5554986B1754}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +89,7 @@ Global
 		{7440450A-0323-4A7D-B24C-2E00F92605FE} = {E27FF03C-A921-4A21-BED7-4B3F08B975FD}
 		{B27DB9A6-FA36-47A8-B3FE-3F503FAC7AE8} = {7440450A-0323-4A7D-B24C-2E00F92605FE}
 		{E22F4DA6-AC28-43CA-B4EB-9BC9C4BFF4A2} = {E27FF03C-A921-4A21-BED7-4B3F08B975FD}
+		{CE104668-6A28-4A62-B5A2-5554986B1754} = {84734185-F64B-44F8-A53D-27C9AFB4B9C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}

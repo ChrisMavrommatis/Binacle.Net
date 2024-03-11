@@ -1,8 +1,7 @@
-﻿using Binacle.Net.Api.Services;
-using FluentValidation;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Binacle.Net.Api.ExtensionMethods;
+namespace FluentValidation;
 
 public static class OptionsBuilderFluentValidationExtensions
 {
@@ -11,7 +10,7 @@ public static class OptionsBuilderFluentValidationExtensions
 		optionsBuilder.Services.AddSingleton<IValidateOptions<TOptions>>(sp =>
 		{
 			var validator = sp.GetRequiredService<IValidator<TOptions>>();
-			return new FluentValidationOptions<TOptions>(optionsBuilder.Name, validator);
+			return new ChrisMavrommatis.Api.Services.FluentValidationOptions<TOptions>(optionsBuilder.Name, validator);
 		});
 		return optionsBuilder;
 	}

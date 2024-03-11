@@ -2,10 +2,11 @@
 using Asp.Versioning.ApiExplorer;
 using Binacle.Net.Api.Configuration;
 using Binacle.Net.Api.Configuration.Models;
-using Binacle.Net.Api.ExtensionMethods;
 using Binacle.Net.Api.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 namespace Binacle.Net.Api;
 
@@ -35,6 +36,7 @@ public class Program
 		builder.Services.AddControllers(options =>
 		{
 			options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+			options.UseNamespaceRouteToken();
 		});
 
 		builder.Services.AddEndpointsApiExplorer();
@@ -90,7 +92,7 @@ public class Program
 			app.UseSwagger();
 			app.UseSwaggerUI(options =>
 			{
-				options.RoutePrefix = string.Empty;
+				options.RoutePrefix = "swagger";
 				foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
 				{
 					options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
@@ -98,8 +100,9 @@ public class Program
 			});
 		}
 
+
 		app.UseHttpsRedirection();
-		app.UseAuthorization();
+
 		app.MapControllers();
 		app.Run();
 	}

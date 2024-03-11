@@ -1,10 +1,10 @@
 ﻿using Asp.Versioning.ApiExplorer;
 using Binacle.Net.Api.Examples;
-using Binacle.Net.Api.ExtensionMethods;
 using Binacle.Net.Api.Models.Responses.Errors;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 namespace Binacle.Net.Api.Configuration;
 
@@ -35,10 +35,12 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 	private void ConfigureSwaggerGenOptions(SwaggerGenOptions options)
 	{
 		AddApiVersionDocuments(options, _provider.ApiVersionDescriptions);
-		options.IncludeXmlCommentsFromAssembly();
+		options.IncludeXmlCommentsFromAssembly(Assembly.GetExecutingAssembly());
 		AddRequestExamples(options);
 		options.UseOneOfForPolymorphism();
 		options.AddPolymorphicTypeMappings(polymorphicTypeMappings);
+		options.TagActionsByEndpointNamespaceOrDefault();
+		options.DescribeAllParametersInCamelCase();
 	}
 
 	private void AddApiVersionDocuments(SwaggerGenOptions options, IReadOnlyList<ApiVersionDescription> apiVersionDescriptions)
@@ -64,9 +66,10 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 		}
 	}
 
-
 	private void AddRequestExamples(SwaggerGenOptions options)
 	{
 		options.SchemaFilter<PresetQueryRequestExampleSchemaFilter>();
 	}
+
+	
 }
