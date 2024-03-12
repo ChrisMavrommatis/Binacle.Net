@@ -1,0 +1,26 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Build and Release Docker Image
+
+on:
+  release:
+    types: [ created, edited ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Release Tag
+      run: echo "Runing release for ${{ $GITHUB_REF_NAME }}"
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore --runtime linux-x64
+    - name: Publish
+      run: dotnet publish ${{ vars.API_PROJECT_PATH }} -c Release -o Build\Output --no-restore --self-contained --runtime linux-x64
