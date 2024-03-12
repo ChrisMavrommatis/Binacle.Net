@@ -39,8 +39,6 @@ public class Program
 			options.UseNamespaceRouteToken();
 		});
 
-		builder.Services.AddEndpointsApiExplorer();
-
 		builder.Services.AddApiVersioning(options =>
 		{
 			options.DefaultApiVersion = new ApiVersion(1, 0);
