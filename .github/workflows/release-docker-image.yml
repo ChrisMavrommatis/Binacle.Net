@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Release Tag
-      run: echo "Runing release for ${{ $GITHUB_REF_NAME }}"
+      run: echo "Runing release for ${{ github.ref_name }}"
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
