@@ -23,4 +23,4 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore --runtime linux-x64
     - name: Publish
-      run: dotnet publish ${{ vars.API_PROJECT_PATH }} -c Release -o Build\Output --no-restore --self-contained --runtime linux-x64
+      run: dotnet publish ${{ vars.API_PROJECT_PATH }} -c Release -o Build/Output --no-restore --self-contained --runtime linux-x64
