@@ -1,0 +1,9 @@
+﻿{
+	"Serilog": {
+		"MinimumLevel": {
+			"Override": {
+				"Microsoft.AspNetCore": "Information"
+			}
+		}
+	}
+}

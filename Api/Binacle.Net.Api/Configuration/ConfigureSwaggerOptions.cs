@@ -4,6 +4,7 @@ using Binacle.Net.Api.Models.Responses.Errors;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Reflection;
 
 namespace Binacle.Net.Api.Configuration;
@@ -71,5 +72,14 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 		options.SchemaFilter<PresetQueryRequestExampleSchemaFilter>();
 	}
 
-	
+	internal static void ConfigureSwaggerUIOptions(WebApplication app, SwaggerUIOptions options)
+	{
+		var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
+		options.RoutePrefix = "swagger";
+		foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+		{
+			options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Binacle API {description.GroupName.ToUpperInvariant()}");
+		}
+	}
 }

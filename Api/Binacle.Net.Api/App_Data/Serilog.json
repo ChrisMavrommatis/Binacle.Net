@@ -1,0 +1,38 @@
+﻿{
+	"Serilog": {
+		"MinimumLevel": {
+			"Default": "Information",
+			"Override": {
+				"Microsoft.AspNetCore": "Warning"
+			}
+		},
+		"WriteTo": [
+			{
+				"Name": "Console"
+			},
+			{
+				"Name": "File",
+				"Args": {
+					"path": "logs/log-.txt",
+					"formatter": "Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact",
+					"rollingInterval": "Day",
+					"retainedFileCountLimit": 7
+				}
+			},
+			{
+				"Name": "ApplicationInsights",
+				"Args": {
+					"telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights"
+				}
+			}
+		],
+		"Enrich": [
+			"FromLogContext",
+			"WithMachineName",
+			"WithThreadId"
+		],
+		"Properties": {
+			"Application": "Binacle API"
+		}
+	}
+}

@@ -1,12 +1,11 @@
 ﻿using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
 using Binacle.Net.Api.Configuration;
 using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.Services;
 using FluentValidation;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
-using System.Threading.RateLimiting;
+using Serilog;
 
 namespace Binacle.Net.Api;
 
@@ -24,14 +23,30 @@ public class Program
 
 		builder.Configuration.SetBasePath($"{Directory.GetCurrentDirectory()}/App_Data");
 
-		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton);
-		builder.Services.AddHealthChecks();
 		builder.Configuration.AddJsonFile(BinPresetOptions.Path, optional: false, reloadOnChange: true);
+		builder.Configuration
+			.AddJsonFile("Serilog.json", optional: false, reloadOnChange: true)
+			.AddJsonFile($"Serilog.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+		
+
+		Log.Logger = new LoggerConfiguration()
+			.ReadFrom.Configuration(builder.Configuration)
+			.CreateLogger();
+
+		builder.Host.UseSerilog();
+
 		builder.Services
 		   .AddOptions<BinPresetOptions>()
 		   .Bind(builder.Configuration.GetSection(BinPresetOptions.SectionName))
 		   .ValidateFluently()
 		   .ValidateOnStart();
+
+
+		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton);
+
+		builder.Services.AddHealthChecks();
+
+		
 
 		builder.Services.AddControllers(options =>
 		{
@@ -81,25 +96,26 @@ public class Program
 
 		// Middleware are in order
 		// Registered before Swagger because I don't want swagger to know about it
-		app.MapHealthChecks("/_health");
-
-		if (app.Environment.IsDevelopment())
+		app.MapHealthChecks("/_health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 		{
-			var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-
-			app.UseSwagger();
-			app.UseSwaggerUI(options =>
+			ResultStatusCodes =
 			{
-				options.RoutePrefix = "swagger";
-				foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-				{
-					options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
-				}
-			});
+				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
+				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status503ServiceUnavailable,
+				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+			},
+			ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+
+		});
+
+
+		// get ENABLE_SWAGGER_UI from environment vars
+		var enableSwaggerUi = bool.TrueString == Environment.GetEnvironmentVariable("ENABLE_SWAGGER_UI");
+		if (enableSwaggerUi || app.Environment.IsDevelopment())
+		{
+			app.UseSwagger();
+			app.UseSwaggerUI(options => ConfigureSwaggerOptions.ConfigureSwaggerUIOptions(app, options));
 		}
-
-
-		app.UseHttpsRedirection();
 
 		app.MapControllers();
 		app.Run();
