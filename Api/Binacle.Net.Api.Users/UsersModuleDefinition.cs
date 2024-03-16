@@ -23,7 +23,8 @@ public static class UsersModuleDefinition
 	{
 		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
-			.AddJsonFile(JwtAuthOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false);
+			.AddJsonFile(JwtAuthOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
+			.AddEnvironmentVariables();
 
 		builder.Services
 			.AddOptions<JwtAuthOptions>()
