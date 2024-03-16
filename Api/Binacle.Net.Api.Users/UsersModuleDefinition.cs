@@ -9,7 +9,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -28,12 +27,13 @@ public static class UsersModuleDefinition
 
 		builder.Services
 			.AddOptions<JwtAuthOptions>()
-			.Bind(builder.Configuration.GetSection(JwtAuthOptions.SectionName))
-			.ValidateFluently()
-			.ValidateOnStart();
+			.Bind(builder.Configuration.GetSection(JwtAuthOptions.SectionName));
 
 		var jwtAuthOptions = builder.Configuration.GetSection(JwtAuthOptions.SectionName).Get<JwtAuthOptions>();
-
+		if (!jwtAuthOptions.IsConfigured())
+		{
+			throw new System.ApplicationException("JWT Not Configured");
+		}
 
 		builder.Services.AddAuthentication(options =>
 		{
