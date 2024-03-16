@@ -33,6 +33,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
+		<ProjectReference Include="..\Binacle.Net.Api.Users\Binacle.Net.Api.Users.csproj" />
 		<ProjectReference Include="..\ChrisMavrommatis.Api\ChrisMavrommatis.Api.csproj" />
 	</ItemGroup>
 
@@ -41,7 +42,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <_ContentIncludedByDefault Remove="app_data\Serilog.json" />
+	  <Content Update="App_Data\*.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 </Project>

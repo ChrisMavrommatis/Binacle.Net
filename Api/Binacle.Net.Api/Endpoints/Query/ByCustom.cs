@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Binacle.Net.Api.Models.Requests;
 using Binacle.Net.Api.Models.Responses;
 using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Api.Endpoints;
@@ -10,7 +11,6 @@ namespace Binacle.Net.Api.Endpoints.Query;
 
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[namespace]")]
-[EnableRateLimiting("TokenBased")]
 public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 {
 	private readonly IValidator<CustomQueryRequest> customQueryRequestValidator;
@@ -82,13 +82,13 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	{
 		try
 		{
-			//if (request is null)
-			//{
-			//	return this.BadRequest(
-			//		ErrorResponse.Create("Malformed request")
-			//		.AddParameterError(nameof(request), Constants.ErrorMessages.MalformedRequestBody)
-			//		);
-			//}
+			if (request is null || request.Body is null)
+			{
+				return this.BadRequest(
+					ErrorResponse.Create("Malformed request")
+					.AddParameterError(nameof(request), Constants.ErrorMessages.MalformedRequestBody)
+					);
+			}
 
 			await this.customQueryRequestValidator.ValidateAndAddToModelStateAsync(request.Body, this.ModelState, cancellationToken);
 

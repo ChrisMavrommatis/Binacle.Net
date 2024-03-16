@@ -12,13 +12,14 @@ namespace Binacle.Net.Api.Configuration;
 public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 {
 	private readonly IApiVersionDescriptionProvider _provider;
-
 	private static Dictionary<Type, Type[]> polymorphicTypeMappings = new()
 	{
 		{ typeof(IApiError), new[] { typeof(FieldValidationError), typeof(ParameterError), typeof(ExceptionError), } }
 	};
 
-	public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider)
+	public ConfigureSwaggerOptions(
+		IApiVersionDescriptionProvider provider
+		)
 	{
 		_provider = provider;
 	}
@@ -42,6 +43,7 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 		options.AddPolymorphicTypeMappings(polymorphicTypeMappings);
 		options.TagActionsByEndpointNamespaceOrDefault();
 		options.DescribeAllParametersInCamelCase();
+		
 	}
 
 	private void AddApiVersionDocuments(SwaggerGenOptions options, IReadOnlyList<ApiVersionDescription> apiVersionDescriptions)

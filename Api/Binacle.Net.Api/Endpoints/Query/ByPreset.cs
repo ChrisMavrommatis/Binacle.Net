@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.Api.Models.Requests;
 using Binacle.Net.Api.Models.Responses;
 using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Api.Endpoints;
@@ -73,6 +74,14 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 	{
 		try
 		{
+			if (request is null || request.Body is null)
+			{
+				return this.BadRequest(
+					ErrorResponse.Create("Malformed request")
+					.AddParameterError(nameof(request), Constants.ErrorMessages.MalformedRequestBody)
+					);
+			}
+
 			if (string.IsNullOrWhiteSpace(request.Preset))
 			{
 				return this.BadRequest(
@@ -81,13 +90,7 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 					);
 			}
 
-			//if (request is null)
-			//{
-			//	return this.BadRequest(
-			//		ErrorResponse.Create("Malformed request")
-			//		.AddParameterError(nameof(request), Constants.ErrorMessages.MalformedRequestBody)
-			//		);
-			//}
+		
 			await this.presetQueryRequestValidator.ValidateAndAddToModelStateAsync(request.Body, this.ModelState, cancellationToken);
 
 			if (!this.ModelState.IsValid)

@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Api.Endpoints.Query;
+﻿using Binacle.Net.Api.Models.Requests;
 using FluentValidation;
 
 namespace Binacle.Net.Api.Validators;

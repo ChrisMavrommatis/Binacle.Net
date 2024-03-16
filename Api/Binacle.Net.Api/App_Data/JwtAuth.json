@@ -1,0 +1,8 @@
+﻿{
+	"JwtAuth": {
+		"Issuer": null,
+		"Audience": null,
+		"TokenSecret": null,
+		"ExpirationInSeconds": 3600
+	}
+}

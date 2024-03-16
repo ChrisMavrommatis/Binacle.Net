@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Binacle.Net.Api.Models.Responses;
 
-public abstract class ResponseBase 
+public abstract class ResponseBase
 {
 	[JsonPropertyOrder(0)]
 	[JsonConverter(typeof(JsonStringEnumConverter))]

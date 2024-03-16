@@ -1,7 +1,6 @@
-﻿using Binacle.Net.Api.Models;
-using ChrisMavrommatis.Api.Endpoints.Requests;
+﻿using ChrisMavrommatis.Api.Endpoints.Requests;
 
-namespace Binacle.Net.Api.Endpoints.Query;
+namespace Binacle.Net.Api.Models.Requests;
 
 public class CustomQueryRequestWithBody : RequestWithBody<CustomQueryRequest>
 {

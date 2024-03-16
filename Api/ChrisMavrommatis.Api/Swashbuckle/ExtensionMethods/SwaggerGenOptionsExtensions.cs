@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
@@ -35,7 +36,7 @@ public static class SwaggerGenOptionsExtensions
 		{
 			if (api.ActionDescriptor is not ControllerActionDescriptor actionDescriptor)
 			{
-				throw new InvalidOperationException($"Unable to determine tag for endpoint: {api.ActionDescriptor.DisplayName}");
+				return api.ActionDescriptor.EndpointMetadata.OfType<TagsAttribute>().SelectMany(x => x.Tags).ToArray();
 			}
 
 			if (actionDescriptor.ControllerTypeInfo.GetBaseTypesAndThis().Any(t => t == typeof(ChrisMavrommatis.Api.Endpoints.EndpointBase)))

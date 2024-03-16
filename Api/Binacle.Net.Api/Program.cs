@@ -2,6 +2,7 @@
 using Binacle.Net.Api.Configuration;
 using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.Services;
+using Binacle.Net.Api.Users;
 using FluentValidation;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +24,14 @@ public class Program
 
 		builder.Configuration.SetBasePath($"{Directory.GetCurrentDirectory()}/App_Data");
 
-		builder.Configuration.AddJsonFile(BinPresetOptions.Path, optional: false, reloadOnChange: true);
+		builder.Configuration
+			.AddJsonFile(BinPresetOptions.FilePath, optional: false, reloadOnChange: true);
+
 		builder.Configuration
 			.AddJsonFile("Serilog.json", optional: false, reloadOnChange: true)
 			.AddJsonFile($"Serilog.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-		
 
+		
 		Log.Logger = new LoggerConfiguration()
 			.ReadFrom.Configuration(builder.Configuration)
 			.CreateLogger();
@@ -41,12 +44,9 @@ public class Program
 		   .ValidateFluently()
 		   .ValidateOnStart();
 
-
 		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton);
 
 		builder.Services.AddHealthChecks();
-
-		
 
 		builder.Services.AddControllers(options =>
 		{
@@ -67,9 +67,13 @@ public class Program
 			options.GroupNameFormat = "'v'VVV";
 			options.SubstituteApiVersionInUrl = true;
 		});
-
+		builder.Services.AddSingleton(_ => TimeProvider.System);
 		builder.Services.AddSingleton<ILockerService, LockerService>();
 
+		if (FeaturesRegistry.IsFeatureEnabled("USERS_MODULE"))
+		{
+			builder.AddUsersModule();
+		}
 
 		builder.Services.AddSwaggerGen();
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
@@ -78,6 +82,7 @@ public class Program
 		{
 			options.SuppressModelStateInvalidFilter = true;
 		});
+
 		builder.Services.Configure<RouteOptions>(options =>
 		{
 			options.LowercaseQueryStrings = true;
@@ -105,19 +110,22 @@ public class Program
 				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
 			},
 			ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-
 		});
 
-
-		// get ENABLE_SWAGGER_UI from environment vars
-		var enableSwaggerUi = bool.TrueString == Environment.GetEnvironmentVariable("ENABLE_SWAGGER_UI");
-		if (enableSwaggerUi || app.Environment.IsDevelopment())
+		// SWAGGER_UI from environment vars
+		if (FeaturesRegistry.IsFeatureEnabled("SWAGGER_UI") || app.Environment.IsDevelopment())
 		{
 			app.UseSwagger();
 			app.UseSwaggerUI(options => ConfigureSwaggerOptions.ConfigureSwaggerUIOptions(app, options));
 		}
 
+		if (FeaturesRegistry.IsFeatureEnabled("USERS_MODULE"))
+		{
+			app.UseUsersModule();
+		}
+
 		app.MapControllers();
+
 		app.Run();
 	}
 }
