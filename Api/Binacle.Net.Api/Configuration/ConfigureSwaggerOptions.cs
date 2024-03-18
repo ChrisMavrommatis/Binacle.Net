@@ -56,8 +56,7 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 				Title = $"Binacle API {description.ApiVersion}",
 				Version = description.ApiVersion.ToString(),
 				Description = "Binacle API is an API that provides a way to to solve the bin fitting problem in one dimension only.",
-				Contact = new OpenApiContact() { Name = "Chris Mavrommatis", Email = "" },
-				License = new OpenApiLicense() { Name = "GPLv3", Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.en.html") }
+				License = new OpenApiLicense() { Name = "View on Github", Url = new Uri("https://github.com/ChrisMavrommatis/Binacle.Net") },
 			};
 
 			if (description.IsDeprecated)

@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Api.Users.Data.Schemas;
-using Binacle.Net.Api.Users.Data.Services;
+﻿using Binacle.Net.Api.Users.Data.Services;
 using Binacle.Net.Api.Users.Models;
 using Binacle.Net.Api.Users.Requests;
 using Binacle.Net.Api.Users.Responses;
@@ -18,21 +17,19 @@ internal class AuthEndpointsDefinition : IEndpointDefinition
 	{
 		var group = app.MapGroup("/auth")
 			.WithTags("Auth");
+		
 
 		group.MapPost("/token", Token)
-			.DisableRateLimiting();
-
-		group.MapPost("/create", Create)
-			.RequireAuthorization(builder =>
-			{
-				builder.RequireAuthenticatedUser();
-				builder.RequireClaim(JwtApplicationClaimNames.Groups, UserGroups.Admins);
-			});
+			.DisableRateLimiting()
+			.WithSummary("Authenticate to use the service without limits")
+			.WithDescription("Use this endpoint if you have the credentials to get a token so you can make the calls without rate limits")
+			.Accepts<TokenRequest>("application/json")
+			.WithOpenApi();
 	}
 
-	[SwaggerOperation("Authenticate to use the service without limits")]
-	[SwaggerResponse(StatusCodes.Status200OK, "The token was generated successfully", typeof(TokenResponse))]
-	[SwaggerResponse(StatusCodes.Status400BadRequest, "The request was invalid", typeof(AuthErrorResponse))]
+	[SwaggerResponse(StatusCodes.Status200OK, "When you have valid credentials", typeof(TokenResponse), "application/json")]
+	[SwaggerResponse(StatusCodes.Status400BadRequest, "When the request is invalid", typeof(AuthErrorResponse), "application/json")]
+	[SwaggerResponse(StatusCodes.Status401Unauthorized, "When the credentials are invalid")]
 	internal async Task<IResult> Token(
 		IAuthService authService,
 		ITokenService tokenService,
@@ -42,7 +39,6 @@ internal class AuthEndpointsDefinition : IEndpointDefinition
 		CancellationToken cancellationToken = default
 		)
 	{
-
 		var validationResult = await validator.ValidateAsync(request, cancellationToken);
 		if (!validationResult.IsValid)
 		{
@@ -69,32 +65,5 @@ internal class AuthEndpointsDefinition : IEndpointDefinition
 
 		}
 		return Results.Ok(TokenResponse.Create(tokenResult.TokenType!, tokenResult.Token!, tokenResult.ExpiresIn!.Value));
-	}
-
-	internal async Task<IResult> Create(
-		IAuthService authService,
-		IValidator<CreateApiUserRequest> validator,
-		[FromBody] CreateApiUserRequest request,
-		CancellationToken cancellationToken = default)
-	{
-		var validationResult = await validator.ValidateAsync(request, cancellationToken);
-		if (!validationResult.IsValid)
-		{
-			return Results.BadRequest(AuthErrorResponse.Create("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage).ToArray()));
-		}
-
-		var createUserResult = await authService.CreateAsync(new CreateUserRequest(request.Email, request.Password), cancellationToken);
-		if (!createUserResult.Success)
-		{
-			var result = createUserResult.Reason switch
-			{
-				CreateUserFailedResultReason.InvalidCredentials => Results.BadRequest(AuthErrorResponse.Create("Invalid credentials")),
-				CreateUserFailedResultReason.AlreadyExists => Results.Conflict(AuthErrorResponse.Create("User already exists")),
-				_ => Results.BadRequest(AuthErrorResponse.Create("Something went wrong, check your request"))
-			};
-			return result;
-
-		}
-		return Results.Created();
 	}
 }

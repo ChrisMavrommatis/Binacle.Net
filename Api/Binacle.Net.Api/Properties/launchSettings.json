@@ -1,15 +1,29 @@
 ﻿{
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "https": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7194",
-      "environmentVariables": {
+		"Normal": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"launchBrowser": true,
+			"launchUrl": "swagger",
+			"applicationUrl": "https://localhost:7194",
+			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    }
+			}
+		},
+		"Service": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"launchBrowser": false,
+			"launchUrl": "swagger",
+			"applicationUrl": "https://localhost:7194",
+			"environmentVariables": {
+				"ASPNETCORE_ENVIRONMENT": "Development",
+				"USERS_MODULE": "True",
+				"SWAGGER_UI": "True",
+				"STORAGEACCOUNT_CONNECTION_STRING": "",
+				"APPLICATIONINSIGHTS_CONNECTION_STRING": ""
+			}
+		}
   }
 }

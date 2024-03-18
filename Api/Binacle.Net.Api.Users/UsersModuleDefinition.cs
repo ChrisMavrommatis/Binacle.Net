@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Threading.RateLimiting;
@@ -24,17 +25,15 @@ public static class UsersModuleDefinition
 		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
 			.AddJsonFile(JwtAuthOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
-			.AddEnvironmentVariables();
+			.AddEnvironmentVariables(JwtAuthOptions.SectionName);
 
 		builder.Services
 			.AddOptions<JwtAuthOptions>()
-			.Bind(builder.Configuration.GetSection(JwtAuthOptions.SectionName));
+			.Bind(builder.Configuration.GetSection(JwtAuthOptions.SectionName))
+			.ValidateFluently()
+			.ValidateOnStart();
 
 		var jwtAuthOptions = builder.Configuration.GetSection(JwtAuthOptions.SectionName).Get<JwtAuthOptions>();
-		if (!jwtAuthOptions.IsConfigured())
-		{
-			throw new System.ApplicationException("JWT Not Configured");
-		}
 
 		builder.Services.AddAuthentication(options =>
 		{
@@ -70,6 +69,11 @@ public static class UsersModuleDefinition
 		{
 			new AuthEndpointsDefinition()
 		};
+
+		if (builder.Environment.IsDevelopment())
+		{
+			endpointDefinitions.Add(new UsersEndpointsDefinition());
+		}
 
 		builder.Services.AddSingleton(endpointDefinitions as IReadOnlyCollection<IEndpointDefinition>);
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
