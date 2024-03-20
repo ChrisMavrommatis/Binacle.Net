@@ -39,7 +39,7 @@ public static class ModuleDefinition
 		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
 			.AddJsonFile(JwtAuthOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
-			.AddEnvironmentVariables(JwtAuthOptions.SectionName);
+			.AddEnvironmentVariables(JwtAuthOptions.EvironmentPrefix);
 
 		builder.Services
 			.AddOptions<JwtAuthOptions>()

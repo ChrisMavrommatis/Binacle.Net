@@ -1,8 +1,0 @@
-﻿{
-	"JwtAuth": {
-		"Issuer": "https://localhost:7194",
-		"Audience": "https://localhost:7194",
-		"TokenSecret": "ThisIsAVerySecretKeyMeantToBeStoredSecurelyAndNotLikeThisSoPleaseChangeIt",
-		"ExpirationInSeconds": 3600
-	}
-}

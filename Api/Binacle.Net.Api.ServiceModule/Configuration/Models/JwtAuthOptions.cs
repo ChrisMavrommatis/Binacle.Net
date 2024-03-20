@@ -4,6 +4,7 @@ internal class JwtAuthOptions
 {
 	public static string SectionName = "JwtAuth";
 	public static string FilePath = "JwtAuth.json";
+	public static string EvironmentPrefix = "JWT__";
 	public static string GetEnvironmentFilePath(string environment) => $"JwtAuth.{environment}.json";
 
 	public string Issuer { get; set; }
