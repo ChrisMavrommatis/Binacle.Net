@@ -1,10 +1,9 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Configuration;
 using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.Api.ServiceModule;
 using Binacle.Net.Api.Services;
-using Binacle.Net.Api.Users;
 using FluentValidation;
-using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -30,7 +29,6 @@ public class Program
 		builder.Configuration
 			.AddJsonFile("Serilog.json", optional: false, reloadOnChange: true)
 			.AddJsonFile($"Serilog.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-
 		
 		Log.Logger = new LoggerConfiguration()
 			.ReadFrom.Configuration(builder.Configuration)
@@ -45,8 +43,6 @@ public class Program
 		   .ValidateOnStart();
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton);
-
-		builder.Services.AddHealthChecks();
 
 		builder.Services.AddControllers(options =>
 		{
@@ -70,9 +66,9 @@ public class Program
 		builder.Services.AddSingleton(_ => TimeProvider.System);
 		builder.Services.AddSingleton<ILockerService, LockerService>();
 
-		if (FeaturesRegistry.IsFeatureEnabled("USERS_MODULE"))
+		if (FeaturesRegistry.IsFeatureEnabled("SERVICE_MODULE"))
 		{
-			builder.AddUsersModule();
+			builder.AddServiceModule();
 		}
 
 		builder.Services.AddSwaggerGen();
@@ -99,19 +95,6 @@ public class Program
 			app.UseDeveloperExceptionPage();
 		}
 
-		// Middleware are in order
-		// Registered before Swagger because I don't want swagger to know about it
-		app.MapHealthChecks("/_health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-		{
-			ResultStatusCodes =
-			{
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status503ServiceUnavailable,
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
-			},
-			ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-		});
-
 		// SWAGGER_UI from environment vars
 		if (FeaturesRegistry.IsFeatureEnabled("SWAGGER_UI") || app.Environment.IsDevelopment())
 		{
@@ -119,9 +102,9 @@ public class Program
 			app.UseSwaggerUI(options => ConfigureSwaggerOptions.ConfigureSwaggerUIOptions(app, options));
 		}
 
-		if (FeaturesRegistry.IsFeatureEnabled("USERS_MODULE"))
+		if (FeaturesRegistry.IsFeatureEnabled("SERVICE_MODULE"))
 		{
-			app.UseUsersModule();
+			app.UseServiceModule();
 		}
 
 		app.MapControllers();

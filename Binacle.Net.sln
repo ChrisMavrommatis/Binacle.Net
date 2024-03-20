@@ -45,7 +45,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Requests", "Requests", "{E2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Api", "Api\ChrisMavrommatis.Api\ChrisMavrommatis.Api.csproj", "{CE104668-6A28-4A62-B5A2-5554986B1754}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binacle.Net.Api.Users", "Api\Binacle.Net.Api.Users\Binacle.Net.Api.Users.csproj", "{5A7B36F7-5C3D-4108-8D00-2A76FD847AD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule", "Api\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj", "{5A7B36F7-5C3D-4108-8D00-2A76FD847AD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

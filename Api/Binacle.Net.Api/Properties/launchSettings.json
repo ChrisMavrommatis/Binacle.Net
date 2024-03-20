@@ -11,7 +11,7 @@
 				"ASPNETCORE_ENVIRONMENT": "Development"
 			}
 		},
-		"Service": {
+		"WithService": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"launchBrowser": false,
@@ -19,7 +19,7 @@
 			"applicationUrl": "https://localhost:7194",
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development",
-				"USERS_MODULE": "True",
+				"SERVICE_MODULE": "True",
 				"SWAGGER_UI": "True",
 				"STORAGEACCOUNT_CONNECTION_STRING": "",
 				"APPLICATIONINSIGHTS_CONNECTION_STRING": ""

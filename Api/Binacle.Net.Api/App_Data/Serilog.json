@@ -18,12 +18,6 @@
 					"rollingInterval": "Day",
 					"retainedFileCountLimit": 7
 				}
-			},
-			{
-				"Name": "ApplicationInsights",
-				"Args": {
-					"telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights"
-				}
 			}
 		],
 		"Enrich": [

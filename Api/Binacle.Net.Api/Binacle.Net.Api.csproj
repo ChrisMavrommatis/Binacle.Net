@@ -8,37 +8,28 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Models\Examples\**" />
-	  <Content Remove="Models\Examples\**" />
-	  <EmbeddedResource Remove="Models\Examples\**" />
-	  <None Remove="Models\Examples\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Asp.Versioning.Mvc" Version="8.0.0" />
-		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.0.0" />
-		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.0" />
-		<PackageReference Include="FluentValidation" Version="11.9.0" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3" />
-		<PackageReference Include="Serilog" Version="3.1.1" />
-		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
-		<PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
-		<PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
-		<PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
-		<PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+	  <PackageReference Include="Asp.Versioning.Mvc" Version="8.0.0" />
+	  <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.0.0" />
+	  <PackageReference Include="FluentValidation" Version="11.9.0" />
+	  <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
+	  <PackageReference Include="Serilog" Version="3.1.1" />
+	  <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+	  <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
+	  <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
+	  <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+	  <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
+	  <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+	  <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+	  <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
+	  <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+	  <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
-		<ProjectReference Include="..\Binacle.Net.Api.Users\Binacle.Net.Api.Users.csproj" />
+		<ProjectReference Include="..\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
 		<ProjectReference Include="..\ChrisMavrommatis.Api\ChrisMavrommatis.Api.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EditorConfigFiles Remove="R:\github\Binacle.Net\Api\Binacle.Net.Api\.editorconfig" />
 	</ItemGroup>
 
 	<ItemGroup>
