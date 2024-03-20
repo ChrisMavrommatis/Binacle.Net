@@ -24,9 +24,9 @@
 				"SWAGGER_UI": "True",
 				"STORAGEACCOUNT_CONNECTION_STRING": "",
 				"APPLICATIONINSIGHTS_CONNECTION_STRING": "",
-				"JWT__JwtAuth__Issuer": "https://localhost:7194",
-				"JWT__JwtAuth__Audience": "https://localhost:7194",
-				"JWT__JwtAuth__TokenSecret": "ThisIsAVerySecretKeyMeantToBeStoredSecurelyAndNotLikeThisSoPleaseChangeIt"
+				"JwtAuth__Issuer": "https://localhost:7194",
+				"JwtAuth__Audience": "https://localhost:7194",
+				"JwtAuth__TokenSecret": "ThisIsAVerySecretKeyMeantToBeStoredSecurelyAndNotLikeThisSoPleaseChangeIt"
 			}
 		}
   }
