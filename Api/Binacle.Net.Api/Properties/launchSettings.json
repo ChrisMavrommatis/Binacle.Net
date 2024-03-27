@@ -4,7 +4,7 @@
 		"Normal": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
-			"launchBrowser": true,
+			"launchBrowser": false,
 			"launchUrl": "swagger",
 			"applicationUrl": "https://localhost:7194",
 			"environmentVariables": {
@@ -20,10 +20,11 @@
 			"applicationUrl": "https://localhost:7194",
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development",
-				"SERVICE_MODULE": "True",
 				"SWAGGER_UI": "True",
+				"SERVICE_MODULE": "True",
 				"STORAGEACCOUNT_CONNECTION_STRING": "",
 				"APPLICATIONINSIGHTS_CONNECTION_STRING": "",
+				"AZUREMONITOR_SAMPLING_RATIO": "0.5",
 				"JwtAuth__Issuer": "https://localhost:7194",
 				"JwtAuth__Audience": "https://localhost:7194",
 				"JwtAuth__TokenSecret": "ThisIsAVerySecretKeyMeantToBeStoredSecurelyAndNotLikeThisSoPleaseChangeIt"

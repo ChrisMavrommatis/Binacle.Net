@@ -12,7 +12,12 @@
 
 	<ItemGroup>
 	  <PackageReference Include="FluentValidation" Version="11.9.0" />
+	  <PackageReference Include="Serilog" Version="3.1.1" />
 	  <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Logging\Models\" />
 	</ItemGroup>
 
 </Project>

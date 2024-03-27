@@ -35,7 +35,6 @@ public static class ModuleDefinition
 
 		Log.Logger.Information("Starting up with Service Module");
 
-
 		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
 			.AddJsonFile(JwtAuthOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
@@ -54,6 +53,7 @@ public static class ModuleDefinition
 			options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 			options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 			options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
 		}).AddJwtBearer(options =>
 		{
 			options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
@@ -88,22 +88,24 @@ public static class ModuleDefinition
 		builder.Services.AddOpenTelemetry()
 			.WithMetrics(configure =>
 			{
-				configure.AddRuntimeInstrumentation()
-				.AddMeter(
-					"Microsoft.AspNetCore.Hosting",
-					"Microsoft.AspNetCore.Server.Kestrel"
-					)
+				configure
+				.AddRuntimeInstrumentation()
+				.AddMeter("Microsoft.AspNetCore.Hosting")
+				.AddMeter("Microsoft.AspNetCore.Server.Kestrel")
 				.AddMeter("Microsoft.AspNetCore.RateLimiting");
 
 			}).WithTracing(configure =>
 			{
-				if (builder.Environment.IsDevelopment())
-				{
-					configure.SetSampler<AlwaysOnSampler>();
-				}
-
 				configure.AddAspNetCoreInstrumentation();
-			}).UseAzureMonitor();
+
+			}).UseAzureMonitor(configure =>
+			{
+				var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
+				if(samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
+				{
+					configure.SamplingRatio = ratio;
+				}
+			});
 
 		var endpointDefinitions = new List<IEndpointDefinition>()
 		{
@@ -154,6 +156,7 @@ public static class ModuleDefinition
 				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
 			},
 			ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+
 		}).DisableRateLimiting();
 
 		app.UseAuthentication();
