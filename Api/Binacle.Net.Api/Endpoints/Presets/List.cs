@@ -2,7 +2,7 @@
 using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Models.Responses;
-using ChrisMavrommatis.Api.Endpoints;
+using ChrisMavrommatis.Endpoints;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 

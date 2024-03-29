@@ -39,7 +39,7 @@ public static class SwaggerGenOptionsExtensions
 				return api.ActionDescriptor.EndpointMetadata.OfType<TagsAttribute>().SelectMany(x => x.Tags).ToArray();
 			}
 
-			if (actionDescriptor.ControllerTypeInfo.GetBaseTypesAndThis().Any(t => t == typeof(ChrisMavrommatis.Api.Endpoints.EndpointBase)))
+			if (actionDescriptor.ControllerTypeInfo.GetBaseTypesAndThis().Any(t => t == typeof(ChrisMavrommatis.Endpoints.EndpointBase)))
 			{
 				return new[] { actionDescriptor.ControllerTypeInfo.Namespace?.Split('.').Last() };
 			}

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ChrisMavrommatis.Api.Endpoints;
+namespace ChrisMavrommatis.Endpoints;
 
 public abstract class EndpointWithRequest<TRequest, TResponse> : EndpointBase
 {

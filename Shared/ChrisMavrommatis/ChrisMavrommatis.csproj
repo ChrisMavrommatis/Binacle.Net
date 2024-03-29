@@ -16,8 +16,4 @@
 	  <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Logging\Models\" />
-	</ItemGroup>
-
 </Project>

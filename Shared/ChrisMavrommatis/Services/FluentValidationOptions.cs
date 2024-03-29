@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Options;
 
-namespace ChrisMavrommatis.Api.Services;
+namespace ChrisMavrommatis.Services;
 
 internal class FluentValidationOptions<TOptions> : IValidateOptions<TOptions> where TOptions : class
 {

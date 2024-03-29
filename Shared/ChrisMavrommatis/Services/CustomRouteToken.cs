@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System.Text.RegularExpressions;
 
-namespace ChrisMavrommatis.Api.Services;
+namespace ChrisMavrommatis.Services;
 
 internal class CustomRouteToken : IApplicationModelConvention
 {

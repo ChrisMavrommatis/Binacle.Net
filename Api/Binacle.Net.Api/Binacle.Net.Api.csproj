@@ -29,8 +29,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
+		<ProjectReference Include="..\..\Shared\ChrisMavrommatis\ChrisMavrommatis.csproj" />
 		<ProjectReference Include="..\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
-		<ProjectReference Include="..\ChrisMavrommatis.Api\ChrisMavrommatis.Api.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

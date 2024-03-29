@@ -9,7 +9,7 @@ public static class MvcOptionsExtensions
 	/// </summary>
 	public static MvcOptions UseNamespaceRouteToken(this MvcOptions options)
 	{
-		options.Conventions.Add(new ChrisMavrommatis.Api.Services.CustomRouteToken(
+		options.Conventions.Add(new ChrisMavrommatis.Services.CustomRouteToken(
 			"namespace",
 			c => c.ControllerType.Namespace?.Split('.').Last()
 		));

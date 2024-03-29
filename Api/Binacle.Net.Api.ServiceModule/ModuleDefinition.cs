@@ -5,7 +5,7 @@ using Binacle.Net.Api.ServiceModule.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Data.Repositories;
 using Binacle.Net.Api.ServiceModule.EndpointDefinitions;
 using Binacle.Net.Api.ServiceModule.Services;
-using ChrisMavrommatis.Api.MinimalEndpoints;
+using ChrisMavrommatis.MinimalEndpoints;
 using FluentValidation;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

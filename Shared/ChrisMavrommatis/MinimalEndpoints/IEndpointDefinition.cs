@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace ChrisMavrommatis.Api.MinimalEndpoints;
+namespace ChrisMavrommatis.MinimalEndpoints;
 
 public interface IEndpointDefinition
 {

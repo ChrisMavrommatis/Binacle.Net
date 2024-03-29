@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ChrisMavrommatis.Api.Endpoints.Requests;
+namespace ChrisMavrommatis.Endpoints.Requests;
 
 public abstract class RequestWithBody<TBody>
 {

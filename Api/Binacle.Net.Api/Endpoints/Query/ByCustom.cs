@@ -2,7 +2,7 @@
 using Binacle.Net.Api.Models.Requests;
 using Binacle.Net.Api.Models.Responses;
 using Binacle.Net.Api.Services;
-using ChrisMavrommatis.Api.Endpoints;
+using ChrisMavrommatis.Endpoints;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
