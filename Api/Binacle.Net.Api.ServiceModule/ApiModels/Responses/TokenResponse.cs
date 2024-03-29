@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.Api.ServiceModule.Responses;
+﻿namespace Binacle.Net.Api.ServiceModule.ApiModels.Responses;
 
 internal class TokenResponse
 {
@@ -17,5 +17,4 @@ internal class TokenResponse
 			RefreshToken = refreshToken
 		};
 	}
-
 }

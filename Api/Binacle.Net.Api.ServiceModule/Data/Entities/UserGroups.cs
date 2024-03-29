@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.Api.ServiceModule.Data.Schemas;
+﻿namespace Binacle.Net.Api.ServiceModule.Data.Entities;
 
 internal struct UserGroups
 {

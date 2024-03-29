@@ -75,7 +75,7 @@ public static class ModuleDefinition
 		// Register Services
 		builder.Services.AddScoped<IUserRepository, UserRepository>();
 		builder.Services.AddScoped<ITokenService, TokenService>();
-		builder.Services.AddScoped<IAuthService, AuthService>();
+		builder.Services.AddScoped<IUserManagerService, UserManagerService>();
 		builder.Services.AddSingleton<TableServiceClient>(sp =>
 		{
 			var connectionString = Environment.GetEnvironmentVariable("STORAGEACCOUNT_CONNECTION_STRING");
