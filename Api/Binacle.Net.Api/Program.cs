@@ -94,12 +94,20 @@ public class Program
 		{
 			app.UseDeveloperExceptionPage();
 		}
-
+		
 		// SWAGGER_UI from environment vars
 		if (FeaturesRegistry.IsFeatureEnabled("SWAGGER_UI") || app.Environment.IsDevelopment())
 		{
 			app.UseSwagger();
-			app.UseSwaggerUI(options => ConfigureSwaggerOptions.ConfigureSwaggerUIOptions(app, options));
+			app.UseSwaggerUI(options => 
+			{
+				ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
+
+				if (FeaturesRegistry.IsFeatureEnabled("SERVICE_MODULE"))
+				{
+					options.ConfigureServiceModuleSwaggerUI(app);
+				}
+			});
 		}
 
 		if (FeaturesRegistry.IsFeatureEnabled("SERVICE_MODULE"))

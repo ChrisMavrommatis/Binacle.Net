@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
 using System.Threading.RateLimiting;
 
@@ -38,7 +39,8 @@ public static class ModuleDefinition
 		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
 			.AddJsonFile(JwtAuthOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
-			.AddEnvironmentVariables();
+			.AddEnvironmentVariables()
+			.AddUserSecrets<IModuleMarker>(optional: true, reloadOnChange: true);
 
 		builder.Services
 			.AddOptions<JwtAuthOptions>()
@@ -78,7 +80,18 @@ public static class ModuleDefinition
 		builder.Services.AddScoped<IUserManagerService, UserManagerService>();
 		builder.Services.AddSingleton<TableServiceClient>(sp =>
 		{
-			var connectionString = Environment.GetEnvironmentVariable("STORAGEACCOUNT_CONNECTION_STRING");
+			var connectionString = builder.Configuration.GetConnectionString("AzureStorage");
+
+			if (string.IsNullOrWhiteSpace(connectionString))
+			{
+				connectionString = Environment.GetEnvironmentVariable("AZURESTORAGE_CONNECTION_STRING");
+			}
+
+			if(string.IsNullOrWhiteSpace(connectionString))
+			{
+				throw new InvalidOperationException("AzureStorage connection string is missing");
+			}
+
 			return new TableServiceClient(connectionString);
 		});
 
@@ -105,6 +118,20 @@ public static class ModuleDefinition
 				{
 					configure.SamplingRatio = ratio;
 				}
+
+				var connectionString = builder.Configuration.GetConnectionString("ApplicationInsights");
+
+				if (string.IsNullOrWhiteSpace(connectionString))
+				{
+					connectionString = Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING");
+				}
+
+				if (string.IsNullOrWhiteSpace(connectionString))
+				{
+					throw new InvalidOperationException("ApplicationInsights connection string is missing");
+				}
+
+				configure.ConnectionString = connectionString;
 			});
 
 		var endpointDefinitions = new List<IEndpointDefinition>()
@@ -169,5 +196,10 @@ public static class ModuleDefinition
 		}
 
 		app.UseRateLimiter();
+	}
+
+	public static void ConfigureServiceModuleSwaggerUI(this SwaggerUIOptions options, WebApplication app)
+	{
+		ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
 	}
 }

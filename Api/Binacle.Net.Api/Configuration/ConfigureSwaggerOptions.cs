@@ -43,14 +43,12 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 		options.AddPolymorphicTypeMappings(polymorphicTypeMappings);
 		options.TagActionsByEndpointNamespaceOrDefault();
 		options.DescribeAllParametersInCamelCase();
-		
 	}
 
 	private void AddApiVersionDocuments(SwaggerGenOptions options, IReadOnlyList<ApiVersionDescription> apiVersionDescriptions)
 	{
 		foreach (var description in apiVersionDescriptions)
 		{
-
 			var info = new OpenApiInfo()
 			{
 				Title = $"Binacle API {description.ApiVersion}",
@@ -73,11 +71,12 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 		options.SchemaFilter<PresetQueryRequestExampleSchemaFilter>();
 	}
 
-	internal static void ConfigureSwaggerUIOptions(WebApplication app, SwaggerUIOptions options)
+	public static void ConfigureSwaggerUI(SwaggerUIOptions options, WebApplication app)
 	{
+		options.RoutePrefix = "swagger";
+
 		var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
-		options.RoutePrefix = "swagger";
 		foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
 		{
 			options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Binacle API {description.GroupName.ToUpperInvariant()}");

@@ -22,12 +22,7 @@
 				"ASPNETCORE_ENVIRONMENT": "Development",
 				"SWAGGER_UI": "True",
 				"SERVICE_MODULE": "True",
-				"STORAGEACCOUNT_CONNECTION_STRING": "",
-				"APPLICATIONINSIGHTS_CONNECTION_STRING": "",
-				"AZUREMONITOR_SAMPLING_RATIO": "0.5",
-				"JwtAuth__Issuer": "https://localhost:7194",
-				"JwtAuth__Audience": "https://localhost:7194",
-				"JwtAuth__TokenSecret": "ThisIsAVerySecretKeyMeantToBeStoredSecurelyAndNotLikeThisSoPleaseChangeIt"
+				"AZUREMONITOR_SAMPLING_RATIO": "0.5"
 			}
 		}
   }

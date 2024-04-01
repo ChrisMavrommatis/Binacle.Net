@@ -1,5 +1,6 @@
 ﻿using Binacle.Net.Api.ServiceModule.ApiModels.Requests;
 using Binacle.Net.Api.ServiceModule.ApiModels.Responses;
+using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Data.Entities;
 using Binacle.Net.Api.ServiceModule.Models;
 using Binacle.Net.Api.ServiceModule.Services;
@@ -8,6 +9,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -17,13 +19,13 @@ internal class UsersEndpointsDefinition : IEndpointDefinition
 {
 	public void DefineEndpoints(WebApplication app)
 	{
-		var group = app.MapGroup("/users")
+		var group = app.MapGroup(ConfigureSwaggerOptions.UsersApiName)
 			.WithTags("Users (Admin only)")
 			.RequireAuthorization(builder =>
 			{
 				builder.RequireAuthenticatedUser();
 				builder.RequireClaim(JwtApplicationClaimNames.Groups, UserGroups.Admins);
-			});
+			}).WithGroupName(ConfigureSwaggerOptions.UsersApiName);
 
 		if (!app.Environment.IsDevelopment())
 		{
@@ -47,7 +49,6 @@ internal class UsersEndpointsDefinition : IEndpointDefinition
 			.Accepts<ChangeApiUserPasswordRequest>("application/json")
 			.WithOpenApi();
 	}
-
 
 	[SwaggerResponse(StatusCodes.Status201Created, "When you have successfully created a user")]
 	[SwaggerResponse(StatusCodes.Status400BadRequest, "When the request is invalid", typeof(DescriptiveErrorResponse), "application/json")]
