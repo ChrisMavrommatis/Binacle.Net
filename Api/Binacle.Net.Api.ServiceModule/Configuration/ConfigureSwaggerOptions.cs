@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Binacle.Net.Api.ServiceModule.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -58,6 +59,8 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 		};
 
 		options.SwaggerDoc(UsersApiName, info);
+
+		options.OperationFilter<RateLimitingResponsesFilter>();
 	}
 
 	internal static void ConfigureSwaggerUI(SwaggerUIOptions options, WebApplication app)

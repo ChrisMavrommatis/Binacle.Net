@@ -1,1 +1,36 @@
 ﻿// User Requests
+
+// Sample Token
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+@email = test@test.com
+
+### Create a user
+POST https://{{Host}}/users
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+	  "email": "test@test.com",
+	  "password": "testpassword"
+}
+	
+
+### Change a users password
+PATCH https://{{Host}}/users/{{email}}
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+	"password": "newpassword"
+}
+
+
+### Delete a user
+DELETE https://{{Host}}/users/{{email}}
+Accept: application/json
+Authorization: Bearer {{token}}
+
+
+### 

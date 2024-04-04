@@ -9,6 +9,7 @@ Accept: application/json
 ### Auth Token
 POST https://{{Host}}/auth/token
 Accept: application/json
+Content-Type: application/json
 
 {
 	"email": "test@test.com",
