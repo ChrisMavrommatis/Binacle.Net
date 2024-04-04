@@ -31,7 +31,7 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	/// <summary>
 	/// Perform a bin fit query using custom bins.
 	/// </summary>
-	/// <returns>The bin that fits all of the items</returns>
+	/// <returns>The bin that fits all of the items, or empty</returns>
 	/// <remarks>
 	/// Example request:
 	///     
@@ -70,9 +70,25 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	///     }
 	/// 
 	/// </remarks>
-	/// <response code="200">Returns the bin that fits all of the items</response>
-	/// <response code="400">If the request is invalid</response>
-	/// <response code="500">If an unexpected error occurs</response>
+	/// <response code="200"> <b>OK</b>
+	/// <br />
+	/// <p>
+	///		Returns the bin that fits all of the items, or empty if they don't fit.
+	/// </p>
+	/// </response>
+	/// <response code="400"> <b>Bad Request</b>
+	/// <br/> 
+	/// If the request is invalid.
+	/// </response>
+	/// <response code="500"> <b>Internal Server Error</b>
+	/// <br />
+	/// <p>
+	///		If an unexpected error occurs.
+	/// </p>
+	/// <p>
+	///		Exception details will only be shown when in a development environment.
+	/// </p>
+	/// </response>
 	[HttpPost("by-custom")]
 	[Consumes("application/json")]
 	[Produces("application/json")]
@@ -86,6 +102,7 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	[SwaggerResponseExample(typeof(ErrorResponse), typeof(BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 
 	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+	[SwaggerResponseExample(typeof(ErrorResponse), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	public override async Task<IActionResult> HandleAsync(CustomQueryRequestWithBody request, CancellationToken cancellationToken = default)
 
 	{

@@ -36,7 +36,6 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 	/// <summary>
 	/// Perform a bin fit query using a specified bin preset.
 	/// </summary>
-	/// <returns>The bin that fits all of the items, or empty</returns>
 	/// <remarks>
 	/// Example request using the "rectangular-cuboids" preset:
 	///     
@@ -68,10 +67,31 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 	///     }
 	/// 
 	/// </remarks>
-	/// <response code="200">When the request is valid, returns the result of the operation</response>
-	/// <response code="400">If the request is invalid</response>
-	/// <response code="404">If the preset does not exist</response>
-	/// <response code="500">If an unexpected error occurs</response>
+	/// <response code="200"> <b>OK</b>
+	/// <br />
+	/// <p>
+	///		Returns the bin that fits all of the items, or empty if they don't fit.
+	/// </p>
+	/// </response>
+	/// <response code="400"> <b>Bad Request</b>
+	/// <br/> 
+	/// If the request is invalid.
+	/// </response>
+	/// <response code="404"> <b>Not Found</b>
+	/// <br />
+	/// <p>
+	///		If the preset does not exist.
+	/// </p>
+	/// </response>
+	/// <response code="500"> <b>Internal Server Error</b>
+	/// <br />
+	/// <p>
+	///		If an unexpected error occurs.
+	/// </p>
+	/// <p>
+	///		Exception details will only be shown when in a development environment.
+	/// </p>
+	/// </response>
 	[HttpPost]
 	[Route("by-preset/{preset}")]
 	[Consumes("application/json")]
@@ -86,10 +106,10 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
 	[SwaggerResponseExample(typeof(ErrorResponse), typeof(BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 	
-	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(PresetNotFoundErrorResponseExample), StatusCodes.Status404NotFound)]
+	[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
 
 	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+	[SwaggerResponseExample(typeof(ErrorResponse), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	public override async Task<IActionResult> HandleAsync(PresetQueryRequestWithBody request, CancellationToken cancellationToken = default)
 	{
 		try
@@ -123,10 +143,7 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 
 			if (!this.presetOptions.Value.Presets.TryGetValue(request.Preset, out var presetOption))
 			{
-				return this.NotFound(
-					ErrorResponse.Create(Constants.Errors.Categories.ResourceNotFoundError)
-					.AddParameterError(nameof(request.Preset), string.Format("preset '{0}' does not exist.", request.Preset))
-					);
+				return this.NotFound(null);
 			}
 
 			var operationResult = this.lockerService.FindFittingBin(presetOption.Bins, request.Body.Items);

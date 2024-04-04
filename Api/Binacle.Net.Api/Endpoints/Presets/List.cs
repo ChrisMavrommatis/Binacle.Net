@@ -2,7 +2,9 @@
 using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Models.Responses;
+using Binacle.Net.Api.Models.Responses.Examples;
 using ChrisMavrommatis.Endpoints;
+using ChrisMavrommatis.SwaggerExamples.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -22,26 +24,45 @@ public class List : EndpointWithoutRequest
 	/// <summary>
 	/// Lists the presets present in configuration
 	/// </summary>
-	/// <returns>All of the configured presets wth the associated bins</returns>
-	/// <response code="200">Returns the all of the configured presets wth the associated bins</response>
-	/// <response code="404">If no presets are configured</response>
-	/// <response code="500">If an unexpected error occurs</response>
+	/// <response code="200"> <b>OK</b>
+	/// <br />
+	/// <p>
+	///		Returns the all of the configured presets wth the associated bins.
+	/// </p>
+	/// </response>
+	/// <response code="404"> <b>Not Found</b>
+	/// <br />
+	/// <p>
+	///		If no presets are configured.
+	/// </p>
+	/// </response>
+	/// <response code="500"> <b>Internal Server Error</b>
+	/// <br />
+	/// <p>
+	///		If an unexpected error occurs.
+	/// </p>
+	/// <p>
+	///		Exception details will only be shown when in a development environment.
+	/// </p>
+	/// </response>
 	[Consumes("application/json")]
 	[Produces("application/json")]
 	[MapToApiVersion("1.0")]
 	[HttpGet]
 	[ProducesResponseType(typeof(PresetListResponse), StatusCodes.Status200OK)]
-	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+	[SwaggerResponseExample(typeof(PresetListResponse), typeof(PresetListResponseExample), StatusCodes.Status200OK)]
+
+	[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+
 	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+	[SwaggerResponseExample(typeof(ErrorResponse), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	public override async Task<IActionResult> HandleAsync(CancellationToken cancellationToken = default)
 	{
 		try
 		{
 			if (this.presetOptions?.Value?.Presets is null || !this.presetOptions.Value.Presets.Any())
 			{
-				return this.NotFound(
-					ErrorResponse.Create("No presets found")
-					);
+				return this.NotFound(null);
 			}
 
 			var presets = this.presetOptions.Value.Presets

@@ -52,7 +52,12 @@ public class ErrorResponse : ResponseBase
 
 	public ErrorResponse AddExceptionError(Exception ex)
 	{
-		this.Errors.Add(new ExceptionError() { ExceptionType = ex.GetType().Name, Message = ex.Message, StackTrace = ex.StackTrace });
+		// if environment is development  then add the error
+		if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+		{
+			this.Errors.Add(new ExceptionError() { ExceptionType = ex.GetType().Name, Message = ex.Message, StackTrace = ex.StackTrace });
+		}
+
 		return this;
 	}
 }

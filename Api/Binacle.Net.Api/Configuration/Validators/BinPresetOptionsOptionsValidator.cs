@@ -7,11 +7,6 @@ public class BinPresetOptionsOptionsValidator : AbstractValidator<BinPresetOptio
 {
 	public BinPresetOptionsOptionsValidator()
 	{
-		RuleFor(x => x.Presets)
-			.NotNull()
-			.NotEmpty();
-
-
 		RuleForEach(x => x.Presets).ChildRules(presetValidator =>
 		{
 			presetValidator.RuleFor(x => x.Value.Bins)
@@ -25,6 +20,5 @@ public class BinPresetOptionsOptionsValidator : AbstractValidator<BinPresetOptio
 				binValidator.RuleFor(x => x.Length).GreaterThan(0).WithMessage($"Length in Bin must be greater than 0");
 			});
 		});
-
 	}
 }

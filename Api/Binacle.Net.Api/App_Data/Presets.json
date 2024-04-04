@@ -21,7 +21,7 @@
 						"Width": 30,
 						"Height": 30
 					}
-				],
+				]
 			},
 			"rectangular-cuboids": {
 				"Bins": [
@@ -43,7 +43,7 @@
 						"Width": 40,
 						"Height": 60
 					}
-				],
+				]
 			},
 			"sample": {
 				"Bins": [
