@@ -1,0 +1,16 @@
+﻿// Service Module requests
+
+
+### Healthcheck
+GET https://{{Host}}/_health
+Accept: application/json
+
+
+### Auth Token
+POST https://{{Host}}/auth/token
+Accept: application/json
+
+{
+	"email": "test@test.com",
+	"password" : "testpassword"
+}

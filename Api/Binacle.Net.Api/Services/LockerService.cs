@@ -1,6 +1,6 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Models;
-using ChrisMavrommatis.Logging.ExtensionMethods;
+using ChrisMavrommatis.Logging;
 
 namespace Binacle.Net.Api.Services;
 

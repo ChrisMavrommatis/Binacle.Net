@@ -3,6 +3,9 @@ using Binacle.Net.Api.Configuration;
 using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.ServiceModule;
 using Binacle.Net.Api.Services;
+using ChrisMavrommatis.Endpoints;
+using ChrisMavrommatis.FluentValidation;
+using ChrisMavrommatis.SwaggerExamples;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -70,7 +73,11 @@ public class Program
 		{
 			builder.AddServiceModule();
 		}
+		builder.Services.AddSwaggerExamples(options =>
+		{
+			options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
 
+		});
 		builder.Services.AddSwaggerGen();
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace ChrisMavrommatis.Endpoints;
 
 public static class MvcOptionsExtensions
 {
@@ -9,7 +9,7 @@ public static class MvcOptionsExtensions
 	/// </summary>
 	public static MvcOptions UseNamespaceRouteToken(this MvcOptions options)
 	{
-		options.Conventions.Add(new ChrisMavrommatis.Services.CustomRouteToken(
+		options.Conventions.Add(new Services.CustomRouteToken(
 			"namespace",
 			c => c.ControllerType.Namespace?.Split('.').Last()
 		));

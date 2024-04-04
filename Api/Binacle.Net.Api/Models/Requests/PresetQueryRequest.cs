@@ -7,7 +7,7 @@ public class PresetQueryRequestWithBody : RequestWithBody<PresetQueryRequest>
 	public string Preset { get; set; }
 }
 
-public class PresetQueryRequest
+public class PresetQueryRequest 
 {
 	public List<Box> Items { get; set; }
 }

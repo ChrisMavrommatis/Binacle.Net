@@ -7,6 +7,6 @@ public class ItemWithIDValidator : AbstractValidator<IWithID>
 {
 	public ItemWithIDValidator()
 	{
-		RuleFor(x => x.ID).NotNull().NotEmpty().WithMessage(Constants.ErrorMessages.IsRequired);
+		RuleFor(x => x.ID).NotNull().NotEmpty().WithMessage(Constants.Errors.Messages.IsRequired);
 	}
 }

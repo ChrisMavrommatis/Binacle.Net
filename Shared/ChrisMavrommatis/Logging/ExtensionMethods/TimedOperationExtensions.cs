@@ -1,7 +1,7 @@
 ﻿using ChrisMavrommatis.Logging.Operations;
 using Microsoft.Extensions.Logging;
 
-namespace ChrisMavrommatis.Logging.ExtensionMethods;
+namespace ChrisMavrommatis.Logging;
 
 public static class TimedOperationExtensions
 {

@@ -1,16 +1,16 @@
-﻿using Binacle.Net.Api.Models.Requests;
+﻿using Binacle.Net.Api.Validators;
 using FluentValidation;
 
-namespace Binacle.Net.Api.Validators;
+namespace Binacle.Net.Api.Models.Requests.Validators;
 
-public class PresetRequestValidator : AbstractValidator<PresetQueryRequest>
+public class PresetQueryRequestValidator : AbstractValidator<PresetQueryRequest>
 {
-	public PresetRequestValidator()
+	public PresetQueryRequestValidator()
 	{
 		RuleFor(x => x.Items)
 			.NotNull()
 			.NotEmpty()
-			.WithMessage(Constants.ErrorMessages.IsRequired);
+			.WithMessage(Constants.Errors.Messages.IsRequired);
 
 		RuleForEach(x => x.Items).ChildRules(itemValidator =>
 		{

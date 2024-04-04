@@ -64,7 +64,7 @@ public class List : EndpointWithoutRequest
 		catch (Exception ex)
 		{
 			return this.InternalServerError(
-				ErrorResponse.Create("An internal server error occurred while processing the request.")
+				ErrorResponse.Create(Constants.Errors.Categories.ServerError)
 				.AddExceptionError(ex)
 				);
 		}

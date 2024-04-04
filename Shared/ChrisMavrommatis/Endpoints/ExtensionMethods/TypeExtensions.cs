@@ -1,8 +1,8 @@
-﻿namespace Microsoft.Extensions.DependencyInjection;
+﻿namespace ChrisMavrommatis.Endpoints.ExtensionMethods;
 
 internal static class TypeExtensions
 {
-	public static IEnumerable<Type> GetBaseTypesAndThis(this Type type)
+	internal static IEnumerable<Type> GetBaseTypesAndThis(this Type type)
 	{
 		Type? current = type;
 		while (current != null)

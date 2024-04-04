@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Options;
 
-namespace ChrisMavrommatis.Services;
+namespace ChrisMavrommatis.FluentValidation.Services;
 
 internal class FluentValidationOptions<TOptions> : IValidateOptions<TOptions> where TOptions : class
 {
@@ -10,20 +10,20 @@ internal class FluentValidationOptions<TOptions> : IValidateOptions<TOptions> wh
 	public string? Name { get; }
 	public FluentValidationOptions(string? name, IValidator<TOptions> validator)
 	{
-		this.Name = name;
+		Name = name;
 		this.validator = validator;
 	}
 
 	public ValidateOptionsResult Validate(string? name, TOptions options)
 	{
-		if (this.Name != null && this.Name != name)
+		if (Name != null && Name != name)
 		{
 			return ValidateOptionsResult.Skip;
 		}
 
 		ArgumentNullException.ThrowIfNull(options);
 
-		var validationResult = this.validator.Validate(options);
+		var validationResult = validator.Validate(options);
 		if (validationResult.IsValid)
 			return ValidateOptionsResult.Success;
 

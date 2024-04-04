@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace Microsoft.AspNetCore.Mvc;
+namespace ChrisMavrommatis.Api.ActionResults;
 
 /// <summary>
 /// An <see cref="ObjectResult"/> that when executed will produce a Internal Server Error (500) response.

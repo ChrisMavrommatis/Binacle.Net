@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ChrisMavrommatis.Api;
 
 namespace ChrisMavrommatis.Endpoints;
 

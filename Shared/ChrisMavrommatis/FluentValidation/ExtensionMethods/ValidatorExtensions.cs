@@ -1,7 +1,8 @@
-﻿using FluentValidation.Results;
+﻿using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace FluentValidation;
+namespace ChrisMavrommatis.FluentValidation;
 
 public static class ValidatorExtensions
 {

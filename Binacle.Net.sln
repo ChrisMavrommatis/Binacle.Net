@@ -38,9 +38,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scaling Benchmarks", "Scali
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Requests", "Requests", "{E22F4DA6-AC28-43CA-B4EB-9BC9C4BFF4A2}"
 	ProjectSection(SolutionItems) = preProject
-		Resources\Requests\Api.Meta.http = Resources\Requests\Api.Meta.http
-		Resources\Requests\Api.Requests.http = Resources\Requests\Api.Requests.http
 		Resources\Requests\http-client.env.json = Resources\Requests\http-client.env.json
+		Resources\Requests\Binacle.Requests.http = Resources\Requests\Binacle.Requests.http
+		Resources\Requests\Users.Requests.http = Resources\Requests\Users.Requests.http
+		Resources\Requests\ServiceModule.Requests.http = Resources\Requests\ServiceModule.Requests.http
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis", "Shared\ChrisMavrommatis\ChrisMavrommatis.csproj", "{CE104668-6A28-4A62-B5A2-5554986B1754}"

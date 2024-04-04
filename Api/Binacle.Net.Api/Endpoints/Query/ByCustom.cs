@@ -1,11 +1,14 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Models.Requests;
+using Binacle.Net.Api.Models.Requests.Examples;
 using Binacle.Net.Api.Models.Responses;
+using Binacle.Net.Api.Models.Responses.Examples;
 using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Endpoints;
+using ChrisMavrommatis.FluentValidation;
+using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 
 namespace Binacle.Net.Api.Endpoints.Query;
 
@@ -74,8 +77,14 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	[Consumes("application/json")]
 	[Produces("application/json")]
 	[MapToApiVersion("1.0")]
+	[SwaggerRequestExample(typeof(CustomQueryRequest), typeof(CustomQueryRequestExample))]
+
 	[ProducesResponseType(typeof(QueryResponse), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(QueryResponse), typeof(CustomQueryResponseExamples), StatusCodes.Status200OK)]
+
 	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+	[SwaggerResponseExample(typeof(ErrorResponse), typeof(BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
+
 	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
 	public override async Task<IActionResult> HandleAsync(CustomQueryRequestWithBody request, CancellationToken cancellationToken = default)
 
@@ -85,8 +94,8 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 			if (request is null || request.Body is null)
 			{
 				return this.BadRequest(
-					ErrorResponse.Create("Malformed request")
-					.AddParameterError(nameof(request), Constants.ErrorMessages.MalformedRequestBody)
+					ErrorResponse.Create(Constants.Errors.Categories.RequestError)
+					.AddParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody)
 					);
 			}
 
@@ -95,7 +104,7 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 			if (!this.ModelState.IsValid)
 			{
 				return this.BadRequest(
-					ErrorResponse.Create("One or More Validation errors occurred.")
+					ErrorResponse.Create(Constants.Errors.Categories.ValidationError)
 					.AddModelStateErrors(this.ModelState)
 					);
 			}
@@ -109,7 +118,7 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 		catch (Exception ex)
 		{
 			return this.InternalServerError(
-				ErrorResponse.Create("An internal server error occurred while processing the request.")
+				ErrorResponse.Create(Constants.Errors.Categories.ServerError)
 				.AddExceptionError(ex)
 				);
 		}

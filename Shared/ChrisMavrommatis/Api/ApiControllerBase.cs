@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ChrisMavrommatis.Api.ActionResults;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace Microsoft.AspNetCore.Mvc;
+namespace ChrisMavrommatis.Api;
 
 [ApiController]
-public abstract class ApiControllerBase: ControllerBase
+public abstract class ApiControllerBase : ControllerBase
 {
 	/// <summary>
 	/// Creates an <see cref="InternalServerErrorObjectResult"/> that produces a <see cref="StatusCodes.Status500InternalServerError"/> response.
