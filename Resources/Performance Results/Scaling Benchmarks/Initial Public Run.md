@@ -1,3 +1,10 @@
+# Scaling Benchmark Results: Initial Public Run
+
+![chart_init_public_run](https://github.com/ChrisMavrommatis/Binacle.Net/assets/56303004/e011e7e8-889a-401b-97e8-c8471b5c172e)
+
+----
+
+
 ```
 
 BenchmarkDotNet v0.13.11, Windows 10 (10.0.19045.4046/22H2/2022Update) (VirtualBox)
