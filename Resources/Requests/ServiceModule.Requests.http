@@ -1,5 +1,8 @@
 ﻿// Service Module requests
 
+### Variables
+
+##
 
 ### Healthcheck
 GET https://{{Host}}/_health
@@ -15,3 +18,4 @@ Content-Type: application/json
 	"email": "test@test.com",
 	"password" : "testpassword"
 }
+

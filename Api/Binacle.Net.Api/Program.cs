@@ -39,6 +39,8 @@ public class Program
 
 		builder.Host.UseSerilog();
 
+		Log.Logger.Information("{moduleName} module. Status {status}", "Core", "Initializing");
+
 		builder.Services
 		   .AddOptions<BinPresetOptions>()
 		   .Bind(builder.Configuration.GetSection(BinPresetOptions.SectionName))
@@ -66,18 +68,16 @@ public class Program
 			options.GroupNameFormat = "'v'VVV";
 			options.SubstituteApiVersionInUrl = true;
 		});
+
 		builder.Services.AddSingleton(_ => TimeProvider.System);
 		builder.Services.AddSingleton<ILockerService, LockerService>();
-
-		if (FeaturesRegistry.IsFeatureEnabled("SERVICE_MODULE"))
-		{
-			builder.AddServiceModule();
-		}
+		
 		builder.Services.AddSwaggerExamples(options =>
 		{
 			options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
 
 		});
+
 		builder.Services.AddSwaggerGen();
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
@@ -91,6 +91,13 @@ public class Program
 			options.LowercaseQueryStrings = true;
 			options.LowercaseUrls = true;
 		});
+
+		Log.Logger.Information("{moduleName} module. Status {status}", "Core", "Initialized");
+		
+		if (FeaturesRegistry.IsFeatureEnabled("SERVICE_MODULE"))
+		{
+			builder.AddServiceModule();
+		}
 
 		var app = builder.Build();
 

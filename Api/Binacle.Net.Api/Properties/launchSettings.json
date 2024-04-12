@@ -21,8 +21,7 @@
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development",
 				"SWAGGER_UI": "True",
-				"SERVICE_MODULE": "True",
-				"AZUREMONITOR_SAMPLING_RATIO": "0.5"
+				"SERVICE_MODULE": "True"
 			}
 		}
   }

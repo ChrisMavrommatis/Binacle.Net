@@ -17,4 +17,10 @@
     <ProjectReference Include="..\Binacle.Net.Lib.Tests\Binacle.Net.Lib.Tests.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="https://json.schemastore.org/lsdlschema.json" /></VisualStudio></ProjectExtensions>
+
 </Project>

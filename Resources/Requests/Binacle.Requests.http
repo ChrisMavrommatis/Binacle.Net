@@ -1,11 +1,13 @@
 ﻿// Sample Requests
 
 ### Variables
-@preset = rectangular-cuboids
+@preset = rectangular-cuboibs;
 
+##
 
-### Get all presets
+###  List all presets
 GET https://{{Host}}/api/v1/presets
+
 
 ### Query based on a preset
 POST https://{{Host}}/api/v1/query/by-preset/{{preset}}
@@ -37,7 +39,7 @@ Content-Type: application/json
 {
   "bins": 
   [
-      {
+	  {
           "id": "custom_bin_1",
           "length": 10,
           "width": 40,
@@ -67,5 +69,3 @@ Content-Type: application/json
       }
   ]
 }
-
-

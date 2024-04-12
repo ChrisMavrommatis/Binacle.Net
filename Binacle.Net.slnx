@@ -1,0 +1,33 @@
+<Solution>
+  <Folder Name="/Tests/">
+    <Project Path="Tests\Binacle.Net.Lib.Benchmarks\Binacle.Net.Lib.Benchmarks.csproj" />
+    <Project Path="Tests\Binacle.Net.Lib.Tests\Binacle.Net.Lib.Tests.csproj" />
+    <Project Path="Tests\Binacle.Net.Lib.UnitTests\Binacle.Net.Lib.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="Shared\ChrisMavrommatis\ChrisMavrommatis.csproj" />
+  </Folder>
+  <Folder Name="/Resources/Requests/">
+    <File Path="Resources\Requests\Binacle.Requests.http" />
+    <File Path="Resources\Requests\http-client.env.json" />
+    <File Path="Resources\Requests\ServiceModule.Requests.http" />
+    <File Path="Resources\Requests\Users.Requests.http" />
+  </Folder>
+  <Folder Name="/Resources/Performance Results/Scaling Benchmarks/">
+    <File Path="Resources\Performance Results\Scaling Benchmarks\Initial Public Run.md" />
+  </Folder>
+  <Folder Name="/Resources/Performance Results/" />
+  <Folder Name="/Resources/Documentation/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Resources/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Folder Name="/Library/">
+    <Project Path="Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
+  </Folder>
+  <Folder Name="/Api/">
+    <Project Path="Api\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
+    <Project Path="Api\Binacle.Net.Api\Binacle.Net.Api.csproj" />
+  </Folder>
+</Solution>

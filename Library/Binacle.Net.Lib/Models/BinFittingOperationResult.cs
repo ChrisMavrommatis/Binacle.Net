@@ -8,11 +8,11 @@ public class BinFittingOperationResult
 	{
 	}
 
-	public BinFitResultStatus Status { get; private set; }
-	public BinFitFailedResultReason? Reason { get; private set; }
-	public IItemWithReadOnlyDimensions<int> FoundBin { get; private set; }
-	public List<IItemWithReadOnlyDimensions<int>> FittedItems { get; private set; }
-	public List<IItemWithReadOnlyDimensions<int>> NotFittedItems { get; private set; }
+	public BinFitResultStatus Status { get; internal set; }
+	public BinFitFailedResultReason? Reason { get; internal set; }
+	public IItemWithReadOnlyDimensions<int> FoundBin { get; internal set; }
+	public List<IItemWithReadOnlyDimensions<int>> FittedItems { get; internal set; }
+	public List<IItemWithReadOnlyDimensions<int>> NotFittedItems { get; internal set; }
 
 	public static BinFittingOperationResult CreateFailedResult(
 		BinFitFailedResultReason? reason = null,

@@ -35,7 +35,7 @@ public static class ModuleDefinition
 			.WriteTo.ApplicationInsights(TelemetryConverter.Traces)
 			.CreateLogger();
 
-		Log.Logger.Information("Starting up with Service Module");
+		Log.Logger.Information("{moduleName} module. Status {status}", "Service", "Initializing");
 
 		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
@@ -169,6 +169,8 @@ public static class ModuleDefinition
 			});
 			options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 		});
+
+		Log.Logger.Information("{moduleName} module. Status {status}", "Service", "Initialized");
 	}
 
 	public static void UseServiceModule(this WebApplication app)
