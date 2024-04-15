@@ -2,12 +2,11 @@
 
 // Sample Token
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-@email = test@test.com
 
 ##
 
 ### Create a user
-POST https://{{Host}}/users
+POST https://{{HOST}}/users
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -19,7 +18,7 @@ Authorization: Bearer {{token}}
 	
 
 ### Change a users password
-PATCH https://{{Host}}/users/{{email}}
+PATCH https://{{HOST}}/users/test@test.com
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -30,7 +29,7 @@ Authorization: Bearer {{token}}
 
 
 ### Delete a user
-DELETE https://{{Host}}/users/{{email}}
+DELETE https://{{HOST}}/users/test@test.com
 Accept: application/json
 Authorization: Bearer {{token}}
 

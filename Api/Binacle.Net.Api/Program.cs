@@ -24,7 +24,7 @@ public class Program
 		// Slim builder
 		builder.WebHost.UseQuic(); //HTTP 3 support
 
-		builder.Configuration.SetBasePath($"{Directory.GetCurrentDirectory()}/App_Data");
+		builder.Configuration.SetBasePath($"{Directory.GetCurrentDirectory()}/Config_Files");
 
 		builder.Configuration
 			.AddJsonFile(BinPresetOptions.FilePath, optional: false, reloadOnChange: true);

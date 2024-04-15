@@ -1,13 +1,12 @@
 ﻿using Asp.Versioning.ApiExplorer;
 using Binacle.Net.Api.Models.Responses.Errors;
+using ChrisMavrommatis.Endpoints;
+using ChrisMavrommatis.SwaggerExamples;
+using ChrisMavrommatis.Swashbuckle;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using System.Reflection;
-using ChrisMavrommatis.Endpoints;
-using ChrisMavrommatis.SwaggerExamples;
-using ChrisMavrommatis.Swashbuckle;
 
 namespace Binacle.Net.Api.Configuration;
 
@@ -56,8 +55,14 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 			{
 				Title = $"Binacle API {description.ApiVersion}",
 				Version = description.ApiVersion.ToString(),
-				Description = "Binacle API is an API that provides a way to to solve the bin fitting problem in one dimension only.",
-				License = new OpenApiLicense() { Name = "View on Github", Url = new Uri("https://github.com/ChrisMavrommatis/Binacle.Net") },
+				Description = __description__,
+				// gpl 3 license
+				License = new OpenApiLicense
+				{
+					Name = "GNU General Public License v3.0",
+					Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.html")
+				},
+
 			};
 
 			if (description.IsDeprecated)
@@ -80,4 +85,13 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 			options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Binacle API {description.GroupName.ToUpperInvariant()}");
 		}
 	}
+
+	private const string __description__ = """
+		Binacle API is an API that provides a way to to solve the bin fitting problem in one dimension only.
+		
+		[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)
+
+		[Get Postman collection](https://www.postman.com/chrismavrommatis/workspace/binacle-net)
+
+		""";
 }

@@ -10,8 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.Api.Endpoints.Presets;
 
-[ApiVersion("1.0")]
-[Route("api/v{version:apiVersion}/[namespace]")]
+[Route("api/[namespace]")]
 public class List : EndpointWithoutRequest
 {
 	private readonly IOptions<BinPresetOptions> presetOptions;
@@ -22,7 +21,7 @@ public class List : EndpointWithoutRequest
 	}
 
 	/// <summary>
-	/// Lists the presets present in configuration
+	/// Lists the presets present in configuration.
 	/// </summary>
 	/// <response code="200"> <b>OK</b>
 	/// <br />
@@ -47,7 +46,6 @@ public class List : EndpointWithoutRequest
 	/// </response>
 	[Consumes("application/json")]
 	[Produces("application/json")]
-	[MapToApiVersion("1.0")]
 	[HttpGet]
 	[ProducesResponseType(typeof(PresetListResponse), StatusCodes.Status200OK)]
 	[SwaggerResponseExample(typeof(PresetListResponse), typeof(PresetListResponseExample), StatusCodes.Status200OK)]

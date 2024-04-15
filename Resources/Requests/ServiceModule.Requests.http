@@ -5,12 +5,13 @@
 ##
 
 ### Healthcheck
-GET https://{{Host}}/_health
+GET https://{{HOST}}/_health
 Accept: application/json
 
 
+
 ### Auth Token
-POST https://{{Host}}/auth/token
+POST https://{{HOST}}/auth/token
 Accept: application/json
 Content-Type: application/json
 

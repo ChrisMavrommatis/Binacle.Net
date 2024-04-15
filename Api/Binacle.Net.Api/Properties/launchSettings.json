@@ -12,7 +12,7 @@
 				"SWAGGER_UI": "True"
 			}
 		},
-		"WithService": {
+		"AsAService": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"launchBrowser": false,
