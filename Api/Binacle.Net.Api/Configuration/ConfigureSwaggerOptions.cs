@@ -53,7 +53,7 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 		{
 			var info = new OpenApiInfo()
 			{
-				Title = $"Binacle API {description.ApiVersion}",
+				Title = $"Binacle.Net API {description.ApiVersion}",
 				Version = description.ApiVersion.ToString(),
 				Description = __description__,
 				// gpl 3 license
@@ -65,10 +65,7 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 
 			};
 
-			if (description.IsDeprecated)
-			{
-				info.Description += " This API version has been deprecated. Please use one of the new APIs available from the explorer.";
-			}
+			info.Description = info.Description.Replace("{{deprecated}}", description.IsDeprecated ? __deprecatedMessage__: string.Empty);
 
 			options.SwaggerDoc(description.GroupName, info);
 		}
@@ -82,16 +79,24 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 
 		foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
 		{
-			options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Binacle API {description.GroupName.ToUpperInvariant()}");
+			options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Binacle.Net API {description.GroupName.ToUpperInvariant()}");
 		}
 	}
 
 	private const string __description__ = """
-		Binacle API is an API that provides a way to to solve the bin fitting problem in one dimension only.
+		Binacle.Net is an API that provides a way to to solve the bin fitting problem in one dimension only.
 		
+		{{deprecated}}
+
 		[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)
 
 		[Get Postman collection](https://www.postman.com/chrismavrommatis/workspace/binacle-net)
+
+		""";
+
+	private const string __deprecatedMessage__ = """
+
+		*This API version has been deprecated. Please use one of the new APIs available from the explorer.*
 
 		""";
 }
