@@ -25,6 +25,6 @@ Many heuristics have been developed to solve the bin packing problem, and the Fi
 ```bash
 docker run --name binacle-net -p 8080:8080 chrismavrommatis/binacle-net
 docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True chrismavrommatis/binacle-net
-docker run --name binacle-net -p 8080:8080 -v $(pwd)/Presets.json:/app/App_Data/Presets.json:ro chrismavrommatis/binacle-net
-docker run --name binacle-net -p 8080:8080 -v %cd%/Presets.json:/app/App_Data/Presets.json:ro chrismavrommatis/binacle-net
+docker run --name binacle-net -p 8080:8080 -v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net
+docker run --name binacle-net -p 8080:8080 -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net
 ```
