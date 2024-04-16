@@ -56,8 +56,8 @@ Follow the steps bellow to get Binacle.Net up and running with Docker.
 
 # Customizing Binacle.Net presets
 
-Binacle.Net ships with specific bin [Presets](https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/Api/Binacle.Net.Api/Config_Files/Presets.json), but you can change the to suit your business.
-Although you can send the bins with the items using the Query by Custom endpoint, its best avoided in production, plus you save a bit on the bandwidth.
+Binacle.Net ships with specific bin [Presets](https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/Api/Binacle.Net.Api/Config_Files/Presets.json), but you can change them to suit your business needs.
+Although you can send the bins with the items using the Query by Custom endpoint, its best avoided if you know the bins ahead of time, and use the Query by Preset endpoint instead.
 
 To change the presets grab the [Presets.json](https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/Api/Binacle.Net.Api/Config_Files/Presets.json) file and change it how you want.
 While Binacle.Net assumes centimeters will be used there is nothing stopping you from using a different system, assuming the dimensions are integers and the same unit for the bins and the items.
