@@ -12,6 +12,7 @@ Websites offering the locker shipping option, will most commonly want to present
 
 Binacle.NET caters precisely to this use case, employing a heuristic algorithm to swiftly address the problem, ensuring minimal wait times for customers.
 
+E-commerce platforms that wish to provide a locker shipping option usually either base their packaging on the dimensions of the end locker container or utilize their own pre-defined boxes tailored to fit the lockers.
 
 ## Algorithm
 Binacle.Net utilizes a hybrid variant of the First Fit Decreasing algorithm to address the 3D Bin Packing Problem in a Bin Selection Variation.
