@@ -92,11 +92,11 @@ Place the updated Presets.json file anywhere on your system and execute the appr
   docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
   ```
 - For Windows (without Swagger)
-  ```bash
+  ```bat 
   docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
   ```
 - For Windows (with Swagger)
-  ```bash
+  ```bat
   docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
   ```
 
