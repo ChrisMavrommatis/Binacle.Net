@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Binacle.Net.Api.Validators;
 
-public class ItemWithDimensionsValidator : AbstractValidator<IWithReadOnlyDimensions<int>>
+internal class ItemWithDimensionsValidator : AbstractValidator<IWithReadOnlyDimensions<int>>
 {
 	public ItemWithDimensionsValidator()
 	{

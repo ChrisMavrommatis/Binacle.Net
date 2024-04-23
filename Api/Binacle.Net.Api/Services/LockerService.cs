@@ -4,6 +4,7 @@ using ChrisMavrommatis.Logging;
 
 namespace Binacle.Net.Api.Services;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public interface ILockerService
 {
 	public BinFittingOperationResult FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
@@ -12,7 +13,7 @@ public interface ILockerService
 
 }
 
-public class LockerService : ILockerService
+internal class LockerService : ILockerService
 {
 	private readonly Lib.StrategyFactory strategyFactory;
 	private readonly ILogger<LockerService> logger;

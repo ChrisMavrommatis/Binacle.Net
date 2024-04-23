@@ -4,6 +4,7 @@ using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.ServiceModule;
 using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Endpoints;
+using ChrisMavrommatis.Features;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples;
 using FluentValidation;
@@ -16,6 +17,14 @@ public class Program
 {
 	public static void Main(string[] args)
 	{
+		Log.Logger = new LoggerConfiguration()
+			.MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
+			.Enrich.FromLogContext()
+			.Enrich.WithMachineName()
+			.Enrich.WithThreadId()
+			.WriteTo.Console()
+			.CreateBootstrapLogger();
+
 		var builder = WebApplication.CreateSlimBuilder(args);
 
 		// Slim builder
@@ -27,19 +36,29 @@ public class Program
 		builder.Configuration.SetBasePath($"{Directory.GetCurrentDirectory()}/Config_Files");
 
 		builder.Configuration
-			.AddJsonFile(BinPresetOptions.FilePath, optional: false, reloadOnChange: true);
-
-		builder.Configuration
 			.AddJsonFile("Serilog.json", optional: false, reloadOnChange: true)
 			.AddJsonFile($"Serilog.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-		
-		Log.Logger = new LoggerConfiguration()
+
+		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+		{
+			loggerConfiguration
+			.ReadFrom.Configuration(builder.Configuration);
+		});
+
+		Log.Information("{moduleName} module. Status {status}", "Core", "Initializing");
+
+		builder.Configuration
+			.AddJsonFile(BinPresetOptions.FilePath, optional: false, reloadOnChange: true);
+
+		// Feature Management
+		builder.Configuration
+			.AddJsonFile("Features.json", optional: false, reloadOnChange: true)
+			.AddJsonFile($"Features.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
+		Feature.Manager = new FeatureManagerConfiguration()
+			.ReadFrom.EnvironmentVariables()
 			.ReadFrom.Configuration(builder.Configuration)
-			.CreateLogger();
-
-		builder.Host.UseSerilog();
-
-		Log.Logger.Information("{moduleName} module. Status {status}", "Core", "Initializing");
+			.CreateManager();
 
 		builder.Services
 		   .AddOptions<BinPresetOptions>()
@@ -47,7 +66,7 @@ public class Program
 		   .ValidateFluently()
 		   .ValidateOnStart();
 
-		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton);
+		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
 
 		builder.Services.AddControllers(options =>
 		{
@@ -71,12 +90,13 @@ public class Program
 
 		builder.Services.AddSingleton(_ => TimeProvider.System);
 		builder.Services.AddSingleton<ILockerService, LockerService>();
-		
+
 		builder.Services.AddSwaggerExamples(options =>
 		{
 			options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
 
 		});
+
 
 		builder.Services.AddSwaggerGen();
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
@@ -92,9 +112,10 @@ public class Program
 			options.LowercaseUrls = true;
 		});
 
-		Log.Logger.Information("{moduleName} module. Status {status}", "Core", "Initialized");
-		
-		if (FeaturesRegistry.IsFeatureEnabled("SERVICE_MODULE"))
+
+		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
+
+		if (Feature.IsEnabled("SERVICE_MODULE"))
 		{
 			builder.AddServiceModule();
 		}
@@ -108,23 +129,23 @@ public class Program
 		{
 			app.UseDeveloperExceptionPage();
 		}
-		
+
 		// SWAGGER_UI from environment vars
-		if (FeaturesRegistry.IsFeatureEnabled("SWAGGER_UI") || app.Environment.IsDevelopment())
+		if (Feature.IsEnabled("SWAGGER_UI"))
 		{
 			app.UseSwagger();
-			app.UseSwaggerUI(options => 
+			app.UseSwaggerUI(options =>
 			{
 				ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
 
-				if (FeaturesRegistry.IsFeatureEnabled("SERVICE_MODULE"))
+				if (Feature.IsEnabled("SERVICE_MODULE"))
 				{
 					options.ConfigureServiceModuleSwaggerUI(app);
 				}
 			});
 		}
 
-		if (FeaturesRegistry.IsFeatureEnabled("SERVICE_MODULE"))
+		if (Feature.IsEnabled("SERVICE_MODULE"))
 		{
 			app.UseServiceModule();
 		}

@@ -1,7 +1,7 @@
 ﻿
 namespace Binacle.Net.Api.Constants.Errors;
 
-public static class Categories
+internal static class Categories
 {
 	public const string RequestError = "Malformed request";
 	public const string ValidationError = "One or more validation errors occurred";
@@ -10,7 +10,7 @@ public static class Categories
 
 }
 
-public static class Messages
+internal static class Messages
 {
 	public const string IsRequired = "Is required.";
 	public const string MalformedRequestBody = "Malformed request body.";

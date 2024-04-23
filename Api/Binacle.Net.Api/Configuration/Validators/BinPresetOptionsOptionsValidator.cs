@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Binacle.Net.Api.Configuration.Validators;
 
-public class BinPresetOptionsOptionsValidator : AbstractValidator<BinPresetOptions>
+internal class BinPresetOptionsOptionsValidator : AbstractValidator<BinPresetOptions>
 {
 	public BinPresetOptionsOptionsValidator()
 	{

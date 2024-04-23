@@ -2,7 +2,7 @@
 using Binacle.Net.Api.ServiceModule.ApiModels.Responses;
 using Binacle.Net.Api.ServiceModule.Models;
 using Binacle.Net.Api.ServiceModule.Services;
-using ChrisMavrommatis.MinimalEndpoints;
+using ChrisMavrommatis.MinimalEndpointDefinitions;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

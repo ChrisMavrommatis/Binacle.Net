@@ -1,28 +1,6 @@
 ﻿{
 	"PresetOptions": {
 		"Presets": {
-			"perfect-cubes": {
-				"Bins": [
-					{
-						"ID": "Small",
-						"Length": 10,
-						"Width": 10,
-						"Height": 10
-					},
-					{
-						"ID": "Medium",
-						"Length": 20,
-						"Width": 20,
-						"Height": 20
-					},
-					{
-						"ID": "Large",
-						"Length": 30,
-						"Width": 30,
-						"Height": 30
-					}
-				]
-			},
 			"rectangular-cuboids": {
 				"Bins": [
 					{
@@ -42,6 +20,28 @@
 						"Length": 30,
 						"Width": 40,
 						"Height": 60
+					}
+				]
+			},
+			"perfect-cubes": {
+				"Bins": [
+					{
+						"ID": "Small",
+						"Length": 10,
+						"Width": 10,
+						"Height": 10
+					},
+					{
+						"ID": "Medium",
+						"Length": 20,
+						"Width": 20,
+						"Height": 20
+					},
+					{
+						"ID": "Large",
+						"Length": 30,
+						"Width": 30,
+						"Height": 30
 					}
 				]
 			},

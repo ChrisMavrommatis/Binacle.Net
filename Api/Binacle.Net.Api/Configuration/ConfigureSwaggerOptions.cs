@@ -1,5 +1,4 @@
 ﻿using Asp.Versioning.ApiExplorer;
-using Binacle.Net.Api.Models.Responses.Errors;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.SwaggerExamples;
 using ChrisMavrommatis.Swashbuckle;
@@ -10,14 +9,10 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Binacle.Net.Api.Configuration;
 
-public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
+internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 {
 	private readonly IApiVersionDescriptionProvider _provider;
-	private static Dictionary<Type, Type[]> polymorphicTypeMappings = new()
-	{
-		{ typeof(IApiError), new[] { typeof(FieldValidationError), typeof(ParameterError), typeof(ExceptionError), } }
-	};
-
+	
 	public ConfigureSwaggerOptions(
 		IApiVersionDescriptionProvider provider
 		)
@@ -42,7 +37,7 @@ public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 		options.UseSwaggerExamples();
 		// options.SchemaFilter<PresetQueryRequestExampleSchemaFilter>();
 		options.UseOneOfForPolymorphism();
-		options.AddPolymorphicTypeMappings(polymorphicTypeMappings);
+		options.AddPolymorphicTypeMappings(v1.ModuleApiVersion.PolymorphicTypeMappings);
 		options.TagActionsByEndpointNamespaceOrDefault();
 		options.DescribeAllParametersInCamelCase();
 	}

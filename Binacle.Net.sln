@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33417.168
@@ -50,12 +49,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{7FDF3FB1-2BFD-4A01-910D-D3C32B5F30AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binacle.Net.Api.IntegrationTests", "Tests\Binacle.Net.Api.IntegrationTests\Binacle.Net.Api.IntegrationTests.csproj", "{7B1351F2-2FC4-4A3E-A8B5-9B3C60223B9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B1351F2-2FC4-4A3E-A8B5-9B3C60223B9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B1351F2-2FC4-4A3E-A8B5-9B3C60223B9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B1351F2-2FC4-4A3E-A8B5-9B3C60223B9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B1351F2-2FC4-4A3E-A8B5-9B3C60223B9B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AE3E5ECD-B7D9-4EC3-953C-F1CD95C7D0D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE3E5ECD-B7D9-4EC3-953C-F1CD95C7D0D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE3E5ECD-B7D9-4EC3-953C-F1CD95C7D0D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -89,6 +94,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{7B1351F2-2FC4-4A3E-A8B5-9B3C60223B9B} = {9811251B-4BAE-4BBD-BDD5-DE6AC10DF58E}
 		{AE3E5ECD-B7D9-4EC3-953C-F1CD95C7D0D4} = {84734185-F64B-44F8-A53D-27C9AFB4B9C8}
 		{DC104286-5FE7-4060-8ABB-EF1F2B28FD14} = {EBE1FF36-023B-4BFC-93C4-4DFB9C19CBCD}
 		{26FBDCCD-AC62-4EEE-8DB7-AA2DC22014AE} = {9811251B-4BAE-4BBD-BDD5-DE6AC10DF58E}

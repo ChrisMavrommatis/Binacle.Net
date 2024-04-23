@@ -4,7 +4,7 @@ using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Data.Entities;
 using Binacle.Net.Api.ServiceModule.Models;
 using Binacle.Net.Api.ServiceModule.Services;
-using ChrisMavrommatis.MinimalEndpoints;
+using ChrisMavrommatis.MinimalEndpointDefinitions;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +19,11 @@ internal class UsersEndpointsDefinition : IEndpointDefinition
 {
 	public void DefineEndpoints(WebApplication app)
 	{
+		if (!app.Environment.IsDevelopment())
+		{
+			return;
+		}
+
 		var group = app.MapGroup(ConfigureSwaggerOptions.UsersApiName)
 			.WithTags("Users (Admin only)")
 			.RequireAuthorization(builder =>
@@ -26,11 +31,6 @@ internal class UsersEndpointsDefinition : IEndpointDefinition
 				builder.RequireAuthenticatedUser();
 				builder.RequireClaim(JwtApplicationClaimNames.Groups, UserGroups.Admins);
 			}).WithGroupName(ConfigureSwaggerOptions.UsersApiName);
-
-		if (!app.Environment.IsDevelopment())
-		{
-			group = group.ExcludeFromDescription();
-		}
 
 		group.MapPost("/", Create)
 			.WithSummary("Create a user")

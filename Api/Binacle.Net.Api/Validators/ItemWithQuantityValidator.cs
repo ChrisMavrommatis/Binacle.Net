@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Binacle.Net.Api.Validators;
 
-public class ItemWithQuantityValidator : AbstractValidator<IWithQuantity<int>>
+internal class ItemWithQuantityValidator : AbstractValidator<IWithQuantity<int>>
 {
 	public ItemWithQuantityValidator()
 	{

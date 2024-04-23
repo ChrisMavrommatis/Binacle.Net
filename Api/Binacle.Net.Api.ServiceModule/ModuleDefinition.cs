@@ -1,23 +1,19 @@
 ﻿using Azure.Data.Tables;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Data.Repositories;
-using Binacle.Net.Api.ServiceModule.EndpointDefinitions;
 using Binacle.Net.Api.ServiceModule.Services;
 using ChrisMavrommatis.FluentValidation;
-using ChrisMavrommatis.MinimalEndpoints;
+using ChrisMavrommatis.MinimalEndpointDefinitions;
 using FluentValidation;
 using HealthChecks.UI.Client;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
@@ -29,13 +25,18 @@ public static class ModuleDefinition
 {
 	public static void AddServiceModule(this WebApplicationBuilder builder)
 	{
-		// overwrite default
-		Log.Logger = new LoggerConfiguration()
-			.ReadFrom.Configuration(builder.Configuration)
-			.WriteTo.ApplicationInsights(TelemetryConverter.Traces)
-			.CreateLogger();
+		Log.Information("{moduleName} module. Status {status}", "Service", "Initializing");
 
-		Log.Logger.Information("{moduleName} module. Status {status}", "Service", "Initializing");
+		// overwrite default
+		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+		{
+			loggerConfiguration
+			.ReadFrom.Configuration(builder.Configuration)
+			.WriteTo.ApplicationInsights(
+				services.GetRequiredService<TelemetryConfiguration>(),
+				TelemetryConverter.Traces
+				);
+		});
 
 		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
@@ -67,7 +68,7 @@ public static class ModuleDefinition
 				ValidateIssuerSigningKey = true,
 				ValidIssuer = jwtAuthOptions.Issuer,
 				ValidAudience = jwtAuthOptions.Audience,
-				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtAuthOptions.TokenSecret))
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtAuthOptions.TokenSecret)),
 			};
 		});
 
@@ -99,53 +100,25 @@ public static class ModuleDefinition
 		builder.Services
 			.AddHealthChecks();
 
-		builder.Services.AddOpenTelemetry()
-			.WithMetrics(configure =>
-			{
-				configure
-				.AddRuntimeInstrumentation()
-				.AddMeter("Microsoft.AspNetCore.Hosting")
-				.AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-				.AddMeter("Microsoft.AspNetCore.RateLimiting");
-
-			}).WithTracing(configure =>
-			{
-				configure.AddAspNetCoreInstrumentation();
-
-			}).UseAzureMonitor(configure =>
-			{
-				var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
-				if(samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
-				{
-					configure.SamplingRatio = ratio;
-				}
-
-				var connectionString = builder.Configuration.GetConnectionString("ApplicationInsights");
-
-				if (string.IsNullOrWhiteSpace(connectionString))
-				{
-					connectionString = Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING");
-				}
-
-				if (string.IsNullOrWhiteSpace(connectionString))
-				{
-					throw new InvalidOperationException("ApplicationInsights connection string is missing");
-				}
-
-				configure.ConnectionString = connectionString;
-			});
-
-		var endpointDefinitions = new List<IEndpointDefinition>()
+		builder.Services.AddApplicationInsightsTelemetry(options =>
 		{
-			new AuthEndpointsDefinition()
-		};
 
-		if (builder.Environment.IsDevelopment())
-		{
-			endpointDefinitions.Add(new UsersEndpointsDefinition());
-		}
+			var connectionString = builder.Configuration.GetConnectionString("ApplicationInsights");
 
-		builder.Services.AddSingleton(endpointDefinitions as IReadOnlyCollection<IEndpointDefinition>);
+			if (string.IsNullOrWhiteSpace(connectionString))
+			{
+				connectionString = Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING");
+			}
+
+			if (string.IsNullOrWhiteSpace(connectionString))
+			{
+				throw new InvalidOperationException("ApplicationInsights connection string is missing");
+			}
+
+			options.ConnectionString = connectionString;
+		});
+
+		builder.Services.AddMinimalEndpointDefinitions<IModuleMarker>();
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 		builder.Services.AddRateLimiter(options =>
@@ -170,7 +143,7 @@ public static class ModuleDefinition
 			options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 		});
 
-		Log.Logger.Information("{moduleName} module. Status {status}", "Service", "Initialized");
+		Log.Information("{moduleName} module. Status {status}", "Service", "Initialized");
 	}
 
 	public static void UseServiceModule(this WebApplication app)
@@ -191,12 +164,7 @@ public static class ModuleDefinition
 
 		app.UseAuthentication();
 		app.UseAuthorization();
-
-		var endpointDefinitions = app.Services.GetRequiredService<IReadOnlyCollection<IEndpointDefinition>>();
-		foreach (var endpointDefinition in endpointDefinitions)
-		{
-			endpointDefinition.DefineEndpoints(app);
-		}
+		app.UseMinimalEndpointDefinitions();
 
 		app.UseRateLimiter();
 	}

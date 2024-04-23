@@ -1,6 +1,8 @@
 ﻿namespace Binacle.Net.Api.Configuration.Models;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 public class BinPresetOption
 {
-	public List<BinOption> Bins { get; set; }
+	public List<BinOption> Bins { get; set; } = new();
 }

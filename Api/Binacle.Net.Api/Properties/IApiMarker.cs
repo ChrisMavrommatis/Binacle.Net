@@ -1,7 +1,8 @@
-﻿
-namespace Binacle.Net.Api;
+﻿namespace Binacle.Net.Api;
 
-// Do not Touch this. It is used for assembly scanning
+/// <summary>
+/// Marker class used for assembly scanning
+/// </summary>
 public interface IApiMarker
 {
 }
