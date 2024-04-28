@@ -1,11 +1,5 @@
 ﻿# Binacle.NET
 
-## Links
-
-- [🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/chrismavrommatis/binacle-net)
-- [Postman Collection](https://www.postman.com/chrismavrommatis/workspace/binacle-net/)
-
-
 ## Overview
 Binacle.NET is an API created to address the 3D Bin Packing Problem in a Bin Selection Variation.
 
@@ -13,7 +7,7 @@ It is designed to be integrated into e-commerce platforms that offer parcel ship
 
 Upon receiving a set of bins and items, Binacle.NET swiftly determines the optimal bin, if any, capable of accommodating all items efficiently.
 
-Websites offering the locker shipping option, will most commonly want to present this option to their customer before the they place the order, this is typically done in cart or during checkout which are critical stages during the customer's purchase journey.
+Websites offering the locker shipping option, will most commonly want to present this option to their customer before they place the order, this is typically done in cart or during checkout which are critical stages during the customer's purchase journey.
 
 Binacle.NET caters precisely to this use case, employing a heuristic algorithm to swiftly address the problem, ensuring minimal wait times for customers.
 
@@ -164,4 +158,10 @@ services:
       - SWAGGER_UI=True
 ```
 
+## Links
+
+- [🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/chrismavrommatis/binacle-net)
+- [Postman Collection](https://www.postman.com/chrismavrommatis/workspace/binacle-net/)
+
+  
 
