@@ -1,24 +1,27 @@
-﻿using Xunit;
+﻿using Binacle.Net.Lib.Tests.Models;
+using Binacle.Net.Lib.UnitTests.Data.Models;
+using Xunit;
 
-namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;
+namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
 
-public class SanityTests : IClassFixture<FirstFitDecreasingFixture>
+[Trait("Sanity Tests", "Ensures the tests are configured correctly")]
+public class SanityTests : IClassFixture<SanityFixture>
 {
-	private FirstFitDecreasingFixture Fixture { get; }
+	private SanityFixture Fixture { get; }
 
-	public SanityTests(FirstFitDecreasingFixture fixture)
+	public SanityTests(SanityFixture fixture)
 	{
 		this.Fixture = fixture;
 	}
 
 	[Fact]
-	public void TestsWork()
+	public void Tests_Work()
 	{
 		Xunit.Assert.True(true);
 	}
 
 	[Fact]
-	public void BinCollectionsConfigured()
+	public void Bin_Collections_Configured()
 	{
 		Xunit.Assert.NotNull(this.Fixture);
 		Xunit.Assert.NotNull(this.Fixture.Bins);
@@ -30,16 +33,27 @@ public class SanityTests : IClassFixture<FirstFitDecreasingFixture>
 	}
 
 	[Fact]
-	public void ScenariosConfiguredCorrectly()
+	public void Scenarios_Configured_Correctly()
 	{
 		Xunit.Assert.NotNull(this.Fixture);
-		Xunit.Assert.NotNull(this.Fixture.Scenarios);
-		Xunit.Assert.True(this.Fixture.Scenarios.Count > 0);
 
-		foreach (var scenario in this.Fixture.Scenarios.Values)
+		Assert_Scenarios_Are_ConfiguredCorrectly(this.Fixture.Bins, this.Fixture.NormalScenarios);
+		Assert_Scenarios_Are_ConfiguredCorrectly(this.Fixture.Bins, this.Fixture.CompactScenarios);
+	}
+
+	private static void Assert_Scenarios_Are_ConfiguredCorrectly(
+		Dictionary<string, List<TestBin>> bins,
+		Dictionary<string, Scenario> scenarios
+		)
+	{
+
+		Xunit.Assert.NotNull(scenarios);
+		Xunit.Assert.True(scenarios.Count > 0);
+
+		foreach (var scenario in scenarios.Values)
 		{
 			var scenarioExpectedSize = scenario.ExpectedSize;
-			this.Fixture.Bins.TryGetValue(scenario.BinCollection, out var binCollection);
+			bins.TryGetValue(scenario.BinCollection, out var binCollection);
 			Xunit.Assert.NotNull(binCollection);
 			if (scenarioExpectedSize != "None")
 			{
@@ -48,4 +62,6 @@ public class SanityTests : IClassFixture<FirstFitDecreasingFixture>
 			}
 		}
 	}
+
+
 }

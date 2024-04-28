@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Lib.Tests.Models;
+﻿using Binacle.Net.Lib.Tests.Data.Models;
+using Binacle.Net.Lib.Tests.Models;
 using System.Collections;
 
 namespace Binacle.Net.Lib.Tests.Data.Providers;
@@ -28,14 +29,17 @@ internal class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 		{ 1000, "None" }
 	};
 
+	private static IReadOnlyList<BenchmarkScalingScenario> scenarios = testCases
+		.Select(x => new BenchmarkScalingScenario(x.Key, x.Value))
+		.ToList();
+
 	// ranges for assertion 193-384, 385-576, 577-1000
-	private static Dictionary<string, Models.Range> ranges = new Dictionary<string, Models.Range>()
-	{
-		{ "Small", new Models.Range(1, 192) },
-		{ "Medium", new Models.Range(193, 384) },
-		{ "Large", new Models.Range(385, 576) },
-		{ "None", new Models.Range(577, 1000) }
-	};
+	private static Dictionary<string, Tests.Models.Range> ranges = scenarios
+		.GroupBy(x => x.ExpectedSize)
+		.ToDictionary(
+		g => g.FirstOrDefault().ExpectedSize,
+		g => new Tests.Models.Range(g.Min(x => x.NoOfItems), g.Max(x => x.NoOfItems))
+		);
 
 
 	public static IEnumerable<int> GetNoOfItems()
@@ -47,9 +51,9 @@ internal class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 
 	public IEnumerator<object[]> GetEnumerator()
 	{
-		foreach (var (noOfItems, expectedSize) in testCases)
+		foreach (var scenario in scenarios)
 		{
-			yield return new object[] { noOfItems, expectedSize };
+			yield return new object[] { scenario };
 		}
 	}
 

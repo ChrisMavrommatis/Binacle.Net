@@ -1,4 +1,5 @@
 ﻿using Azure.Data.Tables;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Data.Repositories;
@@ -14,6 +15,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
@@ -27,16 +30,29 @@ public static class ModuleDefinition
 	{
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initializing");
 
-		// overwrite default
-		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+		builder.Configuration
+			.AddUserSecrets<IModuleMarker>(optional: true, reloadOnChange: true);
+
+		var applicationInsightsConnectionString = GetConnectionStringWithEnvironmentVariableFallback(
+			builder.Configuration,
+			"ApplicationInsights",
+			"APPLICATIONINSIGHTS_CONNECTION_STRING"
+			);
+
+
+		if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
 		{
-			loggerConfiguration
-			.ReadFrom.Configuration(builder.Configuration)
-			.WriteTo.ApplicationInsights(
-				services.GetRequiredService<TelemetryConfiguration>(),
-				TelemetryConverter.Traces
-				);
-		});
+			// overwrite default
+			builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+			{
+				loggerConfiguration
+				.ReadFrom.Configuration(builder.Configuration)
+				.WriteTo.ApplicationInsights(
+					services.GetRequiredService<TelemetryConfiguration>(),
+					TelemetryConverter.Traces
+					);
+			});
+		}
 
 		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
@@ -51,6 +67,11 @@ public static class ModuleDefinition
 			.ValidateOnStart();
 
 		var jwtAuthOptions = builder.Configuration.GetSection(JwtAuthOptions.SectionName).Get<JwtAuthOptions>();
+		if(jwtAuthOptions is null)
+		{
+			Log.Error("Required config {Config} not found during startup", nameof(JwtAuthOptions));
+			throw new System.ArgumentNullException(nameof(JwtAuthOptions), "Config is required during startup");
+		}
 
 		builder.Services.AddAuthentication(options =>
 		{
@@ -62,13 +83,16 @@ public static class ModuleDefinition
 		{
 			options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
 			{
+				ValidIssuer = jwtAuthOptions.Issuer,
+				ValidAudience = jwtAuthOptions.Audience,
+				IssuerSigningKey = new SymmetricSecurityKey(
+					Encoding.UTF8.GetBytes(jwtAuthOptions.TokenSecret)
+				),
 				ValidateIssuer = true,
 				ValidateAudience = true,
 				ValidateLifetime = true,
 				ValidateIssuerSigningKey = true,
-				ValidIssuer = jwtAuthOptions.Issuer,
-				ValidAudience = jwtAuthOptions.Audience,
-				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtAuthOptions.TokenSecret)),
+				ClockSkew = TimeSpan.FromSeconds(5)
 			};
 		});
 
@@ -82,14 +106,12 @@ public static class ModuleDefinition
 		builder.Services.AddScoped<IUserManagerService, UserManagerService>();
 		builder.Services.AddSingleton<TableServiceClient>(sp =>
 		{
-			var connectionString = builder.Configuration.GetConnectionString("AzureStorage");
+			var connectionString = GetConnectionStringWithEnvironmentVariableFallback(
+				builder.Configuration,
+				"AzureStorage",
+				"AZURESTORAGE_CONNECTION_STRING");
 
 			if (string.IsNullOrWhiteSpace(connectionString))
-			{
-				connectionString = Environment.GetEnvironmentVariable("AZURESTORAGE_CONNECTION_STRING");
-			}
-
-			if(string.IsNullOrWhiteSpace(connectionString))
 			{
 				throw new InvalidOperationException("AzureStorage connection string is missing");
 			}
@@ -100,23 +122,39 @@ public static class ModuleDefinition
 		builder.Services
 			.AddHealthChecks();
 
-		builder.Services.AddApplicationInsightsTelemetry(options =>
+
+		if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
 		{
-
-			var connectionString = builder.Configuration.GetConnectionString("ApplicationInsights");
-
-			if (string.IsNullOrWhiteSpace(connectionString))
+			builder.Services.AddApplicationInsightsTelemetry(options =>
 			{
-				connectionString = Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING");
-			}
+				options.ConnectionString = applicationInsightsConnectionString;
+			});
 
-			if (string.IsNullOrWhiteSpace(connectionString))
-			{
-				throw new InvalidOperationException("ApplicationInsights connection string is missing");
-			}
 
-			options.ConnectionString = connectionString;
-		});
+			//builder.Services.AddOpenTelemetry()
+			//	.WithMetrics(configure =>
+			//	{
+			//		configure
+			//		.AddRuntimeInstrumentation()
+			//		.AddMeter("Microsoft.AspNetCore.Hosting")
+			//		.AddMeter("Microsoft.AspNetCore.Server.Kestrel")
+			//		.AddMeter("Microsoft.AspNetCore.RateLimiting");
+
+			//	}).WithTracing(configure =>
+			//	{
+			//		configure.AddAspNetCoreInstrumentation();
+
+			//	}).UseAzureMonitor(configure =>
+			//	{
+			//		var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
+			//		if (samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
+			//		{
+			//			configure.SamplingRatio = ratio;
+			//		}
+
+			//		configure.ConnectionString = applicationInsightsConnectionString;
+			//	});
+		}
 
 		builder.Services.AddMinimalEndpointDefinitions<IModuleMarker>();
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
@@ -149,7 +187,6 @@ public static class ModuleDefinition
 	public static void UseServiceModule(this WebApplication app)
 	{
 		// Middleware are in order
-		// Registered before Swagger because I don't want swagger to know about it
 		app.MapHealthChecks("/_health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 		{
 			ResultStatusCodes =
@@ -173,4 +210,31 @@ public static class ModuleDefinition
 	{
 		ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
 	}
+
+	private static string? GetConnectionStringWithEnvironmentVariableFallback(
+		ConfigurationManager configuration,
+		string name,
+		string variable
+		)
+	{
+		var connectionString = configuration.GetConnectionString(name);
+
+		if (!string.IsNullOrWhiteSpace(connectionString))
+		{
+			Log.Information("Connection String {connectionString} found in {location}", name, "Configuration File");
+			return connectionString;
+		}
+
+		connectionString = Environment.GetEnvironmentVariable(variable);
+
+		if (!string.IsNullOrWhiteSpace(connectionString))
+		{
+			Log.Information("Connection String {connectionString} found in {location}", name, $"Environment Variable: {variable}");
+			return connectionString;
+		}
+
+		Log.Warning("Connection String {connectionString} not found", name);
+		return null;
+	}
+
 }

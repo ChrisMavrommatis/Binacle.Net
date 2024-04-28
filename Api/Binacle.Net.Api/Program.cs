@@ -33,7 +33,8 @@ public class Program
 		// Slim builder
 		builder.WebHost.UseQuic(); //HTTP 3 support
 
-		builder.Configuration.SetBasePath($"{Directory.GetCurrentDirectory()}/Config_Files");
+		builder.Configuration
+			.SetBasePath($"{Directory.GetCurrentDirectory()}/Config_Files");
 
 		builder.Configuration
 			.AddJsonFile("Serilog.json", optional: false, reloadOnChange: true)
@@ -96,7 +97,6 @@ public class Program
 			options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
 
 		});
-
 
 		builder.Services.AddSwaggerGen();
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();

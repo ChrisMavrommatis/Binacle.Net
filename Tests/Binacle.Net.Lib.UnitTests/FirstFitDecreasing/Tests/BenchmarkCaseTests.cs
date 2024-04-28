@@ -1,10 +1,12 @@
 ﻿using Binacle.Net.Lib.Abstractions.Strategies;
+using Binacle.Net.Lib.Tests.Data.Models;
 using Binacle.Net.Lib.Tests.Data.Providers;
 using Binacle.Net.Lib.Tests.Models;
 using Xunit;
 
-namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;
+namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
 
+[Trait("Benchmark Case Tests", "Ensures algorithms behave as expected for the benchmarks")]
 public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>
 {
 	private FirstFitDecreasingFixture Fixture { get; }
@@ -15,38 +17,35 @@ public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>
 
 	[Theory]
 	[ClassData(typeof(BenchmarkScalingTestsDataProvider))]
-	public void Scaling_V1_5x5x5(int noOfItems, string expectedSize)
+	public void Scaling_V1_5x5x5(BenchmarkScalingScenario scenario)
 		=> RunTest(
 			new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v1(),
-			noOfItems,
+			scenario,
 			BenchmarkScalingTestsDataProvider.GetDimensions(),
-			expectedSize,
 			BenchmarkScalingTestsDataProvider.BinCollectionName
 			);
 
 	[Theory]
 	[ClassData(typeof(BenchmarkScalingTestsDataProvider))]
-	public void Scaling_V2_5x5x5(int noOfItems, string expectedSize)
+	public void Scaling_V2_5x5x5(BenchmarkScalingScenario scenario)
 		=> RunTest(
 			new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v2(),
-			noOfItems,
+			scenario,
 			BenchmarkScalingTestsDataProvider.GetDimensions(),
-			expectedSize,
 			BenchmarkScalingTestsDataProvider.BinCollectionName
 			);
 
 	private void RunTest<TStrategy>(
 		TStrategy strategy,
-		int noOfItems,
+		BenchmarkScalingScenario scenario,
 		Dimensions<int> dimensions,
-		string expectedSize,
 		string binCollectionName
 		)
 		where TStrategy : class, IBinFittingStrategy
 	{
 		var binCollection = this.Fixture.Bins[binCollectionName];
 
-		var items = Enumerable.Range(1, noOfItems).Select(x => new TestItem(x.ToString(), dimensions)).ToList();
+		var items = Enumerable.Range(1, scenario.NoOfItems).Select(x => new TestItem(x.ToString(), dimensions)).ToList();
 
 		var operation = strategy
 		 .WithBins(binCollection)
@@ -55,9 +54,9 @@ public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>
 
 		var result = operation.Execute();
 
-		if (expectedSize != "None")
+		if (scenario.ExpectedSize != "None")
 		{
-			Xunit.Assert.Equal(expectedSize, result.FoundBin.ID);
+			Xunit.Assert.Equal(scenario.ExpectedSize, result.FoundBin.ID);
 		}
 		else
 		{

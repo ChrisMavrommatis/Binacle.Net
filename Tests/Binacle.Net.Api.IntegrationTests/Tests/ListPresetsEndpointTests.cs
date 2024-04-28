@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.Api.IntegrationTests.TestPriority;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -9,15 +10,16 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests.Tests;
+namespace Binacle.Net.Api.IntegrationTests;
 
-public class ListPresetsEndpointTests : IClassFixture<WebApplicationFactory<Binacle.Net.Api.Program>>
+[TestCaseOrderer("Binacle.Net.Api.IntegrationTests.TestPriority.TestPriorityOrderer", "Binacle.Net.Api.IntegrationTests")]
+public class ListPresetsEndpointTests : IClassFixture<WebApplicationFactory<Binacle.Net.Api.IApiMarker>>
 {
 	private const string routePath = "/api/v1/presets";
-	private readonly WebApplicationFactory<Binacle.Net.Api.Program> sut;
+	private readonly WebApplicationFactory<Binacle.Net.Api.IApiMarker> sut;
 	private readonly HttpClient client;
 
-	public ListPresetsEndpointTests(WebApplicationFactory<Binacle.Net.Api.Program> sut)
+	public ListPresetsEndpointTests(WebApplicationFactory<Binacle.Net.Api.IApiMarker> sut)
 	{
 		this.sut = sut
 			.WithWebHostBuilder(builder =>
@@ -38,16 +40,18 @@ public class ListPresetsEndpointTests : IClassFixture<WebApplicationFactory<Bina
 		this.sut.Dispose();
 	}
 
-	[Fact]
-	public async Task Get_WithPresetsConfigured_Returns200Ok()
+	[TestPriority(2)]
+	[Fact(DisplayName = $"GET {routePath}. With Presets Configured Returns 200 OK")]
+	public async Task Get_WithPresetsConfigured_Returns_200Ok()
 	{
 		var response = await this.client.GetAsync(routePath);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 	}
 
-	[Fact]
-	public async Task Get_WithoutPresetsConfigured_Returns404NotFound()
+	[TestPriority(1)]
+	[Fact(DisplayName = $"GET {routePath}. Without Presets Configured Returns 404 NotFound")]
+	public async Task Get_WithoutPresetsConfigured_Returns_404NotFound()
 	{
 		// remove presets for this test
 		var presetOptions = this.sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
@@ -57,6 +61,5 @@ public class ListPresetsEndpointTests : IClassFixture<WebApplicationFactory<Bina
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
 	}
-
 	
 }

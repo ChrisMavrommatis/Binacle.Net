@@ -1,6 +1,6 @@
 ﻿using Binacle.Net.Lib.Tests.Models;
 
-namespace Binacle.Net.Lib.UnitTests.Models;
+namespace Binacle.Net.Lib.UnitTests.Data.Models;
 
 public sealed class Scenario
 {

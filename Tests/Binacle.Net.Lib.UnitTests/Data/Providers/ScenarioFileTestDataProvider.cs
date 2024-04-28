@@ -1,34 +1,20 @@
-﻿using Binacle.Net.Lib.UnitTests.Models;
+﻿using Binacle.Net.Lib.UnitTests.Data.Models;
 using Newtonsoft.Json;
-using System.Collections;
 
 namespace Binacle.Net.Lib.UnitTests.Data.Providers;
 
-internal abstract class ScenarioFileTestDataProvider : IEnumerable<object[]>
+internal abstract class ScenarioFileTestDataProvider : ScenarioTestDataProvider
 {
-	private readonly Dictionary<string, Scenario> scenarios;
-
 	public ScenarioFileTestDataProvider(string filePath)
 	{
-		this.scenarios = new Dictionary<string, Scenario>();
 		var scenarioFileInfo = new FileInfo(filePath);
 		using (var sr = new StreamReader(scenarioFileInfo.OpenRead()))
 		{
 			var scenarios = JsonConvert.DeserializeObject<List<Scenario>>(sr.ReadToEnd());
 			foreach (var scenario in scenarios)
 			{
-				this.scenarios.Add(scenario.Name, scenario);
+				_scenarios.Add(scenario.Name, scenario);
 			}
 		}
 	}
-
-	public IEnumerator<object[]> GetEnumerator()
-	{
-		foreach (var scenario in this.scenarios.Values)
-		{
-			yield return new object[] { scenario };
-		}
-	}
-
-	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

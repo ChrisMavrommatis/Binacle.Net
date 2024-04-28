@@ -1,8 +1,8 @@
 ﻿namespace Binacle.Net.Lib.UnitTests.Data.Providers;
 
-internal class BaselineTestDataProvider : ScenarioFileTestDataProvider
+internal class BaselineTestDataProvider : CompactScenarioFileTestDataProvider
 {
-	public BaselineTestDataProvider() : base($"{Constants.DataBasePath}/Scenarios/Baseline.json")
+	public BaselineTestDataProvider() : base($"{Constants.DataBasePath}/Scenarios/Compact/Baseline.json")
 	{
 
 	}

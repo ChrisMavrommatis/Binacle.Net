@@ -3,8 +3,9 @@ using Binacle.Net.Lib.Exceptions;
 using Binacle.Net.Lib.Tests.Models;
 using Xunit;
 
-namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;
+namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
 
+[Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 {
 	private FirstFitDecreasingFixture Fixture { get; }
@@ -16,7 +17,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 		this.AutoFixture = new Fixture();
 	}
 
-	[Fact]
+	[Fact(DisplayName = "Build With Null Or Empty Bins Throws ArgumentNullException")]
 	public void Build_WithNullOrEmptyBins_Throws_ArgumentNullException()
 	{
 		var testItems = this.AutoFixture.CreateMany<TestItem>(2);
@@ -55,7 +56,8 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 	}
 
-	[Fact]
+	[Fact(DisplayName = "Build With Null Or Empty Items Throws ArgumentNullException")]
+
 	public void Build_WithNullOrEmptyItems_Throws_ArgumentNullException()
 	{
 		var testBins = this.AutoFixture.CreateMany<TestBin>(2);
@@ -93,8 +95,8 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 		});
 	}
 
-	[Fact]
-	public void Build_With0DimensionBins_Throws_DimensionException()
+	[Fact(DisplayName = "Build With 0 Dimension on Bins Throws DimensionException")]
+	public void Build_With0DimensionOnBins_Throws_DimensionException()
 	{
 		var testItems = AutoFixture.CreateMany<TestItem>(2);
 
@@ -119,8 +121,8 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 		});
 	}
 
-	[Fact]
-	public void Build_With0DimensionItems_Throws_DimensionException()
+	[Fact(DisplayName = "Build With 0 Dimension on Items Throws DimensionException")]
+	public void Build_With0DimensionOnItems_Throws_DimensionException()
 	{
 		var testBins = AutoFixture.CreateMany<TestBin>(2);
 		var testItemsWith0Dimension = AutoFixture.Build<TestItem>()

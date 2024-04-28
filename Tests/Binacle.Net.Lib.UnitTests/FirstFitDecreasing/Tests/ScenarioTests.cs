@@ -1,9 +1,10 @@
 ﻿using Binacle.Net.Lib.Abstractions.Strategies;
-using Binacle.Net.Lib.UnitTests.Models;
+using Binacle.Net.Lib.UnitTests.Data.Models;
 using Xunit;
 
-namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;
+namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
 
+[Trait("Scenario Tests", "Actual calculation for the algorithms")]
 public class ScenarioTests : IClassFixture<FirstFitDecreasingFixture>
 {
 	private FirstFitDecreasingFixture Fixture { get; }

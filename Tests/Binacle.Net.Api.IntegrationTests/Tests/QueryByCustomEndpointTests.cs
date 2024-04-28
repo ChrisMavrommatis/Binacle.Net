@@ -3,7 +3,7 @@ using FluentAssertions;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests.Tests;
+namespace Binacle.Net.Api.IntegrationTests;
 
 [Collection(BinacleApiCollection.Name)]
 public class QueryByCustomEndpointTests
@@ -32,16 +32,16 @@ public class QueryByCustomEndpointTests
 		this.apiFactory = apiFactory;
 	}
 
-	[Fact]
-	public async Task Query_WithValidRequest_Returns200Ok()
+	[Fact(DisplayName = $"POST {routePath}. With Valid Request Returns 200 OK")]
+	public async Task Post_WithValidRequest_Returns_200Ok()
 	{
 		var response = await this.apiFactory.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.apiFactory.JsonSerializerOptions);
 		
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 	}
 
-	[Fact]
-	public async Task Query_WithZeroDimensionOnItem_Returns400BadRequest()
+	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Item Returns 400 BadRequest")]
+	public async Task Post_WithZeroDimensionOnItem_Returns_400BadRequest()
 	{
 		this.sampleRequest.Items.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 
@@ -50,8 +50,8 @@ public class QueryByCustomEndpointTests
 		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
 	}
 
-	[Fact]
-	public async Task Query_WithZeroDimensionOnBin_Returns400BadRequest()
+	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Bin Returns 400 BadRequest")]
+	public async Task Post_WithZeroDimensionOnBin_Returns400BadRequest()
 	{
 		this.sampleRequest.Bins.FirstOrDefault(x => x.ID == "custom_bin_1")!.Length = 0;
 

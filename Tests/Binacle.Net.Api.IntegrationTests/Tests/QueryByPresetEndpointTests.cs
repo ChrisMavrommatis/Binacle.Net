@@ -1,13 +1,12 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.v1.Requests;
-using Binacle.Net.Api.v1.Responses;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests.Tests;
+namespace Binacle.Net.Api.IntegrationTests;
 
 [Collection(BinacleApiCollection.Name)]
 public class QueryByPresetEndpointTests : IClassFixture<BinacleApiFactory>
@@ -33,8 +32,8 @@ public class QueryByPresetEndpointTests : IClassFixture<BinacleApiFactory>
 
 	}
 
-	[Fact]
-	public async Task Query_WithNonExistingPreset_Returns404NotFound()
+	[Fact(DisplayName = $"POST {routePath}. With Non Existing Preset Returns 404 NotFound")]
+	public async Task Post_WithNonExistingPreset_Returns_404NotFound()
 	{
 		var urlPath = routePath.Replace("{preset}", "non-existing-preset");
 
@@ -43,8 +42,8 @@ public class QueryByPresetEndpointTests : IClassFixture<BinacleApiFactory>
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
 	}
 
-	[Fact]
-	public async Task Query_WithExistingPresetAndValidRequest_Returns200Ok()
+	[Fact(DisplayName = $"POST {routePath}. With Existing Preset And Valid Request Returns 200 OK")]
+	public async Task Post_WithExistingPresetAndValidRequest_Returns200Ok()
 	{
 		var urlPath = routePath.Replace("{preset}", this.presetOptions.Value.Presets.Keys.First());
 
@@ -53,8 +52,8 @@ public class QueryByPresetEndpointTests : IClassFixture<BinacleApiFactory>
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 	}
 
-	[Fact]
-	public async Task Query_WithZeroDimensions_Returns400BadRequest()
+	[Fact(DisplayName = $"POST {routePath}. With Zero Dimensions Returns 400 BadRequest")]
+	public async Task Post_WithZeroDimensions_Returns400BadRequest()
 	{
 		this.sampleRequest.Items.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 		var urlPath = routePath.Replace("{preset}", this.presetOptions.Value.Presets.Keys.First());

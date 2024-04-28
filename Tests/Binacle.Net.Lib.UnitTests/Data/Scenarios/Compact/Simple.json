@@ -1,0 +1,36 @@
+﻿[
+  {
+    "Name": "2Same_FitInSmall",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Small",
+		"Items": [
+			"2-25x25x10"
+		]
+  },
+  {
+    "Name": "2Same_FitInMedium",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Medium",
+		"Items": [
+			"2-15x22x15"
+		]
+  },
+  {
+    "Name": "2Same_1Rotated_FitInSmall",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Small",
+		"Items": [
+			"1-25x25x10",
+			"1-10x25x25"
+		]
+  },
+  {
+    "Name": "2Same_1Rotated_FitInMedium",
+    "BinCollection": "RectangularCuboids",
+    "ExpectedSize": "Medium",
+		"Items": [
+			"1-15x22x15",
+			"1-15x15x22"
+		]
+  }
+]
