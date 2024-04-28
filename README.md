@@ -1,5 +1,10 @@
 ﻿# Binacle.NET
 
+## Links
+
+- [🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/chrismavrommatis/binacle-net)
+- [Postman Collection](https://www.postman.com/chrismavrommatis/workspace/binacle-net/)
+
 
 ## Overview
 Binacle.NET is an API created to address the 3D Bin Packing Problem in a Bin Selection Variation.
@@ -59,7 +64,7 @@ Follow the steps below to get Binacle.Net up and running with Docker.
 
 
 ## About the API
-Binacle.Net offers 3 endpoints
+Binacle.Net at its core offers the following 3 endpoints.
 
 1. **Presets**: This endpoint lists all available presets, which are pre-defined collections of bins. 
 2. **Query by Custom**: With this endpoint, you can send both the bins and the items in a single request. The endpoint will respond with the bin that accommodates all of the items, if such a bin exists. 
@@ -68,6 +73,27 @@ Binacle.Net offers 3 endpoints
 While you have the option to send both the bins and the items together using the **Query by Custom** endpoint, it's recommended to avoid this approach if you already know the bins beforehand. Instead, consider using the **Query by Preset** endpoint for better efficiency.
 
 Binacle.Net includes specific bin [Presets](https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/Api/Binacle.Net.Api/Config_Files/Presets.json) by default, which you can customize to align with your business requirements.
+
+### Service Module
+In addition to the core functionality of Binacle.Net, there's a Service Module available, though it's disabled by default.
+
+This module expands and customizes the core Binacle.Net functionality for use in a public environment.
+
+It introduces several features:
+
+- **Healthcheck**: Allows automated systems to verify the API's status.
+- **Rate Limiting**: Implements a global limit of 10 requests per 60 seconds on all endpoints, irrespective of user. This measure is primarily to prevent potential flooding of the public service. 
+- **Authentication**: Grants certain privileged users the ability to authenticate and bypass the rate limiter.
+- **User Management**: Designed for service administrators.
+- **Cloud Logging**: Facilitates log storage outside the image without requiring volume mounts.
+- **Telemetry**: Provides monitoring capabilities for the application.
+
+It's essential to understand that these features are specifically designed for the hosting environment envisioned for Binacle.Net's deployment. Therefore, the Service Module is heavily opinionated and primarily intended for use by the original deployment team, rather than general users. 
+
+Furthermore, it's been engineered to ensure that any modifications to the module do not affect users who are not utilizing the Service Module, as evidenced by its default disabled status.
+
+Binacle.Net is freely available as an open-source project. With minimal effort, you can deploy your instance in your environment.
+
 
 ## Running the Container with a Custom Internal Port
 By default, Binacle.NET runs on port 8080.
@@ -137,3 +163,5 @@ services:
     environment:
       - SWAGGER_UI=True
 ```
+
+
