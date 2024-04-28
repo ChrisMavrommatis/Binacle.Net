@@ -77,7 +77,7 @@ Binacle.Net includes specific bin [Presets](https://github.com/ChrisMavrommatis/
 ### Service Module
 In addition to the core functionality of Binacle.Net, there's a Service Module available, though it's disabled by default.
 
-This module expands and customizes the core Binacle.Net functionality for use in a public environment.
+This Module expands and customizes the core Binacle.Net functionality for use in a public environment.
 
 It introduces several features:
 
@@ -88,9 +88,9 @@ It introduces several features:
 - **Cloud Logging**: Facilitates log storage outside the image without requiring volume mounts.
 - **Telemetry**: Provides monitoring capabilities for the application.
 
-It's essential to understand that these features are specifically designed for the hosting environment envisioned for Binacle.Net's deployment. Therefore, the Service Module is heavily opinionated and primarily intended for use by the original deployment team, rather than general users. 
+It's essential to understand that these features are specifically designed for the hosting environment envisioned for Binacle.Net's deployment. Therefore, the Service Module is heavily opinionated and primarily intended for use by the creator, rather than general users. 
 
-Furthermore, it's been engineered to ensure that any modifications to the module do not affect users who are not utilizing the Service Module, as evidenced by its default disabled status.
+Furthermore, it's been engineered to ensure that any modifications to the Service Module do not affect users who are not utilizing it, as evidenced by its **disabled by default** status.
 
 Binacle.Net is freely available as an open-source project. With minimal effort, you can deploy your instance in your environment.
 
