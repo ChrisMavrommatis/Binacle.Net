@@ -48,7 +48,7 @@ Follow the steps below to get Binacle.Net up and running with Docker.
    
 7. **Access Binacle.Net**
   
-   You can now send requests to the API. By default, Binacle.NET runs on port 8080.
+   You can now send requests to the API. 
 	 ```
 	 https://localhost:8080/
 	 ```
@@ -69,6 +69,15 @@ While you have the option to send both the bins and the items together using the
 
 Binacle.Net includes specific bin [Presets](https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/Api/Binacle.Net.Api/Config_Files/Presets.json) by default, which you can customize to align with your business requirements.
 
+## Running the Container with a Custom Internal Port
+By default, Binacle.NET runs on port 8080.
+
+If you prefer to run the application with a different port inside the container, you can specify the desired port by passing the `ASPNETCORE_HTTP_PORTS` environment variable.
+
+In the following example we're specifying port 80 as the internal port within the container.
+```bash
+docker run --name binacle-net -e ASPNETCORE_HTTP_PORTS=80 -p 8080:80 chrismavrommatis/binacle-net:latest
+```
 
 ## Customizing the Presets
 To adjust the presets, download the [Presets.json](https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/Api/Binacle.Net.Api/Config_Files/Presets.json) file and modify it according to your needs. 
