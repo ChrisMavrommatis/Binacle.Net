@@ -79,11 +79,14 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 	}
 
 	private const string __description__ = """
-		Binacle.Net is an API that provides a way to to solve the bin fitting problem in one dimension only.
+		Binacle.NET is an API created to address the 3D Bin Packing Problem in a Bin Selection Variation.
 		
 		{{deprecated}}
 
+
 		[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)
+
+		[🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/chrismavrommatis/binacle-net)
 
 		[Get Postman collection](https://www.postman.com/chrismavrommatis/workspace/binacle-net)
 

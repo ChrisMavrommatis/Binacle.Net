@@ -81,6 +81,8 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 		
 		[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)
 
+		[🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/chrismavrommatis/binacle-net)
+
 		[Get Postman collection](https://www.postman.com/chrismavrommatis/workspace/binacle-net)
 
 		""";
