@@ -83,6 +83,7 @@ public class Program
 			options.ApiVersionReader = ApiVersionReader.Combine(
 				new UrlSegmentApiVersionReader()
 				);
+
 		}).AddApiExplorer(options =>
 		{
 			options.GroupNameFormat = "'v'VVV";
@@ -95,7 +96,6 @@ public class Program
 		builder.Services.AddSwaggerExamples(options =>
 		{
 			options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
-
 		});
 
 		builder.Services.AddSwaggerGen();
@@ -111,7 +111,6 @@ public class Program
 			options.LowercaseQueryStrings = true;
 			options.LowercaseUrls = true;
 		});
-
 
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
 

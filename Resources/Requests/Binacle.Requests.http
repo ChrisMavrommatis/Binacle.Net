@@ -7,7 +7,7 @@
 ##
 
 ###  List all presets
-GET https://{{HOST}}/api/presets
+GET https://{{HOST}}/api/v{{version}}/presets
 
 
 ### Query based on a preset

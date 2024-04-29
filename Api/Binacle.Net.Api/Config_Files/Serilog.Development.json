@@ -2,7 +2,8 @@
 	"Serilog": {
 		"MinimumLevel": {
 			"Override": {
-				"Microsoft.AspNetCore": "Information"
+				"Microsoft.AspNetCore": "Information",
+				"Azure.Core":  "Information"
 			}
 		}
 	}

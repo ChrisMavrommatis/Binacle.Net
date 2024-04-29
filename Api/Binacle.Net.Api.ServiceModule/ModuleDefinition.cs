@@ -1,8 +1,7 @@
-﻿using Azure.Data.Tables;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
-using Binacle.Net.Api.ServiceModule.Configuration;
+﻿using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Data.Repositories;
+using Binacle.Net.Api.ServiceModule.Helpers;
 using Binacle.Net.Api.ServiceModule.Services;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.MinimalEndpointDefinitions;
@@ -12,11 +11,10 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
@@ -30,15 +28,16 @@ public static class ModuleDefinition
 	{
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initializing");
 
+		// Required for local run with secrets
+		// Secrets are overwritten later
 		builder.Configuration
 			.AddUserSecrets<IModuleMarker>(optional: true, reloadOnChange: true);
 
-		var applicationInsightsConnectionString = GetConnectionStringWithEnvironmentVariableFallback(
+		var applicationInsightsConnectionString = StartupConfigurationHelper.GetConnectionStringWithEnvironmentVariableFallback(
 			builder.Configuration,
 			"ApplicationInsights",
 			"APPLICATIONINSIGHTS_CONNECTION_STRING"
 			);
-
 
 		if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
 		{
@@ -104,9 +103,11 @@ public static class ModuleDefinition
 		builder.Services.AddScoped<IUserRepository, UserRepository>();
 		builder.Services.AddScoped<ITokenService, TokenService>();
 		builder.Services.AddScoped<IUserManagerService, UserManagerService>();
-		builder.Services.AddSingleton<TableServiceClient>(sp =>
+
+		// Register Azure
+		builder.Services.AddAzureClients(clientBuilder =>
 		{
-			var connectionString = GetConnectionStringWithEnvironmentVariableFallback(
+			var connectionString = StartupConfigurationHelper.GetConnectionStringWithEnvironmentVariableFallback(
 				builder.Configuration,
 				"AzureStorage",
 				"AZURESTORAGE_CONNECTION_STRING");
@@ -116,12 +117,11 @@ public static class ModuleDefinition
 				throw new InvalidOperationException("AzureStorage connection string is missing");
 			}
 
-			return new TableServiceClient(connectionString);
+			clientBuilder.AddTableServiceClient(connectionString);
 		});
 
 		builder.Services
 			.AddHealthChecks();
-
 
 		if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
 		{
@@ -157,6 +157,7 @@ public static class ModuleDefinition
 		}
 
 		builder.Services.AddMinimalEndpointDefinitions<IModuleMarker>();
+
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 		builder.Services.AddRateLimiter(options =>
@@ -211,30 +212,6 @@ public static class ModuleDefinition
 		ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
 	}
 
-	private static string? GetConnectionStringWithEnvironmentVariableFallback(
-		ConfigurationManager configuration,
-		string name,
-		string variable
-		)
-	{
-		var connectionString = configuration.GetConnectionString(name);
-
-		if (!string.IsNullOrWhiteSpace(connectionString))
-		{
-			Log.Information("Connection String {connectionString} found in {location}", name, "Configuration File");
-			return connectionString;
-		}
-
-		connectionString = Environment.GetEnvironmentVariable(variable);
-
-		if (!string.IsNullOrWhiteSpace(connectionString))
-		{
-			Log.Information("Connection String {connectionString} found in {location}", name, $"Environment Variable: {variable}");
-			return connectionString;
-		}
-
-		Log.Warning("Connection String {connectionString} not found", name);
-		return null;
-	}
+	
 
 }

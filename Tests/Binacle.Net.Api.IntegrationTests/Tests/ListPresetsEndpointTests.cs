@@ -1,5 +1,5 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
-using Binacle.Net.Api.IntegrationTests.TestPriority;
+using Binacle.Net.Api.Tests.TestPriority;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Binacle.Net.Api.IntegrationTests;
 
-[TestCaseOrderer("Binacle.Net.Api.IntegrationTests.TestPriority.TestPriorityOrderer", "Binacle.Net.Api.IntegrationTests")]
+[TestCaseOrderer("Binacle.Net.Api.Tests.TestPriority.TestPriorityOrderer", "Binacle.Net.Api.Tests")]
 public class ListPresetsEndpointTests : IClassFixture<WebApplicationFactory<Binacle.Net.Api.IApiMarker>>
 {
 	private const string routePath = "/api/v1/presets";

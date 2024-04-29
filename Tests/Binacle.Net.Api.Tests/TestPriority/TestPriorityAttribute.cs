@@ -1,8 +1,8 @@
-﻿namespace Binacle.Net.Api.IntegrationTests.TestPriority;
+﻿namespace Binacle.Net.Api.Tests.TestPriority;
 
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class TestPriorityAttribute : Attribute
+internal class TestPriorityAttribute : Attribute
 {
 	public TestPriorityAttribute(int priority)
 	{

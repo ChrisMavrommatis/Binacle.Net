@@ -1,7 +1,7 @@
 ﻿using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Binacle.Net.Api.IntegrationTests.TestPriority;
+namespace Binacle.Net.Api.Tests.TestPriority;
 
 public class TestPriorityOrderer : ITestCaseOrderer
 {

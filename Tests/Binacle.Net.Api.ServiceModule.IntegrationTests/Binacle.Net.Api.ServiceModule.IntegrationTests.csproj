@@ -7,13 +7,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="xunit.runner.json" />
+		<None Remove="xunit.runner.json" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="xunit.runner.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+		<Content Include="xunit.runner.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -33,8 +33,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Api\Binacle.Net.Api\Binacle.Net.Api.csproj" />
-	  <ProjectReference Include="..\Binacle.Net.Api.Tests\Binacle.Net.Api.Tests.csproj" />
+		<ProjectReference Include="..\..\Api\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
+		<ProjectReference Include="..\..\Api\Binacle.Net.Api\Binacle.Net.Api.csproj" />
+		<ProjectReference Include="..\Binacle.Net.Api.Tests\Binacle.Net.Api.Tests.csproj" />
 	</ItemGroup>
-	
+
 </Project>
