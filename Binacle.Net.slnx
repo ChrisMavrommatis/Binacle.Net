@@ -1,33 +1,46 @@
 <Solution>
-  <Folder Name="/Tests/">
-    <Project Path="Tests\Binacle.Net.Lib.Benchmarks\Binacle.Net.Lib.Benchmarks.csproj" />
-    <Project Path="Tests\Binacle.Net.Lib.Tests\Binacle.Net.Lib.Tests.csproj" />
-    <Project Path="Tests\Binacle.Net.Lib.UnitTests\Binacle.Net.Lib.UnitTests.csproj" />
-  </Folder>
-  <Folder Name="/Shared/">
-    <Project Path="Shared\ChrisMavrommatis\ChrisMavrommatis.csproj" />
-  </Folder>
-  <Folder Name="/Resources/Requests/">
-    <File Path="Resources\Requests\Binacle.Requests.http" />
-    <File Path="Resources\Requests\http-client.env.json" />
-    <File Path="Resources\Requests\ServiceModule.Requests.http" />
-    <File Path="Resources\Requests\Users.Requests.http" />
-  </Folder>
-  <Folder Name="/Resources/Performance Results/Scaling Benchmarks/">
-    <File Path="Resources\Performance Results\Scaling Benchmarks\Initial Public Run.md" />
-  </Folder>
-  <Folder Name="/Resources/Performance Results/" />
-  <Folder Name="/Resources/Documentation/">
+  <Folder Name="/_root/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Dockerfile" />
+    <File Path="LICENSE" />
+    <File Path="Nuget.config" />
     <File Path="README.md" />
   </Folder>
-  <Folder Name="/Resources/">
-    <File Path=".editorconfig" />
+  <Folder Name="/test/">
+    <Project Path="test\Binacle.Net.Api.IntegrationTests\Binacle.Net.Api.IntegrationTests.csproj" />
+    <Project Path="test\Binacle.Net.Api.ServiceModule.IntegrationTests\Binacle.Net.Api.ServiceModule.IntegrationTests.csproj" />
+    <Project Path="test\Binacle.Net.Lib.Benchmarks\Binacle.Net.Lib.Benchmarks.csproj" />
+    <Project Path="test\Binacle.Net.Lib.UnitTests\Binacle.Net.Lib.UnitTests.csproj" />
+    <Project Path="test\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj" />
   </Folder>
-  <Folder Name="/Library/">
-    <Project Path="Library\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
+    <Project Path="src\Binacle.Net.Api\Binacle.Net.Api.csproj" />
+    <Project Path="src\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj" />
+    <Project Path="src\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
   </Folder>
-  <Folder Name="/Api/">
-    <Project Path="Api\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
-    <Project Path="Api\Binacle.Net.Api\Binacle.Net.Api.csproj" />
+  <Folder Name="/res/Requests/">
+    <File Path="res\Requests\Binacle.Requests.http" />
+    <File Path="res\Requests\http-client.env.json" />
+    <File Path="res\Requests\ServiceModule.Requests.http" />
+    <File Path="res\Requests\Users.Requests.http" />
+  </Folder>
+  <Folder Name="/res/" />
+  <Folder Name="/doc/Performance Results/Scaling Benchmarks/">
+    <File Path="doc\Performance Results\Scaling Benchmarks\2024-04-12.md" />
+    <File Path="doc\Performance Results\Scaling Benchmarks\Initial Public Run.md" />
+  </Folder>
+  <Folder Name="/doc/Performance Results/" />
+  <Folder Name="/doc/" />
+  <Folder Name="/dep/">
+    <Project Path="dep\ChrisMavrommatis.Endpoints\ChrisMavrommatis.Endpoints.csproj" />
+    <Project Path="dep\ChrisMavrommatis.Features\ChrisMavrommatis.Features.csproj" />
+    <Project Path="dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj" />
+    <Project Path="dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
+    <Project Path="dep\ChrisMavrommatis.MinimalEndpointDefinitions\ChrisMavrommatis.MinimalEndpointDefinitions.csproj" />
+    <Project Path="dep\ChrisMavrommatis.Results\ChrisMavrommatis.Results.csproj" />
+    <Project Path="dep\ChrisMavrommatis.SwaggerExamples\ChrisMavrommatis.SwaggerExamples.csproj" />
+    <Project Path="dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj" />
   </Folder>
 </Solution>
