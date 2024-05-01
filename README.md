@@ -76,7 +76,7 @@ If you prefer to run the application with a different port inside the container,
 
 In the following example we're specifying port 80 as the internal port within the container.
 ```bash
-docker run --name binacle-net -e ASPNETCORE_HTTP_PORTS=80 -p 8080:80 chrismavrommatis/binacle-net:latest
+docker run --name binacle-net -e ASPNETCORE_HTTP_PORTS=80 -e SWAGGER_UI=True -p 8080:80 chrismavrommatis/binacle-net:latest
 ```
 
 ## Customizing the Presets
@@ -88,26 +88,17 @@ Use a bind mount to replace the default Presets.json located in `/app/Config_Fil
 You can either directly run Binacle.Net from the command line or use a Docker Compose file which is the suggested way.
 
 ### Command line using Docker
-Place the updated Presets.json file anywhere on your system and execute the appropriate command based on your operating system and preferences.
 
+Place the updated Presets.json file anywhere on your system and execute the following command from that location:
+```bash
+docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
+```
 *Note: Since we are using a bind mount for a single file we must provide the full path when running from a command line.*
 
-- For Linux & MacOS (without Swagger)
-  ```bash
-  docker run --name binacle-net -p 8080:8080 -v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
-  ```
-- For Linux & MacOS (with Swagger)
-  ```bash
-  docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
-  ```
-- For Windows (without Swagger)
-  ```bat 
-  docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
-  ```
-- For Windows (with Swagger)
-  ```bat
-  docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
-  ```
+If you are running under Windows replace `$(pwd)` with `%cd%`, so the command looks like this:
+```bat 
+docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
+```
 
 ### Using the Docker Compose file
 Place the modified Presets.json file in the same directory as your Docker Compose file.
