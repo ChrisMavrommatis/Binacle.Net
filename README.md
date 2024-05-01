@@ -83,14 +83,14 @@ docker run --name binacle-net -e ASPNETCORE_HTTP_PORTS=80 -p 8080:80 chrismavrom
 To adjust the presets, download the [Presets.json](https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/Api/Binacle.Net.Api/Config_Files/Presets.json) file and modify it according to your needs. 
 Although Binacle.Net assumes the usage of centimeters, you can utilize different measurement systems as long as the dimensions remain integers and consistent across bins and items.
 
-Use a bind volume mount to replace the default Presets.json located in `/app/Config_Files/Presets.json` with your customized version.
+Use a bind mount to replace the default Presets.json located in `/app/Config_Files/Presets.json` with your customized version.
 
 You can either directly run Binacle.Net from the command line or use a Docker Compose file which is the suggested way.
 
 ### Command line using Docker
 Place the updated Presets.json file anywhere on your system and execute the appropriate command based on your operating system and preferences.
 
-*Note: Since we are using a volume to bind mount a single file we must provide the full path when running from a command line.*
+*Note: Since we are using a bind mount for a single file we must provide the full path when running from a command line.*
 
 - For Linux & MacOS (without Swagger)
   ```bash
