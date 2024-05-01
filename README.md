@@ -22,39 +22,19 @@ Although not guaranteed to yield a 100% accuracy rate, the algorithm has been fi
 However, it's worth noting that due to its heuristic nature, there are instances where items might feasibly fit within a bin, yet the algorithm may either allocate them to a larger bin or fail to identify a suitable one.
 
 
-## Getting Started
-Follow the steps below to get Binacle.Net up and running with Docker.
+## Get Started
 
-1. **Install Docker:** If you haven't already, [Install Docker](https://www.docker.com/get-started/) on your system.
-   
-3. **Pull Binacle.Net Docker Image**
-   
-   Run the following command in your terminal to pull the latest Binacle.NET Docker image from Docker Hub:
-   ```bash
-   docker pull chrismavrommatis/binacle-net:latest
-   ```
-   
-5. **Run Binacle.NET Container**
-   
-   Once the image is pulled successfully, run the following command to start a Binacle.NET container:
-   ```bash
-   docker run -d --name binacle-net -p 8080:8080 chrismavrommatis/binacle-net:latest
-   ```
-   Or run the following command to start Binacle.NET with Swagger UI:
-   ```bash
-   docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True chrismavrommatis/binacle-net:latest
-   ```
-   
-7. **Access Binacle.Net**
-  
-   You can now send requests to the API. 
-	 ```
-	 https://localhost:8080/
-	 ```
-   Alternatively if you run Binacle.Net with Swagger enabled you could access the Swagger UI in your browser.
-	 ```
-	 https://localhost:8080/swagger/
-	 ```
+Make sure you have [Docker](https://www.docker.com/get-started/) installed on your system.
+
+Then run the following command in your terminal to pull and run the latest Binacle.NET Docker image from Docker Hub:
+```bash
+docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True chrismavrommatis/binacle-net:latest
+```
+Then you can access the Swagger UI by visiting the following URL in your browser
+
+```
+https://localhost:8080/swagger/
+```
 
 
 ## About the API
