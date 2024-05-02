@@ -1,10 +1,12 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
-using Binacle.Net.Api.v1.Requests;
-using Binacle.Net.Api.v1.Requests.Examples;
-using Binacle.Net.Api.v1.Responses;
-using Binacle.Net.Api.v1.Responses.Examples;
+using Binacle.Net.Api.v2.Models.Errors;
+using Binacle.Net.Api.v2.Requests;
+using Binacle.Net.Api.v2.Requests.Examples;
+using Binacle.Net.Api.v2.Responses;
+using Binacle.Net.Api.v2.Responses.Examples;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
@@ -12,12 +14,12 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace Binacle.Net.Api.v1.Endpoints.Query;
+namespace Binacle.Net.Api.v2.Endpoints.Query;
 
 /// <summary>
 /// Query by Preset endpoint
 /// </summary>
-[ApiVersion(v1.ApiVersion.Number)]
+[ApiVersion(v2.ApiVersion.Number)]
 [Route("api/v{version:apiVersion}/[namespace]")]
 public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 {
@@ -109,20 +111,20 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 	[Route("by-preset/{preset}")]
 	[Consumes("application/json")]
 	[Produces("application/json")]
-	[MapToApiVersion(v1.ApiVersion.Number)]
+	[MapToApiVersion(v2.ApiVersion.Number)]
 
 	[SwaggerRequestExample(typeof(PresetQueryRequest), typeof(PresetQueryRequestExample))]
 
-	[ProducesResponseType(typeof(QueryResponse), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(QueryResponse), typeof(PresetQueryResponseExamples), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(Response<Bin?>), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(Response<Bin?>), typeof(PresetQueryResponseExamples), StatusCodes.Status200OK)]
 
-	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(typeof(Response<List<IApiError>>), StatusCodes.Status400BadRequest)]
+	[SwaggerResponseExample(typeof(Response<List<IApiError>>), typeof(BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 
 	[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
 
-	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
+	[ProducesResponseType(typeof(Response<List<IApiError>>), StatusCodes.Status500InternalServerError)]
+	[SwaggerResponseExample(typeof(Response<List<IApiError>>), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	public override async Task<IActionResult> HandleAsync(PresetQueryRequestWithBody request, CancellationToken cancellationToken = default)
 	{
 		try
@@ -130,27 +132,23 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 			if (request is null || request.Body is null)
 			{
 				return this.BadRequest(
-					ErrorResponse.Create(Constants.Errors.Categories.RequestError)
-					.AddParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody)
+					Responses.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody, Constants.Errors.Categories.RequestError)
 					);
 			}
 
 			if (string.IsNullOrWhiteSpace(request.Preset))
 			{
 				return this.BadRequest(
-					ErrorResponse.Create(Constants.Errors.Categories.RequestError)
-					.AddParameterError(nameof(request.Preset), Constants.Errors.Messages.IsRequired)
+					Responses.Response.ParameterError(nameof(request.Preset), Constants.Errors.Messages.IsRequired, Constants.Errors.Categories.RequestError)
 					);
 			}
-
 
 			await this.validator.ValidateAndAddToModelStateAsync(request.Body, this.ModelState, cancellationToken);
 
 			if (!this.ModelState.IsValid)
 			{
 				return this.BadRequest(
-				   ErrorResponse.Create(Constants.Errors.Categories.ValidationError)
-					.AddModelStateErrors(this.ModelState)
+					Responses.Response.ValidationError(this.ModelState, Constants.Errors.Categories.ValidationError)
 					);
 			}
 
@@ -161,15 +159,14 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 
 			var operationResult = this.lockerService.FindFittingBin(presetOption.Bins, request.Body.Items);
 			return this.Ok(
-				QueryResponse.Create(operationResult)
+				Responses.Response.FromResult(operationResult)
 			);
 		}
 		catch (Exception ex)
 		{
 			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Preset");
 			return this.InternalServerError(
-				ErrorResponse.Create(Constants.Errors.Categories.ServerError)
-				.AddExceptionError(ex)
+				Responses.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
 				);
 		}
 	}

@@ -11,6 +11,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{88EC1702-D375-496F-B26A-384DBEA8E0AA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "res", "res", "{D91D976D-F7CC-4AEF-B942-5B5EE97832F7}"
+	ProjectSection(SolutionItems) = preProject
+		res\Binacle.Requests.http = res\Binacle.Requests.http
+		res\http-client.env.json = res\http-client.env.json
+		res\ServiceModule.Requests.http = res\ServiceModule.Requests.http
+		res\Users.Requests.http = res\Users.Requests.http
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8-5B9D-4E2B-AA35-A208DFFFF1FE}"
 	ProjectSection(SolutionItems) = preProject
@@ -22,14 +28,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Requests", "Requests", "{B375BF2F-C766-4D42-8904-0EB4082ECE20}"
-	ProjectSection(SolutionItems) = preProject
-		res\Requests\Binacle.Requests.http = res\Requests\Binacle.Requests.http
-		res\Requests\http-client.env.json = res\Requests\http-client.env.json
-		res\Requests\ServiceModule.Requests.http = res\Requests\ServiceModule.Requests.http
-		res\Requests\Users.Requests.http = res\Requests\Users.Requests.http
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Performance Results", "Performance Results", "{01D68A21-EB78-4CAD-98BC-92632BE3080A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scaling Benchmarks", "Scaling Benchmarks", "{4A3E586B-D272-444E-BD81-8D5960084A02}"
@@ -38,7 +36,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scaling Benchmarks", "Scali
 		doc\Performance Results\Scaling Benchmarks\Initial Public Run.md = doc\Performance Results\Scaling Benchmarks\Initial Public Run.md
 	EndProjectSection
 EndProject
-
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib", "src\Binacle.Net.Lib\Binacle.Net.Lib.csproj", "{231D1EB6-7755-4AE5-BC5D-AFE071C1B10D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.Abstractions", "src\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj", "{2E28813F-4DF6-43BD-BD40-D049F508430F}"
@@ -73,7 +70,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Logging", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.MinimalEndpointDefinitions", "dep\ChrisMavrommatis.MinimalEndpointDefinitions\ChrisMavrommatis.MinimalEndpointDefinitions.csproj", "{9F03D0C9-D21E-4EF0-B2BC-9E7C5F087682}"
 EndProject
-
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -168,7 +164,17 @@ Global
 		{9F03D0C9-D21E-4EF0-B2BC-9E7C5F087682} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{A987C6F6-D895-467B-BA8C-CBF86F4BFC3F} = {33E52B99-426D-45F3-A663-E34A612626B0}
 		{B2C65188-1AEC-46FF-8C19-2AC3676FD629} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
-		{B375BF2F-C766-4D42-8904-0EB4082ECE20} = {D91D976D-F7CC-4AEF-B942-5B5EE97832F7}
+		{DE004F1C-9AB1-4652-A740-0CB7461E7498} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
+		{E07A46C2-5FAE-4373-AA86-FF95FA5BCBD1} = {33E52B99-426D-45F3-A663-E34A612626B0}
+		{F2367457-E8A0-42BE-A64B-DF12621B9CBA} = {33E52B99-426D-45F3-A663-E34A612626B0}
+		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}
+	EndGlobalSection
+EndGlobal
+-CBF86F4BFC3F} = {33E52B99-426D-45F3-A663-E34A612626B0}
+		{B2C65188-1AEC-46FF-8C19-2AC3676FD629} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{DE004F1C-9AB1-4652-A740-0CB7461E7498} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{E07A46C2-5FAE-4373-AA86-FF95FA5BCBD1} = {33E52B99-426D-45F3-A663-E34A612626B0}
 		{F2367457-E8A0-42BE-A64B-DF12621B9CBA} = {33E52B99-426D-45F3-A663-E34A612626B0}

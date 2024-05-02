@@ -1,21 +1,24 @@
 ﻿using Asp.Versioning;
+using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
-using Binacle.Net.Api.v1.Requests;
-using Binacle.Net.Api.v1.Requests.Examples;
-using Binacle.Net.Api.v1.Responses;
-using Binacle.Net.Api.v1.Responses.Examples;
+using Binacle.Net.Api.v2.Models.Errors;
+using Binacle.Net.Api.v2.Requests;
+using Binacle.Net.Api.v2.Requests.Examples;
+using Binacle.Net.Api.v2.Responses;
+using Binacle.Net.Api.v2.Responses.Examples;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Binacle.Net.Api.v1.Endpoints.Query;
+namespace Binacle.Net.Api.v2.Endpoints.Query;
+
 
 /// <summary>
 /// Query by Custom endpoint
 /// </summary>
-[ApiVersion(v1.ApiVersion.Number)]
+[ApiVersion(v2.ApiVersion.Number)]
 [Route("api/v{version:apiVersion}/[namespace]")]
 public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 {
@@ -104,17 +107,17 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	[HttpPost("by-custom")]
 	[Consumes("application/json")]
 	[Produces("application/json")]
-	[MapToApiVersion(v1.ApiVersion.Number)]
+	[MapToApiVersion(v2.ApiVersion.Number)]
 	[SwaggerRequestExample(typeof(CustomQueryRequest), typeof(CustomQueryRequestExample))]
 
-	[ProducesResponseType(typeof(QueryResponse), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(QueryResponse), typeof(CustomQueryResponseExamples), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(Response<Bin?>), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(Response<Bin?>), typeof(CustomQueryResponseExamples), StatusCodes.Status200OK)]
 
-	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(typeof(Response<List<IApiError>>), StatusCodes.Status400BadRequest)]
+	[SwaggerResponseExample(typeof(Response<List<IApiError>>), typeof(BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 
-	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
+	[ProducesResponseType(typeof(Response<List<IApiError>>), StatusCodes.Status500InternalServerError)]
+	[SwaggerResponseExample(typeof(Response<List<IApiError>>), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	public override async Task<IActionResult> HandleAsync(CustomQueryRequestWithBody request, CancellationToken cancellationToken = default)
 	{
 		try
@@ -122,8 +125,7 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 			if (request is null || request.Body is null)
 			{
 				return this.BadRequest(
-					ErrorResponse.Create(Constants.Errors.Categories.RequestError)
-					.AddParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody)
+					Responses.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody, Constants.Errors.Categories.RequestError)
 					);
 			}
 
@@ -132,23 +134,21 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 			if (!this.ModelState.IsValid)
 			{
 				return this.BadRequest(
-					ErrorResponse.Create(Constants.Errors.Categories.ValidationError)
-					.AddModelStateErrors(this.ModelState)
+					Responses.Response.ValidationError(this.ModelState, Constants.Errors.Categories.ValidationError)
 					);
 			}
 
 			var operationResult = this.lockerService.FindFittingBin(request.Body.Bins, request.Body.Items);
 
 			return this.Ok(
-				QueryResponse.Create(operationResult)
+				Responses.Response.FromResult(operationResult)
 				);
 		}
 		catch (Exception ex)
 		{
 			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Custom");
 			return this.InternalServerError(
-				ErrorResponse.Create(Constants.Errors.Categories.ServerError)
-				.AddExceptionError(ex)
+				Responses.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
 				);
 		}
 	}

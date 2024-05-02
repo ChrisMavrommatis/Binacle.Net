@@ -77,7 +77,8 @@ public class Program
 
 		builder.Services.AddApiVersioning(options =>
 		{
-			options.DefaultApiVersion = new ApiVersion(1, 0);
+			
+			options.DefaultApiVersion = ApiVersionParser.Default.Parse(v1.ApiVersion.Number);
 			options.AssumeDefaultVersionWhenUnspecified = true;
 			options.ReportApiVersions = true;
 			options.ApiVersionReader = ApiVersionReader.Combine(

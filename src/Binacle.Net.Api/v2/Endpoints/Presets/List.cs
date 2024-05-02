@@ -1,20 +1,21 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.Models;
-using Binacle.Net.Api.v1.Responses;
-using Binacle.Net.Api.v1.Responses.Examples;
+using Binacle.Net.Api.v2.Models.Errors;
+using Binacle.Net.Api.v2.Responses;
+using Binacle.Net.Api.v2.Responses.Examples;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 
-namespace Binacle.Net.Api.v1.Endpoints.Presets;
+namespace Binacle.Net.Api.v2.Endpoints.Presets;
 
 /// <summary>
 /// List Presets Endpoint
 /// </summary>
-[ApiVersion(v1.ApiVersion.Number)]
+[ApiVersion(v2.ApiVersion.Number)]
 [Route("api/v{version:apiVersion}/[namespace]")]
 public class List : EndpointWithoutRequest
 {
@@ -61,16 +62,16 @@ public class List : EndpointWithoutRequest
 	/// </response>
 	[Consumes("application/json")]
 	[Produces("application/json")]
-	[MapToApiVersion(v1.ApiVersion.Number)]
+	[MapToApiVersion(v2.ApiVersion.Number)]
 
 	[HttpGet]
-	[ProducesResponseType(typeof(PresetListResponse), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(PresetListResponse), typeof(PresetListResponseExample), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(Response<Dictionary<string, List<Bin>>>), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(Response<Dictionary<string, List<Bin>>>), typeof(PresetListResponseExample), StatusCodes.Status200OK)]
 
 	[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
 
-	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
+	[ProducesResponseType(typeof(Response<List<IApiError>>), StatusCodes.Status500InternalServerError)]
+	[SwaggerResponseExample(typeof(Response<List<IApiError>>), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 	public override async Task<IActionResult> HandleAsync(CancellationToken cancellationToken = default)
@@ -96,7 +97,7 @@ public class List : EndpointWithoutRequest
 					}).ToList()
 			);
 
-			var response = PresetListResponse.Create(presets);
+			var response = Responses.Response.Success(presets);
 
 			return this.Ok(response);
 		}
@@ -104,8 +105,7 @@ public class List : EndpointWithoutRequest
 		{
 			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "List Presets");
 			return this.InternalServerError(
-				ErrorResponse.Create(Constants.Errors.Categories.ServerError)
-				.AddExceptionError(ex)
+				Responses.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
 				);
 		}
 	}
