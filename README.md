@@ -22,39 +22,19 @@ Although not guaranteed to yield a 100% accuracy rate, the algorithm has been fi
 However, it's worth noting that due to its heuristic nature, there are instances where items might feasibly fit within a bin, yet the algorithm may either allocate them to a larger bin or fail to identify a suitable one.
 
 
-## Getting Started
-Follow the steps below to get Binacle.Net up and running with Docker.
+## Get Started
 
-1. **Install Docker:** If you haven't already, [Install Docker](https://www.docker.com/get-started/) on your system.
-   
-3. **Pull Binacle.Net Docker Image**
-   
-   Run the following command in your terminal to pull the latest Binacle.NET Docker image from Docker Hub:
-   ```bash
-   docker pull chrismavrommatis/binacle-net:latest
-   ```
-   
-5. **Run Binacle.NET Container**
-   
-   Once the image is pulled successfully, run the following command to start a Binacle.NET container:
-   ```bash
-   docker run -d --name binacle-net -p 8080:8080 chrismavrommatis/binacle-net:latest
-   ```
-   Or run the following command to start Binacle.NET with Swagger UI:
-   ```bash
-   docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True chrismavrommatis/binacle-net:latest
-   ```
-   
-7. **Access Binacle.Net**
-  
-   You can now send requests to the API. 
-	 ```
-	 https://localhost:8080/
-	 ```
-   Alternatively if you run Binacle.Net with Swagger enabled you could access the Swagger UI in your browser.
-	 ```
-	 https://localhost:8080/swagger/
-	 ```
+Make sure you have [Docker](https://www.docker.com/get-started/) installed on your system.
+
+Then run the following command in your terminal to pull and run the latest Binacle.NET Docker image from Docker Hub:
+```bash
+docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True chrismavrommatis/binacle-net:latest
+```
+Then you can access the Swagger UI by visiting the following URL in your browser
+
+```
+https://localhost:8080/swagger/
+```
 
 
 ## About the API
@@ -96,38 +76,29 @@ If you prefer to run the application with a different port inside the container,
 
 In the following example we're specifying port 80 as the internal port within the container.
 ```bash
-docker run --name binacle-net -e ASPNETCORE_HTTP_PORTS=80 -p 8080:80 chrismavrommatis/binacle-net:latest
+docker run --name binacle-net -e ASPNETCORE_HTTP_PORTS=80 -e SWAGGER_UI=True -p 8080:80 chrismavrommatis/binacle-net:latest
 ```
 
 ## Customizing the Presets
 To adjust the presets, download the [Presets.json](https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/Api/Binacle.Net.Api/Config_Files/Presets.json) file and modify it according to your needs. 
 Although Binacle.Net assumes the usage of centimeters, you can utilize different measurement systems as long as the dimensions remain integers and consistent across bins and items.
 
-Use a bind volume mount to replace the default Presets.json located in `/app/Config_Files/Presets.json` with your customized version.
+Use a bind mount to replace the default Presets.json located in `/app/Config_Files/Presets.json` with your customized version.
 
 You can either directly run Binacle.Net from the command line or use a Docker Compose file which is the suggested way.
 
 ### Command line using Docker
-Place the updated Presets.json file anywhere on your system and execute the appropriate command based on your operating system and preferences.
 
-*Note: Since we are using a volume to bind mount a single file we must provide the full path when running from a command line.*
+Place the updated Presets.json file anywhere on your system and execute the following command from that location:
+```bash
+docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
+```
+*Note: Since we are using a bind mount for a single file we must provide the full path when running from a command line.*
 
-- For Linux & MacOS (without Swagger)
-  ```bash
-  docker run --name binacle-net -p 8080:8080 -v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
-  ```
-- For Linux & MacOS (with Swagger)
-  ```bash
-  docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
-  ```
-- For Windows (without Swagger)
-  ```bat 
-  docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
-  ```
-- For Windows (with Swagger)
-  ```bat
-  docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
-  ```
+If you are running under Windows replace `$(pwd)` with `%cd%`, so the command looks like this:
+```bat 
+docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro chrismavrommatis/binacle-net:latest
+```
 
 ### Using the Docker Compose file
 Place the modified Presets.json file in the same directory as your Docker Compose file.
