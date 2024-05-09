@@ -11,8 +11,6 @@ namespace Binacle.Net.Api.ServiceModule.Configuration;
 
 internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 {
-	internal const string UsersApiName = "users";
-
 	public void Configure(string? name, SwaggerGenOptions options)
 	{
 		this.ConfigureSwaggerGenOptions(options);
@@ -49,41 +47,14 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 			[jwtSecurityScheme] = new List<string>()
 		});
 
-		
-		var info = new OpenApiInfo()
-		{
-			Title = "Binacle.Net Users API",
-			Version = "v1",
-			Description = __description__,
-			// gpl 3 license
-			License = new OpenApiLicense
-			{
-				Name = "GNU General Public License v3.0",
-				Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.html")
-			}
-		};
-
-		options.SwaggerDoc(UsersApiName, info);
-
 		options.OperationFilter<RateLimitingResponsesFilter>();
+
+		// Register documents
+		options.SwaggerDoc(v0.UsersApiDocument.ApiName, v0.UsersApiDocument.ApiInfo);
 	}
 
 	internal static void ConfigureSwaggerUI(SwaggerUIOptions options, WebApplication app)
 	{
-		options.SwaggerEndpoint($"/swagger/{UsersApiName}/swagger.json", $"Binacle.Net Users API");
+		options.SwaggerEndpoint(v0.UsersApiDocument.Endpoint, v0.UsersApiDocument.EndpointName);
 	}
-
-	private const string __description__ = """
-		**Binacle.Net Users API for User Management**
-		
-		This section is designed only for when Binacle is used as public service. <br>
-		User Management is done only by a user of Admin Group.
-		
-		[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)
-
-		[🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/chrismavrommatis/binacle-net)
-
-		[Get Postman collection](https://www.postman.com/chrismavrommatis/workspace/binacle-net)
-
-		""";
 }

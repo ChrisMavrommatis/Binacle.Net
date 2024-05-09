@@ -1,6 +1,8 @@
-﻿using Binacle.Net.Api.ServiceModule.Data.Entities;
-using Binacle.Net.Api.ServiceModule.Data.Repositories;
-using Binacle.Net.Api.ServiceModule.Models;
+﻿using Binacle.Net.Api.ServiceModule.Domain.Users.Data;
+using Binacle.Net.Api.ServiceModule.Domain.Users.Entities;
+using Binacle.Net.Api.ServiceModule.Domain.Users.Models;
+using ChrisMavrommatis.Results.Typed;
+using ChrisMavrommatis.Results.Unions;
 using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 using System.Text;
@@ -9,10 +11,10 @@ namespace Binacle.Net.Api.ServiceModule.Services;
 
 internal interface IUserManagerService
 {
-	Task<UserActionResult> AuthenticateAsync(UserActionRequest request, CancellationToken cancellationToken);
-	Task<UserActionResult> CreateAsync(UserActionRequest request, CancellationToken cancellationToken);
-	Task<UserActionResult> DeleteAsync(UserActionRequest request, CancellationToken cancellationToken);
-	Task<UserActionResult> ChangePasswordAsync(UserActionRequest request, CancellationToken cancellationToken);
+	Task<OneOf<User, Unauthorized>> AuthenticateAsync(AuthenticateUserRequest request, CancellationToken cancellationToken);
+	Task<OneOf<User, Conflict, Error>> CreateAsync(CreateUserRequest request, CancellationToken cancellationToken);
+	Task<OneOf<Ok, NotFound, Error>> DeleteAsync(DeleteUserRequest request, CancellationToken cancellationToken);
+	Task<OneOf<Ok, NotFound, Conflict, Error>> ChangePasswordAsync(ChangeUserPasswordRequest request, CancellationToken cancellationToken);
 }
 
 internal class UserManagerService : IUserManagerService
@@ -29,116 +31,119 @@ internal class UserManagerService : IUserManagerService
 		this.logger = logger;
 	}
 
-	public async Task<UserActionResult> AuthenticateAsync(UserActionRequest request, CancellationToken cancellationToken = default)
+	public async Task<OneOf<User, Unauthorized>> AuthenticateAsync(AuthenticateUserRequest request, CancellationToken cancellationToken = default)
 	{
 		if (request is null || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
 		{
-			return new UserActionResult(false, Message: "Invalid Credentials", ResultType: UserActionResultType.Unauthorized);
+			return new Unauthorized();
 		}
 
 		var result = await this.userRepository.GetAsync(request.Email, cancellationToken);
 
-		if (!result.Success)
+		if (!result.Is<User>())
 		{
-			return new UserActionResult(false, Message: "Invalid Credentials", ResultType: UserActionResultType.Unauthorized);
+			return new Unauthorized();
 		}
 
-		var user = result.Value!;
+
+		var user = result.GetValue<User>();
 
 		var hashedPassword = HashPassword(request.Password, Convert.FromBase64String(user.Salt));
 
 		if (hashedPassword != user.HashedPassword)
 		{
-			return new UserActionResult(false, Message: "Invalid Credentials", ResultType: UserActionResultType.Unauthorized);
+			return new Unauthorized();
 		}
 
-		return new UserActionResult(true, User: user);
+		return user;
 	}
 
-	public async Task<UserActionResult> CreateAsync(UserActionRequest request, CancellationToken cancellationToken = default)
+	public async Task<OneOf<User, Conflict, Error>> CreateAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
 	{
 		if (request is null || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
 		{
-			return new UserActionResult(false, Message: "Invalid Credentials", ResultType: UserActionResultType.MalformedRequest);
+			return new Error("Invalid Credentials");
 		}
 
 		var getResult = await this.userRepository.GetAsync(request.Email, cancellationToken);
 
-		if (getResult.Success)
+		if (getResult.Is<User>())
 		{
-			return new UserActionResult(false, Message: "User already exists", ResultType: UserActionResultType.Conflict);
+			return new Error("User already exists");
 		}
 
 		byte[] salt = GenerateSalt();
 		string hashedPassword = HashPassword(request.Password, salt);
 
-		var user = new UserEntity(request.Email, UserGroups.Users)
+		var user = new User
 		{
+			Email = request.Email,
+			Group = UserGroups.Users,
 			Salt = Convert.ToBase64String(salt),
 			HashedPassword = hashedPassword
 		};
 
 		var createResult = await this.userRepository.CreateAsync(user, cancellationToken: cancellationToken);
-		if (!createResult.Success)
+		if (!createResult.Is<Ok>())
 		{
-			return new UserActionResult(false, Message: "Could not create user", ResultType: UserActionResultType.Unspecified);
+			return new Error("Could not create user");
 		}
 
-		return new UserActionResult(true, User: user);
+		return user;
 	}
 
-	public async Task<UserActionResult> DeleteAsync(UserActionRequest request, CancellationToken cancellationToken = default)
+	public async Task<OneOf<Ok, NotFound, Error>> DeleteAsync(DeleteUserRequest request, CancellationToken cancellationToken = default)
 	{
 		if (request is null || string.IsNullOrWhiteSpace(request.Email))
 		{
-			return new UserActionResult(false, Message: "Invalid Email", ResultType: UserActionResultType.MalformedRequest);
+			return new Error("Invalid Email");
 		}
 		var result = await this.userRepository.DeleteAsync(request.Email, cancellationToken);
 
-		if (!result.Success)
+		if (!result.Is<Ok>())
 		{
-			return new UserActionResult(false, Message: "User doesn't exist", ResultType: UserActionResultType.NotFound);
+			return new NotFound();
 		}
 
-		return new UserActionResult(true);
+		return new Ok();
 	}
 
-	public async Task<UserActionResult> ChangePasswordAsync(UserActionRequest request, CancellationToken cancellationToken)
+	public async Task<OneOf<Ok, NotFound, Conflict, Error>> ChangePasswordAsync(ChangeUserPasswordRequest request, CancellationToken cancellationToken)
 	{
-		if (request is null || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+		if (request is null || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.NewPassword))
 		{
-			return new UserActionResult(false, Message: "Invalid Credentials", ResultType: UserActionResultType.MalformedRequest);
+			return new Error("Invalid Credentials");
 		}
 
 		var getResult = await this.userRepository.GetAsync(request.Email, cancellationToken);
 
-		if (!getResult.Success)
+		if (!getResult.Is<User>())
 		{
-			return new UserActionResult(false, Message: "User doesn't exist", ResultType: UserActionResultType.NotFound);
+			return new NotFound();
 		}
 
-		var user = getResult.Value!;
-		var hashedPassword = HashPassword(request.Password, Convert.FromBase64String(user.Salt));
+		var user = getResult.GetValue<User>();
+		var newHashedPassword = HashPassword(request.NewPassword, Convert.FromBase64String(user.Salt));
 
-		if (hashedPassword == user.HashedPassword)
+		if (newHashedPassword == user.HashedPassword)
 		{
-			return new UserActionResult(false, Message: "New password is the same as the old", ResultType: UserActionResultType.Conflict);
+			return new Conflict("New password is the same as the old");
 		}
 
 		byte[] salt = GenerateSalt();
-		string newHashedPassword = HashPassword(request.Password, salt);
+		string newHashedPasswordWithDifferentSalt = HashPassword(request.NewPassword, salt);
 
 		user.Salt = Convert.ToBase64String(salt);
-		user.HashedPassword = newHashedPassword;
+		user.HashedPassword = newHashedPasswordWithDifferentSalt;
 
 		var updateResult = await this.userRepository.UpdateAsync(user, cancellationToken);
 
-		if (!updateResult.Success)
+		if (!updateResult.Is<Ok>())
 		{
-			return new UserActionResult(false, Message: "Could not update user", ResultType: UserActionResultType.Unspecified);
+			return new Error("Could not update user");
 		}
 
-		return new UserActionResult(true, User: user);
+		return new Ok();
 	}
 
 	private static byte[] GenerateSalt()

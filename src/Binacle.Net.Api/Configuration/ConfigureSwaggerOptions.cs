@@ -46,7 +46,7 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 
 	private void AddApiVersionDocuments(SwaggerGenOptions options, IReadOnlyList<ApiVersionDescription> apiVersionDescriptions)
 	{
-		foreach (var description in apiVersionDescriptions)
+		foreach (var description in apiVersionDescriptions.Where(x => x.GroupName.StartsWith("v")))
 		{
 			var info = new OpenApiInfo()
 			{

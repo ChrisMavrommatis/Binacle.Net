@@ -1,7 +1,7 @@
-﻿using Binacle.Net.Api.ServiceModule.Configuration;
+﻿using Binacle.Net.Api.Kernel.Helpers;
+using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
-using Binacle.Net.Api.ServiceModule.Data.Repositories;
-using Binacle.Net.Api.ServiceModule.Helpers;
+using Binacle.Net.Api.ServiceModule.Infrastructure;
 using Binacle.Net.Api.ServiceModule.Services;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.MinimalEndpointDefinitions;
@@ -11,7 +11,6 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -33,7 +32,7 @@ public static class ModuleDefinition
 		builder.Configuration
 			.AddUserSecrets<IModuleMarker>(optional: true, reloadOnChange: true);
 
-		var applicationInsightsConnectionString = StartupConfigurationHelper.GetConnectionStringWithEnvironmentVariableFallback(
+		var applicationInsightsConnectionString = SetupConfigurationHelper.GetConnectionStringWithEnvironmentVariableFallback(
 			builder.Configuration,
 			"ApplicationInsights",
 			"APPLICATIONINSIGHTS_CONNECTION_STRING"
@@ -100,25 +99,9 @@ public static class ModuleDefinition
 		builder.Services.AddAuthorization();
 
 		// Register Services
-		builder.Services.AddScoped<IUserRepository, UserRepository>();
 		builder.Services.AddScoped<ITokenService, TokenService>();
 		builder.Services.AddScoped<IUserManagerService, UserManagerService>();
-
-		// Register Azure
-		builder.Services.AddAzureClients(clientBuilder =>
-		{
-			var connectionString = StartupConfigurationHelper.GetConnectionStringWithEnvironmentVariableFallback(
-				builder.Configuration,
-				"AzureStorage",
-				"AZURESTORAGE_CONNECTION_STRING");
-
-			if (string.IsNullOrWhiteSpace(connectionString))
-			{
-				throw new InvalidOperationException("AzureStorage connection string is missing");
-			}
-
-			clientBuilder.AddTableServiceClient(connectionString);
-		});
+		builder.AddInfrastructureServices();
 
 		builder.Services
 			.AddHealthChecks();
@@ -213,6 +196,6 @@ public static class ModuleDefinition
 		ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
 	}
 
-	
+
 
 }
