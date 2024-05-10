@@ -69,7 +69,7 @@ internal class UserManagerService : IUserManagerService
 
 		if (getResult.Is<User>())
 		{
-			return new Error("User already exists");
+			return new Conflict("User already exists");
 		}
 
 		byte[] salt = GenerateSalt();

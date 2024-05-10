@@ -2,7 +2,7 @@
 
 namespace ChrisMavrommatis.MinimalEndpointDefinitions;
 
-public interface IEndpointDefinition
+public interface IPartOfGroup
 {
-	void DefineEndpoint(IEndpointRouteBuilder endpoints);
+	void DefineEndpoint(RouteGroupBuilder group);
 }

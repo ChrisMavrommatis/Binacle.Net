@@ -1,6 +1,8 @@
 ﻿using Binacle.Net.Api.ServiceModule.Domain.Users.Entities;
 using Binacle.Net.Api.ServiceModule.Models;
 using Binacle.Net.Api.ServiceModule.Services;
+using Binacle.Net.Api.ServiceModule.v0.Requests;
+using Binacle.Net.Api.ServiceModule.v0.Responses;
 using ChrisMavrommatis.MinimalEndpointDefinitions;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
@@ -8,20 +10,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Swashbuckle.AspNetCore.Annotations;
-using Binacle.Net.Api.ServiceModule.v0.Requests;
-using Binacle.Net.Api.ServiceModule.v0.Responses;
 
-namespace Binacle.Net.Api.ServiceModule.v0.Endpoints;
+namespace Binacle.Net.Api.ServiceModule.v0.Endpoints.Auth;
 
-internal class AuthEndpointsDefinition : IEndpointDefinition
+internal class Token : IEndpointDefinition
 {
-	public void DefineEndpoints(WebApplication app)
+	public void DefineEndpoint(IEndpointRouteBuilder endpoints)
 	{
-		var group = app.MapGroup("/auth")
-			.WithTags("Auth");
-
-
-		group.MapPost("/token", Token)
+		endpoints.MapPost("/auth/token", HandleAsync)
+			.WithTags("Auth")
 			.DisableRateLimiting()
 			.WithSummary("Authenticate to use the service without limits")
 			.WithDescription("Use this endpoint if you have the credentials to get a token so you can make the calls without rate limits")
@@ -32,7 +29,7 @@ internal class AuthEndpointsDefinition : IEndpointDefinition
 	[SwaggerResponse(StatusCodes.Status200OK, "When you have valid credentials", typeof(TokenResponse), "application/json")]
 	[SwaggerResponse(StatusCodes.Status400BadRequest, "When the request is invalid", typeof(AuthErrorResponse), "application/json")]
 	[SwaggerResponse(StatusCodes.Status401Unauthorized, "When the credentials are invalid")]
-	internal async Task<IResult> Token(
+	internal async Task<IResult> HandleAsync(
 		IUserManagerService userManagerService,
 		ITokenService tokenService,
 		IValidator<TokenRequest> validator,
