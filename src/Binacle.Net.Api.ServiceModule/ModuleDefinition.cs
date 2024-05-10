@@ -1,8 +1,9 @@
 ﻿using Binacle.Net.Api.Kernel.Helpers;
 using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
+using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Infrastructure;
-using Binacle.Net.Api.ServiceModule.Services;
+using Binacle.Net.Api.ServiceModule.Domain;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.MinimalEndpointDefinitions;
 using FluentValidation;
@@ -18,6 +19,7 @@ using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
 using System.Threading.RateLimiting;
+using Binacle.Net.Api.ServiceModule.Services;
 
 namespace Binacle.Net.Api.ServiceModule;
 
@@ -27,10 +29,14 @@ public static class ModuleDefinition
 	{
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initializing");
 
+
 		// Required for local run with secrets
 		// Secrets are overwritten later
 		builder.Configuration
 			.AddUserSecrets<IModuleMarker>(optional: true, reloadOnChange: true);
+
+		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
+
 
 		var applicationInsightsConnectionString = SetupConfigurationHelper.GetConnectionStringWithEnvironmentVariableFallback(
 			builder.Configuration,
@@ -64,6 +70,15 @@ public static class ModuleDefinition
 			.ValidateFluently()
 			.ValidateOnStart();
 
+		builder.Configuration
+			.AddJsonFile(DefaultsOptions.FilePath, optional: false, reloadOnChange: false)
+			.AddEnvironmentVariables();
+
+
+		builder.Services
+			.AddOptions<DefaultsOptions>()
+			.Bind(builder.Configuration.GetSection(DefaultsOptions.SectionName));
+
 		var jwtAuthOptions = builder.Configuration.GetSection(JwtAuthOptions.SectionName).Get<JwtAuthOptions>();
 		if(jwtAuthOptions is null)
 		{
@@ -95,13 +110,16 @@ public static class ModuleDefinition
 		});
 
 		builder.Services.AddEndpointsApiExplorer();
-		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
+		
 		builder.Services.AddAuthorization();
 
 		// Register Services
+
 		builder.Services.AddScoped<ITokenService, TokenService>();
-		builder.Services.AddScoped<IUserManagerService, UserManagerService>();
-		builder.AddInfrastructureServices();
+
+		builder.Services
+			.AddDomainLayerServices()
+			.AddInfrastructureLayerServices(builder.Configuration);
 
 		builder.Services
 			.AddHealthChecks();
@@ -187,7 +205,6 @@ public static class ModuleDefinition
 		app.UseAuthentication();
 		app.UseAuthorization();
 		app.UseMinimalEndpointDefinitions();
-
 		app.UseRateLimiter();
 	}
 
@@ -195,7 +212,5 @@ public static class ModuleDefinition
 	{
 		ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
 	}
-
-
 
 }

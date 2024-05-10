@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Binacle.Net.Api.ServiceModule.Services;
 
-internal interface IUserManagerService
+public interface IUserManagerService
 {
 	Task<OneOf<User, Unauthorized>> AuthenticateAsync(AuthenticateUserRequest request, CancellationToken cancellationToken);
 	Task<OneOf<User, Conflict, Error>> CreateAsync(CreateUserRequest request, CancellationToken cancellationToken);
@@ -45,8 +45,12 @@ internal class UserManagerService : IUserManagerService
 			return new Unauthorized();
 		}
 
-
 		var user = result.GetValue<User>();
+
+		if(!user.IsActive)
+		{
+			return new Unauthorized();
+		}
 
 		var hashedPassword = HashPassword(request.Password, Convert.FromBase64String(user.Salt));
 
@@ -78,9 +82,10 @@ internal class UserManagerService : IUserManagerService
 		var user = new User
 		{
 			Email = request.Email,
-			Group = UserGroups.Users,
+			Group = request.Group,
 			Salt = Convert.ToBase64String(salt),
-			HashedPassword = hashedPassword
+			HashedPassword = hashedPassword,
+			IsActive = true
 		};
 
 		var createResult = await this.userRepository.CreateAsync(user, cancellationToken: cancellationToken);
@@ -145,6 +150,7 @@ internal class UserManagerService : IUserManagerService
 
 		return new Ok();
 	}
+
 
 	private static byte[] GenerateSalt()
 	{

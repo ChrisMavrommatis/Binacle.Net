@@ -1,19 +1,21 @@
 ﻿using Binacle.Net.Api.Kernel.Helpers;
 using Binacle.Net.Api.ServiceModule.Domain.Users.Data;
 using Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables.Users.Data;
-using Microsoft.AspNetCore.Builder;
+using Binacle.Net.Api.ServiceModule.Infrastructure.Services;
+using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace Binacle.Net.Api.ServiceModule.Infrastructure;
 
-public static class WebApplicationBuilderExtensions
+public static class ServiceCollectionExtensions
 {
-	public static void AddInfrastructureServices(this WebApplicationBuilder builder)
+	public static IServiceCollection AddInfrastructureLayerServices(this IServiceCollection services, IConfiguration configuration)
 	{
 		var azureStorageConnectionString = SetupConfigurationHelper.GetConnectionStringWithEnvironmentVariableFallback(
-				builder.Configuration,
+				configuration,
 				"AzureStorage",
 				"AZURESTORAGE_CONNECTION_STRING");
 
@@ -22,14 +24,19 @@ public static class WebApplicationBuilderExtensions
 		{
 			Log.Information("Registering {StorageProvider} as infrastructure provider", "AzureStorage");
 
-			builder.Services.AddScoped<IUserRepository, AzureTablesUserRepository>();
+			services.AddScoped<IUserRepository, AzureTablesUserRepository>();
 
 			// Register Azure
-			builder.Services.AddAzureClients(clientBuilder =>
+			services.AddAzureClients(clientBuilder =>
 			{
 				clientBuilder.AddTableServiceClient(azureStorageConnectionString);
 			});
 		}
-	
+
+
+		services.AddStartupTask<EnsureAdminUserExistsStartupTask>();
+
+		return services;
 	}
 }
+

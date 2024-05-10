@@ -37,6 +37,7 @@
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Features\ChrisMavrommatis.Features.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
+	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.StartupTasks\ChrisMavrommatis.StartupTasks.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.SwaggerExamples\ChrisMavrommatis.SwaggerExamples.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />

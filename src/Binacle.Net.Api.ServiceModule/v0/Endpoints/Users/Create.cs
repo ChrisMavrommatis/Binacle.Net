@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Api.ServiceModule.Domain.Users.Models;
+using Binacle.Net.Api.ServiceModule.Models;
 using Binacle.Net.Api.ServiceModule.Services;
 using Binacle.Net.Api.ServiceModule.v0.Requests;
 using Binacle.Net.Api.ServiceModule.v0.Responses;

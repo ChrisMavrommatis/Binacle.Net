@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Api.ServiceModule.Domain.Users.Entities;
+using Binacle.Net.Api.ServiceModule.Domain.Users.Models;
 using Binacle.Net.Api.ServiceModule.Models;
 using Binacle.Net.Api.ServiceModule.Services;
 using Binacle.Net.Api.ServiceModule.v0.Requests;
@@ -43,7 +44,7 @@ internal class Token : IEndpointDefinition
 			return Results.BadRequest(AuthErrorResponse.Create("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage).ToArray()));
 		}
 
-		var result = await userManagerService.AuthenticateAsync(new Domain.Users.Models.AuthenticateUserRequest(request.Email, request.Password), cancellationToken);
+		var result = await userManagerService.AuthenticateAsync(new AuthenticateUserRequest(request.Email, request.Password), cancellationToken);
 
 		if (!result.Is<User>())
 		{

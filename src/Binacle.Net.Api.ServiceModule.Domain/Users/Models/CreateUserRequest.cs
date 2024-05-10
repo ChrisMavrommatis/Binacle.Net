@@ -1,3 +1,5 @@
-﻿namespace Binacle.Net.Api.ServiceModule.Domain.Users.Models;
+﻿using Binacle.Net.Api.ServiceModule.Domain.Users.Entities;
 
-public record CreateUserRequest(string Email, string Password);
+namespace Binacle.Net.Api.ServiceModule.Domain.Users.Models;
+
+public record CreateUserRequest(string Email, string Password, string Group = UserGroups.Users);

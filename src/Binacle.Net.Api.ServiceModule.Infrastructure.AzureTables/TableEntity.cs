@@ -10,8 +10,3 @@ internal abstract class TableEntity : ITableEntity
 	public virtual DateTimeOffset? Timestamp { get; set; }
 	public virtual ETag ETag { get; set; }
 }
-
-internal struct TableNames
-{
-	public const string Users = "users";
-}

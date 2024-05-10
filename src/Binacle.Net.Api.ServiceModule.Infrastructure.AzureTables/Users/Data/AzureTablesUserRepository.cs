@@ -8,10 +8,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables.Users.Data;
 
-
 public class AzureTablesUserRepository : IUserRepository
 {
 	private readonly TableServiceClient tableServiceClient;
+	private const string _partitionKey = UsersTablePartitionKeys.Users;
+	private const string _tableName = TableNames.Users;
 
 	public AzureTablesUserRepository(
 		TableServiceClient tableServiceClient
@@ -22,8 +23,8 @@ public class AzureTablesUserRepository : IUserRepository
 
 	public async Task<OneOf<Ok, Error>> CreateAsync(User user, CancellationToken cancellationToken = default)
 	{
-		await this.tableServiceClient.CreateTableIfNotExistsAsync(TableNames.Users);
-		var tableClient = this.tableServiceClient.GetTableClient(TableNames.Users);
+		await this.tableServiceClient.CreateTableIfNotExistsAsync(_tableName);
+		var tableClient = this.tableServiceClient.GetTableClient(_tableName);
 
 		var infrastructureEntity = this.MapToInfrastructureModel(user);
 
@@ -38,9 +39,9 @@ public class AzureTablesUserRepository : IUserRepository
 
 	public async Task<OneOf<User, Error>> GetAsync(string email, CancellationToken cancellationToken = default)
 	{
-		var tableClient = this.tableServiceClient.GetTableClient(TableNames.Users);
+		var tableClient = this.tableServiceClient.GetTableClient(_tableName);
 
-		var response = await tableClient.GetEntityIfExistsAsync<UserTableEntity>(UserGroups.Users, email, cancellationToken: cancellationToken);
+		var response = await tableClient.GetEntityIfExistsAsync<UserTableEntity>(_partitionKey, email, cancellationToken: cancellationToken);
 
 		if (response is not null && response.HasValue)
 		{
@@ -53,9 +54,9 @@ public class AzureTablesUserRepository : IUserRepository
 
 	public async Task<OneOf<Ok, Error>> DeleteAsync(string email, CancellationToken cancellationToken = default)
 	{
-		var tableClient = this.tableServiceClient.GetTableClient(TableNames.Users);
+		var tableClient = this.tableServiceClient.GetTableClient(_tableName);
 
-		var response = await tableClient.DeleteEntityAsync(UserGroups.Users, email, cancellationToken: cancellationToken);
+		var response = await tableClient.DeleteEntityAsync(_partitionKey, email, cancellationToken: cancellationToken);
 
 		var isSuccess = response.Status == StatusCodes.Status204NoContent && !response.IsError;
 		if (isSuccess)
@@ -66,7 +67,7 @@ public class AzureTablesUserRepository : IUserRepository
 
 	public async Task<OneOf<Ok, Error>> UpdateAsync(User user, CancellationToken cancellationToken = default)
 	{
-		var tableClient = this.tableServiceClient.GetTableClient(TableNames.Users);
+		var tableClient = this.tableServiceClient.GetTableClient(_tableName);
 
 
 		var infrastructureEntity = this.MapToInfrastructureModel(user);
@@ -87,16 +88,19 @@ public class AzureTablesUserRepository : IUserRepository
 			Email = infrastructureEntity.Email,
 			Group = infrastructureEntity.Group,
 			Salt = infrastructureEntity.Salt,
-			HashedPassword = infrastructureEntity.HashedPassword
+			HashedPassword = infrastructureEntity.HashedPassword,
+			IsActive = infrastructureEntity.IsActive
 		};
 	}
 
 	private UserTableEntity MapToInfrastructureModel(User domainEntity)
 	{
-		return new UserTableEntity(domainEntity.Email, domainEntity.Group)
+		return new UserTableEntity(domainEntity.Email, _partitionKey)
 		{
 			Salt = domainEntity.Salt,
-			HashedPassword = domainEntity.HashedPassword
+			HashedPassword = domainEntity.HashedPassword,
+			Group = domainEntity.Group,
+			IsActive = domainEntity.IsActive
 		};
 	}
 }

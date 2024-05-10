@@ -6,4 +6,5 @@ public class User
 	public string Group { get; set; }
 	public string HashedPassword { get; set; }
 	public string Salt { get; set; }
+	public bool IsActive { get; set; }
 }

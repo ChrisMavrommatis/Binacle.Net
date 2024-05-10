@@ -6,6 +6,7 @@ using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.Features;
 using ChrisMavrommatis.FluentValidation;
+using ChrisMavrommatis.StartupTasks;
 using ChrisMavrommatis.SwaggerExamples;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ namespace Binacle.Net.Api;
 
 public class Program
 {
-	public static void Main(string[] args)
+	public static async Task Main(string[] args)
 	{
 		Log.Logger = new LoggerConfiguration()
 			.MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
@@ -152,6 +153,7 @@ public class Program
 
 		app.MapControllers();
 
-		app.Run();
+		await app.RunStartupTasksAsync();
+		await app.RunAsync();
 	}
 }

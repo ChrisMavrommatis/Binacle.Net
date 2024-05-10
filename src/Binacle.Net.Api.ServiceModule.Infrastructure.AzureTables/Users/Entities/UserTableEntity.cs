@@ -2,11 +2,10 @@
 
 internal class UserTableEntity : TableEntity
 {
-	public UserTableEntity(string email, string group)
+	public UserTableEntity(string rowKey, string partitionKey)
 	{
-		this.RowKey = email;
-		this.PartitionKey = group;
-		this.Group = group;
+		this.RowKey = rowKey;
+		this.PartitionKey = partitionKey;
 	}
 	public UserTableEntity()
 	{
@@ -16,4 +15,5 @@ internal class UserTableEntity : TableEntity
 	public string Group { get; set; }
 	public string HashedPassword { get; set; }
 	public string Salt { get; set; }
+	public bool IsActive { get; set; }
 }

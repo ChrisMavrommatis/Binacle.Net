@@ -17,6 +17,7 @@ internal class UsersGroup : IEndpointGroupDefinition
 			{
 				builder.RequireAuthenticatedUser();
 				builder.RequireClaim(JwtApplicationClaimNames.Groups, UserGroups.Admins);
-			}).WithGroupName(UsersApiDocument.ApiName);
+			})
+			.WithGroupName(UsersApiDocument.ApiName);
 	}
 }
