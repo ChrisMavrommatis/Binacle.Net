@@ -20,6 +20,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
 using System.Threading.RateLimiting;
 using Binacle.Net.Api.ServiceModule.Services;
+using Microsoft.Extensions.Hosting;
 
 namespace Binacle.Net.Api.ServiceModule;
 
@@ -28,15 +29,20 @@ public static class ModuleDefinition
 	public static void AddServiceModule(this WebApplicationBuilder builder)
 	{
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initializing");
-
+		
+		builder.Configuration
+			.AddJsonFile("ConnectionStrings.json", optional: false, reloadOnChange: true)
+			.AddJsonFile($"ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+			.AddEnvironmentVariables();
 
 		// Required for local run with secrets
-		// Secrets are overwritten later
-		builder.Configuration
+		if (builder.Environment.IsDevelopment())
+		{
+			builder.Configuration
 			.AddUserSecrets<IModuleMarker>(optional: true, reloadOnChange: true);
+		}
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
-
 
 		var applicationInsightsConnectionString = SetupConfigurationHelper.GetConnectionStringWithEnvironmentVariableFallback(
 			builder.Configuration,
@@ -61,8 +67,7 @@ public static class ModuleDefinition
 		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
 			.AddJsonFile(JwtAuthOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
-			.AddEnvironmentVariables()
-			.AddUserSecrets<IModuleMarker>(optional: true, reloadOnChange: true);
+			.AddEnvironmentVariables();
 
 		builder.Services
 			.AddOptions<JwtAuthOptions>()
@@ -74,17 +79,9 @@ public static class ModuleDefinition
 			.AddJsonFile(DefaultsOptions.FilePath, optional: false, reloadOnChange: false)
 			.AddEnvironmentVariables();
 
-
 		builder.Services
 			.AddOptions<DefaultsOptions>()
 			.Bind(builder.Configuration.GetSection(DefaultsOptions.SectionName));
-
-		var jwtAuthOptions = builder.Configuration.GetSection(JwtAuthOptions.SectionName).Get<JwtAuthOptions>();
-		if(jwtAuthOptions is null)
-		{
-			Log.Error("Required config {Config} not found during startup", nameof(JwtAuthOptions));
-			throw new System.ArgumentNullException(nameof(JwtAuthOptions), "Config is required during startup");
-		}
 
 		builder.Services.AddAuthentication(options =>
 		{
@@ -94,6 +91,8 @@ public static class ModuleDefinition
 
 		}).AddJwtBearer(options =>
 		{
+			var jwtAuthOptions = builder.Configuration.GetSection(JwtAuthOptions.SectionName).Get<JwtAuthOptions>();
+			
 			options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
 			{
 				ValidIssuer = jwtAuthOptions.Issuer,

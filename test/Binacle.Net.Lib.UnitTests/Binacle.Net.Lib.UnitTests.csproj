@@ -6,14 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Attributes\**" />
-    <Compile Remove="TestData\**" />
-    <EmbeddedResource Remove="Attributes\**" />
-    <EmbeddedResource Remove="TestData\**" />
-    <None Remove="Attributes\**" />
-    <None Remove="TestData\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.18.1" />

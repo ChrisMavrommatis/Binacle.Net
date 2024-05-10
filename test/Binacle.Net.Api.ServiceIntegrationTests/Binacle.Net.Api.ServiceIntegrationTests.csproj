@@ -7,10 +7,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="xunit.runner.json" />
-	</ItemGroup>
-
-	<ItemGroup>
+		<Content Include="Config_Files\*.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Include="xunit.runner.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
@@ -33,9 +32,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
-	  <ProjectReference Include="..\..\src\Binacle.Net.Api\Binacle.Net.Api.csproj" />
-	  <ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj" />
+		<ProjectReference Include="..\..\src\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
+		<ProjectReference Include="..\..\src\Binacle.Net.Api\Binacle.Net.Api.csproj" />
+		<ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj" />
 	</ItemGroup>
 
 </Project>

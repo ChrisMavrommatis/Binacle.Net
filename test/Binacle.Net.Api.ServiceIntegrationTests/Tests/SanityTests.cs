@@ -1,5 +1,8 @@
-﻿using Binacle.Net.Api.ServiceModule.v0.Requests;
+﻿using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
+using Binacle.Net.Api.ServiceModule.v0.Requests;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
@@ -31,5 +34,19 @@ public class SanityTests : IClassFixture<BinacleApiAsAServiceFactory>
 		};
 		var response = await this.sut.Client.PostAsJsonAsync("/auth/token", request);
 		response.StatusCode.Should().NotBe(System.Net.HttpStatusCode.NotFound);
+	}
+
+	[Fact]
+	public async Task Test_Infrastructure_Configured_Correctly()
+	{
+		var defaultsOptions = this.sut.Services.GetRequiredService<IOptions<DefaultsOptions>>();
+		var defaultAdminUser = defaultsOptions.Value.GetParsedAdminUser();
+		var request = new TokenRequest()
+		{
+			Email = defaultAdminUser.Email,
+			Password = defaultAdminUser.Password
+		};
+		var response = await this.sut.Client.PostAsJsonAsync("/auth/token", request);
+		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 	}
 }

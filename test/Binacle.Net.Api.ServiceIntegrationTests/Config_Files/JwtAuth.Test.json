@@ -1,0 +1,8 @@
+﻿{
+	"JwtAuth": {
+		"Issuer": "ForTestsOnly",
+		"Audience": "ForTestsOnly",
+		"TokenSecret": "SecretKeyForTestsOnly_paddedTo70Plus_paddedTo70Plus_paddedTo70Plus_paddedTo70Plus",
+		"ExpirationInSeconds": 3600
+	}
+}

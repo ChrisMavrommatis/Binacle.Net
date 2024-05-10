@@ -1,0 +1,6 @@
+﻿{
+	"ConnectionStrings": {
+		"ApplicationInsights": "",
+		"AzureStorage": ""
+	}
+}

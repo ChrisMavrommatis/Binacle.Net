@@ -30,7 +30,7 @@ internal class EnsureAdminUserExistsStartupTask : IStartupTask
 
 			var configuredAdminUser = defaultsOptions.Value.GetParsedAdminUser();
 
-			var request = new Domain.Users.Models.CreateUserRequest(configuredAdminUser.Email, configuredAdminUser.Email, UserGroups.Admins);
+			var request = new Domain.Users.Models.CreateUserRequest(configuredAdminUser.Email, configuredAdminUser.Password, UserGroups.Admins);
 
 			var result = await service.CreateAsync(request, cancellationToken);
 

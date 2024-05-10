@@ -78,7 +78,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.Kernel", "src\Binacle.Net.Api.Kernel\Binacle.Net.Api.Kernel.csproj", "{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChrisMavrommatis.StartupTasks", "dep\ChrisMavrommatis.StartupTasks\ChrisMavrommatis.StartupTasks.csproj", "{56BD9CAE-3FBB-47E7-B221-75D3F6BB9C20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.StartupTasks", "dep\ChrisMavrommatis.StartupTasks\ChrisMavrommatis.StartupTasks.csproj", "{56BD9CAE-3FBB-47E7-B221-75D3F6BB9C20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

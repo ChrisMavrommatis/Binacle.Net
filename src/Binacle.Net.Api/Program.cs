@@ -38,6 +38,10 @@ public class Program
 			.SetBasePath($"{Directory.GetCurrentDirectory()}/Config_Files");
 
 		builder.Configuration
+			.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+			.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
+		builder.Configuration
 			.AddJsonFile("Serilog.json", optional: false, reloadOnChange: true)
 			.AddJsonFile($"Serilog.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
