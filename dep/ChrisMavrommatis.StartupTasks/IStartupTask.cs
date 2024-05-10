@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.Metrics;
-
-namespace ChrisMavrommatis.StartupTasks;
+﻿namespace ChrisMavrommatis.StartupTasks;
 
 public interface IStartupTask
 {
