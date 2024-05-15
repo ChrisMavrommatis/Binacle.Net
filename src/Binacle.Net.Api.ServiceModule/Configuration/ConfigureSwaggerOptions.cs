@@ -24,7 +24,6 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 
 	private void ConfigureSwaggerGenOptions(SwaggerGenOptions options)
 	{
-		options.EnableAnnotations();
 		var jwtSecurityScheme = new OpenApiSecurityScheme
 		{
 			BearerFormat = "JWT",

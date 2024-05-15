@@ -102,6 +102,8 @@ public class Program
 		builder.Services.AddSwaggerExamples(options =>
 		{
 			options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+			// ignore null
+			options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
 		});
 
 		builder.Services.AddSwaggerGen();

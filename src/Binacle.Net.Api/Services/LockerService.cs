@@ -35,9 +35,11 @@ internal class LockerService : ILockerService
 
 		var strategy = this.strategyFactory.Create(Lib.BinFittingStrategy.FirstFitDecreasing);
 
+		var flatItems = items.SelectMany(x => Enumerable.Repeat(x, x.Quantity)).ToList();
+
 		var operation = strategy
 			.WithBins(bins)
-			.AndItems(items)
+			.AndItems(flatItems)
 			.Build();
 
 		var operationResult = operation.Execute();

@@ -13,17 +13,17 @@ internal class ExamplesWriter
 
 	public void WriteSingleRequest(OpenApiOperation operation, ISingleSwaggerExamplesProvider provider)
 	{
-		foreach (var content in operation.RequestBody.Content)
+		if (operation.RequestBody.Content.TryGetValue("application/json", out var value))
 		{
-			content.Value.Example = this.formatter.FormatJsonExample(provider);
+			value.Example = this.formatter.FormatJsonExample(provider);
 		}
 	}
 
 	public void WriteMultipleRequests(OpenApiOperation operation, IMultipleSwaggerExamplesProvider provider)
 	{
-		foreach (var content in operation.RequestBody.Content)
+		if (operation.RequestBody.Content.TryGetValue("application/json", out var value))
 		{
-			content.Value.Examples = this.formatter.FormatJsonExamples(provider);
+			value.Examples = this.formatter.FormatJsonExamples(provider);
 		}
 	}
 
@@ -34,11 +34,10 @@ internal class ExamplesWriter
 		if (!operation.Responses.TryGetValue(key, out var response))
 			return;
 
-		foreach (var content in response.Content)
+		if (response.Content.TryGetValue("application/json", out var value))
 		{
-			content.Value.Example = this.formatter.FormatJsonExample(provider);
+			value.Example = this.formatter.FormatJsonExample(provider);
 		}
-
 	}
 
 	public void WriteMultipleResponses(OpenApiOperation operation, int statusCode, IMultipleSwaggerExamplesProvider provider)
@@ -48,9 +47,9 @@ internal class ExamplesWriter
 		if (!operation.Responses.TryGetValue(key, out var response))
 			return;
 
-		foreach (var content in response.Content)
+		if (response.Content.TryGetValue("application/json", out var value))
 		{
-			content.Value.Examples = this.formatter.FormatJsonExamples(provider);
+			value.Examples = this.formatter.FormatJsonExamples(provider);
 		}
 	}
 }

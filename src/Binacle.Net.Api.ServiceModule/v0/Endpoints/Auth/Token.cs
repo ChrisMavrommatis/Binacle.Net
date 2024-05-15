@@ -5,6 +5,7 @@ using Binacle.Net.Api.ServiceModule.Services;
 using Binacle.Net.Api.ServiceModule.v0.Requests;
 using Binacle.Net.Api.ServiceModule.v0.Requests.Examples;
 using Binacle.Net.Api.ServiceModule.v0.Responses;
+using Binacle.Net.Api.ServiceModule.v0.Responses.Examples;
 using ChrisMavrommatis.MinimalEndpointDefinitions;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
@@ -12,7 +13,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace Binacle.Net.Api.ServiceModule.v0.Endpoints.Auth;
 
@@ -26,19 +26,35 @@ internal class Token : IEndpointDefinition
 			.WithSummary("Authenticate to use the service without limits")
 			.WithDescription("Use this endpoint if you have the credentials to get a token so you can make the calls without rate limits")
 			.Accepts<TokenRequest>("application/json")
-			// TODO  SwaggerResponse overwrites SwaggerResponseExample
-			//.Produces<AuthErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			.WithOpenApi();
+			.Produces<TokenResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<AuthErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.Produces(StatusCodes.Status401Unauthorized)
+			.WithOpenApi(operation =>
+			{
+				operation.Responses["200"].Description = @"**OK** 
+				<br /> 
+				<p>
+					When you have valid credentials.
+				</p>";
+
+				operation.Responses["400"].Description = @"**Bad Request** 
+				<br /> 
+				<p>
+					When the request is invalid.
+				</p>";
+
+				operation.Responses["401"].Description = @"**Unauthorized** 
+				<br /> 
+				<p>
+					When the credentials are invalid.
+				</p>";
+
+				return operation;
+			});
 	}
-	
+
 	[SwaggerRequestExample(typeof(TokenRequest), typeof(TokenRequestExample))]
-
-	[SwaggerResponse(StatusCodes.Status200OK, "When you have valid credentials", typeof(TokenResponse), "application/json")]
-
-	//[SwaggerResponseExample(typeof(AuthErrorResponse), typeof(AuthErrorResponseExample), StatusCodes.Status400BadRequest)]
-	[SwaggerResponse(StatusCodes.Status400BadRequest, "When the request is invalid", typeof(AuthErrorResponse), "application/json")]
-
-	[SwaggerResponse(StatusCodes.Status401Unauthorized, "When the credentials are invalid")]
+	[SwaggerResponseExample(typeof(AuthErrorResponse), typeof(AuthErrorResponseExample), StatusCodes.Status400BadRequest)]
 	internal async Task<IResult> HandleAsync(
 		IUserManagerService userManagerService,
 		ITokenService tokenService,
