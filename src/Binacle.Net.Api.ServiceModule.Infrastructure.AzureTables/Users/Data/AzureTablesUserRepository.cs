@@ -41,7 +41,7 @@ public class AzureTablesUserRepository : IUserRepository
 	{
 		var tableClient = this.tableServiceClient.GetTableClient(_tableName);
 
-		var response = await tableClient.GetEntityIfExistsAsync<UserTableEntity>(_partitionKey, email, cancellationToken: cancellationToken);
+		var response = await tableClient.GetEntityIfExistsAsync<UserTableEntity>(_partitionKey, email.ToLowerInvariant(), cancellationToken: cancellationToken);
 
 		if (response is not null && response.HasValue)
 		{
@@ -56,7 +56,7 @@ public class AzureTablesUserRepository : IUserRepository
 	{
 		var tableClient = this.tableServiceClient.GetTableClient(_tableName);
 
-		var response = await tableClient.DeleteEntityAsync(_partitionKey, email, cancellationToken: cancellationToken);
+		var response = await tableClient.DeleteEntityAsync(_partitionKey, email.ToLowerInvariant(), cancellationToken: cancellationToken);
 
 		var isSuccess = response.Status == StatusCodes.Status204NoContent && !response.IsError;
 		if (isSuccess)
@@ -95,8 +95,9 @@ public class AzureTablesUserRepository : IUserRepository
 
 	private UserTableEntity MapToInfrastructureModel(User domainEntity)
 	{
-		return new UserTableEntity(domainEntity.Email, _partitionKey)
+		return new UserTableEntity(domainEntity.Email.ToLowerInvariant(), _partitionKey)
 		{
+			Email = domainEntity.Email,
 			Salt = domainEntity.Salt,
 			HashedPassword = domainEntity.HashedPassword,
 			Group = domainEntity.Group,

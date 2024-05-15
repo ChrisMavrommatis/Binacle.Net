@@ -4,7 +4,7 @@ using Binacle.Net.TestsKernel.Data.Providers;
 using Binacle.Net.TestsKernel.Models;
 using Xunit;
 
-namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
+namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;
 
 [Trait("Benchmark Case Tests", "Ensures algorithms behave as expected for the benchmarks")]
 public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>

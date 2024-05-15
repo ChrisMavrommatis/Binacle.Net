@@ -10,21 +10,22 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests;
+namespace Binacle.Net.Api.IntegrationTests.Tests;
 
 [TestCaseOrderer("Binacle.Net.Api.Tests.TestPriority.TestPriorityOrderer", "Binacle.Net.Api.Tests")]
-public class ListPresetsEndpointTests : IClassFixture<WebApplicationFactory<Binacle.Net.Api.IApiMarker>>
+[Trait("Endpoint Tests", "Endpoint Integration tests")]
+public class ListPresets: IClassFixture<WebApplicationFactory<Binacle.Net.Api.IApiMarker>>
 {
 	private const string routePath = "/api/v1/presets";
 	private readonly WebApplicationFactory<Binacle.Net.Api.IApiMarker> sut;
 	private readonly HttpClient client;
 
-	public ListPresetsEndpointTests(WebApplicationFactory<Binacle.Net.Api.IApiMarker> sut)
+	public ListPresets(WebApplicationFactory<Binacle.Net.Api.IApiMarker> sut)
 	{
 		this.sut = sut
 			.WithWebHostBuilder(builder =>
 			{
-				builder.UseEnvironment("Development");
+				builder.UseEnvironment("Test");
 				builder.ConfigureTestServices(services =>
 				{
 					services.AddSingleton<ILoggerFactory, NullLoggerFactory>();

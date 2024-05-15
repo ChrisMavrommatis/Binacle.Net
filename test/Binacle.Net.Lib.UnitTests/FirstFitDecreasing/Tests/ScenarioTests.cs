@@ -2,7 +2,7 @@
 using Binacle.Net.Lib.UnitTests.Data.Models;
 using Xunit;
 
-namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
+namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;
 
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
 public class ScenarioTests : IClassFixture<FirstFitDecreasingFixture>

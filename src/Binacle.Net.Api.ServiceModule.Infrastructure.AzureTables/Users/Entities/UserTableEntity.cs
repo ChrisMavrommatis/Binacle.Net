@@ -11,7 +11,7 @@ internal class UserTableEntity : TableEntity
 	{
 
 	}
-	public string Email { get => RowKey; }
+	public string Email { get; set; }
 	public string Group { get; set; }
 	public string HashedPassword { get; set; }
 	public string Salt { get; set; }

@@ -3,7 +3,7 @@ using Binacle.Net.Lib.Exceptions;
 using Binacle.Net.TestsKernel.Models;
 using Xunit;
 
-namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
+namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;
 
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>

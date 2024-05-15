@@ -1,9 +1,10 @@
 ﻿using Binacle.Net.Api.Kernel.Helpers;
 using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
+using Binacle.Net.Api.ServiceModule.Domain;
 using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Infrastructure;
-using Binacle.Net.Api.ServiceModule.Domain;
+using Binacle.Net.Api.ServiceModule.Services;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.MinimalEndpointDefinitions;
 using FluentValidation;
@@ -14,13 +15,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
 using System.Threading.RateLimiting;
-using Binacle.Net.Api.ServiceModule.Services;
-using Microsoft.Extensions.Hosting;
 
 namespace Binacle.Net.Api.ServiceModule;
 

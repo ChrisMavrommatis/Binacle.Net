@@ -1,11 +1,11 @@
 ﻿using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests;
+namespace Binacle.Net.Api.IntegrationTests.Tests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
-public class SanityTests
+public class Sanity
 {
-	public SanityTests()
+	public Sanity()
 	{
 	}
 

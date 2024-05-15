@@ -26,6 +26,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
@@ -40,6 +41,7 @@
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.MinimalEndpointDefinitions\ChrisMavrommatis.MinimalEndpointDefinitions.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Results\ChrisMavrommatis.Results.csproj" />
+	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.SwaggerExamples\ChrisMavrommatis.SwaggerExamples.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule.Domain\Binacle.Net.Api.ServiceModule.Domain.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule.Infrastructure\Binacle.Net.Api.ServiceModule.Infrastructure.csproj" />
 	</ItemGroup>

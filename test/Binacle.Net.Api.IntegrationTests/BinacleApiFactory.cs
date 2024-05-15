@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json;
-using Xunit;
 
 namespace Binacle.Net.Api.IntegrationTests;
 
@@ -24,7 +23,7 @@ public class BinacleApiFactory : WebApplicationFactory<Binacle.Net.Api.IApiMarke
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
-		builder.UseEnvironment("Development");
+		builder.UseEnvironment("Test");
 		builder.ConfigureTestServices(services =>
 		{
 			services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
@@ -33,13 +32,4 @@ public class BinacleApiFactory : WebApplicationFactory<Binacle.Net.Api.IApiMarke
 
 	public HttpClient Client { get; init; }
 	public JsonSerializerOptions JsonSerializerOptions { get; init; }
-}
-
-[CollectionDefinition(Name)]
-public class BinacleApiCollection : ICollectionFixture<BinacleApiFactory>
-{
-	public const string Name = "Binacle Api Collection";
-	// This class has no code, and is never created. Its purpose is simply
-	// to be the place to apply [CollectionDefinition] and all the
-	// ICollectionFixture<> interfaces.
 }

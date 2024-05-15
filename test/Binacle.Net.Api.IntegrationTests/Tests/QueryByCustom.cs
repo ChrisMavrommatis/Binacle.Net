@@ -3,10 +3,11 @@ using FluentAssertions;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests;
+namespace Binacle.Net.Api.IntegrationTests.Tests;
 
 [Collection(BinacleApiCollection.Name)]
-public class QueryByCustomEndpointTests
+[Trait("Endpoint Tests", "Endpoint Integration tests")]
+public class QueryByCustom
 {
 	private readonly BinacleApiFactory apiFactory;
 	private readonly CustomQueryRequest sampleRequest = new()
@@ -27,7 +28,7 @@ public class QueryByCustomEndpointTests
 
 	private const string routePath = "/api/v1/query/by-custom";
 
-	public QueryByCustomEndpointTests(BinacleApiFactory apiFactory)
+	public QueryByCustom(BinacleApiFactory apiFactory)
 	{
 		this.apiFactory = apiFactory;
 	}

@@ -6,10 +6,11 @@ using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests;
+namespace Binacle.Net.Api.IntegrationTests.Tests;
 
 [Collection(BinacleApiCollection.Name)]
-public class QueryByPresetEndpointTests : IClassFixture<BinacleApiFactory>
+[Trait("Endpoint Tests", "Endpoint Integration tests")]
+public class QueryByPreset
 {
 	private readonly BinacleApiFactory apiFactory;
 	private readonly IOptions<BinPresetOptions> presetOptions;
@@ -25,7 +26,7 @@ public class QueryByPresetEndpointTests : IClassFixture<BinacleApiFactory>
 
 	private const string routePath = "/api/v1/query/by-preset/{preset}";
 
-	public QueryByPresetEndpointTests(BinacleApiFactory apiFactory)
+	public QueryByPreset(BinacleApiFactory apiFactory)
 	{
 		this.apiFactory = apiFactory;
 		this.presetOptions = this.apiFactory.Services.GetRequiredService<IOptions<BinPresetOptions>>();

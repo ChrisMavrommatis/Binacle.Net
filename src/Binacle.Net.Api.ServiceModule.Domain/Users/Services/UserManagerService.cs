@@ -15,12 +15,19 @@ public interface IUserManagerService
 	Task<OneOf<User, Conflict, Error>> CreateAsync(CreateUserRequest request, CancellationToken cancellationToken);
 	Task<OneOf<Ok, NotFound, Error>> DeleteAsync(DeleteUserRequest request, CancellationToken cancellationToken);
 	Task<OneOf<Ok, NotFound, Conflict, Error>> ChangePasswordAsync(ChangeUserPasswordRequest request, CancellationToken cancellationToken);
+	Task<OneOf<Ok, NotFound, Error>> UpdateAsync(UpdateUserRequest request, CancellationToken cancellationToken);
 }
 
 internal class UserManagerService : IUserManagerService
 {
 	private readonly IUserRepository userRepository;
 	private readonly ILogger<UserManagerService> logger;
+
+	private static string[] _validGroups = new string[]
+	{
+		UserGroups.Admins,
+		UserGroups.Users
+	};
 
 	public UserManagerService(
 		IUserRepository userRepository,
@@ -47,7 +54,7 @@ internal class UserManagerService : IUserManagerService
 
 		var user = result.GetValue<User>();
 
-		if(!user.IsActive)
+		if (!user.IsActive)
 		{
 			return new Unauthorized();
 		}
@@ -145,12 +152,57 @@ internal class UserManagerService : IUserManagerService
 
 		if (!updateResult.Is<Ok>())
 		{
-			return new Error("Could not update user");
+			return new Error("Could not change user's password");
 		}
 
 		return new Ok();
 	}
 
+	public async Task<OneOf<Ok, NotFound, Error>> UpdateAsync(UpdateUserRequest request, CancellationToken cancellationToken)
+	{
+		if (request is null || string.IsNullOrWhiteSpace(request.Email))
+		{
+			return new Error("Invalid Credentials");
+		}
+
+		if (string.IsNullOrEmpty(request.Group) && !request.IsActive.HasValue)
+		{
+			return new Error("Invalid Request");
+		}
+
+		if (!string.IsNullOrEmpty(request.Group) && !_validGroups.Contains(request.Group))
+		{
+			return new Error("Invalid Group");
+		}
+
+		var getResult = await this.userRepository.GetAsync(request.Email, cancellationToken);
+
+		if (!getResult.Is<User>())
+		{
+			return new NotFound();
+		}
+
+		var user = getResult.GetValue<User>();
+
+		if(!string.IsNullOrEmpty(request.Group))
+		{
+			user.Group = request.Group!;
+		}
+
+		if (request.IsActive.HasValue)
+		{
+			user.IsActive = request.IsActive.Value;
+		}
+
+		var updateResult = await this.userRepository.UpdateAsync(user, cancellationToken);
+
+		if (!updateResult.Is<Ok>())
+		{
+			return new Error("Could not update user");
+		}
+
+		return new Ok();
+	}
 
 	private static byte[] GenerateSalt()
 	{

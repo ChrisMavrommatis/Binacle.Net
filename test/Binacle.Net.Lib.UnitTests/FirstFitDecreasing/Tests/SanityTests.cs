@@ -2,7 +2,7 @@
 using Binacle.Net.TestsKernel.Models;
 using Xunit;
 
-namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
+namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
 public class SanityTests : IClassFixture<SanityFixture>

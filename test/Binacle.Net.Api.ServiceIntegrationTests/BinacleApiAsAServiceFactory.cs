@@ -15,11 +15,6 @@ namespace Binacle.Net.Api.ServiceIntegrationTests;
 
 public class BinacleApiAsAServiceFactory : WebApplicationFactory<Binacle.Net.Api.IApiMarker>
 {
-	private static readonly string[] _removeConfigs = new string[]
-	{
-		"appsettings.json"
-	};
-
 	public BinacleApiAsAServiceFactory()
 	{
 		this.Client = this.CreateClient();
