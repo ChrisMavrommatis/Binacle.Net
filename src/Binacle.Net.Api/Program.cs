@@ -11,6 +11,7 @@ using ChrisMavrommatis.SwaggerExamples;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Text.Json.Serialization;
 
 namespace Binacle.Net.Api;
 
@@ -78,11 +79,15 @@ public class Program
 		{
 			options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
 			options.UseNamespaceRouteToken();
+
+		}).AddJsonOptions(options =>
+		{
+			options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
 
 		builder.Services.AddApiVersioning(options =>
 		{
-			
+
 			options.DefaultApiVersion = ApiVersionParser.Default.Parse(v1.ApiVersion.Number);
 			options.AssumeDefaultVersionWhenUnspecified = true;
 			options.ReportApiVersions = true;
@@ -103,7 +108,7 @@ public class Program
 		{
 			options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
 			// ignore null
-			options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+			options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
 
 		builder.Services.AddSwaggerGen();

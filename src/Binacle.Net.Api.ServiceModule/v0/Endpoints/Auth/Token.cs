@@ -1,5 +1,6 @@
 ﻿using Binacle.Net.Api.ServiceModule.Domain.Users.Entities;
 using Binacle.Net.Api.ServiceModule.Domain.Users.Models;
+using Binacle.Net.Api.ServiceModule.Extensions;
 using Binacle.Net.Api.ServiceModule.Models;
 using Binacle.Net.Api.ServiceModule.Services;
 using Binacle.Net.Api.ServiceModule.v0.Requests;
@@ -31,29 +32,30 @@ internal class Token : IEndpointDefinition
 			.Produces(StatusCodes.Status401Unauthorized)
 			.WithOpenApi(operation =>
 			{
-				operation.Responses["200"].Description = @"**OK** 
+				operation.SetResponseDescription(StatusCodes.Status200OK, @"**OK** 
 				<br /> 
 				<p>
 					When you have valid credentials.
-				</p>";
+				</p>");
 
-				operation.Responses["400"].Description = @"**Bad Request** 
+				operation.SetResponseDescription(StatusCodes.Status400BadRequest, @"**Bad Request** 
 				<br /> 
 				<p>
 					When the request is invalid.
-				</p>";
+				</p>");
 
-				operation.Responses["401"].Description = @"**Unauthorized** 
+				operation.SetResponseDescription(StatusCodes.Status401Unauthorized, @"**Unauthorized** 
 				<br /> 
 				<p>
 					When the credentials are invalid.
-				</p>";
+				</p>");
 
 				return operation;
 			});
 	}
 
 	[SwaggerRequestExample(typeof(TokenRequest), typeof(TokenRequestExample))]
+	[SwaggerResponseExample(typeof(TokenResponse), typeof(TokenResponseExample), StatusCodes.Status200OK)]
 	[SwaggerResponseExample(typeof(AuthErrorResponse), typeof(AuthErrorResponseExample), StatusCodes.Status400BadRequest)]
 	internal async Task<IResult> HandleAsync(
 		IUserManagerService userManagerService,

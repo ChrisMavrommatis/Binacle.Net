@@ -13,6 +13,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,6 +21,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 
 namespace Binacle.Net.Api.ServiceModule;
@@ -122,6 +124,11 @@ public static class ModuleDefinition
 
 		builder.Services
 			.AddHealthChecks();
+
+		builder.Services.Configure<JsonOptions>(options =>
+		{
+			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+		});
 
 		if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
 		{
