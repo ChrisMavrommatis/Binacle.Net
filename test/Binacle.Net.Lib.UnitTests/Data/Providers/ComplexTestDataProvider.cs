@@ -1,8 +1,10 @@
-﻿namespace Binacle.Net.Lib.UnitTests.Data.Providers;
+﻿using Binacle.Net.TestsKernel.Providers;
 
-internal class ComplexTestDataProvider : CompactScenarioFileTestDataProvider
+namespace Binacle.Net.Lib.UnitTests.Data.Providers;
+
+internal class ComplexTestDataProvider : ScenarioTestDataProvider
 {
-	public ComplexTestDataProvider() : base($"{Constants.DataBasePath}/Scenarios/Compact/Complex.json")
+	public ComplexTestDataProvider() : base(Constants.SolutionRootBasePath, "Complex")
 	{
 
 	}

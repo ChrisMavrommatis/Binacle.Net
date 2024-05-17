@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Lib.UnitTests.Data.Models;
-using Binacle.Net.TestsKernel.Models;
+﻿using Binacle.Net.TestsKernel.Models;
 using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;
@@ -43,25 +42,26 @@ public class SanityTests : IClassFixture<SanityFixture>
 
 	private static void Assert_Scenarios_Are_ConfiguredCorrectly(
 		Dictionary<string, List<TestBin>> bins,
-		Dictionary<string, Scenario> scenarios
+		Dictionary<string, List<Scenario>> scenarioCollections
 		)
 	{
 
-		Xunit.Assert.NotNull(scenarios);
-		Xunit.Assert.True(scenarios.Count > 0);
+		Xunit.Assert.NotNull(scenarioCollections);
+		Xunit.Assert.True(scenarioCollections.Count > 0);
 
-		foreach (var scenario in scenarios.Values)
+		foreach (var (scenarioCollectionName, scenarios) in scenarioCollections)
 		{
-			var scenarioExpectedSize = scenario.ExpectedSize;
-			bins.TryGetValue(scenario.BinCollection, out var binCollection);
-			Xunit.Assert.NotNull(binCollection);
-			if (scenarioExpectedSize != "None")
+			foreach(var scenario in scenarios)
 			{
-				var expectedSize = binCollection.FirstOrDefault(x => x.ID == scenarioExpectedSize);
-				Xunit.Assert.NotNull(expectedSize);
+				var scenarioExpectedSize = scenario.ExpectedSize;
+				bins.TryGetValue(scenario.BinCollection, out var binCollection);
+				Xunit.Assert.NotNull(binCollection);
+				if (scenarioExpectedSize != "None")
+				{
+					var expectedSize = binCollection.FirstOrDefault(x => x.ID == scenarioExpectedSize);
+					Xunit.Assert.NotNull(expectedSize);
+				}
 			}
 		}
 	}
-
-
 }

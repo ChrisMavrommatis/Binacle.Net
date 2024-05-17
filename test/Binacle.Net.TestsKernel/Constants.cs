@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.TestsKernel.Data;
+﻿namespace Binacle.Net.TestsKernel;
 
 internal class Constants
 {

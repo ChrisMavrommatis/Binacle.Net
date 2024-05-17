@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Binacle.Net.TestsKernel.Data.Providers;
 using Binacle.Net.TestsKernel.Models;
+using Binacle.Net.TestsKernel.Providers;
 using System.Runtime.CompilerServices;
 
 namespace Binacle.Net.Lib.Benchmarks.FirstFitDecreasing;
@@ -26,8 +26,8 @@ public class ScalingBenchmarks
 	{
 		var _5x5x5 = BenchmarkScalingTestsDataProvider.GetDimensions();
 
-		this.rundataProvider = new BinTestDataProvider(solutionRootBasePath: GetSolutionRoot());
-		this.bins = this.rundataProvider.GetBinCollection(BenchmarkScalingTestsDataProvider.BinCollectionName);
+		this.rundataProvider = new BinCollectionsTestDataProvider(solutionRootBasePath: GetSolutionRoot());
+		this.bins = this.rundataProvider.GetCollection(BenchmarkScalingTestsDataProvider.BinCollectionName);
 		this.items = Enumerable.Range(1, this.NoOfItems).Select(x => new TestItem(x.ToString(), _5x5x5)).ToList();
 	}
 
@@ -41,7 +41,7 @@ public class ScalingBenchmarks
 
 	private List<TestBin> bins;
 	private List<TestItem> items;
-	private BinTestDataProvider rundataProvider;
+	private BinCollectionsTestDataProvider rundataProvider;
 
 	[Benchmark(Baseline = true)]
 	public Lib.Models.BinFittingOperationResult V1_5x5x5()

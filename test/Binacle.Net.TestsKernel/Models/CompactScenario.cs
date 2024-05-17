@@ -1,6 +1,6 @@
-﻿namespace Binacle.Net.Lib.UnitTests.Data.Models;
+﻿namespace Binacle.Net.TestsKernel.Models;
 
-public sealed class CompactScenario
+internal class CompactScenario
 {
 	public string Name { get; set; }
 	public string BinCollection { get; set; }

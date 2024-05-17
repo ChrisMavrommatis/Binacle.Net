@@ -1,7 +1,7 @@
 ﻿[
   {
     "Name": "ComplexScenario_FitsInSmall_1",
-    "BinCollection": "RectangularCuboids",
+    "BinCollection": "rectangular-cuboids",
     "ExpectedSize": "Small",
     "Items": [
       {

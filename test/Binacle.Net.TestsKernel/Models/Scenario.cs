@@ -1,6 +1,4 @@
-﻿using Binacle.Net.TestsKernel.Models;
-
-namespace Binacle.Net.Lib.UnitTests.Data.Models;
+﻿namespace Binacle.Net.TestsKernel.Models;
 
 public sealed class Scenario
 {

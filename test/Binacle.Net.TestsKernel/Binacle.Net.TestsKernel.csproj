@@ -19,7 +19,7 @@
 
 	
 	<ItemGroup>
-	  <None Update="Data\Bins\*.json">
+	  <None Update="Data\BinCollections\*.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

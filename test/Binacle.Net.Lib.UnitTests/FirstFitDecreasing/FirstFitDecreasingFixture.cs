@@ -1,18 +1,17 @@
-﻿
-using Binacle.Net.TestsKernel.Data.Providers;
-using Binacle.Net.TestsKernel.Models;
+﻿using Binacle.Net.TestsKernel.Models;
+using Binacle.Net.TestsKernel.Providers;
 
 namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
 
 public sealed class FirstFitDecreasingFixture : IDisposable
 {
-	private readonly BinTestDataProvider binTestDataProvider;
+	private readonly BinCollectionsTestDataProvider binTestDataProvider;
 
-	public Dictionary<string, List<TestBin>> Bins => this.binTestDataProvider.Bins;
+	public Dictionary<string, List<TestBin>> Bins => this.binTestDataProvider.Collections;
 
 	public FirstFitDecreasingFixture()
 	{
-		this.binTestDataProvider = new BinTestDataProvider(Data.Constants.SolutionRootBasePath);
+		this.binTestDataProvider = new BinCollectionsTestDataProvider(Data.Constants.SolutionRootBasePath);
 
 	}
 

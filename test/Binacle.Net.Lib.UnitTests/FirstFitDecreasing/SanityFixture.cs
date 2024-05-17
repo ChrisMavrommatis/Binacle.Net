@@ -1,74 +1,23 @@
-﻿using Binacle.Net.Lib.UnitTests.Data.Models;
-using Binacle.Net.TestsKernel.Data.Providers;
-using Binacle.Net.TestsKernel.Helpers;
-using Binacle.Net.TestsKernel.Models;
-using Newtonsoft.Json;
+﻿using Binacle.Net.TestsKernel.Models;
+using Binacle.Net.TestsKernel.Providers;
 
 namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing;
 
 public sealed class SanityFixture : IDisposable
 {
-	private readonly BinTestDataProvider binTestDataProvider;
+	private readonly BinCollectionsTestDataProvider binCollectionsTestDataProvider;
+	private readonly ScenarioCollectionsTestDataProvider scenarioCollectionsTestDataProvider;
+	private readonly CompactScenarioCollectionsTestDataProvider compactScenarioCollectionsTestDataProvider;
 
-	public Dictionary<string, List<TestBin>> Bins => this.binTestDataProvider.Bins;
-
-	public readonly Dictionary<string, Scenario> CompactScenarios;
-	public readonly Dictionary<string, Scenario> NormalScenarios;
+	public Dictionary<string, List<TestBin>> Bins => this.binCollectionsTestDataProvider.Collections;
+	public Dictionary<string, List<Scenario>> CompactScenarios => this.compactScenarioCollectionsTestDataProvider.Collections;
+	public Dictionary<string, List<Scenario>> NormalScenarios => this.scenarioCollectionsTestDataProvider.Collections;
 
 	public SanityFixture()
 	{
-		this.binTestDataProvider = new BinTestDataProvider(Data.Constants.SolutionRootBasePath);
-		this.CompactScenarios = this.ReadCompactScenarios();
-		this.NormalScenarios = this.ReadNormalScenarios();
-	}
-
-	private Dictionary<string, Scenario> ReadCompactScenarios()
-	{
-		var scenarios = new Dictionary<string, Scenario>();
-		var scenariosDirectoryInfo = new System.IO.DirectoryInfo($"{Data.Constants.DataBasePath}/Scenarios/Compact");
-		foreach (var scenarioCollectionFileInfo in scenariosDirectoryInfo.GetFiles())
-		{
-			var scenarioCollectionName = Path.GetFileNameWithoutExtension(scenarioCollectionFileInfo.Name);
-			using (var sr = new StreamReader(scenarioCollectionFileInfo.OpenRead()))
-			{
-				var compactScenarios = JsonConvert.DeserializeObject<List<CompactScenario>>(sr.ReadToEnd());
-				foreach (var compactScenario in compactScenarios)
-				{
-					var scenario = new Scenario
-					{
-						Name = compactScenario.Name,
-						ExpectedSize = compactScenario.ExpectedSize,
-						BinCollection = compactScenario.BinCollection,
-						Items = compactScenario.Items.Select(x => DimensionHelper.ParseFromCompactString(x)).ToList()
-					};
-
-					scenarios.Add($"{scenarioCollectionName}_{scenario.Name}", scenario);
-				}
-			}
-		}
-
-		return scenarios;
-	}
-
-	private Dictionary<string, Scenario> ReadNormalScenarios()
-	{
-		var scenarios = new Dictionary<string, Scenario>();
-
-		var scenariosDirectoryInfo = new System.IO.DirectoryInfo($"{Data.Constants.DataBasePath}/Scenarios/Normal");
-		foreach (var scenarioCollectionFileInfo in scenariosDirectoryInfo.GetFiles())
-		{
-			var scenarioCollectionName = Path.GetFileNameWithoutExtension(scenarioCollectionFileInfo.Name);
-			using (var sr = new StreamReader(scenarioCollectionFileInfo.OpenRead()))
-			{
-				var normalScenarios = JsonConvert.DeserializeObject<List<Scenario>>(sr.ReadToEnd());
-				foreach (var normalScenario in normalScenarios)
-				{
-					scenarios.Add($"{scenarioCollectionName}_{normalScenario.Name}", normalScenario);
-				}
-			}
-		}
-		return scenarios;
-
+		this.binCollectionsTestDataProvider = new BinCollectionsTestDataProvider(Data.Constants.SolutionRootBasePath);
+		this.scenarioCollectionsTestDataProvider = new ScenarioCollectionsTestDataProvider(Data.Constants.SolutionRootBasePath);
+		this.compactScenarioCollectionsTestDataProvider = new CompactScenarioCollectionsTestDataProvider(Data.Constants.SolutionRootBasePath);
 	}
 
 	public void Dispose()

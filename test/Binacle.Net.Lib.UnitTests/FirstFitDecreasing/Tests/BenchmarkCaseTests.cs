@@ -1,7 +1,6 @@
 ﻿using Binacle.Net.Lib.Abstractions.Strategies;
-using Binacle.Net.TestsKernel.Data.Models;
-using Binacle.Net.TestsKernel.Data.Providers;
 using Binacle.Net.TestsKernel.Models;
+using Binacle.Net.TestsKernel.Providers;
 using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;

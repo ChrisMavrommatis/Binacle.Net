@@ -1,12 +1,11 @@
-﻿using Binacle.Net.TestsKernel.Data.Models;
-using Binacle.Net.TestsKernel.Models;
+﻿using Binacle.Net.TestsKernel.Models;
 using System.Collections;
 
-namespace Binacle.Net.TestsKernel.Data.Providers;
+namespace Binacle.Net.TestsKernel.Providers;
 
 public class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 {
-	public const string BinCollectionName = "RectangularCuboids";
+	public const string BinCollectionName = "rectangular-cuboids";
 	private static Dictionary<int, string> testCases = new Dictionary<int, string>()
 	{
 		{ 10, "Small" },
@@ -34,11 +33,11 @@ public class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 		.ToList();
 
 	// ranges for assertion 193-384, 385-576, 577-1000
-	private static Dictionary<string, TestsKernel.Models.Range> ranges = scenarios
+	private static Dictionary<string, Models.Range> ranges = scenarios
 		.GroupBy(x => x.ExpectedSize)
 		.ToDictionary(
 		g => g.FirstOrDefault().ExpectedSize,
-		g => new TestsKernel.Models.Range(g.Min(x => x.NoOfItems), g.Max(x => x.NoOfItems))
+		g => new Models.Range(g.Min(x => x.NoOfItems), g.Max(x => x.NoOfItems))
 		);
 
 
