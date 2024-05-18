@@ -94,8 +94,8 @@ public class DeleteUser : Abstractions.UsersEndpointTestsBase
 
 	#region 400 Bad Request
 
-	[Fact(DisplayName = $"DELETE {routePath}. With Invalid Credentials Returns 400 BadRequest")]
-	public async Task Delete_WithInvalidCredentials_Returns_400BadRequest()
+	[Fact(DisplayName = $"DELETE {routePath}. With Invalid Email Returns 400 BadRequest")]
+	public async Task Delete_WithInvalidEmail_Returns_400BadRequest()
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
@@ -103,7 +103,7 @@ public class DeleteUser : Abstractions.UsersEndpointTestsBase
 		var response = await this.Sut.Client.DeleteAsync(url);
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 	}
-
+	
 	#endregion
 
 	#region 404 Not Found

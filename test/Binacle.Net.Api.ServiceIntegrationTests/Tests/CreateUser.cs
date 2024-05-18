@@ -133,30 +133,35 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 
 	#region 400 Bad Request
 
-	[Fact(DisplayName = $"POST {routePath}. With Invalid Credentials Returns 400 BadRequest")]
-	public async Task Post_WithInvalidCredentials_Returns_400BadRequest()
+	[Fact(DisplayName = $"POST {routePath}. With Invalid Email Returns 400 BadRequest")]
+	public async Task Post_WithInvalidEmail_Returns_400BadRequest()
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
-		var request1 = new CreateApiUserRequest
+		var request = new CreateApiUserRequest
 		{
 			Email = "newuser.test",
 			Password = this.newUser.Password
 		};
 
-		var response1 = await this.Sut.Client.PostAsJsonAsync(routePath, request1, this.Sut.JsonSerializerOptions);
-		response1.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+	}
 
-		var request2 = new CreateApiUserRequest
+	[Fact(DisplayName = $"POST {routePath}. With Invalid Password Returns 400 BadRequest")]
+	public async Task Post_WithInvalidPassword_Returns_400BadRequest()
+	{
+		await this.AuthenticateAsAsync(this.AdminUser);
+
+		var request = new CreateApiUserRequest
 		{
 			Email = this.newUser.Email,
 			Password = "password"
 		};
 
-		var response2 = await this.Sut.Client.PostAsJsonAsync(routePath, request2, this.Sut.JsonSerializerOptions);
-		response2.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 	}
-
 	#endregion
 
 	#region 409 Conflict
