@@ -9,7 +9,7 @@ namespace Binacle.Net.Api.IntegrationTests.Tests;
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
 public class QueryByCustom
 {
-	private readonly BinacleApiFactory apiFactory;
+	private readonly BinacleApiFactory sut;
 	private readonly CustomQueryRequest sampleRequest = new()
 	{
 		Bins = new()
@@ -28,15 +28,15 @@ public class QueryByCustom
 
 	private const string routePath = "/api/v1/query/by-custom";
 
-	public QueryByCustom(BinacleApiFactory apiFactory)
+	public QueryByCustom(BinacleApiFactory sut)
 	{
-		this.apiFactory = apiFactory;
+		this.sut = sut;
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Valid Request Returns 200 OK")]
 	public async Task Post_WithValidRequest_Returns_200Ok()
 	{
-		var response = await this.apiFactory.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.apiFactory.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
 		
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 	}
@@ -46,7 +46,7 @@ public class QueryByCustom
 	{
 		this.sampleRequest.Items.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 
-		var result = await this.apiFactory.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.apiFactory.JsonSerializerOptions);
+		var result = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
 
 		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
 	}
@@ -56,7 +56,7 @@ public class QueryByCustom
 	{
 		this.sampleRequest.Bins.FirstOrDefault(x => x.ID == "custom_bin_1")!.Length = 0;
 
-		var result = await this.apiFactory.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.apiFactory.JsonSerializerOptions);
+		var result = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
 
 		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
 	}

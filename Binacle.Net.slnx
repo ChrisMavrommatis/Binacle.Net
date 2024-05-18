@@ -9,24 +9,27 @@
   </Folder>
   <Folder Name="/test/">
     <Project Path="test\Binacle.Net.Api.IntegrationTests\Binacle.Net.Api.IntegrationTests.csproj" />
-    <Project Path="test\Binacle.Net.Api.ServiceModule.IntegrationTests\Binacle.Net.Api.ServiceModule.IntegrationTests.csproj" />
+    <Project Path="test\Binacle.Net.Api.ServiceIntegrationTests\Binacle.Net.Api.ServiceIntegrationTests.csproj" />
     <Project Path="test\Binacle.Net.Lib.Benchmarks\Binacle.Net.Lib.Benchmarks.csproj" />
     <Project Path="test\Binacle.Net.Lib.UnitTests\Binacle.Net.Lib.UnitTests.csproj" />
     <Project Path="test\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src\Binacle.Net.Api.Kernel\Binacle.Net.Api.Kernel.csproj" />
+    <Project Path="src\Binacle.Net.Api.ServiceModule.Domain\Binacle.Net.Api.ServiceModule.Domain.csproj" />
+    <Project Path="src\Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables\Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables.csproj" />
+    <Project Path="src\Binacle.Net.Api.ServiceModule.Infrastructure\Binacle.Net.Api.ServiceModule.Infrastructure.csproj" />
     <Project Path="src\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
     <Project Path="src\Binacle.Net.Api\Binacle.Net.Api.csproj" />
     <Project Path="src\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj" />
     <Project Path="src\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
   </Folder>
-  <Folder Name="/res/Requests/">
-    <File Path="res\Requests\Binacle.Requests.http" />
-    <File Path="res\Requests\http-client.env.json" />
-    <File Path="res\Requests\ServiceModule.Requests.http" />
-    <File Path="res\Requests\Users.Requests.http" />
+  <Folder Name="/res/">
+    <File Path="res\Binacle.Requests.http" />
+    <File Path="res\http-client.env.json" />
+    <File Path="res\ServiceModule.Requests.http" />
+    <File Path="res\Users.Requests.http" />
   </Folder>
-  <Folder Name="/res/" />
   <Folder Name="/doc/Performance Results/Scaling Benchmarks/">
     <File Path="doc\Performance Results\Scaling Benchmarks\2024-04-12.md" />
     <File Path="doc\Performance Results\Scaling Benchmarks\Initial Public Run.md" />
@@ -40,6 +43,7 @@
     <Project Path="dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
     <Project Path="dep\ChrisMavrommatis.MinimalEndpointDefinitions\ChrisMavrommatis.MinimalEndpointDefinitions.csproj" />
     <Project Path="dep\ChrisMavrommatis.Results\ChrisMavrommatis.Results.csproj" />
+    <Project Path="dep\ChrisMavrommatis.StartupTasks\ChrisMavrommatis.StartupTasks.csproj" />
     <Project Path="dep\ChrisMavrommatis.SwaggerExamples\ChrisMavrommatis.SwaggerExamples.csproj" />
     <Project Path="dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj" />
   </Folder>

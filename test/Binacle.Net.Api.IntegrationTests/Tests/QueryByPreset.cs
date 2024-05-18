@@ -8,11 +8,12 @@ using Xunit;
 
 namespace Binacle.Net.Api.IntegrationTests.Tests;
 
+
 [Collection(BinacleApiCollection.Name)]
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
 public class QueryByPreset
 {
-	private readonly BinacleApiFactory apiFactory;
+	private readonly BinacleApiFactory sut;
 	private readonly IOptions<BinPresetOptions> presetOptions;
 	private readonly PresetQueryRequest sampleRequest = new()
 	{
@@ -26,10 +27,10 @@ public class QueryByPreset
 
 	private const string routePath = "/api/v1/query/by-preset/{preset}";
 
-	public QueryByPreset(BinacleApiFactory apiFactory)
+	public QueryByPreset(BinacleApiFactory sut)
 	{
-		this.apiFactory = apiFactory;
-		this.presetOptions = this.apiFactory.Services.GetRequiredService<IOptions<BinPresetOptions>>();
+		this.sut = sut;
+		this.presetOptions = this.sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
 
 	}
 
@@ -38,7 +39,7 @@ public class QueryByPreset
 	{
 		var urlPath = routePath.Replace("{preset}", "non-existing-preset");
 
-		var response = await this.apiFactory.Client.PostAsJsonAsync(urlPath, this.sampleRequest, this.apiFactory.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest, this.sut.JsonSerializerOptions);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
 	}
@@ -48,7 +49,7 @@ public class QueryByPreset
 	{
 		var urlPath = routePath.Replace("{preset}", this.presetOptions.Value.Presets.Keys.First());
 
-		var response = await this.apiFactory.Client.PostAsJsonAsync(urlPath, this.sampleRequest, this.apiFactory.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest, this.sut.JsonSerializerOptions);
 		
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 	}
@@ -59,7 +60,7 @@ public class QueryByPreset
 		this.sampleRequest.Items.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 		var urlPath = routePath.Replace("{preset}", this.presetOptions.Value.Presets.Keys.First());
 
-		var result = await this.apiFactory.Client.PostAsJsonAsync(urlPath, this.sampleRequest, this.apiFactory.JsonSerializerOptions);
+		var result = await this.sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest, this.sut.JsonSerializerOptions);
 
 		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
 	}

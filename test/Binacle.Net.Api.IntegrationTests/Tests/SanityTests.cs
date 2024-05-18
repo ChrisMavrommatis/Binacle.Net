@@ -3,9 +3,9 @@
 namespace Binacle.Net.Api.IntegrationTests.Tests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
-public class Sanity
+public class SanityTests
 {
-	public Sanity()
+	public SanityTests()
 	{
 	}
 

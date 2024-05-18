@@ -6,7 +6,7 @@ using Xunit;
 namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;
 
 [Trait("Benchmark Case Tests", "Ensures algorithms behave as expected for the benchmarks")]
-public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>
+public class BenchmarkCaseTests: IClassFixture<FirstFitDecreasingFixture> 
 {
 	private FirstFitDecreasingFixture Fixture { get; }
 	public BenchmarkCaseTests(FirstFitDecreasingFixture fixture)

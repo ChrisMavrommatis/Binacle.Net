@@ -1,6 +1,5 @@
 ﻿using Binacle.Net.Lib.Abstractions.Strategies;
 using Binacle.Net.TestsKernel.Models;
-using Binacle.Net.TestsKernel.Providers;
 using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests.FirstFitDecreasing.Tests;
@@ -16,34 +15,34 @@ public class ScenarioTests : IClassFixture<FirstFitDecreasingFixture>
 
 	// V1
 	[Theory]
-	[ClassData(typeof(Data.Providers.BaselineTestDataProvider))]
+	[ClassData(typeof(Data.Providers.BaselineScenarioTestDataProvider))]
 	public void Baseline_v1(Scenario scenario)
 		=> this.RunScenarioTest(new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v1(), scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.SimpleTestDataProvider))]
+	[ClassData(typeof(Data.Providers.SimpleScenarioTestDataProvider))]
 	public void Simple_v1(Scenario scenario)
 		=> this.RunScenarioTest(new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v1(), scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.ComplexTestDataProvider))]
+	[ClassData(typeof(Data.Providers.ComplexScenarioTestDataProvider))]
 	public void Complex_v1(Scenario scenario)
 		=> this.RunScenarioTest(new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v1(), scenario);
 
 
 	// V2
 	[Theory]
-	[ClassData(typeof(Data.Providers.BaselineTestDataProvider))]
+	[ClassData(typeof(Data.Providers.BaselineScenarioTestDataProvider))]
 	public void Baseline_v2(Scenario scenario)
 		=> this.RunScenarioTest(new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v2(), scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.SimpleTestDataProvider))]
+	[ClassData(typeof(Data.Providers.SimpleScenarioTestDataProvider))]
 	public void Simple_v2(Scenario scenario)
 		=> this.RunScenarioTest(new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v2(), scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.ComplexTestDataProvider))]
+	[ClassData(typeof(Data.Providers.ComplexScenarioTestDataProvider))]
 	public void Complex_v2(Scenario scenario)
 		=> this.RunScenarioTest(new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v2(), scenario);
 
