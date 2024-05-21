@@ -5,7 +5,7 @@ name: Build and Release Docker Image
 
 on:
   release:
-    types: [ "published", "edited" ]
+    types: [ "published" ]
 
 jobs:
   build:
