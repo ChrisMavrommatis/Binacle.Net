@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Api.Kernel.Helpers;
+﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Binacle.Net.Api.Kernel.Helpers;
 using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Domain;
@@ -18,6 +19,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
@@ -31,7 +34,7 @@ public static class ModuleDefinition
 	public static void AddServiceModule(this WebApplicationBuilder builder)
 	{
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initializing");
-		
+
 		builder.Configuration
 			.AddJsonFile("ConnectionStrings.json", optional: false, reloadOnChange: true)
 			.AddJsonFile($"ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
@@ -94,7 +97,7 @@ public static class ModuleDefinition
 		}).AddJwtBearer(options =>
 		{
 			var jwtAuthOptions = builder.Configuration.GetSection(JwtAuthOptions.SectionName).Get<JwtAuthOptions>();
-			
+
 			options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
 			{
 				ValidIssuer = jwtAuthOptions.Issuer,
@@ -111,7 +114,7 @@ public static class ModuleDefinition
 		});
 
 		builder.Services.AddEndpointsApiExplorer();
-		
+
 		builder.Services.AddAuthorization();
 
 		// Register Services
@@ -130,37 +133,45 @@ public static class ModuleDefinition
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
 
+		var optl = builder.Services
+			.AddOpenTelemetry()
+			//.ConfigureResource(resource =>
+			//{
+			//	resource.AddService(serviceName: "Binacle-Net");
+			//})
+			.WithMetrics(configure =>
+			{
+				configure
+					.AddRuntimeInstrumentation()
+					.AddMeter("Microsoft.AspNetCore.Hosting")
+					.AddMeter("Microsoft.AspNetCore.Server.Kestrel")
+					.AddMeter("Microsoft.AspNetCore.RateLimiting");
+			}).WithTracing(configure =>
+			{
+				configure.AddAspNetCoreInstrumentation();
+				//configure.AddConsoleExporter();
+			});
+
+
 		if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
 		{
 			builder.Services.AddApplicationInsightsTelemetry(options =>
 			{
 				options.ConnectionString = applicationInsightsConnectionString;
+				options.EnableQuickPulseMetricStream = false;
 			});
 
 
-			//builder.Services.AddOpenTelemetry()
-			//	.WithMetrics(configure =>
-			//	{
-			//		configure
-			//		.AddRuntimeInstrumentation()
-			//		.AddMeter("Microsoft.AspNetCore.Hosting")
-			//		.AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-			//		.AddMeter("Microsoft.AspNetCore.RateLimiting");
+			optl.UseAzureMonitor(configure =>
+			{
+				var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
+				if (samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
+				{
+					configure.SamplingRatio = ratio;
+				}
 
-			//	}).WithTracing(configure =>
-			//	{
-			//		configure.AddAspNetCoreInstrumentation();
-
-			//	}).UseAzureMonitor(configure =>
-			//	{
-			//		var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
-			//		if (samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
-			//		{
-			//			configure.SamplingRatio = ratio;
-			//		}
-
-			//		configure.ConnectionString = applicationInsightsConnectionString;
-			//	});
+				configure.ConnectionString = applicationInsightsConnectionString;
+			});
 		}
 
 		builder.Services.AddMinimalEndpointDefinitions<IModuleMarker>();
@@ -207,7 +218,7 @@ public static class ModuleDefinition
 
 		}).DisableRateLimiting();
 
-		
+
 		app.UseAuthentication();
 		app.UseAuthorization();
 		app.UseMinimalEndpointDefinitions();

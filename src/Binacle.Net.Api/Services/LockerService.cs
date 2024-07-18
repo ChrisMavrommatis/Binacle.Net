@@ -51,7 +51,11 @@ internal class LockerService : ILockerService
 
 		if (operationResult.FoundBin is not null)
 		{
-			resultState.Add("FoundBin", $"{operationResult.FoundBin.Height}x{operationResult.FoundBin.Length}x{operationResult.FoundBin.Width}");
+			var foundBin = new Dictionary<string, string>()
+			{
+				{operationResult.FoundBin.ID, $"{operationResult.FoundBin.Height}x{operationResult.FoundBin.Length}x{operationResult.FoundBin.Width}" }
+			};
+			resultState.Add("FoundBin", foundBin);
 		}
 
 		timedOperation.WithNamedState("Result", resultState);
