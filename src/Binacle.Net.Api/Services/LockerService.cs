@@ -57,6 +57,11 @@ internal class LockerService : ILockerService
 			};
 			resultState.Add("FoundBin", foundBin);
 		}
+		
+		if(operationResult.Reason.HasValue) 
+		{
+			resultState.Add("Reason", operationResult.Reason.Value.ToString());
+		}
 
 		timedOperation.WithNamedState("Result", resultState);
 		return operationResult;
