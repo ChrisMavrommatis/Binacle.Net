@@ -19,6 +19,7 @@
 		<PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.1" />
 		<PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.2.0" />
+		<PackageReference Include="ChrisMavrommatis.SwaggerExamples" Version="1.0.1" />
 		<PackageReference Include="FluentValidation" Version="11.9.2" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
@@ -41,7 +42,6 @@
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.MinimalEndpointDefinitions\ChrisMavrommatis.MinimalEndpointDefinitions.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Results\ChrisMavrommatis.Results.csproj" />
-	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.SwaggerExamples\ChrisMavrommatis.SwaggerExamples.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule.Domain\Binacle.Net.Api.ServiceModule.Domain.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule.Infrastructure\Binacle.Net.Api.ServiceModule.Infrastructure.csproj" />
 	</ItemGroup>
