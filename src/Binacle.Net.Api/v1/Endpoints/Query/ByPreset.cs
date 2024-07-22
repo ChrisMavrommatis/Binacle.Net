@@ -88,7 +88,9 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 	/// </response>
 	/// <response code="400"> <b>Bad Request</b>
 	/// <br/> 
-	/// If the request is invalid.
+	/// <p>
+	///		If the request is invalid.
+	/// </p>
 	/// </response>
 	/// <response code="404"> <b>Not Found</b>
 	/// <br />

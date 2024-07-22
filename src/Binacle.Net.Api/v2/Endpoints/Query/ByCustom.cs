@@ -93,7 +93,9 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	/// </response>
 	/// <response code="400"> <b>Bad Request</b>
 	/// <br/> 
-	/// If the request is invalid.
+	/// <p>
+	///		If the request is invalid.
+	/// </p>
 	/// </response>
 	/// <response code="500"> <b>Internal Server Error</b>
 	/// <br />
