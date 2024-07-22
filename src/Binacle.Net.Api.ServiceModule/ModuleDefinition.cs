@@ -44,7 +44,7 @@ public static class ModuleDefinition
 		if (builder.Environment.IsDevelopment())
 		{
 			builder.Configuration
-			.AddUserSecrets<IModuleMarker>(optional: true, reloadOnChange: true);
+				.AddUserSecrets<IModuleMarker>(optional: true, reloadOnChange: true);
 		}
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
@@ -96,7 +96,7 @@ public static class ModuleDefinition
 
 		}).AddJwtBearer(options =>
 		{
-			var jwtAuthOptions = builder.Configuration.GetSection(JwtAuthOptions.SectionName).Get<JwtAuthOptions>();
+			var jwtAuthOptions = builder.Configuration.GetSection(JwtAuthOptions.SectionName).Get<JwtAuthOptions>()!;
 
 			options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
 			{
