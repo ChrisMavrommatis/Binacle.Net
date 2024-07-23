@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ChrisMavrommatis.Results" Version="1.0.1" />
     <PackageReference Include="FluentValidation" Version="11.9.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
@@ -14,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\dep\ChrisMavrommatis.Results\ChrisMavrommatis.Results.csproj" />
     <ProjectReference Include="..\Binacle.Net.Api.Kernel\Binacle.Net.Api.Kernel.csproj" />
   </ItemGroup>
 
