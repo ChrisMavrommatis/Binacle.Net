@@ -15,6 +15,7 @@
 	<ItemGroup>
 		<PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
 		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+		<PackageReference Include="ChrisMavrommatis.Endpoints" Version="1.0.1" />
 		<PackageReference Include="ChrisMavrommatis.Features" Version="1.0.0" />
 		<PackageReference Include="ChrisMavrommatis.StartupTasks" Version="1.0.1" />
 		<PackageReference Include="ChrisMavrommatis.SwaggerExamples" Version="1.0.1" />
@@ -36,7 +37,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Endpoints\ChrisMavrommatis.Endpoints.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj" />
