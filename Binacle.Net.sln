@@ -60,8 +60,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.FluentVali
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Logging", "dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj", "{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.MinimalEndpointDefinitions", "dep\ChrisMavrommatis.MinimalEndpointDefinitions\ChrisMavrommatis.MinimalEndpointDefinitions.csproj", "{9F03D0C9-D21E-4EF0-B2BC-9E7C5F087682}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule.Infrastructure", "src\Binacle.Net.Api.ServiceModule.Infrastructure\Binacle.Net.Api.ServiceModule.Infrastructure.csproj", "{325E39DF-D285-4400-905B-C5CFCB858829}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables", "src\Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables\Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables.csproj", "{7053062D-E3AA-492E-B409-7F7D868ED6D9}"
@@ -124,10 +122,6 @@ Global
 		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9F03D0C9-D21E-4EF0-B2BC-9E7C5F087682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9F03D0C9-D21E-4EF0-B2BC-9E7C5F087682}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9F03D0C9-D21E-4EF0-B2BC-9E7C5F087682}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9F03D0C9-D21E-4EF0-B2BC-9E7C5F087682}.Release|Any CPU.Build.0 = Release|Any CPU
 		{325E39DF-D285-4400-905B-C5CFCB858829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{325E39DF-D285-4400-905B-C5CFCB858829}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{325E39DF-D285-4400-905B-C5CFCB858829}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -163,7 +157,6 @@ Global
 		{882F3C14-EAC8-4D7D-881B-61A6663E38B6} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{3ADB3BA2-ADB3-4D6C-8276-15CB5D0F708B} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
-		{9F03D0C9-D21E-4EF0-B2BC-9E7C5F087682} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{325E39DF-D285-4400-905B-C5CFCB858829} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{7053062D-E3AA-492E-B409-7F7D868ED6D9} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
