@@ -11,11 +11,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="ChrisMavrommatis.StartupTasks" Version="1.0.1" />
 	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.4" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.StartupTasks\ChrisMavrommatis.StartupTasks.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.Kernel\Binacle.Net.Api.Kernel.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule.Domain\Binacle.Net.Api.ServiceModule.Domain.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables\Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables.csproj" />
