@@ -68,10 +68,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.Kernel", "src\Binacle.Net.Api.Kernel\Binacle.Net.Api.Kernel.csproj", "{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{91DD690C-F091-4F1B-9B9D-696D2579E9F8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ORLibraryTestDataConverter", "tools\ORLibraryTestDataConverter\ORLibraryTestDataConverter.csproj", "{748B6A95-9BFD-4044-83D5-3DD26B70B001}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -142,10 +138,6 @@ Global
 		{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{748B6A95-9BFD-4044-83D5-3DD26B70B001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{748B6A95-9BFD-4044-83D5-3DD26B70B001}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{748B6A95-9BFD-4044-83D5-3DD26B70B001}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{748B6A95-9BFD-4044-83D5-3DD26B70B001}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -169,7 +161,6 @@ Global
 		{7053062D-E3AA-492E-B409-7F7D868ED6D9} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
-		{748B6A95-9BFD-4044-83D5-3DD26B70B001} = {91DD690C-F091-4F1B-9B9D-696D2579E9F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}
