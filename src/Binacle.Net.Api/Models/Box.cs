@@ -4,7 +4,7 @@ namespace Binacle.Net.Api.Models;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class Box : IItemWithDimensions<int>, IWithQuantity<int>
+public class Box : IWithID, IWithDimensions, IWithQuantity
 {
 	public string ID { get; set; } = string.Empty;
 	public int Quantity { get; set; }

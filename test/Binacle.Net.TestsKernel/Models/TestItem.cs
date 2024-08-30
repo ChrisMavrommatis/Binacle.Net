@@ -1,20 +1,27 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
+using Xunit.Abstractions;
 
 namespace Binacle.Net.TestsKernel.Models;
 
-public sealed class TestItem : IItemWithDimensions<int>
+public sealed class TestItem : IWithID, IWithDimensions, IWithQuantity
 {
 	public TestItem()
 	{
 
 	}
 
-	public TestItem(string id, IWithReadOnlyDimensions<int> item)
+	public TestItem(string id, IWithReadOnlyDimensions item)
+		: this(id, item, 1)
+	{
+	}
+
+	public TestItem(string id, IWithReadOnlyDimensions item, int quantity)
 	{
 		this.ID = id;
 		this.Length = item.Length;
 		this.Width = item.Width;
 		this.Height = item.Height;
+		this.Quantity = quantity;
 	}
 
 	public string ID { get; set; }

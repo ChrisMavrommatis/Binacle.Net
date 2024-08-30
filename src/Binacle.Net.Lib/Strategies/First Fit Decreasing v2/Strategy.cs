@@ -20,7 +20,7 @@ internal sealed partial class FirstFitDecreasing_v2 :
 	}
 
 	public IBinFittingStrategyWithBins WithBins<TBin>(IEnumerable<TBin> bins)
-		where TBin : class, IItemWithReadOnlyDimensions<int>
+		where TBin : class, IWithID, IWithReadOnlyDimensions<int>
 	{
 		var _bins = new List<Bin>();
 
@@ -37,7 +37,7 @@ internal sealed partial class FirstFitDecreasing_v2 :
 	}
 
 	public IBinFittingStrategyWithBinsAndItems AndItems<TItem>(IEnumerable<TItem> items)
-		where TItem : class, IItemWithReadOnlyDimensions<int>
+		where TItem : class, IWithID, IWithReadOnlyDimensions<int>
 
 	{
 		var _items = new List<Item>();

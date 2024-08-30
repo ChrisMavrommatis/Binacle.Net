@@ -6,7 +6,7 @@ namespace Binacle.Net.TestsKernel.Providers;
 public class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 {
 	public const string BinCollectionName = "rectangular-cuboids";
-	private static Dictionary<int, string> testCases = new Dictionary<int, string>()
+	public static Dictionary<int, string> TestCases = new Dictionary<int, string>()
 	{
 		{ 10, "Small" },
 		{ 50, "Small" },
@@ -28,7 +28,7 @@ public class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 		{ 1000, "None" }
 	};
 
-	private static IReadOnlyList<BenchmarkScalingScenario> scenarios = testCases
+	private static IReadOnlyList<BenchmarkScalingScenario> scenarios = TestCases
 		.Select(x => new BenchmarkScalingScenario(x.Key, x.Value))
 		.ToList();
 
@@ -43,10 +43,10 @@ public class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 
 	public static IEnumerable<int> GetNoOfItems()
 	{
-		return testCases.Keys;
+		return TestCases.Keys;
 	}
 
-	public static Dimensions<int> GetDimensions() => new Dimensions<int>(5, 5, 5);
+	public static Dimensions GetDimensions() => new Dimensions(5, 5, 5);
 
 	public IEnumerator<object[]> GetEnumerator()
 	{
@@ -58,9 +58,26 @@ public class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-	public static void AssertSuccessfulResult(Lib.Models.BinFittingOperationResult result, int noOfItems)
+	public static void AssertSuccessfulResult(Lib.BinFittingOperationResult result, int noOfItems)
 	{
 		var foundBin = result.FoundBin?.ID ?? "None";
+
+		if (!ranges.TryGetValue(foundBin, out var range))
+		{
+			throw new ApplicationException("Error. Uncaught Test Result");
+		}
+
+		if (!range.IsWithin(noOfItems))
+		{
+			throw new ApplicationException("Error. Invalid Test Result");
+		}
+
+	}
+
+	public static void AssertSuccessfulResult(Lib.BinPackingResult result, int noOfItems)
+	{
+		var expectedSize = TestCases[noOfItems];
+		var foundBin = expectedSize != "None" ? result.BinID : "None";
 
 		if (!ranges.TryGetValue(foundBin, out var range))
 		{

@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Lib.Abstractions.Models;
+﻿using Binacle.Net.Lib;
+using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Models;
 using ChrisMavrommatis.Logging;
 
@@ -8,8 +9,8 @@ namespace Binacle.Net.Api.Services;
 public interface ILockerService
 {
 	public BinFittingOperationResult FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
-		where TBin : class, IItemWithReadOnlyDimensions<int>
-		where TBox : class, IItemWithReadOnlyDimensions<int>, IWithQuantity<int>;
+		where TBin : class, IWithID, IWithReadOnlyDimensions<int>
+		where TBox : class, IWithID, IWithReadOnlyDimensions<int>, IWithQuantity<int>;
 
 }
 
@@ -25,15 +26,15 @@ internal class LockerService : ILockerService
 	}
 
 	public BinFittingOperationResult FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
-		where TBin : class, IItemWithReadOnlyDimensions<int>
-		where TBox : class, IItemWithReadOnlyDimensions<int>, IWithQuantity<int>
+		where TBin : class, IWithID, IWithReadOnlyDimensions<int>
+		where TBox : class, IWithID, IWithReadOnlyDimensions<int>, IWithQuantity<int>
 	{
 		using var timedOperation = this.logger.BeginTimedOperation("Find Fitting Bin");
 
 		timedOperation.WithNamedState("Items", items.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width} q{x.Quantity}"));
 		timedOperation.WithNamedState("Bins", bins.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width}"));
 
-		var strategy = this.strategyFactory.Create(Lib.BinFittingStrategy.FirstFitDecreasing);
+		var strategy = this.strategyFactory.Create(Lib.Algorithm.FirstFitDecreasing);
 
 		var flatItems = items.SelectMany(x => Enumerable.Repeat(x, x.Quantity)).ToList();
 

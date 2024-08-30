@@ -2,6 +2,10 @@
 
 namespace Binacle.Net.Lib.Abstractions.Models;
 
+public interface IWithQuantity : IWithQuantity<int>
+{
+}
+
 public interface IWithQuantity<T>
 	where T : INumber<T>
 {

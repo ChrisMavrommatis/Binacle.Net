@@ -3,6 +3,25 @@ using System.Numerics;
 
 namespace Binacle.Net.TestsKernel.Models;
 
+public class Dimensions : IWithDimensions
+{
+	public Dimensions()
+	{
+
+	}
+
+	public Dimensions(int length, int width, int height)
+	{
+		this.Length = length;
+		this.Width = width;
+		this.Height = height;
+	}
+	public int Length { get; set; }
+	public int Width { get; set; }
+	public int Height { get; set; }
+}
+
+
 public class Dimensions<T> : IWithDimensions<T>
    where T : struct, INumber<T>
 {

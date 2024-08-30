@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.Lib.Models;
+﻿namespace Binacle.Net.Lib.Strategies;
 
 public enum BinFitResultStatus
 {

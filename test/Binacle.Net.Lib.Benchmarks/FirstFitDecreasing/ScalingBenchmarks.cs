@@ -29,6 +29,7 @@ public class ScalingBenchmarks
 		this.rundataProvider = new BinCollectionsTestDataProvider(solutionRootBasePath: GetSolutionRoot());
 		this.bins = this.rundataProvider.GetCollection(BenchmarkScalingTestsDataProvider.BinCollectionName);
 		this.items = Enumerable.Range(1, this.NoOfItems).Select(x => new TestItem(x.ToString(), _5x5x5)).ToList();
+		
 	}
 
 	[GlobalCleanup]
@@ -44,7 +45,7 @@ public class ScalingBenchmarks
 	private BinCollectionsTestDataProvider rundataProvider;
 
 	[Benchmark(Baseline = true)]
-	public Lib.Models.BinFittingOperationResult V1_5x5x5()
+	public Lib.BinFittingOperationResult V1_5x5x5()
 	{
 		var strategy = new Strategies.FirstFitDecreasing_v1()
 			.WithBins(this.bins)
@@ -57,7 +58,7 @@ public class ScalingBenchmarks
 	}
 
 	[Benchmark]
-	public Lib.Models.BinFittingOperationResult V2_5x5x5()
+	public Lib.BinFittingOperationResult V2_5x5x5()
 	{
 		var strategy = new Strategies.FirstFitDecreasing_v2()
 			.WithBins(this.bins)
@@ -65,6 +66,17 @@ public class ScalingBenchmarks
 			.Build();
 
 		var result = strategy.Execute();
+		BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, this.NoOfItems);
+		return result;
+	}
+
+	[Benchmark]
+	public Lib.BinPackingResult V3_5x5x5()
+	{
+		var expectedSize = BenchmarkScalingTestsDataProvider.TestCases[this.NoOfItems];
+		var expectedBin = expectedSize != "None" ? this.bins.FirstOrDefault(x => x.ID == expectedSize) : this.bins.LastOrDefault(); 
+		var algorithm = new Algorithms.FirstFitDecreasing_v3<TestBin, TestItem>(expectedBin, this.items);
+		var result = algorithm.Execute();
 		BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, this.NoOfItems);
 		return result;
 	}

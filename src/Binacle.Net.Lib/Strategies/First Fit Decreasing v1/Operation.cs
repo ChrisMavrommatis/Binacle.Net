@@ -1,5 +1,4 @@
 ﻿using Binacle.Net.Lib.Abstractions.Strategies;
-using Binacle.Net.Lib.Models;
 using Binacle.Net.Lib.Strategies.Models;
 
 namespace Binacle.Net.Lib.Strategies;
@@ -52,19 +51,6 @@ internal sealed partial class FirstFitDecreasing_v1 :
 		return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.DidNotFit, fittedItems: this._fittedItems);
 	}
 
-
-	private Lib.Models.Item Convert(Bin bin)
-	{
-		return new Lib.Models.Item(bin.ID, bin);
-	}
-
-	private IEnumerable<Lib.Models.Item> Convert(IEnumerable<Item> items)
-	{
-		if (!(items?.Any() ?? false))
-			return Enumerable.Empty<Lib.Models.Item>();
-
-		return items.Select(x => new Lib.Models.Item(x.ID, x));
-	}
 
 	private bool TryFit(Item item)
 	{

@@ -2,6 +2,10 @@
 
 namespace Binacle.Net.Lib.Abstractions.Models;
 
+public interface IWithReadOnlyDimensions : IWithReadOnlyDimensions<int>
+{
+}
+
 public interface IWithReadOnlyDimensions<T>
 	where T : INumber<T>
 {

@@ -1,6 +1,7 @@
 ﻿namespace Binacle.Net.Lib;
 
-public enum BinFittingStrategy
+public enum Algorithm
 {
 	FirstFitDecreasing
 }
+

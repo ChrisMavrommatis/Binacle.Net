@@ -6,13 +6,13 @@ namespace Binacle.Net.Lib.Abstractions.Strategies;
 public interface IBinFittingStrategy
 {
 	IBinFittingStrategyWithBins WithBins<TBin>(IEnumerable<TBin> bins)
-		 where TBin : class, IItemWithReadOnlyDimensions<int>;
+		 where TBin : class, IWithID, IWithReadOnlyDimensions<int>;
 }
 
 public interface IBinFittingStrategyWithBins : IBinFittingStrategy
 {
 	IBinFittingStrategyWithBinsAndItems AndItems<TItem>(IEnumerable<TItem> items)
-		 where TItem : class, IItemWithReadOnlyDimensions<int>;
+		 where TItem : class, IWithID, IWithReadOnlyDimensions<int>;
 
 	//IBinFittingStrategyWithBinsAndItems AndItemsWithQuantity<TItem>(IEnumerable<TItem> items)
 	//     where TItem : class, IWithID, IWithReadOnlyDimensions<int>, IWithQuantity<int>;

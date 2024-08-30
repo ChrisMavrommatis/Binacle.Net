@@ -1,6 +1,7 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
+using Binacle.Net.Lib.Strategies;
 
-namespace Binacle.Net.Lib.Models;
+namespace Binacle.Net.Lib;
 
 public class BinFittingOperationResult
 {

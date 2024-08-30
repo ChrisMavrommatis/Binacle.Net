@@ -20,7 +20,8 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 	[Fact(DisplayName = "Build With Null Or Empty Bins Throws ArgumentNullException")]
 	public void Build_WithNullOrEmptyBins_Throws_ArgumentNullException()
 	{
-		var testItems = this.AutoFixture.CreateMany<TestItem>(2);
+		var testItems = this.AutoFixture.CreateMany<TestItem>(2)
+			.ToList();
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
@@ -52,12 +53,17 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 			.WithBins(Enumerable.Empty<TestBin>())
 			.AndItems(testItems)
 			.Build();
+		});
+
+
+		Assert.Throws<ArgumentNullException>(() =>
+		{
+			var algorithm = new Lib.Algorithms.FirstFitDecreasing_v3<TestBin, TestItem>(null, testItems);
 		});
 
 	}
 
 	[Fact(DisplayName = "Build With Null Or Empty Items Throws ArgumentNullException")]
-
 	public void Build_WithNullOrEmptyItems_Throws_ArgumentNullException()
 	{
 		var testBins = this.AutoFixture.CreateMany<TestBin>(2);
@@ -80,6 +86,14 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
+			var algorithm = new Lib.Algorithms.FirstFitDecreasing_v3<TestBin, TestItem>(
+				testBins.First(),
+				null
+			);
+		});
+
+		Assert.Throws<ArgumentNullException>(() =>
+		{
 			var strategy = new Lib.Strategies.FirstFitDecreasing_v1()
 			.WithBins(testBins)
 			.AndItems(Enumerable.Empty<TestItem>())
@@ -93,12 +107,21 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 			.AndItems(Enumerable.Empty<TestItem>())
 			.Build();
 		});
+
+		Assert.Throws<ArgumentNullException>(() =>
+		{
+			var algorithm = new Lib.Algorithms.FirstFitDecreasing_v3<TestBin, TestItem>(
+				testBins.First(),
+				Enumerable.Empty<TestItem>().ToList()
+			);
+		});
 	}
 
 	[Fact(DisplayName = "Build With 0 Dimension on Bins Throws DimensionException")]
 	public void Build_With0DimensionOnBins_Throws_DimensionException()
 	{
-		var testItems = AutoFixture.CreateMany<TestItem>(2);
+		var testItems = AutoFixture.CreateMany<TestItem>(2)
+			.ToList();
 
 		var testBinsWith0Dimension = AutoFixture.Build<TestBin>()
 		   .With(x => x.Width, 0)
@@ -119,15 +142,25 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 				.AndItems(testItems)
 				.Build();
 		});
+
+		Assert.Throws<DimensionException>(() =>
+		{
+			var algorithm = new Lib.Algorithms.FirstFitDecreasing_v3<TestBin, TestItem>(
+				testBinsWith0Dimension.First(),
+				testItems
+			);
+		});
 	}
 
 	[Fact(DisplayName = "Build With 0 Dimension on Items Throws DimensionException")]
 	public void Build_With0DimensionOnItems_Throws_DimensionException()
 	{
-		var testBins = AutoFixture.CreateMany<TestBin>(2);
+		var testBins = AutoFixture.CreateMany<TestBin>(2)
+			.ToList();
 		var testItemsWith0Dimension = AutoFixture.Build<TestItem>()
 		  .With(x => x.Width, 0)
-		  .CreateMany(2);
+		  .CreateMany(2)
+		  .ToList();
 
 		Assert.Throws<DimensionException>(() =>
 		{
@@ -143,6 +176,14 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 				.WithBins(testBins)
 				.AndItems(testItemsWith0Dimension)
 				.Build();
+		});
+
+		Assert.Throws<DimensionException>(() =>
+		{
+			var algorithm = new Lib.Algorithms.FirstFitDecreasing_v3<TestBin, TestItem>(
+				testBins.First(),
+				testItemsWith0Dimension
+			);
 		});
 	}
 }
