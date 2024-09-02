@@ -1,6 +1,5 @@
-﻿using Binacle.Net.Lib;
-using Binacle.Net.Lib.Abstractions.Models;
-using Binacle.Net.Lib.Models;
+﻿using Binacle.Net.Lib.Abstractions.Models;
+using Binacle.Net.Lib.Fitting.Models;
 using ChrisMavrommatis.Logging;
 
 namespace Binacle.Net.Api.Services;
@@ -8,7 +7,7 @@ namespace Binacle.Net.Api.Services;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public interface ILockerService
 {
-	public BinFittingOperationResult FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
+	public FittingResult FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
 		where TBin : class, IWithID, IWithReadOnlyDimensions<int>
 		where TBox : class, IWithID, IWithReadOnlyDimensions<int>, IWithQuantity<int>;
 
@@ -25,7 +24,7 @@ internal class LockerService : ILockerService
 		this.logger = logger;
 	}
 
-	public BinFittingOperationResult FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
+	public FittingResult FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
 		where TBin : class, IWithID, IWithReadOnlyDimensions<int>
 		where TBox : class, IWithID, IWithReadOnlyDimensions<int>, IWithQuantity<int>
 	{

@@ -1,6 +1,6 @@
-﻿namespace Binacle.Net.Lib;
+﻿namespace Binacle.Net.Lib.Packing.Models;
 
-public enum BinPackingResultStatus
+public enum PackingResultStatus
 {
 	Unknown,
 	FullyPacked,

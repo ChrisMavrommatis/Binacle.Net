@@ -1,6 +1,6 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 
-namespace Binacle.Net.Lib.Abstractions.ExtensionMethods;
+namespace Binacle.Net.Lib;
 
 public static class DimensionExtensions
 {

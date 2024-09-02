@@ -1,14 +1,14 @@
-﻿using Binacle.Net.Lib.Abstractions.Models;
-using Binacle.Net.Lib.Abstractions.Strategies;
+﻿using Binacle.Net.Lib.Abstractions.Fitting;
+using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Exceptions;
 using Binacle.Net.Lib.Strategies.Models;
 
-namespace Binacle.Net.Lib.Strategies;
+namespace Binacle.Net.Lib.Fitting.Algorithms;
 
 internal sealed partial class FirstFitDecreasing_v2 :
-	IBinFittingStrategy,
-	IBinFittingStrategyWithBins,
-	IBinFittingStrategyWithBinsAndItems
+	IFittingAlgorithm,
+	IFittingAlgorithmWithBins,
+	IFittingAlgorithmWithBinsAndItems
 {
 	private List<VolumetricItem> availableSpace;
 	private List<Item> fittedItems;
@@ -19,7 +19,7 @@ internal sealed partial class FirstFitDecreasing_v2 :
 	{
 	}
 
-	public IBinFittingStrategyWithBins WithBins<TBin>(IEnumerable<TBin> bins)
+	public IFittingAlgorithmWithBins WithBins<TBin>(IEnumerable<TBin> bins)
 		where TBin : class, IWithID, IWithReadOnlyDimensions<int>
 	{
 		var _bins = new List<Bin>();
@@ -36,7 +36,7 @@ internal sealed partial class FirstFitDecreasing_v2 :
 		return this;
 	}
 
-	public IBinFittingStrategyWithBinsAndItems AndItems<TItem>(IEnumerable<TItem> items)
+	public IFittingAlgorithmWithBinsAndItems AndItems<TItem>(IEnumerable<TItem> items)
 		where TItem : class, IWithID, IWithReadOnlyDimensions<int>
 
 	{
@@ -54,7 +54,7 @@ internal sealed partial class FirstFitDecreasing_v2 :
 		return this;
 	}
 
-	public IBinFittingOperation Build()
+	public IFittingAlgorithmOperation Build()
 	{
 		if (!(this.bins?.Any() ?? false))
 			throw new ArgumentNullException($"{nameof(bins)} is empty. At least one bin is required");

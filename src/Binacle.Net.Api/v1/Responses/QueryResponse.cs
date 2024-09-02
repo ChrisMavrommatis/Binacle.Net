@@ -1,5 +1,6 @@
 ﻿using Binacle.Net.Api.Models;
 using Binacle.Net.Api.v1.Models;
+using Binacle.Net.Lib.Fitting.Models;
 
 namespace Binacle.Net.Api.v1.Responses;
 
@@ -9,11 +10,11 @@ public class QueryResponse : ResponseBase
 {
 	public Bin? Bin { get; set; }
 
-	public static QueryResponse Create(Lib.BinFittingOperationResult operationResult)
+	public static QueryResponse Create(FittingResult operationResult)
 	{
 		var response = new QueryResponse();
 
-		if (operationResult.Status == Lib.Strategies.BinFitResultStatus.Success)
+		if (operationResult.Status == Lib.Fitting.Models.FittingResultStatus.Success)
 		{
 			response.Bin = new Bin
 			{

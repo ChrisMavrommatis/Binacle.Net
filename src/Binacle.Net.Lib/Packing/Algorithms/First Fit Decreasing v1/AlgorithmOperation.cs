@@ -1,21 +1,23 @@
 ﻿using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Models;
+using Binacle.Net.Lib.Packing.Models;
+using System.Runtime.CompilerServices;
 
-namespace Binacle.Net.Lib.Algorithms;
+namespace Binacle.Net.Lib.Packing.Algorithms;
 
-internal partial class FirstFitDecreasing_v3<TBin, TItem> : IBinPackingAlgorithm
+internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 	where TBin : class, IWithID, IWithReadOnlyDimensions
 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 {
-	public BinPackingResult Execute()
+	public PackingResult Execute()
 	{
-		var resultBuilder = BinPackingResultBuilder<Bin, Item>.Create(this.bin, this.items.Count, this.totalItemsVolume);
+		var resultBuilder = PackingResultBuilder<Bin, Item>.Create(this.bin, this.items.Count, this.totalItemsVolume);
 
 		if (this.totalItemsVolume > this.bin.Volume)
 		{
 			return resultBuilder
-				.WithForcedStatus(BinPackingResultStatus.EarlyFail_ContainerVolumeExceeded)
+				.WithForcedStatus(PackingResultStatus.EarlyFail_ContainerVolumeExceeded)
 				.WithUnpackedItems(this.items)
 				.Build();
 		}
@@ -24,7 +26,7 @@ internal partial class FirstFitDecreasing_v3<TBin, TItem> : IBinPackingAlgorithm
 		if (itemsNotFittingDueToLongestDimension.Count > 0)
 		{
 			return resultBuilder
-				.WithForcedStatus(BinPackingResultStatus.EarlyFail_ContainerDimensionExceeded)
+				.WithForcedStatus(PackingResultStatus.EarlyFail_ContainerDimensionExceeded)
 				.WithUnpackedItems(itemsNotFittingDueToLongestDimension)
 				.Build();
 		}
@@ -39,7 +41,7 @@ internal partial class FirstFitDecreasing_v3<TBin, TItem> : IBinPackingAlgorithm
 				var availableSpaceQuadrant = this.FindAvailableSpace(item, availableSpace);
 				if (availableSpaceQuadrant is not null)
 				{
-					this.Pack(item, availableSpaceQuadrant!, availableSpace);
+					this.Pack(item, availableSpaceQuadrant, availableSpace);
 					break;
 				}
 				item.Rotate();
@@ -52,7 +54,7 @@ internal partial class FirstFitDecreasing_v3<TBin, TItem> : IBinPackingAlgorithm
 			.Build();
 	}
 
-	// [MethodImpl(MethodImplOptions.AggressiveInlining)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private SpaceVolume? FindAvailableSpace(Item orientation, List<SpaceVolume> availableSpace)
 	{
 		foreach (var space in availableSpace)
@@ -64,7 +66,7 @@ internal partial class FirstFitDecreasing_v3<TBin, TItem> : IBinPackingAlgorithm
 		return null;
 	}
 
-	// [MethodImpl(MethodImplOptions.AggressiveInlining)]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void Pack(Item item, SpaceVolume spaceQuadrant, List<SpaceVolume> availableSpace)
 	{
 		item.Pack(spaceQuadrant);

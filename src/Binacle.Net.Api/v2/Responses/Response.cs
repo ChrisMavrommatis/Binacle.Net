@@ -1,6 +1,7 @@
 ﻿using Binacle.Net.Api.Models;
 using Binacle.Net.Api.v2.Models;
 using Binacle.Net.Api.v2.Models.Errors;
+using Binacle.Net.Lib.Fitting.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Text.Json.Serialization;
 
@@ -31,9 +32,9 @@ public class Response<TModel>
 
 internal static class Response
 {
-	public static Response<Bin?> FromResult(Lib.BinFittingOperationResult operationResult)
+	public static Response<Bin?> FromResult(FittingResult operationResult)
 	{
-		if (operationResult.Status == Lib.Strategies.BinFitResultStatus.Success)
+		if (operationResult.Status == Lib.Fitting.Models.FittingResultStatus.Success)
 		{
 			var bin = new Bin
 			{

@@ -58,7 +58,7 @@ public class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-	public static void AssertSuccessfulResult(Lib.BinFittingOperationResult result, int noOfItems)
+	public static void AssertSuccessfulResult(Lib.Fitting.Models.FittingResult result, int noOfItems)
 	{
 		var foundBin = result.FoundBin?.ID ?? "None";
 
@@ -74,7 +74,7 @@ public class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 
 	}
 
-	public static void AssertSuccessfulResult(Lib.BinPackingResult result, int noOfItems)
+	public static void AssertSuccessfulResult(Lib.Packing.Models.PackingResult result, int noOfItems)
 	{
 		var expectedSize = TestCases[noOfItems];
 		var foundBin = expectedSize != "None" ? result.BinID : "None";

@@ -1,23 +1,24 @@
-﻿using Binacle.Net.Lib.Abstractions.Strategies;
+﻿using Binacle.Net.Lib.Abstractions.Fitting;
+using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.Lib.Strategies.Models;
 
-namespace Binacle.Net.Lib.Strategies;
+namespace Binacle.Net.Lib.Fitting.Algorithms;
 
 internal sealed partial class FirstFitDecreasing_v1 :
-	IBinFittingOperation
+	IFittingAlgorithmOperation
 {
-	public BinFittingOperationResult Execute()
+	public FittingResult Execute()
 	{
 		Bin? foundBin = null;
 		int totalItemsToFit = _items.Count();
 
 		var largestBinByVolume = (_bins.OrderByDescending(x => x.Volume).FirstOrDefault())!;
 		if (_items.Sum(x => x.Volume) > largestBinByVolume.Volume)
-			return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.TotalVolumeExceeded);
+			return FittingResult.CreateFailedResult(FittingFailedResultReason.TotalVolumeExceeded);
 
 		var itemsNotFittingDueToLongestDimension = _items.Where(x => x.LongestDimension > largestBinByVolume.LongestDimension);
 		if (itemsNotFittingDueToLongestDimension.Any())
-			return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.ItemDimensionExceeded, itemsNotFittingDueToLongestDimension);
+			return FittingResult.CreateFailedResult(FittingFailedResultReason.ItemDimensionExceeded, itemsNotFittingDueToLongestDimension);
 
 		_bins = _bins.OrderBy(x => x.Volume);
 		_items = _items.OrderByDescending(x => x.Volume);
@@ -45,10 +46,10 @@ internal sealed partial class FirstFitDecreasing_v1 :
 
 		if (foundBin != null)
 		{
-			return BinFittingOperationResult.CreateSuccessfulResult(foundBin, this._fittedItems);
+			return FittingResult.CreateSuccessfulResult(foundBin, this._fittedItems);
 		}
 
-		return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.DidNotFit, fittedItems: this._fittedItems);
+		return FittingResult.CreateFailedResult(FittingFailedResultReason.DidNotFit, fittedItems: this._fittedItems);
 	}
 
 

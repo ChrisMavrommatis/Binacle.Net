@@ -1,12 +1,10 @@
 ﻿using Binacle.Net.Lib.Abstractions.Algorithms;
-using Binacle.Net.Lib.Abstractions.ExtensionMethods;
 using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Exceptions;
-using Binacle.Net.Lib.Models;
 
-namespace Binacle.Net.Lib.Algorithms;
+namespace Binacle.Net.Lib.Packing.Algorithms;
 
-internal partial class FirstFitDecreasing_v3<TBin, TItem> : IBinPackingAlgorithm
+internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 	where TBin : class, IWithID, IWithReadOnlyDimensions
 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 {
@@ -17,7 +15,7 @@ internal partial class FirstFitDecreasing_v3<TBin, TItem> : IBinPackingAlgorithm
 	private readonly List<Item> items;
 	private readonly int totalItemsVolume;
 
-	internal FirstFitDecreasing_v3(TBin bin, IList<TItem> items)
+	internal FirstFitDecreasing_v1(TBin bin, IList<TItem> items)
 	{
 		if(bin is null)
 		{

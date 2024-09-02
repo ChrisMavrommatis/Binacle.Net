@@ -1,6 +1,6 @@
-﻿namespace Binacle.Net.Lib.Strategies;
+﻿namespace Binacle.Net.Lib.Fitting.Models;
 
-public enum BinFitFailedResultReason
+public enum FittingFailedResultReason
 {
 	Unspecified,
 	GeneralError,

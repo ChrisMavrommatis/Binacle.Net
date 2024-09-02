@@ -1,13 +1,13 @@
-﻿using Binacle.Net.Lib.Abstractions.Strategies;
-using Binacle.Net.Lib.Models;
+﻿using Binacle.Net.Lib.Abstractions.Fitting;
+using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.Lib.Strategies.Models;
 
-namespace Binacle.Net.Lib.Strategies;
+namespace Binacle.Net.Lib.Fitting.Algorithms;
 
 internal sealed partial class FirstFitDecreasing_v2 :
-	IBinFittingOperation
+	IFittingAlgorithmOperation
 {
-	public BinFittingOperationResult Execute()
+	public FittingResult Execute()
 	{
 		Bin? foundBin = null;
 		int totalItemsToFit = this.items.Count();
@@ -15,11 +15,11 @@ internal sealed partial class FirstFitDecreasing_v2 :
 
 		var largestBinByVolume = (this.bins.OrderByDescending(x => x.Volume).FirstOrDefault())!;
 		if (totalItemsVolume > largestBinByVolume.Volume)
-			return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.TotalVolumeExceeded);
+			return FittingResult.CreateFailedResult(FittingFailedResultReason.TotalVolumeExceeded);
 
 		var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > largestBinByVolume.LongestDimension);
 		if (itemsNotFittingDueToLongestDimension.Any())
-			return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.ItemDimensionExceeded, itemsNotFittingDueToLongestDimension);
+			return FittingResult.CreateFailedResult(FittingFailedResultReason.ItemDimensionExceeded, itemsNotFittingDueToLongestDimension);
 
 		this.bins = this.bins.OrderBy(x => x.Volume);
 		this.items = this.items.OrderByDescending(x => x.Volume);
@@ -52,10 +52,10 @@ internal sealed partial class FirstFitDecreasing_v2 :
 
 		if (foundBin != null)
 		{
-			return BinFittingOperationResult.CreateSuccessfulResult(foundBin, this.fittedItems);
+			return FittingResult.CreateSuccessfulResult(foundBin, this.fittedItems);
 		}
 
-		return BinFittingOperationResult.CreateFailedResult(BinFitFailedResultReason.DidNotFit, fittedItems: this.fittedItems);
+		return FittingResult.CreateFailedResult(FittingFailedResultReason.DidNotFit, fittedItems: this.fittedItems);
 	}
 
 	private bool TryFit(Item item)

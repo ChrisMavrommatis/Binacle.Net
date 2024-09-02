@@ -2,7 +2,7 @@
 
 namespace Binacle.Net.Lib.Models;
 
-public struct Coordinates : IWithReadOnlyCoordinates
+public readonly struct Coordinates : IWithReadOnlyCoordinates
 {
 
 	public static Coordinates Zero = new Coordinates(0, 0, 0);

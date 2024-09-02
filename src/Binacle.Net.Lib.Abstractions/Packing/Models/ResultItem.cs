@@ -1,8 +1,7 @@
-﻿using Binacle.Net.Lib.Abstractions.ExtensionMethods;
-using Binacle.Net.Lib.Abstractions.Models;
+﻿using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Models;
 
-namespace Binacle.Net.Lib;
+namespace Binacle.Net.Lib.Packing.Models;
 
 public class ResultItem : IWithID, IWithReadOnlyVolume
 {
@@ -18,10 +17,10 @@ public class ResultItem : IWithID, IWithReadOnlyVolume
 	}
 	internal ResultItem(string id, Dimensions dimensions, Coordinates? coordinates = null)
 	{
-		this.ID = id;
-		this.Dimensions = dimensions;
-		this.Coordinates = coordinates;
-		this.Volume = dimensions.CalculateVolume();
+		ID = id;
+		Dimensions = dimensions;
+		Coordinates = coordinates;
+		Volume = dimensions.CalculateVolume();
 	}
 
 	public string ID { get; set; }

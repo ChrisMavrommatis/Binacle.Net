@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Lib.Abstractions.Strategies;
+﻿using Binacle.Net.Lib.Abstractions.Fitting;
+using Binacle.Net.Lib.Packing.Models;
 using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.TestsKernel.Providers;
 using Xunit;
@@ -18,7 +19,7 @@ public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>
 	[ClassData(typeof(BenchmarkScalingTestsDataProvider))]
 	public void Scaling_V1_5x5x5(BenchmarkScalingScenario scenario)
 		=> RunTest(
-			new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v1(),
+			new Binacle.Net.Lib.Fitting.Algorithms.FirstFitDecreasing_v1(),
 			scenario,
 			BenchmarkScalingTestsDataProvider.GetDimensions(),
 			BenchmarkScalingTestsDataProvider.BinCollectionName
@@ -28,7 +29,7 @@ public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>
 	[ClassData(typeof(BenchmarkScalingTestsDataProvider))]
 	public void Scaling_V2_5x5x5(BenchmarkScalingScenario scenario)
 		=> RunTest(
-			new Binacle.Net.Lib.Strategies.FirstFitDecreasing_v2(),
+			new Binacle.Net.Lib.Fitting.Algorithms.FirstFitDecreasing_v2(),
 			scenario,
 			BenchmarkScalingTestsDataProvider.GetDimensions(),
 			BenchmarkScalingTestsDataProvider.BinCollectionName
@@ -45,15 +46,15 @@ public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>
 			new TestItem("5x5x5", dimensions, scenario.NoOfItems)
 		};
 		var expectedBin = scenario.ExpectedSize != "None" ? binCollection.FirstOrDefault(x => x.ID == scenario.ExpectedSize) : binCollection.Last();
-		var algorithm = new Binacle.Net.Lib.Algorithms.FirstFitDecreasing_v3<TestBin, TestItem>(expectedBin, items);
+		var algorithm = new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(expectedBin, items);
 		var result = algorithm.Execute();
 		if (scenario.ExpectedSize != "None")
 		{
-			Xunit.Assert.Equal(BinPackingResultStatus.FullyPacked, result.Status);
+			Xunit.Assert.Equal(PackingResultStatus.FullyPacked, result.Status);
 		}
 		else
 		{
-			BinPackingResultStatus[] expectedResults = [BinPackingResultStatus.PartiallyPacked, BinPackingResultStatus.NotPacked];
+			PackingResultStatus[] expectedResults = [PackingResultStatus.PartiallyPacked, PackingResultStatus.NotPacked];
 
 			Xunit.Assert.True(expectedResults.Contains(result.Status));
 		}
@@ -66,7 +67,7 @@ public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>
 		Dimensions dimensions,
 		string binCollectionName
 		)
-		where TStrategy : class, IBinFittingStrategy
+		where TStrategy : class, IFittingAlgorithm
 	{
 		var binCollection = this.Fixture.Bins[binCollectionName];
 

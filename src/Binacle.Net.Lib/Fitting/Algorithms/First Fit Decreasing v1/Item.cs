@@ -1,8 +1,7 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Strategies.Models;
-using System.Numerics;
 
-namespace Binacle.Net.Lib.Strategies;
+namespace Binacle.Net.Lib.Fitting.Algorithms;
 
 internal sealed partial class FirstFitDecreasing_v1
 {
