@@ -2,7 +2,8 @@
 
 ![chart_init_public_run](https://github.com/ChrisMavrommatis/Binacle.Net/assets/56303004/e011e7e8-889a-401b-97e8-c8471b5c172e)
 
-Chart made by https://chartbenchmark.net/
+Chart made with https://chartbenchmark.net/
+
 ----
 
 
