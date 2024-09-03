@@ -57,8 +57,8 @@ public class ScenarioTests : IClassFixture<FirstFitDecreasingFixture>
 
 		var expectedBin = scenario.ExpectedSize != "None" ? binCollection.FirstOrDefault(x => x.ID == scenario.ExpectedSize) : binCollection.Last();
 
-		var algorithm = new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(expectedBin!, scenario.Items);
-		this.RunAlgorithmScenario(algorithm, scenario);
+		var algorithmInstance = new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(expectedBin!, scenario.Items);
+		this.RunAlgorithmScenario(algorithmInstance, scenario);
 	}
 
 	[Theory]
@@ -69,8 +69,8 @@ public class ScenarioTests : IClassFixture<FirstFitDecreasingFixture>
 
 		var expectedBin = scenario.ExpectedSize != "None" ? binCollection.FirstOrDefault(x => x.ID == scenario.ExpectedSize) : binCollection.Last();
 
-		var algorithm = new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(expectedBin!, scenario.Items);
-		this.RunAlgorithmScenario(algorithm, scenario);
+		var algorithmInstance = new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(expectedBin!, scenario.Items);
+		this.RunAlgorithmScenario(algorithmInstance, scenario);
 	}
 
 	[Theory]
@@ -81,14 +81,14 @@ public class ScenarioTests : IClassFixture<FirstFitDecreasingFixture>
 
 		var expectedBin = scenario.ExpectedSize != "None" ? binCollection.FirstOrDefault(x => x.ID == scenario.ExpectedSize) : binCollection.Last();
 
-		var algorithm = new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(expectedBin!, scenario.Items);
-		this.RunAlgorithmScenario(algorithm, scenario);
+		var algorithmInstance = new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(expectedBin!, scenario.Items);
+		this.RunAlgorithmScenario(algorithmInstance, scenario);
 	}
 
-	private void RunAlgorithmScenario<TAlgorithm>(TAlgorithm algorithm, Scenario scenario)
+	private void RunAlgorithmScenario<TAlgorithm>(TAlgorithm algorithmInstance, Scenario scenario)
 		where TAlgorithm : class, IPackingAlgorithm
 	{
-		var result = algorithm.Execute();
+		var result = algorithmInstance.Execute();
 		if(scenario.ExpectedSize != "None")
 		{
 			Xunit.Assert.Equal(PackingResultStatus.FullyPacked, result.Status);
@@ -101,7 +101,7 @@ public class ScenarioTests : IClassFixture<FirstFitDecreasingFixture>
 		}
 	}
 
-	private void RunScenarioTest<TAlgorithm>(TAlgorithm strategy, Scenario scenario)
+	private void RunScenarioTest<TAlgorithm>(TAlgorithm algorithmInstance, Scenario scenario)
 		where TAlgorithm : class, IFittingAlgorithm
 	{
 		var binCollection = this.Fixture.Bins[scenario.BinCollection];
@@ -109,7 +109,7 @@ public class ScenarioTests : IClassFixture<FirstFitDecreasingFixture>
 		// flatten scenario.Items based on quantity
 		var items = scenario.Items.SelectMany(x => Enumerable.Repeat(x, x.Quantity));
 
-		var operation = strategy
+		var operation = algorithmInstance
 		 .WithBins(binCollection)
 		 .AndItems(items)
 		 .Build();

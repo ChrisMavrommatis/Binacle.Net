@@ -34,6 +34,7 @@ public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>
 			BenchmarkScalingTestsDataProvider.GetDimensions(),
 			BenchmarkScalingTestsDataProvider.BinCollectionName
 			);
+
 	[Theory]
 	[ClassData(typeof(BenchmarkScalingTestsDataProvider))]
 	public void Scaling_V3_5x5x5(BenchmarkScalingScenario scenario)
@@ -46,8 +47,8 @@ public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>
 			new TestItem("5x5x5", dimensions, scenario.NoOfItems)
 		};
 		var expectedBin = scenario.ExpectedSize != "None" ? binCollection.FirstOrDefault(x => x.ID == scenario.ExpectedSize) : binCollection.Last();
-		var algorithm = new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(expectedBin, items);
-		var result = algorithm.Execute();
+		var algorithmInstance = new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(expectedBin, items);
+		var result = algorithmInstance.Execute();
 		if (scenario.ExpectedSize != "None")
 		{
 			Xunit.Assert.Equal(PackingResultStatus.FullyPacked, result.Status);
@@ -61,19 +62,19 @@ public class BenchmarkCaseTests : IClassFixture<FirstFitDecreasingFixture>
 	}
 
 
-	private void RunTest<TStrategy>(
-		TStrategy strategy,
+	private void RunTest<TAlgorithm>(
+		TAlgorithm algorithmInstance,
 		BenchmarkScalingScenario scenario,
 		Dimensions dimensions,
 		string binCollectionName
 		)
-		where TStrategy : class, IFittingAlgorithm
+		where TAlgorithm : class, IFittingAlgorithm
 	{
 		var binCollection = this.Fixture.Bins[binCollectionName];
 
 		var items = Enumerable.Range(1, scenario.NoOfItems).Select(x => new TestItem(x.ToString(), dimensions)).ToList();
 
-		var operation = strategy
+		var operation = algorithmInstance
 		 .WithBins(binCollection)
 		 .AndItems(items)
 		 .Build();

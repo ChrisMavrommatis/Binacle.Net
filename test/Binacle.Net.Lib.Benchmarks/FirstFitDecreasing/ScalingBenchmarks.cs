@@ -46,40 +46,40 @@ public class ScalingBenchmarks
 	private List<TestItem> items;
 	private BinCollectionsTestDataProvider rundataProvider;
 
-	//[Benchmark(Baseline = true)]
-	//public FittingResult V1_5x5x5()
-	//{
-	//	var strategy = new Fitting.Algorithms.FirstFitDecreasing_v1()
-	//		.WithBins(this.bins)
-	//		.AndItems(this.items)
-	//		.Build();
-
-	//	var result = strategy.Execute();
-	//	BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, this.NoOfItems);
-	//	return result;
-	//}
-
-	//[Benchmark]
-	//public FittingResult V2_5x5x5()
-	//{
-	//	var strategy = new Fitting.Algorithms.FirstFitDecreasing_v2()
-	//		.WithBins(this.bins)
-	//		.AndItems(this.items)
-	//		.Build();
-
-	//	var result = strategy.Execute();
-	//	BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, this.NoOfItems);
-	//	return result;
-	//}
-
-	[Benchmark]
-	public PackingResult V3_5x5x5()
+	[Benchmark(Baseline = true)]
+	public FittingResult V1_5x5x5()
 	{
-		var expectedSize = BenchmarkScalingTestsDataProvider.TestCases[this.NoOfItems];
-		var expectedBin = expectedSize != "None" ? this.bins.FirstOrDefault(x => x.ID == expectedSize) : this.bins.LastOrDefault(); 
-		var algorithm = new Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(expectedBin, this.items);
-		var result = algorithm.Execute();
+		var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v1()
+			.WithBins(this.bins)
+			.AndItems(this.items)
+			.Build();
+
+		var result = algorithmInstance.Execute();
 		BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, this.NoOfItems);
 		return result;
 	}
+
+	[Benchmark]
+	public FittingResult V2_5x5x5()
+	{
+		var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v2()
+			.WithBins(this.bins)
+			.AndItems(this.items)
+			.Build();
+
+		var result = algorithmInstance.Execute();
+		BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, this.NoOfItems);
+		return result;
+	}
+
+	//[Benchmark]
+	//public PackingResult V3_5x5x5()
+	//{
+	//	var expectedSize = BenchmarkScalingTestsDataProvider.TestCases[this.NoOfItems];
+	//	var expectedBin = expectedSize != "None" ? this.bins.FirstOrDefault(x => x.ID == expectedSize) : this.bins.LastOrDefault();
+	//	var algorithmInstance = new Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(expectedBin, this.items);
+	//	var result = algorithmInstance.Execute();
+	//	BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, this.NoOfItems);
+	//	return result;
+	//}
 }

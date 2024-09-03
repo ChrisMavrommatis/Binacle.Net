@@ -8,32 +8,32 @@ namespace Binacle.Net.Api.Services;
 public interface ILockerService
 {
 	public FittingResult FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
-		where TBin : class, IWithID, IWithReadOnlyDimensions<int>
-		where TBox : class, IWithID, IWithReadOnlyDimensions<int>, IWithQuantity<int>;
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 
 }
 
 internal class LockerService : ILockerService
 {
-	private readonly Lib.StrategyFactory strategyFactory;
+	private readonly Lib.AlgorithmFactory algorithmFactory;
 	private readonly ILogger<LockerService> logger;
 
 	public LockerService(ILogger<LockerService> logger)
 	{
-		this.strategyFactory = new Lib.StrategyFactory();
+		this.algorithmFactory = new Lib.AlgorithmFactory();
 		this.logger = logger;
 	}
 
 	public FittingResult FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
-		where TBin : class, IWithID, IWithReadOnlyDimensions<int>
-		where TBox : class, IWithID, IWithReadOnlyDimensions<int>, IWithQuantity<int>
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
 		using var timedOperation = this.logger.BeginTimedOperation("Find Fitting Bin");
 
 		timedOperation.WithNamedState("Items", items.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width} q{x.Quantity}"));
 		timedOperation.WithNamedState("Bins", bins.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width}"));
 
-		var strategy = this.strategyFactory.Create(Lib.Algorithm.FirstFitDecreasing);
+		var strategy = this.algorithmFactory.Create(Lib.Algorithm.FirstFitDecreasing);
 
 		var flatItems = items.SelectMany(x => Enumerable.Repeat(x, x.Quantity)).ToList();
 

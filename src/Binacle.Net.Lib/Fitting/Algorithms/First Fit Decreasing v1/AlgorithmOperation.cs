@@ -1,6 +1,5 @@
 ﻿using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.Lib.Fitting.Models;
-using Binacle.Net.Lib.Strategies.Models;
 
 namespace Binacle.Net.Lib.Fitting.Algorithms;
 
@@ -14,7 +13,7 @@ internal sealed partial class FirstFitDecreasing_v1 :
 
 		var largestBinByVolume = (_bins.OrderByDescending(x => x.Volume).FirstOrDefault())!;
 		if (_items.Sum(x => x.Volume) > largestBinByVolume.Volume)
-			return FittingResult.CreateFailedResult(FittingFailedResultReason.TotalVolumeExceeded);
+			return FittingResult.CreateFailedResult<Item>(FittingFailedResultReason.TotalVolumeExceeded);
 
 		var itemsNotFittingDueToLongestDimension = _items.Where(x => x.LongestDimension > largestBinByVolume.LongestDimension);
 		if (itemsNotFittingDueToLongestDimension.Any())

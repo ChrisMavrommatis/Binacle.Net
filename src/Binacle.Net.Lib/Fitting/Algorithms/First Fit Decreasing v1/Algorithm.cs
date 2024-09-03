@@ -1,7 +1,6 @@
 ﻿using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Exceptions;
-using Binacle.Net.Lib.Strategies.Models;
 
 namespace Binacle.Net.Lib.Fitting.Algorithms;
 
@@ -21,14 +20,14 @@ internal sealed partial class FirstFitDecreasing_v1 :
 	}
 
 	public IFittingAlgorithmWithBins WithBins<TBin>(IEnumerable<TBin> bins)
-		 where TBin : class, IWithID, IWithReadOnlyDimensions<int>
+		 where TBin : class, IWithID, IWithReadOnlyDimensions
 	{
 		_bins = bins.Select(x => new Bin(x.ID, x)).ToList();
 		return this;
 	}
 
 	public IFittingAlgorithmWithBinsAndItems AndItems<TItem>(IEnumerable<TItem> items)
-		 where TItem : class, IWithID, IWithReadOnlyDimensions<int>
+		 where TItem : class, IWithID, IWithReadOnlyDimensions
 	{
 		_items = items.Select(x => new Item(x.ID, x)).ToList();
 		return this;

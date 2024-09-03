@@ -1,6 +1,5 @@
 ﻿using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.Lib.Fitting.Models;
-using Binacle.Net.Lib.Strategies.Models;
 
 namespace Binacle.Net.Lib.Fitting.Algorithms;
 
@@ -15,7 +14,7 @@ internal sealed partial class FirstFitDecreasing_v2 :
 
 		var largestBinByVolume = (this.bins.OrderByDescending(x => x.Volume).FirstOrDefault())!;
 		if (totalItemsVolume > largestBinByVolume.Volume)
-			return FittingResult.CreateFailedResult(FittingFailedResultReason.TotalVolumeExceeded);
+			return FittingResult.CreateFailedResult<Item>(FittingFailedResultReason.TotalVolumeExceeded);
 
 		var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > largestBinByVolume.LongestDimension);
 		if (itemsNotFittingDueToLongestDimension.Any())
@@ -73,10 +72,12 @@ internal sealed partial class FirstFitDecreasing_v2 :
 		return false;
 	}
 
-	private VolumetricItem? FindAvailableSpace(VolumetricItem orientation)
+	private VolumetricItem? FindAvailableSpace(Item orientation)
 	{
-		foreach (var space in this.availableSpace)
+		for (var i =0; i < this.availableSpace.Count; i++)
 		{
+			var space = this.availableSpace[i];
+
 			if (space.Length >= orientation.Length && space.Width >= orientation.Width && space.Height >= orientation.Height)
 				return space;
 		}
@@ -88,14 +89,14 @@ internal sealed partial class FirstFitDecreasing_v2 :
 	{
 		var newAvailableSpaces = this.SplitSpaceQuadrant(spaceQuadrant, item);
 		this.availableSpace.Remove(spaceQuadrant);
-		if (newAvailableSpaces.Any())
+		if (newAvailableSpaces.Count > 0)
 		{
 			this.availableSpace.AddRange(newAvailableSpaces);
 		}
 		this.fittedItems.Add(item);
 	}
 
-	private List<VolumetricItem> SplitSpaceQuadrant(VolumetricItem spaceQuadrant, VolumetricItem orientation)
+	private List<VolumetricItem> SplitSpaceQuadrant(VolumetricItem spaceQuadrant, Item orientation)
 	{
 		var newAvailableSpaces = new List<VolumetricItem>();
 

@@ -25,7 +25,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
 			.WithBins((IEnumerable<TestBin>)null)
 			.AndItems(testItems)
 			.Build();
@@ -33,7 +33,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
 			.WithBins((IEnumerable<TestBin>)null)
 			.AndItems(testItems)
 			.Build();
@@ -41,7 +41,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
 			.WithBins(Enumerable.Empty<TestBin>())
 			.AndItems(testItems)
 			.Build();
@@ -49,7 +49,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
 			.WithBins(Enumerable.Empty<TestBin>())
 			.AndItems(testItems)
 			.Build();
@@ -58,7 +58,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
-			var algorithm = new Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(null, testItems);
+			var algorithmInstance = new Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(null, testItems);
 		});
 
 	}
@@ -70,7 +70,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
 			.WithBins(testBins)
 			.AndItems((IEnumerable<TestItem>)null)
 			.Build();
@@ -78,7 +78,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
 			.WithBins(testBins)
 			.AndItems((IEnumerable<TestItem>)null)
 			.Build();
@@ -86,7 +86,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
-			var algorithm = new Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(
+			var algorithmInstance = new Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(
 				testBins.First(),
 				null
 			);
@@ -94,7 +94,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
 			.WithBins(testBins)
 			.AndItems(Enumerable.Empty<TestItem>())
 			.Build();
@@ -102,7 +102,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
 			.WithBins(testBins)
 			.AndItems(Enumerable.Empty<TestItem>())
 			.Build();
@@ -110,7 +110,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<ArgumentNullException>(() =>
 		{
-			var algorithm = new Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(
+			var algorithmInstance = new Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(
 				testBins.First(),
 				Enumerable.Empty<TestItem>().ToList()
 			);
@@ -129,7 +129,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<DimensionException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
 				.WithBins(testBinsWith0Dimension)
 				.AndItems(testItems)
 				.Build();
@@ -137,7 +137,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<DimensionException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
 				.WithBins(testBinsWith0Dimension)
 				.AndItems(testItems)
 				.Build();
@@ -145,7 +145,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<DimensionException>(() =>
 		{
-			var algorithm = new Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(
+			var algorithmInstance = new Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(
 				testBinsWith0Dimension.First(),
 				testItems
 			);
@@ -164,7 +164,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<DimensionException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v1()
 				.WithBins(testBins)
 				.AndItems(testItemsWith0Dimension)
 				.Build();
@@ -172,7 +172,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<DimensionException>(() =>
 		{
-			var strategy = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
+			var algorithmInstance = new Lib.Fitting.Algorithms.FirstFitDecreasing_v2()
 				.WithBins(testBins)
 				.AndItems(testItemsWith0Dimension)
 				.Build();
@@ -180,7 +180,7 @@ public class BehavioralTests : IClassFixture<FirstFitDecreasingFixture>
 
 		Assert.Throws<DimensionException>(() =>
 		{
-			var algorithm = new Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(
+			var algorithmInstance = new Lib.Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(
 				testBins.First(),
 				testItemsWith0Dimension
 			);

@@ -1,21 +1,24 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
-using Binacle.Net.Lib.Strategies.Models;
 
 namespace Binacle.Net.Lib.Fitting.Algorithms;
 
 internal sealed partial class FirstFitDecreasing_v1
 {
-	private sealed class Item : ItemBase
+	private sealed class Item : VolumetricItem, IWithID
 	{
-		internal Item(string id, IWithReadOnlyDimensions<int> item) : base(id, item)
+		internal Item(string id, IWithReadOnlyDimensions item) : 
+			base(item)
 		{
+			this.ID = id;
 		}
 
-		internal Item(string id, int length, int width, int height)
-			: base(id, length, width, height)
+		internal Item(string id, int length, int width, int height) :
+			base(length, width, height)
 		{
+			this.ID = id;
 		}
 
+		public string ID { get; set; }
 
 		internal IEnumerable<Item> GetOrientations()
 		{

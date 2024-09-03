@@ -4,7 +4,7 @@ namespace Binacle.Net.Lib.Abstractions.Algorithms;
 
 public interface IPackingAlgorithm
 {
-	string AlgorithmName { get; }
+	string Name { get; }
 	int Version { get; }
 	PackingResult Execute();
 }
