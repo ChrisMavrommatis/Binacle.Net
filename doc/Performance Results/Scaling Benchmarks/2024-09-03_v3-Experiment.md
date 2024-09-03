@@ -1,8 +1,10 @@
-# Scaling Benchmark Results: 2024-08-30 
+# Scaling Benchmark Results: 2024-09-03
 
 Part of V3 experiment
 
-![chart_2024_08_30__v3-Experiment](https://github.com/user-attachments/assets/dcbd3600-e1b8-4e80-ae17-c31ab477403c)
+![chart_2024_09_03__v3-Experiment](https://github.com/user-attachments/assets/6ca433da-2b95-40b1-b21d-2b5aa16beb6f)
+
+Chart made with https://chartbenchmark.net/
 
 ----
 
