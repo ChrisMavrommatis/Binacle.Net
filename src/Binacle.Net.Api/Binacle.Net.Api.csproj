@@ -41,6 +41,7 @@
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.Api.UIModule\Binacle.Net.Api.UIModule.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
 	</ItemGroup>
 

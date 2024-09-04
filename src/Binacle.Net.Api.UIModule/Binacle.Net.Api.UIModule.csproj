@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UserSecretsId>Binacle_Net_Secrets</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Include all files in the wwwroot directory of the UI module -->
+		<UIFiles Include="wwwroot\**\*.*" />
+	</ItemGroup>
+	
+	<Target Name="CopyUIFiles" BeforeTargets="Build">
+		<Copy SourceFiles="@(UIFiles)" DestinationFolder="..\Binacle.Net.Api\wwwroot\%(UIFiles.RecursiveDir)" />
+	</Target>
+	
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Serilog" Version="4.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\" />
+	</ItemGroup>
+	
+</Project>

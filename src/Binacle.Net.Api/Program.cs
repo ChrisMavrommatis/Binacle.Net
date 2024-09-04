@@ -136,6 +136,8 @@ public class Program
 
 		// Slim builder
 		app.UseHttpsRedirection();
+		
+		
 
 		if (app.Environment.IsDevelopment())
 		{
@@ -163,6 +165,8 @@ public class Program
 		}
 
 		app.MapControllers();
+
+		app.UseUIModule();
 
 		await app.RunStartupTasksAsync();
 		await app.RunAsync();

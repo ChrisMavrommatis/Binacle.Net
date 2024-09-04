@@ -1,6 +1,9 @@
-.vs
+﻿.vs
 *.user
 bin/
 obj/
 BenchmarkDotNet.Artifacts
 logs/
+node_modules
+# Copied from UI Module
+src/Binacle.Net.Api/wwwroot/
