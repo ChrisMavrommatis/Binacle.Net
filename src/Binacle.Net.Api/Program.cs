@@ -3,6 +3,7 @@ using Binacle.Net.Api.Configuration;
 using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.ServiceModule;
 using Binacle.Net.Api.Services;
+using Binacle.Net.Api.UIModule;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.Features;
 using ChrisMavrommatis.FluentValidation;
@@ -63,8 +64,8 @@ public class Program
 			.AddJsonFile($"Features.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
 		Feature.Manager = new FeatureManagerConfiguration()
-			.ReadFrom.EnvironmentVariables()
 			.ReadFrom.Configuration(builder.Configuration)
+			.ReadFrom.EnvironmentVariables()
 			.CreateManager();
 
 		builder.Services
@@ -132,13 +133,16 @@ public class Program
 			builder.AddServiceModule();
 		}
 
+		if (Feature.IsEnabled("UI_MODULE"))
+		{
+			builder.AddUIModule();
+		}
+
 		var app = builder.Build();
 
 		// Slim builder
 		app.UseHttpsRedirection();
 		
-		
-
 		if (app.Environment.IsDevelopment())
 		{
 			app.UseDeveloperExceptionPage();
@@ -164,9 +168,12 @@ public class Program
 			app.UseServiceModule();
 		}
 
-		app.MapControllers();
+		if (Feature.IsEnabled("UI_MODULE"))
+		{
+			app.UseUIModule();
+		}
 
-		app.UseUIModule();
+		app.MapControllers();
 
 		await app.RunStartupTasksAsync();
 		await app.RunAsync();

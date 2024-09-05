@@ -1,9 +1,27 @@
-﻿.vs
-*.user
+﻿# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
 bin/
 obj/
-BenchmarkDotNet.Artifacts
+
+# Visual Studio
+.vs
+*.user
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Node
+/node_modules
+
+# Project Specific
 logs/
-node_modules
-# Copied from UI Module
-src/Binacle.Net.Api/wwwroot/
+BenchmarkDotNet.Artifacts
+## Copied from UI Module
+src/Binacle.Net.Api/wwwroot/ 
+

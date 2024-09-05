@@ -1,31 +1,34 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<UserSecretsId>Binacle_Net_Secrets</UserSecretsId>
+		<DisableScopedCssBundling>true</DisableScopedCssBundling>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<!-- Include all files in the wwwroot directory of the UI module -->
-		<UIFiles Include="wwwroot\**\*.*" />
-	</ItemGroup>
-	
-	<Target Name="CopyUIFiles" BeforeTargets="Build">
-		<Copy SourceFiles="@(UIFiles)" DestinationFolder="..\Binacle.Net.Api\wwwroot\%(UIFiles.RecursiveDir)" />
-	</Target>
-	
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Serilog" Version="4.0.1" />
+		<PackageReference Include="Serilog" Version="4.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="wwwroot\" />
+		<UIFiles Include="wwwroot\**\*.*" />
 	</ItemGroup>
-	
+
+	<ItemGroup>
+	  <None Include="wwwroot\MainLayout.css" />
+	  <None Include="wwwroot\NavMenu.css" />
+	</ItemGroup>
+
+	<!-- This target runs on every build -->
+	<Target Name="CopyUIFiles" BeforeTargets="Build;Rebuild">
+		<Copy SourceFiles="@(UIFiles)" DestinationFolder="..\Binacle.Net.Api\wwwroot\%(UIFiles.RecursiveDir)" />
+	</Target>
+
 </Project>
