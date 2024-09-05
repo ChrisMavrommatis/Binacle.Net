@@ -3,21 +3,23 @@
 
 <head>
     <meta charset="utf-8" />
+    @* Let browser know website is optimized for mobile *@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <base href="/" />
-    <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="app.css" />
-    @* <link rel="stylesheet" href="_content/Binacle.Net.Api.UIModule/Binacle.Net.Api.UIModule.styles.css" /> *@
-    @* <link rel="stylesheet" href="_content/Binacle.Net.Api.UIModule/Binacle.Net.Api.UIModule.bundle.scp.css" /> *@
-    <link rel="stylesheet" href="MainLayout.css" />
-    <link rel="stylesheet" href="NavMenu.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    @* Import materialize.css *@
+    <link type="text/css" rel="stylesheet" href="lib/css/materialize.min.css" media="screen,projection" />
+    @* Favicon *@
+    <link rel="icon" href="favicon.ico" />
     <HeadOutlet />
 </head>
 
 <body>
     <Routes />
     <script src="_framework/blazor.web.js"></script>
+    @* JavaScript at end of body for optimized loading *@
+    <script type="text/javascript" src="lib/js/materialize.min.js"></script>
 </body>
 
 </html>
