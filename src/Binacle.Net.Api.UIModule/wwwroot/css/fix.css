@@ -1,0 +1,20 @@
+﻿nav .nav-wrapper img.navbar-fill {
+    height: var(--navbar-height-mobile) !important;
+}
+
+@media only screen and (min-width : 601px) {
+	nav .nav-wrapper img.navbar-fill {
+		height: var(--navbar-height) !important;
+		line-height: var(--navbar-height) !important;
+	}
+}
+
+body {
+	display: flex;
+	min-height: 100vh;
+	flex-direction: column;
+}
+
+main {
+	flex: 1 0 auto;
+}

@@ -35,6 +35,12 @@ public static class ModuleDefinition
 
 		app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
+
+		// handle 404
+
+		app.UseStatusCodePagesWithReExecute("/Error");
+		//app.UseStatusCodePagesWithRedirects("/Error");
+
 	}
 }
 
