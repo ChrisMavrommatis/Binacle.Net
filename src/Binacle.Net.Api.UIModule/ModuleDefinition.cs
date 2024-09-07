@@ -29,18 +29,16 @@ public static class ModuleDefinition
 			// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 			app.UseHsts();
 		}
-
+		
 		app.UseStaticFiles();
-		app.UseAntiforgery();
 
 		app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
 
 		// handle 404
-
-		app.UseStatusCodePagesWithReExecute("/Error");
-		//app.UseStatusCodePagesWithRedirects("/Error");
-
+		app.UseStatusCodePagesWithReExecute("/Error/{0}");
+		
+		app.UseAntiforgery();
 	}
 }
 

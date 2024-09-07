@@ -1,9 +1,9 @@
-﻿nav .nav-wrapper img.navbar-fill {
+﻿nav .nav-wrapper .navbar-fill {
     height: var(--navbar-height-mobile) !important;
 }
 
 @media only screen and (min-width : 601px) {
-	nav .nav-wrapper img.navbar-fill {
+	nav .nav-wrapper .navbar-fill {
 		height: var(--navbar-height) !important;
 		line-height: var(--navbar-height) !important;
 	}
@@ -18,3 +18,4 @@ body {
 main {
 	flex: 1 0 auto;
 }
+

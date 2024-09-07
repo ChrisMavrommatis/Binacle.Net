@@ -1,23 +1,39 @@
-﻿<header>
-    <nav class="blue accent-2">
-        <div class="nav-wrapper container">
-            <img class="navbar-fill" src="assets/logo/binacle-logo-16x16.svg">
-            <a href="#" class="brand-logo white-text">
-                Binacle.Net
-            </a>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a class="white-text" href="sass.html">Sass</a></li>
-                <li><a class="white-text" href="badges.html">Components</a></li>
-                <li>
-                    <a class="ext-link" href="https://github.com/ChrisMavrommatis/Binacle.Net" target="_blank" title="Check out my GitHub">
-                        <img src="assets/github/github-mark-white.png" style="height: 20px">
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+﻿@inject NavigationManager NavigationManager
+
+<header>
+	<nav class="blue accent-2">
+		<div class="nav-wrapper container">
+			<img class="navbar-fill" src="assets/logo/binacle-logo-16x16.svg">
+			@if (this.IsHomepage)
+			{
+				<div class="brand-logo white-text">
+					Binacle.Net
+				</div>
+			}
+			else
+			{
+				<a href="/" class="brand-logo white-text">
+					Binacle.Net
+				</a>
+			}
+			<ul id="nav-mobile" class="right hide-on-med-and-down">
+				<li>
+					<a class="ext-link" href="https://github.com/ChrisMavrommatis/Binacle.Net" target="_blank" title="Check out my GitHub">
+						<img src="assets/github/github-mark-white.png" style="height: 20px">
+					</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
 </header>
 
 @code {
+	private bool IsHomepage { get; set; }
 
+	protected override void OnInitialized()
+	{
+		var uri = new Uri(this.NavigationManager.Uri);
+
+		this.IsHomepage = uri.LocalPath == "/";
+	}
 }
