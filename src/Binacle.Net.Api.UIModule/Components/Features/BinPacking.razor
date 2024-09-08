@@ -1,0 +1,73 @@
+﻿@inherits BinPackingBase
+@rendermode RenderMode.InteractiveServer
+
+<form class="row mt-5 pt-5">
+    <div class="col s12">
+        <Card Color="blue accent-1" Title="Bin">
+            <div class="row g-1">
+                <div class="col s12 m4 input-field p-1 m-1">
+                    <input id="length" name="length" type="text" @bind="this.Bin.Length" @bind:after="this.BinChangedAsync">
+                    <label for="length">Length</label>
+                </div>
+                <div class="col s12 m4 input-field p-1 m-1">
+                    <input id="width" name="width" type="text" @bind="this.Bin.Width" @bind:after="this.BinChangedAsync">
+                    <label for="width">width</label>
+                </div>
+                <div class="col s12 m4 input-field p-1 m-1">
+                    <input id="height" name="length" type="text" @bind="this.Bin.Height" @bind:after="this.BinChangedAsync">
+                    <label for="height">height</label>
+                </div>
+            </div>
+        </Card>
+
+    </div>
+    <div class="col s12">
+        <Card Color="orange accent-1" Title="Items">
+            <ChildContent>
+                @foreach (var item in this.Items)
+                {
+                    <div class="row mb-1 g-1">
+                        <div class="col s3 m2 l2 input-field inline">
+                            <input id="length" name="length" type="text" @bind="item.Length">
+                            <label for="length">Length</label>
+                        </div>
+                        <div class="col s3 m2 l2 input-field inline">
+                            <input id="width" name="width" type="text" @bind="item.Width">
+                            <label for="width">Width</label>
+                        </div>
+                        <div class="col s3 m2 l2 input-field inline">
+                            <input id="height" name="height" type="text" @bind="item.Height">
+                            <label for="height">Height</label>
+                        </div>
+                        <div class="col s3 m2 l2 input-field inline">
+                            <input id="quantity" name="quantity" type="text" @bind="item.Quantity">
+                            <label for="quantity">Quantity</label>
+                        </div>
+                        <div class="col hide-on-small-only m2 l2">
+                            <span class="badge">Volume: @item.Volume</span>
+                            <span class="badge">Total Volume: @(item.Volume * item.Quantity)</span>
+                        </div>
+                        <div class="col s3 m2 l2 input-field inline valign-wrapper">
+                            <button class="btn outlined" type="button" @onclick="(() => RemoveItem(item))">
+                                <i class="material-icons">delete</i>
+                            </button>
+                        </div>
+
+                    </div>
+                }
+            </ChildContent>
+
+            <CardAction>
+                <button class="btn text icon-right" type="button" @onclick="AddItem">
+                    <i class="material-icons">add</i>
+                    Add Item
+                </button>
+                <button class="btn text icon-right" type="button" @onclick="ClearAllItems">
+                    <i class="material-icons">delete_forever</i>
+                    Clear All Items
+                </button>
+            </CardAction>
+
+        </Card>
+    </div>
+</form>

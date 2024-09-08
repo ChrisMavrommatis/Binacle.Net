@@ -21,6 +21,14 @@
 		<UIFiles Include="wwwroot\**\*.*" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <UIFiles Remove="wwwroot\data\initial_sample_data.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj" />
+	</ItemGroup>
+
 	<!-- This target runs on every build -->
 	<Target Name="CopyUIFiles" BeforeTargets="Build;Rebuild">
 		<Copy SourceFiles="@(UIFiles)" DestinationFolder="..\Binacle.Net.Api\wwwroot\%(UIFiles.RecursiveDir)" />

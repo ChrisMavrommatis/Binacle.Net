@@ -16,6 +16,8 @@ public static class ModuleDefinition
 			.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
+		builder.Services.AddHttpClient();
+
 		Log.Information("{moduleName} module. Status {status}", "UI", "Initialized");
 	}
 
