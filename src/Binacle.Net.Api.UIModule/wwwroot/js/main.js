@@ -7,6 +7,7 @@ import * as THREE from 'three';
 //messageContainer.appendChild(warning);
 
 const rendererContainer = document.getElementById("renderer-container");
+const visualizerContainer = document.getElementById("visualizer-container");
 
 let initialContainer = {
 	length: 60,

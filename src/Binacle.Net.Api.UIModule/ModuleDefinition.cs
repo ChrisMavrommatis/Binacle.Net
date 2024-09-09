@@ -16,7 +16,17 @@ public static class ModuleDefinition
 			.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
-		builder.Services.AddHttpClient();
+
+		builder.Services.AddHttpClient("Self", (serviceProvider, httpClient) =>
+		{
+			// TODO: Fix this
+			var url = builder.Configuration["ASPNETCORE_URLS"];
+			httpClient.BaseAddress = new Uri(url);
+		});
+
+
+		// For blazor components this is per connection or tab
+		builder.Services.AddScoped<Services.ISampleDataService, Services.SampleDataService>();
 
 		Log.Information("{moduleName} module. Status {status}", "UI", "Initialized");
 	}

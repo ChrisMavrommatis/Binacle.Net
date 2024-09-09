@@ -11,7 +11,16 @@ public class Bin : IWithDimensions
 		this.Width = width;
 		this.Height = height;
 	}
+
+	[Required]
+	[Range(1, ushort.MaxValue)]
 	public int Length { get; set; }
+
+	[Required]
+	[Range(1, ushort.MaxValue)]
 	public int Width { get; set; }
+
+	[Required]
+	[Range(1, ushort.MaxValue)]
 	public int Height { get; set; }
 }

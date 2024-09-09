@@ -5,16 +5,34 @@
 
 <PageTitle>Binacle.Net</PageTitle>
 
+<h1>Welcome to Binacle.Net</h1>
+
+<p>
+    This build in UI provides easy use for experimentation and visualization for the packing algorithm.
+</p>
+
 <BinPacking />
 
 <div class="row mt-5 pt-5">
     <div class="col s12">
         <Card Title="Results" Color="indigo lighten-4">
-            <div id="renderer-container"></div>
+            <ImageContent>
+                <div id="visualizer-container">
+                    <div id="renderer-container"></div>
+                    <span class="card-title grey-text text-darken-3">Visualizer</span>
+                    <a class="btn-floating halfway-fab waves-effect waves-light orange accent-3" href="javascript:void(0)">
+                        <i class="material-icons grey-text text-darken-3">autorenew</i>
+                    </a>
+                </div>
+            </ImageContent>
+            <ChildContent>
+                test
+            </ChildContent>
+
         </Card>
     </div>
 </div>
 
 @code {
-   
+
 }

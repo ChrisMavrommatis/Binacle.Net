@@ -1,73 +1,124 @@
-﻿@inherits BinPackingBase
-@rendermode RenderMode.InteractiveServer
+﻿@rendermode RenderMode.InteractiveServer
 
-<form class="row mt-5 pt-5">
+<EditForm Model="@this.Model" class="row mt-5 pt-5">
+    <DataAnnotationsValidator />
+
     <div class="col s12">
         <Card Color="blue accent-1" Title="Bin">
-            <div class="row g-1">
-                <div class="col s12 m4 input-field p-1 m-1">
-                    <input id="length" name="length" type="text" @bind="this.Bin.Length" @bind:after="this.BinChangedAsync">
-                    <label for="length">Length</label>
-                </div>
-                <div class="col s12 m4 input-field p-1 m-1">
-                    <input id="width" name="width" type="text" @bind="this.Bin.Width" @bind:after="this.BinChangedAsync">
-                    <label for="width">width</label>
-                </div>
-                <div class="col s12 m4 input-field p-1 m-1">
-                    <input id="height" name="length" type="text" @bind="this.Bin.Height" @bind:after="this.BinChangedAsync">
-                    <label for="height">height</label>
-                </div>
-            </div>
+            <ChildContent>
+                <ul class="collection">
+                    @foreach (var bin in this.Model.Bins)
+                    {
+                        <li class="collection-item">
+                           @*  <a class="secondary-content">
+                                <i class="material-icons">delete</i>
+                            </a> *@
+                            <div class="row g-1">
+                                <div class="col s4 input-field p-1 m-1">
+                                    <InputNumber id="length" @bind-Value="bin.Length" @bind-Value:after="this.BinChangedAsync" class="blue accent-1" />
+                                    <label for="length">Length</label>
+                                </div>
+                                <div class="col s4 input-field p-1 m-1">
+                                    <InputNumber id="width" @bind-Value="bin.Width" @bind-Value:after="this.BinChangedAsync" class="blue accent-1" />
+                                    <label for="width">Width</label>
+                                </div>
+                                <div class="col s4 input-field p-1 m-1">
+                                    <InputNumber id="height" @bind-Value="bin.Height" @bind-Value:after="this.BinChangedAsync" class="blue accent-1" />
+                                    <label for="height">Height</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12">
+                                    <ValidationMessage For="@(() => bin.Length)" class="supporting-text red-text" />
+                                    <ValidationMessage For="@(() => bin.Width)" class="supporting-text red-text" />
+                                    <ValidationMessage For="@(() => bin.Height)" class="supporting-text red-text" />
+                                </div>
+                            </div>
+                        </li>
+
+                    }
+                </ul>
+            </ChildContent>
+            <ActionContent>
+                <button class="btn text icon-right" type="" @onclick="this.RandomizeBinsFromSamplesAsync">
+                    <i class="material-icons">refresh</i>
+                    Randomize from samples
+                </button>
+            </ActionContent>
         </Card>
 
     </div>
     <div class="col s12">
         <Card Color="orange accent-1" Title="Items">
             <ChildContent>
-                @foreach (var item in this.Items)
-                {
-                    <div class="row mb-1 g-1">
-                        <div class="col s3 m2 l2 input-field inline">
-                            <input id="length" name="length" type="text" @bind="item.Length">
-                            <label for="length">Length</label>
-                        </div>
-                        <div class="col s3 m2 l2 input-field inline">
-                            <input id="width" name="width" type="text" @bind="item.Width">
-                            <label for="width">Width</label>
-                        </div>
-                        <div class="col s3 m2 l2 input-field inline">
-                            <input id="height" name="height" type="text" @bind="item.Height">
-                            <label for="height">Height</label>
-                        </div>
-                        <div class="col s3 m2 l2 input-field inline">
-                            <input id="quantity" name="quantity" type="text" @bind="item.Quantity">
-                            <label for="quantity">Quantity</label>
-                        </div>
-                        <div class="col hide-on-small-only m2 l2">
-                            <span class="badge">Volume: @item.Volume</span>
-                            <span class="badge">Total Volume: @(item.Volume * item.Quantity)</span>
-                        </div>
-                        <div class="col s3 m2 l2 input-field inline valign-wrapper">
-                            <button class="btn outlined" type="button" @onclick="(() => RemoveItem(item))">
+                <ul class="collection">
+                    @foreach (var item in this.Model.Items)
+                    {
+                        <li class="collection-item">
+                            <a href="javascript:void(0)" class="secondary-content" @onclick="(() => this.RemoveItem(item))">
                                 <i class="material-icons">delete</i>
-                            </button>
-                        </div>
-
-                    </div>
-                }
+                            </a>
+                            <div class="row g1">
+                                <div class="col s3 input-field">
+                                    <InputNumber id="length" @bind-Value="item.Length" class="orange accent-1" />
+                                    <label for="length">Length</label>
+                                </div>
+                                <div class="col s3 input-field">
+                                    <InputNumber id="width" @bind-Value="item.Width" class="orange accent-1" />
+                                    <label for="width">Width</label>
+                                </div>
+                                <div class="col s3 input-field">
+                                    <InputNumber id="height" @bind-Value="item.Height" class="orange accent-1" />
+                                    <label for="height">Height</label>
+                                </div>
+                                <div class="col s3 input-field">
+                                    <InputNumber id="quantity" @bind-Value="item.Quantity" class="orange accent-1" />
+                                    <label for="quantity">Quantity</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12">
+                                    <ValidationMessage For="@(() => item.Length)" class="supporting-text red-text" />
+                                    <ValidationMessage For="@(() => item.Width)" class="supporting-text red-text" />
+                                    <ValidationMessage For="@(() => item.Height)" class="supporting-text red-text" />
+                                    <ValidationMessage For="@(() => item.Quantity)" class="supporting-text red-text" />
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
             </ChildContent>
 
-            <CardAction>
-                <button class="btn text icon-right" type="button" @onclick="AddItem">
+            <ActionContent>
+                <button class="btn text icon-right" type="button" @onclick="this.AddItem">
                     <i class="material-icons">add</i>
                     Add Item
                 </button>
-                <button class="btn text icon-right" type="button" @onclick="ClearAllItems">
+                <button class="btn text icon-right" type="button" @onclick="this.ClearAllItems">
                     <i class="material-icons">delete_forever</i>
                     Clear All Items
                 </button>
-            </CardAction>
+                <button class="btn text icon-right" type="button" @onclick="this.RandomizeItemsFromSamplesAsync">
+                    <i class="material-icons">refresh</i>
+                    Randomize from samples
+                </button>
+            </ActionContent>
 
         </Card>
     </div>
-</form>
+</EditForm>
+
+<div class="row mt-5 pt-5">
+    <div class="col s4"></div>
+    <div class="col s4 center">
+        <button class="btn outlined" type="button" @onclick="this.GetResultsAsync">
+            Get Results
+        </button>
+    </div>
+    <div class="col s4"></div>
+</div>
+<div class="row mt-5 pt-5">
+    <div class="col s12">
+        @this.RawResult
+    </div>
+</div>

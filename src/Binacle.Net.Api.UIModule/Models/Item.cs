@@ -1,5 +1,6 @@
 ﻿using Binacle.Net.Lib;
 using Binacle.Net.Lib.Abstractions.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Binacle.Net.Api.UIModule.Models;
 
@@ -18,9 +19,20 @@ public class Item : IWithDimensions, IWithQuantity
 		this.Quantity = quantity;
 	}
 
+	[Required]
+	[Range(1, ushort.MaxValue)]
 	public int Length { get; set; }
+	
+	[Required]
+	[Range(1, ushort.MaxValue)]
 	public int Width { get; set; }
+
+	[Required]
+	[Range(1, ushort.MaxValue)]
 	public int Height { get; set; }
+
+	[Required]
+	[Range(1, ushort.MaxValue)]
 	public int Quantity { get; set; }
 	public int Volume
 	{
