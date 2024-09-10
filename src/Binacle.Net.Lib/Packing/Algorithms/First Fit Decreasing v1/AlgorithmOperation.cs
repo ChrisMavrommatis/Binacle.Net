@@ -1,15 +1,11 @@
-﻿using Binacle.Net.Lib.Abstractions.Algorithms;
-using Binacle.Net.Lib.Abstractions.Models;
-using Binacle.Net.Lib.Models;
+﻿using Binacle.Net.Lib.Models;
 using Binacle.Net.Lib.Packing.Models;
 
 namespace Binacle.Net.Lib.Packing.Algorithms;
 
-internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
-	where TBin : class, IWithID, IWithReadOnlyDimensions
-	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+internal partial class FirstFitDecreasing_v1<TBin, TItem>
 {
-	public PackingResult Execute()
+	public PackingResult Execute(PackingParameters parameters)
 	{
 		var resultBuilder = PackingResultBuilder<Bin, Item>.Create(this.bin, this.items.Count, this.totalItemsVolume);
 
@@ -18,7 +14,7 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 			return resultBuilder
 				.WithForcedStatus(PackingResultStatus.EarlyFail_ContainerVolumeExceeded)
 				.WithUnpackedItems(this.items)
-				.Build();
+				.Build(parameters);
 		}
 
 		var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > this.bin.LongestDimension).ToList();
@@ -27,7 +23,7 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 			return resultBuilder
 				.WithForcedStatus(PackingResultStatus.EarlyFail_ContainerDimensionExceeded)
 				.WithUnpackedItems(itemsNotFittingDueToLongestDimension)
-				.Build();
+				.Build(parameters);
 		}
 
 		List<SpaceVolume> availableSpace = [new SpaceVolume(this.bin, Coordinates.Zero)];
@@ -50,7 +46,7 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 		return resultBuilder
 			.WithPackedItems(orderedItems.Where(x => x.IsPacked).ToList())
 			.WithUnpackedItems(orderedItems.Where(x => !x.IsPacked).ToList())
-			.Build();
+			.Build(parameters);
 	}
 
 	private SpaceVolume? FindAvailableSpace(Item orientation, List<SpaceVolume> availableSpace)

@@ -1,52 +1,36 @@
 ﻿using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.Lib.Abstractions.Models;
-using Binacle.Net.Lib.Exceptions;
+using Binacle.Net.Lib.GuardClauses;
 
 namespace Binacle.Net.Lib.Fitting.Algorithms;
 
-internal sealed partial class FirstFitDecreasing_v1 :
-	IFittingAlgorithm,
-	IFittingAlgorithmWithBins,
-	IFittingAlgorithmWithBinsAndItems
+internal sealed partial class FirstFitDecreasing_v1<TBin, TItem> : IFittingAlgorithm
+	where TBin : class, IWithID, IWithReadOnlyDimensions
+	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 {
+	public string Name => "First Fit Decreasing";
+	public int Version => 1;
+
 	private List<VolumetricItem> _availableSpace;
-	private List<Item> _fittedItems;
-	private IEnumerable<Bin> _bins;
-	private IEnumerable<Item> _items;
+	private Bin _bin;
+	private List<Item> _items;
 
-	internal FirstFitDecreasing_v1()
+	internal FirstFitDecreasing_v1(TBin bin, IEnumerable<TItem> items)
 	{
+		Guard.Against
+			.Null(bin)
+			.ZeroOrNegativeDimensions(bin)
+			.NullOrEmpty(items);
 
-	}
+		_bin = new Bin(bin.ID, bin);
+		_items = items.SelectMany((incomingItem, index) =>
+		{
+			Guard.Against
+			.ZeroOrNegativeDimensions(incomingItem)
+			.ZeroOrNegativeQuantity(incomingItem);
 
-	public IFittingAlgorithmWithBins WithBins<TBin>(IEnumerable<TBin> bins)
-		 where TBin : class, IWithID, IWithReadOnlyDimensions
-	{
-		_bins = bins.Select(x => new Bin(x.ID, x)).ToList();
-		return this;
-	}
-
-	public IFittingAlgorithmWithBinsAndItems AndItems<TItem>(IEnumerable<TItem> items)
-		 where TItem : class, IWithID, IWithReadOnlyDimensions
-	{
-		_items = items.Select(x => new Item(x.ID, x)).ToList();
-		return this;
-	}
-
-	public IFittingAlgorithmOperation Build()
-	{
-		if (!(_bins?.Any() ?? false))
-			throw new ArgumentNullException($"{nameof(_bins)} is empty. At least one bin is required");
-
-		if (!(_items?.Any() ?? false))
-			throw new ArgumentNullException($"{nameof(_items)} is empty. At least one item is required");
-
-		if (_bins.Any(x => x.Volume <= 0))
-			throw new DimensionException("Volume", "You cannot have a bin with negative or 0 volume");
-
-		if (_items.Any(x => x.Volume <= 0))
-			throw new DimensionException("Volume", "You cannot have an item with negative or 0 volume");
-
-		return this;
+			var item = new Item(incomingItem.ID, incomingItem);
+			return Enumerable.Repeat(item, incomingItem.Quantity);
+		}).ToList();
 	}
 }

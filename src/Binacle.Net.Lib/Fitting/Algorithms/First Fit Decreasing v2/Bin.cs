@@ -2,7 +2,7 @@
 
 namespace Binacle.Net.Lib.Fitting.Algorithms;
 
-internal sealed partial class FirstFitDecreasing_v2
+internal sealed partial class FirstFitDecreasing_v2<TBin, TItem>
 {
 	private sealed class Bin : VolumetricItem, IWithID
 	{

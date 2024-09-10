@@ -72,7 +72,7 @@ public partial class BinPacking : ComponentBase
 		var response = await client.PostAsJsonAsync("api/v2/pack/by-custom", request);
 		response.EnsureSuccessStatusCode();
 		this.RawResult = await response.Content.ReadAsStringAsync();
-		await this.BinChangedAsync();
+		await this.JsRuntime.InvokeVoidAsync("updateResults", this.RawResult);
 	}
 
 }

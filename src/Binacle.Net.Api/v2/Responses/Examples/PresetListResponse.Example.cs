@@ -1,33 +1,28 @@
-﻿using Binacle.Net.Api.Models;
-using ChrisMavrommatis.SwaggerExamples;
+﻿using ChrisMavrommatis.SwaggerExamples;
 
 namespace Binacle.Net.Api.v2.Responses.Examples;
 
-internal class PresetListResponseExample : SingleSwaggerExamplesProvider<Response<Dictionary<string, List<Bin>>>>
+internal class PresetListResponseExample : SingleSwaggerExamplesProvider<PresetListResponse>
 {
-	public override Response<Dictionary<string, List<Bin>>> GetExample()
+	public override PresetListResponse GetExample()
 	{
-		var presets = new Dictionary<string, List<Bin>>()
+		var presets = new Dictionary<string, List<v2.Models.Bin>>()
 		{
 			{
-				"preset1",
-				new List<Bin>()
-				{
-					new Bin { ID = "preset1_bin1", Length = 10, Width = 10, Height = 10 },
-					new Bin { ID = "preset1_bin2", Length = 20, Width = 20, Height = 20 },
-					new Bin { ID = "preset1_bin3", Length = 30, Width = 30, Height = 30 },
-				}
+				"preset1", [
+					new  v2.Models.Bin{ ID = "preset1_bin1", Length = 10, Width = 10, Height = 10 },
+					new v2.Models.Bin{ ID = "preset1_bin2", Length = 20, Width = 20, Height = 20 },
+					new v2.Models.Bin { ID = "preset1_bin3", Length = 30, Width = 30, Height = 30 },
+				]
 			},
 			{
-				"preset2",
-				new List<Bin>()
-				{
-					new Bin { ID = "preset2_bin1", Length = 10, Width = 20, Height = 30 },
-					new Bin { ID = "preset2_bin2", Length = 30, Width = 60, Height = 60 },
-				}
+				"preset2", [
+					new v2.Models.Bin { ID = "preset2_bin1", Length = 10, Width = 20, Height = 30 },
+					new v2.Models.Bin { ID = "preset2_bin2", Length = 30, Width = 60, Height = 60 },
+				]
 
 			}
 		};
-		return Response.Success(presets);
+		return PresetListResponse.Create(presets);
 	}
 }

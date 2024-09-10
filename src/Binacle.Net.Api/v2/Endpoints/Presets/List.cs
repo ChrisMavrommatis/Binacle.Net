@@ -1,9 +1,5 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Configuration.Models;
-using Binacle.Net.Api.Models;
-using Binacle.Net.Api.v2.Models.Errors;
-using Binacle.Net.Api.v2.Responses;
-using Binacle.Net.Api.v2.Responses.Examples;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using Microsoft.AspNetCore.Mvc;
@@ -65,13 +61,13 @@ public class List : EndpointWithoutRequest
 	[MapToApiVersion(v2.ApiVersion.Number)]
 
 	[HttpGet]
-	[ProducesResponseType(typeof(Response<Dictionary<string, List<Bin>>>), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(Response<Dictionary<string, List<Bin>>>), typeof(PresetListResponseExample), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(v2.Responses.PresetListResponse), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(v2.Responses.PresetListResponse), typeof(v2.Responses.Examples.PresetListResponseExample), StatusCodes.Status200OK)]
 
 	[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
 
-	[ProducesResponseType(typeof(Response<List<IApiError>>), StatusCodes.Status500InternalServerError)]
-	[SwaggerResponseExample(typeof(Response<List<IApiError>>), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
+	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
+	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 	public override async Task<IActionResult> HandleAsync(CancellationToken cancellationToken = default)
@@ -88,7 +84,7 @@ public class List : EndpointWithoutRequest
 			.ToDictionary(
 				x => x.Key,
 				x => x.Value.Bins
-					.Select(bin => new Bin()
+					.Select(bin => new v2.Models.Bin()
 					{
 						ID = bin.ID,
 						Length = bin.Length,
@@ -97,7 +93,7 @@ public class List : EndpointWithoutRequest
 					}).ToList()
 			);
 
-			var response = Responses.Response.Success(presets);
+			var response = v2.Responses.PresetListResponse.Create(presets);
 
 			return this.Ok(response);
 		}
@@ -105,7 +101,7 @@ public class List : EndpointWithoutRequest
 		{
 			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "List Presets");
 			return this.InternalServerError(
-				Responses.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
+				v2.Responses.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
 				);
 		}
 	}

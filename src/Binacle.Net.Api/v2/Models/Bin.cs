@@ -1,6 +1,6 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 
-namespace Binacle.Net.Api.Models;
+namespace Binacle.Net.Api.v2.Models;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 

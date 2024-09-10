@@ -9,11 +9,12 @@ import * as THREE from 'three';
 const rendererContainer = document.getElementById("renderer-container");
 const visualizerContainer = document.getElementById("visualizer-container");
 
-let initialContainer = {
+let _Container = {
 	length: 60,
 	width: 40,
 	height: 10
 }
+let _Results = {};
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -38,7 +39,7 @@ animate();
 
 camera.position.set(60, 60, 60);
 
-var container = createContainer(initialContainer);
+var container = createContainer(_Container);
 scene.add(container);
 
 function onWindowResize() {
@@ -69,6 +70,10 @@ function createContainer(container) {
 window.containerChanged = function (container) {
 	var selectedObject = scene.getObjectByName('container');
 	scene.remove(selectedObject);
-	const newContainer = createContainer(container);
-	scene.add(newContainer);
+	_Container = createContainer(container);
+	scene.add(_Container);
+}
+window.updateResults = function (rawResults) {
+	_Results = JSON.parse(rawResults);
+
 }

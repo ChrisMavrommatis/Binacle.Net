@@ -1,11 +1,6 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
-using Binacle.Net.Api.v2.Models.Errors;
-using Binacle.Net.Api.v2.Requests;
-using Binacle.Net.Api.v2.Requests.Examples;
-using Binacle.Net.Api.v2.Responses;
-using Binacle.Net.Api.v2.Responses.Examples;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
@@ -20,9 +15,9 @@ namespace Binacle.Net.Api.v2.Endpoints.Query;
 /// </summary>
 [ApiVersion(v2.ApiVersion.Number)]
 [Route("api/v{version:apiVersion}/[namespace]")]
-public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
+public class ByCustom : EndpointWithRequest<v2.Requests.CustomQueryRequestWithBody>
 {
-	private readonly IValidator<CustomQueryRequest> validator;
+	private readonly IValidator<v2.Requests.CustomQueryRequest> validator;
 	private readonly ILockerService lockerService;
 	private readonly ILogger<ByCustom> logger;
 
@@ -33,7 +28,7 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	/// <param name="lockerService"></param>
 	/// <param name="logger"></param>
 	public ByCustom(
-		IValidator<CustomQueryRequest> validator,
+		IValidator<v2.Requests.CustomQueryRequest> validator,
 		ILockerService lockerService,
 		ILogger<ByCustom> logger
 	  )
@@ -50,7 +45,7 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	/// <remarks>
 	/// Example request:
 	///     
-	///     POST /api/v1/query/
+	///     POST /api/v2/query/by-custom
 	///     {
 	///			"bins" : [
 	///			  {
@@ -110,24 +105,24 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	[Consumes("application/json")]
 	[Produces("application/json")]
 	[MapToApiVersion(v2.ApiVersion.Number)]
-	[SwaggerRequestExample(typeof(CustomQueryRequest), typeof(CustomQueryRequestExample))]
+	//[SwaggerRequestExample(typeof(v2.Requests.CustomQueryRequest), typeof(v2.Requests.Examples.CustomQueryRequestExample))]
 
-	[ProducesResponseType(typeof(Response<Bin?>), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(Response<Bin?>), typeof(CustomQueryResponseExamples), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(v2.Responses.QueryResponse), StatusCodes.Status200OK)]
+	//[SwaggerResponseExample(typeof(v2.Responses.QueryResponse), typeof(v2.Responses.Examples.CustomQueryResponseExamples), StatusCodes.Status200OK)]
 
-	[ProducesResponseType(typeof(Response<List<IApiError>>), StatusCodes.Status400BadRequest)]
-	[SwaggerResponseExample(typeof(Response<List<IApiError>>), typeof(BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
+	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 
-	[ProducesResponseType(typeof(Response<List<IApiError>>), StatusCodes.Status500InternalServerError)]
-	[SwaggerResponseExample(typeof(Response<List<IApiError>>), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
-	public override async Task<IActionResult> HandleAsync(CustomQueryRequestWithBody request, CancellationToken cancellationToken = default)
+	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
+	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
+	public override async Task<IActionResult> HandleAsync(v2.Requests.CustomQueryRequestWithBody request, CancellationToken cancellationToken = default)
 	{
 		try
 		{
 			if (request is null || request.Body is null)
 			{
 				return this.BadRequest(
-					Responses.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody, Constants.Errors.Categories.RequestError)
+					v2.Responses.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody, Constants.Errors.Categories.RequestError)
 					);
 			}
 
@@ -136,21 +131,35 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 			if (!this.ModelState.IsValid)
 			{
 				return this.BadRequest(
-					Responses.Response.ValidationError(this.ModelState, Constants.Errors.Categories.ValidationError)
+					v2.Responses.Response.ValidationError(this.ModelState, Constants.Errors.Categories.ValidationError)
 					);
 			}
 
-			var operationResult = this.lockerService.FindFittingBin(request.Body.Bins, request.Body.Items);
+			var operationResults = this.lockerService.FindFittingBin(
+				request.Body.Bins, 
+				request.Body.Items,
+				new FittingParameters
+				{
+					FindSmallestBinOnly = request.Body.Parameters?.FindSmallestBinOnly ?? true,
+					ReportFittedItems = request.Body.Parameters?.ReportFittedItems ?? false,
+					ReportUnfittedItems = request.Body.Parameters?.ReportUnfittedItems ?? false,
+				}
+			);
 
 			return this.Ok(
-				Responses.Response.FromResult(operationResult)
-				);
+				v2.Responses.QueryResponse.Create(
+					request.Body.Bins, 
+					request.Body.Items, 
+					request.Body.Parameters,
+					operationResults
+				)
+			);
 		}
 		catch (Exception ex)
 		{
 			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Custom");
 			return this.InternalServerError(
-				Responses.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
+				v2.Responses.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
 				);
 		}
 	}

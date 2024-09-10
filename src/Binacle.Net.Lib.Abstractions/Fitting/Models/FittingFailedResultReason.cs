@@ -3,7 +3,6 @@
 public enum FittingFailedResultReason
 {
 	Unspecified,
-	GeneralError,
 	TotalVolumeExceeded,
 	ItemDimensionExceeded,
 	DidNotFit

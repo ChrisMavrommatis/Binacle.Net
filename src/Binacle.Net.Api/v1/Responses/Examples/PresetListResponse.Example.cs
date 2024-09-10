@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Api.Models;
+﻿using Binacle.Net.Api.v1.Models;
 using ChrisMavrommatis.SwaggerExamples;
 
 namespace Binacle.Net.Api.v1.Responses.Examples;

@@ -3,54 +3,47 @@ using Binacle.Net.Lib.Fitting.Models;
 
 namespace Binacle.Net.Lib.Fitting.Algorithms;
 
-internal sealed partial class FirstFitDecreasing_v1 :
-	IFittingAlgorithmOperation
+internal sealed partial class FirstFitDecreasing_v1<TBin, TItem> : IFittingAlgorithm
 {
-	public FittingResult Execute()
+	public FittingResult Execute(FittingParameters parameters)
 	{
-		Bin? foundBin = null;
-		int totalItemsToFit = _items.Count();
+		int totalItemsVolume = _items.Sum(x => x.Volume);
 
-		var largestBinByVolume = (_bins.OrderByDescending(x => x.Volume).FirstOrDefault())!;
-		if (_items.Sum(x => x.Volume) > largestBinByVolume.Volume)
-			return FittingResult.CreateFailedResult<Item>(FittingFailedResultReason.TotalVolumeExceeded);
+		var resultBuilder = FittingResultBuilder<Bin, Item>.Create(_bin, _items.Count, totalItemsVolume);
 
-		var itemsNotFittingDueToLongestDimension = _items.Where(x => x.LongestDimension > largestBinByVolume.LongestDimension);
+		if (totalItemsVolume > _bin.Volume)
+		{
+			return resultBuilder
+				.WithUnfittedItems(_items.Where(x => !x.Fitted))
+				.WithReason(FittingFailedResultReason.TotalVolumeExceeded)
+				.Build(parameters);
+		}
+
+		var itemsNotFittingDueToLongestDimension = _items.Where(x => x.LongestDimension > _bin.LongestDimension);
 		if (itemsNotFittingDueToLongestDimension.Any())
-			return FittingResult.CreateFailedResult(FittingFailedResultReason.ItemDimensionExceeded, itemsNotFittingDueToLongestDimension);
-
-		_bins = _bins.OrderBy(x => x.Volume);
-		_items = _items.OrderByDescending(x => x.Volume);
-
-		foreach (var bin in _bins)
 		{
-			_availableSpace = new List<VolumetricItem>
-			{
-				new VolumetricItem(bin)
-			};
+			return resultBuilder
+				.WithUnfittedItems(_items.Where(x => !x.Fitted))
+				.WithReason(FittingFailedResultReason.ItemDimensionExceeded)
+				.Build(parameters);
+		}
 
-			_fittedItems = new List<Item>();
+		_availableSpace = new List<VolumetricItem>
+		{
+			new VolumetricItem(_bin)
+		};
 
-			foreach (var item in _items)
-			{
-				if (!this.TryFit(item))
-					break;
-			}
-			if (_fittedItems.Count == totalItemsToFit)
-			{
-				foundBin = bin;
+		foreach (var item in _items.OrderByDescending(x => x.Volume))
+		{
+			if (!this.TryFit(item))
 				break;
-			}
 		}
 
-		if (foundBin != null)
-		{
-			return FittingResult.CreateSuccessfulResult(foundBin, this._fittedItems);
-		}
-
-		return FittingResult.CreateFailedResult(FittingFailedResultReason.DidNotFit, fittedItems: this._fittedItems);
+		return resultBuilder
+			.WithFittedItems(_items.Where(x => x.Fitted))
+			.WithUnfittedItems(_items.Where(x => !x.Fitted))
+			.Build(parameters);
 	}
-
 
 	private bool TryFit(Item item)
 	{
@@ -79,7 +72,7 @@ internal sealed partial class FirstFitDecreasing_v1 :
 		{
 			_availableSpace.AddRange(newAvailableSpaces);
 		}
-		_fittedItems.Add(item);
+		item.Fitted = true;
 	}
 
 	private List<VolumetricItem> SplitSpaceQuadrant(VolumetricItem spaceQuadrant, VolumetricItem orientation)

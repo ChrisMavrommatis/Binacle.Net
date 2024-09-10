@@ -42,7 +42,7 @@ internal class PackingResultBuilder<TBin, TItem>
 		return this;
 	}
 
-	internal PackingResult Build()
+	internal PackingResult Build(PackingParameters parameters)
 	{
 		var result = new PackingResult()
 		{

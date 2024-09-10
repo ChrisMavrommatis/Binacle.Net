@@ -2,7 +2,7 @@
 
 namespace Binacle.Net.Lib.Fitting.Algorithms;
 
-internal sealed partial class FirstFitDecreasing_v2
+internal sealed partial class FirstFitDecreasing_v2<TBin, TItem>
 {
 	private sealed class Item : IWithID, IWithDimensions, IWithReadOnlyVolume
 	{
@@ -31,6 +31,7 @@ internal sealed partial class FirstFitDecreasing_v2
 		public int Height { get; set; }
 		public int Volume { get; }
 		public int LongestDimension { get; }
+		public bool Fitted { get; set; }
 
 		internal Item Rotate()
 		{

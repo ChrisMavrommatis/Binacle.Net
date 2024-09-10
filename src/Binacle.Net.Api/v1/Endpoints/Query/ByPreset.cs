@@ -1,10 +1,6 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.Services;
-using Binacle.Net.Api.v1.Requests;
-using Binacle.Net.Api.v1.Requests.Examples;
-using Binacle.Net.Api.v1.Responses;
-using Binacle.Net.Api.v1.Responses.Examples;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
@@ -19,10 +15,10 @@ namespace Binacle.Net.Api.v1.Endpoints.Query;
 /// </summary>
 [ApiVersion(v1.ApiVersion.Number)]
 [Route("api/v{version:apiVersion}/[namespace]")]
-public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
+public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBody>
 {
 	private readonly IOptions<BinPresetOptions> presetOptions;
-	private readonly IValidator<PresetQueryRequest> validator;
+	private readonly IValidator<v1.Requests.PresetQueryRequest> validator;
 	private readonly ILockerService lockerService;
 	private readonly ILogger<ByPreset> logger;
 
@@ -35,7 +31,7 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 	/// <param name="logger"></param>
 	public ByPreset(
 		IOptions<BinPresetOptions> presetOptions,
-		IValidator<PresetQueryRequest> validator,
+		IValidator<v1.Requests.PresetQueryRequest> validator,
 		ILockerService lockerService,
 		ILogger<ByPreset> logger
 	  )
@@ -52,7 +48,7 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 	/// <remarks>
 	/// Example request using the "rectangular-cuboids" preset:
 	///     
-	///     POST /api/v1/query/presets/rectangular-cuboids
+	///     POST /api/v1/query/by-preset/rectangular-cuboids
 	///     {
 	///         "items": [
 	///           {
@@ -113,26 +109,26 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 	[Produces("application/json")]
 	[MapToApiVersion(v1.ApiVersion.Number)]
 
-	[SwaggerRequestExample(typeof(PresetQueryRequest), typeof(PresetQueryRequestExample))]
+	[SwaggerRequestExample(typeof(v1.Requests.PresetQueryRequest), typeof(v1.Requests.Examples.PresetQueryRequestExample))]
 
-	[ProducesResponseType(typeof(QueryResponse), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(QueryResponse), typeof(PresetQueryResponseExamples), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(v1.Responses.QueryResponse), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(v1.Responses.QueryResponse), typeof(v1.Responses.Examples.PresetQueryResponseExamples), StatusCodes.Status200OK)]
 
-	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
+	[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 
 	[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
 
-	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
-	public override async Task<IActionResult> HandleAsync(PresetQueryRequestWithBody request, CancellationToken cancellationToken = default)
+	[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
+	[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
+	public override async Task<IActionResult> HandleAsync(v1.Requests.PresetQueryRequestWithBody request, CancellationToken cancellationToken = default)
 	{
 		try
 		{
 			if (request is null || request.Body is null)
 			{
 				return this.BadRequest(
-					ErrorResponse.Create(Constants.Errors.Categories.RequestError)
+					v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.RequestError)
 					.AddParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody)
 					);
 			}
@@ -140,7 +136,7 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 			if (string.IsNullOrWhiteSpace(request.Preset))
 			{
 				return this.BadRequest(
-					ErrorResponse.Create(Constants.Errors.Categories.RequestError)
+					v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.RequestError)
 					.AddParameterError(nameof(request.Preset), Constants.Errors.Messages.IsRequired)
 					);
 			}
@@ -151,7 +147,7 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 			if (!this.ModelState.IsValid)
 			{
 				return this.BadRequest(
-				   ErrorResponse.Create(Constants.Errors.Categories.ValidationError)
+				   v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.ValidationError)
 					.AddModelStateErrors(this.ModelState)
 					);
 			}
@@ -161,16 +157,26 @@ public class ByPreset : EndpointWithRequest<PresetQueryRequestWithBody>
 				return this.NotFound(null);
 			}
 
-			var operationResult = this.lockerService.FindFittingBin(presetOption.Bins, request.Body.Items);
+			var operationResults = this.lockerService.FindFittingBin(
+				presetOption.Bins, 
+				request.Body.Items,
+				new Api.Models.FittingParameters
+				{
+					FindSmallestBinOnly = true,
+					ReportFittedItems = false,
+					ReportUnfittedItems = false
+				}
+			);
+
 			return this.Ok(
-				QueryResponse.Create(operationResult)
+				v1.Responses.QueryResponse.Create(presetOption.Bins, request.Body.Items, operationResults)
 			);
 		}
 		catch (Exception ex)
 		{
 			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Preset");
 			return this.InternalServerError(
-				ErrorResponse.Create(Constants.Errors.Categories.ServerError)
+				v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.ServerError)
 				.AddExceptionError(ex)
 				);
 		}

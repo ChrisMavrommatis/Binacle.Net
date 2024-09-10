@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Api.v1.Models.Errors;
-using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using Swashbuckle.AspNetCore.SwaggerGen;
 using ChrisMavrommatis.Swashbuckle;
 
 namespace Binacle.Net.Api.v1;
@@ -10,7 +9,12 @@ internal static class ApiVersion
 
 	internal static Dictionary<Type, Type[]> _polymorphicTypeMappings = new()
 	{
-		{ typeof(IApiError), new[] { typeof(FieldValidationError), typeof(ParameterError), typeof(ExceptionError), } }
+		{ typeof(v1.Models.Errors.IApiError), [ 
+				typeof(v1.Models.Errors.FieldValidationError), 
+				typeof(v1.Models.Errors.ParameterError), 
+				typeof(v1.Models.Errors.ExceptionError)
+			]
+		}
 	};
 
 	internal static void ConfigureSwaggerOptions(SwaggerGenOptions options)

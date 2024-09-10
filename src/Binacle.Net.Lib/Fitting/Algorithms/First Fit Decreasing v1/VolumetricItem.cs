@@ -1,8 +1,9 @@
-﻿using Binacle.Net.Lib.Abstractions.Models;
+﻿using Binacle.Net.Lib.Abstractions.Fitting;
+using Binacle.Net.Lib.Abstractions.Models;
 
 namespace Binacle.Net.Lib.Fitting.Algorithms;
 
-internal sealed partial class FirstFitDecreasing_v1
+internal sealed partial class FirstFitDecreasing_v1<TBin, TItem>
 {
 	private class VolumetricItem : IWithReadOnlyDimensions, IWithReadOnlyVolume
 	{

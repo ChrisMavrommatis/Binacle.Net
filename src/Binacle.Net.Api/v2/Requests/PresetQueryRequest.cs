@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Api.Models;
+﻿using Binacle.Net.Api.v2.Models;
 using ChrisMavrommatis.Endpoints.Requests;
 
 namespace Binacle.Net.Api.v2.Requests;
@@ -12,5 +12,6 @@ public class PresetQueryRequestWithBody : RequestWithBody<PresetQueryRequest>
 
 public class PresetQueryRequest
 {
+	public QueryRequestParameters? Parameters { get; set; }
 	public List<Box> Items { get; set; }
 }

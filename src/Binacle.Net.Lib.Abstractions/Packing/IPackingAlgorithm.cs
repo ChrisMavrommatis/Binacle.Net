@@ -6,5 +6,5 @@ public interface IPackingAlgorithm
 {
 	string Name { get; }
 	int Version { get; }
-	PackingResult Execute();
+	PackingResult Execute(PackingParameters parameters);
 }

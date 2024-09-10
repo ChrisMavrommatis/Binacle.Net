@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Api.Models;
+﻿using Binacle.Net.Api.v2.Models;
 using ChrisMavrommatis.Endpoints.Requests;
 
 namespace Binacle.Net.Api.v2.Requests;
