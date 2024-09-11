@@ -41,49 +41,54 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomQueryRequestWithBo
 	/// <summary>
 	/// Perform a bin fit query using custom bins.
 	/// </summary>
-	/// <returns>The bin that fits all of the items, or empty</returns>
+	/// <returns>An array of results indicating if a bin can accommodate all of the items</returns>
 	/// <remarks>
 	/// Example request:
 	///     
 	///     POST /api/v2/query/by-custom
-	///     {
+	///		{
+	///			"parameters": {
+	///				"reportFittedItems": true,	
+	///				"reportUnfittedItems": true,
+	///				"findSmallestBinOnly": false
+	///			},
 	///			"bins" : [
-	///			  {
-	///			     "id": "custom_bin_1",
-	///			     "length": 10,
-	///              "width": 40,
-	///              "height": 60
-	///			   },
-	///			   {
-	///			     "id": "custom_bin_2",
-	///			     "length": 20,
-	///              "width": 40,
-	///              "height": 60
-	///			   }
+	///				{
+	///					"id": "custom_bin_1",
+	///					"length": 10,
+	///					"width": 40,
+	///					"height": 60
+	///				},
+	///				{
+	///					"id": "custom_bin_2",
+	///					"length": 20,
+	///					"width": 40,
+	///					"height": 60
+	///				}
 	///			],
-	///         "items": [
-	///           {
-	///             "id": "box_1",
-	///             "quantity": 2,
-	///             "length": 2,
-	///             "width": 5,
-	///             "height": 10
-	///           },
-	///           {
-	///             "id": "box_2",
-	///             "quantity": 1,
-	///             "length": 12,
-	///             "width": 15,
-	///             "height": 10
-	///           }
-	///         ]
-	///     }
+	///			"items": [
+	///				{
+	///					"id": "box_1",
+	///					"quantity": 2,
+	///					"length": 2,
+	///					"width": 5,
+	///					"height": 10
+	///				},
+	///				{
+	///					"id": "box_2",
+	///					"quantity": 1,
+	///					"length": 12,
+	///					"width": 15,
+	///					"height": 10
+	///				}
+	///			]
+	///		}
 	/// 
 	/// </remarks>
 	/// <response code="200"> <b>OK</b>
 	/// <br />
 	/// <p>
-	///		Returns the bin that fits all of the items, or empty if they don't fit.
+	///		An array of results indicating if a bin can accommodate all of the items.
 	/// </p>
 	/// </response>
 	/// <response code="400"> <b>Bad Request</b>
@@ -105,10 +110,10 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomQueryRequestWithBo
 	[Consumes("application/json")]
 	[Produces("application/json")]
 	[MapToApiVersion(v2.ApiVersion.Number)]
-	//[SwaggerRequestExample(typeof(v2.Requests.CustomQueryRequest), typeof(v2.Requests.Examples.CustomQueryRequestExample))]
+	[SwaggerRequestExample(typeof(v2.Requests.CustomQueryRequest), typeof(v2.Requests.Examples.CustomQueryRequestExample))]
 
 	[ProducesResponseType(typeof(v2.Responses.QueryResponse), StatusCodes.Status200OK)]
-	//[SwaggerResponseExample(typeof(v2.Responses.QueryResponse), typeof(v2.Responses.Examples.CustomQueryResponseExamples), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(v2.Responses.QueryResponse), typeof(v2.Responses.Examples.CustomQueryResponseExamples), StatusCodes.Status200OK)]
 
 	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
 	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
@@ -122,7 +127,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomQueryRequestWithBo
 			if (request is null || request.Body is null)
 			{
 				return this.BadRequest(
-					v2.Responses.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody, Constants.Errors.Categories.RequestError)
+					Models.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody, Constants.Errors.Categories.RequestError)
 					);
 			}
 
@@ -131,11 +136,11 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomQueryRequestWithBo
 			if (!this.ModelState.IsValid)
 			{
 				return this.BadRequest(
-					v2.Responses.Response.ValidationError(this.ModelState, Constants.Errors.Categories.ValidationError)
+					Models.Response.ValidationError(this.ModelState, Constants.Errors.Categories.ValidationError)
 					);
 			}
 
-			var operationResults = this.lockerService.FindFittingBin(
+			var operationResults = this.lockerService.FitBins(
 				request.Body.Bins, 
 				request.Body.Items,
 				new FittingParameters
@@ -159,7 +164,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomQueryRequestWithBo
 		{
 			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Custom");
 			return this.InternalServerError(
-				v2.Responses.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
+				Models.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
 				);
 		}
 	}

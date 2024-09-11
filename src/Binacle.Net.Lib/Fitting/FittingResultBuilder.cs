@@ -101,6 +101,10 @@ internal class FittingResultBuilder<TBin, TItem>
 			throw new InvalidOperationException($"The expected total items volume is {this.totalItemsVolume} but was {fittedItemsVolume}");
 		}
 
+		result.FittedBinVolumePercentage = Math.Round((decimal)fittedItemsVolume / this.bin.Volume * 100, 2);
+
+		result.FittedItemsVolumePercentage = Math.Round((decimal)fittedItemsVolume / totalItemsVolume * 100, 2);
+
 		// TODO Maybe refactor the reason / result
 		result.Status = unfittedItemsCount == 0 && fittedItemsCount == this.totalItems ? FittingResultStatus.Success : FittingResultStatus.Fail;
 		if (this.reason.HasValue)

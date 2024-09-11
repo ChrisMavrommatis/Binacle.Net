@@ -50,37 +50,35 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBo
 	/// Example request using the "rectangular-cuboids" preset:
 	///     
 	///     POST /api/v2/query/by-preset/rectangular-cuboids
-	///     {
-	///         "items": [
-	///           {
-	///             "id": "box_1",
-	///             "quantity": 2,
-	///             "length": 2,
-	///             "width": 5,
-	///             "height": 10
-	///           },
-	///           {
-	///             "id": "box_2",
-	///             "quantity": 1,
-	///             "length": 12,
-	///             "width": 15,
-	///             "height": 10
-	///           },
-	///           {
-	///             "id": "box_3",
-	///             "quantity": 1,
-	///             "length": 12,
-	///             "width": 10,
-	///             "height": 15
-	///           }
-	///         ]
-	///     }
+	///		{
+	///			"parameters": {
+	///				"reportFittedItems": true,	
+	///				"reportUnfittedItems": true,
+	///				"findSmallestBinOnly": false
+	///			},
+	///			"items": [
+	///				{
+	///					"id": "box_1",
+	///					"quantity": 2,
+	///					"length": 2,
+	///					"width": 5,
+	///					"height": 10
+	///				},
+	///				{
+	///					"id": "box_2",
+	///					"quantity": 1,
+	///					"length": 12,
+	///					"width": 15,
+	///					"height": 10
+	///				}
+	///			]
+	///		}
 	/// 
 	/// </remarks>
 	/// <response code="200"> <b>OK</b>
 	/// <br />
 	/// <p>
-	///		Returns the bin that fits all of the items, or empty if they don't fit.
+	///		An array of results indicating if a bin can accommodate all of the items.
 	/// </p>
 	/// </response>
 	/// <response code="400"> <b>Bad Request</b>
@@ -110,10 +108,10 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBo
 	[Produces("application/json")]
 	[MapToApiVersion(v2.ApiVersion.Number)]
 
-	//[SwaggerRequestExample(typeof(v2.Requests.PresetQueryRequest), typeof(v2.Requests.Examples.PresetQueryRequestExample))]
+	[SwaggerRequestExample(typeof(v2.Requests.PresetQueryRequest), typeof(v2.Requests.Examples.PresetQueryRequestExample))]
 
 	[ProducesResponseType(typeof(v2.Responses.QueryResponse), StatusCodes.Status200OK)]
-	//[SwaggerResponseExample(typeof(v2.Responses.QueryResponse), typeof(v2.Responses.Examples.PresetQueryResponseExamples), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(v2.Responses.QueryResponse), typeof(v2.Responses.Examples.PresetQueryResponseExamples), StatusCodes.Status200OK)]
 
 	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
 	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
@@ -129,14 +127,14 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBo
 			if (request is null || request.Body is null)
 			{
 				return this.BadRequest(
-					v2.Responses.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody, Constants.Errors.Categories.RequestError)
+					Models.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody, Constants.Errors.Categories.RequestError)
 					);
 			}
 
 			if (string.IsNullOrWhiteSpace(request.Preset))
 			{
 				return this.BadRequest(
-					v2.Responses.Response.ParameterError(nameof(request.Preset), Constants.Errors.Messages.IsRequired, Constants.Errors.Categories.RequestError)
+					Models.Response.ParameterError(nameof(request.Preset), Constants.Errors.Messages.IsRequired, Constants.Errors.Categories.RequestError)
 					);
 			}
 
@@ -145,7 +143,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBo
 			if (!this.ModelState.IsValid)
 			{
 				return this.BadRequest(
-					v2.Responses.Response.ValidationError(this.ModelState, Constants.Errors.Categories.ValidationError)
+					Models.Response.ValidationError(this.ModelState, Constants.Errors.Categories.ValidationError)
 					);
 			}
 
@@ -154,7 +152,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBo
 				return this.NotFound(null);
 			}
 
-			var operationResults = this.lockerService.FindFittingBin(
+			var operationResults = this.lockerService.FitBins(
 				presetOption.Bins,
 				request.Body.Items,
 				new FittingParameters
@@ -178,7 +176,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBo
 		{
 			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Preset");
 			return this.InternalServerError(
-				v2.Responses.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
+				Models.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
 				);
 		}
 	}

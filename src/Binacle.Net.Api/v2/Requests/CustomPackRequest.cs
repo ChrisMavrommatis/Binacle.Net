@@ -1,7 +1,8 @@
-﻿using Binacle.Net.Api.v2.Models;
-using ChrisMavrommatis.Endpoints.Requests;
+﻿using ChrisMavrommatis.Endpoints.Requests;
 
 namespace Binacle.Net.Api.v2.Requests;
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 public class CustomPackRequestWithBody : RequestWithBody<CustomPackRequest>
 {
@@ -9,6 +10,7 @@ public class CustomPackRequestWithBody : RequestWithBody<CustomPackRequest>
 
 public class CustomPackRequest
 {
-	public List<Bin> Bins { get; set; }
-	public List<Box> Items { get; set; }
+	public PackRequestParameters? Parameters { get; set; }
+	public List<v2.Models.Bin> Bins { get; set; }
+	public List<v2.Models.Box> Items { get; set; }
 }

@@ -7,18 +7,151 @@ internal class PresetQueryResponseExamples : MultipleSwaggerExamplesProvider<Que
 {
 	public override IEnumerable<ISwaggerExample<QueryResponse>> GetExamples()
 	{
-		// TODO Create Example response
-
-		yield return SwaggerExample.Create("Success", "Found Bin", "Response example when a bin is found", new QueryResponse
+		yield return SwaggerExample.Create("fullresponse", "Full Response", "Response example when you opt in to report all bins and all items.", new QueryResponse
 		{
-			//Result = ResultType.Success,
-			//Data = new() { ID = "Small", Length = 10, Width = 40, Height = 60 },
+			Data = [
+				new v2.Models.BinFitResult()
+				{
+					Bin = new v2.Models.Bin  { ID = "preset_bin_1", Length = 10, Width = 40, Height = 60 },
+					Result = Models.BinFitResultStatus.AllItemsFit,
+					FittedItems = [
+						new v2.Models.ResultBox
+						{
+							ID = "box_1",
+							Dimensions = new Models.Dimensions(2, 5, 10)
+						},
+						new v2.Models.ResultBox
+						{
+							ID = "box_2",
+							Dimensions = new Models.Dimensions(12, 15, 10)
+						},
+					],
+					UnfittedItems = [],
+					FittedItemsVolumePercentage = 100.00m,
+					FittedBinVolumePercentage = 8.33m,
+				},
+				new v2.Models.BinFitResult()
+				{
+					Bin = new v2.Models.Bin { ID = "preset_bin_2", Length = 20, Width = 40, Height = 60 },
+					Result = Models.BinFitResultStatus.AllItemsFit,
+					FittedItems = [
+						new v2.Models.ResultBox
+						{
+							ID = "box_1",
+							Dimensions = new Models.Dimensions(2, 5, 10)
+						},
+						new v2.Models.ResultBox
+						{
+							ID = "box_2",
+							Dimensions = new Models.Dimensions(12, 15, 10)
+						},
+					],
+					UnfittedItems = [],
+					FittedItemsVolumePercentage = 100.00m,
+					FittedBinVolumePercentage = 4.17m,
+				}
+			],
+			Result = Models.ResultType.Success
 		});
 
-		yield return SwaggerExample.Create("Failure", "Bin not Found", "Response example when a bin is not found", new QueryResponse
+		yield return SwaggerExample.Create("itemsomittedresponse", "Items Omitted Response", "Response example when you omit the items.", new QueryResponse
 		{
-			//Result = ResultType.Failure,
-			//Message = "Failed to find bin. Reason: ItemDimensionExceeded"
+			Data = [
+				new v2.Models.BinFitResult()
+				{
+					Bin = new v2.Models.Bin  { ID = "preset_bin_1", Length = 10, Width = 40, Height = 60 },
+					Result = Models.BinFitResultStatus.AllItemsFit,
+					FittedItemsVolumePercentage = 100.00m,
+					FittedBinVolumePercentage = 8.33m,
+				},
+				new v2.Models.BinFitResult()
+				{
+					Bin = new v2.Models.Bin { ID = "preset_bin_2", Length = 20, Width = 40, Height = 60 },
+					Result = Models.BinFitResultStatus.AllItemsFit,
+					FittedItemsVolumePercentage = 100.00m,
+					FittedBinVolumePercentage = 4.17m,
+				}
+			],
+			Result = Models.ResultType.Success
+		});
+
+		yield return SwaggerExample.Create("smallestbinresponse", "Smallest Bin Response", "Response example when you request to report only the smallest bin.", new QueryResponse
+		{
+			Data = [
+				new v2.Models.BinFitResult()
+				{
+					Bin = new v2.Models.Bin  { ID = "preset_bin_1", Length = 10, Width = 40, Height = 60 },
+					Result = Models.BinFitResultStatus.AllItemsFit,
+					FittedItemsVolumePercentage = 100.00m,
+					FittedBinVolumePercentage = 8.33m,
+				}
+			],
+			Result = Models.ResultType.Success
+		});
+
+		yield return SwaggerExample.Create("binnotfitresponse", "Bin Not Fit Response", "Response example when a bin can't accommodate all the items", new QueryResponse
+		{
+			Data = [
+				new v2.Models.BinFitResult()
+				{
+					Bin = new v2.Models.Bin  { ID = "preset_small_bin_1", Length = 20, Width = 20, Height = 15 },
+					FittedItems = [
+						new v2.Models.ResultBox
+						{
+							ID = "box_2",
+							Dimensions = new Models.Dimensions(12, 15, 10)
+						}
+					],
+					UnfittedItems = [
+						new v2.Models.ResultBox
+						{
+							ID = "box_1",
+							Dimensions = new Models.Dimensions(2, 5, 10)
+						},
+						new v2.Models.ResultBox
+						{
+							ID = "box_2",
+							Dimensions = new Models.Dimensions(12, 15, 10)
+						},
+					],
+					Result = Models.BinFitResultStatus.NotAllItemsFit,
+					FittedItemsVolumePercentage = 48.65m,
+					FittedBinVolumePercentage = 30.00m,
+				}
+			],
+			Result = Models.ResultType.Success
+		});
+
+		yield return SwaggerExample.Create("earlyfailresponse", "Early fail Response", "Response example when a bin can't accommodate all the items due to an early fail check", new QueryResponse
+		{
+			Data = [
+				new v2.Models.BinFitResult()
+				{
+					Bin = new v2.Models.Bin  { ID = "preset_small_bin_1", Length = 10, Width = 10, Height = 10 },
+					FittedItems = [],
+					UnfittedItems = [
+						new v2.Models.ResultBox
+						{
+							ID = "box_2",
+							Dimensions = new Models.Dimensions(12, 15, 10)
+						},
+						new v2.Models.ResultBox
+						{
+							ID = "box_1",
+							Dimensions = new Models.Dimensions(2, 5, 10)
+						},
+						new v2.Models.ResultBox
+						{
+							ID = "box_2",
+							Dimensions = new Models.Dimensions(12, 15, 10)
+						},
+					],
+					Result = Models.BinFitResultStatus.EarlyFail_TotalVolumeExceeded,
+					FittedItemsVolumePercentage = 0.00m,
+					FittedBinVolumePercentage = 0.00m,
+				}
+			],
+			Result = Models.ResultType.Success
 		});
 	}
 }

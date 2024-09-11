@@ -21,23 +21,23 @@ public class Dimensions : IWithDimensions
 	public int Height { get; set; }
 }
 
-
-public class Dimensions<T> : IWithDimensions<T>
-   where T : struct, INumber<T>
+public class DimensionsAndQuantity : IWithDimensions, IWithQuantity
 {
-	public Dimensions()
+	public DimensionsAndQuantity()
 	{
 
 	}
-
-	public Dimensions(T length, T width, T height)
+	
+	public DimensionsAndQuantity(int length, int width, int height, int quantity)
 	{
 		this.Length = length;
 		this.Width = width;
 		this.Height = height;
+		this.Quantity = quantity;
 	}
-	public T Length { get; set; }
-	public T Width { get; set; }
-	public T Height { get; set; }
-}
 
+	public int Length { get; set; }
+	public int Width { get; set; }
+	public int Height { get; set; }
+	public int Quantity { get; set; }
+}

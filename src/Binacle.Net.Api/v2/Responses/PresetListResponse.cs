@@ -1,4 +1,6 @@
-﻿namespace Binacle.Net.Api.v2.Responses;
+﻿using Binacle.Net.Api.v2.Models;
+
+namespace Binacle.Net.Api.v2.Responses;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 

@@ -23,8 +23,6 @@ internal sealed partial class FirstFitDecreasing_v2<TBin, TItem>
 			this.LongestDimension = this.CalculateLongestDimension();
 		}
 
-		
-
 		public string ID { get; set; }
 		public int Length { get; set; }
 		public int Width { get; set; }

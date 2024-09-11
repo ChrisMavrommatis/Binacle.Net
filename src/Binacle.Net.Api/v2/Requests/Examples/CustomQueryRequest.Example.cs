@@ -8,6 +8,12 @@ internal class CustomQueryRequestExample : SingleSwaggerExamplesProvider<CustomQ
 	{
 		return new CustomQueryRequest
 		{
+			Parameters = new QueryRequestParameters
+			{
+				FindSmallestBinOnly = false,
+				ReportFittedItems = true,
+				ReportUnfittedItems = true
+			},
 			Bins = new List<v2.Models.Bin>
 			{
 				new () { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },

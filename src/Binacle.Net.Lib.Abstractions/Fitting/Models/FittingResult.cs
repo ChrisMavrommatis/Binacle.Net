@@ -12,6 +12,6 @@ public class FittingResult
 	public List<ResultItem>? FittedItems { get; internal set; }
 	public List<ResultItem>? UnfittedItems { get; internal set; }
 
-	public decimal? PackedItemsVolumePercentage { get; internal set; }
-	public decimal? PackedBinVolumePercentage { get; internal set; }
+	public decimal? FittedItemsVolumePercentage { get; internal set; }
+	public decimal? FittedBinVolumePercentage { get; internal set; }
 }

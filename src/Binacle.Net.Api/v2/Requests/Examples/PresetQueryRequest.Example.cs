@@ -8,6 +8,12 @@ internal class PresetQueryRequestExample : SingleSwaggerExamplesProvider<PresetQ
 	{
 		return new PresetQueryRequest
 		{
+			Parameters = new QueryRequestParameters
+			{
+				FindSmallestBinOnly = false,
+				ReportFittedItems = true,
+				ReportUnfittedItems = true
+			},
 			Items = [
 				new() { ID = "box_1", Quantity = 2, Length = 2, Width = 5, Height = 10 },
 				new() { ID = "box_2", Quantity = 1, Length = 12, Width = 15, Height = 10 },

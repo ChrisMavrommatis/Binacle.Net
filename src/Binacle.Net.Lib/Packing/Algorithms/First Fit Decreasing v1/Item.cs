@@ -28,11 +28,20 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 			this.Width = item.Width;
 			this.Height = item.Height;
 			this.Volume = volume;
-			this.ID = $"{this.originalItem.ID}_q{order}";
 			this.LongestDimension = longestDimension;
 			this.IsPacked = false;
 		}
-		public string ID { get; set; }
+		public string ID 
+		{ 
+			get
+			{
+				return this.originalItem.ID;
+			}
+			set 
+			{
+				this.originalItem.ID = value;
+			}
+		}
 		public int Order { get; }
 		public int Volume { get; }
 		public int Length { get; private set; }

@@ -3,10 +3,9 @@
 public enum PackingResultStatus
 {
 	Unknown,
-	FullyPacked,
-	PartiallyPacked,
 	NotPacked,
+	PartiallyPacked,
+	FullyPacked,
 	EarlyFail_ContainerVolumeExceeded,
 	EarlyFail_ContainerDimensionExceeded,
-	Error
 }

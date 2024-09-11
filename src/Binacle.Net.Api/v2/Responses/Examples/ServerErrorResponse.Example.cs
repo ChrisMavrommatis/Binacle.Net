@@ -1,4 +1,5 @@
-﻿using ChrisMavrommatis.SwaggerExamples;
+﻿using Binacle.Net.Api.v2.Models;
+using ChrisMavrommatis.SwaggerExamples;
 
 namespace Binacle.Net.Api.v2.Responses.Examples;
 
@@ -6,6 +7,6 @@ internal class ServerErrorResponseExample : SingleSwaggerExamplesProvider<ErrorR
 {
 	public override ErrorResponse GetExample()
 	{
-		return Responses.Response.ExceptionError(new InvalidOperationException("Example Exception"), Constants.Errors.Categories.ServerError);
+		return Response.ExceptionError(new InvalidOperationException("Example Exception"), Constants.Errors.Categories.ServerError);
 	}
 }

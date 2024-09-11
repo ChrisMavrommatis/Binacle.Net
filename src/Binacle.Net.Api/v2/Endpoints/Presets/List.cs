@@ -101,7 +101,7 @@ public class List : EndpointWithoutRequest
 		{
 			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "List Presets");
 			return this.InternalServerError(
-				v2.Responses.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
+				Models.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
 				);
 		}
 	}

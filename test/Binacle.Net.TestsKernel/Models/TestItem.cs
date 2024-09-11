@@ -1,5 +1,4 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
-using Xunit.Abstractions;
 
 namespace Binacle.Net.TestsKernel.Models;
 

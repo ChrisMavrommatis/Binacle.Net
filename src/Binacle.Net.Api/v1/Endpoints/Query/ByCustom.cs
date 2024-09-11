@@ -135,7 +135,7 @@ public class ByCustom : EndpointWithRequest<v1.Requests.CustomQueryRequestWithBo
 					);
 			}
 
-			var operationResults = this.lockerService.FindFittingBin(
+			var operationResults = this.lockerService.FitBins(
 				request.Body.Bins, 
 				request.Body.Items,
 				new Api.Models.FittingParameters

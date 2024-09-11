@@ -157,7 +157,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 				return this.NotFound(null);
 			}
 
-			var operationResults = this.lockerService.FindFittingBin(
+			var operationResults = this.lockerService.FitBins(
 				presetOption.Bins, 
 				request.Body.Items,
 				new Api.Models.FittingParameters

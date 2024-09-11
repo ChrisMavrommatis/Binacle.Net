@@ -53,7 +53,6 @@ internal class PackingResultBuilder<TBin, TItem>
 		var totalItemsCount = (this.packedItems?.Count ?? 0) + (this.unpackedItems?.Count ?? 0);
 		if (totalItemsCount != this.totalItems)
 		{
-			result.Status = PackingResultStatus.Error;
 			throw new InvalidOperationException($"The expected total items count is {this.totalItems} but was {totalItemsCount}");
 		}
 
@@ -63,7 +62,6 @@ internal class PackingResultBuilder<TBin, TItem>
 
 		if (totalItemsVolume != this.totalItemsVolume)
 		{
-			result.Status = PackingResultStatus.Error;
 			throw new InvalidOperationException($"The expected total items volume is {this.totalItemsVolume} but was {totalItemsVolume}");
 		}
 

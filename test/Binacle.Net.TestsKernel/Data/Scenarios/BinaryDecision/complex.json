@@ -1,0 +1,24 @@
+﻿[
+	{
+		"Name": "ComplexScenario_FitsInSmall_1",
+		"Bin": "rectangular-cuboids::Small",
+		"Fits": true,
+		"Items": [
+			"5x5x5-2",
+			"15x10x15-1",
+			"10x10x10-1",
+			"40x10x10-1"
+		]
+	},
+	{
+		"Name": "ComplexScenario_FitsInMedium_1",
+		"Bin": "rectangular-cuboids::Medium",
+		"Fits": true,
+		"Items": [
+			"5x5x5-2",
+			"10x20x10-4",
+			"10x10x10-8",
+			"20x20x10-2"
+		]
+	}
+]

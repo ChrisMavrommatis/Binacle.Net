@@ -7,10 +7,11 @@ namespace Binacle.Net.Api.Services;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public interface ILockerService
 {
-	Dictionary<string, Lib.Fitting.Models.FittingResult> FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items, Models.FittingParameters parameters)
+	Dictionary<string, Lib.Fitting.Models.FittingResult> FitBins<TBin, TBox>(List<TBin> bins, List<TBox> items, Models.FittingParameters parameters)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
-	Dictionary<string, Lib.Packing.Models.PackingResult> PackBins<TBin, TBox>(List<TBin> bins, List<TBox> items)
+
+	Dictionary<string, Lib.Packing.Models.PackingResult> PackBins<TBin, TBox>(List<TBin> bins, List<TBox> items, Models.PackingParameters parameters)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 }
@@ -26,7 +27,7 @@ internal class LockerService : ILockerService
 		this.logger = logger;
 	}
 
-	public Dictionary<string, Lib.Fitting.Models.FittingResult> FindFittingBin<TBin, TBox>(
+	public Dictionary<string, Lib.Fitting.Models.FittingResult> FitBins<TBin, TBox>(
 		List<TBin> bins,
 		List<TBox> items,
 		Models.FittingParameters parameters
@@ -34,7 +35,7 @@ internal class LockerService : ILockerService
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
-		using var timedOperation = this.logger.BeginTimedOperation("Find Fitting Bin");
+		using var timedOperation = this.logger.BeginTimedOperation("Fit Bins");
 
 		timedOperation.WithNamedState("Items", items.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width} q{x.Quantity}"));
 		timedOperation.WithNamedState("Bins", bins.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width}"));
@@ -88,7 +89,11 @@ internal class LockerService : ILockerService
 		//return operationResult;
 	}
 
-	public Dictionary<string, Lib.Packing.Models.PackingResult> PackBins<TBin, TBox>(List<TBin> bins, List<TBox> items)
+	public Dictionary<string, Lib.Packing.Models.PackingResult> PackBins<TBin, TBox>(
+		List<TBin> bins, 
+		List<TBox> items,
+		Models.PackingParameters parameters
+	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
@@ -102,7 +107,11 @@ internal class LockerService : ILockerService
 		foreach (var bin in bins)
 		{
 			var algorithmInstance = this.algorithmFactory.CreatePacking(Lib.Algorithm.FirstFitDecreasing, bin, items);
-			var result = algorithmInstance.Execute(new Lib.Packing.Models.PackingParameters { DontReportItemsOnFail = false, IgnoreEarlyFails = false});
+			var result = algorithmInstance.Execute(new Lib.Packing.Models.PackingParameters 
+			{ 
+				DontReportItemsOnFail = parameters.DontReportItemsOnFail, 
+				IgnoreEarlyFails = parameters.IgnoreEarlyFails
+			});
 			results.Add(bin.ID, result);
 		}
 		
