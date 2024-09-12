@@ -1,4 +1,4 @@
-# Scaling Benchmark Results: 2024-09-03
+# Scaling Benchmark Results: 2024-09-11
 
 Part of V3 experiment after refactoring the algorithms
 
