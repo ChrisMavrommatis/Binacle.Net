@@ -1,6 +1,4 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
-using Binacle.Net.Api.v1.Requests;
-using Binacle.Net.Api.v1.Responses;
 using Binacle.Net.TestsKernel.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +6,7 @@ using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests.Tests;
+namespace Binacle.Net.Api.IntegrationTests;
 
 [Collection(BinacleApiCollection.Name)]
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
@@ -26,36 +24,38 @@ public class QueryByCustomScenario
 	[Theory]
 	[ClassData(typeof(Data.Providers.BaselineScenarioTestDataProvider))]
 	public Task Baseline(Scenario scenario)
-		=> this.RunScenarioTest(scenario);
+		=> RunScenarioTest(scenario);
 
 	[Theory]
 	[ClassData(typeof(Data.Providers.SimpleScenarioTestDataProvider))]
 	public Task Simple(Scenario scenario)
-		=> this.RunScenarioTest(scenario);
+		=> RunScenarioTest(scenario);
 
 	[Theory]
 	[ClassData(typeof(Data.Providers.ComplexScenarioTestDataProvider))]
 	public Task Complex(Scenario scenario)
-		=> this.RunScenarioTest(scenario);
+		=> RunScenarioTest(scenario);
 
 	public async Task RunScenarioTest(Scenario scenario)
 	{
-		var presets = this.sut.Services.GetService<IOptions<BinPresetOptions>>();
+		var presets = sut.Services.GetService<IOptions<BinPresetOptions>>();
+		var binCollection = scenario.GetBinCollectionKey();
+		var expectedBin = scenario.GetTestBin(sut.BinCollectionsTestDataProvider);
 
-		presets!.Value.Presets.Should().ContainKey(scenario.BinCollection);
+		presets!.Value.Presets.Should().ContainKey(binCollection);
 
-		var binPresetOption = presets.Value.Presets[scenario.BinCollection];
+		var binPresetOption = presets.Value.Presets[binCollection];
 
-		var request = new CustomQueryRequest
+		var request = new Api.v1.Requests.CustomQueryRequest
 		{
-			Bins = binPresetOption.Bins.Select(x => new Models.Bin 
-			{ 
-				ID = x.ID, 
-				Length = x.Length, 
-				Width = x.Width, 
-				Height = x.Height 
+			Bins = binPresetOption.Bins.Select(x => new Api.v1.Models.Bin
+			{
+				ID = x.ID,
+				Length = x.Length,
+				Width = x.Width,
+				Height = x.Height
 			}).ToList(),
-			Items = scenario.Items.Select(x => new Models.Box
+			Items = scenario.Items.Select(x => new Api.v1.Models.Box
 			{
 				ID = x.ID,
 				Quantity = x.Quantity,
@@ -65,22 +65,23 @@ public class QueryByCustomScenario
 			}).ToList()
 		};
 
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
+		var response = await sut.Client.PostAsJsonAsync(routePath, request, sut.JsonSerializerOptions);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-		var result = await response.Content.ReadFromJsonAsync<QueryResponse>();
+		var result = await response.Content.ReadFromJsonAsync<Api.v1.Responses.QueryResponse>();
 
 		result.Should().NotBeNull();
-		if (scenario.ExpectedSize != "None")
+
+		if (scenario.Fits)
 		{
-			result!.Result.Should().Be(v1.Models.ResultType.Success);
+			result!.Result.Should().Be(Api.v1.Models.ResultType.Success);
 			result.Bin.Should().NotBeNull();
-			result.Bin!.ID.Should().Be(scenario.ExpectedSize);
+			result.Bin!.ID.Should().Be(expectedBin.ID);
 		}
 		else
 		{
-			result!.Result.Should().Be(v1.Models.ResultType.Failure);
+			result!.Result.Should().Be(Api.v1.Models.ResultType.Failure);
 			result.Bin.Should().BeNull();
 		}
 	}

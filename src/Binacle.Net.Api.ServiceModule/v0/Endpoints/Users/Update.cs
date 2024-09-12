@@ -2,10 +2,6 @@
 using Binacle.Net.Api.ServiceModule.Domain.Users.Models;
 using Binacle.Net.Api.ServiceModule.Extensions;
 using Binacle.Net.Api.ServiceModule.Services;
-using Binacle.Net.Api.ServiceModule.v0.Requests;
-using Binacle.Net.Api.ServiceModule.v0.Requests.Examples;
-using Binacle.Net.Api.ServiceModule.v0.Responses;
-using Binacle.Net.Api.ServiceModule.v0.Responses.Examples;
 using ChrisMavrommatis.MinimalEndpointDefinitions;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
@@ -22,9 +18,9 @@ internal class Update : IEndpointDefinition<UsersGroup>
 		group.MapPut("/{email}", HandleAsync)
 			.WithSummary("Update a user")
 			.WithDescription("Use this endpoint if you are the admin to update the user but not change the password.")
-			.Accepts<UpdateApiUserRequestWithBody>("application/json")
+			.Accepts<v0.Requests.UpdateApiUserRequestWithBody>("application/json")
 			.Produces(StatusCodes.Status204NoContent)
-			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.Produces<v0.Responses.ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
 			.Produces(StatusCodes.Status401Unauthorized)
 			.Produces(StatusCodes.Status403Forbidden)
 			.Produces(StatusCodes.Status404NotFound)
@@ -64,19 +60,19 @@ internal class Update : IEndpointDefinition<UsersGroup>
 			});
 	}
 
-	[SwaggerRequestExample(typeof(UpdateApiUserRequest), typeof(UpdateApiUserRequestExample))]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(UpdateApiUserErrorResponseExample), StatusCodes.Status400BadRequest)]
+	[SwaggerRequestExample(typeof(v0.Requests.UpdateApiUserRequest), typeof(v0.Requests.Examples.UpdateApiUserRequestExample))]
+	[SwaggerResponseExample(typeof(v0.Responses.ErrorResponse), typeof(v0.Responses.Examples.UpdateApiUserErrorResponseExample), StatusCodes.Status400BadRequest)]
 	internal async Task<IResult> HandleAsync(
 			IUserManagerService userManagerService,
-			[AsParameters] UpdateApiUserRequestWithBody request,
-			IValidator<UpdateApiUserRequestWithBody> validator,
+			[AsParameters] v0.Requests.UpdateApiUserRequestWithBody request,
+			IValidator<v0.Requests.UpdateApiUserRequestWithBody> validator,
 			CancellationToken cancellationToken = default
 		)
 	{
 		var validationResult = await validator.ValidateAsync(request, cancellationToken);
 		if (!validationResult.IsValid)
 		{
-			return Results.BadRequest(ErrorResponse.Create("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage).ToArray()));
+			return Results.BadRequest(v0.Responses.ErrorResponse.Create("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage).ToArray()));
 		}
 
 		var userGroup = request.Body.Type switch
@@ -98,7 +94,7 @@ internal class Update : IEndpointDefinition<UsersGroup>
 		return result.Unwrap(
 			ok => Results.NoContent(),
 			notFound => Results.NotFound(),
-			error => Results.BadRequest(ErrorResponse.Create(error.Message))
+			error => Results.BadRequest(v0.Responses.ErrorResponse.Create(error.Message))
 		);
 	}
 }

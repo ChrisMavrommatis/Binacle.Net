@@ -117,7 +117,10 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 	[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
 	[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 
+	// V3 WARNING: Potentially breaking change
 	[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+	//[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status404NotFound)]
+	//[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.PresetNotFoundErrorResponseExample), StatusCodes.Status404NotFound)]
 
 	[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
 	[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
@@ -130,7 +133,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 				return this.BadRequest(
 					v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.RequestError)
 					.AddParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody)
-					);
+				);
 			}
 
 			if (string.IsNullOrWhiteSpace(request.Preset))
@@ -138,7 +141,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 				return this.BadRequest(
 					v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.RequestError)
 					.AddParameterError(nameof(request.Preset), Constants.Errors.Messages.IsRequired)
-					);
+				);
 			}
 
 
@@ -149,12 +152,17 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 				return this.BadRequest(
 				   v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.ValidationError)
 					.AddModelStateErrors(this.ModelState)
-					);
+				);
 			}
 
 			if (!this.presetOptions.Value.Presets.TryGetValue(request.Preset, out var presetOption))
 			{
 				return this.NotFound(null);
+				// V3 WARNING: Potentially breaking change
+				// Required due to UI Module registering Antiforgery
+				//return this.NotFound(
+				//	v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.PresetDoesntExist)
+				//);
 			}
 
 			var operationResults = this.lockerService.FitBins(

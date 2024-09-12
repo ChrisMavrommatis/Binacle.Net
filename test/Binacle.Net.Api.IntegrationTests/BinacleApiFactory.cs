@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Binacle.Net.TestsKernel.Providers;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,7 @@ public class BinacleApiFactory : WebApplicationFactory<Binacle.Net.Api.IApiMarke
 	public BinacleApiFactory()
 	{
 		this.Client = this.CreateClient();
+		this.BinCollectionsTestDataProvider = new BinCollectionsTestDataProvider(Data.Constants.SolutionRootBasePath);
 
 		this.JsonSerializerOptions = new()
 		{
@@ -31,5 +33,6 @@ public class BinacleApiFactory : WebApplicationFactory<Binacle.Net.Api.IApiMarke
 	}
 
 	public HttpClient Client { get; init; }
+	public BinCollectionsTestDataProvider BinCollectionsTestDataProvider { get; }
 	public JsonSerializerOptions JsonSerializerOptions { get; init; }
 }

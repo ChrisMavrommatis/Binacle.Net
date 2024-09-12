@@ -112,8 +112,9 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 
 		var result = algorithmInstance.Execute(new Packing.Models.PackingParameters
 		{
-			DontReportItemsOnFail = true,
-			IgnoreEarlyFails = false
+			NeverReportUnpackedItems = true,
+			ReportPackedItemsOnlyWhenFullyPacked = true,
+			OptInToEarlyFails = true
 		});
 
 		if (scenario.Fits)

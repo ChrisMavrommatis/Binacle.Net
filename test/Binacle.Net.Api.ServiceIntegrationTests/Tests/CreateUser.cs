@@ -1,10 +1,9 @@
 ﻿using Binacle.Net.Api.ServiceIntegrationTests.Models;
-using Binacle.Net.Api.ServiceModule.v0.Requests;
 using FluentAssertions;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests.Tests;
+namespace Binacle.Net.Api.ServiceIntegrationTests;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
 [Collection(BinacleApiAsAServiceCollection.Name)]
@@ -29,7 +28,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithoutBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithoutBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new CreateApiUserRequest
+			var request = new ServiceModule.v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -43,7 +42,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithExpiredBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithExpiredBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new CreateApiUserRequest
+			var request = new ServiceModule.v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -56,7 +55,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithWrongIssuerBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new CreateApiUserRequest
+			var request = new ServiceModule.v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -70,7 +69,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithWrongAudienceBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new CreateApiUserRequest
+			var request = new ServiceModule.v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -84,7 +83,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithWronglySignedBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWronglySignedBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new CreateApiUserRequest
+			var request = new ServiceModule.v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -101,7 +100,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithoutAdminUserBearerToken_Returns_403Forbidden()
 		=> this.Action_WithoutAdminUserBearerToken_Returns_403Forbidden(async () =>
 		{
-			var request = new CreateApiUserRequest
+			var request = new ServiceModule.v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -120,7 +119,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
-		var request = new CreateApiUserRequest
+		var request = new ServiceModule.v0.Requests.CreateApiUserRequest
 		{
 			Email = this.newUser.Email,
 			Password = this.newUser.Password
@@ -138,7 +137,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
-		var request = new CreateApiUserRequest
+		var request = new ServiceModule.v0.Requests.CreateApiUserRequest
 		{
 			Email = "newuser.test",
 			Password = this.newUser.Password
@@ -153,7 +152,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
-		var request = new CreateApiUserRequest
+		var request = new ServiceModule.v0.Requests.CreateApiUserRequest
 		{
 			Email = this.newUser.Email,
 			Password = "password"
@@ -171,7 +170,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
-		var request = new CreateApiUserRequest
+		var request = new ServiceModule.v0.Requests.CreateApiUserRequest
 		{
 			Email = this.TestUser.Email,
 			Password = this.TestUser.Password

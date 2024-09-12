@@ -1,21 +1,20 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
-using Binacle.Net.Api.v1.Requests;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests.Tests;
+namespace Binacle.Net.Api.IntegrationTests;
 
 
 [Collection(BinacleApiCollection.Name)]
-[Trait("Endpoint Tests", "Endpoint Integration tests")]
+[Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class QueryByPreset
 {
 	private readonly BinacleApiFactory sut;
 	private readonly IOptions<BinPresetOptions> presetOptions;
-	private readonly PresetQueryRequest sampleRequest = new()
+	private readonly Api.v1.Requests.PresetQueryRequest sampleRequest = new()
 	{
 		Items = new()
 		{
@@ -30,7 +29,7 @@ public class QueryByPreset
 	public QueryByPreset(BinacleApiFactory sut)
 	{
 		this.sut = sut;
-		this.presetOptions = this.sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
+		presetOptions = this.sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
 
 	}
 
@@ -39,7 +38,7 @@ public class QueryByPreset
 	{
 		var urlPath = routePath.Replace("{preset}", "non-existing-preset");
 
-		var response = await this.sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest, this.sut.JsonSerializerOptions);
+		var response = await sut.Client.PostAsJsonAsync(urlPath, sampleRequest, sut.JsonSerializerOptions);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
 	}
@@ -47,20 +46,20 @@ public class QueryByPreset
 	[Fact(DisplayName = $"POST {routePath}. With Existing Preset And Valid Request Returns 200 OK")]
 	public async Task Post_WithExistingPresetAndValidRequest_Returns200Ok()
 	{
-		var urlPath = routePath.Replace("{preset}", this.presetOptions.Value.Presets.Keys.First());
+		var urlPath = routePath.Replace("{preset}", presetOptions.Value.Presets.Keys.First());
 
-		var response = await this.sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest, this.sut.JsonSerializerOptions);
-		
+		var response = await sut.Client.PostAsJsonAsync(urlPath, sampleRequest, sut.JsonSerializerOptions);
+
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimensions Returns 400 BadRequest")]
 	public async Task Post_WithZeroDimensions_Returns400BadRequest()
 	{
-		this.sampleRequest.Items.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
-		var urlPath = routePath.Replace("{preset}", this.presetOptions.Value.Presets.Keys.First());
+		sampleRequest.Items.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
+		var urlPath = routePath.Replace("{preset}", presetOptions.Value.Presets.Keys.First());
 
-		var result = await this.sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest, this.sut.JsonSerializerOptions);
+		var result = await sut.Client.PostAsJsonAsync(urlPath, sampleRequest, sut.JsonSerializerOptions);
 
 		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
 	}

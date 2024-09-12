@@ -14,6 +14,11 @@ let _Container = {
 	width: 40,
 	height: 10
 }
+let _ContainerOriginOffset = {
+	x: -1 * _Container.length / 2,
+	y: -1 * _Container.height / 2,
+	z: -1 * _Container.width / 2
+}
 let _Results = {};
 
 const scene = new THREE.Scene();
@@ -75,5 +80,28 @@ window.containerChanged = function (container) {
 }
 window.updateResults = function (rawResults) {
 	_Results = JSON.parse(rawResults);
+	var data = _Results.data[0];
+
+	for (var i = 0; i < data.packedItems.length; i++) {
+
+		var item = data.packedItems[i];
+		var itemOriginOffset = {
+			x: item.dimensions.length / 2,
+			y: item.dimensions.height / 2,
+			z: item.dimensions.width / 2
+		};
+
+		var itemGeometry = new THREE.BoxGeometry(item.dimensions.length, item.dimensions.height, item.dimensions.width);
+		var cube = new THREE.Mesh(itemGeometry, itemMaterial);
+		cube.position.set(
+			_ContainerOriginOffset.x + itemOriginOffset.x + item.coordinates.x,
+			_ContainerOriginOffset.y + itemOriginOffset.y + item.coordinates.z,
+			_ContainerOriginOffset.z + itemOriginOffset.z + item.coordinates.y,
+		);
+		cube.name = 'cube' + i;
+		scene.add(cube);
+	}
+	// Remove old items
+
 
 }

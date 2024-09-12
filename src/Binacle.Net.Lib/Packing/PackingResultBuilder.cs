@@ -11,8 +11,8 @@ internal class PackingResultBuilder<TBin, TItem>
 	private readonly int totalItems;
 	private readonly int totalItemsVolume;
 	private PackingResultStatus? forcedStatus;
-	private List<TItem>? packedItems;
-	private List<TItem>? unpackedItems;
+	private IEnumerable<TItem>? packedItems;
+	private IEnumerable<TItem>? unpackedItems;
 
 	internal PackingResultBuilder(TBin bin, int totalItems, int totalItemsVolume)
 	{
@@ -31,12 +31,12 @@ internal class PackingResultBuilder<TBin, TItem>
 		return this;
 	}
 
-	internal PackingResultBuilder<TBin, TItem> WithPackedItems(List<TItem> items)
+	internal PackingResultBuilder<TBin, TItem> WithPackedItems(IEnumerable<TItem> items)
 	{
 		this.packedItems = items;
 		return this;
 	}
-	internal PackingResultBuilder<TBin, TItem> WithUnpackedItems(List<TItem> items)
+	internal PackingResultBuilder<TBin, TItem> WithUnpackedItems(IEnumerable<TItem> items)
 	{
 		this.unpackedItems = items;
 		return this;
@@ -50,14 +50,66 @@ internal class PackingResultBuilder<TBin, TItem>
 			Status = this.forcedStatus.HasValue ? this.forcedStatus.Value : PackingResultStatus.Unknown,
 		};
 
-		var totalItemsCount = (this.packedItems?.Count ?? 0) + (this.unpackedItems?.Count ?? 0);
+		if (!parameters.NeverReportUnpackedItems)
+		{
+			result.UnpackedItems = new List<ResultItem>();
+		}
+
+		var packedItemsCount = 0;
+		var unpackedItemsCount = 0;
+
+		var packedItemsVolume = 0;
+		var unpackedItemsVolume = 0;
+
+		if(this.unpackedItems is not null)
+		{
+			foreach (var unpackedItem in this.unpackedItems)
+			{
+				unpackedItemsCount++;
+				unpackedItemsVolume += unpackedItem.Volume;
+
+				if (parameters.NeverReportUnpackedItems)
+				{
+					continue;
+				}
+
+				result.UnpackedItems!.Add(
+					new ResultItem(unpackedItem.ID, unpackedItem)
+				);
+			}
+		}
+
+		var reportPackedItems = parameters.ReportPackedItemsOnlyWhenFullyPacked ? unpackedItemsCount == 0 : true;
+
+		if (reportPackedItems)
+		{
+			result.PackedItems = new List<ResultItem>();
+		}
+
+		if(this.packedItems is not null)
+		{
+			foreach(var packedItem in this.packedItems)
+			{
+				packedItemsCount++;
+				packedItemsVolume += packedItem.Volume;
+
+				if (!reportPackedItems)
+				{
+					continue;
+				}
+
+				result.PackedItems!.Add(
+					new ResultItem(packedItem.ID, packedItem, packedItem)
+				);
+			}
+		}
+
+		var totalItemsCount = packedItemsCount + unpackedItemsCount;
 		if (totalItemsCount != this.totalItems)
 		{
 			throw new InvalidOperationException($"The expected total items count is {this.totalItems} but was {totalItemsCount}");
 		}
 
-		var packedItemsVolume = this.packedItems?.Sum(x => x.Volume) ?? 0;
-		var unpackedItemsVolume = this.unpackedItems?.Sum(x => x.Volume) ?? 0;
 		var totalItemsVolume = packedItemsVolume + unpackedItemsVolume;
 
 		if (totalItemsVolume != this.totalItemsVolume)
@@ -69,18 +121,15 @@ internal class PackingResultBuilder<TBin, TItem>
 
 		result.PackedItemsVolumePercentage = Math.Round((decimal)packedItemsVolume / totalItemsVolume * 100, 2);
 
-		result.PackedItems = this.packedItems?.Select(x => new Models.ResultItem(x.ID, x, x)).ToList();
-		result.UnpackedItems = this.unpackedItems?.Select(x => new Models.ResultItem(x.ID, x)).ToList();
-
-		if ((this.packedItems?.Count ?? 0) == this.totalItems)
+		if (packedItemsCount == this.totalItems)
 		{
 			result.Status = PackingResultStatus.FullyPacked;
 		}
-		else if ((this.unpackedItems?.Count ?? 0) == this.totalItems)
+		else if (unpackedItemsCount == this.totalItems)
 		{
 			result.Status = PackingResultStatus.NotPacked;
 		}
-		else if ((this.packedItems?.Count ?? 0) > 0)
+		else if (packedItemsCount > 0)
 		{
 			result.Status = PackingResultStatus.PartiallyPacked;
 		}

@@ -1,12 +1,10 @@
 ﻿using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
-using Binacle.Net.Api.ServiceModule.v0.Requests;
-using Binacle.Net.Api.ServiceModule.v0.Responses;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests.Tests.Abstractions;
+namespace Binacle.Net.Api.ServiceIntegrationTests.Abstractions;
 
 public abstract partial class UsersEndpointTestsBase : IAsyncLifetime
 {
@@ -35,13 +33,13 @@ public abstract partial class UsersEndpointTestsBase : IAsyncLifetime
 
 	protected async Task AuthenticateAsAsync(Models.TestUser user)
 	{
-		var request = new TokenRequest()
+		var request = new ServiceModule.v0.Requests.TokenRequest()
 		{
 			Email = user.Email,
 			Password = user.Password
 		};
 		var response = await this.Sut.Client.PostAsJsonAsync("/auth/token", request, this.Sut.JsonSerializerOptions);
-		var tokenResponse = await response.Content.ReadAsAsync<TokenResponse>();
+		var tokenResponse = await response.Content.ReadAsAsync<ServiceModule.v0.Responses.TokenResponse>();
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
 	}
@@ -49,7 +47,7 @@ public abstract partial class UsersEndpointTestsBase : IAsyncLifetime
 	protected async Task CreateUser(Models.TestUser user)
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
-		var request = new CreateApiUserRequest
+		var request = new ServiceModule.v0.Requests.CreateApiUserRequest
 		{
 			Email = user.Email,
 			Password = user.Password

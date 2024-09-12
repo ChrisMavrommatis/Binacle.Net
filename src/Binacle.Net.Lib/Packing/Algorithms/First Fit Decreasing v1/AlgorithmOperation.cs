@@ -9,21 +9,24 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem>
 	{
 		var resultBuilder = PackingResultBuilder<Bin, Item>.Create(this.bin, this.items.Count, this.totalItemsVolume);
 
-		if (this.totalItemsVolume > this.bin.Volume)
+		if (parameters.OptInToEarlyFails)
 		{
-			return resultBuilder
-				.WithForcedStatus(PackingResultStatus.EarlyFail_ContainerVolumeExceeded)
-				.WithUnpackedItems(this.items)
-				.Build(parameters);
-		}
+			if (this.totalItemsVolume > this.bin.Volume)
+			{
+				return resultBuilder
+					.WithForcedStatus(PackingResultStatus.EarlyFail_ContainerVolumeExceeded)
+					.WithUnpackedItems(this.items)
+					.Build(parameters);
+			}
 
-		var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > this.bin.LongestDimension).ToList();
-		if (itemsNotFittingDueToLongestDimension.Count > 0)
-		{
-			return resultBuilder
-				.WithForcedStatus(PackingResultStatus.EarlyFail_ContainerDimensionExceeded)
-				.WithUnpackedItems(itemsNotFittingDueToLongestDimension)
-				.Build(parameters);
+			var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > this.bin.LongestDimension);
+			if (itemsNotFittingDueToLongestDimension.Any())
+			{
+				return resultBuilder
+					.WithForcedStatus(PackingResultStatus.EarlyFail_ContainerDimensionExceeded)
+					.WithUnpackedItems(itemsNotFittingDueToLongestDimension)
+					.Build(parameters);
+			}
 		}
 
 		List<SpaceVolume> availableSpace = [new SpaceVolume(this.bin, Coordinates.Zero)];
@@ -44,8 +47,8 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem>
 		}
 
 		return resultBuilder
-			.WithPackedItems(orderedItems.Where(x => x.IsPacked).ToList())
-			.WithUnpackedItems(orderedItems.Where(x => !x.IsPacked).ToList())
+			.WithPackedItems(orderedItems.Where(x => x.IsPacked))
+			.WithUnpackedItems(orderedItems.Where(x => !x.IsPacked))
 			.Build(parameters);
 	}
 

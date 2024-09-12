@@ -16,17 +16,24 @@ public class QueryResponse : v1.Models.ResponseBase
 		where  TBin : IWithID, IWithReadOnlyDimensions
 		where  TItem : IWithID, IWithReadOnlyDimensions
 	{
-		if (operationResults.Count != 1)
+		if (operationResults.Count > 1)
 		{
-			throw new InvalidOperationException("Expected exactly one fitting operation result at v1 api");
+			throw new InvalidOperationException("Expected at most one fitting operation result at v1 api");
 		}
-		var (binId, operationResult) = operationResults.First();
-		var bin = bins.First(x => x.ID == binId);
-
 		var response = new QueryResponse();
 
-		if (operationResult.Status == Lib.Fitting.Models.FittingResultStatus.Success)
+		if (operationResults.Count == 0)
 		{
+			response.Result = v1.Models.ResultType.Failure;
+			response.Message = $"Failed to find bin.";
+			//response.Message = $"Failed to find bin. Reason: {operationResult.Reason.ToString()}";
+		
+		}
+		else
+		{
+			var (binId, operationResult) = operationResults.First();
+			var bin = bins.First(x => x.ID == binId);
+
 			response.Bin = new v1.Models.Bin
 			{
 				ID = bin.ID,
@@ -35,11 +42,6 @@ public class QueryResponse : v1.Models.ResponseBase
 				Width = bin.Width
 			};
 			response.Result = v1.Models.ResultType.Success;
-		}
-		else
-		{
-			response.Result = v1.Models.ResultType.Failure;
-			response.Message = $"Failed to find bin. Reason: {operationResult.Reason.ToString()}";
 		}
 
 		return response;

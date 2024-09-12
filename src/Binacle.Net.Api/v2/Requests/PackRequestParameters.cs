@@ -4,6 +4,8 @@
 
 public class PackRequestParameters
 {
-	public bool? DontReportItemsOnFail { get; set; }
-	public bool? IgnoreEarlyFails { get; set; }
+	public bool? OptInToEarlyFails { get; set; }
+	public bool? ReportPackedItemsOnlyWhenFullyPacked { get; set; }
+	public bool? NeverReportUnpackedItems { get; set; }
+	public bool? StopAtSmallestBin { get; set; }
 }

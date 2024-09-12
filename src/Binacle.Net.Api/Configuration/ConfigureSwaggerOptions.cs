@@ -61,6 +61,7 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 				}
 			};
 
+			// TODO: Obsolete v1
 			info.Description = info.Description
 				.Replace("{{status}}", description.ApiVersion.MajorVersion == 2 ? "**Warning: This api version is experimental!**": string.Empty)
 				.Replace("{{deprecated}}", description.IsDeprecated ? __deprecatedMessage__: string.Empty);

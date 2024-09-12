@@ -1,18 +1,17 @@
 ﻿using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
-using Binacle.Net.Api.ServiceModule.v0.Requests;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests.Tests;
+namespace Binacle.Net.Api.ServiceIntegrationTests;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
 [Collection(BinacleApiAsAServiceCollection.Name)]
 public class AuthToken
 {
-	private BinacleApiAsAServiceFactory sut;
+	private readonly BinacleApiAsAServiceFactory sut;
 
 	public AuthToken(BinacleApiAsAServiceFactory sut)
 	{
@@ -27,7 +26,7 @@ public class AuthToken
 	{
 		var defaultsOptions = this.sut.Services.GetRequiredService<IOptions<DefaultsOptions>>();
 		var defaultAdminUser = defaultsOptions.Value.GetParsedAdminUser();
-		var request = new TokenRequest()
+		var request = new ServiceModule.v0.Requests.TokenRequest()
 		{
 			Email = defaultAdminUser.Email,
 			Password = defaultAdminUser.Password
@@ -39,7 +38,7 @@ public class AuthToken
 	[Fact(DisplayName = $"POST {routePath}. With Wrong User/Password Returns 401 Unauthorized")]
 	public async Task Post_WithWrongUserPassword_Returns_401Unauthorized()
 	{
-		var request = new TokenRequest()
+		var request = new ServiceModule.v0.Requests.TokenRequest()
 		{
 			Email = "invalid@nonexisting.test",
 			Password = "Wr0ngP@ssw0rd"
@@ -51,7 +50,7 @@ public class AuthToken
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Credentials Returns 400 BadRequest")]
 	public async Task Post_WithInvalidCredentials_Returns_400BadRequest()
 	{
-		var request1 = new TokenRequest()
+		var request1 = new ServiceModule.v0.Requests.TokenRequest()
 		{
 			Email = "notvalidemail.test",
 			Password = "Wr0ngP@ssw0rd"
@@ -59,7 +58,7 @@ public class AuthToken
 		var response1 = await this.sut.Client.PostAsJsonAsync(routePath, request1, this.sut.JsonSerializerOptions);
 		response1.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 
-		var request2 = new TokenRequest()
+		var request2 = new ServiceModule.v0.Requests.TokenRequest()
 		{
 			Email = "valid@email.test",
 			Password = "invpass"

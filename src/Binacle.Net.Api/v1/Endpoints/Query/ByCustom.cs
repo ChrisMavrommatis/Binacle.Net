@@ -5,6 +5,7 @@ using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Binacle.Net.Api.v1.Endpoints.Query;
 
@@ -13,6 +14,7 @@ namespace Binacle.Net.Api.v1.Endpoints.Query;
 /// </summary>
 [ApiVersion(v1.ApiVersion.Number)]
 [Route("api/v{version:apiVersion}/[namespace]")]
+[EnableRateLimiting("SpecificControllerPolicy")]
 public class ByCustom : EndpointWithRequest<v1.Requests.CustomQueryRequestWithBody>
 {
 	private readonly IValidator<v1.Requests.CustomQueryRequest> validator;

@@ -53,7 +53,7 @@ public class ScalingBenchmarks
 		this.items = null;
 	}
 
-	// TODO: Asset or test the results of the benchmarks
+	// TODO: Assert or test the results of the benchmarks
 	[Benchmark(Baseline = true)]
 	public FittingResult Fitting_FFD_V1()
 	{
@@ -62,6 +62,15 @@ public class ScalingBenchmarks
 		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
 		return result;
 	}
+
+	//[Benchmark]
+	//public FittingResult Fitting_FFD_V1_Full()
+	//{
+	//	var algorithmInstance = AlgorithmFactories.Fitting_FFD_v1(this.bin, this.items);
+	//	var result = algorithmInstance.Execute(new FittingParameters { ReportFittedItems = true, ReportUnfittedItems = true });
+	//	//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
+	//	return result;
+	//}
 
 	[Benchmark]
 	public FittingResult Fitting_FFD_V2()
@@ -72,12 +81,30 @@ public class ScalingBenchmarks
 		return result;
 	}
 
+	//[Benchmark]
+	//public FittingResult Fitting_FFD_V2_Full()
+	//{
+	//	var algorithmInstance = AlgorithmFactories.Fitting_FFD_v2(this.bin, this.items);
+	//	var result = algorithmInstance.Execute(new FittingParameters { ReportFittedItems = true, ReportUnfittedItems = true });
+	//	//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
+	//	return result;
+	//}
+
 	[Benchmark]
 	public PackingResult Packing_FFD_V1()
 	{
 		var algorithmInstance = AlgorithmFactories.Packing_FFD_v1(this.bin, this.items);
-		var result = algorithmInstance.Execute(new PackingParameters { DontReportItemsOnFail = true, IgnoreEarlyFails = false});
+		var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = true, NeverReportUnpackedItems = true, ReportPackedItemsOnlyWhenFullyPacked = true});
 		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
 		return result;
 	}
+
+	//[Benchmark]
+	//public PackingResult Packing_FFD_V1_Full()
+	//{
+	//	var algorithmInstance = AlgorithmFactories.Packing_FFD_v1(this.bin, this.items);
+	//	var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = true, NeverReportUnpackedItems = false, ReportPackedItemsOnlyWhenFullyPacked = false });
+	//	//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
+	//	return result;
+	//}
 }

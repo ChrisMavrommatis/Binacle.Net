@@ -1,10 +1,9 @@
 ﻿using Binacle.Net.Api.ServiceIntegrationTests.Models;
-using Binacle.Net.Api.ServiceModule.v0.Requests;
 using FluentAssertions;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests.Tests;
+namespace Binacle.Net.Api.ServiceIntegrationTests;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
 [Collection(BinacleApiAsAServiceCollection.Name)]
@@ -31,7 +30,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 		=> this.Action_WithoutBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{email}", this.existingUser.Email);
-			var request = new UpdateApiUserRequest
+			var request = new ServiceModule.v0.Requests.UpdateApiUserRequest
 			{
 				Status = ServiceModule.Models.UserStatus.Active,
 				Type = ServiceModule.Models.UserType.Admin
@@ -44,7 +43,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 		=> this.Action_WithExpiredBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{email}", this.existingUser.Email);
-			var request = new UpdateApiUserRequest
+			var request = new ServiceModule.v0.Requests.UpdateApiUserRequest
 			{
 				Status = ServiceModule.Models.UserStatus.Active,
 				Type = ServiceModule.Models.UserType.Admin
@@ -58,7 +57,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 		=> this.Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{email}", this.existingUser.Email);
-			var request = new UpdateApiUserRequest
+			var request = new ServiceModule.v0.Requests.UpdateApiUserRequest
 			{
 				Status = ServiceModule.Models.UserStatus.Active,
 				Type = ServiceModule.Models.UserType.Admin
@@ -71,7 +70,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 		=> this.Action_WithWrongAudienceBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{email}", this.existingUser.Email);
-			var request = new UpdateApiUserRequest
+			var request = new ServiceModule.v0.Requests.UpdateApiUserRequest
 			{
 				Status = ServiceModule.Models.UserStatus.Active,
 				Type = ServiceModule.Models.UserType.Admin
@@ -84,7 +83,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 		=> this.Action_WithWronglySignedBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{email}", this.existingUser.Email);
-			var request = new UpdateApiUserRequest
+			var request = new ServiceModule.v0.Requests.UpdateApiUserRequest
 			{
 				Status = ServiceModule.Models.UserStatus.Active,
 				Type = ServiceModule.Models.UserType.Admin
@@ -101,7 +100,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 		=> this.Action_WithoutAdminUserBearerToken_Returns_403Forbidden(async () =>
 		{
 			var url = routePath.Replace("{email}", this.existingUser.Email);
-			var request = new UpdateApiUserRequest
+			var request = new ServiceModule.v0.Requests.UpdateApiUserRequest
 			{
 				Status = ServiceModule.Models.UserStatus.Active,
 				Type = ServiceModule.Models.UserType.Admin
@@ -119,7 +118,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 		await this.AuthenticateAsAsync(this.AdminUser);
 
 		var url = routePath.Replace("{email}", this.existingUser.Email);
-		var request = new UpdateApiUserRequest
+		var request = new ServiceModule.v0.Requests.UpdateApiUserRequest
 		{
 			Status = ServiceModule.Models.UserStatus.Active,
 			Type = ServiceModule.Models.UserType.Admin
@@ -134,7 +133,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 		await this.AuthenticateAsAsync(this.AdminUser);
 
 		var url = routePath.Replace("{email}", this.existingUser.Email);
-		var request = new UpdateApiUserRequest
+		var request = new ServiceModule.v0.Requests.UpdateApiUserRequest
 		{
 			Status = ServiceModule.Models.UserStatus.Active,
 		};
@@ -148,7 +147,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 		await this.AuthenticateAsAsync(this.AdminUser);
 
 		var url = routePath.Replace("{email}", this.existingUser.Email);
-		var request = new UpdateApiUserRequest
+		var request = new ServiceModule.v0.Requests.UpdateApiUserRequest
 		{
 			Type = ServiceModule.Models.UserType.Admin
 		};
@@ -166,7 +165,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 
 		var url = routePath.Replace("{email}", "existinguser.test");
 
-		var request = new UpdateApiUserRequest
+		var request = new ServiceModule.v0.Requests.UpdateApiUserRequest
 		{
 			Status = ServiceModule.Models.UserStatus.Active,
 			Type = ServiceModule.Models.UserType.Admin
@@ -215,7 +214,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 		await this.AuthenticateAsAsync(this.AdminUser);
 
 		var url = routePath.Replace("{email}", "nonexisting@user.test");
-		var request = new UpdateApiUserRequest
+		var request = new ServiceModule.v0.Requests.UpdateApiUserRequest
 		{
 			Status = ServiceModule.Models.UserStatus.Active,
 			Type = ServiceModule.Models.UserType.Admin

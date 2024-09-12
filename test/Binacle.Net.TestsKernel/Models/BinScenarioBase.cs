@@ -4,13 +4,48 @@ namespace Binacle.Net.TestsKernel.Models;
 
 public abstract class BinScenarioBase
 {
-	private readonly string binString;
 
 	private TestBin? bin;
+	private string? binCollectionKey;
+	private string? binFromCollection;
 
 	public BinScenarioBase(string binString)
 	{
-		this.binString = binString;
+		this.ParseBinString(binString);
+	}
+
+	private void ParseBinString(string binString)
+	{
+		var binParts = binString.Split("::");
+		if (binParts.Length != 2)
+		{
+			throw new InvalidOperationException($"Unexpected Bin format {binString}. Bin should be 'CollectionKey::Bin' or 'Raw::LxWxH'");
+		}
+		if (binParts[0] == "Raw")
+		{
+			var dimensions = Helpers.DimensionHelper.ParseFromCompactString(binParts[1]);
+			this.bin = new TestBin(binParts[1], dimensions);
+			return;
+		}
+		this.binCollectionKey = binParts[0];
+		this.binFromCollection = binParts[1];
+
+		if (string.IsNullOrWhiteSpace(this.binCollectionKey)
+			|| string.IsNullOrWhiteSpace(this.binFromCollection))
+		{
+			throw new InvalidOperationException($"Unexpected Bin format {binString}. Bin should be 'CollectionKey::Bin' or 'Raw::LxWxH'");
+		}
+
+	}
+	public string GetBinCollectionKey()
+	{
+		if (string.IsNullOrWhiteSpace(this.binCollectionKey)
+			|| string.IsNullOrWhiteSpace(this.binFromCollection))
+		{
+			throw new InvalidOperationException($"Scenario was not initialized from a collection");
+		}
+
+		return this.binCollectionKey;
 	}
 
 	public TestBin GetTestBin(BinCollectionsTestDataProvider provider)
@@ -19,32 +54,18 @@ public abstract class BinScenarioBase
 		{
 			return this.bin;
 		}
+		var collection = provider.GetCollection(this.binCollectionKey!);
 
-		var binParts = this.binString.Split("::");
-		if (binParts.Length != 2)
+		if (collection is null)
 		{
-			throw new InvalidOperationException($"Unexpected Bin format {this.binString}. Bin should be 'CollectionKey::Bin' or 'Raw::LxWxH'");
+			throw new InvalidOperationException($"Collection {this.binCollectionKey} not found");
 		}
-		if (binParts[0] == "Raw")
+		var bin = collection.FirstOrDefault(x => x.ID == this.binFromCollection);
+		if (bin is null)
 		{
-			var dimensions = Helpers.DimensionHelper.ParseFromCompactString(binParts[1]);
-			this.bin = new TestBin(binParts[1], dimensions);
+			throw new InvalidOperationException($"Bin '{this.binFromCollection}' not found in collection '{this.binCollectionKey}'");
 		}
-		else
-		{
-			var collectionKey = binParts[0];
-			var collection = provider.GetCollection(collectionKey);
-			if (collection is null)
-			{
-				throw new InvalidOperationException($"Collection {collectionKey} not found");
-			}
-			var bin = collection.FirstOrDefault(x => x.ID == binParts[1]);
-			if (bin is null)
-			{
-				throw new InvalidOperationException($"Bin {binParts[1]} not found in collection {collectionKey}");
-			}
-			this.bin = bin;
-		}
+		this.bin = bin;
 
 		return this.bin;
 	}

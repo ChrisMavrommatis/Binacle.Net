@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests.Tests;
+namespace Binacle.Net.Api.IntegrationTests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
 public class SanityTests
@@ -12,6 +12,6 @@ public class SanityTests
 	[Fact]
 	public void Tests_Work()
 	{
-		Xunit.Assert.True(true);
+		Assert.True(true);
 	}
 }

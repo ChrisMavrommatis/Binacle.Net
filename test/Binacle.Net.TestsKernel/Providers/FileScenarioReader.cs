@@ -34,7 +34,7 @@ internal class FileScenarioReader
 					Items = readScenario.Items.Select(x => 
 					{
 						var dimensions = DimensionHelper.ParseFromCompactString(x);
-						return new TestItem(x, dimensions);
+						return new TestItem(x, dimensions, dimensions.Quantity);
 					}).ToList()
 				};
 				resultScenarios.Add(resultScenario);

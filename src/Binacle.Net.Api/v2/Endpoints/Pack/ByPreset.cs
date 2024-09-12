@@ -1,49 +1,55 @@
 ﻿using Asp.Versioning;
+using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.Api.v2.Endpoints.Pack;
 
 /// <summary>
-/// Pack by Custom endpoint
+/// Pack by Preset endpoint
 /// </summary>
 [ApiVersion(v2.ApiVersion.Number)]
 [Route("api/v{version:apiVersion}/[namespace]")]
-public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBody>
+public class ByPreset : EndpointWithRequest<v2.Requests.PresetPackRequestWithBody>
 {
-	private readonly IValidator<v2.Requests.CustomPackRequest> validator;
+	private readonly IOptions<BinPresetOptions> presetOptions;
+	private readonly IValidator<v2.Requests.PresetPackRequest> validator;
 	private readonly ILockerService lockerService;
-	private readonly ILogger<ByCustom> logger;
+	private readonly ILogger<ByPreset> logger;
 
 	/// <summary>
-	/// Pack by Custom endpoint
+	/// Pack by Preset endpoint
 	/// </summary>
+	/// <param name="presetOptions"></param>
 	/// <param name="validator"></param>
 	/// <param name="lockerService"></param>
 	/// <param name="logger"></param>
-	public ByCustom(
-		IValidator<v2.Requests.CustomPackRequest> validator,
+	public ByPreset(
+		IOptions<BinPresetOptions> presetOptions,
+		IValidator<v2.Requests.PresetPackRequest> validator,
 		ILockerService lockerService,
-		ILogger<ByCustom> logger
+		ILogger<ByPreset> logger
 	  )
 	{
 		this.validator = validator;
 		this.lockerService = lockerService;
 		this.logger = logger;
+		this.presetOptions = presetOptions;
 	}
 
 	/// <summary>
-	/// Pack items using custom bins.
+	/// Pack items using a specified bin preset.
 	/// </summary>
 	/// <returns>An array of results indicating the result per bin</returns>
 	/// <remarks>
-	/// Example request:
+	/// Example request using the "rectangular-cuboids" preset:
 	///     
-	///     POST /api/v2/pack/by-custom
+	///     POST /api/v2/pack/by-preset/rectangular-cuboids
 	///		{
 	///			"parameters": {
 	///				"neverReportUnpackedItems": false,
@@ -51,20 +57,6 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 	///				"stopAtSmallestBin": false,
 	///				"reportPackedItemsOnlyWhenFullyPacked": false
 	///			},
-	///			"bins": [
-	///				{
-	///					"id": "custom_bin_1",
-	///					"length": 10,
-	///					"width": 40,
-	///					"height": 60
-	///				},
-	///				{
-	///					"id": "custom_bin_2",
-	///					"length": 20,
-	///					"width": 40,
-	///					"height": 60
-	///				}
-	///			],
 	///			"items": [
 	///				{
 	///					"id": "box_1",
@@ -112,21 +104,23 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 	///		Exception details will only be shown when in a development environment.
 	/// </p>
 	/// </response>
-	[HttpPost("by-custom")]
+	[HttpPost("by-preset/{preset}")]
 	[Consumes("application/json")]
 	[Produces("application/json")]
 	[MapToApiVersion(v2.ApiVersion.Number)]
-	[SwaggerRequestExample(typeof(v2.Requests.CustomPackRequest), typeof(v2.Requests.Examples.CustomPackRequestExample))]
+	[SwaggerRequestExample(typeof(v2.Requests.PresetPackRequest), typeof(v2.Requests.Examples.PresetPackRequestExample))]
 
 	[ProducesResponseType(typeof(v2.Responses.PackResponse), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(v2.Responses.PackResponse), typeof(v2.Responses.Examples.CustomPackResponseExamples), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(v2.Responses.PackResponse), typeof(v2.Responses.Examples.PresetPackResponseExamples), StatusCodes.Status200OK)]
 
 	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
 	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 
+	[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+
 	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
 	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
-	public override async Task<IActionResult> HandleAsync(v2.Requests.CustomPackRequestWithBody request, CancellationToken cancellationToken = default)
+	public override async Task<IActionResult> HandleAsync(v2.Requests.PresetPackRequestWithBody request, CancellationToken cancellationToken = default)
 	{
 		try
 		{
@@ -146,8 +140,13 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 					);
 			}
 
+			if (!this.presetOptions.Value.Presets.TryGetValue(request.Preset, out var presetOption))
+			{
+				return this.NotFound(null);
+			}
+
 			var operationResults = this.lockerService.PackBins(
-				request.Body.Bins,
+				presetOption.Bins,
 				request.Body.Items,
 				new Api.Models.PackingParameters
 				{
@@ -160,7 +159,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 
 			return this.Ok(
 				v2.Responses.PackResponse.Create(
-					request.Body.Bins,
+					presetOption.Bins,
 					request.Body.Items,
 					request.Body.Parameters,
 					operationResults
@@ -170,7 +169,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 		}
 		catch (Exception ex)
 		{
-			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Pack by Custom");
+			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Pack by Preset");
 			return this.InternalServerError(
 				Models.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
 				);

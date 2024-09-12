@@ -6,12 +6,12 @@ using Xunit;
 namespace Binacle.Net.Lib.UnitTests;
 
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
-public class BehavioralTests : IClassFixture<CommonTestingFixture>
+public class CreationTests : IClassFixture<CommonTestingFixture>
 {
 	private CommonTestingFixture Fixture { get; }
 	public Fixture AutoFixture { get; }
 
-	public BehavioralTests(CommonTestingFixture fixture)
+	public CreationTests(CommonTestingFixture fixture)
 	{
 		Fixture = fixture;
 		AutoFixture = new Fixture();

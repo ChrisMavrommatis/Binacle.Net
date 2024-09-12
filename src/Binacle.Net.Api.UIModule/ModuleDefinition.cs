@@ -3,11 +3,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Binacle.Net.Api.UIModule.Components;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace Binacle.Net.Api.UIModule;
 
 public static class ModuleDefinition
 {
+	private static string[] disabledPaths = ["/api", "/auth", "/users"];
+
 	public static void AddUIModule(this WebApplicationBuilder builder)
 	{
 		Log.Information("{moduleName} module. Status {status}", "UI", "Initializing");
@@ -46,10 +49,22 @@ public static class ModuleDefinition
 
 		app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
-
-		// handle 404
-		app.UseStatusCodePagesWithReExecute("/Error/{0}");
 		
+		app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
+		app.Use(async(ctx, next) =>
+		{
+			if (disabledPaths.Any(p => ctx.Request.Path.Value.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+			{
+				var statusCodeFeature = ctx.Features.Get<IStatusCodePagesFeature>();
+
+				if (statusCodeFeature != null && statusCodeFeature.Enabled)
+					statusCodeFeature.Enabled = false;
+			}
+
+			await next();
+		});
+
 		app.UseAntiforgery();
 	}
 }

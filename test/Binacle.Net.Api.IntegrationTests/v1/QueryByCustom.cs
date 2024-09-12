@@ -1,16 +1,15 @@
-﻿using Binacle.Net.Api.v1.Requests;
-using FluentAssertions;
+﻿using FluentAssertions;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests.Tests;
+namespace Binacle.Net.Api.IntegrationTests;
 
 [Collection(BinacleApiCollection.Name)]
-[Trait("Endpoint Tests", "Endpoint Integration tests")]
+[Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class QueryByCustom
 {
 	private readonly BinacleApiFactory sut;
-	private readonly CustomQueryRequest sampleRequest = new()
+	private readonly Api.v1.Requests.CustomQueryRequest sampleRequest = new()
 	{
 		Bins = new()
 		{
@@ -36,17 +35,17 @@ public class QueryByCustom
 	[Fact(DisplayName = $"POST {routePath}. With Valid Request Returns 200 OK")]
 	public async Task Post_WithValidRequest_Returns_200Ok()
 	{
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
-		
+		var response = await sut.Client.PostAsJsonAsync(routePath, sampleRequest, sut.JsonSerializerOptions);
+
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Item Returns 400 BadRequest")]
 	public async Task Post_WithZeroDimensionOnItem_Returns_400BadRequest()
 	{
-		this.sampleRequest.Items.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
+		sampleRequest.Items.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 
-		var result = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
+		var result = await sut.Client.PostAsJsonAsync(routePath, sampleRequest, sut.JsonSerializerOptions);
 
 		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
 	}
@@ -54,9 +53,9 @@ public class QueryByCustom
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Bin Returns 400 BadRequest")]
 	public async Task Post_WithZeroDimensionOnBin_Returns400BadRequest()
 	{
-		this.sampleRequest.Bins.FirstOrDefault(x => x.ID == "custom_bin_1")!.Length = 0;
+		sampleRequest.Bins.FirstOrDefault(x => x.ID == "custom_bin_1")!.Length = 0;
 
-		var result = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
+		var result = await sut.Client.PostAsJsonAsync(routePath, sampleRequest, sut.JsonSerializerOptions);
 
 		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
 	}

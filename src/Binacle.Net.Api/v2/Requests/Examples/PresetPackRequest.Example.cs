@@ -2,22 +2,18 @@
 
 namespace Binacle.Net.Api.v2.Requests.Examples;
 
-internal class CustomPackRequestExample : SingleSwaggerExamplesProvider<CustomPackRequest>
+internal class PresetPackRequestExample : SingleSwaggerExamplesProvider<PresetPackRequest>
 {
-	public override CustomPackRequest GetExample()
+	public override PresetPackRequest GetExample()
 	{
-		return new CustomPackRequest
+		return new PresetPackRequest
 		{
 			Parameters = new PackRequestParameters
 			{
-				DontReportItemsOnFail = false,
-				IgnoreEarlyFails = true,
-			},
-			Bins = new List<v2.Models.Bin>
-			{
-				new () { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
-				new () { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
-
+				NeverReportUnpackedItems = false,
+				OptInToEarlyFails = false,
+				StopAtSmallestBin = false,
+				ReportPackedItemsOnlyWhenFullyPacked = false
 			},
 			Items = new List<v2.Models.Box>
 			{

@@ -1,18 +1,16 @@
-﻿using Binacle.Net.Api.v1.Requests;
-using Binacle.Net.Api.v1.Responses;
-using Binacle.Net.TestsKernel.Models;
+﻿using Binacle.Net.TestsKernel.Models;
 using FluentAssertions;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests.Tests;
+namespace Binacle.Net.Api.IntegrationTests;
 
 [Collection(BinacleApiCollection.Name)]
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
 public class QueryByPresetScenario
 {
 	private readonly BinacleApiFactory sut;
-	
+
 	public QueryByPresetScenario(BinacleApiFactory sut)
 	{
 		this.sut = sut;
@@ -23,25 +21,28 @@ public class QueryByPresetScenario
 	[Theory]
 	[ClassData(typeof(Data.Providers.BaselineScenarioTestDataProvider))]
 	public Task Baseline(Scenario scenario)
-		=> this.RunScenarioTest(scenario);
+		=> RunScenarioTest(scenario);
 
 	[Theory]
 	[ClassData(typeof(Data.Providers.SimpleScenarioTestDataProvider))]
 	public Task Simple(Scenario scenario)
-		=> this.RunScenarioTest(scenario);
+		=> RunScenarioTest(scenario);
 
 	[Theory]
 	[ClassData(typeof(Data.Providers.ComplexScenarioTestDataProvider))]
 	public Task Complex(Scenario scenario)
-		=> this.RunScenarioTest(scenario);
+		=> RunScenarioTest(scenario);
 
 	private async Task RunScenarioTest(Scenario scenario)
 	{
-		var urlPath = routePath.Replace("{preset}", scenario.BinCollection);
+		var binCollection = scenario.GetBinCollectionKey();
+		var expectedBin = scenario.GetTestBin(sut.BinCollectionsTestDataProvider);
 
-		var request = new PresetQueryRequest
+		var urlPath = routePath.Replace("{preset}", binCollection);
+
+		var request = new Api.v1.Requests.PresetQueryRequest
 		{
-			Items = scenario.Items.Select(x => new Models.Box
+			Items = scenario.Items.Select(x => new Api.v1.Models.Box
 			{
 				ID = x.ID,
 				Quantity = x.Quantity,
@@ -51,22 +52,22 @@ public class QueryByPresetScenario
 			}).ToList()
 		};
 
-		var response = await this.sut.Client.PostAsJsonAsync(urlPath, request, this.sut.JsonSerializerOptions);
+		var response = await sut.Client.PostAsJsonAsync(urlPath, request, sut.JsonSerializerOptions);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-		var result = await response.Content.ReadFromJsonAsync<QueryResponse>();
+		var result = await response.Content.ReadFromJsonAsync<Api.v1.Responses.QueryResponse>();
 
 		result.Should().NotBeNull();
-		if (scenario.ExpectedSize != "None")
+		if (scenario.Fits)
 		{
-			result!.Result.Should().Be(v1.Models.ResultType.Success);
+			result!.Result.Should().Be(Api.v1.Models.ResultType.Success);
 			result.Bin.Should().NotBeNull();
-			result.Bin!.ID.Should().Be(scenario.ExpectedSize);
+			result.Bin!.ID.Should().Be(expectedBin.ID);
 		}
 		else
 		{
-			result!.Result.Should().Be(v1.Models.ResultType.Failure);
+			result!.Result.Should().Be(Api.v1.Models.ResultType.Failure);
 			result.Bin.Should().BeNull();
 		}
 	}

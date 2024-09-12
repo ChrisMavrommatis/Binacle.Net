@@ -51,13 +51,18 @@ internal class LockerService : ILockerService
 				ReportUnfittedItems = parameters.ReportUnfittedItems
 			});
 
-			results.Add(bin.ID, result);
-
-			if (result.Status == Lib.Fitting.Models.FittingResultStatus.Success 
-				&& parameters.FindSmallestBinOnly
-				)
+			if(parameters.FindSmallestBinOnly)
 			{
-				break;
+				if(result.Status == Lib.Fitting.Models.FittingResultStatus.Success)
+				{
+					results.Add(bin.ID, result);
+					break;
+				}
+				
+			}
+			else
+			{
+				results.Add(bin.ID, result);
 			}
 		}
 
@@ -109,8 +114,9 @@ internal class LockerService : ILockerService
 			var algorithmInstance = this.algorithmFactory.CreatePacking(Lib.Algorithm.FirstFitDecreasing, bin, items);
 			var result = algorithmInstance.Execute(new Lib.Packing.Models.PackingParameters 
 			{ 
-				DontReportItemsOnFail = parameters.DontReportItemsOnFail, 
-				IgnoreEarlyFails = parameters.IgnoreEarlyFails
+				NeverReportUnpackedItems = parameters.NeverReportUnpackedItems, 
+				OptInToEarlyFails = parameters.OptInToEarlyFails,
+				ReportPackedItemsOnlyWhenFullyPacked = parameters.ReportPackedItemsOnlyWhenFullyPacked
 			});
 			results.Add(bin.ID, result);
 		}

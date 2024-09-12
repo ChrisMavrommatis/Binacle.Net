@@ -4,7 +4,7 @@ namespace Binacle.Net.Api.IntegrationTests.Data.Providers;
 
 internal class SimpleScenarioTestDataProvider : ScenarioTestDataProvider
 {
-	public SimpleScenarioTestDataProvider() : base(Constants.SolutionRootBasePath, "Simple")
+	public SimpleScenarioTestDataProvider() : base(Constants.SolutionRootBasePath, "BinaryDecision/Simple")
 	{
 
 	}
