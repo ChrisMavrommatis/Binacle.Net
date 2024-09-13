@@ -38,8 +38,7 @@ internal class LockerService : ILockerService
 	{
 		using var timedOperation = this.logger.BeginTimedOperation("Fit Bins");
 		this.logger.EnrichStateWith("Items", items);
-		
-		timedOperation.WithNamedState("Bins", bins.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width}"));
+		this.logger.EnrichStateWith("Bins", bins);
 
 		var results = new Dictionary<string, Lib.Fitting.Models.FittingResult>();
 
@@ -67,7 +66,7 @@ internal class LockerService : ILockerService
 			}
 		}
 
-		timedOperation.WithNamedState("Results", results.);
+		this.logger.EnritchStateWithResults(results);
 		return results;
 
 
@@ -105,8 +104,8 @@ internal class LockerService : ILockerService
 	{
 		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
 
-		timedOperation.WithNamedState("Items", items.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width}-{x.Quantity}"));
-		timedOperation.WithNamedState("Bins", bins.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width}"));
+		this.logger.EnrichStateWith("Items", items);
+		this.logger.EnrichStateWith("Bins", bins);
 
 		var results = new Dictionary<string, Lib.Packing.Models.PackingResult>();
 
@@ -122,7 +121,7 @@ internal class LockerService : ILockerService
 			results.Add(bin.ID, result);
 		}
 		
-		timedOperation.WithNamedState("Results", results);
+		//timedOperation.WithNamedState("Results", results);
 		return results;
 	}
 	
