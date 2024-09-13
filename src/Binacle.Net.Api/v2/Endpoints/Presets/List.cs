@@ -11,7 +11,7 @@ namespace Binacle.Net.Api.v2.Endpoints.Presets;
 /// <summary>
 /// List Presets Endpoint
 /// </summary>
-[ApiVersion(v2.ApiVersion.Number)]
+[ApiVersion(v2.ApiVersion.Number, Deprecated = v2.ApiVersion.IsDeprecated)]
 [Route("api/v{version:apiVersion}/[namespace]")]
 public class List : EndpointWithoutRequest
 {

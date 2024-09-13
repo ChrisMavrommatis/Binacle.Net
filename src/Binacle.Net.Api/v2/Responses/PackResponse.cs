@@ -65,12 +65,36 @@ public class PackResponse : v2.Models.ResponseBase<List<v2.Models.BinPackResult>
 			});
 		}
 
-		// TODO: maybe refactor this result type
+		var resultStatus = results.Any(x => 
+			x.Result == Models.BinPackResultStatus.FullyPacked 
+			|| x.Result == Models.BinPackResultStatus.PartiallyPacked
+		) ? Models.ResultType.Success : Models.ResultType.Failure;
+
 		return new PackResponse()
 		{
 			Data = results,
-			Result = Models.ResultType.Success
+			Result = resultStatus
 		};
+	}
+
+
+	internal static PackResponse Create(List<v2.Models.BinPackResult> results)
+	{
+		return new PackResponse
+		{
+			Data = results,
+			Result = CalculateResultType(results)
+		};
+	}
+
+	private static Models.ResultType CalculateResultType(List<v2.Models.BinPackResult> results)
+	{
+		var isSuccess = results.Any(x =>
+			x.Result == Models.BinPackResultStatus.FullyPacked
+			|| x.Result == Models.BinPackResultStatus.PartiallyPacked
+		);
+		
+		return isSuccess ? Models.ResultType.Success : Models.ResultType.Failure;
 	}
 }
 

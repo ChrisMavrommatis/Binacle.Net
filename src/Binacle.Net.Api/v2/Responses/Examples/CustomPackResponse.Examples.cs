@@ -7,9 +7,8 @@ internal class CustomPackResponseExamples : MultipleSwaggerExamplesProvider<Pack
 {
 	public override IEnumerable<ISwaggerExample<PackResponse>> GetExamples()
 	{
-		yield return SwaggerExample.Create("fullypackedresponse", "Fully Packed Response", "Fully Packed Response example.", new PackResponse
-		{
-			Data = [
+		yield return SwaggerExample.Create("fullypackedresponse", "Fully Packed Response", "Fully Packed Response example.", PackResponse.Create(
+			[
 				new v2.Models.BinPackResult()
 				{
 					Bin = new v2.Models.Bin  { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
@@ -27,7 +26,7 @@ internal class CustomPackResponseExamples : MultipleSwaggerExamplesProvider<Pack
 							Dimensions = new Models.Dimensions(2, 5, 10),
 							Coordinates = new Models.Coordinates(0, 12, 0)
 						},
-						
+
 					],
 					UnpackedItems = [],
 					PackedItemsVolumePercentage = 100.00m,
@@ -56,13 +55,12 @@ internal class CustomPackResponseExamples : MultipleSwaggerExamplesProvider<Pack
 					PackedItemsVolumePercentage = 100.00m,
 					PackedBinVolumePercentage = 3.96m,
 				}
-			],
-			Result = Models.ResultType.Success
-		});
+			]
+		));
 
-		yield return SwaggerExample.Create("partiallypackedresponse", "Partially Packed Response", "Partially Packed Response example.", new PackResponse
-		{
-			Data = [
+
+		yield return SwaggerExample.Create("partiallypackedresponse", "Partially Packed Response", "Partially Packed Response example.", PackResponse.Create(
+			[
 				new v2.Models.BinPackResult()
 				{
 					Bin = new v2.Models.Bin { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
@@ -85,9 +83,7 @@ internal class CustomPackResponseExamples : MultipleSwaggerExamplesProvider<Pack
 					PackedItemsVolumePercentage = 2.70m,
 					PackedBinVolumePercentage = 0.42m,
 				}
-			],
-			Result = Models.ResultType.Success
-		});
-
+			]
+		));
 	}
 }

@@ -27,7 +27,6 @@ public class QueryResponse : v1.Models.ResponseBase
 			response.Result = v1.Models.ResultType.Failure;
 			response.Message = $"Failed to find bin.";
 			//response.Message = $"Failed to find bin. Reason: {operationResult.Reason.ToString()}";
-		
 		}
 		else
 		{

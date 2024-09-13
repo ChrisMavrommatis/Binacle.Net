@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Lib;
+﻿using Binacle.Net.Api.ExtensionMethods;
+using Binacle.Net.Lib;
 using Binacle.Net.Lib.Abstractions.Models;
 using ChrisMavrommatis.Logging;
 
@@ -36,8 +37,8 @@ internal class LockerService : ILockerService
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
 		using var timedOperation = this.logger.BeginTimedOperation("Fit Bins");
-
-		timedOperation.WithNamedState("Items", items.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width} q{x.Quantity}"));
+		this.logger.EnrichStateWith("Items", items);
+		
 		timedOperation.WithNamedState("Bins", bins.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width}"));
 
 		var results = new Dictionary<string, Lib.Fitting.Models.FittingResult>();
@@ -66,7 +67,7 @@ internal class LockerService : ILockerService
 			}
 		}
 
-		timedOperation.WithNamedState("Results", results);
+		timedOperation.WithNamedState("Results", results.);
 		return results;
 
 
@@ -104,7 +105,7 @@ internal class LockerService : ILockerService
 	{
 		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
 
-		timedOperation.WithNamedState("Items", items.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width} q{x.Quantity}"));
+		timedOperation.WithNamedState("Items", items.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width}-{x.Quantity}"));
 		timedOperation.WithNamedState("Bins", bins.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width}"));
 
 		var results = new Dictionary<string, Lib.Packing.Models.PackingResult>();

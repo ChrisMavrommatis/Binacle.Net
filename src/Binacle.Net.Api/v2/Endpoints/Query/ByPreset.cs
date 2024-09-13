@@ -14,7 +14,7 @@ namespace Binacle.Net.Api.v2.Endpoints.Query;
 /// <summary>
 /// Query by Preset endpoint
 /// </summary>
-[ApiVersion(v2.ApiVersion.Number)]
+[ApiVersion(v2.ApiVersion.Number, Deprecated = v2.ApiVersion.IsDeprecated)]
 [Route("api/v{version:apiVersion}/[namespace]")]
 public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBody>
 {

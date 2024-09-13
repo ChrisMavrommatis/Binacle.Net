@@ -3,9 +3,15 @@ using ChrisMavrommatis.Swashbuckle;
 
 namespace Binacle.Net.Api.v1;
 
-internal static class ApiVersion
+internal class ApiVersion : IApiVersion
 {
-	internal const string Number = "1.0";
+	public const string Number = "1.0";
+	public const bool IsDeprecated = true;
+	public const bool IsExperimental = false;
+
+	public int MajorNumber => int.Parse(Number.Split('.')[0]);
+	public bool Deprecated => IsDeprecated;
+	public bool Experimental => IsExperimental;
 
 	internal static Dictionary<Type, Type[]> _polymorphicTypeMappings = new()
 	{
@@ -17,7 +23,7 @@ internal static class ApiVersion
 		}
 	};
 
-	internal static void ConfigureSwaggerOptions(SwaggerGenOptions options)
+	public void ConfigureSwaggerOptions(SwaggerGenOptions options)
 	{
 		options.AddPolymorphicTypeMappings(_polymorphicTypeMappings);
 	}

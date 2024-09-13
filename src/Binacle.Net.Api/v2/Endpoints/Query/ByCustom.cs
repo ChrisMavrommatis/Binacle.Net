@@ -13,7 +13,7 @@ namespace Binacle.Net.Api.v2.Endpoints.Query;
 /// <summary>
 /// Query by Custom endpoint
 /// </summary>
-[ApiVersion(v2.ApiVersion.Number)]
+[ApiVersion(v2.ApiVersion.Number, Deprecated = v2.ApiVersion.IsDeprecated)]
 [Route("api/v{version:apiVersion}/[namespace]")]
 public class ByCustom : EndpointWithRequest<v2.Requests.CustomQueryRequestWithBody>
 {

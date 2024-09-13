@@ -46,7 +46,6 @@ public class QueryResponse : v2.Models.ResponseBase<List<v2.Models.BinFitResult>
 				continue;
 			}
 
-
 			results.Add(new v2.Models.BinFitResult
 			{
 				Bin = new v2.Models.Bin
@@ -72,11 +71,24 @@ public class QueryResponse : v2.Models.ResponseBase<List<v2.Models.BinFitResult>
 			});
 		}
 
-		// TODO: maybe refactor this result type
-		return new QueryResponse() 
-		{ 
-			Data = results, 
-			Result = Models.ResultType.Success
+		return new QueryResponse()
+		{
+			Data = results,
+			Result = CalculateResultType(results)
 		};
+	}
+
+	internal static QueryResponse Create(List<v2.Models.BinFitResult> results)
+	{
+		return new QueryResponse
+		{
+			Data = results,
+			Result = CalculateResultType(results)
+		};
+	}
+
+	private static Models.ResultType CalculateResultType(List<v2.Models.BinFitResult> results)
+	{
+		return results.Any(x => x.Result == Models.BinFitResultStatus.AllItemsFit) ? Models.ResultType.Success : Models.ResultType.Failure;
 	}
 }

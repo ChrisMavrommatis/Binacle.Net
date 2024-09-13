@@ -9,9 +9,8 @@ public class CustomQueryResponseExamples : MultipleSwaggerExamplesProvider<Query
 {
 	public override IEnumerable<ISwaggerExample<QueryResponse>> GetExamples()
 	{
-		yield return SwaggerExample.Create("fullresponse", "Full Response", "Response example when you opt in to report all bins and all items.", new QueryResponse
-		{
-			Data = [
+		yield return SwaggerExample.Create("fullresponse", "Full Response", "Response example when you opt in to report all bins and all items.", QueryResponse.Create(
+			[
 				new v2.Models.BinFitResult()
 				{
 					Bin = new v2.Models.Bin  { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
@@ -52,13 +51,12 @@ public class CustomQueryResponseExamples : MultipleSwaggerExamplesProvider<Query
 					FittedItemsVolumePercentage = 100.00m,
 					FittedBinVolumePercentage = 4.17m,
 				}
-			],
-			Result = Models.ResultType.Success
-		});
+			]
+		));
 
-		yield return SwaggerExample.Create("itemsomittedresponse", "Items Omitted Response", "Response example when you omit the items.", new QueryResponse
-		{
-			Data = [
+
+		yield return SwaggerExample.Create("itemsomittedresponse", "Items Omitted Response", "Response example when you omit the items.", QueryResponse.Create(
+			[
 				new v2.Models.BinFitResult()
 				{
 					Bin = new v2.Models.Bin  { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
@@ -73,13 +71,12 @@ public class CustomQueryResponseExamples : MultipleSwaggerExamplesProvider<Query
 					FittedItemsVolumePercentage = 100.00m,
 					FittedBinVolumePercentage = 4.17m,
 				}
-			],
-			Result = Models.ResultType.Success
-		});
+			]
+		));
 
-		yield return SwaggerExample.Create("smallestbinresponse", "Smallest Bin Response", "Response example when you request to report only the smallest bin.", new QueryResponse
-		{
-			Data = [
+
+		yield return SwaggerExample.Create("smallestbinresponse", "Smallest Bin Response", "Response example when you request to report only the smallest bin.", QueryResponse.Create(
+			[
 				new v2.Models.BinFitResult()
 				{
 					Bin = new v2.Models.Bin  { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
@@ -87,25 +84,25 @@ public class CustomQueryResponseExamples : MultipleSwaggerExamplesProvider<Query
 					FittedItemsVolumePercentage = 100.00m,
 					FittedBinVolumePercentage = 8.33m,
 				}
-			],
-			Result = Models.ResultType.Success
-		});
+			]
+		));
 
-		yield return SwaggerExample.Create("binnotfitresponse", "Bin Not Fit Response", "Response example when a bin can't accommodate all the items", new QueryResponse
-		{
-			Data = [
+
+
+		yield return SwaggerExample.Create("binnotfitresponse", "Bin Not Fit Response", "Response example when a bin can't accommodate all the items", QueryResponse.Create(
+			[
 				new v2.Models.BinFitResult()
 				{
-					Bin = new v2.Models.Bin  { ID = "custom_small_bin_1", Length = 20, Width = 20, Height = 15 },
+					Bin = new v2.Models.Bin { ID = "custom_small_bin_1", Length = 20, Width = 20, Height = 15 },
 					FittedItems = [
-						new v2.Models.ResultBox
+					   new v2.Models.ResultBox
 						{
 							ID = "box_2",
 							Dimensions = new Models.Dimensions(12, 15, 10)
 						}
-					],
+				   ],
 					UnfittedItems = [
-						new v2.Models.ResultBox
+					   new v2.Models.ResultBox
 						{
 							ID = "box_1",
 							Dimensions = new Models.Dimensions(2, 5, 10)
@@ -120,13 +117,12 @@ public class CustomQueryResponseExamples : MultipleSwaggerExamplesProvider<Query
 					FittedItemsVolumePercentage = 48.65m,
 					FittedBinVolumePercentage = 30.00m,
 				}
-			],
-			Result = Models.ResultType.Success
-		});
+			]
+		));
 
-		yield return SwaggerExample.Create("earlyfailresponse", "Early fail Response", "Response example when a bin can't accommodate all the items due to an early fail check", new QueryResponse
-		{
-			Data = [
+
+		yield return SwaggerExample.Create("earlyfailresponse", "Early fail Response", "Response example when a bin can't accommodate all the items due to an early fail check", QueryResponse.Create(
+			[
 				new v2.Models.BinFitResult()
 				{
 					Bin = new v2.Models.Bin  { ID = "custom_small_bin_1", Length = 10, Width = 10, Height = 10 },
@@ -152,9 +148,9 @@ public class CustomQueryResponseExamples : MultipleSwaggerExamplesProvider<Query
 					FittedItemsVolumePercentage = 0.00m,
 					FittedBinVolumePercentage = 0.00m,
 				}
-			],
-			Result = Models.ResultType.Success
-		});
+			]
+		));
+
 	}
 }
 
