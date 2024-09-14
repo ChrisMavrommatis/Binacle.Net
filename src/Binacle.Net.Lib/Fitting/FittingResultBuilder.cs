@@ -105,7 +105,6 @@ internal class FittingResultBuilder<TBin, TItem>
 
 		result.FittedItemsVolumePercentage = Math.Round((decimal)fittedItemsVolume / totalItemsVolume * 100, 2);
 
-		// TODO Maybe refactor the reason / result
 		result.Status = unfittedItemsCount == 0 && fittedItemsCount == this.totalItems ? FittingResultStatus.Success : FittingResultStatus.Fail;
 		if (this.reason.HasValue)
 		{

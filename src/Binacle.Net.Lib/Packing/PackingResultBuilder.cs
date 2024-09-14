@@ -121,6 +121,11 @@ internal class PackingResultBuilder<TBin, TItem>
 
 		result.PackedItemsVolumePercentage = Math.Round((decimal)packedItemsVolume / totalItemsVolume * 100, 2);
 
+		if(this.forcedStatus.HasValue)
+		{ 
+			return result; 
+		}
+
 		if (packedItemsCount == this.totalItems)
 		{
 			result.Status = PackingResultStatus.FullyPacked;

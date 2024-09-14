@@ -19,10 +19,9 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 		private Coordinates? coordinates;
 
 
-		internal Item(TItem item, int order, int volume, int longestDimension)
+		internal Item(TItem item, int volume, int longestDimension)
 		{
 			this.originalItem = item;
-			this.Order = order;
 			this.currentOrientation = 0;
 			this.Length = item.Length;
 			this.Width = item.Width;
@@ -42,7 +41,6 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 				this.originalItem.ID = value;
 			}
 		}
-		public int Order { get; }
 		public int Volume { get; }
 		public int Length { get; private set; }
 		public int Width { get; private set; }

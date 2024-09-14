@@ -14,6 +14,11 @@ internal class CustomQueryRequestValidator : AbstractValidator<CustomQueryReques
 		   .NotEmpty()
 		   .WithMessage(Constants.Errors.Messages.IsRequired);
 
+		// Each Bin Id must be unique
+		RuleFor(x => x.Bins)
+			.Must(x => x.Select(y => y.ID).Distinct().Count() == x.Count)
+			.WithMessage(Constants.Errors.Messages.IdMustBeUnique);
+
 		RuleForEach(x => x.Bins).ChildRules(binValidator =>
 		{
 			binValidator.Include(new ItemWithDimensionsValidator());
@@ -24,6 +29,11 @@ internal class CustomQueryRequestValidator : AbstractValidator<CustomQueryReques
 			.NotNull()
 			.NotEmpty()
 			.WithMessage(Constants.Errors.Messages.IsRequired);
+
+		// Each ItemID must be unique
+		RuleFor(x => x.Items)
+			.Must(x => x.Select(y => y.ID).Distinct().Count() == x.Count)
+			.WithMessage(Constants.Errors.Messages.IdMustBeUnique);
 
 		RuleForEach(x => x.Items).ChildRules(itemValidator =>
 		{

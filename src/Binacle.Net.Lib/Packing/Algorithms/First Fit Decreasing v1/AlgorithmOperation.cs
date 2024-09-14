@@ -31,7 +31,7 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem>
 
 		List<SpaceVolume> availableSpace = [new SpaceVolume(this.bin, Coordinates.Zero)];
 
-		var orderedItems = this.items.OrderByDescending(x => x.Volume).ThenBy(x => x.Order);
+		var orderedItems = this.items.OrderByDescending(x => x.Volume);
 		foreach (var item in orderedItems)
 		{
 			for (var i = 0; i < Item.TotalOrientations; i++)

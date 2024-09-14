@@ -3,9 +3,10 @@ using Binacle.Net.Lib.Packing.Models;
 
 namespace Binacle.Net.Api.ExtensionMethods;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 public static class DimensionExtensions
 {
-
 	public static string FormatDimensions<T>(this T item)
 		where T : IWithReadOnlyDimensions
 	{
@@ -25,11 +26,6 @@ public static class DimensionExtensions
 		where T : IWithID, IWithReadOnlyDimensions
 	{
 		return items.ToDictionary((x) => $"{x.ID}", x => (object)x.FormatDimensions());
-	}
-
-	public static Dictionary<string, object> ToItemDimensionDictionary(this IEnumerable<ResultItem> items)
-	{
-		return items.ToDictionary(x => x.ID, x => (object)x.FormatDimensionsAndCoordinates());
 	}
 
 	public static string FormatDimensionsAndCoordinates(this ResultItem item)

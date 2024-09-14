@@ -39,6 +39,7 @@ internal class LockerService : ILockerService
 		using var timedOperation = this.logger.BeginTimedOperation("Fit Bins");
 		this.logger.EnrichStateWith("Items", items);
 		this.logger.EnrichStateWith("Bins", bins);
+		this.logger.EnrichStateWithParameters(parameters);
 
 		var results = new Dictionary<string, Lib.Fitting.Models.FittingResult>();
 
@@ -66,32 +67,10 @@ internal class LockerService : ILockerService
 			}
 		}
 
-		this.logger.EnritchStateWithResults(results);
+		this.logger.EnrichStateWithResults(results);
 		return results;
 
 
-		// TODO Fix logging
-		//var resultState = new Dictionary<string, object>()
-		//{
-		//	{ "Status", operationResult.Status.ToString() }
-		//};
-
-		//if (operationResult.FoundBin is not null)
-		//{
-		//	var foundBin = new Dictionary<string, string>()
-		//	{
-		//		{operationResult.FoundBin.ID, $"{operationResult.FoundBin.Height}x{operationResult.FoundBin.Length}x{operationResult.FoundBin.Width}" }
-		//	};
-		//	resultState.Add("FoundBin", foundBin);
-		//}
-
-		//if(operationResult.Reason.HasValue) 
-		//{
-		//	resultState.Add("Reason", operationResult.Reason.Value.ToString());
-		//}
-
-		//timedOperation.WithNamedState("Result", resultState);
-		//return operationResult;
 	}
 
 	public Dictionary<string, Lib.Packing.Models.PackingResult> PackBins<TBin, TBox>(
@@ -106,6 +85,7 @@ internal class LockerService : ILockerService
 
 		this.logger.EnrichStateWith("Items", items);
 		this.logger.EnrichStateWith("Bins", bins);
+		this.logger.EnrichStateWithParameters(parameters);
 
 		var results = new Dictionary<string, Lib.Packing.Models.PackingResult>();
 
@@ -118,10 +98,22 @@ internal class LockerService : ILockerService
 				OptInToEarlyFails = parameters.OptInToEarlyFails,
 				ReportPackedItemsOnlyWhenFullyPacked = parameters.ReportPackedItemsOnlyWhenFullyPacked
 			});
-			results.Add(bin.ID, result);
+			if (parameters.StopAtSmallestBin)
+			{
+				if (result.Status == Lib.Packing.Models.PackingResultStatus.FullyPacked)
+				{
+					results.Add(bin.ID, result);
+					break;
+				}
+
+			}
+			else
+			{
+				results.Add(bin.ID, result);
+			}
 		}
-		
-		//timedOperation.WithNamedState("Results", results);
+
+		this.logger.EnrichStateWithResults(results);
 		return results;
 	}
 	

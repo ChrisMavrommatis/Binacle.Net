@@ -12,6 +12,11 @@ internal class PresetPackRequestValidator : AbstractValidator<PresetPackRequest>
 			.NotEmpty()
 			.WithMessage(Constants.Errors.Messages.IsRequired);
 
+		// Each ItemID must be unique
+		RuleFor(x => x.Items)
+			.Must(x => x.Select(y => y.ID).Distinct().Count() == x.Count)
+			.WithMessage(Constants.Errors.Messages.IdMustBeUnique);
+
 		RuleForEach(x => x.Items).ChildRules(itemValidator =>
 		{
 			itemValidator.Include(new ItemWithQuantityValidator());

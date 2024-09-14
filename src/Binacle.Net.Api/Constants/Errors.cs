@@ -13,6 +13,7 @@ internal static class Categories
 internal static class Messages
 {
 	public const string IsRequired = "Is required.";
+	public const string IdMustBeUnique = "Each id must only appear once.";
 	public const string MalformedRequestBody = "Malformed request body.";
 	public const string GreaterThanZero = "Must be greater than 0.";
 

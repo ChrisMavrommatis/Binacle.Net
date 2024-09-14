@@ -51,7 +51,7 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 			
 			for (var quantity = 1; quantity <= incomingItem.Quantity; quantity++)
 			{
-				this.items.Add(new Item(incomingItem, quantity, incomingItemVolume, incomingItemLongestDimension));
+				this.items.Add(new Item(incomingItem, incomingItemVolume, incomingItemLongestDimension));
 				this.totalItemsVolume += incomingItemVolume;
 			}
 		}
