@@ -2,6 +2,7 @@
 
 Part of V3 experiment after refactoring the algorithms
 
+![2024-09-15_v3_AfterRefactor](https://github.com/user-attachments/assets/e9a500a2-31b3-4eec-985b-11f489527d20)
 
 
 Chart made with https://chartbenchmark.net/
