@@ -5,17 +5,23 @@ using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests;
+namespace Binacle.Net.Api.IntegrationTests.v2;
 
 
 [Collection(BinacleApiCollection.Name)]
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
-public class QueryByPreset
+public class QueryByPresetBehavior
 {
 	private readonly BinacleApiFactory sut;
 	private readonly IOptions<BinPresetOptions> presetOptions;
-	private readonly Api.v1.Requests.PresetQueryRequest sampleRequest = new()
+	private readonly Api.v2.Requests.PresetQueryRequest sampleRequest = new()
 	{
+		Parameters = new()
+		{
+			FindSmallestBinOnly = false,
+			ReportFittedItems = false,
+			ReportUnfittedItems = false
+		},
 		Items = new()
 		{
 			new (){ ID = "box_1", Quantity = 2, Length = 2, Width = 5, Height = 10 },
@@ -24,9 +30,9 @@ public class QueryByPreset
 		}
 	};
 
-	private const string routePath = "/api/v1/query/by-preset/{preset}";
+	private const string routePath = "/api/v2/query/by-preset/{preset}";
 
-	public QueryByPreset(BinacleApiFactory sut)
+	public QueryByPresetBehavior(BinacleApiFactory sut)
 	{
 		this.sut = sut;
 		presetOptions = this.sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
@@ -60,6 +66,19 @@ public class QueryByPreset
 		var urlPath = routePath.Replace("{preset}", presetOptions.Value.Presets.Keys.First());
 
 		var result = await sut.Client.PostAsJsonAsync(urlPath, sampleRequest, sut.JsonSerializerOptions);
+
+		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Same Id On Items Returns 400 BadRequest")]
+	public async Task Post_WithSameIdOnItems_Returns400BadRequest()
+	{
+		foreach (var bin in sampleRequest.Items)
+		{
+			bin.ID = "box_1";
+		}
+
+		var result = await sut.Client.PostAsJsonAsync(routePath, sampleRequest, sut.JsonSerializerOptions);
 
 		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
 	}

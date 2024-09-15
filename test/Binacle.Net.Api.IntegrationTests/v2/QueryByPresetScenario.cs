@@ -1,9 +1,12 @@
-﻿using Binacle.Net.TestsKernel.Models;
+﻿using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.TestsKernel.Models;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests.v1;
+namespace Binacle.Net.Api.IntegrationTests.v2;
 
 [Collection(BinacleApiCollection.Name)]
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
@@ -16,7 +19,7 @@ public class QueryByPresetScenario
 		this.sut = sut;
 	}
 
-	private const string routePath = "/api/v1/query/by-preset/{preset}";
+	private const string routePath = "/api/v2/query/by-preset/{preset}";
 
 	[Theory]
 	[ClassData(typeof(Data.Providers.BinaryDecision.BaselineScenarioTestDataProvider))]
@@ -35,14 +38,22 @@ public class QueryByPresetScenario
 
 	private async Task RunBinaryDecisionScenarioTest(Scenario scenario)
 	{
+		var presets = sut.Services.GetService<IOptions<BinPresetOptions>>();
+
 		var binCollection = scenario.GetBinCollectionKey();
 		var expectedBin = scenario.GetTestBin(sut.BinCollectionsTestDataProvider);
-
+		
 		var urlPath = routePath.Replace("{preset}", binCollection);
 
-		var request = new Api.v1.Requests.PresetQueryRequest
+		var request = new Api.v2.Requests.PresetQueryRequest
 		{
-			Items = scenario.Items.Select(x => new Api.v1.Models.Box
+			Parameters = new()
+			{
+				FindSmallestBinOnly = false,
+				ReportFittedItems = false,
+				ReportUnfittedItems = false,
+			},
+			Items = scenario.Items.Select(x => new Api.v2.Models.Box
 			{
 				ID = x.ID,
 				Quantity = x.Quantity,
@@ -56,20 +67,29 @@ public class QueryByPresetScenario
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-		var result = await response.Content.ReadFromJsonAsync<Api.v1.Responses.QueryResponse>();
+		var queryResponse = await response.Content.ReadFromJsonAsync<Api.v2.Responses.QueryResponse>(sut.JsonSerializerOptions);
 
+		queryResponse.Should().NotBeNull();
+		queryResponse!.Data.Should()
+			.NotBeNull()
+			.And.NotBeEmpty()
+			.And.HaveCount(presets!.Value.Presets.Count);
+		var result = queryResponse.Data.FirstOrDefault(x => x.Bin.ID == expectedBin.ID);
 		result.Should().NotBeNull();
+		result!.Bin.Should().NotBeNull();
+		result.Bin.ID.Should().Be(expectedBin.ID);
+
 		if (scenario.Fits)
 		{
-			result!.Result.Should().Be(Api.v1.Models.ResultType.Success);
-			result.Bin.Should().NotBeNull();
-			result.Bin!.ID.Should().Be(expectedBin.ID);
+			// Can't guarantee it as multiple bins are evaluated
+			// queryResponse!.Result.Should().Be(Api.v2.Models.ResultType.Success);
+			result.Result.Should().Be(Api.v2.Models.BinFitResultStatus.AllItemsFit);
 		}
 		else
 		{
-			result!.Result.Should().Be(Api.v1.Models.ResultType.Failure);
-			result.Bin.Should().BeNull();
+			// Can't guarantee it as multiple bins are evaluated
+			// queryResponse!.Result.Should().Be(Api.v2.Models.ResultType.Failure);
+			result.Result.Should().NotBe(Api.v2.Models.BinFitResultStatus.AllItemsFit);
 		}
 	}
 }
-

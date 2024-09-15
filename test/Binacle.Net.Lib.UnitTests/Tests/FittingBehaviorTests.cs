@@ -1,41 +1,8 @@
-﻿using Binacle.Net.Lib.Abstractions.Algorithms;
-using Binacle.Net.Lib.Abstractions.Fitting;
+﻿using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.TestsKernel.Models;
 using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests;
-
-[Trait("Behavioral Tests", "Ensures operations behave as expected")]
-public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
-{
-	private CommonTestingFixture Fixture { get; }
-	public TestBin TestBin { get; }
-	public Func<TestBin, List<TestItem>, IPackingAlgorithm>[] TestedAlgorithms { get; }
-
-	public PackingBehaviorTests(CommonTestingFixture fixture)
-	{
-		this.Fixture = fixture;
-		this.TestBin = new TestBin("10x10x10", new Dimensions(10, 10, 10));
-		this.TestedAlgorithms = [AlgorithmFactories.Packing_FFD_v1];
-
-	}
-
-	public void sda()
-	{
-		var expectedFittedItem = new TestItem("5x5x5", new Dimensions(5, 5, 5), 4);
-		var testItems = new List<TestItem>() { expectedFittedItem };
-
-		var parameters = new Packing.Models.PackingParameters { OptInToEarlyFails = false, NeverReportUnpackedItems = false, ReportPackedItemsOnlyWhenFullyPacked = false };
-		foreach (var algorithmFactory in this.TestedAlgorithms)
-		{
-			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
-			var result = algorithmInstance.Execute(parameters);
-
-			
-		}
-	}
-}
-
 
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
@@ -52,6 +19,11 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 
 	}
 
+	#region Parameters / Successfull Result
+	// report | unfitted Items
+	//    0   |    always 0
+	//    1   |    always 0
+
 	[Fact(DisplayName = "On Success, With Report Fitted Items, Result Reports Fitted Items")]
 	public void OnSuccess_WithReportFittedItems_ResultReportsFittedItems()
 	{
@@ -63,18 +35,16 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
-
+			
+			// Result
 			Assert.Equal(Fitting.Models.FittingResultStatus.Success, result.Status);
-			Assert.NotNull(result.FittedItems);
-			Assert.NotEmpty(result.FittedItems);
-			Assert.Equal(expectedFittedItem.Quantity, result.FittedItems!.Count);
-			foreach(var fittedItem in result.FittedItems)
-			{
-				Assert.Equal(expectedFittedItem.ID, fittedItem.ID);
-				Assert.Equal(expectedFittedItem.Length, fittedItem.Length);
-				Assert.Equal(expectedFittedItem.Width, fittedItem.Width);
-				Assert.Equal(expectedFittedItem.Height, fittedItem.Height);
-			}
+			Assert.Null(result.Reason);
+
+			// Fitted Items
+			this.AssertItemsAreCorrect(expectedFittedItem, result.FittedItems);
+
+			// Unfitted Items
+			this.AssertItemsDontExist(result.UnfittedItems);
 		}
 	}
 
@@ -90,9 +60,50 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
 
+			// Result
 			Assert.Equal(Fitting.Models.FittingResultStatus.Success, result.Status);
-			// null or empty
-			Assert.True(result.FittedItems is null || result.FittedItems.Count == 0);
+			Assert.Null(result.Reason);
+
+			// Fitted Items
+			this.AssertItemsDontExist(result.FittedItems);
+			
+			// Unfitted Items
+			this.AssertItemsDontExist(result.UnfittedItems);
+		}
+	}
+
+	#endregion
+
+	#region Parameters / Failed Result
+	// Report Fitted | Report Unfitted
+	//       0		 |        0
+	//       0		 |        1
+	//       1		 |        0
+	//       1		 |        1
+
+	[Fact(DisplayName = "On Fail, Without Report Fitted And Unfitted Items, Result Does Not Report Either")]
+	public void OnFail_WithoutReportFittedAndUnfittedItems_ResultDoesNotReportEither()
+	{
+		var expectedFittedItem = new TestItem("10x10x5", new Dimensions(10, 10, 5), 1);
+		var expectedUnfittedItem = new TestItem("6x6x6", new Dimensions(6, 6, 6), 1);
+		var testItems = new List<TestItem>() { expectedFittedItem, expectedUnfittedItem };
+
+		var parameters = new Fitting.Models.FittingParameters { ReportFittedItems = false, ReportUnfittedItems = false };
+		foreach (var algorithmFactory in this.TestedAlgorithms)
+		{
+			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
+			var result = algorithmInstance.Execute(parameters);
+			
+			// Result
+			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
+			Assert.NotNull(result.Reason);
+			Assert.Equal(Fitting.Models.FittingFailedResultReason.DidNotFit, result.Reason);
+
+			// Fitted Items
+			this.AssertItemsDontExist(result.FittedItems);
+
+			// Unfitted Items
+			this.AssertItemsDontExist(result.UnfittedItems);
 		}
 	}
 
@@ -109,17 +120,16 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
 
+			// Result
 			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
-			Assert.NotNull(result.FittedItems);
-			Assert.NotEmpty(result.FittedItems);
-			Assert.Equal(expectedFittedItem.Quantity, result.FittedItems!.Count);
-			foreach (var fittedItem in result.FittedItems)
-			{
-				Assert.Equal(expectedFittedItem.ID, fittedItem.ID);
-				Assert.Equal(expectedFittedItem.Length, fittedItem.Length);
-				Assert.Equal(expectedFittedItem.Width, fittedItem.Width);
-				Assert.Equal(expectedFittedItem.Height, fittedItem.Height);
-			}
+			Assert.NotNull(result.Reason);
+			Assert.Equal(Fitting.Models.FittingFailedResultReason.DidNotFit, result.Reason);
+
+			// Fitted Items
+			this.AssertItemsAreCorrect(expectedFittedItem, result.FittedItems);
+
+			// Unfitted Items
+			this.AssertItemsDontExist(result.UnfittedItems);
 		}
 	}
 
@@ -136,22 +146,21 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
 
+			// Result
 			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
-			Assert.NotNull(result.UnfittedItems);
-			Assert.NotEmpty(result.UnfittedItems);
-			Assert.Equal(expectedUnfittedItem.Quantity, result.UnfittedItems!.Count);
-			foreach (var unfittedItem in result.UnfittedItems)
-			{
-				Assert.Equal(unfittedItem.ID, unfittedItem.ID);
-				Assert.Equal(unfittedItem.Length, unfittedItem.Length);
-				Assert.Equal(unfittedItem.Width, unfittedItem.Width);
-				Assert.Equal(unfittedItem.Height, unfittedItem.Height);
-			}
+			Assert.NotNull(result.Reason);
+			Assert.Equal(Fitting.Models.FittingFailedResultReason.DidNotFit, result.Reason);
+
+			// Fitted Items
+			this.AssertItemsDontExist(result.FittedItems);
+
+			// Unfitted Items
+			this.AssertItemsAreCorrect(expectedUnfittedItem, result.UnfittedItems);
 		}
 	}
 
-	[Fact(DisplayName = "On Fail, With Report Both Fitted And Unfitted Items, Result Reports Both")]
-	public void OnFail_WithReportBothFittedAndUnfittedItems_ResultReportsBoth()
+	[Fact(DisplayName = "On Fail, With Report Fitted And Unfitted Items, Result Reports Both")]
+	public void OnFail_WithReportFittedAndUnfittedItems_ResultReportsBoth()
 	{
 		var expectedFittedItem = new TestItem("10x10x5", new Dimensions(10, 10, 5), 1);
 		var expectedUnfittedItem = new TestItem("6x6x6", new Dimensions(6, 6, 6), 1);
@@ -163,30 +172,73 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
 
+			// Result
 			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
-			Assert.NotNull(result.FittedItems);
-			Assert.NotEmpty(result.FittedItems);
-			Assert.NotNull(result.UnfittedItems);
-			Assert.NotEmpty(result.UnfittedItems);
-			Assert.Equal(expectedFittedItem.Quantity, result.FittedItems!.Count);
-			Assert.Equal(expectedUnfittedItem.Quantity, result.UnfittedItems!.Count);
+			Assert.NotNull(result.Reason);
+			Assert.Equal(Fitting.Models.FittingFailedResultReason.DidNotFit, result.Reason);
 
-			foreach (var fittedItem in result.FittedItems)
-			{
-				Assert.Equal(expectedFittedItem.ID, fittedItem.ID);
-				Assert.Equal(expectedFittedItem.Length, fittedItem.Length);
-				Assert.Equal(expectedFittedItem.Width, fittedItem.Width);
-				Assert.Equal(expectedFittedItem.Height, fittedItem.Height);
-			}
-			foreach (var unfittedItem in result.UnfittedItems)
-			{
-				Assert.Equal(expectedUnfittedItem.ID, unfittedItem.ID);
-				Assert.Equal(expectedUnfittedItem.Length, unfittedItem.Length);
-				Assert.Equal(expectedUnfittedItem.Width, unfittedItem.Width);
-				Assert.Equal(expectedUnfittedItem.Height, unfittedItem.Height);
-			}
+			// Fitted Items
+			this.AssertItemsAreCorrect(expectedFittedItem, result.FittedItems);
+
+			// Unfitted Items
+			this.AssertItemsAreCorrect(expectedUnfittedItem, result.UnfittedItems);
+		}
+	}
+	#endregion
+
+	private void AssertItemsAreCorrect(TestItem expectedItem, List<Fitting.Models.ResultItem>? items)
+	{
+		Assert.NotNull(items);
+		Assert.NotEmpty(items);
+		Assert.Equal(expectedItem.Quantity, items!.Count);
+		foreach (var item in items)
+		{
+			Assert.Equal(expectedItem.ID, item.ID);
 		}
 	}
 
+	private void AssertItemsDontExist(List<Fitting.Models.ResultItem>? items)
+	{
+		Assert.True(items is null || items.Count == 0);
+	}
 
+	#region Early Fails
+	[Fact(DisplayName = "With Long Item, Operation Fails, And Reports Item Dimension Exceeded")]
+	public void WithLongItem_OperationFails_AndReportsItemDimensionExceeded()
+	{
+		var longItem = new TestItem("1x1x15", new Dimensions(1, 1, 15), 1);
+		var testItems = new List<TestItem>() { longItem };
+
+		var parameters = new Fitting.Models.FittingParameters { ReportFittedItems = false, ReportUnfittedItems = false };
+		foreach (var algorithmFactory in this.TestedAlgorithms)
+		{
+			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
+			var result = algorithmInstance.Execute(parameters);
+
+			// Result
+			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
+			Assert.NotNull(result.Reason);
+			Assert.Equal(Fitting.Models.FittingFailedResultReason.ItemDimensionExceeded, result.Reason);
+		}
+	}
+
+	[Fact(DisplayName = "With Items Total Volume Greater Than Bin Volume, Operation Fails, And Reports Total Volume Exceeded")]
+	public void WithItemsTotalVolumeGreaterThanBinVolume_OperationFails_AndReportsTotalVolumeExceeded()
+	{
+		var longItem = new TestItem("5x5x5", new Dimensions(5, 5, 5), 9);
+		var testItems = new List<TestItem>() { longItem };
+
+		var parameters = new Fitting.Models.FittingParameters { ReportFittedItems = false, ReportUnfittedItems = false };
+		foreach (var algorithmFactory in this.TestedAlgorithms)
+		{
+			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
+			var result = algorithmInstance.Execute(parameters);
+
+			// Result
+			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
+			Assert.NotNull(result.Reason);
+			Assert.Equal(Fitting.Models.FittingFailedResultReason.TotalVolumeExceeded, result.Reason);
+		}
+	}
+	#endregion
 }

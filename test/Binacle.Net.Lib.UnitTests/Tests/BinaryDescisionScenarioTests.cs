@@ -19,17 +19,17 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 	// Fitting V1
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecisionBaselineScenarioTestDataProvider))]
+	[ClassData(typeof(Data.Providers.BinaryDecision.BaselineScenarioTestDataProvider))]
 	public void Fitting_Baseline_v1(Scenario scenario)
 		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v1, scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecisionSimpleScenarioTestDataProvider))]
+	[ClassData(typeof(Data.Providers.BinaryDecision.SimpleScenarioTestDataProvider))]
 	public void Fitting_Simple_v1(Scenario scenario)
 		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v1, scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecisionComplexScenarioTestDataProvider))]
+	[ClassData(typeof(Data.Providers.BinaryDecision.ComplexScenarioTestDataProvider))]
 	public void Fitting_Complex_v1(Scenario scenario)
 		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v1, scenario);
 
@@ -38,17 +38,17 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecisionBaselineScenarioTestDataProvider))]
+	[ClassData(typeof(Data.Providers.BinaryDecision.BaselineScenarioTestDataProvider))]
 	public void Fitting_Baseline_v2(Scenario scenario)
 		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v2, scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecisionSimpleScenarioTestDataProvider))]
+	[ClassData(typeof(Data.Providers.BinaryDecision.SimpleScenarioTestDataProvider))]
 	public void Fitting_Simple_v2(Scenario scenario)
 		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v2, scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecisionComplexScenarioTestDataProvider))]
+	[ClassData(typeof(Data.Providers.BinaryDecision.ComplexScenarioTestDataProvider))]
 	public void Fitting_Complex_v2(Scenario scenario)
 		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v2, scenario);
 
@@ -84,18 +84,18 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 	// Packing V1
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecisionBaselineScenarioTestDataProvider))]
+	[ClassData(typeof(Data.Providers.BinaryDecision.BaselineScenarioTestDataProvider))]
 	public void Packing_Baseline_v1(Scenario scenario)
 		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
 
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecisionSimpleScenarioTestDataProvider))]
+	[ClassData(typeof(Data.Providers.BinaryDecision.SimpleScenarioTestDataProvider))]
 	public void Packing_Simple_v1(Scenario scenario)
 		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecisionComplexScenarioTestDataProvider))]
+	[ClassData(typeof(Data.Providers.BinaryDecision.ComplexScenarioTestDataProvider))]
 	public void Packing_Complex_v1(Scenario scenario)
 		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
 

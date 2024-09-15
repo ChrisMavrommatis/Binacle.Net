@@ -6,20 +6,20 @@ using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests.v1;
+namespace Binacle.Net.Api.IntegrationTests.v2;
 
 [Collection(BinacleApiCollection.Name)]
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
-public class QueryByCustomScenario
+public class PackByCustomScenario
 {
 	private readonly BinacleApiFactory sut;
 
-	public QueryByCustomScenario(BinacleApiFactory sut)
+	public PackByCustomScenario(BinacleApiFactory sut)
 	{
 		this.sut = sut;
 	}
 
-	private const string routePath = "/api/v1/query/by-custom";
+	private const string routePath = "/api/v2/pack/by-custom";
 
 	[Theory]
 	[ClassData(typeof(Data.Providers.BinaryDecision.BaselineScenarioTestDataProvider))]
@@ -46,16 +46,25 @@ public class QueryByCustomScenario
 
 		var binPresetOption = presets.Value.Presets[binCollection];
 
-		var request = new Api.v1.Requests.CustomQueryRequest
+		var request = new Api.v2.Requests.CustomPackRequest
 		{
-			Bins = binPresetOption.Bins.Select(x => new Api.v1.Models.Bin
+			Parameters = new()
 			{
-				ID = x.ID,
-				Length = x.Length,
-				Width = x.Width,
-				Height = x.Height
-			}).ToList(),
-			Items = scenario.Items.Select(x => new Api.v1.Models.Box
+				NeverReportUnpackedItems = false,
+				StopAtSmallestBin = false,
+				OptInToEarlyFails = false,
+				ReportPackedItemsOnlyWhenFullyPacked = false
+			},
+			Bins = [
+				new Api.v2.Models.Bin
+				{
+					ID = expectedBin.ID,
+					Length = expectedBin.Length,
+					Width = expectedBin.Width,
+					Height = expectedBin.Height
+				}
+			],
+			Items = scenario.Items.Select(x => new Api.v2.Models.Box
 			{
 				ID = x.ID,
 				Quantity = x.Quantity,
@@ -69,20 +78,27 @@ public class QueryByCustomScenario
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-		var result = await response.Content.ReadFromJsonAsync<Api.v1.Responses.QueryResponse>();
+		var packResponse = await response.Content.ReadFromJsonAsync<Api.v2.Responses.PackResponse>(sut.JsonSerializerOptions);
 
+		packResponse.Should().NotBeNull();
+		packResponse!.Data.Should()
+			.NotBeNull()
+			.And.NotBeEmpty()
+			.And.HaveCount(1);
+		var result = packResponse.Data.FirstOrDefault(x => x.Bin.ID == expectedBin.ID);
 		result.Should().NotBeNull();
+		result!.Bin.Should().NotBeNull();
+		result.Bin.ID.Should().Be(expectedBin.ID);
 
 		if (scenario.Fits)
 		{
-			result!.Result.Should().Be(Api.v1.Models.ResultType.Success);
-			result.Bin.Should().NotBeNull();
-			result.Bin!.ID.Should().Be(expectedBin.ID);
+			packResponse!.Result.Should().Be(Api.v2.Models.ResultType.Success);
+			result.Result.Should().Be(Api.v2.Models.BinPackResultStatus.FullyPacked);
 		}
 		else
 		{
-			result!.Result.Should().Be(Api.v1.Models.ResultType.Failure);
-			result.Bin.Should().BeNull();
+			packResponse!.Result.Should().Be(Api.v2.Models.ResultType.Failure);
+			result.Result.Should().NotBe(Api.v2.Models.BinPackResultStatus.FullyPacked);
 		}
 	}
 }

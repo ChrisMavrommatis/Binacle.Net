@@ -6,14 +6,15 @@ namespace Binacle.Net.Api.v2.Models;
 
 public class BinFitResult
 {
+	[JsonPropertyOrder(0)]
+	[JsonConverter(typeof(JsonStringEnumConverter))]
+	public BinFitResultStatus Result { get; set; }
+
 	public Bin Bin { get; set; }
 
-	[JsonConverter(typeof(JsonStringEnumConverter))]
-	public BinFitResultStatus Result { get; internal set; }
+	public List<ResultBox>? FittedItems { get; set; }
+	public List<ResultBox>? UnfittedItems { get; set; }
 
-	public List<ResultBox>? FittedItems { get; internal set; }
-	public List<ResultBox>? UnfittedItems { get; internal set; }
-
-	public decimal? FittedItemsVolumePercentage { get; internal set; }
-	public decimal? FittedBinVolumePercentage { get; internal set; }
+	public decimal? FittedItemsVolumePercentage { get; set; }
+	public decimal? FittedBinVolumePercentage { get; set; }
 }

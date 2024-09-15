@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Binacle.Net.Api.IntegrationTests;
 
@@ -20,6 +21,7 @@ public class BinacleApiFactory : WebApplicationFactory<Binacle.Net.Api.IApiMarke
 		{
 			PropertyNameCaseInsensitive = true,
 			PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+			Converters = { new JsonStringEnumConverter() },
 		};
 	}
 

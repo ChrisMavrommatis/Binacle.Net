@@ -10,19 +10,17 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests;
-
-// TODO: Add v2 tests
+namespace Binacle.Net.Api.IntegrationTests.v2;
 
 [TestCaseOrderer("Binacle.Net.Api.Tests.TestPriority.TestPriorityOrderer", "Binacle.Net.Api.Tests")]
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
-public class ListPresets : IClassFixture<WebApplicationFactory<IApiMarker>>
+public class ListPresetsBehavior : IClassFixture<WebApplicationFactory<IApiMarker>>
 {
-	private const string routePath = "/api/v1/presets";
+	private const string routePath = "/api/v2/presets";
 	private readonly WebApplicationFactory<IApiMarker> sut;
 	private readonly HttpClient client;
 
-	public ListPresets(WebApplicationFactory<IApiMarker> sut)
+	public ListPresetsBehavior(WebApplicationFactory<IApiMarker> sut)
 	{
 		this.sut = sut
 			.WithWebHostBuilder(builder =>

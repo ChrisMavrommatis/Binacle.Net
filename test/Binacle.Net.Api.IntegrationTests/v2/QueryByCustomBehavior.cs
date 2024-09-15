@@ -2,15 +2,21 @@
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.IntegrationTests;
+namespace Binacle.Net.Api.IntegrationTests.v2;
 
 [Collection(BinacleApiCollection.Name)]
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
-public class QueryByCustom
+public class QueryByCustomBehavior
 {
 	private readonly BinacleApiFactory sut;
-	private readonly Api.v1.Requests.CustomQueryRequest sampleRequest = new()
+	private readonly Api.v2.Requests.CustomQueryRequest sampleRequest = new()
 	{
+		Parameters = new()
+		{
+			FindSmallestBinOnly = false,
+			ReportFittedItems = false,
+			ReportUnfittedItems = false
+		},
 		Bins = new()
 		{
 			new() { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
@@ -25,9 +31,9 @@ public class QueryByCustom
 		}
 	};
 
-	private const string routePath = "/api/v1/query/by-custom";
+	private const string routePath = "/api/v2/query/by-custom";
 
-	public QueryByCustom(BinacleApiFactory sut)
+	public QueryByCustomBehavior(BinacleApiFactory sut)
 	{
 		this.sut = sut;
 	}
@@ -54,6 +60,32 @@ public class QueryByCustom
 	public async Task Post_WithZeroDimensionOnBin_Returns400BadRequest()
 	{
 		sampleRequest.Bins.FirstOrDefault(x => x.ID == "custom_bin_1")!.Length = 0;
+
+		var result = await sut.Client.PostAsJsonAsync(routePath, sampleRequest, sut.JsonSerializerOptions);
+
+		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Same Id On Bins Returns 400 BadRequest")]
+	public async Task Post_WithSameIdOnBins_Returns400BadRequest()
+	{
+		foreach (var bin in sampleRequest.Bins)
+		{
+			bin.ID = "custom_bin_1";
+		}
+
+		var result = await sut.Client.PostAsJsonAsync(routePath, sampleRequest, sut.JsonSerializerOptions);
+
+		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Same Id On Items Returns 400 BadRequest")]
+	public async Task Post_WithSameIdOnItems_Returns400BadRequest()
+	{
+		foreach (var bin in sampleRequest.Items)
+		{
+			bin.ID = "box_1";
+		}
 
 		var result = await sut.Client.PostAsJsonAsync(routePath, sampleRequest, sut.JsonSerializerOptions);
 
