@@ -3,16 +3,13 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
+using System.Text.Json.Nodes;
 
 namespace Binacle.Net.Api.UIModule.Components.Features;
 
-internal partial class BinPacking : ComponentBase
+public partial class BinPacking : ComponentBase
 {
 	protected BinPackingViewModel Model { get; set; }
-
-	internal ApiModels.Responses.PackByCustomResponse? PackResponse { get; set; }
-	internal ApiModels.Responses.ErrorResponse? ErrorResponse { get; private set; }
-
 
 	[Inject]
 	protected IHttpClientFactory HttpClientFactory { get; set; }
@@ -62,26 +59,35 @@ internal partial class BinPacking : ComponentBase
 		await this.BinChangedAsync();
 	}
 
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await this.JsRuntime.InvokeVoidAsync("binacle.initialize", this.Model.Bins);
+		}
+	}
+
+
 	protected async Task GetResultsAsync()
 	{
 		try
 		{
 			var request = new ApiModels.Requests.PackByCustomRequest
 			{
-				Bins = this.Model.Bins.Select(x => new ApiModels.Bin(x)).ToList(),
-				Items = this.Model.Items.Select(x => new ApiModels.Item(x, x.Quantity)).ToList()
+				Bins = this.Model.Bins.Select(x => new ApiModels.Bin(x.ID, x)).ToList(),
+				Items = this.Model.Items.Select(x => new ApiModels.Item(x.ID, x, x.Quantity)).ToList()
 			};
 			var client = this.HttpClientFactory.CreateClient("Self");
 			var response = await client.PostAsJsonAsync("api/v2/pack/by-custom", request);
 			if(response.StatusCode == System.Net.HttpStatusCode.OK)
 			{
-				this.PackResponse = await response.Content.ReadFromJsonAsync<ApiModels.Responses.PackByCustomResponse>();
-				await this.JsRuntime.InvokeVoidAsync("updateResults", this.PackResponse);
+				var results = await response.Content.ReadFromJsonAsync<JsonObject>();
+				await this.JsRuntime.InvokeVoidAsync("binacle.updateResults", results);
 			}
 			else
 			{
-				this.ErrorResponse = await response.Content.ReadFromJsonAsync<ApiModels.Responses.ErrorResponse>();
-				await this.JsRuntime.InvokeVoidAsync("invokeErrors", this.PackResponse);
+				var results = await response.Content.ReadFromJsonAsync<JsonObject>();
+				await this.JsRuntime.InvokeVoidAsync("binacle.invokeErrors", results);
 			}
 		} 
 		catch(Exception ex)

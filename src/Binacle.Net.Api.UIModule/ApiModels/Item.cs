@@ -4,20 +4,20 @@ namespace Binacle.Net.Api.UIModule.ApiModels;
 
 internal class Item : IWithReadOnlyDimensions, IWithQuantity
 {
-	public Item(IWithReadOnlyDimensions item)
-		: this(item.Length, item.Width, item.Height, 1)
+	public Item(string id,IWithReadOnlyDimensions item)
+		: this(id, item.Length, item.Width, item.Height, 1)
 	{
 
 	}
-	public Item(IWithReadOnlyDimensions item, int quantity)
-		: this(item.Length, item.Width, item.Height, quantity)
+	public Item(string id, IWithReadOnlyDimensions item, int quantity)
+		: this(id, item.Length, item.Width, item.Height, quantity)
 	{
 
 	}
 
-	public Item(int length, int width, int height, int quantity)
+	public Item(string id, int length, int width, int height, int quantity)
 	{
-		this.ID = $"{length}x{width}x{height}-q{quantity}";
+		this.ID =id;
 		this.Length = length;
 		this.Width = width;
 		this.Height = height;

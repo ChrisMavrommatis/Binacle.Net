@@ -17,12 +17,19 @@
     <div class="col s12">
         <Card Title="Results" Color="indigo lighten-4">
             <ImageContent>
-                <div id="visualizer-container">
+                <div id="visualizer-container" class="center" style="min-height:150px">
                     <div id="renderer-container"></div>
-                    <span class="card-title grey-text text-darken-3">Visualizer</span>
-                    <a class="btn-floating halfway-fab waves-effect waves-light orange accent-3" href="javascript:void(0)">
-                        <i class="material-icons grey-text text-darken-3">autorenew</i>
-                    </a>
+                    <div class="preloader-wrapper big active m-6" id="loader">
+                        <div class="spinner-layer spinner-blue-only">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div><div class="gap-patch">
+                                <div class="circle"></div>
+                            </div><div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </ImageContent>
             <ChildContent>

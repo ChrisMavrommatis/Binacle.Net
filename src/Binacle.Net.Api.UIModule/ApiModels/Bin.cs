@@ -4,15 +4,15 @@ namespace Binacle.Net.Api.UIModule.ApiModels;
 
 internal class Bin : IWithID, IWithReadOnlyDimensions
 {
-	public Bin(IWithReadOnlyDimensions item)
-		: this(item.Length, item.Width, item.Height)
+	public Bin(string id, IWithReadOnlyDimensions item)
+		: this(id, item.Length, item.Width, item.Height)
 	{
 
 	}
 
-	public Bin(int length, int width, int height)
+	public Bin(string id, int length, int width, int height)
 	{
-		this.ID = $"{length}x{width}x{height}";
+		this.ID = id;
 		this.Length = length;
 		this.Width = width;
 		this.Height = height;

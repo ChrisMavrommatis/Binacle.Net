@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Lib.Abstractions.Models;
+﻿using Binacle.Net.Api.UIModule.ExtensionMethods;
+using Binacle.Net.Lib.Abstractions.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Binacle.Net.Api.UIModule.Models;
@@ -11,6 +12,8 @@ public class Bin : IWithDimensions
 		this.Width = width;
 		this.Height = height;
 	}
+
+	public string ID => this.FormatDimensions();
 
 	[Required]
 	[Range(1, ushort.MaxValue)]

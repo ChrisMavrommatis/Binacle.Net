@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Lib;
+﻿using Binacle.Net.Api.UIModule.ExtensionMethods;
+using Binacle.Net.Lib;
 using Binacle.Net.Lib.Abstractions.Models;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,6 +19,8 @@ public class Item : IWithDimensions, IWithQuantity
 		this.Height = height;
 		this.Quantity = quantity;
 	}
+
+	public string ID => this.FormatDimensions();
 
 	[Required]
 	[Range(1, ushort.MaxValue)]
