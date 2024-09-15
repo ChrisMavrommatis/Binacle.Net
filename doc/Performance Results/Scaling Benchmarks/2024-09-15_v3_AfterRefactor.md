@@ -1,3 +1,14 @@
+# Scaling Benchmark Results: 2024-09-15
+
+Part of V3 experiment after refactoring the algorithms
+
+
+
+Chart made with https://chartbenchmark.net/
+
+----
+
+
 ```
 
 BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.4412/22H2/2022Update) (VirtualBox)
