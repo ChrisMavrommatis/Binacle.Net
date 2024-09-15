@@ -1,5 +1,4 @@
 ﻿using Binacle.Net.Api.UIModule.Models;
-using Binacle.Net.Lib.Packing.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
@@ -7,12 +6,14 @@ using System.Net.Http.Json;
 
 namespace Binacle.Net.Api.UIModule.Components.Features;
 
-public partial class BinPacking : ComponentBase
+internal partial class BinPacking : ComponentBase
 {
 	protected BinPackingViewModel Model { get; set; }
 
-	protected Dictionary<string, PackingResult>? Results { get; set; }
-	public string RawResult { get; private set; }
+	internal ApiModels.Responses.PackByCustomResponse? PackResponse { get; set; }
+	internal ApiModels.Responses.ErrorResponse? ErrorResponse { get; private set; }
+
+
 	[Inject]
 	protected IHttpClientFactory HttpClientFactory { get; set; }
 
@@ -21,7 +22,7 @@ public partial class BinPacking : ComponentBase
 
 	[Inject]
 	protected Services.ISampleDataService SampleDataService { get; set; }
-	
+
 	protected override void OnInitialized()
 	{
 		this.Model = this.SampleDataService.GetInitialSampleData();
@@ -63,16 +64,31 @@ public partial class BinPacking : ComponentBase
 
 	protected async Task GetResultsAsync()
 	{
-		var request = new ApiModels.Requests.PackByCustomRequest
+		try
 		{
-			Bins = this.Model.Bins.Select(x => new ApiModels.Bin(x)).ToList(),
-			Items = this.Model.Items.Select(x => new ApiModels.Item(x, x.Quantity)).ToList()
-		};
-		var client = this.HttpClientFactory.CreateClient("Self");
-		var response = await client.PostAsJsonAsync("api/v2/pack/by-custom", request);
-		response.EnsureSuccessStatusCode();
-		this.RawResult = await response.Content.ReadAsStringAsync();
-		await this.JsRuntime.InvokeVoidAsync("updateResults", this.RawResult);
+			var request = new ApiModels.Requests.PackByCustomRequest
+			{
+				Bins = this.Model.Bins.Select(x => new ApiModels.Bin(x)).ToList(),
+				Items = this.Model.Items.Select(x => new ApiModels.Item(x, x.Quantity)).ToList()
+			};
+			var client = this.HttpClientFactory.CreateClient("Self");
+			var response = await client.PostAsJsonAsync("api/v2/pack/by-custom", request);
+			if(response.StatusCode == System.Net.HttpStatusCode.OK)
+			{
+				this.PackResponse = await response.Content.ReadFromJsonAsync<ApiModels.Responses.PackByCustomResponse>();
+				await this.JsRuntime.InvokeVoidAsync("updateResults", this.PackResponse);
+			}
+			else
+			{
+				this.ErrorResponse = await response.Content.ReadFromJsonAsync<ApiModels.Responses.ErrorResponse>();
+				await this.JsRuntime.InvokeVoidAsync("invokeErrors", this.PackResponse);
+			}
+		} 
+		catch(Exception ex)
+		{
+
+		}
+		
 	}
 
 }

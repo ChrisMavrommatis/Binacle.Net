@@ -2,7 +2,7 @@
 
 namespace Binacle.Net.Api.UIModule.ApiModels;
 
-public class Bin : IWithID, IWithReadOnlyDimensions
+internal class Bin : IWithID, IWithReadOnlyDimensions
 {
 	public Bin(IWithReadOnlyDimensions item)
 		: this(item.Length, item.Width, item.Height)

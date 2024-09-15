@@ -22,6 +22,7 @@ public class ScalingBenchmarks
 	{
 		this.binCollectionsDataProvider = new BinCollectionsTestDataProvider(solutionRootPath: GetSolutionRoot());
 
+		// TODO Fix this
 		this.scenario = BenchmarkScalingTestsDataProvider.Scenarios["Rectangular-Cuboids::Small"];
 	}
 

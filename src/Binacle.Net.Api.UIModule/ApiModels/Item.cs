@@ -2,7 +2,7 @@
 
 namespace Binacle.Net.Api.UIModule.ApiModels;
 
-public class Item : IWithReadOnlyDimensions, IWithQuantity
+internal class Item : IWithReadOnlyDimensions, IWithQuantity
 {
 	public Item(IWithReadOnlyDimensions item)
 		: this(item.Length, item.Width, item.Height, 1)
