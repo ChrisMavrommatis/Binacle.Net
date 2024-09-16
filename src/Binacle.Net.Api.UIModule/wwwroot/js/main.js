@@ -7,10 +7,10 @@ import * as THREE from 'three';
 //messageContainer.appendChild(warning);
 
 
-const visualizerContainer = document.getElementById("visualizer-container");
-const loader = visualizerContainer.querySelector("#loader");
-const rendererContainer = visualizerContainer.querySelector("#renderer-container");
-const logger = window.console;
+let _visualizerContainer = null;
+let _loader = null;
+let _rendererContainer = null;
+let _logger = null;
 let _State = {
 	aspectRatio: null,
 	currentBin: {},
@@ -22,6 +22,7 @@ let _State = {
 	light: {},
 	renderer: {},
 	controls: {},
+	renderedItems: 0
 }
 
 const windowResizeHandler = function () {
@@ -29,18 +30,36 @@ const windowResizeHandler = function () {
 	_State.camera.aspect = _State.aspectRatio;
 	_State.camera.updateProjectionMatrix();
 
-	var height = 500 / _State.aspectRatio;
-	_State.renderer.setSize(rendererContainer.offsetWidth, height > 500 ? height : 500);
+	const height = 500 / _State.aspectRatio;
+	_State.renderer.setSize(_rendererContainer.offsetWidth, height > 500 ? height : 500);
 
 };
-function createContainer(container) {
-	let geometry = new THREE.BoxGeometry(container.length, container.height, container.width);
+function createBin(bin) {
+	let geometry = new THREE.BoxGeometry(bin.length, bin.height, bin.width);
 	let geo = new THREE.EdgesGeometry(geometry); // or WireframeGeometry( geometry )
 	let mat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 });
 	let wireframe = new THREE.LineSegments(geo, mat);
 	wireframe.position.set(0, 0, 0);
-	wireframe.name = 'container';
+	wireframe.name = 'bin';
 	return wireframe;
+}
+
+function createItem(packedItem, index, material, binOrigin) {
+	var itemOrigin = {
+		x: packedItem.dimensions.length / 2,
+		y: packedItem.dimensions.height / 2,
+		z: packedItem.dimensions.width / 2
+	};
+
+	var itemGeometry = new THREE.BoxGeometry(packedItem.dimensions.length, packedItem.dimensions.height, packedItem.dimensions.width);
+	var mesh = new THREE.Mesh(itemGeometry, material);
+	mesh.position.set(
+		binOrigin.x + itemOrigin.x + packedItem.coordinates.x,
+		binOrigin.y + itemOrigin.y + packedItem.coordinates.z,
+		binOrigin.z + itemOrigin.z + packedItem.coordinates.y,
+	);
+	mesh.name = `item_${index}`;
+	return mesh;
 }
 
 function animate() {
@@ -53,9 +72,23 @@ function render() {
 	_State.renderer.render(_State.scene, _State.camera);
 }
 
+function clearItems() {
+	for (let i = 0; i < _State.renderedItems; i++) {
+		const selectedObject = _State.scene.getObjectByName(`item_${i}`);
+		_State.scene.remove(selectedObject);
+	}
+	_State.renderedItems = 0;
+}
+
 window.binacle = {
 	initialize: function (bins) {
-		logger.log("Binacle Initialize", bins);
+		_visualizerContainer = document.getElementById("visualizer-container");
+		_loader = _visualizerContainer.querySelector("#loader");
+		_rendererContainer = _visualizerContainer.querySelector("#renderer-container");
+		_logger = window.console;
+
+
+		_logger.log("Binacle Initialize", bins);
 		_State.aspectRatio = window.innerWidth / window.innerHeight;
 		_State.bins = bins;
 		_State.currentBin = bins[0];
@@ -66,132 +99,56 @@ window.binacle = {
 		_State.light = new THREE.PointLight(0xffffff);
 		_State.light.position.set(0, 150, 100);
 		_State.scene.add(_State.light);
-		const itemMaterial = new THREE.MeshNormalMaterial({ transparent: true, opacity: 0.6 });
 
 		_State.renderer = new THREE.WebGLRenderer({ antialias: true }); // WebGLRenderer CanvasRenderer
 		_State.renderer.setClearColor(0xf0f0f0);
 		_State.renderer.setPixelRatio(window.devicePixelRatio);
-		var height = 500 / _State.aspectRatio;
-		_State.renderer.setSize(rendererContainer.offsetWidth, height > 500 ? height : 500);
-		rendererContainer.append(_State.renderer.domElement);
+		const height = 500 / _State.aspectRatio;
+		_State.renderer.setSize(_rendererContainer.offsetWidth, height > 500 ? height : 500);
+		_rendererContainer.append(_State.renderer.domElement);
 
 		_State.controls = new OrbitControls(_State.camera, _State.renderer.domElement);
-		loader.classList.remove('active');
-		loader.style.display = 'none';
+		_State.controls.enable = true;
+		_State.controls.enableRotate = true;
+		_loader.classList.remove('active');
+		_loader.style.display = 'none';
 		window.addEventListener('resize', windowResizeHandler, false);
 
 		animate();
 
 		_State.camera.position.set(_State.currentBin.length, _State.currentBin.length, _State.currentBin.length);
 
-		var container = createContainer(_State.currentBin);
-		_State.scene.add(container);
+		var bin = createBin(_State.currentBin);
+		_State.scene.add(bin);
 
-		logger.log("Binacle Initialized", _State.currentBin);
+
+		clearItems();
+
+		_logger.log("Binacle Initialized", _State.currentBin);
 	},
 	updateResults: function (results) {
-		logger.log(results);
+		_logger.log("Binacle Updating Results", results);
+		clearItems();
+
+		const itemMaterial = new THREE.MeshNormalMaterial({ transparent: true, opacity: 0.6 });
+
+		const binOrigin = {
+			x: -1 * _State.currentBin.length / 2,
+			y: -1 * _State.currentBin.height / 2,
+			z: -1 * _State.currentBin.width / 2
+		}
+		var data = results.data[0];
+
+		for (var i = 0; i < data.packedItems.length; i++) {
+
+			var item = createItem(data.packedItems[i], i, itemMaterial, binOrigin);
+			_State.renderedItems += i;
+			_State.scene.add(item);
+			_logger.log("Binacle Updated Results");
+		}
+
 	},
 	invokeErrors: function (errors) {
-		logger.log(errors);
+		_logger.log(errors);
 	}
 };
-
-
-
-//let _Container = {
-//	length: 60,
-//	width: 40,
-//	height: 10
-//}
-//let _ContainerOriginOffset = {
-//	x: -1 * _Container.length / 2,
-//	y: -1 * _Container.height / 2,
-//	z: -1 * _Container.width / 2
-//}
-//let _Results = {};
-
-//const scene = new THREE.Scene();
-//const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-//camera.lookAt(scene.position);
-
-//var light = new THREE.PointLight(0xffffff);
-//light.position.set(0, 150, 100);
-//scene.add(light);
-
-//const itemMaterial = new THREE.MeshNormalMaterial({ transparent: true, opacity: 0.6 });
-
-//const renderer = new THREE.WebGLRenderer({ antialias: true }); // WebGLRenderer CanvasRenderer
-//renderer.setClearColor(0xf0f0f0);
-//renderer.setPixelRatio(window.devicePixelRatio);
-//renderer.setSize(rendererContainer.offsetWidth, 500);
-//rendererContainer.append(renderer.domElement);
-
-//const controls = new OrbitControls(camera, renderer.domElement);
-//window.addEventListener('resize', onWindowResize, false);
-
-//animate();
-
-//camera.position.set(60, 60, 60);
-
-//var container = createContainer(_Container);
-//scene.add(container);
-
-//function onWindowResize() {
-//	camera.aspect = window.innerWidth / window.innerHeight;
-//	camera.updateProjectionMatrix();
-//	renderer.setSize(rendererContainer.offsetWidth, 500);
-//}
-//function animate() {
-//	requestAnimationFrame(animate);
-//	controls.update();
-//	render();
-//}
-
-//function render() {
-//	renderer.render(scene, camera);
-//}
-
-//function createContainer(container) {
-//	let geometry = new THREE.BoxGeometry(container.length, container.height, container.width);
-//	let geo = new THREE.EdgesGeometry(geometry); // or WireframeGeometry( geometry )
-//	let mat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 });
-//	let wireframe = new THREE.LineSegments(geo, mat);
-//	wireframe.position.set(0, 0, 0);
-//	wireframe.name = 'container';
-//	return wireframe;
-//}
-
-//window.containerChanged = function (container) {
-//	var selectedObject = scene.getObjectByName('container');
-//	scene.remove(selectedObject);
-//	_Container = createContainer(container);
-//	scene.add(_Container);
-//}
-//window.updateResults = function (rawResults) {
-//	_Results = JSON.parse(rawResults);
-//	var data = _Results.data[0];
-
-//	for (var i = 0; i < data.packedItems.length; i++) {
-
-//		var item = data.packedItems[i];
-//		var itemOriginOffset = {
-//			x: item.dimensions.length / 2,
-//			y: item.dimensions.height / 2,
-//			z: item.dimensions.width / 2
-//		};
-
-//		var itemGeometry = new THREE.BoxGeometry(item.dimensions.length, item.dimensions.height, item.dimensions.width);
-//		var cube = new THREE.Mesh(itemGeometry, itemMaterial);
-//		cube.position.set(
-//			_ContainerOriginOffset.x + itemOriginOffset.x + item.coordinates.x,
-//			_ContainerOriginOffset.y + itemOriginOffset.y + item.coordinates.z,
-//			_ContainerOriginOffset.z + itemOriginOffset.z + item.coordinates.y,
-//		);
-//		cube.name = 'cube' + i;
-//		scene.add(cube);
-//	}
-//	// Remove old items
-
-
-//}

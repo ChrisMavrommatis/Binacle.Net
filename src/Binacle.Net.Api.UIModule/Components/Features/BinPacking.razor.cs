@@ -67,7 +67,6 @@ public partial class BinPacking : ComponentBase
 		}
 	}
 
-
 	protected async Task GetResultsAsync()
 	{
 		try
