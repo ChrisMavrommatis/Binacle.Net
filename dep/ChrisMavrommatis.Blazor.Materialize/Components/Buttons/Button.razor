@@ -1,6 +1,8 @@
 ﻿@namespace ChrisMavrommatis.Blazor.Materialize.Components
 
-<button class="btn">
+@inherits MaterializeComponentBase
+
+<button class="btn @_classes" @attributes=_attributes>
     @this.ChildContent
 </button>
 

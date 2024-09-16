@@ -27,7 +27,7 @@ public partial class BinPacking : ComponentBase
 
 	protected async Task BinChangedAsync()
 	{
-		await this.JsRuntime.InvokeVoidAsync("containerChanged", this.Model.Bins.First());
+		await this.JsRuntime.InvokeVoidAsync("binacle.binsChanged", this.Model.Bins);
 	}
 
 	protected void AddItem()
@@ -69,6 +69,7 @@ public partial class BinPacking : ComponentBase
 
 	protected async Task GetResultsAsync()
 	{
+		await this.JsRuntime.InvokeVoidAsync("binacle.loading");
 		try
 		{
 			var request = new ApiModels.Requests.PackByCustomRequest
@@ -78,7 +79,7 @@ public partial class BinPacking : ComponentBase
 			};
 			var client = this.HttpClientFactory.CreateClient("Self");
 			var response = await client.PostAsJsonAsync("api/v2/pack/by-custom", request);
-			if(response.StatusCode == System.Net.HttpStatusCode.OK)
+			if (response.StatusCode == System.Net.HttpStatusCode.OK)
 			{
 				var results = await response.Content.ReadFromJsonAsync<JsonObject>();
 				await this.JsRuntime.InvokeVoidAsync("binacle.updateResults", results);
@@ -88,12 +89,12 @@ public partial class BinPacking : ComponentBase
 				var results = await response.Content.ReadFromJsonAsync<JsonObject>();
 				await this.JsRuntime.InvokeVoidAsync("binacle.invokeErrors", results);
 			}
-		} 
-		catch(Exception ex)
+		}
+		catch (Exception ex)
 		{
 
 		}
-		
+
 	}
 
 }

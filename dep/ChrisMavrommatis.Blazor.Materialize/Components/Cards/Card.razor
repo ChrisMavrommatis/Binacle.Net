@@ -1,6 +1,8 @@
 ﻿@namespace ChrisMavrommatis.Blazor.Materialize.Components
 
-<div class="card @Color">
+@inherits MaterializeComponentBase
+
+<div class="card @Color @_classes" @attributes=_attributes>
     @if (this.ImageContent is not null)
     {
         <div class="card-image">

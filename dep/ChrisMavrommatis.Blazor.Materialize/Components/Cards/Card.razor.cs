@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using ChrisMavrommatis.Blazor.Materialize.Models;
+using Microsoft.AspNetCore.Components;
 
 namespace ChrisMavrommatis.Blazor.Materialize.Components;
 
-public partial class Card : ComponentBase
+public partial class Card : MaterializeComponentBase
 {
 	[Parameter]
 	public string? Title { get; set; }

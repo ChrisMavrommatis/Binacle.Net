@@ -70,7 +70,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.Kernel", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.UIModule", "src\Binacle.Net.Api.UIModule\Binacle.Net.Api.UIModule.csproj", "{3020B942-5FCA-4821-B425-B1CF76C5BE85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChrisMavrommatis.Blazor.Materialize", "dep\ChrisMavrommatis.Blazor.Materialize\ChrisMavrommatis.Blazor.Materialize.csproj", "{0C29C934-7E87-47EB-AFEE-BBB1832FADD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Blazor.Materialize", "dep\ChrisMavrommatis.Blazor.Materialize\ChrisMavrommatis.Blazor.Materialize.csproj", "{0C29C934-7E87-47EB-AFEE-BBB1832FADD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
