@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Api.UIModule.ApiModels.Requests;
+using Binacle.Net.Api.UIModule.Models;
 
 namespace Binacle.Net.Api.UIModule.ApiModels.Responses;
 

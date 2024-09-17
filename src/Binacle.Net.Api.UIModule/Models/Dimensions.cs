@@ -1,6 +1,6 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 
-namespace Binacle.Net.Api.UIModule.ApiModels.Requests;
+namespace Binacle.Net.Api.UIModule.Models;
 
 internal class Dimensions : IWithDimensions
 {
@@ -17,9 +17,9 @@ internal class Dimensions : IWithDimensions
 
 	public Dimensions(int length, int width, int height)
 	{
-		this.Length = length;
-		this.Width = width;
-		this.Height = height;
+		Length = length;
+		Width = width;
+		Height = height;
 	}
 
 	public int Length { get; set; }

@@ -1,29 +1,31 @@
-﻿using Binacle.Net.Api.UIModule.ExtensionMethods;
-using Binacle.Net.Lib.Abstractions.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using Binacle.Net.Lib.Abstractions.Models;
 
 namespace Binacle.Net.Api.UIModule.Models;
 
-public class Bin : IWithDimensions
+internal class Bin : IWithID, IWithReadOnlyDimensions
 {
-	public Bin(int length, int width, int height)
+	public Bin()
 	{
-		this.Length = length;
-		this.Width = width;
-		this.Height = height;
+		
+	}
+	public Bin(string id, IWithReadOnlyDimensions item)
+		: this(id, item.Length, item.Width, item.Height)
+	{
+
 	}
 
-	public string ID => this.FormatDimensions();
+	public Bin(string id, int length, int width, int height)
+	{
+		ID = id;
+		Length = length;
+		Width = width;
+		Height = height;
+	}
 
-	[Required]
-	[Range(1, ushort.MaxValue)]
-	public int Length { get; set; }
+	public string ID { get; set; }
+	public int Length { get; }
 
-	[Required]
-	[Range(1, ushort.MaxValue)]
-	public int Width { get; set; }
+	public int Width { get; }
 
-	[Required]
-	[Range(1, ushort.MaxValue)]
-	public int Height { get; set; }
+	public int Height { get; }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Binacle.Net.Api.UIModule.ApiModels.Requests;
+namespace Binacle.Net.Api.UIModule.Models;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
 internal enum PackResultType

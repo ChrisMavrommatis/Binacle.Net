@@ -4,8 +4,8 @@ namespace Binacle.Net.Api.UIModule.Services;
 
 public interface ISampleDataService
 {
-	Models.BinPackingViewModel GetRandomSampleData();
-	Models.BinPackingViewModel GetInitialSampleData();
+	ViewModels.BinPackingViewModel GetRandomSampleData();
+	ViewModels.BinPackingViewModel GetInitialSampleData();
 }
 
 public class SampleDataService : ISampleDataService
@@ -18,8 +18,8 @@ public class SampleDataService : ISampleDataService
 
 	private class SampleData
 	{
-		public List<List<Models.Bin>> BinSets { get; set; }
-		public List<List<Models.Item>> ItemSets { get; set; }
+		public List<List<ViewModels.Bin>> BinSets { get; set; }
+		public List<List<ViewModels.Item>> ItemSets { get; set; }
 	}
 
 	private readonly IWebHostEnvironment environment;
@@ -36,7 +36,7 @@ public class SampleDataService : ISampleDataService
 		this.data = this.ReadSampleData();
 	}
 
-	public Models.BinPackingViewModel GetRandomSampleData()
+	public ViewModels.BinPackingViewModel GetRandomSampleData()
 	{
 		// random with time
 		var random = new Random(this.timeProvider.GetUtcNow().Millisecond);
@@ -48,19 +48,19 @@ public class SampleDataService : ISampleDataService
 		var bins = this.data.BinSets[binRandomNumber];
 		var items = this.data.ItemSets[itemRandomNumber];
 
-		return new Models.BinPackingViewModel
+		return new ViewModels.BinPackingViewModel
 		{
 			Bins = bins,
 			Items = items
 		};
 	}
 
-	public Models.BinPackingViewModel GetInitialSampleData()
+	public ViewModels.BinPackingViewModel GetInitialSampleData()
 	{
 		var bins = this.data.BinSets[0];
 		var items = this.data.ItemSets[0];
 
-		return new Models.BinPackingViewModel
+		return new ViewModels.BinPackingViewModel
 		{
 			Bins = bins,
 			Items = items
@@ -84,21 +84,21 @@ public class SampleDataService : ISampleDataService
 		return sampleData;
 	}
 
-	private Models.Bin ParseBin(string value)
+	private ViewModels.Bin ParseBin(string value)
 	{
 		var dimensionParts = value.Split('x');
 		if (dimensionParts.Length != 3)
 		{
 			throw new InvalidOperationException("Invalid bin data");
 		}
-		return new Models.Bin(
+		return new ViewModels.Bin(
 			int.Parse(dimensionParts[0]),
 			int.Parse(dimensionParts[1]),
 			int.Parse(dimensionParts[2])
 		);
 	}
 
-	private Models.Item ParseItem(string value)
+	private ViewModels.Item ParseItem(string value)
 	{
 		var dimensionsAndQuantityParts = value.Split('-');
 
@@ -119,7 +119,7 @@ public class SampleDataService : ISampleDataService
 			quantity = int.Parse(dimensionsAndQuantityParts[1]);
 		}
 
-		return new Models.Item(
+		return new ViewModels.Item(
 			int.Parse(dimensions[0]),
 			int.Parse(dimensions[1]),
 			int.Parse(dimensions[2]),

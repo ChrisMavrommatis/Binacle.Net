@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.Api.UIModule.ApiModels.Requests;
+﻿namespace Binacle.Net.Api.UIModule.Models;
 
 internal class PackingResult
 {

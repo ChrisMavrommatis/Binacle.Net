@@ -1,6 +1,6 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 
-namespace Binacle.Net.Api.UIModule.ApiModels.Requests;
+namespace Binacle.Net.Api.UIModule.Models;
 
 internal class Coordinates : IWithCoordinates
 {
@@ -17,9 +17,9 @@ internal class Coordinates : IWithCoordinates
 
 	public Coordinates(int x, int y, int z)
 	{
-		this.X = x;
-		this.Y = y;
-		this.Z = z;
+		X = x;
+		Y = y;
+		Z = z;
 	}
 	public int X { get; set; }
 	public int Y { get; set; }

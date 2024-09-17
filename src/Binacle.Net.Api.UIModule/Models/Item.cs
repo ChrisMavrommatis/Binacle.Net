@@ -1,51 +1,34 @@
-﻿using Binacle.Net.Api.UIModule.ExtensionMethods;
-using Binacle.Net.Lib;
-using Binacle.Net.Lib.Abstractions.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using Binacle.Net.Lib.Abstractions.Models;
 
 namespace Binacle.Net.Api.UIModule.Models;
 
-public class Item : IWithDimensions, IWithQuantity
+internal class Item : IWithReadOnlyDimensions, IWithQuantity
 {
-	public Item(int length, int width, int height) :
-		this(length, width, height, 1)
+	public Item(string id, IWithReadOnlyDimensions item)
+		: this(id, item.Length, item.Width, item.Height, 1)
 	{
-		
+
 	}
-	public Item(int length, int width, int height, int quantity)
+	public Item(string id, IWithReadOnlyDimensions item, int quantity)
+		: this(id, item.Length, item.Width, item.Height, quantity)
 	{
-		this.Length = length;
-		this.Width = width;
-		this.Height = height;
-		this.Quantity = quantity;
+
 	}
 
-	public string ID => this.FormatDimensions();
+	public Item(string id, int length, int width, int height, int quantity)
+	{
+		ID = id;
+		Length = length;
+		Width = width;
+		Height = height;
+		Quantity = quantity;
+	}
 
-	[Required]
-	[Range(1, ushort.MaxValue)]
-	public int Length { get; set; }
-	
-	[Required]
-	[Range(1, ushort.MaxValue)]
-	public int Width { get; set; }
+	public string ID { get; set; }
+	public int Length { get; }
 
-	[Required]
-	[Range(1, ushort.MaxValue)]
-	public int Height { get; set; }
+	public int Width { get; }
 
-	[Required]
-	[Range(1, ushort.MaxValue)]
+	public int Height { get; }
 	public int Quantity { get; set; }
-	public int Volume
-	{
-		get
-		{
-			return this.CalculateVolume();
-		}
-		set
-		{
-
-		}
-	}
 }
