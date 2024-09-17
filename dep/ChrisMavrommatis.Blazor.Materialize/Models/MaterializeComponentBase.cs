@@ -8,6 +8,7 @@ public abstract class MaterializeComponentBase : ComponentBase
 	public IReadOnlyDictionary<string, object> UnmatchedAttributes { get; set; } = new Dictionary<string, object>();
 
 	protected IReadOnlyDictionary<string, object>? _attributes;
+
 	protected string _classes = "";
 
 	protected override void OnParametersSet()

@@ -22,6 +22,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <UIFiles Remove="wwwroot\js\modules\visualizer-helper.js" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Blazor.Materialize\ChrisMavrommatis.Blazor.Materialize.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj" />
 	</ItemGroup>

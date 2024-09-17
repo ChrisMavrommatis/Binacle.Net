@@ -7,7 +7,7 @@ using System.Text.Json.Nodes;
 
 namespace Binacle.Net.Api.UIModule.Components.Features;
 
-public partial class BinPacking : ComponentBase
+public partial class BinPackingForm : ComponentBase
 {
 	protected BinPackingViewModel Model { get; set; }
 
@@ -22,72 +22,72 @@ public partial class BinPacking : ComponentBase
 
 	protected override void OnInitialized()
 	{
-		this.Model = this.SampleDataService.GetInitialSampleData();
+		Model = SampleDataService.GetInitialSampleData();
 	}
 
 	protected async Task BinChangedAsync()
 	{
-		await this.JsRuntime.InvokeVoidAsync("binacle.binsChanged", this.Model.Bins);
+		await JsRuntime.InvokeVoidAsync("binacle.binsChanged", Model.Bins);
 	}
 
 	protected void AddItem()
 	{
-		this.Model.Items.Add(new Item(0, 0, 0, 1));
+		Model.Items.Add(new Item(0, 0, 0, 1));
 	}
 
 	protected void RemoveItem(Item item)
 	{
-		this.Model.Items.Remove(item);
+		Model.Items.Remove(item);
 	}
 
 	protected void ClearAllItems()
 	{
-		this.Model.Items.Clear();
+		Model.Items.Clear();
 	}
 
 	protected Task RandomizeItemsFromSamplesAsync()
 	{
-		var sampleData = this.SampleDataService.GetRandomSampleData();
-		this.Model.Items = sampleData.Items;
+		var sampleData = SampleDataService.GetRandomSampleData();
+		Model.Items = sampleData.Items;
 		return Task.CompletedTask;
 	}
 
 	protected async Task RandomizeBinsFromSamplesAsync()
 	{
-		var sampleData = this.SampleDataService.GetRandomSampleData();
-		this.Model.Bins = sampleData.Bins;
-		await this.BinChangedAsync();
+		var sampleData = SampleDataService.GetRandomSampleData();
+		Model.Bins = sampleData.Bins;
+		await BinChangedAsync();
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
-			await this.JsRuntime.InvokeVoidAsync("binacle.initialize", this.Model.Bins);
+			await JsRuntime.InvokeVoidAsync("binacle.initialize", Model.Bins);
 		}
 	}
 
 	protected async Task GetResultsAsync()
 	{
-		await this.JsRuntime.InvokeVoidAsync("binacle.loading");
+		await JsRuntime.InvokeVoidAsync("binacle.loading");
 		try
 		{
 			var request = new ApiModels.Requests.PackByCustomRequest
 			{
-				Bins = this.Model.Bins.Select(x => new ApiModels.Bin(x.ID, x)).ToList(),
-				Items = this.Model.Items.Select(x => new ApiModels.Item(x.ID, x, x.Quantity)).ToList()
+				Bins = Model.Bins.Select(x => new ApiModels.Bin(x.ID, x)).ToList(),
+				Items = Model.Items.Select(x => new ApiModels.Item(x.ID, x, x.Quantity)).ToList()
 			};
-			var client = this.HttpClientFactory.CreateClient("Self");
+			var client = HttpClientFactory.CreateClient("Self");
 			var response = await client.PostAsJsonAsync("api/v2/pack/by-custom", request);
 			if (response.StatusCode == System.Net.HttpStatusCode.OK)
 			{
 				var results = await response.Content.ReadFromJsonAsync<JsonObject>();
-				await this.JsRuntime.InvokeVoidAsync("binacle.updateResults", results);
+				await JsRuntime.InvokeVoidAsync("binacle.updateResults", results);
 			}
 			else
 			{
 				var results = await response.Content.ReadFromJsonAsync<JsonObject>();
-				await this.JsRuntime.InvokeVoidAsync("binacle.invokeErrors", results);
+				await JsRuntime.InvokeVoidAsync("binacle.invokeErrors", results);
 			}
 		}
 		catch (Exception ex)
