@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Collections.Generic;
 using System.Net.Http.Json;
-using System.Net.Http;
 using System.Text.Json.Nodes;
-using Binacle.Net.Api.UIModule.Models;
-using System.Diagnostics;
 
 namespace Binacle.Net.Api.UIModule.Services;
 
@@ -12,29 +10,22 @@ internal class PackingDemoState
 {
 	private readonly IHttpClientFactory httpClientFactory;
 	private readonly IJSRuntime jsRuntime;
-	private readonly ISampleDataService sampleDataService;
 
 	public PackingDemoState(
 		IHttpClientFactory httpClientFactory,
-		IJSRuntime jsRuntime,
-		Services.ISampleDataService sampleDataService
+		IJSRuntime jsRuntime
 		)
 	{
 		this.httpClientFactory = httpClientFactory;
 		this.jsRuntime = jsRuntime;
-		this.sampleDataService = sampleDataService;
+		this.Model = new ViewModels.BinPackingViewModel();
 		this.Results = new List<Models.PackingResult>();
 	}
 	public ViewModels.BinPackingViewModel Model { get; set; }
 
-	public List<Models.PackingResult>? Results { get; private set; }
-	public EventCallback ResultsChanged { get; set; }
-
-	private async Task ResultsChangedAsync(ApiModels.Responses.PackByCustomResponse response)
+	public async Task InitializeDomAsync()
 	{
-		this.Results = response.Data;
-		await this.jsRuntime.InvokeVoidAsync("binacle.updateResults", response);
-		await this.ResultsChanged.InvokeAsync(this.Results);
+		await this.jsRuntime.InvokeVoidAsync("binacle.initialize", this.Model.Bins.FirstOrDefault());
 	}
 
 	public async Task GetResultsAsync()
@@ -53,7 +44,7 @@ internal class PackingDemoState
 			{
 				var results = await response.Content.ReadFromJsonAsync<ApiModels.Responses.PackByCustomResponse>();
 
-				await this.ResultsChangedAsync(results);
+				await this.TriggerResultsChangedAsync(results?.Data);
 			}
 			else
 			{
@@ -68,34 +59,82 @@ internal class PackingDemoState
 
 	}
 
+	public List<Models.PackingResult>? Results { get; private set; }
+	public EventCallback ResultsChanged { get; set; }
+	private async Task TriggerResultsChangedAsync(List<Models.PackingResult>? results)
+	{
+		this.Results = results ?? new List<Models.PackingResult>();
+		await this.jsRuntime.InvokeVoidAsync("binacle.updateResult", this.Results.FirstOrDefault());
+		await this.ResultsChanged.InvokeAsync(this.Results);
+	}
+
 	public EventCallback BinsChanged { get; set; }
-	public async Task BinsChangedAsync()
+	public async Task TriggerBinsChangedAsync()
 	{
-		await this.jsRuntime.InvokeVoidAsync("binacle.binsChanged", this.Model.Bins);
+		await this.jsRuntime.InvokeVoidAsync("binacle.binChanged", this.Model.Bins?.FirstOrDefault());
 		await this.BinsChanged.InvokeAsync(this.Model.Bins);
+		await this.TriggerResultsChangedAsync(null);
+
+	}
+	public EventCallback ItemsChanged { get; set; }
+	private async Task TriggerItemsChangedAsync()
+	{
+		await this.ItemsChanged.InvokeAsync(this.Model.Items);
 	}
 
-	public Task RandomizeItemsFromSamplesAsync()
+	internal async Task SetResultAsync(Models.PackingResult result)
 	{
-		var sampleData = this.sampleDataService.GetRandomSampleData();
-		this.Model.Items = sampleData.Items;
-		return Task.CompletedTask;
+		await this.jsRuntime.InvokeVoidAsync("binacle.loading");
+		var bin = this.Model.Bins.FirstOrDefault(x => x.ID == result.Bin.ID);
+		await this.jsRuntime.InvokeVoidAsync("binacle.binChanged", bin);
+		await this.jsRuntime.InvokeVoidAsync("binacle.updateResult", result);
 	}
 
-	public async Task RandomizeBinsFromSamplesAsync()
+	public async Task ChangeBinsAsync(List<ViewModels.Bin> bins)
 	{
-		var sampleData = this.sampleDataService.GetRandomSampleData();
-		this.Model.Bins = sampleData.Bins;
-		await this.BinsChangedAsync();
+		this.Model.Bins = bins;
+		await this.TriggerBinsChangedAsync();
 	}
 
-	public async Task InitializeDomAsync()
+	public async Task ChangeItemsAsync(List<ViewModels.Item> items)
 	{
-		await this.jsRuntime.InvokeVoidAsync("binacle.initialize", this.Model.Bins);
+		this.Model.Items = items;
+		await this.TriggerItemsChangedAsync();
 	}
 
-	internal void InitializeModelWithSampleData()
+	public async Task AddItemAsync(ViewModels.Item item)
 	{
-		this.Model = sampleDataService.GetInitialSampleData();
+		this.Model.Items.Add(item);
+		await this.TriggerItemsChangedAsync();
+	}
+
+	public async Task RemoveItemAsync(ViewModels.Item item)
+	{
+		this.Model.Items.Remove(item);
+		await this.TriggerItemsChangedAsync();
+	}
+
+	public async Task ClearAllItemsAsync()
+	{
+		this.Model.Items.Clear();
+		await this.TriggerItemsChangedAsync();
+	}
+
+	public async Task AddBinAsync(ViewModels.Bin bin)
+	{
+		this.Model.Bins.Add(bin);
+		await this.TriggerBinsChangedAsync();
+	}
+
+	public async Task RemoveBinAsync(ViewModels.Bin item)
+	{
+		this.Model.Bins.Remove(item);
+		await this.TriggerBinsChangedAsync();
+	}
+
+	public async Task ClearAllBinsAsync()
+	{
+		this.Model.Bins.Clear();
+		await this.TriggerBinsChangedAsync();
 	}
 }

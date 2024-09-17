@@ -2,13 +2,13 @@
 
 namespace Binacle.Net.Api.UIModule.Services;
 
-public interface ISampleDataService
+internal interface ISampleDataService
 {
 	ViewModels.BinPackingViewModel GetRandomSampleData();
 	ViewModels.BinPackingViewModel GetInitialSampleData();
 }
 
-public class SampleDataService : ISampleDataService
+internal class SampleDataService : ISampleDataService
 {
 	private class SampleJsonData
 	{

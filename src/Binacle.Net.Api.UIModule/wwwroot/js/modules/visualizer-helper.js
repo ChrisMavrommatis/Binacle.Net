@@ -68,6 +68,11 @@ export function updateScene(state, loaderEl) {
 	clearItemsFromScene(state);
 	clearBinFromScene(state);
 
+	if (!state.currentBin) {
+		loaderEl.classList.remove('active');
+		return;
+	}
+
 	state.camera.position.set(state.currentBin.length, state.currentBin.length, state.currentBin.length);
 
 	var bin = createBin(state.currentBin);

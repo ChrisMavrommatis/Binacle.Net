@@ -1,6 +1,6 @@
 ﻿namespace Binacle.Net.Api.UIModule.ViewModels;
 
-public class BinPackingViewModel
+internal class BinPackingViewModel
 {
 	public List<ViewModels.Bin> Bins { get; set; }
 	public List<ViewModels.Item> Items { get; set; }

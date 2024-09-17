@@ -11,8 +11,6 @@ let _State = {
 	aspectRatio: null,
 	currentBin: null,
 	currentBinResult: null,
-	bins: [],
-	binResults: [],
 	scene: {},
 	camera: {},
 	light: {},
@@ -44,17 +42,16 @@ function render() {
 
 window.binacle = {
 	state: _State,
-	initialize: function (bins) {
+	initialize: function (bin) {
 		_visualizerContainer = document.getElementById("visualizer-container");
 		_loader = _visualizerContainer.querySelector("#loader");
 		_rendererContainer = _visualizerContainer.querySelector("#renderer-container");
 		_logger = window.console;
 
 
-		_logger.log("Binacle Initialize", bins);
+		_logger.log("Binacle Initialize", bin);
 		_State.aspectRatio = window.innerWidth / window.innerHeight;
-		_State.bins = bins;
-		_State.currentBin = bins[0];
+		_State.currentBin = bin;
 
 		_State.scene = new THREE.Scene();
 		_State.camera = new THREE.PerspectiveCamera(BinacleHelper.cameraFov(_State.aspectRatio), _State.aspectRatio, 0.1, 1000);
@@ -85,22 +82,18 @@ window.binacle = {
 
 		_logger.log("Binacle Initialized", _State.currentBin);
 	},
-	binsChanged: function (bins) {
+	binChanged: function (bin) {
 		_loader.classList.add('active');
 
-		_State.bins = bins;
-		_State.currentBin = bins[0];
-		_State.binResults = [];
+		_State.currentBin = bin;
 		_State.currentBinResult = null;
 		BinacleHelper.updateScene(_State, _loader);
 	},
-	updateResults: function (results) {
+	updateResult: function (result) {
 		_loader.classList.add('active');
 
-		_logger.log("Binacle Updating Results", results);
-		_State.binResults = results.data;
-		var currentBinResults = results.data.filter(x => x.bin.id === _State.currentBin.id);
-		_State.currentBinResult = currentBinResults.length === 1 ? currentBinResults[0] : null;
+		_logger.log("Binacle Updating Results", result);
+		_State.currentBinResult = result;
 
 		BinacleHelper.updateScene(_State, _loader);
 

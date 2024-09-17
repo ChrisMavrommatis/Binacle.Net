@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Binacle.Net.Api.UIModule.ViewModels;
 
-public class Bin : IWithDimensions
+internal class Bin : IWithDimensions
 {
 	public Bin(int length, int width, int height)
 	{

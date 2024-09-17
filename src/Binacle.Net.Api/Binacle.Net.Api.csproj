@@ -51,11 +51,5 @@
 		</Content>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Content Update="wwwroot\js\modules\visualizer.js">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	</ItemGroup>
 
 </Project>

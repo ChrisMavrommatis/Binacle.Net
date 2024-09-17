@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Binacle.Net.Api.UIModule.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace Binacle.Net.Api.UIModule.Components.Features;
 
@@ -7,25 +8,60 @@ public partial class BinPackingForm : ComponentBase
 	[Inject]
 	internal Services.PackingDemoState State { get; set; }
 
-	protected override void OnInitialized()
+	[Inject]
+	internal ISampleDataService SampleDataService { get; set; }
+
+	protected override async Task OnInitializedAsync()
 	{
-		State.InitializeModelWithSampleData();
+		var sampleData = this.SampleDataService.GetInitialSampleData();
+		this.State.Model = sampleData;
 	}
 
-
-	protected void AddItem()
+	public async Task RandomizeItemsFromSamplesAsync()
 	{
-		this.State.Model.Items.Add(new ViewModels.Item(0, 0, 0, 1));
+		var sampleData = this.SampleDataService.GetRandomSampleData();
+		await this.State.ChangeItemsAsync(sampleData.Items);
 	}
 
-	protected void RemoveItem(ViewModels.Item item)
+	public async Task RandomizeBinsFromSamplesAsync()
 	{
-		this.State.Model.Items.Remove(item);
+		var sampleData = this.SampleDataService.GetRandomSampleData();
+		await this.State.ChangeBinsAsync(sampleData.Bins);
 	}
 
-	protected void ClearAllItems()
+	internal async Task AddItemAsync()
 	{
-		this.State.Model.Items.Clear();
+		await this.State.AddItemAsync(new ViewModels.Item(0, 0, 0, 1));
+	}
+
+	internal async Task RemoveItemAsync(ViewModels.Item item)
+	{
+		await this.State.RemoveItemAsync(item);
+	}
+
+	internal async Task ClearAllItemsAsync()
+	{
+		await this.State.ClearAllItemsAsync();
+	}
+
+	internal async Task AddBinAsync()
+	{
+		await this.State.AddBinAsync(new ViewModels.Bin(0, 0, 0));
+	}
+
+	internal async Task RemoveBinAsync(ViewModels.Bin bin)
+	{
+		await this.State.RemoveBinAsync(bin);
+	}
+
+	internal async Task ClearAllBinsAsync()
+	{
+		await this.State.ClearAllBinsAsync();
+	}
+
+	internal async Task BinsChangedAsync()
+	{
+		await this.State.TriggerBinsChangedAsync();
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -35,7 +71,4 @@ public partial class BinPackingForm : ComponentBase
 			await State.InitializeDomAsync();
 		}
 	}
-
-	
-
 }
