@@ -6,17 +6,18 @@ import * as BinacleHelper from '/js/modules/visualizer-helper.js';
 let _visualizerContainer = null;
 let _loader = null;
 let _rendererContainer = null;
-let _logger = null;
+let _logger = {
+	isEnabled: true,
+	log: function () { }
+};
+
 let _State = {
 	aspectRatio: null,
-	currentBin: null,
-	currentBinResult: null,
 	scene: {},
 	camera: {},
 	light: {},
 	renderer: {},
 	controls: {},
-	renderedItems: 0
 }
 
 const windowResizeHandler = function () {
@@ -25,7 +26,6 @@ const windowResizeHandler = function () {
 	_State.camera.fov = BinacleHelper.cameraFov(_State.aspectRatio);
 	_State.camera.updateProjectionMatrix();
 	_loader.style.top = `${BinacleHelper.loaderTop(_loader)}px`;
-	//_loader.style.left = `${loaderLeft()}px`;
 	_State.renderer.setSize(_rendererContainer.offsetWidth, BinacleHelper.rendererHeight());
 
 };
@@ -39,6 +39,26 @@ function render() {
 	_State.renderer.render(_State.scene, _State.camera);
 }
 
+const rendererHeight = function () {
+	//const height = 500 / _State.aspectRatio;
+	//return height > 500 ? height : 500;
+	return 400;
+}
+
+const loaderTop = function (loaderEl) {
+	return (rendererHeight() / 2) - (loaderEl.offsetHeight / 2);
+}
+
+const cameraFov = function (aspectRatio) {
+	if (aspectRatio < 0.60) {
+		return 65;
+	}
+	if (aspectRatio < 1) {
+		return 50;
+	}
+	return 40;
+}
+
 
 window.binacle = {
 	state: _State,
@@ -46,24 +66,23 @@ window.binacle = {
 		_visualizerContainer = document.getElementById("visualizer-container");
 		_loader = _visualizerContainer.querySelector("#loader");
 		_rendererContainer = _visualizerContainer.querySelector("#renderer-container");
-		_logger = window.console;
-
+		_logger.log = window.console.log;
 
 		_logger.log("Binacle Initialize", bin);
 		_State.aspectRatio = window.innerWidth / window.innerHeight;
-		_State.currentBin = bin;
 
 		_State.scene = new THREE.Scene();
-		_State.camera = new THREE.PerspectiveCamera(BinacleHelper.cameraFov(_State.aspectRatio), _State.aspectRatio, 0.1, 1000);
+		_State.camera = new THREE.PerspectiveCamera(cameraFov(_State.aspectRatio), _State.aspectRatio, 0.1, 1000);
 		_State.camera.lookAt(_State.scene.position);
 		_State.light = new THREE.PointLight(0xffffff);
 		_State.light.position.set(0, 150, 100);
 		_State.scene.add(_State.light);
 
-		_State.renderer = new THREE.WebGLRenderer({ antialias: true }); // WebGLRenderer CanvasRenderer
+		// WebGLRenderer CanvasRenderer
+		_State.renderer = new THREE.WebGLRenderer({ antialias: true }); 
 		_State.renderer.setClearColor(0xf0f0f0);
 		_State.renderer.setPixelRatio(window.devicePixelRatio);
-		_State.renderer.setSize(_rendererContainer.offsetWidth, BinacleHelper.rendererHeight());
+		_State.renderer.setSize(_rendererContainer.offsetWidth, rendererHeight());
 		_rendererContainer.append(_State.renderer.domElement);
 
 		_State.controls = new OrbitControls(_State.camera, _State.renderer.domElement);
@@ -71,39 +90,38 @@ window.binacle = {
 		_loader.classList.remove("m-6")
 		_loader.classList.remove('active');
 		_loader.style.position = 'absolute';
-		_loader.style.top = `${BinacleHelper.loaderTop(_loader)}px`;
-		//_loader.style.left = `${loaderLeft()}px`;
+		_loader.style.top = `${loaderTop(_loader)}px`;
 
 		window.addEventListener('resize', windowResizeHandler, false);
 
 		animate();
 
-		BinacleHelper.updateScene(_State, _loader);
+		BinacleHelper.redrawScene(_State.scene, _State.camera, bin, null);
 
-		_logger.log("Binacle Initialized", _State.currentBin);
+		_logger.log("Binacle Initialized");
 	},
-	binChanged: function (bin) {
-		_loader.classList.add('active');
+	redrawScene: function (bin, packedItems) {
+		_logger.log("Binacle Redraw Scene", bin, packedItems);
 
-		_State.currentBin = bin;
-		_State.currentBinResult = null;
-		BinacleHelper.updateScene(_State, _loader);
+		BinacleHelper.redrawScene(_State.scene, _State.camera, bin, packedItems);
+
+		_logger.log("Binacle Scene Redrawn");
 	},
-	updateResult: function (result) {
-		_loader.classList.add('active');
-
-		_logger.log("Binacle Updating Results", result);
-		_State.currentBinResult = result;
-
-		BinacleHelper.updateScene(_State, _loader);
-
-		_logger.log("Binacle Updated Results");
-	},
-
 	invokeErrors: function (errors) {
 		_logger.log(errors);
 	},
-	loading: function () {
+	loadingStart: function () {
 		_loader.classList.add('active');
+	},
+	loadingEnd: function () {
+		_loader.classList.remove('active');
+	},
+	addItemToScene: function (bin, packedItem, index) {
+		BinacleHelper.addItemToScene(_State.scene, bin, packedItem, index);
+	},
+	removeItemFromScene: function (index) {
+		BinacleHelper.removeItemFromScene(_State.scene, index);
+
 	}
 };
+

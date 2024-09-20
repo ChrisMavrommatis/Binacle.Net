@@ -2,7 +2,7 @@
 
 namespace Binacle.Net.Api.UIModule.Models;
 
-internal class Bin : IWithID, IWithReadOnlyDimensions
+internal class Bin : IWithID, IWithDimensions
 {
 	public Bin()
 	{
@@ -16,16 +16,16 @@ internal class Bin : IWithID, IWithReadOnlyDimensions
 
 	public Bin(string id, int length, int width, int height)
 	{
-		ID = id;
-		Length = length;
-		Width = width;
-		Height = height;
+		this.ID = id;
+		this.Length = length;
+		this.Width = width;
+		this.Height = height;
 	}
 
 	public string ID { get; set; }
-	public int Length { get; }
+	public int Length { get; set; }
 
-	public int Width { get; }
+	public int Width { get; set; }
 
-	public int Height { get; }
+	public int Height { get; set; }
 }

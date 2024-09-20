@@ -11,20 +11,29 @@
             var colorClass = this.GetColorClass(result);
             <li class="collection-item avatar @(this.IsSelected(result) ? "active" : string.Empty)">
                 <div class="row">
-                    <div class="col s8">
+                    <div class="col s6 m8">
                         <i class="material-symbols-outlined large circle @colorClass">package_2</i>
                         <span class="title">Bin: @result.Bin.ID</span>
 
                         <div class="progress">
-                            <div class="determinate @colorClass" style="width: @percentage%" />
+                            <div class="determinate @colorClass" style="width: @(percentage)%" />
                         </div>
-                        <span>Packed Bin Volume: @result.PackedBinVolumePercentage% </span>
-                        @if (!isFullyPacked)
-                        {
-                            <span>Packed Items Volume: @result.PackedItemsVolumePercentage% </span>
-                        }
+                        <div class="row">
+                            <div class="col s12 m6">
+                                Packed Bin Volume: @result.PackedBinVolumePercentage%
+                            </div>
+                            <div class="col s12 m6">
+                                @if (!isFullyPacked)
+                                {
+                                    <text>
+                                        Packed Items Volume: @result.PackedItemsVolumePercentage%
+                                    </text>
+                                }
+                            </div>
+                        </div>
+                        
                     </div>
-                    <div class="col s4">
+                    <div class="col s6 m4">
                         @result.Result.ToString()
                     </div>
                     <Button type="button" class="text secondary-content" @onclick="(() => this.SelectResultAsync(result))">

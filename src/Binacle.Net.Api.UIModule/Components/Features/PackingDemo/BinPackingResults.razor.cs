@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System.Collections.ObjectModel;
 
 namespace Binacle.Net.Api.UIModule.Components.Features;
 
@@ -7,19 +8,17 @@ public partial class BinPackingResults : ComponentBase
 	[Inject]
 	internal Services.PackingDemoState State { get; set; }
 
-	private string? selectedResult;
-
 	protected override void OnInitialized()
 	{
 		// register on state.results change to update the state
 		base.OnInitialized();
-		State.ResultsChanged = new EventCallback(this, UpdateResults);
+		State.OnResultsChanged += ResultsChanged;
 	}
 
-	private void UpdateResults(List<Models.PackingResult>? results)
+	private Task ResultsChanged(ReadOnlyCollection<Models.PackingResult> results)
 	{
-		this.selectedResult = results?.FirstOrDefault()?.Bin.ID;
 		this.StateHasChanged();
+		return Task.CompletedTask;
 	}
 
 	private string GetColorClass(Models.PackingResult result)
@@ -34,13 +33,13 @@ public partial class BinPackingResults : ComponentBase
 
 	private bool IsSelected(Models.PackingResult result)
 	{
-		return result.Bin.ID == this.selectedResult;
+		return this.State.IsSelected(result);
+
 	}
 
 	private async Task SelectResultAsync(Models.PackingResult result)
 	{
-		this.selectedResult = result.Bin.ID;
-		await this.State.SetResultAsync(result);
+		await this.State.SelectResultAsync(result);
 	}
 
 }

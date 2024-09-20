@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Binacle.Net.Api.UIModule.ViewModels;
 
-internal class Bin : IWithDimensions
+internal class Bin : IWithID, IWithDimensions
 {
 	public Bin(int length, int width, int height)
 	{
@@ -13,7 +13,11 @@ internal class Bin : IWithDimensions
 		this.Height = height;
 	}
 
-	public string ID => this.FormatDimensions();
+	public string ID 
+	{ 
+		get => this.FormatDimensions();
+		set => _ = value;
+	}
 
 	[Required]
 	[Range(1, ushort.MaxValue)]

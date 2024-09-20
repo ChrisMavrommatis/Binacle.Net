@@ -20,6 +20,7 @@ public static class ModuleDefinition
 			.AddInteractiveServerComponents();
 
 
+
 		builder.Services.AddHttpClient("Self", (serviceProvider, httpClient) =>
 		{
 			// TODO: Fix this
