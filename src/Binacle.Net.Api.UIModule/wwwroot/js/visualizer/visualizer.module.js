@@ -1,7 +1,7 @@
 ﻿import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import * as THREE from 'three';
-import * as BinacleHelper from '/js/modules/visualizer-helper.js';
+import * as BinacleHelper from 'visualizer/addons/helper.js';
 
 let _visualizerContainer = null;
 let _loader = null;
@@ -121,7 +121,6 @@ window.binacle = {
 	},
 	removeItemFromScene: function (index) {
 		BinacleHelper.removeItemFromScene(_State.scene, index);
-
 	}
 };
 

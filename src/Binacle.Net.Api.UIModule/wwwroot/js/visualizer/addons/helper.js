@@ -1,6 +1,4 @@
-﻿import WebGL from 'three/addons/capabilities/WebGL.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import * as THREE from 'three';
+﻿import * as THREE from 'three';
 
 const timer = ms => new Promise(res => setTimeout(res, ms))
 

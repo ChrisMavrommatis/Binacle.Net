@@ -27,7 +27,6 @@ internal class ConfigureRateLimiter : IConfigureNamedOptions<RateLimiterOptions>
 
 	private void ConfigureRateLimiterOptions(RateLimiterOptions options)
 	{
-		// TODO: Fix rate limiter as it breaks UI Module
 		options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
 		{
 			if (!excludedPaths.Any(url => httpContext.Request.Path.StartsWithSegments(url)))
@@ -41,6 +40,7 @@ internal class ConfigureRateLimiter : IConfigureNamedOptions<RateLimiterOptions>
 				return RateLimitPartition.GetNoLimiter("Authenticated");
 			}
 
+			// TODO: create a different limiter as this would cripple the UI
 			return RateLimitPartition.GetFixedWindowLimiter("Anonymous", _ =>
 			new FixedWindowRateLimiterOptions
 			{
