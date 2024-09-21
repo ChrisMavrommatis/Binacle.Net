@@ -14,7 +14,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="4.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Blazor.Materialize\ChrisMavrommatis.Blazor.Materialize.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.Api.Kernel\Binacle.Net.Api.Kernel.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj" />
 	</ItemGroup>
 

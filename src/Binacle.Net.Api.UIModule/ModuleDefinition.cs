@@ -3,29 +3,36 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Binacle.Net.Api.UIModule.Components;
+using Binacle.Net.Api.Kernel;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
 
 namespace Binacle.Net.Api.UIModule;
 
 public static class ModuleDefinition
 {
-	private static string[] disabledPaths = ["/api", "/auth", "/users"];
+	private static string[] statusCodePagesFeatureDisabledPaths = ["/api", "/auth", "/users"];
 
 	public static void AddUIModule(this WebApplicationBuilder builder)
 	{
 		Log.Information("{moduleName} module. Status {status}", "UI", "Initializing");
 
+
+		builder.Configuration
+			.AddJsonFile("UiModule/ConnectionStrings.json", optional: false, reloadOnChange: true)
+			.AddJsonFile($"UiModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+			.AddEnvironmentVariables();
+
 		builder.Services
 			.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
-
-
-		builder.Services.AddHttpClient("Self", (serviceProvider, httpClient) =>
+		builder.Services.AddHttpClient("BinacleApi", (serviceProvider, httpClient) =>
 		{
-			// TODO: Fix this
-			var url = builder.Configuration["ASPNETCORE_URLS"];
-			httpClient.BaseAddress = new Uri(url);
+			var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+			var connectionString = configuration.GetConnectionStringWithEnvironmentVariableFallback("BinacleApi", "BINACLEAPI_CONNECTION_STRING");
+			
+			httpClient.BaseAddress = new Uri(connectionString!.Get("endpoint")!);
 		});
 
 
@@ -56,7 +63,7 @@ public static class ModuleDefinition
 
 		app.Use(async(ctx, next) =>
 		{
-			if (disabledPaths.Any(p => ctx.Request.Path.Value.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+			if (statusCodePagesFeatureDisabledPaths.Any(p => ctx.Request.Path.Value.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
 			{
 				var statusCodeFeature = ctx.Features.Get<IStatusCodePagesFeature>();
 

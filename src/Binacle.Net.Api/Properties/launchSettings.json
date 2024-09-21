@@ -1,6 +1,6 @@
 ﻿{
   "$schema": "https://json.schemastore.org/launchsettings.json",
-  "profiles": {
+	"profiles": {
 		"Normal": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
@@ -12,7 +12,7 @@
 				"SWAGGER_UI": "True"
 			}
 		},
-		"AsAService": {
+		"WithServiceModule": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"launchBrowser": false,
@@ -23,6 +23,31 @@
 				"SWAGGER_UI": "True",
 				"SERVICE_MODULE": "True"
 			}
+		},
+		"WithUiModule": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"launchBrowser": false,
+			"launchUrl": "/",
+			"applicationUrl": "https://localhost:7194",
+			"environmentVariables": {
+				"ASPNETCORE_ENVIRONMENT": "Development",
+				"SWAGGER_UI": "True",
+				"UI_MODULE": "True"
+			}
+		},
+		"WithAllFeatures": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"launchBrowser": false,
+			"launchUrl": "/",
+			"applicationUrl": "https://localhost:7194",
+			"environmentVariables": {
+				"ASPNETCORE_ENVIRONMENT": "Development",
+				"SWAGGER_UI": "True",
+				"SERVICE_MODULE": "True",
+				"UI_MODULE": "True"
+			}
 		}
-  }
+	}
 }

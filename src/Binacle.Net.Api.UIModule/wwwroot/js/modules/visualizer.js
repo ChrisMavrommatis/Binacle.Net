@@ -23,10 +23,10 @@ let _State = {
 const windowResizeHandler = function () {
 	_State.aspectRatio = window.innerWidth / window.innerHeight;
 	_State.camera.aspect = _State.aspectRatio;
-	_State.camera.fov = BinacleHelper.cameraFov(_State.aspectRatio);
+	_State.camera.fov = cameraFov(_State.aspectRatio);
 	_State.camera.updateProjectionMatrix();
-	_loader.style.top = `${BinacleHelper.loaderTop(_loader)}px`;
-	_State.renderer.setSize(_rendererContainer.offsetWidth, BinacleHelper.rendererHeight());
+	_loader.style.top = `${loaderTop(_loader)}px`;
+	_State.renderer.setSize(_rendererContainer.offsetWidth, rendererHeight());
 
 };
 function animate() {

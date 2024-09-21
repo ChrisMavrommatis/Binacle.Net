@@ -3,7 +3,7 @@
 public class DefaultsOptions
 {
 	public static string SectionName = "Defaults";
-	public static string FilePath = "Defaults.json";
+	public static string FilePath = "ServiceModule/Defaults.json";
 	public string AdminUser { get; set; }
 
 	public ConfiguredUser GetParsedAdminUser()

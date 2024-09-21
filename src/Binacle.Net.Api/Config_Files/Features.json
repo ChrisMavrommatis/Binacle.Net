@@ -1,7 +1,7 @@
 ﻿{
 	"Features": {
-		//"SERVICE_MODULE": "NotSet",
-		//"SWAGGER_UI": "NotSet",
-		"UI_MODULE": "True"
+		"SERVICE_MODULE": "NotSet",
+		"SWAGGER_UI": "NotSet",
+		"UI_MODULE": "NotSet"
 	}
 }

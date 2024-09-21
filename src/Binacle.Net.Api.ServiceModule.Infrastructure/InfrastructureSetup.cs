@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Api.Kernel.Helpers;
+﻿using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.ServiceModule.Domain.Users.Data;
 using Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables.Users.Data;
 using Binacle.Net.Api.ServiceModule.Infrastructure.Services;
@@ -14,13 +14,13 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddInfrastructureLayerServices(this IServiceCollection services, IConfiguration configuration)
 	{
-		var azureStorageConnectionString = SetupConfigurationHelper.GetConnectionStringWithEnvironmentVariableFallback(
-				configuration,
+		var azureStorageConnectionString = configuration.GetConnectionStringWithEnvironmentVariableFallback(
 				"AzureStorage",
-				"AZURESTORAGE_CONNECTION_STRING");
+				"AZURESTORAGE_CONNECTION_STRING"
+		);
 
 
-		if (!string.IsNullOrWhiteSpace(azureStorageConnectionString))
+		if (azureStorageConnectionString is not null)
 		{
 			Log.Information("Registering {StorageProvider} as infrastructure provider", "AzureStorage");
 

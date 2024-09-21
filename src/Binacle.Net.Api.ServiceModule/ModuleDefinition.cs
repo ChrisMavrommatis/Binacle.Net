@@ -1,5 +1,5 @@
 ﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
-using Binacle.Net.Api.Kernel.Helpers;
+using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Domain;
@@ -25,7 +25,6 @@ using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.RateLimiting;
 
 namespace Binacle.Net.Api.ServiceModule;
 
@@ -36,8 +35,8 @@ public static class ModuleDefinition
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initializing");
 
 		builder.Configuration
-			.AddJsonFile("ConnectionStrings.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+			.AddJsonFile("ServiceModule/ConnectionStrings.json", optional: false, reloadOnChange: true)
+			.AddJsonFile($"ServiceModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
 			.AddEnvironmentVariables();
 
 		// Required for local run with secrets
@@ -49,13 +48,12 @@ public static class ModuleDefinition
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
 
-		var applicationInsightsConnectionString = SetupConfigurationHelper.GetConnectionStringWithEnvironmentVariableFallback(
-			builder.Configuration,
+		var applicationInsightsConnectionString = builder.Configuration.GetConnectionStringWithEnvironmentVariableFallback(
 			"ApplicationInsights",
 			"APPLICATIONINSIGHTS_CONNECTION_STRING"
 			);
 
-		if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
+		if (applicationInsightsConnectionString is not null)
 		{
 			// overwrite default
 			builder.Host.UseSerilog((context, services, loggerConfiguration) =>
@@ -153,7 +151,7 @@ public static class ModuleDefinition
 			});
 
 
-		if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
+		if (applicationInsightsConnectionString is not null)
 		{
 			builder.Services.AddApplicationInsightsTelemetry(options =>
 			{
@@ -178,47 +176,10 @@ public static class ModuleDefinition
 
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
-		builder.Services.AddRateLimiter(options =>
-		{
-			// TODO: Fix rate limiter as it breaks UI Module
-			//options.AddPolicy("SpecificControllerPolicy", httpContext =>
-			//{
-			//	var user = httpContext.User;
-			//	if (user?.Identity?.IsAuthenticated ?? false)
-			//	{
-			//		return RateLimitPartition.GetNoLimiter("Authenticated");
-			//	}
+		builder.Services.AddRateLimiter(_ => { });
+		builder.Services.ConfigureOptions<ConfigureRateLimiter>();
 
-			//	return RateLimitPartition.GetFixedWindowLimiter("Anonymous", _ =>
-			//	new FixedWindowRateLimiterOptions
-			//	{
-			//		Window = TimeSpan.FromSeconds(60),
-			//		PermitLimit = 10,
-			//		QueueLimit = 0,
-			//		QueueProcessingOrder = QueueProcessingOrder.NewestFirst
-			//	});
-			//});
-				
-
-			//options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
-			//{
-			//	var user = httpContext.User;
-			//	if (user?.Identity?.IsAuthenticated ?? false)
-			//	{
-			//		return RateLimitPartition.GetNoLimiter("Authenticated");
-			//	}
-
-			//	return RateLimitPartition.GetFixedWindowLimiter("Anonymous", _ =>
-			//	new FixedWindowRateLimiterOptions
-			//	{
-			//		Window = TimeSpan.FromSeconds(60),
-			//		PermitLimit = 10,
-			//		QueueLimit = 0,
-			//		QueueProcessingOrder = QueueProcessingOrder.NewestFirst
-			//	});
-			//});
-			options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-		});
+		//builder.Services.ConfigureRateLimiter();
 
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initialized");
 	}

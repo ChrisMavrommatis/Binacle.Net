@@ -55,7 +55,7 @@ internal class PackingDemoState
 				Bins = Model.Bins.Select(x => new Models.Bin(x.ID, x)).ToList(),
 				Items = Model.Items.Select(x => new Models.Item(x.ID, x, x.Quantity)).ToList()
 			};
-			var client = this.httpClientFactory.CreateClient("Self");
+			var client = this.httpClientFactory.CreateClient("BinacleApi");
 			var response = await client.PostAsJsonAsync("api/v2/pack/by-custom", request);
 			if (response.StatusCode != System.Net.HttpStatusCode.OK)
 			{
