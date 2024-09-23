@@ -12,12 +12,11 @@
             <li class="collection-item avatar @(this.IsSelected(result) ? "active" : string.Empty)">
                 <div class="row">
                     <div class="col s6 m8">
-                        <i class="material-symbols-outlined large circle @colorClass">package_2</i>
+                        <MaterialSymbolOutlined Icon="package_2" class="@($"large circle {colorClass}")" />
                         <span class="title">Bin: @result.Bin.ID</span>
 
-                        <div class="progress">
-                            <div class="determinate @colorClass" style="width: @(percentage)%" />
-                        </div>
+                        <LinearPreloader Type="LinearPreloaderType.Determinate" Percentage=percentage class="@colorClass" />
+
                         <div class="row">
                             <div class="col s12 m6">
                                 Packed Bin Volume: @result.PackedBinVolumePercentage%
@@ -31,14 +30,14 @@
                                 }
                             </div>
                         </div>
-                        
+
                     </div>
                     <div class="col s6 m4">
                         @result.Result.ToString()
                     </div>
-                    <Button type="button" class="text secondary-content" @onclick="(() => this.SelectResultAsync(result))">
-                        <i class="material-symbols-outlined">publish</i>
-                    </Button>
+                    <TextButton class="secondary-content" @onclick="(() => this.SelectResultAsync(result))">
+                        <MaterialSymbolOutlined Icon="publish" />
+                    </TextButton>
                 </div>
 
             </li>

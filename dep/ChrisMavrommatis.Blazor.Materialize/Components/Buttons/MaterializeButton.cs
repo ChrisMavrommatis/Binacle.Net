@@ -2,8 +2,8 @@
 
 namespace ChrisMavrommatis.Blazor.Materialize.Components;
 
-public partial class CircularPreloader :MaterializeComponentBase
+public class MaterializeButton : MaterializeComponentBase
 {
 	[Parameter]
-	public string SpinnerColor { get; set; }
+	public RenderFragment? ChildContent { get; set; }
 }

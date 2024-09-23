@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace ChrisMavrommatis.Blazor.Materialize.Models;
+namespace ChrisMavrommatis.Blazor.Materialize.Components;
 
 public abstract class MaterializeComponentBase : ComponentBase
 {

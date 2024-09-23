@@ -14,9 +14,7 @@
         var iconTextClass = control.IsEnabled ? "grey-text text-darken-3" : string.Empty;
         <div class="col s2">
             <a class="btn-floating waves-effect waves-light @(colorClass)" id="@(control.Element.Id)" @onclick=@control.ClickAsync>
-                <i class="material-symbols-outlined @(iconTextClass)">
-                    @control.Icon
-                </i>
+                <MaterialSymbolOutlined Icon="@control.Icon" class="@iconTextClass" />
             </a>
         </div>
     }

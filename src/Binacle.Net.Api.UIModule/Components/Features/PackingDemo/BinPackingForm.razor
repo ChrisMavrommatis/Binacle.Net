@@ -11,12 +11,12 @@
                     @foreach (var bin in this.State.Model.Bins)
                     {
                         <li class="collection-item">
-                          <a href="javascript:void(0)" class="secondary-content" @onclick="(() => this.RemoveBinAsync(bin))">
-                                <i class="material-icons">delete</i>
+                            <a href="javascript:void(0)" class="secondary-content" @onclick="(() => this.RemoveBinAsync(bin))">
+                                <MaterialIcon Icon="delete" />
                             </a>
                             <div class="row g-1">
                                 <div class="col s4 input-field p-1 m-1">
-									<InputNumber id="length" @bind-Value="bin.Length" @bind-Value:after="this.BinsChangedAsync" class="blue accent-1" />
+                                    <InputNumber id="length" @bind-Value="bin.Length" @bind-Value:after="this.BinsChangedAsync" class="blue accent-1" />
                                     <label for="length">Length</label>
                                 </div>
                                 <div class="col s4 input-field p-1 m-1">
@@ -41,18 +41,18 @@
                 </ul>
             </ChildContent>
             <ActionContent>
-                <Button class="text icon-right" type="button" @onclick="this.AddBinAsync">
-                    <i class="material-icons">add</i>
+                <TextButton class="icon-right" @onclick="this.AddBinAsync">
+                    <MaterialIcon Icon="add" />
                     Add Bin
-                </Button>
-                <Button class="text icon-right" type="button" @onclick="this.ClearAllBinsAsync">
-                    <i class="material-icons">delete_forever</i>
+                </TextButton>
+                <TextButton class="icon-right" @onclick="this.ClearAllBinsAsync">
+                    <MaterialIcon Icon="delete_forever" />
                     Clear All Bins
-                </Button>
-                <Button class="text icon-right" type="button" @onclick="this.RandomizeBinsFromSamplesAsync">
-                    <i class="material-icons">refresh</i>
+                </TextButton>
+                <TextButton class="icon-right" @onclick="this.RandomizeBinsFromSamplesAsync">
+                    <MaterialIcon Icon="refresh" />
                     Randomize from samples
-                </Button>
+                </TextButton>
             </ActionContent>
         </Card>
 
@@ -65,7 +65,7 @@
                     {
                         <li class="collection-item">
                             <a href="javascript:void(0)" class="secondary-content" @onclick="(() => this.RemoveItemAsync(item))">
-                                <i class="material-icons">delete</i>
+                                <MaterialIcon Icon="delete" />
                             </a>
                             <div class="row g1">
                                 <div class="col s3 input-field">
@@ -99,18 +99,18 @@
             </ChildContent>
 
             <ActionContent>
-                <Button class="text icon-right" type="button" @onclick="this.AddItemAsync">
-                    <i class="material-icons">add</i>
+                <TextButton class="icon-right" @onclick="this.AddItemAsync">
+                    <MaterialIcon Icon="add" />
                     Add Item
-                </Button>
-                <Button class="text icon-right" type="button" @onclick="this.ClearAllItemsAsync">
-                    <i class="material-icons">delete_forever</i>
+                </TextButton>
+                <TextButton class="icon-right" @onclick="this.ClearAllItemsAsync">
+                    <MaterialIcon Icon="delete_forever" />
                     Clear All Items
-                </Button>
-                <Button class="text icon-right" type="button" @onclick="this.RandomizeItemsFromSamplesAsync">
-                    <i class="material-icons">refresh</i>
+                </TextButton>
+                <TextButton class="icon-right" @onclick="this.RandomizeItemsFromSamplesAsync">
+                    <MaterialIcon Icon="refresh" />
                     Randomize from samples
-                </Button>
+                </TextButton>
             </ActionContent>
 
         </Card>
@@ -120,9 +120,9 @@
 <div class="row mt-5 pt-5">
     <div class="col s4"></div>
     <div class="col s4 center">
-        <button class="btn outlined" type="button" @onclick="this.State.GetResultsAsync">
+        <OutlinedButton @onclick="this.State.GetResultsAsync">
             Get Results
-        </button>
+        </OutlinedButton>
     </div>
     <div class="col s4"></div>
 </div>

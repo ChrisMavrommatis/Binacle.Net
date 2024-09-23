@@ -1,5 +1,4 @@
-﻿using ChrisMavrommatis.Blazor.Materialize.Models;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace ChrisMavrommatis.Blazor.Materialize.Components;
 

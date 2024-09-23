@@ -2,8 +2,8 @@
 
 namespace ChrisMavrommatis.Blazor.Materialize.Components;
 
-public partial class CircularPreloader :MaterializeComponentBase
+public class MaterializeIcon : MaterializeComponentBase
 {
 	[Parameter]
-	public string SpinnerColor { get; set; }
+	public string? Icon { get; set; }
 }
