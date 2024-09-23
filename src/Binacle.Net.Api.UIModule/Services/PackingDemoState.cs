@@ -32,8 +32,8 @@ internal class PackingDemoState
 	public ValueTask UpdateLoadingEnd()
 		=> this.jsRuntime.InvokeVoidAsync("binacle.loadingEnd");
 
-	public ValueTask InvokeErrors(Exception ex)
-		=> this.jsRuntime.InvokeVoidAsync("binacle.invokeErrors", ex.Message);
+	public ValueTask InvokeErrors()
+		=> this.jsRuntime.InvokeVoidAsync("binacle.invokeErrors", this.Errors);
 
 	public ValueTask RedrawSceneAsync<TBin>(TBin bin, List<PackedItem>? items)
 		where TBin : IWithID, IWithReadOnlyDimensions
@@ -47,6 +47,7 @@ internal class PackingDemoState
 
 	public async Task GetResultsAsync()
 	{
+		this.errors.Clear();
 		await this.UpdateLoadingStart();
 		try
 		{
@@ -78,17 +79,20 @@ internal class PackingDemoState
 		catch (Exception ex)
 		{
 			// TODO
-			await this.InvokeErrors(ex);
+			this.errors.Add(ex.Message);
+			await this.InvokeErrors();
 		}
 		await this.UpdateLoadingEnd();
 
 	}
 
+	private List<string> errors  = new();
+	public ReadOnlyCollection<string> Errors => this.errors?.AsReadOnly();
+
 	private List<Models.PackingResult>? results;
 	public ReadOnlyCollection<Models.PackingResult>? Results => this.results?.AsReadOnly();
 
 	public AsyncEvent<ReadOnlyCollection<Models.PackingResult>> OnResultsChanged { get; set; } = new();
-
 
 	public AsyncEvent<Models.PackingResult> OnSelectResult { get; set; } = new();
 
