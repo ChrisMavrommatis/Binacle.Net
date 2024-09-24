@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Api.UIModule.Models;
-using Binacle.Net.Lib.Abstractions.Models;
+﻿using Binacle.Net.Lib.Abstractions.Models;
 using Microsoft.JSInterop;
 using System.Collections.ObjectModel;
 using System.Net.Http.Json;
@@ -35,11 +34,11 @@ internal class PackingDemoState
 	public ValueTask InvokeErrors()
 		=> this.jsRuntime.InvokeVoidAsync("binacle.invokeErrors", this.Errors);
 
-	public ValueTask RedrawSceneAsync<TBin>(TBin bin, List<PackedItem>? items)
+	public ValueTask RedrawSceneAsync<TBin>(TBin bin, List<Models.PackedItem>? items)
 		where TBin : IWithID, IWithReadOnlyDimensions
 		=> this.jsRuntime.InvokeVoidAsync("binacle.redrawScene", bin, items);
 
-	public ValueTask AddItemToScene<TBin>(TBin bin, PackedItem item, int index)
+	public ValueTask AddItemToScene<TBin>(TBin bin, Models.PackedItem item, int index)
 		=> this.jsRuntime.InvokeVoidAsync("binacle.addItemToScene", bin, item, index);
 
 	public ValueTask RemoveItemFromScene(int index)
@@ -78,7 +77,6 @@ internal class PackingDemoState
 		}
 		catch (Exception ex)
 		{
-			// TODO
 			this.errors.Add(ex.Message);
 			await this.InvokeErrors();
 		}
@@ -92,9 +90,9 @@ internal class PackingDemoState
 	private List<Models.PackingResult>? results;
 	public ReadOnlyCollection<Models.PackingResult>? Results => this.results?.AsReadOnly();
 
-	public AsyncEvent<ReadOnlyCollection<Models.PackingResult>> OnResultsChanged { get; set; } = new();
+	public Models.AsyncEvent<ReadOnlyCollection<Models.PackingResult>> OnResultsChanged { get; set; } = new();
 
-	public AsyncEvent<Models.PackingResult> OnSelectResult { get; set; } = new();
+	public Models.AsyncEvent<Models.PackingResult> OnSelectResult { get; set; } = new();
 
 	public Models.PackingResult? SelectedResult { get; private set; }
 	public async Task SelectResultAsync(Models.PackingResult result)
@@ -113,7 +111,7 @@ internal class PackingDemoState
 
 	}
 
-	public AsyncEvent<List<ViewModels.Bin>> OnBinsChanged { get; set; } = new();
+	public Models.AsyncEvent<List<ViewModels.Bin>> OnBinsChanged { get; set; } = new();
 	public async Task TriggerBinsChangedAsync()
 	{
 		await this.OnBinsChanged.InvokeAsync(this.Model.Bins);
@@ -123,7 +121,7 @@ internal class PackingDemoState
 		}
 
 	}
-	public AsyncEvent<List<ViewModels.Item>> OnItemsChanged { get; set; } = new();
+	public Models.AsyncEvent<List<ViewModels.Item>> OnItemsChanged { get; set; } = new();
 	private async Task TriggerItemsChangedAsync()
 	{
 		await this.OnItemsChanged.InvokeAsync(this.Model.Items);

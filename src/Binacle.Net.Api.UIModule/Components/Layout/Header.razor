@@ -1,25 +1,14 @@
-﻿@inject NavigationManager NavigationManager
+﻿@using Binacle.Net.Api.UIModule.Components.Features.Shared
 
 <header>
     <div class="navbar-fixed">
         <nav class="blue accent-2">
             <div class="nav-wrapper container">
-                <img class="navbar-fill" src="assets/logo/binacle-logo-16x16.svg">
-                @if (this.IsHomepage)
-                {
-                    <div class="brand-logo white-text">
-                        Binacle.Net
-                    </div>
-                }
-                else
-                {
-                    <a href="/" class="brand-logo white-text">
-                        Binacle.Net
-                    </a>
-                }
-                <a href="#" data-target="mobile-demo" class="sidenav-trigger right hide-on-large-only">
+                <BinacleLogo />
+               
+                @* <a href="#" data-target="mobile-demo" class="sidenav-trigger right hide-on-large-only">
                     <MaterialIcon Icon="menu" />
-                </a>
+                </a> *@
                 <ul class="right hide-on-med-and-down">
                     <li>
                         <NavLink href="PackingDemo" ActiveClass="active">
@@ -41,8 +30,9 @@
         </nav>
     </div>
 
-    @* TODO fix mobile sidenav *@
-    <ul class="sidenav blue accent-2" id="mobile-demo">
+    @* Blazor doesn't play nice with js listening to events *@
+    @* TODO: Figure out a way to incorporate sidenav opening in blazor *@
+    @* <ul class="sidenav blue accent-2" id="mobile-demo">
         <li class="mt-3">
             <NavLink href="PackingDemo" ActiveClass="active" class="white-text">
                 Packing Demo
@@ -60,16 +50,5 @@
                 Dockerhub
             </a>
         </li>
-    </ul>
+    </ul> *@
 </header>
-
-@code {
-    private bool IsHomepage { get; set; }
-
-    protected override void OnInitialized()
-    {
-        var uri = new Uri(this.NavigationManager.Uri);
-
-        this.IsHomepage = uri.LocalPath == "/";
-    }
-}

@@ -68,6 +68,27 @@ public static class ModuleDefinition
 		}
 
 		builder.Configuration
+			.AddJsonFile(DefaultsOptions.FilePath, optional: false, reloadOnChange: false)
+			.AddEnvironmentVariables();
+
+		builder.Services
+			.AddOptions<DefaultsOptions>()
+			.Bind(builder.Configuration.GetSection(DefaultsOptions.SectionName));
+
+
+		builder.Configuration
+			.AddJsonFile(RateLimiterConfigurationOptions.FilePath, optional: false, reloadOnChange: false)
+			.AddJsonFile(RateLimiterConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
+			.AddEnvironmentVariables();
+
+		builder.Services
+			.AddOptions<RateLimiterConfigurationOptions>()
+			.Bind(builder.Configuration.GetSection(RateLimiterConfigurationOptions.SectionName))
+			.ValidateFluently()
+			.ValidateOnStart();
+
+
+		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
 			.AddJsonFile(JwtAuthOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
 			.AddEnvironmentVariables();
@@ -77,14 +98,6 @@ public static class ModuleDefinition
 			.Bind(builder.Configuration.GetSection(JwtAuthOptions.SectionName))
 			.ValidateFluently()
 			.ValidateOnStart();
-
-		builder.Configuration
-			.AddJsonFile(DefaultsOptions.FilePath, optional: false, reloadOnChange: false)
-			.AddEnvironmentVariables();
-
-		builder.Services
-			.AddOptions<DefaultsOptions>()
-			.Bind(builder.Configuration.GetSection(DefaultsOptions.SectionName));
 
 		builder.Services.AddAuthentication(options =>
 		{
@@ -178,8 +191,6 @@ public static class ModuleDefinition
 
 		builder.Services.AddRateLimiter(_ => { });
 		builder.Services.ConfigureOptions<ConfigureRateLimiter>();
-
-		//builder.Services.ConfigureRateLimiter();
 
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initialized");
 	}

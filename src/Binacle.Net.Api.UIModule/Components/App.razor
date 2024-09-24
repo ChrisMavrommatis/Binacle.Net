@@ -34,8 +34,12 @@
 
     <script src="_framework/blazor.web.js"></script>
     @* JavaScript at end of body for optimized loading *@
+    
+    @* Blazor doesn't play nice with js listening to events  *@
+    @* TODO: Figure out a way to incorporate sidenav opening in blazor *@
+
     @* <script type="text/javascript" src="lib/materialize/materialize.min.js"></script> *@
-    <script type="text/javascript" src="js/main.js"></script>
+    @* <script type="text/javascript" src="js/main.js"></script> *@
 
     <script type="importmap">
         {

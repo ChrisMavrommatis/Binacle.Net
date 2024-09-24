@@ -1,0 +1,6 @@
+﻿{
+	"RateLimiter": {
+		"Enabled": true,
+		"Anonymous" :  "SlidingWindow::10/60-10"
+	}
+}

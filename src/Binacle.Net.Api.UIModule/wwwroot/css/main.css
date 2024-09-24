@@ -30,3 +30,13 @@ input::-webkit-inner-spin-button {
 input[type=number] {
 	-moz-appearance: textfield;
 }
+
+/* input field set padding and label left */
+/*.input-field input {
+	padding: 0 0px;
+	padding-top: 20px;
+}
+
+.input-field > label {
+	left: 0px;
+}*/
