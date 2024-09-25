@@ -1,4 +1,6 @@
 ﻿using AutoFixture;
+using Binacle.Net.Lib.Abstractions.Algorithms;
+using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.Lib.Exceptions;
 using Binacle.Net.TestsKernel.Models;
 using Xunit;
@@ -11,10 +13,13 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 	private CommonTestingFixture Fixture { get; }
 	public Fixture AutoFixture { get; }
 
+	
+
 	public CreationTests(CommonTestingFixture fixture)
 	{
-		Fixture = fixture;
-		AutoFixture = new Fixture();
+		this.Fixture = fixture;
+		this.AutoFixture = new Fixture();
+		
 	}
 
 	[Fact(DisplayName = "Create With Null Bin Throws ArgumentNullException")]
@@ -23,21 +28,21 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 		var testItems = AutoFixture.CreateMany<TestItem>(2)
 			.ToList();
 
-		Assert.Throws<ArgumentNullException>(() =>
+		foreach(var fittingAlgorithm in this.Fixture.TestedFittingAlgorithms)
 		{
-			var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(null, testItems);
-		});
+			Assert.Throws<ArgumentNullException>(() =>
+			{
+				var algorithmInstance = fittingAlgorithm(null, testItems);
+			});
+		}
 
-		Assert.Throws<ArgumentNullException>(() =>
+		foreach (var packingAlgorithm in this.Fixture.TestedPackingAlgorithms)
 		{
-			var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v2<TestBin, TestItem>(null, testItems);
-		});
-
-		Assert.Throws<ArgumentNullException>(() =>
-		{
-			var algorithmInstance = new Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(null, testItems);
-		});
-
+			Assert.Throws<ArgumentNullException>(() =>
+			{
+				var algorithmInstance = packingAlgorithm(null, testItems);
+			});
+		}
 	}
 
 	[Fact(DisplayName = "Create With Null Or Empty Items Throws ArgumentNullException")]
@@ -45,35 +50,30 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 	{
 		var bin = AutoFixture.Create<TestBin>();
 
-		Assert.Throws<ArgumentNullException>(() =>
+		foreach (var fittingAlgorithm in this.Fixture.TestedFittingAlgorithms)
 		{
-			var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(bin, null);
-		});
+			Assert.Throws<ArgumentNullException>(() =>
+			{
+				var algorithmInstance = fittingAlgorithm(bin, null);
+			});
+			Assert.Throws<ArgumentNullException>(() =>
+			{
+				var algorithmInstance = fittingAlgorithm(bin, Enumerable.Empty<TestItem>());
+			});
 
-		Assert.Throws<ArgumentNullException>(() =>
-		{
-			var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v2<TestBin, TestItem>(bin, null);
-		});
+		}
 
-		Assert.Throws<ArgumentNullException>(() =>
+		foreach (var packingAlgorithm in this.Fixture.TestedPackingAlgorithms)
 		{
-			var algorithmInstance = new Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(bin, null);
-		});
-
-		Assert.Throws<ArgumentNullException>(() =>
-		{
-			var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(bin, Enumerable.Empty<TestItem>());
-		});
-
-		Assert.Throws<ArgumentNullException>(() =>
-		{
-			var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v2<TestBin, TestItem>(bin, Enumerable.Empty<TestItem>());
-		});
-
-		Assert.Throws<ArgumentNullException>(() =>
-		{
-			var algorithmInstance = new Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(bin, Enumerable.Empty<TestItem>().ToList());
-		});
+			Assert.Throws<ArgumentNullException>(() =>
+			{
+				var algorithmInstance = packingAlgorithm(bin, null);
+			});
+			Assert.Throws<ArgumentNullException>(() =>
+			{
+				var algorithmInstance = packingAlgorithm(bin, Enumerable.Empty<TestItem>().ToList());
+			});
+		}
 	}
 
 	[Fact(DisplayName = "Create With 0 Dimension on Bins Throws DimensionException")]
@@ -86,20 +86,22 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 		   .With(x => x.Width, 0)
 		   .Create();
 
-		Assert.Throws<DimensionException>(() =>
+		foreach (var fittingAlgorithm in this.Fixture.TestedFittingAlgorithms)
 		{
-			var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(binWith0Dimension, testItems);
-		});
+			Assert.Throws<DimensionException>(() =>
+			{
+				var algorithmInstance = fittingAlgorithm(binWith0Dimension, testItems);
+			});
+		}
 
-		Assert.Throws<DimensionException>(() =>
+		foreach (var packingAlgorithm in this.Fixture.TestedPackingAlgorithms)
 		{
-			var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v2<TestBin, TestItem>(binWith0Dimension, testItems);
-		});
-
-		Assert.Throws<DimensionException>(() =>
-		{
-			var algorithmInstance = new Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(binWith0Dimension, testItems);
-		});
+			Assert.Throws<DimensionException>(() =>
+			{
+				var algorithmInstance = packingAlgorithm(binWith0Dimension, testItems);
+			});
+		}
+		
 	}
 
 	[Fact(DisplayName = "Create With 0 Dimension on Items Throws DimensionException")]
@@ -112,19 +114,20 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 		  .CreateMany(2)
 		  .ToList();
 
-		Assert.Throws<DimensionException>(() =>
+		foreach (var fittingAlgorithm in this.Fixture.TestedFittingAlgorithms)
 		{
-			var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(bin, testItemsWith0Dimension);
-		});
+			Assert.Throws<DimensionException>(() =>
+			{
+				var algorithmInstance = fittingAlgorithm(bin, testItemsWith0Dimension);
+			});
+		}
 
-		Assert.Throws<DimensionException>(() =>
+		foreach (var packingAlgorithm in this.Fixture.TestedPackingAlgorithms)
 		{
-			var algorithmInstance = new Fitting.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(bin, testItemsWith0Dimension);
-		});
-
-		Assert.Throws<DimensionException>(() =>
-		{
-			var algorithmInstance = new Packing.Algorithms.FirstFitDecreasing_v1<TestBin, TestItem>(bin, testItemsWith0Dimension);
-		});
+			Assert.Throws<DimensionException>(() =>
+			{
+				var algorithmInstance = packingAlgorithm(bin, testItemsWith0Dimension);
+			});
+		}
 	}
 }

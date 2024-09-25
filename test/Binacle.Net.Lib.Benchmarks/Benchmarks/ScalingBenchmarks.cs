@@ -99,15 +99,15 @@ public class ScalingBenchmarks
 		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
 		return result;
 	}
-	
-	//[Benchmark]
-	//public FittingResult Fitting_FFD_V4()
-	//{
-	//	var algorithmInstance = AlgorithmFactories.Fitting_FFD_v4(this.bin, this.items);
-	//	var result = algorithmInstance.PreExcecute(new FittingParameters { ReportFittedItems = false, ReportUnfittedItems = false }, this.bin, this.items);
-	//	//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
-	//	return result;
-	//}
+
+	[Benchmark]
+	public FittingResult Fitting_FFD_V4()
+	{
+		var algorithmInstance = AlgorithmFactories.Fitting_FFD_v4(this.bin, this.items);
+		var result = algorithmInstance.Execute(new FittingParameters { ReportFittedItems = false, ReportUnfittedItems = false });
+		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
+		return result;
+	}
 
 	[Benchmark]
 	public PackingResult Packing_FFD_V1()
