@@ -3,11 +3,11 @@ using Binacle.Net.Lib.Packing.Models;
 
 namespace Binacle.Net.Lib.Packing.Algorithms;
 
-internal partial class FirstFitDecreasing_v2<TBin, TItem>
+internal partial class FirstFitDecreasing_v3<TBin, TItem>
 {
 	public PackingResult Execute(PackingParameters parameters)
 	{
-		var resultBuilder = PackingResultBuilder<Bin, Item>.Create(this.bin, this.items.Count, this.totalItemsVolume);
+		var resultBuilder = PackingResultBuilder<Bin, Item>.Create(this.bin, this.items.Length, this.totalItemsVolume);
 
 		if (parameters.OptInToEarlyFails)
 		{
@@ -31,10 +31,16 @@ internal partial class FirstFitDecreasing_v2<TBin, TItem>
 
 		List<SpaceVolume> availableSpace = [new SpaceVolume(this.bin, Coordinates.Zero)];
 
-		var orderedItems = this.items.OrderByDescending(x => x.Volume);
-		foreach (var item in orderedItems)
+
+		Array.Sort(this.items, (x, y) => y.Volume.CompareTo(x.Volume));
+
+
+		
+		for (var i = 0; i < this.items.Length; i++)
 		{
-			for (var i = 0; i < Item.TotalOrientations; i++)
+			var item = this.items[i];
+
+			for (var orientation = 0; orientation < Item.TotalOrientations; orientation++)
 			{
 				var availableSpaceQuadrant = this.FindAvailableSpace(item, availableSpace);
 				if (availableSpaceQuadrant is not null)
@@ -49,8 +55,8 @@ internal partial class FirstFitDecreasing_v2<TBin, TItem>
 		}
 
 		return resultBuilder
-			.WithPackedItems(orderedItems.Where(x => x.IsPacked))
-			.WithUnpackedItems(orderedItems.Where(x => !x.IsPacked))
+			.WithPackedItems(this.items.Where(x => x.IsPacked))
+			.WithUnpackedItems(this.items.Where(x => !x.IsPacked))
 			.Build(parameters);
 	}
 
@@ -70,43 +76,60 @@ internal partial class FirstFitDecreasing_v2<TBin, TItem>
 		item.Pack(spaceQuadrant);
 		var newAvailableSpaceQuadrants = this.SplitSpaceQuadrant(spaceQuadrant, item);
 		availableSpace.Remove(spaceQuadrant);
-		if (newAvailableSpaceQuadrants.Count > 0)
+		if (newAvailableSpaceQuadrants.Length > 0)
 		{
 			availableSpace.AddRange(newAvailableSpaceQuadrants);
 		}
-		
+
 	}
 
-	private List<SpaceVolume> SplitSpaceQuadrant(SpaceVolume spaceQuadrant, Item orientation)
+	private SpaceVolume[] SplitSpaceQuadrant(SpaceVolume spaceQuadrant, Item orientation)
 	{
-		var newAvailableSpaces = new List<SpaceVolume>();
 
 		var remainingLength = (ushort)spaceQuadrant.Dimensions.Length - orientation.Length;
 		var remainingWidth = (ushort)spaceQuadrant.Dimensions.Width - orientation.Width;
 		var remainingHeight = (ushort)spaceQuadrant.Dimensions.Height - orientation.Height;
 
+		ushort newSpaces = 0;
+
+
+		if (remainingLength > 0)
+			newSpaces++;
+
+		if (remainingWidth > 0)
+			newSpaces++;
+
+		if (remainingHeight > 0)
+			newSpaces++;
+
+		var newAvailableSpaces = new SpaceVolume[newSpaces];
+
+
 		var offsetX = (ushort)spaceQuadrant.Coordinates.X + orientation.Length;
 		var offsetY = (ushort)spaceQuadrant.Coordinates.Y + orientation.Width;
 		var offsetZ = (ushort)spaceQuadrant.Coordinates.Z + orientation.Height;
 
-		if (remainingLength > 0)
-			newAvailableSpaces.Add(new SpaceVolume(
-				new Dimensions(remainingLength, spaceQuadrant.Dimensions.Width, spaceQuadrant.Dimensions.Height),
-				new Coordinates(offsetX, spaceQuadrant.Coordinates.Y, spaceQuadrant.Coordinates.Z)
-			));
-
-		if (remainingWidth > 0)
-			newAvailableSpaces.Add(new SpaceVolume(
-				new Dimensions(orientation.Length, remainingWidth, spaceQuadrant.Dimensions.Height),
-				new Coordinates(spaceQuadrant.Coordinates.X, offsetY, spaceQuadrant.Coordinates.Z)
-			));
-
 		if (remainingHeight > 0)
-			newAvailableSpaces.Add(new SpaceVolume(
+			newAvailableSpaces[--newSpaces] = new SpaceVolume(
 				new Dimensions(orientation.Length, orientation.Width, remainingHeight),
 				new Coordinates(spaceQuadrant.Coordinates.X, spaceQuadrant.Coordinates.Y, offsetZ)
-			));
+			);
+
+
+		if (remainingWidth > 0)
+			newAvailableSpaces[--newSpaces] = new SpaceVolume(
+				new Dimensions(orientation.Length, remainingWidth, spaceQuadrant.Dimensions.Height),
+				new Coordinates(spaceQuadrant.Coordinates.X, offsetY, spaceQuadrant.Coordinates.Z)
+			);
+
+		if (remainingLength > 0)
+			newAvailableSpaces[--newSpaces] = new SpaceVolume(
+				new Dimensions(remainingLength, spaceQuadrant.Dimensions.Width, spaceQuadrant.Dimensions.Height),
+				new Coordinates(offsetX, spaceQuadrant.Coordinates.Y, spaceQuadrant.Coordinates.Z)
+			);
+
 
 		return newAvailableSpaces;
+	
 	}
 }

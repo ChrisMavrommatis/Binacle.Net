@@ -22,7 +22,8 @@ public sealed class CommonTestingFixture : IDisposable
 		];
 		this.TestedPackingAlgorithms = [
 			AlgorithmFactories.Packing_FFD_v1,
-			AlgorithmFactories.Packing_FFD_v2
+			AlgorithmFactories.Packing_FFD_v2,
+			AlgorithmFactories.Packing_FFD_v3
 		];
 	}
 

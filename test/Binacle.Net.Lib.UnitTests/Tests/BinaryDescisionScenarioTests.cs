@@ -153,6 +153,24 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 	public void Packing_Complex_v2(Scenario scenario)
 		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
 
+	// Packing V3
+
+	[Theory]
+	[ClassData(typeof(Data.Providers.BinaryDecision.BaselineScenarioTestDataProvider))]
+	public void Packing_Baseline_v3(Scenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v3, scenario);
+
+
+	[Theory]
+	[ClassData(typeof(Data.Providers.BinaryDecision.SimpleScenarioTestDataProvider))]
+	public void Packing_Simple_v3(Scenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v3, scenario);
+
+	[Theory]
+	[ClassData(typeof(Data.Providers.BinaryDecision.ComplexScenarioTestDataProvider))]
+	public void Packing_Complex_v3(Scenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v3, scenario);
+
 
 	private void RunPackingScenarioTest<TAlgorithm>(
 			Func<TestBin, List<TestItem>, TAlgorithm> algorithmFactory,
