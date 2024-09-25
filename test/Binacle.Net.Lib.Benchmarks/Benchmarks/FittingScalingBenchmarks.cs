@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 namespace Binacle.Net.Lib.Benchmarks;
 
 [MemoryDiagnoser]
-public class ScalingBenchmarks
+public class FittingScalingBenchmarks
 {
 	static string GetSolutionRoot([CallerFilePath] string callerFilePath = "")
 	{
@@ -18,7 +18,7 @@ public class ScalingBenchmarks
 		return solutionRoot;
 	}
 
-	public ScalingBenchmarks()
+	public FittingScalingBenchmarks()
 	{
 		this.binCollectionsDataProvider = new BinCollectionsTestDataProvider(solutionRootPath: GetSolutionRoot());
 
@@ -109,21 +109,4 @@ public class ScalingBenchmarks
 		return result;
 	}
 
-	[Benchmark]
-	public PackingResult Packing_FFD_V1()
-	{
-		var algorithmInstance = AlgorithmFactories.Packing_FFD_v1(this.bin, this.items);
-		var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = true, NeverReportUnpackedItems = true, ReportPackedItemsOnlyWhenFullyPacked = true});
-		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
-		return result;
-	}
-
-	//[Benchmark]
-	//public PackingResult Packing_FFD_V1_Full()
-	//{
-	//	var algorithmInstance = AlgorithmFactories.Packing_FFD_v1(this.bin, this.items);
-	//	var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = true, NeverReportUnpackedItems = false, ReportPackedItemsOnlyWhenFullyPacked = false });
-	//	//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
-	//	return result;
-	//}
 }

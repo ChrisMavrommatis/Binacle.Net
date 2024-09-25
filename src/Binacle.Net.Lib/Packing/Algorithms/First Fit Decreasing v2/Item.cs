@@ -1,9 +1,11 @@
 ﻿using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.Lib.Abstractions.Models;
+using Binacle.Net.Lib.Models;
+using Binacle.Net.Lib.Packing.Models;
 
 namespace Binacle.Net.Lib.Packing.Algorithms;
 
-internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
+internal partial class FirstFitDecreasing_v2<TBin, TItem> : IPackingAlgorithm
 	where TBin : class, IWithID, IWithReadOnlyDimensions
 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 {
@@ -11,39 +13,42 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 	{
 		internal static ushort TotalOrientations = 6;
 
-		private readonly int originalLength;
-		private readonly int originalWidth;
-		private readonly int originalHeight;
+		private readonly TItem originalItem;
 
 		private ushort currentOrientation;
+		private Coordinates? coordinates;
 
-		internal Item(TItem item)
+
+		internal Item(TItem item, int volume, int longestDimension)
 		{
+			this.originalItem = item;
 			this.currentOrientation = 0;
-			this.ID = item.ID;
-
-			this.originalLength = item.Length;
-			this.originalWidth = item.Width;
-			this.originalHeight = item.Height;
-
 			this.Length = item.Length;
 			this.Width = item.Width;
 			this.Height = item.Height;
-
-			this.Volume = this.CalculateVolume();
-			this.LongestDimension = this.CalculateLongestDimension();
+			this.Volume = volume;
+			this.LongestDimension = longestDimension;
 			this.IsPacked = false;
 		}
-		public string ID { get; set; }
-		
+		public string ID 
+		{ 
+			get
+			{
+				return this.originalItem.ID;
+			}
+			set 
+			{
+				this.originalItem.ID = value;
+			}
+		}
 		public int Volume { get; }
 		public int Length { get; private set; }
 		public int Width { get; private set; }
 		public int Height { get; private set; }
 
-		public int X { get; private set; }
-		public int Y { get; private set; }
-		public int Z { get; private set; }
+		public int X => this.coordinates!.Value.X;
+		public int Y => this.coordinates!.Value.Y;
+		public int Z => this.coordinates!.Value.Z;
 
 		public int LongestDimension { get; }
 		public bool IsPacked { get; private set; }
@@ -60,39 +65,39 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 				// VolumetricItem(item.Length, item.Width, item.Height)
 				case 0:
 				default:
-					this.Length = this.originalLength;
-					this.Width = this.originalWidth;
-					this.Height = this.originalHeight;
+					this.Length = this.originalItem.Length;
+					this.Width = this.originalItem.Width;
+					this.Height = this.originalItem.Height;
 					break;
 				// new VolumetricItem(item.Length, item.Height, item.Width)
 				case 1:
-					this.Length = this.originalLength;
-					this.Width = this.originalHeight;
-					this.Height = this.originalWidth;
+					this.Length = this.originalItem.Length;
+					this.Width = this.originalItem.Height;
+					this.Height = this.originalItem.Width;
 					break;
 				//new VolumetricItem(item.Width, item.Length, item.Height)
 				case 2:
-					this.Length = this.originalWidth;
-					this.Width = this.originalLength;
-					this.Height = this.originalHeight;
+					this.Length = this.originalItem.Width;
+					this.Width = this.originalItem.Length;
+					this.Height = this.originalItem.Height;
 					break;
 				// new VolumetricItem(item.Width, item.Height, item.Length)
 				case 3:
-					this.Length = this.originalWidth;
-					this.Width = this.originalHeight;
-					this.Height = this.originalLength;
+					this.Length = this.originalItem.Width;
+					this.Width = this.originalItem.Height;
+					this.Height = this.originalItem.Length;
 					break;
 				// new VolumetricItem(item.Height, item.Length, item.Width)
 				case 4:
-					this.Length = this.originalHeight;
-					this.Width = this.originalLength;
-					this.Height = this.originalWidth;
+					this.Length = this.originalItem.Height;
+					this.Width = this.originalItem.Length;
+					this.Height = this.originalItem.Width;
 					break;
 				// new VolumetricItem(item.Height, item.Width, item.Length)
 				case 5:
-					this.Length = this.originalHeight;
-					this.Width = this.originalWidth;
-					this.Height = this.originalLength;
+					this.Length = this.originalItem.Height;
+					this.Width = this.originalItem.Width;
+					this.Height = this.originalItem.Length;
 					break;
 			}
 
@@ -102,11 +107,11 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 		internal void Pack(SpaceVolume spaceQuadrant)
 		{
 			this.IsPacked = true;
-			this.X = spaceQuadrant.Coordinates.X;
-			this.Y = spaceQuadrant.Coordinates.Y;
-			this.Z = spaceQuadrant.Coordinates.Z;
+			this.coordinates = spaceQuadrant.Coordinates;
 		}
 		// when quantity is greater that 0
+
+
 
 	}
 }

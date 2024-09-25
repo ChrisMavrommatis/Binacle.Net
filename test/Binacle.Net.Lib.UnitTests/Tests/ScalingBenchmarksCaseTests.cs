@@ -64,11 +64,15 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 	#endregion
 
 	#region Packing
+	[Theory]
+	[ClassData(typeof(BenchmarkScalingTestsDataProvider))]
+	public void Packing_FFD_v1(BenchmarkScalingScenario scenario)
+	=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
 
 	[Theory]
 	[ClassData(typeof(BenchmarkScalingTestsDataProvider))]
 	public void Packing_FFD_v2(BenchmarkScalingScenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
 
 	private void RunPackingScenarioTest(
 		Func<TestBin, List<TestItem>, IPackingAlgorithm> algorithmFactory,

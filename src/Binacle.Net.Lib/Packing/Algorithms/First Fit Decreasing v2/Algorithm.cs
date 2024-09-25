@@ -5,18 +5,18 @@ using Binacle.Net.Lib.GuardClauses;
 
 namespace Binacle.Net.Lib.Packing.Algorithms;
 
-internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
+internal partial class FirstFitDecreasing_v2<TBin, TItem> : IPackingAlgorithm
 	where TBin : class, IWithID, IWithReadOnlyDimensions
 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 {
 	public string Name => "First Fit Decreasing";
-	public int Version => 1;
+	public int Version => 2;
 
 	private readonly Bin bin;
 	private readonly List<Item> items;
 	private readonly int totalItemsVolume;
 
-	internal FirstFitDecreasing_v1(TBin bin, IList<TItem> items)
+	internal FirstFitDecreasing_v2(TBin bin, IList<TItem> items)
 	{
 		Guard.Against
 			.Null(bin)
@@ -47,10 +47,11 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 		{
 			var incomingItem = items[i];
 			var incomingItemVolume = incomingItem.CalculateVolume();
+			var incomingItemLongestDimension = incomingItem.CalculateLongestDimension();
 			
 			for (var quantity = 1; quantity <= incomingItem.Quantity; quantity++)
 			{
-				this.items.Add(new Item(incomingItem));
+				this.items.Add(new Item(incomingItem, incomingItemVolume, incomingItemLongestDimension));
 				this.totalItemsVolume += incomingItemVolume;
 			}
 		}

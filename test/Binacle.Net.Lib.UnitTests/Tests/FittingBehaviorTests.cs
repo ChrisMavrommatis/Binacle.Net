@@ -9,8 +9,6 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 {
 	private CommonTestingFixture Fixture { get; }
 	public TestBin TestBin { get; }
-	public Func<TestBin, IEnumerable<TestItem>, IFittingAlgorithm>[] TestedAlgorithms { get; }
-
 	public FittingBehaviorTests(CommonTestingFixture fixture)
 	{
 		this.Fixture = fixture;

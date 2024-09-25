@@ -3,7 +3,7 @@ using Binacle.Net.Lib.Packing.Models;
 
 namespace Binacle.Net.Lib.Packing.Algorithms;
 
-internal partial class FirstFitDecreasing_v1<TBin, TItem>
+internal partial class FirstFitDecreasing_v2<TBin, TItem>
 {
 	public PackingResult Execute(PackingParameters parameters)
 	{
