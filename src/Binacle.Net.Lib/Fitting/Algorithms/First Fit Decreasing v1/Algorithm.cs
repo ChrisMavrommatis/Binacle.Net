@@ -29,8 +29,9 @@ internal sealed partial class FirstFitDecreasing_v1<TBin, TItem> : IFittingAlgor
 			.ZeroOrNegativeDimensions(incomingItem)
 			.ZeroOrNegativeQuantity(incomingItem);
 
-			var item = new Item(incomingItem.ID, incomingItem);
-			return Enumerable.Repeat(item, incomingItem.Quantity);
+			// create new items as many as quantity
+			return Enumerable.Range(0, incomingItem.Quantity)
+				.Select(i => new Item(incomingItem.ID, incomingItem));
 		}).ToList();
 	}
 }

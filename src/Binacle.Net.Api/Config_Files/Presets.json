@@ -5,21 +5,21 @@
 				"Bins": [
 					{
 						"ID": "Small",
-						"Length": 10,
+						"Length": 60,
 						"Width": 40,
-						"Height": 60
+						"Height": 10
 					},
 					{
 						"ID": "Medium",
-						"Length": 20,
+						"Length": 60,
 						"Width": 40,
-						"Height": 60
+						"Height": 20
 					},
 					{
 						"ID": "Large",
-						"Length": 30,
+						"Length": 60,
 						"Width": 40,
-						"Height": 60
+						"Height": 30
 					}
 				]
 			},
@@ -49,21 +49,21 @@
 				"Bins": [
 					{
 						"ID": "Small",
-						"Length": 8,
+						"Length": 62,
 						"Width": 45,
-						"Height": 62
+						"Height": 8
 					},
 					{
 						"ID": "Medium",
-						"Length": 17,
+						"Length": 62,
 						"Width": 45,
-						"Height": 62
+						"Height": 17
 					},
 					{
 						"ID": "Large",
-						"Length": 36,
+						"Length": 62,
 						"Width": 45,
-						"Height": 62
+						"Height": 36
 					}
 				]
 			}

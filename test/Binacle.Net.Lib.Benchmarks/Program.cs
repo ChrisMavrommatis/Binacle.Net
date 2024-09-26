@@ -6,7 +6,7 @@ internal class Program
 {
 	static void Main(string[] args)
 	{
-		//BenchmarkRunner.Run<FittingScalingBenchmarks>();
-		BenchmarkRunner.Run<PackingScalingBenchmarks>();
+		BenchmarkRunner.Run<FittingScalingBenchmarks>();
+		//BenchmarkRunner.Run<PackingScalingBenchmarks>();
 	}
 }

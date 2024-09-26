@@ -66,8 +66,7 @@ public class PackResponse : v2.Models.ResponseBase<List<v2.Models.BinPackResult>
 		}
 
 		var resultStatus = results.Any(x => 
-			x.Result == Models.BinPackResultStatus.FullyPacked 
-			|| x.Result == Models.BinPackResultStatus.PartiallyPacked
+			x.Result == Models.BinPackResultStatus.FullyPacked
 		) ? Models.ResultType.Success : Models.ResultType.Failure;
 
 		return new PackResponse()
