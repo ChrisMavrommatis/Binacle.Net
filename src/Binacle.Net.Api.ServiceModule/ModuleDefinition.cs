@@ -1,5 +1,4 @@
-﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
-using Binacle.Net.Api.Kernel;
+﻿using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Domain;
@@ -9,18 +8,13 @@ using Binacle.Net.Api.ServiceModule.Services;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.MinimalEndpointDefinitions;
 using FluentValidation;
-using HealthChecks.UI.Client;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
@@ -47,25 +41,6 @@ public static class ModuleDefinition
 		}
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
-
-		var applicationInsightsConnectionString = builder.Configuration.GetConnectionStringWithEnvironmentVariableFallback(
-			"ApplicationInsights",
-			"APPLICATIONINSIGHTS_CONNECTION_STRING"
-			);
-
-		if (applicationInsightsConnectionString is not null)
-		{
-			// overwrite default
-			builder.Host.UseSerilog((context, services, loggerConfiguration) =>
-			{
-				loggerConfiguration
-				.ReadFrom.Configuration(builder.Configuration)
-				.WriteTo.ApplicationInsights(
-					services.GetRequiredService<TelemetryConfiguration>(),
-					TelemetryConverter.Traces
-					);
-			});
-		}
 
 		builder.Configuration
 			.AddJsonFile(DefaultsOptions.FilePath, optional: false, reloadOnChange: false)
@@ -129,7 +104,6 @@ public static class ModuleDefinition
 		builder.Services.AddAuthorization();
 
 		// Register Services
-
 		builder.Services.AddScoped<ITokenService, TokenService>();
 
 		builder.Services
@@ -144,47 +118,6 @@ public static class ModuleDefinition
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
 
-		var optl = builder.Services
-			.AddOpenTelemetry()
-			//.ConfigureResource(resource =>
-			//{
-			//	resource.AddService(serviceName: "Binacle-Net");
-			//})
-			.WithMetrics(configure =>
-			{
-				configure
-					.AddRuntimeInstrumentation()
-					.AddMeter("Microsoft.AspNetCore.Hosting")
-					.AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-					.AddMeter("Microsoft.AspNetCore.RateLimiting");
-			}).WithTracing(configure =>
-			{
-				configure.AddAspNetCoreInstrumentation();
-				//configure.AddConsoleExporter();
-			});
-
-
-		if (applicationInsightsConnectionString is not null)
-		{
-			builder.Services.AddApplicationInsightsTelemetry(options =>
-			{
-				options.ConnectionString = applicationInsightsConnectionString;
-				options.EnableQuickPulseMetricStream = false;
-			});
-
-
-			optl.UseAzureMonitor(configure =>
-			{
-				var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
-				if (samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
-				{
-					configure.SamplingRatio = ratio;
-				}
-
-				configure.ConnectionString = applicationInsightsConnectionString;
-			});
-		}
-
 		builder.Services.AddMinimalEndpointDefinitions<IModuleMarker>();
 
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
@@ -197,20 +130,6 @@ public static class ModuleDefinition
 
 	public static void UseServiceModule(this WebApplication app)
 	{
-		// Middleware are in order
-		app.MapHealthChecks("/_health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-		{
-			ResultStatusCodes =
-			{
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
-			},
-			ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-
-		}).DisableRateLimiting();
-
-
 		app.UseAuthentication();
 		app.UseAuthorization();
 		app.UseMinimalEndpointDefinitions();
@@ -221,5 +140,4 @@ public static class ModuleDefinition
 	{
 		ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
 	}
-
 }

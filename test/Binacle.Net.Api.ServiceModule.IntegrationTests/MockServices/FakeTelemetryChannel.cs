@@ -1,6 +1,6 @@
 ﻿using Microsoft.ApplicationInsights.Channel;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests.MockServices;
+namespace Binacle.Net.Api.ServiceModule.IntegrationTests.MockServices;
 
 public class FakeTelemetryChannel : ITelemetryChannel
 {

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
+
 namespace Binacle.Net.Api.Kernel;
 
 public static class ConfigurationExtensions

@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Configuration;
 using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.Api.DiagnosticsModule;
 using Binacle.Net.Api.ServiceModule;
 using Binacle.Net.Api.Services;
 using Binacle.Net.Api.UIModule;
@@ -43,15 +44,7 @@ public class Program
 			.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 			.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
-		builder.Configuration
-			.AddJsonFile("Serilog.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"Serilog.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
-		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
-		{
-			loggerConfiguration
-			.ReadFrom.Configuration(builder.Configuration);
-		});
 
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initializing");
 
@@ -88,7 +81,6 @@ public class Program
 
 		builder.Services.AddApiVersioning(options =>
 		{
-
 			options.DefaultApiVersion = ApiVersionParser.Default.Parse(v1.ApiVersion.Number);
 			options.AssumeDefaultVersionWhenUnspecified = true;
 			options.ReportApiVersions = true;
@@ -128,6 +120,8 @@ public class Program
 
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
 
+		builder.AddDiagnosticsModule();
+
 		if (Feature.IsEnabled("SERVICE_MODULE"))
 		{
 			builder.AddServiceModule();
@@ -162,6 +156,8 @@ public class Program
 				}
 			});
 		}
+
+		app.UseDiagnosticsModule();
 
 		if (Feature.IsEnabled("SERVICE_MODULE"))
 		{

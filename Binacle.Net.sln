@@ -52,7 +52,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.Benchmarks"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.IntegrationTests", "test\Binacle.Net.Api.IntegrationTests\Binacle.Net.Api.IntegrationTests.csproj", "{A987C6F6-D895-467B-BA8C-CBF86F4BFC3F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceIntegrationTests", "test\Binacle.Net.Api.ServiceIntegrationTests\Binacle.Net.Api.ServiceIntegrationTests.csproj", "{0987E640-1DFA-4176-90F0-339907209288}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule.IntegrationTests", "test\Binacle.Net.Api.ServiceModule.IntegrationTests\Binacle.Net.Api.ServiceModule.IntegrationTests.csproj", "{0987E640-1DFA-4176-90F0-339907209288}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Swashbuckle", "dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj", "{882F3C14-EAC8-4D7D-881B-61A6663E38B6}"
 EndProject
@@ -71,6 +71,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.UIModule", "src\Binacle.Net.Api.UIModule\Binacle.Net.Api.UIModule.csproj", "{3020B942-5FCA-4821-B425-B1CF76C5BE85}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Blazor.Materialize", "dep\ChrisMavrommatis.Blazor.Materialize\ChrisMavrommatis.Blazor.Materialize.csproj", "{0C29C934-7E87-47EB-AFEE-BBB1832FADD1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binacle.Net.Api.DiagnosticsModule", "src\Binacle.Net.Api.DiagnosticsModule\Binacle.Net.Api.DiagnosticsModule.csproj", "{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -150,6 +152,10 @@ Global
 		{0C29C934-7E87-47EB-AFEE-BBB1832FADD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C29C934-7E87-47EB-AFEE-BBB1832FADD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C29C934-7E87-47EB-AFEE-BBB1832FADD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -175,6 +181,7 @@ Global
 		{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{3020B942-5FCA-4821-B425-B1CF76C5BE85} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{0C29C934-7E87-47EB-AFEE-BBB1832FADD1} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
+		{DEE04EC4-596A-4268-8936-2C85BB5FE8B9} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}

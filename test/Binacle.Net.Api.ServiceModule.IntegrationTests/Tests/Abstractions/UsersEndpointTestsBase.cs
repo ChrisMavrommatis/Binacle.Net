@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests.Abstractions;
+namespace Binacle.Net.Api.ServiceModule.IntegrationTests.Abstractions;
 
 public abstract partial class UsersEndpointTestsBase : IAsyncLifetime
 {

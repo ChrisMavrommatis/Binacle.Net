@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.Api.ServiceIntegrationTests.Models;
+﻿namespace Binacle.Net.Api.ServiceModule.IntegrationTests.Models;
 
 public class TestUser
 {

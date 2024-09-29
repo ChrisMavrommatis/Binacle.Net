@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests;
+namespace Binacle.Net.Api.ServiceModule.IntegrationTests;
 
 [CollectionDefinition(Name)]
 public class BinacleApiAsAServiceCollection : ICollectionFixture<BinacleApiAsAServiceFactory>

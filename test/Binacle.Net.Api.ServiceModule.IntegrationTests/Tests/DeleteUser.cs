@@ -1,8 +1,8 @@
-﻿using Binacle.Net.Api.ServiceIntegrationTests.Models;
+﻿using Binacle.Net.Api.ServiceModule.IntegrationTests.Models;
 using FluentAssertions;
 using Xunit;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests;
+namespace Binacle.Net.Api.ServiceModule.IntegrationTests;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
 [Collection(BinacleApiAsAServiceCollection.Name)]

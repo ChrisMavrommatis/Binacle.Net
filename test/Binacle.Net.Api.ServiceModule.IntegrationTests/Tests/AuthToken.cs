@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests;
+namespace Binacle.Net.Api.ServiceModule.IntegrationTests;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
 [Collection(BinacleApiAsAServiceCollection.Name)]

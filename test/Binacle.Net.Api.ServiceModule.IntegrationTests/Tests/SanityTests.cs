@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests;
+namespace Binacle.Net.Api.ServiceModule.IntegrationTests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
 [Collection(BinacleApiAsAServiceCollection.Name)]
@@ -24,7 +24,7 @@ public class SanityTests
 	[Fact]
 	public async Task Sut_Configured_Correctly()
 	{
-		var request = new ServiceModule.v0.Requests.TokenRequest()
+		var request = new v0.Requests.TokenRequest()
 		{
 			Email = "test@test.com",
 			Password = "password123"

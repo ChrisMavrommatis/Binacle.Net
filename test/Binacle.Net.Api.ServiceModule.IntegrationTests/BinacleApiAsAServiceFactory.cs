@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Api.ServiceIntegrationTests.MockServices;
+﻿using Binacle.Net.Api.ServiceModule.IntegrationTests.MockServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests;
+namespace Binacle.Net.Api.ServiceModule.IntegrationTests;
 
 public class BinacleApiAsAServiceFactory : WebApplicationFactory<Binacle.Net.Api.IApiMarker>
 {

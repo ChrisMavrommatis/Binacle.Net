@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 
-namespace Binacle.Net.Api.ServiceIntegrationTests.Abstractions;
+namespace Binacle.Net.Api.ServiceModule.IntegrationTests.Abstractions;
 public abstract partial class UsersEndpointTestsBase
 {
 	protected async Task Action_WithoutBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
