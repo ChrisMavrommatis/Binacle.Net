@@ -10,7 +10,6 @@
 		<Content Include="Config_Files\**\*.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<None Remove="Config_Files\Features.test.json" />
 		<Content Include="xunit.runner.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>

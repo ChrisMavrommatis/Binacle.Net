@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
@@ -14,6 +15,17 @@ namespace Binacle.Net.Api.DiagnosticsModule;
 
 public static class ModuleDefinition
 {
+	public static void BootstrapLogger()
+	{
+		Log.Logger = new LoggerConfiguration()
+			.MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
+			.Enrich.FromLogContext()
+			.Enrich.WithMachineName()
+			.Enrich.WithThreadId()
+			.WriteTo.Console()
+			.CreateBootstrapLogger();
+	}
+
 	public static void AddDiagnosticsModule(this WebApplicationBuilder builder)
 	{
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initializing");
@@ -53,8 +65,13 @@ public static class ModuleDefinition
 			});
 		}
 
+
 		builder.Services
-			.AddHealthChecks();
+			.AddHealthChecks().AddCheck;
+	
+
+		// discover I HEalth check and register them 
+
 
 		var optl = builder.Services
 			.AddOpenTelemetry()

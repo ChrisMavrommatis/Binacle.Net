@@ -26,6 +26,8 @@ public class BinacleApiAsAServiceFactory : WebApplicationFactory<Binacle.Net.Api
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
+		// TODO: Run the tests with all modules enabled
+
 		// Features.test.json is used to override the configuration values
 		var preBuildConfigurationValues = new Dictionary<string, string>
 		{
@@ -49,7 +51,6 @@ public class BinacleApiAsAServiceFactory : WebApplicationFactory<Binacle.Net.Api
 		// of building the Host (e.g. calling WebApplication.CreateBuilder(args)).
 		builder.ConfigureAppConfiguration(configurationBuilder =>
 		{
-
 			//configurationBuilder.AddJsonFile();
 		});
 

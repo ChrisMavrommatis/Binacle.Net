@@ -21,13 +21,7 @@ public class Program
 {
 	public static async Task Main(string[] args)
 	{
-		Log.Logger = new LoggerConfiguration()
-			.MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
-			.Enrich.FromLogContext()
-			.Enrich.WithMachineName()
-			.Enrich.WithThreadId()
-			.WriteTo.Console()
-			.CreateBootstrapLogger();
+		Binacle.Net.Api.DiagnosticsModule.ModuleDefinition.BootstrapLogger();
 
 		var builder = WebApplication.CreateSlimBuilder(args);
 
@@ -43,8 +37,6 @@ public class Program
 		builder.Configuration
 			.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 			.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-
-
 
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initializing");
 
