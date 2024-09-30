@@ -11,7 +11,7 @@ internal class UsersGroup : IEndpointGroupDefinition
 {
 	public RouteGroupBuilder DefineEndpointGroup(IEndpointRouteBuilder endpoints)
 	{
-		return endpoints.MapGroup(UsersApiDocument.ApiName)
+		return endpoints.MapGroup($"/api/{UsersApiDocument.ApiName}")
 			.WithTags("Users (Admin only)")
 			.RequireAuthorization(builder =>
 			{

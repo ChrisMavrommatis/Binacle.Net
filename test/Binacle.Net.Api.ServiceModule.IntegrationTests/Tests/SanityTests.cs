@@ -29,7 +29,7 @@ public class SanityTests
 			Email = "test@test.com",
 			Password = "password123"
 		};
-		var response = await this.sut.Client.PostAsJsonAsync("/auth/token", request, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync("/api/auth/token", request, this.sut.JsonSerializerOptions);
 		response.StatusCode.Should().NotBe(System.Net.HttpStatusCode.NotFound);
 	}
 }

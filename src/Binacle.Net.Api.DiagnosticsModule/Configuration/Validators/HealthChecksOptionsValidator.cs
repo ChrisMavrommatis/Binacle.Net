@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace Binacle.Net.Api.DiagnosticsModule.Configuration.Validators;
 
-internal class HealthChecksOptionsValidator : AbstractValidator<HealthChecksOptions>
+internal class HealthCheckConfigurationOptionsValidator : AbstractValidator<HealthCheckConfigurationOptions>
 {
-	public HealthChecksOptionsValidator()
+	public HealthCheckConfigurationOptionsValidator()
 	{
 		RuleFor(x => x.Path).NotNull().NotEmpty();
 		RuleFor(x => x.Path).Must(x => x.StartsWith("/")).WithMessage("Path must start with /");

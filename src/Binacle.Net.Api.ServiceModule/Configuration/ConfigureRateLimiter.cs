@@ -8,11 +8,6 @@ namespace Binacle.Net.Api.ServiceModule.Configuration;
 
 internal class ConfigureRateLimiter : IConfigureNamedOptions<RateLimiterOptions>
 {
-	private static string[] excludedPaths = [
-		"/api/v1/query",
-		"/api/v2/query",
-		"/api/v2/pack"
-	];
 	private readonly IOptions<RateLimiterConfigurationOptions> configOptions;
 
 	public ConfigureRateLimiter(
@@ -43,7 +38,7 @@ internal class ConfigureRateLimiter : IConfigureNamedOptions<RateLimiterOptions>
 
 		options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
 		{
-			if (!excludedPaths.Any(url => httpContext.Request.Path.StartsWithSegments(url)))
+			if (!ModuleConstants.RateLimitedPaths.Any(url => httpContext.Request.Path.StartsWithSegments(url)))
 			{
 				return RateLimitPartition.GetNoLimiter("NoLimiter");
 			}

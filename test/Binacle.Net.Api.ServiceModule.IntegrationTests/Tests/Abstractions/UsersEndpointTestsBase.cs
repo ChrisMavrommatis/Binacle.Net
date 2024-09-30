@@ -38,7 +38,7 @@ public abstract partial class UsersEndpointTestsBase : IAsyncLifetime
 			Email = user.Email,
 			Password = user.Password
 		};
-		var response = await this.Sut.Client.PostAsJsonAsync("/auth/token", request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PostAsJsonAsync("/api/auth/token", request, this.Sut.JsonSerializerOptions);
 		var tokenResponse = await response.Content.ReadAsAsync<ServiceModule.v0.Responses.TokenResponse>();
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
@@ -53,7 +53,7 @@ public abstract partial class UsersEndpointTestsBase : IAsyncLifetime
 			Password = user.Password
 		};
 
-		var response = await this.Sut.Client.PostAsJsonAsync("/users", request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PostAsJsonAsync("/api/users", request, this.Sut.JsonSerializerOptions);
 		if (response.StatusCode != System.Net.HttpStatusCode.Created &&
 			response.StatusCode != System.Net.HttpStatusCode.Conflict)
 		{
@@ -65,7 +65,7 @@ public abstract partial class UsersEndpointTestsBase : IAsyncLifetime
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
-		var response = await this.Sut.Client.DeleteAsync($"/users/{user.Email}");
+		var response = await this.Sut.Client.DeleteAsync($"/api/users/{user.Email}");
 
 		if (response.StatusCode != System.Net.HttpStatusCode.NoContent &&
 			response.StatusCode != System.Net.HttpStatusCode.NotFound)

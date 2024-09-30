@@ -17,7 +17,7 @@ internal class Token : IEndpointDefinition
 {
 	public void DefineEndpoint(IEndpointRouteBuilder endpoints)
 	{
-		endpoints.MapPost("/auth/token", HandleAsync)
+		endpoints.MapPost("/api/auth/token", HandleAsync)
 			.WithTags("Auth")
 			.DisableRateLimiting()
 			.WithSummary("Authenticate to use the service without limits")

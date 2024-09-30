@@ -1,6 +1,6 @@
 ﻿namespace Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
 
-internal class HealthChecksOptions
+internal class HealthCheckConfigurationOptions
 {
 	public static string SectionName = "HealthChecks";
 	public static string FilePath = "DiagnosticsModule/HealthChecks.json";

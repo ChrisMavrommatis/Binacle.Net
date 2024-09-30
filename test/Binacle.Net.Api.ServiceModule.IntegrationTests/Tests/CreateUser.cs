@@ -20,7 +20,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 		};
 	}
 
-	private const string routePath = "/users";
+	private const string routePath = "/api/users";
 
 	#region 401 Unauthorized
 

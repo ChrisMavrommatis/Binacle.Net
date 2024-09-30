@@ -77,13 +77,13 @@ public static class ModuleDefinition
 
 		// Health Checks
 		builder.Configuration
-			.AddJsonFile(HealthChecksOptions.FilePath, optional: false, reloadOnChange: true)
-			.AddJsonFile(HealthChecksOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: true)
+			.AddJsonFile(HealthCheckConfigurationOptions.FilePath, optional: false, reloadOnChange: true)
+			.AddJsonFile(HealthCheckConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: true)
 			.AddEnvironmentVariables();
 
 		builder.Services
-			.AddOptions<HealthChecksOptions>()
-			.Bind(builder.Configuration.GetSection(HealthChecksOptions.SectionName))
+			.AddOptions<HealthCheckConfigurationOptions>()
+			.Bind(builder.Configuration.GetSection(HealthCheckConfigurationOptions.SectionName))
 			.ValidateFluently()
 			.ValidateOnStart();
 
@@ -138,7 +138,7 @@ public static class ModuleDefinition
 
 	public static void UseDiagnosticsModule(this WebApplication app)
 	{
-		var healthChecksOptions = app.Services.GetRequiredService<IOptions<HealthChecksOptions>>();
+		var healthChecksOptions = app.Services.GetRequiredService<IOptions<HealthCheckConfigurationOptions>>();
 
 		if (healthChecksOptions.Value.Enabled)
 		{

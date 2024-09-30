@@ -18,7 +18,7 @@ public class AuthToken
 		this.sut = sut;
 	}
 
-	private const string routePath = "/auth/token";
+	private const string routePath = "/api/auth/token";
 
 
 	[Fact(DisplayName = $"POST {routePath}. With Valid Credentials Returns 200 OK")]

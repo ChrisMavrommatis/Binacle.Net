@@ -20,7 +20,7 @@ public class DeleteUser : Abstractions.UsersEndpointTestsBase
 		};
 	}
 
-	private const string routePath = "/users/{email}";
+	private const string routePath = "/api/users/{email}";
 
 	#region 401 Unauthorized
 

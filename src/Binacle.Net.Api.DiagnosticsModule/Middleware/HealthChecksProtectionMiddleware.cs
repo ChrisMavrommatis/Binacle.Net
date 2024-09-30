@@ -11,13 +11,13 @@ internal class HealthChecksProtectionMiddleware
 {
 	private readonly RequestDelegate next;
 	private readonly ILogger<HealthChecksProtectionMiddleware> logger;
-	private readonly IOptions<HealthChecksOptions> options;
+	private readonly IOptions<HealthCheckConfigurationOptions> options;
 	private readonly IPAddressRange[] restrictedIPAddressRanges;
 
 	public HealthChecksProtectionMiddleware(
 		RequestDelegate next,
 		ILogger<HealthChecksProtectionMiddleware> logger,
-		IOptions<HealthChecksOptions> options
+		IOptions<HealthCheckConfigurationOptions> options
 	)
 	{
 		this.next = next;
