@@ -10,11 +10,11 @@ namespace Binacle.Net.Api.IntegrationTests.v2;
 
 [Collection(BinacleApiCollection.Name)]
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
-public class QueryByPresetBehavior
+public class FitByPresetBehavior
 {
 	private readonly BinacleApiFactory sut;
 	private readonly IOptions<BinPresetOptions> presetOptions;
-	private readonly Api.v2.Requests.PresetQueryRequest sampleRequest = new()
+	private readonly Api.v2.Requests.PresetFitRequest sampleRequest = new()
 	{
 		Parameters = new()
 		{
@@ -30,9 +30,9 @@ public class QueryByPresetBehavior
 		}
 	};
 
-	private const string routePath = "/api/v2/query/by-preset/{preset}";
+	private const string routePath = "/api/v2/fit/by-preset/{preset}";
 
-	public QueryByPresetBehavior(BinacleApiFactory sut)
+	public FitByPresetBehavior(BinacleApiFactory sut)
 	{
 		this.sut = sut;
 		presetOptions = this.sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();

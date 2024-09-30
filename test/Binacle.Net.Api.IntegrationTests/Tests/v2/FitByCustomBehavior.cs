@@ -6,10 +6,10 @@ namespace Binacle.Net.Api.IntegrationTests.v2;
 
 [Collection(BinacleApiCollection.Name)]
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
-public class QueryByCustomBehavior
+public class FitByCustomBehavior
 {
 	private readonly BinacleApiFactory sut;
-	private readonly Api.v2.Requests.CustomQueryRequest sampleRequest = new()
+	private readonly Api.v2.Requests.CustomFitRequest sampleRequest = new()
 	{
 		Parameters = new()
 		{
@@ -31,9 +31,9 @@ public class QueryByCustomBehavior
 		}
 	};
 
-	private const string routePath = "/api/v2/query/by-custom";
+	private const string routePath = "/api/v2/fit/by-custom";
 
-	public QueryByCustomBehavior(BinacleApiFactory sut)
+	public FitByCustomBehavior(BinacleApiFactory sut)
 	{
 		this.sut = sut;
 	}

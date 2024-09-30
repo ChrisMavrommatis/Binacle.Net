@@ -1,5 +1,4 @@
 ﻿using Asp.Versioning;
-using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Endpoints;
@@ -7,55 +6,66 @@ using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
-namespace Binacle.Net.Api.v2.Endpoints.Query;
+namespace Binacle.Net.Api.v2.Endpoints.Fit;
+
 
 /// <summary>
-/// Query by Preset endpoint
+/// Fit by Custom endpoint
 /// </summary>
 [ApiVersion(v2.ApiVersion.Number, Deprecated = v2.ApiVersion.IsDeprecated)]
 [Route("api/v{version:apiVersion}/[namespace]")]
-public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBody>
+public class ByCustom : EndpointWithRequest<v2.Requests.CustomFitRequestWithBody>
 {
-	private readonly IOptions<BinPresetOptions> presetOptions;
-	private readonly IValidator<v2.Requests.PresetQueryRequest> validator;
+	private readonly IValidator<v2.Requests.CustomFitRequest> validator;
 	private readonly ILockerService lockerService;
-	private readonly ILogger<ByPreset> logger;
+	private readonly ILogger<ByCustom> logger;
 
 	/// <summary>
-	/// Query by Preset endpoint
+	/// Fit by Custom endpoint
 	/// </summary>
-	/// <param name="presetOptions"></param>
 	/// <param name="validator"></param>
 	/// <param name="lockerService"></param>
 	/// <param name="logger"></param>
-	public ByPreset(
-		IOptions<BinPresetOptions> presetOptions,
-		IValidator<v2.Requests.PresetQueryRequest> validator,
+	public ByCustom(
+		IValidator<v2.Requests.CustomFitRequest> validator,
 		ILockerService lockerService,
-		ILogger<ByPreset> logger
+		ILogger<ByCustom> logger
 	  )
 	{
 		this.validator = validator;
 		this.lockerService = lockerService;
 		this.logger = logger;
-		this.presetOptions = presetOptions;
 	}
 
 	/// <summary>
-	/// Perform a bin fit query using a specified bin preset.
+	/// Perform a bin fitting function using custom bins.
 	/// </summary>
+	/// <returns>An array of results indicating if a bin can accommodate all of the items</returns>
 	/// <remarks>
-	/// Example request using the "rectangular-cuboids" preset:
+	/// Example request:
 	///     
-	///     POST /api/v2/query/by-preset/rectangular-cuboids
+	///     POST /api/v2/fit/by-custom
 	///		{
 	///			"parameters": {
 	///				"reportFittedItems": true,	
 	///				"reportUnfittedItems": true,
 	///				"findSmallestBinOnly": false
 	///			},
+	///			"bins" : [
+	///				{
+	///					"id": "custom_bin_1",
+	///					"length": 10,
+	///					"width": 40,
+	///					"height": 60
+	///				},
+	///				{
+	///					"id": "custom_bin_2",
+	///					"length": 20,
+	///					"width": 40,
+	///					"height": 60
+	///				}
+	///			],
 	///			"items": [
 	///				{
 	///					"id": "box_1",
@@ -87,12 +97,6 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBo
 	///		If the request is invalid.
 	/// </p>
 	/// </response>
-	/// <response code="404"> <b>Not Found</b>
-	/// <br />
-	/// <p>
-	///		If the preset does not exist.
-	/// </p>
-	/// </response>
 	/// <response code="500"> <b>Internal Server Error</b>
 	/// <br />
 	/// <p>
@@ -102,25 +106,21 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBo
 	///		Exception details will only be shown when in a development environment.
 	/// </p>
 	/// </response>
-	[HttpPost]
-	[Route("by-preset/{preset}")]
+	[HttpPost("by-custom")]
 	[Consumes("application/json")]
 	[Produces("application/json")]
 	[MapToApiVersion(v2.ApiVersion.Number)]
+	[SwaggerRequestExample(typeof(v2.Requests.CustomFitRequest), typeof(v2.Requests.Examples.CustomFitRequestExample))]
 
-	[SwaggerRequestExample(typeof(v2.Requests.PresetQueryRequest), typeof(v2.Requests.Examples.PresetQueryRequestExample))]
-
-	[ProducesResponseType(typeof(v2.Responses.QueryResponse), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(v2.Responses.QueryResponse), typeof(v2.Responses.Examples.PresetQueryResponseExamples), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(v2.Responses.FitResponse), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(v2.Responses.FitResponse), typeof(v2.Responses.Examples.CustomFitResponseExamples), StatusCodes.Status200OK)]
 
 	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
 	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 
-	[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-
 	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
 	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
-	public override async Task<IActionResult> HandleAsync(v2.Requests.PresetQueryRequestWithBody request, CancellationToken cancellationToken = default)
+	public override async Task<IActionResult> HandleAsync(v2.Requests.CustomFitRequestWithBody request, CancellationToken cancellationToken = default)
 	{
 		try
 		{
@@ -128,13 +128,6 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBo
 			{
 				return this.BadRequest(
 					Models.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody, Constants.Errors.Categories.RequestError)
-					);
-			}
-
-			if (string.IsNullOrWhiteSpace(request.Preset))
-			{
-				return this.BadRequest(
-					Models.Response.ParameterError(nameof(request.Preset), Constants.Errors.Messages.IsRequired, Constants.Errors.Categories.RequestError)
 					);
 			}
 
@@ -147,34 +140,29 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetQueryRequestWithBo
 					);
 			}
 
-			if (!this.presetOptions.Value.Presets.TryGetValue(request.Preset, out var presetOption))
-			{
-				return this.NotFound(null);
-			}
-
 			var operationResults = this.lockerService.FitBins(
-				presetOption.Bins,
+				request.Body.Bins, 
 				request.Body.Items,
 				new FittingParameters
 				{
 					FindSmallestBinOnly = request.Body.Parameters?.FindSmallestBinOnly ?? true,
 					ReportFittedItems = request.Body.Parameters?.ReportFittedItems ?? false,
-					ReportUnfittedItems = request.Body.Parameters?.FindSmallestBinOnly ?? false,
+					ReportUnfittedItems = request.Body.Parameters?.ReportUnfittedItems ?? false,
 				}
 			);
-			return this.Ok( 
-				v2.Responses.QueryResponse.Create(
-					presetOption.Bins,
-					request.Body.Items,
+
+			return this.Ok(
+				v2.Responses.FitResponse.Create(
+					request.Body.Bins, 
+					request.Body.Items, 
 					request.Body.Parameters,
 					operationResults
 				)
 			);
-
 		}
 		catch (Exception ex)
 		{
-			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Preset");
+			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Custom");
 			return this.InternalServerError(
 				Models.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
 				);

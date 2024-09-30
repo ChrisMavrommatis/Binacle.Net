@@ -5,13 +5,12 @@ namespace Binacle.Net.Api.v2.Requests;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class PresetQueryRequestWithBody : RequestWithBody<PresetQueryRequest>
+public class CustomFitRequestWithBody : RequestWithBody<CustomFitRequest>
 {
-	public string Preset { get; set; }
 }
-
-public class PresetQueryRequest
+public class CustomFitRequest
 {
-	public QueryRequestParameters? Parameters { get; set; }
+	public FitRequestParameters? Parameters { get; set; }
+	public List<Bin> Bins { get; set; }
 	public List<Box> Items { get; set; }
 }

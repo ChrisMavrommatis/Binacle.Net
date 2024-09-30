@@ -83,13 +83,13 @@ public class PackByPresetScenario
 		if (scenario.Fits)
 		{
 			// Can't guarantee it as multiple bins are evaluated
-			// queryResponse!.Result.Should().Be(Api.v2.Models.ResultType.Success);
+			// fitResponse!.Result.Should().Be(Api.v2.Models.ResultType.Success);
 			result.Result.Should().Be(Api.v2.Models.BinPackResultStatus.FullyPacked);
 		}
 		else
 		{
 			// Can't guarantee it as multiple bins are evaluated
-			// queryResponse!.Result.Should().Be(Api.v2.Models.ResultType.Failure);
+			// fitResponse!.Result.Should().Be(Api.v2.Models.ResultType.Failure);
 			result.Result.Should().NotBe(Api.v2.Models.BinPackResultStatus.FullyPacked);
 		}
 	}

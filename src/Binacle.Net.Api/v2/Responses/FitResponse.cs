@@ -6,12 +6,12 @@ using Binacle.Net.Lib.Abstractions.Models;
 
 namespace Binacle.Net.Api.v2.Responses;
 
-public class QueryResponse : v2.Models.ResponseBase<List<v2.Models.BinFitResult>>
+public class FitResponse : v2.Models.ResponseBase<List<v2.Models.BinFitResult>>
 {
-	internal static QueryResponse Create<TBin, TItem>(
+	internal static FitResponse Create<TBin, TItem>(
 		List<TBin> bins,
 		List<TItem> items,
-		v2.Requests.QueryRequestParameters? parameters,
+		v2.Requests.FitRequestParameters? parameters,
 		Dictionary<string, Lib.Fitting.Models.FittingResult> operationResults
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
@@ -71,16 +71,16 @@ public class QueryResponse : v2.Models.ResponseBase<List<v2.Models.BinFitResult>
 			});
 		}
 
-		return new QueryResponse()
+		return new FitResponse()
 		{
 			Data = results,
 			Result = CalculateResultType(results)
 		};
 	}
 
-	internal static QueryResponse Create(List<v2.Models.BinFitResult> results)
+	internal static FitResponse Create(List<v2.Models.BinFitResult> results)
 	{
-		return new QueryResponse
+		return new FitResponse
 		{
 			Data = results,
 			Result = CalculateResultType(results)

@@ -2,7 +2,7 @@
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class QueryRequestParameters
+public class FitRequestParameters
 {
 	public bool? ReportFittedItems { get; set; }
 	public bool? ReportUnfittedItems { get; set; }

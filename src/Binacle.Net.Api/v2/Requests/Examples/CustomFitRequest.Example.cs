@@ -2,13 +2,13 @@
 
 namespace Binacle.Net.Api.v2.Requests.Examples;
 
-internal class CustomQueryRequestExample : SingleSwaggerExamplesProvider<CustomQueryRequest>
+internal class CustomFitRequestExample : SingleSwaggerExamplesProvider<CustomFitRequest>
 {
-	public override CustomQueryRequest GetExample()
+	public override CustomFitRequest GetExample()
 	{
-		return new CustomQueryRequest
+		return new CustomFitRequest
 		{
-			Parameters = new QueryRequestParameters
+			Parameters = new FitRequestParameters
 			{
 				FindSmallestBinOnly = false,
 				ReportFittedItems = true,

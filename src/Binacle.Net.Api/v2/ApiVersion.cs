@@ -23,27 +23,8 @@ internal class ApiVersion : IApiVersion
 		}
 	};
 
-	//private static Dictionary<Type, string> _schemaTypeNameMappings = new()
-	//{
-	//	{ typeof(Response<Dictionary<string, List<Bin>>>), "PresetListResponse" },
-	//	{ typeof(Response<List<IApiError>>), "ErrorResponse" },
-	//	{ typeof(Response<Bin?>), "QueryResponse" }
-	//};
-
-	//private class CustomSchemaTypeNamesSchemaFilter : ISchemaFilter
-	//{
-	//	public void Apply(OpenApiSchema schema, SchemaFilterContext context)
-	//	{
-	//		if (_schemaTypeNameMappings.TryGetValue(context.Type, out var name))
-	//		{
-	//			schema.Title = name;
-	//		}
-	//	}
-	//}
-
 	public void ConfigureSwaggerOptions(SwaggerGenOptions options)
 	{
 		options.AddPolymorphicTypeMappings(_polymorphicTypeMappings);
-		//options.SchemaFilter<CustomSchemaTypeNamesSchemaFilter>();
 	}
 }

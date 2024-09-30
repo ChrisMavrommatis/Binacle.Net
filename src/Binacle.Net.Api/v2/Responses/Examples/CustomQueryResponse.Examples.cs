@@ -5,11 +5,11 @@ namespace Binacle.Net.Api.v2.Responses.Examples;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class CustomQueryResponseExamples : MultipleSwaggerExamplesProvider<QueryResponse>
+public class CustomFitResponseExamples : MultipleSwaggerExamplesProvider<FitResponse>
 {
-	public override IEnumerable<ISwaggerExample<QueryResponse>> GetExamples()
+	public override IEnumerable<ISwaggerExample<FitResponse>> GetExamples()
 	{
-		yield return SwaggerExample.Create("fullresponse", "Full Response", "Response example when you opt in to report all bins and all items.", QueryResponse.Create(
+		yield return SwaggerExample.Create("fullresponse", "Full Response", "Response example when you opt in to report all bins and all items.", FitResponse.Create(
 			[
 				new v2.Models.BinFitResult()
 				{
@@ -55,7 +55,7 @@ public class CustomQueryResponseExamples : MultipleSwaggerExamplesProvider<Query
 		));
 
 
-		yield return SwaggerExample.Create("itemsomittedresponse", "Items Omitted Response", "Response example when you omit the items.", QueryResponse.Create(
+		yield return SwaggerExample.Create("itemsomittedresponse", "Items Omitted Response", "Response example when you omit the items.", FitResponse.Create(
 			[
 				new v2.Models.BinFitResult()
 				{
@@ -75,7 +75,7 @@ public class CustomQueryResponseExamples : MultipleSwaggerExamplesProvider<Query
 		));
 
 
-		yield return SwaggerExample.Create("smallestbinresponse", "Smallest Bin Response", "Response example when you request to report only the smallest bin.", QueryResponse.Create(
+		yield return SwaggerExample.Create("smallestbinresponse", "Smallest Bin Response", "Response example when you request to report only the smallest bin.", FitResponse.Create(
 			[
 				new v2.Models.BinFitResult()
 				{
@@ -89,7 +89,7 @@ public class CustomQueryResponseExamples : MultipleSwaggerExamplesProvider<Query
 
 
 
-		yield return SwaggerExample.Create("binnotfitresponse", "Bin Not Fit Response", "Response example when a bin can't accommodate all the items", QueryResponse.Create(
+		yield return SwaggerExample.Create("binnotfitresponse", "Bin Not Fit Response", "Response example when a bin can't accommodate all the items", FitResponse.Create(
 			[
 				new v2.Models.BinFitResult()
 				{
@@ -121,7 +121,7 @@ public class CustomQueryResponseExamples : MultipleSwaggerExamplesProvider<Query
 		));
 
 
-		yield return SwaggerExample.Create("earlyfailresponse", "Early fail Response", "Response example when a bin can't accommodate all the items due to an early fail check", QueryResponse.Create(
+		yield return SwaggerExample.Create("earlyfailresponse", "Early fail Response", "Response example when a bin can't accommodate all the items due to an early fail check", FitResponse.Create(
 			[
 				new v2.Models.BinFitResult()
 				{
