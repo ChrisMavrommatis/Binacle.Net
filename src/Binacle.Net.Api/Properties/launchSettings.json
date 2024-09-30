@@ -9,10 +9,9 @@
 			"applicationUrl": "https://localhost:7194",
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development",
-				"SWAGGER_UI": "True"
 			}
 		},
-		"WithServiceModule": {
+		"WithServiceModuleOnly": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"launchBrowser": false,
@@ -20,11 +19,10 @@
 			"applicationUrl": "https://localhost:7194",
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development",
-				"SWAGGER_UI": "True",
 				"SERVICE_MODULE": "True"
 			}
 		},
-		"WithUiModule": {
+		"WithUiModuleOnly": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"launchBrowser": false,
@@ -32,11 +30,10 @@
 			"applicationUrl": "https://localhost:7194",
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development",
-				"SWAGGER_UI": "True",
 				"UI_MODULE": "True"
 			}
 		},
-		"WithAllFeatures": {
+		"WithAllModules": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"launchBrowser": false,
@@ -44,7 +41,6 @@
 			"applicationUrl": "https://localhost:7194",
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development",
-				"SWAGGER_UI": "True",
 				"SERVICE_MODULE": "True",
 				"UI_MODULE": "True"
 			}

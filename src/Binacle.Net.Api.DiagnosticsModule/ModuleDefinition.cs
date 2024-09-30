@@ -1,12 +1,17 @@
 ﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
+using Binacle.Net.Api.DiagnosticsModule.Middleware;
 using Binacle.Net.Api.Kernel;
+using ChrisMavrommatis.FluentValidation;
+using FluentValidation;
 using HealthChecks.UI.Client;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
@@ -30,50 +35,65 @@ public static class ModuleDefinition
 	{
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initializing");
 
-
 		builder.Configuration
 			.AddJsonFile("DiagnosticsModule/ConnectionStrings.json", optional: false, reloadOnChange: true)
 			.AddJsonFile($"DiagnosticsModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
 			.AddEnvironmentVariables();
 
+		// Required for local run with secrets
+		if (builder.Environment.IsDevelopment())
+		{
+			builder.Configuration
+				.AddUserSecrets<IModuleMarker>(optional: true, reloadOnChange: true);
+		}
+
+		// Logging
 		builder.Configuration
 			.AddJsonFile("DiagnosticsModule/Serilog.json", optional: false, reloadOnChange: true)
 			.AddJsonFile($"DiagnosticsModule/Serilog.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-
-		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
-		{
-			loggerConfiguration
-			.ReadFrom.Configuration(builder.Configuration);
-		});
 
 		var applicationInsightsConnectionString = builder.Configuration.GetConnectionStringWithEnvironmentVariableFallback(
 			"ApplicationInsights",
 			"APPLICATIONINSIGHTS_CONNECTION_STRING"
 			);
 
-		if (applicationInsightsConnectionString is not null)
+
+		// overwrite default logger
+		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 		{
-			// overwrite default
-			builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+			loggerConfiguration
+			.ReadFrom.Configuration(builder.Configuration);
+
+			if (applicationInsightsConnectionString is not null)
 			{
-				loggerConfiguration
-				.ReadFrom.Configuration(builder.Configuration)
-				.WriteTo.ApplicationInsights(
+				loggerConfiguration.WriteTo.ApplicationInsights(
 					services.GetRequiredService<TelemetryConfiguration>(),
 					TelemetryConverter.Traces
-					);
-			});
-		}
+				);
+			}
+		});
 
+		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
+
+		// Health Checks
+		builder.Configuration
+			.AddJsonFile(HealthChecksOptions.FilePath, optional: false, reloadOnChange: true)
+			.AddJsonFile(HealthChecksOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: true)
+			.AddEnvironmentVariables();
 
 		builder.Services
-			.AddHealthChecks().AddCheck;
-	
+			.AddOptions<HealthChecksOptions>()
+			.Bind(builder.Configuration.GetSection(HealthChecksOptions.SectionName))
+			.ValidateFluently()
+			.ValidateOnStart();
 
-		// discover I HEalth check and register them 
+		// Add health checks
+		builder.Services
+			.AddHealthChecks();
 
 
-		var optl = builder.Services
+		// Add OpenTelemetry
+		var openTelemetryBuilder = builder.Services
 			.AddOpenTelemetry()
 			//.ConfigureResource(resource =>
 			//{
@@ -89,7 +109,6 @@ public static class ModuleDefinition
 			}).WithTracing(configure =>
 			{
 				configure.AddAspNetCoreInstrumentation();
-				//configure.AddConsoleExporter();
 			});
 
 
@@ -102,7 +121,7 @@ public static class ModuleDefinition
 			});
 
 
-			optl.UseAzureMonitor(configure =>
+			openTelemetryBuilder.UseAzureMonitor(configure =>
 			{
 				var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
 				if (samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
@@ -119,20 +138,33 @@ public static class ModuleDefinition
 
 	public static void UseDiagnosticsModule(this WebApplication app)
 	{
-		// Middleware are in order
-		app.MapHealthChecks("/_health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-		{
-			ResultStatusCodes =
-			{
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
-			},
-			ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+		var healthChecksOptions = app.Services.GetRequiredService<IOptions<HealthChecksOptions>>();
 
-		});
+		if (healthChecksOptions.Value.Enabled)
+		{
+			app.UseMiddleware<HealthChecksProtectionMiddleware>();
+
+			app.MapHealthChecks(healthChecksOptions.Value.Path, new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+			{
+				ResultStatusCodes =
+				{
+					[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
+					[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
+					[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+				},
+				ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+				Predicate = (check) =>
+				{
+					if(healthChecksOptions.Value.RestrictedChecks is null || healthChecksOptions.Value.RestrictedChecks.Length == 0)
+					{
+						return true;
+					}
+
+					return healthChecksOptions.Value.RestrictedChecks.Contains(check.Name);
+				}
+			});
+		}
+
 
 	}
-
-
 }

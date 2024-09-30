@@ -15,6 +15,14 @@ public class AzureTablesHeathCheck : IHealthCheck
 	public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
 	{
 		// azure table health 
-		return HealthCheckResult.Healthy();
+		try
+		{
+			var response = await tableServiceClient.GetPropertiesAsync(cancellationToken: cancellationToken);
+			return HealthCheckResult.Healthy();
+		}
+		catch (Exception ex)
+		{
+			return new HealthCheckResult(context.Registration.FailureStatus, "Health check for Azure Tables failed", ex);
+		}
 	}
 }
