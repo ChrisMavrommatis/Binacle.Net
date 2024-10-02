@@ -1,6 +1,10 @@
-﻿namespace Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables.Users.Entities;
+﻿using Azure;
+using Azure.Data.Tables;
+using Binacle.Net.Api.ServiceModule.Domain.Users.Entities;
 
-internal class UserTableEntity : TableEntity
+namespace Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables.Users.Entities;
+
+internal class UserTableEntity : User, ITableEntity
 {
 	public UserTableEntity(string rowKey, string partitionKey)
 	{
@@ -11,9 +15,45 @@ internal class UserTableEntity : TableEntity
 	{
 
 	}
-	public string Email { get; set; }
-	public string Group { get; set; }
-	public string HashedPassword { get; set; }
-	public string Salt { get; set; }
-	public bool IsActive { get; set; }
+
+	public string PartitionKey { get; set; }
+	public string RowKey { get; set; }
+	public DateTimeOffset? Timestamp { get; set; }
+	public ETag ETag { get; set; }
+}
+
+internal static class UserTableEntityExtensions
+{
+	internal static User ToDomainUser(this UserTableEntity tableEntity)
+	{
+		return new User
+		{
+			Email = tableEntity.Email,
+			NormalizedEmail = tableEntity.NormalizedEmail,
+			Group = tableEntity.Group,
+			Salt = tableEntity.Salt,
+			HashedPassword = tableEntity.HashedPassword,
+			CreatedAtUtc = tableEntity.CreatedAtUtc,
+			IsActive = tableEntity.IsActive,
+			IsDeleted = tableEntity.IsDeleted,
+			DeletedAtUtc = tableEntity.DeletedAtUtc,
+		};
+	}
+
+	internal static UserTableEntity ToTableEntityUser(this User entity, string partitionKey)
+	{
+		return new UserTableEntity(entity.NormalizedEmail, partitionKey)
+		{
+			Email = entity.Email,
+			NormalizedEmail = entity.NormalizedEmail,
+			Group = entity.Group,
+			Salt = entity.Salt,
+			HashedPassword = entity.HashedPassword,
+			CreatedAtUtc = entity.CreatedAtUtc,
+			IsActive = entity.IsActive,
+			IsDeleted = entity.IsDeleted,
+			DeletedAtUtc = entity.DeletedAtUtc,
+		};
+	}
+	
 }

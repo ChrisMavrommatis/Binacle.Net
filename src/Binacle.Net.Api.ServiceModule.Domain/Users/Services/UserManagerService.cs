@@ -22,7 +22,7 @@ internal class UserManagerService : IUserManagerService
 {
 	private readonly IUserRepository userRepository;
 	private readonly ILogger<UserManagerService> logger;
-
+	private readonly TimeProvider timeProvider;
 	private static string[] _validGroups = new string[]
 	{
 		UserGroups.Admins,
@@ -31,11 +31,13 @@ internal class UserManagerService : IUserManagerService
 
 	public UserManagerService(
 		IUserRepository userRepository,
-		ILogger<UserManagerService> logger
+		ILogger<UserManagerService> logger,
+		TimeProvider timeProvider
 		)
 	{
 		this.userRepository = userRepository;
 		this.logger = logger;
+		this.timeProvider = timeProvider;
 	}
 
 	public async Task<OneOf<User, Unauthorized>> AuthenticateAsync(AuthenticateUserRequest request, CancellationToken cancellationToken = default)
@@ -54,7 +56,7 @@ internal class UserManagerService : IUserManagerService
 
 		var user = result.GetValue<User>();
 
-		if (!user.IsActive)
+		if (!user.IsActive || user.IsDeleted)
 		{
 			return new Unauthorized();
 		}
@@ -78,7 +80,7 @@ internal class UserManagerService : IUserManagerService
 
 		var getResult = await this.userRepository.GetAsync(request.Email, cancellationToken);
 
-		if (getResult.Is<User>())
+		if (getResult.Is<User>() && !getResult.GetValue<User>().IsDeleted)
 		{
 			return new Conflict("User already exists");
 		}
@@ -89,17 +91,32 @@ internal class UserManagerService : IUserManagerService
 		var user = new User
 		{
 			Email = request.Email,
+			NormalizedEmail = NormalizeEmail(request.Email),
 			Group = request.Group,
-			Salt = Convert.ToBase64String(salt),
 			HashedPassword = hashedPassword,
-			IsActive = true
+			Salt = Convert.ToBase64String(salt),
+			CreatedAtUtc = this.timeProvider.GetUtcNow(),
+			IsActive = true,
+			IsDeleted = false
 		};
 
-		var createResult = await this.userRepository.CreateAsync(user, cancellationToken: cancellationToken);
-		if (!createResult.Is<Ok>())
+		if(getResult.Is<User>())
 		{
-			return new Error("Could not create user");
+			var updateResult = await this.userRepository.UpdateAsync(user, cancellationToken: cancellationToken);
+			if (!updateResult.Is<Ok>())
+			{
+				return new Error("Could not create user. User was previously deleted");
+			}
 		}
+		else
+		{
+			var createResult = await this.userRepository.CreateAsync(user, cancellationToken: cancellationToken);
+			if (!createResult.Is<Ok>())
+			{
+				return new Error("Could not create user");
+			}
+		}
+		
 
 		return user;
 	}
@@ -110,11 +127,29 @@ internal class UserManagerService : IUserManagerService
 		{
 			return new Error("Invalid Email");
 		}
-		var result = await this.userRepository.DeleteAsync(request.Email, cancellationToken);
 
-		if (!result.Is<Ok>())
+		var result = await this.userRepository.GetAsync(request.Email, cancellationToken);
+
+		if (!result.Is<User>())
 		{
 			return new NotFound();
+		}
+
+		var user = result.GetValue<User>();
+
+		if (user.IsDeleted)
+		{
+			return new NotFound();
+
+		}
+		user.IsDeleted = true;
+		user.DeletedAtUtc = this.timeProvider.GetUtcNow();
+
+		var updateResult = await this.userRepository.UpdateAsync(user, cancellationToken);
+
+		if (!updateResult.Is<Ok>())
+		{
+			return new Error("Could not soft delete user");
 		}
 
 		return new Ok();
@@ -135,6 +170,12 @@ internal class UserManagerService : IUserManagerService
 		}
 
 		var user = getResult.GetValue<User>();
+
+		if(user.IsDeleted)
+		{
+			return new NotFound();
+		}
+
 		var newHashedPassword = HashPassword(request.NewPassword, Convert.FromBase64String(user.Salt));
 
 		if (newHashedPassword == user.HashedPassword)
@@ -183,8 +224,13 @@ internal class UserManagerService : IUserManagerService
 		}
 
 		var user = getResult.GetValue<User>();
+		
+		if (user.IsDeleted)
+		{
+			return new NotFound();
+		}
 
-		if(!string.IsNullOrEmpty(request.Group))
+		if (!string.IsNullOrEmpty(request.Group))
 		{
 			user.Group = request.Group!;
 		}
@@ -217,5 +263,10 @@ internal class UserManagerService : IUserManagerService
 			byte[] hashedBytes = sha256.ComputeHash(combinedBytes);
 			return Convert.ToBase64String(hashedBytes);
 		}
+	}
+
+	private static string NormalizeEmail(string email)
+	{
+		return email.Trim().ToLowerInvariant();
 	}
 }

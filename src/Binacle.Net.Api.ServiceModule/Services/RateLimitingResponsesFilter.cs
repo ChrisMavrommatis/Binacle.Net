@@ -18,11 +18,6 @@ internal class RateLimitingResponsesFilter : IOperationFilter
 	}
 	public void Apply(OpenApiOperation operation, OperationFilterContext context)
 	{
-		if (!this.options.Value.Enabled)
-		{
-			return;
-		}
-
 		if (ModuleConstants.RateLimitedPaths.Any(url => context.ApiDescription.RelativePath.StartsWith(url.TrimStart('/'))))
 		{
 			operation.Responses.Add(StatusCodes.Status429TooManyRequests.ToString(), new OpenApiResponse

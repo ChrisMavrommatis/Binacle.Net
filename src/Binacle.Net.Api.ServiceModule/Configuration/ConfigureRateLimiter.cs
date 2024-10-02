@@ -31,11 +31,8 @@ internal class ConfigureRateLimiter : IConfigureNamedOptions<RateLimiterOptions>
 	{
 		options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-		if (!this.configOptions.Value.Enabled)
-		{
-			return;
-		}
-
+		// TODO: Or block the calls completely to unauthorized users
+		// Future feature : Add a configuration to block the calls completely to unauthorized users
 		options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
 		{
 			if (!ModuleConstants.RateLimitedPaths.Any(url => httpContext.Request.Path.StartsWithSegments(url)))

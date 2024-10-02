@@ -4,20 +4,18 @@ using FluentValidation;
 
 namespace Binacle.Net.Api.ServiceModule.Configuration.Validators;
 
-internal class DefaultsOptionsValidator: AbstractValidator<DefaultsOptions>
+internal class UserOptionsValidator: AbstractValidator<UserOptions>
 {
-	public DefaultsOptionsValidator()
+	public UserOptionsValidator()
 	{
-		RuleFor(x => x.AdminUser)
+		RuleFor(x => x.DefaultAdminUser)
 			.NotNull()
 			.NotEmpty()
 			.Must(x => x.Contains(":"));
 
 
-		RuleFor(x => x.GetParsedAdminUser())
+		RuleFor(x => x.GetParsedDefaultAdminUser())
 			.NotNull()
 			.SetValidator(x => new AuthenticationInformationValidator());
-			
-
 	}
 }

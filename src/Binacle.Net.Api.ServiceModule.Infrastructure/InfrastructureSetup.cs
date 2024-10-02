@@ -8,15 +8,17 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace Binacle.Net.Api.ServiceModule.Infrastructure;
 
-public static class ServiceCollectionExtensions
+public static class InfrastructureSetup
 {
-	public static IServiceCollection AddInfrastructureLayerServices(this IServiceCollection services, IConfiguration configuration)
+	public static T AddInfrastructureLayerServices<T>(this T builder)
+		where T : IHostApplicationBuilder
 	{
-		var azureStorageConnectionString = configuration.GetConnectionStringWithEnvironmentVariableFallback(
+		var azureStorageConnectionString = builder.Configuration.GetConnectionStringWithEnvironmentVariableFallback(
 				"AzureStorage",
 				"AZURESTORAGE_CONNECTION_STRING"
 		);
@@ -25,25 +27,25 @@ public static class ServiceCollectionExtensions
 		{
 			Log.Information("Registering {StorageProvider} as infrastructure provider", "AzureStorage");
 
-			services.AddScoped<IUserRepository, AzureTablesUserRepository>();
+			builder.Services.AddScoped<IUserRepository, AzureTablesUserRepository>();
 
-			services.AddHealthCheck<AzureTablesHeathCheck>(
+			builder.Services.AddHealthCheck<AzureTablesHeathCheck>(
 				"AzureTables",
 				HealthStatus.Unhealthy,
 				new[] { "Database" }
 			);
-			
+
 			// Register Azure
-			services.AddAzureClients(clientBuilder =>
+			builder.Services.AddAzureClients(clientBuilder =>
 			{
 				clientBuilder.AddTableServiceClient(azureStorageConnectionString);
 			});
 		}
 
 
-		services.AddStartupTask<EnsureAdminUserExistsStartupTask>();
+		builder.Services.AddStartupTask<EnsureAdminUserExistsStartupTask>();
 
-		return services;
+		return builder;
 	}
 }
 

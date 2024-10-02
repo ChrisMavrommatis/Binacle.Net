@@ -7,8 +7,6 @@ internal class RateLimiterConfigurationOptions
 
 	public static string GetEnvironmentFilePath(string environment) => $"ServiceModule/RateLimiter.{environment}.json";
 
-	public bool Enabled { get; set; }
-
 	public string? Anonymous { get; set; }
 
 	public static RateLimiterConfiguration ParseConfiguration(string value)

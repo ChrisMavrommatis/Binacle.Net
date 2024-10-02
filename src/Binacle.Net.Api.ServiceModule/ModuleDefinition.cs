@@ -43,15 +43,6 @@ public static class ModuleDefinition
 		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
 
 		builder.Configuration
-			.AddJsonFile(DefaultsOptions.FilePath, optional: false, reloadOnChange: false)
-			.AddEnvironmentVariables();
-
-		builder.Services
-			.AddOptions<DefaultsOptions>()
-			.Bind(builder.Configuration.GetSection(DefaultsOptions.SectionName));
-
-
-		builder.Configuration
 			.AddJsonFile(RateLimiterConfigurationOptions.FilePath, optional: false, reloadOnChange: false)
 			.AddJsonFile(RateLimiterConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
 			.AddEnvironmentVariables();
@@ -61,7 +52,6 @@ public static class ModuleDefinition
 			.Bind(builder.Configuration.GetSection(RateLimiterConfigurationOptions.SectionName))
 			.ValidateFluently()
 			.ValidateOnStart();
-
 
 		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
@@ -106,12 +96,9 @@ public static class ModuleDefinition
 		// Register Services
 		builder.Services.AddScoped<ITokenService, TokenService>();
 
-		builder.Services
+		builder
 			.AddDomainLayerServices()
-			.AddInfrastructureLayerServices(builder.Configuration);
-
-		builder.Services
-			.AddHealthChecks();
+			.AddInfrastructureLayerServices();
 
 		builder.Services.Configure<JsonOptions>(options =>
 		{

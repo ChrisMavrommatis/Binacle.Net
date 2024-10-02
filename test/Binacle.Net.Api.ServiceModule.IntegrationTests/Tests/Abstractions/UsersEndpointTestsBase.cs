@@ -21,8 +21,8 @@ public abstract partial class UsersEndpointTestsBase : IAsyncLifetime
 			Password = "T3stUs3rsP@ssw0rd"
 		};
 
-		var defaultsOptions = this.Sut.Services.GetRequiredService<IOptions<DefaultsOptions>>();
-		var defaultAdminUser = defaultsOptions.Value.GetParsedAdminUser();
+		var userOptions = this.Sut.Services.GetRequiredService<IOptions<UserOptions>>();
+		var defaultAdminUser = userOptions.Value.GetParsedDefaultAdminUser();
 
 		this.AdminUser = new Models.TestUser
 		{

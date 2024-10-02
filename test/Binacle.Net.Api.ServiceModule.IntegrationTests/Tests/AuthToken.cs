@@ -24,8 +24,8 @@ public class AuthToken
 	[Fact(DisplayName = $"POST {routePath}. With Valid Credentials Returns 200 OK")]
 	public async Task Post_WithValidCredentials_Returns_200OK()
 	{
-		var defaultsOptions = this.sut.Services.GetRequiredService<IOptions<DefaultsOptions>>();
-		var defaultAdminUser = defaultsOptions.Value.GetParsedAdminUser();
+		var userOptions = this.sut.Services.GetRequiredService<IOptions<UserOptions>>();
+		var defaultAdminUser = userOptions.Value.GetParsedDefaultAdminUser();
 		var request = new ServiceModule.v0.Requests.TokenRequest()
 		{
 			Email = defaultAdminUser.Email,

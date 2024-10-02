@@ -1,16 +1,30 @@
-﻿using Binacle.Net.Api.ServiceModule.Services;
+﻿using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
+using Binacle.Net.Api.ServiceModule.Services;
 using FluentValidation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Binacle.Net.Api.ServiceModule.Domain;
 
-public static class ServiceCollectionExtensions
+public static class DomainSetup
 {
-	public static IServiceCollection AddDomainLayerServices(this IServiceCollection services)
+	public static T AddDomainLayerServices<T>(this T builder)
+		where T : IHostApplicationBuilder
 	{
-		services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
-		services.AddScoped<IUserManagerService, UserManagerService>();
+		builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
 
-		return services;
+		builder.Configuration
+			.AddJsonFile(UserOptions.FilePath, optional: false, reloadOnChange: false)
+			.AddEnvironmentVariables();
+
+		builder.Services
+			.AddOptions<UserOptions>()
+			.Bind(builder.Configuration.GetSection(UserOptions.SectionName));
+
+		builder.Services.AddScoped<IUserManagerService, UserManagerService>();
+
+		return builder;
+
 	}
 }
