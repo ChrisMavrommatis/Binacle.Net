@@ -6,7 +6,7 @@ namespace Binacle.Net.Api.v1;
 internal class ApiVersion : IApiVersion
 {
 	public const string Number = "1.0";
-	public const bool IsDeprecated = true;
+	public const bool IsDeprecated = false;
 	public const bool IsExperimental = false;
 
 	public int MajorNumber => int.Parse(Number.Split('.')[0]);
