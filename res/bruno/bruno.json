@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Binacle.Net",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

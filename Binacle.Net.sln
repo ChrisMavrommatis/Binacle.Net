@@ -11,12 +11,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{88EC1702-D375-496F-B26A-384DBEA8E0AA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "res", "res", "{D91D976D-F7CC-4AEF-B942-5B5EE97832F7}"
-	ProjectSection(SolutionItems) = preProject
-		res\Binacle.Requests.http = res\Binacle.Requests.http
-		res\http-client.env.json = res\http-client.env.json
-		res\ServiceModule.Requests.http = res\ServiceModule.Requests.http
-		res\Users.Requests.http = res\Users.Requests.http
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8-5B9D-4E2B-AA35-A208DFFFF1FE}"
 	ProjectSection(SolutionItems) = preProject

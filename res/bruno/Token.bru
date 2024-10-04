@@ -1,0 +1,19 @@
+meta {
+  name: Token
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://{{HOST}}/api/auth/token
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "test@test.com",
+    "password" : "testpassword"
+  }
+  
+}
