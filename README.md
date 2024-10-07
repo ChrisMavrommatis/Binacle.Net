@@ -7,7 +7,7 @@ It is an ideal fit for e-commerce platforms offering parcel shipments to self-se
 
 Explore the following sections to get started and learn more about Binacle.NET:
 
-## 🚀 [Quick Start](Quick-Start)
+## 🚀 [Quick Start](wiki/Quick-Start)
 Get up and running with Binacle.NET using Docker in a few simple steps. Learn how to deploy the service and access its API quickly.
 
 ## 🔍 [How Binacle.NET Works](How-Binacle.Net-Works)
