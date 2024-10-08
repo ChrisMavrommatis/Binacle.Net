@@ -11,9 +11,9 @@ public static class DimensionExtensions
 		where T : IWithReadOnlyDimensions
 	{
 		if(item is IWithQuantity withQuantity)
-			return $"{item.Height}x{item.Length}x{item.Width}-{withQuantity.Quantity}";
+			return $"{item.Length}x{item.Width}x{item.Height}-{withQuantity.Quantity}";
 
-		return $"{item.Height}x{item.Length}x{item.Width}";
+		return $"{item.Length}x{item.Width}x{item.Height}";
 	}
 
 	public static string FormatCoordinates<T>(this T item)
