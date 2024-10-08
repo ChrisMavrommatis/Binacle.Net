@@ -12,6 +12,11 @@ namespace Binacle.Net.Api.Configuration;
 internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
 {
 	private readonly IApiVersionDescriptionProvider _provider;
+	private static IApiVersion[] apiVersions = [
+		new v1.ApiVersion(),
+		new v2.ApiVersion(),
+		new v3.ApiVersion()
+	];
 	
 	public ConfigureSwaggerOptions(
 		IApiVersionDescriptionProvider provider
@@ -40,14 +45,17 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 		options.TagActionsByEndpointNamespaceOrDefault();
 		options.DescribeAllParametersInCamelCase();
 
-		v1.ApiVersion.ConfigureSwaggerOptions(options);
-		v2.ApiVersion.ConfigureSwaggerOptions(options);
+		foreach(var apiVersion in apiVersions)
+		{
+			apiVersion.ConfigureSwaggerOptions(options);
+		}
 	}
 
 	private void AddApiVersionDocuments(SwaggerGenOptions options, IReadOnlyList<ApiVersionDescription> apiVersionDescriptions)
 	{
 		foreach (var description in apiVersionDescriptions.Where(x => x.GroupName.StartsWith("v")))
 		{
+			var apiVersion = apiVersions.FirstOrDefault(x => x.MajorNumber == description.ApiVersion.MajorVersion);
 			var info = new OpenApiInfo()
 			{
 				Title = $"Binacle.Net API",
@@ -58,11 +66,11 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 				{
 					Name = "GNU General Public License v3.0",
 					Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.html")
-				}
+				},
 			};
 
 			info.Description = info.Description
-				.Replace("{{status}}", description.ApiVersion.MajorVersion == 2 ? "**Warning: This api version is experimental!**": string.Empty)
+				.Replace("{{status}}", apiVersion.Experimental ? __experimentalMessage__: string.Empty)
 				.Replace("{{deprecated}}", description.IsDeprecated ? __deprecatedMessage__: string.Empty);
 
 			options.SwaggerDoc(description.GroupName, info);
@@ -82,7 +90,7 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 	}
 
 	private const string __description__ = """
-		Binacle.NET is an API created to address the 3D Bin Packing Problem in a Bin Selection Variation.
+		Binacle.NET is an API created to address the 3D Bin Packing Problem.
 		
 		{{status}}
 
@@ -97,9 +105,15 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 
 		""";
 
+	private const string __experimentalMessage__ = """
+
+		**Warning: This api version is experimental!**
+
+		""";
+
 	private const string __deprecatedMessage__ = """
 
-		*This API version has been deprecated. Please use one of the new APIs available from the explorer.*
+		**This API version has been deprecated. Please use one of the new APIs available from the explorer.**
 
 		""";
 }

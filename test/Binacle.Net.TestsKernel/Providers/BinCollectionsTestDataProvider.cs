@@ -5,10 +5,19 @@ namespace Binacle.Net.TestsKernel.Providers;
 
 public class BinCollectionsTestDataProvider : CollectionTestDataProvider<List<TestBin>>
 {
-	public BinCollectionsTestDataProvider(string solutionRootBasePath)
+	private const string binCollectionsDirectory = "BinCollections";
+
+
+	public BinCollectionsTestDataProvider(string solutionRootPath) :base(solutionRootPath)
 	{
+	}
+
+	protected override Dictionary<string, List<TestBin>> InitializeCollections(string solutionRootPath)
+	{
+		var collections = new Dictionary<string, List<TestBin>>();
+
 		var binsDirectoryInfo = new DirectoryInfo(
-			Path.Combine(solutionRootBasePath, Constants.DataBasePathRoot, "BinCollections")
+			Path.Combine(solutionRootPath, Constants.DataBasePathRoot, binCollectionsDirectory)
 			);
 
 		foreach (var binCollectionFileInfo in binsDirectoryInfo.GetFiles())
@@ -17,9 +26,13 @@ public class BinCollectionsTestDataProvider : CollectionTestDataProvider<List<Te
 			using (var sr = new StreamReader(binCollectionFileInfo.OpenRead()))
 			{
 				var binCollection = JsonConvert.DeserializeObject<List<TestBin>>(sr.ReadToEnd());
-				this.Collections.Add(binCollectionName, binCollection);
+				if (binCollection is not null)
+				{
+					collections.Add(binCollectionName.ToLower(), binCollection);
+				}
 			}
 		}
-	}
 
+		return collections;
+	}
 }

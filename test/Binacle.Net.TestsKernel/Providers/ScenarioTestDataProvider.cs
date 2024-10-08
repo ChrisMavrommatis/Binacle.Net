@@ -6,13 +6,13 @@ namespace Binacle.Net.TestsKernel.Providers;
 
 public class ScenarioTestDataProvider : IEnumerable<object[]>
 {
-	private readonly CompactScenarioCollectionsTestDataProvider scenarioCollections;
+	private readonly ScenarioCollectionsTestDataProvider scenarioCollections;
 	private readonly List<Scenario> scenarios;
 
-	protected ScenarioTestDataProvider(string solutionRootBasePath, string scenarioCollectionName)
+	protected ScenarioTestDataProvider(string solutionRootBasePath, string collectionKey)
 	{
-		this.scenarioCollections = new CompactScenarioCollectionsTestDataProvider(solutionRootBasePath);
-		this.scenarios = this.scenarioCollections.GetCollection(scenarioCollectionName);
+		this.scenarioCollections = new ScenarioCollectionsTestDataProvider(solutionRootBasePath);
+		this.scenarios = this.scenarioCollections.GetCollection(collectionKey);
 	}
 
 	public virtual IEnumerator<object[]> GetEnumerator()

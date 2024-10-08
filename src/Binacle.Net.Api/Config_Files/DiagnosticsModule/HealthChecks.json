@@ -1,0 +1,8 @@
+﻿{
+	"HealthChecks": {
+		"Enabled": false,
+		"Path": "/_health",
+		"RestrictedIPs": [],
+		"RestrictedChecks": []
+	}
+}

@@ -1,0 +1,33 @@
+﻿@using Binacle.Net.Api.UIModule.Components.Features
+@using Binacle.Net.Api.UIModule.Models
+@using Microsoft.AspNetCore.Components.Web
+@page "/PackingDemo"
+
+<PageTitle>Packing Demo</PageTitle>
+
+<h1>Packing Demo</h1>
+
+<p>
+    This build in UI provides easy use for experimentation and visualization for the packing algorithm.
+</p>
+
+<BinPackingForm />
+
+<div class="row mt-5 pt-5">
+    <div class="col s12">
+        <div class="card indigo lighten-2">
+            <div class="card-image">
+                <span class="card-title black-text">Visualizer</span>
+
+                <div id="visualizer-container" class="center" style="min-height:150px">
+                    <div id="renderer-container"></div>
+                    <CircularPreloader SpinnerColor="spinner-blue-only" class="big active m-6" id="loader" />
+                </div>
+
+                <BinPackingVisualizerControls />
+
+            </div>
+            <BinPackingResults />
+        </div>
+    </div>
+</div>

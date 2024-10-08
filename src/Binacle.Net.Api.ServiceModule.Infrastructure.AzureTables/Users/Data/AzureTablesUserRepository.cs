@@ -26,9 +26,9 @@ public class AzureTablesUserRepository : IUserRepository
 		await this.tableServiceClient.CreateTableIfNotExistsAsync(_tableName);
 		var tableClient = this.tableServiceClient.GetTableClient(_tableName);
 
-		var infrastructureEntity = this.MapToInfrastructureModel(user);
+		var tableEntity = user.ToTableEntityUser(_partitionKey);
 
-		var response = await tableClient.AddEntityAsync(infrastructureEntity, cancellationToken: cancellationToken);
+		var response = await tableClient.AddEntityAsync(tableEntity, cancellationToken: cancellationToken);
 
 		var isSuccess = (new[] { StatusCodes.Status201Created, StatusCodes.Status204NoContent }).Contains(response.Status) && !response.IsError;
 		if (isSuccess)
@@ -45,7 +45,7 @@ public class AzureTablesUserRepository : IUserRepository
 
 		if (response is not null && response.HasValue)
 		{
-			var domainEntity = this.MapToDomainModel(response.Value!);
+			var domainEntity = response.Value!.ToDomainUser();
 			return domainEntity;
 		}
 
@@ -69,39 +69,14 @@ public class AzureTablesUserRepository : IUserRepository
 	{
 		var tableClient = this.tableServiceClient.GetTableClient(_tableName);
 
+		var tableEntity = user.ToTableEntityUser(_partitionKey);
 
-		var infrastructureEntity = this.MapToInfrastructureModel(user);
-
-		var response = await tableClient.UpdateEntityAsync(infrastructureEntity, Azure.ETag.All, cancellationToken: cancellationToken);
+		var response = await tableClient.UpdateEntityAsync(tableEntity, Azure.ETag.All, cancellationToken: cancellationToken);
 
 		var isSuccess = response.Status == StatusCodes.Status204NoContent && !response.IsError;
 		if (isSuccess)
 			return new Ok();
 
 		return new Error(response.ReasonPhrase);
-	}
-
-	private User MapToDomainModel(UserTableEntity infrastructureEntity)
-	{
-		return new User
-		{
-			Email = infrastructureEntity.Email,
-			Group = infrastructureEntity.Group,
-			Salt = infrastructureEntity.Salt,
-			HashedPassword = infrastructureEntity.HashedPassword,
-			IsActive = infrastructureEntity.IsActive
-		};
-	}
-
-	private UserTableEntity MapToInfrastructureModel(User domainEntity)
-	{
-		return new UserTableEntity(domainEntity.Email.ToLowerInvariant(), _partitionKey)
-		{
-			Email = domainEntity.Email,
-			Salt = domainEntity.Salt,
-			HashedPassword = domainEntity.HashedPassword,
-			Group = domainEntity.Group,
-			IsActive = domainEntity.IsActive
-		};
 	}
 }

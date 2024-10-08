@@ -1,5 +1,4 @@
-﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
-using Binacle.Net.Api.Kernel.Helpers;
+﻿using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Domain;
@@ -9,23 +8,17 @@ using Binacle.Net.Api.ServiceModule.Services;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.MinimalEndpointDefinitions;
 using FluentValidation;
-using HealthChecks.UI.Client;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.RateLimiting;
 
 namespace Binacle.Net.Api.ServiceModule;
 
@@ -36,8 +29,8 @@ public static class ModuleDefinition
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initializing");
 
 		builder.Configuration
-			.AddJsonFile("ConnectionStrings.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+			.AddJsonFile("ServiceModule/ConnectionStrings.json", optional: false, reloadOnChange: true)
+			.AddJsonFile($"ServiceModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
 			.AddEnvironmentVariables();
 
 		// Required for local run with secrets
@@ -49,25 +42,16 @@ public static class ModuleDefinition
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
 
-		var applicationInsightsConnectionString = SetupConfigurationHelper.GetConnectionStringWithEnvironmentVariableFallback(
-			builder.Configuration,
-			"ApplicationInsights",
-			"APPLICATIONINSIGHTS_CONNECTION_STRING"
-			);
+		builder.Configuration
+			.AddJsonFile(RateLimiterConfigurationOptions.FilePath, optional: false, reloadOnChange: false)
+			.AddJsonFile(RateLimiterConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
+			.AddEnvironmentVariables();
 
-		if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
-		{
-			// overwrite default
-			builder.Host.UseSerilog((context, services, loggerConfiguration) =>
-			{
-				loggerConfiguration
-				.ReadFrom.Configuration(builder.Configuration)
-				.WriteTo.ApplicationInsights(
-					services.GetRequiredService<TelemetryConfiguration>(),
-					TelemetryConverter.Traces
-					);
-			});
-		}
+		builder.Services
+			.AddOptions<RateLimiterConfigurationOptions>()
+			.Bind(builder.Configuration.GetSection(RateLimiterConfigurationOptions.SectionName))
+			.ValidateFluently()
+			.ValidateOnStart();
 
 		builder.Configuration
 			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
@@ -79,14 +63,6 @@ public static class ModuleDefinition
 			.Bind(builder.Configuration.GetSection(JwtAuthOptions.SectionName))
 			.ValidateFluently()
 			.ValidateOnStart();
-
-		builder.Configuration
-			.AddJsonFile(DefaultsOptions.FilePath, optional: false, reloadOnChange: false)
-			.AddEnvironmentVariables();
-
-		builder.Services
-			.AddOptions<DefaultsOptions>()
-			.Bind(builder.Configuration.GetSection(DefaultsOptions.SectionName));
 
 		builder.Services.AddAuthentication(options =>
 		{
@@ -118,107 +94,29 @@ public static class ModuleDefinition
 		builder.Services.AddAuthorization();
 
 		// Register Services
-
 		builder.Services.AddScoped<ITokenService, TokenService>();
 
-		builder.Services
+		builder
 			.AddDomainLayerServices()
-			.AddInfrastructureLayerServices(builder.Configuration);
-
-		builder.Services
-			.AddHealthChecks();
+			.AddInfrastructureLayerServices();
 
 		builder.Services.Configure<JsonOptions>(options =>
 		{
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
 
-		var optl = builder.Services
-			.AddOpenTelemetry()
-			//.ConfigureResource(resource =>
-			//{
-			//	resource.AddService(serviceName: "Binacle-Net");
-			//})
-			.WithMetrics(configure =>
-			{
-				configure
-					.AddRuntimeInstrumentation()
-					.AddMeter("Microsoft.AspNetCore.Hosting")
-					.AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-					.AddMeter("Microsoft.AspNetCore.RateLimiting");
-			}).WithTracing(configure =>
-			{
-				configure.AddAspNetCoreInstrumentation();
-				//configure.AddConsoleExporter();
-			});
-
-
-		if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
-		{
-			builder.Services.AddApplicationInsightsTelemetry(options =>
-			{
-				options.ConnectionString = applicationInsightsConnectionString;
-				options.EnableQuickPulseMetricStream = false;
-			});
-
-
-			optl.UseAzureMonitor(configure =>
-			{
-				var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
-				if (samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
-				{
-					configure.SamplingRatio = ratio;
-				}
-
-				configure.ConnectionString = applicationInsightsConnectionString;
-			});
-		}
-
 		builder.Services.AddMinimalEndpointDefinitions<IModuleMarker>();
 
 		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
-		builder.Services.AddRateLimiter(options =>
-		{
-			options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
-			{
-				var user = httpContext.User;
-				if (user?.Identity?.IsAuthenticated ?? false)
-				{
-					return RateLimitPartition.GetNoLimiter("Authenticated");
-				}
-
-				return RateLimitPartition.GetFixedWindowLimiter("Anonymous", _ =>
-				new FixedWindowRateLimiterOptions
-				{
-					Window = TimeSpan.FromSeconds(60),
-					PermitLimit = 10,
-					QueueLimit = 0,
-					QueueProcessingOrder = QueueProcessingOrder.NewestFirst
-				});
-			});
-			options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-		});
+		builder.Services.AddRateLimiter(_ => { });
+		builder.Services.ConfigureOptions<ConfigureRateLimiter>();
 
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initialized");
 	}
 
 	public static void UseServiceModule(this WebApplication app)
 	{
-		// Middleware are in order
-		app.MapHealthChecks("/_health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-		{
-			ResultStatusCodes =
-			{
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
-				[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
-			},
-			ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-
-		}).DisableRateLimiting();
-
-
 		app.UseAuthentication();
 		app.UseAuthorization();
 		app.UseMinimalEndpointDefinitions();
@@ -229,5 +127,4 @@ public static class ModuleDefinition
 	{
 		ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
 	}
-
 }

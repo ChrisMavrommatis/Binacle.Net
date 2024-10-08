@@ -2,14 +2,14 @@
 
 namespace Binacle.Net.TestsKernel.Models;
 
-public sealed class TestBin : IItemWithDimensions<int>
+public sealed class TestBin : IWithID, IWithDimensions
 {
 	public TestBin()
 	{
 
 	}
 
-	public TestBin(string id, IWithReadOnlyDimensions<int> item)
+	public TestBin(string id, IWithReadOnlyDimensions item)
 	{
 		this.ID = id;
 		this.Length = item.Length;

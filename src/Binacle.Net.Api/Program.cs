@@ -1,8 +1,10 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Configuration;
 using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.Api.DiagnosticsModule;
 using Binacle.Net.Api.ServiceModule;
 using Binacle.Net.Api.Services;
+using Binacle.Net.Api.UIModule;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.Features;
 using ChrisMavrommatis.FluentValidation;
@@ -19,13 +21,7 @@ public class Program
 {
 	public static async Task Main(string[] args)
 	{
-		Log.Logger = new LoggerConfiguration()
-			.MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
-			.Enrich.FromLogContext()
-			.Enrich.WithMachineName()
-			.Enrich.WithThreadId()
-			.WriteTo.Console()
-			.CreateBootstrapLogger();
+		Binacle.Net.Api.DiagnosticsModule.ModuleDefinition.BootstrapLogger();
 
 		var builder = WebApplication.CreateSlimBuilder(args);
 
@@ -42,16 +38,6 @@ public class Program
 			.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 			.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
-		builder.Configuration
-			.AddJsonFile("Serilog.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"Serilog.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-
-		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
-		{
-			loggerConfiguration
-			.ReadFrom.Configuration(builder.Configuration);
-		});
-
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initializing");
 
 		builder.Configuration
@@ -63,8 +49,8 @@ public class Program
 			.AddJsonFile($"Features.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
 		Feature.Manager = new FeatureManagerConfiguration()
-			.ReadFrom.EnvironmentVariables()
 			.ReadFrom.Configuration(builder.Configuration)
+			.ReadFrom.EnvironmentVariables()
 			.CreateManager();
 
 		builder.Services
@@ -87,7 +73,6 @@ public class Program
 
 		builder.Services.AddApiVersioning(options =>
 		{
-
 			options.DefaultApiVersion = ApiVersionParser.Default.Parse(v1.ApiVersion.Number);
 			options.AssumeDefaultVersionWhenUnspecified = true;
 			options.ReportApiVersions = true;
@@ -127,16 +112,23 @@ public class Program
 
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
 
+		builder.AddDiagnosticsModule();
+
 		if (Feature.IsEnabled("SERVICE_MODULE"))
 		{
 			builder.AddServiceModule();
+		}
+
+		if (Feature.IsEnabled("UI_MODULE"))
+		{
+			builder.AddUIModule();
 		}
 
 		var app = builder.Build();
 
 		// Slim builder
 		app.UseHttpsRedirection();
-
+		
 		if (app.Environment.IsDevelopment())
 		{
 			app.UseDeveloperExceptionPage();
@@ -157,9 +149,16 @@ public class Program
 			});
 		}
 
+		app.UseDiagnosticsModule();
+
 		if (Feature.IsEnabled("SERVICE_MODULE"))
 		{
 			app.UseServiceModule();
+		}
+
+		if (Feature.IsEnabled("UI_MODULE"))
+		{
+			app.UseUIModule();
 		}
 
 		app.MapControllers();

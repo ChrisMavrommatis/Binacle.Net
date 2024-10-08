@@ -3,5 +3,4 @@
 public interface IWithEmail
 {
 	public string Email { get; set; }
-
 }

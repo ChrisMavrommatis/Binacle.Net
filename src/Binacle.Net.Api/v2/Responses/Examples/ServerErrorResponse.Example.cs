@@ -1,12 +1,12 @@
-﻿using Binacle.Net.Api.v2.Models.Errors;
+﻿using Binacle.Net.Api.v2.Models;
 using ChrisMavrommatis.SwaggerExamples;
 
 namespace Binacle.Net.Api.v2.Responses.Examples;
 
-internal class ServerErrorResponseExample : SingleSwaggerExamplesProvider<Response<List<IApiError>>>
+internal class ServerErrorResponseExample : SingleSwaggerExamplesProvider<ErrorResponse>
 {
-	public override Response<List<IApiError>> GetExample()
+	public override ErrorResponse GetExample()
 	{
-		return Responses.Response.ExceptionError(new InvalidOperationException("Example Exception"), Constants.Errors.Categories.ServerError);
+		return Response.ExceptionError(new InvalidOperationException("Example Exception"), Constants.Errors.Categories.ServerError);
 	}
 }

@@ -1,0 +1,76 @@
+﻿[
+	{
+		"Name": "2Same_FitInSmall",
+		"Bin": "rectangular-cuboids::Small",
+		"Fits": true,
+		"Items": [
+			"25x25x10-2"
+		]
+	},
+	{
+		"Name": "2Same_FitInMedium",
+		"Bin": "rectangular-cuboids::Medium",
+		"Fits": true,
+		"Items": [
+			"15x22x15-2"
+		]
+	},
+	{
+		"Name": "2Same_1Rotated_FitInSmall",
+		"Bin": "rectangular-cuboids::Small",
+		"Fits": true,
+		"Items": [
+			"25x25x10-1",
+			"10x25x25-1"
+		]
+	},
+	{
+		"Name": "2Same_1Rotated_FitInMedium",
+		"Bin": "rectangular-cuboids::Medium",
+		"Fits": true,
+		"Items": [
+			"15x22x15-1",
+			"15x15x22-1"
+		]
+	},
+	{
+		"Name": "100_5x5x5_FitInSmall",
+		"Bin": "rectangular-cuboids::Small",
+		"Fits": true,
+		"Items": [
+			"5x5x5-100"
+		]
+	},
+	{
+		"Name": "8_15x15x15_FitInMedium",
+		"Bin": "rectangular-cuboids::Medium",
+		"Fits": true,
+		"Items": [
+			"15x15x15-8"
+		]
+	},
+	{
+		"Name": "2_30x30x30_FitInLarge",
+		"Bin": "rectangular-cuboids::Large",
+		"Fits": true,
+		"Items": [
+			"30x30x30-2"
+		]
+	},
+	{
+		"Name": "3_30x30x30_DoesNotFitInLarge",
+		"Bin": "rectangular-cuboids::Large",
+		"Fits": false,
+		"Items": [
+			"30x30x30-3"
+		]
+	},
+	{
+		"Name": "16_15x15x15_FitInLarge",
+		"Bin": "rectangular-cuboids::Large",
+		"Fits": true,
+		"Items": [
+			"15x15x15-16"
+		]
+	}
+]

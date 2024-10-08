@@ -21,19 +21,6 @@ public class TimedOperation : IDisposable
 		this.startingTimestamp = Stopwatch.GetTimestamp();
 	}
 
-	public TimedOperation WithScope(string messageFormat, params object?[] args)
-	{
-		this.logger.BeginScope(messageFormat, args);
-		return this;
-	}
-
-	public TimedOperation WithNamedState<TKey, TValue>(string name, IEnumerable<KeyValuePair<TKey, TValue>> state)
-	{
-		var namedState = new Dictionary<string, IEnumerable<KeyValuePair<TKey, TValue>>> { { name, state } };
-		this.logger.BeginScope(namedState);
-		return this;
-	}
-
 	public void Dispose()
 	{
 		var delta = Stopwatch.GetElapsedTime(this.startingTimestamp);

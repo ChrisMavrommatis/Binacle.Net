@@ -1,0 +1,23 @@
+﻿@namespace Binacle.Net.Api.UIModule.Components.Features
+@rendermode RenderMode.InteractiveServer
+
+@*  position: absolute;
+                right: 24px;
+                bottom: -20px; *@
+<div class="row" style="position:absolute; bottom: -20px;right: 24px" id="packing-controls">
+    <div class="col s1">
+    </div>
+
+    @foreach (var control in this.controls.Values)
+    {
+        var colorClass = control.IsEnabled ? "orange accent-1" : "disabled";
+        var iconTextClass = control.IsEnabled ? "grey-text text-darken-3" : string.Empty;
+        <div class="col s2">
+            <a class="btn-floating waves-effect waves-light @(colorClass)" id="@(control.Element.Id)" @onclick=@control.ClickAsync>
+                <MaterialSymbolOutlined Icon="@control.Icon" class="@iconTextClass" />
+            </a>
+        </div>
+    }
+    <div class="col s1">
+    </div>
+</div>

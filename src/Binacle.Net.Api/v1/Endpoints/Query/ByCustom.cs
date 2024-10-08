@@ -1,9 +1,5 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Services;
-using Binacle.Net.Api.v1.Requests;
-using Binacle.Net.Api.v1.Requests.Examples;
-using Binacle.Net.Api.v1.Responses;
-using Binacle.Net.Api.v1.Responses.Examples;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
@@ -15,11 +11,11 @@ namespace Binacle.Net.Api.v1.Endpoints.Query;
 /// <summary>
 /// Query by Custom endpoint
 /// </summary>
-[ApiVersion(v1.ApiVersion.Number)]
+[ApiVersion(v1.ApiVersion.Number, Deprecated = v1.ApiVersion.IsDeprecated)]
 [Route("api/v{version:apiVersion}/[namespace]")]
-public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
+public class ByCustom : EndpointWithRequest<v1.Requests.CustomQueryRequestWithBody>
 {
-	private readonly IValidator<CustomQueryRequest> validator;
+	private readonly IValidator<v1.Requests.CustomQueryRequest> validator;
 	private readonly ILockerService lockerService;
 	private readonly ILogger<ByCustom> logger;
 
@@ -30,7 +26,7 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	/// <param name="lockerService"></param>
 	/// <param name="logger"></param>
 	public ByCustom(
-		IValidator<CustomQueryRequest> validator,
+		IValidator<v1.Requests.CustomQueryRequest> validator,
 		ILockerService lockerService,
 		ILogger<ByCustom> logger
 	  )
@@ -47,7 +43,7 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	/// <remarks>
 	/// Example request:
 	///     
-	///     POST /api/v1/query/
+	///     POST /api/v1/query/by-custom
 	///     {
 	///			"bins" : [
 	///			  {
@@ -107,24 +103,24 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 	[Consumes("application/json")]
 	[Produces("application/json")]
 	[MapToApiVersion(v1.ApiVersion.Number)]
-	[SwaggerRequestExample(typeof(CustomQueryRequest), typeof(CustomQueryRequestExample))]
+	[SwaggerRequestExample(typeof(v1.Requests.CustomQueryRequest), typeof(v1.Requests.Examples.CustomQueryRequestExample))]
 
-	[ProducesResponseType(typeof(QueryResponse), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(QueryResponse), typeof(CustomQueryResponseExamples), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(v1.Responses.QueryResponse), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(v1.Responses.QueryResponse), typeof(v1.Responses.Examples.CustomQueryResponseExamples), StatusCodes.Status200OK)]
 
-	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
+	[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 
-	[ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
-	public override async Task<IActionResult> HandleAsync(CustomQueryRequestWithBody request, CancellationToken cancellationToken = default)
+	[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
+	[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
+	public override async Task<IActionResult> HandleAsync(v1.Requests.CustomQueryRequestWithBody request, CancellationToken cancellationToken = default)
 	{
 		try
 		{
 			if (request is null || request.Body is null)
 			{
 				return this.BadRequest(
-					ErrorResponse.Create(Constants.Errors.Categories.RequestError)
+					v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.RequestError)
 					.AddParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody)
 					);
 			}
@@ -134,22 +130,31 @@ public class ByCustom : EndpointWithRequest<CustomQueryRequestWithBody>
 			if (!this.ModelState.IsValid)
 			{
 				return this.BadRequest(
-					ErrorResponse.Create(Constants.Errors.Categories.ValidationError)
+					v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.ValidationError)
 					.AddModelStateErrors(this.ModelState)
 					);
 			}
 
-			var operationResult = this.lockerService.FindFittingBin(request.Body.Bins, request.Body.Items);
+			var operationResults = this.lockerService.FitBins(
+				request.Body.Bins, 
+				request.Body.Items,
+				new Api.Models.FittingParameters
+				{
+					FindSmallestBinOnly = true,
+					ReportFittedItems = false,
+					ReportUnfittedItems = false
+				}
+			);
 
 			return this.Ok(
-				QueryResponse.Create(operationResult)
+				v1.Responses.QueryResponse.Create(request.Body.Bins, request.Body.Items, operationResults)
 				);
 		}
 		catch (Exception ex)
 		{
 			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Custom");
 			return this.InternalServerError(
-				ErrorResponse.Create(Constants.Errors.Categories.ServerError)
+				v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.ServerError)
 				.AddExceptionError(ex)
 				);
 		}

@@ -21,14 +21,14 @@ internal class EnsureAdminUserExistsStartupTask : IStartupTask
 	{
 		using (var scope = this.serviceProvider.CreateScope())
 		{
-			var defaultsOptions = scope.ServiceProvider.GetRequiredService<IOptions<DefaultsOptions>>();
-			var defaultsOptionsValidator = scope.ServiceProvider.GetRequiredService<IValidator<DefaultsOptions>>();
+			var defaultsOptions = scope.ServiceProvider.GetRequiredService<IOptions<UserOptions>>();
+			var defaultsOptionsValidator = scope.ServiceProvider.GetRequiredService<IValidator<UserOptions>>();
 
 			await defaultsOptionsValidator.ValidateAndThrowAsync(defaultsOptions.Value);
 
 			var service = scope.ServiceProvider.GetRequiredService<IUserManagerService>();
 
-			var configuredAdminUser = defaultsOptions.Value.GetParsedAdminUser();
+			var configuredAdminUser = defaultsOptions.Value.GetParsedDefaultAdminUser();
 
 			var request = new Domain.Users.Models.CreateUserRequest(configuredAdminUser.Email, configuredAdminUser.Password, UserGroups.Admins);
 

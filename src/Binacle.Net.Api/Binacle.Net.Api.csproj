@@ -10,44 +10,40 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="$(ProjectName).IntegrationTests" />
+		<InternalsVisibleTo Include="$(ProjectName).ServiceModule.IntegrationTests" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
 		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
 		<PackageReference Include="ChrisMavrommatis.Endpoints" Version="1.0.1" />
-		<PackageReference Include="ChrisMavrommatis.Features" Version="1.0.0" />
+		<PackageReference Include="ChrisMavrommatis.Features" Version="1.0.2" />
 		<PackageReference Include="ChrisMavrommatis.StartupTasks" Version="1.0.1" />
 		<PackageReference Include="ChrisMavrommatis.SwaggerExamples" Version="1.0.1" />
-		<PackageReference Include="FluentValidation" Version="11.9.2" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
+		<PackageReference Include="FluentValidation" Version="11.10.0" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Serilog" Version="4.0.1" />
-		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
-		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
-		<PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
-		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.7.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.7.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.7.3" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.7.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.8.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.8.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.8.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.8.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.Api.DiagnosticsModule\Binacle.Net.Api.DiagnosticsModule.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.Api.UIModule\Binacle.Net.Api.UIModule.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Update="Config_Files\*.json">
+		<Content Update="Config_Files\**\*.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
+
 
 </Project>

@@ -1,10 +1,6 @@
 ﻿using Binacle.Net.Api.ServiceModule.Domain.Users.Models;
 using Binacle.Net.Api.ServiceModule.Extensions;
 using Binacle.Net.Api.ServiceModule.Services;
-using Binacle.Net.Api.ServiceModule.v0.Requests;
-using Binacle.Net.Api.ServiceModule.v0.Requests.Examples;
-using Binacle.Net.Api.ServiceModule.v0.Responses;
-using Binacle.Net.Api.ServiceModule.v0.Responses.Examples;
 using ChrisMavrommatis.MinimalEndpointDefinitions;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
@@ -21,9 +17,9 @@ internal class ChangePassword : IEndpointDefinition<UsersGroup>
 		group.MapPatch("/{email}", HandleAsync)
 			.WithSummary("Change a user's password")
 			.WithDescription("Use this endpoint if you are the admin to change a user's password")
-			.Accepts<ChangeApiUserPasswordRequest>("application/json")
+			.Accepts<v0.Requests.ChangeApiUserPasswordRequest>("application/json")
 			.Produces(StatusCodes.Status204NoContent)
-			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.Produces<v0.Responses.ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
 			.Produces(StatusCodes.Status401Unauthorized)
 			.Produces(StatusCodes.Status403Forbidden)
 			.Produces(StatusCodes.Status404NotFound)
@@ -70,19 +66,19 @@ internal class ChangePassword : IEndpointDefinition<UsersGroup>
 			});
 	}
 
-	[SwaggerRequestExample(typeof(ChangeApiUserPasswordRequest), typeof(ChangeApiUserPasswordRequestExample))]
-	[SwaggerResponseExample(typeof(ErrorResponse), typeof(ChangeApiUserPasswordErrorResponseExample), StatusCodes.Status400BadRequest)]
+	[SwaggerRequestExample(typeof(v0.Requests.ChangeApiUserPasswordRequest), typeof(v0.Requests.Examples.ChangeApiUserPasswordRequestExample))]
+	[SwaggerResponseExample(typeof(v0.Responses.ErrorResponse), typeof(v0.Responses.Examples.ChangeApiUserPasswordErrorResponseExample), StatusCodes.Status400BadRequest)]
 	internal async Task<IResult> HandleAsync(
 			IUserManagerService userManagerService,
-			[AsParameters] ChangeApiUserPasswordRequestWithBody request,
-			IValidator<ChangeApiUserPasswordRequestWithBody> validator,
+			[AsParameters] v0.Requests.ChangeApiUserPasswordRequestWithBody request,
+			IValidator<v0.Requests.ChangeApiUserPasswordRequestWithBody> validator,
 			CancellationToken cancellationToken = default
 		)
 	{
 		var validationResult = await validator.ValidateAsync(request, cancellationToken);
 		if (!validationResult.IsValid)
 		{
-			return Results.BadRequest(ErrorResponse.Create("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage).ToArray()));
+			return Results.BadRequest(v0.Responses.ErrorResponse.Create("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage).ToArray()));
 		}
 
 		var result = await userManagerService.ChangePasswordAsync(new ChangeUserPasswordRequest(request.Email, request.Body.Password), cancellationToken);
@@ -91,7 +87,7 @@ internal class ChangePassword : IEndpointDefinition<UsersGroup>
 			ok => Results.NoContent(),
 			notFound => Results.NotFound(),
 			conflict => Results.Conflict(),
-			error => Results.BadRequest(ErrorResponse.Create(error.Message))
+			error => Results.BadRequest(v0.Responses.ErrorResponse.Create(error.Message))
 		);
 	}
 }

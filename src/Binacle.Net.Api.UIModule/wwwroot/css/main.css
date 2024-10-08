@@ -1,0 +1,42 @@
+﻿nav .nav-wrapper .navbar-fill {
+    height: var(--navbar-height-mobile) !important;
+}
+
+@media only screen and (min-width : 601px) {
+	nav .nav-wrapper .navbar-fill {
+		height: var(--navbar-height) !important;
+		line-height: var(--navbar-height) !important;
+	}
+}
+
+body {
+	display: flex;
+	min-height: 100vh;
+	flex-direction: column;
+}
+
+main {
+	flex: 1 0 auto;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+	-moz-appearance: textfield;
+}
+
+/* input field set padding and label left */
+/*.input-field input {
+	padding: 0 0px;
+	padding-top: 20px;
+}
+
+.input-field > label {
+	left: 0px;
+}*/

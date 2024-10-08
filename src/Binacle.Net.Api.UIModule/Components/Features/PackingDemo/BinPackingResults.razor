@@ -1,0 +1,46 @@
+﻿@namespace Binacle.Net.Api.UIModule.Components.Features
+@rendermode RenderMode.InteractiveServer
+
+<div class="card-content indigo lighten-2 white-text">
+    <div class="card-title">Results</div>
+    <ul class="collection">
+        @foreach (var result in this.State.Results)
+        {
+            var isFullyPacked = result.Result == Models.PackResultType.FullyPacked;
+            var percentage = result.PackedBinVolumePercentage;
+            var colorClass = this.GetColorClass(result);
+            <li class="collection-item avatar @(this.IsSelected(result) ? "active" : string.Empty)">
+                <div class="row">
+                    <div class="col s6 m8">
+                        <MaterialSymbolOutlined Icon="package_2" class="@($"large circle {colorClass}")" />
+                        <span class="title">Bin: @result.Bin.ID</span>
+
+                        <LinearPreloader Type="LinearPreloaderType.Determinate" Percentage=percentage class="@colorClass" />
+
+                        <div class="row">
+                            <div class="col s12 m6">
+                                Packed Bin Volume: @result.PackedBinVolumePercentage%
+                            </div>
+                            <div class="col s12 m6">
+                                @if (!isFullyPacked)
+                                {
+                                    <text>
+                                        Packed Items Volume: @result.PackedItemsVolumePercentage%
+                                    </text>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col s6 m4">
+                        @result.Result.ToString()
+                    </div>
+                    <TextButton class="secondary-content" @onclick="(() => this.SelectResultAsync(result))">
+                        <MaterialSymbolOutlined Icon="publish" />
+                    </TextButton>
+                </div>
+
+            </li>
+        }
+    </ul>
+</div>

@@ -3,8 +3,8 @@
 internal class JwtAuthOptions
 {
 	public static string SectionName = "JwtAuth";
-	public static string FilePath = "JwtAuth.json";
-	public static string GetEnvironmentFilePath(string environment) => $"JwtAuth.{environment}.json";
+	public static string FilePath = "ServiceModule/JwtAuth.json";
+	public static string GetEnvironmentFilePath(string environment) => $"ServiceModule/JwtAuth.{environment}.json";
 
 	public string Issuer { get; set; }
 	public string Audience { get; set; }

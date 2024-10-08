@@ -1,5 +1,6 @@
-﻿using Binacle.Net.Lib.Abstractions.Models;
-using Binacle.Net.Lib.Models;
+﻿using Binacle.Net.Api.ExtensionMethods;
+using Binacle.Net.Lib;
+using Binacle.Net.Lib.Abstractions.Models;
 using ChrisMavrommatis.Logging;
 
 namespace Binacle.Net.Api.Services;
@@ -7,63 +8,113 @@ namespace Binacle.Net.Api.Services;
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public interface ILockerService
 {
-	public BinFittingOperationResult FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
-		where TBin : class, IItemWithReadOnlyDimensions<int>
-		where TBox : class, IItemWithReadOnlyDimensions<int>, IWithQuantity<int>;
+	Dictionary<string, Lib.Fitting.Models.FittingResult> FitBins<TBin, TBox>(List<TBin> bins, List<TBox> items, Models.FittingParameters parameters)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 
+	Dictionary<string, Lib.Packing.Models.PackingResult> PackBins<TBin, TBox>(List<TBin> bins, List<TBox> items, Models.PackingParameters parameters)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 }
 
 internal class LockerService : ILockerService
 {
-	private readonly Lib.StrategyFactory strategyFactory;
+	private readonly Lib.AlgorithmFactory algorithmFactory;
 	private readonly ILogger<LockerService> logger;
 
 	public LockerService(ILogger<LockerService> logger)
 	{
-		this.strategyFactory = new Lib.StrategyFactory();
+		this.algorithmFactory = new Lib.AlgorithmFactory();
 		this.logger = logger;
 	}
 
-	public BinFittingOperationResult FindFittingBin<TBin, TBox>(List<TBin> bins, List<TBox> items)
-		where TBin : class, IItemWithReadOnlyDimensions<int>
-		where TBox : class, IItemWithReadOnlyDimensions<int>, IWithQuantity<int>
+	public Dictionary<string, Lib.Fitting.Models.FittingResult> FitBins<TBin, TBox>(
+		List<TBin> bins,
+		List<TBox> items,
+		Models.FittingParameters parameters
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
-		using var timedOperation = this.logger.BeginTimedOperation("Find Fitting Bin");
+		using var timedOperation = this.logger.BeginTimedOperation("Fit Bins");
+		this.logger.EnrichStateWith("Items", items);
+		this.logger.EnrichStateWith("Bins", bins);
+		this.logger.EnrichStateWithParameters(parameters);
 
-		timedOperation.WithNamedState("Items", items.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width} q{x.Quantity}"));
-		timedOperation.WithNamedState("Bins", bins.ToDictionary(x => x.ID, x => $"{x.Height}x{x.Length}x{x.Width}"));
+		var results = new Dictionary<string, Lib.Fitting.Models.FittingResult>();
 
-		var strategy = this.strategyFactory.Create(Lib.BinFittingStrategy.FirstFitDecreasing);
-
-		var flatItems = items.SelectMany(x => Enumerable.Repeat(x, x.Quantity)).ToList();
-
-		var operation = strategy
-			.WithBins(bins)
-			.AndItems(flatItems)
-			.Build();
-
-		var operationResult = operation.Execute();
-
-		var resultState = new Dictionary<string, object>()
+		foreach (var bin in bins.OrderBy(x => x.CalculateVolume()))
 		{
-			{ "Status", operationResult.Status.ToString() }
-		};
-
-		if (operationResult.FoundBin is not null)
-		{
-			var foundBin = new Dictionary<string, string>()
+			var algorithmInstance = this.algorithmFactory.CreateFitting(Lib.Algorithm.FirstFitDecreasing, bin, items);
+			var result = algorithmInstance.Execute(new Lib.Fitting.Models.FittingParameters
 			{
-				{operationResult.FoundBin.ID, $"{operationResult.FoundBin.Height}x{operationResult.FoundBin.Length}x{operationResult.FoundBin.Width}" }
-			};
-			resultState.Add("FoundBin", foundBin);
-		}
-		
-		if(operationResult.Reason.HasValue) 
-		{
-			resultState.Add("Reason", operationResult.Reason.Value.ToString());
+				ReportFittedItems = parameters.ReportFittedItems,
+				ReportUnfittedItems = parameters.ReportUnfittedItems
+			});
+
+			if(parameters.FindSmallestBinOnly)
+			{
+				if(result.Status == Lib.Fitting.Models.FittingResultStatus.Success)
+				{
+					results.Add(bin.ID, result);
+					break;
+				}
+				
+			}
+			else
+			{
+				results.Add(bin.ID, result);
+			}
 		}
 
-		timedOperation.WithNamedState("Result", resultState);
-		return operationResult;
+		this.logger.EnrichStateWithResults(results);
+		return results;
+
+
 	}
+
+	public Dictionary<string, Lib.Packing.Models.PackingResult> PackBins<TBin, TBox>(
+		List<TBin> bins, 
+		List<TBox> items,
+		Models.PackingParameters parameters
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+	{
+		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
+
+		this.logger.EnrichStateWith("Items", items);
+		this.logger.EnrichStateWith("Bins", bins);
+		this.logger.EnrichStateWithParameters(parameters);
+
+		var results = new Dictionary<string, Lib.Packing.Models.PackingResult>();
+
+		foreach (var bin in bins)
+		{
+			var algorithmInstance = this.algorithmFactory.CreatePacking(Lib.Algorithm.FirstFitDecreasing, bin, items);
+			var result = algorithmInstance.Execute(new Lib.Packing.Models.PackingParameters 
+			{ 
+				NeverReportUnpackedItems = parameters.NeverReportUnpackedItems, 
+				OptInToEarlyFails = parameters.OptInToEarlyFails,
+				ReportPackedItemsOnlyWhenFullyPacked = parameters.ReportPackedItemsOnlyWhenFullyPacked
+			});
+			if (parameters.StopAtSmallestBin)
+			{
+				if (result.Status == Lib.Packing.Models.PackingResultStatus.FullyPacked)
+				{
+					results.Add(bin.ID, result);
+					break;
+				}
+
+			}
+			else
+			{
+				results.Add(bin.ID, result);
+			}
+		}
+
+		this.logger.EnrichStateWithResults(results);
+		return results;
+	}
+	
 }

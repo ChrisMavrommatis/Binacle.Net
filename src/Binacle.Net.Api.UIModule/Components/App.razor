@@ -1,0 +1,67 @@
+﻿@using Binacle.Net.Api.UIModule.Components.Layout
+<!DOCTYPE html>
+<html lang="en" theme="light">
+
+<head>
+    <meta charset="utf-8" />
+    @* Let browser know website is optimized for mobile *@
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <base href="." />
+
+    @* Material Icons *@
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    @* Material Symbols - Outlined Set *@
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    @* Material Symbols - Rounded Set *@
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+    @* Material Symbols - Sharp Set *@
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp" rel="stylesheet" />
+
+    @* Import materialize.css *@
+    <link type="text/css" rel="stylesheet" href="lib/materialize/materialize.min.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="css/main.css" media="screen,projection" />
+
+    @* Favicon *@
+    <link rel="icon" href="favicon.ico" />
+    <HeadOutlet />
+</head>
+
+<body>
+    <Header />
+    <Routes />
+    <Footer />
+
+    <script src="_framework/blazor.web.js"></script>
+    @* JavaScript at end of body for optimized loading *@
+    
+    @* Blazor doesn't play nice with js listening to events  *@
+    @* TODO: Figure out a way to incorporate sidenav opening in blazor *@
+
+    @* <script type="text/javascript" src="lib/materialize/materialize.min.js"></script> *@
+    @* <script type="text/javascript" src="js/main.js"></script> *@
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/",
+            "visualizer/addons/": "./js/visualizer/addons/"
+
+          }
+        }
+    </script>
+
+    @* <script type="importmap">
+        {
+            "imports": {
+                "three": "./lib/three/three.module.min.js",
+                "three/addons/": "./lib/three/addons/",
+                "visualizer/addons/": "./js/visualizer/addons/"
+            }
+        }
+    </script> *@
+    <script type="module" src="js/visualizer/visualizer.module.js"></script>
+</body>
+
+</html>
