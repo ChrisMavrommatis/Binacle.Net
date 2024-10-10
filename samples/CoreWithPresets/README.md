@@ -1,0 +1,1 @@
+﻿# Binacle.Net Core Example With Presets

@@ -16,12 +16,17 @@ obj/
 !.vscode/extensions.json
 .history/*
 
+# Rider
+.idea
+
 # Node
 /node_modules
 
 # Project Specific
 logs/
 BenchmarkDotNet.Artifacts
+
+
 ## Copied from UI Module
 src/Binacle.Net.Api/wwwroot/ 
 
