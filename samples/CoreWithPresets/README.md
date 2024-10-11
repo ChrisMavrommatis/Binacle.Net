@@ -3,7 +3,7 @@
 This sample demonstrates how to set up and run Binacle.Net with custom presets using Docker Compose.
 
 ## Prerequisites
-Before you start, make sure you have the docker installed on your machine:
+Before you start, make sure you have the [docker](https://www.docker.com) installed on your machine.
 
 ## Getting Started
 Clone or download this repository to your local machine.
