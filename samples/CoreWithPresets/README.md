@@ -7,9 +7,10 @@ Before you start, make sure you have the [docker](https://www.docker.com) instal
 
 ## Getting Started
 Clone or download this repository to your local machine.
-Alternatively, you can just download the contents of this folder. Make sure that both `docker-compose.yml` and `Presets.json` files are in the same directory.
-If needed, modify the `Presets.json` file to fit your specific bin configurations.
 
+Alternatively, you can just download the contents of this folder. Make sure that both `docker-compose.yml` and `Presets.json` files are in the same directory.
+
+If needed, modify the `Presets.json` file to fit your specific bin configurations.
 
 ## Running the Application
 To launch the application, open a terminal in the directory where the sample is located and run:
