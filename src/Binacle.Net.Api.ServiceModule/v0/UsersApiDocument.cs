@@ -25,7 +25,7 @@ internal static class UsersApiDocument
 	private const string __description__ = """
 		**Binacle.Net Users API for User Management**
 		
-		This section is designed only for when Binacle is used as public service. <br>
+		This section is designed only for when Binacle.Net is used as public service. <br>
 		User Management is done only by a user of Admin Group.
 		
 		[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)

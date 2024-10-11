@@ -90,7 +90,7 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 	}
 
 	private const string __description__ = """
-		Binacle.NET is an API created to address the 3D Bin Packing Problem.
+		Binacle.NET is an API created to address the 3D Bin Packing Problem in real time.
 		
 		{{status}}
 
