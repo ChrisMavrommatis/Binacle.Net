@@ -35,7 +35,10 @@ public class SanityTests : IClassFixture<SanityFixture>
 	{
 		Assert.NotNull(Fixture);
 
-		Assert_Scenarios_Are_ConfiguredCorrectly(Fixture.BinCollectionsTestDataProvider, Fixture.ScenarioCollectionsTestDataProvider);
+		Assert_Scenarios_Are_ConfiguredCorrectly(
+			Fixture.BinCollectionsTestDataProvider, 
+			Fixture.ScenarioCollectionsTestDataProvider
+		);
 	}
 
 	private static void Assert_Scenarios_Are_ConfiguredCorrectly(

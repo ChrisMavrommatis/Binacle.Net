@@ -80,7 +80,9 @@ public class PackByPresetScenario
 		result!.Bin.Should().NotBeNull();
 		result.Bin.ID.Should().Be(expectedBin.ID);
 
-		if (scenario.Fits)
+		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
+
+		if (scenarioResult.Fits)
 		{
 			// Can't guarantee it as multiple bins are evaluated
 			// fitResponse!.Result.Should().Be(Api.v2.Models.ResultType.Success);

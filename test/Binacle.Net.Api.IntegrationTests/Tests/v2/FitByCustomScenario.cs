@@ -90,7 +90,9 @@ public class FitByCustomScenario
 		result!.Bin.Should().NotBeNull();
 		result.Bin.ID.Should().Be(expectedBin.ID);
 
-		if (scenario.Fits)
+		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
+
+		if (scenarioResult.Fits)
 		{
 			fitResponse!.Result.Should().Be(Api.v2.Models.ResultType.Success);
 			result.Result.Should().Be(Api.v2.Models.BinFitResultStatus.AllItemsFit);

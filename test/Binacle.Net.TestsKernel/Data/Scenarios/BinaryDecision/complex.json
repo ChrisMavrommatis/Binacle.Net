@@ -2,7 +2,7 @@
 	{
 		"Name": "ComplexScenario_FitsInSmall_1",
 		"Bin": "rectangular-cuboids::Small",
-		"Fits": true,
+		"Result": "BinaryDecision::Fits",
 		"Items": [
 			"5x5x5-2",
 			"15x10x15-1",
@@ -13,7 +13,7 @@
 	{
 		"Name": "ComplexScenario_FitsInMedium_1",
 		"Bin": "rectangular-cuboids::Medium",
-		"Fits": true,
+		"Result": "BinaryDecision::Fits",
 		"Items": [
 			"5x5x5-2",
 			"10x20x10-4",

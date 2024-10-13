@@ -100,7 +100,9 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 			ReportUnfittedItems = false
 		});
 
-		if (scenario.Fits)
+		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
+
+		if (scenarioResult.Fits)
 		{
 			Xunit.Assert.Equal(Fitting.Models.FittingResultStatus.Success, result.Status);
 		}
@@ -197,7 +199,9 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 			OptInToEarlyFails = true
 		});
 
-		if (scenario.Fits)
+		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
+
+		if (scenarioResult.Fits)
 		{
 			Xunit.Assert.Equal(Packing.Models.PackingResultStatus.FullyPacked, result.Status);
 		}

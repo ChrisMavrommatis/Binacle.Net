@@ -59,7 +59,10 @@ public class QueryByPresetScenario
 		var result = await response.Content.ReadFromJsonAsync<Api.v1.Responses.QueryResponse>();
 
 		result.Should().NotBeNull();
-		if (scenario.Fits)
+
+		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
+
+		if (scenarioResult.Fits)
 		{
 			result!.Result.Should().Be(Api.v1.Models.ResultType.Success);
 			result.Bin.Should().NotBeNull();

@@ -1,14 +1,13 @@
-﻿using Binacle.Net.TestsKernel.Providers;
+﻿using Binacle.Net.TestsKernel.Models;
+using Binacle.Net.TestsKernel.Providers;
 
-namespace Binacle.Net.TestsKernel.Models;
+namespace Binacle.Net.TestsKernel.Abstractions;
 
 public abstract class BinScenarioBase
 {
-
 	private TestBin? bin;
 	private string? binCollectionKey;
 	private string? binFromCollection;
-
 	public BinScenarioBase(string binString)
 	{
 		this.ParseBinString(binString);
@@ -70,4 +69,3 @@ public abstract class BinScenarioBase
 		return this.bin;
 	}
 }
-

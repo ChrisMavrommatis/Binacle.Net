@@ -1,4 +1,5 @@
-﻿using Binacle.Net.TestsKernel.Helpers;
+﻿using Binacle.Net.TestsKernel.Abstractions;
+using Binacle.Net.TestsKernel.Helpers;
 using Binacle.Net.TestsKernel.Models;
 using Newtonsoft.Json;
 
@@ -6,12 +7,12 @@ using Newtonsoft.Json;
 namespace Binacle.Net.TestsKernel.Providers;
 
 internal class FileScenarioReader
-{
+{ 
 	private class ReadScenario
 	{
 		public string Name { get; set; }
 		public string Bin{ get; set; }
-		public bool Fits { get; set; }
+		public string Result { get; set; }
 		public string[] Items { get; set; }
 	}
 
@@ -27,16 +28,19 @@ internal class FileScenarioReader
 			}
 			foreach (var readScenario in readScenarios)
 			{
-				var resultScenario = new Scenario(readScenario.Bin)
+				var items = readScenario.Items.Select(x =>
 				{
-					Name = readScenario.Name,
-					Fits = readScenario.Fits,
-					Items = readScenario.Items.Select(x => 
-					{
-						var dimensions = DimensionHelper.ParseFromCompactString(x);
-						return new TestItem(x, dimensions, dimensions.Quantity);
-					}).ToList()
-				};
+					var dimensions = DimensionHelper.ParseFromCompactString(x);
+					return new TestItem(x, dimensions, dimensions.Quantity);
+				}).ToList();
+
+				var resultScenario = Scenario.Create(
+					readScenario.Name,
+					readScenario.Bin,
+					items,
+					readScenario.Result
+				);
+
 				resultScenarios.Add(resultScenario);
 			}
 		}

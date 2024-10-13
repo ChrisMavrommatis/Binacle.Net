@@ -2,7 +2,7 @@
 	{
 		"Name": "1_5x5x5_FitsInSmall",
 		"Bin": "rectangular-cuboids::Small",
-		"Fits": true,
+		"Result": "BinaryDecision::Fits",
 		"Items": [
 			"5x5x5-1"
 		]
@@ -10,7 +10,7 @@
 	{
 		"Name": "1_15x15x15_FitsInMedium",
 		"Bin": "rectangular-cuboids::Medium",
-		"Fits": true,
+		"Result": "BinaryDecision::Fits",
 		"Items": [
 			"15x15x15-1"
 		]
@@ -18,7 +18,7 @@
 	{
 		"Name": "1_25x25x25_FitsInLarge",
 		"Bin": "rectangular-cuboids::Large",
-		"Fits": true,
+		"Result": "BinaryDecision::Fits",
 		"Items": [
 			"25x25x25-1"
 		]
@@ -26,7 +26,7 @@
 	{
 		"Name": "1_40x40x40_DoesNotFitInLarge",
 		"Bin": "rectangular-cuboids::Large",
-		"Fits": false,
+		"Result": "BinaryDecision::DoesNotFit",
 		"Items": [
 			"40x40x40-1"
 		]
@@ -34,7 +34,7 @@
 	{
 		"Name": "1_5x5x80_TooLong_DoesNotFitInLarge",
 		"Bin": "rectangular-cuboids::Large",
-		"Fits": false,
+		"Result": "BinaryDecision::DoesNotFit",
 		"Items": [
 			"5x5x80-1"
 		]
