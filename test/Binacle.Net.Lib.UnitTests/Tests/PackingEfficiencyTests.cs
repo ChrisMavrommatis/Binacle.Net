@@ -1,11 +1,12 @@
 ﻿using Binacle.Net.Lib.Abstractions.Algorithms;
+using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.TestsKernel.Models;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Binacle.Net.Lib.UnitTests;
 
-[Trait("Scenario Tests", "Actual calculation for the algorithms.")]
+[Trait("Sanity Tests", "Ensures the tests are configured correctly")]
 public class PackingEfficiencyTests : IClassFixture<CommonTestingFixture>
 {
 	private readonly ITestOutputHelper outputHelper;
@@ -22,9 +23,25 @@ public class PackingEfficiencyTests : IClassFixture<CommonTestingFixture>
 
 	[Theory]
 	[ClassData(typeof(Data.Providers.PackingEfficiency.ORLibraryScenarioTestDataProvider))]
-	public void OR_Library_v1(Scenario scenario)
+	public void OR_Library_Packing_FFD_v1(Scenario scenario)
 		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
 
+	[Theory]
+	[ClassData(typeof(Data.Providers.PackingEfficiency.ORLibraryScenarioTestDataProvider))]
+	public void OR_Library_Packing_FFD_v2(Scenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
+
+	[Theory]
+	[ClassData(typeof(Data.Providers.PackingEfficiency.ORLibraryScenarioTestDataProvider))]
+	public void OR_Library_Packing_FFD_v3(Scenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v3, scenario);
+
+	[Theory]
+	[ClassData(typeof(Data.Providers.PackingEfficiency.ORLibraryScenarioTestDataProvider))]
+	public void OR_Library_Packing_FFD_v4(Scenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v4, scenario);
+
+	
 	private void RunPackingScenarioTest<TAlgorithm>(
 			Func<TestBin, List<TestItem>, TAlgorithm> algorithmFactory,
 			Scenario scenario
@@ -49,14 +66,14 @@ public class PackingEfficiencyTests : IClassFixture<CommonTestingFixture>
 			scenarioResult.MaxPotentialPackingEfficiencyPercentage > result.PackedBinVolumePercentage, 
 			$"Packed Bin Volume Percentage {result.PackedBinVolumePercentage} exceeded Max Potential Efficiency Percentage {scenarioResult.MaxPotentialPackingEfficiencyPercentage}"
 		);
+		//var adjustedPackingEfficiency = Math.Round((result.PackedBinVolumePercentage / scenarioResult.MaxPotentialPackingEfficiencyPercentage) * 100, 2);
+		//var log = string.Format(
+		//	"{0}: {1}/{2} = {3}",
+		//	scenario.Name,
+		//	result.PackedBinVolumePercentage, scenarioResult.MaxPotentialPackingEfficiencyPercentage,
+		//	adjustedPackingEfficiency
+		//	);
 
-		var log = string.Format(
-			"{0} = {1}/{2} = {3}",
-			scenario.Name,
-			result.PackedBinVolumePercentage, scenarioResult.MaxPotentialPackingEfficiencyPercentage,
-			result.PackedBinVolumePercentage / scenarioResult.MaxPotentialPackingEfficiencyPercentage
-			);
-
-		this.outputHelper.WriteLine(log);
+		//this.outputHelper.WriteLine(log);
 	}
 }

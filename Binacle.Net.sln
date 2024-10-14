@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{88EC1702-D37
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "res", "res", "{D91D976D-F7CC-4AEF-B942-5B5EE97832F7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8C31D46E-8778-404A-AEA5-FF4466499CD6}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8-5B9D-4E2B-AA35-A208DFFFF1FE}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -30,6 +32,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scaling Benchmarks", "Scali
 		doc\Performance Results\Scaling Benchmarks\Initial Public Run.md = doc\Performance Results\Scaling Benchmarks\Initial Public Run.md
 	EndProjectSection
 EndProject
+
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Blazor.Materialize", "dep\ChrisMavrommatis.Blazor.Materialize\ChrisMavrommatis.Blazor.Materialize.csproj", "{0C29C934-7E87-47EB-AFEE-BBB1832FADD1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Swashbuckle", "dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj", "{882F3C14-EAC8-4D7D-881B-61A6663E38B6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.FluentValidation", "dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj", "{3ADB3BA2-ADB3-4D6C-8276-15CB5D0F708B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Logging", "dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj", "{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}"
+EndProject
+
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib", "src\Binacle.Net.Lib\Binacle.Net.Lib.csproj", "{231D1EB6-7755-4AE5-BC5D-AFE071C1B10D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.Abstractions", "src\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj", "{2E28813F-4DF6-43BD-BD40-D049F508430F}"
@@ -37,22 +49,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api", "src\Binacle.Net.Api\Binacle.Net.Api.csproj", "{7645D2E0-69FF-42BD-A6C3-C527E2472E15}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule", "src\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj", "{217F952B-6689-4284-83B3-07251CB5AB2F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.TestsKernel", "test\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj", "{198E9FA1-54ED-44D3-9DBE-49CBBA785833}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.UnitTests", "test\Binacle.Net.Lib.UnitTests\Binacle.Net.Lib.UnitTests.csproj", "{F2367457-E8A0-42BE-A64B-DF12621B9CBA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.Benchmarks", "test\Binacle.Net.Lib.Benchmarks\Binacle.Net.Lib.Benchmarks.csproj", "{E07A46C2-5FAE-4373-AA86-FF95FA5BCBD1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.IntegrationTests", "test\Binacle.Net.Api.IntegrationTests\Binacle.Net.Api.IntegrationTests.csproj", "{A987C6F6-D895-467B-BA8C-CBF86F4BFC3F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule.IntegrationTests", "test\Binacle.Net.Api.ServiceModule.IntegrationTests\Binacle.Net.Api.ServiceModule.IntegrationTests.csproj", "{0987E640-1DFA-4176-90F0-339907209288}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Swashbuckle", "dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj", "{882F3C14-EAC8-4D7D-881B-61A6663E38B6}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.FluentValidation", "dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj", "{3ADB3BA2-ADB3-4D6C-8276-15CB5D0F708B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Logging", "dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj", "{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule.Infrastructure", "src\Binacle.Net.Api.ServiceModule.Infrastructure\Binacle.Net.Api.ServiceModule.Infrastructure.csproj", "{325E39DF-D285-4400-905B-C5CFCB858829}"
 EndProject
@@ -64,16 +60,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.Kernel", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.UIModule", "src\Binacle.Net.Api.UIModule\Binacle.Net.Api.UIModule.csproj", "{3020B942-5FCA-4821-B425-B1CF76C5BE85}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Blazor.Materialize", "dep\ChrisMavrommatis.Blazor.Materialize\ChrisMavrommatis.Blazor.Materialize.csproj", "{0C29C934-7E87-47EB-AFEE-BBB1832FADD1}"
+
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.DiagnosticsModule", "src\Binacle.Net.Api.DiagnosticsModule\Binacle.Net.Api.DiagnosticsModule.csproj", "{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binacle.Net.Api.DiagnosticsModule", "src\Binacle.Net.Api.DiagnosticsModule\Binacle.Net.Api.DiagnosticsModule.csproj", "{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}"
+
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.TestsKernel", "test\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj", "{198E9FA1-54ED-44D3-9DBE-49CBBA785833}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8C31D46E-8778-404A-AEA5-FF4466499CD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.UnitTests", "test\Binacle.Net.Lib.UnitTests\Binacle.Net.Lib.UnitTests.csproj", "{F2367457-E8A0-42BE-A64B-DF12621B9CBA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.Benchmarks", "test\Binacle.Net.Lib.Benchmarks\Binacle.Net.Lib.Benchmarks.csproj", "{E07A46C2-5FAE-4373-AA86-FF95FA5BCBD1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.IntegrationTests", "test\Binacle.Net.Api.IntegrationTests\Binacle.Net.Api.IntegrationTests.csproj", "{A987C6F6-D895-467B-BA8C-CBF86F4BFC3F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule.IntegrationTests", "test\Binacle.Net.Api.ServiceModule.IntegrationTests\Binacle.Net.Api.ServiceModule.IntegrationTests.csproj", "{0987E640-1DFA-4176-90F0-339907209288}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.PackingEfficiencyTests", "test\Binacle.Net.Lib.PackingEfficiencyTests\Binacle.Net.Lib.PackingEfficiencyTests.csproj", "{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}"
+EndProject
+
+
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "CoreWithPresets", "samples\CoreWithPresets\CoreWithPresets.dcproj", "{EE4463F3-1386-45F0-AF4E-41D60999E5DC}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "WithAllFeatures", "samples\WithAllFeatures\WithAllFeatures.dcproj", "{291A9588-4EC8-46F8-9764-C4094D09B1F0}"
 EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -248,6 +257,14 @@ Global
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Release|x86.ActiveCfg = Release|Any CPU
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Release|x86.Build.0 = Release|Any CPU
+		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}.Debug|x86.Build.0 = Debug|Any CPU
+		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}.Release|x86.ActiveCfg = Release|Any CPU
+		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -276,6 +293,7 @@ Global
 		{DEE04EC4-596A-4268-8936-2C85BB5FE8B9} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{EE4463F3-1386-45F0-AF4E-41D60999E5DC} = {8C31D46E-8778-404A-AEA5-FF4466499CD6}
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0} = {8C31D46E-8778-404A-AEA5-FF4466499CD6}
+		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9} = {33E52B99-426D-45F3-A663-E34A612626B0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}

@@ -1,10 +1,18 @@
 ﻿{
 	"$schema": "https://json.schemastore.org/launchsettings.json",
 	"profiles": {
-		"Benchmarks": {
+		"FittingScalingBenchmarks": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"environmentVariables": {
+				"RUN_BENCHMARKS": "FittingScalingBenchmarks"
+			}
+		},
+		"PackingScalingBenchmarks": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"environmentVariables": {
+				"RUN_BENCHMARKS": "PackingScalingBenchmarks"
 			}
 		}
 	}

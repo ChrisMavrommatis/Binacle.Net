@@ -6,7 +6,27 @@ internal class Program
 {
 	static void Main(string[] args)
 	{
-		BenchmarkRunner.Run<FittingScalingBenchmarks>();
-		//BenchmarkRunner.Run<PackingScalingBenchmarks>();
+		// Get Type of Benchmark
+		var benchmark = Environment.GetEnvironmentVariable("RUN_BENCHMARKS");
+		if (benchmark == null)
+		{
+			Console.WriteLine("No benchmark specified. Exiting...");
+			return;
+		}
+
+		// Run Benchmark
+		if (benchmark == "FittingScalingBenchmarks")
+		{
+			BenchmarkRunner.Run<FittingScalingBenchmarks>();
+		}
+		else if (benchmark == "PackingScalingBenchmarks")
+		{
+			BenchmarkRunner.Run<PackingScalingBenchmarks>();
+		}
+		else
+		{
+			Console.WriteLine("Invalid benchmark specified. Exiting...");
+			return;
+		}
 	}
 }
