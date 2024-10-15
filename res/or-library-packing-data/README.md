@@ -12,6 +12,19 @@ It is not certain whether the problems in these datasets have known solutions, b
 - [J E Beasley](http://people.brunel.ac.uk/~mastjjb/jeb/jeb.html)
 - [Container Loading](https://people.brunel.ac.uk/~mastjjb/jeb/orlib/thpackinfo.html)
 
+## Corrected #9 Set
+Errors were identified in three problems (18, 19, and 20) within the #9 data set. The issue occurred in the third item of each problem, specifically in the box dimensions. These were corrected by inserting a missing "1" indicator, allowing the data to be processed and converted correctly.
+
+Original error:
+```text
+ 3 6 1 9 12 1 20
+```
+
+Corrected version:
+```text
+ 3 6 1 9 1 12 1 20
+```
+
 ## Container Loading Excerpt
 Below is an excerpt from the original source, preserved here in case it becomes inaccessible in the future:
 
