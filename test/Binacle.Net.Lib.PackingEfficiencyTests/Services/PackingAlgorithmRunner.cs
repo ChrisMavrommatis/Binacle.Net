@@ -44,6 +44,7 @@ internal class PackingEfficiencyTestsRunner : ITestsRunner
 		this.logger.LogInformation("Running Tests ...");
 
 		var percentagesByAlgorithm = new Dictionary<string, List<decimal>>();
+		var adjustedPercentagesByAlgorithm = new Dictionary<string, List<decimal>>();
 		var scenarioDiscrepancies = new Dictionary<string, Dictionary<string, decimal>>();
 		foreach (var objects in this.scenarioProvider)
 		{
@@ -66,9 +67,20 @@ internal class PackingEfficiencyTestsRunner : ITestsRunner
 					algorithmPercentages = new List<decimal> { result.PackedBinVolumePercentage };
 					percentagesByAlgorithm.Add(algorithmName, algorithmPercentages);
 				}
-
-
 				var adjustedEfficiency = Math.Round((result.PackedBinVolumePercentage / scenarioResult.MaxPotentialPackingEfficiencyPercentage) * 100, 2);
+
+
+				if (adjustedPercentagesByAlgorithm.TryGetValue(algorithmName, out var adjustedAlgorithmPercentages))
+				{
+					adjustedAlgorithmPercentages.Add(adjustedEfficiency);
+				}
+				else
+				{
+					adjustedAlgorithmPercentages = new List<decimal> { adjustedEfficiency };
+					adjustedPercentagesByAlgorithm.Add(algorithmName, adjustedAlgorithmPercentages);
+				}
+
+
 
 				this.logger.LogDebug(
 					"{AlgorithmName} {ScenarioName}: {PackedBinVolumePercentage}/{MaxPotentialPackingEfficiencyPercentage} = {AdjustedEfficiency}",
@@ -93,6 +105,12 @@ internal class PackingEfficiencyTestsRunner : ITestsRunner
 		{
 			var averagePackedBinVolumePercentage = algorithmPercentages.Average();
 			this.logger.LogInformation("Algorithm: {AlgorithmName}, Average Efficiency: {AveragePackedBinVolumePercentage}", algorithmName, averagePackedBinVolumePercentage);
+		}
+
+		foreach (var (algorithmName, algorithmPercentages) in adjustedPercentagesByAlgorithm)
+		{
+			var averagePackedBinVolumePercentage = algorithmPercentages.Average();
+			this.logger.LogInformation("Algorithm: {AlgorithmName}, Adjusted Average Efficiency: {AveragePackedBinVolumePercentage}", algorithmName, averagePackedBinVolumePercentage);
 		}
 
 		if (scenarioDiscrepancies.Count > 0)
