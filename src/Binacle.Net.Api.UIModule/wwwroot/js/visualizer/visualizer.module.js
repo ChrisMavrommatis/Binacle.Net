@@ -8,7 +8,12 @@ let _loader = null;
 let _rendererContainer = null;
 let _logger = {
 	isEnabled: true,
-	log: function () { }
+	actualLoger: function () { },
+	log: function () {
+		if (this.isEnabled) {
+			this.actualLoger.apply(console, arguments);
+		}
+	}
 };
 
 let _State = {
@@ -66,16 +71,21 @@ window.binacle = {
 		_visualizerContainer = document.getElementById("visualizer-container");
 		_loader = _visualizerContainer.querySelector("#loader");
 		_rendererContainer = _visualizerContainer.querySelector("#renderer-container");
-		_logger.log = window.console.log;
+		_logger.actualLoger = window.console.log;
 
 		_logger.log("Binacle Initialize", bin);
 		_State.aspectRatio = window.innerWidth / window.innerHeight;
 
 		_State.scene = new THREE.Scene();
-		_State.camera = new THREE.PerspectiveCamera(cameraFov(_State.aspectRatio), _State.aspectRatio, 0.1, 1000);
+		_State.camera = new THREE.PerspectiveCamera(
+			cameraFov(_State.aspectRatio),
+			_State.aspectRatio,
+			0.1,
+			1000
+		);
 		_State.camera.lookAt(_State.scene.position);
-		_State.light = new THREE.PointLight(0xffffff);
-		_State.light.position.set(0, 150, 100);
+		_State.light = new THREE.AmbientLight(0xffffff);
+		_State.light.position.set(0, 0, 0);
 		_State.scene.add(_State.light);
 
 		// WebGLRenderer CanvasRenderer
