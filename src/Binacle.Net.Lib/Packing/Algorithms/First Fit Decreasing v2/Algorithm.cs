@@ -13,7 +13,7 @@ internal partial class FirstFitDecreasing_v2<TBin, TItem> : IPackingAlgorithm
 	public int Version => 2;
 
 	private readonly Bin bin;
-	private readonly List<Item> items;
+	private readonly Item[] items;
 	private readonly int totalItemsVolume;
 
 	internal FirstFitDecreasing_v2(TBin bin, IList<TItem> items)
@@ -40,19 +40,21 @@ internal partial class FirstFitDecreasing_v2<TBin, TItem> : IPackingAlgorithm
 
 			totalItemCount += items[i].Quantity;
 		}
-		
-		this.items = new List<Item>(totalItemCount);
-		
+
+		this.items = new Item[totalItemCount];
+		totalItemCount = 0;
 		for (int i = 0; i < items.Count; i++)
 		{
 			var incomingItem = items[i];
 			var incomingItemVolume = incomingItem.CalculateVolume();
 			var incomingItemLongestDimension = incomingItem.CalculateLongestDimension();
-			
+
 			for (var quantity = 1; quantity <= incomingItem.Quantity; quantity++)
 			{
-				this.items.Add(new Item(incomingItem, incomingItemVolume, incomingItemLongestDimension));
+				this.items[totalItemCount] = new Item(incomingItem, incomingItemVolume, incomingItemLongestDimension);
 				this.totalItemsVolume += incomingItemVolume;
+
+				totalItemCount++;
 			}
 		}
 

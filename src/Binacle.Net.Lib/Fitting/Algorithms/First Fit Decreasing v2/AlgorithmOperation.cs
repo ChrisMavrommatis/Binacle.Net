@@ -6,11 +6,9 @@ internal sealed partial class FirstFitDecreasing_v2<TBin, TItem>
 {
 	public FittingResult Execute(FittingParameters parameters)
 	{
-		int totalItemsVolume = this.items.Sum(x => x.Volume);
+		var resultBuilder = FittingResultBuilder<Bin, Item>.Create(this.bin, this.items.Count, this.totalItemsVolume);
 
-		var resultBuilder = FittingResultBuilder<Bin, Item>.Create(this.bin, this.items.Count, totalItemsVolume);
-
-		if (totalItemsVolume > this.bin.Volume)
+		if (this.totalItemsVolume > this.bin.Volume)
 		{
 			return resultBuilder
 				.WithUnfittedItems(this.items.Where(x => !x.Fitted))

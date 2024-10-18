@@ -80,22 +80,4 @@ public class PackingScalingBenchmarks
 		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
 		return result;
 	}
-
-	[Benchmark]
-	public PackingResult Packing_FFD_V3()
-	{
-		var algorithmInstance = AlgorithmFactories.Packing_FFD_v3(this.bin, this.items);
-		var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = true, NeverReportUnpackedItems = true, ReportPackedItemsOnlyWhenFullyPacked = true });
-		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
-		return result;
-	}
-
-	[Benchmark]
-	public PackingResult Packing_FFD_V4()
-	{
-		var algorithmInstance = AlgorithmFactories.Packing_FFD_v4(this.bin, this.items);
-		var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = true, NeverReportUnpackedItems = true, ReportPackedItemsOnlyWhenFullyPacked = true });
-		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
-		return result;
-	}
 }

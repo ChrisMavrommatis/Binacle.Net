@@ -32,9 +32,7 @@ internal class PackingEfficiencyTestsRunner : ITestsRunner
 		this.algorithmFactories = new()
 		{
 			{ "Packing_FFD_v1", AlgorithmFactories.Packing_FFD_v1 },
-			{ "Packing_FFD_v2", AlgorithmFactories.Packing_FFD_v2 },
-			{ "Packing_FFD_v3", AlgorithmFactories.Packing_FFD_v3 },
-			{ "Packing_FFD_v4", AlgorithmFactories.Packing_FFD_v4 }
+			{ "Packing_FFD_v2", AlgorithmFactories.Packing_FFD_v2 }
 		};
 
 	}

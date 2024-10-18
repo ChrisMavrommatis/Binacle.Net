@@ -4,22 +4,23 @@ namespace Binacle.Net.Lib.Fitting.Algorithms;
 
 internal sealed partial class FirstFitDecreasing_v2<TBin, TItem>
 {
-	private sealed class Bin : VolumetricItem, IWithID
+	private sealed class Bin : IWithID, IWithReadOnlyDimensions, IWithReadOnlyVolume
 	{
-		public Bin(string id, IWithReadOnlyDimensions item) :
-			base(item)
-			//this(id, item.Length, item.Width, item.Height)
+		private TBin bin;
+
+		internal Bin(TBin bin)
 		{
-			this.ID = id;
+			this.bin = bin;
+			this.Volume = bin.CalculateVolume();
+			this.LongestDimension = this.CalculateLongestDimension();
 		}
 
-		public Bin(string id, int length, int width, int height)
-			:base(length, width, height)
-		{
-			this.ID = id;
-			
-		}
+		public string ID { get => this.bin.ID; set => throw new NotSupportedException(); }
 
-		public string ID { get; set; }
+		public int Length => this.bin.Length;
+		public int Width => this.bin.Width;
+		public int Height => this.bin.Height;
+		public int Volume { get; }
+		public int LongestDimension { get; }
 	}
 }

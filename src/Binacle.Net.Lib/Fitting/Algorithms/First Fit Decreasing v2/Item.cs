@@ -6,28 +6,20 @@ internal sealed partial class FirstFitDecreasing_v2<TBin, TItem>
 {
 	private sealed class Item : IWithID, IWithDimensions, IWithReadOnlyVolume
 	{
-		private readonly int originalLength;
-		private readonly int originalWidth;
-		private readonly int originalHeight;
 
+		private readonly IWithReadOnlyDimensions item;
 		private ushort currentOrientation;
 		internal static ushort TotalOrientations = 6;
 
-		internal Item(string id, IWithReadOnlyDimensions item) 
+		internal Item(string id, IWithReadOnlyDimensions item)
 		{
 			this.ID = id;
+			this.item = item;
 			this.currentOrientation = 0;
-
-			this.originalLength = item.Length;
-			this.originalWidth = item.Width;
-			this.originalHeight = item.Height;
-
-			this.Length = item.Length;
-			this.Width = item.Width;
-			this.Height = item.Height;
+			this.Length = this.item.Length;
+			this.Width = this.item.Width;
+			this.Height = this.item.Height;
 			this.Volume = this.CalculateVolume();
-
-
 			this.LongestDimension = this.CalculateLongestDimension();
 		}
 
@@ -51,39 +43,39 @@ internal sealed partial class FirstFitDecreasing_v2<TBin, TItem>
 				// VolumetricItem(item.Length, item.Width, item.Height)
 				case 0:
 				default:
-					this.Length = this.originalLength;
-					this.Width = this.originalWidth;
-					this.Height = this.originalHeight;
+					this.Length = this.item.Length;
+					this.Width = this.item.Width;
+					this.Height = this.item.Height;
 					break;
 				// new VolumetricItem(item.Length, item.Height, item.Width)
 				case 1:
-					this.Length = this.originalLength;
-					this.Width = this.originalHeight;
-					this.Height = this.originalWidth;
+					this.Length = this.item.Length;
+					this.Width = this.item.Height;
+					this.Height = this.item.Width;
 					break;
 				//new VolumetricItem(item.Width, item.Length, item.Height)
 				case 2:
-					this.Length = this.originalWidth;
-					this.Width = this.originalLength;
-					this.Height = this.originalHeight;
+					this.Length = this.item.Width;
+					this.Width = this.item.Length;
+					this.Height = this.item.Height;
 					break;
 				// new VolumetricItem(item.Width, item.Height, item.Length)
 				case 3:
-					this.Length = this.originalWidth;
-					this.Width = this.originalHeight;
-					this.Height = this.originalLength;
+					this.Length = this.item.Width;
+					this.Width = this.item.Height;
+					this.Height = this.item.Length;
 					break;
 				// new VolumetricItem(item.Height, item.Length, item.Width)
 				case 4:
-					this.Length = this.originalHeight;
-					this.Width = this.originalLength;
-					this.Height = this.originalWidth;
+					this.Length = this.item.Height;
+					this.Width = this.item.Length;
+					this.Height = this.item.Width;
 					break;
 				// new VolumetricItem(item.Height, item.Width, item.Length)
 				case 5:
-					this.Length = this.originalHeight;
-					this.Width = this.originalWidth;
-					this.Height = this.originalLength;
+					this.Length = this.item.Height;
+					this.Width = this.item.Width;
+					this.Height = this.item.Length;
 					break;
 
 			}

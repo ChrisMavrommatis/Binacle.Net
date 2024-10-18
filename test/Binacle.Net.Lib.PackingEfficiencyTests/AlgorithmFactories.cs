@@ -10,11 +10,4 @@ internal static class AlgorithmFactories
 
 	public static Func<TestBin, List<TestItem>, IPackingAlgorithm> Packing_FFD_v2 = (bin, items)
 		=> new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v2<TestBin, TestItem>(bin, items);
-
-	public static Func<TestBin, List<TestItem>, IPackingAlgorithm> Packing_FFD_v3 = (bin, items)
-		=> new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v3<TestBin, TestItem>(bin, items);
-
-	public static Func<TestBin, List<TestItem>, IPackingAlgorithm> Packing_FFD_v4 = (bin, items)
-	=> new Binacle.Net.Lib.Packing.Algorithms.FirstFitDecreasing_v4<TestBin, TestItem>(bin, items);
-
 }

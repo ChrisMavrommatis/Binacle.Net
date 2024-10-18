@@ -6,7 +6,7 @@ internal sealed partial class FirstFitDecreasing_v3<TBin, TItem>
 {
 	public FittingResult Execute(FittingParameters parameters)
 	{
-		var resultBuilder = FittingResultBuilder<Bin, Item>.Create(this.bin, this.items.Count, this.totalItemsVolume);
+		var resultBuilder = FittingResultBuilder<Bin, Item>.Create(this.bin, this.items.Length, this.totalItemsVolume);
 
 		if (this.totalItemsVolume > this.bin.Volume)
 		{
@@ -17,7 +17,7 @@ internal sealed partial class FirstFitDecreasing_v3<TBin, TItem>
 		}
 
 		var itemsNotFittingDueToLongestDimension = this.items.Where(x => x.LongestDimension > this.bin.LongestDimension);
-		if (itemsNotFittingDueToLongestDimension.Any())
+		if (itemsNotFittingDueToLongestDimension is not null && itemsNotFittingDueToLongestDimension.Any())
 		{
 			return resultBuilder
 				.WithUnfittedItems(this.items.Where(x => !x.Fitted))
@@ -30,12 +30,37 @@ internal sealed partial class FirstFitDecreasing_v3<TBin, TItem>
 			new VolumetricItem(bin)
 		];
 
-		foreach (var item in this.items.OrderByDescending(x => x.Volume))
+
+		// List -> Array  v2-v3
+		// 10  items 3.39 -> 2.34   KB
+		// 70  items 15.57 -> 10.36 KB
+		// 130 items 27.2 -> 17.8 KB
+		// 192 items 38.02 -> 24.61 KB
+		// 202 Items 13.01 -> 12.95 KB
+
+		//foreach (var item in this.items.OrderByDescending(x => x.Volume))
+		//{
+		//	if (!this.TryFit(item))
+		//		break;
+		//}
+
+
+		// sort by ascending volume without linq
+		//Array.Sort(this.items, (x, y) => x.Volume.CompareTo(y.Volume));
+
+		// sort by descending volume without linq
+		Array.Sort(this.items, (x, y) => y.Volume.CompareTo(x.Volume));
+
+
+		for (var i = 0; i < this.items.Length; i++)
 		{
+			var item = this.items[i];
+
 			if (!this.TryFit(item))
 				break;
 		}
 
+		
 		return resultBuilder
 			.WithFittedItems(this.items.Where(x => x.Fitted))
 			.WithUnfittedItems(this.items.Where(x => !x.Fitted))
@@ -63,6 +88,9 @@ internal sealed partial class FirstFitDecreasing_v3<TBin, TItem>
 		{
 			var space = this.availableSpace[i];
 
+			if (space.Volume < orientation.Volume)
+				continue;
+
 			if (space.Length >= orientation.Length && space.Width >= orientation.Width && space.Height >= orientation.Height)
 				return space;
 		}
@@ -74,29 +102,60 @@ internal sealed partial class FirstFitDecreasing_v3<TBin, TItem>
 	{
 		var newAvailableSpaces = this.SplitSpaceQuadrant(spaceQuadrant, item);
 		this.availableSpace.Remove(spaceQuadrant);
-		if (newAvailableSpaces.Count > 0)
+		if (newAvailableSpaces.Length > 0)
 		{
 			this.availableSpace.AddRange(newAvailableSpaces);
 		}
 		item.Fitted = true;
 	}
 
-	private List<VolumetricItem> SplitSpaceQuadrant(VolumetricItem spaceQuadrant, Item orientation)
+	private VolumetricItem[] SplitSpaceQuadrant(VolumetricItem spaceQuadrant, Item orientation)
 	{
-		var newAvailableSpaces = new List<VolumetricItem>();
+		// List -> Array  v2-v3
+		// 10  items 3.39 -> 2.8   KB
+		// 70  items 15.57 -> 11.76 KB
+		// 130 items 27.2 -> 20.13 KB
+		// 192 items 38.02 -> 27.91 KB
+		// 202 Items 13.01 -> 12.95 KB
 
 		var remainingLength = (ushort)(spaceQuadrant.Length - orientation.Length);
 		var remainingWidth = (ushort)(spaceQuadrant.Width - orientation.Width);
 		var remainingHeight = (ushort)(spaceQuadrant.Height - orientation.Height);
 
+		if (remainingLength == 0 && remainingWidth == 0 && remainingHeight == 0)
+			return Array.Empty<VolumetricItem>();
+
+		ushort newSpaces = 0;
 		if (remainingLength > 0)
-			newAvailableSpaces.Add(new VolumetricItem(remainingLength, spaceQuadrant.Width, spaceQuadrant.Height));
+			newSpaces++;
 
 		if (remainingWidth > 0)
-			newAvailableSpaces.Add(new VolumetricItem(orientation.Length, remainingWidth, spaceQuadrant.Height));
+			newSpaces++;
 
 		if (remainingHeight > 0)
-			newAvailableSpaces.Add(new VolumetricItem(orientation.Length, orientation.Width, remainingHeight));
+			newSpaces++;
+
+		var newAvailableSpaces = new VolumetricItem[newSpaces];
+
+		//if (remainingLength > 0)
+		//	newAvailableSpaces.Add(new VolumetricItem(remainingLength, spaceQuadrant.Width, spaceQuadrant.Height));
+
+		//if (remainingWidth > 0)
+		//	newAvailableSpaces.Add(new VolumetricItem(orientation.Length, remainingWidth, spaceQuadrant.Height));
+
+		//if (remainingHeight > 0)
+		//	newAvailableSpaces.Add(new VolumetricItem(orientation.Length, orientation.Width, remainingHeight));
+
+
+		// Reverse so we keep the same order as above
+		if (remainingHeight > 0)
+			newAvailableSpaces[--newSpaces] = new VolumetricItem(orientation.Length, orientation.Width, remainingHeight);
+
+		if (remainingWidth > 0)
+			newAvailableSpaces[--newSpaces] = new VolumetricItem(orientation.Length, remainingWidth, spaceQuadrant.Height);
+
+		if (remainingLength > 0)
+			newAvailableSpaces[--newSpaces] = new VolumetricItem(remainingLength, spaceQuadrant.Width, spaceQuadrant.Height);
 
 		return newAvailableSpaces;
 	}

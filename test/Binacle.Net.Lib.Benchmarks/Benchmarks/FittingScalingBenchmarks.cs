@@ -99,14 +99,4 @@ public class FittingScalingBenchmarks
 		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
 		return result;
 	}
-
-	[Benchmark]
-	public FittingResult Fitting_FFD_V4()
-	{
-		var algorithmInstance = AlgorithmFactories.Fitting_FFD_v4(this.bin, this.items);
-		var result = algorithmInstance.Execute(new FittingParameters { ReportFittedItems = false, ReportUnfittedItems = false });
-		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
-		return result;
-	}
-
 }

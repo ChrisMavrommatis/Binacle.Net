@@ -45,7 +45,6 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem>
 				item.Rotate();
 			}
 
-			// TODO: Optional to stop algorithm from continuing to try to pack all the items it can
 		}
 
 		return resultBuilder
