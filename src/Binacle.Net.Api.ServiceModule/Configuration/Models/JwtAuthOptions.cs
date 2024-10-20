@@ -11,11 +11,4 @@ internal class JwtAuthOptions
 	public string TokenSecret { get; set; }
 
 	public int ExpirationInSeconds { get; set; }
-
-	public bool IsConfigured() 
-	{
-		return !string.IsNullOrWhiteSpace(this.Issuer)
-			&& !string.IsNullOrWhiteSpace(this.Audience)
-			&& !string.IsNullOrWhiteSpace(this.TokenSecret);
-	}
 }

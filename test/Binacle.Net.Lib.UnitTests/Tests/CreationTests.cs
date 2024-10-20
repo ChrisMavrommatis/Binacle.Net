@@ -32,7 +32,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 		{
 			Assert.Throws<ArgumentNullException>(() =>
 			{
-				var algorithmInstance = fittingAlgorithm(null, testItems);
+				var algorithmInstance = fittingAlgorithm(default!, testItems);
 			});
 		}
 
@@ -40,7 +40,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 		{
 			Assert.Throws<ArgumentNullException>(() =>
 			{
-				var algorithmInstance = packingAlgorithm(null, testItems);
+				var algorithmInstance = packingAlgorithm(default!, testItems);
 			});
 		}
 	}
@@ -54,11 +54,11 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 		{
 			Assert.Throws<ArgumentNullException>(() =>
 			{
-				var algorithmInstance = fittingAlgorithm(bin, null);
+				var algorithmInstance = fittingAlgorithm(bin, default!);
 			});
 			Assert.Throws<ArgumentNullException>(() =>
 			{
-				var algorithmInstance = fittingAlgorithm(bin, Enumerable.Empty<TestItem>());
+				var algorithmInstance = fittingAlgorithm(bin, Enumerable.Empty<TestItem>().ToList());
 			});
 
 		}
@@ -67,7 +67,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 		{
 			Assert.Throws<ArgumentNullException>(() =>
 			{
-				var algorithmInstance = packingAlgorithm(bin, null);
+				var algorithmInstance = packingAlgorithm(bin, default!);
 			});
 			Assert.Throws<ArgumentNullException>(() =>
 			{

@@ -11,10 +11,11 @@ public partial class BinPackingForm : ComponentBase
 	[Inject]
 	internal ISampleDataService SampleDataService { get; set; }
 
-	protected override async Task OnInitializedAsync()
+	protected override Task OnInitializedAsync()
 	{
 		var sampleData = this.SampleDataService.GetInitialSampleData();
 		this.State.Model = sampleData;
+		return Task.CompletedTask;
 	}
 
 	public async Task RandomizeItemsFromSamplesAsync()

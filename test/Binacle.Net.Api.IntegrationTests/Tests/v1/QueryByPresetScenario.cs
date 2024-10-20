@@ -1,4 +1,5 @@
-﻿using Binacle.Net.TestsKernel.Models;
+﻿using Binacle.Net.TestsKernel.Data.Providers.BinaryDecision;
+using Binacle.Net.TestsKernel.Models;
 using FluentAssertions;
 using System.Net.Http.Json;
 using Xunit;
@@ -19,17 +20,17 @@ public class QueryByPresetScenario
 	private const string routePath = "/api/v1/query/by-preset/{preset}";
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecision.BaselineScenarioTestDataProvider))]
+	[ClassData(typeof(BaselineScenarioTestDataProvider))]
 	public Task BinaryDecision_Baseline(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecision.SimpleScenarioTestDataProvider))]
+	[ClassData(typeof(SimpleScenarioTestDataProvider))]
 	public Task BinaryDecision_Simple(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecision.ComplexScenarioTestDataProvider))]
+	[ClassData(typeof(ComplexScenarioTestDataProvider))]
 	public Task BinaryDecision_Complex(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 

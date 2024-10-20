@@ -29,7 +29,7 @@ public class BinacleApiAsAServiceFactory : WebApplicationFactory<Binacle.Net.Api
 		// TODO: Run the tests with all modules enabled
 
 		// Features.test.json is used to override the configuration values
-		var preBuildConfigurationValues = new Dictionary<string, string>
+		var preBuildConfigurationValues = new Dictionary<string, string?>
 		{
 			{ "Features:SERVICE_MODULE", bool.TrueString },
 		};

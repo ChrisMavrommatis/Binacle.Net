@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.TestsKernel.Data.Providers.BinaryDecision;
 using Binacle.Net.TestsKernel.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,21 +23,21 @@ public class FitByCustomScenario
 	private const string routePath = "/api/v2/fit/by-custom";
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecision.BaselineScenarioTestDataProvider))]
+	[ClassData(typeof(BaselineScenarioTestDataProvider))]
 	public Task BinaryDecision_Baseline(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecision.SimpleScenarioTestDataProvider))]
+	[ClassData(typeof(SimpleScenarioTestDataProvider))]
 	public Task BinaryDecision_Simple(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.BinaryDecision.ComplexScenarioTestDataProvider))]
+	[ClassData(typeof(ComplexScenarioTestDataProvider))]
 	public Task BinaryDecision_Complex(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 
-	public async Task RunBinaryDecisionScenarioTest(Scenario scenario)
+	private async Task RunBinaryDecisionScenarioTest(Scenario scenario)
 	{
 		var presets = sut.Services.GetService<IOptions<BinPresetOptions>>();
 		var binCollection = scenario.GetBinCollectionKey();

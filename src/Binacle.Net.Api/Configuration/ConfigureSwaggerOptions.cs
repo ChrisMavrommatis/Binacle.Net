@@ -55,7 +55,7 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 	{
 		foreach (var description in apiVersionDescriptions.Where(x => x.GroupName.StartsWith("v")))
 		{
-			var apiVersion = apiVersions.FirstOrDefault(x => x.MajorNumber == description.ApiVersion.MajorVersion);
+			var apiVersion = apiVersions.FirstOrDefault(x => x.MajorNumber == description.ApiVersion.MajorVersion)!;
 			var info = new OpenApiInfo()
 			{
 				Title = $"Binacle.Net API",

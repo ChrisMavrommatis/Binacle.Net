@@ -1,29 +1,25 @@
-﻿using Binacle.Net.TestsKernel.Models;
+﻿using Binacle.Net.TestsKernel.Data;
+using Binacle.Net.TestsKernel.Models;
 using Newtonsoft.Json;
 
 namespace Binacle.Net.TestsKernel.Providers;
 
 public class BinCollectionsTestDataProvider : CollectionTestDataProvider<List<TestBin>>
 {
-	private const string binCollectionsDirectory = "BinCollections";
+	private const string binCollectionsKey = "BinCollections";
 
-
-	public BinCollectionsTestDataProvider(string solutionRootPath) :base(solutionRootPath)
+	public BinCollectionsTestDataProvider()
 	{
 	}
 
-	protected override Dictionary<string, List<TestBin>> InitializeCollections(string solutionRootPath)
+	protected override Dictionary<string, List<TestBin>> InitializeCollections()
 	{
 		var collections = new Dictionary<string, List<TestBin>>();
 
-		var binsDirectoryInfo = new DirectoryInfo(
-			Path.Combine(solutionRootPath, Constants.DataBasePathRoot, binCollectionsDirectory)
-			);
-
-		foreach (var binCollectionFileInfo in binsDirectoryInfo.GetFiles())
+		foreach (var binCollectionFile in EmbeddedResourceFileProvider.GetFiles(binCollectionsKey))
 		{
-			var binCollectionName = Path.GetFileNameWithoutExtension(binCollectionFileInfo.Name);
-			using (var sr = new StreamReader(binCollectionFileInfo.OpenRead()))
+			var binCollectionName = Path.GetFileNameWithoutExtension(binCollectionFile.Name);
+			using (var sr = new StreamReader(binCollectionFile.OpenRead()))
 			{
 				var binCollection = JsonConvert.DeserializeObject<List<TestBin>>(sr.ReadToEnd());
 				if (binCollection is not null)

@@ -1,7 +1,10 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+
 namespace Binacle.Net.Api.Kernel.Serialization;
+
 
 public class JsonStringNullableEnumConverter<T> : JsonConverter<T>
 {
@@ -9,7 +12,7 @@ public class JsonStringNullableEnumConverter<T> : JsonConverter<T>
 
 	public JsonStringNullableEnumConverter()
 	{
-		_underlyingType = Nullable.GetUnderlyingType(typeof(T));
+		_underlyingType = Nullable.GetUnderlyingType(typeof(T))!;
 	}
 
 	public override bool CanConvert(Type typeToConvert)
@@ -21,14 +24,14 @@ public class JsonStringNullableEnumConverter<T> : JsonConverter<T>
 		Type typeToConvert,
 		JsonSerializerOptions options)
 	{
-		string value = reader.GetString();
-		if (String.IsNullOrEmpty(value)) return default;
+		string value = reader.GetString()!;
+		if (String.IsNullOrEmpty(value)) return default!;
 
 		// for performance, parse with ignoreCase:false first.
 		if (!Enum.TryParse(_underlyingType, value, ignoreCase: false, out object result) &&
 			!Enum.TryParse(_underlyingType, value, ignoreCase: true, out result))
 		{
-			return default;
+			return default!;
 		}
 		return (T)result;
 	}

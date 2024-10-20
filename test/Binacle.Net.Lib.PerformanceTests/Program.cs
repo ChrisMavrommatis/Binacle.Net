@@ -1,17 +1,18 @@
-﻿using Binacle.Net.Lib.PackingEfficiencyTests.Data;
-using Binacle.Net.Lib.PackingEfficiencyTests.Data.Providers.PackingEfficiency;
-using Binacle.Net.Lib.PackingEfficiencyTests.Services;
+﻿using Binacle.Net.Lib.PerformanceTests.Models;
+using Binacle.Net.Lib.PerformanceTests.Services;
+using Binacle.Net.TestsKernel.Data.Providers.PackingEddiciency;
 using Binacle.Net.TestsKernel.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System.Runtime.CompilerServices;
 
-namespace Binacle.Net.Lib.PackingEfficiencyTests;
+namespace Binacle.Net.Lib.PerformanceTests;
 
 internal class Program
 {
-	static void Main(string[] args)
+	static async Task Main(string[] args)
 	{
 		Log.Logger = new LoggerConfiguration()
 			.MinimumLevel.Debug()
@@ -30,10 +31,12 @@ internal class Program
 
 		builder.Services.AddSingleton<BinCollectionsTestDataProvider>(sp =>
 		{
-			return new BinCollectionsTestDataProvider(solutionRootPath: Constants.SolutionRootBasePath);
+			return new BinCollectionsTestDataProvider();
 		});
 		builder.Services.AddSingleton<ORLibraryScenarioTestDataProvider>();
+		builder.Services.AddSingleton<AlgorithmFamiliesCollection>();
 		builder.Services.AddTransient<ITestsRunner, PackingEfficiencyTestsRunner>();
+		builder.Services.AddTransient<ITestsRunner, PackingPerformanceTestsRunner>();
 
 		IHost host = builder.Build();
 
@@ -42,13 +45,23 @@ internal class Program
 
 		using (var scope = host.Services.CreateScope())
 		{
-			var services = scope.ServiceProvider.GetServices<ITestsRunner>();
-
-			foreach (var service in services)
+			var testsRunners = scope.ServiceProvider.GetServices<ITestsRunner>();
+			var tasks = new List<Task<List<TestSummaryAction>>>();
+			foreach ( var testRunner in testsRunners) 
 			{
-				service.Run();
+				tasks.Add(Task.Run(() => testRunner.Run()));
+			}
+			var testRunnersSummaries = await Task.WhenAll(tasks);
+
+			foreach (var testRunnerSummaries in testRunnersSummaries)
+			{
+				foreach (var testSummary in testRunnerSummaries)
+				{
+					testSummary.Action();
+				}
 			}
 		}
 	}
+
 }
 

@@ -1,6 +1,5 @@
 ﻿using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.TestsKernel.Providers;
-using System.Collections.ObjectModel;
 
 namespace Binacle.Net.Lib.UnitTests;
 
@@ -11,8 +10,8 @@ public sealed class SanityFixture : IDisposable
 
 	public SanityFixture()
 	{
-		BinCollectionsTestDataProvider = new BinCollectionsTestDataProvider(Data.Constants.SolutionRootBasePath);
-		ScenarioCollectionsTestDataProvider = new ScenarioCollectionsTestDataProvider(Data.Constants.SolutionRootBasePath);
+		BinCollectionsTestDataProvider = new BinCollectionsTestDataProvider();
+		ScenarioCollectionsTestDataProvider = new ScenarioCollectionsTestDataProvider();
 	}
 
 	public List<TestBin> GetBins(string collectionKey)

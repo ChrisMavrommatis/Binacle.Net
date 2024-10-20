@@ -4,14 +4,14 @@ using System.Collections;
 
 namespace Binacle.Net.TestsKernel.Providers;
 
-public class ScenarioTestDataProvider : IEnumerable<object[]>
+public abstract class ScenarioTestDataProvider : IEnumerable<object[]>
 {
 	private readonly ScenarioCollectionsTestDataProvider scenarioCollections;
 	private readonly List<Scenario> scenarios;
 
-	protected ScenarioTestDataProvider(string solutionRootBasePath, string collectionKey)
+	protected ScenarioTestDataProvider(string collectionKey)
 	{
-		this.scenarioCollections = new ScenarioCollectionsTestDataProvider(solutionRootBasePath);
+		this.scenarioCollections = new ScenarioCollectionsTestDataProvider();
 		this.scenarios = this.scenarioCollections.GetCollection(collectionKey);
 	}
 

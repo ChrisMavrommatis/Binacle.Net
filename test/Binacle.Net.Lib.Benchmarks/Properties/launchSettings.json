@@ -4,16 +4,17 @@
 		"FittingScalingBenchmarks": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
-			"environmentVariables": {
-				"RUN_BENCHMARKS": "FittingScalingBenchmarks"
-			}
+			"commandLineArgs": "--filter *FittingScalingBenchmarks*"
 		},
 		"PackingScalingBenchmarks": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
-			"environmentVariables": {
-				"RUN_BENCHMARKS": "PackingScalingBenchmarks"
-			}
+			"commandLineArgs": "--filter *PackingScalingBenchmarks*"
+		},
+		"All": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"commandLineArgs": "--filter *"
 		}
 	}
 }

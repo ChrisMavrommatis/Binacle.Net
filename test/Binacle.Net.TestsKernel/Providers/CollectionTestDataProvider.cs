@@ -9,12 +9,12 @@ public abstract class CollectionTestDataProvider<T>
 
 	public ReadOnlyDictionary<string, T> Collections => this.collections.AsReadOnly();
 
-	protected CollectionTestDataProvider(string solutionRootPath)
+	protected CollectionTestDataProvider()
 	{
-		this.collections = this.InitializeCollections(solutionRootPath);
+		this.collections = this.InitializeCollections();
 	}
 
-	protected abstract Dictionary<string, T> InitializeCollections(string solutionRootPath);
+	protected abstract Dictionary<string, T> InitializeCollections();
 
 	public virtual T GetCollection(string collectionKey)
 	{

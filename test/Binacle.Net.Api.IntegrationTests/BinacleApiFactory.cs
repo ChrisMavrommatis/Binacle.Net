@@ -16,7 +16,7 @@ public class BinacleApiFactory : WebApplicationFactory<Binacle.Net.Api.IApiMarke
 	public BinacleApiFactory()
 	{
 		this.Client = this.CreateClient();
-		this.BinCollectionsTestDataProvider = new BinCollectionsTestDataProvider(Data.Constants.SolutionRootBasePath);
+		this.BinCollectionsTestDataProvider = new BinCollectionsTestDataProvider();
 
 		this.JsonSerializerOptions = new()
 		{
@@ -29,7 +29,7 @@ public class BinacleApiFactory : WebApplicationFactory<Binacle.Net.Api.IApiMarke
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
 		// TODO: Run the tests with all modules enabled
-		var preBuildConfigurationValues = new Dictionary<string, string>
+		var preBuildConfigurationValues = new Dictionary<string, string?>
 		{
 
 		};

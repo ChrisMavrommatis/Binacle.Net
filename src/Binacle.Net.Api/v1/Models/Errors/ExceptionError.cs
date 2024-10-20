@@ -4,7 +4,7 @@
 
 public class ExceptionError : IApiError
 {
-	public string ExceptionType { get; set; }
-	public string Message { get; set; }
+	public required string ExceptionType { get; set; }
+	public required string Message { get; set; }
 	public string? StackTrace { get; set; }
 }

@@ -13,11 +13,15 @@ public class TimedOperation : IDisposable
 
 	public TimedOperation(ILogger logger, LogLevel logLevel, string messageTemplate, object[]? args)
 	{
+		var argsLength = args?.Length ?? 0;
 		this.logger = logger;
 		this.logLevel = logLevel;
 		this.messageTemplate = messageTemplate;
-		this.args = new object[args.Length + 1];
-		Array.Copy(args, this.args, args.Length);
+		this.args = new object[argsLength + 1];
+		if (args is not null)
+		{
+			Array.Copy(args, this.args, args.Length);
+		}
 		this.startingTimestamp = Stopwatch.GetTimestamp();
 	}
 

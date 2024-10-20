@@ -6,7 +6,7 @@ public class FakeTelemetryChannel : ITelemetryChannel
 {
 	public bool IsFlushed { get; private set; }
 	public bool? DeveloperMode { get; set; }
-	public string EndpointAddress { get; set; }
+	public string EndpointAddress { get; set; } = string.Empty;
 
 	public void Send(ITelemetry item)
 	{

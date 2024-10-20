@@ -1,12 +1,11 @@
-﻿using Binacle.Net.TestsKernel.Abstractions;
-using Binacle.Net.TestsKernel.Helpers;
+﻿using Binacle.Net.TestsKernel.Helpers;
 using Binacle.Net.TestsKernel.Models;
 using Newtonsoft.Json;
 
 
 namespace Binacle.Net.TestsKernel.Providers;
 
-internal class FileScenarioReader
+internal class EmbeddedResourceFileScenarioReader
 { 
 	private class ReadScenario
 	{
@@ -16,7 +15,7 @@ internal class FileScenarioReader
 		public string[] Items { get; set; }
 	}
 
-	public List<Scenario> ReadScenarios(FileInfo file)
+	public List<Scenario> ReadScenarios(EmbeddedResourceFile file)
 	{
 		var resultScenarios = new List<Scenario>();
 		using (var sr = new StreamReader(file.OpenRead()))

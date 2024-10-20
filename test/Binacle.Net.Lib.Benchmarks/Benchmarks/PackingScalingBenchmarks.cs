@@ -1,5 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Binacle.Net.Lib.Fitting.Models;
+using Binacle.Net.Lib.Benchmarks.Order;
 using Binacle.Net.Lib.Packing.Models;
 using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.TestsKernel.Providers;
@@ -7,20 +7,13 @@ using System.Runtime.CompilerServices;
 
 namespace Binacle.Net.Lib.Benchmarks;
 
+
 [MemoryDiagnoser]
 public class PackingScalingBenchmarks
 {
-	static string GetSolutionRoot([CallerFilePath] string callerFilePath = "")
-	{
-		//go ../../ from callerFilePath
-		var callerDirectory = Path.GetDirectoryName(callerFilePath);
-		var solutionRoot = Path.GetFullPath(Path.Combine(callerDirectory, "..", "..", ".."));
-		return solutionRoot;
-	}
-
 	public PackingScalingBenchmarks()
 	{
-		this.binCollectionsDataProvider = new BinCollectionsTestDataProvider(solutionRootPath: GetSolutionRoot());
+		this.binCollectionsDataProvider = new BinCollectionsTestDataProvider();
 
 		// TODO Fix this
 		this.scenario = BenchmarkScalingTestsDataProvider.Scenarios["Rectangular-Cuboids::Small"];
@@ -36,8 +29,8 @@ public class PackingScalingBenchmarks
 
 	private BinCollectionsTestDataProvider binCollectionsDataProvider;
 	private BenchmarkScalingScenario scenario;
-	private TestBin bin;
-	private List<TestItem> items;
+	private TestBin? bin;
+	private List<TestItem>? items;
 
 	[GlobalSetup]
 	public void GlobalSetup()
@@ -54,30 +47,51 @@ public class PackingScalingBenchmarks
 		this.items = null;
 	}
 
+	#region FFD
 	[Benchmark(Baseline = true)]
+	[BenchmarkOrder(0)]
+	[BenchmarkCategory("FFD")]
 	public PackingResult Packing_FFD_V1()
 	{
-		var algorithmInstance = AlgorithmFactories.Packing_FFD_v1(this.bin, this.items);
-		var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = true, NeverReportUnpackedItems = true, ReportPackedItemsOnlyWhenFullyPacked = true});
-		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
+		var algorithmInstance = AlgorithmFactories.Packing_FFD_v1(this.bin!, this.items!);
+		var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = false, NeverReportUnpackedItems = false, ReportPackedItemsOnlyWhenFullyPacked = false });
 		return result;
 	}
-
-	//[Benchmark]
-	//public PackingResult Packing_FFD_V1_Full()
-	//{
-	//	var algorithmInstance = AlgorithmFactories.Packing_FFD_v1(this.bin, this.items);
-	//	var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = true, NeverReportUnpackedItems = false, ReportPackedItemsOnlyWhenFullyPacked = false });
-	//	//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
-	//	return result;
-	//}
 
 	[Benchmark]
+	[BenchmarkOrder(1)]
+	[BenchmarkCategory("FFD")]
 	public PackingResult Packing_FFD_V2()
 	{
-		var algorithmInstance = AlgorithmFactories.Packing_FFD_v2(this.bin, this.items);
-		var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = true, NeverReportUnpackedItems = true, ReportPackedItemsOnlyWhenFullyPacked = true });
-		//BenchmarkScalingTestsDataProvider.AssertSuccessfulResult(result, NoOfItems);
+		var algorithmInstance = AlgorithmFactories.Packing_FFD_v2(this.bin!, this.items!);
+		var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = false, NeverReportUnpackedItems = false, ReportPackedItemsOnlyWhenFullyPacked = false });
 		return result;
 	}
+	#endregion
+
+
+	#region WFD
+	[Benchmark]
+	[BenchmarkOrder(3)]
+	[BenchmarkCategory("WFD")]
+	public PackingResult Packing_WFD_V1()
+	{
+		var algorithmInstance = AlgorithmFactories.Packing_WFD_v1(this.bin!, this.items!);
+		var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = false, NeverReportUnpackedItems = false, ReportPackedItemsOnlyWhenFullyPacked = false });
+		return result;
+	}
+	#endregion
+
+
+	#region BFD
+	[Benchmark]
+	[BenchmarkOrder(4)]
+	[BenchmarkCategory("BFD")]
+	public PackingResult Packing_BFD_V1()
+	{
+		var algorithmInstance = AlgorithmFactories.Packing_BFD_v1(this.bin!, this.items!);
+		var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = false, NeverReportUnpackedItems = false, ReportPackedItemsOnlyWhenFullyPacked = false });
+		return result;
+	}
+	#endregion
 }

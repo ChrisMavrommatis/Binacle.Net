@@ -11,7 +11,6 @@ public partial class BinPackingVisualizerControls : ComponentBase
 
 	private Dictionary<string, ViewModels.Control> controls = [];
 	private int itemsRendered;
-	private CancellationToken cancellationToken;
 	private CancellationTokenSource cancellationTokenSource;
 	private bool repeating;
 
@@ -184,7 +183,7 @@ public partial class BinPackingVisualizerControls : ComponentBase
 
 		var index = this.itemsRendered;
 
-		if (index < this.State.SelectedResult.PackedItems.Count)
+		if (index < this.State.SelectedResult!.PackedItems!.Count)
 		{
 			var bin = this.State.SelectedResult!.Bin;
 			var item = this.State.SelectedResult!.PackedItems![index];

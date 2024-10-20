@@ -9,7 +9,7 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="$(ProjectName).UnitTests" />
 		<InternalsVisibleTo Include="$(ProjectName).Benchmarks" />
-		<InternalsVisibleTo Include="$(ProjectName).PackingEfficiencyTests" />
+		<InternalsVisibleTo Include="$(ProjectName).PerformanceTests" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,35 +1,39 @@
 ﻿using Binacle.Net.Lib.Abstractions.Algorithms;
-using Binacle.Net.Lib.Abstractions.Fitting;
+using Binacle.Net.TestsKernel.Data.Providers.PackingEddiciency;
 using Binacle.Net.TestsKernel.Models;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Binacle.Net.Lib.UnitTests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
 public class PackingEfficiencyTests : IClassFixture<CommonTestingFixture>
 {
-	private readonly ITestOutputHelper outputHelper;
-
 	private CommonTestingFixture Fixture { get; }
-	public PackingEfficiencyTests(
-		CommonTestingFixture fixture,
-		ITestOutputHelper outputHelper
-		)
+	public PackingEfficiencyTests(CommonTestingFixture fixture)
 	{
 		this.Fixture = fixture;
-		this.outputHelper = outputHelper;
 	}
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.PackingEfficiency.ORLibraryScenarioTestDataProvider))]
+	[ClassData(typeof(ORLibraryScenarioTestDataProvider))]
 	public void OR_Library_Packing_FFD_v1(Scenario scenario)
 		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.PackingEfficiency.ORLibraryScenarioTestDataProvider))]
+	[ClassData(typeof(ORLibraryScenarioTestDataProvider))]
 	public void OR_Library_Packing_FFD_v2(Scenario scenario)
 		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
+
+	[Theory]
+	[ClassData(typeof(ORLibraryScenarioTestDataProvider))]
+	public void OR_Library_Packing_WFD_v2(Scenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
+
+	[Theory]
+	[ClassData(typeof(ORLibraryScenarioTestDataProvider))]
+	public void OR_Library_Packing_WFD_v1(Scenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_WFD_v1, scenario);
+
 
 	private void RunPackingScenarioTest<TAlgorithm>(
 			Func<TestBin, List<TestItem>, TAlgorithm> algorithmFactory,
@@ -50,19 +54,10 @@ public class PackingEfficiencyTests : IClassFixture<CommonTestingFixture>
 
 		var scenarioResult = scenario.ResultAs<PackingEfficiencyScenarioResult>();
 
-		Xunit.Assert.Equal(scenarioResult.TotalItemCount, result.PackedItems.Count + result.UnpackedItems.Count);
+		Xunit.Assert.Equal(scenarioResult.TotalItemCount, result.PackedItems!.Count + result.UnpackedItems!.Count);
 		Xunit.Assert.True(
 			scenarioResult.MaxPotentialPackingEfficiencyPercentage > result.PackedBinVolumePercentage, 
 			$"Packed Bin Volume Percentage {result.PackedBinVolumePercentage} exceeded Max Potential Efficiency Percentage {scenarioResult.MaxPotentialPackingEfficiencyPercentage}"
 		);
-		//var adjustedPackingEfficiency = Math.Round((result.PackedBinVolumePercentage / scenarioResult.MaxPotentialPackingEfficiencyPercentage) * 100, 2);
-		//var log = string.Format(
-		//	"{0}: {1}/{2} = {3}",
-		//	scenario.Name,
-		//	result.PackedBinVolumePercentage, scenarioResult.MaxPotentialPackingEfficiencyPercentage,
-		//	adjustedPackingEfficiency
-		//	);
-
-		//this.outputHelper.WriteLine(log);
 	}
 }

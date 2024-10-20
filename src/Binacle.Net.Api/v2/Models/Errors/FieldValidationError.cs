@@ -4,6 +4,6 @@
 
 public class FieldValidationError : IApiError
 {
-	public string Field { get; set; }
-	public string Error { get; set; }
+	public required string Field { get; set; }
+	public required string Error { get; set; }
 }

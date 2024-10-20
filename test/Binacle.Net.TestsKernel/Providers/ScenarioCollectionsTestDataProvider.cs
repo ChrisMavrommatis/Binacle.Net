@@ -1,31 +1,22 @@
-﻿using Binacle.Net.TestsKernel.Models;
+﻿using Binacle.Net.TestsKernel.Data;
+using Binacle.Net.TestsKernel.Models;
 
 namespace Binacle.Net.TestsKernel.Providers;
 
 public class ScenarioCollectionsTestDataProvider : CollectionTestDataProvider<List<Scenario>>
 {
-	private const string scenariosDirectory = "Scenarios";
+	private const string scenariosPrefixKey = "Scenarios";
 
-	public ScenarioCollectionsTestDataProvider(string solutionRootPath) : base(solutionRootPath)
+	public ScenarioCollectionsTestDataProvider()
 	{
 	}
 
-	protected override Dictionary<string, List<Scenario>> InitializeCollections(string solutionRootPath)
+	protected override Dictionary<string, List<Scenario>> InitializeCollections()
 	{
 		var collections = new Dictionary<string, List<Scenario>>();
-		var dirPath = Path.Combine(solutionRootPath, Constants.DataBasePathRoot, scenariosDirectory);
-		var scenariosDirectoryInfo = new System.IO.DirectoryInfo(dirPath);
-		var fileScenarioReader = new FileScenarioReader();
-		
-		// Recursive read
-		var files = scenariosDirectoryInfo.GetFiles(
-			"*.json",
-			new EnumerationOptions
-			{
-				RecurseSubdirectories = true,
-				MaxRecursionDepth = 3
-			}
-		);
+		var fileScenarioReader = new EmbeddedResourceFileScenarioReader();
+		var files = EmbeddedResourceFileProvider.GetFilesFromPrefix(scenariosPrefixKey);
+
 		foreach (var file in files)
 		{
 			var collectionKey = this.GetCollectionKey(file);
@@ -35,10 +26,10 @@ public class ScenarioCollectionsTestDataProvider : CollectionTestDataProvider<Li
 		return collections;
 	}
 
-	private string GetCollectionKey(FileInfo file)
+	private string GetCollectionKey(EmbeddedResourceFile file)
 	{
-		var parts = file.FullName.Split(scenariosDirectory, StringSplitOptions.RemoveEmptyEntries);
-		var cleanPath = parts[1].Replace("\\", "/").Trim('/');
+		var path = file.Path.Replace(scenariosPrefixKey, string.Empty);
+		var cleanPath = path.Replace("\\", "/").Trim('/');
 		return cleanPath.ToLower().Replace(".json", string.Empty);
 
 	}

@@ -68,6 +68,17 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 	public void Packing_FFD_v2(BenchmarkScalingScenario scenario)
 		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
 
+	[Theory]
+	[ClassData(typeof(BenchmarkScalingTestsDataProvider))]
+	public void Packing_WFD_v1(BenchmarkScalingScenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_WFD_v1, scenario);
+
+	[Theory]
+	[ClassData(typeof(BenchmarkScalingTestsDataProvider))]
+	public void Packing_BFD_v1(BenchmarkScalingScenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_BFD_v1, scenario);
+
+
 	private void RunPackingScenarioTest(
 		Func<TestBin, List<TestItem>, IPackingAlgorithm> algorithmFactory,
 		BenchmarkScalingScenario scenario

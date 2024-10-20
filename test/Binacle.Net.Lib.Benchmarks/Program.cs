@@ -1,4 +1,6 @@
-﻿using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Running;
+using Binacle.Net.Lib.Benchmarks.Order;
 
 namespace Binacle.Net.Lib.Benchmarks;
 
@@ -6,27 +8,15 @@ internal class Program
 {
 	static void Main(string[] args)
 	{
-		// Get Type of Benchmark
-		var benchmark = Environment.GetEnvironmentVariable("RUN_BENCHMARKS");
-		if (benchmark == null)
-		{
-			Console.WriteLine("No benchmark specified. Exiting...");
-			return;
-		}
 
-		// Run Benchmark
-		if (benchmark == "FittingScalingBenchmarks")
-		{
-			BenchmarkRunner.Run<FittingScalingBenchmarks>();
-		}
-		else if (benchmark == "PackingScalingBenchmarks")
-		{
-			BenchmarkRunner.Run<PackingScalingBenchmarks>();
-		}
-		else
-		{
-			Console.WriteLine("Invalid benchmark specified. Exiting...");
-			return;
-		}
+		var config = ManualConfig.Create(DefaultConfig.Instance)
+			.WithOptions(ConfigOptions.DisableLogFile);
+
+		// custom order
+		config.Orderer = new AttributeOrderer();
+
+		BenchmarkSwitcher
+			.FromAssembly(typeof(Program).Assembly)
+			.Run(args, config);
 	}
 }
