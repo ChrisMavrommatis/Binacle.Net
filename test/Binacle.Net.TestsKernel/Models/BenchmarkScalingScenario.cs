@@ -8,11 +8,14 @@ public sealed class BenchmarkScalingScenario : BinScenarioBase
 {
 	private readonly BenchmarkTestCase testCase;
 
+	public string Name { get; }
+
 	public int MaxInRange => this.testCase.Range.Max;
 
 	public BenchmarkScalingScenario(string binString, BenchmarkTestCase testCase) : base(binString)
 	{
 		this.testCase = testCase;
+		this.Name = binString;
 	}
 
 	public IEnumerable<int> GetNoOfItems()

@@ -1,6 +1,4 @@
-﻿using Binacle.Net.Lib.Abstractions.Algorithms;
-using Binacle.Net.Lib.Packing.Models;
-using Binacle.Net.Lib.PerformanceTests.Models;
+﻿using Binacle.Net.Lib.PerformanceTests.Models;
 using Binacle.Net.TestsKernel.Data.Providers.PackingEddiciency;
 using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.TestsKernel.Providers;
@@ -9,18 +7,18 @@ using System.Diagnostics;
 
 namespace Binacle.Net.Lib.PerformanceTests.Services;
 
-internal class PackingPerformanceTestsRunner : ITestsRunner
+internal class PackingEfficiencyPerformanceTest : ITest
 {
 	private readonly ORLibraryScenarioTestDataProvider scenarioProvider;
 	private readonly BinCollectionsTestDataProvider binTestDataProvider;
-	private readonly ILogger<PackingPerformanceTestsRunner> logger;
+	private readonly ILogger<PackingEfficiencyPerformanceTest> logger;
 	private readonly AlgorithmFamiliesCollection algorithmFamilyFactories;
 
-	public PackingPerformanceTestsRunner(
+	public PackingEfficiencyPerformanceTest(
 		ORLibraryScenarioTestDataProvider scenarioProvider,
 		BinCollectionsTestDataProvider binTestDataProvider,
 		AlgorithmFamiliesCollection algorithmFamilyFactories,
-		ILogger<PackingPerformanceTestsRunner> logger
+		ILogger<PackingEfficiencyPerformanceTest> logger
 	)
 	{
 		this.scenarioProvider = scenarioProvider;
@@ -41,9 +39,18 @@ internal class PackingPerformanceTestsRunner : ITestsRunner
 				var scenarioResult = scenario!.ResultAs<PackingEfficiencyScenarioResult>();
 				foreach (var (algorithmName, algorithmFactory) in algorithmFactories)
 				{
-					var time = this.MeasureAverageForRuns(10, () =>
+					var bin = scenario.GetTestBin(this.binTestDataProvider);
+
+					var algorithmInstance = algorithmFactory(bin, scenario.Items);
+
+					var time = this.MeasureAverageForRuns(1, () =>
 					{
-						var result = this.RunPackingAlgorithm(algorithmFactory, scenario);
+						var result = algorithmInstance.Execute(new Packing.Models.PackingParameters
+						{
+							NeverReportUnpackedItems = false,
+							ReportPackedItemsOnlyWhenFullyPacked = false,
+							OptInToEarlyFails = true
+						});
 					});
 					this.logger.LogDebug(
 						"{AlgorithmName} {ScenarioName}: Time: {Time}",
@@ -58,7 +65,7 @@ internal class PackingPerformanceTestsRunner : ITestsRunner
 		var results = new List<TestSummaryAction>();
 		results.Add(new TestSummaryAction
 		{
-			Name = "Packing Performance Results",
+			Name = "Packing Efficiency Performance Results",
 			Action = () =>
 			{
 				foreach (var (algorithmName, times) in timeResults)
@@ -89,27 +96,6 @@ internal class PackingPerformanceTestsRunner : ITestsRunner
 			totalElapsed += elapsedTime;
 		}
 		return totalElapsed / runs;
-	}
-
-	internal PackingResult RunPackingAlgorithm<TAlgorithm>(
-			Func<TestBin, List<TestItem>, TAlgorithm> algorithmFactory,
-			Scenario scenario
-	)
-		where TAlgorithm : class, IPackingAlgorithm
-	{
-		var bin = scenario.GetTestBin(this.binTestDataProvider);
-
-		var algorithmInstance = algorithmFactory(bin, scenario.Items);
-
-		var result = algorithmInstance.Execute(new Packing.Models.PackingParameters
-		{
-			NeverReportUnpackedItems = false,
-			ReportPackedItemsOnlyWhenFullyPacked = false,
-			OptInToEarlyFails = true
-		});
-
-		return result;
-
 	}
 }
 

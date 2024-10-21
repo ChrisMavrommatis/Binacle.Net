@@ -2,8 +2,7 @@
 
 namespace Binacle.Net.Lib.PerformanceTests.Services;
 
-internal interface ITestsRunner
+internal interface ITest
 {
 	List<TestSummaryAction> Run();
 }
-

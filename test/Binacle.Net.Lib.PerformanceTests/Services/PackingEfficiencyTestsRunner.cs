@@ -8,18 +8,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Binacle.Net.Lib.PerformanceTests.Services;
 
-internal class PackingEfficiencyTestsRunner : ITestsRunner
+internal class PackingEfficiencyTest : ITest
 {
 	private readonly ORLibraryScenarioTestDataProvider scenarioProvider;
 	private readonly BinCollectionsTestDataProvider binTestDataProvider;
-	private readonly ILogger<PackingEfficiencyTestsRunner> logger;
+	private readonly ILogger<PackingEfficiencyTest> logger;
 	private readonly AlgorithmFamiliesCollection algorithmFamilyFactories;
 
-	public PackingEfficiencyTestsRunner(
+	public PackingEfficiencyTest(
 		ORLibraryScenarioTestDataProvider scenarioProvider,
 		BinCollectionsTestDataProvider binTestDataProvider,
 		AlgorithmFamiliesCollection algorithmFamilyFactories,
-		ILogger<PackingEfficiencyTestsRunner> logger
+		ILogger<PackingEfficiencyTest> logger
 	)
 	{
 		this.scenarioProvider = scenarioProvider;
@@ -30,8 +30,6 @@ internal class PackingEfficiencyTestsRunner : ITestsRunner
 
 	public List<TestSummaryAction> Run()
 	{
-		this.logger.LogInformation("Running Tests ...");
-
 		var percentagesByAlgorithm = new AlgorithmsTestResults<decimal>();
 		var adjustedPercentagesByAlgorithm = new AlgorithmsTestResults<decimal>();
 		var scenarioFamilyDiscrepancies = new AlgorithmsDiscrepancies<decimal>();
@@ -71,7 +69,6 @@ internal class PackingEfficiencyTestsRunner : ITestsRunner
 		}
 
 
-		this.logger.LogInformation("Calculating Results .... ");
 		var results = new List<TestSummaryAction>();
 
 		results.Add(new TestSummaryAction
