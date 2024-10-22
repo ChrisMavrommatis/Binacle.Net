@@ -4,6 +4,8 @@ using Binacle.Net.Api.ServiceModule.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+
 namespace Binacle.Net.Api.ServiceModule.v0.Requests;
 
 internal class UpdateApiUserRequestWithBody: IWithEmail
@@ -12,7 +14,7 @@ internal class UpdateApiUserRequestWithBody: IWithEmail
 	public string Email { get; set; }
 
 	[FromBody]
-	public UpdateApiUserRequest Body { get; set; }
+	public UpdateApiUserRequest? Body { get; set; }
 }
 
 internal class UpdateApiUserRequest

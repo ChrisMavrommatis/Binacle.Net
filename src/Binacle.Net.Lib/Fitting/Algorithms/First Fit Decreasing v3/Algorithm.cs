@@ -11,7 +11,7 @@ internal sealed partial class FirstFitDecreasing_v3<TBin, TItem> : IFittingAlgor
 	public string Name => "First Fit Decreasing";
 	public int Version => 3;
 
-	private List<VolumetricItem> availableSpace;
+	private List<VolumetricItem>? availableSpace;
 	private readonly Bin bin;
 
 	// List -> Array  v2-v3

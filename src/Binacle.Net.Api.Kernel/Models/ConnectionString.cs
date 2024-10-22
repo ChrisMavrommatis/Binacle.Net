@@ -4,8 +4,6 @@ public class ConnectionString
 {
 	private readonly string value;
 	private readonly Dictionary<string, string> keyValuePairs;
-	public string Provider { get; }
-
 	internal ConnectionString(string value)
 	{
 		this.value = value;

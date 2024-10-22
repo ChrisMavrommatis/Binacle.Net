@@ -6,13 +6,13 @@ namespace Binacle.Net.Api.UIModule.Components.Features;
 public partial class BinPackingResults : ComponentBase
 {
 	[Inject]
-	internal Services.PackingDemoState State { get; set; }
+	internal Services.PackingDemoState? State { get; set; }
 
 	protected override void OnInitialized()
 	{
 		// register on state.results change to update the state
 		base.OnInitialized();
-		State.OnResultsChanged += ResultsChanged;
+		this.State!.OnResultsChanged += ResultsChanged;
 	}
 
 	private Task ResultsChanged(ReadOnlyCollection<Models.PackingResult> results)
@@ -33,13 +33,13 @@ public partial class BinPackingResults : ComponentBase
 
 	private bool IsSelected(Models.PackingResult result)
 	{
-		return this.State.IsSelected(result);
+		return this.State!.IsSelected(result);
 
 	}
 
 	private async Task SelectResultAsync(Models.PackingResult result)
 	{
-		await this.State.SelectResultAsync(result);
+		await this.State!.SelectResultAsync(result);
 	}
 
 }

@@ -16,7 +16,7 @@ internal class PresetFitRequestValidator : AbstractValidator<PresetFitRequest>
 
 		// Each ItemID must be unique
 		RuleFor(x => x.Items)
-			.Must(x => x.Select(y => y.ID).Distinct().Count() == x.Count)
+			.Must(x => x!.Select(y => y.ID).Distinct().Count() == x!.Count)
 			.WithMessage(Constants.Errors.Messages.IdMustBeUnique);
 
 		RuleForEach(x => x.Items).ChildRules(itemValidator =>

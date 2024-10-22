@@ -6,8 +6,9 @@ internal class Bin : IWithID, IWithDimensions
 {
 	public Bin()
 	{
-		
+		this.ID = string.Empty;
 	}
+
 	public Bin(string id, IWithReadOnlyDimensions item)
 		: this(id, item.Length, item.Width, item.Height)
 	{

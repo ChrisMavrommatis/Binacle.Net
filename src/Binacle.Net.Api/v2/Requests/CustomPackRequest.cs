@@ -11,6 +11,6 @@ public class CustomPackRequestWithBody : RequestWithBody<CustomPackRequest>
 public class CustomPackRequest
 {
 	public PackRequestParameters? Parameters { get; set; }
-	public List<v2.Models.Bin> Bins { get; set; }
-	public List<v2.Models.Box> Items { get; set; }
+	public List<v2.Models.Bin>? Bins { get; set; }
+	public List<v2.Models.Box>? Items { get; set; }
 }

@@ -4,7 +4,7 @@
 
 public class PresetListResponse : v1.Models.ResponseBase
 {
-	public Dictionary<string, List<v1.Models.Bin>> Presets { get; set; }
+	public required Dictionary<string, List<v1.Models.Bin>> Presets { get; set; }
 
 	public static PresetListResponse Create(Dictionary<string, List<v1.Models.Bin>> presets)
 	{

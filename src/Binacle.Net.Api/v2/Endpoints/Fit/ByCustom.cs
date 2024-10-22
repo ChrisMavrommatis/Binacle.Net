@@ -141,8 +141,8 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomFitRequestWithBody
 			}
 
 			var operationResults = this.lockerService.FitBins(
-				request.Body.Bins, 
-				request.Body.Items,
+				request.Body.Bins!, 
+				request.Body.Items!,
 				new FittingParameters
 				{
 					FindSmallestBinOnly = request.Body.Parameters?.FindSmallestBinOnly ?? true,
@@ -153,8 +153,8 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomFitRequestWithBody
 
 			return this.Ok(
 				v2.Responses.FitResponse.Create(
-					request.Body.Bins, 
-					request.Body.Items, 
+					request.Body.Bins!, 
+					request.Body.Items!, 
 					request.Body.Parameters,
 					operationResults
 				)

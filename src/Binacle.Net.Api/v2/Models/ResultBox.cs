@@ -6,8 +6,8 @@ namespace Binacle.Net.Api.v2.Models;
 
 public class ResultBox : IWithID
 {
-	public string ID { get; set; } = string.Empty;
+	public required string ID { get; set; }
 
-	public Dimensions Dimensions { get; set; }
+	public required Dimensions Dimensions { get; set; }
 	public Coordinates? Coordinates { get; set; }
 }

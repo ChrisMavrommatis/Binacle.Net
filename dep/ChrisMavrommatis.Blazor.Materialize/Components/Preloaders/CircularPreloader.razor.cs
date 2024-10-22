@@ -5,5 +5,5 @@ namespace ChrisMavrommatis.Blazor.Materialize.Components;
 public partial class CircularPreloader :MaterializeComponentBase
 {
 	[Parameter]
-	public string SpinnerColor { get; set; }
+	public string? SpinnerColor { get; set; }
 }

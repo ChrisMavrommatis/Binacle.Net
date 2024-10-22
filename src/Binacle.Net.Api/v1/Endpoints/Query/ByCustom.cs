@@ -136,8 +136,8 @@ public class ByCustom : EndpointWithRequest<v1.Requests.CustomQueryRequestWithBo
 			}
 
 			var operationResults = this.lockerService.FitBins(
-				request.Body.Bins, 
-				request.Body.Items,
+				request.Body.Bins!, 
+				request.Body.Items!,
 				new Api.Models.FittingParameters
 				{
 					FindSmallestBinOnly = true,
@@ -147,7 +147,7 @@ public class ByCustom : EndpointWithRequest<v1.Requests.CustomQueryRequestWithBo
 			);
 
 			return this.Ok(
-				v1.Responses.QueryResponse.Create(request.Body.Bins, request.Body.Items, operationResults)
+				v1.Responses.QueryResponse.Create(request.Body.Bins!, request.Body.Items!, operationResults)
 				);
 		}
 		catch (Exception ex)

@@ -75,7 +75,7 @@ internal class Update : IEndpointDefinition<UsersGroup>
 			return Results.BadRequest(v0.Responses.ErrorResponse.Create("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage).ToArray()));
 		}
 
-		var userGroup = request.Body.Type switch
+		var userGroup = request.Body!.Type switch
 		{
 			Models.UserType.Admin => UserGroups.Admins,
 			Models.UserType.User => UserGroups.Users,

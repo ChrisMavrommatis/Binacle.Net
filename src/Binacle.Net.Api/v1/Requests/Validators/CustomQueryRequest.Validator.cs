@@ -16,7 +16,7 @@ internal class CustomQueryRequestValidator : AbstractValidator<CustomQueryReques
 
 		// Each Bin Id must be unique
 		RuleFor(x => x.Bins)
-			.Must(x => x.Select(y => y.ID).Distinct().Count() == x.Count)
+			.Must(x => x!.Select(y => y.ID).Distinct().Count() == x!.Count)
 			.WithMessage(Constants.Errors.Messages.IdMustBeUnique);
 
 
@@ -33,7 +33,7 @@ internal class CustomQueryRequestValidator : AbstractValidator<CustomQueryReques
 
 		// Each ItemID must be unique
 		RuleFor(x => x.Items)
-			.Must(x => x.Select(y => y.ID).Distinct().Count() == x.Count)
+			.Must(x => x!.Select(y => y.ID).Distinct().Count() == x!.Count)
 			.WithMessage(Constants.Errors.Messages.IdMustBeUnique);
 
 		RuleForEach(x => x.Items).ChildRules(itemValidator =>

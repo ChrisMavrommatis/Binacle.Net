@@ -4,6 +4,6 @@
 
 public class ParameterError : IApiError
 {
-	public string Parameter { get; set; }
-	public string Message { get; set; }
+	public required string Parameter { get; set; }
+	public required string Message { get; set; }
 }

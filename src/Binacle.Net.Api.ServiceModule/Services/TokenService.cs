@@ -45,7 +45,7 @@ internal class TokenService : ITokenService
 
 		var now = this.timeProvider.GetLocalNow();
 
-		var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.options.Value.TokenSecret));
+		var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.options.Value.TokenSecret!));
 
 		var tokenDescriptor = new SecurityTokenDescriptor
 		{

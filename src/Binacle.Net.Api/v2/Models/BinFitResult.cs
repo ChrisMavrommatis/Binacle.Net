@@ -10,7 +10,7 @@ public class BinFitResult
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public BinFitResultStatus Result { get; set; }
 
-	public Bin Bin { get; set; }
+	public required Bin Bin { get; set; }
 
 	public List<ResultBox>? FittedItems { get; set; }
 	public List<ResultBox>? UnfittedItems { get; set; }

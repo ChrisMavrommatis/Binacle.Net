@@ -7,11 +7,11 @@ namespace Binacle.Net.Api.v2.Requests;
 
 public class PresetFitRequestWithBody : RequestWithBody<PresetFitRequest>
 {
-	public string Preset { get; set; }
+	public string? Preset { get; set; }
 }
 
 public class PresetFitRequest
 {
 	public FitRequestParameters? Parameters { get; set; }
-	public List<Box> Items { get; set; }
+	public List<Box>? Items { get; set; }
 }

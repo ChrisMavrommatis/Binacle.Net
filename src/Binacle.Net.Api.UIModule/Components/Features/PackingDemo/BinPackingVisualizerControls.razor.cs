@@ -7,11 +7,11 @@ namespace Binacle.Net.Api.UIModule.Components.Features;
 public partial class BinPackingVisualizerControls : ComponentBase
 {
 	[Inject]
-	internal Services.PackingDemoState State { get; set; }
+	internal Services.PackingDemoState? State { get; set; }
 
 	private Dictionary<string, ViewModels.Control> controls = [];
 	private int itemsRendered;
-	private CancellationTokenSource cancellationTokenSource;
+	private CancellationTokenSource? cancellationTokenSource;
 	private bool repeating;
 
 	protected override void OnInitialized()
@@ -27,8 +27,8 @@ public partial class BinPackingVisualizerControls : ComponentBase
 		base.OnInitialized();
 
 		this.itemsRendered = 0;
-		State.OnResultsChanged += ResultsChanged;
-		State.OnSelectResult += SelectionChanged;
+		this.State!.OnResultsChanged += ResultsChanged;
+		this.State!.OnSelectResult += SelectionChanged;
 	}
 
 
@@ -63,7 +63,7 @@ public partial class BinPackingVisualizerControls : ComponentBase
 
 	private void UpdateControlsStatus()
 	{
-		if (this.State.SelectedResult is null)
+		if (this.State!.SelectedResult is null)
 		{
 			this.DisableAllControls();
 			return;
@@ -102,7 +102,7 @@ public partial class BinPackingVisualizerControls : ComponentBase
 	{
 		this.DisableAllControls();
 		this.StateHasChanged();
-		await this.State.RedrawSceneAsync(this.State.SelectedResult!.Bin, null);
+		await this.State!.RedrawSceneAsync(this.State.SelectedResult!.Bin!, null);
 		this.itemsRendered = 0;
 		this.UpdateControlsStatus();
 		this.StateHasChanged();
@@ -118,7 +118,7 @@ public partial class BinPackingVisualizerControls : ComponentBase
 
 		if (index > -1)
 		{
-			await this.State.RemoveItemFromScene(index);
+			await this.State!.RemoveItemFromScene(index);
 			this.itemsRendered -= 1;
 		}
 	
@@ -131,7 +131,7 @@ public partial class BinPackingVisualizerControls : ComponentBase
 
 		if (this.repeating)
 		{
-			await this.cancellationTokenSource.CancelAsync();
+			await this.cancellationTokenSource!.CancelAsync();
 			this.repeating = false;
 			this.controls["repeat"].Icon = "repeat_one";
 			this.UpdateControlsStatus();
@@ -151,14 +151,14 @@ public partial class BinPackingVisualizerControls : ComponentBase
 		this.itemsRendered = 0;
 		this.cancellationTokenSource = new CancellationTokenSource();
 
-		await this.State.RedrawSceneAsync(this.State.SelectedResult!.Bin, null);
+		await this.State!.RedrawSceneAsync(this.State.SelectedResult!.Bin!, null);
 
 		await Task.Run(async () =>
 		{
 			if (!this.cancellationTokenSource.Token.IsCancellationRequested)
 			{
 				var bin = this.State.SelectedResult!.Bin;
-				for (var i = 0; i < this.State.SelectedResult.PackedItems.Count; i++)
+				for (var i = 0; i < this.State.SelectedResult.PackedItems!.Count; i++)
 				{
 					var item = this.State.SelectedResult!.PackedItems![i];
 					await this.State.AddItemToScene(bin, item, i);
@@ -183,7 +183,7 @@ public partial class BinPackingVisualizerControls : ComponentBase
 
 		var index = this.itemsRendered;
 
-		if (index < this.State.SelectedResult!.PackedItems!.Count)
+		if (index < this.State!.SelectedResult!.PackedItems!.Count)
 		{
 			var bin = this.State.SelectedResult!.Bin;
 			var item = this.State.SelectedResult!.PackedItems![index];
@@ -199,7 +199,7 @@ public partial class BinPackingVisualizerControls : ComponentBase
 	{
 		this.DisableAllControls();
 		this.StateHasChanged();
-		await this.State.RedrawSceneAsync(this.State.SelectedResult!.Bin, this.State.SelectedResult.PackedItems);
+		await this.State!.RedrawSceneAsync(this.State.SelectedResult!.Bin!, this.State.SelectedResult.PackedItems!);
 		this.itemsRendered = this.State.SelectedResult!.PackedItems!.Count;
 		this.UpdateControlsStatus();
 		this.StateHasChanged();

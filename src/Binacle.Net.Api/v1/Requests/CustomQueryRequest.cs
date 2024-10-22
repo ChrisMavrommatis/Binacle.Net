@@ -9,6 +9,6 @@ public class CustomQueryRequestWithBody : RequestWithBody<CustomQueryRequest>
 }
 public class CustomQueryRequest
 {
-	public List<v1.Models.Bin> Bins { get; set; }
-	public List<v1.Models.Box> Items { get; set; }
+	public List<v1.Models.Bin>? Bins { get; set; }
+	public List<v1.Models.Box>? Items { get; set; }
 }

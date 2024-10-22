@@ -4,6 +4,6 @@ namespace Binacle.Net.Api.UIModule.ApiModels.Requests;
 
 internal class PackByCustomRequest
 {
-	public List<Bin> Bins { get; set; }
-	public List<Item> Items { get; set; }
+	public required List<Bin> Bins { get; set; }
+	public required List<Item> Items { get; set; }
 }

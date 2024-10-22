@@ -147,8 +147,8 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 			}
 
 			var operationResults = this.lockerService.PackBins(
-				request.Body.Bins,
-				request.Body.Items,
+				request.Body.Bins!,
+				request.Body.Items!,
 				new Api.Models.PackingParameters
 				{
 					StopAtSmallestBin = request.Body.Parameters?.StopAtSmallestBin ?? false,
@@ -160,8 +160,8 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 
 			return this.Ok(
 				v2.Responses.PackResponse.Create(
-					request.Body.Bins,
-					request.Body.Items,
+					request.Body.Bins!,
+					request.Body.Items!,
 					request.Body.Parameters,
 					operationResults
 				)

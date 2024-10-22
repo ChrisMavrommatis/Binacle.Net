@@ -8,7 +8,7 @@ internal class UpdateApiUserRequestValidator : AbstractValidator<UpdateApiUserRe
 	public UpdateApiUserRequestValidator()
 	{
 		Include(x => new EmailValidator());
-		RuleFor(x => x.Body).SetValidator(x => new UpdateApiUserRequestBodyValidator());
+		RuleFor(x => x.Body!).SetValidator(x => new UpdateApiUserRequestBodyValidator());
 	}
 }
 

@@ -6,7 +6,7 @@ public class TestPriorityAttribute : Attribute
 {
 	public TestPriorityAttribute(int priority)
 	{
-		Priority = priority;
+		this.Priority = priority;
 	}
 
 	public int Priority { get; private set; }

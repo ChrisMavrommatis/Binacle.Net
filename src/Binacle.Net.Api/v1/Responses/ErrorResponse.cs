@@ -13,7 +13,7 @@ public class ErrorResponse : v1.Models.ResponseBase
 		Errors = new List<v1.Models.Errors.IApiError>();
 	}
 
-	public static ErrorResponse Create(string? message = null)
+	public static ErrorResponse Create(string message)
 	{
 		return new ErrorResponse { Message = message };
 	}

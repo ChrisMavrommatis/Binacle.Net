@@ -11,7 +11,7 @@ internal class UserOptionsValidator: AbstractValidator<UserOptions>
 		RuleFor(x => x.DefaultAdminUser)
 			.NotNull()
 			.NotEmpty()
-			.Must(x => x.Contains(":"));
+			.Must(x => x!.Contains(":"));
 
 
 		RuleFor(x => x.GetParsedDefaultAdminUser())

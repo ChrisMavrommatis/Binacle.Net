@@ -2,7 +2,7 @@
 
 internal class BinPackingViewModel
 {
-	public List<ViewModels.Bin> Bins { get; set; }
-	public List<ViewModels.Item> Items { get; set; }
+	public required List<ViewModels.Bin> Bins { get; set; }
+	public required List<ViewModels.Item> Items { get; set; }
 }
 

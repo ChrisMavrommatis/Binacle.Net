@@ -140,14 +140,14 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetPackRequestWithBod
 					);
 			}
 
-			if (!this.presetOptions.Value.Presets.TryGetValue(request.Preset, out var presetOption))
+			if (!this.presetOptions.Value.Presets.TryGetValue(request.Preset!, out var presetOption))
 			{
 				return this.NotFound(null);
 			}
 
 			var operationResults = this.lockerService.PackBins(
 				presetOption.Bins,
-				request.Body.Items,
+				request.Body.Items!,
 				new Api.Models.PackingParameters
 				{
 					StopAtSmallestBin = request.Body.Parameters?.StopAtSmallestBin ?? false,
@@ -160,7 +160,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetPackRequestWithBod
 			return this.Ok(
 				v2.Responses.PackResponse.Create(
 					presetOption.Bins,
-					request.Body.Items,
+					request.Body.Items!,
 					request.Body.Parameters,
 					operationResults
 				)

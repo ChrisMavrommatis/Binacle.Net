@@ -9,7 +9,7 @@ internal class HealthCheckConfigurationOptionsValidator : AbstractValidator<Heal
 	public HealthCheckConfigurationOptionsValidator()
 	{
 		RuleFor(x => x.Path).NotNull().NotEmpty();
-		RuleFor(x => x.Path).Must(x => x.StartsWith("/")).WithMessage("Path must start with /");
+		RuleFor(x => x.Path).Must(x => x!.StartsWith("/")).WithMessage("Path must start with /");
 		RuleForEach(x => x.RestrictedIPs)
 			.ChildRules(childRule => 
 			{

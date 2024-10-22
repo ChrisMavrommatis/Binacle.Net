@@ -17,7 +17,11 @@ internal class PackingDemoState
 	{
 		this.httpClientFactory = httpClientFactory;
 		this.jsRuntime = jsRuntime;
-		this.Model = new ViewModels.BinPackingViewModel();
+		this.Model = new ViewModels.BinPackingViewModel() 
+		{ 
+			Bins = new List<ViewModels.Bin>(), 
+			Items = new List<ViewModels.Item>()
+		};
 		this.results = new List<Models.PackingResult>();
 	}
 	public ViewModels.BinPackingViewModel Model { get; set; }
@@ -85,7 +89,7 @@ internal class PackingDemoState
 	}
 
 	private List<string> errors  = new();
-	public ReadOnlyCollection<string> Errors => this.errors?.AsReadOnly();
+	public ReadOnlyCollection<string>? Errors => this.errors?.AsReadOnly();
 
 	private List<Models.PackingResult>? results;
 	public ReadOnlyCollection<Models.PackingResult>? Results => this.results?.AsReadOnly();
@@ -95,19 +99,25 @@ internal class PackingDemoState
 	public Models.AsyncEvent<Models.PackingResult> OnSelectResult { get; set; } = new();
 
 	public Models.PackingResult? SelectedResult { get; private set; }
+
 	public async Task SelectResultAsync(Models.PackingResult result)
 	{
-		var existingResult = this.Results?.FirstOrDefault(x => x.Bin.ID == result.Bin.ID);
+		if(result.Bin is null)
+		{
+			throw new InvalidOperationException("Selected result has no bin");
+		}
+
+		var existingResult = this.Results?.FirstOrDefault(x => x.Bin!.ID == result.Bin.ID);
 		if (existingResult is null)
 		{
-			throw new ApplicationException("Could not find selected result");
+			throw new InvalidOperationException("Could not find selected result");
 
 		}
 		this.SelectedResult = result;
 
 		await this.OnSelectResult.InvokeAsync(result);
 
-		await this.RedrawSceneAsync(result.Bin, result.PackedItems);
+		await this.RedrawSceneAsync(result.Bin!, result.PackedItems);
 
 	}
 

@@ -10,7 +10,7 @@ public abstract class ResponseBase<TModel>
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public ResultType Result { get; set; }
 
-	public TModel Data { get; set; }
+	public required TModel Data { get; set; }
 
-	public string Message { get; set; }
+	public string? Message { get; set; }
 }

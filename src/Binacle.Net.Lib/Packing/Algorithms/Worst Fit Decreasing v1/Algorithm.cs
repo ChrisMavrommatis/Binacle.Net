@@ -1,6 +1,5 @@
 ﻿using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.Lib.Abstractions.Models;
-using Binacle.Net.Lib.Exceptions;
 using Binacle.Net.Lib.GuardClauses;
 
 namespace Binacle.Net.Lib.Packing.Algorithms;

@@ -6,10 +6,10 @@ namespace Binacle.Net.Api.v1.Requests;
 
 public class PresetQueryRequestWithBody : RequestWithBody<PresetQueryRequest>
 {
-	public string Preset { get; set; }
+	public string? Preset { get; set; }
 }
 
 public class PresetQueryRequest
 {
-	public List<v1.Models.Box> Items { get; set; }
+	public List<v1.Models.Box>? Items { get; set; }
 }

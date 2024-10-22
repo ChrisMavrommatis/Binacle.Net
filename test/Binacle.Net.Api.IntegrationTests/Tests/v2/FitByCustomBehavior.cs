@@ -49,7 +49,7 @@ public class FitByCustomBehavior
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Item Returns 400 BadRequest")]
 	public async Task Post_WithZeroDimensionOnItem_Returns_400BadRequest()
 	{
-		sampleRequest.Items.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
+		this.sampleRequest.Items!.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 
 		var result = await sut.Client.PostAsJsonAsync(routePath, sampleRequest, sut.JsonSerializerOptions);
 
@@ -59,7 +59,7 @@ public class FitByCustomBehavior
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Bin Returns 400 BadRequest")]
 	public async Task Post_WithZeroDimensionOnBin_Returns400BadRequest()
 	{
-		sampleRequest.Bins.FirstOrDefault(x => x.ID == "custom_bin_1")!.Length = 0;
+		this.sampleRequest.Bins!.FirstOrDefault(x => x.ID == "custom_bin_1")!.Length = 0;
 
 		var result = await sut.Client.PostAsJsonAsync(routePath, sampleRequest, sut.JsonSerializerOptions);
 
@@ -69,7 +69,7 @@ public class FitByCustomBehavior
 	[Fact(DisplayName = $"POST {routePath}. With Same Id On Bins Returns 400 BadRequest")]
 	public async Task Post_WithSameIdOnBins_Returns400BadRequest()
 	{
-		foreach (var bin in sampleRequest.Bins)
+		foreach (var bin in this.sampleRequest.Bins!)
 		{
 			bin.ID = "custom_bin_1";
 		}
@@ -82,7 +82,7 @@ public class FitByCustomBehavior
 	[Fact(DisplayName = $"POST {routePath}. With Same Id On Items Returns 400 BadRequest")]
 	public async Task Post_WithSameIdOnItems_Returns400BadRequest()
 	{
-		foreach (var bin in sampleRequest.Items)
+		foreach (var bin in this.sampleRequest.Items!)
 		{
 			bin.ID = "box_1";
 		}

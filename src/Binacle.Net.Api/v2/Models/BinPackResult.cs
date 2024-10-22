@@ -9,7 +9,7 @@ public class BinPackResult
 	[JsonPropertyOrder(0)]
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public BinPackResultStatus Result { get; set; }
-	public Bin Bin { get; set; }
+	public required Bin Bin { get; set; }
 
 	public List<ResultBox>? PackedItems { get; set; }
 	public List<ResultBox>? UnpackedItems { get; set; }

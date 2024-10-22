@@ -6,11 +6,11 @@ namespace Binacle.Net.Api.v2.Requests;
 
 public class PresetPackRequestWithBody : RequestWithBody<PresetPackRequest>
 {
-	public string Preset { get; set; }
+	public string? Preset { get; set; }
 }
 
 public class PresetPackRequest
 {
 	public PackRequestParameters? Parameters { get; set; }
-	public List<v2.Models.Box> Items { get; set; }
+	public List<v2.Models.Box>? Items { get; set; }
 }

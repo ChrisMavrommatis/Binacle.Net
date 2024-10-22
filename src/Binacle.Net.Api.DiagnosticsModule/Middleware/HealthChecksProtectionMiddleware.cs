@@ -23,13 +23,13 @@ internal class HealthChecksProtectionMiddleware
 		this.next = next;
 		this.logger = logger;
 		this.options = options;
-		if (this.options.Value.RestrictedIPs is null || this.options.Value.RestrictedIPs.Length == 0)
+		if (this.options.Value.RestrictedIPs is not null && this.options.Value.RestrictedIPs.Length > 0)
 		{
-			this.restrictedIPAddressRanges = Array.Empty<IPAddressRange>();
+			this.restrictedIPAddressRanges = options.Value.RestrictedIPs!.Select(IPAddressRange.ParseRange).ToArray();
 		}
 		else
 		{
-			this.restrictedIPAddressRanges = options.Value.RestrictedIPs.Select(IPAddressRange.ParseRange).ToArray();
+			this.restrictedIPAddressRanges = Array.Empty<IPAddressRange>();
 		}
 	}
 
@@ -52,6 +52,13 @@ internal class HealthChecksProtectionMiddleware
 
 		var remoteIp = context.Connection.RemoteIpAddress;
 		// is in range
+
+		if (remoteIp is null) 
+		{
+			logger.LogWarning("Health check request from unknown remote IP");
+			context.Response.StatusCode = StatusCodes.Status403Forbidden;
+			return;
+		}
 
 		if (!this.restrictedIPAddressRanges.Any(range => range.IsInRange(remoteIp)))
 		{

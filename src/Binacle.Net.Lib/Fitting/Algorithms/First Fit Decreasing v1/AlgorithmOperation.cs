@@ -61,13 +61,13 @@ internal sealed partial class FirstFitDecreasing_v1<TBin, TItem> : IFittingAlgor
 
 	private VolumetricItem? FindAvailableSpace(VolumetricItem orientation)
 	{
-		return _availableSpace.FirstOrDefault(x => x.Length >= orientation.Length && x.Width >= orientation.Width && x.Height >= orientation.Height);
+		return _availableSpace!.FirstOrDefault(x => x.Length >= orientation.Length && x.Width >= orientation.Width && x.Height >= orientation.Height);
 	}
 
 	private void Fit(VolumetricItem spaceQuadrant, VolumetricItem orientation, Item item)
 	{
 		var newAvailableSpaces = this.SplitSpaceQuadrant(spaceQuadrant, orientation);
-		_availableSpace.Remove(spaceQuadrant);
+		_availableSpace!.Remove(spaceQuadrant);
 		if (newAvailableSpaces.Any())
 		{
 			_availableSpace.AddRange(newAvailableSpaces);

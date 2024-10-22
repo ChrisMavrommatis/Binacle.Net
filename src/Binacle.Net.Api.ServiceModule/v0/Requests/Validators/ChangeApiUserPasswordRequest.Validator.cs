@@ -8,6 +8,6 @@ internal class ChangeApiUserPasswordRequestValidator : AbstractValidator<ChangeA
 	public ChangeApiUserPasswordRequestValidator()
 	{
 		Include(x => new EmailValidator());
-		RuleFor(x => x.Body).SetValidator(x => new PasswordValidator());
+		RuleFor(x => x.Body!).SetValidator(x => new PasswordValidator());
 	}
 }

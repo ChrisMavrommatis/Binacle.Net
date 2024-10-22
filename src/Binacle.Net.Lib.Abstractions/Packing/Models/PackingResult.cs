@@ -7,7 +7,7 @@ public class PackingResult
 		
 	}
 
-	public string BinID { get; internal set; }
+	public required string BinID { get; init; }
 	public PackingResultStatus Status { get; internal set; }
 
 	public List<ResultItem>? PackedItems { get; internal set; }

@@ -11,6 +11,6 @@ public class CustomFitRequestWithBody : RequestWithBody<CustomFitRequest>
 public class CustomFitRequest
 {
 	public FitRequestParameters? Parameters { get; set; }
-	public List<Bin> Bins { get; set; }
-	public List<Box> Items { get; set; }
+	public List<Bin>? Bins { get; set; }
+	public List<Box>? Items { get; set; }
 }

@@ -75,6 +75,6 @@ internal class AlgorithmsDiscrepancies<T> : IEnumerable<KeyValuePair<string, Dic
 
 internal class TestSummaryAction
 {
-	public string Name { get; set; }
-	public Action Action { get; set; }
+	public required string Name { get; set; }
+	public required Action Action { get; set; }
 }

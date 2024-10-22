@@ -32,13 +32,13 @@ public class ListPresetsBehavior : IClassFixture<WebApplicationFactory<IApiMarke
 				});
 			});
 
-		client = this.sut.CreateClient();
+		this.client = this.sut.CreateClient();
 	}
 
-	public void Dispose()
+	internal void Dispose()
 	{
-		client.Dispose();
-		sut.Dispose();
+		this.client.Dispose();
+		this.sut.Dispose();
 	}
 
 	[TestPriority(2)]

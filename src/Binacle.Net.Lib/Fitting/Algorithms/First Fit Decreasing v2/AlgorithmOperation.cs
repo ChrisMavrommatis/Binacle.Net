@@ -59,7 +59,7 @@ internal sealed partial class FirstFitDecreasing_v2<TBin, TItem>
 
 	private VolumetricItem? FindAvailableSpace(Item orientation)
 	{
-		for (var i = 0; i < this.availableSpace.Count; i++)
+		for (var i = 0; i < this.availableSpace!.Count; i++)
 		{
 			var space = this.availableSpace[i];
 
@@ -73,7 +73,7 @@ internal sealed partial class FirstFitDecreasing_v2<TBin, TItem>
 	private void Fit(VolumetricItem spaceQuadrant, Item item)
 	{
 		var newAvailableSpaces = this.SplitSpaceQuadrant(spaceQuadrant, item);
-		this.availableSpace.Remove(spaceQuadrant);
+		this.availableSpace!.Remove(spaceQuadrant);
 		if (newAvailableSpaces.Count > 0)
 		{
 			this.availableSpace.AddRange(newAvailableSpaces);

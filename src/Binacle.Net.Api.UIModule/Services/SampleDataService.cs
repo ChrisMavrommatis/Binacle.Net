@@ -12,14 +12,14 @@ internal class SampleDataService : ISampleDataService
 {
 	private class SampleJsonData
 	{
-		public Dictionary<string, List<string>> BinSets { get; set; }
-		public Dictionary<string, List<string>> ItemSets { get; set; }
+		public Dictionary<string, List<string>>? BinSets { get; set; }
+		public Dictionary<string, List<string>>? ItemSets { get; set; }
 	}
 
 	private class SampleData
 	{
-		public List<List<ViewModels.Bin>> BinSets { get; set; }
-		public List<List<ViewModels.Item>> ItemSets { get; set; }
+		public required List<List<ViewModels.Bin>> BinSets { get; set; }
+		public required List<List<ViewModels.Item>> ItemSets { get; set; }
 	}
 
 	private readonly IWebHostEnvironment environment;
@@ -70,17 +70,24 @@ internal class SampleDataService : ISampleDataService
 	private SampleData ReadSampleData()
 	{
 		var fileInfo = this.environment.WebRootFileProvider.GetFileInfo("data/sample_data.json");
-		var sampleData = new SampleData();
+
 		if (!fileInfo.Exists)
 		{
-			return sampleData;
+			return new SampleData()
+			{
+				BinSets = new List<List<ViewModels.Bin>>(),
+				ItemSets = new List<List<ViewModels.Item>>()
+			};
 		}
 
 		var json = System.IO.File.ReadAllText(fileInfo.PhysicalPath!);
 		var sampleJsonData = System.Text.Json.JsonSerializer.Deserialize<SampleJsonData>(json)!;
 
-		sampleData.BinSets = sampleJsonData.BinSets.Values.Select(binSet => binSet.Select(ParseBin).ToList()).ToList();
-		sampleData.ItemSets = sampleJsonData.ItemSets.Values.Select(itemSet => itemSet.Select(ParseItem).ToList()).ToList();
+		var sampleData = new SampleData
+		{
+			BinSets = sampleJsonData.BinSets?.Values.Select(binSet => binSet.Select(ParseBin).ToList()).ToList() ?? new List<List<ViewModels.Bin>>(),
+			ItemSets = sampleJsonData.ItemSets?.Values.Select(itemSet => itemSet.Select(ParseItem).ToList()).ToList() ?? new List<List<ViewModels.Item>>()
+		};
 		return sampleData;
 	}
 

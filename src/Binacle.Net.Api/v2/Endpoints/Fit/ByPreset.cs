@@ -154,7 +154,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 
 			var operationResults = this.lockerService.FitBins(
 				presetOption.Bins,
-				request.Body.Items,
+				request.Body.Items!,
 				new FittingParameters
 				{
 					FindSmallestBinOnly = request.Body.Parameters?.FindSmallestBinOnly ?? true,
@@ -165,7 +165,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 			return this.Ok( 
 				v2.Responses.FitResponse.Create(
 					presetOption.Bins,
-					request.Body.Items,
+					request.Body.Items!,
 					request.Body.Parameters,
 					operationResults
 				)

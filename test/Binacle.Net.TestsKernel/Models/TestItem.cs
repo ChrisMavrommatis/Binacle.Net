@@ -6,7 +6,7 @@ public sealed class TestItem : IWithID, IWithDimensions, IWithQuantity
 {
 	public TestItem()
 	{
-
+		this.ID = string.Empty;
 	}
 
 	public TestItem(string id, IWithReadOnlyDimensions item)

@@ -10,5 +10,5 @@ public abstract class ResponseBase
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public ResultType Result { get; set; }
 
-	public string Message { get; set; }
+	public string? Message { get; set; }
 }

@@ -9,8 +9,13 @@ internal class RateLimiterConfigurationOptions
 
 	public string? Anonymous { get; set; }
 
-	public static RateLimiterConfiguration ParseConfiguration(string value)
+	public static RateLimiterConfiguration ParseConfiguration(string? value)
 	{
+		if (string.IsNullOrWhiteSpace(value))
+		{
+			throw new InvalidOperationException("RateLimiter configuration is not set");
+		}
+
 		var parts = value.Split("::");
 		if (parts.Length != 2)
 		{

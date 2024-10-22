@@ -61,7 +61,7 @@ public static class ModuleDefinition
 
 		app.Use(async(ctx, next) =>
 		{
-			if (ctx.Request.Path.Value.StartsWith("/api/", StringComparison.OrdinalIgnoreCase))
+			if (ctx.Request.Path.Value?.StartsWith("/api/", StringComparison.OrdinalIgnoreCase) ?? false)
 			{
 				var statusCodeFeature = ctx.Features.Get<IStatusCodePagesFeature>();
 

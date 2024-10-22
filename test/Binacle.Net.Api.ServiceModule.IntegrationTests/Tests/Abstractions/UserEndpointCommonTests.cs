@@ -39,7 +39,7 @@ public abstract partial class UsersEndpointTestsBase
 
 	protected async Task Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
 	{
-		var jwtAuthOptions = this.Sut.Services.GetService<IOptions<JwtAuthOptions>>();
+		var jwtAuthOptions = this.Sut.Services.GetService<IOptions<JwtAuthOptions>>()!;
 
 		var newJwtAuthOptions = new JwtAuthOptions()
 		{
@@ -85,7 +85,7 @@ public abstract partial class UsersEndpointTestsBase
 
 	protected async Task Action_WithWronglySignedBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
 	{
-		var jwtAuthOptions = this.Sut.Services.GetService<IOptions<JwtAuthOptions>>();
+		var jwtAuthOptions = this.Sut.Services.GetService<IOptions<JwtAuthOptions>>()!;
 
 		var newJwtAuthOptions = new JwtAuthOptions()
 		{

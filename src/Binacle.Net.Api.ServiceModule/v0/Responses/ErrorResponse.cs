@@ -2,7 +2,7 @@
 
 internal class ErrorResponse
 {
-	public string Message { get; set; }
+	public required string Message { get; set; }
 	public string[]? Errors { get; set; }
 	internal static ErrorResponse Create(string message, string[]? errors = null)
 	{

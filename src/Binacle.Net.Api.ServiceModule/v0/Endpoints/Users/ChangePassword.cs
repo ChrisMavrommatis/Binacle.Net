@@ -81,7 +81,7 @@ internal class ChangePassword : IEndpointDefinition<UsersGroup>
 			return Results.BadRequest(v0.Responses.ErrorResponse.Create("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage).ToArray()));
 		}
 
-		var result = await userManagerService.ChangePasswordAsync(new ChangeUserPasswordRequest(request.Email, request.Body.Password), cancellationToken);
+		var result = await userManagerService.ChangePasswordAsync(new ChangeUserPasswordRequest(request.Email, request.Body!.Password), cancellationToken);
 
 		return result.Unwrap(
 			ok => Results.NoContent(),

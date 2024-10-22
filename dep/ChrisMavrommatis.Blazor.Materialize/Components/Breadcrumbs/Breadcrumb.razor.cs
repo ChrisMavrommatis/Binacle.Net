@@ -4,24 +4,28 @@ namespace ChrisMavrommatis.Blazor.Materialize.Components;
 
 public partial class Breadcrumb : MaterializeComponentBase
 {
-	private List<BreadcrumbItem> items;
+	private List<BreadcrumbItem> items = new List<BreadcrumbItem>();
 
 	[Parameter]
-	public string WrapperClasses { get; set; }
+	public string? WrapperClasses { get; set; }
 
 	[Inject]
-	protected NavigationManager NavigationManager { get; set; }
+	protected NavigationManager? NavigationManager { get; set; }
 
 	protected override void OnParametersSet()
 	{
-		this.items = new List<BreadcrumbItem>();
-		var currentUrl = NavigationManager.Uri;
-		var myUrl = currentUrl.Replace(NavigationManager.BaseUri, "");
+		if (this.NavigationManager is null)
+		{
+			throw new InvalidOperationException($"{nameof(NavigationManager)} has not been initialized.");
+		}
+
+		var currentUrl = this.NavigationManager.Uri;
+		var myUrl = currentUrl.Replace(this.NavigationManager.BaseUri, "");
 		var count = 0;
 		this.items.Add(new BreadcrumbItem
 		{
-			Link = NavigationManager.BaseUri,
-			IsActive = NavigationManager.Uri == NavigationManager.BaseUri,
+			Link = this.NavigationManager.BaseUri,
+			IsActive = this.NavigationManager.Uri == this.NavigationManager.BaseUri,
 			Order = count,
 			Title = "Home",
 			Icon = "home"

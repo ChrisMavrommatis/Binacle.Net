@@ -167,7 +167,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 
 			var operationResults = this.lockerService.FitBins(
 				presetOption.Bins, 
-				request.Body.Items,
+				request.Body.Items!,
 				new Api.Models.FittingParameters
 				{
 					FindSmallestBinOnly = true,
@@ -177,7 +177,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 			);
 
 			return this.Ok(
-				v1.Responses.QueryResponse.Create(presetOption.Bins, request.Body.Items, operationResults)
+				v1.Responses.QueryResponse.Create(presetOption.Bins, request.Body.Items!, operationResults)
 			);
 		}
 		catch (Exception ex)

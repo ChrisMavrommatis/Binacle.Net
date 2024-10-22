@@ -30,9 +30,9 @@ public class AttributeOrderer : IOrderer
 
 	private int GetBenchmarkOrder(BenchmarkCase benchmarkCase)
 	{
-		var orderAttr = (BenchmarkOrderAttribute)benchmarkCase.Descriptor.WorkloadMethod
+		var orderAttr = benchmarkCase.Descriptor.WorkloadMethod
 		  .GetCustomAttributes(typeof(BenchmarkOrderAttribute), false)
-		  .FirstOrDefault();
+		  .FirstOrDefault() as BenchmarkOrderAttribute;
 
 		return orderAttr?.Order ?? int.MaxValue; // Default to the end if no order specified
 	}

@@ -3,9 +3,10 @@ public class FittingResult
 {
 	internal FittingResult()
 	{
+
 	}
 
-	public string BinID { get; internal set; }
+	public required string BinID { get; init; }
 	public FittingResultStatus Status { get; internal set; }
 	public FittingFailedResultReason? Reason { get; internal set; }
 

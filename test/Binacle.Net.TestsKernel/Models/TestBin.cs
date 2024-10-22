@@ -6,7 +6,7 @@ public sealed class TestBin : IWithID, IWithDimensions
 {
 	public TestBin()
 	{
-
+		this.ID = string.Empty;
 	}
 
 	public TestBin(string id, IWithReadOnlyDimensions item)

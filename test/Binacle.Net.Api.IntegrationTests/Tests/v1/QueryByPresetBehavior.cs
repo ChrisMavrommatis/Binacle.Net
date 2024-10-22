@@ -38,7 +38,7 @@ public class QueryByPresetBehavior
 	{
 		var urlPath = routePath.Replace("{preset}", "non-existing-preset");
 
-		var response = await sut.Client.PostAsJsonAsync(urlPath, sampleRequest, sut.JsonSerializerOptions);
+		var response = await sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest!, sut.JsonSerializerOptions);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
 	}
@@ -48,7 +48,7 @@ public class QueryByPresetBehavior
 	{
 		var urlPath = routePath.Replace("{preset}", presetOptions.Value.Presets.Keys.First());
 
-		var response = await sut.Client.PostAsJsonAsync(urlPath, sampleRequest, sut.JsonSerializerOptions);
+		var response = await sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest!, sut.JsonSerializerOptions);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 	}
@@ -56,7 +56,7 @@ public class QueryByPresetBehavior
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimensions Returns 400 BadRequest")]
 	public async Task Post_WithZeroDimensions_Returns400BadRequest()
 	{
-		sampleRequest.Items.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
+		this.sampleRequest!.Items!.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 		var urlPath = routePath.Replace("{preset}", presetOptions.Value.Presets.Keys.First());
 
 		var result = await sut.Client.PostAsJsonAsync(urlPath, sampleRequest, sut.JsonSerializerOptions);
@@ -67,12 +67,12 @@ public class QueryByPresetBehavior
 	[Fact(DisplayName = $"POST {routePath}. With Same Id On Items Returns 400 BadRequest")]
 	public async Task Post_WithSameIdOnItems_Returns400BadRequest()
 	{
-		foreach (var bin in sampleRequest.Items)
+		foreach (var bin in this.sampleRequest!.Items!)
 		{
 			bin.ID = "box_1";
 		}
 
-		var result = await sut.Client.PostAsJsonAsync(routePath, sampleRequest, sut.JsonSerializerOptions);
+		var result = await sut.Client.PostAsJsonAsync(routePath, this.sampleRequest!, sut.JsonSerializerOptions);
 
 		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
 	}

@@ -1,7 +1,7 @@
 ﻿@namespace Binacle.Net.Api.UIModule.Components.Features
 @rendermode RenderMode.InteractiveServer
 
-<EditForm Model="@this.State.Model" class="row mt-5 pt-5">
+<EditForm Model="@this.State!.Model" class="row mt-5 pt-5">
     <DataAnnotationsValidator />
 
     <div class="col s12">
@@ -127,11 +127,13 @@
     <div class="col s4"></div>
 </div>
 <div class="row center mt-5 red-text">
-    @foreach(var error in this.State.Errors)
+    @if (this.State.Errors is not null)
     {
-        <div class="col s12">
-            @error
-        </div>
+        @foreach (var error in this.State.Errors)
+        {
+            <div class="col s12">
+                @error
+            </div>
+        }
     }
-   
 </div>

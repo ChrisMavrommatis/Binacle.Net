@@ -2,7 +2,7 @@
 
 internal class AuthErrorResponse
 {
-	public string Message { get; set; }
+	public required string Message { get; set; }
 	public string[]? Errors { get; set; }
 	internal static AuthErrorResponse Create(string message, string[]? errors = null)
 	{

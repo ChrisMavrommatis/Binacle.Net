@@ -6,17 +6,17 @@ internal class PackedItem : IWithID
 {
 	public PackedItem()
 	{
-
+		this.ID = string.Empty;
 	}
+
 	public PackedItem(string id, int length, int width, int height, int x, int y, int z)
 	{
-		ID = id;
-		Dimensions = new Dimensions(length, width, height);
-		Coordinates = new Coordinates(x, y, z);
-
+		this.ID = id;
+		this.Dimensions = new Dimensions(length, width, height);
+		this.Coordinates = new Coordinates(x, y, z);
 	}
 
-	public string ID { get; set; } = string.Empty;
+	public required string ID { get; set; }
 
 	public Dimensions Dimensions { get; set; }
 	public Coordinates? Coordinates { get; set; }

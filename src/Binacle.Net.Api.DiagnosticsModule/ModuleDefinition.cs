@@ -144,7 +144,7 @@ public static class ModuleDefinition
 		{
 			app.UseMiddleware<HealthChecksProtectionMiddleware>();
 
-			app.MapHealthChecks(healthChecksOptions.Value.Path, new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+			app.MapHealthChecks(healthChecksOptions.Value.Path!, new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 			{
 				ResultStatusCodes =
 				{

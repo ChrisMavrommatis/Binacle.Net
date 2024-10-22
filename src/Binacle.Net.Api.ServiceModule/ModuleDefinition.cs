@@ -79,7 +79,7 @@ public static class ModuleDefinition
 				ValidIssuer = jwtAuthOptions.Issuer,
 				ValidAudience = jwtAuthOptions.Audience,
 				IssuerSigningKey = new SymmetricSecurityKey(
-					Encoding.UTF8.GetBytes(jwtAuthOptions.TokenSecret)
+					Encoding.UTF8.GetBytes(jwtAuthOptions.TokenSecret!)
 				),
 				ValidateIssuer = true,
 				ValidateAudience = true,
