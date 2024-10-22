@@ -11,10 +11,10 @@
 			"dotnetRunMessages": true,
 			"commandLineArgs": "--filter *PackingScalingBenchmarks*"
 		},
-		"All": {
+		"MultiAlgorithmPackingBenchmarks": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *"
+			"commandLineArgs": "--filter *MultiAlgorithmPackingBenchmarks*"
 		}
 	}
 }

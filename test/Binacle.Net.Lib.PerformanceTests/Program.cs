@@ -37,6 +37,7 @@ internal class Program
 		builder.Services.AddTransient<TestRunner>();
 		builder.Services.AddTransient<ITest, PackingEfficiencyTest>();
 		builder.Services.AddTransient<ITest, PackingEfficiencyPerformanceTest>();
+		builder.Services.AddTransient<ITest, PackingEfficiencyBaselineComparisonTest>();
 
 		IHost host = builder.Build();
 
