@@ -3,7 +3,6 @@ using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.Lib.Packing.Models;
 using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.TestsKernel.Providers;
-using System.Diagnostics.Contracts;
 
 namespace Binacle.Net.Lib.Benchmarks;
 
@@ -19,12 +18,12 @@ public class MultiAlgorithmPackingBenchmarks
 		this.scenario = BenchmarkScalingTestsDataProvider.Scenarios["Rectangular-Cuboids::Small"];
 	}
 
-	
-	[ParamsSource(nameof(NoOfItemsParamsSourceAccessor))]
-	public int NoOfItems { get; set; }
+	// [Params(2, 3, 4, 5, 6)]
+	// public int NoOfAlgorithms { get; set; }
 
-	[Params(2, 3, 4, 5, 6)]
-	public int NoOfAlgorithms { get; set; }
+	[ParamsSource(nameof(NoOfItemsParamsSourceAccessor))]
+	// [Params(10, 50, 100, 200, 400, 500)]
+	public int NoOfItems { get; set; }
 
 	public IEnumerable<int> NoOfItemsParamsSourceAccessor()
 	{
@@ -36,14 +35,20 @@ public class MultiAlgorithmPackingBenchmarks
 	private TestBin? bin;
 	private List<TestItem>? items;
 	private readonly Func<TestBin, List<TestItem>, IPackingAlgorithm>[] algorithmFactories = [
-		AlgorithmFactories.Packing_FFD_v1,
-		AlgorithmFactories.Packing_FFD_v1,
-		AlgorithmFactories.Packing_FFD_v1,
-		AlgorithmFactories.Packing_FFD_v1,
-		AlgorithmFactories.Packing_FFD_v1,
-		AlgorithmFactories.Packing_FFD_v1,
-		AlgorithmFactories.Packing_FFD_v1
+    		AlgorithmFactories.Packing_FFD_v1,
+    		AlgorithmFactories.Packing_FFD_v2,
+    		AlgorithmFactories.Packing_WFD_v1,
+    		AlgorithmFactories.Packing_FFD_v1,	
 	];
+	// private readonly Func<TestBin, List<TestItem>, IPackingAlgorithm>[] algorithmFactories = [
+	// 	AlgorithmFactories.Packing_FFD_v1,
+	// 	AlgorithmFactories.Packing_FFD_v1,
+	// 	AlgorithmFactories.Packing_FFD_v1,
+	// 	AlgorithmFactories.Packing_FFD_v1,
+	// 	AlgorithmFactories.Packing_FFD_v1,
+	// 	AlgorithmFactories.Packing_FFD_v1,
+	// 	AlgorithmFactories.Packing_FFD_v1
+	// ];
 
 	[GlobalSetup]
 	public void GlobalSetup()
@@ -62,30 +67,44 @@ public class MultiAlgorithmPackingBenchmarks
 	[Benchmark(Baseline = true)]
 	public PackingResult ForLoop()
 	{
-		var results = new PackingResult[NoOfAlgorithms];
-		for(var i = 0; i< NoOfAlgorithms; i++)
+		var results = new PackingResult[this.algorithmFactories.Length];
+		for(var i = 0; i< this.algorithmFactories.Length; i++)
 		{
 			var algorithmFactory = this.algorithmFactories[i];
 			var algorithmInstance = algorithmFactory(this.bin!, this.items!);
-			var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = false, NeverReportUnpackedItems = false, ReportPackedItemsOnlyWhenFullyPacked = false });
+			var result = algorithmInstance.Execute(new PackingParameters
+			{
+				OptInToEarlyFails = false, 
+				NeverReportUnpackedItems = false,
+				ReportPackedItemsOnlyWhenFullyPacked = false 
+			});
 			results[i] = result;
 		}
 
-		return results.OrderByDescending(x => x.PackedBinVolumePercentage).FirstOrDefault()!;
+		return results
+			.OrderByDescending(x => x.PackedBinVolumePercentage)
+			.FirstOrDefault()!;
 	}
 
 	[Benchmark]
 	public PackingResult ParallelFor()
 	{
-		var results = new PackingResult[NoOfAlgorithms];
-		Parallel.For(0, NoOfAlgorithms, index =>
+		var results = new PackingResult[this.algorithmFactories.Length];
+		Parallel.For(0, this.algorithmFactories.Length, index =>
 		{
 			var algorithmFactory = this.algorithmFactories[index];
 			var algorithmInstance = algorithmFactory(this.bin!, this.items!);
-			var result = algorithmInstance.Execute(new PackingParameters { OptInToEarlyFails = false, NeverReportUnpackedItems = false, ReportPackedItemsOnlyWhenFullyPacked = false });
+			var result = algorithmInstance.Execute(new PackingParameters
+			{
+				OptInToEarlyFails = false,
+				NeverReportUnpackedItems = false,
+				ReportPackedItemsOnlyWhenFullyPacked = false
+			});
 			results[index] = result;
 		});
-		return results.OrderByDescending(x => x.PackedBinVolumePercentage).FirstOrDefault()!;
+		return results
+			.OrderByDescending(x => x.PackedBinVolumePercentage)
+			.FirstOrDefault()!;
 	}
 
 
