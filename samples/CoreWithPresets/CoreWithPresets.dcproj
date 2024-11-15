@@ -5,6 +5,8 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <DockerServiceName>Binacle.Net</DockerServiceName>
     <ProjectGuid>ee4463f3-1386-45f0-af4e-41d60999e5dc</ProjectGuid>
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.yml" />

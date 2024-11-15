@@ -4,10 +4,12 @@ using Binacle.Net.Lib.Packing.Models;
 using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.TestsKernel.Providers;
 using System.Runtime.CompilerServices;
+using BenchmarkDotNet.Jobs;
 
 namespace Binacle.Net.Lib.Benchmarks;
 
-
+[SimpleJob(RuntimeMoniker.Net80, baseline: true)]
+[SimpleJob(RuntimeMoniker.Net90)]
 [MemoryDiagnoser]
 public class PackingScalingBenchmarks
 {

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
@@ -11,8 +11,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="ChrisMavrommatis.StartupTasks" Version="1.0.1" />
-	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.6" />
+	  <PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>
