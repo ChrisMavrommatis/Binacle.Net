@@ -24,14 +24,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Performance Results", "Performance Results", "{01D68A21-EB78-4CAD-98BC-92632BE3080A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scaling Benchmarks", "Scaling Benchmarks", "{4A3E586B-D272-444E-BD81-8D5960084A02}"
-	ProjectSection(SolutionItems) = preProject
-		doc\Performance Results\Scaling Benchmarks\2024-04-12.md = doc\Performance Results\Scaling Benchmarks\2024-04-12.md
-		doc\Performance Results\Scaling Benchmarks\Initial Public Run.md = doc\Performance Results\Scaling Benchmarks\Initial Public Run.md
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Blazor.Materialize", "dep\ChrisMavrommatis.Blazor.Materialize\ChrisMavrommatis.Blazor.Materialize.csproj", "{0C29C934-7E87-47EB-AFEE-BBB1832FADD1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Swashbuckle", "dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj", "{882F3C14-EAC8-4D7D-881B-61A6663E38B6}"
@@ -259,8 +251,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{01D68A21-EB78-4CAD-98BC-92632BE3080A} = {88EC1702-D375-496F-B26A-384DBEA8E0AA}
-		{4A3E586B-D272-444E-BD81-8D5960084A02} = {01D68A21-EB78-4CAD-98BC-92632BE3080A}
 		{0C29C934-7E87-47EB-AFEE-BBB1832FADD1} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{882F3C14-EAC8-4D7D-881B-61A6663E38B6} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{3ADB3BA2-ADB3-4D6C-8276-15CB5D0F708B} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
