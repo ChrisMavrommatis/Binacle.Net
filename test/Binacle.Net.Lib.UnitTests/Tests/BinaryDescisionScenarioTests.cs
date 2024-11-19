@@ -69,7 +69,7 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 
 
 	private void RunFittingScenarioTest<TAlgorithm>(
-		Func<TestBin, List<TestItem>, TAlgorithm> algorithmFactory,
+		AlgorithmFactory<TAlgorithm> algorithmFactory,
 		Scenario scenario
 	)
 		where TAlgorithm : class, IFittingAlgorithm
@@ -168,8 +168,8 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 
 
 	private void RunPackingScenarioTest<TAlgorithm>(
-			Func<TestBin, List<TestItem>, TAlgorithm> algorithmFactory,
-			Scenario scenario
+		AlgorithmFactory<TAlgorithm> algorithmFactory,
+		Scenario scenario
 	)
 		where TAlgorithm : class, IPackingAlgorithm
 	{

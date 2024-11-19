@@ -33,7 +33,7 @@ internal class Program
 		});
 		builder.Services.AddSingleton<ORLibraryScenarioTestDataProvider>();
 		builder.Services.AddSingleton<AlgorithmFamiliesCollection>();
-		builder.Services.AddSingleton<BenchmarkScalingTestsDataProvider>();
+		builder.Services.AddSingleton<ScalingBenchmarkTestsDataProvider>();
 		builder.Services.AddTransient<TestRunner>();
 		builder.Services.AddTransient<ITest, PackingEfficiencyTest>();
 		builder.Services.AddTransient<ITest, PackingEfficiencyPerformanceTest>();

@@ -36,8 +36,8 @@ public class PackingEfficiencyTests : IClassFixture<CommonTestingFixture>
 
 
 	private void RunPackingScenarioTest<TAlgorithm>(
-			Func<TestBin, List<TestItem>, TAlgorithm> algorithmFactory,
-			Scenario scenario
+		AlgorithmFactory<TAlgorithm> algorithmFactory,
+		Scenario scenario
 	)
 		where TAlgorithm : class, IPackingAlgorithm
 	{

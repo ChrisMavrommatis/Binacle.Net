@@ -141,7 +141,7 @@ internal class PackingEfficiencyBaselineComparisonTest : ITest
 	}
 
 	internal PackingResult RunPackingAlgorithm<TAlgorithm>(
-			Func<TestBin, List<TestItem>, TAlgorithm> algorithmFactory,
+			AlgorithmFactory<TAlgorithm> algorithmFactory,
 			Scenario scenario
 	)
 		where TAlgorithm : class, IPackingAlgorithm

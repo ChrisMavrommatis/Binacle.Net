@@ -4,15 +4,15 @@ using Binacle.Net.TestsKernel.Providers;
 
 namespace Binacle.Net.TestsKernel.Models;
 
-public sealed class BenchmarkScalingScenario : BinScenarioBase
+public sealed class ScalingBenchmarkScenario : BinScenarioBase
 {
-	private readonly BenchmarkTestCase testCase;
+	private readonly ScalingBenchmarkTestCase testCase;
 
 	public string Name { get; }
 
 	public int MaxInRange => this.testCase.Range.Max;
 
-	public BenchmarkScalingScenario(string binString, BenchmarkTestCase testCase) : base(binString)
+	public ScalingBenchmarkScenario(string binString, ScalingBenchmarkTestCase testCase) : base(binString)
 	{
 		this.testCase = testCase;
 		this.Name = binString;
@@ -22,14 +22,14 @@ public sealed class BenchmarkScalingScenario : BinScenarioBase
 	{
 		var rangeDiff = this.testCase.Range.Max - this.testCase.Range.Min;
 
-		var step = rangeDiff / (BenchmarkScalingTestsDataProvider.TestsPerCase +1);
+		var step = rangeDiff / (ScalingBenchmarkTestsDataProvider.TestsPerCase +1);
 
 
 		// min
 		yield return this.testCase.Range.Min;
 
 		// med
-		for(var i=1; i<= BenchmarkScalingTestsDataProvider.TestsPerCase; i++)
+		for(var i=1; i<= ScalingBenchmarkTestsDataProvider.TestsPerCase; i++)
 		{
 			yield return this.testCase.Range.Min + step * i;
 		}

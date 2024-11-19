@@ -9,7 +9,7 @@ public abstract class SingleScenarioScalingBase
 	public SingleScenarioScalingBase(string scenarioName)
 	{
 		this.binCollectionsDataProvider = new BinCollectionsTestDataProvider();
-		this.scenario = BenchmarkScalingTestsDataProvider.Scenarios[scenarioName];
+		this.scenario = ScalingBenchmarkTestsDataProvider.Scenarios[scenarioName];
 	}
 
 	[ParamsSource(nameof(NoOfItemsParamsSourceAccessor))]
@@ -21,7 +21,7 @@ public abstract class SingleScenarioScalingBase
 	}
 
 	private BinCollectionsTestDataProvider binCollectionsDataProvider;
-	private BenchmarkScalingScenario scenario;
+	private ScalingBenchmarkScenario scenario;
 	protected TestBin? Bin { get; private set; }
 	protected List<TestItem>? Items { get; private set; }
 

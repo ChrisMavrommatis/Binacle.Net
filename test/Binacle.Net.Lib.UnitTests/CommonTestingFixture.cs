@@ -8,8 +8,8 @@ namespace Binacle.Net.Lib.UnitTests;
 public sealed class CommonTestingFixture : IDisposable
 {
 	public BinCollectionsTestDataProvider BinTestDataProvider { get; }
-	public Func<TestBin, List<TestItem>, IFittingAlgorithm>[] TestedFittingAlgorithms { get; }
-	public Func<TestBin, List<TestItem>, IPackingAlgorithm>[] TestedPackingAlgorithms { get; }
+	public AlgorithmFactory<IFittingAlgorithm>[] TestedFittingAlgorithms { get; }
+	public AlgorithmFactory<IPackingAlgorithm>[] TestedPackingAlgorithms { get; }
 
 	public CommonTestingFixture()
 	{

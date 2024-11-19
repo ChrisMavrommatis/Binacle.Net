@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Binacle.Net.TestsKernel.Providers;
 
-public class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
+public class ScalingBenchmarkTestsDataProvider : IEnumerable<object[]>
 {
 	// 1 min
 	// 1 max
@@ -11,15 +11,15 @@ public class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 	// and X in between
 	public static int TestsPerCase = 2;
 
-	public static Dictionary<string, Models.BenchmarkTestCase> TestCases = new()
+	public static Dictionary<string, ScalingBenchmarkTestCase> TestCases = new()
 	{
 		{ "Rectangular-Cuboids::Small", new("5x5x5", 10, 192) },
 		{ "Rectangular-Cuboids::Medium", new("5x5x5", 10, 384) },
 		{ "Rectangular-Cuboids::Large", new("5x5x5", 10, 576) },
 	};
 
-	public static Dictionary<string, BenchmarkScalingScenario> Scenarios = TestCases
-		.ToDictionary(x => x.Key, x => new BenchmarkScalingScenario(x.Key, x.Value));
+	public static Dictionary<string, ScalingBenchmarkScenario> Scenarios = TestCases
+		.ToDictionary(x => x.Key, x => new ScalingBenchmarkScenario(x.Key, x.Value));
 
 	public IEnumerator<object[]> GetEnumerator()
 	{
@@ -31,3 +31,4 @@ public class BenchmarkScalingTestsDataProvider : IEnumerable<object[]>
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
+

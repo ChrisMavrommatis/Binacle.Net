@@ -6,6 +6,7 @@ using Binacle.Net.TestsKernel.Providers;
 
 namespace Binacle.Net.Lib.Benchmarks.Scaling;
 
+
 [MemoryDiagnoser]
 public class PackingMultiResult : SingleScenarioScalingBase
 {
@@ -13,13 +14,13 @@ public class PackingMultiResult : SingleScenarioScalingBase
 	{
 	}
 
-	private readonly Func<TestBin, List<TestItem>, IPackingAlgorithm>[] algorithmFactories = [
+	private readonly AlgorithmFactory<IPackingAlgorithm>[] algorithmFactories = [
     		AlgorithmFactories.Packing_FFD_v1,
     		AlgorithmFactories.Packing_FFD_v2,
     		AlgorithmFactories.Packing_WFD_v1,
     		AlgorithmFactories.Packing_FFD_v1,	
 	];
-	// private readonly Func<TestBin, List<TestItem>, IPackingAlgorithm>[] algorithmFactories = [
+	// private readonly AlgorithmFactory<IPackingAlgorithm>[] algorithmFactories = [
 	// 	AlgorithmFactories.Packing_FFD_v1,
 	// 	AlgorithmFactories.Packing_FFD_v1,
 	// 	AlgorithmFactories.Packing_FFD_v1,
