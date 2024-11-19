@@ -1,20 +1,30 @@
 ﻿{
 	"$schema": "https://json.schemastore.org/launchsettings.json",
 	"profiles": {
-		"FittingScalingBenchmarks": {
+		"Scaling_Fitting_FFD": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *FittingScalingBenchmarks*"
+			"commandLineArgs": "--filter *Scaling.Fitting_FFD*"
 		},
-		"PackingScalingBenchmarks": {
+		"Scaling_FittingComparison": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *PackingScalingBenchmarks*"
+			"commandLineArgs": "--filter *Scaling.FittingComparison*"
 		},
-		"MultiAlgorithmPackingBenchmarks": {
+		"Scaling_Packing_FFD": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *MultiAlgorithmPackingBenchmarks*"
+			"commandLineArgs": "--filter *Scaling.Packing_FFD*"
+		},
+		"Scaling_PackingComparison": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"commandLineArgs": "--filter *Scaling.PackingComparison*"
+		},
+		"Scaling_PackingMultiResult": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"commandLineArgs": "--filter *Scaling.PackingMultiResult*"
 		}
 	}
 }

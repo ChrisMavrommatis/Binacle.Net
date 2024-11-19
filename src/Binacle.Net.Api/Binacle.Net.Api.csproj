@@ -20,8 +20,8 @@
 		<PackageReference Include="ChrisMavrommatis.Features" Version="2.0.1" />
 		<PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.1" />
 		<PackageReference Include="ChrisMavrommatis.SwaggerExamples" Version="2.0.0" />
-		<PackageReference Include="FluentValidation" Version="11.10.0" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+		<PackageReference Include="FluentValidation" Version="11.11.0" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.0.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.0.0" />

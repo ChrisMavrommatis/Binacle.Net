@@ -68,6 +68,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "CoreWithPresets", "samples\
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "WithAllFeatures", "samples\WithAllFeatures\WithAllFeatures.dcproj", "{291A9588-4EC8-46F8-9764-C4094D09B1F0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{C74DE1C5-A76A-433C-8FCA-272FBDE3713F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

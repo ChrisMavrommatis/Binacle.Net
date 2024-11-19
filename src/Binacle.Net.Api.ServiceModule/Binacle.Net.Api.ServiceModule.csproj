@@ -18,10 +18,10 @@
 	<ItemGroup>
 		<PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
 		<PackageReference Include="ChrisMavrommatis.MinimalEndpointDefinitions" Version="2.0.0" />
-		<PackageReference Include="ChrisMavrommatis.Results" Version="2.0.0" />
+		<PackageReference Include="ChrisMavrommatis.Results" Version="3.0.0" />
 		<PackageReference Include="ChrisMavrommatis.SwaggerExamples" Version="2.0.0" />
-		<PackageReference Include="FluentValidation" Version="11.10.0" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+		<PackageReference Include="FluentValidation" Version="11.11.0" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.0" />
