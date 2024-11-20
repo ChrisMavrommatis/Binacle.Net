@@ -21,10 +21,20 @@
 			"dotnetRunMessages": true,
 			"commandLineArgs": "--filter *Scaling.PackingComparison*"
 		},
-		"Scaling_PackingMultiResult": {
+		"Scaling_PackingMultiAlgorithm": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *Scaling.PackingMultiResult*"
+			"commandLineArgs": "--filter *Scaling.PackingMultiAlgorithm*"
+		},
+		"Combination_Fitting_FFD_MultipleBins": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"commandLineArgs": "--filter *Combination.Fitting_FFD_MultipleBins*"
+		},
+		"Combination_Packing_FFD_MultipleBins": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"commandLineArgs": "--filter *Combination.Packing_FFD_MultipleBins*"
 		}
 	}
 }

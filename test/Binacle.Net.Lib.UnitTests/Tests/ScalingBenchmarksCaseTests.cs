@@ -10,12 +10,14 @@ namespace Binacle.Net.Lib.UnitTests;
 public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 {
 	private CommonTestingFixture Fixture { get; }
+
 	public ScalingBenchmarksCaseTests(CommonTestingFixture fixture)
 	{
 		this.Fixture = fixture;
 	}
 
 	#region Fitting
+
 	[Theory]
 	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
 	public void Fitting_FFD_v1(ScalingBenchmarkScenario scenario)
@@ -35,7 +37,7 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 	private void RunFittingScenarioTest(
 		AlgorithmFactory<IFittingAlgorithm> algorithmFactory,
 		ScalingBenchmarkScenario scenario
-		)
+	)
 	{
 		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
 		foreach (var noOfItems in scenario.GetNoOfItems())
@@ -43,7 +45,8 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 			var items = scenario.GetTestItems(noOfItems);
 			var algorithmInstance = algorithmFactory(bin, items);
 
-			var result = algorithmInstance.Execute(new Fitting.Models.FittingParameters { ReportFittedItems = false, ReportUnfittedItems = false });
+			var result = algorithmInstance.Execute(new Fitting.Models.FittingParameters
+				{ ReportFittedItems = false, ReportUnfittedItems = false });
 
 			if (scenario.MaxInRange < noOfItems) // doesn't fit
 			{
@@ -55,13 +58,15 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 			}
 		}
 	}
+
 	#endregion
 
 	#region Packing
+
 	[Theory]
 	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
 	public void Packing_FFD_v1(ScalingBenchmarkScenario scenario)
-	=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
 
 	[Theory]
 	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
@@ -82,7 +87,7 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 	private void RunPackingScenarioTest(
 		AlgorithmFactory<IPackingAlgorithm> algorithmFactory,
 		ScalingBenchmarkScenario scenario
-		)
+	)
 	{
 		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
 		foreach (var noOfItems in scenario.GetNoOfItems())
@@ -91,7 +96,7 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 			var algorithmInstance = algorithmFactory(bin, items);
 
 			var result = algorithmInstance.Execute(new Packing.Models.PackingParameters
-				{ 
+				{
 					OptInToEarlyFails = true,
 					NeverReportUnpackedItems = true,
 					ReportPackedItemsOnlyWhenFullyPacked = true
@@ -108,6 +113,6 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 			}
 		}
 	}
+
 	#endregion
 }
-

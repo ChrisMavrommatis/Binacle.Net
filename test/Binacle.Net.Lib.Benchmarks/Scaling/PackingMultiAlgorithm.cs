@@ -2,34 +2,23 @@
 using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.Lib.Packing.Models;
 using Binacle.Net.TestsKernel.Models;
-using Binacle.Net.TestsKernel.Providers;
 
 namespace Binacle.Net.Lib.Benchmarks.Scaling;
 
 
 [MemoryDiagnoser]
-public class PackingMultiResult : SingleScenarioScalingBase
+public class PackingMultiAlgorithm : SingleScenarioScalingBase
 {
-	public PackingMultiResult() : base("Rectangular-Cuboids::Small")
+	public PackingMultiAlgorithm() : base("Rectangular-Cuboids::Small")
 	{
 	}
 
 	private readonly AlgorithmFactory<IPackingAlgorithm>[] algorithmFactories = [
-    		AlgorithmFactories.Packing_FFD_v1,
-    		AlgorithmFactories.Packing_FFD_v2,
-    		AlgorithmFactories.Packing_WFD_v1,
-    		AlgorithmFactories.Packing_FFD_v1,	
+		AlgorithmFactories.Packing_FFD_v1,
+    	AlgorithmFactories.Packing_FFD_v2,
+    	AlgorithmFactories.Packing_WFD_v1
 	];
-	// private readonly AlgorithmFactory<IPackingAlgorithm>[] algorithmFactories = [
-	// 	AlgorithmFactories.Packing_FFD_v1,
-	// 	AlgorithmFactories.Packing_FFD_v1,
-	// 	AlgorithmFactories.Packing_FFD_v1,
-	// 	AlgorithmFactories.Packing_FFD_v1,
-	// 	AlgorithmFactories.Packing_FFD_v1,
-	// 	AlgorithmFactories.Packing_FFD_v1,
-	// 	AlgorithmFactories.Packing_FFD_v1
-	// ];
-
+	
 	[Benchmark(Baseline = true)]
 	public PackingResult ForLoop()
 	{

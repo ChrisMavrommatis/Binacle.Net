@@ -44,7 +44,6 @@ public sealed class Scenario : BinScenarioBase
 			ScenarioResultType.PackingEfficiency => PackingEfficiencyScenarioResult.Create(resultParts[1]),
 			_ => throw new NotImplementedException($"Result type {resultParts[0]} not implemented")
 		};
-
 		return new Scenario(bin)
 		{
 			Name = name,
