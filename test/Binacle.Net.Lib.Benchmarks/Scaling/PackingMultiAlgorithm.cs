@@ -15,8 +15,8 @@ public class PackingMultiAlgorithm : SingleScenarioScalingBase
 
 	private readonly AlgorithmFactory<IPackingAlgorithm>[] algorithmFactories = [
 		AlgorithmFactories.Packing_FFD_v1,
-    	AlgorithmFactories.Packing_FFD_v2,
-    	AlgorithmFactories.Packing_WFD_v1
+    	AlgorithmFactories.Packing_WFD_v1,
+		AlgorithmFactories.Packing_BFD_v1,
 	];
 	
 	[Benchmark(Baseline = true)]

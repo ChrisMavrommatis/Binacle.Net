@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Runtime.InteropServices;
+using BenchmarkDotNet.Attributes;
 using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.Lib.Packing.Models;
@@ -35,7 +36,7 @@ public class Packing_FFD_MultipleBins
 	public Dictionary<string, PackingResult> ForeachLoop()
 	{
 		var algorithmFactory = this.algorithmFactories[this.AlgorithmVersion];
-		var results = new Dictionary<string, PackingResult>();
+		var results = new Dictionary<string, PackingResult>(this.bins.Count);
 		
 		foreach(var bin in this.bins)
 		{
@@ -53,10 +54,54 @@ public class Packing_FFD_MultipleBins
 	}
 	
 	[Benchmark]
+	public Dictionary<string, PackingResult> ForLoop()
+	{
+		var algorithmFactory = this.algorithmFactories[this.AlgorithmVersion];
+		var results = new Dictionary<string, PackingResult>(this.bins.Count);
+
+		for (int i = 0; i < this.bins.Count; i++)
+		{
+			var bin = this.bins[i];
+			var algorithmInstance = algorithmFactory(bin, this.items);
+			var result = algorithmInstance.Execute(new PackingParameters()
+			{
+				OptInToEarlyFails = false,
+				NeverReportUnpackedItems = false,
+				ReportPackedItemsOnlyWhenFullyPacked = false
+			});
+			results[bin.ID] = result;
+		}
+		return results;
+	}
+	
+	[Benchmark]
+	public Dictionary<string, PackingResult> SpanForLoop()
+	{
+		var algorithmFactory = this.algorithmFactories[this.AlgorithmVersion];
+		var results = new Dictionary<string, PackingResult>(this.bins.Count);
+
+		var binsSpan = CollectionsMarshal.AsSpan(this.bins);
+
+		for (int i = 0; i < binsSpan.Length; i++)
+		{
+			var bin = binsSpan[i];
+			var algorithmInstance = algorithmFactory(bin, this.items);
+			var result = algorithmInstance.Execute(new PackingParameters()
+			{
+				OptInToEarlyFails = false,
+				NeverReportUnpackedItems = false,
+				ReportPackedItemsOnlyWhenFullyPacked = false
+			});
+			results[bin.ID] = result;
+		}
+		return results;
+	}
+	
+	[Benchmark]
 	public Dictionary<string, PackingResult> ParallelFor()
 	{
 		var algorithmFactory = this.algorithmFactories[this.AlgorithmVersion];
-		var results = new Dictionary<string, PackingResult>();
+		var results = new Dictionary<string, PackingResult>(this.bins.Count);
 		
 		Parallel.For(0, this.bins.Count, index =>
 		{

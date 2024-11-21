@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.TestsKernel.Models;
@@ -35,7 +36,7 @@ public class Fitting_FFD_MultipleBins
 	public Dictionary<string, FittingResult> ForeachLoop()
 	{
 		var algorithmFactory = this.algorithmFactories[this.AlgorithmVersion];
-		var results = new Dictionary<string, FittingResult>();
+		var results = new Dictionary<string, FittingResult>(this.bins.Count);
 		
 		foreach(var bin in this.bins)
 		{
@@ -47,7 +48,7 @@ public class Fitting_FFD_MultipleBins
 			});
 			results[bin.ID] = result;
 		}
-		
+		 
 		return results;
 	}
 	
@@ -55,7 +56,7 @@ public class Fitting_FFD_MultipleBins
 	public Dictionary<string, FittingResult> ParallelFor()
 	{
 		var algorithmFactory = this.algorithmFactories[this.AlgorithmVersion];
-		var results = new Dictionary<string, FittingResult>();
+		var results = new Dictionary<string, FittingResult>(this.bins.Count);
 		
 		Parallel.For(0, this.bins.Count, index =>
 		{

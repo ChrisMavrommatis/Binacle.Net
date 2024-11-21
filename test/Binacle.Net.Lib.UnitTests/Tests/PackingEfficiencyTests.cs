@@ -26,13 +26,13 @@ public class PackingEfficiencyTests : IClassFixture<CommonTestingFixture>
 
 	[Theory]
 	[ClassData(typeof(ORLibraryScenarioTestDataProvider))]
-	public void OR_Library_Packing_WFD_v2(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
+	public void OR_Library_Packing_WFD_v1(Scenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_WFD_v1, scenario);
 
 	[Theory]
 	[ClassData(typeof(ORLibraryScenarioTestDataProvider))]
-	public void OR_Library_Packing_WFD_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_WFD_v1, scenario);
+	public void OR_Library_Packing_BFD_v1(Scenario scenario)
+		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_BFD_v1, scenario);
 
 
 	private void RunPackingScenarioTest<TAlgorithm>(

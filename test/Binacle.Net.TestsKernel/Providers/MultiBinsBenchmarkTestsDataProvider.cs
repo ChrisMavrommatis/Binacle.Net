@@ -8,16 +8,83 @@ public class MultiBinsBenchmarkTestsDataProvider : IEnumerable<object[]>
 	private static readonly MultiBinsBenchmarkTestCase TestCase = new MultiBinsBenchmarkTestCase()
 		.Add("Rectangular-Cuboids::Small", "BinaryDecision::DoesNotFit")
 		.Add("Rectangular-Cuboids::Medium", "BinaryDecision::Fits")
-		.Add("Rectangular-Cuboids::Large", "BinaryDecision::Fits");
+		.Add("Rectangular-Cuboids::Large", "BinaryDecision::Fits")
+		
+		.Add("Raw::60x40x10", "BinaryDecision::DoesNotFit")
+		.Add("Raw::60x10x40", "BinaryDecision::DoesNotFit")
+		.Add("Raw::40x60x10", "BinaryDecision::DoesNotFit")
+		.Add("Raw::40x10x60", "BinaryDecision::DoesNotFit")
+		.Add("Raw::10x40x60", "BinaryDecision::DoesNotFit")
+		.Add("Raw::10x60x40", "BinaryDecision::DoesNotFit")
+		
+		.Add("Raw::60x40x11", "BinaryDecision::DoesNotFit")
+		.Add("Raw::60x11x40", "BinaryDecision::DoesNotFit")
+		.Add("Raw::40x60x11", "BinaryDecision::DoesNotFit")
+		.Add("Raw::40x11x60", "BinaryDecision::DoesNotFit")
+		.Add("Raw::11x40x60", "BinaryDecision::DoesNotFit")
+		.Add("Raw::11x60x40", "BinaryDecision::DoesNotFit")
+		
+		.Add("Raw::60x40x12", "BinaryDecision::DoesNotFit")
+		.Add("Raw::60x12x40", "BinaryDecision::DoesNotFit")
+		.Add("Raw::40x60x12", "BinaryDecision::DoesNotFit")
+		.Add("Raw::40x12x60", "BinaryDecision::DoesNotFit")
+		.Add("Raw::12x40x60", "BinaryDecision::DoesNotFit")
+		.Add("Raw::12x60x40", "BinaryDecision::DoesNotFit")
+		
+		.Add("Raw::60x40x20", "BinaryDecision::Fits")
+		.Add("Raw::60x20x40", "BinaryDecision::Fits")
+		.Add("Raw::40x60x20", "BinaryDecision::Fits")
+		.Add("Raw::40x20x60", "BinaryDecision::Fits")
+		.Add("Raw::20x40x60", "BinaryDecision::Fits")
+		.Add("Raw::20x60x40", "BinaryDecision::Fits")
+		
+		.Add("Raw::60x40x21", "BinaryDecision::Fits")
+		.Add("Raw::60x21x40", "BinaryDecision::Fits")
+		.Add("Raw::40x60x21", "BinaryDecision::Fits")
+		.Add("Raw::40x21x60", "BinaryDecision::Fits")
+		.Add("Raw::21x40x60", "BinaryDecision::Fits")
+		.Add("Raw::21x60x40", "BinaryDecision::Fits")
+		
+		.Add("Raw::60x40x22", "BinaryDecision::Fits")
+        .Add("Raw::60x22x40", "BinaryDecision::Fits")
+        .Add("Raw::40x60x22", "BinaryDecision::Fits")
+        .Add("Raw::40x22x60", "BinaryDecision::Fits")
+        .Add("Raw::22x40x60", "BinaryDecision::Fits")
+        .Add("Raw::22x60x40", "BinaryDecision::Fits")
+		
+		.Add("Raw::60x40x30", "BinaryDecision::Fits")
+		.Add("Raw::60x30x40", "BinaryDecision::Fits")
+		.Add("Raw::40x60x30", "BinaryDecision::Fits")
+		.Add("Raw::40x30x60", "BinaryDecision::Fits")
+		.Add("Raw::30x40x60", "BinaryDecision::Fits")
+		.Add("Raw::30x60x40", "BinaryDecision::Fits")
+		
+		.Add("Raw::60x40x31", "BinaryDecision::Fits")
+		.Add("Raw::60x31x40", "BinaryDecision::Fits")
+		.Add("Raw::40x60x31", "BinaryDecision::Fits")
+		.Add("Raw::40x31x60", "BinaryDecision::Fits")
+		.Add("Raw::31x40x60", "BinaryDecision::Fits")
+		.Add("Raw::31x60x40", "BinaryDecision::Fits")
+		
+		.Add("Raw::60x40x32", "BinaryDecision::Fits")
+		.Add("Raw::60x32x40", "BinaryDecision::Fits")
+		.Add("Raw::40x60x32", "BinaryDecision::Fits")
+		.Add("Raw::40x32x60", "BinaryDecision::Fits")
+		.Add("Raw::32x40x60", "BinaryDecision::Fits")
+		.Add("Raw::32x60x40", "BinaryDecision::Fits")
+		;
 
 	private static readonly ItemsCollection ItemsHolder = new ItemsCollection()
-		.Add("10x10x40-2")
+		.Add("10x10x40-4")
 		.Add("10x10x10-4")
 		.Add("5x5x5-4")
-		.Add("5x10x10-3")
-		.Add("10x7x5-2");
+		.Add("5x10x10-7")
+		.Add("10x7x5-5")
+		.Add("4x12x9-5")
+		.Add("2x11x2-15")
+		.Add("7x2x7-10")
+		.Add("6x4x2-4");
 		
-
 	private readonly Scenario[] scenarios = TestCase.GetScenarios(ItemsHolder).ToArray();
 	public List<TestBin> GetBins(BinCollectionsTestDataProvider binCollectionsDataProvider)
 	{
