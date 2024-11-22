@@ -1,9 +1,12 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using Binacle.Net.Lib.Benchmarks.Order;
 using Binacle.Net.Lib.Packing.Models;
 
 namespace Binacle.Net.Lib.Benchmarks.Scaling;
 
+// [SimpleJob(RuntimeMoniker.Net80, baseline: true)]
+// [SimpleJob(RuntimeMoniker.Net90)]
 [MemoryDiagnoser]
 public class Packing_FFD : SingleScenarioScalingBase
 {
