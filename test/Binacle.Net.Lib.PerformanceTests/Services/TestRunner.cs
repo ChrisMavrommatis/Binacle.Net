@@ -21,26 +21,20 @@ internal class TestRunner
 	public async Task RunAsync()
 	{
 		var tests = this.serviceProvider.GetServices<ITest>();
-		var tasks = new List<Task<List<TestSummaryAction>>>();
+		var tasks = new TaskList<TestResultList>();
 
 		foreach (var test in tests)
 		{
 			tasks.Add(Task.Run(() => test.Run()));
-
 		}
-		var testSummaries = await Task.WhenAll(tasks);
+		var testResultLists = await Task.WhenAll(tasks);
 
-		this.logger.LogInformation("=========================================================");
-		foreach (var summaries in testSummaries)
+		foreach (var testResultList in testResultLists)
 		{
-			foreach (var summary in summaries)
+			foreach (var testResult in testResultList)
 			{
-				this.logger.LogInformation("=========================================================");
-				this.logger.LogInformation(summary.Name);
-				this.logger.LogInformation("---------------------------------------------------------");
-
-				summary.Action();
-				this.logger.LogInformation("=========================================================");
+				var text = testResult.ConsolePrint();
+				this.logger.LogInformation(text);
 			}
 		}
 	}

@@ -4,5 +4,5 @@ namespace Binacle.Net.Lib.PerformanceTests.Services;
 
 internal interface ITest
 {
-	List<TestSummaryAction> Run();
+	TestResultList Run();
 }
