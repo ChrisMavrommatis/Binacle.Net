@@ -39,7 +39,7 @@ internal class Program
 		builder.Services.AddSingleton<ScalingBenchmarkTestsDataProvider>();
 		builder.Services.AddTransient<TestRunner>();
 		builder.Services.AddTransient<ITest, PackingEfficiency>();
-		// builder.Services.AddTransient<ITest, PackingTime>();
+		builder.Services.AddTransient<ITest, PackingTime>();
 		builder.Services.AddTransient<ITest, PackingEfficiencyComparison>();
 
 		IHost host = builder.Build();
