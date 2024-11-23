@@ -25,6 +25,7 @@ obj/
 # Project Specific
 logs/
 BenchmarkDotNet.Artifacts
+PerformanceTestsArtifacts
 
 
 ## Copied from UI Module

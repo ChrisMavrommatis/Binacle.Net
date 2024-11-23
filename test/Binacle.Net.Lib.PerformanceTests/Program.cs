@@ -34,11 +34,13 @@ internal class Program
 		});
 		builder.Services.AddSingleton<ORLibraryScenarioTestDataProvider>();
 		builder.Services.AddSingleton<AlgorithmFamiliesCollection>();
+		builder.Services.AddSingleton<MarkdownFileWriter>();
+		builder.Services.AddSingleton<DistinctAlgorithmCollection>();
 		builder.Services.AddSingleton<ScalingBenchmarkTestsDataProvider>();
 		builder.Services.AddTransient<TestRunner>();
 		builder.Services.AddTransient<ITest, PackingEfficiency>();
-		builder.Services.AddTransient<ITest, PackingTime>();
-		// builder.Services.AddTransient<ITest, PackingEfficiencyBaselineComparisonTest>();
+		// builder.Services.AddTransient<ITest, PackingTime>();
+		builder.Services.AddTransient<ITest, PackingEfficiencyComparison>();
 
 		IHost host = builder.Build();
 

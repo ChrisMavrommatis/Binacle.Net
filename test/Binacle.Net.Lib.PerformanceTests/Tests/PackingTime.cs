@@ -67,7 +67,12 @@ internal class PackingTime : ITest
 			}
 		}
 
-		var results = new TestResultList();
+		var results = new TestResultList()
+		{
+			Title = "Packing Time",
+			Description = "Shows the packing time of each algorithm",
+			Filename = "PackingTime"
+		};
 
 		var packingTimeResults = times.GetMeasurementResults("us");
 		results.Add(new TestResult()

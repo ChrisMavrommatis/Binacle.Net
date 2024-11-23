@@ -67,7 +67,12 @@ internal class PackingEfficiency : ITest
 			}
 		}
 		
-		var results = new TestResultList();
+		var results = new TestResultList()
+		{
+			Title = "Packing Efficiency",
+			Description = "Shows the packing efficiency of each algorithm",
+			Filename = "PackingEfficiency"
+		};
 
 		var packingEfficiencyResults = packingPercentages.GetMeasurementResults("%");
 		results.Add(new TestResult()

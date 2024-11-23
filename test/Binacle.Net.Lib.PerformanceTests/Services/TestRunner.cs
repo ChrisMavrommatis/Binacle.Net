@@ -7,14 +7,17 @@ namespace Binacle.Net.Lib.PerformanceTests.Services;
 internal class TestRunner
 {
 	private readonly IServiceProvider serviceProvider;
+	private readonly MarkdownFileWriter markdownFileWriter;
 	private readonly ILogger<TestRunner> logger;
 
 	public TestRunner(
 		IServiceProvider serviceProvider,
+		MarkdownFileWriter markdownFileWriter,
 		ILogger<TestRunner> logger
 		)
 	{
 		this.serviceProvider = serviceProvider;
+		this.markdownFileWriter = markdownFileWriter;
 		this.logger = logger;
 	}
 
@@ -36,6 +39,8 @@ internal class TestRunner
 				var text = testResult.ConsolePrint();
 				this.logger.LogInformation(text);
 			}
+			
+			await this.markdownFileWriter.WriteAsync(testResultList);
 		}
 	}
 }

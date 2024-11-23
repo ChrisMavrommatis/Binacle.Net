@@ -27,8 +27,20 @@ internal class TestResult
 		sb.AppendLine(string.Empty);
 		return sb.ToString();
 	}
-}
+	
+	public string MarkdownPrint()
+	{
+		var sb = new StringBuilder();
+		sb.AppendLine($"## {this.Title}");
+		if (!string.IsNullOrEmpty(this.Description))
+		{
+			sb.AppendLine(this.Description);
+		}
+		sb.AppendLine(string.Empty);
 
-internal class TestResultList : List<TestResult>
-{
+		var result = this.Result.MarkdownPrint();
+		sb.Append(result);
+		sb.AppendLine(string.Empty);
+		return sb.ToString();
+	}
 }

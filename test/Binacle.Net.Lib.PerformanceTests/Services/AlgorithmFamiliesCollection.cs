@@ -22,4 +22,3 @@ internal class AlgorithmFamiliesCollection : Dictionary<string, Dictionary<strin
 		});
 	}
 }
-
