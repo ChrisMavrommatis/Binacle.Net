@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -20,7 +20,5 @@
     <ProjectReference Include="..\..\src\Binacle.Net.Lib\Binacle.Net.Lib.csproj" />
     <ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj" />
   </ItemGroup>
-
-  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="https://json.schemastore.org/lsdlschema.json" /></VisualStudio></ProjectExtensions>
 
 </Project>

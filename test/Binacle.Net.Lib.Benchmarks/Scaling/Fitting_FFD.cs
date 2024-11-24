@@ -4,8 +4,6 @@ using Binacle.Net.Lib.Fitting.Models;
 
 namespace Binacle.Net.Lib.Benchmarks.Scaling;
 
-// [SimpleJob(RuntimeMoniker.Net80, baseline: true)]
-// [SimpleJob(RuntimeMoniker.Net90)]
 [MemoryDiagnoser]
 public class Fitting_FFD : SingleScenarioScalingBase
 {
