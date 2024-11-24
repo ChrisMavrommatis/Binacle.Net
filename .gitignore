@@ -26,7 +26,7 @@ obj/
 logs/
 BenchmarkDotNet.Artifacts
 PerformanceTestsArtifacts
-Build/Output
+Output
 
 ## Copied from UI Module
 src/Binacle.Net.Api/wwwroot/ 
