@@ -19,17 +19,17 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: ${{ vars.DONET_VERSION }}
     - name: Restore dependencies
       run: dotnet restore --runtime linux-x64
     - name: Publish
-      run: dotnet publish ${{ vars.API_PROJECT_PATH }} -c Release -o Build/Output --no-restore --self-contained --runtime linux-x64
+      run: dotnet publish ${{ vars.API_PROJECT_PATH }} -c Release -o ${{ vars.BUILD_OUTPUT }} --no-restore --self-contained --runtime linux-x64
     - name: Extract Docker metadata
       id: meta
       uses: docker/metadata-action@v5
       with:
         images: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPO }}
+          ${{ vars.DOCKERHUB_ORGNAME }}/${{ vars.DOCKERHUB_REPO }}
         tags: |
           type=semver,pattern={{version}}
     - name: Login to Docker Hub
@@ -43,7 +43,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./Dockerfile
+        file: ${{ vars.BUILD_DOCKERFILE }}
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
