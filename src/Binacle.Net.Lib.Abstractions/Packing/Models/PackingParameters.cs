@@ -2,7 +2,7 @@
 
 public class PackingParameters
 {
-	public bool OptInToEarlyFails { get; set; }
-	public bool ReportPackedItemsOnlyWhenFullyPacked { get; set; }
-	public bool NeverReportUnpackedItems { get; set; }
+	public required bool OptInToEarlyFails { get; init; }
+	public required bool ReportPackedItemsOnlyWhenFullyPacked { get; init; }
+	public required bool NeverReportUnpackedItems { get; init; }
 }

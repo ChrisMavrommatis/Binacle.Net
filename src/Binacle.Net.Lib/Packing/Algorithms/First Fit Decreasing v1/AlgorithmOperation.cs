@@ -55,13 +55,13 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem>
 
 	private SpaceVolume? FindAvailableSpace(Item orientation, List<SpaceVolume> availableSpace)
 	{
-		foreach (var space in availableSpace)
-		{
-			if (space.Dimensions.Length >= orientation.Length && space.Dimensions.Width >= orientation.Width && space.Dimensions.Height >= orientation.Height)
-				return space;
-		}
-
-		return null;
+		return availableSpace
+			.FirstOrDefault(space => 
+				space.Dimensions.Length >= orientation.Length && 
+				space.Dimensions.Width >= orientation.Width && 
+				space.Dimensions.Height >= orientation.Height
+			);
+		
 	}
 
 	private void Pack(Item item, SpaceVolume spaceQuadrant, List<SpaceVolume> availableSpace)

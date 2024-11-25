@@ -2,6 +2,6 @@
 
 public class FittingParameters
 {
-	public bool ReportFittedItems { get; set; }
-	public bool ReportUnfittedItems { get; set; }
+	public required bool ReportFittedItems { get; init; }
+	public required bool ReportUnfittedItems { get; init; }
 }

@@ -89,7 +89,7 @@ internal class LockerService : ILockerService
 
 		var results = new Dictionary<string, Lib.Packing.Models.PackingResult>();
 
-		foreach (var bin in bins)
+		foreach (var bin in bins.OrderBy(x => x.CalculateVolume()))
 		{
 			var algorithmInstance = this.algorithmFactory.CreatePacking(Lib.Algorithm.FirstFitDecreasing, bin, items);
 			var result = algorithmInstance.Execute(new Lib.Packing.Models.PackingParameters 

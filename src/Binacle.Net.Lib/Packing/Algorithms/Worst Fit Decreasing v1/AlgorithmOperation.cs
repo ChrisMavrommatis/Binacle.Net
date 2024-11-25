@@ -36,7 +36,7 @@ internal partial class WorstFitDecreasing_v1<TBin, TItem>
 		{
 			for (var i = 0; i < Item.TotalOrientations; i++)
 			{
-				var availableSpaceQuadrant = this.FindAvailableSpace(item, availableSpace);
+				var availableSpaceQuadrant = this.FindWorstAvailableSpace(item, availableSpace);
 				if (availableSpaceQuadrant is not null)
 				{
 					this.Pack(item, availableSpaceQuadrant, availableSpace);
@@ -53,15 +53,15 @@ internal partial class WorstFitDecreasing_v1<TBin, TItem>
 			.Build(parameters);
 	}
 
-	private SpaceVolume? FindAvailableSpace(Item orientation, List<SpaceVolume> availableSpace)
+	private SpaceVolume? FindWorstAvailableSpace(Item orientation, List<SpaceVolume> availableSpace)
 	{
-		foreach (var space in availableSpace.OrderByDescending(x => x.Volume))
-		{
-			if (space.Dimensions.Length >= orientation.Length && space.Dimensions.Width >= orientation.Width && space.Dimensions.Height >= orientation.Height)
-				return space;
-		}
-
-		return null;
+		return availableSpace
+			.OrderByDescending(x => x.Volume)
+			.FirstOrDefault(space => 
+				space.Dimensions.Length >= orientation.Length && 
+				space.Dimensions.Width >= orientation.Width && 
+				space.Dimensions.Height >= orientation.Height
+			);
 	}
 
 	private void Pack(Item item, SpaceVolume spaceQuadrant, List<SpaceVolume> availableSpace)
