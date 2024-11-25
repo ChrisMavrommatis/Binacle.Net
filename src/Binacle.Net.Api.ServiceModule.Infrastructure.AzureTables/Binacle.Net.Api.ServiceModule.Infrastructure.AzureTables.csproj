@@ -12,7 +12,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Azure.Data.Tables" Version="12.9.1" />
-		<PackageReference Include="ChrisMavrommatis.Results" Version="3.0.0" />
+		<PackageReference Include="ChrisMavrommatis.Results" Version="2.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="9.0.0" />
 	</ItemGroup>
 

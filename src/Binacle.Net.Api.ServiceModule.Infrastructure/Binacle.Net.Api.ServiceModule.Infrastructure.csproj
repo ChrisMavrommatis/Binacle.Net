@@ -11,7 +11,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.1" />
+	  <PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.2" />
 	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.8.0" />
 	</ItemGroup>
 
