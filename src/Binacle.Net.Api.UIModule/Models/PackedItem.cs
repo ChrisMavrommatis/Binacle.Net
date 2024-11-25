@@ -4,6 +4,12 @@ namespace Binacle.Net.Api.UIModule.Models;
 
 internal class PackedItem : IWithID
 {
+	// Json Deserialize
+	public PackedItem()
+	{
+		this.ID = string.Empty;
+	}
+	
 	public PackedItem(string id, int length, int width, int height, int x, int y, int z)
 	{
 		this.ID = id;
