@@ -1,6 +1,6 @@
 services:
   binacle-net:
-    image: chrismavrommatis/binacle-net:lastest
+    image: binacle/binacle-net:lastest
     depends_on:
       azurite:
         condition: service_started

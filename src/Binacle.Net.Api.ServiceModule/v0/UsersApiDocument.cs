@@ -22,19 +22,18 @@ internal static class UsersApiDocument
 		}
 	};
 
-	private const string __description__ = """
+	private const string __description__ = $"""
 		**Binacle.Net Users API for User Management**
 		
 		This section is designed only for when Binacle.Net is used as public service. <br>
 		User Management is done only by a user of Admin Group.
 		
-		[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)
+		[View on Github]({Binacle.Net.Api.Metadata.GitHub})
 
-		[🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/chrismavrommatis/binacle-net)
+		[🐳 Binacle.Net on Dockerhub]({Binacle.Net.Api.Metadata.Dockerhub})
 
-		[Get Postman collection](https://www.postman.com/chrismavrommatis/workspace/binacle-net)
+		[Get Postman collection]({Binacle.Net.Api.Metadata.Postman})
 
 		""";
-
 }
 

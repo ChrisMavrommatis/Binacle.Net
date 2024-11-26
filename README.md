@@ -15,7 +15,7 @@ Or
 To get started quickly, use Docker to run Binacle.NET:
 
 ```bash
-docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True chrismavrommatis/binacle-net:latest
+docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True binacle/binacle-net:latest
 ```
 After that, visit the Swagger UI (http://localhost:8080/swagger/) to interact with the API.
 
@@ -46,7 +46,7 @@ Customize Binacle.NET to suit your environment. Explore the following configurat
 This wiki will guide you through every aspect of using and integrating Binacle.NET. Whether you're looking for a quick deployment or deep customization, all the resources you need are here!
 
 ## 🔗 Links
-- [🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/chrismavrommatis/binacle-net)
+- [🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/binacle/binacle-net)
 - [Postman Collection](https://www.postman.com/chrismavrommatis/workspace/binacle-net/)
 
   

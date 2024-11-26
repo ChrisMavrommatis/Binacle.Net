@@ -17,9 +17,9 @@ internal class Dimensions : IWithDimensions
 
 	public Dimensions(int length, int width, int height)
 	{
-		Length = length;
-		Width = width;
-		Height = height;
+		this.Length = length;
+		this.Width = width;
+		this.Height = height;
 	}
 
 	public int Length { get; set; }

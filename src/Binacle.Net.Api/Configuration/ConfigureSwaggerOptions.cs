@@ -1,4 +1,5 @@
-﻿using Asp.Versioning.ApiExplorer;
+﻿using System.Text;
+using Asp.Versioning.ApiExplorer;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.SwaggerExamples;
 using ChrisMavrommatis.Swashbuckle;
@@ -89,21 +90,21 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 		}
 	}
 
-	private const string __description__ = """
-		Binacle.NET is an API created to address the 3D Bin Packing Problem in real time.
-		
-		{{status}}
-
-		{{deprecated}}
-
-
-		[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)
-
-		[🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/chrismavrommatis/binacle-net)
-
-		[Get Postman collection](https://www.postman.com/chrismavrommatis/workspace/binacle-net)
-
-		""";
+	private static string __description__ = new StringBuilder()
+		.AppendLine(Binacle.Net.Api.Metadata.Description)
+		.AppendLine()
+		.AppendLine("{{status}}")
+		.AppendLine()
+		.AppendLine("{{deprecated}}")
+		.AppendLine()
+		.AppendLine($"[View on Github]({Binacle.Net.Api.Metadata.GitHub})")
+		.AppendLine()
+		.AppendLine($"[🐳 Binacle.Net on Dockerhub]({Binacle.Net.Api.Metadata.Dockerhub})")
+		.AppendLine()
+		.AppendLine($"[Get Postman collection]({Binacle.Net.Api.Metadata.Postman})")
+		.AppendLine()
+		.ToString();
+	
 
 	private const string __experimentalMessage__ = """
 

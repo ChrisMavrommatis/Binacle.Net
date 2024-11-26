@@ -1,6 +1,6 @@
 services:
   binacle-net:
-    image: chrismavrommatis/binacle-net:latest
+    image: binacle/binacle-net:latest
     ports:
       - "8080:8080"
     volumes:
