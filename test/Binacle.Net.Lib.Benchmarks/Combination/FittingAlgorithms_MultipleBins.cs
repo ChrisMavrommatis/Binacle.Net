@@ -7,16 +7,16 @@ using Binacle.Net.TestsKernel.Models;
 namespace Binacle.Net.Lib.Benchmarks.Combination;
 
 [MemoryDiagnoser]
-public class Fitting_FFD_MultipleBins : MultipleBinsBenchmarkBase
+public class FittingAlgorithms_MultipleBins : MultipleBinsBenchmarkBase
 {
-	[Params("FFD v1", "FFD v2", "FFD v3")]
+	[Params("FFD v1", "WFD v1", "BFD v1")]
 	public string AlgorithmVersion { get; set; }
 
 	private readonly Dictionary<string, AlgorithmFactory<IFittingAlgorithm>> algorithmFactories = new()
 	{
 		{ "FFD v1", AlgorithmFactories.Fitting_FFD_v1 },
-		{ "FFD v2", AlgorithmFactories.Fitting_FFD_v2 },
-		{ "FFD v3", AlgorithmFactories.Fitting_FFD_v3 },
+		{ "WFD v1", AlgorithmFactories.Fitting_WFD_v1 },
+		{ "BFD v1", AlgorithmFactories.Fitting_BFD_v1 }
 	};
 
 	[Benchmark(Baseline = true)]

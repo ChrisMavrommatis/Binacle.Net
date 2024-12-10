@@ -21,11 +21,18 @@
 			"dotnetRunMessages": true,
 			"commandLineArgs": "--filter *Scaling.PackingComparison*"
 		},
+
+		"Scaling_FittingMultiAlgorithm": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"commandLineArgs": "--filter *Scaling.FittingMultiAlgorithm*"
+		},
 		"Scaling_PackingMultiAlgorithm": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"commandLineArgs": "--filter *Scaling.PackingMultiAlgorithm*"
 		},
+		
 		"Combination_Fitting_FFD_MultipleBins": {
 			"commandName": "Project",
 			"dotnetRunMessages": true,
@@ -35,6 +42,17 @@
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"commandLineArgs": "--filter *Combination.Packing_FFD_MultipleBins*"
+		},
+
+		"Combination_FittingAlgorithms_MultipleBins": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"commandLineArgs": "--filter *Combination.FittingAlgorithms_MultipleBins*"
+		},
+		"Combination_PackingAlgorithms_MultipleBins": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"commandLineArgs": "--filter *Combination.PackingAlgorithms_MultipleBins*"
 		}
 	}
 }

@@ -66,6 +66,38 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 	[ClassData(typeof(ComplexScenarioTestDataProvider))]
 	public void Fitting_FFD_Complex_v3(Scenario scenario)
 		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v3, scenario);
+	
+	// Fitting WFD V1
+	[Theory]
+	[ClassData(typeof(BaselineScenarioTestDataProvider))]
+	public void Fitting_WFD_Baseline_v1(Scenario scenario)
+		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_WFD_v1, scenario);
+
+	[Theory]
+	[ClassData(typeof(SimpleScenarioTestDataProvider))]
+	public void Fitting_WFD_Simple_v1(Scenario scenario)
+		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_WFD_v1, scenario);
+
+	[Theory]
+	[ClassData(typeof(ComplexScenarioTestDataProvider))]
+	public void Fitting_WFD_Complex_v1(Scenario scenario)
+		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_WFD_v1, scenario);
+	
+	// Fitting BFD V1
+	[Theory]
+	[ClassData(typeof(BaselineScenarioTestDataProvider))]
+	public void Fitting_BFD_Baseline_v1(Scenario scenario)
+		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_BFD_v1, scenario);
+
+	[Theory]
+	[ClassData(typeof(SimpleScenarioTestDataProvider))]
+	public void Fitting_BFD_Simple_v1(Scenario scenario)
+		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_BFD_v1, scenario);
+
+	[Theory]
+	[ClassData(typeof(ComplexScenarioTestDataProvider))]
+	public void Fitting_BFD_Complex_v1(Scenario scenario)
+		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_BFD_v1, scenario);
 
 
 	private void RunFittingScenarioTest<TAlgorithm>(

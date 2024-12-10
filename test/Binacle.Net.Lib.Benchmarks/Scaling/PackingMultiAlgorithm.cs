@@ -6,6 +6,7 @@ using Binacle.Net.TestsKernel.Models;
 namespace Binacle.Net.Lib.Benchmarks.Scaling;
 
 
+
 [MemoryDiagnoser]
 public class PackingMultiAlgorithm : SingleScenarioScalingBase
 {

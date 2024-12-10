@@ -1,23 +1,23 @@
 ﻿using System.Runtime.InteropServices;
 using BenchmarkDotNet.Attributes;
 using Binacle.Net.Lib.Abstractions.Algorithms;
-using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.Lib.Packing.Models;
 using Binacle.Net.TestsKernel.Models;
 
 namespace Binacle.Net.Lib.Benchmarks.Combination;
 
 [MemoryDiagnoser]
-public class Packing_FFD_MultipleBins : MultipleBinsBenchmarkBase
+public class PackingAlgorithms_MultipleBins : MultipleBinsBenchmarkBase
 {
-
-	[Params("FFD v1", "FFD v2")]
+	
+	[Params("FFD v1", "WFD v1", "BFD v1")]
 	public string AlgorithmVersion { get; set; }
 
 	private readonly Dictionary<string, AlgorithmFactory<IPackingAlgorithm>> algorithmFactories = new()
 	{
 		{ "FFD v1", AlgorithmFactories.Packing_FFD_v1 },
-		{ "FFD v2", AlgorithmFactories.Packing_FFD_v2 }
+		{ "WFD v1", AlgorithmFactories.Packing_WFD_v1 },
+		{ "BFD v1", AlgorithmFactories.Packing_BFD_v1 }
 	};
 
 	[Benchmark(Baseline = true)]

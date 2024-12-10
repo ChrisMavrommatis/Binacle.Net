@@ -28,11 +28,20 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 	public void Fitting_FFD_v2(ScalingBenchmarkScenario scenario)
 		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v2, scenario);
 
-
 	[Theory]
 	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
 	public void Fitting_FFD_v3(ScalingBenchmarkScenario scenario)
 		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v3, scenario);
+	
+	[Theory]
+	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
+	public void Fitting_WFD_v1(ScalingBenchmarkScenario scenario)
+		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_WFD_v1, scenario);
+	
+	[Theory]
+	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
+	public void Fitting_BFD_v1(ScalingBenchmarkScenario scenario)
+		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_BFD_v1, scenario);
 
 	private void RunFittingScenarioTest(
 		AlgorithmFactory<IFittingAlgorithm> algorithmFactory,

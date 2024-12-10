@@ -34,6 +34,16 @@ public class MultiBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 	public void Fitting_FFD_v3(Scenario scenario)
 		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v3, scenario);
 
+	[Theory]
+	[ClassData(typeof(MultiBinsBenchmarkTestsDataProvider))]
+	public void Fitting_WFD_v1(Scenario scenario)
+		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_WFD_v1, scenario);
+
+	[Theory]
+	[ClassData(typeof(MultiBinsBenchmarkTestsDataProvider))]
+	public void Fitting_BFD_v1(Scenario scenario)
+		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_BFD_v1, scenario);
+
 	private void RunFittingScenarioTest<TAlgorithm>(
 		AlgorithmFactory<TAlgorithm> algorithmFactory,
 		Scenario scenario
