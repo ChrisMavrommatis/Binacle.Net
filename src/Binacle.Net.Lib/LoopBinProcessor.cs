@@ -34,28 +34,6 @@ internal class LoopBinProcessor
 		return results;
 	}
 	
-	public Dictionary<string, FittingResult> ProcessFitting_InParallel<TBin, TItem>(
-		Algorithm algorithm,
-		IList<TBin> bins, 
-		IList<TItem> items, 
-		FittingParameters parameters
-	)
-		where TBin : class, IWithID, IWithReadOnlyDimensions
-		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
-	{
-		var results = new Dictionary<string, FittingResult>(bins.Count);
-
-		Parallel.ForEach(bins, bin =>
-		{
-			var algorithmInstance = this.algorithmFactory.CreateFitting(algorithm, bin, items);
-			var result = algorithmInstance.Execute(parameters);
-			results.Add(bin.ID, result);
-		});
-
-
-		return results;
-	}
-
 	public Dictionary<string, PackingResult> ProcessPacking<TBin, TItem>(
 		Algorithm algorithm,
 		IList<TBin> bins, 
@@ -76,27 +54,4 @@ internal class LoopBinProcessor
 
 		return results;
 	}
-	
-		
-	public Dictionary<string, PackingResult> ProcessPacking_InParallel<TBin, TItem>(
-		Algorithm algorithm,
-		IList<TBin> bins, 
-		IList<TItem> items, 
-		PackingParameters parameters
-	)
-		where TBin : class, IWithID, IWithReadOnlyDimensions
-		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
-	{
-		var results = new Dictionary<string, PackingResult>(bins.Count);
-
-		Parallel.ForEach(bins, bin =>
-		{
-			var algorithmInstance = this.algorithmFactory.CreatePacking(algorithm, bin, items);
-			var result = algorithmInstance.Execute(parameters);
-			results.Add(bin.ID, result);
-		});
-
-		return results;
-	}
-	
 }

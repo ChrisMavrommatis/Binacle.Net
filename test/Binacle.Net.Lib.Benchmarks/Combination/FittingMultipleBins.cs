@@ -56,7 +56,7 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 	[Benchmark]
 	public Dictionary<string, FittingResult> FFD_Parallel()
 	{
-		var results = this.loopProcessor.ProcessFitting(Algorithm.FirstFitDecreasing, this.Bins, this.Items, new FittingParameters
+		var results = this.parallelProcessor.ProcessFitting(Algorithm.FirstFitDecreasing, this.Bins, this.Items, new FittingParameters
 		{
 			ReportFittedItems = false,
 			ReportUnfittedItems = false
@@ -80,7 +80,7 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 	[Benchmark]
 	public Dictionary<string, FittingResult> WFD_Parallel()
 	{
-		var results = this.loopProcessor.ProcessFitting(Algorithm.WorstFitDecreasing, this.Bins, this.Items, new FittingParameters
+		var results = this.parallelProcessor.ProcessFitting(Algorithm.WorstFitDecreasing, this.Bins, this.Items, new FittingParameters
 		{
 			ReportFittedItems = false,
 			ReportUnfittedItems = false
@@ -105,7 +105,7 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 	[Benchmark]
 	public Dictionary<string, FittingResult> BFD_Parallel()
 	{
-		var results = this.loopProcessor.ProcessFitting(Algorithm.BestFitDecreasing, this.Bins, this.Items, new FittingParameters
+		var results = this.parallelProcessor.ProcessFitting(Algorithm.BestFitDecreasing, this.Bins, this.Items, new FittingParameters
 		{
 			ReportFittedItems = false,
 			ReportUnfittedItems = false
@@ -113,10 +113,4 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 		
 		return results;
 	}
-
-	
-	
-
 }
-
-

@@ -30,6 +30,16 @@
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"commandLineArgs": "--filter *Combination.PackingSingleBaseLine*"
+		},
+		"Combination_FittingMultipleBins": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"commandLineArgs": "--filter *Combination.FittingMultipleBins*"
+		},
+		"Combination_PackingMultipleBins": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"commandLineArgs": "--filter *Combination.PackingMultipleBins*"
 		}
 	}
 }

@@ -13,7 +13,7 @@ internal class ParallelBinProcessor
 		this.algorithmFactory = new AlgorithmFactory();
 	}
 	
-	public Dictionary<string, FittingResult> ProcessFitting_<TBin, TItem>(
+	public Dictionary<string, FittingResult> ProcessFitting<TBin, TItem>(
 		Algorithm algorithm,
 		IList<TBin> bins, 
 		IList<TItem> items, 
