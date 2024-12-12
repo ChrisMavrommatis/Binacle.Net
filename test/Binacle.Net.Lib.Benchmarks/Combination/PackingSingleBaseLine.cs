@@ -17,9 +17,27 @@ public class PackingSingleBaseLine : MultipleBinsBenchmarkBase
 		this.testBin = this.DataProvider
 			.GetSuccessfulBins(this.BinCollectionsDataProvider)
 			.FirstOrDefault(x => x.ID == "Medium")!;
-		this.Items = this.DataProvider.GetItems();
+		this.Items = new List<TestItem>();
+	}
+	
+	/// 4,12, 24, 44, 58 
+	[Params(1, 3, 5, 7, 9)]
+	public int NoOfVariedItems { get; set; }
+	
+	[GlobalSetup]
+	public void GlobalSetup()
+	{
+		this.Items = this.DataProvider
+			.GetItems()
+			.Take(this.NoOfVariedItems)
+			.ToList();
 	}
 
+	[GlobalCleanup]
+	public void GlobalCleanup()
+	{
+		this.Items = new List<TestItem>();
+	}
 	public List<TestItem> Items { get; set; }
 
 	[Benchmark(Baseline = true)]

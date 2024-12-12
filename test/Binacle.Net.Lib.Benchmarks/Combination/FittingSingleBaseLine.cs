@@ -19,8 +19,27 @@ public class FittingSingleBaseLine : MultipleBinsBenchmarkBase
 			.FirstOrDefault(x => x.ID == "Medium")!;
 		this.Items = this.DataProvider.GetItems();
 	}
-
+	
+	/// 4,12, 24, 44, 58 
+	[Params(1, 3, 5, 7, 9)]
+	public int NoOfVariedItems { get; set; }
 	public List<TestItem> Items { get; set; }
+
+	[GlobalSetup]
+	public void GlobalSetup()
+	{
+		this.Items = this.DataProvider
+			.GetItems()
+			.Take(this.NoOfVariedItems)
+			.ToList();
+	}
+
+	[GlobalCleanup]
+	public void GlobalCleanup()
+	{
+		this.Items = new List<TestItem>();
+	}
+	
 
 	[Benchmark(Baseline = true)]
 	public FittingResult FFD()

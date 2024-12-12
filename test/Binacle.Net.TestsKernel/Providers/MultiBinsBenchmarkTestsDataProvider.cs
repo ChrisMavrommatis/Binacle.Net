@@ -75,15 +75,15 @@ public class MultiBinsBenchmarkTestsDataProvider : IEnumerable<object[]>
 		;
 
 	private static readonly ItemsCollection ItemsHolder = new ItemsCollection()
-		.Add("10x10x40-4") // 4
+		.Add("10x10x40-4") // 4    1
 		.Add("10x10x10-4") // 8
-		.Add("5x5x5-4")    // 12
+		.Add("5x5x5-4")    // 12   3
 		.Add("5x10x10-7")  // 19 
-		.Add("10x7x5-5")   // 24
+		.Add("10x7x5-5")   // 24   5
 		.Add("4x12x9-5")   // 29
-		.Add("2x11x2-15")  // 44
+		.Add("2x11x2-15")  // 44   7
 		.Add("7x2x7-10")   // 54
-		.Add("6x4x2-4");   // 58
+		.Add("6x4x2-4");   // 58   9
 		
 	private readonly Scenario[] allScenarios = TestCase.GetScenarios(ItemsHolder).ToArray();
 	

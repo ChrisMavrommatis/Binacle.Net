@@ -15,12 +15,17 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 		this.loopProcessor = new LoopBinProcessor();
 		this.parallelProcessor = new ParallelBinProcessor();
 		this.Bins = new List<TestBin>();
-		this.Items = this.DataProvider.GetItems();
+		this.Items = new List<TestItem>();
 	}
-
 
 	[Params(2, 8, 14, 20, 26, 32, 38)]
 	public int NoOfBins { get; set; }
+	public List<TestBin> Bins { get; set; }
+	
+	/// 4,12, 24, 44, 58 
+	[Params(1, 3, 5, 7, 9)]
+	public int NoOfVariedItems { get; set; }
+	public List<TestItem> Items { get; set; }
 	
 	[GlobalSetup]
 	public void GlobalSetup()
@@ -29,17 +34,19 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 			.GetSuccessfulBins(this.BinCollectionsDataProvider)
 			.Take(this.NoOfBins)
 			.ToList();
+		
+		this.Items = this.DataProvider
+			.GetItems()
+			.Take(this.NoOfVariedItems)
+			.ToList();
 	}
 
 	[GlobalCleanup]
 	public void GlobalCleanup()
 	{
 		this.Bins = new List<TestBin>();
+		this.Items = new List<TestItem>();
 	}
-	
-	public List<TestBin> Bins { get; set; }
-	public List<TestItem> Items { get; set; }
-
 	
 	[Benchmark(Baseline = true)]
 	public Dictionary<string, FittingResult> FFD_Loop()
