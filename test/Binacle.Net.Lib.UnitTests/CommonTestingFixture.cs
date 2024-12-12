@@ -8,25 +8,14 @@ namespace Binacle.Net.Lib.UnitTests;
 public sealed class CommonTestingFixture : IDisposable
 {
 	public BinCollectionsTestDataProvider BinTestDataProvider { get; }
-	public AlgorithmFactory<IFittingAlgorithm>[] TestedFittingAlgorithms { get; }
-	public AlgorithmFactory<IPackingAlgorithm>[] TestedPackingAlgorithms { get; }
+	public  Dictionary<string, AlgorithmFactory<IFittingAlgorithm>>  FittingAlgorithmsUnderTest { get; }
+	public  Dictionary<string, AlgorithmFactory<IPackingAlgorithm>> PackingAlgorithmsUnderTest { get; }
 
 	public CommonTestingFixture()
 	{
 		this.BinTestDataProvider = new BinCollectionsTestDataProvider();
-		this.TestedFittingAlgorithms = [
-			AlgorithmFactories.Fitting_FFD_v1,
-			AlgorithmFactories.Fitting_FFD_v2,
-			AlgorithmFactories.Fitting_FFD_v3,
-			AlgorithmFactories.Fitting_WFD_v1,
-			AlgorithmFactories.Fitting_BFD_v1
-		];
-		this.TestedPackingAlgorithms = [
-			AlgorithmFactories.Packing_FFD_v1,
-			AlgorithmFactories.Packing_FFD_v2,
-			AlgorithmFactories.Packing_WFD_v1,
-			AlgorithmFactories.Packing_BFD_v1
-		];
+		this.FittingAlgorithmsUnderTest = AlgorithmsUnderTest.FittingAlgorithms;
+		this.PackingAlgorithmsUnderTest = AlgorithmsUnderTest.PackingAlgorithms;
 	}
 
 	public List<TestBin> GetBins(string collectionKey)

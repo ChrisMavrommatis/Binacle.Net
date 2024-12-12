@@ -21,7 +21,7 @@ public class ScalingBenchmarkTestsDataProvider : IEnumerable<object[]>
 	public static Dictionary<string, ScalingBenchmarkScenario> Scenarios = TestCases
 		.ToDictionary(x => x.Key, x => new ScalingBenchmarkScenario(x.Key, x.Value));
 
-	public IEnumerator<object[]> GetEnumerator()
+	public virtual IEnumerator<object[]> GetEnumerator()
 	{
 		foreach(var (key, scenario) in Scenarios)
 		{

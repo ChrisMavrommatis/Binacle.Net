@@ -16,38 +16,17 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 		this.Fixture = fixture;
 	}
 
-	#region Fitting
-
 	[Theory]
-	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
-	public void Fitting_FFD_v1(ScalingBenchmarkScenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
-	public void Fitting_FFD_v2(ScalingBenchmarkScenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v2, scenario);
-
-	[Theory]
-	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
-	public void Fitting_FFD_v3(ScalingBenchmarkScenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v3, scenario);
-	
-	[Theory]
-	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
-	public void Fitting_WFD_v1(ScalingBenchmarkScenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_WFD_v1, scenario);
-	
-	[Theory]
-	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
-	public void Fitting_BFD_v1(ScalingBenchmarkScenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_BFD_v1, scenario);
+	[ClassData(typeof(Data.Providers.Benchmarks.FittingScalingBenchmarksProvider))]
+	public void Fitting_Algorithms(string algorithm, ScalingBenchmarkScenario scenario)
+		=> this.RunFittingScenarioTest(algorithm, scenario);
 
 	private void RunFittingScenarioTest(
-		AlgorithmFactory<IFittingAlgorithm> algorithmFactory,
+		string algorithmKey,
 		ScalingBenchmarkScenario scenario
 	)
 	{
+		var algorithmFactory = this.Fixture.FittingAlgorithmsUnderTest[algorithmKey];
 		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
 		foreach (var noOfItems in scenario.GetNoOfItems())
 		{
@@ -68,36 +47,18 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 		}
 	}
 
-	#endregion
-
-	#region Packing
 
 	[Theory]
-	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
-	public void Packing_FFD_v1(ScalingBenchmarkScenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
-	public void Packing_FFD_v2(ScalingBenchmarkScenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
-
-	[Theory]
-	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
-	public void Packing_WFD_v1(ScalingBenchmarkScenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_WFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(ScalingBenchmarkTestsDataProvider))]
-	public void Packing_BFD_v1(ScalingBenchmarkScenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_BFD_v1, scenario);
-
-
+	[ClassData(typeof(Data.Providers.Benchmarks.PackingScalingBenchmarksProvider))]
+	public void Packing_Algorithms(string algorithm, ScalingBenchmarkScenario scenario)
+		=> this.RunPackingScenarioTest(algorithm, scenario);
+	
 	private void RunPackingScenarioTest(
-		AlgorithmFactory<IPackingAlgorithm> algorithmFactory,
+		string algorithmKey,
 		ScalingBenchmarkScenario scenario
 	)
 	{
+		var algorithmFactory = this.Fixture.PackingAlgorithmsUnderTest[algorithmKey];
 		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
 		foreach (var noOfItems in scenario.GetNoOfItems())
 		{
@@ -122,6 +83,4 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 			}
 		}
 	}
-
-	#endregion
 }

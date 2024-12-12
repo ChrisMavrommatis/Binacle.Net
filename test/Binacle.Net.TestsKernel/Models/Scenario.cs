@@ -13,6 +13,8 @@ public sealed class Scenario : BinScenarioBase
 	public required ScenarioResultType ResultType { get; init; }
 	public required string Name { get; init; }
 	public required List<TestItem> Items { get; init; }
+	
+	public override string ToString() => Name;
 
 	public TResult ResultAs<TResult>()
 		where TResult : class, IScenarioResult

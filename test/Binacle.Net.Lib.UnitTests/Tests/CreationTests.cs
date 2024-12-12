@@ -28,19 +28,19 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 		var testItems = AutoFixture.CreateMany<TestItem>(2)
 			.ToList();
 
-		foreach(var fittingAlgorithm in this.Fixture.TestedFittingAlgorithms)
+		foreach(var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			Assert.Throws<ArgumentNullException>(() =>
 			{
-				var algorithmInstance = fittingAlgorithm(default!, testItems);
+				var algorithmInstance = algorithmFactory(default!, testItems);
 			});
 		}
 
-		foreach (var packingAlgorithm in this.Fixture.TestedPackingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
 		{
 			Assert.Throws<ArgumentNullException>(() =>
 			{
-				var algorithmInstance = packingAlgorithm(default!, testItems);
+				var algorithmInstance = algorithmFactory(default!, testItems);
 			});
 		}
 	}
@@ -50,28 +50,28 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 	{
 		var bin = AutoFixture.Create<TestBin>();
 
-		foreach (var fittingAlgorithm in this.Fixture.TestedFittingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			Assert.Throws<ArgumentNullException>(() =>
 			{
-				var algorithmInstance = fittingAlgorithm(bin, default!);
+				var algorithmInstance = algorithmFactory(bin, default!);
 			});
 			Assert.Throws<ArgumentNullException>(() =>
 			{
-				var algorithmInstance = fittingAlgorithm(bin, Enumerable.Empty<TestItem>().ToList());
+				var algorithmInstance = algorithmFactory(bin, Enumerable.Empty<TestItem>().ToList());
 			});
 
 		}
 
-		foreach (var packingAlgorithm in this.Fixture.TestedPackingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
 		{
 			Assert.Throws<ArgumentNullException>(() =>
 			{
-				var algorithmInstance = packingAlgorithm(bin, default!);
+				var algorithmInstance = algorithmFactory(bin, default!);
 			});
 			Assert.Throws<ArgumentNullException>(() =>
 			{
-				var algorithmInstance = packingAlgorithm(bin, Enumerable.Empty<TestItem>().ToList());
+				var algorithmInstance = algorithmFactory(bin, Enumerable.Empty<TestItem>().ToList());
 			});
 		}
 	}
@@ -86,19 +86,19 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 		   .With(x => x.Width, 0)
 		   .Create();
 
-		foreach (var fittingAlgorithm in this.Fixture.TestedFittingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			Assert.Throws<DimensionException>(() =>
 			{
-				var algorithmInstance = fittingAlgorithm(binWith0Dimension, testItems);
+				var algorithmInstance = algorithmFactory(binWith0Dimension, testItems);
 			});
 		}
 
-		foreach (var packingAlgorithm in this.Fixture.TestedPackingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
 		{
 			Assert.Throws<DimensionException>(() =>
 			{
-				var algorithmInstance = packingAlgorithm(binWith0Dimension, testItems);
+				var algorithmInstance = algorithmFactory(binWith0Dimension, testItems);
 			});
 		}
 		
@@ -114,19 +114,19 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 		  .CreateMany(2)
 		  .ToList();
 
-		foreach (var fittingAlgorithm in this.Fixture.TestedFittingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			Assert.Throws<DimensionException>(() =>
 			{
-				var algorithmInstance = fittingAlgorithm(bin, testItemsWith0Dimension);
+				var algorithmInstance = algorithmFactory(bin, testItemsWith0Dimension);
 			});
 		}
 
-		foreach (var packingAlgorithm in this.Fixture.TestedPackingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
 		{
 			Assert.Throws<DimensionException>(() =>
 			{
-				var algorithmInstance = packingAlgorithm(bin, testItemsWith0Dimension);
+				var algorithmInstance = algorithmFactory(bin, testItemsWith0Dimension);
 			});
 		}
 	}

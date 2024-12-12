@@ -1,8 +1,9 @@
 ﻿using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.Lib.Fitting.Models;
+using Binacle.Net.Lib.Packing.Models;
+using Binacle.Net.Lib.UnitTests.Data.Providers.Benchmarks;
 using Binacle.Net.TestsKernel.Models;
-using Binacle.Net.TestsKernel.Providers;
 using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests;
@@ -17,39 +18,17 @@ public class MultiBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 		this.Fixture = fixture;
 	}
 
-	#region Fitting
-
 	[Theory]
-	[ClassData(typeof(MultiBinsBenchmarkTestsDataProvider))]
-	public void Fitting_FFD_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v1, scenario);
+	[ClassData(typeof(FittingMultiBinsBenchmarksProvider))]
+	public void Fitting_Algorithms(string algorithm, Scenario scenario)
+		=> this.RunFittingScenarioTest(algorithm, scenario);
 
-	[Theory]
-	[ClassData(typeof(MultiBinsBenchmarkTestsDataProvider))]
-	public void Fitting_FFD_v2(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v2, scenario);
-
-	[Theory]
-	[ClassData(typeof(MultiBinsBenchmarkTestsDataProvider))]
-	public void Fitting_FFD_v3(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v3, scenario);
-
-	[Theory]
-	[ClassData(typeof(MultiBinsBenchmarkTestsDataProvider))]
-	public void Fitting_WFD_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_WFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(MultiBinsBenchmarkTestsDataProvider))]
-	public void Fitting_BFD_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_BFD_v1, scenario);
-
-	private void RunFittingScenarioTest<TAlgorithm>(
-		AlgorithmFactory<TAlgorithm> algorithmFactory,
+	private void RunFittingScenarioTest(
+		string algorithmKey,
 		Scenario scenario
 	)
-		where TAlgorithm : class, IFittingAlgorithm
 	{
+		var algorithmFactory = this.Fixture.FittingAlgorithmsUnderTest[algorithmKey];
 		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
@@ -64,50 +43,31 @@ public class MultiBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 
 		if (scenarioResult.Fits)
 		{
-			Xunit.Assert.Equal(Fitting.Models.FittingResultStatus.Success, result.Status);
+			Assert.Equal(FittingResultStatus.Success, result.Status);
 		}
 		else
 		{
-			Xunit.Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
+			Assert.Equal(FittingResultStatus.Fail, result.Status);
 		}
 	}
 
-	#endregion
-
-	#region Packing
 
 	[Theory]
-	[ClassData(typeof(MultiBinsBenchmarkTestsDataProvider))]
-	public void Packing_FFD_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
+	[ClassData(typeof(PackingMultiBinsBenchmarksProvider))]
+	public void Packing_Algorithms(string algorithm, Scenario scenario)
+		=> this.RunPackingScenarioTest(algorithm, scenario);
 
-	[Theory]
-	[ClassData(typeof(MultiBinsBenchmarkTestsDataProvider))]
-	public void Packing_FFD_v2(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
-
-	[Theory]
-	[ClassData(typeof(MultiBinsBenchmarkTestsDataProvider))]
-	public void Packing_WFD_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_WFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(MultiBinsBenchmarkTestsDataProvider))]
-	public void Packing_BFD_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_BFD_v1, scenario);
-
-
-	private void RunPackingScenarioTest<TAlgorithm>(
-		AlgorithmFactory<TAlgorithm> algorithmFactory,
+	private void RunPackingScenarioTest(
+		string algorithmKey,
 		Scenario scenario
 	)
-		where TAlgorithm : class, IPackingAlgorithm
 	{
+		var algorithmFactory = this.Fixture.PackingAlgorithmsUnderTest[algorithmKey];
 		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
 
-		var result = algorithmInstance.Execute(new Packing.Models.PackingParameters
+		var result = algorithmInstance.Execute(new PackingParameters
 		{
 			NeverReportUnpackedItems = true,
 			ReportPackedItemsOnlyWhenFullyPacked = true,
@@ -118,13 +78,12 @@ public class MultiBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 
 		if (scenarioResult.Fits)
 		{
-			Xunit.Assert.Equal(Packing.Models.PackingResultStatus.FullyPacked, result.Status);
+			Assert.Equal(PackingResultStatus.FullyPacked, result.Status);
 		}
 		else
 		{
-			Xunit.Assert.NotEqual(Packing.Models.PackingResultStatus.FullyPacked, result.Status);
+			Assert.NotEqual(PackingResultStatus.FullyPacked, result.Status);
 		}
 	}
 
-	#endregion
 }

@@ -17,6 +17,8 @@ public sealed class ScalingBenchmarkScenario : BinScenarioBase
 		this.testCase = testCase;
 		this.Name = binString;
 	}
+	
+	public override string ToString() => Name;
 
 	public IEnumerable<int> GetNoOfItems()
 	{

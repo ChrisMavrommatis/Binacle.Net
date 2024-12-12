@@ -85,12 +85,12 @@ public class MultiBinsBenchmarkTestsDataProvider : IEnumerable<object[]>
 		.Add("7x2x7-10")   // 54
 		.Add("6x4x2-4");   // 58   9
 		
-	private readonly Scenario[] allScenarios = TestCase.GetScenarios(ItemsHolder).ToArray();
+	protected readonly Scenario[] AllScenarios = TestCase.GetScenarios(ItemsHolder).ToArray();
 	
 	public List<TestBin> GetAllBins(BinCollectionsTestDataProvider binCollectionsDataProvider)
 	{
 		var bins = new List<TestBin>();
-		foreach (var scenario in this.allScenarios)
+		foreach (var scenario in this.AllScenarios)
 		{
 			var bin = scenario.GetTestBin(binCollectionsDataProvider);
 			bins.Add(bin);
@@ -99,7 +99,7 @@ public class MultiBinsBenchmarkTestsDataProvider : IEnumerable<object[]>
 		return bins;
 	}
 	
-	private readonly Scenario[] successfullScenarios = TestCase.GetScenarios(ItemsHolder, x =>
+	protected readonly Scenario[] SuccessfulScenarios = TestCase.GetScenarios(ItemsHolder, x =>
 	{
 		if(x.ResultType != ScenarioResultType.BinaryDecision)
 		{
@@ -113,7 +113,7 @@ public class MultiBinsBenchmarkTestsDataProvider : IEnumerable<object[]>
 	public List<TestBin> GetSuccessfulBins(BinCollectionsTestDataProvider binCollectionsDataProvider)
 	{
 		var bins = new List<TestBin>();
-		foreach (var scenario in this.successfullScenarios)
+		foreach (var scenario in this.SuccessfulScenarios)
 		{
 			var bin = scenario.GetTestBin(binCollectionsDataProvider);
 			bins.Add(bin);
@@ -127,9 +127,9 @@ public class MultiBinsBenchmarkTestsDataProvider : IEnumerable<object[]>
 		return ItemsHolder.GetItems();
 	}
 	
-	public IEnumerator<object[]> GetEnumerator()
+	public virtual IEnumerator<object[]> GetEnumerator()
 	{
-		foreach(var scenario in this.allScenarios)
+		foreach(var scenario in this.AllScenarios)
 		{
 			yield return new object[] { scenario };
 		}

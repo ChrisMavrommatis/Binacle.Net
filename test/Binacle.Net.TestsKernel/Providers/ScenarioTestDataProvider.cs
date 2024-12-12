@@ -6,18 +6,18 @@ namespace Binacle.Net.TestsKernel.Providers;
 
 public abstract class ScenarioTestDataProvider : IEnumerable<object[]>
 {
-	private readonly ScenarioCollectionsTestDataProvider scenarioCollections;
-	private readonly List<Scenario> scenarios;
+	protected readonly ScenarioCollectionsTestDataProvider ScenarioCollections;
+	protected readonly List<Scenario> Scenarios;
 
 	protected ScenarioTestDataProvider(string collectionKey)
 	{
-		this.scenarioCollections = new ScenarioCollectionsTestDataProvider();
-		this.scenarios = this.scenarioCollections.GetCollection(collectionKey);
+		this.ScenarioCollections = new ScenarioCollectionsTestDataProvider();
+		this.Scenarios = this.ScenarioCollections.GetCollection(collectionKey);
 	}
 
 	public virtual IEnumerator<object[]> GetEnumerator()
 	{
-		foreach (var scenario in this.scenarios)
+		foreach (var scenario in this.Scenarios)
 		{
 			yield return new object[] { scenario };
 		}

@@ -1,6 +1,8 @@
 ﻿using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.Lib.Abstractions.Fitting;
-using Binacle.Net.TestsKernel.Data.Providers.BinaryDecision;
+using Binacle.Net.Lib.Fitting.Models;
+using Binacle.Net.Lib.Packing.Models;
+using Binacle.Net.Lib.UnitTests.Data.Providers.BinaryDecision;
 using Binacle.Net.TestsKernel.Models;
 using Xunit;
 
@@ -15,102 +17,32 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 		Fixture = fixture;
 	}
 
-	#region Fitting
-
-	// Fitting FFD V1
 	[Theory]
-	[ClassData(typeof(BaselineScenarioTestDataProvider))]
-	public void Fitting_FFD_Baseline_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v1, scenario);
+	[ClassData(typeof(FittingAlgorithmsBaselineScenariosProvider))]
+	public void Fitting_Algorithms_Baseline_Scenarios(string algorithm, Scenario scenario)
+		=> this.RunFittingScenarioTest(algorithm, scenario);
 
 	[Theory]
-	[ClassData(typeof(SimpleScenarioTestDataProvider))]
-	public void Fitting_FFD_Simple_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v1, scenario);
+	[ClassData(typeof(FittingAlgorithmsSimpleScenariosProvider))]
+	public void Fitting_Algorithms_Simple_Scenarios(string algorithm, Scenario scenario)
+		=> this.RunFittingScenarioTest(algorithm, scenario);
 
 	[Theory]
-	[ClassData(typeof(ComplexScenarioTestDataProvider))]
-	public void Fitting_FFD_Complex_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v1, scenario);
+	[ClassData(typeof(FittingAlgorithmsComplexScenariosProvider))]
+	public void Fitting_Algorithms_Complex_Scenarios(string algorithm, Scenario scenario)
+		=> this.RunFittingScenarioTest(algorithm, scenario);
 
-
-	// Fitting FFD V2
-	[Theory]
-	[ClassData(typeof(BaselineScenarioTestDataProvider))]
-	public void Fitting_FFD_Baseline_v2(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v2, scenario);
-
-	[Theory]
-	[ClassData(typeof(SimpleScenarioTestDataProvider))]
-	public void Fitting_FFD_Simple_v2(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v2, scenario);
-
-	[Theory]
-	[ClassData(typeof(ComplexScenarioTestDataProvider))]
-	public void Fitting_FFD_Complex_v2(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v2, scenario);
-
-
-	// Fitting FFD V3
-	[Theory]
-	[ClassData(typeof(BaselineScenarioTestDataProvider))]
-	public void Fitting_FFD_Baseline_v3(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v3, scenario);
-
-	[Theory]
-	[ClassData(typeof(SimpleScenarioTestDataProvider))]
-	public void Fitting_FFD_Simple_v3(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v3, scenario);
-
-	[Theory]
-	[ClassData(typeof(ComplexScenarioTestDataProvider))]
-	public void Fitting_FFD_Complex_v3(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_FFD_v3, scenario);
-	
-	// Fitting WFD V1
-	[Theory]
-	[ClassData(typeof(BaselineScenarioTestDataProvider))]
-	public void Fitting_WFD_Baseline_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_WFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(SimpleScenarioTestDataProvider))]
-	public void Fitting_WFD_Simple_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_WFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(ComplexScenarioTestDataProvider))]
-	public void Fitting_WFD_Complex_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_WFD_v1, scenario);
-	
-	// Fitting BFD V1
-	[Theory]
-	[ClassData(typeof(BaselineScenarioTestDataProvider))]
-	public void Fitting_BFD_Baseline_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_BFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(SimpleScenarioTestDataProvider))]
-	public void Fitting_BFD_Simple_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_BFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(ComplexScenarioTestDataProvider))]
-	public void Fitting_BFD_Complex_v1(Scenario scenario)
-		=> this.RunFittingScenarioTest(AlgorithmFactories.Fitting_BFD_v1, scenario);
-
-
-	private void RunFittingScenarioTest<TAlgorithm>(
-		AlgorithmFactory<TAlgorithm> algorithmFactory,
+	private void RunFittingScenarioTest(
+		string algorithmKey,
 		Scenario scenario
 	)
-		where TAlgorithm : class, IFittingAlgorithm
 	{
+		var algorithmFactory = this.Fixture.FittingAlgorithmsUnderTest[algorithmKey];
 		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
 
-		var result = algorithmInstance.Execute(new Fitting.Models.FittingParameters
+		var result = algorithmInstance.Execute(new FittingParameters
 		{
 			ReportFittedItems = false,
 			ReportUnfittedItems = false
@@ -120,96 +52,40 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 
 		if (scenarioResult.Fits)
 		{
-			Xunit.Assert.Equal(Fitting.Models.FittingResultStatus.Success, result.Status);
+			Assert.Equal(FittingResultStatus.Success, result.Status);
 		}
 		else
 		{
-			Xunit.Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
+			Assert.Equal(FittingResultStatus.Fail, result.Status);
 		}
 	}
 
-	#endregion
-
-	#region Packing
-	// Packing FFD V1
 	[Theory]
-	[ClassData(typeof(BaselineScenarioTestDataProvider))]
-	public void Packing_FFD_Baseline_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
+	[ClassData(typeof(PackingAlgorithmsBaselineScenariosProvider))]
+	public void Packing_Algorithms_Baseline_Scenarios(string algorithm, Scenario scenario)
+		=> this.RunPackingScenarioTest(algorithm, scenario);
 
 	[Theory]
-	[ClassData(typeof(SimpleScenarioTestDataProvider))]
-	public void Packing_FFD_Simple_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
+	[ClassData(typeof(PackingAlgorithmsSimpleScenariosProvider))]
+	public void Packing_Algorithms_Simple_Scenarios(string algorithm, Scenario scenario)
+		=> this.RunPackingScenarioTest(algorithm, scenario);
 
 	[Theory]
-	[ClassData(typeof(ComplexScenarioTestDataProvider))]
-	public void Packing_FFD_Complex_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v1, scenario);
+	[ClassData(typeof(PackingAlgorithmsComplexScenariosProvider))]
+	public void Packing_Algorithms_Complex_Scenarios(string algorithm, Scenario scenario)
+		=> this.RunPackingScenarioTest(algorithm, scenario);
 
-
-	// Packing FFD V2
-	[Theory]
-	[ClassData(typeof(BaselineScenarioTestDataProvider))]
-	public void Packing_FFD_Baseline_v2(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
-
-	[Theory]
-	[ClassData(typeof(SimpleScenarioTestDataProvider))]
-	public void Packing_FFD_Simple_v2(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
-
-	[Theory]
-	[ClassData(typeof(ComplexScenarioTestDataProvider))]
-	public void Packing_FFD_Complex_v2(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_FFD_v2, scenario);
-
-
-	// Packing WFD V1
-	[Theory]
-	[ClassData(typeof(BaselineScenarioTestDataProvider))]
-	public void Packing_WFD_Baseline_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_WFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(SimpleScenarioTestDataProvider))]
-	public void Packing_WFD_Simple_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_WFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(ComplexScenarioTestDataProvider))]
-	public void Packing_WFD_Complex_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_WFD_v1, scenario);
-
-	// Packing BFD V1
-	[Theory]
-	[ClassData(typeof(BaselineScenarioTestDataProvider))]
-	public void Packing_BFD_Baseline_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_BFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(SimpleScenarioTestDataProvider))]
-	public void Packing_BFD_Simple_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_BFD_v1, scenario);
-
-	[Theory]
-	[ClassData(typeof(ComplexScenarioTestDataProvider))]
-	public void Packing_BFD_Complex_v1(Scenario scenario)
-		=> this.RunPackingScenarioTest(AlgorithmFactories.Packing_BFD_v1, scenario);
-
-
-
-	private void RunPackingScenarioTest<TAlgorithm>(
-		AlgorithmFactory<TAlgorithm> algorithmFactory,
+	private void RunPackingScenarioTest(
+		string algorithmKey,
 		Scenario scenario
 	)
-		where TAlgorithm : class, IPackingAlgorithm
 	{
+		var algorithmFactory = this.Fixture.PackingAlgorithmsUnderTest[algorithmKey];
 		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
 
-		var result = algorithmInstance.Execute(new Packing.Models.PackingParameters
+		var result = algorithmInstance.Execute(new PackingParameters
 		{
 			NeverReportUnpackedItems = true,
 			ReportPackedItemsOnlyWhenFullyPacked = true,
@@ -220,12 +96,11 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 
 		if (scenarioResult.Fits)
 		{
-			Xunit.Assert.Equal(Packing.Models.PackingResultStatus.FullyPacked, result.Status);
+			Assert.Equal(PackingResultStatus.FullyPacked, result.Status);
 		}
 		else
 		{
-			Xunit.Assert.NotEqual(Packing.Models.PackingResultStatus.FullyPacked, result.Status);
+			Assert.NotEqual(PackingResultStatus.FullyPacked, result.Status);
 		}
 	}
-	#endregion
 }

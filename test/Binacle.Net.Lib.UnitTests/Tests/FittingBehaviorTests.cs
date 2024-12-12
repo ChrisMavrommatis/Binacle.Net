@@ -27,7 +27,7 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 		var testItems = new List<TestItem>() { expectedFittedItem };
 
 		var parameters = new Fitting.Models.FittingParameters { ReportFittedItems = true, ReportUnfittedItems = false };
-		foreach (var algorithmFactory in this.Fixture.TestedFittingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -51,7 +51,7 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 		var testItems = new List<TestItem>() { expectedFittedItem };
 
 		var parameters = new Fitting.Models.FittingParameters { ReportFittedItems = false, ReportUnfittedItems = false };
-		foreach (var algorithmFactory in this.Fixture.TestedFittingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -85,7 +85,7 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 		var testItems = new List<TestItem>() { expectedFittedItem, expectedUnfittedItem };
 
 		var parameters = new Fitting.Models.FittingParameters { ReportFittedItems = false, ReportUnfittedItems = false };
-		foreach (var algorithmFactory in this.Fixture.TestedFittingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -111,7 +111,7 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 		var testItems = new List<TestItem>() { expectedFittedItem, expectedUnfittedItem };
 
 		var parameters = new Fitting.Models.FittingParameters { ReportFittedItems = true, ReportUnfittedItems = false };
-		foreach (var algorithmFactory in this.Fixture.TestedFittingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -137,7 +137,7 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 		var testItems = new List<TestItem>() { expectedFittedItem, expectedUnfittedItem };
 
 		var parameters = new Fitting.Models.FittingParameters { ReportFittedItems = false, ReportUnfittedItems = true };
-		foreach (var algorithmFactory in this.Fixture.TestedFittingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -163,7 +163,7 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 		var testItems = new List<TestItem>() { expectedFittedItem, expectedUnfittedItem };
 
 		var parameters = new Fitting.Models.FittingParameters { ReportFittedItems = true, ReportUnfittedItems = true };
-		foreach (var algorithmFactory in this.Fixture.TestedFittingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -206,7 +206,7 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 		var testItems = new List<TestItem>() { longItem };
 
 		var parameters = new Fitting.Models.FittingParameters { ReportFittedItems = false, ReportUnfittedItems = false };
-		foreach (var algorithmFactory in this.Fixture.TestedFittingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -225,7 +225,7 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 		var testItems = new List<TestItem>() { longItem };
 
 		var parameters = new Fitting.Models.FittingParameters { ReportFittedItems = false, ReportUnfittedItems = false };
-		foreach (var algorithmFactory in this.Fixture.TestedFittingAlgorithms)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
