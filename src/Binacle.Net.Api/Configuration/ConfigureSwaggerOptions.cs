@@ -38,7 +38,6 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 
 	private void ConfigureSwaggerGenOptions(SwaggerGenOptions options)
 	{
-		AddApiVersionDocuments(options, _provider.ApiVersionDescriptions);
 		options.IncludeXmlCommentsFromAssemblyContaining<IApiMarker>();
 		options.UseSwaggerExamples();
 		options.UseOneOfForPolymorphism();
@@ -48,33 +47,7 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 
 		foreach(var apiVersion in apiVersions)
 		{
-			apiVersion.ConfigureSwaggerOptions(options);
-		}
-	}
-
-	private void AddApiVersionDocuments(SwaggerGenOptions options, IReadOnlyList<ApiVersionDescription> apiVersionDescriptions)
-	{
-		foreach (var description in apiVersionDescriptions.Where(x => x.GroupName.StartsWith("v")))
-		{
-			var apiVersion = apiVersions.FirstOrDefault(x => x.MajorNumber == description.ApiVersion.MajorVersion)!;
-			var info = new OpenApiInfo()
-			{
-				Title = $"Binacle.Net API",
-				Version = $"{description.ApiVersion.ToString()}",
-				Description = __description__,
-				// gpl 3 license
-				License = new OpenApiLicense
-				{
-					Name = "GNU General Public License v3.0",
-					Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.html")
-				},
-			};
-
-			info.Description = info.Description
-				.Replace("{{status}}", apiVersion.Experimental ? __experimentalMessage__: string.Empty)
-				.Replace("{{deprecated}}", description.IsDeprecated ? __deprecatedMessage__: string.Empty);
-
-			options.SwaggerDoc(description.GroupName, info);
+			apiVersion.ConfigureSwaggerOptions(options, _provider);
 		}
 	}
 
@@ -83,38 +56,9 @@ internal class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOption
 		options.RoutePrefix = "swagger";
 
 		var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-
-		foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+		foreach(var apiVersion in apiVersions)
 		{
-			options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Binacle.Net API {description.GroupName}");
+			apiVersion.ConfigureSwaggerUI(options, apiVersionDescriptionProvider);
 		}
 	}
-
-	private static string __description__ = new StringBuilder()
-		.AppendLine(Binacle.Net.Api.Metadata.Description)
-		.AppendLine()
-		.AppendLine("{{status}}")
-		.AppendLine()
-		.AppendLine("{{deprecated}}")
-		.AppendLine()
-		.AppendLine($"[View on Github]({Binacle.Net.Api.Metadata.GitHub})")
-		.AppendLine()
-		.AppendLine($"[🐳 Binacle.Net on Dockerhub]({Binacle.Net.Api.Metadata.Dockerhub})")
-		.AppendLine()
-		.AppendLine($"[Get Postman collection]({Binacle.Net.Api.Metadata.Postman})")
-		.AppendLine()
-		.ToString();
-	
-
-	private const string __experimentalMessage__ = """
-
-		**Warning: This api version is experimental!**
-
-		""";
-
-	private const string __deprecatedMessage__ = """
-
-		**This API version has been deprecated. Please use one of the new APIs available from the explorer.**
-
-		""";
 }

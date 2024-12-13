@@ -1,5 +1,7 @@
-﻿using ChrisMavrommatis.Swashbuckle;
+﻿using Asp.Versioning.ApiExplorer;
+using ChrisMavrommatis.Swashbuckle;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Binacle.Net.Api.v2;
 
@@ -12,6 +14,26 @@ internal class ApiVersion : IApiVersion
 	public int MajorNumber => int.Parse(Number.Split('.')[0]);
 	public bool Deprecated => IsDeprecated;
 	public bool Experimental => IsExperimental;
+	
+	public void ConfigureSwaggerOptions(SwaggerGenOptions options, IApiVersionDescriptionProvider provider)
+	{
+		options.AddPolymorphicTypeMappings(_polymorphicTypeMappings);
+			
+		var description = provider.ApiVersionDescriptions
+			.FirstOrDefault(x => x.ApiVersion.MajorVersion == this.MajorNumber)!;
+
+		var info = ApiDocument.CreateApiInfo(this, description);
+	
+		options.SwaggerDoc(description.GroupName, info);
+	}
+
+	public void ConfigureSwaggerUI(SwaggerUIOptions options, IApiVersionDescriptionProvider provider)
+	{
+		var description = provider.ApiVersionDescriptions
+			.FirstOrDefault(x => x.ApiVersion.MajorVersion == this.MajorNumber);
+		
+		options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Binacle.Net API {description.GroupName}");
+	}
 
 	private static Dictionary<Type, Type[]> _polymorphicTypeMappings = new()
 	{
@@ -23,8 +45,5 @@ internal class ApiVersion : IApiVersion
 		}
 	};
 
-	public void ConfigureSwaggerOptions(SwaggerGenOptions options)
-	{
-		options.AddPolymorphicTypeMappings(_polymorphicTypeMappings);
-	}
+	
 }

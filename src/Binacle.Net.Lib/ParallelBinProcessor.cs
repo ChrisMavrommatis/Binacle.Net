@@ -1,10 +1,11 @@
-﻿using Binacle.Net.Lib.Abstractions.Models;
+﻿using System.Collections.Concurrent;
+using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.Lib.Packing.Models;
 
 namespace Binacle.Net.Lib;
 
-internal class ParallelBinProcessor
+public class ParallelBinProcessor
 {
 	private readonly AlgorithmFactory algorithmFactory;
 
@@ -13,44 +14,55 @@ internal class ParallelBinProcessor
 		this.algorithmFactory = new AlgorithmFactory();
 	}
 	
-	public Dictionary<string, FittingResult> ProcessFitting<TBin, TItem>(
+	public ConcurrentDictionary<string, FittingResult> ProcessFitting<TBin, TItem>(
 		Algorithm algorithm,
 		IList<TBin> bins, 
 		IList<TItem> items, 
-		FittingParameters parameters
+		FittingParameters parameters,
+		int? concurrencyLevel = null
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
-		var results = new Dictionary<string, FittingResult>(bins.Count);
-
-		Parallel.ForEach(bins, bin =>
+		if(!concurrencyLevel.HasValue)
 		{
+			concurrencyLevel = Environment.ProcessorCount;
+		}
+		var results = new ConcurrentDictionary<string, FittingResult>(concurrencyLevel.Value, bins.Count);
+
+		Parallel.For(0, bins.Count, i =>
+		{
+			var bin = bins[i];
 			var algorithmInstance = this.algorithmFactory.CreateFitting(algorithm, bin, items);
 			var result = algorithmInstance.Execute(parameters);
-			results.Add(bin.ID, result);
+			results[bin.ID] = result;
 		});
-
 
 		return results;
 	}
 
-	public Dictionary<string, PackingResult> ProcessPacking<TBin, TItem>(
+	public ConcurrentDictionary<string, PackingResult> ProcessPacking<TBin, TItem>(
 		Algorithm algorithm,
 		IList<TBin> bins, 
 		IList<TItem> items, 
-		PackingParameters parameters
+		PackingParameters parameters,
+		int? concurrencyLevel = null
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
-		var results = new Dictionary<string, PackingResult>(bins.Count);
-
-		Parallel.ForEach(bins, bin =>
+		if(!concurrencyLevel.HasValue)
 		{
+			concurrencyLevel = Environment.ProcessorCount;
+		}
+		var results =  new ConcurrentDictionary<string, PackingResult>(concurrencyLevel.Value, bins.Count);
+
+		Parallel.For(0, bins.Count, i =>
+		{
+			var bin = bins[i];
 			var algorithmInstance = this.algorithmFactory.CreatePacking(algorithm, bin, items);
 			var result = algorithmInstance.Execute(parameters);
-			results.Add(bin.ID, result);
+			results[bin.ID] = result;
 		});
 
 		return results;
