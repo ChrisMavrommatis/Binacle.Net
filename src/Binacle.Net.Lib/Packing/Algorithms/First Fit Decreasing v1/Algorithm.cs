@@ -5,7 +5,7 @@ using Binacle.Net.Lib.GuardClauses;
 
 namespace Binacle.Net.Lib.Packing.Algorithms;
 
-[Obsolete("This class is obsolete. Use FirstFitDecreasing_v2 instead.")]
+
 internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 	where TBin : class, IWithID, IWithReadOnlyDimensions
 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity

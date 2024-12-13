@@ -4,7 +4,6 @@ using Binacle.Net.Lib.GuardClauses;
 
 namespace Binacle.Net.Lib.Fitting.Algorithms;
 
-[Obsolete("This class is obsolete. Use FirstFitDecreasing_v3 instead.")]
 internal sealed partial class FirstFitDecreasing_v2<TBin, TItem> : IFittingAlgorithm
 	where TBin : class, IWithID, IWithReadOnlyDimensions
 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
