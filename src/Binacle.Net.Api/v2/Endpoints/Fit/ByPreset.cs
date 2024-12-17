@@ -20,7 +20,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 {
 	private readonly IOptions<BinPresetOptions> presetOptions;
 	private readonly IValidator<v2.Requests.PresetFitRequest> validator;
-	private readonly ILockerService lockerService;
+	private readonly IBinsService binsService;
 	private readonly ILogger<ByPreset> logger;
 
 	/// <summary>
@@ -28,17 +28,17 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 	/// </summary>
 	/// <param name="presetOptions"></param>
 	/// <param name="validator"></param>
-	/// <param name="lockerService"></param>
+	/// <param name="binsService"></param>
 	/// <param name="logger"></param>
 	public ByPreset(
 		IOptions<BinPresetOptions> presetOptions,
 		IValidator<v2.Requests.PresetFitRequest> validator,
-		ILockerService lockerService,
+		IBinsService binsService,
 		ILogger<ByPreset> logger
 	  )
 	{
 		this.validator = validator;
-		this.lockerService = lockerService;
+		this.binsService = binsService;
 		this.logger = logger;
 		this.presetOptions = presetOptions;
 	}
@@ -46,6 +46,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 	/// <summary>
 	/// Perform a bin fit function using a specified bin preset.
 	/// </summary>
+    /// <returns>An array of results indicating if a bin can accommodate all the items</returns>
 	/// <remarks>
 	/// Example request using the "rectangular-cuboids" preset:
 	///     
@@ -78,7 +79,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 	/// <response code="200"> <b>OK</b>
 	/// <br />
 	/// <p>
-	///		An array of results indicating if a bin can accommodate all of the items.
+	///		An array of results indicating if a bin can accommodate all the items.
 	/// </p>
 	/// </response>
 	/// <response code="400"> <b>Bad Request</b>
@@ -152,7 +153,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 				return this.NotFound(null);
 			}
 
-			var operationResults = this.lockerService.FitBins(
+			var operationResults = this.binsService.FitBins(
 				presetOption.Bins,
 				request.Body.Items!,
 				new FittingParameters

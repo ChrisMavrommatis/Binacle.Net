@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.FluentValidation;
@@ -19,7 +20,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetPackRequestWithBod
 {
 	private readonly IOptions<BinPresetOptions> presetOptions;
 	private readonly IValidator<v2.Requests.PresetPackRequest> validator;
-	private readonly ILockerService lockerService;
+	private readonly IBinsService binsService;
 	private readonly ILogger<ByPreset> logger;
 
 	/// <summary>
@@ -27,17 +28,17 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetPackRequestWithBod
 	/// </summary>
 	/// <param name="presetOptions"></param>
 	/// <param name="validator"></param>
-	/// <param name="lockerService"></param>
+	/// <param name="binsService"></param>
 	/// <param name="logger"></param>
 	public ByPreset(
 		IOptions<BinPresetOptions> presetOptions,
 		IValidator<v2.Requests.PresetPackRequest> validator,
-		ILockerService lockerService,
+		IBinsService binsService,
 		ILogger<ByPreset> logger
 	  )
 	{
 		this.validator = validator;
-		this.lockerService = lockerService;
+		this.binsService = binsService;
 		this.logger = logger;
 		this.presetOptions = presetOptions;
 	}
@@ -145,11 +146,12 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetPackRequestWithBod
 				return this.NotFound(null);
 			}
 
-			var operationResults = this.lockerService.PackBins(
+			var operationResults = this.binsService.PackBins(
 				presetOption.Bins,
 				request.Body.Items!,
 				new Api.Models.PackingParameters
 				{
+					Algorithm = Algorithm.FFD,
 					StopAtSmallestBin = request.Body.Parameters?.StopAtSmallestBin ?? false,
 					NeverReportUnpackedItems = request.Body.Parameters?.NeverReportUnpackedItems ?? false,
 					OptInToEarlyFails = request.Body.Parameters?.OptInToEarlyFails ?? false,

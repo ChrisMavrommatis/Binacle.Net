@@ -6,7 +6,7 @@ using ChrisMavrommatis.Logging;
 namespace Binacle.Net.Api.Services;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public interface ILockerService
+public interface IBinsService
 {
 	Dictionary<string, Lib.Fitting.Models.FittingResult> FitBins<TBin, TBox>(List<TBin> bins, List<TBox> items, Models.FittingParameters parameters)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
@@ -17,12 +17,12 @@ public interface ILockerService
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 }
 
-internal class LockerService : ILockerService
+internal class BinsService : IBinsService
 {
 	private readonly Lib.AlgorithmFactory algorithmFactory;
-	private readonly ILogger<LockerService> logger;
+	private readonly ILogger<BinsService> logger;
 
-	public LockerService(ILogger<LockerService> logger)
+	public BinsService(ILogger<BinsService> logger)
 	{
 		this.algorithmFactory = new Lib.AlgorithmFactory();
 		this.logger = logger;
@@ -89,9 +89,10 @@ internal class LockerService : ILockerService
 
 		var results = new Dictionary<string, Lib.Packing.Models.PackingResult>();
 
+		var algorithm = this.GetAlgorithm(parameters.Algorithm);
 		foreach (var bin in bins.OrderBy(x => x.CalculateVolume()))
 		{
-			var algorithmInstance = this.algorithmFactory.CreatePacking(Lib.Algorithm.FirstFitDecreasing, bin, items);
+			var algorithmInstance = this.algorithmFactory.CreatePacking(algorithm, bin, items);
 			var result = algorithmInstance.Execute(new Lib.Packing.Models.PackingParameters 
 			{ 
 				NeverReportUnpackedItems = parameters.NeverReportUnpackedItems, 
@@ -115,6 +116,17 @@ internal class LockerService : ILockerService
 
 		this.logger.EnrichStateWithResults(results);
 		return results;
+	}
+	
+	private Lib.Algorithm GetAlgorithm(Models.Algorithm algorithm)
+	{
+		return algorithm switch
+		{
+			Models.Algorithm.FFD => Lib.Algorithm.FirstFitDecreasing,
+			Models.Algorithm.BFD => Lib.Algorithm.BestFitDecreasing,
+			Models.Algorithm.WFD => Lib.Algorithm.WorstFitDecreasing,
+			_ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
+		};
 	}
 	
 }

@@ -19,7 +19,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 {
 	private readonly IOptions<BinPresetOptions> presetOptions;
 	private readonly IValidator<v1.Requests.PresetQueryRequest> validator;
-	private readonly ILockerService lockerService;
+	private readonly IBinsService binsService;
 	private readonly ILogger<ByPreset> logger;
 
 	/// <summary>
@@ -27,17 +27,17 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 	/// </summary>
 	/// <param name="presetOptions"></param>
 	/// <param name="validator"></param>
-	/// <param name="lockerService"></param>
+	/// <param name="binsService"></param>
 	/// <param name="logger"></param>
 	public ByPreset(
 		IOptions<BinPresetOptions> presetOptions,
 		IValidator<v1.Requests.PresetQueryRequest> validator,
-		ILockerService lockerService,
+		IBinsService binsService,
 		ILogger<ByPreset> logger
 	  )
 	{
 		this.validator = validator;
-		this.lockerService = lockerService;
+		this.binsService = binsService;
 		this.logger = logger;
 		this.presetOptions = presetOptions;
 	}
@@ -79,7 +79,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 	/// <response code="200"> <b>OK</b>
 	/// <br />
 	/// <p>
-	///		Returns the bin that fits all of the items, or empty if they don't fit.
+	///		Returns the bin that fits all the items, or empty if they don't fit.
 	/// </p>
 	/// </response>
 	/// <response code="400"> <b>Bad Request</b>
@@ -165,7 +165,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 				//);
 			}
 
-			var operationResults = this.lockerService.FitBins(
+			var operationResults = this.binsService.FitBins(
 				presetOption.Bins, 
 				request.Body.Items!,
 				new Api.Models.FittingParameters

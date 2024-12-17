@@ -18,30 +18,30 @@ namespace Binacle.Net.Api.v2.Endpoints.Fit;
 public class ByCustom : EndpointWithRequest<v2.Requests.CustomFitRequestWithBody>
 {
 	private readonly IValidator<v2.Requests.CustomFitRequest> validator;
-	private readonly ILockerService lockerService;
+	private readonly IBinsService binsService;
 	private readonly ILogger<ByCustom> logger;
 
 	/// <summary>
 	/// Fit by Custom endpoint
 	/// </summary>
 	/// <param name="validator"></param>
-	/// <param name="lockerService"></param>
+	/// <param name="binsService"></param>
 	/// <param name="logger"></param>
 	public ByCustom(
 		IValidator<v2.Requests.CustomFitRequest> validator,
-		ILockerService lockerService,
+		IBinsService binsService,
 		ILogger<ByCustom> logger
 	  )
 	{
 		this.validator = validator;
-		this.lockerService = lockerService;
+		this.binsService = binsService;
 		this.logger = logger;
 	}
 
 	/// <summary>
 	/// Perform a bin fitting function using custom bins.
 	/// </summary>
-	/// <returns>An array of results indicating if a bin can accommodate all of the items</returns>
+	/// <returns>An array of results indicating if a bin can accommodate all the items</returns>
 	/// <remarks>
 	/// Example request:
 	///     
@@ -88,7 +88,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomFitRequestWithBody
 	/// <response code="200"> <b>OK</b>
 	/// <br />
 	/// <p>
-	///		An array of results indicating if a bin can accommodate all of the items.
+	///		An array of results indicating if a bin can accommodate all the items.
 	/// </p>
 	/// </response>
 	/// <response code="400"> <b>Bad Request</b>
@@ -140,7 +140,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomFitRequestWithBody
 					);
 			}
 
-			var operationResults = this.lockerService.FitBins(
+			var operationResults = this.binsService.FitBins(
 				request.Body.Bins!, 
 				request.Body.Items!,
 				new FittingParameters

@@ -16,30 +16,30 @@ namespace Binacle.Net.Api.v1.Endpoints.Query;
 public class ByCustom : EndpointWithRequest<v1.Requests.CustomQueryRequestWithBody>
 {
 	private readonly IValidator<v1.Requests.CustomQueryRequest> validator;
-	private readonly ILockerService lockerService;
+	private readonly IBinsService binsService;
 	private readonly ILogger<ByCustom> logger;
 
 	/// <summary>
 	/// Query by Custom endpoint
 	/// </summary>
 	/// <param name="validator"></param>
-	/// <param name="lockerService"></param>
+	/// <param name="binsService"></param>
 	/// <param name="logger"></param>
 	public ByCustom(
 		IValidator<v1.Requests.CustomQueryRequest> validator,
-		ILockerService lockerService,
+		IBinsService binsService,
 		ILogger<ByCustom> logger
 	  )
 	{
 		this.validator = validator;
-		this.lockerService = lockerService;
+		this.binsService = binsService;
 		this.logger = logger;
 	}
 
 	/// <summary>
 	/// Perform a bin fit query using custom bins.
 	/// </summary>
-	/// <returns>The bin that fits all of the items, or empty</returns>
+	/// <returns>The bin that fits all the items, or empty</returns>
 	/// <remarks>
 	/// Example request:
 	///     
@@ -135,7 +135,7 @@ public class ByCustom : EndpointWithRequest<v1.Requests.CustomQueryRequestWithBo
 					);
 			}
 
-			var operationResults = this.lockerService.FitBins(
+			var operationResults = this.binsService.FitBins(
 				request.Body.Bins!, 
 				request.Body.Items!,
 				new Api.Models.FittingParameters

@@ -17,34 +17,34 @@ internal class ApiVersion : IApiVersion
 
 	public void ConfigureSwaggerOptions(SwaggerGenOptions options, IApiVersionDescriptionProvider provider)
 	{
-		//options.AddPolymorphicTypeMappings(_polymorphicTypeMappings);
+		options.AddPolymorphicTypeMappings(_polymorphicTypeMappings);
 		//options.SchemaFilter<CustomSchemaTypeNamesSchemaFilter>();
 			
-		// var description = provider.ApiVersionDescriptions
-		// 	.FirstOrDefault(x => x.ApiVersion.MajorVersion == this.MajorNumber)!;
-		//
-		// var info = ApiDocument.CreateApiInfo(this, description);
-		//
-		// options.SwaggerDoc(description.GroupName, info);
+		var description = provider.ApiVersionDescriptions
+			.FirstOrDefault(x => x.ApiVersion.MajorVersion == this.MajorNumber)!;
+		
+		var info = ApiDocument.CreateApiInfo(this, description);
+		
+		options.SwaggerDoc(description.GroupName, info);
 	}
 
 	public void ConfigureSwaggerUI(SwaggerUIOptions options, IApiVersionDescriptionProvider provider)
 	{
-		// var description = provider.ApiVersionDescriptions
-		// 	.FirstOrDefault(x => x.ApiVersion.MajorVersion == this.MajorNumber);
-		//
-		// options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Binacle.Net API {description.GroupName}");
+		var description = provider.ApiVersionDescriptions
+			.FirstOrDefault(x => x.ApiVersion.MajorVersion == this.MajorNumber);
+		
+		options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Binacle.Net API {description.GroupName}");
 	}
 	
-	//private static Dictionary<Type, Type[]> _polymorphicTypeMappings = new()
-	//{
-	//	{ typeof(v3.Models.Errors.IApiError), [
-	//			typeof(v3.Models.Errors.FieldValidationError), 
-	//			typeof(v3.Models.Errors.ParameterError), 
-	//			typeof(v3.Models.Errors.ExceptionError)
-	//		] 
-	//	}
-	//};
+	private static Dictionary<Type, Type[]> _polymorphicTypeMappings = new()
+	{
+		{ typeof(v3.Models.Errors.IApiError), [
+				typeof(v3.Models.Errors.FieldValidationError), 
+				typeof(v3.Models.Errors.ParameterError), 
+				typeof(v3.Models.Errors.ExceptionError)
+			] 
+		}
+	};
 
 	//private static Dictionary<Type, string> _schemaTypeNameMappings = new()
 	//{

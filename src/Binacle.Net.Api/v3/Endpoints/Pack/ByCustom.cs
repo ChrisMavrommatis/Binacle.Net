@@ -7,16 +7,16 @@ using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Binacle.Net.Api.v2.Endpoints.Pack;
+namespace Binacle.Net.Api.v3.Endpoints;
 
 /// <summary>
 /// Pack by Custom endpoint
 /// </summary>
-[ApiVersion(v2.ApiVersion.Number, Deprecated = v2.ApiVersion.IsDeprecated)]
+[ApiVersion(v3.ApiVersion.Number, Deprecated = v3.ApiVersion.IsDeprecated)]
 [Route("api/v{version:apiVersion}/[namespace]")]
-public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBody>
+public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBody>
 {
-	private readonly IValidator<v2.Requests.CustomPackRequest> validator;
+	private readonly IValidator<v3.Requests.CustomPackRequest> validator;
 	private readonly IBinsService binsService;
 	private readonly ILogger<ByCustom> logger;
 
@@ -27,10 +27,10 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 	/// <param name="binsService"></param>
 	/// <param name="logger"></param>
 	public ByCustom(
-		IValidator<v2.Requests.CustomPackRequest> validator,
+		IValidator<v3.Requests.CustomPackRequest> validator,
 		IBinsService binsService,
 		ILogger<ByCustom> logger
-	  )
+	)
 	{
 		this.validator = validator;
 		this.binsService = binsService;
@@ -44,12 +44,12 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 	/// <remarks>
 	/// Example request:
 	///     
-	///     POST /api/v2/pack/by-custom
+	///     POST /api/v3/pack/by-custom
 	///		{
 	///			"parameters": {
+	///				"algorithm" : "FFD",
 	///				"neverReportUnpackedItems": false,
 	///				"optInToEarlyFails": false,
-	///				"stopAtSmallestBin": false,
 	///				"reportPackedItemsOnlyWhenFullyPacked": false
 	///			},
 	///			"bins": [
@@ -116,26 +116,27 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 	[HttpPost("by-custom")]
 	[Consumes("application/json")]
 	[Produces("application/json")]
-	[MapToApiVersion(v2.ApiVersion.Number)]
-	[SwaggerRequestExample(typeof(v2.Requests.CustomPackRequest), typeof(v2.Requests.Examples.CustomPackRequestExample))]
+	[MapToApiVersion(v3.ApiVersion.Number)]
+	[SwaggerRequestExample(typeof(v3.Requests.CustomPackRequest), typeof(v3.Requests.Examples.CustomPackRequestExample))]
 
-	[ProducesResponseType(typeof(v2.Responses.PackResponse), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(v2.Responses.PackResponse), typeof(v2.Responses.Examples.CustomPackResponseExamples), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(v3.Responses.PackResponse), StatusCodes.Status200OK)]
+	[SwaggerResponseExample(typeof(v3.Responses.PackResponse), typeof(v3.Responses.Examples.CustomPackResponseExamples), StatusCodes.Status200OK)]
 
-	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
-	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(typeof(v3.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
+	[SwaggerResponseExample(typeof(v3.Responses.ErrorResponse), typeof(v3.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 
-	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
-	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
-	public override async Task<IActionResult> HandleAsync(v2.Requests.CustomPackRequestWithBody request, CancellationToken cancellationToken = default)
+	[ProducesResponseType(typeof(v3.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
+	[SwaggerResponseExample(typeof(v3.Responses.ErrorResponse), typeof(v3.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
+	public override async Task<IActionResult> HandleAsync(v3.Requests.CustomPackRequestWithBody request, CancellationToken cancellationToken = default)
 	{
 		try
 		{
 			if (request is null || request.Body is null)
 			{
 				return this.BadRequest(
-					Models.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody, Constants.Errors.Categories.RequestError)
-					);
+					Models.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody,
+						Constants.Errors.Categories.RequestError)
+				);
 			}
 
 			await this.validator.ValidateAndAddToModelStateAsync(request.Body, this.ModelState, cancellationToken);
@@ -144,7 +145,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 			{
 				return this.BadRequest(
 					Models.Response.ValidationError(this.ModelState, Constants.Errors.Categories.ValidationError)
-					);
+				);
 			}
 
 			var operationResults = this.binsService.PackBins(
@@ -152,16 +153,17 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 				request.Body.Items!,
 				new Api.Models.PackingParameters
 				{
-					Algorithm = Algorithm.FFD,
-					StopAtSmallestBin = request.Body.Parameters?.StopAtSmallestBin ?? false,
+					Algorithm = request.Body.Parameters?.Algorithm ?? Algorithm.FFD,
+					StopAtSmallestBin = false,
 					NeverReportUnpackedItems = request.Body.Parameters?.NeverReportUnpackedItems ?? false,
 					OptInToEarlyFails = request.Body.Parameters?.OptInToEarlyFails ?? false,
-					ReportPackedItemsOnlyWhenFullyPacked = request.Body.Parameters?.ReportPackedItemsOnlyWhenFullyPacked ?? false,
+					ReportPackedItemsOnlyWhenFullyPacked =
+						request.Body.Parameters?.ReportPackedItemsOnlyWhenFullyPacked ?? false,
 				}
 			);
 
 			return this.Ok(
-				v2.Responses.PackResponse.Create(
+				v3.Responses.PackResponse.Create(
 					request.Body.Bins!,
 					request.Body.Items!,
 					request.Body.Parameters,
@@ -175,8 +177,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Pack by Custom");
 			return this.InternalServerError(
 				Models.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
-				);
+			);
 		}
 	}
 }
-

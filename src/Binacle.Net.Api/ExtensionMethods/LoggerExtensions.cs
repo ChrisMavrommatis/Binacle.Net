@@ -1,6 +1,5 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 using ChrisMavrommatis.Logging;
-using Newtonsoft.Json.Linq;
 
 namespace Binacle.Net.Api.ExtensionMethods;
 
