@@ -7,7 +7,7 @@ using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Binacle.Net.Api.v3.Endpoints;
+namespace Binacle.Net.Api.v3.Endpoints.Pack;
 
 /// <summary>
 /// Pack by Custom endpoint

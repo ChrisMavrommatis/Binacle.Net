@@ -2,6 +2,7 @@
 using Microsoft.JSInterop;
 using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using Binacle.Net.Api.UIModule.ViewModels;
 
 namespace Binacle.Net.Api.UIModule.Services;
 
@@ -19,6 +20,7 @@ internal class PackingDemoState
 		this.jsRuntime = jsRuntime;
 		this.Model = new ViewModels.BinPackingViewModel() 
 		{ 
+			Algorithm = ViewModels.Algorithm.FirstFitDecreasing,
 			Bins = new List<ViewModels.Bin>(), 
 			Items = new List<ViewModels.Item>()
 		};
@@ -56,11 +58,25 @@ internal class PackingDemoState
 		{
 			var request = new ApiModels.Requests.PackByCustomRequest
 			{
+				Parameters = new ApiModels.Requests.PackRequestParameters
+				{
+					Algorithm = Model.Algorithm switch
+					{
+						ViewModels.Algorithm.BestFitDecreasing => Models.Algorithm.BFD,
+						ViewModels.Algorithm.FirstFitDecreasing => Models.Algorithm.FFD,
+						ViewModels.Algorithm.WorstFitDecreasing => Models.Algorithm.WFD,
+						_ => throw new InvalidOperationException("Invalid algorithm")
+					},
+					OptInToEarlyFails = false,
+					ReportPackedItemsOnlyWhenFullyPacked = false,
+					NeverReportUnpackedItems = false,
+					StopAtSmallestBin = false
+				},
 				Bins = Model.Bins.Select(x => new Models.Bin(x.ID, x)).ToList(),
 				Items = Model.Items.Select(x => new Models.Item(x.ID, x, x.Quantity)).ToList()
 			};
 			var client = this.httpClientFactory.CreateClient("BinacleApi");
-			var response = await client.PostAsJsonAsync("api/v2/pack/by-custom", request);
+			var response = await client.PostAsJsonAsync("api/v3/pack/by-custom", request);
 			if (response.StatusCode != System.Net.HttpStatusCode.OK)
 			{
 				throw new ApplicationException($"Error: {response.StatusCode}");

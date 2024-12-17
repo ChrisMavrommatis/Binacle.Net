@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Binacle.Net.Api.UIModule.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Binacle.Net.Api.UIModule.Services;
 
@@ -50,6 +51,7 @@ internal class SampleDataService : ISampleDataService
 
 		return new ViewModels.BinPackingViewModel
 		{
+			Algorithm = Algorithm.FirstFitDecreasing,
 			Bins = bins,
 			Items = items
 		};
@@ -62,6 +64,7 @@ internal class SampleDataService : ISampleDataService
 
 		return new ViewModels.BinPackingViewModel
 		{
+			Algorithm = Algorithm.FirstFitDecreasing,
 			Bins = bins,
 			Items = items
 		};
