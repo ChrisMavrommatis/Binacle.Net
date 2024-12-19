@@ -39,9 +39,9 @@ public class PackByCustomScenario
 
 	private async Task RunBinaryDecisionScenarioTest(Scenario scenario)
 	{
-		var presets = sut.Services.GetService<IOptions<BinPresetOptions>>();
+		var presets = this.sut.Services.GetService<IOptions<BinPresetOptions>>();
 		var binCollection = scenario.GetBinCollectionKey();
-		var expectedBin = scenario.GetTestBin(sut.BinCollectionsTestDataProvider);
+		var expectedBin = scenario.GetTestBin(this.sut.BinCollectionsTestDataProvider);
 
 		presets!.Value.Presets.Should().ContainKey(binCollection);
 
@@ -75,11 +75,11 @@ public class PackByCustomScenario
 			}).ToList()
 		};
 
-		var response = await sut.Client.PostAsJsonAsync(routePath, request, sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-		var packResponse = await response.Content.ReadFromJsonAsync<Api.v2.Responses.PackResponse>(sut.JsonSerializerOptions);
+		var packResponse = await response.Content.ReadFromJsonAsync<Api.v2.Responses.PackResponse>(this.sut.JsonSerializerOptions);
 
 		packResponse.Should().NotBeNull();
 		packResponse!.Data.Should()

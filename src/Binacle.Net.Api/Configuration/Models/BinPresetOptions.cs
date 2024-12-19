@@ -6,6 +6,8 @@ public class BinPresetOptions
 {
 	public const string SectionName = "PresetOptions";
 	public const string FilePath = "Presets.json";
+	// public static string GetEnvironmentFilePath(string environment) => $"Presets.{environment}.json";
+
 
 	public Dictionary<string, BinPresetOption> Presets { get; set; } = new();
 }

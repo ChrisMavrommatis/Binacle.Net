@@ -10,7 +10,7 @@ public class PresetFitRequestWithBody : RequestWithBody<PresetFitRequest>
 	public string? Preset { get; set; }
 }
 
-public class PresetFitRequest
+public class PresetFitRequest : IWithFitRequestParameters
 {
 	public FitRequestParameters? Parameters { get; set; }
 	public List<Box>? Items { get; set; }

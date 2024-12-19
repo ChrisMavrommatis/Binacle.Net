@@ -37,7 +37,7 @@ public class QueryByPresetScenario
 	private async Task RunBinaryDecisionScenarioTest(Scenario scenario)
 	{
 		var binCollection = scenario.GetBinCollectionKey();
-		var expectedBin = scenario.GetTestBin(sut.BinCollectionsTestDataProvider);
+		var expectedBin = scenario.GetTestBin(this.sut.BinCollectionsTestDataProvider);
 
 		var urlPath = routePath.Replace("{preset}", binCollection);
 
@@ -53,7 +53,7 @@ public class QueryByPresetScenario
 			}).ToList()
 		};
 
-		var response = await sut.Client.PostAsJsonAsync(urlPath, request, sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(urlPath, request, this.sut.JsonSerializerOptions);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 

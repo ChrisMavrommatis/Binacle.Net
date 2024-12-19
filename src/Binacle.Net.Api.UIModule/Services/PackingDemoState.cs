@@ -62,15 +62,11 @@ internal class PackingDemoState
 				{
 					Algorithm = Model.Algorithm switch
 					{
-						ViewModels.Algorithm.BestFitDecreasing => Models.Algorithm.BFD,
-						ViewModels.Algorithm.FirstFitDecreasing => Models.Algorithm.FFD,
-						ViewModels.Algorithm.WorstFitDecreasing => Models.Algorithm.WFD,
+						ViewModels.Algorithm.BestFitDecreasing => ApiModels.Algorithm.BFD,
+						ViewModels.Algorithm.FirstFitDecreasing => ApiModels.Algorithm.FFD,
+						ViewModels.Algorithm.WorstFitDecreasing => ApiModels.Algorithm.WFD,
 						_ => throw new InvalidOperationException("Invalid algorithm")
-					},
-					OptInToEarlyFails = false,
-					ReportPackedItemsOnlyWhenFullyPacked = false,
-					NeverReportUnpackedItems = false,
-					StopAtSmallestBin = false
+					}
 				},
 				Bins = Model.Bins.Select(x => new Models.Bin(x.ID, x)).ToList(),
 				Items = Model.Items.Select(x => new Models.Item(x.ID, x, x.Quantity)).ToList()

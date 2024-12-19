@@ -38,7 +38,6 @@ public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>
 				continue;
 			}
 
-
 			results.Add(new v3.Models.BinPackResult
 			{
 				Bin = new v3.Models.Bin
@@ -57,11 +56,13 @@ public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>
 					Dimensions = new Models.Dimensions(x.Dimensions),
 					Coordinates = new Models.Coordinates(x.Coordinates!.Value)
 				}).ToList(),
-				UnpackedItems = operationResult.UnpackedItems?.Select(x => new v3.Models.ResultBox
-				{
-					ID = x.ID,
-					Dimensions = new Models.Dimensions(x.Dimensions)
-				}).ToList()
+				UnpackedItems = operationResult.UnpackedItems?
+					.GroupBy(x => x.ID)
+					.Select(x => new v3.Models.ResultBox
+					{
+						ID = x.Key,
+						Quantity = x.Count()
+					}).ToList()
 			});
 		}
 

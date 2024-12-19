@@ -15,7 +15,7 @@ internal partial class FirstFitDecreasing_v2<TBin, TItem>
 			{
 				return resultBuilder
 					.WithForcedStatus(PackingResultStatus.EarlyFail_ContainerVolumeExceeded)
-					.WithUnpackedItems(this.items)
+					.WithUnpackedItems(this.items.Where(x => !x.IsPacked))
 					.Build(parameters);
 			}
 
@@ -24,7 +24,7 @@ internal partial class FirstFitDecreasing_v2<TBin, TItem>
 			{
 				return resultBuilder
 					.WithForcedStatus(PackingResultStatus.EarlyFail_ContainerDimensionExceeded)
-					.WithUnpackedItems(itemsNotFittingDueToLongestDimension)
+					.WithUnpackedItems(this.items.Where(x => !x.IsPacked))
 					.Build(parameters);
 			}
 		}

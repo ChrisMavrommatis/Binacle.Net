@@ -1,8 +1,9 @@
-﻿@namespace Binacle.Net.Api.UIModule.Components.Features
+﻿@using Binacle.Net.Api.UIModule.ExtensionMethods
+@namespace Binacle.Net.Api.UIModule.Components.Features
 @rendermode RenderMode.InteractiveServer
 
 <EditForm Model="@this.State!.Model" class="row mt-5 pt-5">
-	<DataAnnotationsValidator />
+	<DataAnnotationsValidator/>
 
 	<div class="col s12">
 		<Card Color="blue accent-1" Title="Bin">
@@ -11,46 +12,49 @@
 					@foreach (var bin in this.State.Model.Bins)
 					{
 						<li class="collection-item">
-							<a href="javascript:void(0)" class="secondary-content" @onclick="(() => this.RemoveBinAsync(bin))">
-								<MaterialIcon Icon="delete" />
+							<a href="javascript:void(0)" class="secondary-content"
+							   @onclick="(() => this.RemoveBinAsync(bin))">
+								<MaterialIcon Icon="delete"/>
 							</a>
 							<div class="row g-1">
 								<div class="col s4 input-field p-1 m-1">
-									<InputNumber id="length" @bind-Value="bin.Length" @bind-Value:after="this.BinsChangedAsync" class="blue accent-1" />
+									<InputNumber id="length" @bind-Value="bin.Length"
+									             @bind-Value:after="this.BinsChangedAsync" class="blue accent-1"/>
 									<label for="length">Length</label>
 								</div>
 								<div class="col s4 input-field p-1 m-1">
-									<InputNumber id="width" @bind-Value="bin.Width" @bind-Value:after="this.BinsChangedAsync" class="blue accent-1" />
+									<InputNumber id="width" @bind-Value="bin.Width"
+									             @bind-Value:after="this.BinsChangedAsync" class="blue accent-1"/>
 									<label for="width">Width</label>
 								</div>
 								<div class="col s4 input-field p-1 m-1">
-									<InputNumber id="height" @bind-Value="bin.Height" @bind-Value:after="this.BinsChangedAsync" class="blue accent-1" />
+									<InputNumber id="height" @bind-Value="bin.Height"
+									             @bind-Value:after="this.BinsChangedAsync" class="blue accent-1"/>
 									<label for="height">Height</label>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col s12">
-									<ValidationMessage For="@(() => bin.Length)" class="supporting-text red-text" />
-									<ValidationMessage For="@(() => bin.Width)" class="supporting-text red-text" />
-									<ValidationMessage For="@(() => bin.Height)" class="supporting-text red-text" />
+									<ValidationMessage For="@(() => bin.Length)" class="supporting-text red-text"/>
+									<ValidationMessage For="@(() => bin.Width)" class="supporting-text red-text"/>
+									<ValidationMessage For="@(() => bin.Height)" class="supporting-text red-text"/>
 								</div>
 							</div>
 						</li>
-
 					}
 				</ul>
 			</ChildContent>
 			<ActionContent>
 				<TextButton class="icon-right" @onclick="this.AddBinAsync">
-					<MaterialIcon Icon="add" />
+					<MaterialIcon Icon="add"/>
 					Add Bin
 				</TextButton>
 				<TextButton class="icon-right" @onclick="this.ClearAllBinsAsync">
-					<MaterialIcon Icon="delete_forever" />
+					<MaterialIcon Icon="delete_forever"/>
 					Clear All Bins
 				</TextButton>
 				<TextButton class="icon-right" @onclick="this.RandomizeBinsFromSamplesAsync">
-					<MaterialIcon Icon="refresh" />
+					<MaterialIcon Icon="refresh"/>
 					Randomize from samples
 				</TextButton>
 			</ActionContent>
@@ -64,33 +68,34 @@
 					@foreach (var item in this.State.Model.Items)
 					{
 						<li class="collection-item">
-							<a href="javascript:void(0)" class="secondary-content" @onclick="(() => this.RemoveItemAsync(item))">
-								<MaterialIcon Icon="delete" />
+							<a href="javascript:void(0)" class="secondary-content"
+							   @onclick="(() => this.RemoveItemAsync(item))">
+								<MaterialIcon Icon="delete"/>
 							</a>
 							<div class="row g1">
 								<div class="col s3 input-field">
-									<InputNumber id="length" @bind-Value="item.Length" class="orange accent-1" />
+									<InputNumber id="length" @bind-Value="item.Length" class="orange accent-1"/>
 									<label for="length">Length</label>
 								</div>
 								<div class="col s3 input-field">
-									<InputNumber id="width" @bind-Value="item.Width" class="orange accent-1" />
+									<InputNumber id="width" @bind-Value="item.Width" class="orange accent-1"/>
 									<label for="width">Width</label>
 								</div>
 								<div class="col s3 input-field">
-									<InputNumber id="height" @bind-Value="item.Height" class="orange accent-1" />
+									<InputNumber id="height" @bind-Value="item.Height" class="orange accent-1"/>
 									<label for="height">Height</label>
 								</div>
 								<div class="col s3 input-field">
-									<InputNumber id="quantity" @bind-Value="item.Quantity" class="orange accent-1" />
+									<InputNumber id="quantity" @bind-Value="item.Quantity" class="orange accent-1"/>
 									<label for="quantity">Quantity</label>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col s12">
-									<ValidationMessage For="@(() => item.Length)" class="supporting-text red-text" />
-									<ValidationMessage For="@(() => item.Width)" class="supporting-text red-text" />
-									<ValidationMessage For="@(() => item.Height)" class="supporting-text red-text" />
-									<ValidationMessage For="@(() => item.Quantity)" class="supporting-text red-text" />
+									<ValidationMessage For="@(() => item.Length)" class="supporting-text red-text"/>
+									<ValidationMessage For="@(() => item.Width)" class="supporting-text red-text"/>
+									<ValidationMessage For="@(() => item.Height)" class="supporting-text red-text"/>
+									<ValidationMessage For="@(() => item.Quantity)" class="supporting-text red-text"/>
 								</div>
 							</div>
 						</li>
@@ -100,15 +105,15 @@
 
 			<ActionContent>
 				<TextButton class="icon-right" @onclick="this.AddItemAsync">
-					<MaterialIcon Icon="add" />
+					<MaterialIcon Icon="add"/>
 					Add Item
 				</TextButton>
 				<TextButton class="icon-right" @onclick="this.ClearAllItemsAsync">
-					<MaterialIcon Icon="delete_forever" />
+					<MaterialIcon Icon="delete_forever"/>
 					Clear All Items
 				</TextButton>
 				<TextButton class="icon-right" @onclick="this.RandomizeItemsFromSamplesAsync">
-					<MaterialIcon Icon="refresh" />
+					<MaterialIcon Icon="refresh"/>
 					Randomize from samples
 				</TextButton>
 			</ActionContent>
@@ -118,39 +123,31 @@
 </EditForm>
 
 
-<div class="row mt-5 pt-5">
+<div class="row mt-5 pt-5 valign-wrapper">
 	<div class="col s4">
-			<label for="algorithm">Algorithm</label>
-			<InputSelect @bind-Value="this.State.Model.Algorithm" id="algorithm" class="browser-default">
-				@foreach(var value in Enum.GetValues<ViewModels.Algorithm>())
-				{
-					if(value == this.State.Model.Algorithm)
-					{
-						<option value="@value" selected>@value</option>
-					}
-					else
-					{
-						<option value="@value">@value</option>
-					}
-				}
-			</InputSelect>
+		<BrowserSelect 
+			Id="algorithm"
+			Label="Algorithm"
+			@bind-Value="@this.State.Model.Algorithm"
+			Options="EnumExtensions.ToKeyValue<ViewModels.Algorithm>()"
+			/>
 	</div>
-	
-    <div class="col s4 center">
-        <OutlinedButton @onclick="this.State.GetResultsAsync">
-            Get Results
-        </OutlinedButton>
-    </div>
-    <div class="col s4"></div>
+
+	<div class="col s4 center">
+		<OutlinedButton @onclick="this.State.GetResultsAsync">
+			Get Results
+		</OutlinedButton>
+	</div>
+	<div class="col s4"></div>
 </div>
 <div class="row center mt-5 red-text">
-    @if (this.State.Errors is not null)
-    {
-        @foreach (var error in this.State.Errors)
-        {
-            <div class="col s12">
-                @error
-            </div>
-        }
-    }
+	@if (this.State.Errors is not null)
+	{
+		@foreach (var error in this.State.Errors)
+		{
+			<div class="col s12">
+				@error
+			</div>
+		}
+	}
 </div>

@@ -49,7 +49,6 @@ internal class CustomPackResponseExamples : MultipleSwaggerExamplesProvider<Pack
 							Dimensions = new Models.Dimensions(2, 5, 10),
 							Coordinates = new Models.Coordinates(12, 0, 0)
 						},
-
 					],
 					UnpackedItems = [],
 					PackedItemsVolumePercentage = 100.00m,
@@ -77,7 +76,7 @@ internal class CustomPackResponseExamples : MultipleSwaggerExamplesProvider<Pack
 						new v3.Models.ResultBox
 						{
 							ID = "box_2",
-							Dimensions = new Models.Dimensions(12, 15, 20)
+							Quantity = 1
 						}
 					],
 					PackedItemsVolumePercentage = 2.70m,

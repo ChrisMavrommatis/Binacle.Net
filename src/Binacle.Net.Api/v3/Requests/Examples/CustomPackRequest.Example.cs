@@ -11,10 +11,7 @@ internal class CustomPackRequestExample : SingleSwaggerExamplesProvider<CustomPa
 		{
 			Parameters = new PackRequestParameters
 			{
-				Algorithm = Algorithm.FFD,
-				NeverReportUnpackedItems = false,
-				OptInToEarlyFails = false,
-				ReportPackedItemsOnlyWhenFullyPacked = false
+				Algorithm = Algorithm.FFD
 			},
 			Bins = new List<v3.Models.Bin>
 			{

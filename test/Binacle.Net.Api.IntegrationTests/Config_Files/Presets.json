@@ -1,0 +1,50 @@
+﻿{
+	"PresetOptions": {
+		"Presets": {
+			"rectangular-cuboids": {
+				"Bins": [
+					{
+						"ID": "Small",
+						"Length": 60,
+						"Width": 40,
+						"Height": 10
+					},
+					{
+						"ID": "Medium",
+						"Length": 60,
+						"Width": 40,
+						"Height": 20
+					},
+					{
+						"ID": "Large",
+						"Length": 60,
+						"Width": 40,
+						"Height": 30
+					}
+				]
+			},
+			"special": {
+				"Bins": [
+					{
+						"ID": "special_bin_1",
+						"Length": 60,
+						"Width": 40,
+						"Height": 10
+					},
+					{
+						"ID": "special_bin_2",
+						"Length": 60,
+						"Width": 40,
+						"Height": 11
+					},
+					{
+						"ID": "special_bin_3",
+						"Length": 60,
+						"Width": 40,
+						"Height": 12
+					}
+				]
+			}
+		}
+	}
+}

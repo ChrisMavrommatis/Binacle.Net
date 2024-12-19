@@ -8,7 +8,7 @@ public class CustomPackRequestWithBody : RequestWithBody<CustomPackRequest>
 {
 }
 
-public class CustomPackRequest
+public class CustomPackRequest : IWithPackRequestParameters
 {
 	public PackRequestParameters? Parameters { get; set; }
 	public List<v2.Models.Bin>? Bins { get; set; }

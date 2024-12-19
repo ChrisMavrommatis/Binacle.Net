@@ -7,9 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Include="xunit.runner.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+		<Content Include="Config_Files\**\*.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="xunit.runner.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,6 +34,10 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\src\Binacle.Net.Api\Binacle.Net.Api.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Tests\v3\" />
 	</ItemGroup>
 	
 </Project>

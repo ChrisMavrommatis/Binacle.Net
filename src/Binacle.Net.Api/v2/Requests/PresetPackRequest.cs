@@ -9,7 +9,7 @@ public class PresetPackRequestWithBody : RequestWithBody<PresetPackRequest>
 	public string? Preset { get; set; }
 }
 
-public class PresetPackRequest
+public class PresetPackRequest : IWithPackRequestParameters
 {
 	public PackRequestParameters? Parameters { get; set; }
 	public List<v2.Models.Box>? Items { get; set; }

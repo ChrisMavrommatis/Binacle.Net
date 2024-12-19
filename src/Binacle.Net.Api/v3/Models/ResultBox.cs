@@ -8,6 +8,7 @@ public class ResultBox : IWithID
 {
 	public required string ID { get; set; }
 
-	public required Dimensions Dimensions { get; set; }
+	public int? Quantity { get; set; }
+	public Dimensions? Dimensions { get; set; }
 	public Coordinates? Coordinates { get; set; }
 }

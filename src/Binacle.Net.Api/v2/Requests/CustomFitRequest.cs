@@ -8,7 +8,7 @@ namespace Binacle.Net.Api.v2.Requests;
 public class CustomFitRequestWithBody : RequestWithBody<CustomFitRequest>
 {
 }
-public class CustomFitRequest
+public class CustomFitRequest : IWithFitRequestParameters
 {
 	public FitRequestParameters? Parameters { get; set; }
 	public List<Bin>? Bins { get; set; }

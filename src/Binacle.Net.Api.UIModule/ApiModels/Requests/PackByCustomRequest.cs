@@ -15,9 +15,5 @@ internal class PackRequestParameters
 {
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public required Algorithm Algorithm { get; init; }
-	public bool? OptInToEarlyFails { get; set; }
-	public bool? ReportPackedItemsOnlyWhenFullyPacked { get; set; }
-	public bool? NeverReportUnpackedItems { get; set; }
-	public bool? StopAtSmallestBin { get; set; }
 }
 

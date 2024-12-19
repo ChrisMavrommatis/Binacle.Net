@@ -160,7 +160,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 				{
 					FindSmallestBinOnly = request.Body.Parameters?.FindSmallestBinOnly ?? true,
 					ReportFittedItems = request.Body.Parameters?.ReportFittedItems ?? false,
-					ReportUnfittedItems = request.Body.Parameters?.FindSmallestBinOnly ?? false,
+					ReportUnfittedItems = request.Body.Parameters?.ReportUnfittedItems ?? false,
 				}
 			);
 			return this.Ok( 

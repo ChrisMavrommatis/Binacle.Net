@@ -41,7 +41,7 @@ public class QueryByCustomScenario
 	{
 		var presets = sut.Services.GetService<IOptions<BinPresetOptions>>();
 		var binCollection = scenario.GetBinCollectionKey();
-		var expectedBin = scenario.GetTestBin(sut.BinCollectionsTestDataProvider);
+		var expectedBin = scenario.GetTestBin(this.sut.BinCollectionsTestDataProvider);
 
 		presets!.Value.Presets.Should().ContainKey(binCollection);
 
@@ -66,7 +66,7 @@ public class QueryByCustomScenario
 			}).ToList()
 		};
 
-		var response = await sut.Client.PostAsJsonAsync(routePath, request, sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 

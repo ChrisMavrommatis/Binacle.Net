@@ -43,6 +43,10 @@ internal static class ApiDocument
 		.AppendLine()
 		.ToString();
 	
-	private const string __experimentalMessage__ ="**Warning: This api version is experimental!**";
-	private const string __deprecatedMessage__ = "**This API version has been deprecated. Please use one of the new APIs available from the explorer.**";
+	private const string __experimentalMessage__ =
+		"**Warning: This API version is experimental and may change any time, introducing breaking changes.**";
+	
+	private const string __deprecatedMessage__ =
+		"**This API version has been deprecated and will be removed on the next major version.** <br/>" +
+		"**Please use one of the newer APIs available from the explorer.**";
 }

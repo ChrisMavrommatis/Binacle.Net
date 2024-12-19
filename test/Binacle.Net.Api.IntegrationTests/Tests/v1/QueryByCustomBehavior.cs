@@ -35,7 +35,7 @@ public class QueryByCustomBehavior
 	[Fact(DisplayName = $"POST {routePath}. With Valid Request Returns 200 OK")]
 	public async Task Post_WithValidRequest_Returns_200Ok()
 	{
-		var response = await sut.Client.PostAsJsonAsync(routePath, sampleRequest, sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 	}
@@ -45,9 +45,9 @@ public class QueryByCustomBehavior
 	{
 		this.sampleRequest.Items!.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 
-		var result = await sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
 
-		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
+		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Bin Returns 400 BadRequest")]
@@ -55,9 +55,9 @@ public class QueryByCustomBehavior
 	{
 		this.sampleRequest.Bins!.FirstOrDefault(x => x.ID == "custom_bin_1")!.Length = 0;
 
-		var result = await sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, sut.JsonSerializerOptions);
-
-		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
+		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
+		
+		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Same Id On Bins Returns 400 BadRequest")]
@@ -68,9 +68,9 @@ public class QueryByCustomBehavior
 			bin.ID = "custom_bin_1";
 		}
 
-		var result = await sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, sut.JsonSerializerOptions);
-
-		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
+		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
+		
+		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Same Id On Items Returns 400 BadRequest")]
@@ -81,8 +81,8 @@ public class QueryByCustomBehavior
 			bin.ID = "box_1";
 		}
 
-		var result = await sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
 
-		Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
+		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
 	}
 }

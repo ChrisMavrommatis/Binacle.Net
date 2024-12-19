@@ -41,57 +41,6 @@ public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBod
 	/// Pack items using custom bins.
 	/// </summary>
 	/// <returns>An array of results indicating the result per bin</returns>
-	/// <remarks>
-	/// Example request:
-	///     
-	///     POST /api/v3/pack/by-custom
-	///		{
-	///			"parameters": {
-	///				"algorithm" : "FFD",
-	///				"neverReportUnpackedItems": false,
-	///				"optInToEarlyFails": false,
-	///				"reportPackedItemsOnlyWhenFullyPacked": false
-	///			},
-	///			"bins": [
-	///				{
-	///					"id": "custom_bin_1",
-	///					"length": 10,
-	///					"width": 40,
-	///					"height": 60
-	///				},
-	///				{
-	///					"id": "custom_bin_2",
-	///					"length": 20,
-	///					"width": 40,
-	///					"height": 60
-	///				}
-	///			],
-	///			"items": [
-	///				{
-	///					"id": "box_1",
-	///					"quantity": 2,
-	///					"length": 2,
-	///					"width": 5,
-	///					"height": 10
-	///				},
-	///				{
-	///					"id": "box_2",
-	///					"quantity": 1,
-	///					"length": 12,
-	///					"width": 15,
-	///					"height": 10
-	///				},
-	///				{
-	///					"id": "box_3",
-	///					"quantity": 1,
-	///					"length": 12,
-	///					"width": 10,
-	///					"height": 15
-	///				}
-	///			]
-	///		}
-	/// 
-	/// </remarks>
 	/// <response code="200"> <b>OK</b>
 	/// <br />
 	/// <p>
@@ -153,12 +102,11 @@ public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBod
 				request.Body.Items!,
 				new Api.Models.PackingParameters
 				{
-					Algorithm = request.Body.Parameters?.Algorithm ?? Algorithm.FFD,
+					Algorithm = request.Body.Parameters!.Algorithm!.Value,
 					StopAtSmallestBin = false,
-					NeverReportUnpackedItems = request.Body.Parameters?.NeverReportUnpackedItems ?? false,
-					OptInToEarlyFails = request.Body.Parameters?.OptInToEarlyFails ?? false,
-					ReportPackedItemsOnlyWhenFullyPacked =
-						request.Body.Parameters?.ReportPackedItemsOnlyWhenFullyPacked ?? false,
+					NeverReportUnpackedItems = false,
+					OptInToEarlyFails = false,
+					ReportPackedItemsOnlyWhenFullyPacked = false,
 				}
 			);
 

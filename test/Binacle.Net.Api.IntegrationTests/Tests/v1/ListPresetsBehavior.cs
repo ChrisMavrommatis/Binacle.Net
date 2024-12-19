@@ -45,7 +45,7 @@ public class ListPresetsBehavior : IClassFixture<WebApplicationFactory<IApiMarke
 	[Fact(DisplayName = $"GET {routePath}. With Presets Configured Returns 200 OK")]
 	public async Task Get_WithPresetsConfigured_Returns_200Ok()
 	{
-		var response = await client.GetAsync(routePath);
+		var response = await this.client.GetAsync(routePath);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 	}
@@ -58,7 +58,7 @@ public class ListPresetsBehavior : IClassFixture<WebApplicationFactory<IApiMarke
 		var presetOptions = sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
 		presetOptions.Value.Presets.Clear();
 
-		var response = await client.GetAsync(routePath);
+		var response = await this.client.GetAsync(routePath);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
 	}

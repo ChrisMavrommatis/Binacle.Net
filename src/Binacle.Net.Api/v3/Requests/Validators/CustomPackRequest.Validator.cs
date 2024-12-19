@@ -43,10 +43,10 @@ internal class CustomPackRequestValidator : AbstractValidator<CustomPackRequest>
 		RuleFor(x => x.Parameters)
 			.NotNull();
 
-		RuleFor(x => x.Parameters)
+		RuleFor(x => x.Parameters!)
 			.ChildRules(parametersValidator =>
 			{
-				parametersValidator.RuleFor(x => x.Algorithm).NotNull();
+				parametersValidator.Include(new AlgorithmValidator());
 			});
 
 	}

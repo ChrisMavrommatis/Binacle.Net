@@ -60,7 +60,7 @@ public class PackResponse : v2.Models.ResponseBase<List<v2.Models.BinPackResult>
 				UnpackedItems = operationResult.UnpackedItems?.Select(x => new v2.Models.ResultBox
 				{
 					ID = x.ID,
-					Dimensions = new Models.Dimensions(x.Dimensions)
+					Dimensions = new Models.Dimensions(items.FirstOrDefault(item => item.ID == x.ID)!)
 				}).ToList()
 			});
 		}

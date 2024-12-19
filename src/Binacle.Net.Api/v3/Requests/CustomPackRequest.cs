@@ -18,11 +18,8 @@ public class CustomPackRequest
 	public List<v3.Models.Box>? Items { get; set; }
 }
 
-public class PackRequestParameters
+public class PackRequestParameters : IWithAlgorithm
 {
 	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<Algorithm>>))]
 	public Algorithm? Algorithm { get; set; }
-	public bool? OptInToEarlyFails { get; set; }
-	public bool? ReportPackedItemsOnlyWhenFullyPacked { get; set; }
-	public bool? NeverReportUnpackedItems { get; set; }
 }

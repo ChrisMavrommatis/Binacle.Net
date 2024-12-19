@@ -39,10 +39,11 @@ public class PackByPresetScenario
 
 	private async Task RunBinaryDecisionScenarioTest(Scenario scenario)
 	{
-		var presets = sut.Services.GetService<IOptions<BinPresetOptions>>();
+		var presets = this.sut.Services.GetService<IOptions<BinPresetOptions>>();
 
 		var binCollection = scenario.GetBinCollectionKey();
 		var expectedBin = scenario.GetTestBin(sut.BinCollectionsTestDataProvider);
+		var preset = presets!.Value.Presets[binCollection];
 		
 		var urlPath = routePath.Replace("{preset}", binCollection);
 
@@ -65,17 +66,17 @@ public class PackByPresetScenario
 			}).ToList()
 		};
 
-		var response = await sut.Client.PostAsJsonAsync(urlPath, request, sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(urlPath, request, this.sut.JsonSerializerOptions);
 
 		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-		var packResponse = await response.Content.ReadFromJsonAsync<Api.v2.Responses.PackResponse>(sut.JsonSerializerOptions);
+		var packResponse = await response.Content.ReadFromJsonAsync<Api.v2.Responses.PackResponse>(this.sut.JsonSerializerOptions);
 
 		packResponse.Should().NotBeNull();
 		packResponse!.Data.Should()
 			.NotBeNull()
 			.And.NotBeEmpty()
-			.And.HaveCount(presets!.Value.Presets.Count);
+			.And.HaveCount(preset.Bins.Count);
 		var result = packResponse.Data.FirstOrDefault(x => x.Bin.ID == expectedBin.ID);
 		result.Should().NotBeNull();
 		result!.Bin.Should().NotBeNull();
