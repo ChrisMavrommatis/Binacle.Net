@@ -2,7 +2,7 @@
 
 public static class Metadata
 {
-	public const string Version = "1.1.3";
+	public const string Version = "1.1.4";
 	public const string Name = "Binacle.Net";
 	public const string Description = "Binacle.NET is an API created to address the 3D Bin Packing Problem in real time.";
 	public const string DotNetVersion = "9";
