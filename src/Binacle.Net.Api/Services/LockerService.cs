@@ -69,8 +69,6 @@ internal class BinsService : IBinsService
 
 		this.logger.EnrichStateWithResults(results);
 		return results;
-
-
 	}
 
 	public Dictionary<string, Lib.Packing.Models.PackingResult> PackBins<TBin, TBox>(
