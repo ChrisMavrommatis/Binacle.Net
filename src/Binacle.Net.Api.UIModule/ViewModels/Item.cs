@@ -37,6 +37,7 @@ internal class Item : IWithDimensions, IWithQuantity
 	[Required]
 	[Range(1, ushort.MaxValue)]
 	public int Quantity { get; set; }
+	
 	public int Volume
 	{
 		get
