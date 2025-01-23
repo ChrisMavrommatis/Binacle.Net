@@ -31,7 +31,6 @@
 
     <script src="_framework/blazor.web.js"></script>
 	<script src="js/cookies.js"></script>
-	<script src="js/site.js"></script>
 
     <script type="importmap">
         {
@@ -44,7 +43,9 @@
         }
     </script>
     <script type="module" src="js/visualizer/visualizer.module.js"></script>
-    @* <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.8.0/dist/cdn/beer.min.js"></script> *@
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.8.0/dist/cdn/beer.min.js"></script>
+    <script src="js/site.js"></script>
+    
     @* <script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script> *@
 </body>
 
@@ -60,14 +61,15 @@
 			this.ThemeBodyClass = ThemeService?.DefaultTheme switch
 			{
 				Models.Theme.Dark => "dark",
-				_ => string.Empty
+				_ => "light"
 			};
+			return;
 		}
 		var theme = HttpContextAccessor.HttpContext.Request.Cookies["theme"];
 		this.ThemeBodyClass = theme switch
 		{
 			"dark" => "dark",
-			_ => string.Empty
+			_ => "light"
 		};
 	}
 

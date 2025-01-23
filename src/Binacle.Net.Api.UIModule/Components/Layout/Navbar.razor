@@ -35,7 +35,10 @@
 
 	private List<Models.LinkWithContent>? MenuItems =>
 		this.AppletsService?.Applets
-			.Select(applet => new Models.LinkWithContent(applet.Title, applet.Ref, new Models.MaterialSymbol(applet.Icon)))
+			.Select(applet => new Models.LinkWithContent(applet.Title, applet.Ref, new MaterialSymbol()
+			{
+				Name = applet.Icon
+			}))
 			.ToList();
 
 }

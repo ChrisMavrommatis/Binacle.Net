@@ -39,7 +39,7 @@ public static class ModuleDefinition
 
 		// For blazor components this is per connection or tab
 		builder.Services.AddScoped<Services.ISampleDataService, Services.SampleDataService>();
-		builder.Services.AddScoped<Services.PackingDemoState>();
+		// builder.Services.AddScoped<Services.PackingDemoState>();
 
 		Log.Information("{moduleName} module. Status {status}", "UI", "Initialized");
 	}

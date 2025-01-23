@@ -1,12 +1,14 @@
-﻿<article class="medium middle-align center-align">
+﻿@rendermode RenderMode.InteractiveServer
+
+<article class="medium middle-align center-align">
 	<div>
 		<div id="visualizer-container" class="" style="min-height:150px">
 			<div id="renderer-container"></div>
+			@if (this.Bin == null)
+			{
+				
 			<progress class="circle"></progress>
+			}
 		</div>
 	</div>
 </article>
-
-@code {
-	
-}

@@ -3,7 +3,7 @@ body.light {
 	--primary: #448aff; /* Vibrant Blue */
 	--on-primary: #ffffff; /* White for contrast */
 	--primary-container: #82b1ff; /* Lighter Blue */
-	--on-primary-container: #ffffff;
+	--on-primary-container: #000000;
 
 	--secondary: #ff9100; /* Bright Orange */
 	--on-secondary: #1b140e; /* Dark Brown for readability */

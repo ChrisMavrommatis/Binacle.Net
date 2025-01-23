@@ -31,8 +31,10 @@
 	function changeTheme(){
 		if(isDarkTheme()) {
 			body.classList.remove("dark");
+			body.classList.add("light");
 			themeIcon.textContent = "dark_mode";
 		} else {
+			body.classList.remove("light");
 			body.classList.add("dark");
 			themeIcon.textContent = "light_mode";
 		}
