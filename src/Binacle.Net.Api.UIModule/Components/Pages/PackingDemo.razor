@@ -1,6 +1,10 @@
 ﻿@using Binacle.Net.Api.UIModule.Components.Features
-@using Binacle.Net.Api.UIModule.Models
-@using Microsoft.AspNetCore.Components.Web
+@using Binacle.Net.Api.UIModule.Services
+
+@rendermode RenderMode.InteractiveServer
+
+@inject ISampleDataService SampleDataService
+
 @page "/PackingDemo"
 
 <PageTitle>Packing Demo</PageTitle>
@@ -14,23 +18,56 @@
 	This demo uses the experimental V3 API.
 </p>
 
-<BinPackingForm />
+<EditForm Model="@Model" class="grid">
+	<DataAnnotationsValidator />
+	
+	<article class="s12">
+		<fieldset>
+			@foreach (var bin in Model.Bins)
+			{
+				<div class="grid">
+					<div class="s4 field border label">
+						<InputNumber id="length" @bind-Value="bin.Length" />
+						<label for="length">Length</label>
+					</div>
+					<div class="s4 field border label">
+						<InputNumber id="width" @bind-Value="bin.Width" />
+						<label for="width">Width</label>
+					</div>
 
-<div class="row mt-5 pt-5">
-    <div class="col s12">
-        <div class="card indigo lighten-2">
-            <div class="card-image">
-                <span class="card-title black-text">Visualizer</span>
+					<div class="s4 field border label">
+						<InputNumber id="height" @bind-Value="bin.Height" />
+						<label for="height">Height</label>
+					</div>
+					<div class="s12">
+						<ValidationMessage For="@(() => bin.Length)" class="supporting-text red-text" />
+						<ValidationMessage For="@(() => bin.Width)" class="supporting-text red-text" />
+						<ValidationMessage For="@(() => bin.Height)" class="supporting-text red-text" />
+					</div>
+				</div>
+			}
+		</fieldset>
 
-                <div id="visualizer-container" class="center" style="min-height:150px">
-                    <div id="renderer-container"></div>
-                    <CircularPreloader SpinnerColor="spinner-blue-only" class="big active m-6" id="loader" />
-                </div>
+	</article>
+</EditForm>
 
-                <BinPackingVisualizerControls />
-
-            </div>
-            <BinPackingResults />
-        </div>
+<div class="grid">
+    <div class="s12">
+		    <PackingVisualizer>
+			    
+		    </PackingVisualizer>
+		    <BinPackingResults/>
     </div>
 </div>
+
+@code {
+
+	internal ViewModels.BinPackingViewModel Model { get; set; }
+
+	protected override void OnInitialized()
+	{
+		var sampleData = this.SampleDataService!.GetInitialSampleData();
+		this.Model = sampleData;
+	}
+
+}

@@ -1,42 +1,100 @@
-﻿nav .nav-wrapper .navbar-fill {
-    height: var(--navbar-height-mobile) !important;
+﻿:root,
+body.light {
+	--primary: #448aff; /* Vibrant Blue */
+	--on-primary: #ffffff; /* White for contrast */
+	--primary-container: #82b1ff; /* Lighter Blue */
+	--on-primary-container: #ffffff;
+
+	--secondary: #ff9100; /* Bright Orange */
+	--on-secondary: #1b140e; /* Dark Brown for readability */
+	--secondary-container: #ffcc80; /* Soft Orange */
+	--on-secondary-container: #000000;
+
+	--tertiary: #7a4d93; /* Desaturated Violet */
+	--on-tertiary: #ffffff; /* White for contrast */
+	--tertiary-container: #e7d9f1; /* Light Violet */
+	--on-tertiary-container: #2a1036; /* Dark Violet for contrast */
+
+	--error: #ba1a1a;
+	--on-error: #ffffff;
+	--error-container: #ffdad6;
+	--on-error-container: #410002;
+
+	--background: #fdfcff; /* Very Light */
+	--on-background: #1a1c1e; /* Dark Gray */
+
+	--surface: #faf9fc; /* Slightly off-white */
+	--on-surface: #1a1c1e;
+	--surface-variant: #dfe2eb; /* Light Gray */
+	--on-surface-variant: #43474e; /* Dark Gray */
+
+	--outline: #73777f; /* Medium Gray */
+	--outline-variant: #c3c7cf;
+
+	--shadow: #000000;
+	--scrim: #000000;
+
+	--inverse-surface: #2f3033; /* Dark Gray for inverse */
+	--inverse-on-surface: #f1f0f4; /* Light Gray for inverse text */
+	--inverse-primary: #9ecaff; /* Soft Blue */
+
+	--surface-dim: #dadadd;
+	--surface-bright: #faf9fc;
+
+	--surface-container-lowest: #ffffff;
+	--surface-container-low: #f4f3f7;
+	--surface-container: #eeedf1;
+	--surface-container-high: #e8e8eb;
+	--surface-container-highest: #e2e2e6;
 }
 
-@media only screen and (min-width : 601px) {
-	nav .nav-wrapper .navbar-fill {
-		height: var(--navbar-height) !important;
-		line-height: var(--navbar-height) !important;
-	}
+body.dark {
+	--primary: #3c5d8b; /* Muted, but noticeable blue */
+	--on-primary: #ffffff; /* White for contrast */
+	--primary-container: #253153; /* Deep blue */
+	--on-primary-container: #ffffff;
+
+	--secondary: #9c6e2d; /* Soft orange */
+	--on-secondary: #ffffff; 
+	--secondary-container: #7a5322; /* Muted orange */
+	--on-secondary-container: #ffffff;
+
+	--tertiary: #5b2d70; /* Subdued violet */
+	--on-tertiary: #ffffff; /* White for contrast */
+	--tertiary-container: #3e1f4f; /* Deep violet */
+	--on-tertiary-container: #e1c9e5; /* Light lavender for contrast */
+
+	--error: #9b2d2d; /* Muted red */
+	--on-error: #ffffff;
+	--error-container: #642424; /* Dark red */
+	--on-error-container: #f8d6d6;
+
+	--background: #101010; /* Almost pure black */
+	--on-background: #d1d1d1; /* Soft gray for text readability */
+
+	--surface: #181818; /* Very dark gray */
+	--on-surface: #d1d1d1; /* Light gray text */
+	--surface-variant: #2a2a2a; /* Slightly lighter dark gray */
+	--on-surface-variant: #d1d1d1;
+
+	--outline: #444444; /* Soft gray for outline */
+	--outline-variant: #555555;
+
+	--shadow: #000000;
+	--scrim: #000000;
+
+	--inverse-surface: #2a2a2a; /* Dark gray for inverse */
+	--inverse-on-surface: #f0f0f4; /* Light gray for inverse text */
+	--inverse-primary: #8b9ed6; /* Soft blue for inverse primary */
+
+	--surface-dim: #2e2e2e;
+	--surface-bright: #222222;
+
+	--surface-container-lowest: #1a1a1a;
+	--surface-container-low: #242424;
+	--surface-container: #303030;
+	--surface-container-high: #3b3b3b;
+	--surface-container-highest: #444444;
 }
 
-body {
-	display: flex;
-	min-height: 100vh;
-	flex-direction: column;
-}
 
-main {
-	flex: 1 0 auto;
-}
-
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-	-moz-appearance: textfield;
-}
-
-/* input field set padding and label left */
-/*.input-field input {
-	padding: 0 0px;
-	padding-top: 20px;
-}
-
-.input-field > label {
-	left: 0px;
-}*/

@@ -1,54 +1,43 @@
-﻿@using Binacle.Net.Api.UIModule.Components.Features.Shared
+﻿
 
-<header>
-    <div class="navbar-fixed">
-        <nav class="blue accent-2">
-            <div class="nav-wrapper container">
-                <BinacleLogo />
-               
-                @* <a href="#" data-target="mobile-demo" class="sidenav-trigger right hide-on-large-only">
-                    <MaterialIcon Icon="menu" />
-                </a> *@
-                <ul class="right hide-on-med-and-down">
-                    <li>
-                        <NavLink href="PackingDemo" ActiveClass="active">
-                            Packing Demo
-                        </NavLink>
-                    </li>
-                    <li>
-                        <a class="ext-link" href="@Binacle.Net.Api.Metadata.GitHub" target="_blank" title="Check out my GitHub">
-                            <img src="assets/github/github-mark-white.png" style="height: 20px">
-                        </a>
-                    </li>
-                    <li>
-                        <a class="ext-link" href="@Binacle.Net.Api.Metadata.Dockerhub" target="_blank" title="Visit Binacle.Net on Dockerhub">
-                            <img src="assets/docker/docker-mark-white.png" style="height: 20px">
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </div>
+<header class="fixed top responsive max primary">
+	<nav>
+		<div class="s">
+			<Logo class="large border white-border"/>
+		</div>
 
-    @* Blazor doesn't play nice with js listening to events *@
-    @* TODO: Figure out a way to incorporate sidenav opening in blazor *@
-    @* <ul class="sidenav blue accent-2" id="mobile-demo">
-        <li class="mt-3">
-            <NavLink href="PackingDemo" ActiveClass="active" class="white-text">
-                Packing Demo
-            </NavLink>
-        </li>
-        <li class="mt-3">
-            <a class="ext-link white-text" href="https://github.com/ChrisMavrommatis/Binacle.Net" target="_blank" title="Check out my GitHub">
-                <img class="mr-3" src="assets/github/github-mark-white.png" style="height: 20px">
-                Github
-            </a>
-        </li>
-        <li class="mt-3">
-            <a class="ext-link white-text" href="https://hub.docker.com/r/binacle/binacle-net" target="_blank" title="Visit Binacle.Net on Dockerhub">
-                <img class="mr-3" src="assets/docker/docker-mark-white.png" style="height: 20px">
-                Dockerhub
-            </a>
-        </li>
-    </ul> *@
+		<h5 class="max center-align">@Title</h5>
+		@foreach (var link in Links())
+		{
+			<a href="@link.Url" title="@link.Title" target="@link.GetTarget()">
+				@link.Content.Render()
+			</a>
+		}
+		
+		<ThemeButton />
+	</nav>
 </header>
+
+@code{
+	private string Title { get; set; } = "Binacle.Net";
+	
+	private List<Models.LinkWithContent> Links()
+	{
+		var githubImage = new Models.Image("assets/github/github-mark-white.png", "Github", height: 20);
+		// githubImage.Attributes.Add("data-theme", "src");
+		// githubImage.Attributes.Add("data-darktheme", "assets/github/github-mark-white.png");
+		// githubImage.Attributes.Add("data-lighttheme", "assets/github/github-mark.png");
+
+		var dockerImage = new Models.Image("assets/docker/docker-mark-white.png", "Docker", height: 20);
+		// dockerImage.Attributes.Add("data-theme", "src");
+		// dockerImage.Attributes.Add("data-darktheme", "assets/docker/docker-mark-white.png");
+		// dockerImage.Attributes.Add("data-lighttheme", "assets/docker/docker-mark-blue.png");
+
+		return
+		[
+			new("Check out my GitHub", Binacle.Net.Api.Metadata.GitHub, githubImage, Models.Target.Blank),
+			new("Visit Binacle.Net on Dockerhub", Binacle.Net.Api.Metadata.Dockerhub, dockerImage, Models.Target.Blank)
+		];
+	}
+
+}

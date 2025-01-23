@@ -1,6 +1,11 @@
 ﻿@using Binacle.Net.Api.UIModule.Components.Layout
+@using Microsoft.AspNetCore.Http
+
+@inject Services.ThemeService ThemeService
+@inject IHttpContextAccessor HttpContextAccessor
+
 <!DOCTYPE html>
-<html lang="en" theme="light">
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
@@ -9,37 +14,24 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <base href="." />
 
-    @* Material Icons *@
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    @* Material Symbols - Outlined Set *@
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    @* Material Symbols - Rounded Set *@
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
-    @* Material Symbols - Sharp Set *@
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp" rel="stylesheet" />
-
-    @* Import materialize.css *@
-    <link type="text/css" rel="stylesheet" href="lib/materialize/materialize.min.css" media="screen,projection" />
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.8.0/dist/cdn/beer.min.css" rel="stylesheet">
+    
     <link type="text/css" rel="stylesheet" href="css/main.css" media="screen,projection" />
-
+    
     @* Favicon *@
     <link rel="icon" href="favicon.ico" />
     <HeadOutlet />
 </head>
 
-<body>
+<body class="@ThemeBodyClass">
     <Header />
+	<Navbar />
     <Routes />
     <Footer />
 
     <script src="_framework/blazor.web.js"></script>
-    @* JavaScript at end of body for optimized loading *@
-    
-    @* Blazor doesn't play nice with js listening to events  *@
-    @* TODO: Figure out a way to incorporate sidenav opening in blazor *@
-
-    @* <script type="text/javascript" src="lib/materialize/materialize.min.js"></script> *@
-    @* <script type="text/javascript" src="js/main.js"></script> *@
+	<script src="js/cookies.js"></script>
+	<script src="js/site.js"></script>
 
     <script type="importmap">
         {
@@ -51,17 +43,32 @@
           }
         }
     </script>
-
-    @* <script type="importmap">
-        {
-            "imports": {
-                "three": "./lib/three/three.module.min.js",
-                "three/addons/": "./lib/three/addons/",
-                "visualizer/addons/": "./js/visualizer/addons/"
-            }
-        }
-    </script> *@
     <script type="module" src="js/visualizer/visualizer.module.js"></script>
+    @* <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.8.0/dist/cdn/beer.min.js"></script> *@
+    @* <script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script> *@
 </body>
 
 </html>
+
+@code {
+	private string ThemeBodyClass { get; set; }
+	
+	protected override void OnInitialized()
+	{
+		if (!HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("theme"))
+		{
+			this.ThemeBodyClass = ThemeService?.DefaultTheme switch
+			{
+				Models.Theme.Dark => "dark",
+				_ => string.Empty
+			};
+		}
+		var theme = HttpContextAccessor.HttpContext.Request.Cookies["theme"];
+		this.ThemeBodyClass = theme switch
+		{
+			"dark" => "dark",
+			_ => string.Empty
+		};
+	}
+
+}

@@ -1,0 +1,41 @@
+﻿<nav class="m l left secondary">
+	<header>
+		<Logo class="large" />
+	</header>
+	@if (MenuItems is not null)
+	{
+		@foreach (var menuItem in MenuItems)
+		{
+			<NavLink href="@menuItem.Url" ActiveClass="active">
+				@menuItem.Content.Render()
+				<span>@menuItem.Title</span>
+			</NavLink>
+		}
+	}
+	
+</nav>
+
+<nav class="s bottom secondary">
+	@if (MenuItems is not null)
+	{
+		@foreach (var menuItem in MenuItems)
+		{
+			<NavLink href="@menuItem.Url" ActiveClass="active">
+				@menuItem.Content.Render()
+				<span>@menuItem.Title</span>
+			</NavLink>
+		}
+	}
+</nav>
+
+@code {
+
+	[Inject]
+	private Services.AppletsService? AppletsService { get; set; }
+
+	private List<Models.LinkWithContent>? MenuItems =>
+		this.AppletsService?.Applets
+			.Select(applet => new Models.LinkWithContent(applet.Title, applet.Ref, new Models.MaterialSymbol(applet.Icon)))
+			.ToList();
+
+}

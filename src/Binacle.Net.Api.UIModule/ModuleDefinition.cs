@@ -22,6 +22,7 @@ public static class ModuleDefinition
 			.AddEnvironmentVariables();
 
 		builder.Services
+			.AddHttpContextAccessor()
 			.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
@@ -33,6 +34,8 @@ public static class ModuleDefinition
 			httpClient.BaseAddress = new Uri(connectionString!.Get("endpoint")!);
 		});
 
+		builder.Services.AddScoped<Components.Services.ThemeService>();
+		builder.Services.AddSingleton<Components.Services.AppletsService>();
 
 		// For blazor components this is per connection or tab
 		builder.Services.AddScoped<Services.ISampleDataService, Services.SampleDataService>();
@@ -56,7 +59,7 @@ public static class ModuleDefinition
 
 		app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
-		
+
 		app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
 		app.Use(async(ctx, next) =>

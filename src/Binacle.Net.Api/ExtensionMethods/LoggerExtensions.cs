@@ -38,7 +38,9 @@ public static class LoggerExtensions
 
 	public static IDisposable? EnrichStateWithParameters(this ILogger logger, Models.PackingParameters parameters)
 	{
-		List<string> parametersList = [];
+		List<string> parametersList = [
+			parameters.Algorithm.ToString()
+		];
 
 		if (parameters.OptInToEarlyFails)
 		{

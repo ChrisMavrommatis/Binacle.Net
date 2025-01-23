@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Http
+
+@inject Services.ThemeService ThemeService
+@inject IHttpContextAccessor HttpContextAccessor
+
+
+<button class="transparent circle" data-role="theme-button">
+	<i class="page top active">
+		@ThemeButtonIcon
+	</i>
+</button>
+@code {
+	private string ThemeButtonIcon { get; set; }
+
+	protected override void OnInitialized()
+	{
+		if (!HttpContextAccessor.HttpContext.Request.Cookies.ContainsKey("theme"))
+		{
+			this.ThemeButtonIcon = ThemeService.DefaultTheme switch
+			{
+				Models.Theme.Dark => "light_mode",
+				_ => "dark_mode"
+			};
+		}
+		var theme = HttpContextAccessor.HttpContext.Request.Cookies["theme"];
+		this.ThemeButtonIcon = theme switch
+		{
+			"dark" => "light_mode",
+			_ => "dark_mode"
+		};
+	}
+}
