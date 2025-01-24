@@ -1,14 +1,27 @@
 ﻿@rendermode RenderMode.InteractiveServer
 
-<article class="medium middle-align center-align">
+@inject IJSRuntime JS
+
+@{
+	var count = 0;
+}
+
+<article id="visualizer-container" class="no-padding transparent">
+	<article class="large no-padding tertiary-container top-round" id="renderer-container"></article>
+	<progress id="loader" class="circle absolute center middle"></progress>
 	<div>
-		<div id="visualizer-container" class="" style="min-height:150px">
-			<div id="renderer-container"></div>
-			@if (this.Bin == null)
+		<nav class="no-space">
+			@foreach (var control in this.controls.Values)
 			{
-				
-			<progress class="circle"></progress>
+				var isFirst = count == 0;
+				count++;
+				var isLast = count == this.controls.Count;
+				var @class =  isFirst ? "bottom-left-round" : isLast ? "bottom-right-round" : "no-round";
+				<button type="button" class="border tertiary-container class max @(@class)" id="@(control.Element.Id)" @onclick=@control.ClickAsync>
+					<MaterialSymbol Name="@control.Icon" />
+				</button>
 			}
-		</div>
+		</nav>	
 	</div>
 </article>
+

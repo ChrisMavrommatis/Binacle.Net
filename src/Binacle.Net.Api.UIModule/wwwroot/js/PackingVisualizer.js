@@ -1,17 +1,22 @@
 ﻿import WebGL from 'three/addons/capabilities/WebGL.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import * as THREE from 'three';
-import * as BinacleHelper from 'visualizer/addons/helper.js';
+import {
+	cameraFov,
+	startLoading,
+	stopLoading,
+	redrawScene,
+	addItemToScene,
+	removeItemFromScene
+} from "binacle/addons/PackingVisualizer.utils.js";
 
-let _visualizerContainer = null;
-let _loader = null;
-let _rendererContainer = null;
-let _logger = {
+const _logger = {
 	isEnabled: true,
-	actualLoger: function () { },
+	actualLogger: function () {
+	},
 	log: function () {
 		if (this.isEnabled) {
-			this.actualLoger.apply(console, arguments);
+			this.actualLogger.apply(console, arguments);
 		}
 	}
 };
@@ -23,15 +28,20 @@ let _State = {
 	light: {},
 	renderer: {},
 	controls: {},
+	initialized: false,
 }
+let _visualizerContainer = null;
+let _rendererContainer = null;
 
 const windowResizeHandler = function () {
 	_State.aspectRatio = window.innerWidth / window.innerHeight;
 	_State.camera.aspect = _State.aspectRatio;
 	_State.camera.fov = cameraFov(_State.aspectRatio);
 	_State.camera.updateProjectionMatrix();
-	_loader.style.top = `${loaderTop(_loader)}px`;
-	_State.renderer.setSize(_rendererContainer.offsetWidth, rendererHeight());
+	_State.renderer.setSize(
+		_rendererContainer.offsetWidth,
+		_rendererContainer.offsetHeight
+	);
 
 };
 function animate() {
@@ -44,36 +54,19 @@ function render() {
 	_State.renderer.render(_State.scene, _State.camera);
 }
 
-const rendererHeight = function () {
-	//const height = 500 / _State.aspectRatio;
-	//return height > 500 ? height : 500;
-	return 400;
-}
-
-const loaderTop = function (loaderEl) {
-	return (rendererHeight() / 2) - (loaderEl.offsetHeight / 2);
-}
-
-const cameraFov = function (aspectRatio) {
-	if (aspectRatio < 0.60) {
-		return 65;
-	}
-	if (aspectRatio < 1) {
-		return 50;
-	}
-	return 40;
-}
-
-
 window.binacle = {
 	state: _State,
 	initialize: function (bin) {
+		if (_State.initialized) {
+			_logger.log("Binacle already initialized");
+			return;
+		}
 		_visualizerContainer = document.getElementById("visualizer-container");
-		_loader = _visualizerContainer.querySelector("#loader");
 		_rendererContainer = _visualizerContainer.querySelector("#renderer-container");
-		_logger.actualLoger = window.console.log;
 
+		_logger.actualLoger = window.console.log;
 		_logger.log("Binacle Initialize", bin);
+
 		_State.aspectRatio = window.innerWidth / window.innerHeight;
 
 		_State.scene = new THREE.Scene();
@@ -89,31 +82,33 @@ window.binacle = {
 		_State.scene.add(_State.light);
 
 		// WebGLRenderer CanvasRenderer
-		_State.renderer = new THREE.WebGLRenderer({ antialias: true }); 
-		_State.renderer.setClearColor(0xf0f0f0);
+		_State.renderer = new THREE.WebGLRenderer({ antialias: true });
+		_State.renderer.setClearColor(0xe7d9f1);
 		_State.renderer.setPixelRatio(window.devicePixelRatio);
-		_State.renderer.setSize(_rendererContainer.offsetWidth, rendererHeight());
+		_State.renderer.setSize(
+			_rendererContainer.offsetWidth,
+			_rendererContainer.offsetHeight
+		);
 		_rendererContainer.append(_State.renderer.domElement);
 
 		_State.controls = new OrbitControls(_State.camera, _State.renderer.domElement);
 
-		_loader.classList.remove("m-6")
-		_loader.classList.remove('active');
-		_loader.style.position = 'absolute';
-		_loader.style.top = `${loaderTop(_loader)}px`;
+		stopLoading(_visualizerContainer);
 
 		window.addEventListener('resize', windowResizeHandler, false);
 
+		_State.initialized = true;
+
 		animate();
 
-		BinacleHelper.redrawScene(_State.scene, _State.camera, bin, null);
+		redrawScene(_State.scene, _State.camera, bin, null);
 
 		_logger.log("Binacle Initialized");
 	},
 	redrawScene: function (bin, packedItems) {
 		_logger.log("Binacle Redraw Scene", bin, packedItems);
 
-		BinacleHelper.redrawScene(_State.scene, _State.camera, bin, packedItems);
+		redrawScene(_State.scene, _State.camera, bin, packedItems);
 
 		_logger.log("Binacle Scene Redrawn");
 	},
@@ -121,16 +116,15 @@ window.binacle = {
 		_logger.log(errors);
 	},
 	loadingStart: function () {
-		_loader.classList.add('active');
+		startLoading(_visualizerContainer);
 	},
 	loadingEnd: function () {
-		_loader.classList.remove('active');
+		stopLoading(_visualizerContainer);
 	},
 	addItemToScene: function (bin, packedItem, index) {
-		BinacleHelper.addItemToScene(_State.scene, bin, packedItem, index);
+		addItemToScene(_State.scene, bin, packedItem, index);
 	},
 	removeItemFromScene: function (index) {
-		BinacleHelper.removeItemFromScene(_State.scene, index);
+		removeItemFromScene(_State.scene, index);
 	}
 };
-

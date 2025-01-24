@@ -1,21 +1,28 @@
-﻿(function(global){
-
+﻿(function (global) {
 	const modeButton = document.querySelector('[data-role="theme-button"]');
 	const themeIcon = modeButton.querySelector('i')
 	const body = document.querySelector('body');
 
-	
 	function init(){
 		themeIcon.textContent =  isDarkTheme() ? "light_mode" : "dark_mode"
-		setElementsAccordingToTheme();
+		changeThemeElementsAccordingToTheme();
 		saveThemeCookie();
 	}
-	
+
 	function saveThemeCookie() {
 		Cookies.set('theme', isDarkTheme() ? 'dark' : 'light', { expires: 365 });
 	}
+	function isDarkTheme() {
+		return body.classList.contains("dark");
+	}
 	
-	function setElementsAccordingToTheme(){
+	function emitChangeThemeEvent() {
+		const theme = isDarkTheme() ? 'dark' : 'light';
+		const event = new CustomEvent('themeChanged', { detail: { theme:  theme } });
+		document.dispatchEvent(event);
+	}
+	
+	function changeThemeElementsAccordingToTheme(){
 		const themeChangingElements = document.querySelectorAll('[data-theme]');
 		themeChangingElements.forEach(element => {
 			const attribute = element.getAttribute('data-theme');
@@ -24,12 +31,8 @@
 		});
 	}
 	
-	function isDarkTheme(){
-		return body.classList.contains("dark");
-	}
-	
-	function changeTheme(){
-		if(isDarkTheme()) {
+	function changeTheme() {
+		if (isDarkTheme()) {
 			body.classList.remove("dark");
 			body.classList.add("light");
 			themeIcon.textContent = "dark_mode";
@@ -38,11 +41,12 @@
 			body.classList.add("dark");
 			themeIcon.textContent = "light_mode";
 		}
-		setElementsAccordingToTheme();
+
 		saveThemeCookie();
+		changeThemeElementsAccordingToTheme();
+		emitChangeThemeEvent();
 	}
 
 	init();
-	 modeButton.addEventListener('click', changeTheme);
-
+	modeButton.addEventListener('click', changeTheme);
 })(window);

@@ -98,3 +98,11 @@ body.dark {
 }
 
 
+.bottom-right-round {
+	border-radius: 0 !important;
+	border-bottom-right-radius: 2rem !important;
+}
+.bottom-left-round {
+	border-radius: 0 !important;
+	border-bottom-left-radius: 2rem !important;
+}
