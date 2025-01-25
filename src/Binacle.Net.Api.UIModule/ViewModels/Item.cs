@@ -3,9 +3,6 @@ using Binacle.Net.Lib;
 using Binacle.Net.Lib.Abstractions.Models;
 using System.ComponentModel.DataAnnotations;
 
-
-
-
 namespace Binacle.Net.Api.UIModule.ViewModels;
 
 public class Item : IWithDimensions, IWithQuantity

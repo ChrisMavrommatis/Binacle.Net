@@ -17,9 +17,9 @@ internal class Coordinates : IWithCoordinates
 
 	public Coordinates(int x, int y, int z)
 	{
-		X = x;
-		Y = y;
-		Z = z;
+		this.X = x;
+		this.Y = y;
+		this.Z = z;
 	}
 	public int X { get; set; }
 	public int Y { get; set; }

@@ -1,6 +1,7 @@
 ﻿using Binacle.Net.Api.UIModule.ExtensionMethods;
 using Binacle.Net.Lib.Abstractions.Models;
 using System.ComponentModel.DataAnnotations;
+using Binacle.Net.Lib;
 
 namespace Binacle.Net.Api.UIModule.ViewModels;
 

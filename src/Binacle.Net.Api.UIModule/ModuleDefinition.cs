@@ -39,7 +39,6 @@ public static class ModuleDefinition
 
 		// For blazor components this is per connection or tab
 		builder.Services.AddScoped<Services.ISampleDataService, Services.SampleDataService>();
-		// builder.Services.AddScoped<Services.PackingDemoState>();
 
 		Log.Information("{moduleName} module. Status {status}", "UI", "Initialized");
 	}
@@ -68,7 +67,7 @@ public static class ModuleDefinition
 			{
 				var statusCodeFeature = ctx.Features.Get<IStatusCodePagesFeature>();
 
-				if (statusCodeFeature != null && statusCodeFeature.Enabled)
+				if (statusCodeFeature is { Enabled: true })
 					statusCodeFeature.Enabled = false;
 			}
 

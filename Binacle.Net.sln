@@ -24,8 +24,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Blazor.Materialize", "dep\ChrisMavrommatis.Blazor.Materialize\ChrisMavrommatis.Blazor.Materialize.csproj", "{0C29C934-7E87-47EB-AFEE-BBB1832FADD1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Swashbuckle", "dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj", "{882F3C14-EAC8-4D7D-881B-61A6663E38B6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.FluentValidation", "dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj", "{3ADB3BA2-ADB3-4D6C-8276-15CB5D0F708B}"

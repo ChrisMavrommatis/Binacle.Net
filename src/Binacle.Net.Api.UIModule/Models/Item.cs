@@ -17,11 +17,11 @@ internal class Item : IWithReadOnlyDimensions, IWithQuantity
 
 	public Item(string id, int length, int width, int height, int quantity)
 	{
-		ID = id;
-		Length = length;
-		Width = width;
-		Height = height;
-		Quantity = quantity;
+		this.ID = id;
+		this.Length = length;
+		this.Width = width;
+		this.Height = height;
+		this.Quantity = quantity;
 	}
 
 	public string ID { get; set; }
