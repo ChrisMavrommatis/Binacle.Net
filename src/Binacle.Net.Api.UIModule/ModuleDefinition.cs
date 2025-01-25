@@ -35,6 +35,7 @@ public static class ModuleDefinition
 		});
 
 		builder.Services.AddScoped<Components.Services.ThemeService>();
+		builder.Services.AddScoped<Services.MessagingService>();
 		builder.Services.AddSingleton<Components.Services.AppletsService>();
 
 		// For blazor components this is per connection or tab

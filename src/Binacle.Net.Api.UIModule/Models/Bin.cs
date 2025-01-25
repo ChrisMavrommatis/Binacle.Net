@@ -2,7 +2,7 @@
 
 namespace Binacle.Net.Api.UIModule.Models;
 
-internal class Bin : IWithID, IWithDimensions
+public class Bin : IWithID, IWithDimensions
 {
 	public Bin()
 	{
