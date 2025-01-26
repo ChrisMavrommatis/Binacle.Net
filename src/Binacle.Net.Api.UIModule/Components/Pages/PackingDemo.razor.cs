@@ -154,4 +154,34 @@ public partial class PackingDemo : ComponentBase
 				}
 			});
 	}
+	
+	private async Task SelectResult(UIModule.Models.PackingResult result)
+	{
+		await this.MessagingService!.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
+			"UpdateScene",
+			async () =>
+			{
+				try
+				{
+					if(result.Bin is null)
+					{
+						throw new InvalidOperationException("Selected result has no bin");
+					}
+
+					var existingResult = this.results?.FirstOrDefault(x => x.Bin!.ID == result.Bin.ID);
+					if (existingResult is null)
+					{
+						throw new InvalidOperationException("Could not find selected result");
+
+					}
+					this.selectedResult = result;
+					return (this.selectedResult.Bin, this.selectedResult.PackedItems);
+				}
+				catch (Exception ex)
+				{
+					this.errors.Add(ex.Message);
+					return (null, null);
+				}
+			});
+	}
 }
