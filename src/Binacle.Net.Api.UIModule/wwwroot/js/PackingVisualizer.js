@@ -7,7 +7,8 @@ import {
 	stopLoading,
 	redrawScene,
 	addItemToScene,
-	removeItemFromScene
+	removeItemFromScene,
+	getThemeColors
 } from "binacle/addons/PackingVisualizer.utils.js";
 
 const _logger = {
@@ -42,8 +43,15 @@ const windowResizeHandler = function () {
 		_rendererContainer.offsetWidth,
 		_rendererContainer.offsetHeight
 	);
-
 };
+
+const themeChangedHandler = function (event) {
+	const themeColors = getThemeColors(window.document.body, "tertiary-container");
+	_State.renderer.setClearColor(themeColors.color);
+	var bin = _State.scene.getObjectByName('bin');
+	bin.material.color.setHex(themeColors.onColor);
+};
+
 function animate() {
 	requestAnimationFrame(animate);
 	_State.controls.update();
@@ -81,9 +89,10 @@ window.binacle = {
 		_State.light.position.set(0, 0, 0);
 		_State.scene.add(_State.light);
 
+		const themeColors = getThemeColors(window.document.body, "tertiary-container");
 		// WebGLRenderer CanvasRenderer
 		_State.renderer = new THREE.WebGLRenderer({ antialias: true });
-		_State.renderer.setClearColor(0xe7d9f1);
+		_State.renderer.setClearColor(themeColors.color);
 		_State.renderer.setPixelRatio(window.devicePixelRatio);
 		_State.renderer.setSize(
 			_rendererContainer.offsetWidth,
@@ -96,6 +105,7 @@ window.binacle = {
 		stopLoading(_visualizerContainer);
 
 		window.addEventListener('resize', windowResizeHandler, false);
+		window.addEventListener("themeChanged", themeChangedHandler, false);
 
 		_State.initialized = true;
 

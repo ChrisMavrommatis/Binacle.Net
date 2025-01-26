@@ -17,7 +17,7 @@
 				count++;
 				var isLast = count == this.controls.Count;
 				var @class =  isFirst ? "bottom-left-round" : isLast ? "bottom-right-round" : "no-round";
-				<button type="button" class="border tertiary-container class max @(@class)" id="@(control.Element.Id)" @onclick=@control.ClickAsync>
+				<button type="button" class="border tertiary-container class max @(@class)" disabled="@(control.IsEnabled ? null : "disabled")"  id="@(control.Element.Id)" @onclick=@control.ClickAsync>
 					<MaterialSymbol Name="@control.Icon" />
 				</button>
 			}

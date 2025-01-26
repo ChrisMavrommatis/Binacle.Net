@@ -125,6 +125,16 @@ export function redrawScene(scene, camera, bin, packedItems) {
 	}
 }
 
+export function getThemeColors(el, themeColor){
+	var style = window.getComputedStyle(el);
+	var color = style.getPropertyValue(`--${themeColor}`);
+	var onColor = style.getPropertyValue(`--on-${themeColor}`);
+	return {
+		color: Number(color.replace('#', '0x')),
+		onColor: Number(onColor.replace('#', '0x'))
+	};
+}
+
 function createItem(packedItem, index, material, binOrigin) {
 	const itemOrigin = getItemOrigin(packedItem);
 
@@ -149,7 +159,8 @@ function createBin(bin) {
 	// or WireframeGeometry( geometry )
 	let geo = new THREE.EdgesGeometry(geometry);
 
-	let mat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 4 });
+	const colors = getThemeColors(window.document.body, "tertiary-container");
+	let mat = new THREE.LineBasicMaterial({ color: colors.onColor, linewidth: 4 });
 	let wireframe = new THREE.LineSegments(geo, mat);
 	wireframe.position.set(0, 0, 0);
 	wireframe.name = 'bin';

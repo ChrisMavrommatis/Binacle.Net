@@ -19,7 +19,7 @@
 	function emitChangeThemeEvent() {
 		const theme = isDarkTheme() ? 'dark' : 'light';
 		const event = new CustomEvent('themeChanged', { detail: { theme:  theme } });
-		document.dispatchEvent(event);
+		window.dispatchEvent(event);
 	}
 	
 	function changeThemeElementsAccordingToTheme(){
