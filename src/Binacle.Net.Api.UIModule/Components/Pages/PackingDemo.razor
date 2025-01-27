@@ -24,25 +24,25 @@
 			<legend>Bins</legend>
 			@foreach (var bin in Model.Bins)
 			{
-			<div class="row">
-				<div class="max">
-					<InputNumberField @bind-Value="bin.Length" Label="Length" id="length"/>
+				<div class="row">
+					<div class="max">
+						<InputNumberField @bind-Value="bin.Length" Label="Length" id="length"/>
+					</div>
+					<div class="max">
+						<InputNumberField @bind-Value="bin.Width" Label="Width" id="width"/>
+					</div>
+					<div class="max">
+						<InputNumberField @bind-Value="bin.Height" Label="Height" id="height"/>
+					</div>
+					<button type="button" class="transparent circle" @onclick="(() => this.RemoveBin(bin))">
+						<MaterialSymbol Name="delete"/>
+					</button>
 				</div>
-				<div class="max">
-					<InputNumberField @bind-Value="bin.Width" Label="Width" id="width"/>
+				<div>
+					<ValidationMessage For="@(() => bin.Length)" class="error-text"/>
+					<ValidationMessage For="@(() => bin.Width)" class="error-text"/>
+					<ValidationMessage For="@(() => bin.Height)" class="error-text"/>
 				</div>
-				<div class="max">
-					<InputNumberField @bind-Value="bin.Height" Label="Height" id="height"/>
-				</div>
-				<button type="button" class="transparent circle" @onclick="(() => this.RemoveBin(bin))">
-					<MaterialSymbol Name="delete"/>
-				</button>
-			</div>
-			<div>
-				<ValidationMessage For="@(() => bin.Length)" class="error-text"/>
-				<ValidationMessage For="@(() => bin.Width)" class="error-text"/>
-				<ValidationMessage For="@(() => bin.Height)" class="error-text"/>
-			</div>
 			}
 		</fieldset>
 		<nav>
@@ -144,24 +144,27 @@
 					{
 						var isFullyPacked = result.Result == UIModule.Models.PackResultType.FullyPacked;
 						var percentage = result.PackedBinVolumePercentage;
-						var colorClass = this.getColorClass(result);
-						
-						<a class="row wave padding @(isSelected(result) ? $"surface-container border" : string.Empty )" @onclick="@(() =>this.SelectResult(result))">
+						var colorClass = this.GetColorClass(result);
+
+						<a class="row wave padding @(IsSelected(result) ? $"surface-container border" : string.Empty)"
+						   @onclick="@(() => this.SelectResult(result))">
 							<MaterialSymbol Name="package_2" class="@($"large {colorClass}-text")"></MaterialSymbol>
-							<div class="max">
-								<progress value="@percentage" max="100" class="@($"surface-container-lowest {colorClass}-text")"></progress>
-								<div>
-									@if (!isFullyPacked)
-									{
-										<span>
-											Packed Items Volume: @result.PackedItemsVolumePercentage%
-										</span>
-									}
-									<span>@result.Result.ToString()</span>
+
+							<div class="grid no-space max">
+								<span class="s6 m4 l2">Bin: @result.Bin!.ID</span>
+								<span class="s6 m8 l10">@result.Result.ToString()</span>
+								<progress value="@percentage" max="100"
+								          class="@($"s12 surface-container-lowest {colorClass}-text")"></progress>
+								<div class="s6 m6 l4">
+									Packed Bin Volume: @result.PackedBinVolumePercentage%
 								</div>
-								
+								@if (!isFullyPacked)
+								{
+									<div class="s6 m6 l8">
+										Packed Items Volume: @result.PackedItemsVolumePercentage%
+									</div>
+								}
 							</div>
-						
 						</a>
 					}
 				}
@@ -170,21 +173,3 @@
 	</div>
 </div>
 
-@code {
-
-	private string getColorClass(UIModule.Models.PackingResult result)
-	{
-		var baseColor =  result.Result switch
-		{
-			UIModule.Models.PackResultType.FullyPacked => "green",
-			UIModule.Models.PackResultType.PartiallyPacked => "orange",
-			_ => "red"
-		};
-		return baseColor;
-	}
-
-	private bool isSelected(UIModule.Models.PackingResult result)
-	{
-		return this.selectedResult == result;
-	}
-}

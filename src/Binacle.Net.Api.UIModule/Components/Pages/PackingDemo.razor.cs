@@ -184,4 +184,20 @@ public partial class PackingDemo : ComponentBase
 				}
 			});
 	}
+	
+	private string GetColorClass(UIModule.Models.PackingResult result)
+	{
+		var baseColor = result.Result switch
+		{
+			UIModule.Models.PackResultType.FullyPacked => "green",
+			UIModule.Models.PackResultType.PartiallyPacked => "orange",
+			_ => "red"
+		};
+		return baseColor;
+	}
+
+	private bool IsSelected(UIModule.Models.PackingResult result)
+	{
+		return this.selectedResult == result;
+	}
 }
