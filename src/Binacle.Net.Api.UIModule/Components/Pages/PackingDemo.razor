@@ -151,8 +151,7 @@
 
 						<a class="row wave padding @(IsSelected(result) ? $"surface-container border" : string.Empty)"
 						   @onclick="@(() => this.SelectResult(result))">
-							<MaterialSymbol Name="package_2" class="@($"large {colorClass}-text")"></MaterialSymbol>
-
+							<MaterialSymbol Name="package_2" class="@($"large {colorClass}-text")" />
 							<div class="grid no-space max">
 								<span class="s4">
 									Bin: @result.Bin!.ID

@@ -9,3 +9,35 @@
 
 <h1>Protocol Decoder</h1>
 
+
+
+<div class="grid">
+	<article class="large s12 m5 l3">
+		<fieldset class="scroll" style="block-size: 30rem;">
+			<legend>Saved Results</legend>
+			@if (this.results is null || this.results.Count == 0)
+			{
+				<span>No Results</span>
+			}
+			else
+			{
+				@foreach (var result in this.results)
+				{
+					<a class="row wave padding @(IsSelected(result) ? $"surface-container border" : string.Empty)">
+						<MaterialSymbol Name="package_2" />
+
+						<div class="max">
+							Bin: @result.Bin!.ID
+						</div>
+						<button type="button" class="transparent circle">
+							<MaterialSymbol Name="delete"/>
+						</button>
+					</a>
+				}
+			}
+		</fieldset>
+	</article>
+	<div class="s12 m7 l9">
+		<PackingVisualizer InitialBin="this.selectedResult?.Bin"/>
+	</div>
+</div>
