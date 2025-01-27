@@ -64,10 +64,10 @@ body.dark {
 	--tertiary-container: #3e1f4f; /* Deep violet */
 	--on-tertiary-container: #e1c9e5; /* Light lavender for contrast */
 
-	--error: #9b2d2d; /* Muted red */
+	--error: #e57373; /* Muted red */
 	--on-error: #ffffff;
-	--error-container: #642424; /* Dark red */
-	--on-error-container: #f8d6d6;
+	--error-container: #8a2a2a; /* Dark red */
+	--on-error-container: #ffd9d9;
 
 	--background: #101010; /* Almost pure black */
 	--on-background: #d1d1d1; /* Soft gray for text readability */
@@ -105,4 +105,14 @@ body.dark {
 .bottom-left-round {
 	border-radius: 0 !important;
 	border-bottom-left-radius: 2rem !important;
+}
+
+.s:not(.m), .l:not(.m), .s.l:not(.m) {
+	.field.padless > :is(input, textarea) {
+		padding: 0 0;
+		padding-block-start: 1rem;
+	}
+	.field.label.padless > label {
+		inset: -.5rem auto auto 0.1rem;
+	}
 }

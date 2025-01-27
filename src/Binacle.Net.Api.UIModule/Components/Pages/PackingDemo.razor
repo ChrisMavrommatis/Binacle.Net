@@ -26,13 +26,13 @@
 			{
 				<div class="row">
 					<div class="max">
-						<InputNumberField @bind-Value="bin.Length" Label="Length" id="length"/>
+						<InputNumberField @bind-Value="bin.Length" Label="Length" id="length" ContainerFieldClass="small padless"/>
 					</div>
 					<div class="max">
-						<InputNumberField @bind-Value="bin.Width" Label="Width" id="width"/>
+						<InputNumberField @bind-Value="bin.Width" Label="Width" id="width" ContainerFieldClass="small padless"/>
 					</div>
 					<div class="max">
-						<InputNumberField @bind-Value="bin.Height" Label="Height" id="height"/>
+						<InputNumberField @bind-Value="bin.Height" Label="Height" id="height" ContainerFieldClass="small padless"/>
 					</div>
 					<button type="button" class="transparent circle" @onclick="(() => this.RemoveBin(bin))">
 						<MaterialSymbol Name="delete"/>
@@ -68,16 +68,16 @@
 			{
 				<div class="row">
 					<div class="max">
-						<InputNumberField @bind-Value="item.Length" Label="Length" id="length"/>
+						<InputNumberField @bind-Value="item.Length" Label="Length" id="length" ContainerFieldClass="small padless"/>
 					</div>
 					<div class="max">
-						<InputNumberField @bind-Value="item.Width" Label="Width" id="width"/>
+						<InputNumberField @bind-Value="item.Width" Label="Width" id="width" ContainerFieldClass="small padless"/>
 					</div>
 					<div class="max">
-						<InputNumberField @bind-Value="item.Height" Label="Height" id="height"/>
+						<InputNumberField @bind-Value="item.Height" Label="Height" id="height" ContainerFieldClass="small padless"/>
 					</div>
 					<div class="max">
-						<InputNumberField @bind-Value="item.Quantity" Label="Quantity" id="quantity"/>
+						<InputNumberField @bind-Value="item.Quantity" Label="Quantity" id="quantity" ContainerFieldClass="small padless"/>
 					</div>
 					<button type="button" class="transparent circle" @onclick="(() => this.RemoveItem(item))">
 						<MaterialSymbol Name="delete"/>
@@ -92,15 +92,15 @@
 			}
 		</fieldset>
 		<nav>
-			<button class="max" type="button" @onclick="this.AddItem">
+			<button class="max secondary" type="button" @onclick="this.AddItem">
 				<MaterialSymbol Name="add"/>
 				<span class="m l">Add Item</span>
 			</button>
-			<button class="max" type="button" @onclick="this.ClearAllItems">
+			<button class="max secondary" type="button" @onclick="this.ClearAllItems">
 				<MaterialSymbol Name="delete_forever"/>
 				<span class="m l">Clear All Items</span>
 			</button>
-			<button class="max" type="button" @onclick="this.RandomizeItemsFromSamples">
+			<button class="max secondary" type="button" @onclick="this.RandomizeItemsFromSamples">
 				<MaterialSymbol Name="refresh"/>
 				<span class="m l">Randomize from samples</span>
 			</button>
@@ -108,24 +108,27 @@
 	</article>
 
 	<fieldset class="s12">
-		<div class="row">
-			<div class="max">
+		<div class="grid">
+			<div class="s12 m6 max">
 				<SelectField
 					Id="algorithm"
 					Label="Algorithm"
 					@bind-Value="@this.Model.Algorithm"
 					Options="ExtensionMethods.EnumExtensions.ToKeyValue<ViewModels.Algorithm>()"/>
 			</div>
-			<button class="max" type="button" @onclick="this.GetResults">
-				<span>Get Results</span>
-			</button>
+			<div class="s12 m6 row">
+				<button class="max tertiary" type="button" @onclick="this.GetResults">
+					<span>Get Results</span>
+				</button>
+			</div>
+			
 		</div>
 	</fieldset>
 </EditForm>
 
 <div class="grid">
 	<div class="s12">
-		<PackingVisualizer InitialBin="@this.selectedResult.Bin"/>
+		<PackingVisualizer InitialBin="@this.selectedResult?.Bin"/>
 	</div>
 </div>
 
@@ -151,16 +154,22 @@
 							<MaterialSymbol Name="package_2" class="@($"large {colorClass}-text")"></MaterialSymbol>
 
 							<div class="grid no-space max">
-								<span class="s6 m4 l2">Bin: @result.Bin!.ID</span>
-								<span class="s6 m8 l10">@result.Result.ToString()</span>
-								<progress value="@percentage" max="100"
-								          class="@($"s12 surface-container-lowest {colorClass}-text")" />
-								<div class="s6 m6 l4">
+								<span class="s4">
+									Bin: @result.Bin!.ID
+								</span>
+								<span class="s8 right-align">
 									Packed Bin Volume: @result.PackedBinVolumePercentage%
+								</span>
+								<progress value="@percentage" max="100"
+								          class="@($"s12 surface-container-lowest {colorClass}-text")"></progress>
+
+
+								<div class="s4">
+									@result.Result.ToString()
 								</div>
 								@if (!isFullyPacked)
 								{
-									<div class="s6 m6 l8">
+									<div class="s8 right-align">
 										Packed Items Volume: @result.PackedItemsVolumePercentage%
 									</div>
 								}

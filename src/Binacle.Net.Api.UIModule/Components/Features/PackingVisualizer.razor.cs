@@ -36,21 +36,29 @@ public partial class PackingVisualizer : ComponentBase
 		this.controls.Add("last", new Models.Control("control-last", "last_page", LastAsync));
 		
 		this.MessagingService?.On<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>("UpdateScene", UpdateSceneAsync);
-
 		base.OnInitialized();
 	}
 
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if(firstRender)
 		{
-			await JS.InvokeVoidAsync("binacle.initialize", this.InitialBin);
+			await this.InitializeAsync(this.InitialBin); 
 		}
 		await base.OnAfterRenderAsync(firstRender);
 	}
 
-	internal async Task UpdateSceneAsync(
+	private async Task InitializeAsync(UIModule.Models.Bin? bin)
+	{
+		await JS.InvokeVoidAsync("binacle.initialize", bin);
+	}
+
+	private async Task UpdateSceneAsync(
 		AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)> getUpdate
 		)
 	{
