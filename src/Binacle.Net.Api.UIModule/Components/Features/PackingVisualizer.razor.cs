@@ -62,6 +62,7 @@ public partial class PackingVisualizer : ComponentBase
 		AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)> getUpdate
 		)
 	{
+		await this.cancellationTokenSource?.CancelAsync();
 		await this.UpdateLoadingStartAsync();
 		this.DisableAllControls();
 		var (bin, items) = await getUpdate();

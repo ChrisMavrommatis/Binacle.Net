@@ -21,7 +21,7 @@ public struct EncodingInfo
 	public bool IsLittleEndian { get; init; }
 	
 	// 1 Bit
-	public bool FutureBit { get; init; }
+	private bool FutureBit { get; init; }
 
 	public static byte ToByte(EncodingInfo encodingInfo)
 	{

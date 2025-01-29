@@ -14,18 +14,20 @@ namespace Binacle.Net.Api.UIModule.Components.Pages;
 
 public partial class PackingDemo : ComponentBase
 {
-	[Inject] internal ISampleDataService? SampleDataService { get; set; }
+	[Inject] 
+	internal ISampleDataService? SampleDataService { get; set; }
 
-	[Inject] protected IHttpClientFactory? HttpClientFactory { get; set; }
+	[Inject] 
+	protected IHttpClientFactory? HttpClientFactory { get; set; }
 
-	[Inject] protected MessagingService? MessagingService { get; set; }
+	[Inject] 
+	protected MessagingService? MessagingService { get; set; }
 
-
-	private List<string> errors = new();
+	private Errors errors = new();
 	private List<PackingResult>? results;
 	private PackingResult? selectedResult;
 
-	internal BinPackingViewModel Model { get; set; } = new()
+	internal PackingDemoViewModel Model { get; set; } = new()
 	{
 		Algorithm = Algorithm.FirstFitDecreasing,
 		Bins = new List<Bin>(),
@@ -54,57 +56,56 @@ public partial class PackingDemo : ComponentBase
 		await base.OnParametersSetAsync();
 	}
 
-	internal void RemoveBin(Bin bin)
+	private void RemoveBin(Bin bin)
 	{
 		this.Model.Bins.Remove(bin);
 	}
 
-	internal void AddBin()
+	private void AddBin()
 	{
 		var bin = new Bin(0, 0, 0);
 		this.Model.Bins.Add(bin);
 	}
 
-	internal void ClearAllBins()
+	private void ClearAllBins()
 	{
 		this.Model.Bins.Clear();
 	}
 
-	internal void RandomizeBinsFromSamples()
+	private void RandomizeBinsFromSamples()
 	{
 		var sampleData = this.SampleDataService!.GetRandomSampleData();
 		this.Model.Bins = sampleData.Bins;
 	}
 
-	internal void RemoveItem(Item item)
+	private void RemoveItem(Item item)
 	{
 		this.Model.Items.Remove(item);
 	}
 
-	internal void AddItem()
+	private void AddItem()
 	{
 		var item = new Item(0, 0, 0, 1);
 		this.Model.Items.Add(item);
 	}
 
-	internal void ClearAllItems()
+	private void ClearAllItems()
 	{
 		this.Model.Items.Clear();
 	}
 
-	internal void RandomizeItemsFromSamples()
+	private void RandomizeItemsFromSamples()
 	{
 		var sampleData = this.SampleDataService!.GetRandomSampleData();
 		this.Model.Items = sampleData.Items;
 	}
 
-	internal async Task GetResults()
+	private async Task GetResults()
 	{
 		await this.MessagingService!.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
 			"UpdateScene",
 			async () =>
 			{
-				this.errors.Clear();
 				try
 				{
 					var request = new PackByCustomRequest
@@ -172,8 +173,8 @@ public partial class PackingDemo : ComponentBase
 					if (existingResult is null)
 					{
 						throw new InvalidOperationException("Could not find selected result");
-
 					}
+					
 					this.selectedResult = result;
 					return (this.selectedResult.Bin, this.selectedResult.PackedItems);
 				}

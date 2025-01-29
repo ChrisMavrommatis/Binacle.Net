@@ -2,7 +2,11 @@
 
 namespace Binacle.Net.Api.UIModule.Models;
 
-internal class PackedItem : IWithID
+internal class PackedItem : 
+	IWithID,
+	IWithDimensions,
+	PackingVisualizationProtocol.Abstractions.IWithDimensions<int>,
+	PackingVisualizationProtocol.Abstractions.IWithCoordinates<int>
 {
 	// Json Deserialize
 	public PackedItem()
@@ -13,13 +17,19 @@ internal class PackedItem : IWithID
 	public PackedItem(string id, int length, int width, int height, int x, int y, int z)
 	{
 		this.ID = id;
-		this.Dimensions = new Dimensions(length, width, height);
-		this.Coordinates = new Coordinates(x, y, z);
+		this.Length = length;
+		this.Width = width;
+		this.Height = height;
+		this.X = x;
+		this.Y = y;
+		this.Z = z;
 	}
 
-	public required string ID { get; set; }
-
-	public Dimensions Dimensions { get; set; }
-	public Coordinates? Coordinates { get; set; }
-
+	public string ID { get; set; }
+	public int Length { get; set; }
+	public int Width { get; set; }
+	public int Height { get; set; }
+	public int X { get; set; }
+	public int Y { get; set; }
+	public int Z { get; set; }
 }

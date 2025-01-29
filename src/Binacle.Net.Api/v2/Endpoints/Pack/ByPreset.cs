@@ -155,7 +155,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetPackRequestWithBod
 					StopAtSmallestBin = request.Body.Parameters?.StopAtSmallestBin ?? false,
 					NeverReportUnpackedItems = request.Body.Parameters?.NeverReportUnpackedItems ?? false,
 					OptInToEarlyFails = request.Body.Parameters?.OptInToEarlyFails ?? false,
-					ReportPackedItemsOnlyWhenFullyPacked = request.Body.Parameters?.ReportPackedItemsOnlyWhenFullyPacked ?? false,
+					ReportPackedItemsOnlyWhenFullyPacked = request.Body.Parameters?.ReportPackedItemsOnlyWhenFullyPacked ?? false
 				}
 			);
 

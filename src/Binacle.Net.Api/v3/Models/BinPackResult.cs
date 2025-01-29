@@ -11,9 +11,11 @@ public class BinPackResult
 	public BinPackResultStatus Result { get; set; }
 	public required Bin Bin { get; set; }
 
-	public List<ResultBox>? PackedItems { get; set; }
-	public List<ResultBox>? UnpackedItems { get; set; }
+	public List<PackedBox>? PackedItems { get; set; }
+	public List<UnpackedBox>? UnpackedItems { get; set; }
 
 	public decimal? PackedItemsVolumePercentage { get; set; }
 	public decimal? PackedBinVolumePercentage { get; set; }
+	
+	public string? SerializedResult { get; set; }
 }

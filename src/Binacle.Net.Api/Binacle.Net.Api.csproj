@@ -29,6 +29,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\dep\Binacle.PackingVisualizationProtocol\Binacle.PackingVisualizationProtocol.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj" />

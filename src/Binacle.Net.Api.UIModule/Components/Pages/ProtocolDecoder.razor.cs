@@ -1,181 +1,125 @@
 ﻿using Binacle.Net.Api.UIModule.Models;
+using Binacle.Net.Api.UIModule.Services;
+using Binacle.Net.Api.UIModule.ViewModels;
+using Binacle.Net.Lib;
+using Binacle.PackingVisualizationProtocol;
 using Microsoft.AspNetCore.Components;
 
 namespace Binacle.Net.Api.UIModule.Components.Pages;
 
 public partial class ProtocolDecoder : ComponentBase
 {
-	private List<UIModule.Models.DecodedPackingResult>? results { get; set; } = new();
+	[Inject] 
+	protected MessagingService? MessagingService { get; set; }
+	
+	private Errors errors = new();
+
+	internal ViewModels.ProtocolDecoderViewModel Model { get; set; } = new();
+	
+	private HashSet<string> encodedResults { get; set; } = new();
+	private List<UIModule.Models.DecodedPackingResult> results { get; set; } = new();
 	private UIModule.Models.DecodedPackingResult? selectedResult { get; set; }
+
 	protected override void OnInitialized()
 	{
-		this.results =
-		[
-			new UIModule.Models.DecodedPackingResult()
-			{
-				Bin = new Bin()
-				{
-					ID ="60x40x30",
-					Length = 60,
-					Width = 40,
-					Height = 30,
-				},
-				PackedItems = new()
-				{
-					new PackedItem()
-					{
-						ID = "1",
-						Dimensions = new Dimensions()
-						{
-							Length = 12,
-							Width = 15,
-							Height = 10,
-						},
-						Coordinates = new Coordinates()
-						{
-							X = 0,
-							Y = 0,
-							Z = 0,
-						}
-					},
-					new PackedItem()
-					{
-						ID = "2",
-						Dimensions = new Dimensions()
-						{
-							Length = 12,
-							Width = 10,
-							Height = 15,
-						},
-						Coordinates = new Coordinates()
-						{
-							X = 12,
-							Y = 0,
-							Z = 0,
-						}
-					},
-					new PackedItem()
-					{
-						ID = "3",
-						Dimensions = new Dimensions()
-						{
-							Length = 2,
-							Width = 5,
-							Height = 10,
-						},
-						Coordinates = new Coordinates()
-						{
-							X = 0,
-							Y = 15,
-							Z = 0,
-						}
-					},
-					new PackedItem()
-					{
-						ID = "4",
-						Dimensions = new Dimensions()
-						{
-							Length = 2,
-							Width = 5,
-							Height = 10,
-						},
-						Coordinates = new Coordinates()
-						{
-							X = 0,
-							Y = 0,
-							Z = 10,
-						}
-					},
-					
-				},
-			},
-			new UIModule.Models.DecodedPackingResult()
-			{
-				Bin = new Bin()
-				{
-					ID ="60x40x30",
-					Length = 60,
-					Width = 40,
-					Height = 30,
-				},
-				PackedItems = new()
-				{
-					new PackedItem()
-					{
-						ID = "1",
-						Dimensions = new Dimensions()
-						{
-							Length = 12,
-							Width = 15,
-							Height = 10,
-						},
-						Coordinates = new Coordinates()
-						{
-							X = 0,
-							Y = 0,
-							Z = 0,
-						}
-					},
-					new PackedItem()
-					{
-						ID = "2",
-						Dimensions = new Dimensions()
-						{
-							Length = 12,
-							Width = 10,
-							Height = 15,
-						},
-						Coordinates = new Coordinates()
-						{
-							X = 12,
-							Y = 0,
-							Z = 0,
-						}
-					},
-					new PackedItem()
-					{
-						ID = "3",
-						Dimensions = new Dimensions()
-						{
-							Length = 2,
-							Width = 5,
-							Height = 10,
-						},
-						Coordinates = new Coordinates()
-						{
-							X = 0,
-							Y = 15,
-							Z = 0,
-						}
-					},
-					new PackedItem()
-					{
-						ID = "4",
-						Dimensions = new Dimensions()
-						{
-							Length = 2,
-							Width = 5,
-							Height = 10,
-						},
-						Coordinates = new Coordinates()
-						{
-							X = 0,
-							Y = 0,
-							Z = 10,
-						}
-					},
-					
-				},
-				
-			},
-		];
-		this.selectedResult = this.results.FirstOrDefault();
 		base.OnInitialized();
 	}
-	
+
 	private bool IsSelected(UIModule.Models.DecodedPackingResult result)
 	{
 		return this.selectedResult == result;
 	}
-}
 
+	private Task DeleteResult(UIModule.Models.DecodedPackingResult result)
+	{
+		this.results.Remove(result);
+		return Task.CompletedTask;
+	}
+	
+	private async Task AddResult()
+	{
+		var resultString = this.Model.AddResult;
+
+		if (string.IsNullOrWhiteSpace(resultString))
+		{
+			return;
+		}
+			
+		if(!this.encodedResults.Add(resultString))
+		{
+			this.errors.Add("Result already added");
+			this.Model.AddResult = string.Empty;
+			return;
+		}
+		
+		var decodedResult = DecodeResult(resultString);
+		if (decodedResult is null)
+		{
+			this.errors.Add("Could not decode result");
+			this.Model.AddResult = string.Empty;
+			return;
+		}
+		
+		this.results.Add(decodedResult!);
+
+		this.Model.AddResult = string.Empty;
+		
+		if(this.results.Count == 1)
+		{
+			await this.SelectResult(this.results.FirstOrDefault()!);
+		}
+	}
+
+	private static UIModule.Models.DecodedPackingResult? DecodeResult(string resultString)
+	{
+		try
+		{
+			var bytes = Convert.FromBase64String(resultString);
+			var (bin, items) =
+				PackingVisualizationProtocolSerializer
+					.DeserializeInt32<UIModule.Models.Bin, UIModule.Models.PackedItem>(bytes);
+
+			bin.ID = bin.FormatDimensions();
+			return new UIModule.Models.DecodedPackingResult()
+			{
+				Bin = bin,
+				PackedItems = items.ToList(),
+			};
+		}
+		catch (Exception ex)
+		{
+			return null;
+		}
+	}
+
+	private async Task SelectResult(UIModule.Models.DecodedPackingResult result)
+	{
+		await this.MessagingService!
+			.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
+				"UpdateScene",
+				async () =>
+				{
+					try
+					{
+						if (result.Bin is null)
+						{
+							throw new InvalidOperationException("Selected result has no bin");
+						}
+
+						var existingResult = this.results?.FirstOrDefault(x => x.Bin!.ID == result.Bin.ID);
+						if (existingResult is null)
+						{
+							throw new InvalidOperationException("Could not find selected result");
+						}
+
+						this.selectedResult = result;
+						return (this.selectedResult.Bin, this.selectedResult.PackedItems);
+					}
+					catch (Exception ex)
+					{
+						this.errors.Add(ex.Message);
+						return (null, null);
+					}
+				});
+	}
+}

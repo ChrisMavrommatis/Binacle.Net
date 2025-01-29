@@ -5,7 +5,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Binacle.Net.Api.UIModule.ViewModels;
 
-internal class Item : IWithDimensions, IWithQuantity
+internal class Item : 
+	IWithDimensions,
+	IWithQuantity
 {
 	public Item(int length, int width, int height) :
 		this(length, width, height, 1)

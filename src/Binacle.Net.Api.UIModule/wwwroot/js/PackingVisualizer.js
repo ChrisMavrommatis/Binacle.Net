@@ -91,7 +91,7 @@ window.binacle = {
 
 		const themeColors = getThemeColors(window.document.body, "tertiary-container");
 		// WebGLRenderer CanvasRenderer
-		_State.renderer = new THREE.WebGLRenderer({ antialias: true });
+		_State.renderer = new THREE.WebGLRenderer({antialias: true});
 		_State.renderer.setClearColor(themeColors.color);
 		_State.renderer.setPixelRatio(window.devicePixelRatio);
 		_State.renderer.setSize(
@@ -111,7 +111,9 @@ window.binacle = {
 
 		animate();
 
-		redrawScene(_State.scene, _State.camera, bin, null);
+		if (bin) {
+			redrawScene(_State.scene, _State.camera, bin, null);
+		}
 
 		_logger.log("Binacle Initialized");
 	},

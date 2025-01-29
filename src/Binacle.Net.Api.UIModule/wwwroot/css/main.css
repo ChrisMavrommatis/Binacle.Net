@@ -116,3 +116,11 @@ body.dark {
 		inset: -.5rem auto auto 0.1rem;
 	}
 }
+
+.max-height {
+	height: 100%;
+}
+
+.word-wrap{
+	word-wrap: break-word !important;
+}

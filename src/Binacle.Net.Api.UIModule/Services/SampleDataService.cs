@@ -5,8 +5,8 @@ namespace Binacle.Net.Api.UIModule.Services;
 
 internal interface ISampleDataService
 {
-	ViewModels.BinPackingViewModel GetRandomSampleData();
-	ViewModels.BinPackingViewModel GetInitialSampleData();
+	ViewModels.PackingDemoViewModel GetRandomSampleData();
+	ViewModels.PackingDemoViewModel GetInitialSampleData();
 }
 
 internal class SampleDataService : ISampleDataService
@@ -37,7 +37,7 @@ internal class SampleDataService : ISampleDataService
 		this.data = this.ReadSampleData();
 	}
 
-	public ViewModels.BinPackingViewModel GetRandomSampleData()
+	public ViewModels.PackingDemoViewModel GetRandomSampleData()
 	{
 		// random with time
 		var random = new Random(this.timeProvider.GetUtcNow().Millisecond);
@@ -49,7 +49,7 @@ internal class SampleDataService : ISampleDataService
 		var bins = this.data.BinSets[binRandomNumber];
 		var items = this.data.ItemSets[itemRandomNumber];
 
-		return new ViewModels.BinPackingViewModel
+		return new ViewModels.PackingDemoViewModel
 		{
 			Algorithm = Algorithm.FirstFitDecreasing,
 			Bins = bins,
@@ -57,12 +57,12 @@ internal class SampleDataService : ISampleDataService
 		};
 	}
 
-	public ViewModels.BinPackingViewModel GetInitialSampleData()
+	public ViewModels.PackingDemoViewModel GetInitialSampleData()
 	{
 		var bins = this.data.BinSets[0];
 		var items = this.data.ItemSets[0];
 
-		return new ViewModels.BinPackingViewModel
+		return new ViewModels.PackingDemoViewModel
 		{
 			Algorithm = Algorithm.FirstFitDecreasing,
 			Bins = bins,

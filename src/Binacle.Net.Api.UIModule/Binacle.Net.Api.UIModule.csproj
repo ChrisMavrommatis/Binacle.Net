@@ -22,6 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\dep\Binacle.PackingVisualizationProtocol\Binacle.PackingVisualizationProtocol.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.Kernel\Binacle.Net.Api.Kernel.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj" />
 	</ItemGroup>

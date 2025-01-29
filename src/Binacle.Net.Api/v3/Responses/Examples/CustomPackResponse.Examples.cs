@@ -14,19 +14,26 @@ internal class CustomPackResponseExamples : MultipleSwaggerExamplesProvider<Pack
 					Bin = new v3.Models.Bin  { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
 					Result = Models.BinPackResultStatus.FullyPacked,
 					PackedItems = [
-						new v3.Models.ResultBox
+						new v3.Models.PackedBox()
 						{
 							ID = "box_2",
-							Dimensions = new Models.Dimensions(10, 12, 15),
-							Coordinates = new Models.Coordinates(0, 0, 0)
+							Length = 10,
+							Width = 12,
+							Height = 15,
+							X = 0,
+							Y = 0,
+							Z = 0
 						},
-						new v3.Models.ResultBox
+						new v3.Models.PackedBox
 						{
 							ID = "box_1",
-							Dimensions = new Models.Dimensions(2, 5, 10),
-							Coordinates = new Models.Coordinates(0, 12, 0)
+							Length = 2,
+							Width = 5,
+							Height = 10,
+							X = 0,
+							Y = 12,
+							Z = 0
 						},
-
 					],
 					UnpackedItems = [],
 					PackedItemsVolumePercentage = 100.00m,
@@ -37,18 +44,26 @@ internal class CustomPackResponseExamples : MultipleSwaggerExamplesProvider<Pack
 					Bin = new v3.Models.Bin { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
 					Result = Models.BinPackResultStatus.FullyPacked,
 					PackedItems = [
-						new v3.Models.ResultBox
+						new v3.Models.PackedBox()
 						{
 							ID = "box_2",
-							Dimensions = new Models.Dimensions(12, 15, 10),
-							Coordinates = new Models.Coordinates(0, 0, 0)
+							Length = 12,
+							Width = 15,
+							Height = 10,
+							X = 0,
+							Y = 0,
+							Z = 0
 						},
-						new v3.Models.ResultBox
+						new v3.Models.PackedBox()
 						{
 							ID = "box_1",
-							Dimensions = new Models.Dimensions(2, 5, 10),
-							Coordinates = new Models.Coordinates(12, 0, 0)
-						},
+							Length = 2,
+							Width = 5,
+							Height = 10,
+							X = 12,
+							Y = 0,
+							Z = 0
+						}
 					],
 					UnpackedItems = [],
 					PackedItemsVolumePercentage = 100.00m,
@@ -65,15 +80,19 @@ internal class CustomPackResponseExamples : MultipleSwaggerExamplesProvider<Pack
 					Bin = new v3.Models.Bin { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
 					Result = Models.BinPackResultStatus.FullyPacked,
 					PackedItems = [
-						new v3.Models.ResultBox
+						new v3.Models.PackedBox()
 						{
 							ID = "box_1",
-							Dimensions = new Models.Dimensions(2, 5, 10),
-							Coordinates = new Models.Coordinates(0, 0, 0)
+							Length = 2,
+							Width = 5,
+							Height = 10,
+							X = 0,
+							Y = 0,
+							Z = 0
 						}
 					],
 					UnpackedItems = [
-						new v3.Models.ResultBox
+						new v3.Models.UnpackedBox()
 						{
 							ID = "box_2",
 							Quantity = 1

@@ -5,7 +5,9 @@ using Binacle.Net.Lib;
 
 namespace Binacle.Net.Api.UIModule.ViewModels;
 
-internal class Bin : IWithID, IWithDimensions
+internal class Bin :
+	IWithID,
+	IWithDimensions
 {
 	public Bin(int length, int width, int height)
 	{

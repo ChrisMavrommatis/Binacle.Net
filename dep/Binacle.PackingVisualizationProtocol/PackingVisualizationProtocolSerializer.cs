@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System.IO.Compression;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 using Binacle.PackingVisualizationProtocol.Abstractions;
 using Binacle.PackingVisualizationProtocol.Models;
 using Version = Binacle.PackingVisualizationProtocol.Models.Version;
@@ -36,7 +38,7 @@ public static class PackingVisualizationProtocolSerializer
 		typeof(double),
 	];
 	
-	internal static EncodingInfo CreateEncodingInfo<T>()
+	private static EncodingInfo CreateEncodingInfo<T>()
 		where T: struct, INumber<T>
 	{
 		var typeOfT = typeof(T);
@@ -54,12 +56,16 @@ public static class PackingVisualizationProtocolSerializer
 		};
 		return encodingInfo;
 	}
-
-	internal static void ThrowOnInvalidEncodingInfo<T>(EncodingInfo info)
+	
+	private static void ThrowOnInvalidEncodingInfo<T>(EncodingInfo info)
 		where T: struct, INumber<T>
 	{
 		var typeOfT = typeof(T);
-		var byteSize = _byteSizes[typeOfT];
+		if (!_byteSizes.TryGetValue(typeOfT, out var byteSize))
+		{
+			throw new ArgumentException($"Unsupported type {typeOfT}");
+		}
+		
 		var isFloating = _floatingTypes.Contains(typeOfT);
 		var isSigned = _signedTypes.Contains(typeOfT);
 		
@@ -78,27 +84,22 @@ public static class PackingVisualizationProtocolSerializer
 			throw new ArgumentException($"Expected {nameof(info.IsSigned)} to be {isSigned}, but was {info.IsSigned}");
 		}
 	}
-		
-	public static byte[] Serialize<TBin, TItem>(TBin bin, IList<TItem> items)
+
+	public static byte[] SerializeInt32<TBin, TItem>(TBin bin, IList<TItem> items)
+		where TBin : IWithDimensions<int>
+		where TItem: IWithDimensions<int>, IWithCoordinates<int>
+	{
+		return SerializeInternal<TBin, TItem, int>(bin, items, x=> x.WriteInt32);
+	}
+	
+	public static byte[] SerializeUInt16<TBin, TItem>(TBin bin, IList<TItem> items)
 		where TBin : IWithDimensions<ushort>
 		where TItem: IWithDimensions<ushort>, IWithCoordinates<ushort>
 	{
-		if(items.Count > ushort.MaxValue)
-		{
-			throw new ArgumentOutOfRangeException($"{nameof(items)} cannot be more than {ushort.MaxValue}");
-		}
-
-		var header = new Header
-		{
-			EncodingInfo = CreateEncodingInfo<ushort>(),
-			NumberOfItems = (ushort)items.Count
-		};
-
-		return SerializeInternal<TBin, TItem, ushort>(header, bin, items, x=> x.WriteUInt16);
+		return SerializeInternal<TBin, TItem, ushort>(bin, items, x=> x.WriteUInt16);
 	}
 	
-	internal static byte[] SerializeInternal<TBin, TItem, T>(
-		Header header, 
+	private static byte[] SerializeInternal<TBin, TItem, T>(
 		TBin bin, 
 		IList<TItem> items,
 		Func<PackingVisualizationProtocolWriter, Action<T>> writeActionSelector
@@ -107,6 +108,16 @@ public static class PackingVisualizationProtocolSerializer
 		where TBin : IWithDimensions<T>
 		where TItem: IWithDimensions<T>, IWithCoordinates<T>
 	{
+		if(items.Count > ushort.MaxValue)
+		{
+			throw new ArgumentOutOfRangeException($"{nameof(items)} cannot be more than {ushort.MaxValue}");
+		}
+
+		var header = new Header
+		{
+			EncodingInfo = CreateEncodingInfo<T>(),
+			NumberOfItems = (ushort)items.Count
+		};
 		using var memoryStream = new MemoryStream();
 		using var protocolWriter = new PackingVisualizationProtocolWriter(memoryStream, header.EncodingInfo.IsLittleEndian);
 		var encodingInfoByte = EncodingInfo.ToByte(header.EncodingInfo);
@@ -125,23 +136,34 @@ public static class PackingVisualizationProtocolSerializer
 			writeAction(item.Y);
 			writeAction(item.Z);
 		}
-		return memoryStream.ToArray();
+	
+		using var compressedStream = new MemoryStream();
+		using (var compressionStream = new GZipStream(compressedStream, CompressionLevel.Optimal, leaveOpen: true))
+		{
+			memoryStream.Position = 0; // Reset memory stream to the beginning
+			memoryStream.CopyTo(compressionStream);
+		}
+
+		return compressedStream.ToArray();
 	}
 	
-	public static (TBin, IList<TItem>) Deserialize<TBin, TItem>(byte[] data)
+	
+	public static (TBin, IList<TItem>) DeserializeInt32<TBin, TItem>(byte[] data)
+		where TBin : IWithDimensions<int>, new()
+		where TItem : IWithDimensions<int>, IWithCoordinates<int>, new()
+	{
+		return DeserializeInternal<TBin, TItem, int>(data, x=> x.ReadInt32);
+	}
+	
+	public static (TBin, IList<TItem>) DeserializeUInt16<TBin, TItem>(byte[] data)
 		where TBin : IWithDimensions<ushort>, new()
 		where TItem : IWithDimensions<ushort>, IWithCoordinates<ushort>, new()
 	{
-		var readEncodingInfo = EncodingInfo.FromByte(data[0]);
-		
-		ThrowOnInvalidEncodingInfo<ushort>(readEncodingInfo);
-		
-		return DeserializeInternal<TBin, TItem, ushort>(data, readEncodingInfo, x=> x.ReadUInt16);
+		return DeserializeInternal<TBin, TItem, ushort>(data, x=> x.ReadUInt16);
 	}
-
-	internal static (TBin, IList<TItem>) DeserializeInternal<TBin, TItem, T>(
+	
+	private static (TBin, IList<TItem>) DeserializeInternal<TBin, TItem, T>(
 		byte[] data,
-		EncodingInfo encodingInfo,
 		Func<PackingVisualizationProtocolReader, Func<T>> readActionSelector
 	)
 		where T : struct, INumber<T>
@@ -149,8 +171,20 @@ public static class PackingVisualizationProtocolSerializer
 		where TItem : IWithDimensions<T>, IWithCoordinates<T>, new()
 	{
 		using var memoryStream = new MemoryStream(data);
-		using var protocolReader = new PackingVisualizationProtocolReader(memoryStream, encodingInfo.IsLittleEndian);
-		var _ = EncodingInfo.FromByte(protocolReader.ReadByte());
+		using var inputStream = new GZipStream(memoryStream, CompressionMode.Decompress);
+
+		int firstByte = inputStream.ReadByte();
+		if (firstByte == -1)
+		{
+			throw new InvalidOperationException("The decompressed data is empty.");
+		}
+
+		var readEncodingInfo = EncodingInfo.FromByte((byte)firstByte);
+
+		// Validate the encoding info
+		ThrowOnInvalidEncodingInfo<T>(readEncodingInfo);
+		
+		using var protocolReader = new PackingVisualizationProtocolReader(inputStream, readEncodingInfo.IsLittleEndian);
 		var numberOfItems = protocolReader.ReadUInt16();
 
 		var readAction = readActionSelector(protocolReader);
@@ -177,7 +211,5 @@ public static class PackingVisualizationProtocolSerializer
 		}
 		return (bin, items);
 	}
-	
-
 	
 }

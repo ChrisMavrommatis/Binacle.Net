@@ -62,17 +62,17 @@ export function getBinOrigin(bin) {
 
 export function getItemOrigin(packedItem) {
 	return {
-		x: packedItem.dimensions.length / 2,
-		y: packedItem.dimensions.height / 2,
-		z: packedItem.dimensions.width / 2
+		x: packedItem.length / 2,
+		y: packedItem.height / 2,
+		z: packedItem.width / 2
 	};
 }
 
 export function getMeshPosition(binOrigin, itemOrigin, packedItem) {
 	return {
-		x: binOrigin.x + itemOrigin.x + packedItem.coordinates.x,
-		y: binOrigin.y + itemOrigin.y + packedItem.coordinates.z,
-		z: binOrigin.z + itemOrigin.z + packedItem.coordinates.y,
+		x: binOrigin.x + itemOrigin.x + packedItem.x,
+		y: binOrigin.y + itemOrigin.y + packedItem.z,
+		z: binOrigin.z + itemOrigin.z + packedItem.y,
 	};
 }
 
@@ -139,9 +139,9 @@ function createItem(packedItem, index, material, binOrigin) {
 	const itemOrigin = getItemOrigin(packedItem);
 
 	const itemGeometry = new THREE.BoxGeometry(
-		packedItem.dimensions.length,
-		packedItem.dimensions.height,
-		packedItem.dimensions.width
+		packedItem.length,
+		packedItem.height,
+		packedItem.width
 	);
 
 	const meshPosition = getMeshPosition(binOrigin, itemOrigin, packedItem);

@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
+using Binacle.PackingVisualizationProtocol;
 
 namespace Binacle.Net.Api.v3.Responses;
 
@@ -38,7 +39,7 @@ public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>
 				continue;
 			}
 
-			results.Add(new v3.Models.BinPackResult
+			var result = new v3.Models.BinPackResult
 			{
 				Bin = new v3.Models.Bin
 				{
@@ -50,20 +51,33 @@ public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>
 				Result = GetResultStatus(operationResult),
 				PackedBinVolumePercentage = operationResult.PackedBinVolumePercentage,
 				PackedItemsVolumePercentage = operationResult.PackedItemsVolumePercentage,
-				PackedItems = operationResult.PackedItems?.Select(x => new v3.Models.ResultBox
-				{
-					ID = x.ID,
-					Dimensions = new Models.Dimensions(x.Dimensions),
-					Coordinates = new Models.Coordinates(x.Coordinates!.Value)
-				}).ToList(),
+				PackedItems = operationResult.PackedItems?
+					.Select(x => new v3.Models.PackedBox()
+					{
+						ID = x.ID,
+						Length = x.Dimensions.Length,
+						Width = x.Dimensions.Width,
+						Height = x.Dimensions.Height,
+						X = x.Coordinates!.Value.X,
+						Y = x.Coordinates!.Value.Y,
+						Z = x.Coordinates!.Value.Z
+					}).ToList(),
 				UnpackedItems = operationResult.UnpackedItems?
 					.GroupBy(x => x.ID)
-					.Select(x => new v3.Models.ResultBox
+					.Select(x => new v3.Models.UnpackedBox
 					{
 						ID = x.Key,
 						Quantity = x.Count()
 					}).ToList()
-			});
+			};
+
+			if (result.PackedItems is not null && result.PackedItems.Any())
+			{
+				var serializedResult = PackingVisualizationProtocolSerializer.SerializeInt32(result.Bin, result.PackedItems!);
+				result.SerializedResult = Convert.ToBase64String(serializedResult);
+			}
+
+			results.Add(result);
 		}
 
 		var resultStatus = results.Any(x => 

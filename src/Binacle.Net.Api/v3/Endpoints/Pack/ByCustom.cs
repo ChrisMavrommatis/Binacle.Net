@@ -106,7 +106,7 @@ public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBod
 					StopAtSmallestBin = false,
 					NeverReportUnpackedItems = false,
 					OptInToEarlyFails = false,
-					ReportPackedItemsOnlyWhenFullyPacked = false,
+					ReportPackedItemsOnlyWhenFullyPacked = false
 				}
 			);
 

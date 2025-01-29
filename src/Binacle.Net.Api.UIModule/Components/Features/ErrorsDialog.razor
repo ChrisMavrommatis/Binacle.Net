@@ -1,0 +1,25 @@
+﻿
+<div class="dialog-code">
+	<div class="overlay @(this.HasErrors() ? "active" : string.Empty )">
+		<dialog class="modal @(this.HasErrors() ? "active" : string.Empty )">
+			<h5>One or more Errors occured!</h5>
+			<div>
+				@if (this.Errors is not null)
+				{
+					@foreach (var error in this.Errors)
+					{
+						<div>
+							@error
+						</div>
+					}
+				}
+			</div>
+			<nav class="right-align no-space">
+				<button class="transparent link" type="button" @onclick="this.CloseDialog">
+					<span>Close</span>
+				</button>				
+			</nav>
+		</dialog>
+	</div>
+</div>
+
