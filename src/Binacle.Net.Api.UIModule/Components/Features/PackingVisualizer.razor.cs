@@ -10,19 +10,19 @@ public partial class PackingVisualizer : ComponentBase
 {
 	[Inject]
 	protected IJSRuntime JS { get; set; }
-	
-	[Inject]
-    protected MessagingService? MessagingService { get; set; }
 
-    [Parameter]
+	[Inject]
+	protected MessagingService? MessagingService { get; set; }
+
+	[Parameter] 
 	public UIModule.Models.Bin? InitialBin { get; set; }
-	
+
 	private UIModule.Models.Bin? bin { get; set; }
 
 	private List<UIModule.Models.PackedItem>? items;
 
 	private Dictionary<string, Models.Control> controls = [];
-	
+
 	private int itemsRendered;
 	private CancellationTokenSource? cancellationTokenSource;
 	private bool repeating;
@@ -34,8 +34,9 @@ public partial class PackingVisualizer : ComponentBase
 		this.controls.Add("repeat", new Models.Control("control-repeat", "repeat_one", RepeatAsync));
 		this.controls.Add("next", new Models.Control("control-next", "chevron_right", NextAsync));
 		this.controls.Add("last", new Models.Control("control-last", "last_page", LastAsync));
-		
-		this.MessagingService?.On<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>("UpdateScene", UpdateSceneAsync);
+
+		this.MessagingService?.On<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
+			"UpdateScene", UpdateSceneAsync);
 		base.OnInitialized();
 	}
 
@@ -46,10 +47,11 @@ public partial class PackingVisualizer : ComponentBase
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		if(firstRender)
+		if (firstRender)
 		{
-			await this.InitializeAsync(this.InitialBin); 
+			await this.InitializeAsync(this.InitialBin);
 		}
+
 		await base.OnAfterRenderAsync(firstRender);
 	}
 
@@ -60,9 +62,9 @@ public partial class PackingVisualizer : ComponentBase
 
 	private async Task UpdateSceneAsync(
 		AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)> getUpdate
-		)
+	)
 	{
-		await this.cancellationTokenSource?.CancelAsync();
+		await this.StopRepeatingAsync();
 		await this.UpdateLoadingStartAsync();
 		this.DisableAllControls();
 		var (bin, items) = await getUpdate();
@@ -75,13 +77,13 @@ public partial class PackingVisualizer : ComponentBase
 			await this.RedrawSceneAsync(this.bin, this.items);
 		}
 
-		this.itemsRendered = this.items.Count;
+		this.itemsRendered = this.items!.Count;
 		this.UpdateControlsStatus();
 
 		this.StateHasChanged();
 		await this.UpdateLoadingEndAsync();
 	}
-	
+
 	private void UpdateControlsStatus()
 	{
 		if (this.bin is null || this.items is null || !this.items.Any())
@@ -108,7 +110,6 @@ public partial class PackingVisualizer : ComponentBase
 			this.controls["next"].IsEnabled = false;
 			this.controls["last"].IsEnabled = false;
 			return;
-
 		}
 
 		this.controls["first"].IsEnabled = true;
@@ -117,7 +118,7 @@ public partial class PackingVisualizer : ComponentBase
 		this.controls["next"].IsEnabled = true;
 		this.controls["last"].IsEnabled = true;
 	}
-	
+
 	private void DisableAllControls()
 	{
 		foreach (var control in this.controls.Values)
@@ -126,7 +127,6 @@ public partial class PackingVisualizer : ComponentBase
 		}
 	}
 
-	
 	private async Task FirstAsync()
 	{
 		this.DisableAllControls();
@@ -149,7 +149,7 @@ public partial class PackingVisualizer : ComponentBase
 			await this.RemoveItemFromSceneAsync(index);
 			this.itemsRendered -= 1;
 		}
-	
+
 		this.UpdateControlsStatus();
 		this.StateHasChanged();
 	}
@@ -158,12 +158,7 @@ public partial class PackingVisualizer : ComponentBase
 	{
 		if (this.repeating)
 		{
-			await this.cancellationTokenSource!.CancelAsync();
-			this.repeating = false;
-			this.controls["repeat"].Icon = "repeat_one";
-			this.UpdateControlsStatus();
-			this.StateHasChanged();
-			return;
+			await this.StopRepeatingAsync();
 		}
 
 		this.controls["first"].IsEnabled = false;
@@ -190,16 +185,28 @@ public partial class PackingVisualizer : ComponentBase
 					await this.AddItemToSceneAsync(this.bin, item, i);
 					this.itemsRendered += 1;
 					await Task.Delay(1000, this.cancellationTokenSource.Token);
-
 				}
 			}
 		}, this.cancellationTokenSource.Token);
-
 
 		this.repeating = false;
 		this.controls["repeat"].Icon = "repeat_one";
 		this.UpdateControlsStatus();
 		this.StateHasChanged();
+	}
+
+	private async Task StopRepeatingAsync()
+	{
+		if (this.cancellationTokenSource is not null)
+		{
+			await this.cancellationTokenSource!.CancelAsync();
+		}
+
+		this.repeating = false;
+		this.controls["repeat"].Icon = "repeat_one";
+		this.UpdateControlsStatus();
+		this.StateHasChanged();
+		return;
 	}
 
 	private async Task NextAsync()
@@ -229,13 +236,13 @@ public partial class PackingVisualizer : ComponentBase
 		this.UpdateControlsStatus();
 		this.StateHasChanged();
 	}
-	
+
 	private ValueTask UpdateLoadingStartAsync()
 		=> this.JS.InvokeVoidAsync("binacle.loadingStart");
 
 	private ValueTask UpdateLoadingEndAsync()
 		=> this.JS.InvokeVoidAsync("binacle.loadingEnd");
-	
+
 	private ValueTask RedrawSceneAsync<TBin>(TBin bin, List<UIModule.Models.PackedItem>? items)
 		where TBin : IWithID, IWithReadOnlyDimensions
 		=> this.JS.InvokeVoidAsync("binacle.redrawScene", bin, items);
@@ -245,5 +252,4 @@ public partial class PackingVisualizer : ComponentBase
 
 	private ValueTask RemoveItemFromSceneAsync(int index)
 		=> this.JS.InvokeVoidAsync("binacle.removeItemFromScene", index);
-
 }
