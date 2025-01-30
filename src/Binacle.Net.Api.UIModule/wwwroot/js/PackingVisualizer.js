@@ -49,7 +49,9 @@ const themeChangedHandler = function (event) {
 	const themeColors = getThemeColors(window.document.body, "tertiary-container");
 	_State.renderer.setClearColor(themeColors.color);
 	var bin = _State.scene.getObjectByName('bin');
-	bin.material.color.setHex(themeColors.onColor);
+	if(bin){
+		bin.material.color.setHex(themeColors.onColor);
+	}
 };
 
 function animate() {

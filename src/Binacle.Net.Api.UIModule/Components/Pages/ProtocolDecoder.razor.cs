@@ -9,33 +9,51 @@ namespace Binacle.Net.Api.UIModule.Components.Pages;
 
 public partial class ProtocolDecoder : ComponentBase
 {
-	[Inject] 
-	protected MessagingService? MessagingService { get; set; }
-	
+	[Inject] internal MessagingService? MessagingService { get; set; }
+
+	[Inject] internal LocalStorageService? LocalStorage { get; set; }
+
 	private Errors errors = new();
 
 	internal ViewModels.ProtocolDecoderViewModel Model { get; set; } = new();
-	
-	private HashSet<string> encodedResults { get; set; } = new();
-	private List<UIModule.Models.DecodedPackingResult> results { get; set; } = new();
-	private UIModule.Models.DecodedPackingResult? selectedResult { get; set; }
 
-	protected override void OnInitialized()
+	private Dictionary<string, Models.DecodedPackingResult> results = new();
+	private Models.DecodedPackingResult? selectedResult;
+
+	protected override async Task OnAfterRenderAsync(bool isFirstRender)
 	{
-		base.OnInitialized();
+		if (isFirstRender)
+		{
+			var savedResults = await this.LocalStorage!.GetItemAsync<string[]>("ProtocolDecoderSavedResults");
+			if (savedResults is not null && savedResults!.Length > 0)
+			{
+				foreach (var savedResult in savedResults)
+				{
+					var decodedResult = DecodeResult(savedResult);
+					if (decodedResult is not null)
+					{
+						this.results.Add(savedResult, decodedResult!);
+					}
+				}
+
+				this.StateHasChanged();
+			}
+		}
+
+		await base.OnAfterRenderAsync(isFirstRender);
 	}
 
-	private bool IsSelected(UIModule.Models.DecodedPackingResult result)
+	private bool IsSelected(Models.DecodedPackingResult result)
 	{
 		return this.selectedResult == result;
 	}
 
-	private Task DeleteResult(UIModule.Models.DecodedPackingResult result)
+	private async Task DeleteResult(Models.DecodedPackingResult result)
 	{
-		this.results.Remove(result);
-		return Task.CompletedTask;
+		this.results.Remove(result.EncodedResult);
+		await this.LocalStorage!.SetItemAsync("ProtocolDecoderSavedResults", this.results.Keys.ToArray());
 	}
-	
+
 	private async Task AddResult()
 	{
 		var resultString = this.Model.AddResult;
@@ -44,14 +62,14 @@ public partial class ProtocolDecoder : ComponentBase
 		{
 			return;
 		}
-			
-		if(!this.encodedResults.Add(resultString))
+
+		if (this.results.ContainsKey(resultString))
 		{
 			this.errors.Add("Result already added");
 			this.Model.AddResult = string.Empty;
 			return;
 		}
-		
+
 		var decodedResult = DecodeResult(resultString);
 		if (decodedResult is null)
 		{
@@ -59,29 +77,32 @@ public partial class ProtocolDecoder : ComponentBase
 			this.Model.AddResult = string.Empty;
 			return;
 		}
-		
-		this.results.Add(decodedResult!);
+
+		this.results.Add(resultString, decodedResult!);
+
 
 		this.Model.AddResult = string.Empty;
-		
-		if(this.results.Count == 1)
+		if (this.results.Count == 1)
 		{
-			await this.SelectResult(this.results.FirstOrDefault()!);
+			await this.SelectResult(this.results.Values.FirstOrDefault()!);
 		}
+
+		await this.LocalStorage!.SetItemAsync("ProtocolDecoderSavedResults", this.results.Keys.ToArray());
 	}
 
-	private static UIModule.Models.DecodedPackingResult? DecodeResult(string resultString)
+	private static Models.DecodedPackingResult? DecodeResult(string resultString)
 	{
 		try
 		{
 			var bytes = Convert.FromBase64String(resultString);
 			var (bin, items) =
 				PackingVisualizationProtocolSerializer
-					.DeserializeInt32<UIModule.Models.Bin, UIModule.Models.PackedItem>(bytes);
+					.DeserializeInt32<Models.Bin, Models.PackedItem>(bytes);
 
 			bin.ID = bin.FormatDimensions();
-			return new UIModule.Models.DecodedPackingResult()
+			return new Models.DecodedPackingResult()
 			{
+				EncodedResult = resultString,
 				Bin = bin,
 				PackedItems = items.ToList(),
 			};
@@ -92,10 +113,10 @@ public partial class ProtocolDecoder : ComponentBase
 		}
 	}
 
-	private async Task SelectResult(UIModule.Models.DecodedPackingResult result)
+	private async Task SelectResult(Models.DecodedPackingResult result)
 	{
 		await this.MessagingService!
-			.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
+			.TriggerAsync<AsyncCallback<(Models.Bin?, List<Models.PackedItem>?)>>(
 				"UpdateScene",
 				async () =>
 				{
@@ -106,8 +127,7 @@ public partial class ProtocolDecoder : ComponentBase
 							throw new InvalidOperationException("Selected result has no bin");
 						}
 
-						var existingResult = this.results?.FirstOrDefault(x => x.Bin!.ID == result.Bin.ID);
-						if (existingResult is null)
+						if (!(this.results?.TryGetValue(result.EncodedResult, out var existingResult) ?? false))
 						{
 							throw new InvalidOperationException("Could not find selected result");
 						}

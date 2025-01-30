@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Api.UIModule.Components.Models;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Binacle.Net.Api.UIModule.Components.Shared;

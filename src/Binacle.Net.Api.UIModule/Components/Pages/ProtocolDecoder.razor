@@ -37,7 +37,7 @@
 			}
 			else
 			{
-				@foreach (var result in this.results)
+				@foreach (var (key, result) in this.results)
 				{
 					<a class="row wave padding max @(IsSelected(result) ? $"surface-container border" : string.Empty)"
 					   @onclick="@(() => this.SelectResult(result))">
@@ -46,8 +46,9 @@
 						<div class="max">
 							Bin: @result.Bin!.ID
 						</div>
-						<button type="button" class="transparent circle "
-						        @onclick="@(() => this.DeleteResult(result))">
+						<button type="button" class="transparent circle" style="z-index:10"
+						        @onclick="@(() => this.DeleteResult(result))"
+						        @onclick:stopPropagation="true">
 							<MaterialSymbol Name="delete"/>
 						</button>
 					</a>

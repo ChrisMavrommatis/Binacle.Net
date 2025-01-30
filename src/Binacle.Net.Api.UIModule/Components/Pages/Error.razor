@@ -4,20 +4,13 @@
 @page "/Error"
 @page "/Error/{ErrorCode}"
 
-@if (!string.IsNullOrWhiteSpace(this.ErrorCode))
-{
-	<PageTitle>Error @this.ErrorCode</PageTitle>
-}
-else
-{
-	<PageTitle>Error</PageTitle>
-}
+<PageTitle>@PageTitle</PageTitle>
 
 <article class="medium middle-align center-align">
 	<div>
-		<MaterialSymbol class="extra error-text" Name="error" />
-		<h1 class="error-text">Error @this.ErrorCode</h1>
-		<p>An error occurred while processing your request.</p>
+		<MaterialSymbol class="extra error-text" Name="error"/>
+		<h1 class="error-text">@PageTitle</h1>
+		<p>@Description</p>
 
 	</div>
 </article>
@@ -54,10 +47,24 @@ else
 	private string? RequestId { get; set; }
 	private bool IsDevelopment { get; set; }
 
+
+	private string PageTitle = "Error";
+	private string Description = "An error occurred while processing your request.";
+
 	protected override void OnInitialized()
 	{
 		this.RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
 		this.IsDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if(!string.IsNullOrEmpty((this.ErrorCode)))
+		{
+			this.PageTitle = $"Error {this.ErrorCode}";
+		}
+		
 	}
 
 }

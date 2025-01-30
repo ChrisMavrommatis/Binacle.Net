@@ -21,7 +21,7 @@ public partial class PackingDemo : ComponentBase
 	protected IHttpClientFactory? HttpClientFactory { get; set; }
 
 	[Inject] 
-	protected MessagingService? MessagingService { get; set; }
+	internal MessagingService? MessagingService { get; set; }
 
 	private Errors errors = new();
 	private List<PackingResult>? results;

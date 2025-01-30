@@ -3,7 +3,7 @@
 namespace Binacle.Net.Api.UIModule.Services;
 
 
-public class MessagingService
+internal class MessagingService
 {
 	private readonly ConcurrentDictionary<string, List<Func<Task>>> _notifications  = new();
 	private readonly ConcurrentDictionary<string, List<Delegate>> _broadcasts  = new();

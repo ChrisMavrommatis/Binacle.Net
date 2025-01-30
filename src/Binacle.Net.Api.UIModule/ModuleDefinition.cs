@@ -34,11 +34,13 @@ public static class ModuleDefinition
 			httpClient.BaseAddress = new Uri(connectionString!.Get("endpoint")!);
 		});
 
-		builder.Services.AddScoped<Components.Services.ThemeService>();
-		builder.Services.AddScoped<Services.MessagingService>();
-		builder.Services.AddSingleton<Components.Services.AppletsService>();
-
+		builder.Services.AddSingleton<Services.AppletsService>();
+		
 		// For blazor components this is per connection or tab
+		builder.Services.AddScoped<Services.ThemeService>();
+		builder.Services.AddScoped<Services.MessagingService>();
+		builder.Services.AddScoped<Services.BinacleVisualizerService>();
+		builder.Services.AddScoped<Services.LocalStorageService>();
 		builder.Services.AddScoped<Services.ISampleDataService, Services.SampleDataService>();
 
 		Log.Information("{moduleName} module. Status {status}", "UI", "Initialized");

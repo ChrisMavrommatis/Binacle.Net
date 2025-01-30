@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.Api.UIModule.Components.Models;
+﻿namespace Binacle.Net.Api.UIModule.Models;
 
 internal class Link 
 {

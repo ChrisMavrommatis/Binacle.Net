@@ -1,27 +1,25 @@
 ﻿using Binacle.Net.Api.UIModule.Models;
 using Binacle.Net.Api.UIModule.Services;
-using Binacle.Net.Lib.Abstractions.Models;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 namespace Binacle.Net.Api.UIModule.Components.Features;
 
 public partial class PackingVisualizer : ComponentBase
 {
 	[Inject]
-	protected IJSRuntime JS { get; set; }
-
+	internal MessagingService? MessagingService { get; set; }
+	
 	[Inject]
-	protected MessagingService? MessagingService { get; set; }
+	internal BinacleVisualizerService? Binacle { get; set; }
 
 	[Parameter] 
-	public UIModule.Models.Bin? InitialBin { get; set; }
+	public Bin? InitialBin { get; set; }
 
-	private UIModule.Models.Bin? bin { get; set; }
+	private Bin? bin;
 
-	private List<UIModule.Models.PackedItem>? items;
+	private List<PackedItem>? items;
 
-	private Dictionary<string, Models.Control> controls = [];
+	private Dictionary<string, Control> controls = [];
 
 	private int itemsRendered;
 	private CancellationTokenSource? cancellationTokenSource;
@@ -29,13 +27,13 @@ public partial class PackingVisualizer : ComponentBase
 
 	protected override void OnInitialized()
 	{
-		this.controls.Add("first", new Models.Control("control-first", "first_page", FirstAsync));
-		this.controls.Add("previous", new Models.Control("control-previous", "chevron_left", PreviousAsync));
-		this.controls.Add("repeat", new Models.Control("control-repeat", "repeat_one", RepeatAsync));
-		this.controls.Add("next", new Models.Control("control-next", "chevron_right", NextAsync));
-		this.controls.Add("last", new Models.Control("control-last", "last_page", LastAsync));
+		this.controls.Add("first", new Control("control-first", "first_page", FirstAsync));
+		this.controls.Add("previous", new Control("control-previous", "chevron_left", PreviousAsync));
+		this.controls.Add("repeat", new Control("control-repeat", "repeat_one", RepeatAsync));
+		this.controls.Add("next", new Control("control-next", "chevron_right", NextAsync));
+		this.controls.Add("last", new Control("control-last", "last_page", LastAsync));
 
-		this.MessagingService?.On<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
+		this.MessagingService?.On<AsyncCallback<(Bin?, List<PackedItem>?)>>(
 			"UpdateScene", UpdateSceneAsync);
 		base.OnInitialized();
 	}
@@ -49,23 +47,18 @@ public partial class PackingVisualizer : ComponentBase
 	{
 		if (firstRender)
 		{
-			await this.InitializeAsync(this.InitialBin);
+			await this.Binacle!.InitializeSceneAsync(this.InitialBin!);
 		}
 
 		await base.OnAfterRenderAsync(firstRender);
 	}
 
-	private async Task InitializeAsync(UIModule.Models.Bin? bin)
-	{
-		await JS.InvokeVoidAsync("binacle.initialize", bin);
-	}
-
 	private async Task UpdateSceneAsync(
-		AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)> getUpdate
+		AsyncCallback<(Bin?, List<PackedItem>?)> getUpdate
 	)
 	{
 		await this.StopRepeatingAsync();
-		await this.UpdateLoadingStartAsync();
+		await this.Binacle!.UpdateLoadingStartAsync();
 		this.DisableAllControls();
 		var (bin, items) = await getUpdate();
 
@@ -74,14 +67,14 @@ public partial class PackingVisualizer : ComponentBase
 			this.bin = bin;
 			this.items = items;
 
-			await this.RedrawSceneAsync(this.bin, this.items);
+			await this.Binacle.RedrawSceneAsync(this.bin, this.items);
 		}
 
 		this.itemsRendered = this.items!.Count;
 		this.UpdateControlsStatus();
 
 		this.StateHasChanged();
-		await this.UpdateLoadingEndAsync();
+		await this.Binacle.UpdateLoadingEndAsync();
 	}
 
 	private void UpdateControlsStatus()
@@ -131,7 +124,7 @@ public partial class PackingVisualizer : ComponentBase
 	{
 		this.DisableAllControls();
 		this.StateHasChanged();
-		await this.RedrawSceneAsync(this.bin!, null);
+		await this.Binacle!.RedrawSceneAsync(this.bin!, null);
 		this.itemsRendered = 0;
 		this.UpdateControlsStatus();
 		this.StateHasChanged();
@@ -146,7 +139,7 @@ public partial class PackingVisualizer : ComponentBase
 
 		if (index > -1)
 		{
-			await this.RemoveItemFromSceneAsync(index);
+			await this.Binacle!.RemoveItemFromSceneAsync(index);
 			this.itemsRendered -= 1;
 		}
 
@@ -173,7 +166,7 @@ public partial class PackingVisualizer : ComponentBase
 		this.itemsRendered = 0;
 		this.cancellationTokenSource = new CancellationTokenSource();
 
-		await this.RedrawSceneAsync(this.bin!, null);
+		await this.Binacle!.RedrawSceneAsync(this.bin!, null);
 
 		await Task.Run(async () =>
 		{
@@ -182,7 +175,7 @@ public partial class PackingVisualizer : ComponentBase
 				for (var i = 0; i < this.items!.Count; i++)
 				{
 					var item = this.items![i];
-					await this.AddItemToSceneAsync(this.bin, item, i);
+					await this.Binacle.AddItemToSceneAsync(this.bin, item, i);
 					this.itemsRendered += 1;
 					await Task.Delay(1000, this.cancellationTokenSource.Token);
 				}
@@ -219,7 +212,7 @@ public partial class PackingVisualizer : ComponentBase
 		if (index < this.items!.Count)
 		{
 			var item = this.items![index];
-			await this.AddItemToSceneAsync(bin, item, index);
+			await this.Binacle!.AddItemToSceneAsync(bin, item, index);
 			this.itemsRendered += 1;
 		}
 
@@ -231,25 +224,11 @@ public partial class PackingVisualizer : ComponentBase
 	{
 		this.DisableAllControls();
 		this.StateHasChanged();
-		await this.RedrawSceneAsync(this.bin!, this.items!);
+		await this.Binacle!.RedrawSceneAsync(this.bin!, this.items!);
 		this.itemsRendered = this.items!.Count;
 		this.UpdateControlsStatus();
 		this.StateHasChanged();
 	}
 
-	private ValueTask UpdateLoadingStartAsync()
-		=> this.JS.InvokeVoidAsync("binacle.loadingStart");
-
-	private ValueTask UpdateLoadingEndAsync()
-		=> this.JS.InvokeVoidAsync("binacle.loadingEnd");
-
-	private ValueTask RedrawSceneAsync<TBin>(TBin bin, List<UIModule.Models.PackedItem>? items)
-		where TBin : IWithID, IWithReadOnlyDimensions
-		=> this.JS.InvokeVoidAsync("binacle.redrawScene", bin, items);
-
-	private ValueTask AddItemToSceneAsync<TBin>(TBin bin, UIModule.Models.PackedItem item, int index)
-		=> this.JS.InvokeVoidAsync("binacle.addItemToScene", bin, item, index);
-
-	private ValueTask RemoveItemFromSceneAsync(int index)
-		=> this.JS.InvokeVoidAsync("binacle.removeItemFromScene", index);
+	
 }
