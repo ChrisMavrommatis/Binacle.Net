@@ -9,9 +9,11 @@ namespace Binacle.Net.Api.UIModule.Components.Pages;
 
 public partial class ProtocolDecoder : ComponentBase
 {
-	[Inject] internal MessagingService? MessagingService { get; set; }
-
-	[Inject] internal LocalStorageService? LocalStorage { get; set; }
+	[Inject] 
+	internal MessagingService? MessagingService { get; set; }
+	
+	[Inject] 
+	internal LocalStorageService? LocalStorage { get; set; }
 
 	private Errors errors = new();
 
