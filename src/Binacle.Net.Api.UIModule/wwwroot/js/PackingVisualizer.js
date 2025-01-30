@@ -65,15 +65,15 @@ function render() {
 window.binacle = {
 	state: _State,
 	initialize: function (bin) {
+		_logger.actualLogger = window.console.log;
+		_logger.log("Binacle Initialize", bin);
+		
 		if (_State.initialized) {
-			_logger.log("Binacle already initialized");
-			return;
+			_logger.log("Binacle already initialized. Reinitializing");
 		}
+		
 		_visualizerContainer = document.getElementById("visualizer-container");
 		_rendererContainer = _visualizerContainer.querySelector("#renderer-container");
-
-		_logger.actualLoger = window.console.log;
-		_logger.log("Binacle Initialize", bin);
 
 		_State.aspectRatio = window.innerWidth / window.innerHeight;
 
