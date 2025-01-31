@@ -8,7 +8,9 @@ Before you start, make sure you have the [docker](https://www.docker.com) instal
 ## Getting Started
 Clone or download this repository to your local machine.
 
-Alternatively, you can just download the contents of this folder. Make sure that both `docker-compose.yml` and `Presets.json` files are in the same directory.
+Alternatively, you can just download the contents of this folder.  Ensure all the following files are present in the same directory:
+- `docker-compose.yml` - The docker compose file that includes all configuration for the services.
+- `Presets.json` – Custom bin configurations.
 
 If needed, modify the `Presets.json` file to fit your specific bin configurations.
 
@@ -19,7 +21,11 @@ To launch the application, open a terminal in the directory where the sample is 
 docker compose up
 ```
 
-This will start the Binacle.Net API, including the Swagger UI for easy interaction with the API.
+This will start the Binacle.Net API with:
+
+- **Swagger UI**: Available at http://localhost:8080/swagger/index.html for easy API exploration and testing.
+- **Logs Folder**: A `./data` folder will be created, containing the `logs` folder where log files from Binacle.Net will be stored.
+
 
 ### Accessing the API
 Once the containers are running, you can access the Swagger UI in your browser at:
