@@ -1,0 +1,12 @@
+@Username = test@test.com
+@Password = testpassword
+
+POST https://{{HOST}}/api/auth/token
+Accept: application/json
+
+  {
+    "email": "{{Username}}",
+    "password" : "{{Password}}"
+  }
+  
+

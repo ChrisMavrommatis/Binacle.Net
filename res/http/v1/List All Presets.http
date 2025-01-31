@@ -1,0 +1,2 @@
+GET https://{{HOST}}/api/v1/presets
+Accept: application/json

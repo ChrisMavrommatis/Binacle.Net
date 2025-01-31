@@ -1,0 +1,2 @@
+GET https://{{HOST}}/_health
+Accept: application/json
