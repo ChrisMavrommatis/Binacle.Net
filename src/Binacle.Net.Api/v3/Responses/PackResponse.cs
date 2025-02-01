@@ -1,5 +1,5 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
-using Binacle.PackingVisualizationProtocol;
+using Binacle.ViPaq;
 
 namespace Binacle.Net.Api.v3.Responses;
 
@@ -73,8 +73,8 @@ public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>
 
 			if (result.PackedItems is not null && result.PackedItems.Any())
 			{
-				var serializedResult = PackingVisualizationProtocolSerializer.SerializeInt32(result.Bin, result.PackedItems!);
-				result.SerializedResult = Convert.ToBase64String(serializedResult);
+				var serializedResult = ViPaqSerializer.SerializeInt32(result.Bin, result.PackedItems!);
+				result.ViPaqData = Convert.ToBase64String(serializedResult);
 			}
 
 			results.Add(result);

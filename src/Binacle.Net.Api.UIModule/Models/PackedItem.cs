@@ -5,8 +5,8 @@ namespace Binacle.Net.Api.UIModule.Models;
 internal class PackedItem : 
 	IWithID,
 	IWithDimensions,
-	PackingVisualizationProtocol.Abstractions.IWithDimensions<int>,
-	PackingVisualizationProtocol.Abstractions.IWithCoordinates<int>
+	ViPaq.Abstractions.IWithDimensions<int>,
+	ViPaq.Abstractions.IWithCoordinates<int>
 {
 	// Json Deserialize
 	public PackedItem()

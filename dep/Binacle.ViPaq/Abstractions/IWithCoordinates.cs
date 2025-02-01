@@ -1,9 +1,9 @@
 ﻿using System.Numerics;
 
-namespace Binacle.PackingVisualizationProtocol.Abstractions;
+namespace Binacle.ViPaq.Abstractions;
 
 public interface IWithCoordinates<T>
-	where T: struct, INumber<T>
+	where T: struct, IBinaryInteger<T>
 {
 	public T X { get; set; }
 	public T Y { get; set; }

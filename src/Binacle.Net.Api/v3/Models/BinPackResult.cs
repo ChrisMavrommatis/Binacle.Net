@@ -17,5 +17,5 @@ public class BinPackResult
 	public decimal? PackedItemsVolumePercentage { get; set; }
 	public decimal? PackedBinVolumePercentage { get; set; }
 	
-	public string? SerializedResult { get; set; }
+	public string? ViPaqData { get; set; }
 }

@@ -7,8 +7,8 @@ public class PackedBox :
 	IWithID, 
 	IWithDimensions, 
 	IWithCoordinates, 
-	PackingVisualizationProtocol.Abstractions.IWithDimensions<int>,
-	PackingVisualizationProtocol.Abstractions.IWithCoordinates<int>
+	ViPaq.Abstractions.IWithDimensions<int>,
+	ViPaq.Abstractions.IWithCoordinates<int>
 {
 	public required string ID { get; set; }
 	public int Length { get; set; }

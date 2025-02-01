@@ -2,8 +2,9 @@
 using Binacle.Net.Api.UIModule.Services;
 using Binacle.Net.Api.UIModule.ViewModels;
 using Binacle.Net.Lib;
-using Binacle.PackingVisualizationProtocol;
+using Binacle.ViPaq;
 using Microsoft.AspNetCore.Components;
+using Bin = Binacle.Net.Api.UIModule.Models.Bin;
 
 namespace Binacle.Net.Api.UIModule.Components.Pages;
 
@@ -17,10 +18,10 @@ public partial class ProtocolDecoder : ComponentBase
 
 	private Errors errors = new();
 
-	internal ViewModels.ProtocolDecoderViewModel Model { get; set; } = new();
+	internal ProtocolDecoderViewModel Model { get; set; } = new();
 
-	private Dictionary<string, Models.DecodedPackingResult> results = new();
-	private Models.DecodedPackingResult? selectedResult;
+	private Dictionary<string, DecodedPackingResult> results = new();
+	private DecodedPackingResult? selectedResult;
 
 	protected override async Task OnAfterRenderAsync(bool isFirstRender)
 	{
@@ -45,12 +46,12 @@ public partial class ProtocolDecoder : ComponentBase
 		await base.OnAfterRenderAsync(isFirstRender);
 	}
 
-	private bool IsSelected(Models.DecodedPackingResult result)
+	private bool IsSelected(DecodedPackingResult result)
 	{
 		return this.selectedResult == result;
 	}
 
-	private async Task DeleteResult(Models.DecodedPackingResult result)
+	private async Task DeleteResult(DecodedPackingResult result)
 	{
 		this.results.Remove(result.EncodedResult);
 		await this.LocalStorage!.SetItemAsync("ProtocolDecoderSavedResults", this.results.Keys.ToArray());
@@ -92,17 +93,16 @@ public partial class ProtocolDecoder : ComponentBase
 		await this.LocalStorage!.SetItemAsync("ProtocolDecoderSavedResults", this.results.Keys.ToArray());
 	}
 
-	private static Models.DecodedPackingResult? DecodeResult(string resultString)
+	private static DecodedPackingResult? DecodeResult(string resultString)
 	{
 		try
 		{
 			var bytes = Convert.FromBase64String(resultString);
 			var (bin, items) =
-				PackingVisualizationProtocolSerializer
-					.DeserializeInt32<Models.Bin, Models.PackedItem>(bytes);
+				ViPaqSerializer.DeserializeInt32<Bin, PackedItem>(bytes);
 
 			bin.ID = bin.FormatDimensions();
-			return new Models.DecodedPackingResult()
+			return new DecodedPackingResult()
 			{
 				EncodedResult = resultString,
 				Bin = bin,
@@ -115,10 +115,10 @@ public partial class ProtocolDecoder : ComponentBase
 		}
 	}
 
-	private async Task SelectResult(Models.DecodedPackingResult result)
+	private async Task SelectResult(DecodedPackingResult result)
 	{
 		await this.MessagingService!
-			.TriggerAsync<AsyncCallback<(Models.Bin?, List<Models.PackedItem>?)>>(
+			.TriggerAsync<AsyncCallback<(Bin?, List<PackedItem>?)>>(
 				"UpdateScene",
 				async () =>
 				{

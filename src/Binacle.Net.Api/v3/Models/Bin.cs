@@ -1,5 +1,4 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
-using Binacle.PackingVisualizationProtocol.Abstractions;
 
 namespace Binacle.Net.Api.v3.Models;
 
@@ -8,7 +7,7 @@ namespace Binacle.Net.Api.v3.Models;
 public class Bin : 
 	IWithID,
 	IWithDimensions,
-	PackingVisualizationProtocol.Abstractions.IWithDimensions<int>
+	ViPaq.Abstractions.IWithDimensions<int>
 {
 	public string ID { get; set; } = string.Empty;
 	public int Length { get; set; }

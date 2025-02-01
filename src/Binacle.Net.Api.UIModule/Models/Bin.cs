@@ -5,7 +5,7 @@ namespace Binacle.Net.Api.UIModule.Models;
 public class Bin : 
 	IWithID, 
 	IWithDimensions,
-	PackingVisualizationProtocol.Abstractions.IWithDimensions<int>
+	ViPaq.Abstractions.IWithDimensions<int>
 {
 	public Bin()
 	{
