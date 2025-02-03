@@ -6,23 +6,24 @@ using ChrisMavrommatis.Logging;
 namespace Binacle.Net.Api.Services;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public interface IBinsService
+
+public interface ILegacyBinsService
 {
-	Dictionary<string, Lib.Fitting.Models.FittingResult> FitBins<TBin, TBox>(List<TBin> bins, List<TBox> items, Models.FittingParameters parameters)
+	Dictionary<string, Lib.Fitting.Models.FittingResult> FitBins<TBin, TBox>(List<TBin> bins, List<TBox> items, Models.LegacyFittingParameters parameters)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 
-	Dictionary<string, Lib.Packing.Models.PackingResult> PackBins<TBin, TBox>(List<TBin> bins, List<TBox> items, Models.PackingParameters parameters)
+	Dictionary<string, Lib.Packing.Models.PackingResult> PackBins<TBin, TBox>(List<TBin> bins, List<TBox> items, Models.LegacyPackingParameters parameters)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 }
 
-internal class BinsService : IBinsService
+internal class LegacyBinsService : ILegacyBinsService
 {
 	private readonly Lib.AlgorithmFactory algorithmFactory;
-	private readonly ILogger<BinsService> logger;
+	private readonly ILogger<LegacyBinsService> logger;
 
-	public BinsService(ILogger<BinsService> logger)
+	public LegacyBinsService(ILogger<LegacyBinsService> logger)
 	{
 		this.algorithmFactory = new Lib.AlgorithmFactory();
 		this.logger = logger;
@@ -31,7 +32,7 @@ internal class BinsService : IBinsService
 	public Dictionary<string, Lib.Fitting.Models.FittingResult> FitBins<TBin, TBox>(
 		List<TBin> bins,
 		List<TBox> items,
-		Models.FittingParameters parameters
+		Models.LegacyFittingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
@@ -74,7 +75,7 @@ internal class BinsService : IBinsService
 	public Dictionary<string, Lib.Packing.Models.PackingResult> PackBins<TBin, TBox>(
 		List<TBin> bins, 
 		List<TBox> items,
-		Models.PackingParameters parameters
+		Models.LegacyPackingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
@@ -87,10 +88,9 @@ internal class BinsService : IBinsService
 
 		var results = new Dictionary<string, Lib.Packing.Models.PackingResult>();
 
-		var algorithm = this.GetAlgorithm(parameters.Algorithm);
 		foreach (var bin in bins.OrderBy(x => x.CalculateVolume()))
 		{
-			var algorithmInstance = this.algorithmFactory.CreatePacking(algorithm, bin, items);
+			var algorithmInstance = this.algorithmFactory.CreatePacking(Algorithm.FirstFitDecreasing, bin, items);
 			var result = algorithmInstance.Execute(new Lib.Packing.Models.PackingParameters 
 			{ 
 				NeverReportUnpackedItems = parameters.NeverReportUnpackedItems, 
@@ -115,16 +115,4 @@ internal class BinsService : IBinsService
 		this.logger.EnrichStateWithResults(results);
 		return results;
 	}
-	
-	private Lib.Algorithm GetAlgorithm(Models.Algorithm algorithm)
-	{
-		return algorithm switch
-		{
-			Models.Algorithm.FFD => Lib.Algorithm.FirstFitDecreasing,
-			Models.Algorithm.BFD => Lib.Algorithm.BestFitDecreasing,
-			Models.Algorithm.WFD => Lib.Algorithm.WorstFitDecreasing,
-			_ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
-		};
-	}
-	
 }

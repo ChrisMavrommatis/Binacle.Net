@@ -1,12 +1,19 @@
-﻿
-namespace Binacle.Net.Api.Models;
+﻿namespace Binacle.Net.Api.Models;
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CS1591
 public class PackingParameters
 {
 	public required Algorithm Algorithm { get; init; }
-	public required bool OptInToEarlyFails { get; init; }
-	public required bool ReportPackedItemsOnlyWhenFullyPacked { get; init; }
-	public required bool NeverReportUnpackedItems { get; init; }
-	public required bool StopAtSmallestBin { get; init; }
+
+	internal Lib.Algorithm GetMappedAlgorithm()
+	{
+		return this.Algorithm switch
+		{
+			Algorithm.FFD => Lib.Algorithm.FirstFitDecreasing,
+			Algorithm.WFD => Lib.Algorithm.WorstFitDecreasing,
+			Algorithm.BFD => Lib.Algorithm.BestFitDecreasing,
+			_ => throw new NotSupportedException($"Algorithm {this.Algorithm} is not supported.")
+		};
+		
+	}
 }

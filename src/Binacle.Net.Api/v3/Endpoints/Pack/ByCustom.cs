@@ -17,23 +17,23 @@ namespace Binacle.Net.Api.v3.Endpoints.Pack;
 public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBody>
 {
 	private readonly IValidator<v3.Requests.CustomPackRequest> validator;
-	private readonly IBinsService binsService;
+	private readonly IBinacleService binacleService;
 	private readonly ILogger<ByCustom> logger;
 
 	/// <summary>
 	/// Pack by Custom endpoint
 	/// </summary>
 	/// <param name="validator"></param>
-	/// <param name="binsService"></param>
+	/// <param name="binacleService"></param>
 	/// <param name="logger"></param>
 	public ByCustom(
 		IValidator<v3.Requests.CustomPackRequest> validator,
-		IBinsService binsService,
+		IBinacleService binacleService,
 		ILogger<ByCustom> logger
 	)
 	{
 		this.validator = validator;
-		this.binsService = binsService;
+		this.binacleService = binacleService;
 		this.logger = logger;
 	}
 
@@ -97,16 +97,12 @@ public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBod
 				);
 			}
 
-			var operationResults = this.binsService.PackBins(
+			var operationResults = this.binacleService.PackBins(
 				request.Body.Bins!,
 				request.Body.Items!,
 				new Api.Models.PackingParameters
 				{
-					Algorithm = request.Body.Parameters!.Algorithm!.Value,
-					StopAtSmallestBin = false,
-					NeverReportUnpackedItems = false,
-					OptInToEarlyFails = false,
-					ReportPackedItemsOnlyWhenFullyPacked = false
+					Algorithm = request.Body.Parameters!.Algorithm!.Value
 				}
 			);
 

@@ -89,7 +89,7 @@ public class Program
 		});
 
 		builder.Services.AddSingleton(_ => TimeProvider.System);
-		builder.Services.AddSingleton<IBinsService, BinsService>();
+		builder.Services.AddSingleton<ILegacyBinsService, LegacyBinsService>();
 
 		builder.Services.AddSwaggerExamples(options =>
 		{

@@ -18,7 +18,7 @@ namespace Binacle.Net.Api.v2.Endpoints.Fit;
 public class ByCustom : EndpointWithRequest<v2.Requests.CustomFitRequestWithBody>
 {
 	private readonly IValidator<v2.Requests.CustomFitRequest> validator;
-	private readonly IBinsService binsService;
+	private readonly ILegacyBinsService binsService;
 	private readonly ILogger<ByCustom> logger;
 
 	/// <summary>
@@ -29,7 +29,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomFitRequestWithBody
 	/// <param name="logger"></param>
 	public ByCustom(
 		IValidator<v2.Requests.CustomFitRequest> validator,
-		IBinsService binsService,
+		ILegacyBinsService binsService,
 		ILogger<ByCustom> logger
 	  )
 	{
@@ -143,7 +143,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomFitRequestWithBody
 			var operationResults = this.binsService.FitBins(
 				request.Body.Bins!, 
 				request.Body.Items!,
-				new FittingParameters
+				new LegacyFittingParameters
 				{
 					FindSmallestBinOnly = request.Body.Parameters?.FindSmallestBinOnly ?? true,
 					ReportFittedItems = request.Body.Parameters?.ReportFittedItems ?? false,

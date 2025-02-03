@@ -20,7 +20,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetPackRequestWithBod
 {
 	private readonly IOptions<BinPresetOptions> presetOptions;
 	private readonly IValidator<v2.Requests.PresetPackRequest> validator;
-	private readonly IBinsService binsService;
+	private readonly ILegacyBinsService binsService;
 	private readonly ILogger<ByPreset> logger;
 
 	/// <summary>
@@ -33,7 +33,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetPackRequestWithBod
 	public ByPreset(
 		IOptions<BinPresetOptions> presetOptions,
 		IValidator<v2.Requests.PresetPackRequest> validator,
-		IBinsService binsService,
+		ILegacyBinsService binsService,
 		ILogger<ByPreset> logger
 	  )
 	{
@@ -149,9 +149,8 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetPackRequestWithBod
 			var operationResults = this.binsService.PackBins(
 				presetOption.Bins,
 				request.Body.Items!,
-				new Api.Models.PackingParameters
+				new Api.Models.LegacyPackingParameters
 				{
-					Algorithm = Algorithm.FFD,
 					StopAtSmallestBin = request.Body.Parameters?.StopAtSmallestBin ?? false,
 					NeverReportUnpackedItems = request.Body.Parameters?.NeverReportUnpackedItems ?? false,
 					OptInToEarlyFails = request.Body.Parameters?.OptInToEarlyFails ?? false,

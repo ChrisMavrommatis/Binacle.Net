@@ -20,7 +20,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 {
 	private readonly IOptions<BinPresetOptions> presetOptions;
 	private readonly IValidator<v2.Requests.PresetFitRequest> validator;
-	private readonly IBinsService binsService;
+	private readonly ILegacyBinsService binsService;
 	private readonly ILogger<ByPreset> logger;
 
 	/// <summary>
@@ -33,7 +33,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 	public ByPreset(
 		IOptions<BinPresetOptions> presetOptions,
 		IValidator<v2.Requests.PresetFitRequest> validator,
-		IBinsService binsService,
+		ILegacyBinsService binsService,
 		ILogger<ByPreset> logger
 	  )
 	{
@@ -156,7 +156,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 			var operationResults = this.binsService.FitBins(
 				presetOption.Bins,
 				request.Body.Items!,
-				new FittingParameters
+				new LegacyFittingParameters
 				{
 					FindSmallestBinOnly = request.Body.Parameters?.FindSmallestBinOnly ?? true,
 					ReportFittedItems = request.Body.Parameters?.ReportFittedItems ?? false,

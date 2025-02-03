@@ -19,7 +19,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 {
 	private readonly IOptions<BinPresetOptions> presetOptions;
 	private readonly IValidator<v1.Requests.PresetQueryRequest> validator;
-	private readonly IBinsService binsService;
+	private readonly ILegacyBinsService binsService;
 	private readonly ILogger<ByPreset> logger;
 
 	/// <summary>
@@ -32,7 +32,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 	public ByPreset(
 		IOptions<BinPresetOptions> presetOptions,
 		IValidator<v1.Requests.PresetQueryRequest> validator,
-		IBinsService binsService,
+		ILegacyBinsService binsService,
 		ILogger<ByPreset> logger
 	  )
 	{
@@ -168,7 +168,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 			var operationResults = this.binsService.FitBins(
 				presetOption.Bins, 
 				request.Body.Items!,
-				new Api.Models.FittingParameters
+				new Api.Models.LegacyFittingParameters
 				{
 					FindSmallestBinOnly = true,
 					ReportFittedItems = false,

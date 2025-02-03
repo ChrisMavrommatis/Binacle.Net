@@ -15,7 +15,7 @@ public static class LoggerExtensions
 		return logger.EnrichState(name, state);
 	}
 
-	public static IDisposable? EnrichStateWithParameters(this ILogger logger, Models.FittingParameters parameters)
+	public static IDisposable? EnrichStateWithParameters(this ILogger logger, Models.LegacyFittingParameters parameters)
 	{
 		List<string> parametersList = [];
 
@@ -37,11 +37,9 @@ public static class LoggerExtensions
 		return logger.EnrichState("Parameters", parametersList);
 	}
 
-	public static IDisposable? EnrichStateWithParameters(this ILogger logger, Models.PackingParameters parameters)
+	public static IDisposable? EnrichStateWithParameters(this ILogger logger, Models.LegacyPackingParameters parameters)
 	{
-		List<string> parametersList = [
-			parameters.Algorithm.ToString()
-		];
+		List<string> parametersList = new List<string>();
 
 		if (parameters.OptInToEarlyFails)
 		{
@@ -62,6 +60,16 @@ public static class LoggerExtensions
 		{
 			parametersList.Add("StopAtSmallestBin");
 		}
+
+		return logger.EnrichState("Parameters", parametersList);
+	}
+	
+	public static IDisposable? EnrichStateWithParameters(this ILogger logger, Models.PackingParameters parameters)
+	{
+		List<string> parametersList =
+		[
+			parameters.Algorithm.ToString()
+		];
 
 		return logger.EnrichState("Parameters", parametersList);
 	}
