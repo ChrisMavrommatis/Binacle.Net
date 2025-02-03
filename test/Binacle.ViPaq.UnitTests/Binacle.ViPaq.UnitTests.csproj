@@ -1,16 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
 
-
-	<ItemGroup>
-		<PackageReference Include="AutoFixture" Version="4.18.1"/>
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+    <ItemGroup>
+       <PackageReference Include="coverlet.collector" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -20,17 +18,22 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-	</ItemGroup>
-
-
-	<ItemGroup>
+    </ItemGroup>
+    
+    <ItemGroup>
 		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
 	</ItemGroup>
 
+    <ItemGroup>
+        <Using Include="Xunit"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\src\Binacle.Net.Lib\Binacle.Net.Lib.csproj"/>
-		<ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj"/>
-	</ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\dep\Binacle.ViPaq\Binacle.ViPaq.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Tests\" />
+    </ItemGroup>
 
 </Project>
