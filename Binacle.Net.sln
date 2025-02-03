@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "res", "res", "{D91D976D-F7C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8C31D46E-8778-404A-AEA5-FF4466499CD6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{C74DE1C5-A76A-433C-8FCA-272FBDE3713F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8-5B9D-4E2B-AA35-A208DFFFF1FE}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -24,11 +28,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{66A2671D-8FB5-11D2-AA7E-00C04F688DDE}") = "contentproject", "build\contentproject\contentproject.proj", "{3A074859-B076-45C5-97AB-BE404A0E8434}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Swashbuckle", "dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj", "{882F3C14-EAC8-4D7D-881B-61A6663E38B6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.FluentValidation", "dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj", "{3ADB3BA2-ADB3-4D6C-8276-15CB5D0F708B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Logging", "dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj", "{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.ViPaq", "dep\Binacle.ViPaq\Binacle.ViPaq.csproj", "{27243C7C-94C8-4F85-A924-83674E764906}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib", "src\Binacle.Net.Lib\Binacle.Net.Lib.csproj", "{231D1EB6-7755-4AE5-BC5D-AFE071C1B10D}"
 EndProject
@@ -67,13 +75,6 @@ EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "WithAllFeatures", "samples\WithAllFeatures\WithAllFeatures.dcproj", "{291A9588-4EC8-46F8-9764-C4094D09B1F0}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "WithUiModuleOnly", "samples\WithUiModuleOnly\WithUiModuleOnly.dcproj", "{52076940-51EC-45A8-8767-F4EC3409F873}"
-EndProject
-
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{C74DE1C5-A76A-433C-8FCA-272FBDE3713F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binacle.ViPaq", "dep\Binacle.ViPaq\Binacle.ViPaq.csproj", "{27243C7C-94C8-4F85-A924-83674E764906}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -281,6 +282,7 @@ Global
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0} = {8C31D46E-8778-404A-AEA5-FF4466499CD6}
 		{52076940-51EC-45A8-8767-F4EC3409F873} = {8C31D46E-8778-404A-AEA5-FF4466499CD6}
 		{27243C7C-94C8-4F85-A924-83674E764906} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
+		{3A074859-B076-45C5-97AB-BE404A0E8434} = {848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}
