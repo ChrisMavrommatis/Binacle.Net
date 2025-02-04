@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using System.Net.Http.Json;
-using Xunit;
+﻿using System.Net.Http.Json;
 
 namespace Binacle.Net.Api.ServiceModule.IntegrationTests;
 
@@ -18,7 +16,7 @@ public class SanityTests
 	[Fact]
 	public void Tests_Work()
 	{
-		Xunit.Assert.True(true);
+		true.ShouldBe(true);
 	}
 	
 	[Fact]
@@ -30,6 +28,6 @@ public class SanityTests
 			Password = "password123"
 		};
 		var response = await this.sut.Client.PostAsJsonAsync("/api/auth/token", request, this.sut.JsonSerializerOptions);
-		response.StatusCode.Should().NotBe(System.Net.HttpStatusCode.NotFound);
+		response.StatusCode.ShouldNotBe(System.Net.HttpStatusCode.NotFound);
 	}
 }

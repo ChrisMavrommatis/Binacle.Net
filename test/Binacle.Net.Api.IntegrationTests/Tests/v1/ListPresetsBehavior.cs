@@ -1,6 +1,5 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.TestsKernel.TestPriority;
-using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -8,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
-using Xunit;
 
 namespace Binacle.Net.Api.IntegrationTests.v1;
 
@@ -47,7 +45,7 @@ public class ListPresetsBehavior : IClassFixture<WebApplicationFactory<IApiMarke
 	{
 		var response = await this.client.GetAsync(routePath);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 	}
 
 	[TestPriority(1)]
@@ -60,7 +58,7 @@ public class ListPresetsBehavior : IClassFixture<WebApplicationFactory<IApiMarke
 
 		var response = await this.client.GetAsync(routePath);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 	}
 
 }

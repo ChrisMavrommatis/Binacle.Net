@@ -1,4 +1,5 @@
-﻿using Xunit.Abstractions;
+﻿
+using Xunit.Abstractions;
 using Xunit.Sdk;
 
 namespace Binacle.Net.TestsKernel.TestPriority;

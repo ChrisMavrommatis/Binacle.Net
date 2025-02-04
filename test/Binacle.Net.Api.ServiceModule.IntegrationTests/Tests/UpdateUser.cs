@@ -1,7 +1,5 @@
 ﻿using Binacle.Net.Api.ServiceModule.IntegrationTests.Models;
-using FluentAssertions;
 using System.Net.Http.Json;
-using Xunit;
 
 namespace Binacle.Net.Api.ServiceModule.IntegrationTests;
 
@@ -124,7 +122,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 			Type = ServiceModule.Models.UserType.Admin
 		};
 		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NoContent);
 	}
 
 	[Fact(DisplayName = $"PUT {routePath}. With Just Status Returns 204 No Content")]
@@ -138,7 +136,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 			Status = ServiceModule.Models.UserStatus.Active,
 		};
 		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NoContent);
 	}
 
 	[Fact(DisplayName = $"PUT {routePath}. With Just Type Returns 204 No Content")]
@@ -152,7 +150,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 			Type = ServiceModule.Models.UserType.Admin
 		};
 		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NoContent);
 	}
 	#endregion
 
@@ -171,7 +169,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 			Type = ServiceModule.Models.UserType.Admin
 		};
 		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Status Returns 400 BadRequest")]
@@ -186,7 +184,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 			status = "Invalid",
 		};
 		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Type Returns 400 BadRequest")]
@@ -201,7 +199,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 			type = "Invalid"
 		};
 		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	#endregion
@@ -220,7 +218,7 @@ public class UpdateUser : Abstractions.UsersEndpointTestsBase
 			Type = ServiceModule.Models.UserType.Admin
 		};
 		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 	}
 
 	#endregion

@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using System.Net.Http.Json;
-using Xunit;
+﻿using System.Net.Http.Json;
 
 namespace Binacle.Net.Api.IntegrationTests.v2;
 
@@ -92,7 +90,7 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 			request,
 			result =>
 			{
-				result.Data.Should().HaveCount(request.Bins!.Count);
+				result.Data.ShouldHaveCount(request.Bins!.Count);
 			}
 		);
 	}
@@ -107,7 +105,7 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 			request,
 			result =>
 			{
-				result.Data.Should().HaveCount(request.Bins!.Count);
+				result.Data.ShouldHaveCount(request.Bins!.Count);
 			}
 		);
 	}
@@ -122,7 +120,7 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 			request,
 			result =>
 			{
-				result.Data.Should().HaveCount(request.Bins!.Count);
+				result.Data.ShouldHaveCount(request.Bins!.Count);
 			}
 		);
 	}
@@ -138,10 +136,10 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 			request,
 			result =>
 			{
-				result.Data.Should().HaveCount(request.Bins!.Count);
+				result.Data.ShouldHaveCount(request.Bins!.Count);
 				foreach (var binPackResult in result.Data)
 				{
-					binPackResult.Result.Should().Be(Api.v2.Models.BinPackResultStatus.EarlyFail_ContainerVolumeExceeded);
+					binPackResult.Result.ShouldBe(Api.v2.Models.BinPackResultStatus.EarlyFail_ContainerVolumeExceeded);
 				}
 			}
 		);
@@ -161,10 +159,10 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 			request,
 			result =>
 			{
-				result.Data.Should().HaveCount(request.Bins!.Count);
+				result.Data.ShouldHaveCount(request.Bins!.Count);
 				foreach (var binPackResult in result.Data)
 				{
-					binPackResult.Result.Should().Be(Api.v2.Models.BinPackResultStatus.EarlyFail_ContainerDimensionExceeded);
+					binPackResult.Result.ShouldBe(Api.v2.Models.BinPackResultStatus.EarlyFail_ContainerDimensionExceeded);
 
 				}
 			}
@@ -186,7 +184,7 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 			{
 				foreach (var binPackResult in result.Data)
 				{
-					binPackResult.Bin.ID.Should().Be(expectedBin.ID);
+					binPackResult.Bin.ID.ShouldBe(expectedBin.ID);
 				};
 			}
 		);

@@ -1,11 +1,9 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.TestsKernel.Data.Providers.BinaryDecision;
 using Binacle.Net.TestsKernel.Models;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
-using Xunit;
 
 namespace Binacle.Net.Api.IntegrationTests.v2;
 
@@ -39,13 +37,8 @@ public class FitByCustomScenario
 
 	private async Task RunBinaryDecisionScenarioTest(Scenario scenario)
 	{
-		var presets = this.sut.Services.GetService<IOptions<BinPresetOptions>>();
 		var binCollection = scenario.GetBinCollectionKey();
 		var expectedBin = scenario.GetTestBin(this.sut.BinCollectionsTestDataProvider);
-
-		presets!.Value.Presets.Should().ContainKey(binCollection);
-
-		var binPresetOption = presets.Value.Presets[binCollection];
 
 		var request = new Api.v2.Requests.CustomFitRequest
 		{
@@ -76,32 +69,29 @@ public class FitByCustomScenario
 
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 
 		
 		var fitResponse = await response.Content.ReadFromJsonAsync<Api.v2.Responses.FitResponse>(this.sut.JsonSerializerOptions);
 
-		fitResponse.Should().NotBeNull();
-		fitResponse!.Data.Should()
-			.NotBeNull()
-			.And.NotBeEmpty()
-			.And.HaveCount(1);
+		fitResponse.ShouldNotBeNull();
+		fitResponse!.Data.ShouldHaveSingleItem();
 		var result = fitResponse.Data.FirstOrDefault(x => x.Bin.ID == expectedBin.ID);
-		result.Should().NotBeNull();
-		result!.Bin.Should().NotBeNull();
-		result.Bin.ID.Should().Be(expectedBin.ID);
+		result.ShouldNotBeNull();
+		result!.Bin.ShouldNotBeNull();
+		result.Bin.ID.ShouldBe(expectedBin.ID);
 
 		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
 
 		if (scenarioResult.Fits)
 		{
-			fitResponse!.Result.Should().Be(Api.v2.Models.ResultType.Success);
-			result.Result.Should().Be(Api.v2.Models.BinFitResultStatus.AllItemsFit);
+			fitResponse!.Result.ShouldBe(Api.v2.Models.ResultType.Success);
+			result.Result.ShouldBe(Api.v2.Models.BinFitResultStatus.AllItemsFit);
 		}
 		else
 		{
-			fitResponse!.Result.Should().Be(Api.v2.Models.ResultType.Failure);
-			result.Result.Should().NotBe(Api.v2.Models.BinFitResultStatus.AllItemsFit);
+			fitResponse!.Result.ShouldBe(Api.v2.Models.ResultType.Failure);
+			result.Result.ShouldNotBe(Api.v2.Models.BinFitResultStatus.AllItemsFit);
 		}
 	}
 }

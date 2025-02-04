@@ -4,7 +4,6 @@ using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.Lib.Packing.Models;
 using Binacle.Net.Lib.UnitTests.Data.Providers.BinaryDecision;
 using Binacle.Net.TestsKernel.Models;
-using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests;
 
@@ -52,11 +51,11 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 
 		if (scenarioResult.Fits)
 		{
-			Assert.Equal(FittingResultStatus.Success, result.Status);
+			result.Status.ShouldBe(FittingResultStatus.Success);
 		}
 		else
 		{
-			Assert.Equal(FittingResultStatus.Fail, result.Status);
+			result.Status.ShouldBe(FittingResultStatus.Fail);
 		}
 	}
 
@@ -96,11 +95,11 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 
 		if (scenarioResult.Fits)
 		{
-			Assert.Equal(PackingResultStatus.FullyPacked, result.Status);
+			result.Status.ShouldBe(PackingResultStatus.FullyPacked);
 		}
 		else
 		{
-			Assert.NotEqual(PackingResultStatus.FullyPacked, result.Status);
+			result.Status.ShouldNotBe(PackingResultStatus.FullyPacked);
 		}
 	}
 }

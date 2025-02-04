@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using System.Net.Http.Json;
-using Xunit;
+﻿using System.Net.Http.Json;
 
 namespace Binacle.Net.Api.IntegrationTests.v2;
 
@@ -93,10 +91,10 @@ public class FitByCustomBehavior : Abstractions.BehaviourTestsBase
 			request,
 			result =>
 			{
-				result.Data.Should().HaveCount(request.Bins!.Count);
+				result.Data.ShouldHaveCount(request.Bins!.Count);
 				foreach (var binFitResult in result.Data)
 				{
-					binFitResult.Result.Should().Be(Api.v2.Models.BinFitResultStatus.EarlyFail_TotalVolumeExceeded);
+					binFitResult.Result.ShouldBe(Api.v2.Models.BinFitResultStatus.EarlyFail_TotalVolumeExceeded);
 				}
 			}
 		);
@@ -116,10 +114,10 @@ public class FitByCustomBehavior : Abstractions.BehaviourTestsBase
 			request,
 			result =>
 			{
-				result.Data.Should().HaveCount(request.Bins!.Count);
+				result.Data.ShouldHaveCount(request.Bins!.Count);
 				foreach (var binFitResult in result.Data)
 				{
-					binFitResult.Result.Should().Be(Api.v2.Models.BinFitResultStatus.EarlyFail_ItemDimensionExceeded);
+					binFitResult.Result.ShouldBe(Api.v2.Models.BinFitResultStatus.EarlyFail_ItemDimensionExceeded);
 				}
 			}
 		);
@@ -135,7 +133,7 @@ public class FitByCustomBehavior : Abstractions.BehaviourTestsBase
 			request,
 			result =>
 			{
-				result.Data.Should().HaveCount(request.Bins!.Count);
+				result.Data.ShouldHaveCount(request.Bins!.Count);
 			}
 		);
 	}
@@ -150,7 +148,7 @@ public class FitByCustomBehavior : Abstractions.BehaviourTestsBase
 			request,
 			result =>
 			{
-				result.Data.Should().HaveCount(request.Bins!.Count);
+				result.Data.ShouldHaveCount(request.Bins!.Count);
 			}
 		);
 	}
@@ -170,7 +168,7 @@ public class FitByCustomBehavior : Abstractions.BehaviourTestsBase
 			{
 				foreach (var binFitResult in result.Data)
 				{
-					binFitResult.Bin.ID.Should().Be(expectedBin.ID);
+					binFitResult.Bin.ID.ShouldBe(expectedBin.ID);
 				}
 			}
 		);

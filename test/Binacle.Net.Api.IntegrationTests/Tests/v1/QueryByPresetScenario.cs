@@ -1,8 +1,6 @@
 ﻿using Binacle.Net.TestsKernel.Data.Providers.BinaryDecision;
 using Binacle.Net.TestsKernel.Models;
-using FluentAssertions;
 using System.Net.Http.Json;
-using Xunit;
 
 namespace Binacle.Net.Api.IntegrationTests.v1;
 
@@ -55,24 +53,24 @@ public class QueryByPresetScenario
 
 		var response = await this.sut.Client.PostAsJsonAsync(urlPath, request, this.sut.JsonSerializerOptions);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 
 		var result = await response.Content.ReadFromJsonAsync<Api.v1.Responses.QueryResponse>();
 
-		result.Should().NotBeNull();
+		result.ShouldNotBeNull();
 
 		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
 
 		if (scenarioResult.Fits)
 		{
-			result!.Result.Should().Be(Api.v1.Models.ResultType.Success);
-			result.Bin.Should().NotBeNull();
-			result.Bin!.ID.Should().Be(expectedBin.ID);
+			result!.Result.ShouldBe(Api.v1.Models.ResultType.Success);
+			result.Bin.ShouldNotBeNull();
+			result.Bin!.ID.ShouldBe(expectedBin.ID);
 		}
 		else
 		{
-			result!.Result.Should().Be(Api.v1.Models.ResultType.Failure);
-			result.Bin.Should().BeNull();
+			result!.Result.ShouldBe(Api.v1.Models.ResultType.Failure);
+			result.Bin.ShouldBeNull();
 		}
 	}
 }

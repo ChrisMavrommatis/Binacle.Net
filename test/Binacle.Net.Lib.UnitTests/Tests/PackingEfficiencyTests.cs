@@ -1,7 +1,6 @@
 ﻿using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.TestsKernel.Data.Providers.PackingEddiciency;
 using Binacle.Net.TestsKernel.Models;
-using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests;
 
@@ -54,10 +53,12 @@ public class PackingEfficiencyTests : IClassFixture<CommonTestingFixture>
 
 		var scenarioResult = scenario.ResultAs<PackingEfficiencyScenarioResult>();
 
-		Xunit.Assert.Equal(scenarioResult.TotalItemCount, result.PackedItems!.Count + result.UnpackedItems!.Count);
-		Xunit.Assert.True(
-			scenarioResult.MaxPotentialPackingEfficiencyPercentage > result.PackedBinVolumePercentage, 
-			$"Packed Bin Volume Percentage {result.PackedBinVolumePercentage} exceeded Max Potential Efficiency Percentage {scenarioResult.MaxPotentialPackingEfficiencyPercentage}"
-		);
+		var totalItems = result.PackedItems!.Count + result.UnpackedItems!.Count;
+		totalItems.ShouldBe((int)scenarioResult.TotalItemCount);
+		result.PackedBinVolumePercentage
+			.ShouldBeLessThan(
+				scenarioResult.MaxPotentialPackingEfficiencyPercentage,
+				customMessage: $"Packed Bin Volume Percentage {result.PackedBinVolumePercentage} exceeded Max Potential Efficiency Percentage {scenarioResult.MaxPotentialPackingEfficiencyPercentage}"
+				);
 	}
 }

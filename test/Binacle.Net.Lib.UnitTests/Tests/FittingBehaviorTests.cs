@@ -1,6 +1,5 @@
 ﻿using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.TestsKernel.Models;
-using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests;
 
@@ -33,14 +32,14 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 			
 			// Result
-			Assert.Equal(Fitting.Models.FittingResultStatus.Success, result.Status);
-			Assert.Null(result.Reason);
+			result.Status.ShouldBe(Fitting.Models.FittingResultStatus.Success);
+			result.Reason.ShouldBeNull();
 
 			// Fitted Items
 			this.AssertItemsAreCorrect(expectedFittedItem, result.FittedItems);
 
 			// Unfitted Items
-			this.AssertItemsDontExist(result.UnfittedItems);
+			result.UnfittedItems.ShouldBeNullOrEmpty();
 		}
 	}
 
@@ -57,14 +56,14 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Fitting.Models.FittingResultStatus.Success, result.Status);
-			Assert.Null(result.Reason);
-
-			// Fitted Items
-			this.AssertItemsDontExist(result.FittedItems);
+			result.Status.ShouldBe(Fitting.Models.FittingResultStatus.Success);
+			result.Reason.ShouldBeNull();
 			
+			// Fitted Items
+			result.FittedItems.ShouldBeNullOrEmpty();
+
 			// Unfitted Items
-			this.AssertItemsDontExist(result.UnfittedItems);
+			result.UnfittedItems.ShouldBeNullOrEmpty();
 		}
 	}
 
@@ -91,15 +90,15 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 			
 			// Result
-			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
-			Assert.NotNull(result.Reason);
-			Assert.Equal(Fitting.Models.FittingFailedResultReason.DidNotFit, result.Reason);
+			result.Status.ShouldBe(Fitting.Models.FittingResultStatus.Fail);
+			result.Reason.ShouldNotBeNull();
+			result.Reason.ShouldBe(Fitting.Models.FittingFailedResultReason.DidNotFit);
 
 			// Fitted Items
-			this.AssertItemsDontExist(result.FittedItems);
+			result.FittedItems.ShouldBeNullOrEmpty();
 
 			// Unfitted Items
-			this.AssertItemsDontExist(result.UnfittedItems);
+			result.UnfittedItems.ShouldBeNullOrEmpty();
 		}
 	}
 
@@ -117,15 +116,15 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
-			Assert.NotNull(result.Reason);
-			Assert.Equal(Fitting.Models.FittingFailedResultReason.DidNotFit, result.Reason);
+			result.Status.ShouldBe(Fitting.Models.FittingResultStatus.Fail);
+			result.Reason.ShouldNotBeNull();
+			result.Reason.ShouldBe(Fitting.Models.FittingFailedResultReason.DidNotFit);
 
 			// Fitted Items
 			this.AssertItemsAreCorrect(expectedFittedItem, result.FittedItems);
 
 			// Unfitted Items
-			this.AssertItemsDontExist(result.UnfittedItems);
+			result.UnfittedItems.ShouldBeNullOrEmpty();
 		}
 	}
 
@@ -143,12 +142,12 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
-			Assert.NotNull(result.Reason);
-			Assert.Equal(Fitting.Models.FittingFailedResultReason.DidNotFit, result.Reason);
+			result.Status.ShouldBe(Fitting.Models.FittingResultStatus.Fail);
+			result.Reason.ShouldNotBeNull();
+			result.Reason.ShouldBe(Fitting.Models.FittingFailedResultReason.DidNotFit);
 
 			// Fitted Items
-			this.AssertItemsDontExist(result.FittedItems);
+			result.FittedItems.ShouldBeNullOrEmpty();
 
 			// Unfitted Items
 			this.AssertItemsAreCorrect(expectedUnfittedItem, result.UnfittedItems);
@@ -169,9 +168,9 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
-			Assert.NotNull(result.Reason);
-			Assert.Equal(Fitting.Models.FittingFailedResultReason.DidNotFit, result.Reason);
+			result.Status.ShouldBe(Fitting.Models.FittingResultStatus.Fail);
+			result.Reason.ShouldNotBeNull();
+			result.Reason.ShouldBe(Fitting.Models.FittingFailedResultReason.DidNotFit);
 
 			// Fitted Items
 			this.AssertItemsAreCorrect(expectedFittedItem, result.FittedItems);
@@ -184,18 +183,12 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 
 	private void AssertItemsAreCorrect(TestItem expectedItem, List<Fitting.Models.ResultItem>? items)
 	{
-		Assert.NotNull(items);
-		Assert.NotEmpty(items);
-		Assert.Equal(expectedItem.Quantity, items!.Count);
+		items.ShouldNotBeEmpty();
+		items.ShouldHaveCount(expectedItem.Quantity);
 		foreach (var item in items)
 		{
-			Assert.Equal(expectedItem.ID, item.ID);
+			item.ID.ShouldBe(expectedItem.ID);
 		}
-	}
-
-	private void AssertItemsDontExist(List<Fitting.Models.ResultItem>? items)
-	{
-		Assert.True(items is null || items.Count == 0);
 	}
 
 	#region Early Fails
@@ -212,9 +205,9 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
-			Assert.NotNull(result.Reason);
-			Assert.Equal(Fitting.Models.FittingFailedResultReason.ItemDimensionExceeded, result.Reason);
+			result.Status.ShouldBe(Fitting.Models.FittingResultStatus.Fail);
+			result.Reason.ShouldNotBeNull();
+			result.Reason.ShouldBe(Fitting.Models.FittingFailedResultReason.ItemDimensionExceeded);
 		}
 	}
 
@@ -231,9 +224,9 @@ public class FittingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Fitting.Models.FittingResultStatus.Fail, result.Status);
-			Assert.NotNull(result.Reason);
-			Assert.Equal(Fitting.Models.FittingFailedResultReason.TotalVolumeExceeded, result.Reason);
+			result.Status.ShouldBe(Fitting.Models.FittingResultStatus.Fail);
+			result.Reason.ShouldNotBeNull();
+			result.Reason.ShouldBe(Fitting.Models.FittingFailedResultReason.TotalVolumeExceeded);
 		}
 	}
 	#endregion

@@ -2,7 +2,6 @@
 using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.TestsKernel.Providers;
-using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests;
 
@@ -38,11 +37,11 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 
 			if (scenario.MaxInRange < noOfItems) // doesn't fit
 			{
-				Assert.Equal(Lib.Fitting.Models.FittingResultStatus.Fail, result.Status);
+				result.Status.ShouldBe(Lib.Fitting.Models.FittingResultStatus.Fail);
 			}
 			else
 			{
-				Assert.Equal(Lib.Fitting.Models.FittingResultStatus.Success, result.Status);
+				result.Status.ShouldBe(Lib.Fitting.Models.FittingResultStatus.Success);
 			}
 		}
 	}
@@ -75,11 +74,11 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 
 			if (scenario.MaxInRange < noOfItems) // doesn't fit
 			{
-				Assert.NotEqual(Lib.Packing.Models.PackingResultStatus.FullyPacked, result.Status);
+				result.Status.ShouldNotBe(Lib.Packing.Models.PackingResultStatus.FullyPacked);
 			}
 			else
 			{
-				Assert.Equal(Lib.Packing.Models.PackingResultStatus.FullyPacked, result.Status);
+				result.Status.ShouldBe(Lib.Packing.Models.PackingResultStatus.FullyPacked);
 			}
 		}
 	}

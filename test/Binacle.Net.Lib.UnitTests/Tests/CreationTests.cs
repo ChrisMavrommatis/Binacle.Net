@@ -3,7 +3,6 @@ using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.Lib.Exceptions;
 using Binacle.Net.TestsKernel.Models;
-using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests;
 
@@ -30,7 +29,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 
 		foreach(var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
-			Assert.Throws<ArgumentNullException>(() =>
+			Should.Throw<ArgumentNullException>(() =>
 			{
 				var algorithmInstance = algorithmFactory(default!, testItems);
 			});
@@ -38,7 +37,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 
 		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
 		{
-			Assert.Throws<ArgumentNullException>(() =>
+			Should.Throw<ArgumentNullException>(() =>
 			{
 				var algorithmInstance = algorithmFactory(default!, testItems);
 			});
@@ -52,11 +51,11 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 
 		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
-			Assert.Throws<ArgumentNullException>(() =>
+			Should.Throw<ArgumentNullException>(() =>
 			{
 				var algorithmInstance = algorithmFactory(bin, default!);
 			});
-			Assert.Throws<ArgumentNullException>(() =>
+			Should.Throw<ArgumentNullException>(() =>
 			{
 				var algorithmInstance = algorithmFactory(bin, Enumerable.Empty<TestItem>().ToList());
 			});
@@ -65,11 +64,11 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 
 		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
 		{
-			Assert.Throws<ArgumentNullException>(() =>
+			Should.Throw<ArgumentNullException>(() =>
 			{
 				var algorithmInstance = algorithmFactory(bin, default!);
 			});
-			Assert.Throws<ArgumentNullException>(() =>
+			Should.Throw<ArgumentNullException>(() =>
 			{
 				var algorithmInstance = algorithmFactory(bin, Enumerable.Empty<TestItem>().ToList());
 			});
@@ -88,7 +87,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 
 		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
-			Assert.Throws<DimensionException>(() =>
+			Should.Throw<DimensionException>(() =>
 			{
 				var algorithmInstance = algorithmFactory(binWith0Dimension, testItems);
 			});
@@ -96,7 +95,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 
 		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
 		{
-			Assert.Throws<DimensionException>(() =>
+			Should.Throw<DimensionException>(() =>
 			{
 				var algorithmInstance = algorithmFactory(binWith0Dimension, testItems);
 			});
@@ -116,7 +115,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 
 		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
 		{
-			Assert.Throws<DimensionException>(() =>
+			Should.Throw<DimensionException>(() =>
 			{
 				var algorithmInstance = algorithmFactory(bin, testItemsWith0Dimension);
 			});
@@ -124,7 +123,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 
 		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
 		{
-			Assert.Throws<DimensionException>(() =>
+			Should.Throw<DimensionException>(() =>
 			{
 				var algorithmInstance = algorithmFactory(bin, testItemsWith0Dimension);
 			});

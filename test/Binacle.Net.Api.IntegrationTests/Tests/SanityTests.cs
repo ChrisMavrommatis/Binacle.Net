@@ -1,8 +1,6 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Xunit;
 
 namespace Binacle.Net.Api.IntegrationTests;
 
@@ -20,16 +18,16 @@ public class SanityTests
 	[Fact]
 	public void Tests_Work()
 	{
-		Assert.True(true);
+		true.ShouldBe(true);
 	}
 
 	[Fact]
 	public void Presets_Are_Configured_Correctly()
 	{
 		var presetOptions = sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
-		presetOptions.Value.Presets.Should().NotBeNullOrEmpty();
-		presetOptions.Value.Presets.Should().HaveCount(2);
-		presetOptions.Value.Presets.Should().ContainKey("rectangular-cuboids");
-		presetOptions.Value.Presets.Should().ContainKey("special");
+		presetOptions.Value.Presets.ShouldNotBeEmpty();
+		presetOptions.Value.Presets.ShouldHaveCount(2);
+		presetOptions.Value.Presets.ShouldContainKey("rectangular-cuboids");
+		presetOptions.Value.Presets.ShouldContainKey("special");
 	}
 }

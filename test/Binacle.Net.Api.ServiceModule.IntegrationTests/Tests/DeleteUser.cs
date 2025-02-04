@@ -1,6 +1,4 @@
 ﻿using Binacle.Net.Api.ServiceModule.IntegrationTests.Models;
-using FluentAssertions;
-using Xunit;
 
 namespace Binacle.Net.Api.ServiceModule.IntegrationTests;
 
@@ -88,7 +86,7 @@ public class DeleteUser : Abstractions.UsersEndpointTestsBase
 
 		var url = routePath.Replace("{email}", this.existingUser.Email);
 		var response = await this.Sut.Client.DeleteAsync(url);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NoContent);
 	}
 	#endregion
 
@@ -101,7 +99,7 @@ public class DeleteUser : Abstractions.UsersEndpointTestsBase
 
 		var url = routePath.Replace("{email}", "existinguser.test");
 		var response = await this.Sut.Client.DeleteAsync(url);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 	
 	#endregion
@@ -115,7 +113,7 @@ public class DeleteUser : Abstractions.UsersEndpointTestsBase
 
 		var url = routePath.Replace("{email}", "nonexisting@user.test");
 		var response = await this.Sut.Client.DeleteAsync(url);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 	}
 
 	#endregion

@@ -1,9 +1,7 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
-using Xunit;
 
 namespace Binacle.Net.Api.IntegrationTests.v1;
 
@@ -40,7 +38,7 @@ public class QueryByPresetBehavior
 
 		var response = await this.sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest!, this.sut.JsonSerializerOptions);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Existing Preset And Valid Request Returns 200 OK")]
@@ -50,7 +48,7 @@ public class QueryByPresetBehavior
 
 		var response = await sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest!, sut.JsonSerializerOptions);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimensions Returns 400 BadRequest")]
@@ -61,7 +59,7 @@ public class QueryByPresetBehavior
 
 		var response = await sut.Client.PostAsJsonAsync(urlPath, sampleRequest, sut.JsonSerializerOptions);
 		
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Same Id On Items Returns 400 BadRequest")]
@@ -74,6 +72,6 @@ public class QueryByPresetBehavior
 
 		var result = await sut.Client.PostAsJsonAsync(routePath, this.sampleRequest!, sut.JsonSerializerOptions);
 
-		result.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		result.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 }

@@ -36,6 +36,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.FluentVali
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Logging", "dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj", "{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Shouldly", "dep\ChrisMavrommatis.Shouldly\ChrisMavrommatis.Shouldly.csproj", "{28105C4D-7776-4682-B103-5576E8D2E3F4}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.ViPaq", "dep\Binacle.ViPaq\Binacle.ViPaq.csproj", "{27243C7C-94C8-4F85-A924-83674E764906}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib", "src\Binacle.Net.Lib\Binacle.Net.Lib.csproj", "{231D1EB6-7755-4AE5-BC5D-AFE071C1B10D}"
@@ -70,13 +72,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.PerformanceTests", "test\Binacle.Net.Lib.PerformanceTests\Binacle.Net.Lib.PerformanceTests.csproj", "{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.ViPaq.UnitTests", "test\Binacle.ViPaq.UnitTests\Binacle.ViPaq.UnitTests.csproj", "{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}"
+EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "CoreWithPresets", "samples\CoreWithPresets\CoreWithPresets.dcproj", "{EE4463F3-1386-45F0-AF4E-41D60999E5DC}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "WithAllFeatures", "samples\WithAllFeatures\WithAllFeatures.dcproj", "{291A9588-4EC8-46F8-9764-C4094D09B1F0}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "WithUiModuleOnly", "samples\WithUiModuleOnly\WithUiModuleOnly.dcproj", "{52076940-51EC-45A8-8767-F4EC3409F873}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binacle.ViPaq.UnitTests", "test\Binacle.ViPaq.UnitTests\Binacle.ViPaq.UnitTests.csproj", "{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -264,6 +266,14 @@ Global
 		{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}.Release|x86.ActiveCfg = Release|Any CPU
 		{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}.Release|x86.Build.0 = Release|Any CPU
+		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Debug|x86.Build.0 = Debug|Any CPU
+		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Release|x86.ActiveCfg = Release|Any CPU
+		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -294,6 +304,7 @@ Global
 		{27243C7C-94C8-4F85-A924-83674E764906} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{3A074859-B076-45C5-97AB-BE404A0E8434} = {848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}
 		{43A084F6-C19B-48F6-8D24-FD79AE3F53E4} = {33E52B99-426D-45F3-A663-E34A612626B0}
+		{28105C4D-7776-4682-B103-5576E8D2E3F4} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}

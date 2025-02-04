@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using System.Net.Http.Json;
-using Xunit;
+﻿using System.Net.Http.Json;
 
 namespace Binacle.Net.Api.IntegrationTests.v1;
 
@@ -37,7 +35,7 @@ public class QueryByCustomBehavior
 	{
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Item Returns 400 BadRequest")]
@@ -47,7 +45,7 @@ public class QueryByCustomBehavior
 
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Bin Returns 400 BadRequest")]
@@ -57,7 +55,7 @@ public class QueryByCustomBehavior
 
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
 		
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Same Id On Bins Returns 400 BadRequest")]
@@ -70,7 +68,7 @@ public class QueryByCustomBehavior
 
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
 		
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Same Id On Items Returns 400 BadRequest")]
@@ -83,6 +81,6 @@ public class QueryByCustomBehavior
 
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 }

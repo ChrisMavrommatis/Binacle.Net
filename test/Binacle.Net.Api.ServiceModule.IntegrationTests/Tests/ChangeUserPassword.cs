@@ -1,7 +1,5 @@
 ﻿using Binacle.Net.Api.ServiceModule.IntegrationTests.Models;
-using FluentAssertions;
 using System.Net.Http.Json;
-using Xunit;
 
 namespace Binacle.Net.Api.ServiceModule.IntegrationTests;
 
@@ -117,7 +115,7 @@ public class ChangeUserPassword : Abstractions.UsersEndpointTestsBase
 			Password = "Ex1stingUs3rNewP@ssw0rd"
 		};
 		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NoContent);
 	}
 	#endregion
 
@@ -135,7 +133,7 @@ public class ChangeUserPassword : Abstractions.UsersEndpointTestsBase
 			Password = this.existingUser.Password
 		};
 		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 	
 	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Password Returns 400 BadRequest")]
@@ -150,7 +148,7 @@ public class ChangeUserPassword : Abstractions.UsersEndpointTestsBase
 			Password = "password"
 		};
 		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	#endregion
@@ -168,7 +166,7 @@ public class ChangeUserPassword : Abstractions.UsersEndpointTestsBase
 			Password = "Ex1stingUs3rNewP@ssw0rd"
 		};
 		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 	}
 
 	#endregion
@@ -187,7 +185,7 @@ public class ChangeUserPassword : Abstractions.UsersEndpointTestsBase
 			Password = this.existingUser.Password
 		};
 		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Conflict);
 	}
 
 	#endregion

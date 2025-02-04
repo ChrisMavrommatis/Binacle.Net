@@ -6,7 +6,7 @@ public class SanityTests
     [Fact]
     public void Tests_Work()
     {
-	    Assert.True(true);
+	    true.ShouldBe(true);
     }
 }
 

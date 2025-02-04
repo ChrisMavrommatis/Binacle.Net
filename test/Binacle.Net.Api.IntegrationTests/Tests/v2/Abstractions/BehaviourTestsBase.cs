@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Json;
-using FluentAssertions;
 
 namespace Binacle.Net.Api.IntegrationTests.v2.Abstractions;
 
@@ -23,7 +22,7 @@ public abstract partial class BehaviourTestsBase
 			this.Sut.JsonSerializerOptions
 		);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 	}
 
 	protected async Task Request_Returns_400BadRequest<TRequest>(
@@ -36,7 +35,7 @@ public abstract partial class BehaviourTestsBase
 			this.Sut.JsonSerializerOptions
 		);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	protected async Task Request_Returns_404NotFound<TRequest>(
@@ -50,7 +49,7 @@ public abstract partial class BehaviourTestsBase
 			this.Sut.JsonSerializerOptions
 		);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 	}
 
 
@@ -67,37 +66,37 @@ public abstract partial class BehaviourTestsBase
 			this.Sut.JsonSerializerOptions
 		);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 
 		var result = await response.Content
 			.ReadFromJsonAsync<Api.v2.Responses.FitResponse>(this.Sut.JsonSerializerOptions);
 
-		result.Should().NotBeNull();
-		result!.Data.Should().NotBeNullOrEmpty();
+		result.ShouldNotBeNull();
+		result!.Data.ShouldNotBeEmpty();
 		if (request.Parameters?.FindSmallestBinOnly ?? false)
 		{
-			result.Data.Should().HaveCount(1);
+			result.Data.ShouldHaveSingleItem();
 		}
 
 		foreach (var binFitResult in result.Data)
 		{
-			binFitResult.Bin.Should().NotBeNull();
+			binFitResult.Bin.ShouldNotBeNull();
 			if (request.Parameters!.ReportFittedItems ?? false)
 			{
-				binFitResult.FittedItems.Should().NotBeNullOrEmpty();
+				binFitResult.FittedItems.ShouldNotBeEmpty();
 			}
 			else
 			{
-				binFitResult.FittedItems.Should().BeNullOrEmpty();
+				binFitResult.FittedItems.ShouldBeNullOrEmpty();
 			}
 
 			if (request.Parameters!.ReportUnfittedItems ?? false)
 			{
-				binFitResult.UnfittedItems.Should().NotBeNullOrEmpty();
+				binFitResult.UnfittedItems.ShouldNotBeEmpty();
 			}
 			else
 			{
-				binFitResult.UnfittedItems.Should().BeNullOrEmpty();
+				binFitResult.UnfittedItems.ShouldBeNullOrEmpty();
 			}
 		}
 
@@ -120,31 +119,31 @@ public abstract partial class BehaviourTestsBase
 			this.Sut.JsonSerializerOptions
 		);
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 
 		var result = await response.Content
 			.ReadFromJsonAsync<Api.v2.Responses.PackResponse>(this.Sut.JsonSerializerOptions);
 
-		result.Should().NotBeNull();
-		result!.Data.Should().NotBeNullOrEmpty();
+		result.ShouldNotBeNull();
+		result!.Data.ShouldNotBeEmpty();
 		if (request.Parameters?.StopAtSmallestBin ?? false)
 		{
-			result.Data.Should().HaveCount(1);
+			result.Data.ShouldHaveSingleItem();
 		}
 
 		foreach (var binPackResult in result.Data)
 		{
-			binPackResult.Bin.Should().NotBeNull();
+			binPackResult.Bin.ShouldNotBeNull();
 			if (binPackResult.Result == Api.v2.Models.BinPackResultStatus.FullyPacked)
 			{
-				binPackResult.PackedItems.Should().NotBeNullOrEmpty();
+				binPackResult.PackedItems.ShouldNotBeEmpty();
 			}
 			
 			if (request.Parameters!.ReportPackedItemsOnlyWhenFullyPacked ?? false)
 			{
 				if (binPackResult.Result != Api.v2.Models.BinPackResultStatus.FullyPacked)
 				{
-					binPackResult.PackedItems.Should().BeNullOrEmpty();
+					binPackResult.PackedItems.ShouldBeNullOrEmpty();
 				}
 			}
 
@@ -154,7 +153,7 @@ public abstract partial class BehaviourTestsBase
 				if (binPackResult.Result == Api.v2.Models.BinPackResultStatus.EarlyFail_ContainerVolumeExceeded
 				    || binPackResult.Result == Api.v2.Models.BinPackResultStatus.EarlyFail_ContainerDimensionExceeded)
 				{
-					binPackResult.PackedItems.Should().BeNullOrEmpty();
+					binPackResult.PackedItems.ShouldBeNullOrEmpty();
 				}
 			}
 			
@@ -162,11 +161,11 @@ public abstract partial class BehaviourTestsBase
 			if ((request.Parameters!.NeverReportUnpackedItems ?? false) ||
 			    binPackResult.Result == Api.v2.Models.BinPackResultStatus.FullyPacked)
 			{
-				binPackResult.UnpackedItems.Should().BeNullOrEmpty();
+				binPackResult.UnpackedItems.ShouldBeNullOrEmpty();
 			}
 			else
 			{
-				binPackResult.UnpackedItems.Should().NotBeNullOrEmpty();
+				binPackResult.UnpackedItems.ShouldNotBeEmpty();
 			}
 			
 			

@@ -1,6 +1,5 @@
 ﻿using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.TestsKernel.Models;
-using Xunit;
 
 namespace Binacle.Net.Lib.UnitTests;
 
@@ -52,13 +51,13 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Packing.Models.PackingResultStatus.FullyPacked, result.Status);
+			result.Status.ShouldBe(Packing.Models.PackingResultStatus.FullyPacked);
 
 			// Packed Items
 			this.AssertItemsAreCorrect(expectedPackedItem, result.PackedItems, coordinatesShouldExist: true);
 
 			// Unpacked Items
-			this.AssertItemsDontExist(result.UnpackedItems);
+			result.UnpackedItems.ShouldBeNullOrEmpty();
 		}
 	}
 	#endregion
@@ -89,7 +88,7 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Packing.Models.PackingResultStatus.PartiallyPacked, result.Status);
+			result.Status.ShouldBe(Packing.Models.PackingResultStatus.PartiallyPacked);
 
 			// Packed Items
 			this.AssertItemsAreCorrect(expectedPackedItem, result.PackedItems, coordinatesShouldExist: true);
@@ -119,10 +118,10 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Packing.Models.PackingResultStatus.PartiallyPacked, result.Status);
+			result.Status.ShouldBe(Packing.Models.PackingResultStatus.PartiallyPacked);
 
 			// Packed Items
-			this.AssertItemsDontExist(result.PackedItems);
+			result.PackedItems.ShouldBeNullOrEmpty();
 
 			// Unpacked Items
 			this.AssertItemsAreCorrect(expectedUnpackedItem, result.UnpackedItems, coordinatesShouldExist: false);
@@ -149,13 +148,13 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Packing.Models.PackingResultStatus.PartiallyPacked, result.Status);
+			result.Status.ShouldBe(Packing.Models.PackingResultStatus.PartiallyPacked);
 
 			// Packed Items
 			this.AssertItemsAreCorrect(expectedPackedItem, result.PackedItems, coordinatesShouldExist: true);
 
 			// Unpacked Items
-			this.AssertItemsDontExist(result.UnpackedItems);
+			result.UnpackedItems.ShouldBeNullOrEmpty();
 		}
 	}
 
@@ -179,13 +178,13 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Packing.Models.PackingResultStatus.PartiallyPacked, result.Status);
+			result.Status.ShouldBe(Packing.Models.PackingResultStatus.PartiallyPacked);
 
 			// Packed Items
-			this.AssertItemsDontExist(result.PackedItems);
+			result.PackedItems.ShouldBeNullOrEmpty();
 
 			// Unpacked Items
-			this.AssertItemsDontExist(result.UnpackedItems);
+			result.UnpackedItems.ShouldBeNullOrEmpty();
 		}
 	}
 	#endregion
@@ -215,10 +214,10 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Packing.Models.PackingResultStatus.EarlyFail_ContainerDimensionExceeded, result.Status);
+			result.Status.ShouldBe(Packing.Models.PackingResultStatus.EarlyFail_ContainerDimensionExceeded);
 
 			// Packed Items
-			this.AssertItemsDontExist(result.PackedItems);
+			result.PackedItems.ShouldBeNullOrEmpty();
 
 			// Unpacked Items
 			this.AssertItemsAreCorrect(longItem, result.UnpackedItems, coordinatesShouldExist: false);
@@ -244,10 +243,10 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			var result = algorithmInstance.Execute(parameters);
 
 			// Result
-			Assert.Equal(Packing.Models.PackingResultStatus.EarlyFail_ContainerVolumeExceeded, result.Status);
+			result.Status.ShouldBe(Packing.Models.PackingResultStatus.EarlyFail_ContainerVolumeExceeded);
 
 			// Packed Items
-			this.AssertItemsDontExist(result.PackedItems);
+			result.PackedItems.ShouldBeNullOrEmpty();
 
 			// Unpacked Items
 			this.AssertItemsAreCorrect(longItem, result.UnpackedItems, coordinatesShouldExist: false);
@@ -258,25 +257,19 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 	
 	private void AssertItemsAreCorrect(TestItem expectedItem, List<Packing.Models.ResultItem>? items, bool coordinatesShouldExist)
 	{
-		Assert.NotNull(items);
-		Assert.NotEmpty(items);
-		Assert.Equal(expectedItem.Quantity, items!.Count);
+		items.ShouldNotBeEmpty();
+		items.ShouldHaveCount(expectedItem.Quantity);
 		foreach (var item in items)
 		{
-			Assert.Equal(expectedItem.ID, item.ID);
+			item.ID.ShouldBe(expectedItem.ID);
 			if (coordinatesShouldExist)
 			{
-				Assert.NotNull(item.Coordinates);
+				item.Coordinates.ShouldNotBeNull();
 			}
 			else
 			{
-				Assert.Null(item.Coordinates);
+				item.Coordinates.ShouldBeNull();
 			}
 		}
-	}
-
-	private void AssertItemsDontExist(List<Packing.Models.ResultItem>? items)
-	{
-		Assert.True(items is null || items.Count == 0);
 	}
 }

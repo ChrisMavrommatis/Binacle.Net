@@ -1,9 +1,7 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
-using Xunit;
 
 namespace Binacle.Net.Api.IntegrationTests.v2;
 
@@ -91,7 +89,7 @@ public class PackByPresetBehavior :  Abstractions.BehaviourTestsBase
 			request,
 			(result) =>
 			{
-				result.Data.Should().HaveCount(preset.Bins!.Count);
+				result.Data.ShouldHaveCount(preset.Bins!.Count);
 			}
 		);
 	}
@@ -109,7 +107,7 @@ public class PackByPresetBehavior :  Abstractions.BehaviourTestsBase
 			request,
 			(result) =>
 			{
-				result.Data.Should().HaveCount(preset.Bins!.Count);
+				result.Data.ShouldHaveCount(preset.Bins!.Count);
 			}
 		);
 	}
@@ -127,7 +125,7 @@ public class PackByPresetBehavior :  Abstractions.BehaviourTestsBase
 			request,
 			(result) =>
 			{
-				result.Data.Should().HaveCount(preset.Bins!.Count);
+				result.Data.ShouldHaveCount(preset.Bins!.Count);
 			}
 		);
 	}
@@ -146,10 +144,10 @@ public class PackByPresetBehavior :  Abstractions.BehaviourTestsBase
 			request,
 			(result) =>
 			{
-				result.Data.Should().HaveCount(preset.Bins!.Count);
+				result.Data.ShouldHaveCount(preset.Bins!.Count);
 				foreach (var binFitResult in result.Data)
 				{
-					binFitResult.Result.Should().Be(Api.v2.Models.BinPackResultStatus.EarlyFail_ContainerVolumeExceeded);
+					binFitResult.Result.ShouldBe(Api.v2.Models.BinPackResultStatus.EarlyFail_ContainerVolumeExceeded);
 				}
 			}
 		);
@@ -172,10 +170,10 @@ public class PackByPresetBehavior :  Abstractions.BehaviourTestsBase
 			request,
 			(result) =>
 			{
-				result.Data.Should().HaveCount(preset.Bins!.Count);
+				result.Data.ShouldHaveCount(preset.Bins!.Count);
 				foreach (var binFitResult in result.Data)
 				{
-					binFitResult.Result.Should().Be(Api.v2.Models.BinPackResultStatus.EarlyFail_ContainerDimensionExceeded);
+					binFitResult.Result.ShouldBe(Api.v2.Models.BinPackResultStatus.EarlyFail_ContainerDimensionExceeded);
 				}
 			}
 		);
@@ -200,7 +198,7 @@ public class PackByPresetBehavior :  Abstractions.BehaviourTestsBase
 			{
 				foreach (var binFitResult in result.Data)
 				{
-					binFitResult.Bin.ID.Should().Be(expectedBin.ID);
+					binFitResult.Bin.ID.ShouldBe(expectedBin.ID);
 				}
 			}
 		);

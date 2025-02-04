@@ -1,5 +1,4 @@
-﻿using Xunit;
-
+﻿
 namespace Binacle.Net.Api.IntegrationTests;
 
 [CollectionDefinition(Name)]

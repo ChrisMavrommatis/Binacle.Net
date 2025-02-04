@@ -1,6 +1,6 @@
-﻿using Binacle.Net.TestsKernel.Helpers;
+﻿using System.Text.Json;
+using Binacle.Net.TestsKernel.Helpers;
 using Binacle.Net.TestsKernel.Models;
-using Newtonsoft.Json;
 
 
 namespace Binacle.Net.TestsKernel.Providers;
@@ -20,7 +20,7 @@ internal class EmbeddedResourceFileScenarioReader
 		var resultScenarios = new List<Scenario>();
 		using (var sr = new StreamReader(file.OpenRead()))
 		{
-			var readScenarios = JsonConvert.DeserializeObject<List<ReadScenario>>(sr.ReadToEnd());
+			var readScenarios = JsonSerializer.Deserialize<List<ReadScenario>>(sr.ReadToEnd());
 			if(readScenarios is null)
 			{
 				return resultScenarios;

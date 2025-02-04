@@ -1,9 +1,7 @@
 ﻿using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
-using Xunit;
 
 namespace Binacle.Net.Api.ServiceModule.IntegrationTests;
 
@@ -32,7 +30,7 @@ public class AuthToken
 			Password = defaultAdminUser.Password
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Wrong User/Password Returns 401 Unauthorized")]
@@ -44,7 +42,7 @@ public class AuthToken
 			Password = "Wr0ngP@ssw0rd"
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Credentials Returns 400 BadRequest")]
@@ -56,7 +54,7 @@ public class AuthToken
 			Password = "Wr0ngP@ssw0rd"
 		};
 		var response1 = await this.sut.Client.PostAsJsonAsync(routePath, request1, this.sut.JsonSerializerOptions);
-		response1.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response1.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 
 		var request2 = new ServiceModule.v0.Requests.TokenRequest()
 		{
@@ -64,6 +62,6 @@ public class AuthToken
 			Password = "invpass"
 		};
 		var response2 = await this.sut.Client.PostAsJsonAsync(routePath, request2, this.sut.JsonSerializerOptions);
-		response2.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response2.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 }

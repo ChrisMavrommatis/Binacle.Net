@@ -1,5 +1,4 @@
-﻿using Xunit;
-
+﻿
 namespace Binacle.Net.Lib.UnitTests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
@@ -15,25 +14,25 @@ public class SanityTests : IClassFixture<SanityFixture>
 	[Fact]
 	public void Tests_Work()
 	{
-		Assert.True(true);
+		true.ShouldBe(true);
 	}
 
 	[Fact]
 	public void Bin_Collections_Configured()
 	{
-		Assert.NotNull(Fixture);
-		Assert.NotNull(Fixture.BinCollectionsTestDataProvider.Collections);
+		Fixture.ShouldNotBeNull();
+		Fixture.BinCollectionsTestDataProvider.Collections.ShouldNotBeEmpty();
 
 		foreach (var (key, binCollection) in Fixture.BinCollectionsTestDataProvider.Collections)
 		{
-			Assert.NotEmpty(binCollection);
+			binCollection.ShouldNotBeEmpty();
 		}
 	}
 
 	[Fact]
 	public void Scenarios_Configured_Correctly()
 	{
-		Assert.NotNull(Fixture);
+		Fixture.ShouldNotBeNull();
 
 		Assert_Scenarios_Are_ConfiguredCorrectly(
 			Fixture.BinCollectionsTestDataProvider, 
@@ -48,19 +47,16 @@ public class SanityTests : IClassFixture<SanityFixture>
 		var scenarioCollections = scenarioCollectionsTestDataProvider.Collections;
 		var bins = binCollectionsTestDataProvider.Collections;
 
-		Assert.NotNull(scenarioCollections);
-		Assert.True(scenarioCollections.Count > 0);
 
-		Assert.NotNull(bins);
-		Assert.True(bins.Count > 0);
+		scenarioCollections.ShouldNotBeEmpty();
+		bins.ShouldNotBeEmpty();
 
 		foreach (var (scenarioCollectionName, scenarios) in scenarioCollections)
 		{
 			foreach (var scenario in scenarios)
 			{
 				var bin = scenario.GetTestBin(binCollectionsTestDataProvider);
-				Assert.NotNull(bin);
-
+				bin.ShouldNotBeNull();
 			}
 		}
 	}

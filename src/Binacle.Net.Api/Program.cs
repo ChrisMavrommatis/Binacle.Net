@@ -90,6 +90,7 @@ public class Program
 
 		builder.Services.AddSingleton(_ => TimeProvider.System);
 		builder.Services.AddSingleton<ILegacyBinsService, LegacyBinsService>();
+		builder.Services.AddSingleton<IBinacleService, BinacleService>();
 
 		builder.Services.AddSwaggerExamples(options =>
 		{

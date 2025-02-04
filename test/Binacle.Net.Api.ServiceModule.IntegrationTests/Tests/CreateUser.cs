@@ -1,7 +1,5 @@
 ﻿using Binacle.Net.Api.ServiceModule.IntegrationTests.Models;
-using FluentAssertions;
 using System.Net.Http.Json;
-using Xunit;
 
 namespace Binacle.Net.Api.ServiceModule.IntegrationTests;
 
@@ -126,7 +124,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Created);
 	}
 	#endregion
 
@@ -144,7 +142,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Password Returns 400 BadRequest")]
@@ -159,7 +157,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 	#endregion
 
@@ -177,7 +175,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Conflict);
 	}
 
 	#endregion

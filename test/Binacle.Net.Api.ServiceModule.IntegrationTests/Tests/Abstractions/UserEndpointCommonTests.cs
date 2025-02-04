@@ -2,7 +2,6 @@
 using Binacle.Net.Api.ServiceModule.Domain.Users.Entities;
 using Binacle.Net.Api.ServiceModule.Models;
 using Binacle.Net.Api.ServiceModule.Services;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
@@ -16,7 +15,7 @@ public abstract partial class UsersEndpointTestsBase
 
 
 		var response = await action();
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
 	}
 
 	protected async Task Action_WithExpiredBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
@@ -34,7 +33,7 @@ public abstract partial class UsersEndpointTestsBase
 
 		var response = await action();
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
 	}
 
 	protected async Task Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
@@ -57,7 +56,7 @@ public abstract partial class UsersEndpointTestsBase
 
 		var response = await action();
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
 	}
 
 	protected async Task Action_WithWrongAudienceBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
@@ -80,7 +79,7 @@ public abstract partial class UsersEndpointTestsBase
 
 		var response = await action();
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
 	}
 
 	protected async Task Action_WithWronglySignedBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
@@ -103,7 +102,7 @@ public abstract partial class UsersEndpointTestsBase
 
 		var response = await action();
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
 	}
 
 	protected async Task Action_WithoutAdminUserBearerToken_Returns_403Forbidden(Func<Task<HttpResponseMessage>> action)
@@ -112,6 +111,6 @@ public abstract partial class UsersEndpointTestsBase
 
 		var response = await action();
 
-		response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Forbidden);
 	}
 }
