@@ -152,6 +152,7 @@ public partial class PackingVisualizer : ComponentBase
 		if (this.repeating)
 		{
 			await this.StopRepeatingAsync();
+			return;
 		}
 
 		this.controls["first"].IsEnabled = false;
