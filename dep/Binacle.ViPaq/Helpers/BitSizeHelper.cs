@@ -13,15 +13,27 @@ internal static class BitSizeHelper
 	{
 		if (obj.X < T.Zero)
 		{
-			throw new ArgumentOutOfRangeException($"{nameof(obj.Z)} must be zero or positive");
+			throw new ArgumentOutOfRangeException(
+				nameof(obj.X),
+				obj.X,
+				$"{nameof(obj.X)} must be zero or positive"
+				);
 		}
 		if (obj.Y < T.Zero)
 		{
-			throw new ArgumentOutOfRangeException($"{nameof(obj.Y)} must be zero or positive");
+			throw new ArgumentOutOfRangeException(
+				nameof(obj.Y),
+				obj.Y,
+				$"{nameof(obj.Y)} must be zero or positive"
+				);
 		}
 		if (obj.Z < T.Zero)
 		{
-			throw new ArgumentOutOfRangeException($"{nameof(obj.Z)} must be zero or positive");
+			throw new ArgumentOutOfRangeException(
+				nameof(obj.Z),
+				obj.Z,
+				$"{nameof(obj.Z)} must be zero or positive"
+				);
 		}
 		
 		var uInt8Size = T.CreateChecked(byte.MaxValue);
@@ -51,7 +63,11 @@ internal static class BitSizeHelper
 			return BitSize.SixtyFour;
 		}
 		
-		throw new ArgumentOutOfRangeException($"The {nameof(obj)} Coordinates are too large");
+		throw new ArgumentOutOfRangeException(
+			$"{nameof(obj)} coordinates",
+			$"{obj.X},{obj.Y},{obj.Z}",
+			$"The {nameof(obj)} Coordinates are too large"
+			);
 	}
 
 	public static BitSize GetDimensionsBitSize<TObject, T>(
@@ -62,15 +78,27 @@ internal static class BitSizeHelper
 	{
 		if (obj.Length <= T.Zero)
 		{
-			throw new ArgumentOutOfRangeException($"{nameof(obj.Length)} must be greater than zero");
+			throw new ArgumentOutOfRangeException(
+				nameof(obj.Length),
+				obj.Length,
+				$"{nameof(obj.Length)} must be greater than zero"
+				);
 		}
 		if (obj.Width <= T.Zero)
 		{
-			throw new ArgumentOutOfRangeException($"{nameof(obj.Width)} must be greater than zero");
+			throw new ArgumentOutOfRangeException(
+				nameof(obj.Width),
+				obj.Width,
+				$"{nameof(obj.Width)} must be greater than zero"
+				);
 		}
 		if (obj.Height <= T.Zero)
 		{
-			throw new ArgumentOutOfRangeException($"{nameof(obj.Height)} must be greater than zero");
+			throw new ArgumentOutOfRangeException(
+				nameof(obj.Height),
+				obj.Height,
+				$"{nameof(obj.Height)} must be greater than zero"
+				);
 		}
 		
 		var uInt8Size = T.CreateChecked(byte.MaxValue);
@@ -100,6 +128,10 @@ internal static class BitSizeHelper
 			return BitSize.SixtyFour;
 		}
 		
-		throw new ArgumentOutOfRangeException($"The {nameof(obj)} dimensions are too large");
+		throw new ArgumentOutOfRangeException(
+			$"{nameof(obj)} dimensions",
+			$"{obj.Length}x{obj.Width}x{obj.Height}",
+			$"The {nameof(obj)} dimensions are too large"
+			);
 	}
 }

@@ -10,7 +10,7 @@ namespace Binacle.ViPaq;
 
 public static partial class ViPaqSerializer
 {
-	private static (TBin, IList<TItem>) DeserializeInternal<TBin, TItem, T>(
+	internal static (TBin, IList<TItem>) DeserializeInternal<TBin, TItem, T>(
 		byte[] data
 	)
 		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>

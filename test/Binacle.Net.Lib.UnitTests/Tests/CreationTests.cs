@@ -1,33 +1,40 @@
-﻿using AutoFixture;
-using Binacle.Net.Lib.Abstractions.Algorithms;
+﻿using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.Lib.Exceptions;
 using Binacle.Net.TestsKernel.Models;
+using Bogus;
 
 namespace Binacle.Net.Lib.UnitTests;
 
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class CreationTests : IClassFixture<CommonTestingFixture>
 {
-	private CommonTestingFixture Fixture { get; }
-	public Fixture AutoFixture { get; }
-
-	
+	private readonly CommonTestingFixture fixture;
+	private readonly Bogus.Faker<TestItem> testItemsFaker;
+	private readonly Bogus.Faker<TestBin> testBinsFaker;
 
 	public CreationTests(CommonTestingFixture fixture)
 	{
-		this.Fixture = fixture;
-		this.AutoFixture = new Fixture();
+		this.fixture = fixture;
+		Randomizer.Seed = new Random(605080);
+		this.testItemsFaker = new Bogus.Faker<TestItem>()
+			.RuleFor(x => x.Length, x => x.Random.Number(1, 65535))
+			.RuleFor(x => x.Width, x => x.Random.Number(1, 65535))
+			.RuleFor(x => x.Height, x => x.Random.Number(1, 65535));
 		
+		this.testBinsFaker = new Bogus.Faker<TestBin>()
+			.RuleFor(x => x.Length, x => x.Random.Number(1, 65535))
+			.RuleFor(x => x.Width, x => x.Random.Number(1, 65535))
+			.RuleFor(x => x.Height, x => x.Random.Number(1, 65535));
 	}
+
 
 	[Fact(DisplayName = "Create With Null Bin Throws ArgumentNullException")]
 	public void OnCreate_WithNullBin_Throws_ArgumentNullException()
 	{
-		var testItems = AutoFixture.CreateMany<TestItem>(2)
-			.ToList();
+		var testItems = this.testItemsFaker.Generate(2);
 
-		foreach(var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
+		foreach(var (algorithmKey, algorithmFactory) in this.fixture.FittingAlgorithmsUnderTest)
 		{
 			Should.Throw<ArgumentNullException>(() =>
 			{
@@ -35,7 +42,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 			});
 		}
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.fixture.PackingAlgorithmsUnderTest)
 		{
 			Should.Throw<ArgumentNullException>(() =>
 			{
@@ -47,9 +54,9 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 	[Fact(DisplayName = "Create With Null Or Empty Items Throws ArgumentNullException")]
 	public void Create_WithNullOrEmptyItems_Throws_ArgumentNullException()
 	{
-		var bin = AutoFixture.Create<TestBin>();
+		var bin = this.testBinsFaker.Generate(1).FirstOrDefault()!;
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.fixture.FittingAlgorithmsUnderTest)
 		{
 			Should.Throw<ArgumentNullException>(() =>
 			{
@@ -62,7 +69,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 
 		}
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.fixture.PackingAlgorithmsUnderTest)
 		{
 			Should.Throw<ArgumentNullException>(() =>
 			{
@@ -78,14 +85,12 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 	[Fact(DisplayName = "Create With 0 Dimension on Bins Throws DimensionException")]
 	public void Create_With0DimensionOnBins_Throws_DimensionException()
 	{
-		var testItems = AutoFixture.CreateMany<TestItem>(2)
-			.ToList();
+		var testItems = this.testItemsFaker.Generate(2);
 
-		var binWith0Dimension = AutoFixture.Build<TestBin>()
-		   .With(x => x.Width, 0)
-		   .Create();
+		var binWith0Dimension = this.testBinsFaker.Generate(1).FirstOrDefault()!;
+		binWith0Dimension.Width = 0;
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.fixture.FittingAlgorithmsUnderTest)
 		{
 			Should.Throw<DimensionException>(() =>
 			{
@@ -93,7 +98,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 			});
 		}
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.fixture.PackingAlgorithmsUnderTest)
 		{
 			Should.Throw<DimensionException>(() =>
 			{
@@ -106,14 +111,13 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 	[Fact(DisplayName = "Create With 0 Dimension on Items Throws DimensionException")]
 	public void Create_With0DimensionOnItems_Throws_DimensionException()
 	{
-		var bin = AutoFixture.Create<TestBin>();
+		var testItemsWith0Dimension = this.testItemsFaker
+			.FinishWith((faker, item) => item.Width = 0)
+			.Generate(2);
 
-		var testItemsWith0Dimension = AutoFixture.Build<TestItem>()
-		  .With(x => x.Width, 0)
-		  .CreateMany(2)
-		  .ToList();
-
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.FittingAlgorithmsUnderTest)
+		var bin = this.testBinsFaker.Generate(1).FirstOrDefault()!;
+		
+		foreach (var (algorithmKey, algorithmFactory) in this.fixture.FittingAlgorithmsUnderTest)
 		{
 			Should.Throw<DimensionException>(() =>
 			{
@@ -121,7 +125,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 			});
 		}
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.fixture.PackingAlgorithmsUnderTest)
 		{
 			Should.Throw<DimensionException>(() =>
 			{

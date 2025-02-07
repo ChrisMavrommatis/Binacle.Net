@@ -10,7 +10,7 @@ namespace Binacle.ViPaq;
 
 public static partial class ViPaqSerializer
 {
-	private static byte[] SerializeInternal<TBin, TItem, T>(
+	internal static byte[] SerializeInternal<TBin, TItem, T>(
 		TBin bin,
 		IList<TItem> items
 	)

@@ -65,22 +65,33 @@ internal static class EncodingInfoHelper
 		var typeOfT = typeof(T);
 		if (!_bitSizes.TryGetValue(typeOfT, out var bitSize))
 		{
-			throw new ArgumentException($"Unsupported type {typeOfT}");
+			throw new ArgumentException($"Unsupported generic type {typeOfT}", nameof(T));
 		}
 		
 		if(bitSize < readEncodingInfo.BinDimensionsBitSize)
 		{
-			throw new ArgumentOutOfRangeException($"Expected the bit size ({bitSize}) of generic parameter to be greater or equal to {nameof(readEncodingInfo.BinDimensionsBitSize)}({readEncodingInfo.BinDimensionsBitSize}).");
+			throw new ArgumentOutOfRangeException(
+				nameof(readEncodingInfo.BinDimensionsBitSize),
+				bitSize,
+				$"Expected the bit size ({bitSize}) of generic parameter to be greater or equal to {nameof(readEncodingInfo.BinDimensionsBitSize)}({readEncodingInfo.BinDimensionsBitSize}).");
 		}
 		
 		if(bitSize < readEncodingInfo.ItemDimensionsBitSize)
 		{
-			throw new ArgumentOutOfRangeException($"Expected the bit size ({bitSize}) of generic parameter to be greater or equal to {nameof(readEncodingInfo.ItemDimensionsBitSize)}({readEncodingInfo.ItemDimensionsBitSize}).");
+			throw new ArgumentOutOfRangeException(
+				nameof(readEncodingInfo.ItemDimensionsBitSize),
+				bitSize,
+				$"Expected the bit size ({bitSize}) of generic parameter to be greater or equal to {nameof(readEncodingInfo.ItemDimensionsBitSize)}({readEncodingInfo.ItemDimensionsBitSize})."
+				);
 		}
 		
 		if(bitSize < readEncodingInfo.ItemCoordinatesBitSize)
 		{
-			throw new ArgumentOutOfRangeException($"Expected the bit size ({bitSize}) of generic parameter to be greater or equal to {nameof(readEncodingInfo.ItemCoordinatesBitSize)}({readEncodingInfo.ItemCoordinatesBitSize}).");
+			throw new ArgumentOutOfRangeException(
+				nameof(readEncodingInfo.ItemCoordinatesBitSize),
+				bitSize,
+				$"Expected the bit size ({bitSize}) of generic parameter to be greater or equal to {nameof(readEncodingInfo.ItemCoordinatesBitSize)}({readEncodingInfo.ItemCoordinatesBitSize})."
+				);
 		}
 	}
 }

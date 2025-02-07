@@ -1,6 +1,6 @@
 ﻿namespace Binacle.ViPaq.Models;
 
-internal enum BitSize 
+public enum BitSize 
 {
 	Eight = 0,
 	Sixteen = 1,

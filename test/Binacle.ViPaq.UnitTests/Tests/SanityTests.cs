@@ -1,4 +1,7 @@
-﻿namespace Binacle.ViPaq.UnitTests;
+﻿using System.Numerics;
+using Binacle.ViPaq.UnitTests.Models;
+
+namespace Binacle.ViPaq.UnitTests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
 public class SanityTests
@@ -9,4 +12,3 @@ public class SanityTests
 	    true.ShouldBe(true);
     }
 }
-
