@@ -1,6 +1,6 @@
 ﻿namespace Binacle.ViPaq.Models;
 
-internal enum Version
+public enum Version
 {
 	Uncompressed = 0,
 	CompressedGzip = 1,

@@ -1,5 +1,6 @@
 ﻿using Binacle.ViPaq.Helpers;
 using Binacle.ViPaq.Models;
+using Binacle.ViPaq.UnitTests.Models;
 using Bogus;
 using Version = Binacle.ViPaq.Models.Version;
 
@@ -205,6 +206,28 @@ public class EncodingInfoHelperBehaviorTests
 			.ParamName.ShouldBe(nameof(EncodingInfo.ItemCoordinatesBitSize));
 		Should.Throw<ArgumentOutOfRangeException>(() => EncodingInfoHelper.ThrowOnInvalidEncodingInfo<uint>(encodingInfo))
 			.ParamName.ShouldBe(nameof(EncodingInfo.ItemCoordinatesBitSize));
+	}
+	
+	[Fact]
+	public void CreateEncodingInfo_Throws_When_Items_Count_Is_More_Than_UShort_MaxValue()
+	{
+		var binFaker = new Faker<Bin<ulong>>()
+			.RuleFor(x => x.Length, x => x.Random.ULong(0, ushort.MaxValue))
+			.RuleFor(x => x.Width, x => x.Random.ULong(0, ushort.MaxValue))
+			.RuleFor(x => x.Height, x => x.Random.ULong(0, ushort.MaxValue));
+		
+		var itemFaker = new Faker<Item<ulong>>()
+			.RuleFor(x => x.Length, x => x.Random.ULong(0, ushort.MaxValue))
+			.RuleFor(x => x.Width, x => x.Random.ULong(0, ushort.MaxValue))
+			.RuleFor(x => x.Height, x => x.Random.ULong(0, ushort.MaxValue))
+			.RuleFor(x => x.X, x => x.Random.ULong(0, ushort.MaxValue))
+			.RuleFor(x => x.Y, x => x.Random.ULong(0, ushort.MaxValue))
+			.RuleFor(x => x.Z, x => x.Random.ULong(0, ushort.MaxValue));
+
+		var bin = binFaker.Generate(1).FirstOrDefault()!;
+		var items = itemFaker.Generate(ushort.MaxValue + 1).ToList();
+		
+		Should.Throw<ArgumentOutOfRangeException>(() => EncodingInfoHelper.CreateEncodingInfo<Bin<ulong>, Item<ulong>, ulong>(bin, items));
 	}
 
 	

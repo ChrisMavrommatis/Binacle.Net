@@ -29,7 +29,11 @@ internal static class EncodingInfoHelper
 	{
 		if(items.Count > ushort.MaxValue)
 		{
-			throw new ArgumentOutOfRangeException($"{nameof(items)} cannot be more than {ushort.MaxValue}");
+			throw new ArgumentOutOfRangeException(
+				nameof(items),
+				items.Count,
+				$"{nameof(items)} cannot be more than {ushort.MaxValue}"
+				);
 		}
 
 		var binDimensionsBitSize = BitSizeHelper.GetDimensionsBitSize<TBin, T>(bin);
