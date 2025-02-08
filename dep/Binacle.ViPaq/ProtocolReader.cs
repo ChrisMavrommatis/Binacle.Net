@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace Binacle.ViPaq;
 
-internal class ProtocolReader<T> : IDisposable, IAsyncDisposable
+public class ProtocolReader<T> : IDisposable, IAsyncDisposable
 	where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
 {
 	private readonly Stream stream;

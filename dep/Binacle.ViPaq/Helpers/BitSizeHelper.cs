@@ -1,10 +1,9 @@
 ﻿using System.Numerics;
 using Binacle.ViPaq.Abstractions;
-using Binacle.ViPaq.Models;
 
 namespace Binacle.ViPaq.Helpers;
 
-internal static class BitSizeHelper
+public static class BitSizeHelper
 {
 	public static BitSize GetCoordinatesBitSize<TObject, T>(
 		TObject obj) 

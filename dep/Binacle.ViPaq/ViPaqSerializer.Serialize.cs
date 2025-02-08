@@ -2,15 +2,12 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Binacle.ViPaq.Abstractions;
-using Binacle.ViPaq.Helpers;
-using Binacle.ViPaq.Models;
-using Version = Binacle.ViPaq.Models.Version;
 
 namespace Binacle.ViPaq;
 
 public static partial class ViPaqSerializer
 {
-	internal static byte[] SerializeInternal<TBin, TItem, T>(
+	public static byte[] Serialize<TBin, TItem, T>(
 		TBin bin,
 		IList<TItem> items
 	)
@@ -56,7 +53,7 @@ public static partial class ViPaqSerializer
 	{
 		byte[] serializedData = memoryStream.ToArray();
 		var finalData = new byte[1 + serializedData.Length];
-		finalData[0] = EncodingInfo.ToByte(encodingInfo);
+		finalData[0] = EncodingInfoHelper.ToByte(encodingInfo);
 		Buffer.BlockCopy(serializedData, 0, finalData, 1, serializedData.Length);
 		return finalData;
 	}

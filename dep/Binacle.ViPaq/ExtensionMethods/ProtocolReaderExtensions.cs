@@ -1,10 +1,9 @@
 ﻿using System.Numerics;
 using Binacle.ViPaq.Abstractions;
-using Binacle.ViPaq.Models;
 
-namespace Binacle.ViPaq.Helpers;
+namespace Binacle.ViPaq;
 
-internal static class ProtocolReaderHelper
+public static class ProtocolReaderExtensions
 {
 	public static void ReadDimensions<TObject, T>(
 		this ProtocolReader<T> protocolReader,

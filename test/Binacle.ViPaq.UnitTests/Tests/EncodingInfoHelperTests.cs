@@ -1,5 +1,4 @@
 ﻿using Binacle.ViPaq.Helpers;
-using Binacle.ViPaq.Models;
 using Binacle.ViPaq.UnitTests.Models;
 using Bogus;
 
@@ -149,5 +148,48 @@ public class EncodingInfoHelperTests
 		encodingInfo.ItemCoordinatesBitSize.ShouldBe(expectedBitSize);
 	}
 	
+	[Theory]
+	[ClassData(typeof(Providers.EncodingInfoByteDataProvider))]
+	public void ToByte_Returns_Correct_Byte(
+		Version version,
+		BitSize binDimensionsBitSize, 
+		BitSize itemDimensionsBitSize, 
+		BitSize itemCoordinatesBitSize,
+		byte expectedByte)
+	{
+		var encodingInfo = new EncodingInfo
+		{
+			Version = version,
+			BinDimensionsBitSize = binDimensionsBitSize,
+			ItemDimensionsBitSize = itemDimensionsBitSize,
+			ItemCoordinatesBitSize = itemCoordinatesBitSize
+		};
+		
+		var actualByte = EncodingInfoHelper.ToByte(encodingInfo);
+		
+		actualByte.ShouldBe(expectedByte);
+	}
+	
+	[Theory]
+	[ClassData(typeof(Providers.EncodingInfoByteDataProvider))]
+	public void FromByte_Returns_Correct_EncodingInfo(
+		Version expectedVersion,
+		BitSize expectedBinDimensionsBitSize, 
+		BitSize expectedItemDimensionsBitSize, 
+		BitSize expectedItemCoordinatesBitSize,
+		byte firstByte)
+	{
+		var expectedEncodingInfo = new EncodingInfo
+		{
+			Version = expectedVersion,
+			BinDimensionsBitSize = expectedBinDimensionsBitSize,
+			ItemDimensionsBitSize = expectedItemDimensionsBitSize,
+			ItemCoordinatesBitSize = expectedItemCoordinatesBitSize
+		};
+		
+		var actualEncodingInfo = EncodingInfoHelper.FromByte(firstByte);
+		
+		actualEncodingInfo.ShouldBe(expectedEncodingInfo);
+	}
 	
 }

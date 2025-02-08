@@ -3,11 +3,10 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Binacle.ViPaq.Abstractions;
-using Binacle.ViPaq.Models;
 
 namespace Binacle.ViPaq;
 
-internal class ProtocolWriter<T> : IDisposable, IAsyncDisposable
+public class ProtocolWriter<T> : IDisposable, IAsyncDisposable
 	where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
 {
 	private readonly Stream stream;

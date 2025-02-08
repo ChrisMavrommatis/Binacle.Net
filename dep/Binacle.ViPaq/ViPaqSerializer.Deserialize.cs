@@ -3,14 +3,13 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using Binacle.ViPaq.Abstractions;
 using Binacle.ViPaq.Helpers;
-using Binacle.ViPaq.Models;
-using Version = Binacle.ViPaq.Models.Version;
+using Version = Binacle.ViPaq.Version;
 
 namespace Binacle.ViPaq;
 
 public static partial class ViPaqSerializer
 {
-	internal static (TBin, IList<TItem>) DeserializeInternal<TBin, TItem, T>(
+	public static (TBin, IList<TItem>) Deserialize<TBin, TItem, T>(
 		byte[] data
 	)
 		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
@@ -26,7 +25,7 @@ public static partial class ViPaqSerializer
 
 		// Read the first byte (encoding info) before any decompression
 		var firstByte = (byte)memoryStream.ReadByte();
-		var encodingInfo = EncodingInfo.FromByte(firstByte);
+		var encodingInfo = EncodingInfoHelper.FromByte(firstByte);
 		EncodingInfoHelper.ThrowOnInvalidEncodingInfo<T>(encodingInfo);
 
 		// Determine if the data is compressed

@@ -1,5 +1,4 @@
 ﻿using Binacle.ViPaq.Helpers;
-using Binacle.ViPaq.Models;
 using Bogus;
 
 namespace Binacle.ViPaq.UnitTests;
@@ -11,6 +10,7 @@ public class BitSizeHelperTests
 	{
 		Randomizer.Seed = new Random(605080);
 	}
+	
 	#region Dimensions
 
 	[Fact]

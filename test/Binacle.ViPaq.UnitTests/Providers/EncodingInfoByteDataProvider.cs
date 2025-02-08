@@ -1,6 +1,5 @@
 ﻿using System.Collections;
-using Binacle.ViPaq.Models;
-using Version = Binacle.ViPaq.Models.Version;
+using Version = Binacle.ViPaq.Version;
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 

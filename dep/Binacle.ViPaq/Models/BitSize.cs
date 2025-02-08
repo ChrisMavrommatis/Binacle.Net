@@ -1,4 +1,4 @@
-﻿namespace Binacle.ViPaq.Models;
+﻿namespace Binacle.ViPaq;
 
 public enum BitSize 
 {

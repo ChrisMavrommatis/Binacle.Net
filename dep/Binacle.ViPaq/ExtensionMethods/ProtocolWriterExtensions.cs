@@ -1,10 +1,9 @@
 ﻿using System.Numerics;
 using Binacle.ViPaq.Abstractions;
-using Binacle.ViPaq.Models;
 
-namespace Binacle.ViPaq.Helpers;
+namespace Binacle.ViPaq;
 
-internal static class ProtocolWriterHelper
+public static class ProtocolWriterExtensions
 {
 	public static void WriteDimensions<TObject, T>(
 		this ProtocolWriter<T> protocolWriter,

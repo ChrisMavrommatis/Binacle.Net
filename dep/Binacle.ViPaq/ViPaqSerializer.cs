@@ -8,14 +8,14 @@ public static partial class ViPaqSerializer
 		where TBin : IWithDimensions<int>, new()
 		where TItem : IWithDimensions<int>, IWithCoordinates<int>, new()
 	{
-		return DeserializeInternal<TBin, TItem, int>(data);
+		return Deserialize<TBin, TItem, int>(data);
 	}
 
 	public static (TBin, IList<TItem>) DeserializeUInt16<TBin, TItem>(byte[] data)
 		where TBin : IWithDimensions<ushort>, new()
 		where TItem : IWithDimensions<ushort>, IWithCoordinates<ushort>, new()
 	{
-		return DeserializeInternal<TBin, TItem, ushort>(data);
+		return Deserialize<TBin, TItem, ushort>(data);
 	}
 	
 	
@@ -23,13 +23,13 @@ public static partial class ViPaqSerializer
 		where TBin : IWithDimensions<int>
 		where TItem : IWithDimensions<int>, IWithCoordinates<int>
 	{
-		return SerializeInternal<TBin, TItem, int>(bin, items);
+		return Serialize<TBin, TItem, int>(bin, items);
 	}
 
 	public static byte[] SerializeUInt16<TBin, TItem>(TBin bin, IList<TItem> items)
 		where TBin : IWithDimensions<ushort>
 		where TItem : IWithDimensions<ushort>, IWithCoordinates<ushort>
 	{
-		return SerializeInternal<TBin, TItem, ushort>(bin, items);
+		return Serialize<TBin, TItem, ushort>(bin, items);
 	}
 }
