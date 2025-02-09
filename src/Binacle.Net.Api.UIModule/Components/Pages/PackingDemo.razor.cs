@@ -12,8 +12,10 @@ using Item = Binacle.Net.Api.UIModule.ViewModels.Item;
 
 namespace Binacle.Net.Api.UIModule.Components.Pages;
 
-public partial class PackingDemo : ComponentBase
+public partial class PackingDemo : AppletComponentBase
 {
+	protected override string Ref => "PackingDemo";
+	
 	[Inject] 
 	internal ISampleDataService? SampleDataService { get; set; }
 
@@ -22,7 +24,7 @@ public partial class PackingDemo : ComponentBase
 
 	[Inject] 
 	internal MessagingService? MessagingService { get; set; }
-
+	
 	private Errors errors = new();
 	private List<PackingResult>? results;
 	private PackingResult? selectedResult;
@@ -36,6 +38,7 @@ public partial class PackingDemo : ComponentBase
 
 	protected override void OnInitialized()
 	{
+		base.OnInitialized();
 		var sampleData = this.SampleDataService!.GetInitialSampleData();
 		this.Model = sampleData;
 	}

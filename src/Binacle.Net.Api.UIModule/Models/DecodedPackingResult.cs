@@ -2,7 +2,9 @@
 
 internal class DecodedPackingResult
 {
-	public required string EncodedResult { get; set; }
-	public Bin? Bin { get; set; }
-	public List<PackedItem>? PackedItems { get; set; }
+	public required string EncodedResult { get; init; }
+	public Bin? Bin { get; init; }
+	public List<PackedItem>? PackedItems { get; init; }
+	
+	public double? PackedBinVolumePercentage { get; init; }
 }

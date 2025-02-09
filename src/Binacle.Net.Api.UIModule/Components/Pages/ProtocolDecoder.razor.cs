@@ -8,14 +8,16 @@ using Bin = Binacle.Net.Api.UIModule.Models.Bin;
 
 namespace Binacle.Net.Api.UIModule.Components.Pages;
 
-public partial class ProtocolDecoder : ComponentBase
+public partial class ProtocolDecoder : AppletComponentBase
 {
+	protected override string Ref => "ProtocolDecoder";
+	
 	[Inject] 
 	internal MessagingService? MessagingService { get; set; }
 	
 	[Inject] 
 	internal LocalStorageService? LocalStorage { get; set; }
-
+	
 	private Errors errors = new();
 
 	internal ProtocolDecoderViewModel Model { get; set; } = new();
@@ -102,11 +104,17 @@ public partial class ProtocolDecoder : ComponentBase
 				ViPaqSerializer.DeserializeInt32<Bin, PackedItem>(bytes);
 
 			bin.ID = bin.FormatDimensions();
+			
+			var binVolume = bin.CalculateVolume();
+			var itemsVolume = items.Sum(i => i.CalculateVolume());
+			var packedBinVolumePercentage = (int)Math.Round(((double)itemsVolume / binVolume) * 100);
+			
 			return new DecodedPackingResult()
 			{
 				EncodedResult = resultString,
 				Bin = bin,
 				PackedItems = items.ToList(),
+				PackedBinVolumePercentage = packedBinVolumePercentage
 			};
 		}
 		catch (Exception ex)

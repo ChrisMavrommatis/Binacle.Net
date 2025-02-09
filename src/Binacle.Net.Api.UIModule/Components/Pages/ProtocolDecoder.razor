@@ -3,12 +3,16 @@
 
 @rendermode RenderMode.InteractiveServer
 
+@inherits AppletComponentBase
+
 @page "/ProtocolDecoder"
 
-<PageTitle>Protocol Decoder</PageTitle>
+<PageTitle>@Title</PageTitle>
 
-<h1>Protocol Decoder</h1>
-
+<h1>@Title</h1>
+<p>
+	@Description
+</p>
 
 <div class="grid">
 	<article class="no-padding transparent s12 m5 l3">
@@ -28,7 +32,7 @@
 	<div class="s12 m7 l9">
 		<PackingVisualizer InitialBin="this.selectedResult?.Bin"/>
 	</div>
-	<div class="s12">
+	<article class="s12 surface-variant">
 		<fieldset class="scroll" style="block-size: 30rem;">
 			<legend>Saved Results</legend>
 			@if (this.results.Count == 0)
@@ -43,8 +47,18 @@
 					   @onclick="@(() => this.SelectResult(result))">
 						<MaterialSymbol Name="package_2"/>
 
-						<div class="max">
-							Bin: @result.Bin!.ID
+						<div class="grid no-space max">
+							<span class="s4">
+								Bin: @result.Bin!.ID
+							</span>
+							<span class="s8 right-align">
+								Packed Bin Volume: @result.PackedBinVolumePercentage%
+							</span>
+							<progress value="@result.PackedBinVolumePercentage" max="100"
+							          class="@($"s12 surface-container-lowest")"></progress>
+							<div class="s4">
+								@result.PackedItems?.Count Items
+							</div>
 						</div>
 						<button type="button" class="transparent circle" style="z-index:10"
 						        @onclick="@(() => this.DeleteResult(result))"
@@ -55,7 +69,7 @@
 				}
 			}
 		</fieldset>
-	</div>
+	</article>
 </div>
 
 <ErrorsDialog @bind-Errors="@this.errors" />

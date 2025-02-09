@@ -19,6 +19,11 @@ internal class MessagingService
 
 		_notifications[notification].Add(handler);
 	}
+	
+	public void Off(string notification)
+	{
+		_notifications.TryRemove(notification, out _);
+	}
 
 	public async Task TriggerAsync(string notification)
 	{
@@ -40,6 +45,11 @@ internal class MessagingService
 
 		_broadcasts[eventName].Add(handler);
 	}
+	
+	public void Off<TData>(string eventName)
+	{
+		_broadcasts.TryRemove(eventName, out _);
+	}
 
 	public async Task TriggerAsync<TData>(string eventName, TData data)
 	{
@@ -58,6 +68,11 @@ internal class MessagingService
 		{
 			throw new InvalidOperationException($"Only one handler can be registered for the event '{eventName}'.");
 		}
+	}
+	
+	public void Off<TRequest, TResponse>(string eventName)
+	{
+		_requests.TryRemove(eventName, out _);
 	}
 	
 	public async Task<TResponse> TriggerAsync<TRequest, TResponse>(string eventName, TRequest request)

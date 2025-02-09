@@ -1,5 +1,0 @@
-﻿{
-	"ConnectionStrings": {
-		"BinacleApi": "endpoint=https://localhost:7194/"
-	}
-}

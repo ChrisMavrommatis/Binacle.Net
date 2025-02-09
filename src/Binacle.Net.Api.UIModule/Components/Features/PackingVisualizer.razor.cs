@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Binacle.Net.Api.UIModule.Components.Features;
 
-public partial class PackingVisualizer : ComponentBase
+public partial class PackingVisualizer : ComponentBase, IDisposable
 {
 	[Inject]
 	internal MessagingService? MessagingService { get; set; }
@@ -38,6 +38,11 @@ public partial class PackingVisualizer : ComponentBase
 		base.OnInitialized();
 	}
 
+	public void Dispose()
+	{
+		this.MessagingService?.Off<AsyncCallback<(Bin?, List<PackedItem>?)>>("UpdateScene");
+	}
+
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
@@ -68,9 +73,10 @@ public partial class PackingVisualizer : ComponentBase
 			this.items = items;
 
 			await this.Binacle.RedrawSceneAsync(this.bin, this.items);
+			
+			this.itemsRendered = this.items!.Count;
 		}
 
-		this.itemsRendered = this.items!.Count;
 		this.UpdateControlsStatus();
 
 		this.StateHasChanged();

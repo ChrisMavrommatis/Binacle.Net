@@ -5,6 +5,7 @@ using Serilog;
 using Binacle.Net.Api.UIModule.Components;
 using Binacle.Net.Api.Kernel;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace Binacle.Net.Api.UIModule;
@@ -30,8 +31,21 @@ public static class ModuleDefinition
 		{
 			var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 			var connectionString = configuration.GetConnectionStringWithEnvironmentVariableFallback("BinacleApi", "BINACLEAPI_CONNECTION_STRING");
+
+			if (connectionString is not null)
+			{
+				httpClient.BaseAddress = new Uri(connectionString!.Get("endpoint")!);
+				return;
+			}
 			
-			httpClient.BaseAddress = new Uri(connectionString!.Get("endpoint")!);
+			var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+			var request = httpContextAccessor.HttpContext?.Request;
+
+			if (request != null)
+			{
+				var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+				httpClient.BaseAddress = new Uri(baseUrl);
+			}
 		});
 
 		builder.Services.AddSingleton<Services.AppletsService>();

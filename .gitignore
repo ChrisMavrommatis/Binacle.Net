@@ -1,4 +1,4 @@
-﻿# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
 # Compiled output
 bin/
@@ -27,6 +27,7 @@ logs/
 BenchmarkDotNet.Artifacts
 PerformanceTestsArtifacts
 Output
+output
 
 ## Copied from UI Module
 src/Binacle.Net.Api/wwwroot/ 
