@@ -7,38 +7,32 @@ Before you start, make sure you have [Docker](https://www.docker.com) and [Docke
 
 ## 📥 Getting Started
 
-1. **Clone the Repository**
+1. **Clone the Repository**<br>
+   Clone or download this repository to your local machine.
+   ```bash
+   git clone https://github.com/ChrisMavrommatis/Binacle.Net.git
+   ```
+   Alternatively, download the contents of this folder directly.
 
-    Clone or download this repository to your local machine.
-    ```bash
-    git clone https://github.com/ChrisMavrommatis/Binacle.Net.git
-    ```
-    Alternatively, download the contents of this folder directly.
+3. **Verify Files**<br>
+   Ensure the following files are present in the same directory:
+   - `docker-compose.yml` – Docker Compose configuration for all services.
+   - `Presets.json` – Your custom bin configurations.
 
-3. **Verify Files**
-   
-    Ensure the following files are present in the same directory:
-    - `docker-compose.yml` – Docker Compose configuration for all services.
-    - `Presets.json` – Your custom bin configurations.
-
-4. Customize (Optional)
-   
-    Edit the `Presets.json` file to adjust the bin configurations as per your needs.
+4. **Customize (Optional)**<br>
+   Edit the `Presets.json` file to adjust the bin configurations as per your needs.
 
 ## 🚀 Running the Application
 In the project directory, start the application by running:
-
 ```bash
 docker compose up
 ```
 This will launch the Binacle.Net API with:
-
 - 🌐 **Swagger UI**: http://localhost:8080/swagger/ for easy API exploration.
 - 📂 **Logs Folder**: A `./data/logs` folder will be created to store API logs for monitoring and debugging.
 
 ## 🔍 Accessing the API
 Once the containers are running, open your browser and go to:
-
 ```bash
 http://localhost:8080/swagger/
 ```
@@ -46,10 +40,9 @@ Here, you can explore and test the API endpoints with an intuitive interface.
 
 ## ⚙️ Customizing Presets
 To modify bin configurations:
-
 1. Open the `Presets.json` file in your preferred editor.
 2. Make your changes to the bin definitions.
-3. Restart the application to apply the updates:
+3. Restart the application to apply the updates:<br>
     ```bash
     docker compose down
     docker compose up
