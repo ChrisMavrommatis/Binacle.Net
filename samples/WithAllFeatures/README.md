@@ -61,12 +61,13 @@ This will launch Binacle.Net with the following features:
 
 ## ✅ Conclusion
 By following these steps, you can effortlessly run Binacle.Net with all features enabled, including:
-- Local storage with Azurite
-- API interaction via Swagger UI
-- A dynamic UI Module for demonstrations
-- Comprehensive logging for monitoring and troubleshooting
+- Local storage with Azurite.
+- API interaction via Swagger UI.
+- A dynamic UI Module for demonstrations.
+- Comprehensive logging for monitoring and troubleshooting.
 
 ## 📄 Additional Resources
 - [Binacle.Net Documentation](https://github.com/ChrisMavrommatis/Binacle.Net/wiki)
 - [Docker Compose Reference](https://docs.docker.com/compose/)
  
+Happy packing! 📦✨
