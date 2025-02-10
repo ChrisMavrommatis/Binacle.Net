@@ -2,54 +2,71 @@
 
 This sample demonstrates how to set up and run Binacle.Net with all features enabled, including Azurite as the database provider for the Service Module.
 
-## Prerequisites
-Before you begin, ensure that [Docker](https://www.docker.com) is installed on your machine.
 
-## Getting Started
-Clone or download this repository to your local machine.
+## 🛠️ Prerequisites
+Before you start, make sure you have [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose/) installed on your machine.
 
-Alternatively, you can just download the contents of this folder. Ensure all the following files are present in the same directory:
-- `docker-compose.yml` - The docker compose file that includes all configuration for the services.
-- `Presets.json` – Custom bin configurations.
-- `JwtAuth.json` – JWT authentication configuration.
 
-Modify `Presets.json`, `JwtAuth.json` files as needed to match your requirements.
+## 📥 Getting Started
 
-## Running the Application
-To start the application, open a terminal in the directory where the sample is located and run:
+1. **Clone the Repository**<br>
+   Clone or download this repository to your local machine.
+   ```bash
+   git clone https://github.com/ChrisMavrommatis/Binacle.Net.git
+   ```
+   Alternatively, download the contents of this folder directly.
+
+2. **Verify Files**<br>
+   Ensure the following files are present in the same directory:
+   - `docker-compose.yml` – Docker Compose configuration for all services.
+   - `Presets.json` – Your custom bin configurations.
+   - `JwtAuth.json` – JWT authentication configuration.
+
+3. **Customize (Optional)**<br>
+   Edit the `Presets.json` and `JwtAuth.json` files to match your specific requirements.
+   
+
+## 🚀 Running the Application
+In the project directory, start the application by running:
 
 ```bash
 docker compose up
 ```
-
-This will start the Binacle.Net API with:
-
-- **Swagger UI**: Available at http://localhost:8080/swagger/index.html for easy API exploration and testing.
-- **Azurite Storage Emulator**: Simulates Azure Storage locally. Azurite will create a `./azurite` folder to persist data across container restarts. It handles the storage operations for the Service Module.
-- **Service Module**: Configured to use Azurite as its database provider, enabling local storage operations for the API.
-- **UI Module**: Accessible via `http://localhost:8080/`, providing a user interface for interacting with Binacle.Net.
-- **Logs Folder**: A `./data` folder will be created, containing the `logs` folder where log files from Binacle.Net will be stored.
-
-## Customizing the Configuration
-- **Custom Presets**: To adjust bin configurations, edit the `Presets.json` file. Changes will be applied upon restarting the application.
-- **JWT Authentication**: You can modify the authentication settings by editing the `JwtAuth.json` file.
-
-## Accessing the API and UI
-Once the containers are running, you can access the Swagger UI in your browser at:
-
-```bash
-http://localhost:8080/swagger/index.html
-```
-
-The Swagger UI allows you to explore and test the API endpoints directly.
-
-To access the UI Module, navigate to:
-
-```bash
-http://localhost:8080/
-```
+This will launch Binacle.Net with the following features:
+- 🌐 **Swagger UI**: http://localhost:8080/swagger/ for easy API exploration.
+- 💾 **Azurite Storage Emulator**: Simulates Azure Storage locally. Data is persisted in the ./azurite folder across container restarts.
+- ⚙️ **Service Module**: Uses Azurite as its database provider for local storage operations.
+- 🖥️ **UI Module**: Accessible via http://localhost:8080/, offering an interactive packing demo.
+- 📂 **Logs Folder**: A `./data/logs` folder will be created to store application logs for monitoring and debugging.
 
 
-## Conclusion
-By following these steps, you can easily run Binacle.Net with all its features, including local storage with Azurite, API interaction via Swagger UI, and logging capabilities.
+## 🔍 Accessing the API and UI
+- **API Documentation (Swagger UI)**:<br>
+  http://localhost:8080/swagger/ <br>
+  Use this to explore and test API endpoints directly.
+
+- **UI Module (Packing Demo)**:<br>
+  http://localhost:8080/<br>
+  Interact with Binacle.Net through a user-friendly interface.
+
+## ⚙️Customizing the Configuration
+- 🗂️**Custom Presets**:<br>
+  Edit the Presets.json file to modify bin configurations. Changes will take effect after restarting the application:
+  ```bash
+  docker compose down
+  docker compose up
+  ```
+- 🔐 **JWT Authentication**:<br>
+  Adjust authentication settings in the JwtAuth.json file as needed.
+
+## ✅ Conclusion
+By following these steps, you can effortlessly run Binacle.Net with all features enabled, including:
+- Local storage with Azurite
+- API interaction via Swagger UI
+- A dynamic UI Module for demonstrations
+- Comprehensive logging for monitoring and troubleshooting
+
+## 📄 Additional Resources
+- [Binacle.Net Documentation](https://github.com/ChrisMavrommatis/Binacle.Net/wiki)
+- [Docker Compose Reference](https://docs.docker.com/compose/)
  
