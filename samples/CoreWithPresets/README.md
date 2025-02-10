@@ -2,39 +2,60 @@
 
 This sample demonstrates how to set up and run Binacle.Net with custom presets using Docker Compose.
 
-## Prerequisites
-Before you start, make sure you have the [docker](https://www.docker.com) installed on your machine.
+## 🛠️ Prerequisites
+Before you start, make sure you have [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose/) installed on your machine.
 
-## Getting Started
-Clone or download this repository to your local machine.
+## 📥 Getting Started
 
-Alternatively, you can just download the contents of this folder.  Ensure all the following files are present in the same directory:
-- `docker-compose.yml` - The docker compose file that includes all configuration for the services.
-- `Presets.json` – Custom bin configurations.
+1. **Clone the Repository**
 
-If needed, modify the `Presets.json` file to fit your specific bin configurations.
+    Clone or download this repository to your local machine.
+    ```bash
+    git clone https://github.com/ChrisMavrommatis/Binacle.Net.git
+    ```
+    Alternatively, download the contents of this folder directly.
 
-## Running the Application
-To launch the application, open a terminal in the directory where the sample is located and run:
+3. **Verify Files**
+   
+    Ensure the following files are present in the same directory:
+    - `docker-compose.yml` – Docker Compose configuration for all services.
+    - `Presets.json` – Your custom bin configurations.
+
+4. Customize (Optional)
+   
+    Edit the `Presets.json` file to adjust the bin configurations as per your needs.
+
+## 🚀 Running the Application
+In the project directory, start the application by running:
 
 ```bash
 docker compose up
 ```
+This will launch the Binacle.Net API with:
 
-This will start the Binacle.Net API with:
+- 🌐 **Swagger UI**: http://localhost:8080/swagger/ for easy API exploration.
+- 📂 **Logs Folder**: A ./data/logs folder will be created to store API logs for monitoring and debugging.
 
-- **Swagger UI**: Available at http://localhost:8080/swagger/index.html for easy API exploration and testing.
-- **Logs Folder**: A `./data` folder will be created, containing the `logs` folder where log files from Binacle.Net will be stored.
-
-
-### Accessing the API
-Once the containers are running, you can access the Swagger UI in your browser at:
+## 🔍 Accessing the API
+Once the containers are running, open your browser and go to:
 
 ```bash
-http://localhost:8080/swagger/index.html
+http://localhost:8080/swagger/
 ```
+Here, you can explore and test the API endpoints with an intuitive interface.
 
-The Swagger UI allows you to explore and test the API endpoints directly.
+## ⚙️ Customizing Presets
+To modify bin configurations:
 
-## Customizing Presets
-If you want to customize the bin configurations, simply edit the `Presets.json` file in the project folder. The updated configurations will be automatically used by the API when it is restarted.
+1. Open the `Presets.json` file in your preferred editor.
+2. Make your changes to the bin definitions.
+3. Restart the application to apply the updates:
+    ```bash
+    docker compose down
+    docker compose up
+    ```
+Your custom presets will now be active in the API.
+
+## 📄 Additional Resources
+- [Binacle.Net Documentation](https://github.com/ChrisMavrommatis/Binacle.Net/wiki)
+- [Docker Compose Reference](https://docs.docker.com/compose/)
