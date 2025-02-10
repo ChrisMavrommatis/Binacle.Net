@@ -1,6 +1,6 @@
 ﻿namespace Binacle.Net.Api.Models;
 
-#pragma warning disable CS1591
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 public class PackingParameters
 {
 	public required Algorithm Algorithm { get; init; }
