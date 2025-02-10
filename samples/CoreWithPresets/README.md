@@ -34,7 +34,7 @@ docker compose up
 This will launch the Binacle.Net API with:
 
 - 🌐 **Swagger UI**: http://localhost:8080/swagger/ for easy API exploration.
-- 📂 **Logs Folder**: A ./data/logs folder will be created to store API logs for monitoring and debugging.
+- 📂 **Logs Folder**: A `./data/logs` folder will be created to store API logs for monitoring and debugging.
 
 ## 🔍 Accessing the API
 Once the containers are running, open your browser and go to:
