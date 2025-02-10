@@ -61,4 +61,5 @@ By following these steps, you can easily run Binacle.Net with the UI Module enab
 ## 📄 Additional Resources
 - [Binacle.Net Documentation](https://github.com/ChrisMavrommatis/Binacle.Net/wiki)
 - [Docker Compose Reference](https://docs.docker.com/compose/)
- 
+
+Happy packing! 📦✨
