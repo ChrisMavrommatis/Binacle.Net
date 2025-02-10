@@ -8,16 +8,19 @@ It is an ideal fit for e-commerce platforms offering parcel shipments to self-se
 Explore the following sections to get started and learn more about Binacle.NET:
 
 ## 🚀 [Quick Start](https://github.com/ChrisMavrommatis/Binacle.Net/wiki/Quick-Start)
-Get up and running with Binacle.NET using Docker in a few simple steps. Learn how to deploy the service and access its API quickly.
+Read the article to get up and running with Binacle.NET using Docker in a few simple steps and learn how to deploy the service and access its API quickly.
 
-Or
-
-To get started quickly, use Docker to run Binacle.NET:
+Or run the following command in your terminal now :
 
 ```bash
-docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True binacle/binacle-net:latest
+docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -e UI_MODULE=True binacle/binacle-net:latest
 ```
-After that, visit the Swagger UI (http://localhost:8080/swagger/) to interact with the API.
+
+After that, visit the Swagger UI (http://localhost:8080/swagger/) to interact with the API, 
+
+or 
+
+Go to http://localhost:8080/ to see the UI Module and interact with the Packing Demo.
 
 ## 🔍 [How Binacle.NET Works](https://github.com/ChrisMavrommatis/Binacle.Net/wiki/How-Binacle.Net-Works)
 Discover the algorithm behind Binacle.NET, including its First Fit Decreasing (FFD) strategy, and learn how it handles fitting and packing items into bins.
