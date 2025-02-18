@@ -6,9 +6,23 @@ namespace Binacle.Net.Api.DiagnosticsModule.Services;
 
 public class FittingLogsProcessor  : BackgroundService
 {
-	protected override Task ExecuteAsync(CancellationToken stoppingToken)
+	private readonly Channel<FittingLogChannelRequest> channel;
+	
+	public FittingLogsProcessor(Channel<FittingLogChannelRequest> channel)
 	{
-		throw new NotImplementedException();
+		this.channel = channel;
+	}
+	
+	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+	{
+		while(await this.channel.Reader.WaitToReadAsync(stoppingToken))
+		{
+			var request = await this.channel.Reader.ReadAsync(stoppingToken);
+			foreach (var result in request.Results)
+			{
+				Console.WriteLine($"Fitting result for bin {result.Key}: {result.Value}");
+			}
+		}
 	}
 }
 internal class PackingLogsProcessor : BackgroundService

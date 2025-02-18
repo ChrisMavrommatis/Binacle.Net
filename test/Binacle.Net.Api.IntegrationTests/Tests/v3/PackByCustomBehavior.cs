@@ -92,7 +92,7 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 	}
 	
 	private Api.v3.Requests.CustomPackRequest CreateSpecialRequest(
-		Action<Api.v3.Requests.PackRequestParameters> modifyParameters = null
+		Action<Api.v3.Requests.PackRequestParameters>? modifyParameters = null
 	)
 	{
 		var request = new Api.v3.Requests.CustomPackRequest

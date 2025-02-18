@@ -4,6 +4,8 @@ using Binacle.Net.Api.ServiceModule.Domain.Users.Entities;
 
 namespace Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables.Users.Entities;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
 internal class UserTableEntity : User, ITableEntity
 {
 	public UserTableEntity(string rowKey, string partitionKey)
@@ -11,6 +13,7 @@ internal class UserTableEntity : User, ITableEntity
 		this.RowKey = rowKey;
 		this.PartitionKey = partitionKey;
 	}
+
 	public UserTableEntity()
 	{
 
@@ -55,5 +58,4 @@ internal static class UserTableEntityExtensions
 			DeletedAtUtc = entity.DeletedAtUtc,
 		};
 	}
-	
 }

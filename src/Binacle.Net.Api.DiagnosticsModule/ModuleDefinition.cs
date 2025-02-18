@@ -127,8 +127,8 @@ public static class ModuleDefinition
 				AllowSynchronousContinuations = false
 			}));
 			
-		builder.Services.AddSingleton<Channel<PackingLogChannelRequest>>(
-			services => Channel.CreateUnbounded<PackingLogChannelRequest>(new UnboundedChannelOptions()
+		builder.Services.AddSingleton<Channel<FittingLogChannelRequest>>(
+			services => Channel.CreateUnbounded<FittingLogChannelRequest>(new UnboundedChannelOptions()
 			{
 				SingleWriter = false,
 				SingleReader = true,

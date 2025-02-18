@@ -7,9 +7,10 @@ internal class MarkdownFileWriter
 	public async Task WriteAsync(TestResultList testResultList)
 	{
 		var filepath = $"./PerformanceTestsArtifacts/{testResultList.Filename}.md";
-		
+
+		var directoryName = Path.GetDirectoryName(filepath)!;
 		//ensure directory exists
-		Directory.CreateDirectory(Path.GetDirectoryName(filepath));
+		Directory.CreateDirectory(directoryName);
 		
 		if(File.Exists(filepath))
 		{

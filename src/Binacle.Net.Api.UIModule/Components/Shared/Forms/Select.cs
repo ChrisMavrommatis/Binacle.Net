@@ -1,11 +1,11 @@
-﻿using System.Linq.Expressions;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Binacle.Net.Api.UIModule.Components.Shared.Forms;
 
 public class SelectField<TValue> : InputSelect<TValue>
+	where TValue : notnull
 {
 	[Parameter] 
 	public string Id { get; set; } = string.Empty;
@@ -30,7 +30,7 @@ public class SelectField<TValue> : InputSelect<TValue>
 			{
 				builder2.OpenElement(0, "option");
 				builder2.AddAttribute(1, "value", key);
-				if (this.Value.Equals(key))
+				if (this.Value is not null && this.Value.Equals(key))
 				{
 					builder2.AddAttribute(2, "selected", true);
 				}

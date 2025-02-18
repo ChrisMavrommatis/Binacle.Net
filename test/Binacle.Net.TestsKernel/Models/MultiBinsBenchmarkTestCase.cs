@@ -17,7 +17,7 @@ public sealed class MultiBinsBenchmarkTestCase
 
 	public List<Scenario> GetScenarios(
 		ItemsCollection itemsHolder,
-		Func<Scenario, bool> filter = null
+		Func<Scenario, bool>? filter = null
 	)
 	{
 		var items = itemsHolder.GetItems();
@@ -25,7 +25,7 @@ public sealed class MultiBinsBenchmarkTestCase
 		foreach (var (binString, resultString) in this.binCases)
 		{
 			var scenario = Scenario.Create($"{binString}::{resultString}", binString, items, resultString);
-			if (filter == null || filter(scenario))
+			if (filter is null || filter(scenario))
 			{
 				scenarios.Add(scenario);
 			}

@@ -31,8 +31,11 @@ internal class ApiVersion : IApiVersion
 	{
 		var description = provider.ApiVersionDescriptions
 			.FirstOrDefault(x => x.ApiVersion.MajorVersion == this.MajorNumber);
-		
-		options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Binacle.Net API {description.GroupName}");
+
+		if (description is not null)
+		{
+			options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Binacle.Net API {description.GroupName}");
+		}
 	}
 
 	private static Dictionary<Type, Type[]> _polymorphicTypeMappings = new()
