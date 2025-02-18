@@ -19,6 +19,7 @@
 
 	<ItemGroup>
 		<UIFiles Include="wwwroot\**\*.*" />
+		<ConfigFiles Include="Config_Files\*.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -40,6 +41,11 @@
 	<!-- This target runs on every build -->
 	<Target Name="CopyUIFiles" BeforeTargets="Build;Rebuild">
 		<Copy SourceFiles="@(UIFiles)" DestinationFolder="..\Binacle.Net.Api\wwwroot\%(UIFiles.RecursiveDir)" />
+	</Target>
+
+	<!-- This target runs on every build -->
+	<Target Name="CopyConfigFiles" BeforeTargets="Build;Rebuild">
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="..\Binacle.Net.Api\Config_Files\UiModule\%(ConfigFiles.RecursiveDir)" />
 	</Target>
 
 </Project>

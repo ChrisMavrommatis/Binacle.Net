@@ -43,5 +43,15 @@
 		<ProjectReference Include="..\Binacle.Net.Api.Kernel\Binacle.Net.Api.Kernel.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ConfigFiles Include="Config_Files\*.json" />
+	</ItemGroup>
+
+
+	<!-- This target runs on every build -->
+	<Target Name="CopyConfigFiles" BeforeTargets="Build;Rebuild">
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="..\Binacle.Net.Api\Config_Files\DiagnosticsModule\%(ConfigFiles.RecursiveDir)" />
+	</Target>
+
 </Project>
 

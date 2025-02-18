@@ -1,7 +1,9 @@
-﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
+﻿using System.Threading.Channels;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
 using Binacle.Net.Api.DiagnosticsModule.Middleware;
 using Binacle.Net.Api.Kernel;
+using Binacle.Net.Api.Kernel.Models;
 using ChrisMavrommatis.FluentValidation;
 using FluentValidation;
 using HealthChecks.UI.Client;
@@ -57,7 +59,6 @@ public static class ModuleDefinition
 			"APPLICATIONINSIGHTS_CONNECTION_STRING"
 			);
 
-
 		// overwrite default logger
 		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 		{
@@ -72,26 +73,7 @@ public static class ModuleDefinition
 				);
 			}
 		});
-
-		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
-
-		// Health Checks
-		builder.Configuration
-			.AddJsonFile(HealthCheckConfigurationOptions.FilePath, optional: false, reloadOnChange: true)
-			.AddJsonFile(HealthCheckConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: true)
-			.AddEnvironmentVariables();
-
-		builder.Services
-			.AddOptions<HealthCheckConfigurationOptions>()
-			.Bind(builder.Configuration.GetSection(HealthCheckConfigurationOptions.SectionName))
-			.ValidateFluently()
-			.ValidateOnStart();
-
-		// Add health checks
-		builder.Services
-			.AddHealthChecks();
-
-
+		
 		// Add OpenTelemetry
 		var openTelemetryBuilder = builder.Services
 			.AddOpenTelemetry()
@@ -133,6 +115,49 @@ public static class ModuleDefinition
 			});
 		}
 
+		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
+
+		// Logs Processor
+		builder.Services.AddSingleton<Channel<PackingLogChannelRequest>>(
+			services => Channel.CreateBounded<PackingLogChannelRequest>(new BoundedChannelOptions(100)
+			{
+				FullMode = BoundedChannelFullMode.DropWrite,
+				SingleWriter = false,
+				SingleReader = true,
+				AllowSynchronousContinuations = false
+			}));
+			
+		builder.Services.AddSingleton<Channel<PackingLogChannelRequest>>(
+			services => Channel.CreateUnbounded<PackingLogChannelRequest>(new UnboundedChannelOptions()
+			{
+				SingleWriter = false,
+				SingleReader = true,
+				AllowSynchronousContinuations = false
+			}));
+		
+		builder.Services
+			.AddHostedService<Services.FittingLogsProcessor>()
+			.AddHostedService<Services.PackingLogsProcessor>();
+		
+		
+		// Health Checks
+		builder.Configuration
+			.AddJsonFile(HealthCheckConfigurationOptions.FilePath, optional: false, reloadOnChange: true)
+			.AddJsonFile(HealthCheckConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: true)
+			.AddEnvironmentVariables();
+
+		builder.Services
+			.AddOptions<HealthCheckConfigurationOptions>()
+			.Bind(builder.Configuration.GetSection(HealthCheckConfigurationOptions.SectionName))
+			.ValidateFluently()
+			.ValidateOnStart();
+
+		// Add health checks
+		builder.Services
+			.AddHealthChecks();
+
+
+		
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initialized");
 	}
 
