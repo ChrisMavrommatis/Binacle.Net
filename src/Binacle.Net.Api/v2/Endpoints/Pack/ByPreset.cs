@@ -146,7 +146,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetPackRequestWithBod
 				return this.NotFound(null);
 			}
 
-			var operationResults = this.binsService.PackBins(
+			var operationResults = await this.binsService.PackBinsAsync(
 				presetOption.Bins,
 				request.Body.Items!,
 				new Api.Models.LegacyPackingParameters

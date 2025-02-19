@@ -165,7 +165,7 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 				//);
 			}
 
-			var operationResults = this.binsService.FitBins(
+			var operationResults = await this.binsService.FitBinsAsync(
 				presetOption.Bins, 
 				request.Body.Items!,
 				new Api.Models.LegacyFittingParameters

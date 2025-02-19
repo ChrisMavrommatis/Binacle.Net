@@ -4,7 +4,7 @@
 
 public class LegacyFittingParameters
 {
-	public bool ReportFittedItems { get; set; }
-	public bool ReportUnfittedItems { get; set; }
-	public bool FindSmallestBinOnly { get; set; }
+	public bool ReportFittedItems { get; init; }
+	public bool ReportUnfittedItems { get; init; }
+	public bool FindSmallestBinOnly { get; init; }
 }

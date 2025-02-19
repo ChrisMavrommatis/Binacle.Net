@@ -18,10 +18,8 @@ public static class InfrastructureSetup
 	public static T AddInfrastructureLayerServices<T>(this T builder)
 		where T : IHostApplicationBuilder
 	{
-		var azureStorageConnectionString = builder.Configuration.GetConnectionStringWithEnvironmentVariableFallback(
-				"AzureStorage",
-				"AZURESTORAGE_CONNECTION_STRING"
-		);
+		var azureStorageConnectionString = builder.Configuration
+			.GetConnectionStringWithEnvironmentVariableFallback("AzureStorage");
 
 		if (azureStorageConnectionString is not null)
 		{

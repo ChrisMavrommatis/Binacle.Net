@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Api.ExtensionMethods;
+﻿using System.Threading.Channels;
+using Binacle.Net.Api.Kernel.Models;
 using Binacle.Net.Lib;
 using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Packing.Models;
@@ -11,7 +12,7 @@ namespace Binacle.Net.Api.Services;
 
 public interface IBinacleService
 {
-	Dictionary<string, PackingResult> PackBins<TBin, TBox>(List<TBin> bins, List<TBox> items, PackingParameters parameters)
+	Task<Dictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items, PackingParameters parameters)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 }
@@ -19,18 +20,21 @@ public interface IBinacleService
 
 internal class BinacleService : IBinacleService
 {
+	private readonly Channel<PackingLogChannelRequest> packingChannel;
 	private readonly ILogger<BinacleService> logger;
 	private readonly LoopBinProcessor loopBinProcessor;
 
 	public BinacleService(
+		Channel<PackingLogChannelRequest> packingChannel,
 		ILogger<BinacleService> logger
 	)
 	{
 		this.loopBinProcessor = new LoopBinProcessor();
+		this.packingChannel = packingChannel;
 		this.logger = logger;
 	}
 	
-	public Dictionary<string, PackingResult> PackBins<TBin, TBox>(
+	public async Task<Dictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
 		List<TBin> bins, 
 		List<TBox> items,
 		PackingParameters parameters
@@ -39,10 +43,6 @@ internal class BinacleService : IBinacleService
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
 		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
-
-		this.logger.EnrichStateWith("Items", items);
-		this.logger.EnrichStateWith("Bins", bins);
-		this.logger.EnrichStateWithParameters(parameters);
 
 		var results = this.loopBinProcessor.ProcessPacking(
 			parameters.GetMappedAlgorithm(),
@@ -55,7 +55,11 @@ internal class BinacleService : IBinacleService
 				ReportPackedItemsOnlyWhenFullyPacked = false
 			});
 
-		this.logger.EnrichStateWithResults(results);
+		await this.packingChannel
+			.Writer
+			.WriteAsync(
+				PackingLogChannelRequest.From(bins, items, parameters, results)
+			);
 		return results;
 	}
 }

@@ -2,15 +2,13 @@
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
-
 namespace Binacle.Net.Api.Kernel;
 
 public static class ConfigurationExtensions
 {
 	public static ConnectionString? GetConnectionStringWithEnvironmentVariableFallback(
 		this IConfiguration configuration,
-		string name,
-		string variable
+		string name
 		)
 	{
 		var connectionString = configuration?.GetConnectionString(name);
@@ -20,6 +18,8 @@ public static class ConfigurationExtensions
 			Log.Information("Connection String {connectionString} found in {location}", name, "Configuration File");
 			return new ConnectionString(connectionString);
 		}
+
+		var variable = $"{name.ToUpperInvariant()}_CONNECTION_STRING";
 
 		connectionString = Environment.GetEnvironmentVariable(variable);
 

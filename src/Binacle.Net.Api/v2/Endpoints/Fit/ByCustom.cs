@@ -140,7 +140,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomFitRequestWithBody
 					);
 			}
 
-			var operationResults = this.binsService.FitBins(
+			var operationResults = await this.binsService.FitBinsAsync(
 				request.Body.Bins!, 
 				request.Body.Items!,
 				new LegacyFittingParameters

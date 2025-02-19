@@ -135,7 +135,7 @@ public class ByCustom : EndpointWithRequest<v1.Requests.CustomQueryRequestWithBo
 					);
 			}
 
-			var operationResults = this.binsService.FitBins(
+			var operationResults = await this.binsService.FitBinsAsync(
 				request.Body.Bins!, 
 				request.Body.Items!,
 				new Api.Models.LegacyFittingParameters

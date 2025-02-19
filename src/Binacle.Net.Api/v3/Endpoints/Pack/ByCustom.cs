@@ -97,7 +97,7 @@ public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBod
 				);
 			}
 
-			var operationResults = this.binacleService.PackBins(
+			var operationResults = await this.binacleService.PackBinsAsync(
 				request.Body.Bins!,
 				request.Body.Items!,
 				new Api.Models.PackingParameters

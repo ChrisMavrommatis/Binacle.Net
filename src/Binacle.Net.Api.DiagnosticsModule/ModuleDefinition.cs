@@ -54,10 +54,8 @@ public static class ModuleDefinition
 			.AddJsonFile("DiagnosticsModule/Serilog.json", optional: false, reloadOnChange: true)
 			.AddJsonFile($"DiagnosticsModule/Serilog.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
-		var applicationInsightsConnectionString = builder.Configuration.GetConnectionStringWithEnvironmentVariableFallback(
-			"ApplicationInsights",
-			"APPLICATIONINSIGHTS_CONNECTION_STRING"
-			);
+		var applicationInsightsConnectionString = builder.Configuration
+			.GetConnectionStringWithEnvironmentVariableFallback("ApplicationInsights");
 
 		// overwrite default logger
 		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
@@ -117,29 +115,25 @@ public static class ModuleDefinition
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
 
-		// Logs Processor
-		builder.Services.AddSingleton<Channel<PackingLogChannelRequest>>(
-			services => Channel.CreateBounded<PackingLogChannelRequest>(new BoundedChannelOptions(100)
-			{
-				FullMode = BoundedChannelFullMode.DropWrite,
-				SingleWriter = false,
-				SingleReader = true,
-				AllowSynchronousContinuations = false
-			}));
-			
-		builder.Services.AddSingleton<Channel<FittingLogChannelRequest>>(
-			services => Channel.CreateUnbounded<FittingLogChannelRequest>(new UnboundedChannelOptions()
-			{
-				SingleWriter = false,
-				SingleReader = true,
-				AllowSynchronousContinuations = false
-			}));
-		
+		// Logs Processors
 		builder.Services
-			.AddHostedService<Services.FittingLogsProcessor>()
-			.AddHostedService<Services.PackingLogsProcessor>();
-		
-		
+			.AddUnboundedLogProcessor<Services.LegacyFittingLogsProcessor, LegacyFittingLogChannelRequest>(
+				options =>
+				{
+					options.SingleReader = true;
+				});
+		builder.Services
+			.AddUnboundedLogProcessor<Services.LegacyPackingLogsProcessor, LegacyPackingLogChannelRequest>(options =>
+			{
+				options.SingleReader = true;
+			});
+		builder.Services
+			.AddUnboundedLogProcessor<Services.PackingLogsProcessor, PackingLogChannelRequest>(options =>
+			{
+				options.SingleReader = true;
+			});
+			
+			
 		// Health Checks
 		builder.Configuration
 			.AddJsonFile(HealthCheckConfigurationOptions.FilePath, optional: false, reloadOnChange: true)
@@ -155,8 +149,6 @@ public static class ModuleDefinition
 		// Add health checks
 		builder.Services
 			.AddHealthChecks();
-
-
 		
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initialized");
 	}

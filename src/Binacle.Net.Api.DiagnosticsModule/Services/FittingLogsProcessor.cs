@@ -1,48 +1,69 @@
 ﻿using System.Threading.Channels;
+using Binacle.Net.Api.DiagnosticsModule.ExtensionMethods;
 using Binacle.Net.Api.Kernel.Models;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Binacle.Net.Api.DiagnosticsModule.Services;
 
-public class FittingLogsProcessor  : BackgroundService
+internal class LegacyFittingLogsProcessor  : LogsProcessorBase<LegacyFittingLogChannelRequest>
 {
-	private readonly Channel<FittingLogChannelRequest> channel;
-	
-	public FittingLogsProcessor(Channel<FittingLogChannelRequest> channel)
+
+	public LegacyFittingLogsProcessor(
+		Channel<LegacyFittingLogChannelRequest> channel,
+		IWebHostEnvironment environment,
+		TimeProvider timeProvider
+		) : base(channel, environment, timeProvider, "fitting_legacy")
 	{
-		this.channel = channel;
 	}
-	
-	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+
+	protected override Dictionary<string, object> ConvertToLogFormat(LegacyFittingLogChannelRequest request)
 	{
-		while(await this.channel.Reader.WaitToReadAsync(stoppingToken))
-		{
-			var request = await this.channel.Reader.ReadAsync(stoppingToken);
-			foreach (var result in request.Results)
-			{
-				Console.WriteLine($"Fitting result for bin {result.Key}: {result.Value}");
-			}
-		}
+		var log = new Dictionary<string, object>();
+		log.Add("Bins", request.Bins.ConvertToLogFormat());
+		log.Add("Items", request.Items.ConvertToLogFormat());
+		log.Add("Results", request.Results.ConvertToLogFormat());
+		return log;
 	}
 }
-internal class PackingLogsProcessor : BackgroundService
-{
-	private readonly Channel<PackingLogChannelRequest> channel;
 
-	public PackingLogsProcessor(Channel<PackingLogChannelRequest> channel)
+internal class LegacyPackingLogsProcessor : LogsProcessorBase<LegacyPackingLogChannelRequest>
+{
+	public LegacyPackingLogsProcessor(	
+		Channel<LegacyPackingLogChannelRequest> channel,
+		IWebHostEnvironment environment,
+		TimeProvider timeProvider
+	) : base(channel, environment, timeProvider, "fitting_packing")
 	{
-		this.channel = channel;
 	}
-	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+	
+	protected override Dictionary<string, object> ConvertToLogFormat(LegacyPackingLogChannelRequest request)
 	{
-		while (await this.channel.Reader.WaitToReadAsync(stoppingToken))
-		{
-			var request = await this.channel.Reader.ReadAsync(stoppingToken);
-			foreach (var result in request.Results)
-			{
-				Console.WriteLine($"Packing result for bin {result.Key}: {result.Value}");
-			}
+		var log = new Dictionary<string, object>();
 			
-		}
+		log.Add("Bins", request.Bins.ConvertToLogFormat());
+		log.Add("Items", request.Items.ConvertToLogFormat());
+		log.Add("Results", request.Results.ConvertToLogFormat());
+		return log;
+	}
+}
+
+internal class PackingLogsProcessor : LogsProcessorBase<PackingLogChannelRequest>
+{
+	public PackingLogsProcessor(	
+		Channel<PackingLogChannelRequest> channel,
+		IWebHostEnvironment environment,
+		TimeProvider timeProvider
+	) : base(channel, environment, timeProvider, "packing")
+	{
+	}
+	
+	protected override Dictionary<string, object> ConvertToLogFormat(PackingLogChannelRequest request)
+	{
+		var log = new Dictionary<string, object>();
+			
+		log.Add("Bins", request.Bins.ConvertToLogFormat());
+		log.Add("Items", request.Items.ConvertToLogFormat());
+		log.Add("Results", request.Results.ConvertToLogFormat());
+		return log;
 	}
 }

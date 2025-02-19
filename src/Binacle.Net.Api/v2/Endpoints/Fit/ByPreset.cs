@@ -153,7 +153,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 				return this.NotFound(null);
 			}
 
-			var operationResults = this.binsService.FitBins(
+			var operationResults = await this.binsService.FitBinsAsync(
 				presetOption.Bins,
 				request.Body.Items!,
 				new LegacyFittingParameters

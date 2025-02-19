@@ -30,7 +30,7 @@ public static class ModuleDefinition
 		builder.Services.AddHttpClient("BinacleApi", (serviceProvider, httpClient) =>
 		{
 			var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-			var connectionString = configuration.GetConnectionStringWithEnvironmentVariableFallback("BinacleApi", "BINACLEAPI_CONNECTION_STRING");
+			var connectionString = configuration.GetConnectionStringWithEnvironmentVariableFallback("BinacleApi");
 
 			if (connectionString is not null)
 			{

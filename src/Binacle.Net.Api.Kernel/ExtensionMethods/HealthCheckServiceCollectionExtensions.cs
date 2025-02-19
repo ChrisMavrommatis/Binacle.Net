@@ -4,7 +4,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Binacle.Net.Api.Kernel;
 
-public static class ServiceCollectionExtensions
+public static class HealthCheckServiceCollectionExtensions
 {
 	public static void AddHealthCheck<T>(
 		this IServiceCollection services,

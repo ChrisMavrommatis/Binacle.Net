@@ -147,7 +147,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 					);
 			}
 
-			var operationResults = this.binsService.PackBins(
+			var operationResults = await this.binsService.PackBinsAsync(
 				request.Body.Bins!,
 				request.Body.Items!,
 				new Api.Models.LegacyPackingParameters
