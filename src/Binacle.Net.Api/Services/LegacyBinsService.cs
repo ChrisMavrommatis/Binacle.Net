@@ -15,11 +15,13 @@ namespace Binacle.Net.Api.Services;
 
 public interface ILegacyBinsService
 {
-	Task<Dictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items, LegacyFittingParameters parameters)
+	Task<Dictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items,
+		LegacyFittingParameters parameters)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 
-	Task<Dictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items, LegacyPackingParameters parameters)
+	Task<Dictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items,
+		LegacyPackingParameters parameters)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 }
@@ -27,19 +29,19 @@ public interface ILegacyBinsService
 internal class LegacyBinsService : ILegacyBinsService
 {
 	private readonly AlgorithmFactory algorithmFactory;
-	private readonly Channel<LegacyFittingLogChannelRequest> fittingChannel;
-	private readonly Channel<LegacyPackingLogChannelRequest> packingChannel;
+	private readonly Channel<LegacyFittingLogChannelRequest>? fittingChannel;
+	private readonly Channel<LegacyPackingLogChannelRequest>? packingChannel;
 	private readonly ILogger<LegacyBinsService> logger;
 
 	public LegacyBinsService(
-		Channel<LegacyFittingLogChannelRequest> fittingChannel,
-		Channel<LegacyPackingLogChannelRequest> packingChannel,
+		IOptionalDependency<Channel<LegacyFittingLogChannelRequest>> fittingChannel,
+		IOptionalDependency<Channel<LegacyPackingLogChannelRequest>> packingChannel,
 		ILogger<LegacyBinsService> logger
-		)
+	)
 	{
 		this.algorithmFactory = new AlgorithmFactory();
-		this.fittingChannel = fittingChannel;
-		this.packingChannel = packingChannel;
+		this.fittingChannel = fittingChannel.Value;
+		this.packingChannel = packingChannel.Value;
 		this.logger = logger;
 	}
 
@@ -64,14 +66,13 @@ internal class LegacyBinsService : ILegacyBinsService
 				ReportUnfittedItems = parameters.ReportUnfittedItems
 			});
 
-			if(parameters.FindSmallestBinOnly)
+			if (parameters.FindSmallestBinOnly)
 			{
-				if(result.Status == FittingResultStatus.Success)
+				if (result.Status == FittingResultStatus.Success)
 				{
 					results.Add(bin.ID, result);
 					break;
 				}
-				
 			}
 			else
 			{
@@ -79,16 +80,20 @@ internal class LegacyBinsService : ILegacyBinsService
 			}
 		}
 
-		await this.fittingChannel
-			.Writer
-			.WriteAsync(
-				LegacyFittingLogChannelRequest.From(bins, items, parameters, results)
-			);
+		if (this.fittingChannel is not null)
+		{
+			await this.fittingChannel
+				.Writer
+				.WriteAsync(
+					LegacyFittingLogChannelRequest.From(bins, items, parameters, results)
+				);
+		}
+
 		return results;
 	}
 
 	public async Task<Dictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
-		List<TBin> bins, 
+		List<TBin> bins,
 		List<TBox> items,
 		LegacyPackingParameters parameters
 	)
@@ -102,9 +107,9 @@ internal class LegacyBinsService : ILegacyBinsService
 		foreach (var bin in bins.OrderBy(x => x.CalculateVolume()))
 		{
 			var algorithmInstance = this.algorithmFactory.CreatePacking(Algorithm.FirstFitDecreasing, bin, items);
-			var result = algorithmInstance.Execute(new PackingParameters 
-			{ 
-				NeverReportUnpackedItems = parameters.NeverReportUnpackedItems, 
+			var result = algorithmInstance.Execute(new PackingParameters
+			{
+				NeverReportUnpackedItems = parameters.NeverReportUnpackedItems,
 				OptInToEarlyFails = parameters.OptInToEarlyFails,
 				ReportPackedItemsOnlyWhenFullyPacked = parameters.ReportPackedItemsOnlyWhenFullyPacked
 			});
@@ -115,19 +120,22 @@ internal class LegacyBinsService : ILegacyBinsService
 					results.Add(bin.ID, result);
 					break;
 				}
-
 			}
 			else
 			{
 				results.Add(bin.ID, result);
 			}
 		}
-		
-		await this.packingChannel
-			.Writer
-			.WriteAsync(
-				LegacyPackingLogChannelRequest.From(bins, items, parameters, results)
-			);
+
+		if (this.packingChannel is not null)
+		{
+			await this.packingChannel
+				.Writer
+				.WriteAsync(
+					LegacyPackingLogChannelRequest.From(bins, items, parameters, results)
+				);
+		}
+
 		return results;
 	}
 }

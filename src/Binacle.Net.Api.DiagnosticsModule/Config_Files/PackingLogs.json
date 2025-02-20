@@ -1,0 +1,20 @@
+﻿{
+	"PackingLogs" : {
+		"Enabled": true,
+		"LegacyPacking" : {
+			"Path" : "data/pack-logs/legacy-packing/",
+			"FileName" : "{0}.ndjson",
+			"ChannelLimit" : 100
+		},
+		"LegacyFitting" : {
+			"Path" : "data/pack-logs/legacy-fitting/",
+			"FileName" : "{0}.ndjson",
+			"ChannelLimit" : 100
+		},
+		"Packing" : {
+			"Path" : "data/pack-logs/packing/",
+			"FileName" : "{0}.ndjson",
+			"ChannelLimit" : 100
+		}
+	}
+}

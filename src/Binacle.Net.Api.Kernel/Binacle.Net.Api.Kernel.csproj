@@ -18,5 +18,4 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj" />
 	</ItemGroup>
-
 </Project>

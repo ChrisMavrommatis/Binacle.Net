@@ -20,17 +20,17 @@ public interface IBinacleService
 
 internal class BinacleService : IBinacleService
 {
-	private readonly Channel<PackingLogChannelRequest> packingChannel;
+	private readonly Channel<PackingLogChannelRequest>? packingChannel;
 	private readonly ILogger<BinacleService> logger;
 	private readonly LoopBinProcessor loopBinProcessor;
 
 	public BinacleService(
-		Channel<PackingLogChannelRequest> packingChannel,
-		ILogger<BinacleService> logger
+		ILogger<BinacleService> logger,
+		IOptionalDependency<Channel<PackingLogChannelRequest>> packingChannel
 	)
 	{
 		this.loopBinProcessor = new LoopBinProcessor();
-		this.packingChannel = packingChannel;
+		this.packingChannel = packingChannel.Value;
 		this.logger = logger;
 	}
 	
@@ -55,11 +55,15 @@ internal class BinacleService : IBinacleService
 				ReportPackedItemsOnlyWhenFullyPacked = false
 			});
 
-		await this.packingChannel
-			.Writer
-			.WriteAsync(
-				PackingLogChannelRequest.From(bins, items, parameters, results)
-			);
+		if (this.packingChannel is not null)
+		{
+			await this.packingChannel
+				.Writer
+				.WriteAsync(
+					PackingLogChannelRequest.From(bins, items, parameters, results)
+				);
+		}
+		
 		return results;
 	}
 }

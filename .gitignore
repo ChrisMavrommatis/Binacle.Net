@@ -24,6 +24,8 @@ obj/
 
 # Project Specific
 logs/
+pack-logs/
+packing-logs/
 BenchmarkDotNet.Artifacts
 PerformanceTestsArtifacts
 Output

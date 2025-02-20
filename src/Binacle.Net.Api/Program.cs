@@ -73,6 +73,8 @@ public class Program
 			options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
 
+		builder.Services.AddTransient(typeof(IOptionalDependency<>), typeof(OptionalDependency<>));
+
 		builder.Services.AddApiVersioning(options =>
 		{
 			options.DefaultApiVersion = ApiVersionParser.Default.Parse(v1.ApiVersion.Number);

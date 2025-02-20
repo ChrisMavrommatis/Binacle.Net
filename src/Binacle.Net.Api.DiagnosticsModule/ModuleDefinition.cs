@@ -1,9 +1,11 @@
 ﻿using System.Threading.Channels;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
+using Binacle.Net.Api.DiagnosticsModule.ExtensionMethods;
 using Binacle.Net.Api.DiagnosticsModule.Middleware;
 using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.Kernel.Models;
+using Binacle.Net.Api.Models;
 using ChrisMavrommatis.FluentValidation;
 using FluentValidation;
 using HealthChecks.UI.Client;
@@ -39,7 +41,8 @@ public static class ModuleDefinition
 
 		builder.Configuration
 			.AddJsonFile("DiagnosticsModule/ConnectionStrings.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"DiagnosticsModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+			.AddJsonFile($"DiagnosticsModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json",
+				optional: true, reloadOnChange: true)
 			.AddEnvironmentVariables();
 
 		// Required for local run with secrets
@@ -52,7 +55,8 @@ public static class ModuleDefinition
 		// Logging
 		builder.Configuration
 			.AddJsonFile("DiagnosticsModule/Serilog.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"DiagnosticsModule/Serilog.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+			.AddJsonFile($"DiagnosticsModule/Serilog.{builder.Environment.EnvironmentName}.json", optional: true,
+				reloadOnChange: true);
 
 		var applicationInsightsConnectionString = builder.Configuration
 			.GetConnectionStringWithEnvironmentVariableFallback("ApplicationInsights");
@@ -61,7 +65,7 @@ public static class ModuleDefinition
 		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 		{
 			loggerConfiguration
-			.ReadFrom.Configuration(builder.Configuration);
+				.ReadFrom.Configuration(builder.Configuration);
 
 			if (applicationInsightsConnectionString is not null)
 			{
@@ -71,7 +75,7 @@ public static class ModuleDefinition
 				);
 			}
 		});
-		
+
 		// Add OpenTelemetry
 		var openTelemetryBuilder = builder.Services
 			.AddOpenTelemetry()
@@ -86,10 +90,7 @@ public static class ModuleDefinition
 					.AddMeter("Microsoft.AspNetCore.Hosting")
 					.AddMeter("Microsoft.AspNetCore.Server.Kestrel")
 					.AddMeter("Microsoft.AspNetCore.RateLimiting");
-			}).WithTracing(configure =>
-			{
-				configure.AddAspNetCoreInstrumentation();
-			});
+			}).WithTracing(configure => { configure.AddAspNetCoreInstrumentation(); });
 
 
 		if (applicationInsightsConnectionString is not null)
@@ -113,31 +114,71 @@ public static class ModuleDefinition
 			});
 		}
 
-		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
+		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton,
+			includeInternalTypes: true);
 
-		// Logs Processors
+		// Packing Logs
+
+		builder.Configuration
+			.AddJsonFile(PackingLogsConfigurationOptions.FilePath, optional: false, reloadOnChange: true)
+			.AddJsonFile(PackingLogsConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName),
+				optional: true, reloadOnChange: true)
+			.AddEnvironmentVariables();
+
 		builder.Services
-			.AddUnboundedLogProcessor<Services.LegacyFittingLogsProcessor, LegacyFittingLogChannelRequest>(
-				options =>
-				{
-					options.SingleReader = true;
-				});
-		builder.Services
-			.AddUnboundedLogProcessor<Services.LegacyPackingLogsProcessor, LegacyPackingLogChannelRequest>(options =>
-			{
-				options.SingleReader = true;
-			});
-		builder.Services
-			.AddUnboundedLogProcessor<Services.PackingLogsProcessor, PackingLogChannelRequest>(options =>
-			{
-				options.SingleReader = true;
-			});
+			.AddOptions<PackingLogsConfigurationOptions>()
+			.Bind(builder.Configuration.GetSection(PackingLogsConfigurationOptions.SectionName))
+			.ValidateFluently()
+			.ValidateOnStart();
+
+		var packingLogsOptionsIsEnabled = builder.Configuration
+			.GetSection(PackingLogsConfigurationOptions.SectionName)
+			.GetValue<bool>(nameof(PackingLogsConfigurationOptions.Enabled));
+		
+		if (packingLogsOptionsIsEnabled)
+		{
+			builder.Services
+				.AddOptionsBasedLogProcessor<LegacyFittingLogChannelRequest>(
+					optionsSelector: options => options.LegacyFitting!,
+					logFormatter: request =>
+					{
+						var log = new Dictionary<string, object>();
+						log.Add("Bins", request.Bins.ConvertToLogFormat());
+						log.Add("Items", request.Items.ConvertToLogFormat());
+						log.Add("Results", request.Results.ConvertToLogFormat());
+						return log;
+					});
 			
+			builder.Services
+				.AddOptionsBasedLogProcessor<LegacyPackingLogChannelRequest>(
+					optionsSelector: options => options.LegacyPacking!,
+					logFormatter: request =>
+					{
+						var log = new Dictionary<string, object>();
+						log.Add("Bins", request.Bins.ConvertToLogFormat());
+						log.Add("Items", request.Items.ConvertToLogFormat());
+						log.Add("Results", request.Results.ConvertToLogFormat());
+						return log;
+					});
 			
+			builder.Services
+				.AddOptionsBasedLogProcessor<PackingLogChannelRequest>(
+					optionsSelector: options => options.Packing!,
+					logFormatter: request =>
+					{
+						var log = new Dictionary<string, object>();
+						log.Add("Bins", request.Bins.ConvertToLogFormat());
+						log.Add("Items", request.Items.ConvertToLogFormat());
+						log.Add("Results", request.Results.ConvertToLogFormat());
+						return log;
+					});
+		}
+
 		// Health Checks
 		builder.Configuration
 			.AddJsonFile(HealthCheckConfigurationOptions.FilePath, optional: false, reloadOnChange: true)
-			.AddJsonFile(HealthCheckConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: true)
+			.AddJsonFile(HealthCheckConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName),
+				optional: true, reloadOnChange: true)
 			.AddEnvironmentVariables();
 
 		builder.Services
@@ -149,7 +190,7 @@ public static class ModuleDefinition
 		// Add health checks
 		builder.Services
 			.AddHealthChecks();
-		
+
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initialized");
 	}
 
@@ -161,27 +202,28 @@ public static class ModuleDefinition
 		{
 			app.UseMiddleware<HealthChecksProtectionMiddleware>();
 
-			app.MapHealthChecks(healthChecksOptions.Value.Path!, new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-			{
-				ResultStatusCodes =
+			app.MapHealthChecks(healthChecksOptions.Value.Path!,
+				new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 				{
-					[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
-					[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
-					[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
-				},
-				ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
-				Predicate = (check) =>
-				{
-					if(healthChecksOptions.Value.RestrictedChecks is null || healthChecksOptions.Value.RestrictedChecks.Length == 0)
+					ResultStatusCodes =
 					{
-						return true;
+						[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
+						[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
+						[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] =
+							StatusCodes.Status503ServiceUnavailable
+					},
+					ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+					Predicate = (check) =>
+					{
+						if (healthChecksOptions.Value.RestrictedChecks is null ||
+						    healthChecksOptions.Value.RestrictedChecks.Length == 0)
+						{
+							return true;
+						}
+
+						return healthChecksOptions.Value.RestrictedChecks.Contains(check.Name);
 					}
-
-					return healthChecksOptions.Value.RestrictedChecks.Contains(check.Name);
-				}
-			});
+				});
 		}
-
-
 	}
 }
