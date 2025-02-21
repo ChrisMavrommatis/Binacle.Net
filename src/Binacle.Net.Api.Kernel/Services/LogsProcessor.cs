@@ -38,7 +38,10 @@ internal class LogsProcessor<TRequest> : BackgroundService
 			var log = this.options.LogFormatter(request);
 
 			var date = this.timeProvider.GetLocalNow();
-			var fileName = string.Format(this.options.FileNameFormat, date.ToString("yyyyMMdd"));
+			var fileName = string.Format(
+				this.options.FileNameFormat, 
+				date.ToString(this.options.DateFormat)
+			);
 			var logFile = Path.Combine(logDirectory, fileName);
 			var json = JsonSerializer.Serialize(log);
 

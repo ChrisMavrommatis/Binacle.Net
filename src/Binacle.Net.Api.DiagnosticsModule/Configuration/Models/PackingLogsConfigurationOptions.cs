@@ -17,5 +17,6 @@ internal class PackingLogOptions
 {
 	public string? Path { get; set; }
 	public string? FileName { get; set; }
+	public string? DateFormat { get; set; }
 	public int? ChannelLimit { get; set; }
 }
