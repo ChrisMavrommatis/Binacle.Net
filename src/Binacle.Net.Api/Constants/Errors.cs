@@ -16,6 +16,7 @@ internal static class Messages
 	public const string IdMustBeUnique = "Each id must only appear once.";
 	public const string MalformedRequestBody = "Malformed request body.";
 	public const string GreaterThanZero = "Must be greater than 0.";
+	public const string VolumeOverflow = "The dimensions provided result in a volume overflow."; 
 
 	public static readonly string LessThanUShortMaxValue = string.Format("Must be less than {0}.", ushort.MaxValue);
 }

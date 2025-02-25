@@ -3,6 +3,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import * as THREE from 'three';
 import {
 	cameraFov,
+	cameraFar,
 	startLoading,
 	stopLoading,
 	redrawScene,
@@ -34,10 +35,21 @@ let _State = {
 let _visualizerContainer = null;
 let _rendererContainer = null;
 
+const getBin = function(scene){
+	const bin = scene.getObjectByName('bin').geometry.parameters.geometry.parameters;
+	return {
+		length : bin.width,
+		width: bin.depth,
+		height: bin.height
+	};
+	
+}
 const windowResizeHandler = function () {
 	_State.aspectRatio = window.innerWidth / window.innerHeight;
 	_State.camera.aspect = _State.aspectRatio;
 	_State.camera.fov = cameraFov(_State.aspectRatio);
+	const bin = getBin(_State.scene);
+	_State.camera.far = cameraFar(bin);
 	_State.camera.updateProjectionMatrix();
 	_State.renderer.setSize(
 		_rendererContainer.offsetWidth,
@@ -83,8 +95,8 @@ window.binacle = {
 		_State.camera = new THREE.PerspectiveCamera(
 			cameraFov(_State.aspectRatio),
 			_State.aspectRatio,
-			0.1,
-			1000
+			1,
+			cameraFar(bin)
 		);
 		_State.camera.lookAt(_State.scene.position);
 		_State.light = new THREE.AmbientLight(0xffffff);

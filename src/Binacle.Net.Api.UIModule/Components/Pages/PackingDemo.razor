@@ -18,7 +18,7 @@
 	This demo uses the experimental V3 API.
 </p>
 
-<EditForm Model="@Model" class="grid">
+<EditForm Model="@Model" class="grid" OnSubmit="@((editContext) => this.GetResults(editContext))">
 	<DataAnnotationsValidator/>
 
 	<article class="s12 primary-container">
@@ -119,7 +119,7 @@
 					Options="ExtensionMethods.EnumExtensions.ToKeyValue<ViewModels.Algorithm>()"/>
 			</div>
 			<div class="s12 m6 row">
-				<button class="max tertiary" type="button" @onclick="this.GetResults">
+				<button class="max tertiary" type="submit">
 					<span>Get Results</span>
 				</button>
 			</div>

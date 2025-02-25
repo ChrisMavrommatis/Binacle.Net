@@ -1,12 +1,10 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Binacle.Net.Api.UIModule.ApiModels.Requests;
-using Binacle.Net.Api.UIModule.ApiModels.Responses;
-using Binacle.Net.Api.UIModule.Components.Features;
 using Binacle.Net.Api.UIModule.Models;
 using Binacle.Net.Api.UIModule.Services;
 using Binacle.Net.Api.UIModule.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Bin = Binacle.Net.Api.UIModule.ViewModels.Bin;
 using Item = Binacle.Net.Api.UIModule.ViewModels.Item;
 
@@ -24,7 +22,7 @@ public partial class PackingDemo : AppletComponentBase
 
 	[Inject] 
 	internal MessagingService? MessagingService { get; set; }
-	
+
 	private Errors errors = new();
 	private List<PackingResult>? results;
 	private PackingResult? selectedResult;
@@ -103,17 +101,23 @@ public partial class PackingDemo : AppletComponentBase
 		this.Model.Items = sampleData.Items;
 	}
 
-	private async Task GetResults()
+	private async Task GetResults(EditContext editContext)
 	{
+		var messages = editContext.GetValidationMessages().ToList();
+		if (messages.Count > 0)
+		{
+			this.errors.AddRange(messages);
+			return;
+		}
 		await this.MessagingService!.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
 			"UpdateScene",
 			async () =>
 			{
 				try
 				{
-					var request = new PackByCustomRequest
+					var request = new ApiModels.Requests.PackByCustomRequest
 					{
-						Parameters = new PackRequestParameters()
+						Parameters = new ApiModels.Requests.PackRequestParameters()
 						{
 							Algorithm = this.Model.Algorithm switch
 							{
@@ -130,13 +134,44 @@ public partial class PackingDemo : AppletComponentBase
 					var response = await client.PostAsJsonAsync("api/v3/pack/by-custom", request);
 					if (response.StatusCode != HttpStatusCode.OK)
 					{
-						throw new ApplicationException($"Error: {response.StatusCode}");
+						this.errors.Add($"Error: {response.StatusCode}.");
+						var errorResponse = await response.Content.ReadFromJsonAsync<ApiModels.Responses.ErrorResponse>();
+						if (errorResponse is null)
+						{
+							this.errors.Add($"Could not read the response");
+							return (null, null);
+						}
+
+						if (!string.IsNullOrEmpty(errorResponse.Message))
+						{
+							this.errors.Add(errorResponse.Message);
+						}
+
+						if (errorResponse.Data is null)
+						{
+							return (null, null);
+						}
+						foreach (var error in errorResponse.Data)
+						{
+							if (!string.IsNullOrEmpty(error.Field))
+							{
+								this.errors.Add($"{error.Field} - {error.FieldError}");
+							}
+
+							if (!string.IsNullOrEmpty(error.Parameter))
+							{
+								this.errors.Add($"{error.Parameter} - {error.Message}");
+							}
+						}
+
+						return (null, null);
 					}
 
-					var packResponse = await response.Content.ReadFromJsonAsync<PackByCustomResponse>();
+					var packResponse = await response.Content.ReadFromJsonAsync<ApiModels.Responses.PackByCustomResponse>();
 					if (packResponse is null || packResponse.Data is null || packResponse.Data.Count < 1)
 					{
-						throw new ApplicationException("No results found");
+						this.errors.Add($"No results found");
+						return (null, null);
 					}
 
 					this.results = packResponse.Data ?? new List<PackingResult>();
@@ -145,7 +180,8 @@ public partial class PackingDemo : AppletComponentBase
 
 					if (result.Bin is null)
 					{
-						throw new InvalidOperationException("Selected result has no bin");
+						this.errors.Add($"Selected result has no bin");
+						return (null, null);
 					}
 
 					this.selectedResult = result;
