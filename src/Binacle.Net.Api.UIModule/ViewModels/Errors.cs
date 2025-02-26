@@ -11,6 +11,11 @@ public class Errors  : IEnumerable<string>
 		this._errors.Add(error);
 	}
 	
+	public void AddRange(IEnumerable<string> errors)
+	{
+		this._errors.AddRange(errors);
+	}
+	
 	public void Clear()
 	{
 		this._errors.Clear();

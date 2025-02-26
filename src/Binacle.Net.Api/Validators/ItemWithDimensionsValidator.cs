@@ -7,6 +7,7 @@ internal class ItemWithDimensionsValidator : AbstractValidator<IWithReadOnlyDime
 {
 	public ItemWithDimensionsValidator()
 	{
+		RuleFor(x => x).Must(x => x.Height * x.Width * x.Length > -1).WithMessage(Constants.Errors.Messages.VolumeOverflow);
 		RuleFor(x => x.Length).NotNull().WithMessage(Constants.Errors.Messages.IsRequired);
 		RuleFor(x => x.Width).NotNull().WithMessage(Constants.Errors.Messages.IsRequired);
 		RuleFor(x => x.Height).NotNull().WithMessage(Constants.Errors.Messages.IsRequired);

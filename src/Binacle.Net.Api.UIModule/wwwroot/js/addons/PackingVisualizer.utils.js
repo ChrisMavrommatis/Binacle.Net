@@ -12,6 +12,16 @@ export function cameraFov(aspectRatio) {
 	return 40;
 }
 
+export function cameraFar(bin){
+	if(!bin) {
+		return 1000;
+	}
+	const distance = Math.sqrt((bin.length**2) + (bin.height**2) + (bin.width**2) );
+	const far = (distance * 2) + (bin.height * 2);
+	const roundedFar = Math.ceil(far);
+	return roundedFar;
+}
+
 export function startLoading(container) {
 	const loader = document.createElement("progress");
 	loader.id = "loader";
@@ -108,6 +118,7 @@ export function redrawScene(scene, camera, bin, packedItems) {
 	const cameraPosition = getCameraPosition(bin);
 	camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 
+	camera.far = cameraFar(bin);
 	const bin3D = createBin(bin);
 	scene.add(bin3D);
 
@@ -123,6 +134,8 @@ export function redrawScene(scene, camera, bin, packedItems) {
 
 		scene.add(item);
 	}
+	
+	camera.updateProjectionMatrix();
 }
 
 export function getThemeColors(el, themeColor){
