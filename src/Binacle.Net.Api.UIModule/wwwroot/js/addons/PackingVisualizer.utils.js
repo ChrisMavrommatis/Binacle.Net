@@ -13,6 +13,9 @@ export function cameraFov(aspectRatio) {
 }
 
 export function cameraFar(bin){
+	if(!bin) {
+		return 1000;
+	}
 	const distance = Math.sqrt((bin.length**2) + (bin.height**2) + (bin.width**2) );
 	const far = (distance * 2) + (bin.height * 2);
 	const roundedFar = Math.ceil(far);
