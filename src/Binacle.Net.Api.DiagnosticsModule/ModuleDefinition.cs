@@ -140,38 +140,17 @@ public static class ModuleDefinition
 			builder.Services
 				.AddOptionsBasedLogProcessor<LegacyFittingLogChannelRequest>(
 					optionsSelector: options => options.LegacyFitting!,
-					logFormatter: request =>
-					{
-						var log = new Dictionary<string, object>();
-						log.Add("Bins", request.Bins.ConvertToLogFormat());
-						log.Add("Items", request.Items.ConvertToLogFormat());
-						log.Add("Results", request.Results.ConvertToLogFormat());
-						return log;
-					});
-			
+					logFormatter: request => request.ConvertToLogObject());
+
 			builder.Services
 				.AddOptionsBasedLogProcessor<LegacyPackingLogChannelRequest>(
 					optionsSelector: options => options.LegacyPacking!,
-					logFormatter: request =>
-					{
-						var log = new Dictionary<string, object>();
-						log.Add("Bins", request.Bins.ConvertToLogFormat());
-						log.Add("Items", request.Items.ConvertToLogFormat());
-						log.Add("Results", request.Results.ConvertToLogFormat());
-						return log;
-					});
-			
+					logFormatter: request => request.ConvertToLogObject());
+
 			builder.Services
 				.AddOptionsBasedLogProcessor<PackingLogChannelRequest>(
 					optionsSelector: options => options.Packing!,
-					logFormatter: request =>
-					{
-						var log = new Dictionary<string, object>();
-						log.Add("Bins", request.Bins.ConvertToLogFormat());
-						log.Add("Items", request.Items.ConvertToLogFormat());
-						log.Add("Results", request.Results.ConvertToLogFormat());
-						return log;
-					});
+					logFormatter: request => request.ConvertToLogObject());
 		}
 
 		// Health Checks
