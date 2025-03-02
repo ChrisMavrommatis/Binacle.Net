@@ -1,9 +1,13 @@
-﻿namespace Binacle.Net.Api.ServiceModule.Configuration.Models;
+﻿using Binacle.Net.Api.Kernel.Models;
 
-internal class JwtAuthOptions
+namespace Binacle.Net.Api.ServiceModule.Configuration.Models;
+
+internal class JwtAuthOptions : IConfigurationOptions
 {
-	public static string SectionName = "JwtAuth";
-	public static string FilePath = "ServiceModule/JwtAuth.json";
+	public static string FilePath => "ServiceModule/JwtAuth.json";
+	public static string SectionName => "JwtAuth";
+	public static bool Optional => false;
+	public static bool ReloadOnChange => false;
 	public static string GetEnvironmentFilePath(string environment) => $"ServiceModule/JwtAuth.{environment}.json";
 
 	public string? Issuer { get; set; }

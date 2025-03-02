@@ -2,7 +2,7 @@
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace ChrisMavrommatis.FluentValidation;
+namespace Binacle.Net.Api.Kernel;
 
 public static class ValidatorExtensions
 {

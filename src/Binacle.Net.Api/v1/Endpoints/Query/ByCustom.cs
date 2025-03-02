@@ -1,7 +1,7 @@
 ﻿using Asp.Versioning;
+using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Endpoints;
-using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;

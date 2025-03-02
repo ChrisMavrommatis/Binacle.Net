@@ -1,7 +1,7 @@
-﻿using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
+﻿using Binacle.Net.Api.Kernel;
+using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Services;
 using FluentValidation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -14,13 +14,7 @@ public static class DomainSetup
 	{
 		builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
 
-		builder.Configuration
-			.AddJsonFile(UserOptions.FilePath, optional: false, reloadOnChange: false)
-			.AddEnvironmentVariables();
-
-		builder.Services
-			.AddOptions<UserOptions>()
-			.Bind(builder.Configuration.GetSection(UserOptions.SectionName));
+		builder.AddValidatableJsonConfigurationOptions<UserOptions>();
 
 		builder.Services.AddScoped<IUserManagerService, UserManagerService>();
 

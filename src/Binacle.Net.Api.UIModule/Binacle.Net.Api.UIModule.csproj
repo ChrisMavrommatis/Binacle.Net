@@ -14,18 +14,17 @@
 
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="4.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<UIFiles Include="wwwroot\**\*.*" />
-		<ConfigFiles Include="Config_Files\*.json" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\dep\Binacle.ViPaq\Binacle.ViPaq.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.Kernel\Binacle.Net.Api.Kernel.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<UIFiles Include="wwwroot\**\*.*" />
+		<ConfigFiles Include="Config_Files\*.json" />
 	</ItemGroup>
 
 	<!-- This target runs on every build -->

@@ -1,24 +1,25 @@
-﻿using System.Threading.Channels;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
-using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
+﻿using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
 using Binacle.Net.Api.DiagnosticsModule.ExtensionMethods;
 using Binacle.Net.Api.DiagnosticsModule.Middleware;
 using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.Kernel.Models;
-using Binacle.Net.Api.Models;
-using ChrisMavrommatis.FluentValidation;
 using FluentValidation;
 using HealthChecks.UI.Client;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
+using Serilog.Events;
+
 
 namespace Binacle.Net.Api.DiagnosticsModule;
 
@@ -27,7 +28,7 @@ public static class ModuleDefinition
 	public static void BootstrapLogger()
 	{
 		Log.Logger = new LoggerConfiguration()
-			.MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
+			.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
 			.Enrich.FromLogContext()
 			.Enrich.WithMachineName()
 			.Enrich.WithThreadId()
@@ -39,11 +40,12 @@ public static class ModuleDefinition
 	{
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initializing");
 
-		builder.Configuration
-			.AddJsonFile("DiagnosticsModule/ConnectionStrings.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"DiagnosticsModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json",
-				optional: true, reloadOnChange: true)
-			.AddEnvironmentVariables();
+		builder.AddJsonConfiguration(
+			filePath: "DiagnosticsModule/ConnectionStrings.json",
+			environmentFilePath: $"DiagnosticsModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json",
+			optional: false,
+			reloadOnChange: true
+		);
 
 		// Required for local run with secrets
 		if (builder.Environment.IsDevelopment())
@@ -53,88 +55,110 @@ public static class ModuleDefinition
 		}
 
 		// Logging
-		builder.Configuration
-			.AddJsonFile("DiagnosticsModule/Serilog.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"DiagnosticsModule/Serilog.{builder.Environment.EnvironmentName}.json", optional: true,
-				reloadOnChange: true);
-
-		var applicationInsightsConnectionString = builder.Configuration
-			.GetConnectionStringWithEnvironmentVariableFallback("ApplicationInsights");
+		builder.AddJsonConfiguration(
+			filePath: "DiagnosticsModule/Serilog.json",
+			environmentFilePath: $"DiagnosticsModule/Serilog.{builder.Environment.EnvironmentName}.json",
+			optional: false,
+			reloadOnChange: true
+		);
 
 		// overwrite default logger
 		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 		{
 			loggerConfiguration
 				.ReadFrom.Configuration(builder.Configuration);
-
-			if (applicationInsightsConnectionString is not null)
-			{
-				loggerConfiguration.WriteTo.ApplicationInsights(
-					services.GetRequiredService<TelemetryConfiguration>(),
-					TelemetryConverter.Traces
-				);
-			}
 		});
-
-		// Add OpenTelemetry
-		var openTelemetryBuilder = builder.Services
-			.AddOpenTelemetry()
-			//.ConfigureResource(resource =>
-			//{
-			//	resource.AddService(serviceName: "Binacle-Net");
-			//})
-			.WithMetrics(configure =>
-			{
-				configure
-					.AddRuntimeInstrumentation()
-					.AddMeter("Microsoft.AspNetCore.Hosting")
-					.AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-					.AddMeter("Microsoft.AspNetCore.RateLimiting");
-			}).WithTracing(configure => { configure.AddAspNetCoreInstrumentation(); });
-
-
-		if (applicationInsightsConnectionString is not null)
-		{
-			builder.Services.AddApplicationInsightsTelemetry(options =>
-			{
-				options.ConnectionString = applicationInsightsConnectionString;
-				options.EnableQuickPulseMetricStream = false;
-			});
-
-
-			openTelemetryBuilder.UseAzureMonitor(configure =>
-			{
-				var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
-				if (samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
-				{
-					configure.SamplingRatio = ratio;
-				}
-
-				configure.ConnectionString = applicationInsightsConnectionString;
-			});
-		}
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton,
 			includeInternalTypes: true);
 
+		// Open Telemetry
+		builder.AddValidatableJsonConfigurationOptions<OpenTelemetryConfigurationOptions>();
+
+		var openTelemetryOptions = builder.Configuration.GetConfigurationOptions<OpenTelemetryConfigurationOptions>();
+
+		if (openTelemetryOptions is not null && openTelemetryOptions.Enabled)
+		{
+			var openTelemetryBuilder = builder.Services
+				.AddOpenTelemetry()
+				.ConfigureResource(resourceBuilder =>
+				{
+					resourceBuilder.AddService(
+						serviceName: "Binacle.Net",
+						serviceVersion: Environment.GetEnvironmentVariable("BINACLE_VERSION"),
+						serviceNamespace: openTelemetryOptions.ServiceNamespace,
+						serviceInstanceId: openTelemetryOptions.ServiceInstanceId
+					);
+				});
+
+			openTelemetryBuilder.WithMetrics(meterBuilder =>
+			{
+				 meterBuilder
+					 .AddAspNetCoreInstrumentation()
+					 //	 .AddMeter("Microsoft.AspNetCore.Hosting")
+					 //  .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
+					 //  .AddMeter("Microsoft.AspNetCore.Http.Connections")
+					 //  .AddMeter("Microsoft.AspNetCore.Routing")
+					 //  .AddMeter("Microsoft.AspNetCore.Diagnostics")
+					 //  .AddMeter("Microsoft.AspNetCore.RateLimiting");
+				 	.AddRuntimeInstrumentation()
+					 // .AddMeter("System.Runtime")
+					 
+					.AddOtlpExporter(options =>
+					{
+						 
+					});
+			});
+			openTelemetryBuilder.WithTracing(traceBuilder =>
+			{
+				traceBuilder
+					.AddAspNetCoreInstrumentation()
+					.AddHttpClientInstrumentation()
+					.AddOtlpExporter(options =>
+					{
+						
+					}); 
+				
+			});
+			openTelemetryBuilder.WithLogging(logBuilder =>
+			{
+				logBuilder
+					.AddOtlpExporter(options =>
+					{
+							
+					});
+			});
+
+			// if (applicationInsightsConnectionString is not null)
+			// {
+			// 	builder.Services.AddApplicationInsightsTelemetry(options =>
+			// 	{
+			// 		options.ConnectionString = applicationInsightsConnectionString;
+			// 		options.EnableQuickPulseMetricStream = false;
+			// 	});
+			//
+			//
+			// 	openTelemetryBuilder.UseAzureMonitor(configure =>
+			// 	{
+			// 		var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
+			// 		if (samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
+			// 		{
+			// 			configure.SamplingRatio = ratio;
+			// 		}
+			//
+			// 		configure.ConnectionString = applicationInsightsConnectionString;
+			// 	});
+			// }
+		}
+
+
 		// Packing Logs
-
-		builder.Configuration
-			.AddJsonFile(PackingLogsConfigurationOptions.FilePath, optional: false, reloadOnChange: true)
-			.AddJsonFile(PackingLogsConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName),
-				optional: true, reloadOnChange: true)
-			.AddEnvironmentVariables();
-
-		builder.Services
-			.AddOptions<PackingLogsConfigurationOptions>()
-			.Bind(builder.Configuration.GetSection(PackingLogsConfigurationOptions.SectionName))
-			.ValidateFluently()
-			.ValidateOnStart();
+		builder.AddValidatableJsonConfigurationOptions<PackingLogsConfigurationOptions>();
 
 		var packingLogsOptionsIsEnabled = builder.Configuration
 			.GetSection(PackingLogsConfigurationOptions.SectionName)
 			.GetValue<bool>(nameof(PackingLogsConfigurationOptions.Enabled));
-		
+
 		if (packingLogsOptionsIsEnabled)
 		{
 			builder.Services
@@ -154,17 +178,7 @@ public static class ModuleDefinition
 		}
 
 		// Health Checks
-		builder.Configuration
-			.AddJsonFile(HealthCheckConfigurationOptions.FilePath, optional: false, reloadOnChange: true)
-			.AddJsonFile(HealthCheckConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName),
-				optional: true, reloadOnChange: true)
-			.AddEnvironmentVariables();
-
-		builder.Services
-			.AddOptions<HealthCheckConfigurationOptions>()
-			.Bind(builder.Configuration.GetSection(HealthCheckConfigurationOptions.SectionName))
-			.ValidateFluently()
-			.ValidateOnStart();
+		builder.AddValidatableJsonConfigurationOptions<HealthCheckConfigurationOptions>();
 
 		// Add health checks
 		builder.Services
@@ -182,13 +196,13 @@ public static class ModuleDefinition
 			app.UseMiddleware<HealthChecksProtectionMiddleware>();
 
 			app.MapHealthChecks(healthChecksOptions.Value.Path!,
-				new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+				new HealthCheckOptions
 				{
 					ResultStatusCodes =
 					{
-						[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
-						[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
-						[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] =
+						[HealthStatus.Healthy] = StatusCodes.Status200OK,
+						[HealthStatus.Degraded] = StatusCodes.Status200OK,
+						[HealthStatus.Unhealthy] =
 							StatusCodes.Status503ServiceUnavailable
 					},
 					ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,

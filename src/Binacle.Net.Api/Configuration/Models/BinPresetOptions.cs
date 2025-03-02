@@ -1,12 +1,16 @@
-﻿namespace Binacle.Net.Api.Configuration.Models;
+﻿using Binacle.Net.Api.Kernel.Models;
+
+namespace Binacle.Net.Api.Configuration.Models;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class BinPresetOptions
+public class BinPresetOptions : IConfigurationOptions
 {
-	public const string SectionName = "PresetOptions";
-	public const string FilePath = "Presets.json";
-	// public static string GetEnvironmentFilePath(string environment) => $"Presets.{environment}.json";
+	public static string FilePath => "Presets.json";
+	public static string SectionName => "PresetOptions";
+	public static bool Optional => false;
+	public static bool ReloadOnChange => true;
+	public static string? GetEnvironmentFilePath(string environment) => null;
 
 
 	public Dictionary<string, BinPresetOption> Presets { get; set; } = new();

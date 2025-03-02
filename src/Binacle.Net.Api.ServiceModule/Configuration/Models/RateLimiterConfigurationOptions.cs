@@ -1,10 +1,13 @@
-﻿namespace Binacle.Net.Api.ServiceModule.Configuration.Models;
+﻿using Binacle.Net.Api.Kernel.Models;
 
-internal class RateLimiterConfigurationOptions
+namespace Binacle.Net.Api.ServiceModule.Configuration.Models;
+
+internal class RateLimiterConfigurationOptions : IConfigurationOptions
 {
-	public static string SectionName = "RateLimiter";
-	public static string FilePath = "ServiceModule/RateLimiter.json";
-
+	public static string FilePath => "ServiceModule/RateLimiter.json";
+	public static string SectionName => "RateLimiter";
+	public static bool Optional => false;
+	public static bool ReloadOnChange => false;
 	public static string GetEnvironmentFilePath(string environment) => $"ServiceModule/RateLimiter.{environment}.json";
 
 	public string? Anonymous { get; set; }

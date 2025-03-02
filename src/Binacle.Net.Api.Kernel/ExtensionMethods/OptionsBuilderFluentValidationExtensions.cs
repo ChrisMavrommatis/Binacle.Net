@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace ChrisMavrommatis.FluentValidation;
+namespace Binacle.Net.Api.Kernel;
 
 public static class OptionsBuilderFluentValidationExtensions
 {

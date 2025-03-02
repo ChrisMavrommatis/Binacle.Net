@@ -1,11 +1,11 @@
-﻿using Binacle.Net.Api.Kernel;
+﻿using System.Text;
+using System.Text.Json.Serialization;
+using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Domain;
-using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Infrastructure;
 using Binacle.Net.Api.ServiceModule.Services;
-using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.MinimalEndpointDefinitions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,8 +17,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using System.Text;
-using System.Text.Json.Serialization;
 
 namespace Binacle.Net.Api.ServiceModule;
 
@@ -28,11 +26,13 @@ public static class ModuleDefinition
 	{
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initializing");
 
-		builder.Configuration
-			.AddJsonFile("ServiceModule/ConnectionStrings.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"ServiceModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-			.AddEnvironmentVariables();
-
+		builder.AddJsonConfiguration(
+			filePath: "ServiceModule/ConnectionStrings.json",
+			environmentFilePath:$"ServiceModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json",
+			optional: false,
+			reloadOnChange: true
+		);
+		
 		// Required for local run with secrets
 		if (builder.Environment.IsDevelopment())
 		{
@@ -42,27 +42,9 @@ public static class ModuleDefinition
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
 
-		builder.Configuration
-			.AddJsonFile(RateLimiterConfigurationOptions.FilePath, optional: false, reloadOnChange: false)
-			.AddJsonFile(RateLimiterConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
-			.AddEnvironmentVariables();
+		builder.AddValidatableJsonConfigurationOptions<RateLimiterConfigurationOptions>();
 
-		builder.Services
-			.AddOptions<RateLimiterConfigurationOptions>()
-			.Bind(builder.Configuration.GetSection(RateLimiterConfigurationOptions.SectionName))
-			.ValidateFluently()
-			.ValidateOnStart();
-
-		builder.Configuration
-			.AddJsonFile(JwtAuthOptions.FilePath, optional: false, reloadOnChange: false)
-			.AddJsonFile(JwtAuthOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: false)
-			.AddEnvironmentVariables();
-
-		builder.Services
-			.AddOptions<JwtAuthOptions>()
-			.Bind(builder.Configuration.GetSection(JwtAuthOptions.SectionName))
-			.ValidateFluently()
-			.ValidateOnStart();
+		builder.AddValidatableJsonConfigurationOptions<JwtAuthOptions>();
 
 		builder.Services.AddAuthentication(options =>
 		{
@@ -74,7 +56,7 @@ public static class ModuleDefinition
 		{
 			var jwtAuthOptions = builder.Configuration.GetSection(JwtAuthOptions.SectionName).Get<JwtAuthOptions>()!;
 
-			options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+			options.TokenValidationParameters = new TokenValidationParameters
 			{
 				ValidIssuer = jwtAuthOptions.Issuer,
 				ValidAudience = jwtAuthOptions.Audience,

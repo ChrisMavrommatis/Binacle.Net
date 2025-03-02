@@ -16,21 +16,23 @@
 	<ItemGroup>
 		<PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
 		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="ChrisMavrommatis.Endpoints" Version="2.0.1" />
 		<PackageReference Include="ChrisMavrommatis.Features" Version="2.0.2" />
 		<PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.2" />
 		<PackageReference Include="ChrisMavrommatis.SwaggerExamples" Version="2.0.1" />
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.2.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.2.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.3.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.3.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\dep\Binacle.ViPaq\Binacle.ViPaq.csproj" />
-	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.DiagnosticsModule\Binacle.Net.Api.DiagnosticsModule.csproj" />

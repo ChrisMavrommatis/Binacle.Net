@@ -1,5 +1,7 @@
 ﻿using Binacle.Net.Api.Kernel.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace Binacle.Net.Api.Kernel;
@@ -31,5 +33,61 @@ public static class ConfigurationExtensions
 
 		Log.Warning("Connection String {connectionString} not found", name);
 		return null;
+	}
+
+	public static void AddJsonConfiguration<TBuilder>(
+		this TBuilder builder, 
+		string filePath, 
+		string? environmentFilePath = null,
+		bool optional = false,
+		bool reloadOnChange = false
+		)
+		where TBuilder : IHostApplicationBuilder
+	{
+		builder.Configuration
+			.AddJsonFile(filePath, optional: optional, reloadOnChange: reloadOnChange);
+
+		if (!string.IsNullOrWhiteSpace(environmentFilePath))
+		{
+			builder.Configuration
+				.AddJsonFile(environmentFilePath, optional: true, reloadOnChange: reloadOnChange);
+		}
+		
+		builder.Configuration
+			.AddEnvironmentVariables();
+	}
+	
+	public static void AddValidatableJsonConfigurationOptions<TOptions>(
+		this IHostApplicationBuilder builder
+		)
+		where TOptions : class, IConfigurationOptions
+	{
+		builder.Configuration
+			.AddJsonFile(TOptions.FilePath, optional: TOptions.Optional, reloadOnChange: TOptions.ReloadOnChange);
+
+		var environmentFilePath = TOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName);
+		if (!string.IsNullOrWhiteSpace(environmentFilePath))
+		{
+			builder.Configuration
+				.AddJsonFile(environmentFilePath, optional: true, reloadOnChange: TOptions.ReloadOnChange);
+		}
+			
+		builder.Configuration
+			.AddEnvironmentVariables();
+		
+		builder.Services
+			.AddOptions<TOptions>()
+			.Bind(builder.Configuration.GetSection(TOptions.SectionName))
+			.ValidateFluently()
+			.ValidateOnStart();
+	}
+	
+	public static TOptions? GetConfigurationOptions<TOptions>(
+		this IConfigurationManager configuration
+		)
+		where TOptions : class, IConfigurationOptions
+	{
+		return configuration.GetSection(TOptions.SectionName)
+			.Get<TOptions>();
 	}
 }
