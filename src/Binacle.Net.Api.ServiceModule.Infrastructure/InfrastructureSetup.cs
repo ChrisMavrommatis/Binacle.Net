@@ -38,7 +38,15 @@ public static class InfrastructureSetup
 				clientBuilder.AddTableServiceClient(azureStorageConnectionString);
 			});
 		}
-
+		
+		// see if IUserRepository was registered
+		var userRepositoryServiceDescriptor = builder.Services.FirstOrDefault(x => x.ServiceType == typeof(IUserRepository));
+		if (userRepositoryServiceDescriptor is null)
+		{
+			var ex = new ApplicationException("IUserRepository was not registered");
+			Log.Fatal(ex, "No Database provider was registered, please check your configuration");
+			throw ex;
+		}
 
 		builder.Services.AddStartupTask<EnsureAdminUserExistsStartupTask>();
 

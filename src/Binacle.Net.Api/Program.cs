@@ -23,9 +23,8 @@ public class Program
 {
 	public static async Task Main(string[] args)
 	{
-		Binacle.Net.Api.DiagnosticsModule.ModuleDefinition.BootstrapLogger();
-
 		var builder = WebApplication.CreateSlimBuilder(args);
+		builder.BootstrapLogger();
 
 		// Slim builder
 		builder.WebHost.UseKestrelHttpsConfiguration();

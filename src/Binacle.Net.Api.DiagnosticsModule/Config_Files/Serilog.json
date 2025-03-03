@@ -31,7 +31,7 @@
 			"WithThreadId"
 		],
 		"Properties": {
-			"Application": "Binacle API"
+			"Application": "Binacle.Net"
 		}
 	}
 }

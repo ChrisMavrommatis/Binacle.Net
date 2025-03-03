@@ -1,8 +1,6 @@
 ﻿{
 	"OpenTelemetry" : {
-		"ServiceNamespace": "binacle",
-		"ServiceInstanceId": "1",
-		"GlobalOtlpEndpoint": null,
+		"GlobalOtlpEndpoint": "http://localhost:4317",
 		"Tracing": {
 			"OtlpEndpoint": null
 		},

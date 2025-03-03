@@ -1,0 +1,18 @@
+services:
+    aspire-dashboard:
+        image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0
+        ports:
+            - '18888:18888'
+            - '4317:18889'
+    azurite:
+        image: mcr.microsoft.com/azure-storage/azurite:latest
+        volumes:
+            -   type: bind
+                source: ./azurite
+                target: /data
+        ports:
+            - '10000:10000'
+            - '10001:10001'
+            - '10002:10002'
+
+

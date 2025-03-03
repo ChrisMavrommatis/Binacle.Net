@@ -12,7 +12,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -25,8 +28,10 @@ namespace Binacle.Net.Api.DiagnosticsModule;
 
 public static class ModuleDefinition
 {
-	public static void BootstrapLogger()
+	public static void BootstrapLogger(this WebApplicationBuilder builder)
 	{
+		builder.Logging.ClearProviders();
+		
 		Log.Logger = new LoggerConfiguration()
 			.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
 			.Enrich.FromLogContext()
@@ -66,8 +71,9 @@ public static class ModuleDefinition
 		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 		{
 			loggerConfiguration
-				.ReadFrom.Configuration(builder.Configuration);
-		});
+				.ReadFrom.Configuration(builder.Configuration)
+				.Enrich.WithBinacleVersion();
+		}, writeToProviders: true);
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton,
 			includeInternalTypes: true);
@@ -77,7 +83,7 @@ public static class ModuleDefinition
 
 		var openTelemetryOptions = builder.Configuration.GetConfigurationOptions<OpenTelemetryConfigurationOptions>();
 
-		if (openTelemetryOptions is not null && openTelemetryOptions.Enabled)
+		if (openTelemetryOptions?.IsEnabled() ?? false)
 		{
 			var openTelemetryBuilder = builder.Services
 				.AddOpenTelemetry()
@@ -85,49 +91,79 @@ public static class ModuleDefinition
 				{
 					resourceBuilder.AddService(
 						serviceName: "Binacle.Net",
-						serviceVersion: Environment.GetEnvironmentVariable("BINACLE_VERSION"),
+						serviceVersion: Environment.GetEnvironmentVariable("BINACLE_VERSION") ?? "Unknown",
 						serviceNamespace: openTelemetryOptions.ServiceNamespace,
 						serviceInstanceId: openTelemetryOptions.ServiceInstanceId
 					);
 				});
+			
+			if (openTelemetryOptions.IsEnabled(x => x.Metrics))
+			{
+				Log.Information("OpenTelemetry {OpenTelemetryType}. Exporter: {OpenTelemetryExporter}", "Metrics", "OTLP");
 
-			openTelemetryBuilder.WithMetrics(meterBuilder =>
-			{
-				 meterBuilder
-					 .AddAspNetCoreInstrumentation()
-					 //	 .AddMeter("Microsoft.AspNetCore.Hosting")
-					 //  .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-					 //  .AddMeter("Microsoft.AspNetCore.Http.Connections")
-					 //  .AddMeter("Microsoft.AspNetCore.Routing")
-					 //  .AddMeter("Microsoft.AspNetCore.Diagnostics")
-					 //  .AddMeter("Microsoft.AspNetCore.RateLimiting");
-				 	.AddRuntimeInstrumentation()
-					 // .AddMeter("System.Runtime")
-					 
-					.AddOtlpExporter(options =>
-					{
-						 
-					});
-			});
-			openTelemetryBuilder.WithTracing(traceBuilder =>
-			{
-				traceBuilder
-					.AddAspNetCoreInstrumentation()
-					.AddHttpClientInstrumentation()
-					.AddOtlpExporter(options =>
-					{
+				openTelemetryBuilder.WithMetrics(meterBuilder =>
+				{
+					meterBuilder
+						.AddRuntimeInstrumentation()
+						.AddAspNetCoreInstrumentation();
 						
-					}); 
-				
-			});
-			openTelemetryBuilder.WithLogging(logBuilder =>
-			{
-				logBuilder
-					.AddOtlpExporter(options =>
+					if (!string.IsNullOrEmpty(openTelemetryOptions.Metrics.OtlpEndpoint))
 					{
-							
-					});
-			});
+						meterBuilder
+							.AddOtlpExporter(options =>
+							{
+								options.Endpoint = new Uri(openTelemetryOptions.Metrics.OtlpEndpoint!);
+							}); 
+					}
+				});
+			}
+
+			if (openTelemetryOptions.IsEnabled(x => x.Tracing))
+			{
+				Log.Information("OpenTelemetry {OpenTelemetryType}. Exporter: {OpenTelemetryExporter}", "Tracing", "OTLP");
+				openTelemetryBuilder.WithTracing(traceBuilder =>
+				{
+					traceBuilder
+						.AddAspNetCoreInstrumentation()
+						.AddHttpClientInstrumentation();
+					
+					if (!string.IsNullOrEmpty(openTelemetryOptions.Tracing.OtlpEndpoint))
+					{
+						traceBuilder
+							.AddOtlpExporter(options =>
+							{
+								options.Endpoint = new Uri(openTelemetryOptions.Tracing.OtlpEndpoint!);
+							}); 
+					}
+				});
+			}
+
+			if (openTelemetryOptions.IsEnabled(x => x.Logging))
+			{
+				Log.Information("OpenTelemetry {OpenTelemetryType}. Exporter: {OpenTelemetryExporter}", "Logging", "OTLP");
+				openTelemetryBuilder.WithLogging(logBuilder =>
+				{
+					if (!string.IsNullOrEmpty(openTelemetryOptions.Logging.OtlpEndpoint))
+					{
+						logBuilder
+							.AddOtlpExporter(options =>
+							{
+								options.Endpoint = new Uri(openTelemetryOptions.Logging.OtlpEndpoint!);
+							}); 
+					}
+				});
+			}
+
+			if (!string.IsNullOrEmpty(openTelemetryOptions.GlobalOtlpEndpoint))
+			{
+				openTelemetryBuilder
+					.UseOtlpExporter(
+						OtlpExportProtocol.Grpc,
+						new Uri(openTelemetryOptions.GlobalOtlpEndpoint)
+					);
+			}
+
+			
 
 			// if (applicationInsightsConnectionString is not null)
 			// {
