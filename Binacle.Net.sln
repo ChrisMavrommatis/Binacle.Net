@@ -2,22 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33417.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AF3732DE-2A08-4636-9087-2C070CDF67F8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{33E52B99-426D-45F3-A663-E34A612626B0}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dep", "dep", "{5EE822B0-B4A4-43DF-8967-91D3CFC190F8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{88EC1702-D375-496F-B26A-384DBEA8E0AA}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "res", "res", "{D91D976D-F7CC-4AEF-B942-5B5EE97832F7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8C31D46E-8778-404A-AEA5-FF4466499CD6}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{C74DE1C5-A76A-433C-8FCA-272FBDE3713F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8-5B9D-4E2B-AA35-A208DFFFF1FE}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -28,7 +12,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}"
+	ProjectSection(SolutionItems) = preProject
+		build\build.sh = build\build.sh
+		build\README.md = build\README.md
+	EndProjectSection
+EndProject
 Project("{66A2671D-8FB5-11D2-AA7E-00C04F688DDE}") = "contentproject", "build\contentproject\contentproject.proj", "{3A074859-B076-45C5-97AB-BE404A0E8434}"
+EndProject
+
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{C74DE1C5-A76A-433C-8FCA-272FBDE3713F}"
+	ProjectSection(SolutionItems) = preProject
+		config\README.md = config\README.md
+		config\tmux.sh = config\tmux.sh
+	EndProjectSection
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "AspireDashboard", "config\AspireDashboard\AspireDashboard.dcproj", "{B6863CAA-51E9-44D3-81A2-9C5E2DF95AF2}"
+EndProject
+
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dep", "dep", "{5EE822B0-B4A4-43DF-8967-91D3CFC190F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Swashbuckle", "dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj", "{882F3C14-EAC8-4D7D-881B-61A6663E38B6}"
 EndProject
@@ -37,6 +39,36 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Shouldly", "dep\ChrisMavrommatis.Shouldly\ChrisMavrommatis.Shouldly.csproj", "{28105C4D-7776-4682-B103-5576E8D2E3F4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.ViPaq", "dep\Binacle.ViPaq\Binacle.ViPaq.csproj", "{27243C7C-94C8-4F85-A924-83674E764906}"
+EndProject
+
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{88EC1702-D375-496F-B26A-384DBEA8E0AA}"
+	ProjectSection(SolutionItems) = preProject
+		doc\README.md = doc\README.md
+	EndProjectSection
+EndProject
+Project("{66A2671D-8FB5-11D2-AA7E-00C04F688DDE}") = "Benchmarks", "doc\Benchmarks\Benchmarks.proj", "{4E754C19-32DC-4E10-9194-3BED0AFEB69F}"
+EndProject
+Project("{66A2671D-8FB5-11D2-AA7E-00C04F688DDE}") = "PackingEfficiencyTests", "doc\PackingEfficiencyTests\PackingEfficiencyTests.proj", "{757AC6E8-1C23-4FF3-ADFD-95ED974B24E7}"
+EndProject
+
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "res", "res", "{D91D976D-F7CC-4AEF-B942-5B5EE97832F7}"
+EndProject
+Project("{66A2671D-8FB5-11D2-AA7E-00C04F688DDE}") = "http", "res\http\http.proj", "{5E845E8C-E566-4C95-9282-EBA7D18319D5}"
+EndProject
+
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8C31D46E-8778-404A-AEA5-FF4466499CD6}"
+	ProjectSection(SolutionItems) = preProject
+		samples\README.md = samples\README.md
+	EndProjectSection
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "CoreWithPresets", "samples\CoreWithPresets\CoreWithPresets.dcproj", "{EE4463F3-1386-45F0-AF4E-41D60999E5DC}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "WithAllFeatures", "samples\WithAllFeatures\WithAllFeatures.dcproj", "{291A9588-4EC8-46F8-9764-C4094D09B1F0}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "WithUiModuleOnly", "samples\WithUiModuleOnly\WithUiModuleOnly.dcproj", "{52076940-51EC-45A8-8767-F4EC3409F873}"
+EndProject
+
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AF3732DE-2A08-4636-9087-2C070CDF67F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib", "src\Binacle.Net.Lib\Binacle.Net.Lib.csproj", "{231D1EB6-7755-4AE5-BC5D-AFE071C1B10D}"
 EndProject
@@ -58,6 +90,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.UIModule", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.DiagnosticsModule", "src\Binacle.Net.Api.DiagnosticsModule\Binacle.Net.Api.DiagnosticsModule.csproj", "{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}"
 EndProject
+
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{33E52B99-426D-45F3-A663-E34A612626B0}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.TestsKernel", "test\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj", "{198E9FA1-54ED-44D3-9DBE-49CBBA785833}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.UnitTests", "test\Binacle.Net.Lib.UnitTests\Binacle.Net.Lib.UnitTests.csproj", "{F2367457-E8A0-42BE-A64B-DF12621B9CBA}"
@@ -71,14 +106,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.PerformanceTests", "test\Binacle.Net.Lib.PerformanceTests\Binacle.Net.Lib.PerformanceTests.csproj", "{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.ViPaq.UnitTests", "test\Binacle.ViPaq.UnitTests\Binacle.ViPaq.UnitTests.csproj", "{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "CoreWithPresets", "samples\CoreWithPresets\CoreWithPresets.dcproj", "{EE4463F3-1386-45F0-AF4E-41D60999E5DC}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "WithAllFeatures", "samples\WithAllFeatures\WithAllFeatures.dcproj", "{291A9588-4EC8-46F8-9764-C4094D09B1F0}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "WithUiModuleOnly", "samples\WithUiModuleOnly\WithUiModuleOnly.dcproj", "{52076940-51EC-45A8-8767-F4EC3409F873}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "AspireDashboard", "config\AspireDashboard\AspireDashboard.dcproj", "{B6863CAA-51E9-44D3-81A2-9C5E2DF95AF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -232,16 +259,6 @@ Global
 		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}.Release|x86.ActiveCfg = Release|Any CPU
 		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}.Release|x86.Build.0 = Release|Any CPU
-		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Debug|x86.Build.0 = Debug|Any CPU
-		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Release|x86.ActiveCfg = Release|Any CPU
-		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Release|x86.Build.0 = Release|Any CPU
-		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Debug|x86.Build.0 = Debug|Any CPU
-		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Release|x86.ActiveCfg = Release|Any CPU
-		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Release|x86.Build.0 = Release|Any CPU
 		{27243C7C-94C8-4F85-A924-83674E764906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{27243C7C-94C8-4F85-A924-83674E764906}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27243C7C-94C8-4F85-A924-83674E764906}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -293,6 +310,12 @@ Global
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0} = {8C31D46E-8778-404A-AEA5-FF4466499CD6}
 		{52076940-51EC-45A8-8767-F4EC3409F873} = {8C31D46E-8778-404A-AEA5-FF4466499CD6}
 		{B6863CAA-51E9-44D3-81A2-9C5E2DF95AF2} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
+		
+		{5E845E8C-E566-4C95-9282-EBA7D18319D5} = {D91D976D-F7CC-4AEF-B942-5B5EE97832F7}
+		
+		{4E754C19-32DC-4E10-9194-3BED0AFEB69F} = {88EC1702-D375-496F-B26A-384DBEA8E0AA}
+		{757AC6E8-1C23-4FF3-ADFD-95ED974B24E7} = {88EC1702-D375-496F-B26A-384DBEA8E0AA}
+		
 		{27243C7C-94C8-4F85-A924-83674E764906} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{3A074859-B076-45C5-97AB-BE404A0E8434} = {848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}
 		{43A084F6-C19B-48F6-8D24-FD79AE3F53E4} = {33E52B99-426D-45F3-A663-E34A612626B0}

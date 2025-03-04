@@ -5,6 +5,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="*.md"/>
+		<None Include="**\*.http"/>
+		<None Include="*.json"/>
+		<None Include="README.md"/>
 	</ItemGroup>
 </Project>

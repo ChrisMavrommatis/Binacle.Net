@@ -15,7 +15,7 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	tmux send-keys -t $SESSION_NAME:0.0 'cd ./src/Binacle.Net.Api' C-m
 	
 	# Set the cd to ../_data
-	tmux send-keys -t $SESSION_NAME:0.1 'cd ../_data' C-m
+	tmux send-keys -t $SESSION_NAME:0.1 'cd ./config/AspireDashboard' C-m
 	
 	# Select the first pane
 	tmux select-pane -t $SESSION_NAME:0.0
