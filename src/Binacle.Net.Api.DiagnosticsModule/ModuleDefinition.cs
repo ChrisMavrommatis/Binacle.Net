@@ -33,11 +33,15 @@ public static class ModuleDefinition
 		builder.Logging.ClearProviders();
 		
 		Log.Logger = new LoggerConfiguration()
+			.MinimumLevel.Information()
 			.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+			.MinimumLevel.Override("Azure.Core", LogEventLevel.Warning)
+			.WriteTo.Console()
 			.Enrich.FromLogContext()
 			.Enrich.WithMachineName()
+			.Enrich.WithProcessId()
 			.Enrich.WithThreadId()
-			.WriteTo.Console()
+			.Enrich.WithBinacleVersion()
 			.CreateBootstrapLogger();
 	}
 
@@ -125,7 +129,8 @@ public static class ModuleDefinition
 				{
 					traceBuilder
 						.AddAspNetCoreInstrumentation()
-						.AddHttpClientInstrumentation();
+						.AddHttpClientInstrumentation()
+						.AddSource("Binacle.Net.Lib");
 					
 					if (!string.IsNullOrEmpty(openTelemetryOptions.Tracing.OtlpEndpoint))
 					{

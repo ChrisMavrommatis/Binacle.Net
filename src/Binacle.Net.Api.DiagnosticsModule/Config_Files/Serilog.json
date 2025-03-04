@@ -28,6 +28,7 @@
 		"Enrich": [
 			"FromLogContext",
 			"WithMachineName",
+			"WithProcessId",
 			"WithThreadId"
 		],
 		"Properties": {

@@ -22,6 +22,9 @@ public class LoopBinProcessor
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
+		using var activity = Diagnostics.ActivitySource
+			.StartActivity("Process Fitting: Loop");
+		
 		var results = new Dictionary<string, FittingResult>(bins.Count);
 
 		for (var i = 0; i < bins.Count; i++)
@@ -44,6 +47,9 @@ public class LoopBinProcessor
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
+		using var activity = Diagnostics.ActivitySource
+			.StartActivity("Process Packing: Loop");
+		
 		var results = new Dictionary<string, PackingResult>(bins.Count);
 
 		for (var i = 0; i < bins.Count; i++)

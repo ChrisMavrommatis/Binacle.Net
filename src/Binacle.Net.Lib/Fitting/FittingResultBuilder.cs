@@ -45,6 +45,9 @@ internal class FittingResultBuilder<TBin, TItem>
 	}
 	internal FittingResult Build(FittingParameters parameters)
 	{
+		using var activity = Diagnostics.ActivitySource
+			.StartActivity("Build Fitting Result");
+		
 		var result = new FittingResult()
 		{
 			BinID = this.bin.ID

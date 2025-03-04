@@ -24,6 +24,9 @@ public class ParallelBinProcessor
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
+		using var activity = Diagnostics.ActivitySource
+			.StartActivity("Process Fitting: Parallel");
+		
 		if(!concurrencyLevel.HasValue)
 		{
 			concurrencyLevel = Environment.ProcessorCount;
@@ -51,6 +54,9 @@ public class ParallelBinProcessor
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
+		using var activity = Diagnostics.ActivitySource
+			.StartActivity("Process Packing: Parallel");
+		
 		if(!concurrencyLevel.HasValue)
 		{
 			concurrencyLevel = Environment.ProcessorCount;
