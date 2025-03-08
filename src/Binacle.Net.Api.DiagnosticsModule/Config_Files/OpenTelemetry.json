@@ -2,15 +2,40 @@
 	"OpenTelemetry" : {
 		"ServiceNamespace": "binacle",
 		"ServiceInstanceId": "1",
-		"GlobalOtlpEndpoint": null,
-		"Tracing": {
-			"OtlpEndpoint": null
+		"Otlp": {
+			"Endpoint" : null,
+			"Protocol" : "grpc",
+			"Headers" : null
 		},
 		"Metrics": {
-			"OtlpEndpoint":  null
+			"Enabled" : false,
+			"Otlp": {
+				"Endpoint" : null,
+				"Protocol" : "grpc",
+				"Headers" : null
+			},
+			"AdditionalMeters": [
+
+			]
+		},
+		"Tracing": {
+			"Enabled" : false,
+			"Otlp": {
+				"Endpoint" : null,
+				"Protocol" : "grpc",
+				"Headers" : null
+			},
+			"AdditionalSources": [
+				
+			]
 		},
 		"Logging": {
-			"OtlpEndpoint":  null
+			"Enabled" : false,
+			"Otlp": {
+				"Endpoint" : null,
+				"Protocol" : "grpc",
+				"Headers" : null
+			}
 		}
 	}
 }

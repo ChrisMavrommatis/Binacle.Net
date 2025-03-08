@@ -2,13 +2,10 @@
 
 namespace Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
 
-internal class OpenTelemetryTracingConfiguration : IOpenTelemetryConfiguration
+internal class OpenTelemetryTracingConfigurationOptions : IOpenTelemetryTypeConfigurationOptions
 {
-	public string? OtlpEndpoint { get; set; }
-	
-	public bool IsEnabled()
-	{
-		return !string.IsNullOrEmpty(this.OtlpEndpoint);
-	}
-}
+	public bool Enabled { get; set; }
+	public OtlpExporterConfigurationOptions? Otlp { get; set; }
+	public string[]? AdditionalSources { get; set; }
 
+}

@@ -13,31 +13,31 @@ internal class OpenTelemetryConfigurationOptions : IConfigurationOptions
 	public string? ServiceNamespace { get; set; }
 	public string? ServiceInstanceId { get; set; }
 	
-	public string? GlobalOtlpEndpoint { get; set; }
-	public OpenTelemetryTracingConfiguration Tracing { get; set; } = new();
-	public OpenTelemetryMetricsConfiguration Metrics { get; set; } = new();
-	public OpenTelemetryLoggingConfiguration Logging { get; set; } = new();
+	public OtlpExporterConfigurationOptions? Otlp { get; set; }
+	public OpenTelemetryTracingConfigurationOptions Tracing { get; set; } = new();
+	public OpenTelemetryMetricsConfigurationOptions Metrics { get; set; } = new();
+	public OpenTelemetryLoggingConfigurationOptions Logging { get; set; } = new();
 	
 
 	public bool IsEnabled()
 	{
-		if (!string.IsNullOrEmpty(this.GlobalOtlpEndpoint))
-			return true;
-		
-		return (this.Tracing?.IsEnabled() ?? false)
-			|| (this.Metrics?.IsEnabled() ?? false)
-			|| (this.Logging?.IsEnabled() ?? false);
-
+		return this.Tracing.Enabled
+			|| this.Metrics.Enabled
+			|| this.Logging.Enabled;
 	}
-	
-	public bool IsEnabled<TConfiguration>(Func<OpenTelemetryConfigurationOptions, TConfiguration> configurationSelector)
-		where TConfiguration : IOpenTelemetryConfiguration
+
+	public bool UseIndividualOtlpEndpointFor<TConfiguration>(
+		Func<OpenTelemetryConfigurationOptions, TConfiguration> configurationSelector
+	)
+		where TConfiguration: IOpenTelemetryTypeConfigurationOptions
 	{
-		if(!string.IsNullOrEmpty(this.GlobalOtlpEndpoint))
-			return true;
-		
+		if (!string.IsNullOrEmpty(this.Otlp?.Endpoint))
+		{
+			return false;
+		}
+
 		var configuration = configurationSelector(this);
-		return configuration.IsEnabled();
+		return !string.IsNullOrEmpty(configuration.Otlp?.Endpoint);
 	}
 }
 

@@ -23,7 +23,6 @@ using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Events;
 
-
 namespace Binacle.Net.Api.DiagnosticsModule;
 
 public static class ModuleDefinition
@@ -83,12 +82,14 @@ public static class ModuleDefinition
 			includeInternalTypes: true);
 
 		// Open Telemetry
+		
 		builder.AddValidatableJsonConfigurationOptions<OpenTelemetryConfigurationOptions>();
 
 		var openTelemetryOptions = builder.Configuration.GetConfigurationOptions<OpenTelemetryConfigurationOptions>();
 
 		if (openTelemetryOptions?.IsEnabled() ?? false)
 		{
+			Log.Information("OpenTelemetry is enabled.");
 			var openTelemetryBuilder = builder.Services
 				.AddOpenTelemetry()
 				.ConfigureResource(resourceBuilder =>
@@ -100,98 +101,75 @@ public static class ModuleDefinition
 						serviceInstanceId: openTelemetryOptions.ServiceInstanceId
 					);
 				});
-			
-			if (openTelemetryOptions.IsEnabled(x => x.Metrics))
-			{
-				Log.Information("OpenTelemetry {OpenTelemetryType}. Exporter: {OpenTelemetryExporter}", "Metrics", "OTLP");
 
-				openTelemetryBuilder.WithMetrics(meterBuilder =>
-				{
-					meterBuilder
-						.AddRuntimeInstrumentation()
-						.AddAspNetCoreInstrumentation();
-						
-					if (!string.IsNullOrEmpty(openTelemetryOptions.Metrics.OtlpEndpoint))
+			if (openTelemetryOptions.Metrics.Enabled)
+			{
+				Log.Information("Using {OpenTelemetryType} with OpenTelemetry.", "Metrics");
+				openTelemetryBuilder
+					.WithMetrics(meterBuilder =>
 					{
 						meterBuilder
-							.AddOtlpExporter(options =>
-							{
-								options.Endpoint = new Uri(openTelemetryOptions.Metrics.OtlpEndpoint!);
-							}); 
-					}
-				});
+							.AddRuntimeInstrumentation()
+							.AddAspNetCoreInstrumentation()
+							.AddMeters(openTelemetryOptions.Metrics.AdditionalMeters);
+						
+						if (openTelemetryOptions.UseIndividualOtlpEndpointFor(x => x.Metrics))
+						{
+							meterBuilder.AddOtlpExporter("metrics", options =>
+								options.ConfigureOtlpExporter(openTelemetryOptions.Metrics.Otlp!)
+							);
+						}
+					});
 			}
 
-			if (openTelemetryOptions.IsEnabled(x => x.Tracing))
+			if (openTelemetryOptions.Tracing.Enabled)
 			{
-				Log.Information("OpenTelemetry {OpenTelemetryType}. Exporter: {OpenTelemetryExporter}", "Tracing", "OTLP");
-				openTelemetryBuilder.WithTracing(traceBuilder =>
-				{
-					traceBuilder
-						.AddAspNetCoreInstrumentation()
-						.AddHttpClientInstrumentation()
-						.AddSource("Binacle.Net.Lib");
-					
-					if (!string.IsNullOrEmpty(openTelemetryOptions.Tracing.OtlpEndpoint))
+				Log.Information("Using {OpenTelemetryType} with OpenTelemetry.", "Tracing");
+				openTelemetryBuilder
+					.WithTracing(traceBuilder =>
 					{
 						traceBuilder
-							.AddOtlpExporter(options =>
-							{
-								options.Endpoint = new Uri(openTelemetryOptions.Tracing.OtlpEndpoint!);
-							}); 
-					}
-				});
+							.AddAspNetCoreInstrumentation(options =>
+								options.ConfigureAspNetCoreInstrumentation(openTelemetryOptions.Tracing)
+							)
+							.AddHttpClientInstrumentation(options =>
+								options.ConfigureHttpClientInstrumentation(openTelemetryOptions.Tracing)
+							)
+							.AddSource("Binacle.Net.Lib")
+							.AddSources(openTelemetryOptions.Tracing.AdditionalSources);
+						
+						if (openTelemetryOptions.UseIndividualOtlpEndpointFor(x => x.Tracing))
+						{
+							traceBuilder.AddOtlpExporter("tracing", options =>
+								options.ConfigureOtlpExporter(openTelemetryOptions.Tracing.Otlp!)
+							);
+						}
+					});
 			}
 
-			if (openTelemetryOptions.IsEnabled(x => x.Logging))
+			if (openTelemetryOptions.Logging.Enabled)
 			{
-				Log.Information("OpenTelemetry {OpenTelemetryType}. Exporter: {OpenTelemetryExporter}", "Logging", "OTLP");
+				Log.Information("Using {OpenTelemetryType} with OpenTelemetry.", "Logging");
 				openTelemetryBuilder.WithLogging(logBuilder =>
 				{
-					if (!string.IsNullOrEmpty(openTelemetryOptions.Logging.OtlpEndpoint))
+					if (openTelemetryOptions.UseIndividualOtlpEndpointFor(x => x.Logging))
 					{
-						logBuilder
-							.AddOtlpExporter(options =>
-							{
-								options.Endpoint = new Uri(openTelemetryOptions.Logging.OtlpEndpoint!);
-							}); 
+						logBuilder.AddOtlpExporter("logging", options =>
+							options.ConfigureOtlpExporter(openTelemetryOptions.Logging.Otlp!)
+						);
 					}
+					
 				});
 			}
 
-			if (!string.IsNullOrEmpty(openTelemetryOptions.GlobalOtlpEndpoint))
+			if (!string.IsNullOrEmpty(openTelemetryOptions.Otlp?.Endpoint))
 			{
-				openTelemetryBuilder
-					.UseOtlpExporter(
-						OtlpExportProtocol.Grpc,
-						new Uri(openTelemetryOptions.GlobalOtlpEndpoint)
-					);
+				openTelemetryBuilder.UseOtlpExporter();
+				builder.Services.Configure<OtlpExporterOptions>(options =>
+					options.ConfigureOtlpExporter(openTelemetryOptions.Otlp!)
+				);
 			}
-
-			
-
-			// if (applicationInsightsConnectionString is not null)
-			// {
-			// 	builder.Services.AddApplicationInsightsTelemetry(options =>
-			// 	{
-			// 		options.ConnectionString = applicationInsightsConnectionString;
-			// 		options.EnableQuickPulseMetricStream = false;
-			// 	});
-			//
-			//
-			// 	openTelemetryBuilder.UseAzureMonitor(configure =>
-			// 	{
-			// 		var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
-			// 		if (samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
-			// 		{
-			// 			configure.SamplingRatio = ratio;
-			// 		}
-			//
-			// 		configure.ConnectionString = applicationInsightsConnectionString;
-			// 	});
-			// }
 		}
-
 
 		// Packing Logs
 		builder.AddValidatableJsonConfigurationOptions<PackingLogsConfigurationOptions>();

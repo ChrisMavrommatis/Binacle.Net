@@ -3,7 +3,8 @@ services:
         image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0
         ports:
             - '18888:18888'
-            - '4317:18889'
+            - '18889:18889'
+            - '18890:18890'
     azurite:
         image: mcr.microsoft.com/azure-storage/azurite:latest
         volumes:
