@@ -4,7 +4,6 @@ services:
         ports:
             - '18888:18888'
             - '18889:18889'
-            - '18890:18890'
     azurite:
         image: mcr.microsoft.com/azure-storage/azurite:latest
         volumes:

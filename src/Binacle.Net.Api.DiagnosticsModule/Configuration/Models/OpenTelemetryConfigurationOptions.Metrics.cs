@@ -5,5 +5,7 @@ internal class OpenTelemetryMetricsConfigurationOptions : IOpenTelemetryTypeConf
 	public bool Enabled { get; set; }
 	public OtlpExporterConfigurationOptions? Otlp { get; set; }
 	public string[]? AdditionalMeters { get; set; }
+	
+	public Dictionary<string, object>? AdditionalAttributes { get; set; }
 }
 

@@ -13,7 +13,9 @@ internal class OpenTelemetryConfigurationOptions : IConfigurationOptions
 	public string? ServiceNamespace { get; set; }
 	public string? ServiceInstanceId { get; set; }
 	
+	public Dictionary<string, object>? AdditionalAttributes { get; set; }
 	public OtlpExporterConfigurationOptions? Otlp { get; set; }
+	public AzureMonitorConfigurationOptions? AzureMonitor { get; set; }
 	public OpenTelemetryTracingConfigurationOptions Tracing { get; set; } = new();
 	public OpenTelemetryMetricsConfigurationOptions Metrics { get; set; } = new();
 	public OpenTelemetryLoggingConfigurationOptions Logging { get; set; } = new();

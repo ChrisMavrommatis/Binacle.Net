@@ -1,16 +1,16 @@
 ﻿{
 	"OpenTelemetry" : {
 		"Otlp": {
-			"Endpoint" : "http://localhost:18889",
+			"Endpoint": "http://localhost:18889"
 		},
 		"Metrics": {
-			"Enabled" : true,
+			"Enabled" : true
 		},
 		"Tracing": {
-			"Enabled" : true,
+			"Enabled" : true
 		},
 		"Logging": {
-			"Enabled" : true,
+			"Enabled" : true
 		}
 	}
 }

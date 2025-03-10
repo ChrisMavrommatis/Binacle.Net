@@ -1,8 +1,10 @@
-﻿using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
+﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Instrumentation.Http;
 using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 namespace Binacle.Net.Api.DiagnosticsModule.ExtensionMethods;
@@ -45,14 +47,11 @@ internal static class OpenTelemetryConfigurationExtensions
 		)
 	{
 		options.Endpoint = new Uri(configurationOptions.Endpoint!);
-		if (!string.IsNullOrEmpty(configurationOptions.Protocol))
+
+		var protocol = configurationOptions.GetOtlpExportProtocol();
+		if (protocol is not null)
 		{
-			options.Protocol = configurationOptions.Protocol! switch
-			{
-				"grpc" => OtlpExportProtocol.Grpc,
-				"httpProtobuf" => OtlpExportProtocol.HttpProtobuf,
-				_ => throw new ArgumentOutOfRangeException(nameof(configurationOptions.Protocol), configurationOptions.Protocol, null)
-			};
+			options.Protocol = protocol.Value;
 		}
 
 		if (!string.IsNullOrEmpty(configurationOptions.Headers))
@@ -73,5 +72,27 @@ internal static class OpenTelemetryConfigurationExtensions
 		OpenTelemetryTracingConfigurationOptions tracingConfigurationOptions
 	)
 	{
+	}
+	
+	public static void ConfigureAzureMonitor(
+		this AzureMonitorOptions options,
+		AzureMonitorConfigurationOptions azureMonitorConfigurationOptions
+	)
+	{
+		options.ConnectionString = azureMonitorConfigurationOptions.ConnectionString!;
+		options.SamplingRatio = azureMonitorConfigurationOptions.SamplingRatio;
+		options.EnableLiveMetrics = azureMonitorConfigurationOptions.EnableLiveMetrics;
+	}
+
+	public static ResourceBuilder AddOptionalAdditionalAttributes(
+		this ResourceBuilder builder,
+		Dictionary<string, object>? additionalAttributes
+		)
+	{
+		if (additionalAttributes?.Any() ?? false)
+		{
+			builder.AddAttributes(additionalAttributes!);
+		}
+		return builder;
 	}
 }

@@ -7,5 +7,5 @@ internal class OpenTelemetryTracingConfigurationOptions : IOpenTelemetryTypeConf
 	public bool Enabled { get; set; }
 	public OtlpExporterConfigurationOptions? Otlp { get; set; }
 	public string[]? AdditionalSources { get; set; }
-
+	public Dictionary<string, object>? AdditionalAttributes { get; set; }
 }

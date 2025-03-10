@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
+﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
 using Binacle.Net.Api.DiagnosticsModule.ExtensionMethods;
 using Binacle.Net.Api.DiagnosticsModule.Middleware;
 using Binacle.Net.Api.Kernel;
@@ -82,7 +83,6 @@ public static class ModuleDefinition
 			includeInternalTypes: true);
 
 		// Open Telemetry
-		
 		builder.AddValidatableJsonConfigurationOptions<OpenTelemetryConfigurationOptions>();
 
 		var openTelemetryOptions = builder.Configuration.GetConfigurationOptions<OpenTelemetryConfigurationOptions>();
@@ -99,7 +99,8 @@ public static class ModuleDefinition
 						serviceVersion: Environment.GetEnvironmentVariable("BINACLE_VERSION") ?? "Unknown",
 						serviceNamespace: openTelemetryOptions.ServiceNamespace,
 						serviceInstanceId: openTelemetryOptions.ServiceInstanceId
-					);
+					)
+					.AddOptionalAdditionalAttributes(openTelemetryOptions.AdditionalAttributes);
 				});
 
 			if (openTelemetryOptions.Metrics.Enabled)
@@ -109,12 +110,16 @@ public static class ModuleDefinition
 					.WithMetrics(meterBuilder =>
 					{
 						meterBuilder
+							.ConfigureResource(config =>
+								config.AddOptionalAdditionalAttributes(openTelemetryOptions.Metrics.AdditionalAttributes)
+							)
 							.AddRuntimeInstrumentation()
 							.AddAspNetCoreInstrumentation()
 							.AddMeters(openTelemetryOptions.Metrics.AdditionalMeters);
 						
 						if (openTelemetryOptions.UseIndividualOtlpEndpointFor(x => x.Metrics))
 						{
+							Log.Information("Using individual Otlp Endpoint for {OpenTelemetryType} with OpenTelemetry.", "Metrics");
 							meterBuilder.AddOtlpExporter("metrics", options =>
 								options.ConfigureOtlpExporter(openTelemetryOptions.Metrics.Otlp!)
 							);
@@ -129,6 +134,9 @@ public static class ModuleDefinition
 					.WithTracing(traceBuilder =>
 					{
 						traceBuilder
+							.ConfigureResource(config =>
+								config.AddOptionalAdditionalAttributes(openTelemetryOptions.Tracing.AdditionalAttributes)
+							)
 							.AddAspNetCoreInstrumentation(options =>
 								options.ConfigureAspNetCoreInstrumentation(openTelemetryOptions.Tracing)
 							)
@@ -140,6 +148,8 @@ public static class ModuleDefinition
 						
 						if (openTelemetryOptions.UseIndividualOtlpEndpointFor(x => x.Tracing))
 						{
+							Log.Information("Using individual Otlp Endpoint for {OpenTelemetryType} with OpenTelemetry.", "Tracing");
+
 							traceBuilder.AddOtlpExporter("tracing", options =>
 								options.ConfigureOtlpExporter(openTelemetryOptions.Tracing.Otlp!)
 							);
@@ -152,21 +162,35 @@ public static class ModuleDefinition
 				Log.Information("Using {OpenTelemetryType} with OpenTelemetry.", "Logging");
 				openTelemetryBuilder.WithLogging(logBuilder =>
 				{
+					logBuilder.ConfigureResource(config =>
+						config.AddOptionalAdditionalAttributes(openTelemetryOptions.Logging.AdditionalAttributes)
+					);
 					if (openTelemetryOptions.UseIndividualOtlpEndpointFor(x => x.Logging))
 					{
+						Log.Information("Using individual Otlp Endpoint for {OpenTelemetryType} with OpenTelemetry.", "Logging");
+
 						logBuilder.AddOtlpExporter("logging", options =>
 							options.ConfigureOtlpExporter(openTelemetryOptions.Logging.Otlp!)
 						);
 					}
-					
 				});
 			}
-
+			
 			if (!string.IsNullOrEmpty(openTelemetryOptions.Otlp?.Endpoint))
 			{
-				openTelemetryBuilder.UseOtlpExporter();
-				builder.Services.Configure<OtlpExporterOptions>(options =>
-					options.ConfigureOtlpExporter(openTelemetryOptions.Otlp!)
+				Log.Information("Using {Provider} with OpenTelemetry.", "Otlp Exporter");
+				
+				openTelemetryBuilder.UseOtlpExporter(
+					openTelemetryOptions.Otlp!.GetOtlpExportProtocol() ?? OtlpExportProtocol.Grpc,
+					new Uri(openTelemetryOptions.Otlp!.Endpoint!)
+				);
+			}
+
+			if (!string.IsNullOrEmpty(openTelemetryOptions.AzureMonitor?.ConnectionString))
+			{
+				Log.Information("Using {Provider} with OpenTelemetry.", "Azure Monitor");
+				openTelemetryBuilder.UseAzureMonitor(options =>
+					options.ConfigureAzureMonitor(openTelemetryOptions.AzureMonitor!)
 				);
 			}
 		}
