@@ -2,7 +2,7 @@
 
 namespace Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
 
-internal class OpenTelemetryConfigurationOptions : IConfigurationOptions
+internal class OpenTelemetryConfigurationOptions : IConfigurationOptions, IOpenTelemetryAttributes
 {
 	public static string FilePath => "DiagnosticsModule/OpenTelemetry.json";
 	public static string SectionName => "OpenTelemetry";
@@ -12,34 +12,18 @@ internal class OpenTelemetryConfigurationOptions : IConfigurationOptions
 	
 	public string? ServiceNamespace { get; set; }
 	public string? ServiceInstanceId { get; set; }
-	
+	public OtlpExporterConfigurationOptions Otlp { get; set; } = new();
+	public AzureMonitorConfigurationOptions AzureMonitor { get; set; } = new();
 	public Dictionary<string, object>? AdditionalAttributes { get; set; }
-	public OtlpExporterConfigurationOptions? Otlp { get; set; }
-	public AzureMonitorConfigurationOptions? AzureMonitor { get; set; }
+
 	public OpenTelemetryTracingConfigurationOptions Tracing { get; set; } = new();
 	public OpenTelemetryMetricsConfigurationOptions Metrics { get; set; } = new();
 	public OpenTelemetryLoggingConfigurationOptions Logging { get; set; } = new();
-	
 
 	public bool IsEnabled()
 	{
-		return this.Tracing.Enabled
-			|| this.Metrics.Enabled
-			|| this.Logging.Enabled;
-	}
-
-	public bool UseIndividualOtlpEndpointFor<TConfiguration>(
-		Func<OpenTelemetryConfigurationOptions, TConfiguration> configurationSelector
-	)
-		where TConfiguration: IOpenTelemetryTypeConfigurationOptions
-	{
-		if (!string.IsNullOrEmpty(this.Otlp?.Endpoint))
-		{
-			return false;
-		}
-
-		var configuration = configurationSelector(this);
-		return !string.IsNullOrEmpty(configuration.Otlp?.Endpoint);
+		return this.Otlp.Enabled
+		       || this.AzureMonitor.Enabled;
 	}
 }
 

@@ -13,26 +13,32 @@ internal class OpenTelemetryConfigurationOptionsValidator : AbstractValidator<Op
 
 		RuleFor(x => x.AzureMonitor)
 			.SetValidator(x => new AzureMonitorConfigurationOptionsValidator());
+	}
+}
+
+internal class OtlpExporterConfigurationsOptionsValidator : AbstractValidator<OtlpExporterConfigurationOptions>
+{
+	public OtlpExporterConfigurationsOptionsValidator()
+	{
+		When(x =>  !string.IsNullOrEmpty(x.Protocol), () =>
+		{
+			RuleFor(x => x.Protocol)
+				.Must(x => x == "grpc" || x == "httpProtobuf")
+				.WithMessage("The protocol must be either 'grpc' or 'httpProtobuf'");
+		});
 		
-		RuleFor(x => x.Metrics)
-			.ChildRules(child =>
-			{
-				child.RuleFor(x => x.Otlp)
-					.SetValidator(x => new OtlpExporterConfigurationsOptionsValidator());
-			});
-		
-		RuleFor(x => x.Tracing)
-			.ChildRules(child =>
-			{
-				child.RuleFor(x => x.Otlp)
-					.SetValidator(x => new OtlpExporterConfigurationsOptionsValidator());
-			});
-		
-		RuleFor(x => x.Logging)
-			.ChildRules(child =>
-			{
-				child.RuleFor(x => x.Otlp)
-					.SetValidator(x => new OtlpExporterConfigurationsOptionsValidator());
-			});
+	}
+	
+}
+
+internal class AzureMonitorConfigurationOptionsValidator : AbstractValidator<AzureMonitorConfigurationOptions?>
+{
+	public AzureMonitorConfigurationOptionsValidator()
+	{
+		When(x => x is not null, () =>
+		{
+			RuleFor(x => x!.SamplingRatio)
+				.InclusiveBetween(0.1f, 1.0f);
+		});
 	}
 }

@@ -4,15 +4,15 @@ namespace Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
 
 internal class OtlpExporterConfigurationOptions
 {
+	public bool Enabled { get; set; }
 	public string? Endpoint { get; set; }
 	public string? Protocol { get; set; }
-	public string? Headers { get; set; }
 	
-	public OtlpExportProtocol? GetOtlpExportProtocol()
+	public OtlpExportProtocol GetOtlpExportProtocol()
 	{
 		if(string.IsNullOrEmpty(this.Protocol))
 		{
-			return null;
+			return OtlpExportProtocol.Grpc;
 		}
 		return this.Protocol switch
 		{

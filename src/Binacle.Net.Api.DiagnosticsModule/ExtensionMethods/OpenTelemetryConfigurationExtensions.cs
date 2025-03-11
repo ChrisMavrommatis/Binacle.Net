@@ -1,5 +1,6 @@
 ﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
+using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Instrumentation.Http;
@@ -23,9 +24,10 @@ internal static class OpenTelemetryConfigurationExtensions
 				meterProviderBuilder.AddMeter(meter);
 			}
 		}
+
 		return meterProviderBuilder;
 	}
-	
+
 	public static TracerProviderBuilder AddSources(
 		this TracerProviderBuilder tracerProviderBuilder,
 		string[]? additionalSources
@@ -38,61 +40,69 @@ internal static class OpenTelemetryConfigurationExtensions
 				tracerProviderBuilder.AddSource(source);
 			}
 		}
+
 		return tracerProviderBuilder;
-	}
-
-	public static void ConfigureOtlpExporter(
-		this OtlpExporterOptions options,
-		OtlpExporterConfigurationOptions configurationOptions
-		)
-	{
-		options.Endpoint = new Uri(configurationOptions.Endpoint!);
-
-		var protocol = configurationOptions.GetOtlpExportProtocol();
-		if (protocol is not null)
-		{
-			options.Protocol = protocol.Value;
-		}
-
-		if (!string.IsNullOrEmpty(configurationOptions.Headers))
-		{
-			options.Headers = configurationOptions.Headers;
-		}
 	}
 
 	public static void ConfigureAspNetCoreInstrumentation(
 		this AspNetCoreTraceInstrumentationOptions options,
 		OpenTelemetryTracingConfigurationOptions tracingConfigurationOptions
-		)
+	)
 	{
 	}
-	
+
 	public static void ConfigureHttpClientInstrumentation(
 		this HttpClientTraceInstrumentationOptions options,
 		OpenTelemetryTracingConfigurationOptions tracingConfigurationOptions
 	)
 	{
 	}
-	
-	public static void ConfigureAzureMonitor(
-		this AzureMonitorOptions options,
-		AzureMonitorConfigurationOptions azureMonitorConfigurationOptions
+
+	public static void UseOtlpExporter(
+		this OpenTelemetryBuilder builder,
+		Configuration.Models.OtlpExporterConfigurationOptions otlp
 	)
 	{
-		options.ConnectionString = azureMonitorConfigurationOptions.ConnectionString!;
-		options.SamplingRatio = azureMonitorConfigurationOptions.SamplingRatio;
-		options.EnableLiveMetrics = azureMonitorConfigurationOptions.EnableLiveMetrics;
+		if (!string.IsNullOrEmpty(otlp.Endpoint))
+		{
+			builder.UseOtlpExporter(
+				otlp.GetOtlpExportProtocol(),
+				new Uri(otlp.Endpoint!)
+			);
+			return;
+		}
+
+		// Expected config to be passed through environemnt variables
+		builder.UseOtlpExporter();
 	}
 
-	public static ResourceBuilder AddOptionalAdditionalAttributes(
-		this ResourceBuilder builder,
-		Dictionary<string, object>? additionalAttributes
-		)
+	public static void UseAzureMonitor(
+		this OpenTelemetryBuilder builder,
+		AzureMonitorConfigurationOptions options
+	)
 	{
-		if (additionalAttributes?.Any() ?? false)
+		builder.UseAzureMonitor(azureMonitorOptions =>
 		{
-			builder.AddAttributes(additionalAttributes!);
+			if (!string.IsNullOrEmpty(options.ConnectionString))
+			{
+				azureMonitorOptions.ConnectionString = options.ConnectionString!;
+			}
+			azureMonitorOptions.SamplingRatio = options.SamplingRatio;
+			azureMonitorOptions.EnableLiveMetrics = options.EnableLiveMetrics;
+		});
+	}
+
+	public static ResourceBuilder AddOptionalAdditionalAttributes<T>(
+		this ResourceBuilder builder,
+		T model
+	)
+		where T : IOpenTelemetryAttributes
+	{
+		if (model.AdditionalAttributes?.Any() ?? false)
+		{
+			builder.AddAttributes(model.AdditionalAttributes!);
 		}
+
 		return builder;
 	}
 }

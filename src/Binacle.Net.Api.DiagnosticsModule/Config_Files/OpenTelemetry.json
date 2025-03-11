@@ -3,24 +3,20 @@
 		"ServiceNamespace": "binacle",
 		"ServiceInstanceId": "1",
 		"AdditionalAttributes": {
-			"region" : "us-west"
+			
 		},
 		"Otlp": {
+			"Enabled" : false,
 			"Endpoint" : null,
 			"Protocol" : "grpc"
 		},
 		"AzureMonitor": {
+			"Enabled" : false,
 			"ConnectionString" : null,
 			"EnableLiveMetrics" : false,
 			"SamplingRatio" : 1.0
 		},
 		"Metrics": {
-			"Enabled" : false,
-			"Otlp": {
-				"Endpoint" : null,
-				"Protocol" : "grpc",
-				"Headers" : null
-			},
 			"AdditionalMeters": [
 
 			],
@@ -29,12 +25,6 @@
 			}
 		},
 		"Tracing": {
-			"Enabled" : false,
-			"Otlp": {
-				"Endpoint" : null,
-				"Protocol" : "grpc",
-				"Headers" : null
-			},
 			"AdditionalSources": [
 				
 			],
@@ -43,12 +33,6 @@
 			}
 		},
 		"Logging": {
-			"Enabled" : false,
-			"Otlp": {
-				"Endpoint" : null,
-				"Protocol" : "grpc",
-				"Headers" : null
-			},
 			"AdditionalAttributes": {
 
 			}

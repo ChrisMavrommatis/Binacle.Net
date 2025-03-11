@@ -1,11 +1,8 @@
 ﻿namespace Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
 
-internal class OpenTelemetryMetricsConfigurationOptions : IOpenTelemetryTypeConfigurationOptions
+internal class OpenTelemetryMetricsConfigurationOptions : IOpenTelemetryAttributes
 {
-	public bool Enabled { get; set; }
-	public OtlpExporterConfigurationOptions? Otlp { get; set; }
 	public string[]? AdditionalMeters { get; set; }
-	
 	public Dictionary<string, object>? AdditionalAttributes { get; set; }
 }
 
