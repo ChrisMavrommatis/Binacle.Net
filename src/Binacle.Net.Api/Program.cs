@@ -1,7 +1,11 @@
-﻿using Asp.Versioning;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Asp.Versioning;
 using Binacle.Net.Api.Configuration;
 using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.DiagnosticsModule;
+using Binacle.Net.Api.ExtensionMethods;
+using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.ServiceModule;
 using Binacle.Net.Api.Services;
 using Binacle.Net.Api.UIModule;
@@ -12,8 +16,7 @@ using ChrisMavrommatis.SwaggerExamples;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using System.Text.Json.Serialization;
-using Binacle.Net.Api.Kernel;
+using ApiVersion = Binacle.Net.Api.v1.ApiVersion;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
@@ -75,13 +78,12 @@ public class Program
 
 		builder.Services.AddApiVersioning(options =>
 		{
-			options.DefaultApiVersion = ApiVersionParser.Default.Parse(v1.ApiVersion.Number);
+			options.DefaultApiVersion = ApiVersionParser.Default.Parse(ApiVersion.Number);
 			options.AssumeDefaultVersionWhenUnspecified = true;
 			options.ReportApiVersions = true;
 			options.ApiVersionReader = ApiVersionReader.Combine(
 				new UrlSegmentApiVersionReader()
-				);
-
+			);
 		}).AddApiExplorer(options =>
 		{
 			options.GroupNameFormat = "'v'VVV";
@@ -89,12 +91,11 @@ public class Program
 		});
 
 		builder.Services.AddSingleton(_ => TimeProvider.System);
-		builder.Services.AddSingleton<ILegacyBinsService, LegacyBinsService>();
-		builder.Services.AddSingleton<IBinacleService, BinacleService>();
+		builder.Services.AddBinacleServices();
 
 		builder.Services.AddSwaggerExamples(options =>
 		{
-			options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+			options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 			// ignore null
 			options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});

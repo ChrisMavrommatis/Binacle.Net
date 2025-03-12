@@ -1,19 +1,22 @@
-﻿using Binacle.Net.Lib.Abstractions.Models;
+﻿using Binacle.Net.Lib.Abstractions;
+using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.Lib.Packing.Models;
 
 namespace Binacle.Net.Lib;
 
-public class LoopBinProcessor
+public class LoopBinProcessor : IBinProcessor
 {
-	private readonly AlgorithmFactory algorithmFactory;
+	private readonly IAlgorithmFactory algorithmFactory;
 
-	public LoopBinProcessor()
+	public LoopBinProcessor(
+		IAlgorithmFactory algorithmFactory
+		)
 	{
-		this.algorithmFactory = new AlgorithmFactory();
+		this.algorithmFactory = algorithmFactory;
 	}
 
-	public Dictionary<string, FittingResult> ProcessFitting<TBin, TItem>(
+	public IDictionary<string, FittingResult> ProcessFitting<TBin, TItem>(
 		Algorithm algorithm,
 		IList<TBin> bins,
 		IList<TItem> items,
@@ -38,7 +41,7 @@ public class LoopBinProcessor
 		return results;
 	}
 
-	public Dictionary<string, PackingResult> ProcessPacking<TBin, TItem>(
+	public IDictionary<string, PackingResult> ProcessPacking<TBin, TItem>(
 		Algorithm algorithm,
 		IList<TBin> bins,
 		IList<TItem> items,

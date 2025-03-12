@@ -13,8 +13,9 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 
 	public FittingMultipleBins()
 	{
-		this.loopProcessor = new LoopBinProcessor();
-		this.parallelProcessor = new ParallelBinProcessor();
+		var algorithmFactory = new AlgorithmFactory();
+		this.loopProcessor = new LoopBinProcessor(algorithmFactory);
+		this.parallelProcessor = new ParallelBinProcessor(algorithmFactory);
 		this.Bins = new List<TestBin>();
 		this.Items = this.DataProvider.GetItems();
 		// this.Items = new List<TestItem>();
@@ -52,7 +53,7 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 	}
 	
 	[Benchmark(Baseline = true)]
-	public Dictionary<string, FittingResult> FFD_Loop()
+	public IDictionary<string, FittingResult> FFD_Loop()
 	{
 		var results = this.loopProcessor.ProcessFitting(Algorithm.FirstFitDecreasing, this.Bins, this.Items, new FittingParameters
 		{
@@ -64,7 +65,7 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 	}
 	
 	[Benchmark]
-	public ConcurrentDictionary<string, FittingResult> FFD_Parallel()
+	public IDictionary<string, FittingResult> FFD_Parallel()
 	{
 		var results = this.parallelProcessor.ProcessFitting(Algorithm.FirstFitDecreasing, this.Bins, this.Items, new FittingParameters
 		{
@@ -76,7 +77,7 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 	}
 	
 	[Benchmark]
-	public Dictionary<string, FittingResult> WFD_Loop()
+	public IDictionary<string, FittingResult> WFD_Loop()
 	{
 		var results = this.loopProcessor.ProcessFitting(Algorithm.WorstFitDecreasing, this.Bins, this.Items, new FittingParameters
 		{
@@ -88,7 +89,7 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 	}
 	
 	[Benchmark]
-	public ConcurrentDictionary<string, FittingResult> WFD_Parallel()
+	public IDictionary<string, FittingResult> WFD_Parallel()
 	{
 		var results = this.parallelProcessor.ProcessFitting(Algorithm.WorstFitDecreasing, this.Bins, this.Items, new FittingParameters
 		{
@@ -101,7 +102,7 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 
 	
 	[Benchmark]
-	public Dictionary<string, FittingResult> BFD_Loop()
+	public IDictionary<string, FittingResult> BFD_Loop()
 	{
 		var results = this.loopProcessor.ProcessFitting(Algorithm.BestFitDecreasing, this.Bins, this.Items, new FittingParameters
 		{
@@ -113,7 +114,7 @@ public class FittingMultipleBins : MultipleBinsBenchmarkBase
 	}
 	
 	[Benchmark]
-	public ConcurrentDictionary<string, FittingResult> BFD_Parallel()
+	public IDictionary<string, FittingResult> BFD_Parallel()
 	{
 		var results = this.parallelProcessor.ProcessFitting(Algorithm.BestFitDecreasing, this.Bins, this.Items, new FittingParameters
 		{

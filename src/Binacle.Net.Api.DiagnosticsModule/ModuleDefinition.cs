@@ -1,5 +1,4 @@
-﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
-using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
+﻿using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
 using Binacle.Net.Api.DiagnosticsModule.ExtensionMethods;
 using Binacle.Net.Api.DiagnosticsModule.Middleware;
 using Binacle.Net.Api.Kernel;
@@ -15,8 +14,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using OpenTelemetry;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -124,7 +121,6 @@ public static class ModuleDefinition
 						.AddHttpClientInstrumentation(options =>
 							options.ConfigureHttpClientInstrumentation(openTelemetryOptions.Tracing)
 						)
-						.AddSource("Binacle.Net.Lib")
 						.AddSources(openTelemetryOptions.Tracing.AdditionalSources);
 				})
 				.WithLogging(logBuilder =>

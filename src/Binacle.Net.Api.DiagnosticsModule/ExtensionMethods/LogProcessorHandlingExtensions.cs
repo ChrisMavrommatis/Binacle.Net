@@ -55,7 +55,7 @@ internal static class LogProcessorHandlingExtensions
 	}
 
 	private static Dictionary<string, object> ConvertToLogObject(
-		this Dictionary<string, Lib.Packing.Models.PackingResult> results
+		this IDictionary<string, Lib.Packing.Models.PackingResult> results
 	)
 	{
 		Dictionary<string, object> state = new Dictionary<string, object>();
@@ -98,7 +98,7 @@ internal static class LogProcessorHandlingExtensions
 	}
 
 	private static Dictionary<string, object> ConvertToLogObject(
-		this Dictionary<string, Lib.Fitting.Models.FittingResult> results
+		this IDictionary<string, Lib.Fitting.Models.FittingResult> results
 	)
 	{
 		Dictionary<string, object> state = new Dictionary<string, object>();

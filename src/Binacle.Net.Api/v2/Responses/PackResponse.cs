@@ -10,7 +10,7 @@ public class PackResponse : v2.Models.ResponseBase<List<v2.Models.BinPackResult>
 		List<TBin> bins,
 		List<TItem> items,
 		v2.Requests.PackRequestParameters? parameters,
-		Dictionary<string, Lib.Packing.Models.PackingResult> operationResults
+		IDictionary<string, Lib.Packing.Models.PackingResult> operationResults
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions

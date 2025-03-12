@@ -9,7 +9,7 @@ public abstract class PackingLogChannelRequestBase
 	public required IReadOnlyCollection<IWithReadOnlyDimensions> Bins { get; init; }
 	public required IReadOnlyCollection<IWithReadOnlyDimensions> Items { get; init; }
 	public ILogConvertible? Parameters { get; set; }
-	public required Dictionary<string, PackingResult> Results { get; init; }
+	public required IDictionary<string, PackingResult> Results { get; init; }
 	internal PackingLogChannelRequestBase() 
 	{
 	}
@@ -21,7 +21,7 @@ public class LegacyPackingLogChannelRequest : PackingLogChannelRequestBase
 		List<TBin> bins,
 		List<TItem> items,
 		TParams parameters,
-		Dictionary<string, PackingResult> results
+		IDictionary<string, PackingResult> results
 	)
 		where TBin: IWithID, IWithReadOnlyDimensions
 		where TItem: IWithID, IWithReadOnlyDimensions, IWithQuantity
@@ -43,7 +43,7 @@ public class PackingLogChannelRequest : PackingLogChannelRequestBase
 		List<TBin> bins,
 		List<TItem> items,
 		TParams parameters,
-		Dictionary<string, PackingResult> results
+		IDictionary<string, PackingResult> results
 	)
 		where TBin: IWithID, IWithReadOnlyDimensions
 		where TItem: IWithID, IWithReadOnlyDimensions, IWithQuantity

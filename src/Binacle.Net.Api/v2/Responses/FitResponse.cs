@@ -12,7 +12,7 @@ public class FitResponse : v2.Models.ResponseBase<List<v2.Models.BinFitResult>>
 		List<TBin> bins,
 		List<TItem> items,
 		v2.Requests.FitRequestParameters? parameters,
-		Dictionary<string, Lib.Fitting.Models.FittingResult> operationResults
+		IDictionary<string, Lib.Fitting.Models.FittingResult> operationResults
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions

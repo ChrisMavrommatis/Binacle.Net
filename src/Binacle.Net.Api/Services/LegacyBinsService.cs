@@ -2,6 +2,7 @@
 using Binacle.Net.Api.Kernel.Models;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Lib;
+using Binacle.Net.Lib.Abstractions;
 using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.Lib.Packing.Models;
@@ -15,12 +16,12 @@ namespace Binacle.Net.Api.Services;
 
 public interface ILegacyBinsService
 {
-	Task<Dictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items,
+	Task<IDictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items,
 		LegacyFittingParameters parameters)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 
-	Task<Dictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items,
+	Task<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items,
 		LegacyPackingParameters parameters)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
@@ -28,24 +29,25 @@ public interface ILegacyBinsService
 
 internal class LegacyBinsService : ILegacyBinsService
 {
-	private readonly AlgorithmFactory algorithmFactory;
+	private readonly IAlgorithmFactory algorithmFactory;
 	private readonly Channel<LegacyFittingLogChannelRequest>? fittingChannel;
 	private readonly Channel<LegacyPackingLogChannelRequest>? packingChannel;
 	private readonly ILogger<LegacyBinsService> logger;
 
 	public LegacyBinsService(
+		IAlgorithmFactory algorithmFactory,
 		IOptionalDependency<Channel<LegacyFittingLogChannelRequest>> fittingChannel,
 		IOptionalDependency<Channel<LegacyPackingLogChannelRequest>> packingChannel,
 		ILogger<LegacyBinsService> logger
 	)
 	{
-		this.algorithmFactory = new AlgorithmFactory();
+		this.algorithmFactory = algorithmFactory;
 		this.fittingChannel = fittingChannel.Value;
 		this.packingChannel = packingChannel.Value;
 		this.logger = logger;
 	}
 
-	public async Task<Dictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(
+	public async Task<IDictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(
 		List<TBin> bins,
 		List<TBox> items,
 		LegacyFittingParameters parameters
@@ -92,7 +94,7 @@ internal class LegacyBinsService : ILegacyBinsService
 		return results;
 	}
 
-	public async Task<Dictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
+	public async Task<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
 		List<TBin> bins,
 		List<TBox> items,
 		LegacyPackingParameters parameters
