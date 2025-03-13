@@ -46,13 +46,6 @@ public static class ModuleDefinition
 	{
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initializing");
 
-		builder.AddJsonConfiguration(
-			filePath: "DiagnosticsModule/ConnectionStrings.json",
-			environmentFilePath: $"DiagnosticsModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json",
-			optional: false,
-			reloadOnChange: true
-		);
-
 		// Required for local run with secrets
 		if (builder.Environment.IsDevelopment())
 		{

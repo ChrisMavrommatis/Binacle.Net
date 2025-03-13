@@ -1,4 +1,4 @@
-services:
+﻿services:
     binacle-net:
         image: binacle/binacle-net:lastest
         depends_on:
@@ -34,5 +34,3 @@ services:
             - '10000:10000'
             - '10001:10001'
             - '10002:10002'
-
-

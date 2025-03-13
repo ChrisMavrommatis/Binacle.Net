@@ -6,20 +6,22 @@ root = true
 
 # All files 
 [*] 
-indent_style = tab
 charset = utf-8-bom
+
+# Config files
+[*.{json,xml,http,yml,yaml}]
+indent_size = 2  
+indent_style = space
+insert_final_newline = true 
 
 # Code files 
 [*.{cs,csx,vb,vbx}] 
 indent_size = 4 
+indent_style = tab
 insert_final_newline = true 
 
 # IDE0290: Use primary constructor
 csharp_style_prefer_primary_constructors = false
 
 
-# Config files
-[*.{json, xml, http}]
-indent_size = 2  
-insert_final_newline = true 
 
