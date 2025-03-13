@@ -11,7 +11,6 @@
         read_only: true
     environment:
       - DOTNET_DASHBOARD_CONFIG_FILE_PATH=config_files/aspire-dashboard-config.json
-    
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite:latest
     volumes:
@@ -22,6 +21,3 @@
       - '10000:10000'
       - '10001:10001'
       - '10002:10002'
-        
-
-

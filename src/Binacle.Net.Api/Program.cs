@@ -56,7 +56,7 @@ public class Program
 			optional: false,
 			reloadOnChange: true
 		);
-
+		
 		Feature.Manager = new FeatureManagerConfiguration()
 			.ReadFrom.Configuration(builder.Configuration)
 			.ReadFrom.EnvironmentVariables()

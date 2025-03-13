@@ -15,5 +15,3 @@ services:
       - SWAGGER_UI=True
       - UI_MODULE=True
       - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/
-
-

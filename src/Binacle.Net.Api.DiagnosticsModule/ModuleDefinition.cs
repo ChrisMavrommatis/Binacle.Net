@@ -41,7 +41,7 @@ public static class ModuleDefinition
 			.Enrich.WithBinacleVersion()
 			.CreateBootstrapLogger();
 	}
-
+	
 	public static void AddDiagnosticsModule(this WebApplicationBuilder builder)
 	{
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initializing");

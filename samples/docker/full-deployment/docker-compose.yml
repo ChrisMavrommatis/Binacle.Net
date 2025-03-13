@@ -1,36 +1,36 @@
 ﻿services:
-    binacle-net:
-        image: binacle/binacle-net:lastest
-        depends_on:
-            azurite:
-                condition: service_started
-        ports:
-            - "8080:8080"
-        volumes:
-            -   type: bind
-                source: ./Presets.json
-                target: /app/Config_Files/Presets.json
-                read_only: true
-            -   type: bind
-                source: ./JwtAuth.json
-                target: /app/Config_Files/ServiceModule/JwtAuth.json
-                read_only: true
-            -   type: bind
-                source: ./data
-                target: /app/data
-        environment:
-            - SWAGGER_UI=True
-            - UI_MODULE=True
-            - SERVICE_MODULE=True
-            - AZURESTORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1
-            - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/
-    azurite:
-        image: mcr.microsoft.com/azure-storage/azurite:latest
-        volumes:
-            -   type: bind
-                source: ./azurite
-                target: /data
-        ports:
-            - '10000:10000'
-            - '10001:10001'
-            - '10002:10002'
+  binacle-net:
+    image: binacle/binacle-net:lastest
+    depends_on:
+      azurite:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./Presets.json
+        target: /app/Config_Files/Presets.json
+        read_only: true
+      - type: bind
+        source: ./JwtAuth.json
+        target: /app/Config_Files/ServiceModule/JwtAuth.json
+        read_only: true
+      - type: bind
+        source: ./data
+        target: /app/data
+    environment:
+      - SWAGGER_UI=True
+      - UI_MODULE=True
+      - SERVICE_MODULE=True
+      - AZURESTORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1
+      - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    volumes:
+      - type: bind
+        source: ./azurite
+        target: /data
+    ports:
+      - '10000:10000'
+      - '10001:10001'
+      - '10002:10002'

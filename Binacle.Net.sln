@@ -18,13 +18,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{848A5F14
 		build\README.md = build\README.md
 	EndProjectSection
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ContentProject", "build\contentproject\ContentProject.proj", "{3A074859-B076-45C5-97AB-BE404A0E8434}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ContentProject", "build\contentproject\contentproject.proj", "{3A074859-B076-45C5-97AB-BE404A0E8434}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{C74DE1C5-A76A-433C-8FCA-272FBDE3713F}"
 	ProjectSection(SolutionItems) = preProject
 		config\README.md = config\README.md
 		config\tmux.sh = config\tmux.sh
 	EndProjectSection
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Binacle.Net.AspireDashboardOtel", "config\aspire-dashboard-otel\Binacle.Net.AspireDashboardOtel.dcproj", "{1756A39D-E259-4888-BDB4-F06140DF95CB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dep", "dep", "{5EE822B0-B4A4-43DF-8967-91D3CFC190F8}"
 EndProject
@@ -99,8 +101,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.PerformanceTests", "test\Binacle.Net.Lib.PerformanceTests\Binacle.Net.Lib.PerformanceTests.csproj", "{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.ViPaq.UnitTests", "test\Binacle.ViPaq.UnitTests\Binacle.ViPaq.UnitTests.csproj", "{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Binacle.Net.AspireDashboardOtel", "config\aspire-dashboard-otel\Binacle.Net.AspireDashboardOtel.dcproj", "{1756A39D-E259-4888-BDB4-F06140DF95CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
