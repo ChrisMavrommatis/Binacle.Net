@@ -1,6 +1,6 @@
 services:
   binacle-net:
-    image: binacle/binacle-net:lastest
+    image: binacle/binacle-net:latest
     ports:
       - "8080:8080"
     volumes:
@@ -10,7 +10,7 @@ services:
         read_only: true
       - type: bind
         source: ./data
-        target: /app/data
+        target: /app/data/
     environment:
       - SWAGGER_UI=True
       - UI_MODULE=True
