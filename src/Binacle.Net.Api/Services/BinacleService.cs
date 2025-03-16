@@ -4,7 +4,8 @@ using Binacle.Net.Lib.Abstractions;
 using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Packing.Models;
 using ChrisMavrommatis.Logging;
-using PackingParameters = Binacle.Net.Api.Models.PackingParameters;
+using ApiPackingParameters = Binacle.Net.Api.Models.PackingParameters;
+using LibPackingParameters = Binacle.Net.Lib.Packing.Models.PackingParameters;
 
 namespace Binacle.Net.Api.Services;
 
@@ -12,11 +13,14 @@ namespace Binacle.Net.Api.Services;
 
 public interface IBinacleService
 {
-	Task<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items, PackingParameters parameters)
+	ValueTask<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
+		List<TBin> bins,
+		List<TBox> items,
+		ApiPackingParameters parameters
+	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 }
-
 
 internal class BinacleService : IBinacleService
 {
@@ -37,42 +41,61 @@ internal class BinacleService : IBinacleService
 		this.packingChannel = packingChannel.Value;
 		this.logger = logger;
 	}
-	
-	public async Task<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
-		List<TBin> bins, 
+
+	public async ValueTask<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
+		List<TBin> bins,
 		List<TBox> items,
-		PackingParameters parameters
+		ApiPackingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
 		using var activity = Diagnostics.ActivitySource.StartActivity("Pack Bins");
-		
+
 		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
 
 		var results = this.loopBinProcessor.ProcessPacking(
 			parameters.GetMappedAlgorithm(),
 			bins,
 			items,
-			new Lib.Packing.Models.PackingParameters 
-			{ 
-				NeverReportUnpackedItems = false, 
+			new LibPackingParameters
+			{
+				NeverReportUnpackedItems = false,
 				OptInToEarlyFails = false,
 				ReportPackedItemsOnlyWhenFullyPacked = false
 			});
 
-		using (var channelActivity = Diagnostics.ActivitySource.StartActivity("Send Channel Request"))
-		{
-			if (this.packingChannel is not null)
-			{
-				await this.packingChannel
-					.Writer
-					.WriteAsync(
-						PackingLogChannelRequest.From(bins, items, parameters, results)
-					);
-			}	
-		}
-		
+		await this.WriteToChannelAsync(bins, items, parameters, results);
 		return results;
+	}
+
+	private async ValueTask WriteToChannelAsync<TBin, TBox>(
+		List<TBin> bins,
+		List<TBox> items,
+		ApiPackingParameters parameters,
+		IDictionary<string, PackingResult> results
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+	{
+		using var channelActivity = Diagnostics.ActivitySource.StartActivity("Send Channel Request");
+
+		if (this.packingChannel is null)
+		{
+			return;
+		}
+
+		try
+		{
+			await this.packingChannel
+				.Writer
+				.WriteAsync(
+					PackingLogChannelRequest.From(bins, items, parameters, results)
+				);
+		}
+		catch (Exception ex)
+		{
+			this.logger.LogError(ex, "Error while writing to channel");
+		}
 	}
 }

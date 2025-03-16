@@ -7,8 +7,8 @@ using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.Lib.Packing.Models;
 using ChrisMavrommatis.Logging;
-using Algorithm = Binacle.Net.Lib.Algorithm;
-using PackingParameters = Binacle.Net.Lib.Packing.Models.PackingParameters;
+using LibAlgorithm = Binacle.Net.Lib.Algorithm;
+using LibPackingParameters = Binacle.Net.Lib.Packing.Models.PackingParameters;
 
 namespace Binacle.Net.Api.Services;
 
@@ -16,13 +16,19 @@ namespace Binacle.Net.Api.Services;
 
 public interface ILegacyBinsService
 {
-	Task<IDictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items,
-		LegacyFittingParameters parameters)
+	ValueTask<IDictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(
+		List<TBin> bins, 
+		List<TBox> items,
+		LegacyFittingParameters parameters
+	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 
-	Task<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(List<TBin> bins, List<TBox> items,
-		LegacyPackingParameters parameters)
+	ValueTask<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
+		List<TBin> bins, 
+		List<TBox> items,
+		LegacyPackingParameters parameters
+	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 }
@@ -47,7 +53,7 @@ internal class LegacyBinsService : ILegacyBinsService
 		this.logger = logger;
 	}
 
-	public async Task<IDictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(
+	public async ValueTask<IDictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(
 		List<TBin> bins,
 		List<TBox> items,
 		LegacyFittingParameters parameters
@@ -61,7 +67,7 @@ internal class LegacyBinsService : ILegacyBinsService
 
 		foreach (var bin in bins.OrderBy(x => x.CalculateVolume()))
 		{
-			var algorithmInstance = this.algorithmFactory.CreateFitting(Algorithm.FirstFitDecreasing, bin, items);
+			var algorithmInstance = this.algorithmFactory.CreateFitting(LibAlgorithm.FirstFitDecreasing, bin, items);
 			var result = algorithmInstance.Execute(new FittingParameters
 			{
 				ReportFittedItems = parameters.ReportFittedItems,
@@ -82,7 +88,27 @@ internal class LegacyBinsService : ILegacyBinsService
 			}
 		}
 
-		if (this.fittingChannel is not null)
+		await this.WriteToChannelAsync(bins, items, parameters, results);
+		return results;
+	}
+
+	private async ValueTask WriteToChannelAsync<TBin, TBox>(
+		List<TBin> bins,
+		List<TBox> items,
+		LegacyFittingParameters parameters,
+		Dictionary<string, FittingResult> results
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+	{
+		using var channelActivity = Diagnostics.ActivitySource.StartActivity("Send Channel Request");
+
+		if (this.fittingChannel is null)
+		{
+			return;
+		}
+
+		try
 		{
 			await this.fittingChannel
 				.Writer
@@ -90,11 +116,13 @@ internal class LegacyBinsService : ILegacyBinsService
 					LegacyFittingLogChannelRequest.From(bins, items, parameters, results)
 				);
 		}
-
-		return results;
+		catch (Exception ex)
+		{
+			this.logger.LogError(ex, "Error while writing to channel");
+		}
 	}
 
-	public async Task<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
+	public async ValueTask<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
 		List<TBin> bins,
 		List<TBox> items,
 		LegacyPackingParameters parameters
@@ -108,8 +136,8 @@ internal class LegacyBinsService : ILegacyBinsService
 
 		foreach (var bin in bins.OrderBy(x => x.CalculateVolume()))
 		{
-			var algorithmInstance = this.algorithmFactory.CreatePacking(Algorithm.FirstFitDecreasing, bin, items);
-			var result = algorithmInstance.Execute(new PackingParameters
+			var algorithmInstance = this.algorithmFactory.CreatePacking(LibAlgorithm.FirstFitDecreasing, bin, items);
+			var result = algorithmInstance.Execute(new LibPackingParameters
 			{
 				NeverReportUnpackedItems = parameters.NeverReportUnpackedItems,
 				OptInToEarlyFails = parameters.OptInToEarlyFails,
@@ -129,7 +157,27 @@ internal class LegacyBinsService : ILegacyBinsService
 			}
 		}
 
-		if (this.packingChannel is not null)
+		await this.WriteToChannelAsync(bins, items, parameters, results);
+		return results;
+	}
+
+	private async ValueTask WriteToChannelAsync<TBin, TBox>(
+		List<TBin> bins,
+		List<TBox> items,
+		LegacyPackingParameters parameters,
+		Dictionary<string, PackingResult> results
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+	{
+		using var channelActivity = Diagnostics.ActivitySource.StartActivity("Send Channel Request");
+
+		if (this.packingChannel is null)
+		{
+			return;
+		}
+
+		try
 		{
 			await this.packingChannel
 				.Writer
@@ -137,7 +185,9 @@ internal class LegacyBinsService : ILegacyBinsService
 					LegacyPackingLogChannelRequest.From(bins, items, parameters, results)
 				);
 		}
-
-		return results;
+		catch (Exception ex)
+		{
+			this.logger.LogError(ex, "Error while writing to channel");
+		}
 	}
 }

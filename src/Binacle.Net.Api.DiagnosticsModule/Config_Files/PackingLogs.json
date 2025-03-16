@@ -1,6 +1,6 @@
 ﻿{
 	"PackingLogs" : {
-		"Enabled": true,
+		"Enabled": false,
 		"LegacyPacking" : {
 			"Path" : "data/pack-logs/legacy-packing/",
 			"FileName" : "{0}.ndjson",
