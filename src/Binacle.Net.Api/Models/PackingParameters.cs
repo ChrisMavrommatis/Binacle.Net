@@ -1,7 +1,9 @@
-﻿namespace Binacle.Net.Api.Models;
+﻿using Binacle.Net.Api.Kernel.Models;
+
+namespace Binacle.Net.Api.Models;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public class PackingParameters
+public class PackingParameters : ILogConvertible
 {
 	public required Algorithm Algorithm { get; init; }
 
@@ -15,5 +17,14 @@ public class PackingParameters
 			_ => throw new NotSupportedException($"Algorithm {this.Algorithm} is not supported.")
 		};
 		
+	}
+
+	public object ConvertToLogObject()
+	{
+		List<string> parameters =
+		[
+			this.Algorithm.ToString()
+		];
+		return parameters;
 	}
 }

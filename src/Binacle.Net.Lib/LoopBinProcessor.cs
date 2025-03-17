@@ -1,19 +1,22 @@
-﻿using Binacle.Net.Lib.Abstractions.Models;
+﻿using Binacle.Net.Lib.Abstractions;
+using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.Lib.Packing.Models;
 
 namespace Binacle.Net.Lib;
 
-public class LoopBinProcessor
+public class LoopBinProcessor : IBinProcessor
 {
-	private readonly AlgorithmFactory algorithmFactory;
+	private readonly IAlgorithmFactory algorithmFactory;
 
-	public LoopBinProcessor()
+	public LoopBinProcessor(
+		IAlgorithmFactory algorithmFactory
+		)
 	{
-		this.algorithmFactory = new AlgorithmFactory();
+		this.algorithmFactory = algorithmFactory;
 	}
 
-	public Dictionary<string, FittingResult> ProcessFitting<TBin, TItem>(
+	public IDictionary<string, FittingResult> ProcessFitting<TBin, TItem>(
 		Algorithm algorithm,
 		IList<TBin> bins,
 		IList<TItem> items,
@@ -22,6 +25,9 @@ public class LoopBinProcessor
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
+		using var activity = Diagnostics.ActivitySource
+			.StartActivity("Process Fitting: Loop");
+		
 		var results = new Dictionary<string, FittingResult>(bins.Count);
 
 		for (var i = 0; i < bins.Count; i++)
@@ -35,7 +41,7 @@ public class LoopBinProcessor
 		return results;
 	}
 
-	public Dictionary<string, PackingResult> ProcessPacking<TBin, TItem>(
+	public IDictionary<string, PackingResult> ProcessPacking<TBin, TItem>(
 		Algorithm algorithm,
 		IList<TBin> bins,
 		IList<TItem> items,
@@ -44,6 +50,9 @@ public class LoopBinProcessor
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
+		using var activity = Diagnostics.ActivitySource
+			.StartActivity("Process Packing: Loop");
+		
 		var results = new Dictionary<string, PackingResult>(bins.Count);
 
 		for (var i = 0; i < bins.Count; i++)

@@ -3,6 +3,4 @@
 /// <summary>
 /// Marker class used for assembly scanning
 /// </summary>
-public interface IApiMarker
-{
-}
+public interface IApiMarker;

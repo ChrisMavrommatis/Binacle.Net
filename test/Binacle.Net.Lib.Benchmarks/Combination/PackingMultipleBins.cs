@@ -13,8 +13,9 @@ public class PackingMultipleBins : MultipleBinsBenchmarkBase
 
 	public PackingMultipleBins()
 	{
-		this.loopProcessor = new LoopBinProcessor();
-		this.parallelProcessor = new ParallelBinProcessor();
+		var algorithmFactory = new AlgorithmFactory();
+		this.loopProcessor = new LoopBinProcessor(algorithmFactory);
+		this.parallelProcessor = new ParallelBinProcessor(algorithmFactory);
 		this.Bins = new List<TestBin>();
 		this.Items = this.DataProvider.GetItems();
 		// this.Items = new List<TestItem>();
@@ -50,7 +51,7 @@ public class PackingMultipleBins : MultipleBinsBenchmarkBase
 	}
 	
 	[Benchmark(Baseline = true)]
-	public Dictionary<string, PackingResult> FFD_Loop()
+	public IDictionary<string, PackingResult> FFD_Loop()
 	{
 		var results = this.loopProcessor.ProcessPacking(Algorithm.FirstFitDecreasing, this.Bins, this.Items, new PackingParameters
 		{
@@ -63,7 +64,7 @@ public class PackingMultipleBins : MultipleBinsBenchmarkBase
 	}
 	
 	[Benchmark]
-	public ConcurrentDictionary<string, PackingResult> FFD_Parallel()
+	public IDictionary<string, PackingResult> FFD_Parallel()
 	{
 		var results = this.parallelProcessor.ProcessPacking(Algorithm.FirstFitDecreasing, this.Bins, this.Items, new PackingParameters
 		{
@@ -76,7 +77,7 @@ public class PackingMultipleBins : MultipleBinsBenchmarkBase
 	}
 	
 	[Benchmark]
-	public Dictionary<string, PackingResult> WFD_Loop()
+	public IDictionary<string, PackingResult> WFD_Loop()
 	{
 		var results = this.loopProcessor.ProcessPacking(Algorithm.WorstFitDecreasing, this.Bins, this.Items, new PackingParameters
 		{
@@ -89,7 +90,7 @@ public class PackingMultipleBins : MultipleBinsBenchmarkBase
 	}
 	
 	[Benchmark]
-	public ConcurrentDictionary<string, PackingResult> WFD_Parallel()
+	public IDictionary<string, PackingResult> WFD_Parallel()
 	{
 		var results = this.parallelProcessor.ProcessPacking(Algorithm.WorstFitDecreasing, this.Bins, this.Items, new PackingParameters
 		{
@@ -103,7 +104,7 @@ public class PackingMultipleBins : MultipleBinsBenchmarkBase
 
 	
 	[Benchmark]
-	public Dictionary<string, PackingResult> BFD_Loop()
+	public IDictionary<string, PackingResult> BFD_Loop()
 	{
 		var results = this.loopProcessor.ProcessPacking(Algorithm.BestFitDecreasing, this.Bins, this.Items, new PackingParameters
 		{
@@ -116,7 +117,7 @@ public class PackingMultipleBins : MultipleBinsBenchmarkBase
 	}
 	
 	[Benchmark]
-	public ConcurrentDictionary<string, PackingResult> BFD_Parallel()
+	public IDictionary<string, PackingResult> BFD_Parallel()
 	{
 		var results = this.parallelProcessor.ProcessPacking(Algorithm.BestFitDecreasing, this.Bins, this.Items, new PackingParameters
 		{
@@ -127,8 +128,4 @@ public class PackingMultipleBins : MultipleBinsBenchmarkBase
 		
 		return results;
 	}
-
-	
-	
-
 }

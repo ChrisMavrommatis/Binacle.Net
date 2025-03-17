@@ -6,6 +6,6 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "email": "{{Email}}",
-    "password": "{{Password}}"
+  "email": "{{Email}}",
+  "password": "{{Password}}"
 }

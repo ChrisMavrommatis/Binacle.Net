@@ -9,5 +9,4 @@ public enum Algorithm
 	FFD,
 	WFD,
 	BFD
-	
 }

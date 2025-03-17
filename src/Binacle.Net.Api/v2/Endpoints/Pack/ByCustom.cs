@@ -1,8 +1,7 @@
 ﻿using Asp.Versioning;
-using Binacle.Net.Api.Models;
+using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Endpoints;
-using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -147,7 +146,7 @@ public class ByCustom : EndpointWithRequest<v2.Requests.CustomPackRequestWithBod
 					);
 			}
 
-			var operationResults = this.binsService.PackBins(
+			var operationResults = await this.binsService.PackBinsAsync(
 				request.Body.Bins!,
 				request.Body.Items!,
 				new Api.Models.LegacyPackingParameters

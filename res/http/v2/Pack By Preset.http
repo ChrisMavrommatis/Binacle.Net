@@ -6,33 +6,33 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "parameters": {
-        "neverReportUnpackedItems": false,
-        "optInToEarlyFails": false,
-        "stopAtSmallestBin": false,
-        "reportPackedItemsOnlyWhenFullyPacked": false
+  "parameters": {
+    "neverReportUnpackedItems": false,
+    "optInToEarlyFails": false,
+    "stopAtSmallestBin": false,
+    "reportPackedItemsOnlyWhenFullyPacked": false
+  },
+  "items": [
+    {
+      "id": "box_1",
+      "quantity": 2,
+      "length": 2,
+      "width": 5,
+      "height": 10
     },
-    "items": [
-        {
-            "id": "box_1",
-            "quantity": 2,
-            "length": 2,
-            "width": 5,
-            "height": 10
-        },
-        {
-            "id": "box_2",
-            "quantity": 1,
-            "length": 12,
-            "width": 15,
-            "height": 10
-        },
-        {
-            "id": "box_3",
-            "quantity": 1,
-            "length": 12,
-            "width": 10,
-            "height": 15
-        }
-    ]
+    {
+      "id": "box_2",
+      "quantity": 1,
+      "length": 12,
+      "width": 15,
+      "height": 10
+    },
+    {
+      "id": "box_3",
+      "quantity": 1,
+      "length": 12,
+      "width": 10,
+      "height": 15
+    }
+  ]
 }

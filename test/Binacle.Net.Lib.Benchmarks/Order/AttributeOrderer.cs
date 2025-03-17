@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 
 namespace Binacle.Net.Lib.Benchmarks.Order;
 
-public class AttributeOrderer : IOrderer
+internal class AttributeOrderer : IOrderer
 {
 	public bool SeparateLogicalGroups => true;
 

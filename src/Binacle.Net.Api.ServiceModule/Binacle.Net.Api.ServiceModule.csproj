@@ -16,25 +16,33 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
+	</ItemGroup>
+	
+	<ItemGroup>
 		<PackageReference Include="ChrisMavrommatis.MinimalEndpointDefinitions" Version="2.0.1" />
 		<PackageReference Include="ChrisMavrommatis.Results" Version="2.0.2" />
 		<PackageReference Include="ChrisMavrommatis.SwaggerExamples" Version="2.0.1" />
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0" />
-
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.FluentValidation\ChrisMavrommatis.FluentValidation.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule.Domain\Binacle.Net.Api.ServiceModule.Domain.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule.Infrastructure\Binacle.Net.Api.ServiceModule.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ConfigFiles Include="Config_Files\*.json" />
+	</ItemGroup>
+
+
+	<!-- This target runs on every build -->
+	<Target Name="CopyConfigFiles" BeforeTargets="Build;Rebuild">
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="..\Binacle.Net.Api\Config_Files\ServiceModule\%(ConfigFiles.RecursiveDir)" />
+	</Target>
+	
 
 </Project>

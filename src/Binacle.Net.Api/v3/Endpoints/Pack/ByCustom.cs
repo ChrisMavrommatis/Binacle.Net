@@ -1,8 +1,7 @@
 ﻿using Asp.Versioning;
-using Binacle.Net.Api.Models;
+using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Endpoints;
-using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -78,6 +77,7 @@ public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBod
 	[SwaggerResponseExample(typeof(v3.Responses.ErrorResponse), typeof(v3.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	public override async Task<IActionResult> HandleAsync(v3.Requests.CustomPackRequestWithBody request, CancellationToken cancellationToken = default)
 	{
+		using var activity = Diagnostics.ActivitySource.StartActivity("Pack by Custom: v3");
 		try
 		{
 			if (request is null || request.Body is null)
@@ -88,7 +88,10 @@ public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBod
 				);
 			}
 
-			await this.validator.ValidateAndAddToModelStateAsync(request.Body, this.ModelState, cancellationToken);
+			using(var validationActivity = Diagnostics.ActivitySource.StartActivity("Validate Request"))
+			{
+				await this.validator.ValidateAndAddToModelStateAsync(request.Body, this.ModelState, cancellationToken);
+			}
 
 			if (!this.ModelState.IsValid)
 			{
@@ -97,7 +100,7 @@ public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBod
 				);
 			}
 
-			var operationResults = this.binacleService.PackBins(
+			var operationResults = await this.binacleService.PackBinsAsync(
 				request.Body.Bins!,
 				request.Body.Items!,
 				new Api.Models.PackingParameters
@@ -106,15 +109,17 @@ public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBod
 				}
 			);
 
-			return this.Ok(
-				v3.Responses.PackResponse.Create(
-					request.Body.Bins!,
-					request.Body.Items!,
-					request.Body.Parameters,
-					operationResults
-				)
-			);
-
+			using (var responseActivity = Diagnostics.ActivitySource.StartActivity("Create Response"))
+			{
+				return this.Ok(
+					v3.Responses.PackResponse.Create(
+						request.Body.Bins!,
+						request.Body.Items!,
+						request.Body.Parameters,
+						operationResults
+					)
+				);
+			}
 		}
 		catch (Exception ex)
 		{

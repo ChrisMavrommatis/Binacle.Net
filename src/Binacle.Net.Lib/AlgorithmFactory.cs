@@ -1,10 +1,11 @@
-﻿using Binacle.Net.Lib.Abstractions.Algorithms;
+﻿using Binacle.Net.Lib.Abstractions;
+using Binacle.Net.Lib.Abstractions.Algorithms;
 using Binacle.Net.Lib.Abstractions.Fitting;
 using Binacle.Net.Lib.Abstractions.Models;
 
 namespace Binacle.Net.Lib;
 
-public class AlgorithmFactory
+public class AlgorithmFactory : IAlgorithmFactory
 {
 	public IFittingAlgorithm CreateFitting<TBin, TItem>(Algorithm algorithm, TBin bin, IList<TItem> items)
 		where TBin : class, IWithID, IWithReadOnlyDimensions

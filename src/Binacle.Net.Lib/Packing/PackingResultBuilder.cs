@@ -44,6 +44,9 @@ internal class PackingResultBuilder<TBin, TItem>
 
 	internal PackingResult Build(PackingParameters parameters)
 	{
+		using var activity = Diagnostics.ActivitySource
+			.StartActivity("Build Packing Result");
+		
 		var result = new PackingResult()
 		{
 			BinID = this.bin.ID,

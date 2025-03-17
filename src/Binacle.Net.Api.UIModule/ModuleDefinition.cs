@@ -16,12 +16,13 @@ public static class ModuleDefinition
 	{
 		Log.Information("{moduleName} module. Status {status}", "UI", "Initializing");
 
-
-		builder.Configuration
-			.AddJsonFile("UiModule/ConnectionStrings.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"UiModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-			.AddEnvironmentVariables();
-
+		builder.AddJsonConfiguration(
+			filePath: "UiModule/ConnectionStrings.json",
+			environmentFilePath: $"UiModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json",
+			optional: false,
+			reloadOnChange: true
+		);
+		
 		builder.Services
 			.AddHttpContextAccessor()
 			.AddRazorComponents()
@@ -30,7 +31,7 @@ public static class ModuleDefinition
 		builder.Services.AddHttpClient("BinacleApi", (serviceProvider, httpClient) =>
 		{
 			var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-			var connectionString = configuration.GetConnectionStringWithEnvironmentVariableFallback("BinacleApi", "BINACLEAPI_CONNECTION_STRING");
+			var connectionString = configuration.GetConnectionStringWithEnvironmentVariableFallback("BinacleApi");
 
 			if (connectionString is not null)
 			{
@@ -62,7 +63,6 @@ public static class ModuleDefinition
 
 	public static void UseUIModule(this WebApplication app)
 	{
-
 		// Configure the HTTP request pipeline.
 		if (!app.Environment.IsDevelopment())
 		{

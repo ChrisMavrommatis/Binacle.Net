@@ -1,9 +1,9 @@
 ﻿using Asp.Versioning;
 using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
 using ChrisMavrommatis.Endpoints;
-using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.SwaggerExamples.Attributes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -153,7 +153,7 @@ public class ByPreset : EndpointWithRequest<v2.Requests.PresetFitRequestWithBody
 				return this.NotFound(null);
 			}
 
-			var operationResults = this.binsService.FitBins(
+			var operationResults = await this.binsService.FitBinsAsync(
 				presetOption.Bins,
 				request.Body.Items!,
 				new LegacyFittingParameters

@@ -1,9 +1,15 @@
-﻿namespace Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
+﻿using Binacle.Net.Api.Kernel.Models;
 
-public class UserOptions
+namespace Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
+
+public class UserOptions : IConfigurationOptions
 {
-	public static string SectionName = "Users";
-	public static string FilePath = "ServiceModule/Users.json";
+	public static string FilePath => "ServiceModule/Users.json";
+	public static string SectionName => "Users";
+	public static bool Optional => false;
+	public static bool ReloadOnChange => true;
+	public static string? GetEnvironmentFilePath(string environment) => null;
+	
 	public string? DefaultAdminUser { get; set; }
 
 	// TODO: add user options

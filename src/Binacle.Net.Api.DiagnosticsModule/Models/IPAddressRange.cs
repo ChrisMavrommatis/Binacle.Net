@@ -3,7 +3,7 @@ using System.Net.Sockets;
 
 namespace Binacle.Net.Api.DiagnosticsModule.Models;
 
-public class IPAddressRange
+internal class IPAddressRange
 {
 	readonly AddressFamily addressFamily;
 	readonly byte[] lowerBytes;

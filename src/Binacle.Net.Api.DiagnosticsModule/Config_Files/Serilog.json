@@ -1,0 +1,38 @@
+﻿{
+	"Serilog": {
+		"MinimumLevel": {
+			"Default": "Information",
+			"Override": {
+				"Microsoft.AspNetCore": "Warning",
+				"Azure.Core":  "Warning"
+			}
+		},
+		"WriteTo": [
+			{
+				"Name": "Console",
+				"Args": {
+					"theme": "Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme::Code, Serilog.Sinks.Console",
+					"outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} <s:{SourceContext}>{NewLine}{Exception}"
+				}
+			},
+			{
+				"Name": "File",
+				"Args": {
+					"path": "data/logs/log-.txt",
+					"formatter": "Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact",
+					"rollingInterval": "Day",
+					"retainedFileCountLimit": 7
+				}
+			}
+		],
+		"Enrich": [
+			"FromLogContext",
+			"WithMachineName",
+			"WithProcessId",
+			"WithThreadId"
+		],
+		"Properties": {
+			"Application": "Binacle.Net"
+		}
+	}
+}

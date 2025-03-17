@@ -1,34 +1,38 @@
 ﻿using System.Collections.Concurrent;
+using Binacle.Net.Lib.Abstractions;
 using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Fitting.Models;
 using Binacle.Net.Lib.Packing.Models;
 
 namespace Binacle.Net.Lib;
 
-public class ParallelBinProcessor
+public class ParallelBinProcessor : IBinProcessor
 {
-	private readonly AlgorithmFactory algorithmFactory;
+	private readonly IAlgorithmFactory algorithmFactory;
+	private readonly int concurrencyLevel;
 
-	public ParallelBinProcessor()
+	public ParallelBinProcessor(
+		IAlgorithmFactory algorithmFactory,
+		int? concurrencyLevel = null
+		)
 	{
-		this.algorithmFactory = new AlgorithmFactory();
+		this.algorithmFactory = algorithmFactory;
+		this.concurrencyLevel = concurrencyLevel ?? Environment.ProcessorCount;
 	}
 	
-	public ConcurrentDictionary<string, FittingResult> ProcessFitting<TBin, TItem>(
+	public IDictionary<string, FittingResult> ProcessFitting<TBin, TItem>(
 		Algorithm algorithm,
 		IList<TBin> bins, 
 		IList<TItem> items, 
-		FittingParameters parameters,
-		int? concurrencyLevel = null
+		FittingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
-		if(!concurrencyLevel.HasValue)
-		{
-			concurrencyLevel = Environment.ProcessorCount;
-		}
-		var results = new ConcurrentDictionary<string, FittingResult>(concurrencyLevel.Value, bins.Count);
+		using var activity = Diagnostics.ActivitySource
+			.StartActivity("Process Fitting: Parallel");
+		
+		var results = new ConcurrentDictionary<string, FittingResult>(this.concurrencyLevel, bins.Count);
 
 		Parallel.For(0, bins.Count, i =>
 		{
@@ -41,21 +45,19 @@ public class ParallelBinProcessor
 		return results;
 	}
 
-	public ConcurrentDictionary<string, PackingResult> ProcessPacking<TBin, TItem>(
+	public IDictionary<string, PackingResult> ProcessPacking<TBin, TItem>(
 		Algorithm algorithm,
 		IList<TBin> bins, 
 		IList<TItem> items, 
-		PackingParameters parameters,
-		int? concurrencyLevel = null
+		PackingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
-		if(!concurrencyLevel.HasValue)
-		{
-			concurrencyLevel = Environment.ProcessorCount;
-		}
-		var results =  new ConcurrentDictionary<string, PackingResult>(concurrencyLevel.Value, bins.Count);
+		using var activity = Diagnostics.ActivitySource
+			.StartActivity("Process Packing: Parallel");
+		
+		var results =  new ConcurrentDictionary<string, PackingResult>(this.concurrencyLevel, bins.Count);
 
 		Parallel.For(0, bins.Count, i =>
 		{
@@ -67,5 +69,4 @@ public class ParallelBinProcessor
 
 		return results;
 	}
-	
 }

@@ -1,19 +1,22 @@
-﻿using Asp.Versioning;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Asp.Versioning;
 using Binacle.Net.Api.Configuration;
 using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.DiagnosticsModule;
+using Binacle.Net.Api.ExtensionMethods;
+using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.ServiceModule;
 using Binacle.Net.Api.Services;
 using Binacle.Net.Api.UIModule;
 using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.Features;
-using ChrisMavrommatis.FluentValidation;
 using ChrisMavrommatis.StartupTasks;
 using ChrisMavrommatis.SwaggerExamples;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using System.Text.Json.Serialization;
+using ApiVersion = Binacle.Net.Api.v1.ApiVersion;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
@@ -23,9 +26,8 @@ public class Program
 {
 	public static async Task Main(string[] args)
 	{
-		Binacle.Net.Api.DiagnosticsModule.ModuleDefinition.BootstrapLogger();
-
 		var builder = WebApplication.CreateSlimBuilder(args);
+		builder.BootstrapLogger();
 
 		// Slim builder
 		builder.WebHost.UseKestrelHttpsConfiguration();
@@ -36,31 +38,30 @@ public class Program
 		builder.Configuration
 			.SetBasePath($"{Directory.GetCurrentDirectory()}/Config_Files");
 
-		builder.Configuration
-			.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-			.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-
+		builder.AddJsonConfiguration(
+			filePath: "appsettings.json",
+			environmentFilePath: $"appsettings.{builder.Environment.EnvironmentName}.json",
+			optional: true,
+			reloadOnChange: true
+		);
+		
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initializing");
 
-		builder.Configuration
-			.AddJsonFile(BinPresetOptions.FilePath, optional: false, reloadOnChange: true);
+		builder.AddValidatableJsonConfigurationOptions<BinPresetOptions>();
 
 		// Feature Management
-		builder.Configuration
-			.AddJsonFile("Features.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"Features.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-
+		builder.AddJsonConfiguration(
+			filePath: "Features.json",
+			environmentFilePath: $"Features.{builder.Environment.EnvironmentName}.json",
+			optional: false,
+			reloadOnChange: true
+		);
+		
 		Feature.Manager = new FeatureManagerConfiguration()
 			.ReadFrom.Configuration(builder.Configuration)
 			.ReadFrom.EnvironmentVariables()
 			.CreateManager();
-
-		builder.Services
-		   .AddOptions<BinPresetOptions>()
-		   .Bind(builder.Configuration.GetSection(BinPresetOptions.SectionName))
-		   .ValidateFluently()
-		   .ValidateOnStart();
-
+		
 		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
 
 		builder.Services.AddControllers(options =>
@@ -73,15 +74,16 @@ public class Program
 			options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
 
+		builder.Services.AddTransient(typeof(IOptionalDependency<>), typeof(OptionalDependency<>));
+
 		builder.Services.AddApiVersioning(options =>
 		{
-			options.DefaultApiVersion = ApiVersionParser.Default.Parse(v1.ApiVersion.Number);
+			options.DefaultApiVersion = ApiVersionParser.Default.Parse(ApiVersion.Number);
 			options.AssumeDefaultVersionWhenUnspecified = true;
 			options.ReportApiVersions = true;
 			options.ApiVersionReader = ApiVersionReader.Combine(
 				new UrlSegmentApiVersionReader()
-				);
-
+			);
 		}).AddApiExplorer(options =>
 		{
 			options.GroupNameFormat = "'v'VVV";
@@ -89,12 +91,11 @@ public class Program
 		});
 
 		builder.Services.AddSingleton(_ => TimeProvider.System);
-		builder.Services.AddSingleton<ILegacyBinsService, LegacyBinsService>();
-		builder.Services.AddSingleton<IBinacleService, BinacleService>();
+		builder.Services.AddBinacleServices();
 
 		builder.Services.AddSwaggerExamples(options =>
 		{
-			options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+			options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 			// ignore null
 			options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});

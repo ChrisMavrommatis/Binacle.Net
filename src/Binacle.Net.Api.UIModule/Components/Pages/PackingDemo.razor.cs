@@ -199,7 +199,7 @@ public partial class PackingDemo : AppletComponentBase
 	{
 		await this.MessagingService!.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
 			"UpdateScene",
-			async () =>
+			() =>
 			{
 				try
 				{
@@ -215,12 +215,14 @@ public partial class PackingDemo : AppletComponentBase
 					}
 					
 					this.selectedResult = result;
-					return (this.selectedResult.Bin, this.selectedResult.PackedItems);
+					var returnedResult = (this.selectedResult.Bin, this.selectedResult.PackedItems);
+					return Task.FromResult(returnedResult)!;
 				}
 				catch (Exception ex)
 				{
 					this.errors.Add(ex.Message);
-					return (null, null);
+					var returnedResult = (default(UIModule.Models.Bin?), default(List<UIModule.Models.PackedItem>?));
+					return Task.FromResult(returnedResult)!;
 				}
 			});
 	}

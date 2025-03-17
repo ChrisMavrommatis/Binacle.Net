@@ -117,7 +117,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 				PackedBinVolumePercentage = packedBinVolumePercentage
 			};
 		}
-		catch (Exception ex)
+		catch (Exception)
 		{
 			return null;
 		}
@@ -128,7 +128,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 		await this.MessagingService!
 			.TriggerAsync<AsyncCallback<(Bin?, List<PackedItem>?)>>(
 				"UpdateScene",
-				async () =>
+				() =>
 				{
 					try
 					{
@@ -143,12 +143,14 @@ public partial class ProtocolDecoder : AppletComponentBase
 						}
 
 						this.selectedResult = result;
-						return (this.selectedResult.Bin, this.selectedResult.PackedItems);
+						var returnedResult = (result.Bin, result.PackedItems);
+						return Task.FromResult(returnedResult)!;
 					}
 					catch (Exception ex)
 					{
 						this.errors.Add(ex.Message);
-						return (null, null);
+						var returnedResult = (default(Bin?), default(List<PackedItem>?));
+						return Task.FromResult(returnedResult)!;
 					}
 				});
 	}

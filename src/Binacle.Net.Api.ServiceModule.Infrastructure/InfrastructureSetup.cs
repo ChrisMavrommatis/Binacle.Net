@@ -5,7 +5,6 @@ using Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables.Users.Data;
 using Binacle.Net.Api.ServiceModule.Infrastructure.Services;
 using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.Azure;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
@@ -18,10 +17,8 @@ public static class InfrastructureSetup
 	public static T AddInfrastructureLayerServices<T>(this T builder)
 		where T : IHostApplicationBuilder
 	{
-		var azureStorageConnectionString = builder.Configuration.GetConnectionStringWithEnvironmentVariableFallback(
-				"AzureStorage",
-				"AZURESTORAGE_CONNECTION_STRING"
-		);
+		var azureStorageConnectionString = builder.Configuration
+			.GetConnectionStringWithEnvironmentVariableFallback("AzureStorage");
 
 		if (azureStorageConnectionString is not null)
 		{
@@ -41,7 +38,15 @@ public static class InfrastructureSetup
 				clientBuilder.AddTableServiceClient(azureStorageConnectionString);
 			});
 		}
-
+		
+		// see if IUserRepository was registered
+		var userRepositoryServiceDescriptor = builder.Services.FirstOrDefault(x => x.ServiceType == typeof(IUserRepository));
+		if (userRepositoryServiceDescriptor is null)
+		{
+			var ex = new ApplicationException("IUserRepository was not registered");
+			Log.Fatal(ex, "No Database provider was registered, please check your configuration");
+			throw ex;
+		}
 
 		builder.Services.AddStartupTask<EnsureAdminUserExistsStartupTask>();
 

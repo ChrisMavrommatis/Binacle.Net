@@ -175,7 +175,7 @@ public class FitByCustomBehavior : Abstractions.BehaviourTestsBase
 	}
 
 	private Api.v2.Requests.CustomFitRequest CreateSpecialRequest(
-		Action<Api.v2.Requests.FitRequestParameters> modifyParameters = null
+		Action<Api.v2.Requests.FitRequestParameters>? modifyParameters = null
 	)
 	{
 		var request = new Api.v2.Requests.CustomFitRequest

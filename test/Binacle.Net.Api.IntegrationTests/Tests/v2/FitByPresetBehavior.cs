@@ -184,7 +184,7 @@ public class FitByPresetBehavior :  Abstractions.BehaviourTestsBase
 	}
 	
 	private Api.v2.Requests.PresetFitRequest CreateSpecialRequest(
-		Action<Api.v2.Requests.FitRequestParameters> modifyParameters = null
+		Action<Api.v2.Requests.FitRequestParameters>? modifyParameters = null
 	)
 	{
 		var request = new Api.v2.Requests.PresetFitRequest

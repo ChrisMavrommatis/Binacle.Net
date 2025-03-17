@@ -3,10 +3,9 @@
 
 POST https://{{HOST}}/api/auth/token
 Accept: application/json
+Content-Type: application/json
 
-  {
-    "email": "{{Username}}",
-    "password" : "{{Password}}"
-  }
-  
-
+{
+  "email": "{{Username}}",
+  "password" : "{{Password}}"
+}

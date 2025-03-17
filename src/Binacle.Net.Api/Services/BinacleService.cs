@@ -1,9 +1,11 @@
-﻿using Binacle.Net.Api.ExtensionMethods;
-using Binacle.Net.Lib;
+﻿using System.Threading.Channels;
+using Binacle.Net.Api.Kernel.Models;
+using Binacle.Net.Lib.Abstractions;
 using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Packing.Models;
 using ChrisMavrommatis.Logging;
-using PackingParameters = Binacle.Net.Api.Models.PackingParameters;
+using ApiPackingParameters = Binacle.Net.Api.Models.PackingParameters;
+using LibPackingParameters = Binacle.Net.Lib.Packing.Models.PackingParameters;
 
 namespace Binacle.Net.Api.Services;
 
@@ -11,51 +13,89 @@ namespace Binacle.Net.Api.Services;
 
 public interface IBinacleService
 {
-	Dictionary<string, PackingResult> PackBins<TBin, TBox>(List<TBin> bins, List<TBox> items, PackingParameters parameters)
+	ValueTask<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
+		List<TBin> bins,
+		List<TBox> items,
+		ApiPackingParameters parameters
+	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 }
 
-
 internal class BinacleService : IBinacleService
 {
+	private readonly Channel<PackingLogChannelRequest>? packingChannel;
 	private readonly ILogger<BinacleService> logger;
-	private readonly LoopBinProcessor loopBinProcessor;
+	private readonly IBinProcessor loopBinProcessor;
+	private readonly IBinProcessor parallelBinProcessor;
 
 	public BinacleService(
-		ILogger<BinacleService> logger
+		[FromKeyedServices("loop")] IBinProcessor loopBinProcessor,
+		[FromKeyedServices("parallel")] IBinProcessor parallelBinProcessor,
+		ILogger<BinacleService> logger,
+		IOptionalDependency<Channel<PackingLogChannelRequest>> packingChannel
 	)
 	{
-		this.loopBinProcessor = new LoopBinProcessor();
+		this.loopBinProcessor = loopBinProcessor;
+		this.parallelBinProcessor = parallelBinProcessor;
+		this.packingChannel = packingChannel.Value;
 		this.logger = logger;
 	}
-	
-	public Dictionary<string, PackingResult> PackBins<TBin, TBox>(
-		List<TBin> bins, 
+
+	public async ValueTask<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
+		List<TBin> bins,
 		List<TBox> items,
-		PackingParameters parameters
+		ApiPackingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 	{
-		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
+		using var activity = Diagnostics.ActivitySource.StartActivity("Pack Bins");
 
-		this.logger.EnrichStateWith("Items", items);
-		this.logger.EnrichStateWith("Bins", bins);
-		this.logger.EnrichStateWithParameters(parameters);
+		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
 
 		var results = this.loopBinProcessor.ProcessPacking(
 			parameters.GetMappedAlgorithm(),
 			bins,
 			items,
-			new Lib.Packing.Models.PackingParameters 
-			{ 
-				NeverReportUnpackedItems = false, 
+			new LibPackingParameters
+			{
+				NeverReportUnpackedItems = false,
 				OptInToEarlyFails = false,
 				ReportPackedItemsOnlyWhenFullyPacked = false
 			});
 
-		this.logger.EnrichStateWithResults(results);
+		await this.WriteToChannelAsync(bins, items, parameters, results);
 		return results;
+	}
+
+	private async ValueTask WriteToChannelAsync<TBin, TBox>(
+		List<TBin> bins,
+		List<TBox> items,
+		ApiPackingParameters parameters,
+		IDictionary<string, PackingResult> results
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+	{
+		using var channelActivity = Diagnostics.ActivitySource.StartActivity("Send Channel Request");
+
+		if (this.packingChannel is null)
+		{
+			return;
+		}
+
+		try
+		{
+			await this.packingChannel
+				.Writer
+				.WriteAsync(
+					PackingLogChannelRequest.From(bins, items, parameters, results)
+				);
+		}
+		catch (Exception ex)
+		{
+			this.logger.LogError(ex, "Error while writing to channel");
+		}
 	}
 }

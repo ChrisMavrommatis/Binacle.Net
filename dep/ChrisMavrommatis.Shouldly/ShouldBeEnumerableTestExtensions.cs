@@ -11,14 +11,14 @@ namespace Shouldly;
 public static partial class ShouldBeEnumerableTestExtensions
 {
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ShouldBeNullOrEmpty<T>([NotNull] this IEnumerable<T>? actual, string? customMessage = null)
+    public static void ShouldBeNullOrEmpty<T>(this IEnumerable<T>? actual, string? customMessage = null)
     {
         if (actual?.Any() ?? false)
             throw new ShouldAssertException(new ExpectedShouldlyMessage(actual, customMessage).ToString());
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ShouldHaveCount<T>([NotNull] this IEnumerable<T>? actual, int count, string? customMessage = null)
+    public static void ShouldHaveCount<T>(this IEnumerable<T>? actual, int count, string? customMessage = null)
     {
 	    if (actual is null || actual.Count() != count)
 		    throw new ShouldAssertException(new ExpectedShouldlyMessage(actual, customMessage).ToString());

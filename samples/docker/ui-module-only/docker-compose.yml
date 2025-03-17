@@ -1,0 +1,17 @@
+services:
+  binacle-net:
+    image: binacle/binacle-net:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./Presets.json
+        target: /app/Config_Files/Presets.json
+        read_only: true
+      - type: bind
+        source: ./data
+        target: /app/data/
+    environment:
+      - SWAGGER_UI=True
+      - UI_MODULE=True
+      - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/

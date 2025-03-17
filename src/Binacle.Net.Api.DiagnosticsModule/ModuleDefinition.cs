@@ -1,44 +1,50 @@
-﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
-using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
+﻿using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
+using Binacle.Net.Api.DiagnosticsModule.ExtensionMethods;
 using Binacle.Net.Api.DiagnosticsModule.Middleware;
 using Binacle.Net.Api.Kernel;
-using ChrisMavrommatis.FluentValidation;
+using Binacle.Net.Api.Kernel.Models;
 using FluentValidation;
 using HealthChecks.UI.Client;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
+using Serilog.Events;
 
 namespace Binacle.Net.Api.DiagnosticsModule;
 
 public static class ModuleDefinition
 {
-	public static void BootstrapLogger()
+	public static void BootstrapLogger(this WebApplicationBuilder builder)
 	{
+		builder.Logging.ClearProviders();
+
 		Log.Logger = new LoggerConfiguration()
-			.MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
+			.MinimumLevel.Information()
+			.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+			.MinimumLevel.Override("Azure.Core", LogEventLevel.Warning)
+			.WriteTo.Console()
 			.Enrich.FromLogContext()
 			.Enrich.WithMachineName()
+			.Enrich.WithProcessId()
 			.Enrich.WithThreadId()
-			.WriteTo.Console()
+			.Enrich.WithBinacleVersion()
 			.CreateBootstrapLogger();
 	}
-
+	
 	public static void AddDiagnosticsModule(this WebApplicationBuilder builder)
 	{
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initializing");
-
-		builder.Configuration
-			.AddJsonFile("DiagnosticsModule/ConnectionStrings.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"DiagnosticsModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-			.AddEnvironmentVariables();
 
 		// Required for local run with secrets
 		if (builder.Environment.IsDevelopment())
@@ -48,90 +54,119 @@ public static class ModuleDefinition
 		}
 
 		// Logging
-		builder.Configuration
-			.AddJsonFile("DiagnosticsModule/Serilog.json", optional: false, reloadOnChange: true)
-			.AddJsonFile($"DiagnosticsModule/Serilog.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-
-		var applicationInsightsConnectionString = builder.Configuration.GetConnectionStringWithEnvironmentVariableFallback(
-			"ApplicationInsights",
-			"APPLICATIONINSIGHTS_CONNECTION_STRING"
-			);
-
+		builder.AddJsonConfiguration(
+			filePath: "DiagnosticsModule/Serilog.json",
+			environmentFilePath: $"DiagnosticsModule/Serilog.{builder.Environment.EnvironmentName}.json",
+			optional: false,
+			reloadOnChange: true
+		);
 
 		// overwrite default logger
 		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 		{
 			loggerConfiguration
-			.ReadFrom.Configuration(builder.Configuration);
+				.ReadFrom.Configuration(builder.Configuration)
+				.Enrich.WithBinacleVersion();
+		}, writeToProviders: true);
 
-			if (applicationInsightsConnectionString is not null)
+		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton,
+			includeInternalTypes: true);
+
+		// Open Telemetry
+		builder.AddValidatableJsonConfigurationOptions<OpenTelemetryConfigurationOptions>();
+
+		var openTelemetryOptions = builder.Configuration.GetConfigurationOptions<OpenTelemetryConfigurationOptions>();
+
+		if (openTelemetryOptions?.IsEnabled() ?? false)
+		{
+			Log.Information("OpenTelemetry is enabled.");
+			var openTelemetryBuilder = builder.Services
+				.AddOpenTelemetry()
+				.ConfigureResource(resourceBuilder =>
+				{
+					resourceBuilder.AddService(
+						serviceName: "Binacle.Net",
+						serviceVersion: Environment.GetEnvironmentVariable("BINACLE_VERSION") ?? "Unknown",
+						serviceNamespace: openTelemetryOptions.ServiceNamespace,
+						serviceInstanceId: openTelemetryOptions.ServiceInstanceId
+					)
+					.AddOptionalAdditionalAttributes(openTelemetryOptions);
+				})
+				.WithMetrics(meterBuilder =>
+				{
+					meterBuilder
+						.ConfigureResource(config =>
+							config.AddOptionalAdditionalAttributes(openTelemetryOptions.Metrics)
+						)
+						.AddRuntimeInstrumentation()
+						.AddAspNetCoreInstrumentation()
+						.AddMeters(openTelemetryOptions.Metrics.AdditionalMeters);
+				})
+				.WithTracing(traceBuilder =>
+				{
+					traceBuilder
+						.ConfigureResource(config =>
+							config.AddOptionalAdditionalAttributes(openTelemetryOptions.Tracing)
+						)
+						.AddAspNetCoreInstrumentation(options =>
+							options.ConfigureAspNetCoreInstrumentation(openTelemetryOptions.Tracing)
+						)
+						.AddHttpClientInstrumentation(options =>
+							options.ConfigureHttpClientInstrumentation(openTelemetryOptions.Tracing)
+						)
+						.AddSources(openTelemetryOptions.Tracing.AdditionalSources);
+				})
+				.WithLogging(logBuilder =>
+				{
+					logBuilder.ConfigureResource(config =>
+						config.AddOptionalAdditionalAttributes(openTelemetryOptions.Logging)
+					);
+				});
+
+			if (openTelemetryOptions.Otlp.Enabled)
 			{
-				loggerConfiguration.WriteTo.ApplicationInsights(
-					services.GetRequiredService<TelemetryConfiguration>(),
-					TelemetryConverter.Traces
-				);
+				Log.Information("Using {Provider} with OpenTelemetry.", "Otlp Exporter");
+				openTelemetryBuilder.UseOtlpExporter(openTelemetryOptions.Otlp);
 			}
-		});
 
-		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
+			if (openTelemetryOptions.AzureMonitor.Enabled)
+			{
+				Log.Information("Using {Provider} with OpenTelemetry.", "Azure Monitor");
+				openTelemetryBuilder.UseAzureMonitor(openTelemetryOptions.AzureMonitor);
+			}
+		}
+
+		// Packing Logs
+		builder.AddValidatableJsonConfigurationOptions<PackingLogsConfigurationOptions>();
+
+		var packingLogsOptionsIsEnabled = builder.Configuration
+			.GetSection(PackingLogsConfigurationOptions.SectionName)
+			.GetValue<bool>(nameof(PackingLogsConfigurationOptions.Enabled));
+		
+		if (packingLogsOptionsIsEnabled)
+		{
+			builder.Services
+				.AddOptionsBasedLogProcessor<LegacyFittingLogChannelRequest>(
+					optionsSelector: options => options.LegacyFitting!,
+					logFormatter: request => request.ConvertToLogObject());
+
+			builder.Services
+				.AddOptionsBasedLogProcessor<LegacyPackingLogChannelRequest>(
+					optionsSelector: options => options.LegacyPacking!,
+					logFormatter: request => request.ConvertToLogObject());
+
+			builder.Services
+				.AddOptionsBasedLogProcessor<PackingLogChannelRequest>(
+					optionsSelector: options => options.Packing!,
+					logFormatter: request => request.ConvertToLogObject());
+		}
 
 		// Health Checks
-		builder.Configuration
-			.AddJsonFile(HealthCheckConfigurationOptions.FilePath, optional: false, reloadOnChange: true)
-			.AddJsonFile(HealthCheckConfigurationOptions.GetEnvironmentFilePath(builder.Environment.EnvironmentName), optional: true, reloadOnChange: true)
-			.AddEnvironmentVariables();
-
-		builder.Services
-			.AddOptions<HealthCheckConfigurationOptions>()
-			.Bind(builder.Configuration.GetSection(HealthCheckConfigurationOptions.SectionName))
-			.ValidateFluently()
-			.ValidateOnStart();
+		builder.AddValidatableJsonConfigurationOptions<HealthCheckConfigurationOptions>();
 
 		// Add health checks
 		builder.Services
 			.AddHealthChecks();
-
-
-		// Add OpenTelemetry
-		var openTelemetryBuilder = builder.Services
-			.AddOpenTelemetry()
-			//.ConfigureResource(resource =>
-			//{
-			//	resource.AddService(serviceName: "Binacle-Net");
-			//})
-			.WithMetrics(configure =>
-			{
-				configure
-					.AddRuntimeInstrumentation()
-					.AddMeter("Microsoft.AspNetCore.Hosting")
-					.AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-					.AddMeter("Microsoft.AspNetCore.RateLimiting");
-			}).WithTracing(configure =>
-			{
-				configure.AddAspNetCoreInstrumentation();
-			});
-
-
-		if (applicationInsightsConnectionString is not null)
-		{
-			builder.Services.AddApplicationInsightsTelemetry(options =>
-			{
-				options.ConnectionString = applicationInsightsConnectionString;
-				options.EnableQuickPulseMetricStream = false;
-			});
-
-
-			openTelemetryBuilder.UseAzureMonitor(configure =>
-			{
-				var samplingRatio = Environment.GetEnvironmentVariable("AZUREMONITOR_SAMPLING_RATIO");
-				if (samplingRatio != null && float.TryParse(samplingRatio, out var ratio))
-				{
-					configure.SamplingRatio = ratio;
-				}
-
-				configure.ConnectionString = applicationInsightsConnectionString;
-			});
-		}
 
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initialized");
 	}
@@ -144,27 +179,28 @@ public static class ModuleDefinition
 		{
 			app.UseMiddleware<HealthChecksProtectionMiddleware>();
 
-			app.MapHealthChecks(healthChecksOptions.Value.Path!, new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
-			{
-				ResultStatusCodes =
+			app.MapHealthChecks(healthChecksOptions.Value.Path!,
+				new HealthCheckOptions
 				{
-					[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Healthy] = StatusCodes.Status200OK,
-					[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded] = StatusCodes.Status200OK,
-					[Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
-				},
-				ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
-				Predicate = (check) =>
-				{
-					if(healthChecksOptions.Value.RestrictedChecks is null || healthChecksOptions.Value.RestrictedChecks.Length == 0)
+					ResultStatusCodes =
 					{
-						return true;
+						[HealthStatus.Healthy] = StatusCodes.Status200OK,
+						[HealthStatus.Degraded] = StatusCodes.Status200OK,
+						[HealthStatus.Unhealthy] =
+							StatusCodes.Status503ServiceUnavailable
+					},
+					ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+					Predicate = (check) =>
+					{
+						if (healthChecksOptions.Value.RestrictedChecks is null ||
+						    healthChecksOptions.Value.RestrictedChecks.Length == 0)
+						{
+							return true;
+						}
+
+						return healthChecksOptions.Value.RestrictedChecks.Contains(check.Name);
 					}
-
-					return healthChecksOptions.Value.RestrictedChecks.Contains(check.Name);
-				}
-			});
+				});
 		}
-
-
 	}
 }

@@ -11,7 +11,7 @@ public class QueryResponse : v1.Models.ResponseBase
 	public static QueryResponse Create<TBin, TItem>(
 		List<TBin> bins, 
 		List<TItem> items, 
-		Dictionary<string, Lib.Fitting.Models.FittingResult> operationResults
+		IDictionary<string, Lib.Fitting.Models.FittingResult> operationResults
 	)
 		where  TBin : IWithID, IWithReadOnlyDimensions
 		where  TItem : IWithID, IWithReadOnlyDimensions
