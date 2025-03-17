@@ -33,6 +33,8 @@ internal class LogsProcessor<TRequest> : BackgroundService
 		var logDirectory = Path.Combine(this.environment.ContentRootPath, this.options.Path!);
 		this.EnsureDirectoryExists(logDirectory);
 		var exceptionsCount = 0;
+		this.logger.LogInformation("{Status} logs processor for {LogProcessorRequest}", "Starting",
+			typeof(TRequest).Name);
 
 		while (await this.channel.Reader.WaitToReadAsync(stoppingToken).ConfigureAwait(false))
 		{
@@ -53,23 +55,29 @@ internal class LogsProcessor<TRequest> : BackgroundService
 				{
 					await writer.WriteLineAsync(json.AsMemory(), stoppingToken).ConfigureAwait(false);
 					// Ensure data is written to disk
-					await writer.FlushAsync(stoppingToken).ConfigureAwait(false); 
+					await writer.FlushAsync(stoppingToken).ConfigureAwait(false);
 				}
 
 				exceptionsCount = 0;
 			}
 			catch (Exception ex)
 			{
-				this.logger.LogError(ex, "An error occured while processing logs");
+				this.logger.LogError(ex, "An error occured while processing logs for {LogProcessorRequest}",
+					typeof(TRequest).Name);
 				exceptionsCount++;
 
 				if (exceptionsCount >= this.options.MaxConsecutiveAllowedExceptions)
 				{
-					this.logger.LogCritical("Too many consecutive exceptions, stopping the processor");
+					this.logger.LogCritical(
+						"Too many consecutive exceptions, stopping the processor for {LogProcessorRequest}",
+						typeof(TRequest).Name);
 					break;
 				}
 			}
 		}
+
+		this.logger.LogInformation("{Status} logs processor for {LogProcessorRequest}", "Stopped",
+			typeof(TRequest).Name);
 	}
 
 	private void EnsureDirectoryExists(string logDirectory)
@@ -83,7 +91,7 @@ internal class LogsProcessor<TRequest> : BackgroundService
 		}
 		catch (Exception ex)
 		{
-			this.logger.LogCritical(ex, "Could not create log directory");
+			this.logger.LogCritical(ex, "Could not create log directory {LogDirectory}", logDirectory);
 		}
 	}
 }
