@@ -10,7 +10,7 @@ This sample demonstrates a minimal Docker Compose setup for Binacle.Net with ess
   - Basic API functionality
   - Lightweight configuration for easy setup and testing
 
-### 2️⃣ Full Deployment with All Features
+### 2️⃣ Full Deployment
 Run Binacle.Net with all features enabled for a complete experience.
 - Directory: `samples/docker/full-deployment`
 - Key Features:
