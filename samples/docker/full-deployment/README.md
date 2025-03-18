@@ -87,6 +87,19 @@ This will grant full access to `./data` and its subdirectories.
 > [!Note]
 > 777 gives full access to all users. Adjust permissions as needed for security.
 
+## 🛠️ Getting the Aspire Dashboard Login Token
+The Aspire Dashboard generates a login URL with a token for access.
+
+View the Logs: After starting the deployment, run the following command:
+```bash
+docker-compose logs -f aspire-dashboard
+```
+Locate the Login URL: In the logs, find a line like:
+```pgsql
+Login to the dashboard at http://localhost:18888/login?t=your_token_here.
+```
+Access the Dashboard: Copy the URL and open it in your browser. You’ll be logged in automatically
+
 ## 📄 Additional Resources
 - [Binacle.Net Documentation](https://github.com/ChrisMavrommatis/Binacle.Net/wiki)
 - [Docker Compose Reference](https://docs.docker.com/compose/)
