@@ -1,6 +1,5 @@
-﻿# Binacle.Net with Custom Presets
-
-This sample demonstrates how to set up and run Binacle.Net with custom presets using Docker Compose.
+# Binacle.Net with Custom Presets
+This sample demonstrates how to set up and run Binacle.Net with custom presets using Docker Compose. It is a minimal setup that showcases basic API functionality with customizable bin configurations.
 
 ## 🛠️ Prerequisites
 Before you start, make sure you have [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose/) installed on your machine.
@@ -31,7 +30,7 @@ This will launch the Binacle.Net API with:
 - 🌐 **Swagger UI**: http://localhost:8080/swagger/ for easy API exploration.
 - 📂 **Logs Folder**: A `./data/logs` folder will be created to store API logs for monitoring and debugging.
 
-## 🔍 Accessing the API
+##🌐 Accessing the API
 Once the containers are running, open your browser and go to:
 ```bash
 http://localhost:8080/swagger/
@@ -48,6 +47,22 @@ To modify bin configurations:
     docker compose up
     ```
 Your custom presets will now be active in the API.
+
+## 📂 Logs Folder
+When running the application, a `./data` folder will be created to store application data, including logs for monitoring and debugging. It's important to ensure that the `./data` and `./data/logs` directories have write permissions for proper functionality.
+
+### Setting Permissions
+Run the following commands to create the directory and set the required permissions:
+
+```bash
+mkdir -p ./data
+sudo chmod -R 777 ./data
+```
+This will grant full access to `./data` and its subdirectories.
+
+> [!Note]
+> 777 gives full access to all users. Adjust permissions as needed for security.
+
 
 ## 📄 Additional Resources
 - [Binacle.Net Documentation](https://github.com/ChrisMavrommatis/Binacle.Net/wiki)
