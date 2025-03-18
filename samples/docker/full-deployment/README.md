@@ -1,6 +1,6 @@
 # Binacle.Net with All Features
 
-This sample demonstrates how to set up and run Binacle.Net with all features enabled, including Azurite as the database provider for the Service Module.
+This guide demonstrates how to set up and run Binacle.Net with all features enabled, including Azurite as the database provider for the Service Module, OpenTelemetry for monitoring, and Aspire Dashboard for observability.
 
 
 ## 🛠️ Prerequisites
@@ -21,9 +21,11 @@ Before you start, make sure you have [Docker](https://www.docker.com) and [Docke
    - `docker-compose.yml` – Docker Compose configuration for all services.
    - `Presets.json` – Your custom bin configurations.
    - `JwtAuth.json` – JWT authentication configuration.
+   - `OpenTelemetry.Production.json` – OpenTelemetry configuration for monitoring.
+   - `aspire-dashboard-config.json` – Configuration for the Aspire Dashboard.
 
 3. **Customize (Optional)**<br>
-   Edit the `Presets.json` and `JwtAuth.json` files to match your specific requirements.
+   Edit the `Presets.json`, `JwtAuth.json`, `OpenTelemetry.Production.json`, and `aspire-dashboard-config.json` files to match your specific requirements.
    
 
 ## 🚀 Running the Application
@@ -37,10 +39,12 @@ This will launch Binacle.Net with the following features:
 - 💾 **Azurite Storage Emulator**: Simulates Azure Storage locally. Data is persisted in the ./azurite folder across container restarts.
 - ⚙️ **Service Module**: Uses Azurite as its database provider for local storage operations.
 - 🖥️ **UI Module**: Accessible via http://localhost:8080/, offering an interactive packing demo.
+- 📊 **OpenTelemetry**: Collects telemetry data for monitoring and exports it to the **Aspire Dashboard**.
+- 📈 **Aspire Dashboard**: Accessible via http://localhost:18888 for real-time metrics and performance monitoring.
 - 📂 **Logs Folder**: A `./data/logs` folder will be created to store application logs for monitoring and debugging.
 
 
-## 🔍 Accessing the API and UI
+## 🔍 Accessing the API, UI and Aspire Dashboard
 - **API Documentation (Swagger UI)**:<br>
   http://localhost:8080/swagger/ <br>
   Use this to explore and test API endpoints directly.
@@ -48,6 +52,11 @@ This will launch Binacle.Net with the following features:
 - **UI Module (Packing Demo)**:<br>
   http://localhost:8080/<br>
   Interact with Binacle.Net through a user-friendly interface.
+
+- **Aspire Dashboard**:<br>
+   http://localhost:18888<br>
+   Monitor real-time metrics and performance of Binacle.Net services.
+   
 
 ## ⚙️Customizing the Configuration
 - 🗂️**Custom Presets**:<br>
@@ -58,16 +67,30 @@ This will launch Binacle.Net with the following features:
   ```
 - 🔐 **JWT Authentication**:<br>
   Adjust authentication settings in the JwtAuth.json file as needed.
+- 📊 **OpenTelemetry**:<br>
+  Customize telemetry configuration by editing OpenTelemetry.Production.json.
+- 📈 **Aspire Dashboard**:<br>
+  Adjust settings in aspire-dashboard-config.json to fine-tune the dashboard.
 
-## ✅ Conclusion
-By following these steps, you can effortlessly run Binacle.Net with all features enabled, including:
-- Local storage with Azurite.
-- API interaction via Swagger UI.
-- A dynamic UI Module for demonstrations.
-- Comprehensive logging for monitoring and troubleshooting.
+## 📂 Logs Folder
+When running the application, a `./data` folder will be created to store application data, including logs for monitoring and debugging. It's important to ensure that the `./data` and `./data/logs` directories have write permissions for proper functionality.
+
+### Setting Permissions
+Run the following commands to create the directory and set the required permissions:
+
+```bash
+mkdir -p ./data/logs
+sudo chmod -R 777 ./data ./data/logs
+```
+This will grant full access to `./data` and its subdirectories.
+
+> [!Note]
+> 777 gives full access to all users. Adjust permissions as needed for security.
 
 ## 📄 Additional Resources
 - [Binacle.Net Documentation](https://github.com/ChrisMavrommatis/Binacle.Net/wiki)
 - [Docker Compose Reference](https://docs.docker.com/compose/)
+- [Aspire Dashboard Documentation](https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/dashboard/overview?tabs=bash)
+- [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
  
 Happy packing! 📦✨
