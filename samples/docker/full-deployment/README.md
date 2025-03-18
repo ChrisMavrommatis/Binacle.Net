@@ -1,4 +1,4 @@
-# Binacle.Net with All Features
+# Binacle.Net - Full Deployment
 
 This guide demonstrates how to set up and run Binacle.Net with all features enabled, including Azurite as the database provider for the Service Module, OpenTelemetry for monitoring, and Aspire Dashboard for observability.
 
