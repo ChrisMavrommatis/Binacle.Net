@@ -37,7 +37,7 @@ public partial class PackingDemo : AppletComponentBase
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		var sampleData = this.SampleDataService!.GetInitialSampleData();
+		var sampleData = this.SampleDataService!.GetSampleData(binsIndex: 0, itemsIndex: 0);
 		this.Model = sampleData;
 	}
 
@@ -75,7 +75,7 @@ public partial class PackingDemo : AppletComponentBase
 
 	private void RandomizeBinsFromSamples()
 	{
-		var sampleData = this.SampleDataService!.GetRandomSampleData();
+		var sampleData = this.SampleDataService!.GetSampleData();
 		this.Model.Bins = sampleData.Bins;
 	}
 
@@ -97,7 +97,7 @@ public partial class PackingDemo : AppletComponentBase
 
 	private void RandomizeItemsFromSamples()
 	{
-		var sampleData = this.SampleDataService!.GetRandomSampleData();
+		var sampleData = this.SampleDataService!.GetSampleData();
 		this.Model.Items = sampleData.Items;
 	}
 

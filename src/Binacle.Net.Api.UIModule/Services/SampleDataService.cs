@@ -5,8 +5,7 @@ namespace Binacle.Net.Api.UIModule.Services;
 
 internal interface ISampleDataService
 {
-	ViewModels.PackingDemoViewModel GetRandomSampleData();
-	ViewModels.PackingDemoViewModel GetInitialSampleData();
+	ViewModels.PackingDemoViewModel GetSampleData(int? binsIndex = null, int? itemsIndex = null);
 }
 
 internal class SampleDataService : ISampleDataService
@@ -17,15 +16,9 @@ internal class SampleDataService : ISampleDataService
 		public Dictionary<string, List<string>>? ItemSets { get; set; }
 	}
 
-	private class SampleData
-	{
-		public required List<List<ViewModels.Bin>> BinSets { get; set; }
-		public required List<List<ViewModels.Item>> ItemSets { get; set; }
-	}
-
 	private readonly IWebHostEnvironment environment;
 	private readonly TimeProvider timeProvider;
-	private readonly SampleData data;
+	private readonly SampleJsonData data;
 
 	public SampleDataService(
 		IWebHostEnvironment environment,
@@ -37,61 +30,59 @@ internal class SampleDataService : ISampleDataService
 		this.data = this.ReadSampleData();
 	}
 
-	public ViewModels.PackingDemoViewModel GetRandomSampleData()
+	public ViewModels.PackingDemoViewModel GetSampleData(int? binsIndex = null, int? itemsIndex = null)
 	{
-		// random with time
-		var random = new Random(this.timeProvider.GetUtcNow().Millisecond);
+		var actualBinsIndex = binsIndex;
+		var actualItemsIndex = itemsIndex;
 
-		// random bin and Items
-		var binRandomNumber = random.Next(this.data.BinSets.Count);
-		var itemRandomNumber = random.Next(this.data.ItemSets.Count);
+		if (actualBinsIndex is null || actualItemsIndex is null)
+		{
+			var random = new Random(this.timeProvider.GetUtcNow().Millisecond);
+			if (actualBinsIndex is null)
+			{
+				actualBinsIndex = random.Next(this.data.BinSets!.Count);
+			}
 
-		var bins = this.data.BinSets[binRandomNumber];
-		var items = this.data.ItemSets[itemRandomNumber];
+			if (actualItemsIndex is null)
+			{
+				actualItemsIndex = random.Next(this.data.ItemSets!.Count);
+			}
+		}
+		
+		var bins = this.data.BinSets!
+			.ElementAt(actualBinsIndex.Value)
+			.Value;
+		
+		var items = this.data.ItemSets!
+			.ElementAt(actualItemsIndex.Value)
+			.Value;
 
 		return new ViewModels.PackingDemoViewModel
 		{
 			Algorithm = Algorithm.FirstFitDecreasing,
-			Bins = bins,
-			Items = items
+			Bins = ParseBins(bins),
+			Items = ParseItems(items)
 		};
 	}
 
-	public ViewModels.PackingDemoViewModel GetInitialSampleData()
-	{
-		var bins = this.data.BinSets[0];
-		var items = this.data.ItemSets[0];
-
-		return new ViewModels.PackingDemoViewModel
-		{
-			Algorithm = Algorithm.FirstFitDecreasing,
-			Bins = bins,
-			Items = items
-		};
-	}
-
-	private SampleData ReadSampleData()
+	private SampleJsonData ReadSampleData()
 	{
 		var fileInfo = this.environment.WebRootFileProvider.GetFileInfo("data/sample_data.json");
 
 		if (!fileInfo.Exists)
 		{
-			return new SampleData()
-			{
-				BinSets = new List<List<ViewModels.Bin>>(),
-				ItemSets = new List<List<ViewModels.Item>>()
-			};
+			return _defaultJsonSampleData;
 		}
 
 		var json = System.IO.File.ReadAllText(fileInfo.PhysicalPath!);
 		var sampleJsonData = System.Text.Json.JsonSerializer.Deserialize<SampleJsonData>(json)!;
 
-		var sampleData = new SampleData
-		{
-			BinSets = sampleJsonData.BinSets?.Values.Select(binSet => binSet.Select(ParseBin).ToList()).ToList() ?? new List<List<ViewModels.Bin>>(),
-			ItemSets = sampleJsonData.ItemSets?.Values.Select(itemSet => itemSet.Select(ParseItem).ToList()).ToList() ?? new List<List<ViewModels.Item>>()
-		};
-		return sampleData;
+		return sampleJsonData;
+	}
+
+	private List<ViewModels.Bin> ParseBins(List<string> bins)
+	{
+		return bins.Select(ParseBin).ToList();
 	}
 
 	private ViewModels.Bin ParseBin(string value)
@@ -106,6 +97,11 @@ internal class SampleDataService : ISampleDataService
 			int.Parse(dimensionParts[1]),
 			int.Parse(dimensionParts[2])
 		);
+	}
+	
+	private List<ViewModels.Item> ParseItems(List<string> items)
+	{
+		return items.Select(ParseItem).ToList();
 	}
 
 	private ViewModels.Item ParseItem(string value)
@@ -136,4 +132,16 @@ internal class SampleDataService : ISampleDataService
 			quantity
 		);
 	}
+	
+	private static SampleJsonData _defaultJsonSampleData = new SampleJsonData()
+	{
+		BinSets = new Dictionary<string, List<string>>()
+		{
+			{"Default Sample Bin Set 1", ["60x40x10"] },
+		},
+		ItemSets = new Dictionary<string, List<string>>()
+		{
+			{"Default Sample Item Set 1", ["2x5x10-7","12x15x10-3", "10x15x15-2" ] }
+		} 
+	};
 }
