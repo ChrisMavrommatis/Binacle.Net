@@ -12,5 +12,6 @@
     <None Include="docker-compose.yml" />
     <None Include="README.md" />
     <None Include="*.json" />
+    <None Include=".env" />
   </ItemGroup>
 </Project>
