@@ -4,7 +4,6 @@
     ports:
       - "8080:8080"
     volumes:
-
       - type: bind
         source: ./Presets.json
         target: /app/Config_Files/Presets.json
