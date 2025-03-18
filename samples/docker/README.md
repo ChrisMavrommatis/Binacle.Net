@@ -18,6 +18,8 @@ Run Binacle.Net with all features enabled for a complete experience.
   - UI Module for interactive demos
   - Service Module with Azurite as a local storage provider
   - Customizable bin configurations via Presets.json
+  - OpenTelemetry integration for monitoring
+  - Aspire Dashboard for observability
 
 ### 3️⃣ UI Module Only
 A sample focused on running Binacle.Net with just the UI Module enabled, ideal for interactive demos or visual testing.
@@ -61,11 +63,13 @@ docker compose up -d
 ## 🌐 Access the Application
 - Swagger UI (API Explorer): http://localhost:8080/swagger/
 - UI Module (if enabled): http://localhost:8080/
+- Aspire Dashboard (Only In Full Deployment): http://localhost:18888
 
 ## 🔧 Customization
 - **Presets**: Modify `Presets.json` to adjust bin packing configurations.
 - **Authentication**: Configure `JwtAuth.json` in the "Full Deployment" sample for accessing the API as an admin or user.
 - **Storage**: The "Full Deployment" sample uses Azurite for local storage. Data persists in the `./azurite` folder.
+- **Telemetry and Observability**: The "Full Deployment" sample integrates OpenTelemetry for monitoring, sending telemetry data to the Aspire Dashboard.
 
 ## 🗑️ Stopping and Cleaning Up
 To stop the containers:
