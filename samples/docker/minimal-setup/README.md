@@ -1,4 +1,4 @@
-# Binacle.Net Minimal Setup
+# Binacle.Net - Minimal Setup
 This sample demonstrates how to set up and run Binacle.Net with custom presets using Docker Compose. It is a minimal setup that showcases basic API functionality with customizable bin configurations.
 
 ## 🛠️ Prerequisites
