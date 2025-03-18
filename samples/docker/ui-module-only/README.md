@@ -52,12 +52,21 @@ This will launch the Binacle.Net API with:
   docker compose up
   ```
 
-## ✅ Conclusion
-By following these steps, you can easily run Binacle.Net with the UI Module enabled, offering:
-- A user-friendly interface for real-time packing demonstrations.
-- API interaction through Swagger UI.
-- Comprehensive logging for monitoring and troubleshooting.
-  
+## 📂 Logs Folder
+When running the application, a `./data` folder will be created to store application data, including logs for monitoring and debugging. It's important to ensure that the `./data` and `./data/logs` directories have write permissions for proper functionality.
+
+### Setting Permissions
+Run the following commands to create the directory and set the required permissions:
+
+```bash
+mkdir -p ./data
+sudo chmod -R 777 ./data
+```
+This will grant full access to `./data` and its subdirectories.
+
+> [!Note]
+> 777 gives full access to all users. Adjust permissions as needed for security.
+
 ## 📄 Additional Resources
 - [Binacle.Net Documentation](https://github.com/ChrisMavrommatis/Binacle.Net/wiki)
 - [Docker Compose Reference](https://docs.docker.com/compose/)
