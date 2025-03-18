@@ -1,4 +1,4 @@
-# Binacle.Net with UI Module
+# Binacle.Net - UI Module Only
 
 This sample demonstrates how to set up and run Binacle.Net with the UI Module Enabled.
 
