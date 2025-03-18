@@ -55,8 +55,8 @@ When running the application, a `./data` folder will be created to store applica
 Run the following commands to create the directory and set the required permissions:
 
 ```bash
-mkdir -p ./data
-sudo chmod -R 777 ./data
+mkdir -p ./data/logs
+sudo chmod -R 777 ./data ./data/logs
 ```
 This will grant full access to `./data` and its subdirectories.
 
