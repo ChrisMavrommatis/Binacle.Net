@@ -34,17 +34,4 @@
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule.Infrastructure\Binacle.Net.Api.ServiceModule.Infrastructure.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ConfigFiles Include="Config_Files\**\*.json" />
-	</ItemGroup>
-
-
-	<!-- This target runs on every build -->
-	<Target Name="CopyConfigFiles" BeforeTargets="Build;Rebuild">
-		<Message Importance="high" Text="ConfigFiles: @(ConfigFiles -> '%(FullPath)')" />
-		<Message Importance="high" Text="Copying to: ..\Binacle.Net.Api\Config_Files\ServiceModule\" />
-		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="..\Binacle.Net.Api\Config_Files\ServiceModule\" />
-	</Target>
-	
-
 </Project>

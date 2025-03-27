@@ -31,15 +31,8 @@ PerformanceTestsArtifacts
 Output
 output
 
-## Copied from Diagnostincs Module
-src/Binacle.Net.Api/Config_Files/DiagnosticsModule/
-
-## Copied from Service Module
-src/Binacle.Net.Api/Config_Files/ServiceModule/
-
 ## Copied from UI Module
 src/Binacle.Net.Api/wwwroot/ 
-src/Binacle.Net.Api/Config_Files/UiModule/
 
 ## data
 azurite/
