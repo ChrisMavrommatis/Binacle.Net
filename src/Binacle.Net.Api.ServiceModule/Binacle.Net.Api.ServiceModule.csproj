@@ -41,6 +41,8 @@
 
 	<!-- This target runs on every build -->
 	<Target Name="CopyConfigFiles" BeforeTargets="Build;Rebuild">
+		<Message Importance="high" Text="ConfigFiles: @(ConfigFiles -> '%(FullPath)')" />
+		<Message Importance="high" Text="Copying to: ..\Binacle.Net.Api\Config_Files\ServiceModule\%(ConfigFiles.RecursiveDir)" />
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="..\Binacle.Net.Api\Config_Files\ServiceModule\%(ConfigFiles.RecursiveDir)" />
 	</Target>
 	
