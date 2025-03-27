@@ -46,15 +46,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ConfigFiles Include="Config_Files\**\*.json" />
+		<ConfigFiles Include="Config_Files\*.json" />
 	</ItemGroup>
 
 
 	<!-- This target runs on every build -->
 	<Target Name="CopyConfigFiles" BeforeTargets="Build;Rebuild">
 		<Message Importance="high" Text="ConfigFiles: @(ConfigFiles -> '%(FullPath)')" />
-		<Message Importance="high" Text="Copying to: ..\Binacle.Net.Api\Config_Files\DiagnosticsModule\%(ConfigFiles.RecursiveDir)" />
-		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="..\Binacle.Net.Api\Config_Files\DiagnosticsModule\%(ConfigFiles.RecursiveDir)" />
+		<Message Importance="high" Text="Copying to: ..\Binacle.Net.Api\Config_Files\DiagnosticsModule\" />
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="..\Binacle.Net.Api\Config_Files\DiagnosticsModule\" />
 	</Target>
 
 </Project>
