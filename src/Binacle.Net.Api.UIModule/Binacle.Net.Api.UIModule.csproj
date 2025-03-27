@@ -24,7 +24,7 @@
 
 	<ItemGroup>
 		<UIFiles Include="wwwroot\**\*.*" />
-		<ConfigFiles Include="Config_Files\*.json" />
+		<ConfigFiles Include="Config_Files\**\*.json" />
 	</ItemGroup>
 
 	<!-- This target runs on every build -->

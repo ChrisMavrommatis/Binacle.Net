@@ -35,7 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ConfigFiles Include="Config_Files\*.json" />
+		<ConfigFiles Include="Config_Files\**\*.json" />
 	</ItemGroup>
 
 
