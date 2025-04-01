@@ -38,6 +38,8 @@ public class Program
 		builder.Configuration
 			.SetBasePath($"{Directory.GetCurrentDirectory()}/Config_Files");
 
+		builder.Configuration.AddEnvironmentVariables();
+		
 		builder.AddJsonConfiguration(
 			filePath: "appsettings.json",
 			environmentFilePath: $"appsettings.{builder.Environment.EnvironmentName}.json",
@@ -50,13 +52,6 @@ public class Program
 		builder.AddValidatableJsonConfigurationOptions<BinPresetOptions>();
 
 		// Feature Management
-		builder.AddJsonConfiguration(
-			filePath: "Features.json",
-			environmentFilePath: $"Features.{builder.Environment.EnvironmentName}.json",
-			optional: false,
-			reloadOnChange: true
-		);
-		
 		Feature.Manager = new FeatureManagerConfiguration()
 			.ReadFrom.Configuration(builder.Configuration)
 			.ReadFrom.EnvironmentVariables()
