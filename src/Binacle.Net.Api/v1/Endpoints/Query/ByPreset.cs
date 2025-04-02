@@ -1,163 +1,90 @@
-﻿using Asp.Versioning;
-using Binacle.Net.Api.Configuration.Models;
-using Binacle.Net.Api.Kernel;
+﻿using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.Api.Constants.Errors;
+using Binacle.Net.Api.Kernel.Endpoints;
+using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
-using ChrisMavrommatis.Endpoints;
-using ChrisMavrommatis.SwaggerExamples.Attributes;
+using Binacle.Net.Api.v1.Requests;
+using Binacle.Net.Api.v1.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.Api.v1.Endpoints.Query;
 
-/// <summary>
-/// Query by Preset endpoint
-/// </summary>
-[ApiVersion(v1.ApiVersion.Number, Deprecated = v1.ApiVersion.IsDeprecated)]
-[Route("api/v{version:apiVersion}/[namespace]")]
-public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBody>
+internal class ByPreset : IGroupedEndpoint<ApiV1EndpointGroup>
 {
-	private readonly IOptions<BinPresetOptions> presetOptions;
-	private readonly IValidator<v1.Requests.PresetQueryRequest> validator;
-	private readonly ILegacyBinsService binsService;
-	private readonly ILogger<ByPreset> logger;
-
-	/// <summary>
-	/// Query by Preset endpoint
-	/// </summary>
-	/// <param name="presetOptions"></param>
-	/// <param name="validator"></param>
-	/// <param name="binsService"></param>
-	/// <param name="logger"></param>
-	public ByPreset(
-		IOptions<BinPresetOptions> presetOptions,
-		IValidator<v1.Requests.PresetQueryRequest> validator,
-		ILegacyBinsService binsService,
-		ILogger<ByPreset> logger
-	  )
+	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		this.validator = validator;
-		this.binsService = binsService;
-		this.logger = logger;
-		this.presetOptions = presetOptions;
+		group.MapPost("query/by-preset/{preset}", HandleAsync)
+			.WithTags("Query")
+			.WithSummary("Query by Preset")
+			.WithDescription("Perform a bin fit query using a specified bin preset")
+			.Accepts<PresetQueryRequest>("application/json")
+			.Produces<QueryResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces(StatusCodes.Status404NotFound)
+			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.Produces<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
+			.WithOpenApi(operation =>
+			{
+				// Returns the bin that fits all of the items, or empty if they don't fit.
+				// 	If the request is invalid.
+				// If the preset does not exist
+				//	If an unexpected error occurs.
+				//	Exception details will only be shown when in a development environment.
+				return operation;
+			});
+		// [SwaggerRequestExample(typeof(v1.Requests.PresetQueryRequest), typeof(v1.Requests.Examples.PresetQueryRequestExample))]
+		// [SwaggerResponseExample(typeof(v1.Responses.QueryResponse), typeof(v1.Responses.Examples.PresetQueryResponseExamples), StatusCodes.Status200OK)]
+		// [SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
+		// V3 WARNING: Potentially breaking change
+		//[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status404NotFound)]
+		//[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.PresetNotFoundErrorResponseExample), StatusCodes.Status404NotFound)]
+		// [SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
+
 	}
-
-	/// <summary>
-	/// Perform a bin fit query using a specified bin preset.
-	/// </summary>
-	/// <remarks>
-	/// Example request using the "rectangular-cuboids" preset:
-	///     
-	///     POST /api/v1/query/by-preset/rectangular-cuboids
-	///     {
-	///         "items": [
-	///           {
-	///             "id": "box_1",
-	///             "quantity": 2,
-	///             "length": 2,
-	///             "width": 5,
-	///             "height": 10
-	///           },
-	///           {
-	///             "id": "box_2",
-	///             "quantity": 1,
-	///             "length": 12,
-	///             "width": 15,
-	///             "height": 10
-	///           },
-	///           {
-	///             "id": "box_3",
-	///             "quantity": 1,
-	///             "length": 12,
-	///             "width": 10,
-	///             "height": 15
-	///           }
-	///         ]
-	///     }
-	/// 
-	/// </remarks>
-	/// <response code="200"> <b>OK</b>
-	/// <br />
-	/// <p>
-	///		Returns the bin that fits all the items, or empty if they don't fit.
-	/// </p>
-	/// </response>
-	/// <response code="400"> <b>Bad Request</b>
-	/// <br/> 
-	/// <p>
-	///		If the request is invalid.
-	/// </p>
-	/// </response>
-	/// <response code="404"> <b>Not Found</b>
-	/// <br />
-	/// <p>
-	///		If the preset does not exist.
-	/// </p>
-	/// </response>
-	/// <response code="500"> <b>Internal Server Error</b>
-	/// <br />
-	/// <p>
-	///		If an unexpected error occurs.
-	/// </p>
-	/// <p>
-	///		Exception details will only be shown when in a development environment.
-	/// </p>
-	/// </response>
-	[HttpPost]
-	[Route("by-preset/{preset}")]
-	[Consumes("application/json")]
-	[Produces("application/json")]
-	[MapToApiVersion(v1.ApiVersion.Number)]
-
-	[SwaggerRequestExample(typeof(v1.Requests.PresetQueryRequest), typeof(v1.Requests.Examples.PresetQueryRequestExample))]
-
-	[ProducesResponseType(typeof(v1.Responses.QueryResponse), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(v1.Responses.QueryResponse), typeof(v1.Responses.Examples.PresetQueryResponseExamples), StatusCodes.Status200OK)]
-
-	[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
-	[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
-
-	// V3 WARNING: Potentially breaking change
-	[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-	//[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status404NotFound)]
-	//[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.PresetNotFoundErrorResponseExample), StatusCodes.Status404NotFound)]
-
-	[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
-	[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
-	public override async Task<IActionResult> HandleAsync(v1.Requests.PresetQueryRequestWithBody request, CancellationToken cancellationToken = default)
+	
+	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+	internal async Task<IResult> HandleAsync(
+		[FromRoute] string? preset,
+		[FromBody] PresetQueryRequest? request,
+		IValidator<PresetQueryRequest> validator,
+		IOptions<BinPresetOptions> presetOptions,
+		ILegacyBinsService binsService,
+		ILogger<ByPreset> logger,
+		CancellationToken cancellationToken = default
+	)
 	{
 		try
 		{
-			if (request is null || request.Body is null)
+			if (string.IsNullOrWhiteSpace(preset))
 			{
-				return this.BadRequest(
-					v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.RequestError)
-					.AddParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody)
+				return Results.BadRequest(
+					ErrorResponse.Create(Categories.RequestError)
+						.AddParameterError(nameof(preset), Messages.IsRequired)
+				);
+			}
+			
+			if (request is null)
+			{
+				return Results.BadRequest(
+					ErrorResponse.Create(Categories.RequestError)
+						.AddParameterError(nameof(request), Messages.MalformedRequestBody)
 				);
 			}
 
-			if (string.IsNullOrWhiteSpace(request.Preset))
+			var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+			if (!validationResult.IsValid)
 			{
-				return this.BadRequest(
-					v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.RequestError)
-					.AddParameterError(nameof(request.Preset), Constants.Errors.Messages.IsRequired)
+				return Results.BadRequest(
+					ErrorResponse.Create(Categories.ValidationError)
+						.AddValidationResult(validationResult)
 				);
 			}
 
-
-			await this.validator.ValidateAndAddToModelStateAsync(request.Body, this.ModelState, cancellationToken);
-
-			if (!this.ModelState.IsValid)
+			if (!presetOptions.Value.Presets.TryGetValue(preset, out var presetOption))
 			{
-				return this.BadRequest(
-				   v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.ValidationError)
-					.AddModelStateErrors(this.ModelState)
-				);
-			}
-
-			if (!this.presetOptions.Value.Presets.TryGetValue(request.Preset, out var presetOption))
-			{
-				return this.NotFound(null);
+				return Results.NotFound(null);
 				// V3 WARNING: Potentially breaking change
 				// Required due to UI Module registering Antiforgery
 				//return this.NotFound(
@@ -165,10 +92,10 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 				//);
 			}
 
-			var operationResults = await this.binsService.FitBinsAsync(
+			var operationResults = await binsService.FitBinsAsync(
 				presetOption.Bins, 
-				request.Body.Items!,
-				new Api.Models.LegacyFittingParameters
+				request.Items!,
+				new LegacyFittingParameters
 				{
 					FindSmallestBinOnly = true,
 					ReportFittedItems = false,
@@ -176,17 +103,17 @@ public class ByPreset : EndpointWithRequest<v1.Requests.PresetQueryRequestWithBo
 				}
 			);
 
-			return this.Ok(
-				v1.Responses.QueryResponse.Create(presetOption.Bins, request.Body.Items!, operationResults)
+			return Results.Ok(
+				QueryResponse.Create(presetOption.Bins, request.Items!, operationResults)
 			);
 		}
 		catch (Exception ex)
 		{
-			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Preset");
-			return this.InternalServerError(
-				v1.Responses.ErrorResponse.Create(Constants.Errors.Categories.ServerError)
-				.AddExceptionError(ex)
-				);
+			logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Preset");
+			return Results.InternalServerError(
+				ErrorResponse.Create(Categories.ServerError)
+					.AddExceptionError(ex)
+			);
 		}
 	}
 }

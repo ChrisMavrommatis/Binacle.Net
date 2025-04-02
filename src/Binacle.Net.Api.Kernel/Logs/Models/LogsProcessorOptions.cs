@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.Api.Models;
+﻿namespace Binacle.Net.Api.Kernel.Logs.Models;
 
 public class LogsProcessorOptions<TChannelRequest>
 {

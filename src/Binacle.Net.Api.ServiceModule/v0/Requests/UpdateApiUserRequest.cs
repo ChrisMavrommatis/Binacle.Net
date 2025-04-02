@@ -1,8 +1,8 @@
 ﻿using Binacle.Net.Api.Kernel.Serialization;
 using Binacle.Net.Api.ServiceModule.Domain.Models;
 using Binacle.Net.Api.ServiceModule.Models;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 

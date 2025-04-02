@@ -1,5 +1,5 @@
 ﻿using System.Threading.Channels;
-using Binacle.Net.Api.Kernel.Models;
+using Binacle.Net.Api.Kernel.Logs.Models;
 using Binacle.Net.Lib.Abstractions;
 using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Packing.Models;

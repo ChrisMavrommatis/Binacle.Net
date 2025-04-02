@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.Api.Kernel.Models;
+﻿namespace Binacle.Net.Api.Kernel.Logs.Models;
 
 public interface ILogConvertible
 {

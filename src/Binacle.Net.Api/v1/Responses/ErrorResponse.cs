@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Text.Json.Serialization;
+using FluentValidation.Results;
 
 namespace Binacle.Net.Api.v1.Responses;
 
@@ -21,17 +22,11 @@ public class ErrorResponse : v1.Models.ResponseBase
 	[JsonPropertyOrder(99)]
 	public List<v1.Models.Errors.IApiError> Errors { get; set; }
 
-	public ErrorResponse AddModelStateErrors(ModelStateDictionary modelState)
+	public ErrorResponse AddValidationResult(ValidationResult validationResult)
 	{
-		foreach (var (key, value) in modelState)
+		foreach (var error in validationResult.Errors)
 		{
-			if (value?.ValidationState == ModelValidationState.Invalid)
-			{
-				foreach (var error in value.Errors)
-				{
-					AddFieldValidationError(key, error.ErrorMessage);
-				}
-			}
+			AddFieldValidationError(error.PropertyName, error.ErrorMessage);
 		}
 
 		return this;

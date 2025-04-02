@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Api.Kernel.Models;
+﻿using Binacle.Net.Api.Kernel.Configuration.Models;
 
 namespace Binacle.Net.Api.Configuration.Models;
 

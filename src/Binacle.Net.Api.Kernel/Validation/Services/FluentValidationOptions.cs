@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Options;
 
-namespace Binacle.Net.Api.Services;
+namespace Binacle.Net.Api.Kernel.Validation.Services;
 
 internal class FluentValidationOptions<TOptions> : IValidateOptions<TOptions> where TOptions : class
 {

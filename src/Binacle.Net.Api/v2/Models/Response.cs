@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Binacle.Net.Api.v2.Models.Errors;
+using Binacle.Net.Api.v2.Responses;
+using FluentValidation.Results;
 
 namespace Binacle.Net.Api.v2.Models;
 
@@ -6,9 +8,9 @@ namespace Binacle.Net.Api.v2.Models;
 
 internal static class Response
 {
-	private static v2.Responses.ErrorResponse Error(List<Errors.IApiError> data, string message)
+	private static ErrorResponse Error(List<IApiError> data, string message)
 	{
-		return new v2.Responses.ErrorResponse
+		return new ErrorResponse
 		{
 			Result = ResultType.Error,
 			Message = message,
@@ -17,11 +19,11 @@ internal static class Response
 	}
 
 
-	public static v2.Responses.ErrorResponse ParameterError(string parameter, string parameterMessage, string message)
+	public static ErrorResponse ParameterError(string parameter, string parameterMessage, string message)
 	{
-		var errors = new List<Errors.IApiError>
+		var errors = new List<IApiError>
 		{
-			new Errors.ParameterError
+			new ParameterError
 			{
 				Parameter = parameter,
 				Message = parameterMessage
@@ -31,11 +33,11 @@ internal static class Response
 		return Error(errors, message);
 	}
 
-	public static v2.Responses.ErrorResponse FieldValidationError(string field, string error, string message)
+	public static ErrorResponse FieldValidationError(string field, string error, string message)
 	{
-		var errors = new List<Errors.IApiError>
+		var errors = new List<IApiError>
 		{
-			new Errors.FieldValidationError
+			new FieldValidationError
 			{
 				Field = field,
 				Error = error
@@ -45,37 +47,30 @@ internal static class Response
 		return Error(errors, message);
 	}
 
-	public static v2.Responses.ErrorResponse ValidationError(ModelStateDictionary modelState, string message)
+	public static ErrorResponse ValidationError(ValidationResult validationResult, string message)
 	{
-		var errors = new List<Errors.IApiError>();
-
-		foreach (var (key, value) in modelState)
+		var errors = new List<IApiError>();
+		foreach (var error in validationResult.Errors)
 		{
-			if (value?.ValidationState == ModelValidationState.Invalid)
-			{
-				foreach (var error in value.Errors)
-				{
-					errors.Add(new Errors.FieldValidationError { Field = key, Error = error.ErrorMessage });
-				}
-			}
+			errors.Add(new FieldValidationError { Field = error.PropertyName, Error = error.ErrorMessage });
 		}
 
 		return Error(errors, message);
 	}
 
 
-	public static v2.Responses.ErrorResponse ExceptionError(Exception ex, string message)
+	public static ErrorResponse ExceptionError(Exception ex, string message)
 	{
-		var errors = new List<Errors.IApiError>();
+		var errors = new List<IApiError>();
 		if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
 		{
-			errors.Add(new Errors.ExceptionError() { ExceptionType = ex.GetType().Name, Message = ex.Message, StackTrace = ex.StackTrace });
+			errors.Add(new ExceptionError() { ExceptionType = ex.GetType().Name, Message = ex.Message, StackTrace = ex.StackTrace });
 		}
-		var response = new v2.Responses.ErrorResponse
+		var response = new ErrorResponse
 		{
 			Result = ResultType.Error,
 			Message = message,
-			Data = new List<Errors.IApiError>()
+			Data = new List<IApiError>()
 		};
 		return Error(errors, message);
 	}

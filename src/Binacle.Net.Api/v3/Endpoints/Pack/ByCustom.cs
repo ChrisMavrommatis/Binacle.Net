@@ -1,121 +1,90 @@
-﻿using Asp.Versioning;
-using Binacle.Net.Api.Kernel;
+﻿using Binacle.Net.Api.Constants.Errors;
+using Binacle.Net.Api.Kernel.Endpoints;
+using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
-using ChrisMavrommatis.Endpoints;
-using ChrisMavrommatis.SwaggerExamples.Attributes;
+using Binacle.Net.Api.v3.Models;
+using Binacle.Net.Api.v3.Requests;
+using Binacle.Net.Api.v3.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Binacle.Net.Api.v3.Endpoints.Pack;
 
-/// <summary>
-/// Pack by Custom endpoint
-/// </summary>
-[ApiVersion(v3.ApiVersion.Number, Deprecated = v3.ApiVersion.IsDeprecated)]
-[Route("api/v{version:apiVersion}/[namespace]")]
-public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBody>
+internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 {
-	private readonly IValidator<v3.Requests.CustomPackRequest> validator;
-	private readonly IBinacleService binacleService;
-	private readonly ILogger<ByCustom> logger;
-
-	/// <summary>
-	/// Pack by Custom endpoint
-	/// </summary>
-	/// <param name="validator"></param>
-	/// <param name="binacleService"></param>
-	/// <param name="logger"></param>
-	public ByCustom(
-		IValidator<v3.Requests.CustomPackRequest> validator,
-		IBinacleService binacleService,
-		ILogger<ByCustom> logger
-	)
+	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		this.validator = validator;
-		this.binacleService = binacleService;
-		this.logger = logger;
+		group.MapPost("pack/by-custom", HandleAsync)
+			.WithTags("Pack")
+			.WithSummary("Pack by Custom")
+			.WithDescription("Pack items using custom bins")
+			.Accepts<CustomPackRequest>("application/json")
+			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.Produces<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
+			.WithOpenApi(operation =>
+			{
+				// An array of results indicating the result per bin.
+				//	If the request is invalid.
+				//	If an unexpected error occurs.
+				// 
+				// ///		Exception details will only be shown when in a development environment.
+				return operation;
+			});
+		// [SwaggerRequestExample(typeof(v3.Requests.CustomPackRequest), typeof(v3.Requests.Examples.CustomPackRequestExample))]
+		// [SwaggerResponseExample(typeof(v3.Responses.PackResponse), typeof(v3.Responses.Examples.CustomPackResponseExamples), StatusCodes.Status200OK)]
+		// [SwaggerResponseExample(typeof(v3.Responses.ErrorResponse), typeof(v3.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
+		// [SwaggerResponseExample(typeof(v3.Responses.ErrorResponse), typeof(v3.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	}
 
-	/// <summary>
-	/// Pack items using custom bins.
-	/// </summary>
-	/// <returns>An array of results indicating the result per bin</returns>
-	/// <response code="200"> <b>OK</b>
-	/// <br />
-	/// <p>
-	///		An array of results indicating the result per bin.
-	/// </p>
-	/// </response>
-	/// <response code="400"> <b>Bad Request</b>
-	/// <br/> 
-	/// <p>
-	///		If the request is invalid.
-	/// </p>
-	/// </response>
-	/// <response code="500"> <b>Internal Server Error</b>
-	/// <br />
-	/// <p>
-	///		If an unexpected error occurs.
-	/// </p>
-	/// <p>
-	///		Exception details will only be shown when in a development environment.
-	/// </p>
-	/// </response>
-	[HttpPost("by-custom")]
-	[Consumes("application/json")]
-	[Produces("application/json")]
-	[MapToApiVersion(v3.ApiVersion.Number)]
-	[SwaggerRequestExample(typeof(v3.Requests.CustomPackRequest), typeof(v3.Requests.Examples.CustomPackRequestExample))]
-
-	[ProducesResponseType(typeof(v3.Responses.PackResponse), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(v3.Responses.PackResponse), typeof(v3.Responses.Examples.CustomPackResponseExamples), StatusCodes.Status200OK)]
-
-	[ProducesResponseType(typeof(v3.Responses.ErrorResponse), StatusCodes.Status400BadRequest)]
-	[SwaggerResponseExample(typeof(v3.Responses.ErrorResponse), typeof(v3.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
-
-	[ProducesResponseType(typeof(v3.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
-	[SwaggerResponseExample(typeof(v3.Responses.ErrorResponse), typeof(v3.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
-	public override async Task<IActionResult> HandleAsync(v3.Requests.CustomPackRequestWithBody request, CancellationToken cancellationToken = default)
+	internal async Task<IResult> HandleAsync(
+		[FromBody] CustomPackRequest? request,
+		IValidator<CustomPackRequest> validator,
+		IBinacleService binacleService,
+		ILogger<ByCustom> logger,
+		CancellationToken cancellationToken = default
+	)
 	{
 		using var activity = Diagnostics.ActivitySource.StartActivity("Pack by Custom: v3");
 		try
 		{
-			if (request is null || request.Body is null)
+			if (request is null)
 			{
-				return this.BadRequest(
-					Models.Response.ParameterError(nameof(request), Constants.Errors.Messages.MalformedRequestBody,
-						Constants.Errors.Categories.RequestError)
+				return Results.BadRequest(
+					Response.ParameterError(
+						nameof(request),
+						Messages.MalformedRequestBody,
+						Categories.RequestError
+					)
 				);
 			}
 
-			using(var validationActivity = Diagnostics.ActivitySource.StartActivity("Validate Request"))
-			{
-				await this.validator.ValidateAndAddToModelStateAsync(request.Body, this.ModelState, cancellationToken);
-			}
+			// using(var validationActivity = Diagnostics.ActivitySource.StartActivity("Validate Request"))
+			var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-			if (!this.ModelState.IsValid)
+			if (!validationResult.IsValid)
 			{
-				return this.BadRequest(
-					Models.Response.ValidationError(this.ModelState, Constants.Errors.Categories.ValidationError)
+				return Results.BadRequest(
+					Response.ValidationError(validationResult, Categories.ValidationError)
 				);
 			}
 
-			var operationResults = await this.binacleService.PackBinsAsync(
-				request.Body.Bins!,
-				request.Body.Items!,
-				new Api.Models.PackingParameters
+			var operationResults = await binacleService.PackBinsAsync(
+				request.Bins!,
+				request.Items!,
+				new PackingParameters
 				{
-					Algorithm = request.Body.Parameters!.Algorithm!.Value
+					Algorithm = request.Parameters!.Algorithm!.Value
 				}
 			);
 
 			using (var responseActivity = Diagnostics.ActivitySource.StartActivity("Create Response"))
 			{
-				return this.Ok(
-					v3.Responses.PackResponse.Create(
-						request.Body.Bins!,
-						request.Body.Items!,
-						request.Body.Parameters,
+				return Results.Ok(
+					PackResponse.Create(
+						request.Bins!,
+						request.Items!,
+						request.Parameters,
 						operationResults
 					)
 				);
@@ -123,9 +92,9 @@ public class ByCustom : EndpointWithRequest<v3.Requests.CustomPackRequestWithBod
 		}
 		catch (Exception ex)
 		{
-			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Pack by Custom");
-			return this.InternalServerError(
-				Models.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
+			logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Pack by Custom");
+			return Results.InternalServerError(
+				Response.ExceptionError(ex, Categories.ServerError)
 			);
 		}
 	}

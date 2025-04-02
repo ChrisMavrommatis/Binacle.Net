@@ -1,12 +1,10 @@
 ﻿using System.Text;
 using System.Text.Json.Serialization;
-using Binacle.Net.Api.Kernel;
 using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Domain;
 using Binacle.Net.Api.ServiceModule.Infrastructure;
 using Binacle.Net.Api.ServiceModule.Services;
-using ChrisMavrommatis.MinimalEndpointDefinitions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -16,7 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Binacle.Net.Api.ServiceModule;
 
@@ -71,7 +68,7 @@ public static class ModuleDefinition
 			};
 		});
 
-		builder.Services.AddEndpointsApiExplorer();
+		// builder.Services.AddEndpointsApiExplorer();
 
 		builder.Services.AddAuthorization();
 
@@ -87,9 +84,6 @@ public static class ModuleDefinition
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
 
-		builder.Services.AddMinimalEndpointDefinitions<IModuleMarker>();
-
-		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 		builder.Services.AddRateLimiter(_ => { });
 		builder.Services.ConfigureOptions<ConfigureRateLimiter>();
@@ -101,12 +95,7 @@ public static class ModuleDefinition
 	{
 		app.UseAuthentication();
 		app.UseAuthorization();
-		app.UseMinimalEndpointDefinitions();
 		app.UseRateLimiter();
-	}
-
-	public static void ConfigureServiceModuleSwaggerUI(this SwaggerUIOptions options, WebApplication app)
-	{
-		ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
+		app.RegisterEndpointsFromAssemblyContaining<IModuleMarker>();
 	}
 }

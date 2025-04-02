@@ -1,5 +1,5 @@
 ﻿
-using Binacle.Net.Api.Kernel.Models;
+using Binacle.Net.Api.Kernel.Logs.Models;
 
 namespace Binacle.Net.Api.Models;
 

@@ -1,15 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 using Binacle.Net.Api.Kernel.Serialization;
 using Binacle.Net.Api.Models;
-using ChrisMavrommatis.Endpoints.Requests;
 
 namespace Binacle.Net.Api.v3.Requests;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-
-public class CustomPackRequestWithBody : RequestWithBody<CustomPackRequest>
-{
-}
 
 public class CustomPackRequest
 {

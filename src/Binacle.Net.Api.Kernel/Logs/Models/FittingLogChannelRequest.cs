@@ -1,7 +1,7 @@
 ﻿using Binacle.Net.Lib.Abstractions.Models;
 using Binacle.Net.Lib.Fitting.Models;
 
-namespace Binacle.Net.Api.Kernel.Models;
+namespace Binacle.Net.Api.Kernel.Logs.Models;
 
 public abstract class FittingLogChannelRequestBase
 {

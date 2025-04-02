@@ -1,22 +1,16 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using Asp.Versioning;
-using Binacle.Net.Api.Configuration;
-using Binacle.Net.Api.Configuration.Models;
+﻿using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.DiagnosticsModule;
 using Binacle.Net.Api.ExtensionMethods;
-using Binacle.Net.Api.Kernel;
+using Binacle.Net.Api.Kernel.OpenApi.ExtensionsMethods;
 using Binacle.Net.Api.ServiceModule;
 using Binacle.Net.Api.Services;
 using Binacle.Net.Api.UIModule;
-using ChrisMavrommatis.Endpoints;
 using ChrisMavrommatis.Features;
 using ChrisMavrommatis.StartupTasks;
-using ChrisMavrommatis.SwaggerExamples;
 using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi;
+using Scalar.AspNetCore;
 using Serilog;
-using ApiVersion = Binacle.Net.Api.v1.ApiVersion;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
@@ -58,50 +52,58 @@ public class Program
 			.CreateManager();
 		
 		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
+		builder.Services.AddEndpointsApiExplorer();
 
-		builder.Services.AddControllers(options =>
-		{
-			options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
-			options.UseNamespaceRouteToken();
-
-		}).AddJsonOptions(options =>
-		{
-			options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-		});
+		// builder.Services.AddControllers(options =>
+		// {
+		// 	options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+		// 	options.UseNamespaceRouteToken();
+		//
+		// }).AddJsonOptions(options =>
+		// {
+		// 	options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+		// });
 
 		builder.Services.AddTransient(typeof(IOptionalDependency<>), typeof(OptionalDependency<>));
 
-		builder.Services.AddApiVersioning(options =>
-		{
-			options.DefaultApiVersion = ApiVersionParser.Default.Parse(ApiVersion.Number);
-			options.AssumeDefaultVersionWhenUnspecified = true;
-			options.ReportApiVersions = true;
-			options.ApiVersionReader = ApiVersionReader.Combine(
-				new UrlSegmentApiVersionReader()
-			);
-		}).AddApiExplorer(options =>
-		{
-			options.GroupNameFormat = "'v'VVV";
-			options.SubstituteApiVersionInUrl = true;
-		});
+		// builder.Services.AddApiVersioning(options =>
+		// {
+		// 	options.DefaultApiVersion = ApiVersionParser.Default.Parse(v1.ApiVersion.Number);
+		// 	options.AssumeDefaultVersionWhenUnspecified = true;
+		// 	options.ReportApiVersions = true;
+		// 	options.ApiVersionReader = ApiVersionReader.Combine(
+		// 		new UrlSegmentApiVersionReader()
+		// 	);
+		// }).AddApiExplorer(options =>
+		// {
+		// 	options.GroupNameFormat = "'v'VVV";
+		// 	options.SubstituteApiVersionInUrl = true;
+		// });
 
 		builder.Services.AddSingleton(_ => TimeProvider.System);
 		builder.Services.AddBinacleServices();
 
-		builder.Services.AddSwaggerExamples(options =>
-		{
-			options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-			// ignore null
-			options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-		});
+		builder.Services.AddOpenApiDocumentsFromAssemblyContaining<IApiMarker>();
+		// 	.AddOpenApi("v1");
+		// builder.Services.AddOpenApi("v2");
+		// builder.Services.AddOpenApi("v3", options =>
+		// {
+		// 	options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+		// });
+		// builder.Services.AddSwaggerExamples(options =>
+		// {
+		// 	options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+		// 	// ignore null
+		// 	options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+		// });
+		//
+		// builder.Services.AddSwaggerGen();
+		// builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
-		builder.Services.AddSwaggerGen();
-		builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
-
-		builder.Services.Configure<ApiBehaviorOptions>(options =>
-		{
-			options.SuppressModelStateInvalidFilter = true;
-		});
+		// builder.Services.Configure<ApiBehaviorOptions>(options =>
+		// {
+		// 	options.SuppressModelStateInvalidFilter = true;
+		// });
 
 		builder.Services.Configure<RouteOptions>(options =>
 		{
@@ -133,20 +135,33 @@ public class Program
 			app.UseDeveloperExceptionPage();
 		}
 
-		// SWAGGER_UI from environment vars
-		if (Feature.IsEnabled("SWAGGER_UI"))
+		app.MapOpenApi("/openapi/{documentName}.json");
+		app.UseSwaggerUI(options =>
 		{
-			app.UseSwagger();
-			app.UseSwaggerUI(options =>
-			{
-				ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
-
-				if (Feature.IsEnabled("SERVICE_MODULE"))
-				{
-					options.ConfigureServiceModuleSwaggerUI(app);
-				}
-			});
-		}
+			options.SwaggerEndpoint("/openapi/v1.json", "v1");
+			options.SwaggerEndpoint("/openapi/v2.json", "v2");
+			options.SwaggerEndpoint("/openapi/v3.json", "v3");
+		});
+		app.MapScalarApiReference(options =>
+		{
+			options.AddDocument("v1");
+			options.AddDocument("v2");
+			options.AddDocument("v3");
+		});
+		// // SWAGGER_UI from environment vars
+		// if (Feature.IsEnabled("SWAGGER_UI"))
+		// {
+		// 	app.UseSwagger();
+		// 	app.UseSwaggerUI(options =>
+		// 	{
+		// 		ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
+		//
+		// 		if (Feature.IsEnabled("SERVICE_MODULE"))
+		// 		{
+		// 			options.ConfigureServiceModuleSwaggerUI(app);
+		// 		}
+		// 	});
+		// }
 
 		app.UseDiagnosticsModule();
 
@@ -160,8 +175,7 @@ public class Program
 			app.UseUIModule();
 		}
 
-		app.MapControllers();
-
+		app.RegisterEndpointsFromAssemblyContaining<IApiMarker>();
 		await app.RunStartupTasksAsync();
 		await app.RunAsync();
 	}

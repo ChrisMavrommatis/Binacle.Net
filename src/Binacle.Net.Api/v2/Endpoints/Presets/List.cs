@@ -1,90 +1,56 @@
-﻿using Asp.Versioning;
-using Binacle.Net.Api.Configuration.Models;
-using ChrisMavrommatis.Endpoints;
-using ChrisMavrommatis.SwaggerExamples.Attributes;
-using Microsoft.AspNetCore.Mvc;
+﻿using Binacle.Net.Api.Configuration.Models;
+using Binacle.Net.Api.Constants.Errors;
+using Binacle.Net.Api.Kernel.Endpoints;
+using Binacle.Net.Api.v2.Models;
+using Binacle.Net.Api.v2.Responses;
 using Microsoft.Extensions.Options;
-
 
 namespace Binacle.Net.Api.v2.Endpoints.Presets;
 
-/// <summary>
-/// List Presets Endpoint
-/// </summary>
-[ApiVersion(v2.ApiVersion.Number, Deprecated = v2.ApiVersion.IsDeprecated)]
-[Route("api/v{version:apiVersion}/[namespace]")]
-public class List : EndpointWithoutRequest
+internal class List : IGroupedEndpoint<ApiV2EndpointGroup>
 {
-	private readonly IOptions<BinPresetOptions> presetOptions;
-	private readonly ILogger<List> logger;
-
-	/// <summary>
-	/// List Presets Endpoint
-	/// </summary>
-	/// <param name="presetOptions"></param>
-	/// <param name="logger"></param>
-	public List(
-		IOptions<BinPresetOptions> presetOptions,
-		ILogger<List> logger
-		)
+	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		this.presetOptions = presetOptions;
-		this.logger = logger;
+		group.MapGet("presets", HandleAsync)
+			.WithTags("Presets")
+			.WithSummary("List Presets")
+			.WithDescription("Lists the presets present in configuration.")
+			.Produces<PresetListResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.Produces(StatusCodes.Status404NotFound)
+			.Produces<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
+			.WithOpenApi(operation =>
+			{
+				// Returns the all of the configured presets wth the associated bins.
+				//	If no presets are configured.
+				//	If an unexpected error occurs.
+				// 
+				// ///		Exception details will only be shown when in a development environment.
+				return operation;
+			});
+		// [SwaggerResponseExample(typeof(v2.Responses.PresetListResponse), typeof(v2.Responses.Examples.PresetListResponseExample), StatusCodes.Status200OK)]
+		// [SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
+
 	}
-
-	/// <summary>
-	/// Lists the presets present in configuration.
-	/// </summary>
-	/// <response code="200"> <b>OK</b>
-	/// <br />
-	/// <p>
-	///		Returns the all of the configured presets wth the associated bins.
-	/// </p>
-	/// </response>
-	/// <response code="404"> <b>Not Found</b>
-	/// <br />
-	/// <p>
-	///		If no presets are configured.
-	/// </p>
-	/// </response>
-	/// <response code="500"> <b>Internal Server Error</b>
-	/// <br />
-	/// <p>
-	///		If an unexpected error occurs.
-	/// </p>
-	/// <p>
-	///		Exception details will only be shown when in a development environment.
-	/// </p>
-	/// </response>
-	[Consumes("application/json")]
-	[Produces("application/json")]
-	[MapToApiVersion(v2.ApiVersion.Number)]
-
-	[HttpGet]
-	[ProducesResponseType(typeof(v2.Responses.PresetListResponse), StatusCodes.Status200OK)]
-	[SwaggerResponseExample(typeof(v2.Responses.PresetListResponse), typeof(v2.Responses.Examples.PresetListResponseExample), StatusCodes.Status200OK)]
-
-	[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-
-	[ProducesResponseType(typeof(v2.Responses.ErrorResponse), StatusCodes.Status500InternalServerError)]
-	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
-
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-	public override async Task<IActionResult> HandleAsync(CancellationToken cancellationToken = default)
-	#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+	internal async Task<IResult> HandleAsync(
+		IOptions<BinPresetOptions> presetOptions,
+		ILogger<List> logger,
+		CancellationToken cancellationToken = default
+	)
 	{
 		try
 		{
-			if (this.presetOptions?.Value?.Presets is null || this.presetOptions.Value.Presets.Count <= 0)
+			if (presetOptions?.Value?.Presets is null || presetOptions.Value.Presets.Count <= 0)
 			{
-				return this.NotFound(null);
+				return Results.NotFound(null);
 			}
 
-			var presets = this.presetOptions.Value.Presets
+			var presets = presetOptions.Value.Presets
 			.ToDictionary(
 				x => x.Key,
 				x => x.Value.Bins
-					.Select(bin => new v2.Models.Bin()
+					.Select(bin => new Bin()
 					{
 						ID = bin.ID,
 						Length = bin.Length,
@@ -93,15 +59,15 @@ public class List : EndpointWithoutRequest
 					}).ToList()
 			);
 
-			var response = v2.Responses.PresetListResponse.Create(presets);
+			var response = PresetListResponse.Create(presets);
 
-			return this.Ok(response);
+			return Results.Ok(response);
 		}
 		catch (Exception ex)
 		{
-			this.logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "List Presets");
-			return this.InternalServerError(
-				Models.Response.ExceptionError(ex, Constants.Errors.Categories.ServerError)
+			logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "List Presets");
+			return Results.InternalServerError(
+				Response.ExceptionError(ex, Categories.ServerError)
 				);
 		}
 	}

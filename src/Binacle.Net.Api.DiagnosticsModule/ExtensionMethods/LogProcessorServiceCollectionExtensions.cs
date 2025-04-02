@@ -1,8 +1,6 @@
 ﻿using System.Threading.Channels;
 using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
-using Binacle.Net.Api.Kernel;
-using Binacle.Net.Api.Kernel.Models;
-using Binacle.Net.Api.Models;
+using Binacle.Net.Api.Kernel.Logs.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

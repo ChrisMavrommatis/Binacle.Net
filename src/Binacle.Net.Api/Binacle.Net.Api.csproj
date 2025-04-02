@@ -14,27 +14,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
-		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.1.4" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ChrisMavrommatis.Endpoints" Version="2.0.2" />
 		<PackageReference Include="ChrisMavrommatis.Features" Version="2.0.3" />
 		<PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.3" />
-		<PackageReference Include="ChrisMavrommatis.SwaggerExamples" Version="2.0.2" />
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="8.1.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="8.1.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.1.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\dep\Binacle.ViPaq\Binacle.ViPaq.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
-	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.DiagnosticsModule\Binacle.Net.Api.DiagnosticsModule.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Api.UIModule\Binacle.Net.Api.UIModule.csproj" />

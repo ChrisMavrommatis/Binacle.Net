@@ -1,10 +1,11 @@
-﻿using Binacle.Net.Api.Kernel.Models;
+﻿using Binacle.Net.Api.Kernel;
+using Binacle.Net.Api.Kernel.Configuration.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace Binacle.Net.Api.Kernel;
+namespace Binacle.Net.Api;
 
 public static class ConfigurationExtensions
 {

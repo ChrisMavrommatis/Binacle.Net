@@ -1,8 +1,7 @@
 ﻿using Binacle.Net.Api.DiagnosticsModule.Configuration.Models;
 using Binacle.Net.Api.DiagnosticsModule.ExtensionMethods;
 using Binacle.Net.Api.DiagnosticsModule.Middleware;
-using Binacle.Net.Api.Kernel;
-using Binacle.Net.Api.Kernel.Models;
+using Binacle.Net.Api.Kernel.Logs.Models;
 using FluentValidation;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;

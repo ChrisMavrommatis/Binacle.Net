@@ -1,6 +1,6 @@
 ﻿using System.Threading.Channels;
-using Binacle.Net.Api.Models;
-using Binacle.Net.Api.Services;
+using Binacle.Net.Api.Kernel.Logs.Models;
+using Binacle.Net.Api.Kernel.Logs.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Binacle.Net.Api;

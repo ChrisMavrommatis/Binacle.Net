@@ -1,17 +1,18 @@
 ﻿using System.Text;
-using Asp.Versioning.ApiExplorer;
+using Binacle.Net.Api.Kernel.OpenApi;
 using Microsoft.OpenApi.Models;
 
 namespace Binacle.Net.Api;
 
+
 internal static class ApiDocument
 {
-	internal static OpenApiInfo CreateApiInfo(IApiVersion apiVersion, ApiVersionDescription description)
+	internal static OpenApiInfo CreateApiInfo(IOpenApiDocument apiDocument)
 	{
 		var info = new OpenApiInfo()
 		{
 			Title = $"Binacle.Net API",
-			Version = $"{description.ApiVersion.ToString()}",
+			Version = apiDocument.Version,
 			Description = __description__,
 			// gpl 3 license
 			License = new OpenApiLicense
@@ -22,8 +23,8 @@ internal static class ApiDocument
 		};
 
 		info.Description = info.Description
-			.Replace("{{status}}", apiVersion.Experimental ? __experimentalMessage__: string.Empty)
-			.Replace("{{deprecated}}", apiVersion.Deprecated ? __deprecatedMessage__: string.Empty);
+			.Replace("{{status}}", apiDocument.IsExperimental ? __experimentalMessage__: string.Empty)
+			.Replace("{{deprecated}}", apiDocument.IsDeprecated ? __deprecatedMessage__: string.Empty);
 
 		return info;
 	}

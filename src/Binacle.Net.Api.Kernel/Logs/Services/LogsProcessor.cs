@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
 using System.Threading.Channels;
-using Binacle.Net.Api.Models;
+using Binacle.Net.Api.Kernel.Logs.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Binacle.Net.Api.Services;
+namespace Binacle.Net.Api.Kernel.Logs.Services;
 
 internal class LogsProcessor<TRequest> : BackgroundService
 {

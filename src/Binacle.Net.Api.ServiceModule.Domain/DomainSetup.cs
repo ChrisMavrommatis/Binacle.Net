@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Api.Kernel;
-using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
+﻿using Binacle.Net.Api.ServiceModule.Domain.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
