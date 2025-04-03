@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Api.Validators;
+﻿using Binacle.Net.Api.Constants;
+using Binacle.Net.Api.Validators;
 using FluentValidation;
 
 namespace Binacle.Net.Api.v2.Requests.Validators;
@@ -12,12 +13,12 @@ internal class CustomFitRequestValidator : AbstractValidator<CustomFitRequest>
 		RuleFor(x => x.Bins)
 		   .NotNull()
 		   .NotEmpty()
-		   .WithMessage(Constants.Errors.Messages.IsRequired);
+		   .WithMessage(ErrorMessage.IsRequired);
 
 		// Each Bin Id must be unique
 		RuleFor(x => x.Bins)
 			.Must(x => x!.Select(y => y.ID).Distinct().Count() == x!.Count)
-			.WithMessage(Constants.Errors.Messages.IdMustBeUnique);
+			.WithMessage(ErrorMessage.IdMustBeUnique);
 
 		RuleForEach(x => x.Bins).ChildRules(binValidator =>
 		{
@@ -28,12 +29,12 @@ internal class CustomFitRequestValidator : AbstractValidator<CustomFitRequest>
 		RuleFor(x => x.Items)
 			.NotNull()
 			.NotEmpty()
-			.WithMessage(Constants.Errors.Messages.IsRequired);
+			.WithMessage(ErrorMessage.IsRequired);
 
 		// Each ItemID must be unique
 		RuleFor(x => x.Items)
 			.Must(x => x!.Select(y => y.ID).Distinct().Count() == x!.Count)
-			.WithMessage(Constants.Errors.Messages.IdMustBeUnique);
+			.WithMessage(ErrorMessage.IdMustBeUnique);
 
 		RuleForEach(x => x.Items).ChildRules(itemValidator =>
 		{

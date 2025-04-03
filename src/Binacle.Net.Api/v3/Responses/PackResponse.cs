@@ -1,36 +1,39 @@
-﻿using Binacle.Net.Lib.Abstractions.Models;
+﻿using Binacle.Net.Api.v3.Models;
+using Binacle.Net.Api.v3.Requests;
+using Binacle.Net.Lib.Abstractions.Models;
+using Binacle.Net.Lib.Packing.Models;
 using Binacle.ViPaq;
 
 namespace Binacle.Net.Api.v3.Responses;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>>
+public class PackResponse : ResponseBase<List<BinPackResult>>
 {
 	internal static PackResponse Create<TBin, TItem>(
 		List<TBin> bins,
 		List<TItem> items,
-		v3.Requests.PackRequestParameters? parameters,
-		IDictionary<string, Lib.Packing.Models.PackingResult> operationResults
+		PackRequestParameters? parameters,
+		IDictionary<string, PackingResult> operationResults
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions
 	{
-		v3.Models.BinPackResultStatus GetResultStatus(Lib.Packing.Models.PackingResult operationResult)
+		BinPackResultStatus GetResultStatus(PackingResult operationResult)
 		{
 			return operationResult.Status switch
 			{
-				Lib.Packing.Models.PackingResultStatus.FullyPacked => v3.Models.BinPackResultStatus.FullyPacked,
-				Lib.Packing.Models.PackingResultStatus.PartiallyPacked => v3.Models.BinPackResultStatus.PartiallyPacked,
-				Lib.Packing.Models.PackingResultStatus.EarlyFail_ContainerDimensionExceeded => v3.Models.BinPackResultStatus.EarlyFail_ContainerDimensionExceeded,
-				Lib.Packing.Models.PackingResultStatus.EarlyFail_ContainerVolumeExceeded => v3.Models.BinPackResultStatus.EarlyFail_ContainerVolumeExceeded,
-				Lib.Packing.Models.PackingResultStatus.Unknown => v3.Models.BinPackResultStatus.Unknown,
-				Lib.Packing.Models.PackingResultStatus.NotPacked => v3.Models.BinPackResultStatus.NotPacked,
+				PackingResultStatus.FullyPacked => BinPackResultStatus.FullyPacked,
+				PackingResultStatus.PartiallyPacked => BinPackResultStatus.PartiallyPacked,
+				PackingResultStatus.EarlyFail_ContainerDimensionExceeded => BinPackResultStatus.EarlyFail_ContainerDimensionExceeded,
+				PackingResultStatus.EarlyFail_ContainerVolumeExceeded => BinPackResultStatus.EarlyFail_ContainerVolumeExceeded,
+				PackingResultStatus.Unknown => BinPackResultStatus.Unknown,
+				PackingResultStatus.NotPacked => BinPackResultStatus.NotPacked,
 				_ => throw new NotImplementedException(),
 			};
 		}
 
-		var results = new List<v3.Models.BinPackResult>();
+		var results = new List<BinPackResult>();
 		for (var i = 0; i < bins.Count; i++)
 		{
 			var bin = bins[i];
@@ -39,9 +42,9 @@ public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>
 				continue;
 			}
 
-			var result = new v3.Models.BinPackResult
+			var result = new BinPackResult
 			{
-				Bin = new v3.Models.Bin
+				Bin = new Bin
 				{
 					ID = bin.ID,
 					Height = bin.Height,
@@ -52,7 +55,7 @@ public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>
 				PackedBinVolumePercentage = operationResult.PackedBinVolumePercentage,
 				PackedItemsVolumePercentage = operationResult.PackedItemsVolumePercentage,
 				PackedItems = operationResult.PackedItems?
-					.Select(x => new v3.Models.PackedBox()
+					.Select(x => new PackedBox()
 					{
 						ID = x.ID,
 						Length = x.Dimensions.Length,
@@ -64,7 +67,7 @@ public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>
 					}).ToList(),
 				UnpackedItems = operationResult.UnpackedItems?
 					.GroupBy(x => x.ID)
-					.Select(x => new v3.Models.UnpackedBox
+					.Select(x => new UnpackedBox
 					{
 						ID = x.Key,
 						Quantity = x.Count()
@@ -81,8 +84,8 @@ public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>
 		}
 
 		var resultStatus = results.Any(x => 
-			x.Result == Models.BinPackResultStatus.FullyPacked
-		) ? Models.ResultType.Success : Models.ResultType.Failure;
+			x.Result == BinPackResultStatus.FullyPacked
+		) ? ResultType.Success : ResultType.Failure;
 
 		return new PackResponse()
 		{
@@ -92,7 +95,7 @@ public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>
 	}
 
 
-	internal static PackResponse Create(List<v3.Models.BinPackResult> results)
+	internal static PackResponse Create(List<BinPackResult> results)
 	{
 		return new PackResponse
 		{
@@ -101,14 +104,14 @@ public class PackResponse : v3.Models.ResponseBase<List<v3.Models.BinPackResult>
 		};
 	}
 
-	private static Models.ResultType CalculateResultType(List<v3.Models.BinPackResult> results)
+	private static ResultType CalculateResultType(List<BinPackResult> results)
 	{
 		var isSuccess = results.Any(x =>
-			x.Result == Models.BinPackResultStatus.FullyPacked
-			|| x.Result == Models.BinPackResultStatus.PartiallyPacked
+			x.Result == BinPackResultStatus.FullyPacked
+			|| x.Result == BinPackResultStatus.PartiallyPacked
 		);
 		
-		return isSuccess ? Models.ResultType.Success : Models.ResultType.Failure;
+		return isSuccess ? ResultType.Success : ResultType.Failure;
 	}
 }
 

@@ -7,26 +7,18 @@ namespace Binacle.Net.Api;
 
 internal static class ApiDocument
 {
-	internal static OpenApiInfo CreateApiInfo(IOpenApiDocument apiDocument)
+	internal static void Transform(IOpenApiDocument apiDocument, OpenApiInfo documentInfo)
 	{
-		var info = new OpenApiInfo()
-		{
-			Title = $"Binacle.Net API",
-			Version = apiDocument.Version,
-			Description = __description__,
-			// gpl 3 license
-			License = new OpenApiLicense
-			{
-				Name = "GNU General Public License v3.0",
-				Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.html")
-			},
-		};
-
-		info.Description = info.Description
+		documentInfo.Title = $"Binacle.Net API";
+		documentInfo.Version = apiDocument.Version;
+		documentInfo.Description = __description__
 			.Replace("{{status}}", apiDocument.IsExperimental ? __experimentalMessage__: string.Empty)
 			.Replace("{{deprecated}}", apiDocument.IsDeprecated ? __deprecatedMessage__: string.Empty);
-
-		return info;
+		documentInfo.License = new OpenApiLicense
+		{
+			Name = "GNU General Public License v3.0",
+			Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.html")
+		};
 	}
 	
 	private static string __description__ = new StringBuilder()

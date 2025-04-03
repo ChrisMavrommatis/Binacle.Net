@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Api.Kernel.Endpoints;
+using Binacle.Net.Api.ServiceModule.Constants;
 using Binacle.Net.Api.ServiceModule.Domain.Users.Entities;
 using Binacle.Net.Api.ServiceModule.Domain.Users.Models;
 using Binacle.Net.Api.ServiceModule.Models;
@@ -20,34 +21,15 @@ internal class Token : IEndpoint
 		endpoints.MapPost("/api/auth/token", HandleAsync)
 			.WithTags("Auth")
 			.DisableRateLimiting()
-			.WithSummary("Authenticate to use the service without limits")
-			.WithDescription("Use this endpoint if you have the credentials to get a token so you can make the calls without rate limits")
+			.WithSummary("Auth Token")
+			.WithDescription("Use this endpoint if you have the credentials to get a token and use the service without limits")
 			.Accepts<TokenRequest>("application/json")
 			.Produces<TokenResponse>(StatusCodes.Status200OK, "application/json")
+			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForAuthToken200OK)
 			.Produces<AuthErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.Produces(StatusCodes.Status401Unauthorized)
-			.WithOpenApi(operation =>
-			{
-				operation.SetResponseDescription(StatusCodes.Status200OK, @"**OK** 
-				<br /> 
-				<p>
-					When you have valid credentials.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status400BadRequest, @"**Bad Request** 
-				<br /> 
-				<p>
-					When the request is invalid.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status401Unauthorized, @"**Unauthorized** 
-				<br /> 
-				<p>
-					When the credentials are invalid.
-				</p>");
-
-				return operation;
-			});
+			.WithResponseDescription(StatusCodes.Status401Unauthorized, ResponseDescription.ForAuthToken401Unauthorized);
 	}
 
 	// [SwaggerRequestExample(typeof(v0.Requests.TokenRequest), typeof(v0.Requests.Examples.TokenRequestExample))]

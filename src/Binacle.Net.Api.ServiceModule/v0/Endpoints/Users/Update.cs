@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Api.Kernel.Endpoints;
+using Binacle.Net.Api.ServiceModule.Constants;
 using Binacle.Net.Api.ServiceModule.Domain.Users.Entities;
 using Binacle.Net.Api.ServiceModule.Domain.Users.Models;
 using Binacle.Net.Api.ServiceModule.Models;
@@ -21,44 +22,9 @@ internal class Update : IGroupedEndpoint<UsersGroup>
 			.WithDescription("Use this endpoint if you are the admin to update the user but not change the password.")
 			.Accepts<UpdateApiUserRequestWithBody>("application/json")
 			.Produces(StatusCodes.Status204NoContent)
-			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			.Produces(StatusCodes.Status401Unauthorized)
-			.Produces(StatusCodes.Status403Forbidden)
+			.WithResponseDescription(StatusCodes.Status204NoContent, ResponseDescription.ForUpdate204NoContent)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithOpenApi(operation =>
-			{
-				operation.SetResponseDescription(StatusCodes.Status204NoContent, @"**No Content**
-				<br />
-				<p>
-					When the user was updated.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status400BadRequest, @"**Bad Request**
-				<br />
-				<p>
-					When the request is invalid.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status401Unauthorized, @"**Unauthorized**
-				<br />
-				<p>
-					When provided user token is invalid.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status403Forbidden, @"**Forbidden**
-				<br />
-				<p>
-					When provided user token does not have permission.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status404NotFound, @"**Not Found**
-				<br />
-				<p>
-					When the user does not exist.
-				</p>");
-
-				return operation;
-			});
+			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForUpdate404NotFound);
 	}
 
 	// [SwaggerRequestExample(typeof(v0.Requests.UpdateApiUserRequest), typeof(v0.Requests.Examples.UpdateApiUserRequestExample))]

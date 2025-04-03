@@ -9,6 +9,17 @@ internal class RateLimiterConfigurationOptionsValidator : AbstractValidator<Rate
 	{
 		RuleFor(x => x.Anonymous).NotNull().NotEmpty();
 
-		RuleFor(x => x.Anonymous).Must((value) => RateLimiterConfigurationOptions.ParseConfiguration(value) is not null);
+		RuleFor(x => x.Anonymous).Must((value) =>
+		{
+			try
+			{
+				var result = RateLimiterConfigurationOptions.ParseConfiguration(value);
+				return result is not null;
+			}
+			catch(Exception ex)
+			{
+				return false;
+			}	
+		});
 	}
 }

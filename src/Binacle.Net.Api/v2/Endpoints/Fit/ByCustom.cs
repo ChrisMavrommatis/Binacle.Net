@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Api.Constants.Errors;
+﻿using Binacle.Net.Api.Constants;
 using Binacle.Net.Api.Kernel.Endpoints;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
@@ -16,22 +16,14 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 	{
 		group.MapPost("fit/by-custom", HandleAsync)
 			.WithTags("Fit")
-			.WithSummary("Fit by custom")
+			.WithSummary("Fit by Custom")
 			.WithDescription("Perform a bin fitting function using custom bins.")
 			.Accepts<CustomFitRequest>("application/json")
 			.Produces<FitResponse>(StatusCodes.Status200OK, "application/json")
+			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForFitResponse200OK)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			.Produces<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
-			.WithOpenApi(operation =>
-			{
-				// Returns n array of results indicating if a bin can accommodate all the items
-				// 	An array of results indicating if a bin can accommodate all the items.
-				//	If the request is invalid.
-				//	If an unexpected error occurs.
-				// 
-				// ///		Exception details will only be shown when in a development environment.
-				return operation;
-			});
+			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest);
+		
 		// [SwaggerRequestExample(typeof(v2.Requests.CustomFitRequest), typeof(v2.Requests.Examples.CustomFitRequestExample))]
 		// [SwaggerResponseExample(typeof(v2.Responses.FitResponse), typeof(v2.Responses.Examples.CustomFitResponseExamples), StatusCodes.Status200OK)]
 		// [SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
@@ -39,7 +31,6 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 
 	}
 
-	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 	internal async Task<IResult> HandleAsync(
 		[FromBody] CustomFitRequest? request,
 		IValidator<CustomFitRequest> validator,
@@ -54,7 +45,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 			{
 				return Results.BadRequest(
 					Response.ParameterError(
-						nameof(request), Messages.MalformedRequestBody, Categories.RequestError)
+						nameof(request), ErrorMessage.MalformedRequestBody, ErrorCategory.RequestError)
 				);
 			}
 
@@ -63,7 +54,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 			if (!validationResult.IsValid)
 			{
 				return Results.BadRequest(
-					Response.ValidationError(validationResult, Categories.ValidationError)
+					Response.ValidationError(validationResult, ErrorCategory.ValidationError)
 				);
 			}
 
@@ -91,7 +82,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 		{
 			logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Custom");
 			return Results.InternalServerError(
-				Response.ExceptionError(ex, Categories.ServerError)
+				Response.ExceptionError(ex, ErrorCategory.ServerError)
 			);
 		}
 	}

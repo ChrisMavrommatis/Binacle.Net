@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Api.Kernel.Endpoints;
+using Binacle.Net.Api.ServiceModule.Constants;
 using Binacle.Net.Api.ServiceModule.Domain.Users.Models;
 using Binacle.Net.Api.ServiceModule.Services;
 using Binacle.Net.Api.ServiceModule.v0.Requests;
@@ -19,51 +20,11 @@ internal class ChangePassword : IGroupedEndpoint<UsersGroup>
 			.WithDescription("Use this endpoint if you are the admin to change a user's password")
 			.Accepts<ChangeApiUserPasswordRequest>("application/json")
 			.Produces(StatusCodes.Status204NoContent)
-			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			.Produces(StatusCodes.Status401Unauthorized)
-			.Produces(StatusCodes.Status403Forbidden)
+			.WithResponseDescription(StatusCodes.Status204NoContent, ResponseDescription.ForChangePassword204NoContent)
 			.Produces(StatusCodes.Status404NotFound)
+			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForChangePassword404NotFound)
 			.Produces(StatusCodes.Status409Conflict)
-			.WithOpenApi(operation =>
-			{
-				operation.SetResponseDescription(StatusCodes.Status204NoContent, @"**No Content**
-				<br />
-				<p>
-					When the password was changed.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status400BadRequest, @"**Bad Request**
-				<br />
-				<p>
-					When the request is invalid.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status401Unauthorized, @" **Unauthorized**
-				<br />
-				<p>
-					When provided user token is invalid.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status403Forbidden, @"**Forbidden**
-				<br />
-				<p>
-					When provided user token does not have permission.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status404NotFound, @"**Not Found**
-				<br />
-				<p>
-					When the user does not exist.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status409Conflict, @"**Conflict**
-				<br />
-				<p>
-					When the password is the same as the old.
-				</p>");
-
-				return operation;
-			});
+			.WithResponseDescription(StatusCodes.Status409Conflict, ResponseDescription.ForChangePassword409Conflict);
 	}
 
 	// [SwaggerRequestExample(typeof(v0.Requests.ChangeApiUserPasswordRequest), typeof(v0.Requests.Examples.ChangeApiUserPasswordRequestExample))]

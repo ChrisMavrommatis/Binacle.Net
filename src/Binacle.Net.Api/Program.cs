@@ -1,6 +1,8 @@
-﻿using Binacle.Net.Api.Configuration.Models;
+﻿using System.Text.Json.Serialization;
+using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.DiagnosticsModule;
 using Binacle.Net.Api.ExtensionMethods;
+using Binacle.Net.Api.Kernel.OpenApi;
 using Binacle.Net.Api.Kernel.OpenApi.ExtensionsMethods;
 using Binacle.Net.Api.ServiceModule;
 using Binacle.Net.Api.Services;
@@ -8,6 +10,7 @@ using Binacle.Net.Api.UIModule;
 using ChrisMavrommatis.Features;
 using ChrisMavrommatis.StartupTasks;
 using FluentValidation;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Serilog;
@@ -54,56 +57,17 @@ public class Program
 		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
 		builder.Services.AddEndpointsApiExplorer();
 
-		// builder.Services.AddControllers(options =>
-		// {
-		// 	options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
-		// 	options.UseNamespaceRouteToken();
-		//
-		// }).AddJsonOptions(options =>
-		// {
-		// 	options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-		// });
-
+		builder.Services.Configure<JsonOptions>(options =>
+		{
+			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+		});
+		
 		builder.Services.AddTransient(typeof(IOptionalDependency<>), typeof(OptionalDependency<>));
-
-		// builder.Services.AddApiVersioning(options =>
-		// {
-		// 	options.DefaultApiVersion = ApiVersionParser.Default.Parse(v1.ApiVersion.Number);
-		// 	options.AssumeDefaultVersionWhenUnspecified = true;
-		// 	options.ReportApiVersions = true;
-		// 	options.ApiVersionReader = ApiVersionReader.Combine(
-		// 		new UrlSegmentApiVersionReader()
-		// 	);
-		// }).AddApiExplorer(options =>
-		// {
-		// 	options.GroupNameFormat = "'v'VVV";
-		// 	options.SubstituteApiVersionInUrl = true;
-		// });
 
 		builder.Services.AddSingleton(_ => TimeProvider.System);
 		builder.Services.AddBinacleServices();
 
 		builder.Services.AddOpenApiDocumentsFromAssemblyContaining<IApiMarker>();
-		// 	.AddOpenApi("v1");
-		// builder.Services.AddOpenApi("v2");
-		// builder.Services.AddOpenApi("v3", options =>
-		// {
-		// 	options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
-		// });
-		// builder.Services.AddSwaggerExamples(options =>
-		// {
-		// 	options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-		// 	// ignore null
-		// 	options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-		// });
-		//
-		// builder.Services.AddSwaggerGen();
-		// builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
-
-		// builder.Services.Configure<ApiBehaviorOptions>(options =>
-		// {
-		// 	options.SuppressModelStateInvalidFilter = true;
-		// });
 
 		builder.Services.Configure<RouteOptions>(options =>
 		{
@@ -135,33 +99,31 @@ public class Program
 			app.UseDeveloperExceptionPage();
 		}
 
-		app.MapOpenApi("/openapi/{documentName}.json");
-		app.UseSwaggerUI(options =>
+		// SWAGGER_UI from environment vars
+		if (Feature.IsEnabled("SWAGGER_UI"))
 		{
-			options.SwaggerEndpoint("/openapi/v1.json", "v1");
-			options.SwaggerEndpoint("/openapi/v2.json", "v2");
-			options.SwaggerEndpoint("/openapi/v3.json", "v3");
-		});
-		app.MapScalarApiReference(options =>
-		{
-			options.AddDocument("v1");
-			options.AddDocument("v2");
-			options.AddDocument("v3");
-		});
-		// // SWAGGER_UI from environment vars
-		// if (Feature.IsEnabled("SWAGGER_UI"))
-		// {
-		// 	app.UseSwagger();
-		// 	app.UseSwaggerUI(options =>
-		// 	{
-		// 		ConfigureSwaggerOptions.ConfigureSwaggerUI(options, app);
-		//
-		// 		if (Feature.IsEnabled("SERVICE_MODULE"))
-		// 		{
-		// 			options.ConfigureServiceModuleSwaggerUI(app);
-		// 		}
-		// 	});
-		// }
+			const string openApiEndpointPattern = "/openapi/{documentName}.json";
+			app.MapOpenApi(openApiEndpointPattern);
+			
+			var openApiDocuments = app.Services.GetServices<IOpenApiDocument>();
+			
+			app.UseSwaggerUI(options =>
+			{
+				foreach (var openApiDocument in openApiDocuments)
+				{
+					var endpoint = openApiEndpointPattern.Replace("{documentName}", openApiDocument.Name);
+					options.SwaggerEndpoint(endpoint, openApiDocument.Title);
+				}
+			});
+			
+			app.MapScalarApiReference(options =>
+			{
+				foreach (var openApiDocument in openApiDocuments)
+				{
+					options.AddDocument(openApiDocument.Name, openApiDocument.Title);
+				}
+			});
+		}
 
 		app.UseDiagnosticsModule();
 
@@ -176,6 +138,7 @@ public class Program
 		}
 
 		app.RegisterEndpointsFromAssemblyContaining<IApiMarker>();
+		
 		await app.RunStartupTasksAsync();
 		await app.RunAsync();
 	}

@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Api.Validators;
+﻿using Binacle.Net.Api.Constants;
+using Binacle.Net.Api.Validators;
 using FluentValidation;
 
 namespace Binacle.Net.Api.v1.Requests.Validators;
@@ -12,12 +13,12 @@ internal class PresetQueryRequestValidator : AbstractValidator<PresetQueryReques
 		RuleFor(x => x.Items)
 			.NotNull()
 			.NotEmpty()
-			.WithMessage(Constants.Errors.Messages.IsRequired);
+			.WithMessage(ErrorMessage.IsRequired);
 
 		// Each ItemID must be unique
 		RuleFor(x => x.Items)
 			.Must(x => x!.Select(y => y.ID).Distinct().Count() == x!.Count)
-			.WithMessage(Constants.Errors.Messages.IdMustBeUnique);
+			.WithMessage(ErrorMessage.IdMustBeUnique);
 
 		RuleForEach(x => x.Items).ChildRules(itemValidator =>
 		{

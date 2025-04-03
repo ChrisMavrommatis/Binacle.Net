@@ -1,5 +1,5 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
-using Binacle.Net.Api.Constants.Errors;
+using Binacle.Net.Api.Constants;
 using Binacle.Net.Api.Kernel.Endpoints;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
@@ -22,20 +22,12 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 			.WithDescription("Perform a bin fit function using a specified bin preset.")
 			.Accepts<CustomFitRequest>("application/json")
 			.Produces<FitResponse>(StatusCodes.Status200OK, "application/json")
+			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForFitResponse200OK)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.Produces(StatusCodes.Status404NotFound)
-			.Produces<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
-			.WithOpenApi(operation =>
-			{
-				// Returns n array of results indicating if a bin can accommodate all the items
-				// 	An array of results indicating if a bin can accommodate all the items.
-				//	If the request is invalid.
-				// If the preset does not exist.
-				//	If an unexpected error occurs.
-				// 
-				// ///		Exception details will only be shown when in a development environment.
-				return operation;
-			});
+			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPreset404NotFound);
+
 		// [SwaggerRequestExample(typeof(v2.Requests.PresetFitRequest), typeof(v2.Requests.Examples.PresetFitRequestExample))]
 		//	[SwaggerResponseExample(typeof(v2.Responses.FitResponse), typeof(v2.Responses.Examples.PresetFitResponseExamples), StatusCodes.Status200OK)]
 		//	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
@@ -59,8 +51,8 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 				return Results.BadRequest(
 					Response.ParameterError(
 						nameof(preset),
-						Messages.IsRequired,
-						Categories.RequestError
+						ErrorMessage.IsRequired,
+						ErrorCategory.RequestError
 					)
 				);
 			}
@@ -70,8 +62,8 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 				return Results.BadRequest(
 					Response.ParameterError(
 						nameof(request),
-						Messages.MalformedRequestBody,
-						Categories.RequestError
+						ErrorMessage.MalformedRequestBody,
+						ErrorCategory.RequestError
 					)
 				);
 			}
@@ -81,7 +73,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 			if (!validationResult.IsValid)
 			{
 				return Results.BadRequest(
-					Response.ValidationError(validationResult, Categories.ValidationError)
+					Response.ValidationError(validationResult, ErrorCategory.ValidationError)
 				);
 			}
 
@@ -113,7 +105,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 		{
 			logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Preset");
 			return Results.InternalServerError(
-				Response.ExceptionError(ex, Categories.ServerError)
+				Response.ExceptionError(ex, ErrorCategory.ServerError)
 			);
 		}
 	}

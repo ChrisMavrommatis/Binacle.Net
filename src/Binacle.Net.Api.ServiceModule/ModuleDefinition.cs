@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using System.Text.Json.Serialization;
+using Binacle.Net.Api.Kernel.OpenApi.ExtensionsMethods;
 using Binacle.Net.Api.ServiceModule.Configuration;
 using Binacle.Net.Api.ServiceModule.Configuration.Models;
 using Binacle.Net.Api.ServiceModule.Domain;
@@ -8,7 +8,6 @@ using Binacle.Net.Api.ServiceModule.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -42,6 +41,8 @@ public static class ModuleDefinition
 		builder.AddValidatableJsonConfigurationOptions<RateLimiterConfigurationOptions>();
 
 		builder.AddValidatableJsonConfigurationOptions<JwtAuthOptions>();
+		
+		builder.Services.AddOpenApiDocumentsFromAssemblyContaining<IModuleMarker>();
 
 		builder.Services.AddAuthentication(options =>
 		{
@@ -68,8 +69,6 @@ public static class ModuleDefinition
 			};
 		});
 
-		// builder.Services.AddEndpointsApiExplorer();
-
 		builder.Services.AddAuthorization();
 
 		// Register Services
@@ -78,12 +77,6 @@ public static class ModuleDefinition
 		builder
 			.AddDomainLayerServices()
 			.AddInfrastructureLayerServices();
-
-		builder.Services.Configure<JsonOptions>(options =>
-		{
-			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-		});
-
 
 		builder.Services.AddRateLimiter(_ => { });
 		builder.Services.ConfigureOptions<ConfigureRateLimiter>();

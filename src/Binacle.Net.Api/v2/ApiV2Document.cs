@@ -6,6 +6,7 @@ internal class ApiV2Document : IOpenApiDocument
 {
 	public const string DocumentName = "v2";
 	public string Name => DocumentName;
+	public string Title => $"Binacle.Net API {DocumentName}";
 	public string Version => "2.0";
 	public bool IsDeprecated => false;
 	public bool IsExperimental => false;
@@ -15,9 +16,10 @@ internal class ApiV2Document : IOpenApiDocument
 		{
 			options.AddDocumentTransformer((document, context, cancellationToken) =>
 			{
-				document.Info = ApiDocument.CreateApiInfo(this);
+				ApiDocument.Transform(this, document.Info);
 				return Task.CompletedTask;
 			});
+			options.AddOperationTransformer<ResponseDescriptionOperationTransformer>();
 		});
 	}
 	

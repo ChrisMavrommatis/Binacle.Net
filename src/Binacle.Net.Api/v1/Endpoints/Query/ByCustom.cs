@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Api.Constants.Errors;
+﻿using Binacle.Net.Api.Constants;
 using Binacle.Net.Api.Kernel.Endpoints;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
@@ -15,27 +15,20 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 	{
 		group.MapPost("query/by-custom", HandleAsync)
 			.WithTags("Query")
-			.WithSummary("Query by custom")
+			.WithSummary("Query by Custom")
 			.WithDescription("Perform a bin fit query using custom bins.")
 			.Accepts<CustomQueryRequest>("application/json")
 			.Produces<QueryResponse>(StatusCodes.Status200OK, "application/json")
+			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForQueryResponse200OK)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			.Produces<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
-			.WithOpenApi(operation =>
-			{
-				// Returns the bin that fits all of the items, or empty if they don't fit.
-				// 	If the request is invalid.
-				//	If an unexpected error occurs.
-				//	Exception details will only be shown when in a development environment.
-				return operation;
-			});
+			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest);
+
 		// [SwaggerRequestExample(typeof(v1.Requests.CustomQueryRequest), typeof(v1.Requests.Examples.CustomQueryRequestExample))]
 		// [SwaggerResponseExample(typeof(v1.Responses.QueryResponse), typeof(v1.Responses.Examples.CustomQueryResponseExamples), StatusCodes.Status200OK)]
 		// [SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 		// [SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	}
 
-	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 	internal async Task<IResult> HandleAsync(
 		[FromBody] CustomQueryRequest? request,
 		IValidator<CustomQueryRequest> validator,
@@ -49,8 +42,8 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 			if (request is null)
 			{
 				return Results.BadRequest(
-					ErrorResponse.Create(Categories.RequestError)
-						.AddParameterError(nameof(request), Messages.MalformedRequestBody)
+					ErrorResponse.Create(ErrorCategory.RequestError)
+						.AddParameterError(nameof(request), ErrorMessage.MalformedRequestBody)
 				);
 			}
 
@@ -60,7 +53,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 			if (!validationResult.IsValid)
 			{
 				return Results.BadRequest(
-					ErrorResponse.Create(Categories.ValidationError)
+					ErrorResponse.Create(ErrorCategory.ValidationError)
 						.AddValidationResult(validationResult)
 				);
 			}
@@ -84,7 +77,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 		{
 			logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Query by Custom");
 			return Results.InternalServerError(
-				ErrorResponse.Create(Categories.ServerError)
+				ErrorResponse.Create(ErrorCategory.ServerError)
 					.AddExceptionError(ex)
 			);
 		}

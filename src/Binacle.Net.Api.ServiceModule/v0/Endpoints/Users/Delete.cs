@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Api.Kernel.Endpoints;
+using Binacle.Net.Api.ServiceModule.Constants;
 using Binacle.Net.Api.ServiceModule.Domain.Users.Models;
 using Binacle.Net.Api.ServiceModule.Services;
 using Binacle.Net.Api.ServiceModule.v0.Requests;
@@ -18,44 +19,9 @@ internal class Delete : IGroupedEndpoint<UsersGroup>
 			.WithSummary("Delete a user")
 			.WithDescription("Use this endpoint if you are the admin to delete a user")
 			.Produces(StatusCodes.Status204NoContent)
-			.Produces<ErrorResponse> (StatusCodes.Status400BadRequest, "application/json")
-			.Produces(StatusCodes.Status401Unauthorized)
-			.Produces(StatusCodes.Status403Forbidden)
+			.WithResponseDescription(StatusCodes.Status204NoContent, ResponseDescription.ForDelete204NoContent)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithOpenApi(operation =>
-			{
-				operation.SetResponseDescription(StatusCodes.Status204NoContent, @"**No Content**
-				<br />
-				<p>
-					When the user was deleted.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status400BadRequest, @"**Bad Request**
-				<br />
-				<p>
-					When the request is invalid.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status401Unauthorized, @"**Unauthorized**
-				<br />
-				<p>
-					When provided user token is invalid.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status403Forbidden, @"**Forbidden**
-				<br />
-				<p>
-					When provided user token does not have permission.
-				</p>");
-
-				operation.SetResponseDescription(StatusCodes.Status404NotFound, @"**Not Found**
-				<br />
-				<p>
-					When the user does not exist.
-				</p>");
-
-				return operation;
-			});
+			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForDelete404NotFound);
 	}
 
 	// [SwaggerResponseExample(typeof(v0.Responses.ErrorResponse), typeof(v0.Responses.Examples.DeleteApiUserErrorResponseExample), StatusCodes.Status400BadRequest)]

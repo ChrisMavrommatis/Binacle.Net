@@ -1,5 +1,5 @@
 ﻿using Binacle.Net.Api.Configuration.Models;
-using Binacle.Net.Api.Constants.Errors;
+using Binacle.Net.Api.Constants;
 using Binacle.Net.Api.Kernel.Endpoints;
 using Binacle.Net.Api.v1.Models;
 using Binacle.Net.Api.v1.Responses;
@@ -16,15 +16,9 @@ internal class List : IGroupedEndpoint<ApiV1EndpointGroup>
 			.WithSummary("Lists presets")
 			.WithDescription("Lists the presets present in configuration.")
 			.Produces<PresetListResponse>(StatusCodes.Status200OK, "application/json")
+			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPresets200OK)
 			.Produces(StatusCodes.Status404NotFound)
-			.Produces<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
-			.WithOpenApi(operation =>
-			{
-				// Returns the all of the configured presets wth the associated bins.
-				// If no presets are configured.
-				// If an unexpected error occurs. Exception details will only be shown when in a development environment.
-				return operation;
-			});
+			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPresets404NotFound);
 
 		// [SwaggerResponseExample(typeof(v1.Responses.PresetListResponse), typeof(v1.Responses.Examples.PresetListResponseExample), StatusCodes.Status200OK)]
 		// [SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
@@ -65,7 +59,7 @@ internal class List : IGroupedEndpoint<ApiV1EndpointGroup>
 		{
 			logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "List Presets");
 			return Results.InternalServerError(
-				ErrorResponse.Create(Categories.ServerError)
+				ErrorResponse.Create(ErrorCategory.ServerError)
 					.AddExceptionError(ex)
 			);
 		}

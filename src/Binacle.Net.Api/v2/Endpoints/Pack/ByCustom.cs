@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Api.Constants.Errors;
+﻿using Binacle.Net.Api.Constants;
 using Binacle.Net.Api.Kernel.Endpoints;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
@@ -20,17 +20,10 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 			.WithDescription("Pack items using custom bins")
 			.Accepts<CustomPackRequest>("application/json")
 			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
+			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200OK)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			.Produces<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
-			.WithOpenApi(operation =>
-			{
-				// An array of results indicating the result per bin.
-				//	If the request is invalid.
-				//	If an unexpected error occurs.
-				// 
-				// ///		Exception details will only be shown when in a development environment.
-				return operation;
-			});
+			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest);
+		
 		// [SwaggerRequestExample(typeof(v2.Requests.CustomPackRequest), typeof(v2.Requests.Examples.CustomPackRequestExample))]
 		// [SwaggerResponseExample(typeof(v2.Responses.PackResponse), typeof(v2.Responses.Examples.CustomPackResponseExamples), StatusCodes.Status200OK)]
 		// [SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
@@ -53,8 +46,8 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 				return Results.BadRequest(
 					Response.ParameterError(
 						nameof(request),
-						Messages.MalformedRequestBody, 
-						Categories.RequestError
+						ErrorMessage.MalformedRequestBody, 
+						ErrorCategory.RequestError
 					)
 				);
 			}
@@ -64,7 +57,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 			if (!validationResult.IsValid)
 			{
 				return Results.BadRequest(
-					Response.ValidationError(validationResult, Categories.ValidationError)
+					Response.ValidationError(validationResult, ErrorCategory.ValidationError)
 					);
 			}
 
@@ -94,7 +87,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 		{
 			logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Pack by Custom");
 			return Results.InternalServerError(
-				Response.ExceptionError(ex, Categories.ServerError)
+				Response.ExceptionError(ex, ErrorCategory.ServerError)
 				);
 		}
 	}
