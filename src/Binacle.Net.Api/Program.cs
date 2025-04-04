@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using Binacle.Net.Api.Configuration.Models;
 using Binacle.Net.Api.DiagnosticsModule;
 using Binacle.Net.Api.ExtensionMethods;
@@ -12,6 +13,7 @@ using ChrisMavrommatis.StartupTasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.OpenApi;
+using OpenApiExamples;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -68,6 +70,16 @@ public class Program
 		builder.Services.AddBinacleServices();
 
 		builder.Services.AddOpenApiDocumentsFromAssemblyContaining<IApiMarker>();
+			
+		builder.Services.AddOpenApiExamples(options =>
+		{
+			options.ConfigureJsonFormatter(jsonFormatter =>
+			{
+				jsonFormatter.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+				jsonFormatter.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+				
+			});
+		});
 
 		builder.Services.Configure<RouteOptions>(options =>
 		{

@@ -20,17 +20,17 @@ public class ResponseDescriptionOperationTransformer : IOpenApiOperationTransfor
 			return Task.CompletedTask;
 		}
 		
-		foreach (var response in metadata)
+		foreach (var item in metadata)
 		{
-			if (operation.Responses.ContainsKey(response.StatusCode.ToString()))
+			if (operation.Responses.ContainsKey(item.StatusCode.ToString()))
 			{
-				operation.Responses[response.StatusCode.ToString()].Description = response.Description;
+				operation.Responses[item.StatusCode.ToString()].Description = item.Description;
 			}
 			else
 			{
 				operation.Responses.Add(
-					response.StatusCode.ToString(),
-					new OpenApiResponse { Description = response.Description }
+					item.StatusCode.ToString(),
+					new OpenApiResponse { Description = item.Description }
 				);
 			}
 		}

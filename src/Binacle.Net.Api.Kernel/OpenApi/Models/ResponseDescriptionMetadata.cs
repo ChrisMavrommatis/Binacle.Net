@@ -8,6 +8,6 @@ internal sealed class ResponseDescriptionMetadata
 		this.Description = description;
 	}
 
-	public int StatusCode { get; set; }
-	public string Description { get; set; }
+	public int StatusCode { get; }
+	public string Description { get; }
 }

@@ -28,7 +28,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 			.Produces(StatusCodes.Status404NotFound)
 			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPreset404NotFound);
 
-		// [SwaggerRequestExample(typeof(v2.Requests.PresetFitRequest), typeof(v2.Requests.Examples.PresetFitRequestExample))]
+		//  [SwaggerRequestExample(typeof(v2.Requests.PresetFitRequest), typeof(v2.Requests.Examples.PresetFitRequestExample))]
 		//	[SwaggerResponseExample(typeof(v2.Responses.FitResponse), typeof(v2.Responses.Examples.PresetFitResponseExamples), StatusCodes.Status200OK)]
 		//	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
 		//	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]

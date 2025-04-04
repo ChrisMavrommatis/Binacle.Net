@@ -4,9 +4,11 @@ using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
 using Binacle.Net.Api.v3.Models;
 using Binacle.Net.Api.v3.Requests;
+using Binacle.Net.Api.v3.Requests.Examples;
 using Binacle.Net.Api.v3.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using OpenApiExamples;
 
 namespace Binacle.Net.Api.v3.Endpoints.Pack;
 
@@ -19,6 +21,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			.WithSummary("Pack by Custom")
 			.WithDescription("Pack items using custom bins")
 			.Accepts<CustomPackRequest>("application/json")
+			.RequestExample<CustomPackRequestExample>("application/json")
 			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
 			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200OK)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
@@ -51,7 +54,6 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 				);
 			}
 
-			// using(var validationActivity = Diagnostics.ActivitySource.StartActivity("Validate Request"))
 			var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
 			if (!validationResult.IsValid)

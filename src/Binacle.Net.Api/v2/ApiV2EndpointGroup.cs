@@ -15,6 +15,5 @@ internal class ApiV2EndpointGroup : IEndpointGroup
 				StatusCodes.Status500InternalServerError,
 				ResponseDescription.For500InternalServerError
 			);
-		
 	}
 }
