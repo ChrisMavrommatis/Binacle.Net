@@ -12,7 +12,6 @@ using ChrisMavrommatis.Features;
 using ChrisMavrommatis.StartupTasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.OpenApi;
 using OpenApiExamples;
 using Scalar.AspNetCore;
 using Serilog;
@@ -38,14 +37,14 @@ public class Program
 			.SetBasePath($"{Directory.GetCurrentDirectory()}/Config_Files");
 
 		builder.Configuration.AddEnvironmentVariables();
-		
+
 		builder.AddJsonConfiguration(
 			filePath: "appsettings.json",
 			environmentFilePath: $"appsettings.{builder.Environment.EnvironmentName}.json",
 			optional: true,
 			reloadOnChange: true
 		);
-		
+
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initializing");
 
 		builder.AddValidatableJsonConfigurationOptions<BinPresetOptions>();
@@ -55,30 +54,29 @@ public class Program
 			.ReadFrom.Configuration(builder.Configuration)
 			.ReadFrom.EnvironmentVariables()
 			.CreateManager();
-		
-		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
+
+		builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(
+			ServiceLifetime.Singleton,
+			includeInternalTypes: true
+		);
 		builder.Services.AddEndpointsApiExplorer();
 
 		builder.Services.Configure<JsonOptions>(options =>
 		{
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
-		
+
 		builder.Services.AddTransient(typeof(IOptionalDependency<>), typeof(OptionalDependency<>));
 
 		builder.Services.AddSingleton(_ => TimeProvider.System);
 		builder.Services.AddBinacleServices();
 
 		builder.Services.AddOpenApiDocumentsFromAssemblyContaining<IApiMarker>();
-			
+
 		builder.Services.AddOpenApiExamples(options =>
 		{
-			options.ConfigureJsonFormatter(jsonFormatter =>
-			{
-				jsonFormatter.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-				jsonFormatter.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-				
-			});
+			options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+			options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
 
 		builder.Services.Configure<RouteOptions>(options =>
@@ -105,7 +103,7 @@ public class Program
 
 		// Slim builder
 		app.UseHttpsRedirection();
-		
+
 		if (app.Environment.IsDevelopment())
 		{
 			app.UseDeveloperExceptionPage();
@@ -116,9 +114,9 @@ public class Program
 		{
 			const string openApiEndpointPattern = "/openapi/{documentName}.json";
 			app.MapOpenApi(openApiEndpointPattern);
-			
+
 			var openApiDocuments = app.Services.GetServices<IOpenApiDocument>();
-			
+
 			app.UseSwaggerUI(options =>
 			{
 				foreach (var openApiDocument in openApiDocuments)
@@ -127,7 +125,7 @@ public class Program
 					options.SwaggerEndpoint(endpoint, openApiDocument.Title);
 				}
 			});
-			
+
 			app.MapScalarApiReference(options =>
 			{
 				foreach (var openApiDocument in openApiDocuments)
@@ -150,7 +148,7 @@ public class Program
 		}
 
 		app.RegisterEndpointsFromAssemblyContaining<IApiMarker>();
-		
+
 		await app.RunStartupTasksAsync();
 		await app.RunAsync();
 	}

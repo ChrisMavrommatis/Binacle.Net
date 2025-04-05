@@ -4,9 +4,12 @@ using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
 using Binacle.Net.Api.v2.Models;
 using Binacle.Net.Api.v2.Requests;
+using Binacle.Net.Api.v2.Requests.Examples;
 using Binacle.Net.Api.v2.Responses;
+using Binacle.Net.Api.v2.Responses.Examples;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using OpenApiExamples;
 
 namespace Binacle.Net.Api.v2.Endpoints.Fit;
 
@@ -19,15 +22,13 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 			.WithSummary("Fit by Custom")
 			.WithDescription("Perform a bin fitting function using custom bins.")
 			.Accepts<CustomFitRequest>("application/json")
+			.RequestExample<CustomFitRequestExample>("application/json")
 			.Produces<FitResponse>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<CustomFitResponseExamples>(StatusCodes.Status200OK, "application/json")
 			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForFitResponse200OK)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
 			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest);
-		
-		// [SwaggerRequestExample(typeof(v2.Requests.CustomFitRequest), typeof(v2.Requests.Examples.CustomFitRequestExample))]
-		// [SwaggerResponseExample(typeof(v2.Responses.FitResponse), typeof(v2.Responses.Examples.CustomFitResponseExamples), StatusCodes.Status200OK)]
-		// [SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
-		// [SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	}
 
 	internal async Task<IResult> HandleAsync(

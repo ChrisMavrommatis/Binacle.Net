@@ -5,10 +5,13 @@ using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
 using Binacle.Net.Api.v2.Models;
 using Binacle.Net.Api.v2.Requests;
+using Binacle.Net.Api.v2.Requests.Examples;
 using Binacle.Net.Api.v2.Responses;
+using Binacle.Net.Api.v2.Responses.Examples;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using OpenApiExamples;
 
 namespace Binacle.Net.Api.v2.Endpoints.Fit;
 
@@ -21,17 +24,15 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 			.WithSummary("Fit by Preset")
 			.WithDescription("Perform a bin fit function using a specified bin preset.")
 			.Accepts<CustomFitRequest>("application/json")
+			.RequestExample<PresetFitRequestExample>("application/json")
 			.Produces<FitResponse>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<PresetFitResponseExamples>(StatusCodes.Status200OK, "application/json")
 			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForFitResponse200OK)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
 			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.Produces(StatusCodes.Status404NotFound)
 			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPreset404NotFound);
-
-		//  [SwaggerRequestExample(typeof(v2.Requests.PresetFitRequest), typeof(v2.Requests.Examples.PresetFitRequestExample))]
-		//	[SwaggerResponseExample(typeof(v2.Responses.FitResponse), typeof(v2.Responses.Examples.PresetFitResponseExamples), StatusCodes.Status200OK)]
-		//	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
-		//	[SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	}
 
 	internal async Task<IResult> HandleAsync(

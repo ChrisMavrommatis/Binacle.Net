@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using OpenApiExamples.Abstractions;
 using OpenApiExamples.Models;
 
 namespace OpenApiExamples;
 
-public class RequestExamplesOperationTransformer : IOpenApiOperationTransformer
+internal class RequestExamplesOperationTransformer : IOpenApiOperationTransformer
 {
 	public async Task TransformAsync(
 		OpenApiOperation operation,
@@ -25,13 +23,9 @@ public class RequestExamplesOperationTransformer : IOpenApiOperationTransformer
 			return;
 		}
 
-		var examplesWritter = context.ApplicationServices
+		var examplesWriter = context.ApplicationServices
 			.GetRequiredService<IOpenApiExamplesWriter>();
 
-		var logger = context.ApplicationServices
-			.GetRequiredService<ILoggerFactory>()
-			?.CreateLogger(nameof(RequestExamplesOperationTransformer));
-		
 		foreach (var item in metadata)
 		{
 			if (!operation.RequestBody.Content.TryGetValue(item.ContentType, out var content))
@@ -39,29 +33,7 @@ public class RequestExamplesOperationTransformer : IOpenApiOperationTransformer
 				continue;
 			}
 
-			var providerInstance = ActivatorUtilities.CreateInstance(
-				context.ApplicationServices,
-				item.ProviderType
-			);
-
-			if (providerInstance is ISingleOpenApiExamplesProvider singleExamplesProvider)
-			{
-				var example = singleExamplesProvider.GetExample();
-				await examplesWritter.WriteSingleExampleAsync(content, item.ContentType, example);
-			}
-			else if (providerInstance is IMultipleOpenApiExamplesProvider multipleExamplesProvider)
-			{
-				var examples = multipleExamplesProvider.GetExamples();
-				await examplesWritter.WriteMultipleExamplesAsync(content, item.ContentType, examples);
-			}
-			else
-			{
-				logger?.LogWarning(
-					"Provider type {ProviderType} should be either ISingleOpenApiExamplesProvider or IMultipleOpenApiExamplesProvider",
-					providerInstance.GetType().Name
-				);
-			}
-
+			await examplesWriter.WriteAsync(content, item.ContentType, item.ProviderType);
 		}
 	}
 }

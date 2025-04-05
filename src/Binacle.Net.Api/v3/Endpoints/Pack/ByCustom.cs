@@ -6,6 +6,7 @@ using Binacle.Net.Api.v3.Models;
 using Binacle.Net.Api.v3.Requests;
 using Binacle.Net.Api.v3.Requests.Examples;
 using Binacle.Net.Api.v3.Responses;
+using Binacle.Net.Api.v3.Responses.Examples;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples;
@@ -23,13 +24,11 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			.Accepts<CustomPackRequest>("application/json")
 			.RequestExample<CustomPackRequestExample>("application/json")
 			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<CustomPackResponseExamples>(StatusCodes.Status200OK, "application/json")
 			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200OK)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
 			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest);
-		// [SwaggerRequestExample(typeof(v3.Requests.CustomPackRequest), typeof(v3.Requests.Examples.CustomPackRequestExample))]
-		// [SwaggerResponseExample(typeof(v3.Responses.PackResponse), typeof(v3.Responses.Examples.CustomPackResponseExamples), StatusCodes.Status200OK)]
-		// [SwaggerResponseExample(typeof(v3.Responses.ErrorResponse), typeof(v3.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
-		// [SwaggerResponseExample(typeof(v3.Responses.ErrorResponse), typeof(v3.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	}
 
 	internal async Task<IResult> HandleAsync(

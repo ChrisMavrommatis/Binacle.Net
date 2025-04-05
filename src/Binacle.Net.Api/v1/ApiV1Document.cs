@@ -20,6 +20,7 @@ internal class ApiV1Document : IOpenApiDocument
 				return Task.CompletedTask;
 			});
 			options.AddOperationTransformer<ResponseDescriptionOperationTransformer>();
+			options.AddExamples();
 		});
 	}
 	

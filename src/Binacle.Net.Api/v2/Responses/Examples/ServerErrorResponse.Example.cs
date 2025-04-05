@@ -1,12 +1,20 @@
-﻿// using Binacle.Net.Api.v2.Models;
-// using ChrisMavrommatis.SwaggerExamples;
-//
-// namespace Binacle.Net.Api.v2.Responses.Examples;
-//
-// internal class ServerErrorResponseExample : SingleSwaggerExamplesProvider<ErrorResponse>
-// {
-// 	public override ErrorResponse GetExample()
-// 	{
-// 		return Response.ExceptionError(new InvalidOperationException("Example Exception"), Constants.Errors.Categories.ServerError);
-// 	}
-// }
+﻿using Binacle.Net.Api.Constants;
+using Binacle.Net.Api.v2.Models;
+using OpenApiExamples;
+using OpenApiExamples.Abstractions;
+
+namespace Binacle.Net.Api.v2.Responses.Examples;
+
+internal class ServerErrorResponseExample : ISingleOpenApiExamplesProvider<ErrorResponse>
+{
+	public IOpenApiExample<ErrorResponse> GetExample()
+	{
+		return OpenApiExample.Create(
+			"Server Error",
+			Response.ExceptionError(
+				new InvalidOperationException("Example Exception"),
+				ErrorCategory.ServerError
+			)
+		);
+	}
+}

@@ -3,7 +3,9 @@ using Binacle.Net.Api.Constants;
 using Binacle.Net.Api.Kernel.Endpoints;
 using Binacle.Net.Api.v1.Models;
 using Binacle.Net.Api.v1.Responses;
+using Binacle.Net.Api.v1.Responses.Examples;
 using Microsoft.Extensions.Options;
+using OpenApiExamples;
 
 namespace Binacle.Net.Api.v1.Endpoints.Presets;
 
@@ -16,12 +18,11 @@ internal class List : IGroupedEndpoint<ApiV1EndpointGroup>
 			.WithSummary("Lists presets")
 			.WithDescription("Lists the presets present in configuration.")
 			.Produces<PresetListResponse>(StatusCodes.Status200OK, "application/json")
+			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, "application/json")
 			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPresets200OK)
 			.Produces(StatusCodes.Status404NotFound)
 			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPresets404NotFound);
 
-		// [SwaggerResponseExample(typeof(v1.Responses.PresetListResponse), typeof(v1.Responses.Examples.PresetListResponseExample), StatusCodes.Status200OK)]
-		// [SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
 	}
 
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously

@@ -5,8 +5,9 @@ public interface IMultipleOpenApiExamplesProvider
 	IEnumerable<IOpenApiExample> GetExamples();
 }
 
-public interface IMultipleOpenApiExamplesProvider<TModel> : IMultipleOpenApiExamplesProvider
+public interface IMultipleOpenApiExamplesProvider<out TModel> : IMultipleOpenApiExamplesProvider
 	where TModel : class
 {
-	IEnumerable<IOpenApiExample<TModel>> GetExamples();
+	new IEnumerable<IOpenApiExample<TModel>> GetExamples();
+	IEnumerable<IOpenApiExample> IMultipleOpenApiExamplesProvider.GetExamples() => this.GetExamples();
 }

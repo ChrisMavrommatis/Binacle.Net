@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace Binacle.Net.Api.v3.Models.Errors;
 
@@ -9,6 +10,9 @@ namespace Binacle.Net.Api.v3.Models.Errors;
 [JsonDerivedType(typeof(FieldValidationError), nameof(FieldValidationError))]
 [JsonDerivedType(typeof(ParameterError), nameof(ParameterError))]
 [JsonDerivedType(typeof(ExceptionError), nameof(ExceptionError))]
+// [XmlInclude(typeof(FieldValidationError))]
+// [XmlInclude(typeof(ParameterError))]
+// [XmlInclude(typeof(ExceptionError))]
 public interface IApiError
 {
 	public static string TypeName { get; set; }

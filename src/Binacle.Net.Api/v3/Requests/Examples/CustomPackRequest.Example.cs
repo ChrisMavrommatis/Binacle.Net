@@ -4,11 +4,11 @@ using OpenApiExamples.Abstractions;
 
 namespace Binacle.Net.Api.v3.Requests.Examples;
 
-internal class CustomPackRequestExample : SingleOpenApiExamplesProvider<CustomPackRequest>
+internal class CustomPackRequestExample : ISingleOpenApiExamplesProvider<CustomPackRequest>
 {
-	public override IOpenApiExample<CustomPackRequest> GetExample()
+	public IOpenApiExample<CustomPackRequest> GetExample()
 	{
-		return BinacleOpenApiExample.Create("custom-pack-request", new CustomPackRequest()
+		return OpenApiExample.Create("custom-pack-request", new CustomPackRequest()
 		{
 			Parameters = new PackRequestParameters
 			{

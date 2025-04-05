@@ -6,8 +6,9 @@ public interface ISingleOpenApiExamplesProvider
 	IOpenApiExample GetExample();
 }
 
-public interface ISingleOpenApiExamplesProvider<TModel> : ISingleOpenApiExamplesProvider
+public interface ISingleOpenApiExamplesProvider<out TModel> : ISingleOpenApiExamplesProvider
 	where TModel : class
 {
-	IOpenApiExample<TModel> GetExample();
+	new IOpenApiExample<TModel> GetExample();
+	IOpenApiExample ISingleOpenApiExamplesProvider.GetExample() => this.GetExample();
 }

@@ -7,10 +7,10 @@ namespace OpenApiExamples.Services;
 
 internal class JsonOpenApiExamplesFormatter : IOpenApiExamplesFormatter
 {
-	private readonly IOptions<JsonExamplesFormatterOptions> options;
+	private readonly IOptions<OpenApiExamplesOptions> options;
 
 	public JsonOpenApiExamplesFormatter(
-		IOptions<JsonExamplesFormatterOptions> options
+		IOptions<OpenApiExamplesOptions> options
 	)
 	{
 		this.options = options;
@@ -24,24 +24,6 @@ internal class JsonOpenApiExamplesFormatter : IOpenApiExamplesFormatter
 	{
 		var serializedExample = JsonSerializer.Serialize(example, this.options.Value.JsonSerializerOptions);
 		var openApiExample = new OpenApiString(serializedExample);
-		return ValueTask.FromResult(openApiExample as IOpenApiAny);
-	}
-}
-
-internal class XmlOpenApiExamplesFormatter : IOpenApiExamplesFormatter
-{
-	public XmlOpenApiExamplesFormatter()
-	{
-	}
-	
-	public IEnumerable<string> SupportedContentTypes =>
-	[
-		"application/xml",
-		"text/xml",
-	];
-	
-	public ValueTask<IOpenApiAny> FormatAsync(object example)
-	{
-		throw new NotImplementedException();
+		return ValueTask.FromResult<IOpenApiAny>(openApiExample);
 	}
 }

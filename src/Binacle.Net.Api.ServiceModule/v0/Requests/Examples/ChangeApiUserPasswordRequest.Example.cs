@@ -1,14 +1,18 @@
-﻿// using ChrisMavrommatis.SwaggerExamples;
-//
-// namespace Binacle.Net.Api.ServiceModule.v0.Requests.Examples;
-//
-// internal class ChangeApiUserPasswordRequestExample : SingleSwaggerExamplesProvider<ChangeApiUserPasswordRequest>
-// {
-// 	public override ChangeApiUserPasswordRequest GetExample()
-// 	{
-// 		return new ChangeApiUserPasswordRequest
-// 		{
-// 			Password = "newpassword"
-// 		};
-// 	}
-// }
+﻿using OpenApiExamples;
+using OpenApiExamples.Abstractions;
+
+namespace Binacle.Net.Api.ServiceModule.v0.Requests.Examples;
+
+internal class ChangeApiUserPasswordRequestExample : ISingleOpenApiExamplesProvider<ChangeApiUserPasswordRequest>
+{
+	public IOpenApiExample<ChangeApiUserPasswordRequest> GetExample()
+	{
+		return OpenApiExample.Create(
+			"Change Password",
+			new ChangeApiUserPasswordRequest
+			{
+				Password = "newpassword"
+			}
+		);
+	}
+}

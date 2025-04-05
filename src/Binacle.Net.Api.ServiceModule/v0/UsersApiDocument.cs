@@ -32,6 +32,7 @@ internal class UsersApiDocument : IOpenApiDocument
 				return Task.CompletedTask;
 			});
 			options.AddOperationTransformer<ResponseDescriptionOperationTransformer>();
+			options.AddExamples();
 		});
 	}
 	

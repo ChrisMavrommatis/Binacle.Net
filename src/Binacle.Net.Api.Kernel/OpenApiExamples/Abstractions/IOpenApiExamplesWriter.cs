@@ -2,9 +2,7 @@
 
 namespace OpenApiExamples.Abstractions;
 
-public interface IOpenApiExamplesWriter
+internal interface IOpenApiExamplesWriter
 {
-	ValueTask WriteSingleExampleAsync(OpenApiMediaType content, string contentType, IOpenApiExample example);
-
-	ValueTask WriteMultipleExamplesAsync(OpenApiMediaType content, string contentType, IEnumerable<IOpenApiExample> examples);
+	ValueTask WriteAsync(OpenApiMediaType content, string itemContentType, Type itemProviderType);
 }

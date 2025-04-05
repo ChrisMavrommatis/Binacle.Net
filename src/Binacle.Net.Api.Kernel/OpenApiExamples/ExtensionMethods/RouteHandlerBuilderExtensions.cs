@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Binacle.Net.Api;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using OpenApiExamples.Abstractions;
 using OpenApiExamples.Models;
 
@@ -77,4 +79,53 @@ public static class RouteHandlerBuilderExtensions
 			)
 		);
 	}
+	
+	
+	
+	public static RouteGroupBuilder AllEndpointsHaveResponseExample<T>(
+		this RouteGroupBuilder builder,
+		int statusCode,
+		string contentType = "application/json"
+	) where T : class, ISingleOpenApiExamplesProvider
+		=> builder.AllEndpointsHaveResponseExample<T>(statusCode.ToString(), contentType);
+
+	public static RouteGroupBuilder AllEndpointsHaveResponseExample<T>(
+		this RouteGroupBuilder builder,
+		string statusCode,
+		string contentType = "application/json"
+	) where T : class, ISingleOpenApiExamplesProvider
+	{
+		return builder.WithMetadata(
+			new ResponseExampleMetadata(
+				statusCode,
+				contentType,
+				typeof(T)
+			)
+		);
+	}
+	
+	
+	public static RouteGroupBuilder AllEndpointsHaveResponseExamples<T>(
+		this RouteGroupBuilder builder,
+		int statusCode,
+		string contentType = "application/json"
+	) where T : class, IMultipleOpenApiExamplesProvider
+		=> builder.AllEndpointsHaveResponseExamples<T>(statusCode.ToString(), contentType);
+
+	static RouteGroupBuilder AllEndpointsHaveResponseExamples<T>(
+		this RouteGroupBuilder builder,
+		string statusCode,
+		string contentType = "application/json"
+	) where T : class, IMultipleOpenApiExamplesProvider
+	{
+		return builder.WithMetadata(
+			new ResponseExampleMetadata(
+				statusCode,
+				contentType,
+				typeof(T)
+			)
+		);
+	}
+	
+	
 }

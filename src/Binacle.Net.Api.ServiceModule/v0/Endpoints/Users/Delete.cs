@@ -4,10 +4,12 @@ using Binacle.Net.Api.ServiceModule.Domain.Users.Models;
 using Binacle.Net.Api.ServiceModule.Services;
 using Binacle.Net.Api.ServiceModule.v0.Requests;
 using Binacle.Net.Api.ServiceModule.v0.Responses;
+using Binacle.Net.Api.ServiceModule.v0.Responses.Examples;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using OpenApiExamples;
 
 namespace Binacle.Net.Api.ServiceModule.v0.Endpoints.Users;
 
@@ -20,11 +22,14 @@ internal class Delete : IGroupedEndpoint<UsersGroup>
 			.WithDescription("Use this endpoint if you are the admin to delete a user")
 			.Produces(StatusCodes.Status204NoContent)
 			.WithResponseDescription(StatusCodes.Status204NoContent, ResponseDescription.ForDelete204NoContent)
+			.ResponseExample<DeleteApiUserErrorResponseExample>(
+				StatusCodes.Status400BadRequest,
+				"application/json"
+			)
 			.Produces(StatusCodes.Status404NotFound)
 			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForDelete404NotFound);
 	}
 
-	// [SwaggerResponseExample(typeof(v0.Responses.ErrorResponse), typeof(v0.Responses.Examples.DeleteApiUserErrorResponseExample), StatusCodes.Status400BadRequest)]
 	internal async Task<IResult> HandleAsync(
 			IUserManagerService userManagerService,
 			[AsParameters] DeleteApiUserRequest request,

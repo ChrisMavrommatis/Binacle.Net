@@ -3,7 +3,9 @@ using Binacle.Net.Api.Constants;
 using Binacle.Net.Api.Kernel.Endpoints;
 using Binacle.Net.Api.v2.Models;
 using Binacle.Net.Api.v2.Responses;
+using Binacle.Net.Api.v2.Responses.Examples;
 using Microsoft.Extensions.Options;
+using OpenApiExamples;
 
 namespace Binacle.Net.Api.v2.Endpoints.Presets;
 
@@ -16,13 +18,12 @@ internal class List : IGroupedEndpoint<ApiV2EndpointGroup>
 			.WithSummary("List Presets")
 			.WithDescription("Lists the presets present in configuration.")
 			.Produces<PresetListResponse>(StatusCodes.Status200OK, "application/json")
+			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, "application/json")
 			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPresets200OK)
 			.Produces(StatusCodes.Status404NotFound)
 			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPresets404NotFound);
-		// [SwaggerResponseExample(typeof(v2.Responses.PresetListResponse), typeof(v2.Responses.Examples.PresetListResponseExample), StatusCodes.Status200OK)]
-		// [SwaggerResponseExample(typeof(v2.Responses.ErrorResponse), typeof(v2.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
-
 	}
+	
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 	internal async Task<IResult> HandleAsync(
 		IOptions<BinPresetOptions> presetOptions,
@@ -38,17 +39,17 @@ internal class List : IGroupedEndpoint<ApiV2EndpointGroup>
 			}
 
 			var presets = presetOptions.Value.Presets
-			.ToDictionary(
-				x => x.Key,
-				x => x.Value.Bins
-					.Select(bin => new Bin()
-					{
-						ID = bin.ID,
-						Length = bin.Length,
-						Height = bin.Height,
-						Width = bin.Width
-					}).ToList()
-			);
+				.ToDictionary(
+					x => x.Key,
+					x => x.Value.Bins
+						.Select(bin => new Bin()
+						{
+							ID = bin.ID,
+							Length = bin.Length,
+							Height = bin.Height,
+							Width = bin.Width
+						}).ToList()
+				);
 
 			var response = PresetListResponse.Create(presets);
 
@@ -59,7 +60,7 @@ internal class List : IGroupedEndpoint<ApiV2EndpointGroup>
 			logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "List Presets");
 			return Results.InternalServerError(
 				Response.ExceptionError(ex, ErrorCategory.ServerError)
-				);
+			);
 		}
 	}
 }

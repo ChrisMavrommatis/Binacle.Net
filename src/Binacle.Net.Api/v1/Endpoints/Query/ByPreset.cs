@@ -4,10 +4,13 @@ using Binacle.Net.Api.Kernel.Endpoints;
 using Binacle.Net.Api.Models;
 using Binacle.Net.Api.Services;
 using Binacle.Net.Api.v1.Requests;
+using Binacle.Net.Api.v1.Requests.Examples;
 using Binacle.Net.Api.v1.Responses;
+using Binacle.Net.Api.v1.Responses.Examples;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using OpenApiExamples;
 
 namespace Binacle.Net.Api.v1.Endpoints.Query;
 
@@ -20,21 +23,15 @@ internal class ByPreset : IGroupedEndpoint<ApiV1EndpointGroup>
 			.WithSummary("Query by Preset")
 			.WithDescription("Perform a bin fit query using a specified bin preset")
 			.Accepts<PresetQueryRequest>("application/json")
+			.RequestExample<PresetQueryRequestExample>("application/json")
 			.Produces<QueryResponse>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<PresetQueryResponseExamples>(StatusCodes.Status200OK, "application/json")
 			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForQueryResponse200OK)
 			.Produces(StatusCodes.Status404NotFound)
 			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPreset404NotFound)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
 			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest);
-			
-		// [SwaggerRequestExample(typeof(v1.Requests.PresetQueryRequest), typeof(v1.Requests.Examples.PresetQueryRequestExample))]
-		// [SwaggerResponseExample(typeof(v1.Responses.QueryResponse), typeof(v1.Responses.Examples.PresetQueryResponseExamples), StatusCodes.Status200OK)]
-		// [SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.BadRequestErrorResponseExamples), StatusCodes.Status400BadRequest)]
-		// V3 WARNING: Potentially breaking change
-		//[ProducesResponseType(typeof(v1.Responses.ErrorResponse), StatusCodes.Status404NotFound)]
-		//[SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.PresetNotFoundErrorResponseExample), StatusCodes.Status404NotFound)]
-		// [SwaggerResponseExample(typeof(v1.Responses.ErrorResponse), typeof(v1.Responses.Examples.ServerErrorResponseExample), StatusCodes.Status500InternalServerError)]
-
 	}
 	
 	internal async Task<IResult> HandleAsync(
