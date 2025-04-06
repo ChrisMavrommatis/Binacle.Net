@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(ProjectName).UnitTests" />
+		<InternalsVisibleTo Include="$(ProjectName).Benchmarks" />
+		<InternalsVisibleTo Include="$(ProjectName).PerformanceTests" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-API_PROJECT_PATH='src/Binacle.Net.Api/Binacle.Net.Api.csproj'
+API_PROJECT_PATH='src/Binacle.Net/Binacle.Net.csproj'
 
 dotnet restore --runtime linux-x64
 

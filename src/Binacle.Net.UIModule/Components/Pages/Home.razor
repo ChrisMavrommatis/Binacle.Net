@@ -1,0 +1,42 @@
+﻿@using Binacle.Net.UIModule.Components.Features
+@using Binacle.Net.UIModule.Models
+@using Microsoft.AspNetCore.Components.Web
+@page "/"
+
+<PageTitle>@PageTitle</PageTitle>
+
+<h1>@Title</h1>
+
+<p>@Description</p>
+
+<div class="grid medium space">
+
+	@if (AppletsService?.Applets is not null)
+	{
+		foreach (var applet in AppletsService.Applets)
+		{
+			<article class="s12 m6">
+				<div class="row">
+					<div class="max">
+						<h5>@applet.Title</h5>
+						<p>@((MarkupString)applet.ShortDescription)</p>
+					</div>
+				</div>
+				<nav>
+					<NavLink href="@applet.Ref" class="button">@AppletButton</NavLink>
+				</nav>
+			</article>
+		}
+	}
+</div>
+
+@code {
+	[Inject]
+	private Services.AppletsService? AppletsService { get; set; }
+	
+	private string PageTitle { get; set; } = "Binacle.Net";
+	private string Title { get; set; } = "Welcome to Binacle.Net";
+	private string Description { get; set; } = "This is a UI for Binacle.Net to provide a demo platform so see what it is capable of.";
+	
+	private string AppletButton { get; set; } = "Try it out!";
+}

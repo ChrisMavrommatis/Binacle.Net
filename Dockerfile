@@ -9,4 +9,4 @@ COPY ["build/output", "."]
 
 USER $APP_UID
 
-ENTRYPOINT ["dotnet", "Binacle.Net.Api.dll"]
+ENTRYPOINT ["dotnet", "Binacle.Net.dll"]

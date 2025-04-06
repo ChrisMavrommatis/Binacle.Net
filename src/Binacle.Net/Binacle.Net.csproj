@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<UserSecretsId>Binacle_Net_Secrets</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(ProjectName).IntegrationTests" />
+		<InternalsVisibleTo Include="$(ProjectName).ServiceModule.IntegrationTests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.1.4" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ChrisMavrommatis.Features" Version="2.0.3" />
+		<PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.3" />
+		<PackageReference Include="FluentValidation" Version="11.11.0" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\dep\Binacle.ViPaq\Binacle.ViPaq.csproj" />
+	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.DiagnosticsModule\Binacle.Net.DiagnosticsModule.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.ServiceModule\Binacle.Net.ServiceModule.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.UIModule\Binacle.Net.UIModule.csproj" />
+	  <ProjectReference Include="..\Binacle.Lib\Binacle.Lib.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="Config_Files\**\*.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+</Project>

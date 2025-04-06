@@ -11,8 +11,8 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the 1st window horizontally
 	tmux split-window -h -t $SESSION_NAME:0 
 
-	# set the cd to /src/Binacle.Net.Api
-	tmux send-keys -t $SESSION_NAME:0.0 'cd ./src/Binacle.Net.Api' C-m
+	# set the cd to /src/Binacle.Net
+	tmux send-keys -t $SESSION_NAME:0.0 'cd ./src/Binacle.Net' C-m
 	
 	# Set the cd to ../_data
 	tmux send-keys -t $SESSION_NAME:0.1 'cd ./config/aspire-dashboard-otel' C-m
@@ -33,11 +33,11 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# Split the 3rd pane horizontally
 	tmux split-window -h -t $SESSION_NAME:1.2
 	
-	# Set the cd to ./test/Binacle.Net.Lib.Benchmarks
-	tmux send-keys -t $SESSION_NAME:1.0 'cd ./test/Binacle.Net.Lib.Benchmarks' C-m
-	tmux send-keys -t $SESSION_NAME:1.1 'cd ./test/Binacle.Net.Lib.Benchmarks' C-m
-	tmux send-keys -t $SESSION_NAME:1.2 'cd ./test/Binacle.Net.Lib.Benchmarks' C-m
-	tmux send-keys -t $SESSION_NAME:1.3 'cd ./test/Binacle.Net.Lib.Benchmarks' C-m
+	# Set the cd to ./test/Binacle.Lib.Benchmarks
+	tmux send-keys -t $SESSION_NAME:1.0 'cd ./test/Binacle.Lib.Benchmarks' C-m
+	tmux send-keys -t $SESSION_NAME:1.1 'cd ./test/Binacle.Lib.Benchmarks' C-m
+	tmux send-keys -t $SESSION_NAME:1.2 'cd ./test/Binacle.Lib.Benchmarks' C-m
+	tmux send-keys -t $SESSION_NAME:1.3 'cd ./test/Binacle.Lib.Benchmarks' C-m
 	
 	# Select the first pane
   tmux select-pane -t $SESSION_NAME:1.0
@@ -55,11 +55,11 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# Split the 3rd pane horizontally
 	tmux split-window -h -t $SESSION_NAME:2.2
 	
-	# Set the cd to ./test/Binacle.Net.Lib.Benchmarks
-	tmux send-keys -t $SESSION_NAME:2.0 'cd ./test/Binacle.Net.Lib.Benchmarks' C-m
-	tmux send-keys -t $SESSION_NAME:2.1 'cd ./test/Binacle.Net.Lib.Benchmarks' C-m
-	tmux send-keys -t $SESSION_NAME:2.2 'cd ./test/Binacle.Net.Lib.Benchmarks' C-m
-	tmux send-keys -t $SESSION_NAME:2.3 'cd ./test/Binacle.Net.Lib.Benchmarks' C-m
+	# Set the cd to ./test/Binacle.Lib.Benchmarks
+	tmux send-keys -t $SESSION_NAME:2.0 'cd ./test/Binacle.Lib.Benchmarks' C-m
+	tmux send-keys -t $SESSION_NAME:2.1 'cd ./test/Binacle.Lib.Benchmarks' C-m
+	tmux send-keys -t $SESSION_NAME:2.2 'cd ./test/Binacle.Lib.Benchmarks' C-m
+	tmux send-keys -t $SESSION_NAME:2.3 'cd ./test/Binacle.Lib.Benchmarks' C-m
 	
 	# Select the first pane
 	tmux select-pane -t $SESSION_NAME:2.0
@@ -73,9 +73,9 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# Split the 4th window horizontally
 	tmux split-window -h -t $SESSION_NAME:3
 
-	# Set the cd to ./test/Binacle.Net.Lib.PerformanceTests
-	tmux send-keys -t $SESSION_NAME:3.0 'cd ./test/Binacle.Net.Lib.PerformanceTests' C-m
-	tmux send-keys -t $SESSION_NAME:3.1 'cd ./test/Binacle.Net.Lib.PerformanceTests' C-m
+	# Set the cd to ./test/Binacle.Lib.PerformanceTests
+	tmux send-keys -t $SESSION_NAME:3.0 'cd ./test/Binacle.Lib.PerformanceTests' C-m
+	tmux send-keys -t $SESSION_NAME:3.1 'cd ./test/Binacle.Lib.PerformanceTests' C-m
 	
 	# Select the first pane
 	tmux select-pane -t $SESSION_NAME:3.0

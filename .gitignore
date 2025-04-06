@@ -32,7 +32,7 @@ Output
 output
 
 ## Copied from UI Module
-src/Binacle.Net.Api/wwwroot/ 
+src/Binacle.Net/wwwroot/ 
 
 ## data
 azurite/
