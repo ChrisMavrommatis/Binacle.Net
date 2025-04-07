@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Kernel.OpenApi;
+using OpenApiExamples;
 
 namespace Binacle.Net.v2;
 
@@ -19,8 +20,9 @@ internal class ApiV2Document : IOpenApiDocument
 				ApiDocument.Transform(this, document.Info);
 				return Task.CompletedTask;
 			});
-			options.AddOperationTransformer<ResponseDescriptionOperationTransformer>();
+			options.AddResponseDescription();
 			options.AddExamples();
+			options.AddJwtAuthentication();
 		});
 	}
 	

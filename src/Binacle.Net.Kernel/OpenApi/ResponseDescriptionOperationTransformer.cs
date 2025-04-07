@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Binacle.Net.Kernel.OpenApi;
 
-public class ResponseDescriptionOperationTransformer : IOpenApiOperationTransformer
+internal class ResponseDescriptionOperationTransformer : IOpenApiOperationTransformer
 {
 	public Task TransformAsync(
 		OpenApiOperation operation,

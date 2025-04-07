@@ -43,9 +43,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{88EC1702-D37
 		doc\README.md = doc\README.md
 	EndProjectSection
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.Net.Tests.BenchmarkResults", "doc\benchmark-results\Binacle.Net.Tests.BenchmarkResults.proj", "{61DCF326-13CF-47B8-A327-C22B2F5E1CD7}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.TestResults.Benchmarks", "doc\benchmark-results\Binacle.TestResults.Benchmarks.proj", "{61DCF326-13CF-47B8-A327-C22B2F5E1CD7}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.Net.Tests.PackingEfficiencyResults", "doc\packing-efficiency-results\Binacle.Net.Tests.PackingEfficiencyResults.proj", "{4261E056-EC16-4AD7-8CD1-F327386C8BE9}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.TestResults.PackingEfficiency", "doc\packing-efficiency-results\Binacle.TestResults.PackingEfficiency.proj", "{4261E056-EC16-4AD7-8CD1-F327386C8BE9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "res", "res", "{D91D976D-F7CC-4AEF-B942-5B5EE97832F7}"
 EndProject

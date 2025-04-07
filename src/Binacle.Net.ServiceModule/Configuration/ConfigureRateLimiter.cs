@@ -30,6 +30,8 @@ internal class ConfigureRateLimiter : IConfigureNamedOptions<RateLimiterOptions>
 	private void ConfigureRateLimiterOptions(RateLimiterOptions options)
 	{
 		options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+		
+		// options.AddPolicy<string, >()
 
 		// TODO: Or block the calls completely to unauthorized users
 		// Future feature : Add a configuration to block the calls completely to unauthorized users

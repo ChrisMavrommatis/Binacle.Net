@@ -2,6 +2,7 @@
 using Binacle.Net.Kernel.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using OpenApiExamples;
 
 namespace Binacle.Net.ServiceModule.v0;
 
@@ -31,8 +32,9 @@ internal class UsersApiDocument : IOpenApiDocument
 				};
 				return Task.CompletedTask;
 			});
-			options.AddOperationTransformer<ResponseDescriptionOperationTransformer>();
+			options.AddResponseDescription();
 			options.AddExamples();
+			options.AddJwtAuthentication();
 		});
 	}
 	

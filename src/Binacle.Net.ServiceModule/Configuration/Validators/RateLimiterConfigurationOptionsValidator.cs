@@ -16,7 +16,7 @@ internal class RateLimiterConfigurationOptionsValidator : AbstractValidator<Rate
 				var result = RateLimiterConfigurationOptions.ParseConfiguration(value);
 				return result is not null;
 			}
-			catch(Exception ex)
+			catch(Exception _)
 			{
 				return false;
 			}	
