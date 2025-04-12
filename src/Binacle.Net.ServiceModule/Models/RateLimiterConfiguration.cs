@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.Configuration.Models;
+﻿namespace Binacle.Net.ServiceModule.Models;
 
 internal class RateLimiterConfiguration
 {

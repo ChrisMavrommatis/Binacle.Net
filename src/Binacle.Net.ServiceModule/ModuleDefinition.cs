@@ -79,13 +79,11 @@ public static class ModuleDefinition
 			.AddDomainLayerServices()
 			.AddInfrastructureLayerServices();
 		
-		
-
 		builder.Services.AddRateLimiter(options =>
 		{
 			options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-			options.AddPolicy<string, PublicAnonymousRateLimitingPolicy>("PublicAnonymous");
+			options.AddPolicy<string, AnonymousRateLimitingPolicy>("Anonymous");
 		});
 		
 		builder.Services.Configure<FeatureOptions>(options =>
