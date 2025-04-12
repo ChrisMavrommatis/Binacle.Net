@@ -32,7 +32,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 	}
 	
 	internal async Task<IResult> HandleAsync(
-		[FromBody] CustomPackRequest? request,
+		BindingResult<CustomPackRequest> request,
 		IValidator<CustomPackRequest> validator,
 		ILegacyBinsService binsService,
 		ILogger<ByCustom> logger,
@@ -41,7 +41,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 	{
 		try
 		{
-			if (request is null)
+			if (request.Value is null)
 			{
 				return Results.BadRequest(
 					Response.ParameterError(
@@ -52,7 +52,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 				);
 			}
 
-			var validationResult = await validator.ValidateAsync(request, cancellationToken);
+			var validationResult = await validator.ValidateAsync(request.Value, cancellationToken);
 
 			if (!validationResult.IsValid)
 			{
@@ -62,22 +62,22 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 			}
 
 			var operationResults = await binsService.PackBinsAsync(
-				request.Bins!,
-				request.Items!,
+				request.Value.Bins!,
+				request.Value.Items!,
 				new LegacyPackingParameters
 				{
-					StopAtSmallestBin = request.Parameters?.StopAtSmallestBin ?? false,
-					NeverReportUnpackedItems = request.Parameters?.NeverReportUnpackedItems ?? false,
-					OptInToEarlyFails = request.Parameters?.OptInToEarlyFails ?? false,
-					ReportPackedItemsOnlyWhenFullyPacked = request.Parameters?.ReportPackedItemsOnlyWhenFullyPacked ?? false
+					StopAtSmallestBin = request.Value.Parameters?.StopAtSmallestBin ?? false,
+					NeverReportUnpackedItems = request.Value.Parameters?.NeverReportUnpackedItems ?? false,
+					OptInToEarlyFails = request.Value.Parameters?.OptInToEarlyFails ?? false,
+					ReportPackedItemsOnlyWhenFullyPacked = request.Value.Parameters?.ReportPackedItemsOnlyWhenFullyPacked ?? false
 				}
 			);
 
 			return Results.Ok(
 				PackResponse.Create(
-					request.Bins!,
-					request.Items!,
-					request.Parameters,
+					request.Value.Bins!,
+					request.Value.Items!,
+					request.Value.Parameters,
 					operationResults
 				)
 			);

@@ -8,6 +8,7 @@ using Binacle.Net.ServiceModule.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -77,9 +78,20 @@ public static class ModuleDefinition
 		builder
 			.AddDomainLayerServices()
 			.AddInfrastructureLayerServices();
+		
+		
 
-		builder.Services.AddRateLimiter(_ => { });
-		builder.Services.ConfigureOptions<ConfigureRateLimiter>();
+		builder.Services.AddRateLimiter(options =>
+		{
+			options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+			options.AddPolicy<string, PublicAnonymousRateLimitingPolicy>("PublicAnonymous");
+		});
+		
+		builder.Services.Configure<FeatureOptions>(options =>
+		{
+			options.AddFeature("RateLimiter");
+		});
 
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initialized");
 	}

@@ -36,7 +36,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV1EndpointGroup>
 	
 	internal async Task<IResult> HandleAsync(
 		[FromRoute] string? preset,
-		[FromBody] PresetQueryRequest? request,
+		BindingResult<PresetQueryRequest> request,
 		IValidator<PresetQueryRequest> validator,
 		IOptions<BinPresetOptions> presetOptions,
 		ILegacyBinsService binsService,
@@ -54,7 +54,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV1EndpointGroup>
 				);
 			}
 			
-			if (request is null)
+			if (request.Value is null)
 			{
 				return Results.BadRequest(
 					ErrorResponse.Create(ErrorCategory.RequestError)
@@ -62,7 +62,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV1EndpointGroup>
 				);
 			}
 
-			var validationResult = await validator.ValidateAsync(request, cancellationToken);
+			var validationResult = await validator.ValidateAsync(request.Value, cancellationToken);
 
 			if (!validationResult.IsValid)
 			{
@@ -84,7 +84,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV1EndpointGroup>
 
 			var operationResults = await binsService.FitBinsAsync(
 				presetOption.Bins, 
-				request.Items!,
+				request.Value.Items!,
 				new LegacyFittingParameters
 				{
 					FindSmallestBinOnly = true,
@@ -94,7 +94,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV1EndpointGroup>
 			);
 
 			return Results.Ok(
-				QueryResponse.Create(presetOption.Bins, request.Items!, operationResults)
+				QueryResponse.Create(presetOption.Bins, request.Value.Items!, operationResults)
 			);
 		}
 		catch (Exception ex)

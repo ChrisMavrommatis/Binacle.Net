@@ -32,7 +32,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		[FromBody] CustomFitRequest? request,
+		BindingResult<CustomFitRequest> request,
 		IValidator<CustomFitRequest> validator,
 		ILegacyBinsService binsService,
 		ILogger<ByCustom> logger,
@@ -41,7 +41,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 	{
 		try
 		{
-			if (request is null)
+			if (request.Value is null)
 			{
 				return Results.BadRequest(
 					Response.ParameterError(
@@ -49,7 +49,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 				);
 			}
 
-			var validationResult = await validator.ValidateAsync(request, cancellationToken);
+			var validationResult = await validator.ValidateAsync(request.Value, cancellationToken);
 
 			if (!validationResult.IsValid)
 			{
@@ -59,21 +59,21 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 			}
 
 			var operationResults = await binsService.FitBinsAsync(
-				request.Bins!, 
-				request.Items!,
+				request.Value.Bins!, 
+				request.Value.Items!,
 				new LegacyFittingParameters
 				{
-					FindSmallestBinOnly = request.Parameters?.FindSmallestBinOnly ?? true,
-					ReportFittedItems = request.Parameters?.ReportFittedItems ?? false,
-					ReportUnfittedItems = request.Parameters?.ReportUnfittedItems ?? false,
+					FindSmallestBinOnly = request.Value.Parameters?.FindSmallestBinOnly ?? true,
+					ReportFittedItems = request.Value.Parameters?.ReportFittedItems ?? false,
+					ReportUnfittedItems = request.Value.Parameters?.ReportUnfittedItems ?? false,
 				}
 			);
 
 			return Results.Ok(
 				FitResponse.Create(
-					request.Bins!, 
-					request.Items!, 
-					request.Parameters,
+					request.Value.Bins!, 
+					request.Value.Items!, 
+					request.Value.Parameters,
 					operationResults
 				)
 			);

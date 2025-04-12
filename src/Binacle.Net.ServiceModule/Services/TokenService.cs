@@ -65,4 +65,3 @@ internal class TokenService : ITokenService
 		return new StatelessTokenGenerationResult(true, token, JwtBearerDefaults.AuthenticationScheme, this.options.Value.ExpirationInSeconds);
 	}
 }
-

@@ -31,7 +31,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		[FromBody] CustomQueryRequest? request,
+		BindingResult<CustomQueryRequest> request,
 		IValidator<CustomQueryRequest> validator,
 		ILegacyBinsService binsService,
 		ILogger<ByCustom> logger,
@@ -40,7 +40,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 	{
 		try
 		{
-			if (request is null)
+			if (request.Value is null)
 			{
 				return Results.BadRequest(
 					ErrorResponse.Create(ErrorCategory.RequestError)
@@ -48,7 +48,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 				);
 			}
 
-			var validationResult = await validator.ValidateAsync(request, cancellationToken);
+			var validationResult = await validator.ValidateAsync(request.Value, cancellationToken);
 			
 
 			if (!validationResult.IsValid)
@@ -60,8 +60,8 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 			}
 
 			var operationResults = await binsService.FitBinsAsync(
-				request.Bins!, 
-				request.Items!,
+				request.Value.Bins!, 
+				request.Value.Items!,
 				new LegacyFittingParameters
 				{
 					FindSmallestBinOnly = true,
@@ -71,7 +71,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 			);
 
 			return Results.Ok(
-				QueryResponse.Create(request.Bins!, request.Items!, operationResults)
+				QueryResponse.Create(request.Value.Bins!, request.Value.Items!, operationResults)
 			);
 		}
 		catch (Exception ex)

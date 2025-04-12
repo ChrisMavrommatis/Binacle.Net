@@ -35,6 +35,7 @@ internal class UsersApiDocument : IOpenApiDocument
 			options.AddResponseDescription();
 			options.AddExamples();
 			options.AddJwtAuthentication();
+			options.AddRateLimiterResponse();
 		});
 	}
 	

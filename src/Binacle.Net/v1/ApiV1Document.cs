@@ -24,6 +24,7 @@ internal class ApiV1Document : IOpenApiDocument
 			options.AddResponseDescription();
 			options.AddExamples();
 			options.AddJwtAuthentication();
+			options.AddRateLimiterResponse();
 		});
 	}
 	

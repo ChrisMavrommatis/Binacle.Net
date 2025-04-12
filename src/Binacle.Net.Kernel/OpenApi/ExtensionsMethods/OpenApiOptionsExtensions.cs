@@ -1,5 +1,6 @@
 ﻿using Binacle.Net.Kernel.OpenApi;
 using Microsoft.AspNetCore.OpenApi;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Binacle.Net;
 
@@ -17,4 +18,11 @@ public static class OpenApiOptionsExtensions
 		options.AddOperationTransformer<JwtBearerSecuritySchemeOperationTransformer>();
 		return options;
 	}
+	
+	public static OpenApiOptions AddRateLimiterResponse(this OpenApiOptions options)
+	{
+		options.AddOperationTransformer<RateLimiterResponseOperationTransformer>();
+		return options;
+	}
 }
+

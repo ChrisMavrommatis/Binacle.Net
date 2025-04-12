@@ -11,6 +11,7 @@ using Binacle.Net.UIModule;
 using ChrisMavrommatis.Features;
 using ChrisMavrommatis.StartupTasks;
 using FluentValidation;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Json;
 using OpenApiExamples;
 using Scalar.AspNetCore;
@@ -61,6 +62,11 @@ public class Program
 		);
 		builder.Services.AddEndpointsApiExplorer();
 
+
+		builder.Services.ConfigureHttpJsonOptions(options =>
+		{
+			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+		});
 		builder.Services.Configure<JsonOptions>(options =>
 		{
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
@@ -85,6 +91,19 @@ public class Program
 			options.LowercaseUrls = true;
 		});
 
+
+		// builder.Services.AddProblemDetails(options =>
+		// {
+		// 	options.CustomizeProblemDetails = context =>
+		// 	{
+		// 		context.ProblemDetails.Instance =
+		// 			$"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+		// 		context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+		// 		var activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+		// 		context.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
+		// 	};
+		// });
+		
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
 
 		builder.AddDiagnosticsModule();
@@ -108,6 +127,15 @@ public class Program
 		{
 			app.UseDeveloperExceptionPage();
 		}
+		
+		// app.UseExceptionHandler(exceptionHandlerApp =>
+		// {
+		// 	exceptionHandlerApp.Run(async httpContext =>
+		// 	{
+		// 		await Results.Problem()
+		// 			.ExecuteAsync(httpContext);
+		// 	});
+		// });
 
 		// SWAGGER_UI from environment vars
 		if (Feature.IsEnabled("SWAGGER_UI"))

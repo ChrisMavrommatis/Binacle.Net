@@ -37,7 +37,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 
 	internal async Task<IResult> HandleAsync(
 		[FromRoute] string preset,
-		[FromBody] PresetPackRequest? request,
+		BindingResult<PresetPackRequest> request,
 		IValidator<PresetPackRequest> validator,
 		IOptions<BinPresetOptions> presetOptions,
 		ILegacyBinsService binsService,
@@ -58,7 +58,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 				);
 			}
 			
-			if (request is null)
+			if (request.Value is null)
 			{
 				return Results.BadRequest(
 					Response.ParameterError(
@@ -69,7 +69,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 				);
 			}
 
-			var validationResult = await validator.ValidateAsync(request, cancellationToken);
+			var validationResult = await validator.ValidateAsync(request.Value, cancellationToken);
 
 			if (!validationResult.IsValid)
 			{
@@ -85,22 +85,22 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 
 			var operationResults = await binsService.PackBinsAsync(
 				presetOption.Bins,
-				request.Items!,
+				request.Value.Items!,
 				new LegacyPackingParameters
 				{
-					StopAtSmallestBin = request.Parameters?.StopAtSmallestBin ?? false,
-					NeverReportUnpackedItems = request.Parameters?.NeverReportUnpackedItems ?? false,
-					OptInToEarlyFails = request.Parameters?.OptInToEarlyFails ?? false,
+					StopAtSmallestBin = request.Value.Parameters?.StopAtSmallestBin ?? false,
+					NeverReportUnpackedItems = request.Value.Parameters?.NeverReportUnpackedItems ?? false,
+					OptInToEarlyFails = request.Value.Parameters?.OptInToEarlyFails ?? false,
 					ReportPackedItemsOnlyWhenFullyPacked =
-						request.Parameters?.ReportPackedItemsOnlyWhenFullyPacked ?? false
+						request.Value.Parameters?.ReportPackedItemsOnlyWhenFullyPacked ?? false
 				}
 			);
 
 			return Results.Ok(
 				PackResponse.Create(
 					presetOption.Bins,
-					request.Items!,
-					request.Parameters,
+					request.Value.Items!,
+					request.Value.Parameters,
 					operationResults
 				)
 			);

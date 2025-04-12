@@ -19,7 +19,7 @@ internal class ResponseDescriptionOperationTransformer : IOpenApiOperationTransf
 		{
 			return Task.CompletedTask;
 		}
-		
+
 		foreach (var item in metadata)
 		{
 			if (operation.Responses.ContainsKey(item.StatusCode.ToString()))
@@ -34,6 +34,7 @@ internal class ResponseDescriptionOperationTransformer : IOpenApiOperationTransf
 				);
 			}
 		}
+
 		return Task.CompletedTask;
 	}
 }

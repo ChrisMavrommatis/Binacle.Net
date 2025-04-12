@@ -8,7 +8,7 @@ using Binacle.Net.v3.Requests.Examples;
 using Binacle.Net.v3.Responses;
 using Binacle.Net.v3.Responses.Examples;
 using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
+using FluentValidation.Results;
 using OpenApiExamples;
 
 namespace Binacle.Net.v3.Endpoints.Pack;
@@ -28,12 +28,12 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200OK)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
-			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest);
+			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			.RequireRateLimiting("PublicAnonymous");
 	}
 
 	internal async Task<IResult> HandleAsync(
-		[FromBody] CustomPackRequest? request,
-		IValidator<CustomPackRequest> validator,
+		ValidatedBindingResult<CustomPackRequest?> request,
 		IBinacleService binacleService,
 		ILogger<ByCustom> logger,
 		CancellationToken cancellationToken = default
@@ -42,32 +42,30 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 		using var activity = Diagnostics.ActivitySource.StartActivity("Pack by Custom: v3");
 		try
 		{
-			if (request is null)
+			if (request.Value is null)
 			{
 				return Results.BadRequest(
 					Response.ParameterError(
 						nameof(request),
-						ErrorMessage.MalformedRequestBody,
+						request.Exception!.Message,
 						ErrorCategory.RequestError
 					)
 				);
 			}
 
-			var validationResult = await validator.ValidateAsync(request, cancellationToken);
-
-			if (!validationResult.IsValid)
+			if (!request.ValidationResult?.IsValid ?? false)
 			{
 				return Results.BadRequest(
-					Response.ValidationError(validationResult, ErrorCategory.ValidationError)
+					Response.ValidationError(request.ValidationResult, ErrorCategory.ValidationError)
 				);
 			}
 
 			var operationResults = await binacleService.PackBinsAsync(
-				request.Bins!,
-				request.Items!,
+				request.Value.Bins!,
+				request.Value.Items!,
 				new PackingParameters
 				{
-					Algorithm = request.Parameters!.Algorithm!.Value
+					Algorithm = request.Value.Parameters!.Algorithm!.Value
 				}
 			);
 
@@ -75,9 +73,9 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			{
 				return Results.Ok(
 					PackResponse.Create(
-						request.Bins!,
-						request.Items!,
-						request.Parameters,
+						request.Value.Bins!,
+						request.Value.Items!,
+						request.Value.Parameters,
 						operationResults
 					)
 				);
@@ -92,3 +90,4 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 		}
 	}
 }
+

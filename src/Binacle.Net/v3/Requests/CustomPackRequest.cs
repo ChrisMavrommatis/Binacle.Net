@@ -1,6 +1,8 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Binacle.Net.Kernel.Serialization;
 using Binacle.Net.Models;
+using Binacle.Net.v3.Models;
 
 namespace Binacle.Net.v3.Requests;
 
@@ -8,14 +10,15 @@ namespace Binacle.Net.v3.Requests;
 
 public class CustomPackRequest
 {
-	public PackRequestParameters? Parameters { get; set; }
-	public List<v3.Models.Bin>? Bins { get; set; }
-	public List<v3.Models.Box>? Items { get; set; }
+	public PackRequestParameters Parameters { get; set; } = new();
+	public List<Bin> Bins { get; set; } = new();
+	public List<Box> Items { get; set; } = new();
 }
 
 public class PackRequestParameters : IWithAlgorithm
 {
 	// TODO: Investigate this as with this it fails
-	// [JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<Algorithm>>))]
+	[Required]
+	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<Algorithm>>))]
 	public Algorithm? Algorithm { get; set; }
 }
