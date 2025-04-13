@@ -29,7 +29,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
 			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.RequireRateLimiting("PublicAnonymous");
+			.RequireRateLimiting("Anonymous");
 	}
 
 	internal async Task<IResult> HandleAsync(

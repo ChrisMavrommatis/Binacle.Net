@@ -13,5 +13,11 @@ internal class RateLimiterConfigurationOptionsValidator : AbstractValidator<Rate
 		RuleFor(x => x.Anonymous)
 			.Must((value) => RateLimiterConfigurationParser.TryParse(value, out var _))
 			.WithMessage("Invalid configuration for Anonymous rate limiter. Please check the configuration."); 
+		
+		RuleFor(x => x.Auth).NotNull().NotEmpty();
+
+		RuleFor(x => x.Auth)
+			.Must((value) => RateLimiterConfigurationParser.TryParse(value, out var _))
+			.WithMessage("Invalid configuration for Auth rate limiter. Please check the configuration."); 
 	}
 }

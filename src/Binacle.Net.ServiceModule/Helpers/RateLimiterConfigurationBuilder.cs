@@ -30,6 +30,7 @@ internal static class RateLimiterConfigurationBuilder
 					AutoReplenishment = true,
 				}
 			),
+			RateLimiterType.NoLimiter => RateLimitPartition.GetNoLimiter(key),
 			_ => throw new NotImplementedException($"No Implementation found for RateLimiter of type {configuration.Type}")
 		};
 	} 

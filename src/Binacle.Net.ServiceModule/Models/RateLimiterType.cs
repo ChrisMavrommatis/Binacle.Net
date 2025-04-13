@@ -2,6 +2,7 @@
 
 internal enum RateLimiterType
 {
+	NoLimiter,
 	FixedWindow,
 	SlidingWindow
 }

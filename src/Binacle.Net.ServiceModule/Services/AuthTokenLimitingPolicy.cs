@@ -9,33 +9,32 @@ using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.ServiceModule.Services;
 
-internal class AuthTokenLimitingPolicy : IRateLimiterPolicy<string>
+internal class AuthRateLimitingPolicy : IRateLimiterPolicy<string>
 {
 	private readonly IOptions<RateLimiterConfigurationOptions> options;
-	private readonly ILogger<AuthTokenLimitingPolicy> logger;
+	private readonly ILogger<AuthRateLimitingPolicy> logger;
 	private readonly Func<OnRejectedContext, CancellationToken, ValueTask>?  onRejected;
 
-	public AuthTokenLimitingPolicy(
+	public AuthRateLimitingPolicy(
 		IOptions<RateLimiterConfigurationOptions> options,
-		ILogger<AuthTokenLimitingPolicy> logger
+		ILogger<AuthRateLimitingPolicy> logger
 	)
 	{
 		this.options = options;
 		this.logger = logger;
 		this.onRejected = (ctx, token) =>
 		{
-			logger.LogWarning($"Request rejected by {nameof(AuthTokenLimitingPolicy)}");
+			logger.LogWarning("Request rejected by {Policy}", nameof(AuthRateLimitingPolicy));
 			return ValueTask.CompletedTask;
 		};
 	}
 	
 	public RateLimitPartition<string> GetPartition(HttpContext httpContext)
 	{
-		var partitionKey = httpContext.User.Identity?.Name ?? httpContext.GetClientIp();
-		
-		var configuration = RateLimiterConfigurationParser.Parse(this.options.Value.Anonymous);
+		var partitionKey = httpContext?.GetClientIp() ?? "unknown";
+		var configuration = RateLimiterConfigurationParser.Parse(this.options.Value.Auth);
 
-		return RateLimiterConfigurationBuilder.Build(configuration, partitionKey ?? "unknown");
+		return RateLimiterConfigurationBuilder.Build(configuration, partitionKey);
 	}
 
 	public Func<OnRejectedContext, CancellationToken, ValueTask>? OnRejected => this.onRejected;

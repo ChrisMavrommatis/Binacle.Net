@@ -23,7 +23,7 @@ internal class AnonymousRateLimitingPolicy : IRateLimiterPolicy<string>
 		this.logger = logger;
 		this.onRejected = (ctx, token) =>
 		{
-			logger.LogWarning($"Request rejected by {nameof(AnonymousRateLimitingPolicy)}");
+			logger.LogWarning("Request rejected by {Policy}", nameof(AnonymousRateLimitingPolicy));
 			return ValueTask.CompletedTask;
 		};
 	}

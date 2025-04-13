@@ -37,13 +37,14 @@ internal static class RateLimiterConfigurationParser
 
 		return type switch
 		{
-			"FixedWindow" => ParseFixedWindowOptions(options),
-			"SlidingWindow" => ParseSlidingWindowOptions(options),
+			"FixedWindow" => CreateFixedWindow(options),
+			"SlidingWindow" => CreateSlidingWindow(options),
+			"NoLimiter" => CreateNoLimiter(options),
 			_ => throw new InvalidOperationException("RateLimiter type must be of 'FixedWindow' or 'SlidingWindow' ")
 		};
 	}
 
-	private static RateLimiterConfiguration ParseFixedWindowOptions(string options)
+	private static RateLimiterConfiguration CreateFixedWindow(string options)
 	{
 		var parts = options.Split('/');
 
@@ -61,7 +62,7 @@ internal static class RateLimiterConfigurationParser
 
 	}
 
-	private static RateLimiterConfiguration ParseSlidingWindowOptions(string options)
+	private static RateLimiterConfiguration CreateSlidingWindow(string options)
 	{
 		var parts = options.Split('/');
 		if(parts.Length != 2)
@@ -81,6 +82,16 @@ internal static class RateLimiterConfigurationParser
 			PermitLimit = int.Parse(parts[0]),
 			WindowInSeconds = int.Parse(parts2[0]),
 			SegmentsPerWindow = int.Parse(parts2[1])
+		};
+	}
+	
+	private static RateLimiterConfiguration CreateNoLimiter(string options)
+	{
+		return new RateLimiterConfiguration
+		{
+			Type = RateLimiterType.NoLimiter,
+			PermitLimit = 0,
+			WindowInSeconds = 0
 		};
 	}
 }

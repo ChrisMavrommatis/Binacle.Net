@@ -23,7 +23,6 @@ internal class Token : IEndpoint
 	{
 		endpoints.MapPost("/api/auth/token", HandleAsync)
 			.WithTags("Auth")
-			.DisableRateLimiting()
 			.WithSummary("Auth Token")
 			.WithDescription(
 				"Use this endpoint if you have the credentials to get a token and use the service without limits"
@@ -40,7 +39,8 @@ internal class Token : IEndpoint
 			.WithResponseDescription(
 				StatusCodes.Status401Unauthorized,
 				ResponseDescription.ForAuthToken401Unauthorized
-			);
+			)
+			.RequireRateLimiting("Auth");
 	}
 
 	internal async Task<IResult> HandleAsync(

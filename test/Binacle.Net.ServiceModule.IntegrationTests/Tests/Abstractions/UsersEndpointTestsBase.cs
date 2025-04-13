@@ -38,6 +38,7 @@ public abstract partial class UsersEndpointTestsBase : IAsyncLifetime
 			Password = user.Password
 		};
 		var response = await this.Sut.Client.PostAsJsonAsync("/api/auth/token", request, this.Sut.JsonSerializerOptions);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 		var tokenResponse = await response.Content.ReadAsAsync<Net.ServiceModule.v0.Responses.TokenResponse>();
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);

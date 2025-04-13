@@ -1,9 +1,10 @@
 ﻿using System.Text;
 using Binacle.Net.Kernel.OpenApi.ExtensionsMethods;
-using Binacle.Net.ServiceModule.Domain;
-using Binacle.Net.ServiceModule.Infrastructure;
-using Binacle.Net.ServiceModule.Configuration;
 using Binacle.Net.ServiceModule.Configuration.Models;
+using Binacle.Net.ServiceModule.Domain;
+using Binacle.Net.ServiceModule.Domain.Users.Entities;
+using Binacle.Net.ServiceModule.Infrastructure;
+using Binacle.Net.ServiceModule.Models;
 using Binacle.Net.ServiceModule.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -70,7 +71,14 @@ public static class ModuleDefinition
 			};
 		});
 
-		builder.Services.AddAuthorization();
+		builder.Services.AddAuthorization(options =>
+		{
+			options.AddPolicy("Admin", policyBuilder =>
+			{
+				policyBuilder.RequireAuthenticatedUser();
+				policyBuilder.RequireClaim(JwtApplicationClaimNames.Groups, UserGroups.Admins);
+			});
+		});
 
 		// Register Services
 		builder.Services.AddScoped<ITokenService, TokenService>();
@@ -84,6 +92,7 @@ public static class ModuleDefinition
 			options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
 			options.AddPolicy<string, AnonymousRateLimitingPolicy>("Anonymous");
+			options.AddPolicy<string, AuthRateLimitingPolicy>("Auth");
 		});
 		
 		builder.Services.Configure<FeatureOptions>(options =>

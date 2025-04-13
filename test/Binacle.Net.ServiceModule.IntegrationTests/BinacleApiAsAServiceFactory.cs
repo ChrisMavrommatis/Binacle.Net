@@ -30,6 +30,7 @@ public class BinacleApiAsAServiceFactory : WebApplicationFactory<IApiMarker>
 		var preBuildConfigurationValues = new Dictionary<string, string?>
 		{
 			{ "Features:SERVICE_MODULE", bool.TrueString },
+			{ "RateLimiter:Auth", "NoLimiter::0"}
 		};
 		var configuration = new ConfigurationBuilder()
 			.AddInMemoryCollection(preBuildConfigurationValues)

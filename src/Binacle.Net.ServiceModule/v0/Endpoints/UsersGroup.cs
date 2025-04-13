@@ -15,11 +15,7 @@ internal class UsersGroup : IEndpointGroup
 	{
 		return endpoints.MapGroup($"/api/{UsersApiDocument.DocumentName}")
 			.WithTags("Users (Admin only)")
-			.RequireAuthorization(builder =>
-			{
-				builder.RequireAuthenticatedUser();
-				builder.RequireClaim(JwtApplicationClaimNames.Groups, UserGroups.Admins);
-			})
+			.RequireAuthorization("Admin")
 			.WithGroupName(UsersApiDocument.DocumentName)
 			.AllEndpointsProduce<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
 			.AllEndpointsHaveResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)

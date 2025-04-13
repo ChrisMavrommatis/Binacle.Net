@@ -11,4 +11,5 @@ internal class RateLimiterConfigurationOptions : IConfigurationOptions
 	public static string GetEnvironmentFilePath(string environment) => $"ServiceModule/RateLimiter.{environment}.json";
 
 	public string? Anonymous { get; set; }
+	public string? Auth { get; set; }
 }

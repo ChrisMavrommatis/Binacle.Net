@@ -40,7 +40,8 @@ internal class TokenService : ITokenService
 			new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 			new(JwtRegisteredClaimNames.Sub, request.Email),
 			new(JwtRegisteredClaimNames.Email, request.Email),
-			new(JwtApplicationClaimNames.Groups, request.UserGroup)
+			new(JwtApplicationClaimNames.Groups, request.UserGroup),
+			new(ClaimTypes.Role, request.UserGroup)
 		};
 
 		var now = this.timeProvider.GetLocalNow();
