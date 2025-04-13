@@ -26,6 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\dep\OpenApiExamples\OpenApiExamples.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Domain\Binacle.Net.ServiceModule.Domain.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Infrastructure\Binacle.Net.ServiceModule.Infrastructure.csproj" />
 	</ItemGroup>

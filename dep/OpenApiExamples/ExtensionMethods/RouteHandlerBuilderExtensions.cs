@@ -1,5 +1,4 @@
-﻿using Binacle.Net;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples.Abstractions;
 using OpenApiExamples.Models;
