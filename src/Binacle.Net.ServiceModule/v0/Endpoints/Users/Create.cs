@@ -48,7 +48,7 @@ internal class Create : IGroupedEndpoint<UsersGroup>
 
 		var result = await userManagerService.CreateAsync(new CreateUserRequest(request.Email, request.Password), cancellationToken);
 
-		return result.Unwrap(
+		return result.Match(
 			user => Results.Created(),
 			conflict => Results.Conflict(),
 			error => Results.BadRequest(ErrorResponse.Create(error.Message))

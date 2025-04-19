@@ -12,10 +12,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Azure.Data.Tables" Version="12.10.0" />
-		<PackageReference Include="ChrisMavrommatis.Results" Version="2.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\dep\FluxResults\FluxResults.csproj" />
 		<ProjectReference Include="..\Binacle.Net.ServiceModule.Domain\Binacle.Net.ServiceModule.Domain.csproj" />
 	</ItemGroup>
 

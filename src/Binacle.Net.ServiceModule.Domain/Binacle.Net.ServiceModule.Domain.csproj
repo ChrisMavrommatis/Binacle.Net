@@ -15,13 +15,17 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <PackageReference Include="ChrisMavrommatis.Results" Version="2.0.3" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\dep\FluxResults\FluxResults.csproj" />
     <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
   </ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\dep\FluxResults\FluxResults.csproj" />
+	</ItemGroup>
 
 </Project>

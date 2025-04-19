@@ -1,8 +1,10 @@
-﻿using System.Text;
+﻿using System.Security.Claims;
+using System.Text;
 using Binacle.Net.Kernel.OpenApi.ExtensionsMethods;
+using Binacle.Net.ServiceModule.Application;
+using Binacle.Net.ServiceModule.Application.Authentication.Configuration;
 using Binacle.Net.ServiceModule.Configuration.Models;
-using Binacle.Net.ServiceModule.Domain;
-using Binacle.Net.ServiceModule.Domain.Users.Entities;
+using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Infrastructure;
 using Binacle.Net.ServiceModule.Models;
 using Binacle.Net.ServiceModule.Services;
@@ -76,16 +78,14 @@ public static class ModuleDefinition
 			options.AddPolicy("Admin", policyBuilder =>
 			{
 				policyBuilder.RequireAuthenticatedUser();
-				policyBuilder.RequireClaim(JwtApplicationClaimNames.Groups, UserGroups.Admins);
+				policyBuilder.RequireClaim(ClaimTypes.Role, AccountRole.Admin.ToString());
 			});
 		});
 
-		// Register Services
-		builder.Services.AddScoped<ITokenService, TokenService>();
 
 		builder
-			.AddDomainLayerServices()
-			.AddInfrastructureLayerServices();
+			.AddApplication()
+			.AddInfrastructure();
 		
 		builder.Services.AddRateLimiter(options =>
 		{

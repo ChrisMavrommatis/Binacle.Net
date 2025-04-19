@@ -15,20 +15,24 @@
 		<InternalsVisibleTo Include="$(ProjectName).IntegrationTests" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
-	</ItemGroup>
+	
 	
 	<ItemGroup>
-		<PackageReference Include="ChrisMavrommatis.Results" Version="2.0.3" />
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\dep\FluxResults\FluxResults.csproj" />
 	  <ProjectReference Include="..\..\dep\OpenApiExamples\OpenApiExamples.csproj" />
-	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Domain\Binacle.Net.ServiceModule.Domain.csproj" />
+	  <ProjectReference Include="..\..\dep\YetAnotherMediator\YetAnotherMediator.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Application\Binacle.Net.ServiceModule.Application.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Infrastructure\Binacle.Net.ServiceModule.Infrastructure.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="v0\Endpoints\Admin\Subscriptions\" />
 	</ItemGroup>
 
 </Project>

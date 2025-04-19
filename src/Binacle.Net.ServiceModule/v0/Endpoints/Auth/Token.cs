@@ -1,12 +1,8 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.ServiceModule.Domain.Users.Entities;
-using Binacle.Net.ServiceModule.Domain.Users.Models;
+using Binacle.Net.ServiceModule.Application.Authentication.Messages;
 using Binacle.Net.ServiceModule.Constants;
-using Binacle.Net.ServiceModule.Models;
-using Binacle.Net.ServiceModule.Services;
-using Binacle.Net.ServiceModule.v0.Requests;
+using Binacle.Net.ServiceModule.v0.Contracts.Auth;
 using Binacle.Net.ServiceModule.v0.Requests.Examples;
-using Binacle.Net.ServiceModule.v0.Responses;
 using Binacle.Net.ServiceModule.v0.Responses.Examples;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
+using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule.v0.Endpoints.Auth;
 
@@ -44,46 +41,41 @@ internal class Token : IEndpoint
 	}
 
 	internal async Task<IResult> HandleAsync(
-		IUserManagerService userManagerService,
-		ITokenService tokenService,
+		ValidatedBindingResult<TokenRequest> request,
+		IMediator mediator,
 		IValidator<TokenRequest> validator,
-		[FromBody] TokenRequest request,
 		CancellationToken cancellationToken = default
 	)
 	{
-		var validationResult = await validator.ValidateAsync(request, cancellationToken);
-		if (!validationResult.IsValid)
+		if (request.Value is null)
 		{
 			return Results.BadRequest(
 				AuthErrorResponse.Create(
-					"Validation Error",
-					validationResult.Errors.Select(x => x.ErrorMessage).ToArray()
+					"Malformed request",
+					["Marlformed request body"]
 				)
 			);
 		}
 
-		var result = await userManagerService.AuthenticateAsync(
-			new AuthenticateUserRequest(request.Email, request.Password),
-			cancellationToken
-		);
-
-		if (!result.Is<User>())
+		if (!request.ValidationResult?.IsValid ?? false)
 		{
-			return Results.Unauthorized();
+			return Results.BadRequest(
+				AuthErrorResponse.Create(
+					"Validation Error",
+					request.ValidationResult!.Errors.Select(x => x.ErrorMessage).ToArray()
+				)
+			);
 		}
+		
+	
+		var authRequest = new AuthenticationRequest(request.Value.Email, request.Value.Password);
+		var result = await mediator.SendAsync(authRequest, cancellationToken);
 
-		var user = result.GetValue<User>();
-
-		var tokenResult = tokenService.GenerateStatelessToken(
-			new StatelessTokenGenerationRequest(user.Email, user.Group)
+		return result.Match(
+			token => Results.Ok(TokenResponse.Create(token)),
+			unauthorized => Results.Unauthorized(),
+			error => Results.BadRequest(AuthErrorResponse.Create(error.Message ?? "Failed to generate token"))
 		);
-		if (!tokenResult.Success)
-		{
-			return Results.BadRequest(AuthErrorResponse.Create("Failed to generate token"));
-		}
 
-		return Results.Ok(
-			TokenResponse.Create(tokenResult.TokenType!, tokenResult.Token!, tokenResult.ExpiresIn!.Value)
-		);
 	}
 }
