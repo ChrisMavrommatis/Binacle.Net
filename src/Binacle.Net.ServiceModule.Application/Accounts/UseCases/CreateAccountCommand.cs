@@ -6,7 +6,7 @@ using FluxResults.TypedResults;
 using FluxResults.Unions;
 using YetAnotherMediator;
 
-namespace Binacle.Net.ServiceModule.Application.Authentication.Messages;
+namespace Binacle.Net.ServiceModule.Application.Accounts.UseCases;
 
 public record CreateAccountCommand(string Email, string Password)
 	: ICommand<FluxUnion<Account, Conflict, UnexpectedError>>;

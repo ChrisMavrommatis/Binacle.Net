@@ -1,4 +1,5 @@
-﻿using FluentValidation;Failed to create
+﻿using Binacle.Net.ServiceModule.v0.Contracts.Common;
+using FluentValidation;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Auth;
 

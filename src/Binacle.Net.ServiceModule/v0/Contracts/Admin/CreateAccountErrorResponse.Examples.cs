@@ -1,9 +1,10 @@
-﻿using OpenApiExamples;
+﻿using Binacle.Net.ServiceModule.v0.Contracts.Common;
+using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 
-namespace Binacle.Net.ServiceModule.v0.Responses.Examples;
+namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
-internal class CreateApiUserErrorResponseExample : IMultipleOpenApiExamplesProvider<ErrorResponse>
+internal class CreateAccountErrorResponseExamples : IMultipleOpenApiExamplesProvider<ErrorResponse>
 {
 	public IEnumerable<IOpenApiExample<ErrorResponse>> GetExamples()
 	{

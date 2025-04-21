@@ -12,4 +12,20 @@ internal class ErrorResponse
 			Errors = errors
 		};
 	}
+
+	internal static ErrorResponse MalformedRequest()
+	{
+		return ErrorResponse.Create(
+			"Malformed request",
+			["Malformed request body"]
+		);
+	}
+	
+	internal static ErrorResponse ValidationError(string[] errors)
+	{
+		return ErrorResponse.Create(
+			"Validation Error",
+			errors
+		);
+	}
 }

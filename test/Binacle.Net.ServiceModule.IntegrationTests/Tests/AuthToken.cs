@@ -1,7 +1,8 @@
-﻿using Binacle.Net.ServiceModule.Domain.Configuration.Models;
+﻿using System.Net;
+using System.Net.Http.Json;
+using Binacle.Net.ServiceModule.v0.Contracts.Auth;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System.Net.Http.Json;
 
 namespace Binacle.Net.ServiceModule.IntegrationTests;
 
@@ -24,44 +25,44 @@ public class AuthToken
 	{
 		var userOptions = this.sut.Services.GetRequiredService<IOptions<UserOptions>>();
 		var defaultAdminUser = userOptions.Value.GetParsedDefaultAdminUser();
-		var request = new Net.ServiceModule.v0.Requests.TokenRequest()
+		var request = new TokenRequest()
 		{
 			Email = defaultAdminUser.Email,
 			Password = defaultAdminUser.Password
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+		response.StatusCode.ShouldBe(HttpStatusCode.OK);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Wrong User/Password Returns 401 Unauthorized")]
 	public async Task Post_WithWrongUserPassword_Returns_401Unauthorized()
 	{
-		var request = new Net.ServiceModule.v0.Requests.TokenRequest()
+		var request = new TokenRequest()
 		{
 			Email = "invalid@nonexisting.test",
 			Password = "Wr0ngP@ssw0rd"
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
+		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Credentials Returns 400 BadRequest")]
 	public async Task Post_WithInvalidCredentials_Returns_400BadRequest()
 	{
-		var request1 = new Net.ServiceModule.v0.Requests.TokenRequest()
+		var request1 = new TokenRequest()
 		{
 			Email = "notvalidemail.test",
 			Password = "Wr0ngP@ssw0rd"
 		};
 		var response1 = await this.sut.Client.PostAsJsonAsync(routePath, request1, this.sut.JsonSerializerOptions);
-		response1.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+		response1.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
-		var request2 = new Net.ServiceModule.v0.Requests.TokenRequest()
+		var request2 = new TokenRequest()
 		{
 			Email = "valid@email.test",
 			Password = "invpass"
 		};
 		var response2 = await this.sut.Client.PostAsJsonAsync(routePath, request2, this.sut.JsonSerializerOptions);
-		response2.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+		response2.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 	}
 }

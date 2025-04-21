@@ -8,7 +8,7 @@ using FluxResults.TypedResults;
 using FluxResults.Unions;
 using YetAnotherMediator;
 
-namespace Binacle.Net.ServiceModule.Application.Authentication.Messages;
+namespace Binacle.Net.ServiceModule.Application.Authentication.UseCases;
 
 public record AuthenticationRequest(string Email, string Password)
 	: IRequest<FluxUnion<Token, Unauthorized, UnexpectedError>>;

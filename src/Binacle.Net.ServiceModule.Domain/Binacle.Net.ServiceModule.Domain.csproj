@@ -1,31 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="Binacle.Net.ServiceModule.IntegrationTests" />
-	</ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Binacle.Net.ServiceModule.IntegrationTests"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.4" />
-  </ItemGroup>
-	
-  <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="11.11.0" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\dep\FluxResults\FluxResults.csproj" />
-    <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
-  </ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\..\dep\FluxResults\FluxResults.csproj" />
-	</ItemGroup>
-
+    <ItemGroup>
+        <ProjectReference Include="..\..\dep\FluxResults\FluxResults.csproj"/>
+    </ItemGroup>
 </Project>

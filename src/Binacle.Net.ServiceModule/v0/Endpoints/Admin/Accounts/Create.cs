@@ -1,17 +1,10 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Application.Authentication.Messages;
-using Binacle.Net.ServiceModule.Constants;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
-using Binacle.Net.ServiceModule.v0.Contracts.Auth;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
-using Binacle.Net.ServiceModule.v0.Requests;
-using Binacle.Net.ServiceModule.v0.Requests.Examples;
-using Binacle.Net.ServiceModule.v0.Responses;
-using Binacle.Net.ServiceModule.v0.Responses.Examples;
-using FluentValidation;
+using Binacle.Net.ServiceModule.v0.Resources;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
 using YetAnotherMediator;
@@ -24,17 +17,17 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 	{
 		group.MapPost("/account", HandleAsync)
 			.WithSummary("Create an account")
-			.WithDescription("Admins use this endpoint to create accounts");
-		// .Accepts<CreateApiUserRequest>("application/json")
-		// .RequestExample<CreateApiUserRequestExample>("application/json")
-		// .Produces(StatusCodes.Status201Created)
-		// .WithResponseDescription(StatusCodes.Status201Created, ResponseDescription.ForCreate200OK)
-		// .ResponseExamples<CreateApiUserErrorResponseExample>(
-		// 	StatusCodes.Status400BadRequest,
-		// 	"application/json"
-		// )
-		// .Produces(StatusCodes.Status409Conflict)
-		// .WithResponseDescription(StatusCodes.Status409Conflict, ResponseDescription.ForCreate409Conflict);
+			.WithDescription("Admins can use this endpoint to create accounts")
+			.Accepts<CreateAccountRequest>("application/json")
+			.RequestExample<CreateAccountRequestExample>("application/json")
+			.Produces(StatusCodes.Status201Created)
+			.WithResponseDescription(StatusCodes.Status201Created, CreateAccountResponseDescription.For200OK)
+			.ResponseExamples<CreateAccountErrorResponseExamples>(
+				StatusCodes.Status400BadRequest,
+				"application/json"
+			)
+			.Produces(StatusCodes.Status409Conflict)
+			.WithResponseDescription(StatusCodes.Status409Conflict, CreateAccountResponseDescription.For409Conflict);
 	}
 
 	internal async Task<IResult> HandleAsync(
@@ -45,25 +38,21 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 		if (request.Value is null)
 		{
 			return Results.BadRequest(
-				ErrorResponse.Create(
-					"Malformed request",
-					["Marlformed request body"]
-				)
+				ErrorResponse.MalformedRequest()
 			);
 		}
 
 		if (!request.ValidationResult?.IsValid ?? false)
 		{
 			return Results.BadRequest(
-				ErrorResponse.Create(
-					"Validation Error",
+				ErrorResponse.ValidationError(
 					request.ValidationResult!.Errors.Select(x => x.ErrorMessage).ToArray()
 				)
 			);
 		}
-		
+
 		var createAccountCommand = new CreateAccountCommand(request.Value.Email, request.Value.Password);
-		var result = await mediator.ExecuteAsync(createAccountCommand, cancellationToken); 
+		var result = await mediator.ExecuteAsync(createAccountCommand, cancellationToken);
 
 		return result.Match(
 			account => Results.Created(),

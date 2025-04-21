@@ -1,13 +1,10 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Application.Authentication.Messages;
-using Binacle.Net.ServiceModule.Constants;
 using Binacle.Net.ServiceModule.v0.Contracts.Auth;
-using Binacle.Net.ServiceModule.v0.Requests.Examples;
-using Binacle.Net.ServiceModule.v0.Responses.Examples;
+using Binacle.Net.ServiceModule.v0.Resources;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
 using YetAnotherMediator;
@@ -28,14 +25,19 @@ internal class Token : IEndpoint
 			.RequestExample<TokenRequestExample>("application/json")
 			.Produces<TokenResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExample<TokenResponseExample>(StatusCodes.Status200OK, "application/json")
-			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForAuthToken200OK)
+			.WithResponseDescription(StatusCodes.Status200OK, AuthTokenResponseDescription.For200OK)
 			.Produces<AuthErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			.ResponseExamples<AuthErrorResponseExample>(StatusCodes.Status400BadRequest, "application/json")
+			.ResponseExamples<AuthErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
 			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.Produces(StatusCodes.Status401Unauthorized)
 			.WithResponseDescription(
 				StatusCodes.Status401Unauthorized,
-				ResponseDescription.ForAuthToken401Unauthorized
+				AuthTokenResponseDescription.For200OK
+			)
+			.Produces(StatusCodes.Status403Forbidden)
+			.WithResponseDescription(
+				StatusCodes.Status403Forbidden,
+				AuthTokenResponseDescription.For403Forbidden
 			)
 			.RequireRateLimiting("Auth");
 	}
@@ -66,8 +68,8 @@ internal class Token : IEndpoint
 				)
 			);
 		}
-		
-	
+
+
 		var authRequest = new AuthenticationRequest(request.Value.Email, request.Value.Password);
 		var result = await mediator.SendAsync(authRequest, cancellationToken);
 
@@ -76,6 +78,7 @@ internal class Token : IEndpoint
 			unauthorized => Results.Unauthorized(),
 			error => Results.BadRequest(AuthErrorResponse.Create(error.Message ?? "Failed to generate token"))
 		);
-
 	}
+
+
 }

@@ -1,19 +1,17 @@
-﻿using Binacle.Net.ServiceModule.Domain.Configuration.Models;
-using Binacle.Net.ServiceModule.Domain.Users.Entities;
-using Binacle.Net.ServiceModule.Domain.Users.Models;
-using Binacle.Net.ServiceModule.Services;
+﻿using Binacle.Net.ServiceModule.Application.Authentication.Messages;
 using ChrisMavrommatis.StartupTasks;
-using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule.Infrastructure.Services;
 
-internal class EnsureAdminUserExistsStartupTask : IStartupTask
+internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 {
 	private readonly IServiceProvider serviceProvider;
 
-	public EnsureAdminUserExistsStartupTask(IServiceProvider serviceProvider)
+	private const string _defaultAdminAccount = "admin@binacle.net:B1n4cl3Adm!n";
+
+	public EnsureDefaultAdminAccountExistsStartupTask(IServiceProvider serviceProvider)
 	{
 		this.serviceProvider = serviceProvider;
 	}
@@ -22,31 +20,47 @@ internal class EnsureAdminUserExistsStartupTask : IStartupTask
 	{
 		using (var scope = this.serviceProvider.CreateScope())
 		{
-			var defaultsOptions = scope.ServiceProvider.GetRequiredService<IOptions<UserOptions>>();
-			var defaultsOptionsValidator = scope.ServiceProvider.GetRequiredService<IValidator<UserOptions>>();
+			var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-			await defaultsOptionsValidator.ValidateAndThrowAsync(defaultsOptions.Value);
+			var adminCredentials = Environment.GetEnvironmentVariable("BINACLE_ADMIN_CREDENTIALS");
+			var configuredAdminCredentials = ParseAccountCredentials(adminCredentials ?? _defaultAdminAccount);
 
-			var service = scope.ServiceProvider.GetRequiredService<IUserManagerService>();
+			var request = new CreateAccountCommand(configuredAdminCredentials.Email, configuredAdminCredentials.Password);
 
-			var configuredAdminUser = defaultsOptions.Value.GetParsedDefaultAdminUser();
+			var result = await mediator.ExecuteAsync(request, cancellationToken);
 
-			var request = new CreateUserRequest(configuredAdminUser.Email, configuredAdminUser.Password, UserGroups.Admins);
-
-			var result = await service.CreateAsync(request, cancellationToken);
-
-			var success = result.Unwrap(
+			var success = result.Match(
 				user => true,
 				conflict => true,
 				error => false
-				);
+			);
 
-			
 			if (!success)
 			{
-				throw new System.ApplicationException($"{nameof(EnsureAdminUserExistsStartupTask)} failed");
+				throw new ApplicationException($"{nameof(EnsureDefaultAdminAccountExistsStartupTask)} failed");
 			}
 		}
-		
+
+	}
+
+	private static ConfiguredAccountCredentials ParseAccountCredentials(string accountCredentials)
+	{
+		if (string.IsNullOrWhiteSpace(accountCredentials))
+		{
+			throw new ArgumentNullException(nameof(accountCredentials), "Account credentials cannot be null or empty");
+		}
+
+		var parts = accountCredentials.Split(":");
+		return new ConfiguredAccountCredentials
+		{
+			Email = parts[0],
+			Password = parts[1]
+		};
+	}
+
+	private class ConfiguredAccountCredentials
+	{
+		public required string Email { get; init; }
+		public required string Password { get; init; }
 	}
 }

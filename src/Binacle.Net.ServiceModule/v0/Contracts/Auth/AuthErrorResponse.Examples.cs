@@ -3,7 +3,7 @@ using OpenApiExamples.Abstractions;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Auth;
 
-internal class AuthErrorResponseExample : IMultipleOpenApiExamplesProvider<AuthErrorResponse>
+internal class AuthErrorResponseExamples : IMultipleOpenApiExamplesProvider<AuthErrorResponse>
 {
 	public IEnumerable<IOpenApiExample<AuthErrorResponse>> GetExamples()
 	{

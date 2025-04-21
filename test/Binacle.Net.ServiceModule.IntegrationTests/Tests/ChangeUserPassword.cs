@@ -28,7 +28,7 @@ public class ChangeUserPassword : Abstractions.UsersEndpointTestsBase
 		=> this.Action_WithoutBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{email}", this.existingUser.Email);
-			var request = new Net.ServiceModule.v0.Requests.ChangeApiUserPasswordRequest
+			var request = new Net.ServiceModule.v0.Contracts.Auth.ChangeApiUserPasswordRequest
 			{
 				Password = "Ex1stingUs3rNewP@ssw0rd"
 			};

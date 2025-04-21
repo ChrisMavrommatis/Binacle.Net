@@ -6,12 +6,12 @@ using OpenApiExamples;
 
 namespace Binacle.Net.ServiceModule.v0;
 
-internal class UsersApiDocument : IOpenApiDocument
+internal class ServiceModuleApiDocument : IOpenApiDocument
 {
-	public const string DocumentName = "users";
+	public const string DocumentName = "service";
 	public string Name => DocumentName;
-	public string Title => "Binacle.Net Users API";
-	public string Version => "1.0";
+	public string Title => "Binacle.Net Service Module API";
+	public string Version => "2.0";
 	public bool IsDeprecated => false;
 	public bool IsExperimental => false;
 
@@ -21,7 +21,7 @@ internal class UsersApiDocument : IOpenApiDocument
 		{
 			options.AddDocumentTransformer((document, context, cancellationToken) =>
 			{
-				document.Info.Title = "Binacle.Net Users API";
+				document.Info.Title = this.Title;
 				document.Info.Version = this.Version;
 				document.Info.Description = __description__;
 				// gpl 3 license
@@ -40,9 +40,9 @@ internal class UsersApiDocument : IOpenApiDocument
 	}
 	
 	private static string __description__ = new StringBuilder()
-		.AppendLine("**Binacle.Net Users API for User Management**")
+		.AppendLine("**Binacle.Net Service Module API**")
 		.AppendLine()
-		.AppendLine("This section is designed only for when Binacle.Net is used as public service.")
+		.AppendLine("This api is designed only for when Binacle.Net is used as public service with the Service Module.")
 		.AppendLine()
 		.AppendLine("User Management is done only by a user of Admin Group.")
 		.AppendLine()

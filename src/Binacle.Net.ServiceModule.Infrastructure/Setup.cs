@@ -55,7 +55,7 @@ public static class Setup
 			throw ex;
 		}
 
-		builder.Services.AddStartupTask<EnsureAdminUserExistsStartupTask>();
+		builder.Services.AddStartupTask<EnsureDefaultAdminAccountExistsStartupTask>();
 
 		return builder;
 	}

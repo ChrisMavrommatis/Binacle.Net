@@ -7,14 +7,20 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Binacle.Net.ServiceModule.IntegrationTests"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.4" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.4"/>
     </ItemGroup>
     
     <ItemGroup>
         <ProjectReference Include="..\..\dep\FluxResults\FluxResults.csproj"/>
         <ProjectReference Include="..\..\dep\YetAnotherMediator\YetAnotherMediator.csproj" />
+        <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
         <ProjectReference Include="..\Binacle.Net.ServiceModule.Domain\Binacle.Net.ServiceModule.Domain.csproj"/>
     </ItemGroup>
-
+    
 
 </Project>
