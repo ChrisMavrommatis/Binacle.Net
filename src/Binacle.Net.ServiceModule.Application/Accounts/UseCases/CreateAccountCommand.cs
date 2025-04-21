@@ -8,8 +8,11 @@ using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule.Application.Accounts.UseCases;
 
-public record CreateAccountCommand(string Email, string Password)
-	: ICommand<FluxUnion<Account, Conflict, UnexpectedError>>;
+public record CreateAccountCommand(
+	string Username,
+	string Password,
+	string Email
+) : ICommand<FluxUnion<Account, Conflict, UnexpectedError>>;
 
 internal class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand, FluxUnion<Account, Conflict, UnexpectedError>>
 {
@@ -29,7 +32,7 @@ internal class CreateAccountCommandHandler : ICommandHandler<CreateAccountComman
 	}
 	public async ValueTask<FluxUnion<Account, Conflict, UnexpectedError>> HandleAsync(CreateAccountCommand command, CancellationToken cancellationToken)
 	{
-		var getResult = await this.accountRepository.GetByEmailAsync(command.Email);
+		var getResult = await this.accountRepository.GetByUsernameAsync(command.Username);
 
 		if (getResult.TryGetValue<Account>(out var existingAccount) && existingAccount is not null && !existingAccount.IsDeleted)
 		{
@@ -38,9 +41,9 @@ internal class CreateAccountCommandHandler : ICommandHandler<CreateAccountComman
 
 		var utcNow = this.timeProvider.GetUtcNow();
 		var newAccount = new Account(
-			command.Email.ToLowerInvariant(),
+			command.Username,
 			AccountRole.User,
-			command.Email,
+			command.Email.ToLowerInvariant(),
 			AccountStatus.Active,
 			utcNow
 		);
@@ -50,6 +53,7 @@ internal class CreateAccountCommandHandler : ICommandHandler<CreateAccountComman
 		
 		var createResult = await this.accountRepository.CreateAsync(newAccount);
 
+		// Flux here
 		if (!createResult.TryGetValue<Success>(out var _))
 		{
 			return TypedResult.Conflict;

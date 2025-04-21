@@ -11,7 +11,7 @@ internal class TokenRequestExample : ISingleOpenApiExamplesProvider<TokenRequest
 			"Auth Token",
 			new TokenRequest
 			{
-				Email = "test@test.com",
+				Username = "test_user",
 				Password = "testpassword"
 			}
 		);

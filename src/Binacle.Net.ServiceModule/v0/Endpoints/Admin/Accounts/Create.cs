@@ -1,5 +1,5 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.ServiceModule.Application.Authentication.Messages;
+using Binacle.Net.ServiceModule.Application.Accounts.UseCases;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
@@ -27,7 +27,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 				"application/json"
 			)
 			.Produces(StatusCodes.Status409Conflict)
-			.WithResponseDescription(StatusCodes.Status409Conflict, CreateAccountResponseDescription.For409Conflict);
+			.WithResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict);
 	}
 
 	internal async Task<IResult> HandleAsync(
@@ -51,7 +51,12 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			);
 		}
 
-		var createAccountCommand = new CreateAccountCommand(request.Value.Email, request.Value.Password);
+		var createAccountCommand = new CreateAccountCommand(
+			request.Value.Username,
+			request.Value.Password,
+			request.Value.Email
+		); 
+		
 		var result = await mediator.ExecuteAsync(createAccountCommand, cancellationToken);
 
 		return result.Match(

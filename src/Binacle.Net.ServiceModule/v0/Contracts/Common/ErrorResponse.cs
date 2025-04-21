@@ -28,4 +28,12 @@ internal class ErrorResponse
 			errors
 		);
 	}
+	
+	internal static ErrorResponse IdToGuidParameterError()
+	{
+		return ErrorResponse.Create(
+			"Parameter Error",
+			["The provided value is not a valid Guid"]
+		);
+	}
 }

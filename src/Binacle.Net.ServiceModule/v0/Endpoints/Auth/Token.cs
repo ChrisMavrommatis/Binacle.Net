@@ -1,5 +1,5 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.ServiceModule.Application.Authentication.Messages;
+using Binacle.Net.ServiceModule.Application.Authentication.UseCases;
 using Binacle.Net.ServiceModule.v0.Contracts.Auth;
 using Binacle.Net.ServiceModule.v0.Resources;
 using FluentValidation;
@@ -70,7 +70,7 @@ internal class Token : IEndpoint
 		}
 
 
-		var authRequest = new AuthenticationRequest(request.Value.Email, request.Value.Password);
+		var authRequest = new AuthenticationRequest(request.Value.Username, request.Value.Password);
 		var result = await mediator.SendAsync(authRequest, cancellationToken);
 
 		return result.Match(

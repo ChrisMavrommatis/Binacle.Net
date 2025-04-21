@@ -11,8 +11,9 @@ internal class CreateAccountRequestExample : ISingleOpenApiExamplesProvider<Crea
 			"Create Account",
 			new CreateAccountRequest
 			{
-				Email = "useremail@domain.com",
-				Password = "userspassword"
+				Username = "test_user",
+				Email = "user@domain.test",
+				Password = "testpassword"
 			}
 		);
 	}

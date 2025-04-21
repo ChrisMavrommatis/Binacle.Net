@@ -10,7 +10,7 @@ using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule.Application.Authentication.UseCases;
 
-public record AuthenticationRequest(string Email, string Password)
+public record AuthenticationRequest(string Username, string Password)
 	: IRequest<FluxUnion<Token, Unauthorized, UnexpectedError>>;
 
 internal class AuthenticationRequestHandler: IRequestHandler<AuthenticationRequest, FluxUnion<Token, Unauthorized, UnexpectedError>>
@@ -36,7 +36,7 @@ internal class AuthenticationRequestHandler: IRequestHandler<AuthenticationReque
 	
 	public async ValueTask<FluxUnion<Token, Unauthorized, UnexpectedError>> HandleAsync(AuthenticationRequest request, CancellationToken cancellationToken)
 	{
-		var accountResult = await this.accountRepository.GetByEmailAsync(request.Email);
+		var accountResult = await this.accountRepository.GetByUsernameAsync(request.Username);
 		if (!accountResult.TryGetValue<Account>(out var account) || account is null)
 		{
 			return TypedResult.Unauthorized;

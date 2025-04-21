@@ -10,6 +10,13 @@ internal static class AccountResponseDescription
 		.AppendLine("When the account does not exist.")
 		.AppendLine()
 		.ToString();
+	
+	public static string For409Conflict = new StringBuilder("**Conflict**")
+		.AppendLine("<br />")
+		.AppendLine()
+		.AppendLine("When the account with the same username already exists.")
+		.AppendLine()
+		.ToString();
 }
 
 internal static class CreateAccountResponseDescription
@@ -20,13 +27,6 @@ internal static class CreateAccountResponseDescription
 		.AppendLine("When you have successfully created an account.")
 		.AppendLine()
 		.ToString();
-
-	public static string For409Conflict = new StringBuilder("**Conflict**")
-		.AppendLine("<br />")
-		.AppendLine()
-		.AppendLine("When the account with the same email already exists.")
-		.AppendLine()
-		.ToString();
 }
 
 internal static class PatchAccountResponseDescription
@@ -35,13 +35,6 @@ internal static class PatchAccountResponseDescription
 		.AppendLine("<br />")
 		.AppendLine()
 		.AppendLine("When the password was changed.")
-		.AppendLine()
-		.ToString();
-
-	public static string For409Conflict = new StringBuilder("**Conflict**")
-		.AppendLine("<br />")
-		.AppendLine()
-		.AppendLine("When the password is the same as the old.")
 		.AppendLine()
 		.ToString();
 }

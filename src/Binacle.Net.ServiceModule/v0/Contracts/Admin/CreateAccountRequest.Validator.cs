@@ -7,6 +7,7 @@ internal class CreateAccountRequestValidator : AbstractValidator<CreateAccountRe
 {
 	public CreateAccountRequestValidator()
 	{
-		Include(x => new AuthenticationInformationValidator());
+		Include(x => new PasswordValidator());
+		Include(x => new EmailValidator());
 	}
 }

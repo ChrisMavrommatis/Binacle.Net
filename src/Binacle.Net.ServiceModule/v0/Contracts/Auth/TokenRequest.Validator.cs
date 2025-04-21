@@ -7,6 +7,6 @@ internal class TokenRequestValidator : AbstractValidator<TokenRequest>
 {
 	public TokenRequestValidator()
 	{
-		Include(x => new AuthenticationInformationValidator());
+		Include(x => new PasswordValidator());
 	}
 }

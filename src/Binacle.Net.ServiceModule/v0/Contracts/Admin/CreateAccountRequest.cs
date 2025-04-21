@@ -2,8 +2,9 @@
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
-internal class CreateAccountRequest : IWithAuthenticationInformation
+internal class CreateAccountRequest : IWithPassword, IWithEmail
 {
-	public string Email { get; set; }
+	public string Username { get; set; }
 	public string Password { get; set; }
+	public string Email { get; set; }
 }

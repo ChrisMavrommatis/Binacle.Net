@@ -49,6 +49,26 @@ public class Account : AuditableEntity
 		this.PasswordHash = passwordHash;
 		this.SecurityStamp = Guid.NewGuid();
 	}
+	
+	public void ChangeUsername(string newUsername)
+	{
+		this.Username = newUsername;
+	}
+	
+	public void ChangeEmail(string newEmail)
+	{
+		this.Email = newEmail;
+	}
+
+	public void ChangeRole(AccountRole newRole)
+	{
+		this.Role = newRole;
+	}
+	
+	public void ChangeStatus(AccountStatus newStatus)
+	{
+		this.Status = newStatus;
+	}
 
 	public FluxUnion<Success, Conflict> SetSubscription(Subscription subscription)
 	{

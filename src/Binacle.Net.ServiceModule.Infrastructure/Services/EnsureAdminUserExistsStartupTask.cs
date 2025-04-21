@@ -1,4 +1,4 @@
-﻿using Binacle.Net.ServiceModule.Application.Authentication.Messages;
+﻿using Binacle.Net.ServiceModule.Application.Accounts.UseCases;
 using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.DependencyInjection;
 using YetAnotherMediator;
@@ -25,7 +25,11 @@ internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 			var adminCredentials = Environment.GetEnvironmentVariable("BINACLE_ADMIN_CREDENTIALS");
 			var configuredAdminCredentials = ParseAccountCredentials(adminCredentials ?? _defaultAdminAccount);
 
-			var request = new CreateAccountCommand(configuredAdminCredentials.Email, configuredAdminCredentials.Password);
+			var request = new CreateAccountCommand(
+				configuredAdminCredentials.Email.ToLowerInvariant(),
+				configuredAdminCredentials.Password,
+				configuredAdminCredentials.Email.ToLowerInvariant()
+			);
 
 			var result = await mediator.ExecuteAsync(request, cancellationToken);
 
