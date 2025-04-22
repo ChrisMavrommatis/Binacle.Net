@@ -1,11 +1,11 @@
-@Username = test@test.com
-@Password = testpassword
+@Username = admin@binacle.net
+@Password = B1n4cl3Adm!n
 
 POST https://{{HOST}}/api/auth/token
 Accept: application/json
 Content-Type: application/json
 
 {
-  "email": "{{Username}}",
+  "username": "{{Username}}",
   "password" : "{{Password}}"
 }

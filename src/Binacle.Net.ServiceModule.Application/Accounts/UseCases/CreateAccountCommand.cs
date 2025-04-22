@@ -11,7 +11,8 @@ namespace Binacle.Net.ServiceModule.Application.Accounts.UseCases;
 public record CreateAccountCommand(
 	string Username,
 	string Password,
-	string Email
+	string Email,
+	AccountRole Role
 ) : ICommand<FluxUnion<Account, Conflict, UnexpectedError>>;
 
 internal class CreateAccountCommandHandler : ICommandHandler<CreateAccountCommand, FluxUnion<Account, Conflict, UnexpectedError>>
@@ -42,7 +43,7 @@ internal class CreateAccountCommandHandler : ICommandHandler<CreateAccountComman
 		var utcNow = this.timeProvider.GetUtcNow();
 		var newAccount = new Account(
 			command.Username,
-			AccountRole.User,
+			command.Role,
 			command.Email.ToLowerInvariant(),
 			AccountStatus.Active,
 			utcNow

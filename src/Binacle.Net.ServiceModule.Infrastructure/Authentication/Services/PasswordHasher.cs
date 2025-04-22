@@ -6,11 +6,11 @@ internal class PasswordHasher : IPasswordHasher
 {
 	public bool PasswordMatches(string password, string passwordHash)
 	{
-		throw new NotImplementedException();
+		return passwordHash == password;
 	}
 
 	public string CreateHash(string password)
 	{
-		throw new NotImplementedException();
+		return password;
 	}
 }

@@ -1,20 +1,22 @@
-﻿using Binacle.Net.ServiceModule.Domain.Configuration.Models;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using Binacle.Net.ServiceModule.IntegrationTests.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System.Net.Http.Json;
 
 namespace Binacle.Net.ServiceModule.IntegrationTests.Abstractions;
 
 public abstract partial class UsersEndpointTestsBase : IAsyncLifetime
 {
 	protected readonly BinacleApiAsAServiceFactory Sut;
-	protected readonly Models.TestUser TestUser;
-	protected readonly Models.TestUser AdminUser;
+	protected readonly TestUser TestUser;
+	protected readonly TestUser AdminUser;
 
 	public UsersEndpointTestsBase(BinacleApiAsAServiceFactory sut)
 	{
 		this.Sut = sut;
-		this.TestUser = new Models.TestUser
+		this.TestUser = new TestUser
 		{
 			Email = "testuser@binacle.net",
 			Password = "T3stUs3rsP@ssw0rd"
@@ -23,54 +25,54 @@ public abstract partial class UsersEndpointTestsBase : IAsyncLifetime
 		var userOptions = this.Sut.Services.GetRequiredService<IOptions<UserOptions>>();
 		var defaultAdminUser = userOptions.Value.GetParsedDefaultAdminUser();
 
-		this.AdminUser = new Models.TestUser
+		this.AdminUser = new TestUser
 		{
 			Email = defaultAdminUser.Email,
 			Password = defaultAdminUser.Password
 		};
 	}
 
-	protected async Task AuthenticateAsAsync(Models.TestUser user)
+	protected async Task AuthenticateAsAsync(TestUser user)
 	{
-		var request = new Net.ServiceModule.v0.Requests.TokenRequest()
+		var request = new v0.Requests.TokenRequest()
 		{
 			Email = user.Email,
 			Password = user.Password
 		};
 		var response = await this.Sut.Client.PostAsJsonAsync("/api/auth/token", request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
-		var tokenResponse = await response.Content.ReadAsAsync<Net.ServiceModule.v0.Responses.TokenResponse>();
+		response.StatusCode.ShouldBe(HttpStatusCode.OK);
+		var tokenResponse = await response.Content.ReadAsAsync<v0.Responses.TokenResponse>();
 
-		this.Sut.Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
+		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
 	}
 
-	protected async Task CreateUser(Models.TestUser user)
+	protected async Task CreateUser(TestUser user)
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
-		var request = new Net.ServiceModule.v0.Requests.CreateApiUserRequest
+		var request = new v0.Requests.CreateApiUserRequest
 		{
 			Email = user.Email,
 			Password = user.Password
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync("/api/users", request, this.Sut.JsonSerializerOptions);
-		if (response.StatusCode != System.Net.HttpStatusCode.Created &&
-			response.StatusCode != System.Net.HttpStatusCode.Conflict)
+		if (response.StatusCode != HttpStatusCode.Created &&
+			response.StatusCode != HttpStatusCode.Conflict)
 		{
-			throw new System.ApplicationException($"Error while creating user {user.Email}. Response status code was {response.StatusCode}");
+			throw new ApplicationException($"Error while creating user {user.Email}. Response status code was {response.StatusCode}");
 		}
 	}
 
-	protected async Task DeleteUser(Models.TestUser user)
+	protected async Task DeleteUser(TestUser user)
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
 		var response = await this.Sut.Client.DeleteAsync($"/api/users/{user.Email}");
 
-		if (response.StatusCode != System.Net.HttpStatusCode.NoContent &&
-			response.StatusCode != System.Net.HttpStatusCode.NotFound)
+		if (response.StatusCode != HttpStatusCode.NoContent &&
+			response.StatusCode != HttpStatusCode.NotFound)
 		{
-			throw new System.ApplicationException($"Error while deleting user {user.Email}. Response status code was {response.StatusCode}");
+			throw new ApplicationException($"Error while deleting user {user.Email}. Response status code was {response.StatusCode}");
 		}
 	}
 

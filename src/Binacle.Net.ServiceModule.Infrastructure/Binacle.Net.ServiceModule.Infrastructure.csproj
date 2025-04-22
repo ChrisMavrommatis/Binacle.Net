@@ -25,7 +25,6 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Application\Binacle.Net.ServiceModule.Application.csproj" />
-	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Infrastructure.AzureTables\Binacle.Net.ServiceModule.Infrastructure.AzureTables.csproj" />
 	</ItemGroup>
 
 </Project>

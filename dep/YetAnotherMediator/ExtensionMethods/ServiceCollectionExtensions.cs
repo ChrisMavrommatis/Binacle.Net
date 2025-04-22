@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
 		where TRequest : IRequest<TResponse>
 		where THandler : class, IRequestHandler<TRequest, TResponse>
 	{
-		services.AddScoped<IRequestHandler<TRequest, TResponse>, THandler>();
+		services.AddTransient<IRequestHandler<TRequest, TResponse>, THandler>();
 		return services;
 	}
 
@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions
 		where TQuery : IQuery<TResult>
 		where THandler : class, IQueryHandler<TQuery, TResult>
 	{
-		services.AddScoped<IQueryHandler<TQuery, TResult>, THandler>();
+		services.AddTransient<IQueryHandler<TQuery, TResult>, THandler>();
 		return services;
 	}
 
@@ -36,7 +36,7 @@ public static class ServiceCollectionExtensions
 		where TCommand : ICommand<TResult>
 		where THandler : class, ICommandHandler<TCommand, TResult>
 	{
-		services.AddScoped<ICommandHandler<TCommand, TResult>, THandler>();
+		services.AddTransient<ICommandHandler<TCommand, TResult>, THandler>();
 		return services;
 	}
 	

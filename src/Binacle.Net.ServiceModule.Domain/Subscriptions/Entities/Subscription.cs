@@ -5,7 +5,7 @@ namespace Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 
 public class Subscription : AuditableEntity
 {
-	private Guid? accountId;
+	public Guid? AccountId { get; }
 	public SubscriptionType Type { get; private set; }
 	
 	private SubscriptionStatus status;
@@ -22,7 +22,7 @@ public class Subscription : AuditableEntity
 			creationDate
 		)
 	{
-		this.accountId = accountId;
+		this.AccountId = accountId;
 		this.status = status;
 		this.Type = type;
 	}

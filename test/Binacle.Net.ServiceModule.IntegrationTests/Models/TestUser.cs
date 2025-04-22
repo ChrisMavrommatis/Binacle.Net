@@ -1,7 +1,8 @@
 ﻿namespace Binacle.Net.ServiceModule.IntegrationTests.Models;
 
-public class TestUser
+public class TestAccount
 {
-	public required string Email { get; set; }
+	public Guid Id { get; set; }
+	public required string Username { get; set; }
 	public required string Password { get; set; }
 }

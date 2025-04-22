@@ -1,5 +1,4 @@
-﻿using Binacle.Net;
-using Binacle.Net.Configuration.Models;
+﻿using Binacle.Net.Configuration.Models;
 using Binacle.Net.TestsKernel.TestPriority;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;

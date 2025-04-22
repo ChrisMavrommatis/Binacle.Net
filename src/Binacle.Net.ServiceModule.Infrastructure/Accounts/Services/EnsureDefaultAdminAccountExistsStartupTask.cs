@@ -1,15 +1,18 @@
 ﻿using Binacle.Net.ServiceModule.Application.Accounts.UseCases;
+using Binacle.Net.ServiceModule.Application.Common.Configuration;
+using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using YetAnotherMediator;
 
-namespace Binacle.Net.ServiceModule.Infrastructure.Services;
+namespace Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;
 
 internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 {
 	private readonly IServiceProvider serviceProvider;
 
-	private const string _defaultAdminAccount = "admin@binacle.net:B1n4cl3Adm!n";
+	private const string _defaultAdminAccount = "admin@binacle.net:B1n4cl3Adm!n"; 
 
 	public EnsureDefaultAdminAccountExistsStartupTask(IServiceProvider serviceProvider)
 	{
@@ -22,13 +25,15 @@ internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 		{
 			var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-			var adminCredentials = Environment.GetEnvironmentVariable("BINACLE_ADMIN_CREDENTIALS");
-			var configuredAdminCredentials = ParseAccountCredentials(adminCredentials ?? _defaultAdminAccount);
+			// get configuration
+			var options = scope.ServiceProvider.GetRequiredService<IOptions<ServiceModuleOptions>>();
+			var configuredAdminCredentials = ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
 
 			var request = new CreateAccountCommand(
-				configuredAdminCredentials.Email.ToLowerInvariant(),
+				configuredAdminCredentials.Username.ToLowerInvariant(),
 				configuredAdminCredentials.Password,
-				configuredAdminCredentials.Email.ToLowerInvariant()
+				configuredAdminCredentials.Username.ToLowerInvariant(),
+				AccountRole.Admin
 			);
 
 			var result = await mediator.ExecuteAsync(request, cancellationToken);
@@ -47,24 +52,5 @@ internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 
 	}
 
-	private static ConfiguredAccountCredentials ParseAccountCredentials(string accountCredentials)
-	{
-		if (string.IsNullOrWhiteSpace(accountCredentials))
-		{
-			throw new ArgumentNullException(nameof(accountCredentials), "Account credentials cannot be null or empty");
-		}
 
-		var parts = accountCredentials.Split(":");
-		return new ConfiguredAccountCredentials
-		{
-			Email = parts[0],
-			Password = parts[1]
-		};
-	}
-
-	private class ConfiguredAccountCredentials
-	{
-		public required string Email { get; init; }
-		public required string Password { get; init; }
-	}
 }

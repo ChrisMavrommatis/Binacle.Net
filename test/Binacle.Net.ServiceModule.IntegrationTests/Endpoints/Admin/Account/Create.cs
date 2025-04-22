@@ -1,15 +1,15 @@
-﻿using Binacle.Net.ServiceModule.IntegrationTests.Models;
+﻿using System.Net;
 using System.Net.Http.Json;
 
-namespace Binacle.Net.ServiceModule.IntegrationTests;
+namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Account;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
 [Collection(BinacleApiAsAServiceCollection.Name)]
-public class CreateUser : Abstractions.UsersEndpointTestsBase
+public class Create : UsersEndpointTestsBase
 {
 	private readonly TestUser newUser;
 
-	public CreateUser(BinacleApiAsAServiceFactory sut) : base(sut)
+	public Create(BinacleApiAsAServiceFactory sut) : base(sut)
 	{
 		this.newUser = new TestUser
 		{
@@ -18,7 +18,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 		};
 	}
 
-	private const string routePath = "/api/users";
+	private const string routePath = "/api/admin/users";
 
 	#region 401 Unauthorized
 
@@ -26,7 +26,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithoutBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithoutBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new Net.ServiceModule.v0.Requests.CreateApiUserRequest
+			var request = new v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -40,7 +40,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithExpiredBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithExpiredBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new Net.ServiceModule.v0.Requests.CreateApiUserRequest
+			var request = new v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -53,7 +53,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithWrongIssuerBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new Net.ServiceModule.v0.Requests.CreateApiUserRequest
+			var request = new v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -67,7 +67,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithWrongAudienceBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new Net.ServiceModule.v0.Requests.CreateApiUserRequest
+			var request = new v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -81,7 +81,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithWronglySignedBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWronglySignedBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new Net.ServiceModule.v0.Requests.CreateApiUserRequest
+			var request = new v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -98,7 +98,7 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	public Task Post_WithoutAdminUserBearerToken_Returns_403Forbidden()
 		=> this.Action_WithoutAdminUserBearerToken_Returns_403Forbidden(async () =>
 		{
-			var request = new Net.ServiceModule.v0.Requests.CreateApiUserRequest
+			var request = new v0.Requests.CreateApiUserRequest
 			{
 				Email = this.newUser.Email,
 				Password = this.newUser.Password
@@ -117,14 +117,14 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
-		var request = new Net.ServiceModule.v0.Requests.CreateApiUserRequest
+		var request = new v0.Requests.CreateApiUserRequest
 		{
 			Email = this.newUser.Email,
 			Password = this.newUser.Password
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Created);
+		response.StatusCode.ShouldBe(HttpStatusCode.Created);
 	}
 	#endregion
 
@@ -135,14 +135,14 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
-		var request = new Net.ServiceModule.v0.Requests.CreateApiUserRequest
+		var request = new v0.Requests.CreateApiUserRequest
 		{
 			Email = "newuser.test",
 			Password = this.newUser.Password
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Password Returns 400 BadRequest")]
@@ -150,14 +150,14 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
-		var request = new Net.ServiceModule.v0.Requests.CreateApiUserRequest
+		var request = new v0.Requests.CreateApiUserRequest
 		{
 			Email = this.newUser.Email,
 			Password = "password"
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 	}
 	#endregion
 
@@ -168,14 +168,14 @@ public class CreateUser : Abstractions.UsersEndpointTestsBase
 	{
 		await this.AuthenticateAsAsync(this.AdminUser);
 
-		var request = new Net.ServiceModule.v0.Requests.CreateApiUserRequest
+		var request = new v0.Requests.CreateApiUserRequest
 		{
 			Email = this.TestUser.Email,
 			Password = this.TestUser.Password
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Conflict);
+		response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
 	}
 
 	#endregion

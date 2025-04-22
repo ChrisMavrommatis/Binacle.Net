@@ -40,6 +40,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiExamples", "dep\Open
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.ViPaq", "dep\Binacle.ViPaq\Binacle.ViPaq.csproj", "{27243C7C-94C8-4F85-A924-83674E764906}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluxResults", "dep\FluxResults\FluxResults.csproj", "{DCD82F0A-1665-4DC8-B899-17ECDA7D12E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YetAnotherMediator", "dep\YetAnotherMediator\YetAnotherMediator.csproj", "{8761E190-8EBE-4835-B68E-250980EDB42F}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{88EC1702-D375-496F-B26A-384DBEA8E0AA}"
 	ProjectSection(SolutionItems) = preProject
 		doc\README.md = doc\README.md
@@ -74,42 +78,40 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib.Abstractions", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net", "src\Binacle.Net\Binacle.Net.csproj", "{7645D2E0-69FF-42BD-A6C3-C527E2472E15}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule", "src\Binacle.Net.ServiceModule\Binacle.Net.ServiceModule.csproj", "{217F952B-6689-4284-83B3-07251CB5AB2F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule.Infrastructure", "src\Binacle.Net.ServiceModule.Infrastructure\Binacle.Net.ServiceModule.Infrastructure.csproj", "{325E39DF-D285-4400-905B-C5CFCB858829}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule.Infrastructure.AzureTables", "src\Binacle.Net.ServiceModule.Infrastructure.AzureTables\Binacle.Net.ServiceModule.Infrastructure.AzureTables.csproj", "{7053062D-E3AA-492E-B409-7F7D868ED6D9}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule.Domain", "src\Binacle.Net.ServiceModule.Domain\Binacle.Net.ServiceModule.Domain.csproj", "{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.DiagnosticsModule", "src\Binacle.Net.DiagnosticsModule\Binacle.Net.DiagnosticsModule.csproj", "{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Kernel", "src\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj", "{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule", "src\Binacle.Net.ServiceModule\Binacle.Net.ServiceModule.csproj", "{217F952B-6689-4284-83B3-07251CB5AB2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binacle.Net.ServiceModule.Application", "src\Binacle.Net.ServiceModule.Application\Binacle.Net.ServiceModule.Application.csproj", "{18420D2B-1D1E-4F7C-A382-75E2231B549A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule.Domain", "src\Binacle.Net.ServiceModule.Domain\Binacle.Net.ServiceModule.Domain.csproj", "{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule.Infrastructure", "src\Binacle.Net.ServiceModule.Infrastructure\Binacle.Net.ServiceModule.Infrastructure.csproj", "{325E39DF-D285-4400-905B-C5CFCB858829}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.UIModule", "src\Binacle.Net.UIModule\Binacle.Net.UIModule.csproj", "{3020B942-5FCA-4821-B425-B1CF76C5BE85}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.DiagnosticsModule", "src\Binacle.Net.DiagnosticsModule\Binacle.Net.DiagnosticsModule.csproj", "{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}"
-EndProject
+
+
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{33E52B99-426D-45F3-A663-E34A612626B0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.TestsKernel", "test\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj", "{198E9FA1-54ED-44D3-9DBE-49CBBA785833}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib.Benchmarks", "test\Binacle.Lib.Benchmarks\Binacle.Lib.Benchmarks.csproj", "{E07A46C2-5FAE-4373-AA86-FF95FA5BCBD1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib.PerformanceTests", "test\Binacle.Lib.PerformanceTests\Binacle.Lib.PerformanceTests.csproj", "{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib.UnitTests", "test\Binacle.Lib.UnitTests\Binacle.Lib.UnitTests.csproj", "{F2367457-E8A0-42BE-A64B-DF12621B9CBA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib.Benchmarks", "test\Binacle.Lib.Benchmarks\Binacle.Lib.Benchmarks.csproj", "{E07A46C2-5FAE-4373-AA86-FF95FA5BCBD1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.IntegrationTests", "test\Binacle.Net.IntegrationTests\Binacle.Net.IntegrationTests.csproj", "{A987C6F6-D895-467B-BA8C-CBF86F4BFC3F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule.IntegrationTests", "test\Binacle.Net.ServiceModule.IntegrationTests\Binacle.Net.ServiceModule.IntegrationTests.csproj", "{0987E640-1DFA-4176-90F0-339907209288}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib.PerformanceTests", "test\Binacle.Lib.PerformanceTests\Binacle.Lib.PerformanceTests.csproj", "{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.TestsKernel", "test\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj", "{198E9FA1-54ED-44D3-9DBE-49CBBA785833}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.ViPaq.UnitTests", "test\Binacle.ViPaq.UnitTests\Binacle.ViPaq.UnitTests.csproj", "{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluxResults", "dep\FluxResults\FluxResults.csproj", "{DCD82F0A-1665-4DC8-B899-17ECDA7D12E9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binacle.Net.ServiceModule.Application", "src\Binacle.Net.ServiceModule.Application\Binacle.Net.ServiceModule.Application.csproj", "{18420D2B-1D1E-4F7C-A382-75E2231B549A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YetAnotherMediator", "dep\YetAnotherMediator\YetAnotherMediator.csproj", "{8761E190-8EBE-4835-B68E-250980EDB42F}"
-EndProject
+
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -222,14 +224,6 @@ Global
 		{325E39DF-D285-4400-905B-C5CFCB858829}.Release|Any CPU.Build.0 = Release|Any CPU
 		{325E39DF-D285-4400-905B-C5CFCB858829}.Release|x86.ActiveCfg = Release|Any CPU
 		{325E39DF-D285-4400-905B-C5CFCB858829}.Release|x86.Build.0 = Release|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Debug|x86.Build.0 = Debug|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Release|x86.ActiveCfg = Release|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Release|x86.Build.0 = Release|Any CPU
 		{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -379,7 +373,6 @@ Global
 		{7645D2E0-69FF-42BD-A6C3-C527E2472E15} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{217F952B-6689-4284-83B3-07251CB5AB2F} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{325E39DF-D285-4400-905B-C5CFCB858829} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{3020B942-5FCA-4821-B425-B1CF76C5BE85} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}

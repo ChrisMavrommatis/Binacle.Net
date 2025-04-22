@@ -17,7 +17,8 @@ internal class CommandHandlerWrapperImpl<TCommand, TResult> : CommandHandlerWrap
 {
 	public override ValueTask<TResult> Handle(ICommand<TResult> command, IServiceProvider provider, CancellationToken cancellationToken)
 	{
-		var handler = provider.GetRequiredService<ICommandHandler<TCommand, TResult>>();
+		var handler = provider.GetService<ICommandHandler<TCommand, TResult>>();
+		// var handler = provider.GetRequiredService<ICommandHandler<TCommand, TResult>>();
 		return handler.HandleAsync((TCommand)command, cancellationToken);
 	}
 }

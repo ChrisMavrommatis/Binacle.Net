@@ -1,5 +1,4 @@
-﻿using Binacle.Net;
-using Binacle.Net.Kernel.OpenApi;
+﻿using Binacle.Net.Kernel.OpenApi;
 using OpenApiExamples;
 
 namespace Binacle.Net.v1;

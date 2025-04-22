@@ -1,18 +1,19 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using Binacle.Net.ServiceModule.Application.Common.Configuration;
 using Binacle.Net.ServiceModule.v0.Contracts.Auth;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Binacle.Net.ServiceModule.IntegrationTests;
+namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Auth;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
 [Collection(BinacleApiAsAServiceCollection.Name)]
-public class AuthToken
+public class Token
 {
 	private readonly BinacleApiAsAServiceFactory sut;
 
-	public AuthToken(BinacleApiAsAServiceFactory sut)
+	public Token(BinacleApiAsAServiceFactory sut)
 	{
 		this.sut = sut;
 	}
@@ -23,11 +24,11 @@ public class AuthToken
 	[Fact(DisplayName = $"POST {routePath}. With Valid Credentials Returns 200 OK")]
 	public async Task Post_WithValidCredentials_Returns_200OK()
 	{
-		var userOptions = this.sut.Services.GetRequiredService<IOptions<UserOptions>>();
-		var defaultAdminUser = userOptions.Value.GetParsedDefaultAdminUser();
+		var options = this.sut.Services.GetRequiredService<IOptions<ServiceModuleOptions>>();
+		var defaultAdminUser = ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
 		var request = new TokenRequest()
 		{
-			Email = defaultAdminUser.Email,
+			Username = defaultAdminUser.Username,
 			Password = defaultAdminUser.Password
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
@@ -39,7 +40,7 @@ public class AuthToken
 	{
 		var request = new TokenRequest()
 		{
-			Email = "invalid@nonexisting.test",
+			Username = "invalid@nonexisting.test",
 			Password = "Wr0ngP@ssw0rd"
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
@@ -51,7 +52,7 @@ public class AuthToken
 	{
 		var request1 = new TokenRequest()
 		{
-			Email = "notvalidemail.test",
+			Username = "notvalidemail.test",
 			Password = "Wr0ngP@ssw0rd"
 		};
 		var response1 = await this.sut.Client.PostAsJsonAsync(routePath, request1, this.sut.JsonSerializerOptions);
@@ -59,7 +60,7 @@ public class AuthToken
 
 		var request2 = new TokenRequest()
 		{
-			Email = "valid@email.test",
+			Username = "valid@email.test",
 			Password = "invpass"
 		};
 		var response2 = await this.sut.Client.PostAsJsonAsync(routePath, request2, this.sut.JsonSerializerOptions);

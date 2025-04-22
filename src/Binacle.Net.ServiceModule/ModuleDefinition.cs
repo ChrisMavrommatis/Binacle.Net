@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule;
 
@@ -83,6 +84,7 @@ public static class ModuleDefinition
 		});
 
 
+		builder.Services.AddMediator();
 		builder
 			.AddApplication()
 			.AddInfrastructure();

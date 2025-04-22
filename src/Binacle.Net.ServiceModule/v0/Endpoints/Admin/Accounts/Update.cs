@@ -51,7 +51,6 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			return Results.BadRequest(
 				ErrorResponse.IdToGuidParameterError()
 			);
-
 		}
 
 		if (!request.ValidationResult?.IsValid ?? false)

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Binacle.Net;
+using Binacle.Net.ServiceModule.Application.Common.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -56,6 +56,10 @@ public class BinacleApiAsAServiceFactory : WebApplicationFactory<IApiMarker>
 		builder.ConfigureTestServices(services =>
 		{
 			services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
+			services.Configure<ServiceModuleOptions>(options =>
+			{
+				options.DefaultAdminAccount = "testadmin@binacle.net:B1n4cl3Adm!nT3st";
+			});
 		});
 	}
 

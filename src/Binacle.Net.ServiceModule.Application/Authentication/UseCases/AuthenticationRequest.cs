@@ -47,7 +47,7 @@ internal class AuthenticationRequestHandler: IRequestHandler<AuthenticationReque
 			return TypedResult.Unauthorized;
 		}
 
-		if (this.passwordHasher.PasswordMatches(request.Password, account.PasswordHash!))
+		if (!this.passwordHasher.PasswordMatches(request.Password, account.PasswordHash!))
 		{
 			return TypedResult.Unauthorized;
 		}
@@ -64,6 +64,7 @@ internal class AuthenticationRequestHandler: IRequestHandler<AuthenticationReque
 		}
 
 		var tokenResult = this.tokenService.GenerateToken(account, subscription);
+		// Flux here
 		if (tokenResult.TryGetValue<Token>(out var token) && token is not null)
 		{
 			return token;

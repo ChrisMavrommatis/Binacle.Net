@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
+using Binacle.Net.ServiceModule.v0.Contracts.Auth;
 
 namespace Binacle.Net.ServiceModule.IntegrationTests;
 
@@ -22,12 +24,12 @@ public class SanityTests
 	[Fact]
 	public async Task Sut_Configured_Correctly()
 	{
-		var request = new v0.Requests.TokenRequest()
+		var request = new TokenRequest()
 		{
-			Email = "test@test.com",
+			Username = "test@test.com",
 			Password = "password123"
 		};
 		var response = await this.sut.Client.PostAsJsonAsync("/api/auth/token", request, this.sut.JsonSerializerOptions);
-		response.StatusCode.ShouldNotBe(System.Net.HttpStatusCode.NotFound);
+		response.StatusCode.ShouldNotBe(HttpStatusCode.NotFound);
 	}
 }

@@ -6,12 +6,16 @@ public readonly struct FluxUnion<T0, T1> : IFluxUnion
 	where T0 : notnull
 	where T1 : notnull
 {
-	private enum Flux { T0, T1 }
+	private enum Flux
+	{
+		T0,
+		T1
+	}
 
 	private readonly Flux flux;
-	private readonly T0? t0;
-	private readonly T1? t1;
-	
+	internal readonly T0? t0;
+	internal readonly T1? t1;
+
 	public object Value =>
 		this.flux switch
 		{
@@ -62,6 +66,7 @@ public readonly struct FluxUnion<T0, T1> : IFluxUnion
 			result = (T)(object)t0!;
 			return true;
 		}
+
 		if (typeof(T) == typeof(T1) && this.flux == Flux.T1)
 		{
 			result = (T)(object)t1!;
@@ -70,24 +75,26 @@ public readonly struct FluxUnion<T0, T1> : IFluxUnion
 
 		result = default;
 		return false;
-		
 	}
-	
 }
-
 
 public readonly struct FluxUnion<T0, T1, T2> : IFluxUnion
 	where T0 : notnull
 	where T1 : notnull
 	where T2 : notnull
 {
-	private enum Flux { T0, T1, T2 }
-	
+	private enum Flux
+	{
+		T0,
+		T1,
+		T2
+	}
+
 	private readonly Flux flux;
 	private readonly T0? t0;
 	private readonly T1? t1;
 	private readonly T2? t2;
-	
+
 	public object Value =>
 		this.flux switch
 		{
@@ -113,7 +120,8 @@ public readonly struct FluxUnion<T0, T1, T2> : IFluxUnion
 	public static implicit operator FluxUnion<T0, T1, T2>(T0 t0) => new(Flux.T0, t0: t0);
 	public static implicit operator FluxUnion<T0, T1, T2>(T1 t1) => new(Flux.T1, t1: t1);
 	public static implicit operator FluxUnion<T0, T1, T2>(T2 t2) => new(Flux.T2, t2: t2);
-	
+
+
 	public TResult Match<TResult>(
 		Func<T0, TResult> t0Func,
 		Func<T1, TResult> t1Func,
@@ -128,7 +136,7 @@ public readonly struct FluxUnion<T0, T1, T2> : IFluxUnion
 			_ => throw new InvalidOperationException("Invalid result value.")
 		};
 	}
-	
+
 	public bool Is<T>()
 	{
 		return
@@ -136,7 +144,7 @@ public readonly struct FluxUnion<T0, T1, T2> : IFluxUnion
 			typeof(T) == typeof(T1) && this.flux == Flux.T1 ||
 			typeof(T) == typeof(T2) && this.flux == Flux.T2;
 	}
-	
+
 	public bool TryGetValue<T>(out T? result)
 	{
 		if (typeof(T) == typeof(T0) && this.flux == Flux.T0)
@@ -144,11 +152,13 @@ public readonly struct FluxUnion<T0, T1, T2> : IFluxUnion
 			result = (T)(object)t0!;
 			return true;
 		}
+
 		if (typeof(T) == typeof(T1) && this.flux == Flux.T1)
 		{
 			result = (T)(object)t1!;
 			return true;
 		}
+
 		if (typeof(T) == typeof(T2) && this.flux == Flux.T2)
 		{
 			result = (T)(object)t2!;
@@ -157,7 +167,6 @@ public readonly struct FluxUnion<T0, T1, T2> : IFluxUnion
 
 		result = default;
 		return false;
-		
 	}
 }
 
@@ -167,14 +176,20 @@ public readonly struct FluxUnion<T0, T1, T2, T3> : IFluxUnion
 	where T2 : notnull
 	where T3 : notnull
 {
-	private enum Flux { T0, T1, T2, T3 }
-	
+	private enum Flux
+	{
+		T0,
+		T1,
+		T2,
+		T3
+	}
+
 	private readonly Flux flux;
 	private readonly T0? t0;
 	private readonly T1? t1;
 	private readonly T2? t2;
 	private readonly T3? t3;
-	
+
 	public object Value =>
 		this.flux switch
 		{
@@ -199,10 +214,12 @@ public readonly struct FluxUnion<T0, T1, T2, T3> : IFluxUnion
 		this.t2 = t2;
 		this.t3 = t3;
 	}
+
 	public static implicit operator FluxUnion<T0, T1, T2, T3>(T0 t0) => new(Flux.T0, t0: t0);
 	public static implicit operator FluxUnion<T0, T1, T2, T3>(T1 t1) => new(Flux.T1, t1: t1);
 	public static implicit operator FluxUnion<T0, T1, T2, T3>(T2 t2) => new(Flux.T2, t2: t2);
 	public static implicit operator FluxUnion<T0, T1, T2, T3>(T3 t3) => new(Flux.T3, t3: t3);
+
 	public TResult Match<TResult>(
 		Func<T0, TResult> t0Func,
 		Func<T1, TResult> t1Func,
@@ -219,6 +236,7 @@ public readonly struct FluxUnion<T0, T1, T2, T3> : IFluxUnion
 			_ => throw new InvalidOperationException("Invalid result value.")
 		};
 	}
+
 	public bool Is<T>()
 	{
 		return
@@ -227,6 +245,7 @@ public readonly struct FluxUnion<T0, T1, T2, T3> : IFluxUnion
 			typeof(T) == typeof(T2) && this.flux == Flux.T2 ||
 			typeof(T) == typeof(T3) && this.flux == Flux.T3;
 	}
+
 	public bool TryGetValue<T>(out T? result)
 	{
 		if (typeof(T) == typeof(T0) && this.flux == Flux.T0)
@@ -234,16 +253,19 @@ public readonly struct FluxUnion<T0, T1, T2, T3> : IFluxUnion
 			result = (T)(object)t0!;
 			return true;
 		}
+
 		if (typeof(T) == typeof(T1) && this.flux == Flux.T1)
 		{
 			result = (T)(object)t1!;
 			return true;
 		}
+
 		if (typeof(T) == typeof(T2) && this.flux == Flux.T2)
 		{
 			result = (T)(object)t2!;
 			return true;
 		}
+
 		if (typeof(T) == typeof(T3) && this.flux == Flux.T3)
 		{
 			result = (T)(object)t3!;
@@ -252,8 +274,5 @@ public readonly struct FluxUnion<T0, T1, T2, T3> : IFluxUnion
 
 		result = default;
 		return false;
-		
 	}
 }
-
-

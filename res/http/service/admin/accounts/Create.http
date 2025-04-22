@@ -1,0 +1,15 @@
+﻿@Email = useremail@domain.com
+@Username = useremail@domain.com
+@Password = userspassword
+@BearerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjYmY3MTU4NS02NzNiLTQ5ODktOTIxMy1lMGUzOTg1OWI1YzUiLCJzdWIiOiIwMTk2NWYxZC1kOTc4LTcwOWYtOTJiYS05YTlmNTZmNjk0MzUiLCJuYW1lIjoiYWRtaW5AYmluYWNsZS5uZXQiLCJlbWFpbCI6ImFkbWluQGJpbmFjbGUubmV0Iiwicm9sZSI6IkFkbWluIiwic2VjdXJpdHlTdGFtcCI6Ijk2NGZmZjZlLWIyZDQtNDJlMy05MzI0LTUwMTg4Y2Q2YzZlNCIsIm5iZiI6MTc0NTM1MjU1NiwiZXhwIjoxNzQ1MzU2MTU2LCJpYXQiOjE3NDUzNTI1NTYsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcxOTQiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo3MTk0In0.29kKjXKoTm7qxx9AYJCjvjnkXzJP32BNT3gnciqQ-jA
+
+POST https://{{HOST}}/api/admin/account/
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{BearerToken}}
+
+{
+  "username": "{{Username}}",
+  "email" : "{{Email}}",
+  "password": "{{Password}}"
+}

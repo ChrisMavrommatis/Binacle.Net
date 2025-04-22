@@ -19,9 +19,19 @@ internal static class AccountResponseDescription
 		.ToString();
 }
 
-internal static class CreateAccountResponseDescription
+internal static class GetAccountResponseDescription
 {
 	public static string For200OK = new StringBuilder("**OK**")
+		.AppendLine("<br />")
+		.AppendLine()
+		.AppendLine("When the account exists")
+		.AppendLine()
+		.ToString();
+}
+
+internal static class CreateAccountResponseDescription
+{
+	public static string For201Created = new StringBuilder("**Created**")
 		.AppendLine("<br />")
 		.AppendLine()
 		.AppendLine("When you have successfully created an account.")

@@ -1,5 +1,6 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Application.Accounts.UseCases;
+using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
@@ -16,12 +17,12 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("/account", HandleAsync)
-			.WithSummary("Create an account")
+			.WithSummary("Create account")
 			.WithDescription("Admins can use this endpoint to create accounts")
 			.Accepts<CreateAccountRequest>("application/json")
 			.RequestExample<CreateAccountRequestExample>("application/json")
 			.Produces(StatusCodes.Status201Created)
-			.WithResponseDescription(StatusCodes.Status201Created, CreateAccountResponseDescription.For200OK)
+			.WithResponseDescription(StatusCodes.Status201Created, CreateAccountResponseDescription.For201Created)
 			.ResponseExamples<CreateAccountErrorResponseExamples>(
 				StatusCodes.Status400BadRequest,
 				"application/json"
@@ -54,13 +55,14 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 		var createAccountCommand = new CreateAccountCommand(
 			request.Value.Username,
 			request.Value.Password,
-			request.Value.Email
+			request.Value.Email,
+			AccountRole.User
 		); 
 		
 		var result = await mediator.ExecuteAsync(createAccountCommand, cancellationToken);
 
 		return result.Match(
-			account => Results.Created(),
+			account => Results.Created($"/api/admin/account/{account.Id}", null),
 			conflict => Results.Conflict(),
 			error => Results.BadRequest(ErrorResponse.Create(error.Message ?? "Account creation failed"))
 		);
