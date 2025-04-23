@@ -9,6 +9,7 @@ internal class PresetNotFoundErrorResponseExample : ISingleOpenApiExamplesProvid
 	public IOpenApiExample<ErrorResponse> GetExample()
 	{
 		return OpenApiExample.Create(
+			"presetNotFound",
 			"Preset Not Found",
 			ErrorResponse.Create(ErrorCategory.PresetDoesntExist)
 		);

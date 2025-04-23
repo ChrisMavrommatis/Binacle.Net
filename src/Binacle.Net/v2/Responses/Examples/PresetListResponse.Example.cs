@@ -25,6 +25,7 @@ internal class PresetListResponseExample : ISingleOpenApiExamplesProvider<Preset
 			}
 		};
 		return OpenApiExample.Create(
+			"presetListResponse",
 			"Preset List Response",
 			PresetListResponse.Create(presets)
 		);

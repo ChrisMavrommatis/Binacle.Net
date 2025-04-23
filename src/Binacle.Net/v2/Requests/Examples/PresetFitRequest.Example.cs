@@ -8,6 +8,7 @@ internal class PresetFitRequestExample : ISingleOpenApiExamplesProvider<PresetFi
 	public IOpenApiExample<PresetFitRequest> GetExample()
 	{
 		return OpenApiExample.Create(
+			"presetFitRequest",
 			"Preset Fit Request",
 			new PresetFitRequest
 			{

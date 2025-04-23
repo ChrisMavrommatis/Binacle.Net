@@ -8,18 +8,22 @@ internal class CreateAccountErrorResponseExamples : IMultipleOpenApiExamplesProv
 {
 	public IEnumerable<IOpenApiExample<ErrorResponse>> GetExamples()
 	{
-		yield return OpenApiExample.Create("Validation Error", "Validation Error", "Example response with validation errors",
-			ErrorResponse.Create("Validation Error",
+		yield return OpenApiExample.Create(
+			"validationError",
+			"Validation Error",
+			"Example response with validation errors",
+			ErrorResponse.ValidationError(
 			[
 				"'Email' is not a valid email address.",
-				"The length of 'Password' must be at least 10 characters. You entered 8 characters." 
+				"The length of 'Password' must be at least 10 characters. You entered 8 characters."
 			])
 		);
 
-		yield return OpenApiExample.Create("Other Error", "Other Error", "Example response when something went wrong",
+		yield return OpenApiExample.Create(
+			"otherError",
+			"Other Error",
+			"Example response when something went wrong",
 			ErrorResponse.Create("Could not create user")
 		);
-		
 	}
 }
-

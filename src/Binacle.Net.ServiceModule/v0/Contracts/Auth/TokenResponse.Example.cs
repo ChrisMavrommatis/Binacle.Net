@@ -8,6 +8,7 @@ internal class TokenResponseExample : ISingleOpenApiExamplesProvider<TokenRespon
 	public IOpenApiExample<TokenResponse> GetExample()
 	{
 		return OpenApiExample.Create(
+			"successfulTokenResponse",
 			"Successful Token Response",
 			new TokenResponse
 			{

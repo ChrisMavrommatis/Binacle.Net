@@ -9,6 +9,7 @@ internal class PresetPackRequestExample : ISingleOpenApiExamplesProvider<PresetP
 	public IOpenApiExample<PresetPackRequest> GetExample()
 	{
 		return OpenApiExample.Create(
+			"presetPackRequest",
 			"Preset Pack Request",
 			new PresetPackRequest
 			{

@@ -8,6 +8,7 @@ internal class TokenRequestExample : ISingleOpenApiExamplesProvider<TokenRequest
 	public IOpenApiExample<TokenRequest> GetExample()
 	{
 		return OpenApiExample.Create(
+			"authToken",
 			"Auth Token",
 			new TokenRequest
 			{

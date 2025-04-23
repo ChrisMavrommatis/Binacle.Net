@@ -9,6 +9,7 @@ internal class PresetQueryRequestExample : ISingleOpenApiExamplesProvider<Preset
 	public IOpenApiExample<PresetQueryRequest> GetExample()
 	{
 		return OpenApiExample.Create(
+			"presetQueryRequest",
 			"Preset Query Request",
 			new PresetQueryRequest
 			{

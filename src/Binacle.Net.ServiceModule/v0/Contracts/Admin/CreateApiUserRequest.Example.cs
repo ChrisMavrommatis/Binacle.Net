@@ -8,6 +8,7 @@ internal class CreateAccountRequestExample : ISingleOpenApiExamplesProvider<Crea
 	public IOpenApiExample<CreateAccountRequest> GetExample()
 	{
 		return OpenApiExample.Create(
+			"createAccount",
 			"Create Account",
 			new CreateAccountRequest
 			{

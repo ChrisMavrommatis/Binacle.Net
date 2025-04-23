@@ -9,6 +9,7 @@ internal class ServerErrorResponseExample : ISingleOpenApiExamplesProvider<Error
 	public IOpenApiExample<ErrorResponse> GetExample()
 	{
 		return OpenApiExample.Create(
+			"serverError",
 			"Server Error",
 			ErrorResponse.Create(ErrorCategory.ServerError)
 				.AddExceptionError(new InvalidOperationException("Example Exception"))

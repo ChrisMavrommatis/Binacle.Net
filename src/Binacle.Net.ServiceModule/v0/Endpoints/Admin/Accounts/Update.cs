@@ -42,14 +42,14 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 		if (request.Value is null)
 		{
 			return Results.BadRequest(
-				ErrorResponse.MalformedRequest()
+				ErrorResponse.MalformedRequest
 			);
 		}
 
 		if (!Guid.TryParse(id, out var accountId))
 		{
 			return Results.BadRequest(
-				ErrorResponse.IdToGuidParameterError()
+				ErrorResponse.IdToGuidParameterError
 			);
 		}
 

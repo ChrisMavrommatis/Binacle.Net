@@ -9,7 +9,7 @@ internal class PresetQueryResponseExamples : IMultipleOpenApiExamplesProvider<Qu
 	public IEnumerable<IOpenApiExample<QueryResponse>> GetExamples()
 	{
 		yield return OpenApiExample.Create(
-			"Success",
+			"success",
 			"Found Bin",
 			"Response example when a bin is found",
 			new QueryResponse
@@ -20,7 +20,7 @@ internal class PresetQueryResponseExamples : IMultipleOpenApiExamplesProvider<Qu
 		);
 
 		yield return OpenApiExample.Create(
-			"Failure",
+			"failure",
 			"Bin not Found",
 			"Response example when a bin is not found",
 			new QueryResponse

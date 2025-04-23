@@ -7,7 +7,10 @@ internal class AuthErrorResponseExamples : IMultipleOpenApiExamplesProvider<Auth
 {
 	public IEnumerable<IOpenApiExample<AuthErrorResponse>> GetExamples()
 	{
-		yield return OpenApiExample.Create("Validation Error", "Validation Error", "Example response with validation errors",
+		yield return OpenApiExample.Create(
+			"validationError",
+			"Validation Error",
+			"Example response with validation errors",
 			AuthErrorResponse.Create("Validation Error",
 			[
 				"'Email' is not a valid email address.",
@@ -15,7 +18,10 @@ internal class AuthErrorResponseExamples : IMultipleOpenApiExamplesProvider<Auth
 			])
 		);
 
-		yield return OpenApiExample.Create("Other Error", "Other Error", "Example response when something went wrong",
+		yield return OpenApiExample.Create(
+			"otherError",
+			"Other Error",
+			"Example response when something went wrong",
 			AuthErrorResponse.Create("Failed to generate token")
 		);
 	}

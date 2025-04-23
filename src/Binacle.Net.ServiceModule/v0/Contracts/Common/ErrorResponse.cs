@@ -4,6 +4,7 @@ internal class ErrorResponse
 {
 	public required string Message { get; set; }
 	public string[]? Errors { get; set; }
+
 	internal static ErrorResponse Create(string message, string[]? errors = null)
 	{
 		return new ErrorResponse
@@ -13,14 +14,12 @@ internal class ErrorResponse
 		};
 	}
 
-	internal static ErrorResponse MalformedRequest()
-	{
-		return ErrorResponse.Create(
+	internal static ErrorResponse MalformedRequest =>
+		ErrorResponse.Create(
 			"Malformed request",
 			["Malformed request body"]
 		);
-	}
-	
+
 	internal static ErrorResponse ValidationError(string[] errors)
 	{
 		return ErrorResponse.Create(
@@ -28,12 +27,10 @@ internal class ErrorResponse
 			errors
 		);
 	}
-	
-	internal static ErrorResponse IdToGuidParameterError()
-	{
-		return ErrorResponse.Create(
+
+	internal static ErrorResponse IdToGuidParameterError =>
+		ErrorResponse.Create(
 			"Parameter Error",
 			["The provided value is not a valid Guid"]
 		);
-	}
 }

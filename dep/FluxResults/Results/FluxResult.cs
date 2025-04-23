@@ -1,8 +1,12 @@
-﻿using FluxResults.Abstractions.Results;
-using FluxResults.Abstractions.TypedResults;
-using FluxResults.TypedResults;
+﻿using FluxResults.TypedResults;
 
 namespace FluxResults.Results;
+
+public interface IFluxResult
+{
+	bool IsError { get; }
+}
+
 
 public readonly struct FluxResult<T0> : IFluxResult
 	where T0 : notnull

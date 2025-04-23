@@ -37,7 +37,7 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 		if (!Guid.TryParse(id, out var accountId))
 		{
 			return Results.BadRequest(
-				ErrorResponse.IdToGuidParameterError()
+				ErrorResponse.IdToGuidParameterError
 			);
 		}
 

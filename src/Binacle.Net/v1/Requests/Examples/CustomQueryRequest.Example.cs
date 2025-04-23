@@ -9,6 +9,7 @@ internal class CustomQueryRequestExample : ISingleOpenApiExamplesProvider<Custom
 	public IOpenApiExample<CustomQueryRequest> GetExample()
 	{
 		return OpenApiExample.Create(
+			"customQueryRequest",
 			"Custom Query Request",
 			new CustomQueryRequest
 			{

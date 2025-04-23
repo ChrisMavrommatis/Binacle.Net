@@ -7,6 +7,7 @@ internal class UpdateAccountRequestExamples : IMultipleOpenApiExamplesProvider<U
 {
 	public IEnumerable<IOpenApiExample<UpdateAccountRequest>> GetExamples()
 	{
+		// TODO Exxamples
 		throw new NotImplementedException();
 		// yield return OpenApiExample.Create(
 		// 	"Promote User",

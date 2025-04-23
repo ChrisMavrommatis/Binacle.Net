@@ -9,6 +9,7 @@ internal class CustomPackRequestExample : ISingleOpenApiExamplesProvider<CustomP
 	public IOpenApiExample<CustomPackRequest> GetExample()
 	{
 		return OpenApiExample.Create(
+			"customPackRequest",
 			"Custom Pack Request",
 			new CustomPackRequest
 			{

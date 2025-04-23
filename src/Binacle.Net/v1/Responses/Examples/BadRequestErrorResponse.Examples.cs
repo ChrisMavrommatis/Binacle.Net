@@ -9,7 +9,7 @@ internal class BadRequestErrorResponseExamples : IMultipleOpenApiExamplesProvide
 	public IEnumerable<IOpenApiExample<ErrorResponse>> GetExamples()
 	{
 		yield return OpenApiExample.Create(
-			"Validation Error",
+			"validationError",
 			"Validation Error",
 			"Example response with validation errors",
 			ErrorResponse.Create(ErrorCategory.ValidationError)
@@ -17,7 +17,7 @@ internal class BadRequestErrorResponseExamples : IMultipleOpenApiExamplesProvide
 		);
 
 		yield return OpenApiExample.Create(
-			"Request Error",
+			"requestError",
 			"Request Error",
 			"Example response when the request is malformed",
 			ErrorResponse.Create(ErrorCategory.RequestError)

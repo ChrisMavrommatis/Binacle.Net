@@ -39,7 +39,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 		if (request.Value is null)
 		{
 			return Results.BadRequest(
-				ErrorResponse.MalformedRequest()
+				ErrorResponse.MalformedRequest
 			);
 		}
 

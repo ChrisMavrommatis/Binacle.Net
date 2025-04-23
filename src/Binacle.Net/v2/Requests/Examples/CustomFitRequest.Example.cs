@@ -9,6 +9,7 @@ internal class CustomFitRequestExample : ISingleOpenApiExamplesProvider<CustomFi
 	public IOpenApiExample<CustomFitRequest> GetExample()
 	{
 		return OpenApiExample.Create(
+			"customFitRequest",
 			"Custom Fit Request",
 			new CustomFitRequest
 			{

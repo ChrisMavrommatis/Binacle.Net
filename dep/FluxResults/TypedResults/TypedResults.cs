@@ -1,6 +1,10 @@
-﻿using FluxResults.Abstractions.TypedResults;
-
+﻿
 namespace FluxResults.TypedResults;
+
+
+public interface ITypedResult;
+public interface ISuccessfulTypedResult;
+public interface IErrorTypedResult : ITypedResult;
 
 public readonly record struct Success(string? Message) : ISuccessfulTypedResult;
 public readonly record struct Created(string? Message) : ISuccessfulTypedResult;

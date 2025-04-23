@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using Binacle.Net.ServiceModule.Application.Authentication.Configuration;
 using Binacle.Net.ServiceModule.Application.Authentication.Models;
 using Binacle.Net.ServiceModule.Infrastructure.Authentication.Services;
+using FluxResults.Unions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
