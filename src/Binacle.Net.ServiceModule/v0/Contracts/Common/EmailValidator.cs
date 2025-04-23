@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Common;
 
-public class EmailValidator : AbstractValidator<IWithEmail>
+internal class EmailValidator : AbstractValidator<IWithEmail>
 {
 	public EmailValidator()
 	{

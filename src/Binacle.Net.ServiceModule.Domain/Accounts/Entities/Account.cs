@@ -16,7 +16,7 @@ public class Account : AuditableEntity
 	public string? PasswordHash { get; private set; }
 	public Guid SecurityStamp { get; private set; }
 	
-	private Guid? subscriptionId;
+	public Guid? SubscriptionId { get; private set; }
 	
 	public Account(
 		string username,
@@ -72,20 +72,20 @@ public class Account : AuditableEntity
 
 	public FluxUnion<Success, Conflict> SetSubscription(Subscription subscription)
 	{
-		if (this.subscriptionId.HasValue)
+		if (this.SubscriptionId.HasValue)
 		{
 			return TypedResult.Conflict;
 		}
 
-		this.subscriptionId = subscription.Id;
+		this.SubscriptionId = subscription.Id;
 
 		return TypedResult.Success;
 	}
 	
 	public bool HasSubscription()
 	{
-		return this.subscriptionId.HasValue
-			&& this.subscriptionId.Value != Guid.Empty;
+		return this.SubscriptionId.HasValue
+			&& this.SubscriptionId.Value != Guid.Empty;
 	}
 
 	public bool IsActive()

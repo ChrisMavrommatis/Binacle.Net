@@ -1,6 +1,6 @@
 ﻿namespace Binacle.Net.ServiceModule.v0.Contracts.Common.Interfaces;
 
-internal interface IWithPassword
+internal interface IWithUsername
 {
-	public string Password { get; }
+	public string Username { get; }
 }

@@ -20,10 +20,11 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 			.WithDescription("Admins can use this endpoint to get an account's information")
 			.Produces(StatusCodes.Status200OK)
 			.WithResponseDescription(StatusCodes.Status200OK, GetAccountResponseDescription.For200OK)
-			//.ResponseExample<GetAccountErrorResponseExample>(
-			//	StatusCodes.Status400BadRequest,
-			//	"application/json"
-			//)
+			.ResponseExample<GetAccountResponseExample>(StatusCodes.Status200OK, "application/json")
+			.ResponseExample<GetAccountErrorResponseExample>(
+				StatusCodes.Status400BadRequest,
+				"application/json"
+			)
 			.Produces(StatusCodes.Status404NotFound)
 			.WithResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound);
 
@@ -46,7 +47,9 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 		var result = await mediator.QueryAsync(query, cancellationToken);
 
 		return result.Match(
-			account => Results.Ok(account),
+			account => Results.Ok(
+				GetAccountResponse.From(account)
+			),
 			notFound => Results.NotFound()
 		);
 	}

@@ -19,7 +19,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			.WithSummary("Update an account")
 			.WithDescription("Admins can use this endpoint to update an account")
 			.Accepts<UpdateAccountRequest>("application/json")
-			.RequestExamples<UpdateAccountRequestExamples>("application/json")
+			.RequestExample<UpdateAccountRequestExample>("application/json")
 			.Produces(StatusCodes.Status204NoContent)
 			.WithResponseDescription(StatusCodes.Status204NoContent, UpdateAccountResponseDescription.For204NoContent)
 			.ResponseExamples<UpdateAccountErrorResponseExamples>(

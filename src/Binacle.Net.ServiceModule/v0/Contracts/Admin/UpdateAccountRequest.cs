@@ -7,8 +7,7 @@ using Binacle.Net.ServiceModule.v0.Contracts.Common.Interfaces;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
-
-internal class UpdateAccountRequest : IWithEmail, IWithPassword
+internal class UpdateAccountRequest : IWithUsername, IWithEmail, IWithPassword
 {
 	public string Username { get; set; }
 	public string Email { get; set; }

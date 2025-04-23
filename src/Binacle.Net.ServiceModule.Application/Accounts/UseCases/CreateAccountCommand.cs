@@ -35,7 +35,7 @@ internal class CreateAccountCommandHandler : ICommandHandler<CreateAccountComman
 	{
 		var getResult = await this.accountRepository.GetByUsernameAsync(command.Username);
 
-		if (getResult.TryGetValue<Account>(out var existingAccount) && existingAccount is not null && !existingAccount.IsDeleted)
+		if (getResult.Is<Account>())
 		{
 			return TypedResult.Conflict;
 		}

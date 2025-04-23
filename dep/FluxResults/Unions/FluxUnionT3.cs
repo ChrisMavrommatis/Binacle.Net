@@ -60,6 +60,7 @@ public readonly struct FluxUnion<T0, T1, T2, T3> : IFluxUnion
 			Flux.T1 => typeof(T1),
 			Flux.T2 => typeof(T2),
 			Flux.T3 => typeof(T3),
+			_ => throw new InvalidOperationException("Invalid result value.")
 		};
 	}
 	
