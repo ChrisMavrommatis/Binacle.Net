@@ -17,17 +17,16 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 	{
 		group.MapGet("/account/{id}", HandleAsync)
 			.WithSummary("Get account")
-			.WithDescription("Admins can use this endpoint to get account information.")
+			.WithDescription("Admins can use this endpoint to get an account's information")
 			.Produces(StatusCodes.Status200OK)
 			.WithResponseDescription(StatusCodes.Status200OK, GetAccountResponseDescription.For200OK)
-			.ResponseExamples<CreateAccountErrorResponseExamples>(
-				StatusCodes.Status400BadRequest,
-				"application/json"
-			)
+			//.ResponseExample<GetAccountErrorResponseExample>(
+			//	StatusCodes.Status400BadRequest,
+			//	"application/json"
+			//)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound)
-			.Produces(StatusCodes.Status409Conflict)
-			.WithResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict);
+			.WithResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound);
+
 	}
 
 	internal async Task<IResult> HandleAsync(
@@ -49,7 +48,6 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 		return result.Match(
 			account => Results.Ok(account),
 			notFound => Results.NotFound()
-			// error => Results.BadRequest(ErrorResponse.Create(error.Message ?? "Account creation failed"))
 		);
 	}
 }

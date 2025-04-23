@@ -15,6 +15,7 @@ public class ServiceModuleOptions
 		return new ConfiguredAccountCredentials
 		{
 			Username = parts[0],
+			Email = parts[0],
 			Password = parts[1]
 		};
 	}
@@ -24,5 +25,6 @@ public class ServiceModuleOptions
 public class ConfiguredAccountCredentials
 {
 	public required string Username { get; init; }
+	public required string Email { get; init; }
 	public required string Password { get; init; }
 }

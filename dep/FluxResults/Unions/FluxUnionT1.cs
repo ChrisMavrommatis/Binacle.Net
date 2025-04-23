@@ -59,6 +59,20 @@ public readonly struct FluxUnion<T0, T1> : IFluxUnion
 			typeof(T) == typeof(T1) && this.flux == Flux.T1;
 	}
 
+	public T Unwrap<T>()
+	{
+		if(!this.Is<T>())
+		{
+			throw new InvalidOperationException($"Cannot cast {typeof(T)} to {this.flux}");
+		}
+		return this.flux switch
+		{
+			Flux.T0 => (T)(object)this.t0!,
+			Flux.T1 => (T)(object)this.t1!,
+			_ => throw new InvalidOperationException("Invalid result value.")
+		};
+	}
+
 	public bool TryGetValue<T>(out T? result)
 	{
 		if (typeof(T) == typeof(T0) && this.flux == Flux.T0)
@@ -143,6 +157,21 @@ public readonly struct FluxUnion<T0, T1, T2> : IFluxUnion
 			typeof(T) == typeof(T0) && this.flux == Flux.T0 ||
 			typeof(T) == typeof(T1) && this.flux == Flux.T1 ||
 			typeof(T) == typeof(T2) && this.flux == Flux.T2;
+	}
+	
+	public T Unwrap<T>()
+	{
+		if(!this.Is<T>())
+		{
+			throw new InvalidOperationException($"Cannot cast {typeof(T)} to {this.flux}");
+		}
+		return this.flux switch
+		{
+			Flux.T0 => (T)(object)this.t0!,
+			Flux.T1 => (T)(object)this.t1!,
+			Flux.T2 => (T)(object)this.t2!,
+			_ => throw new InvalidOperationException("Invalid result value.")
+		};
 	}
 
 	public bool TryGetValue<T>(out T? result)
@@ -244,6 +273,22 @@ public readonly struct FluxUnion<T0, T1, T2, T3> : IFluxUnion
 			typeof(T) == typeof(T1) && this.flux == Flux.T1 ||
 			typeof(T) == typeof(T2) && this.flux == Flux.T2 ||
 			typeof(T) == typeof(T3) && this.flux == Flux.T3;
+	}
+	
+	public T Unwrap<T>()
+	{
+		if(!this.Is<T>())
+		{
+			throw new InvalidOperationException($"Cannot cast {typeof(T)} to {this.flux}");
+		}
+		return this.flux switch
+		{
+			Flux.T0 => (T)(object)this.t0!,
+			Flux.T1 => (T)(object)this.t1!,
+			Flux.T2 => (T)(object)this.t2!,
+			Flux.T3 => (T)(object)this.t3!,
+			_ => throw new InvalidOperationException("Invalid result value.")
+		};
 	}
 
 	public bool TryGetValue<T>(out T? result)

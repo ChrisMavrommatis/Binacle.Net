@@ -17,7 +17,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 	{
 		group.MapPut("/account/{id}", HandleAsync)
 			.WithSummary("Update an account")
-			.WithDescription("Admins can use this endpoint to update the account.")
+			.WithDescription("Admins can use this endpoint to update an account")
 			.Accepts<UpdateAccountRequest>("application/json")
 			.RequestExamples<UpdateAccountRequestExamples>("application/json")
 			.Produces(StatusCodes.Status204NoContent)
@@ -33,7 +33,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		string id, // TODO validate it
+		string id,
 		ValidatedBindingResult<UpdateAccountRequest> request,
 		IMediator mediator,
 		CancellationToken cancellationToken = default
