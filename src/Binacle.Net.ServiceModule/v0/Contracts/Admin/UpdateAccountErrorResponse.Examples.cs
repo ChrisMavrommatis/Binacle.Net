@@ -26,10 +26,11 @@ internal class UpdateAccountErrorResponseExamples : IMultipleOpenApiExamplesProv
 			"Example response with validation errors",
 			ErrorResponse.ValidationError(
 			[
-				// TODO: Example
+				"'Email' is not a valid email address.",
+				"The length of 'Password' must be at least 10 characters. You entered 8 characters."
 			])
 		);
-		
+			 
 		yield return OpenApiExample.Create(
 			"validationError2",
 			"Validation Error 2",

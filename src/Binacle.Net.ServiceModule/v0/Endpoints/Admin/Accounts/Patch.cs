@@ -11,15 +11,15 @@ using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
 
-internal class Update : IGroupedEndpoint<AdminGroup>
+internal class Patch : IGroupedEndpoint<AdminGroup>
 {
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		group.MapPut("/account/{id}", HandleAsync)
-			.WithSummary("Update an account")
-			.WithDescription("Admins can use this endpoint to update an account")
-			.Accepts<UpdateAccountRequest>("application/json")
-			.RequestExample<UpdateAccountRequestExample>("application/json")
+		group.MapPatch("/account/{id}", HandleAsync)
+			.WithSummary("Partially update an account")
+			.WithDescription("Admins can use this endpoint to partially update an account")
+			.Accepts<PartialUpdateAccountRequest>("application/json")
+			.RequestExamples<PartialUpdateAccountRequestExamples>("application/json")
 			.Produces(StatusCodes.Status204NoContent)
 			.WithResponseDescription(StatusCodes.Status204NoContent, UpdateAccountResponseDescription.For204NoContent)
 			.ResponseExamples<UpdateAccountErrorResponseExamples>(
@@ -34,7 +34,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 
 	internal async Task<IResult> HandleAsync(
 		string id,
-		ValidatedBindingResult<UpdateAccountRequest> request,
+		ValidatedBindingResult<PartialUpdateAccountRequest> request,
 		IMediator mediator,
 		CancellationToken cancellationToken = default
 	)

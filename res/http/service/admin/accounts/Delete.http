@@ -1,0 +1,8 @@
+@ID = 01966472-c08e-77b5-88a0-c8376ab48f15
+
+DELETE https://{{HOST}}/api/admin/account/{{ID}}
+Accept: application/json
+Authorization: Bearer {{BEARERTOKEN}}
+
+
+

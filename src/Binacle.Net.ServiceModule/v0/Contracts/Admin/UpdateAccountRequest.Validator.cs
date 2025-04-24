@@ -1,6 +1,7 @@
 ﻿using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using FluentValidation;
+using FluentValidation.Validators;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
@@ -16,13 +17,13 @@ internal class UpdateAccountRequestValidator : AbstractValidator<UpdateAccountRe
 		
 		RuleFor(x => x.Status)
 			.NotNull()
-			.WithMessage($"Is required and must be one of the following values: {string.Join(", ", accountStatusValues)}");
+			.WithMessage($"'{nameof(UpdateAccountRequest.Status)}' is required and must be one of the following values: {string.Join(", ", accountStatusValues)}");
 
-		// "Is required and must be one of the following values: Active, Inactive, Suspended",
-		// "'Role' must not be empty."
+		var accountRoleValues = Enum.GetValues<AccountRole>();
+
 		RuleFor(x => x.Role)
 			.NotNull()
-			.IsInEnum();
+			.WithMessage($"'{nameof(UpdateAccountRequest.Role)}' is required and must be one of the following values: {string.Join(", ", accountRoleValues)}");
+
 	}
 }
-

@@ -7,12 +7,12 @@ using Binacle.Net.ServiceModule.v0.Contracts.Common.Interfaces;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
-internal class UpdateAccountRequest : IWithUsername, IWithEmail, IWithPassword
+internal class PartialUpdateAccountRequest : IWithUsername, IWithEmail, IWithPassword
 {
-	public string Username { get; set; }
-	public string Email { get; set; }
+	public string? Username { get; set; }
+	public string? Email { get; set; }
 	
-	public string Password { get; set; }
+	public string? Password { get; set; }
 	
 	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<AccountStatus>>))]
 	public AccountStatus? Status { get; set; }

@@ -15,11 +15,10 @@ public record UpdateAccountCommand(
 	string? Email = null,
 	AccountRole? Role = null,
 	AccountStatus? Status = null
-	) : ICommand<FluxUnion<Success, NotFound, Conflict, UnexpectedError>>;
+) : ICommand<FluxUnion<Success, NotFound, Conflict, UnexpectedError>>;
 
-
-
-internal class UpdateAccountCommandHandler : ICommandHandler<UpdateAccountCommand, FluxUnion<Success, NotFound, Conflict, UnexpectedError>>
+internal class UpdateAccountCommandHandler :
+	ICommandHandler<UpdateAccountCommand, FluxUnion<Success, NotFound, Conflict, UnexpectedError>>
 {
 	private readonly IAccountRepository accountRepository;
 	private readonly IPasswordHasher passwordHasher;
@@ -27,12 +26,16 @@ internal class UpdateAccountCommandHandler : ICommandHandler<UpdateAccountComman
 	public UpdateAccountCommandHandler(
 		IAccountRepository accountRepository,
 		IPasswordHasher passwordHasher
-		)
+	)
 	{
 		this.accountRepository = accountRepository;
 		this.passwordHasher = passwordHasher;
 	}
-	public async ValueTask<FluxUnion<Success, NotFound, Conflict, UnexpectedError>> HandleAsync(UpdateAccountCommand command, CancellationToken cancellationToken)
+
+	public async ValueTask<FluxUnion<Success, NotFound, Conflict, UnexpectedError>> HandleAsync(
+		UpdateAccountCommand command, 
+		CancellationToken cancellationToken
+		)
 	{
 		var accountResult = await this.accountRepository.GetByIdAsync(command.Id);
 		if (!accountResult.TryGetValue<Account>(out var account) || account is null)
@@ -49,12 +52,12 @@ internal class UpdateAccountCommandHandler : ICommandHandler<UpdateAccountComman
 		{
 			account.ChangeUsername(command.Username);
 		}
-		
+
 		if (!string.IsNullOrEmpty(command.Email))
 		{
 			account.ChangeEmail(command.Email);
 		}
-		
+
 		if (!string.IsNullOrEmpty(command.Password))
 		{
 			var newPasswordHash = this.passwordHasher.CreateHash(command.Password);
@@ -65,21 +68,20 @@ internal class UpdateAccountCommandHandler : ICommandHandler<UpdateAccountComman
 		{
 			account.ChangeRole(command.Role.Value);
 		}
+
 		if (command.Status.HasValue)
 		{
 			account.ChangeStatus(command.Status.Value);
 		}
 
 		var updateResult = await this.accountRepository.UpdateAsync(account);
-		
+
 		if (!updateResult.TryGetValue<Success>(out var _))
 		{
 			return TypedResult.NotFound;
 		}
+
 		return TypedResult.Success;
-
-
-
 	}
 
 	private async ValueTask<bool> CheckUniqueUsernameAsync(Account account, UpdateAccountCommand command)
@@ -88,6 +90,7 @@ internal class UpdateAccountCommandHandler : ICommandHandler<UpdateAccountComman
 		{
 			return false;
 		}
+
 		var result = await this.accountRepository.GetByUsernameAsync(command.Username);
 		if (!result.TryGetValue<Account>(out var foundAccount))
 		{
@@ -96,5 +99,4 @@ internal class UpdateAccountCommandHandler : ICommandHandler<UpdateAccountComman
 
 		return account.Equals(foundAccount);
 	}
-
 }

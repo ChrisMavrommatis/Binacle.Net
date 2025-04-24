@@ -1,54 +1,53 @@
-﻿// using Binacle.Net.Kernel.Endpoints;
-// using Binacle.Net.ServiceModule.Domain.Users.Models;
-// using Binacle.Net.ServiceModule.Services;
-// using Binacle.Net.ServiceModule.Constants;
-// using Binacle.Net.ServiceModule.v0.Requests;
-// using Binacle.Net.ServiceModule.v0.Responses;
-// using Binacle.Net.ServiceModule.v0.Responses.Examples;
-// using FluentValidation;
-// using Microsoft.AspNetCore.Builder;
-// using Microsoft.AspNetCore.Http;
-// using Microsoft.AspNetCore.Routing;
-// using OpenApiExamples;
-//
-// namespace Binacle.Net.ServiceModule.v0.Endpoints.Users;
-//
-// internal class Delete : IGroupedEndpoint<UsersGroup>
-// {
-// 	public void DefineEndpoint(RouteGroupBuilder group)
-// 	{
-// 		group.MapDelete("/{email}", HandleAsync)
-// 			.WithSummary("Delete a user")
-// 			.WithDescription("Use this endpoint if you are the admin to delete a user")
-// 			.Produces(StatusCodes.Status204NoContent)
-// 			.WithResponseDescription(StatusCodes.Status204NoContent, ResponseDescription.ForDelete204NoContent)
-// 			.ResponseExample<DeleteApiUserErrorResponseExample>(
-// 				StatusCodes.Status400BadRequest,
-// 				"application/json"
-// 			)
-// 			.Produces(StatusCodes.Status404NotFound)
-// 			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForDelete404NotFound);
-// 	}
-//
-// 	internal async Task<IResult> HandleAsync(
-// 			IUserManagerService userManagerService,
-// 			[AsParameters] DeleteApiUserRequest request,
-// 			IValidator<DeleteApiUserRequest> validator,
-// 			CancellationToken cancellationToken = default
-// 		)
-// 	{
-// 		var validationResult = await validator.ValidateAsync(request, cancellationToken);
-// 		if (!validationResult.IsValid)
-// 		{
-// 			return Results.BadRequest(ErrorResponse.Create("Validation Error", validationResult.Errors.Select(x => x.ErrorMessage).ToArray()));
-// 		}
-//
-// 		var result = await userManagerService.DeleteAsync(new DeleteUserRequest(request.Email), cancellationToken);
-//
-// 		return result.Unwrap(
-// 			ok => Results.NoContent(),
-// 			notFound => Results.NotFound(),
-// 			error => Results.BadRequest(ErrorResponse.Create(error.Message))
-// 		);
-// 	}
-// }
+﻿using Binacle.Net.Kernel.Endpoints;
+using Binacle.Net.ServiceModule.Application.Accounts.UseCases;
+using Binacle.Net.ServiceModule.v0.Contracts.Admin;
+using Binacle.Net.ServiceModule.v0.Contracts.Common;
+using Binacle.Net.ServiceModule.v0.Resources;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using OpenApiExamples;
+using YetAnotherMediator;
+
+namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
+
+internal class Delete : IGroupedEndpoint<AdminGroup>
+{
+	public void DefineEndpoint(RouteGroupBuilder group)
+	{
+		group.MapDelete("/account/{id}", HandleAsync)
+			.WithSummary("Delete an account")
+			.WithDescription("Admins can use this endpoint to delete an account")
+			.Produces(StatusCodes.Status204NoContent)
+			.WithResponseDescription(StatusCodes.Status204NoContent, DeleteAccountResponseDescription.For204NoContent)
+			.ResponseExamples<DeleteAccountErrorResponseExamples>(
+				StatusCodes.Status400BadRequest,
+				"application/json"
+			)
+			.Produces(StatusCodes.Status404NotFound)
+			.WithResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound);
+	}
+
+	internal async Task<IResult> HandleAsync(
+			string id,
+			IMediator mediator,
+			CancellationToken cancellationToken = default
+		)
+	{
+		if (!Guid.TryParse(id, out var accountId))
+		{
+			return Results.BadRequest(
+				ErrorResponse.IdToGuidParameterError
+			);
+		}
+		var command = new DeleteAccountCommand(accountId);
+
+		var result = await mediator.ExecuteAsync(command, cancellationToken);	
+
+		return result.Match(
+			ok => Results.NoContent(),
+			notFound => Results.NotFound(),
+			error => Results.BadRequest(ErrorResponse.Create(error.Message ?? "Account deletion failed"))
+		);
+	}
+}

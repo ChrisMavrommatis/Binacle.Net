@@ -1,4 +1,0 @@
-@Email = test@test.com
-
-DELETE https://{{HOST}}/api/users/{{Email}}
-Content-Type: application/json

@@ -39,16 +39,6 @@ internal static class CreateAccountResponseDescription
 		.ToString();
 }
 
-internal static class PatchAccountResponseDescription
-{
-	public static string For204NoContent = new StringBuilder("**No Content**")
-		.AppendLine("<br />")
-		.AppendLine()
-		.AppendLine("When the password was changed.")
-		.AppendLine()
-		.ToString();
-}
-
 internal static class DeleteAccountResponseDescription
 {
 	public static string For204NoContent = new StringBuilder("**No Content**")
