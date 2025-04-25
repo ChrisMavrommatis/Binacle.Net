@@ -11,44 +11,53 @@ using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
 
-internal class Get : IGroupedEndpoint<AdminGroup>
+internal class List : IGroupedEndpoint<AdminGroup>
 {
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		group.MapGet("/account/{id}", HandleAsync)
-			.WithSummary("Get account")
-			.WithDescription("Admins can use this endpoint to get an account's information")
-			.Produces<GetAccountResponse>(StatusCodes.Status200OK)
-			.WithResponseDescription(StatusCodes.Status200OK, GetAccountResponseDescription.For200OK)
-			.ResponseExample<GetAccountResponseExample>(StatusCodes.Status200OK, "application/json")
-			.ResponseExample<GetAccountErrorResponseExample>(
+		group.MapGet("/account/", HandleAsync)
+			.WithSummary("List accounts")
+			.WithDescription("Admins can use this endpoint to list all accounts.")
+			.Produces<ListAccountsResponse>(StatusCodes.Status200OK)
+			.WithResponseDescription(StatusCodes.Status200OK, ListAccountResponseDescription.For200OK)
+			.ResponseExample<ListAccountsResponseExample>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<ListAccountsErrorResponseExamples>(
 				StatusCodes.Status400BadRequest,
 				"application/json"
 			)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound);
+			.WithResponseDescription(StatusCodes.Status404NotFound, ListAccountResponseDescription.For404NotFound);
 
 	}
 
 	internal async Task<IResult> HandleAsync(
-		string id,
+		int? pg,
+		int? pz,
 		IMediator mediator,
 		CancellationToken cancellationToken = default)
 	{
-		if (!Guid.TryParse(id, out var accountId))
+		
+		if (pg is < 1)
 		{
 			return Results.BadRequest(
-				ErrorResponse.IdToGuidParameterError
+				ErrorResponse.PageNumberError
 			);
 		}
-
-		var query = new GetAccountQuery(accountId);
+		
+		if (pz is < 1)
+		{
+			return Results.BadRequest(
+				ErrorResponse.PageSizeError
+			);
+		}
+	
+		var query = new ListAccountsQuery(pg ?? 1, pz ?? 10);
 		
 		var result = await mediator.QueryAsync(query, cancellationToken);
 
 		return result.Match(
-			account => Results.Ok(
-				GetAccountResponse.From(account)
+			accounts => Results.Ok(
+				ListAccountsResponse.From(accounts)
 			),
 			notFound => Results.NotFound()
 		);

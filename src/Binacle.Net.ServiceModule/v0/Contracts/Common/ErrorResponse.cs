@@ -4,6 +4,7 @@ internal class ErrorResponse
 {
 	public required string Message { get; set; }
 	public string[]? Errors { get; set; }
+	
 
 	internal static ErrorResponse Create(string message, string[]? errors = null)
 	{
@@ -32,5 +33,17 @@ internal class ErrorResponse
 		ErrorResponse.Create(
 			"Parameter Error",
 			["The provided value is not a valid Guid"]
+		);
+	
+	internal static ErrorResponse PageNumberError =>
+		ErrorResponse.Create(
+			"Parameter Error",
+			["The provided page number is not valid"]
+		);
+	
+	internal static ErrorResponse PageSizeError =>
+		ErrorResponse.Create(
+			"Parameter Error",
+			["The provided page size is not valid"]
 		);
 }

@@ -29,6 +29,23 @@ internal static class GetAccountResponseDescription
 		.ToString();
 }
 
+internal static class ListAccountResponseDescription
+{
+	public static string For200OK = new StringBuilder("**OK**")
+		.AppendLine("<br />")
+		.AppendLine()
+		.AppendLine("When accounts exist")
+		.AppendLine()
+		.ToString();
+	
+	public static string For404NotFound = new StringBuilder("**Not Found**")
+		.AppendLine("<br />")
+		.AppendLine()
+		.AppendLine("When no accounts exist")
+		.AppendLine()
+		.ToString();
+}
+
 internal static class CreateAccountResponseDescription
 {
 	public static string For201Created = new StringBuilder("**Created**")

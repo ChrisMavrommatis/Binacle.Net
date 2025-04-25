@@ -20,11 +20,17 @@ public static class Setup
 		builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>(ServiceLifetime.Singleton,
 			includeInternalTypes: true);
 
-		builder.Services.AddRequestHandler<AuthenticationRequest, FluxUnion<Token, Unauthorized, UnexpectedError>, AuthenticationRequestHandler>();
-		builder.Services.AddQueryHandler<GetAccountQuery, FluxUnion<Account, NotFound>, GetAccountQueryHandler>();
-		builder.Services.AddCommandHandler<CreateAccountCommand, FluxUnion<Account, Conflict, UnexpectedError>, CreateAccountCommandHandler>();
-		builder.Services.AddCommandHandler<UpdateAccountCommand, FluxUnion<Success, NotFound, Conflict, UnexpectedError>, UpdateAccountCommandHandler>();
-		builder.Services.AddCommandHandler<DeleteAccountCommand, FluxUnion<Success, NotFound, UnexpectedError>, DeleteAccountCommandHandler>();
+		// builder.Services.AddRequestHandler<AuthenticationRequest, FluxUnion<Token, Unauthorized, UnexpectedError>, AuthenticationRequestHandler>();
+		// builder.Services.AddQueryHandler<GetAccountQuery, FluxUnion<Account, NotFound>, GetAccountQueryHandler>();
+		// builder.Services.AddCommandHandler<CreateAccountCommand, FluxUnion<Account, Conflict, UnexpectedError>, CreateAccountCommandHandler>();
+		// builder.Services.AddCommandHandler<UpdateAccountCommand, FluxUnion<Success, NotFound, Conflict, UnexpectedError>, UpdateAccountCommandHandler>();
+		// builder.Services.AddCommandHandler<DeleteAccountCommand, FluxUnion<Success, NotFound, UnexpectedError>, DeleteAccountCommandHandler>();
+		builder.Services.AddRequestHandler<AuthenticationRequestHandler>();
+		builder.Services.AddQueryHandler<GetAccountQueryHandler>();
+		builder.Services.AddQueryHandler<ListAccountsQueryHandler>();
+		builder.Services.AddCommandHandler<CreateAccountCommandHandler>();
+		builder.Services.AddCommandHandler<UpdateAccountCommandHandler>();
+		builder.Services.AddCommandHandler<DeleteAccountCommandHandler>();
 
 		var defaultAdminCredentials = Environment.GetEnvironmentVariable("BINACLE_ADMIN_CREDENTIALS");
 		if (!string.IsNullOrWhiteSpace(defaultAdminCredentials))

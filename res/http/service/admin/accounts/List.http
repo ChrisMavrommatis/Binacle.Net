@@ -1,0 +1,6 @@
+﻿@pg=1
+@pz=20
+
+GET https://{{HOST}}/api/admin/account/?pg={{pg}}&pz={{pz}}
+Accept: application/json
+Authorization: Bearer {{BEARERTOKEN}}

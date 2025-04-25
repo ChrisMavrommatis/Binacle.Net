@@ -26,3 +26,4 @@ internal class GetAccountQueryHandler : IQueryHandler<GetAccountQuery, FluxUnion
 		return getResult;
 	}
 }
+

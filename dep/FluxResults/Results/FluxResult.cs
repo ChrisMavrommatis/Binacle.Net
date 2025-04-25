@@ -51,4 +51,16 @@ public readonly struct FluxResult<T0> : IFluxResult
 
 		return this.t0!;
 	}
+	
+	public TResult Match<TResult>(
+		Func<T0, TResult> resultFunc,
+		Func<IErrorTypedResult, TResult> errorFunc
+	)
+	{
+		if (this.IsError)
+		{
+			return errorFunc(this.error!);
+		}
+		return resultFunc(this.t0!);
+	}
 }

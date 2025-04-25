@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Application.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using FluxResults.TypedResults;
@@ -8,7 +9,7 @@ namespace Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;
 
 internal class InMemoryAccountRepository : IAccountRepository
 {
-	private static readonly ConcurrentDictionary<Guid, Account> _accounts = new();
+	private static readonly ConcurrentSortedDictionary<Guid, Account> _accounts = new();
 
 	public Task<FluxUnion<Account, NotFound>> GetByIdAsync(Guid id)
 	{
@@ -18,6 +19,29 @@ internal class InMemoryAccountRepository : IAccountRepository
 		}
 
 		return Task.FromResult<FluxUnion<Account, NotFound>>(TypedResult.NotFound);
+	}
+
+	public Task<FluxUnion<PagedList<Account>, NotFound>> GetAsync(int page, int pageSize)
+	{
+		var accounts = _accounts.Values
+			.Where(x => !x.IsDeleted)
+			.Skip((page - 1) * pageSize)
+			.Take(pageSize)
+			.ToList();
+
+		if (accounts.Count == 0)
+		{
+			return Task.FromResult<FluxUnion<PagedList<Account>, NotFound>>(TypedResult.NotFound);
+		}
+
+		var pagedAccounts = new PagedList<Account>(
+			accounts,
+			accounts.Count,
+			pageSize,
+			page
+		);
+
+		return Task.FromResult<FluxUnion<PagedList<Account>, NotFound>>(pagedAccounts);
 	}
 
 	public Task<FluxUnion<Account, NotFound>> GetByUsernameAsync(string username)
@@ -33,32 +57,35 @@ internal class InMemoryAccountRepository : IAccountRepository
 
 	public Task<FluxUnion<Success, Conflict>> CreateAsync(Account account)
 	{
-		var added = _accounts.TryAdd(account.Id, account);
+		if (_accounts.ContainsKey(account.Id))
+		{
+			return Task.FromResult<FluxUnion<Success, Conflict>>(TypedResult.Conflict);
+		}
 
-		return Task.FromResult<FluxUnion<Success, Conflict>>(
-			added ? TypedResult.Success : TypedResult.Conflict
-		);
+		_accounts.Add(account.Id, account);
+		return Task.FromResult<FluxUnion<Success, Conflict>>(TypedResult.Success);
 	}
 
 	public Task<FluxUnion<Success, NotFound>> UpdateAsync(Account account)
 	{
-		if (_accounts.TryGetValue(account.Id, out var existing) && existing.IsDeleted)
+		if (_accounts.TryGetValue(account.Id, out var existingAccount) && !existingAccount.IsDeleted)
 		{
-			var updated = _accounts.TryUpdate(account.Id, account, existing);
-			if (updated)
-			{
-				return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.Success);
-			}
+			_accounts[account.Id] = account;
+			return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.Success);
 		}
 
 		return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.NotFound);
+	
 	}
 
 	public Task<FluxUnion<Success, NotFound>> DeleteAsync(Account account)
 	{
-		var removed = _accounts.TryRemove(account.Id, out _);
-		return Task.FromResult<FluxUnion<Success, NotFound>>(
-			removed ? TypedResult.Success : TypedResult.NotFound
-		);
+		if (!_accounts.ContainsKey(account.Id))
+		{
+			return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.NotFound);
+		}
+
+		_accounts.Remove(account.Id);
+		return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.Success);
 	}
 }
