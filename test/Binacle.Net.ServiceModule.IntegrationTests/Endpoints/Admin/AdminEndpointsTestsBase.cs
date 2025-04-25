@@ -1,10 +1,11 @@
-﻿using System.Net.Http.Json;
-using Binacle.Net.ServiceModule.Application.Authentication.Services;
-using Binacle.Net.ServiceModule.Application.Common.Configuration;
+﻿using System.Net;
+using System.Net.Http.Json;
+using Binacle.Net.ServiceModule.Domain;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
+using Binacle.Net.ServiceModule.Domain.Common.Services;
+using Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;
+using Binacle.Net.ServiceModule.IntegrationTests.Models;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
-using Binacle.Net.ServiceModule.v0.Contracts.Auth;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -13,32 +14,19 @@ namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin;
 public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 {
 	protected readonly BinacleApiAsAServiceFactory Sut;
-	protected readonly Models.AccountCredentials UserAccountCredentials;
-	protected readonly Models.AccountCredentials AdminAccountCredentials;
-	protected readonly Domain.Accounts.Entities.Account SimulatedAdminAccount;
+	protected readonly Domain.Accounts.Entities.Account AdminAccount;
+	protected readonly Domain.Accounts.Entities.Account UserAccount;
 	
 	
 	public AdminEndpointsTestsBase(BinacleApiAsAServiceFactory sut)
 	{
 		this.Sut = sut;
-		this.UserAccountCredentials = new Models.AccountCredentials
-		{
-			Username = "testuser@binacle.net",
-			Email = "testuser@binacle.net",
-			Password = "T3stUs3rsP@ssw0rd"
-		};
-
+		
+		var passwordHasher = this.Sut.Services.GetRequiredService<IPasswordHasher>();
 		var options = this.Sut.Services.GetRequiredService<IOptions<ServiceModuleOptions>>();
 		var defaultAdmin = ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
 
-		this.AdminAccountCredentials = new Models.AccountCredentials
-		{
-			Username = defaultAdmin.Username,
-			Email = defaultAdmin.Email,
-			Password = defaultAdmin.Password
-		};
-
-		this.SimulatedAdminAccount = new Domain.Accounts.Entities.Account(
+		this.AdminAccount = new Domain.Accounts.Entities.Account(
 			defaultAdmin.Username,
 			AccountRole.Admin,
 			defaultAdmin.Email,
@@ -47,27 +35,24 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 			Guid.Parse("6B54DFF4-8130-4572-A21A-A305F9018FFF")
 		);
 
-		var passwordHasher = this.Sut.Services.GetRequiredService<IPasswordHasher>();
-		var hashedPassword = passwordHasher.CreateHash(defaultAdmin.Password);
-		this.SimulatedAdminAccount.ChangePassword(hashedPassword);
+		var adminsHashedPassword = passwordHasher.CreateHash(defaultAdmin.Password);
+		this.AdminAccount.ChangePassword(adminsHashedPassword);
+		
+		this.UserAccount =new Domain.Accounts.Entities.Account(
+			"testuser@binacle.net",
+			AccountRole.User,
+			"testuser@binacle.net",
+			AccountStatus.Active,
+			new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero),
+			Guid.Parse("C68B22B5-E41F-4E1B-9FEB-50A5CD46D441")
+		);
+		var usersHashedPassword = passwordHasher.CreateHash("T3stUs3rsP@ssw0rd");
+		this.UserAccount.ChangePassword(usersHashedPassword);
 	}
 	
-	protected async Task AuthenticateAsAsync(Models.AccountCredentials accountCredentials)
+	protected async Task EnsureAccountExists(AccountCredentials accountCredentials)
 	{
-		var request = new TokenRequest()
-		{
-			Username = accountCredentials.Username,
-			Password = accountCredentials.Password
-		};
-		var response = await this.Sut.Client.PostAsJsonAsync("/api/auth/token", request, this.Sut.JsonSerializerOptions);
-		var tokenResponse = await response.Content.ReadAsAsync<TokenResponse>();
-
-		this.Sut.Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
-	}
-	
-	protected async Task EnsureAccountExists(Models.AccountCredentials accountCredentials)
-	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 		var request = new CreateAccountRequest()
 		{
 			Username = accountCredentials.Username,
@@ -76,13 +61,16 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync("/api/admin/account", request, this.Sut.JsonSerializerOptions);
-		if (response.StatusCode != System.Net.HttpStatusCode.Created &&
-		    response.StatusCode != System.Net.HttpStatusCode.Conflict)
+		if (response.StatusCode != HttpStatusCode.Created &&
+		    response.StatusCode != HttpStatusCode.Conflict)
 		{
-			throw new System.ApplicationException($"Error while creating account {accountCredentials.Username}. Response status code was {response.StatusCode}");
+			throw new ApplicationException($"Error while creating account {accountCredentials.Username}. Response status code was {response.StatusCode}");
 		}
 
-		accountCredentials.Id = GetCreatedId(response);
+		if (response.StatusCode == HttpStatusCode.Created)
+		{
+			accountCredentials.Id = GetCreatedId(response);
+		}
 	}
 
 	protected Guid GetCreatedId(HttpResponseMessage response)
@@ -93,32 +81,31 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 		return id;
 	}
 	
-	protected async Task EnsureAccountDoesNotExist(Models.AccountCredentials accountCredentials)
+	protected async Task EnsureAccountDoesNotExist(AccountCredentials accountCredentials)
 	{
 		if (accountCredentials.Id is null)
 		{
 			// TODO: In create can create users
 			return;
 		}
-		
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
 		var response = await this.Sut.Client.DeleteAsync($"/api/admin/account/{accountCredentials.Id}");
 
-		if (response.StatusCode != System.Net.HttpStatusCode.NoContent &&
-		    response.StatusCode != System.Net.HttpStatusCode.NotFound)
+		if (response.StatusCode != HttpStatusCode.NoContent &&
+		    response.StatusCode != HttpStatusCode.NotFound)
 		{
-			throw new System.ApplicationException($"Error while deleting Account {accountCredentials.Username}. Response status code was {response.StatusCode}");
+			throw new ApplicationException($"Error while deleting Account {accountCredentials.Username}. Response status code was {response.StatusCode}");
 		}
 	}
 	
-	public virtual async Task InitializeAsync()
+	public virtual Task InitializeAsync()
 	{
-		await this.EnsureAccountExists(this.UserAccountCredentials);
+		return Task.CompletedTask;
 	}
 
-	public virtual async Task DisposeAsync()
+	public virtual Task DisposeAsync()
 	{
-		await this.EnsureAccountDoesNotExist(this.UserAccountCredentials);
+		return Task.CompletedTask;
 	}
 }

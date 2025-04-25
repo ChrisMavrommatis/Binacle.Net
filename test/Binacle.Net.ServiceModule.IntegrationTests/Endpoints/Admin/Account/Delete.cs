@@ -1,4 +1,6 @@
-﻿using Binacle.Net.ServiceModule.IntegrationTests.Models;
+﻿using System.Net;
+using Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;
+using Binacle.Net.ServiceModule.IntegrationTests.Models;
 
 namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Account;
 
@@ -7,9 +9,17 @@ namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Account;
 public class Delete : AdminEndpointsTestsBase
 {
 	private readonly AccountCredentials existingAccountCredentials;
+	private readonly AccountCredentials newAccountCredentials;
 
 	public Delete(BinacleApiAsAServiceFactory sut) : base(sut)
 	{
+		this.newAccountCredentials = new AccountCredentials
+		{
+			Username = "newuser@binacle.net",
+			Email =  "newuser@binacle.net",
+			Password = "N3wUs3rP@ssw0rd"
+		};
+		
 		this.existingAccountCredentials = new AccountCredentials()
 		{
 			Username =  "existinguser@binacle.net",
@@ -82,9 +92,11 @@ public class Delete : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"DELETE {routePath}. With Valid Credentials Returns 204 No Content")]
 	public async Task Delete_WithValidCredentials_Returns_204NoContent()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await this.EnsureAccountExists(this.newAccountCredentials);
 
-		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		
+		var url = routePath.Replace("{id}", this.newAccountCredentials.Id.ToString());
 		var response = await this.Sut.Client.DeleteAsync(url);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NoContent);
 	}
@@ -95,11 +107,11 @@ public class Delete : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"DELETE {routePath}. With Invalid Id Returns 400 BadRequest")]
 	public async Task Delete_WithInvalidId_Returns_400BadRequest()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
 		var url = routePath.Replace("{id}", "invalid");
 		var response = await this.Sut.Client.DeleteAsync(url);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 	}
 	
 	#endregion
@@ -109,12 +121,12 @@ public class Delete : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"DELETE {routePath}. For Non Existing User Returns 404 Not Found")]
 	public async Task Delete_ForNonExistingUser_Returns_404NotFound()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 		var nonExistentId = Guid.Parse("EF81C267-A003-44B8-AD89-4B48661C4AA5");
 
 		var url = routePath.Replace("{id}", nonExistentId.ToString());
 		var response = await this.Sut.Client.DeleteAsync(url);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
+		response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 	}
 
 	#endregion

@@ -1,5 +1,5 @@
-﻿using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
+﻿using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
+using Binacle.Net.ServiceModule.Domain.Common.Models;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
@@ -28,34 +28,37 @@ internal class ListAccountsResponse
 		}
 		return response;
 	}
-}
-
-internal class ListAccountsResponseExample : ISingleOpenApiExamplesProvider<ListAccountsResponse>
-{
-	public IOpenApiExample<ListAccountsResponse> GetExample()
+	
+	internal class Example : ISingleOpenApiExamplesProvider<ListAccountsResponse>
 	{
-		return OpenApiExample.Create(
-			"listAccountsResponse",
-			"List Accounts Response",
-			new ListAccountsResponse()
-		);
+		public IOpenApiExample<ListAccountsResponse> GetExample()
+		{
+			return OpenApiExample.Create(
+				"listAccountsResponse",
+				"List Accounts Response",
+				new ListAccountsResponse() // TODO
+			);
+		}
 	}
-}
-
-internal class ListAccountsErrorResponseExamples : IMultipleOpenApiExamplesProvider<ErrorResponse>
-{
-	public IEnumerable<IOpenApiExample<ErrorResponse>> GetExamples()
+	
+	internal class ErrorResponseExamples : IMultipleOpenApiExamplesProvider<ErrorResponse>
 	{
-		yield return OpenApiExample.Create(
-			"pageNumberError",
-			"Page Number Error",
-			ErrorResponse.PageNumberError
-		);
-		yield return OpenApiExample.Create(
-			"pageSizeError",
-			"Page Size Error",
-			ErrorResponse.PageSizeError
-		);
+		public IEnumerable<IOpenApiExample<ErrorResponse>> GetExamples()
+		{
+			yield return OpenApiExample.Create(
+				"pageNumberError",
+				"Page Number Error",
+				ErrorResponse.PageNumberError
+			);
+			yield return OpenApiExample.Create(
+				"pageSizeError",
+				"Page Size Error",
+				ErrorResponse.PageSizeError
+			);
 		
+		}
 	}
+	
 }
+
+

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;
 using Binacle.Net.ServiceModule.IntegrationTests.Models;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
@@ -10,6 +11,7 @@ namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Account;
 public class Create : AdminEndpointsTestsBase
 {
 	private readonly AccountCredentials newAccountCredentials;
+	private readonly AccountCredentials existingAccountCredentials;
 
 	public Create(BinacleApiAsAServiceFactory sut) : base(sut)
 	{
@@ -18,6 +20,14 @@ public class Create : AdminEndpointsTestsBase
 			Username = "newuser@binacle.net",
 			Email =  "newuser@binacle.net",
 			Password = "N3wUs3rP@ssw0rd"
+		};
+		
+		this.existingAccountCredentials = new AccountCredentials()
+		{
+			Username =  "existinguser@binacle.net",
+			Email = "existinguser@binacle.net",
+			Password = "Ex1stingUs3rP@ssw0rd"
+
 		};
 	}
 
@@ -124,7 +134,8 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Valid Credentials Returns 201 Created")]
 	public async Task Post_WithValidCredentials_Returns_201Created()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
 
 		var request = new CreateAccountRequest
 		{
@@ -137,7 +148,7 @@ public class Create : AdminEndpointsTestsBase
 		response.StatusCode.ShouldBe(HttpStatusCode.Created);
 		
 		this.newAccountCredentials.Id = GetCreatedId(response);
-
+		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
 	}
 	#endregion
 
@@ -146,7 +157,7 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Email Returns 400 BadRequest")]
 	public async Task Post_WithInvalidEmail_Returns_400BadRequest()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
 		var request = new CreateAccountRequest
 		{
@@ -162,7 +173,7 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Password Returns 400 BadRequest")]
 	public async Task Post_WithInvalidPassword_Returns_400BadRequest()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
 		var request = new CreateAccountRequest
 		{
@@ -181,25 +192,21 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. For Existing User Returns 409 Conflict")]
 	public async Task Post_ForExistingUser_Returns_409Conflict()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
-		
-		var request = new CreateAccountRequest
+		await this.EnsureAccountExists(this.existingAccountCredentials);
+		await using (var scope = this.Sut.StartAuthenticationScope(this.AdminAccount))
 		{
-			Username = this.UserAccountCredentials.Username,
-			Email = this.UserAccountCredentials.Email,
-			Password = this.UserAccountCredentials.Password
-		};
-
-		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+			var request = new CreateAccountRequest
+			{
+				Username = this.existingAccountCredentials.Username,
+				Email = this.existingAccountCredentials.Email,
+				Password = this.existingAccountCredentials.Password
+			};
+	
+			var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+			response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+		}
+		await this.EnsureAccountDoesNotExist(this.existingAccountCredentials);
 	}
 
 	#endregion
-
-
-	public override async Task DisposeAsync()
-	{
-		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
-		await base.DisposeAsync();
-	}
 }

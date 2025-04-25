@@ -24,4 +24,11 @@ internal static class ResponseDescription
 		.AppendLine("When provided user token does not have permission.")
 		.AppendLine()
 		.ToString();
+	
+	public static string For500InternalServerError = new StringBuilder("**Internal Server Error**")
+		.AppendLine("<br />")
+		.AppendLine()
+		.AppendLine("When an internal error occured.")
+		.AppendLine()
+		.ToString();
 }

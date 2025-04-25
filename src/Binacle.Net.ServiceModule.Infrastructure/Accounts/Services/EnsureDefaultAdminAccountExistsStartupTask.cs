@@ -1,18 +1,17 @@
-﻿using Binacle.Net.ServiceModule.Application.Accounts.UseCases;
-using Binacle.Net.ServiceModule.Application.Common.Configuration;
+﻿using Binacle.Net.ServiceModule.Domain;
+using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
+using Binacle.Net.ServiceModule.Domain.Accounts.Services;
+using Binacle.Net.ServiceModule.Domain.Common.Services;
 using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;
 
 internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 {
 	private readonly IServiceProvider serviceProvider;
-
-	private const string _defaultAdminAccount = "admin@binacle.net:B1n4cl3Adm!n"; 
 
 	public EnsureDefaultAdminAccountExistsStartupTask(IServiceProvider serviceProvider)
 	{
@@ -21,36 +20,36 @@ internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 
 	public async Task ExecuteAsync(CancellationToken cancellationToken = default)
 	{
-		using (var scope = this.serviceProvider.CreateScope())
+		using var scope = this.serviceProvider.CreateScope();
+
+		var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
+		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
+		var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+		var utcNow = timeProvider.GetUtcNow();
+		// get configuration
+		var options = scope.ServiceProvider.GetRequiredService<IOptions<ServiceModuleOptions>>();
+		var configuredAdminCredentials =
+			ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
+
+		var newAccount = new Account(
+			configuredAdminCredentials.Username,
+			AccountRole.Admin,
+			configuredAdminCredentials.Email.ToLowerInvariant(),
+			AccountStatus.Active,
+			utcNow
+		);
+		var passwordHash = passwordHasher.CreateHash(configuredAdminCredentials.Password);
+		newAccount.ChangePassword(passwordHash);
+		var createResult = await accountRepository.CreateAsync(newAccount);
+
+		var success = createResult.Match(
+			account => true,
+			conflict => true
+		);
+
+		if (!success)
 		{
-			var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-
-			// get configuration
-			var options = scope.ServiceProvider.GetRequiredService<IOptions<ServiceModuleOptions>>();
-			var configuredAdminCredentials = ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
-
-			var request = new CreateAccountCommand(
-				configuredAdminCredentials.Username.ToLowerInvariant(),
-				configuredAdminCredentials.Password,
-				configuredAdminCredentials.Username.ToLowerInvariant(),
-				AccountRole.Admin
-			);
-
-			var result = await mediator.ExecuteAsync(request, cancellationToken);
-
-			var success = result.Match(
-				account => true,
-				conflict => true,
-				error => false
-			);
-
-			if (!success)
-			{
-				throw new ApplicationException($"{nameof(EnsureDefaultAdminAccountExistsStartupTask)} failed");
-			}
+			throw new ApplicationException($"{nameof(EnsureDefaultAdminAccountExistsStartupTask)} failed");
 		}
-
 	}
-
-
 }

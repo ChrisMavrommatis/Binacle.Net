@@ -1,8 +1,8 @@
-﻿using Binacle.Net.ServiceModule.Application.Accounts.Services;
-using Binacle.Net.ServiceModule.Application.Authentication.Services;
-using Binacle.Net.ServiceModule.Application.Subscriptions.Services;
+﻿using Binacle.Net.ServiceModule.Domain.Accounts.Services;
+using Binacle.Net.ServiceModule.Domain.Common.Services;
+using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;
-using Binacle.Net.ServiceModule.Infrastructure.Authentication.Services;
+using Binacle.Net.ServiceModule.Infrastructure.Common.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Subscriptions.Services;
 using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,12 +17,10 @@ public static class Setup
 	{
 		
 		// Register Services
-		builder.Services.AddTransient<ITokenService, TokenService>();
-		builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
-
 		builder.Services
-			.AddTransient<IAccountRepository, InMemoryAccountRepository>()
-			.AddTransient<ISubscriptionRepository, InMemorySubscriptionRepository>();
+			.AddScoped<IPasswordHasher, PasswordHasher>()
+			.AddScoped<IAccountRepository, InMemoryAccountRepository>()
+			.AddScoped<ISubscriptionRepository, InMemorySubscriptionRepository>();
 		// var azureStorageConnectionString = builder.Configuration
 		// 	.GetConnectionStringWithEnvironmentVariableFallback("AzureStorage");
 		//

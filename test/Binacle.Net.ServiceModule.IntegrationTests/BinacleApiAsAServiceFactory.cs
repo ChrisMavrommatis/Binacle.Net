@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Binacle.Net.ServiceModule.Application.Common.Configuration;
+using Binacle.Net.ServiceModule.Domain;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;

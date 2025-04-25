@@ -1,5 +1,5 @@
 ﻿using System.Threading.RateLimiting;
-using Binacle.Net.ServiceModule.Configuration.Models;
+using Binacle.Net.ServiceModule.Configuration;
 using Binacle.Net.ServiceModule.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;

@@ -1,8 +1,9 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
-using Binacle.Net.ServiceModule.Application.Authentication.Configuration;
-using Binacle.Net.ServiceModule.Application.Authentication.Models;
-using Binacle.Net.ServiceModule.Infrastructure.Authentication.Services;
+using Binacle.Net.ServiceModule.Configuration;
+using Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;
+using Binacle.Net.ServiceModule.Models;
+using Binacle.Net.ServiceModule.Services;
 using FluxResults.Unions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -29,7 +30,7 @@ public abstract partial class AdminEndpointsTestsBase
 		var tokenService = new TokenService(jwtAuthOptions!, timeProvider);
 
 		
-		var result = tokenService.GenerateToken(this.SimulatedAdminAccount, null);
+		var result = tokenService.GenerateToken(this.AdminAccount, null);
 		var token = result.Unwrap<Token>();
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
@@ -37,6 +38,7 @@ public abstract partial class AdminEndpointsTestsBase
 		var response = await action();
 
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+		this.Sut.Client.DefaultRequestHeaders.Authorization = null;
 	}
 
 	protected async Task Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
@@ -53,7 +55,7 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var tokenService = new TokenService(Options.Create(newJwtAuthOptions), TimeProvider.System);
 
-		var result = tokenService.GenerateToken(this.SimulatedAdminAccount, null);
+		var result = tokenService.GenerateToken(this.AdminAccount, null);
 		var token = result.Unwrap<Token>();
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
@@ -61,6 +63,7 @@ public abstract partial class AdminEndpointsTestsBase
 		var response = await action();
 
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+		this.Sut.Client.DefaultRequestHeaders.Authorization = null;
 	}
 
 	protected async Task Action_WithWrongAudienceBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
@@ -77,7 +80,7 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var tokenService = new TokenService(Options.Create(newJwtAuthOptions), TimeProvider.System);
 
-		var result = tokenService.GenerateToken(this.SimulatedAdminAccount, null);
+		var result = tokenService.GenerateToken(this.AdminAccount, null);
 		var token = result.Unwrap<Token>();
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
@@ -85,6 +88,7 @@ public abstract partial class AdminEndpointsTestsBase
 		var response = await action();
 
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+		this.Sut.Client.DefaultRequestHeaders.Authorization = null;
 	}
 
 	protected async Task Action_WithWronglySignedBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
@@ -101,7 +105,7 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var tokenService = new TokenService(Options.Create(newJwtAuthOptions), TimeProvider.System);
 
-		var result = tokenService.GenerateToken(this.SimulatedAdminAccount, null);
+		var result = tokenService.GenerateToken(this.AdminAccount, null);
 		var token = result.Unwrap<Token>();
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
@@ -109,11 +113,12 @@ public abstract partial class AdminEndpointsTestsBase
 		var response = await action();
 
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+		this.Sut.Client.DefaultRequestHeaders.Authorization = null;
 	}
 
 	protected async Task Action_WithoutAdminBearerToken_Returns_403Forbidden(Func<Task<HttpResponseMessage>> action)
 	{
-		await this.AuthenticateAsAsync(this.UserAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.UserAccount);
 
 		var response = await action();
 

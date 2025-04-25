@@ -1,13 +1,15 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.ServiceModule.Application.Accounts.UseCases;
+using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
+using Binacle.Net.ServiceModule.Domain.Accounts.Services;
+using Binacle.Net.ServiceModule.Domain.Common.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
+using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
-using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
 
@@ -19,10 +21,10 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 			.WithSummary("Partially update an account")
 			.WithDescription("Admins can use this endpoint to partially update an account")
 			.Accepts<PartialUpdateAccountRequest>("application/json")
-			.RequestExamples<PartialUpdateAccountRequestExamples>("application/json")
+			.RequestExamples<PartialUpdateAccountRequest.Examples>("application/json")
 			.Produces(StatusCodes.Status204NoContent)
 			.WithResponseDescription(StatusCodes.Status204NoContent, UpdateAccountResponseDescription.For204NoContent)
-			.ResponseExamples<UpdateAccountErrorResponseExamples>(
+			.ResponseExamples<PartialUpdateAccountRequest.ErrorResponseExamples>(
 				StatusCodes.Status400BadRequest,
 				"application/json"
 			)
@@ -34,50 +36,62 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 
 	internal async Task<IResult> HandleAsync(
 		string id,
-		ValidatedBindingResult<PartialUpdateAccountRequest> request,
-		IMediator mediator,
-		CancellationToken cancellationToken = default
-	)
+		ValidatedBindingResult<PartialUpdateAccountRequest> requestResult,
+		IAccountRepository accountRepository,
+		IPasswordHasher passwordHasher,
+		CancellationToken cancellationToken = default)
 	{
-		if (request.Value is null)
+		return await requestResult.WithValidatedRequest(async request =>
 		{
-			return Results.BadRequest(
-				ErrorResponse.MalformedRequest
+			if (!Guid.TryParse(id, out var accountId))
+			{
+				return Results.BadRequest(
+					ErrorResponse.IdToGuidParameterError
+				);
+			}
+			var accountResult = await accountRepository.GetByIdAsync(accountId);
+			if (!accountResult.TryGetValue<Account>(out var account) || account is null)
+			{
+				return Results.NotFound();
+			}
+
+			if (!string.IsNullOrWhiteSpace(request.Username))
+			{
+				var usernameResult = await accountRepository.GetByUsernameAsync(request.Username);
+				if (usernameResult.TryGetValue<Account>(out var foundAccount) && account.Equals(foundAccount))
+				{
+					return Results.Conflict();
+				}
+				account.ChangeUsername(request.Username);
+			}
+			if (!string.IsNullOrEmpty(request.Email))
+			{
+				account.ChangeEmail(request.Email);
+			}
+
+			if (!string.IsNullOrEmpty(request.Password))
+			{
+				var newPasswordHash = passwordHasher.CreateHash(request.Password);
+				account.ChangePassword(newPasswordHash);
+			}
+
+			if (request.Role.HasValue)
+			{
+				account.ChangeRole(request.Role.Value);
+			}
+
+			if (request.Status.HasValue)
+			{
+				account.ChangeStatus(request.Status.Value);
+			}
+
+			var updateResult = await accountRepository.UpdateAsync(account);
+
+			return updateResult.Match(
+				success => Results.NoContent(),
+				notFound => Results.NotFound()
 			);
-		}
-
-		if (!Guid.TryParse(id, out var accountId))
-		{
-			return Results.BadRequest(
-				ErrorResponse.IdToGuidParameterError
-			);
-		}
-
-		if (!request.ValidationResult?.IsValid ?? false)
-		{
-			return Results.BadRequest(
-				ErrorResponse.ValidationError(
-					request.ValidationResult!.Errors.Select(x => x.ErrorMessage).ToArray()
-				)
-			);
-		}
-
-		var command = new UpdateAccountCommand(
-			accountId,
-			request.Value.Username,
-			request.Value.Password,
-			request.Value.Email,
-			request.Value.Role,
-			request.Value.Status
-		);
-
-		var result = await mediator.ExecuteAsync(command, cancellationToken);	
-
-		return result.Match(
-			ok => Results.NoContent(),
-			notFound => Results.NotFound(),
-			conglict => Results.Conflict(),
-			error => Results.BadRequest(ErrorResponse.Create(error.Message ?? "Account update failed"))
-		);
+			
+		});
 	}
 }

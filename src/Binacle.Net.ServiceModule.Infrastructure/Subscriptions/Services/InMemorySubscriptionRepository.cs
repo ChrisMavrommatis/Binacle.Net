@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
-using Binacle.Net.ServiceModule.Application.Subscriptions.Services;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
+using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using FluxResults.TypedResults;
 using FluxResults.Unions;
 

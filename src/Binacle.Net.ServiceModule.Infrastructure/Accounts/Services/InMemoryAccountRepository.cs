@@ -1,7 +1,6 @@
-﻿using System.Collections.Concurrent;
-using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.ServiceModule.Application.Accounts.Services;
-using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
+﻿using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
+using Binacle.Net.ServiceModule.Domain.Accounts.Services;
+using Binacle.Net.ServiceModule.Domain.Common.Models;
 using FluxResults.TypedResults;
 using FluxResults.Unions;
 
@@ -75,7 +74,17 @@ internal class InMemoryAccountRepository : IAccountRepository
 		}
 
 		return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.NotFound);
+	}
 	
+	public Task<FluxUnion<Success, NotFound>> ForceUpdateAsync(Account account)
+	{
+		if (_accounts.TryGetValue(account.Id, out var existingAccount))
+		{
+			_accounts[account.Id] = account;
+			return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.Success);
+		}
+
+		return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.NotFound);
 	}
 
 	public Task<FluxUnion<Success, NotFound>> DeleteAsync(Account account)

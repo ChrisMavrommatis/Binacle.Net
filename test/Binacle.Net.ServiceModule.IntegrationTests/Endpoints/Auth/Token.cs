@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Binacle.Net.ServiceModule.Application.Common.Configuration;
+using Binacle.Net.ServiceModule.Domain;
 using Binacle.Net.ServiceModule.v0.Contracts.Auth;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

@@ -19,7 +19,7 @@
 	
 	<ItemGroup>
 	  <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
-	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Application\Binacle.Net.ServiceModule.Application.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Domain\Binacle.Net.ServiceModule.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

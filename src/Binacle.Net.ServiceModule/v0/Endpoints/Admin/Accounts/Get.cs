@@ -1,5 +1,5 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.ServiceModule.Application.Accounts.UseCases;
+using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
-using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
 
@@ -20,8 +19,8 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 			.WithDescription("Admins can use this endpoint to get an account's information")
 			.Produces<GetAccountResponse>(StatusCodes.Status200OK)
 			.WithResponseDescription(StatusCodes.Status200OK, GetAccountResponseDescription.For200OK)
-			.ResponseExample<GetAccountResponseExample>(StatusCodes.Status200OK, "application/json")
-			.ResponseExample<GetAccountErrorResponseExample>(
+			.ResponseExample<GetAccountResponse.Example>(StatusCodes.Status200OK, "application/json")
+			.ResponseExample<GetAccountResponse.ErrorResponseExample>(
 				StatusCodes.Status400BadRequest,
 				"application/json"
 			)
@@ -32,25 +31,25 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 
 	internal async Task<IResult> HandleAsync(
 		string id,
-		IMediator mediator,
+		IAccountRepository accountRepository,
 		CancellationToken cancellationToken = default)
 	{
-		if (!Guid.TryParse(id, out var accountId))
+		return await RequestValidationExtensions.WithTryCatch(async () =>
 		{
-			return Results.BadRequest(
-				ErrorResponse.IdToGuidParameterError
+			if (!Guid.TryParse(id, out var accountId))
+			{
+				return Results.BadRequest(
+					ErrorResponse.IdToGuidParameterError
+				);
+			}
+			var result = await accountRepository.GetByIdAsync(accountId);
+
+			return result.Match(
+				account => Results.Ok(
+					GetAccountResponse.From(account)
+				),
+				notFound => Results.NotFound()
 			);
-		}
-
-		var query = new GetAccountQuery(accountId);
-		
-		var result = await mediator.QueryAsync(query, cancellationToken);
-
-		return result.Match(
-			account => Results.Ok(
-				GetAccountResponse.From(account)
-			),
-			notFound => Results.NotFound()
-		);
+		});
 	}
 }

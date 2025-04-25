@@ -1,14 +1,16 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.ServiceModule.Application.Accounts.UseCases;
+using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
+using Binacle.Net.ServiceModule.Domain.Accounts.Services;
+using Binacle.Net.ServiceModule.Domain.Common.Services;
+using Binacle.Net.ServiceModule.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
-using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
+using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
-using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
 
@@ -20,10 +22,10 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			.WithSummary("Create account")
 			.WithDescription("Admins can use this endpoint to create accounts")
 			.Accepts<CreateAccountRequest>("application/json")
-			.RequestExample<CreateAccountRequestExample>("application/json")
+			.RequestExample<CreateAccountRequest.Example>("application/json")
 			.Produces(StatusCodes.Status201Created)
 			.WithResponseDescription(StatusCodes.Status201Created, CreateAccountResponseDescription.For201Created)
-			.ResponseExamples<CreateAccountErrorResponseExamples>(
+			.ResponseExamples<CreateAccountRequest.ErrorResponseExamples>(
 				StatusCodes.Status400BadRequest,
 				"application/json"
 			)
@@ -32,39 +34,37 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		IMediator mediator,
-		ValidatedBindingResult<CreateAccountRequest> request,
+		ValidatedBindingResult<CreateAccountRequest> requestResult,
+		IAccountRepository accountRepository,
+		IPasswordHasher passwordHasher,
+		TimeProvider timeProvider,
 		CancellationToken cancellationToken = default)
 	{
-		if (request.Value is null)
+		return await requestResult.WithValidatedRequest(async request =>
 		{
-			return Results.BadRequest(
-				ErrorResponse.MalformedRequest
+			var getResult = await accountRepository.GetByUsernameAsync(request.Username);
+			if (getResult.Is<Account>())
+			{
+				return Results.Conflict();
+			}
+			
+			var utcNow = timeProvider.GetUtcNow();
+			var newAccount = new Account(
+				request.Username,
+				AccountRole.User,
+				request.Email.ToLowerInvariant(),
+				AccountStatus.Active,
+				utcNow
 			);
-		}
+			
+			var passwordHash = passwordHasher.CreateHash(request.Password);
+			newAccount.ChangePassword(passwordHash);
+			var createResult = await accountRepository.CreateAsync(newAccount);
 
-		if (!request.ValidationResult?.IsValid ?? false)
-		{
-			return Results.BadRequest(
-				ErrorResponse.ValidationError(
-					request.ValidationResult!.Errors.Select(x => x.ErrorMessage).ToArray()
-				)
+			return createResult.Match(
+				success => Results.Created($"/api/admin/account/{newAccount.Id}", null),
+				conflict => Results.Conflict()
 			);
-		}
-
-		var createAccountCommand = new CreateAccountCommand(
-			request.Value.Username,
-			request.Value.Password,
-			request.Value.Email,
-			AccountRole.User
-		); 
-		
-		var result = await mediator.ExecuteAsync(createAccountCommand, cancellationToken);
-
-		return result.Match(
-			account => Results.Created($"/api/admin/account/{account.Id}", null),
-			conflict => Results.Conflict(),
-			error => Results.BadRequest(ErrorResponse.Create(error.Message ?? "Account creation failed"))
-		);
+		});
 	}
 }

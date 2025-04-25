@@ -1,13 +1,14 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.ServiceModule.Application.Accounts.UseCases;
+using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
+using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
+using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
-using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
 
@@ -30,24 +31,33 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 
 	internal async Task<IResult> HandleAsync(
 			string id,
-			IMediator mediator,
+			IAccountRepository accountRepository,
+			TimeProvider timeProvider,
 			CancellationToken cancellationToken = default
 		)
 	{
-		if (!Guid.TryParse(id, out var accountId))
+		return await RequestValidationExtensions.WithTryCatch(async () =>
 		{
-			return Results.BadRequest(
-				ErrorResponse.IdToGuidParameterError
+			if (!Guid.TryParse(id, out var accountId))
+			{
+				return Results.BadRequest(
+					ErrorResponse.IdToGuidParameterError
+				);
+			}
+			var accountResult = await accountRepository.GetByIdAsync(accountId);
+			if (!accountResult.TryGetValue<Account>(out var account) || account is null)
+			{
+				return Results.NotFound();
+			}
+			var now = timeProvider.GetUtcNow();
+			account.SoftDelete(now);
+
+			var result = await accountRepository.ForceUpdateAsync(account);
+
+			return result.Match(
+				success => Results.NoContent(),
+				notFound => Results.NotFound()
 			);
-		}
-		var command = new DeleteAccountCommand(accountId);
-
-		var result = await mediator.ExecuteAsync(command, cancellationToken);	
-
-		return result.Match(
-			ok => Results.NoContent(),
-			notFound => Results.NotFound(),
-			error => Results.BadRequest(ErrorResponse.Create(error.Message ?? "Account deletion failed"))
-		);
+		});
 	}
 }

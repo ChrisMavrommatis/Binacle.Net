@@ -1,12 +1,10 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using Binacle.Net.Kernel.OpenApi.ExtensionsMethods;
-using Binacle.Net.ServiceModule.Application;
-using Binacle.Net.ServiceModule.Application.Authentication.Configuration;
-using Binacle.Net.ServiceModule.Configuration.Models;
+using Binacle.Net.ServiceModule.Configuration;
+using Binacle.Net.ServiceModule.Domain;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Infrastructure;
-using Binacle.Net.ServiceModule.Models;
 using Binacle.Net.ServiceModule.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using YetAnotherMediator;
 
 namespace Binacle.Net.ServiceModule;
 
@@ -79,14 +76,20 @@ public static class ModuleDefinition
 			options.AddPolicy("Admin", policyBuilder =>
 			{
 				policyBuilder.RequireAuthenticatedUser();
-				policyBuilder.RequireClaim(ClaimTypes.Role, AccountRole.Admin.ToString());
+				policyBuilder.RequireClaim(ClaimTypes.Role, nameof(AccountRole.Admin));
 			});
 		});
 
-
-		builder.Services.AddMediator();
+		var defaultAdminCredentials = Environment.GetEnvironmentVariable("BINACLE_ADMIN_CREDENTIALS");
+		if (!string.IsNullOrWhiteSpace(defaultAdminCredentials))
+		{
+			builder.Services.Configure<ServiceModuleOptions>(options =>
+			{
+				options.DefaultAdminAccount = defaultAdminCredentials;
+			});
+		}
+		builder.Services.AddScoped<ITokenService, TokenService>();
 		builder
-			.AddApplication()
 			.AddInfrastructure();
 		
 		builder.Services.AddRateLimiter(options =>

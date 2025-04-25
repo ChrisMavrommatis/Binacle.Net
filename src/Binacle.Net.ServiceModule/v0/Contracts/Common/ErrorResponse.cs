@@ -28,6 +28,26 @@ internal class ErrorResponse
 			errors
 		);
 	}
+	
+	internal static ErrorResponse ServerError(Exception exception)
+	{
+		if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+		{
+			return ErrorResponse.Create(
+				"Server Error",
+				["An internal server error occured"]
+			);
+		}
+
+		return ErrorResponse.Create(
+			"Server Error",
+			[
+				exception.GetType().Name,
+				exception.Message,
+				exception.StackTrace
+			]
+		);
+	}
 
 	internal static ErrorResponse IdToGuidParameterError =>
 		ErrorResponse.Create(

@@ -1,0 +1,35 @@
+﻿using Binacle.Net.Kernel.Configuration.Models;
+using Binacle.Net.ServiceModule.Helpers;
+using FluentValidation;
+
+namespace Binacle.Net.ServiceModule.Configuration;
+
+internal class RateLimiterConfigurationOptions : IConfigurationOptions
+{
+	public static string FilePath => "ServiceModule/RateLimiter.json";
+	public static string SectionName => "RateLimiter";
+	public static bool Optional => false;
+	public static bool ReloadOnChange => false;
+	public static string GetEnvironmentFilePath(string environment) => $"ServiceModule/RateLimiter.{environment}.json";
+
+	public string? Anonymous { get; set; }
+	public string? Auth { get; set; }
+}
+
+internal class RateLimiterConfigurationOptionsValidator : AbstractValidator<RateLimiterConfigurationOptions>
+{
+	public RateLimiterConfigurationOptionsValidator()
+	{
+		RuleFor(x => x.Anonymous).NotNull().NotEmpty();
+
+		RuleFor(x => x.Anonymous)
+			.Must((value) => RateLimiterConfigurationParser.TryParse(value, out var _))
+			.WithMessage("Invalid configuration for Anonymous rate limiter. Please check the configuration."); 
+		
+		RuleFor(x => x.Auth).NotNull().NotEmpty();
+
+		RuleFor(x => x.Auth)
+			.Must((value) => RateLimiterConfigurationParser.TryParse(value, out var _))
+			.WithMessage("Invalid configuration for Auth rate limiter. Please check the configuration."); 
+	}
+}

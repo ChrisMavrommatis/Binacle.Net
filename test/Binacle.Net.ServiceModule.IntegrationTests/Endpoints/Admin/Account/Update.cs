@@ -1,6 +1,7 @@
 ﻿using Binacle.Net.ServiceModule.IntegrationTests.Models;
 using System.Net.Http.Json;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
+using Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
 namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Account;
@@ -133,7 +134,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. With Valid Request Returns 204 No Content")]
 	public async Task Put_WithValidRequest_Returns_204NoContent()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
 		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
 		var request = new UpdateAccountRequest
@@ -156,7 +157,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Email Returns 400 BadRequest")]
 	public async Task Put_WithInvalidEmail_Returns_400BadRequest()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
 		var request = new UpdateAccountRequest
 		{
@@ -173,7 +174,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Status Returns 400 BadRequest")]
 	public async Task Put_WithInvalidStatus_Returns_400BadRequest()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
 		var request = new UpdateAccountRequest
 		{
@@ -191,7 +192,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Role Returns 400 BadRequest")]
 	public async Task Put_WithInvalidRole_Returns_400BadRequest()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
 		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
 		var request = new UpdateAccountRequest
@@ -210,7 +211,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Password Returns 400 BadRequest")]
 	public async Task Put_WithInvalidPassword_Returns_400BadRequest()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
 		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
 		var request = new UpdateAccountRequest
@@ -233,7 +234,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. For Non Existing User Returns 404 Not Found")]
 	public async Task Put_ForNonExistingUser_Returns_404NotFound()
 	{
-		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 		var nonExistentId = Guid.Parse("EF81C267-A003-44B8-AD89-4B48661C4AA5");
 
 		var url = routePath.Replace("{id}", nonExistentId.ToString());
