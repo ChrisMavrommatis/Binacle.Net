@@ -39,7 +39,7 @@ internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 			var result = await mediator.ExecuteAsync(request, cancellationToken);
 
 			var success = result.Match(
-				user => true,
+				account => true,
 				conflict => true,
 				error => false
 			);

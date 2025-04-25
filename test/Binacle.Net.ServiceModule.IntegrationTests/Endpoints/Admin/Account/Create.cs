@@ -15,8 +15,8 @@ public class Create : AdminEndpointsTestsBase
 	{
 		this.newAccountCredentials = new AccountCredentials
 		{
-			Username = "new@user.test",
-			Email =  "new@user.test",
+			Username = "newuser@binacle.net",
+			Email =  "newuser@binacle.net",
 			Password = "N3wUs3rP@ssw0rd"
 		};
 	}
@@ -102,9 +102,9 @@ public class Create : AdminEndpointsTestsBase
 
 	#region 403 Forbidden
 
-	[Fact(DisplayName = $"POST {routePath}. Without Admin User Bearer Token Returns 403 Forbidden")]
-	public Task Post_WithoutAdminUserBearerToken_Returns_403Forbidden()
-		=> this.Action_WithoutAdminUserBearerToken_Returns_403Forbidden(async () =>
+	[Fact(DisplayName = $"POST {routePath}. Without Admin Bearer Token Returns 403 Forbidden")]
+	public Task Post_WithoutAdminBearerToken_Returns_403Forbidden()
+		=> this.Action_WithoutAdminBearerToken_Returns_403Forbidden(async () =>
 		{
 			var request = new CreateAccountRequest
 			{
@@ -135,6 +135,9 @@ public class Create : AdminEndpointsTestsBase
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
 		response.StatusCode.ShouldBe(HttpStatusCode.Created);
+		
+		this.newAccountCredentials.Id = GetCreatedId(response);
+
 	}
 	#endregion
 

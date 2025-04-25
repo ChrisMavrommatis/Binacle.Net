@@ -29,26 +29,26 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 		};
 
 		var options = this.Sut.Services.GetRequiredService<IOptions<ServiceModuleOptions>>();
-		var defaultAdminUser = ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
+		var defaultAdmin = ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
 
 		this.AdminAccountCredentials = new Models.AccountCredentials
 		{
-			Username = defaultAdminUser.Username,
-			Email = defaultAdminUser.Email,
-			Password = defaultAdminUser.Password
+			Username = defaultAdmin.Username,
+			Email = defaultAdmin.Email,
+			Password = defaultAdmin.Password
 		};
 
 		this.SimulatedAdminAccount = new Domain.Accounts.Entities.Account(
-			defaultAdminUser.Username,
+			defaultAdmin.Username,
 			AccountRole.Admin,
-			defaultAdminUser.Email,
+			defaultAdmin.Email,
 			AccountStatus.Active,
 			new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero),
 			Guid.Parse("6B54DFF4-8130-4572-A21A-A305F9018FFF")
 		);
 
 		var passwordHasher = this.Sut.Services.GetRequiredService<IPasswordHasher>();
-		var hashedPassword = passwordHasher.CreateHash(defaultAdminUser.Password);
+		var hashedPassword = passwordHasher.CreateHash(defaultAdmin.Password);
 		this.SimulatedAdminAccount.ChangePassword(hashedPassword);
 	}
 	
@@ -82,13 +82,25 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 			throw new System.ApplicationException($"Error while creating account {accountCredentials.Username}. Response status code was {response.StatusCode}");
 		}
 
-		var parts = response.Headers.Location!.LocalPath.Split(["/"], StringSplitOptions.RemoveEmptyEntries);
+		accountCredentials.Id = GetCreatedId(response);
+	}
+
+	protected Guid GetCreatedId(HttpResponseMessage response)
+	{
+		var location = response.Headers.Location!.ToString();
+		var parts = location.Split(["/"], StringSplitOptions.RemoveEmptyEntries);
 		var id = Guid.Parse(parts.Last());
-		accountCredentials.Id = id;
+		return id;
 	}
 	
 	protected async Task EnsureAccountDoesNotExist(Models.AccountCredentials accountCredentials)
 	{
+		if (accountCredentials.Id is null)
+		{
+			// TODO: In create can create users
+			return;
+		}
+		
 		await this.AuthenticateAsAsync(this.AdminAccountCredentials);
 
 		var response = await this.Sut.Client.DeleteAsync($"/api/admin/account/{accountCredentials.Id}");
@@ -96,7 +108,7 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 		if (response.StatusCode != System.Net.HttpStatusCode.NoContent &&
 		    response.StatusCode != System.Net.HttpStatusCode.NotFound)
 		{
-			throw new System.ApplicationException($"Error while deleting user {accountCredentials.Username}. Response status code was {response.StatusCode}");
+			throw new System.ApplicationException($"Error while deleting Account {accountCredentials.Username}. Response status code was {response.StatusCode}");
 		}
 	}
 	

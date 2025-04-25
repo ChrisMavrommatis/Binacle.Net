@@ -111,7 +111,7 @@ public abstract partial class AdminEndpointsTestsBase
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 	}
 
-	protected async Task Action_WithoutAdminUserBearerToken_Returns_403Forbidden(Func<Task<HttpResponseMessage>> action)
+	protected async Task Action_WithoutAdminBearerToken_Returns_403Forbidden(Func<Task<HttpResponseMessage>> action)
 	{
 		await this.AuthenticateAsAsync(this.UserAccountCredentials);
 

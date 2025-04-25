@@ -25,23 +25,23 @@ public class Token
 	public async Task Post_WithValidCredentials_Returns_200OK()
 	{
 		var options = this.sut.Services.GetRequiredService<IOptions<ServiceModuleOptions>>();
-		var defaultAdminUser = ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
+		var defaultAdmin = ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
 		var request = new TokenRequest()
 		{
-			Username = defaultAdminUser.Username,
-			Password = defaultAdminUser.Password
+			Username = defaultAdmin.Username,
+			Password = defaultAdmin.Password
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
 		response.StatusCode.ShouldBe(HttpStatusCode.OK);
 	}
 
-	[Fact(DisplayName = $"POST {routePath}. With Wrong User/Password Returns 401 Unauthorized")]
+	[Fact(DisplayName = $"POST {routePath}. With Wrong Credentials Returns 401 Unauthorized")]
 	public async Task Post_WithWrongUserPassword_Returns_401Unauthorized()
 	{
 		var request = new TokenRequest()
 		{
-			Username = "invalid@nonexisting.test",
-			Password = "Wr0ngP@ssw0rd"
+			Username = "validemail@binacle.net",
+			Password = "Ag00dP@ssw0rd"
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
@@ -50,20 +50,12 @@ public class Token
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Credentials Returns 400 BadRequest")]
 	public async Task Post_WithInvalidCredentials_Returns_400BadRequest()
 	{
-		var request1 = new TokenRequest()
+		var request = new TokenRequest()
 		{
-			Username = "notvalidemail.test",
-			Password = "Wr0ngP@ssw0rd"
+			Username = "validemail@binacle.net",
+			Password = "pass"
 		};
-		var response1 = await this.sut.Client.PostAsJsonAsync(routePath, request1, this.sut.JsonSerializerOptions);
-		response1.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-
-		var request2 = new TokenRequest()
-		{
-			Username = "valid@email.test",
-			Password = "invpass"
-		};
-		var response2 = await this.sut.Client.PostAsJsonAsync(routePath, request2, this.sut.JsonSerializerOptions);
-		response2.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
+		response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 	}
 }
