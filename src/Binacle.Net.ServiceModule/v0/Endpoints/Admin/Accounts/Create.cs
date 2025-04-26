@@ -36,7 +36,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 	internal async Task<IResult> HandleAsync(
 		ValidatedBindingResult<CreateAccountRequest> requestResult,
 		IAccountRepository accountRepository,
-		IPasswordHasher passwordHasher,
+		IPasswordService passwordService,
 		TimeProvider timeProvider,
 		CancellationToken cancellationToken = default)
 	{
@@ -57,8 +57,8 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 				utcNow
 			);
 			
-			var passwordHash = passwordHasher.CreateHash(request.Password);
-			newAccount.ChangePassword(passwordHash);
+			var password = passwordService.Create(request.Password);
+			newAccount.ChangePassword(password);
 			var createResult = await accountRepository.CreateAsync(newAccount);
 
 			return createResult.Match(

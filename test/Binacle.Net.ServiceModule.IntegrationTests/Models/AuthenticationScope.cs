@@ -36,8 +36,9 @@ internal class AuthenticationScope : IAsyncDisposable, IDisposable
 		this.sut.Client.DefaultRequestHeaders.Authorization = null;
 	}
 
-	public async ValueTask DisposeAsync()
+	public ValueTask DisposeAsync()
 	{
 		this.sut.Client.DefaultRequestHeaders.Authorization = null;
+		return ValueTask.CompletedTask;
 	}
 }

@@ -38,7 +38,7 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 		string id,
 		ValidatedBindingResult<PartialUpdateAccountRequest> requestResult,
 		IAccountRepository accountRepository,
-		IPasswordHasher passwordHasher,
+		IPasswordService passwordService,
 		CancellationToken cancellationToken = default)
 	{
 		return await requestResult.WithValidatedRequest(async request =>
@@ -71,8 +71,8 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 
 			if (!string.IsNullOrEmpty(request.Password))
 			{
-				var newPasswordHash = passwordHasher.CreateHash(request.Password);
-				account.ChangePassword(newPasswordHash);
+				var newPassword = passwordService.Create(request.Password);
+				account.ChangePassword(newPassword);
 			}
 
 			if (request.Role.HasValue)

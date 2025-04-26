@@ -1,5 +1,6 @@
 ﻿using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Domain.Common;
+using Binacle.Net.ServiceModule.Domain.Common.Models;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using FluxResults.TypedResults;
 using FluxResults.Unions;
@@ -13,7 +14,7 @@ public class Account : AuditableEntity
 	public string Email { get; private set; }
 	public AccountStatus Status { get; private set; }
 
-	public string? PasswordHash { get; private set; }
+	public Password? Password { get; private set; }
 	public Guid SecurityStamp { get; private set; }
 	
 	public Guid? SubscriptionId { get; private set; }
@@ -40,13 +41,13 @@ public class Account : AuditableEntity
 	
 	public bool HasPassword()
 	{
-		return !string.IsNullOrEmpty(this.PasswordHash)
+		return this.Password is not null
 			&& this.SecurityStamp != Guid.Empty;
 	}
 
-	public void ChangePassword(string passwordHash)
+	public void ChangePassword(Password password)
 	{
-		this.PasswordHash = passwordHash;
+		this.Password = password;
 		this.SecurityStamp = Guid.NewGuid();
 	}
 	

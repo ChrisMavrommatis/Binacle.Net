@@ -24,7 +24,7 @@ internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 
 		var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
-		var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+		var passwordService = scope.ServiceProvider.GetRequiredService<IPasswordService>();
 		var utcNow = timeProvider.GetUtcNow();
 		// get configuration
 		var options = scope.ServiceProvider.GetRequiredService<IOptions<ServiceModuleOptions>>();
@@ -38,8 +38,8 @@ internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 			AccountStatus.Active,
 			utcNow
 		);
-		var passwordHash = passwordHasher.CreateHash(configuredAdminCredentials.Password);
-		newAccount.ChangePassword(passwordHash);
+		var password = passwordService.Create(configuredAdminCredentials.Password);
+		newAccount.ChangePassword(password);
 		var createResult = await accountRepository.CreateAsync(newAccount);
 
 		var success = createResult.Match(

@@ -44,7 +44,7 @@ internal class ErrorResponse
 			[
 				exception.GetType().Name,
 				exception.Message,
-				exception.StackTrace
+				exception.StackTrace ?? string.Empty
 			]
 		);
 	}

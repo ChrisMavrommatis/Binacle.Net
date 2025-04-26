@@ -1,4 +1,6 @@
-﻿namespace Binacle.Net.ServiceModule.Domain.Accounts.Models;
+﻿using Binacle.Net.ServiceModule.Domain.Common;
+
+namespace Binacle.Net.ServiceModule.Domain.Accounts.Models;
 
 public enum AccountRole
 {
@@ -6,3 +8,4 @@ public enum AccountRole
 	User,
 	Guest
 }
+

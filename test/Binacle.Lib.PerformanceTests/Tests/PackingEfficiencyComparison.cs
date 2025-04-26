@@ -2,7 +2,6 @@
 using Binacle.Lib.Packing.Models;
 using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Services;
-using Binacle.Lib.Packing.Models;
 using Binacle.Net.TestsKernel.Data.Providers.PackingEddiciency;
 using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.TestsKernel.Providers;

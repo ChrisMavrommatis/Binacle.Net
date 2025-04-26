@@ -11,7 +11,7 @@ internal static class RateLimiterConfigurationParser
 			configuration = Parse(value);
 			return true;
 		}
-		catch (Exception ex)
+		catch (Exception)
 		{
 			configuration = null;
 			return false;
@@ -37,9 +37,9 @@ internal static class RateLimiterConfigurationParser
 
 		return type switch
 		{
-			"FixedWindow" => CreateFixedWindow(options),
-			"SlidingWindow" => CreateSlidingWindow(options),
-			"NoLimiter" => CreateNoLimiter(options),
+			nameof(RateLimiterType.FixedWindow) => CreateFixedWindow(options),
+			nameof(RateLimiterType.SlidingWindow) => CreateSlidingWindow(options),
+			nameof(RateLimiterType.NoLimiter) => CreateNoLimiter(options),
 			_ => throw new InvalidOperationException("RateLimiter type must be of 'FixedWindow' or 'SlidingWindow' ")
 		};
 	}

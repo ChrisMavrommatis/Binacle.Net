@@ -18,7 +18,10 @@ public static class Setup
 		
 		// Register Services
 		builder.Services
-			.AddScoped<IPasswordHasher, PasswordHasher>()
+			.AddSingleton<IPasswordService, PasswordService>()
+			.AddSingleton<IPasswordHasher, PlainTextPasswordHasher>()
+			.AddSingleton<IPasswordHasher, Sha256PasswordHasher>()
+			.AddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>()
 			.AddScoped<IAccountRepository, InMemoryAccountRepository>()
 			.AddScoped<ISubscriptionRepository, InMemorySubscriptionRepository>();
 		// var azureStorageConnectionString = builder.Configuration

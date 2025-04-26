@@ -53,10 +53,10 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 				);
 			}
 
-			if (!request.ValidationResult?.IsValid ?? false)
+			if (!(request.ValidationResult?.IsValid ?? false))
 			{
 				return Results.BadRequest(
-					Response.ValidationError(request.ValidationResult, ErrorCategory.ValidationError)
+					Response.ValidationError(request.ValidationResult!, ErrorCategory.ValidationError)
 				);
 			}
 

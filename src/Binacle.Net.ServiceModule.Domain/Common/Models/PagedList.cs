@@ -15,4 +15,3 @@ public class PagedList<T> : List<T>
 		this.PageNumber = pageNumber;
 	}
 }
-

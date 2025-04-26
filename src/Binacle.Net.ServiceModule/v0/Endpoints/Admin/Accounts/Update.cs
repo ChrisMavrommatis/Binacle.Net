@@ -38,7 +38,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 		string id,
 		ValidatedBindingResult<UpdateAccountRequest> requestResult,
 		IAccountRepository accountRepository,
-		IPasswordHasher passwordHasher,
+		IPasswordService passwordService,
 		CancellationToken cancellationToken = default)
 	{
 		return await requestResult.WithValidatedRequest(async request =>
@@ -62,8 +62,8 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			}
 			account.ChangeUsername(request.Username);
 			account.ChangeEmail(request.Email);
-			var newPasswordHash = passwordHasher.CreateHash(request.Password);
-			account.ChangePassword(newPasswordHash);
+			var newPassword = passwordService.Create(request.Password);
+			account.ChangePassword(newPassword);
 			account.ChangeRole(request.Role!.Value);
 			account.ChangeStatus(request.Status!.Value);
 			

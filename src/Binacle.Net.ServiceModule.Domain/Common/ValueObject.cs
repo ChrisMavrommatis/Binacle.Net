@@ -4,7 +4,7 @@ public abstract class ValueObject
 {
 	protected abstract IEnumerable<object> GetAtomicValues();
 
-	public override bool Equals(object? obj)
+	public sealed override bool Equals(object? obj)
 	{
 		if (obj is not ValueObject other)
 			return false;
@@ -12,7 +12,7 @@ public abstract class ValueObject
 		return this.GetAtomicValues().SequenceEqual(other.GetAtomicValues());
 	}
 
-	public override int GetHashCode()
+	public sealed override int GetHashCode()
 	{
 		return this.GetAtomicValues()
 			.Select(x => x?.GetHashCode() ?? 0)

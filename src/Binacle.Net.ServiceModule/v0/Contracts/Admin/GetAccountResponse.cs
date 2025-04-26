@@ -30,7 +30,7 @@ internal class GetAccountResponse
 			Role = account.Role,
 			Email = account.Email,
 			Status = account.Status,
-			PasswordHash = account.PasswordHash,
+			PasswordHash = account.Password?.ToString(),
 			SecurityStamp = account.SecurityStamp,
 			SubscriptionId = account.SubscriptionId,
 			CreatedAtUtc = account.CreatedAtUtc

@@ -1,14 +1,13 @@
-﻿using System.Numerics;
-using Binacle.Lib.Abstractions.Algorithms;
+﻿using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Packing.Models;
 using Binacle.Lib.PerformanceTests.Models;
-using Binacle.Lib.Packing.Models;
+using Binacle.Lib.PerformanceTests.Services;
 using Binacle.Net.TestsKernel.Data.Providers.PackingEddiciency;
 using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.TestsKernel.Providers;
 using Microsoft.Extensions.Logging;
 
-namespace Binacle.Lib.PerformanceTests.Services;
+namespace Binacle.Lib.PerformanceTests.Tests;
 
 internal class PackingEfficiency : ITest
 {

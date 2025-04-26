@@ -9,6 +9,9 @@ using OpenApiExamples.Abstractions;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
+#pragma warning disable CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
+
+
 namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
 internal class PartialUpdateAccountRequest : IWithUsername, IWithEmail, IWithPassword

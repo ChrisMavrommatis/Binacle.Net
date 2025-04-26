@@ -60,7 +60,7 @@ internal class Token : IEndpoint
 		IAccountRepository accountRepository,
 		ISubscriptionRepository subscriptionRepository,
 		ITokenService tokenService,
-		IPasswordHasher passwordHasher,
+		IPasswordService passwordService,
 		CancellationToken cancellationToken = default
 	)
 	{
@@ -77,7 +77,7 @@ internal class Token : IEndpoint
 				return Results.Unauthorized();
 			}
 
-			if (!passwordHasher.PasswordMatches(request.Password, account.PasswordHash!))
+			if (!passwordService.PasswordMatches(account.Password!, request.Password))
 			{
 				return Results.Unauthorized();
 			}

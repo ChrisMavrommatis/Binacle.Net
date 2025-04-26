@@ -31,7 +31,7 @@ internal class AuthErrorResponse
 			[
 				ex.GetType().Name,
 				ex.Message,
-				ex.StackTrace
+				ex.StackTrace ?? string.Empty
 			]
 		);
 	}

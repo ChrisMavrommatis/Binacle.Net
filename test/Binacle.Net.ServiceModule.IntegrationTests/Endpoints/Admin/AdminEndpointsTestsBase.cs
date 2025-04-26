@@ -22,7 +22,7 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 	{
 		this.Sut = sut;
 		
-		var passwordHasher = this.Sut.Services.GetRequiredService<IPasswordHasher>();
+		var passwordService = this.Sut.Services.GetRequiredService<IPasswordService>();
 		var options = this.Sut.Services.GetRequiredService<IOptions<ServiceModuleOptions>>();
 		var defaultAdmin = ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
 
@@ -35,8 +35,8 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 			Guid.Parse("6B54DFF4-8130-4572-A21A-A305F9018FFF")
 		);
 
-		var adminsHashedPassword = passwordHasher.CreateHash(defaultAdmin.Password);
-		this.AdminAccount.ChangePassword(adminsHashedPassword);
+		var adminsPassword = passwordService.Create(defaultAdmin.Password);
+		this.AdminAccount.ChangePassword(adminsPassword);
 		
 		this.UserAccount =new Domain.Accounts.Entities.Account(
 			"testuser@binacle.net",
@@ -46,8 +46,8 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 			new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero),
 			Guid.Parse("C68B22B5-E41F-4E1B-9FEB-50A5CD46D441")
 		);
-		var usersHashedPassword = passwordHasher.CreateHash("T3stUs3rsP@ssw0rd");
-		this.UserAccount.ChangePassword(usersHashedPassword);
+		var usersPassword = passwordService.Create("T3stUs3rsP@ssw0rd");
+		this.UserAccount.ChangePassword(usersPassword);
 	}
 	
 	protected async Task EnsureAccountExists(AccountCredentials accountCredentials)
