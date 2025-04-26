@@ -1,11 +1,12 @@
 ﻿@id = 019673f7-8ab8-7708-b181-8bbdd2d831c8
 
 
-POST https://{{HOST}}/api/admin/account/{{id}}/subscription/
+PATCH https://{{HOST}}/api/admin/account/{{id}}/subscription/
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{BEARERTOKEN}}
 
 {
-  "type":"Normal" 
+  "type":"Normal",
+  "status": "Active"
 }

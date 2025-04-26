@@ -16,7 +16,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 {
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		group.MapPost("/account/{id}/subscription", HandleAsync)
+		group.MapPut("/account/{id}/subscription", HandleAsync)
 			.WithSummary("Update subscription")
 			.WithDescription("Admins can use this endpoint to update the subscription for an account")
 			.Accepts<UpdateSubscriptionRequest>("application/json")

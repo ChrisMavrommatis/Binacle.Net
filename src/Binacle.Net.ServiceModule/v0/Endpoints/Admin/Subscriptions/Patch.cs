@@ -16,7 +16,7 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 {
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		group.MapPost("/account/{id}/subscription", HandleAsync)
+		group.MapPatch("/account/{id}/subscription", HandleAsync)
 			.WithSummary("Partiually update the subscription")
 			.WithDescription("Admins can use this endpoint to partially update the subscription for an account")
 			.Accepts<PartialUpdateSubscriptionRequest>("application/json")
