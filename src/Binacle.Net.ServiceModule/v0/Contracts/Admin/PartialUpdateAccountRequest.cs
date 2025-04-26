@@ -142,7 +142,7 @@ internal class PartialUpdateAccountRequest : IWithUsername, IWithEmail, IWithPas
 				"Example response with validation errors",
 				ErrorResponse.ValidationError(
 				[
-					// TODO: Example
+					"At least one field must be provided for update."
 				])
 			);
 		}

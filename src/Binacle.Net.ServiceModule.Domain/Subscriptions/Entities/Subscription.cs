@@ -5,10 +5,10 @@ namespace Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 
 public class Subscription : AuditableEntity
 {
-	public Guid? AccountId { get; }
+	public Guid AccountId { get; }
 	public SubscriptionType Type { get; private set; }
 	
-	private SubscriptionStatus status;
+	public SubscriptionStatus Status { get; private set; }
 	
 	public Subscription(
 		Guid accountId,
@@ -23,14 +23,23 @@ public class Subscription : AuditableEntity
 		)
 	{
 		this.AccountId = accountId;
-		this.status = status;
+		this.Status = status;
 		this.Type = type;
 	}
-
+	
+	public void ChangeType(SubscriptionType newType)
+	{
+		this.Type = newType;
+	}
+	
+	public void ChangeStatus(SubscriptionStatus newStatus)
+	{
+		this.Status = newStatus;
+	}
 	public bool IsActive()
 	{
 		return !this.IsDeleted
-		       && this.status == SubscriptionStatus.Active;
+		       && this.Status == SubscriptionStatus.Active;
 	}
 }
 

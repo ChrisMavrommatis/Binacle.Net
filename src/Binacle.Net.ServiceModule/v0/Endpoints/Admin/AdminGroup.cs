@@ -32,60 +32,8 @@ internal class AdminGroup : IEndpointGroup
 				ResponseDescription.For500InternalServerError
 			)
 			.AllEndpointsHaveResponseExample<InternalServerErrorErrorResponseExample>(
-				StatusCodes.Status500InternalServerError, 
+				StatusCodes.Status500InternalServerError,
 				"application/json"
 			);
-	}
-}
-
-internal static class RequestValidationExtensions
-{
-	public static async Task<IResult> WithValidatedRequest<TRequest>(
-		this ValidatedBindingResult<TRequest> request,
-		Func<TRequest, Task<IResult>> handleRequest
-	)
-	{
-		try
-		{
-			if (request.Value is null)
-			{
-				return Results.BadRequest(
-					ErrorResponse.MalformedRequest
-				);
-			}
-
-			if (!request.ValidationResult?.IsValid ?? false)
-			{
-				return Results.BadRequest(
-					ErrorResponse.ValidationError(
-						request.ValidationResult!.Errors.Select(x => x.ErrorMessage).ToArray()
-					)
-				);
-			}
-
-			return await handleRequest(request.Value);
-		}
-		catch (Exception ex)
-		{
-			return Results.InternalServerError(
-				ErrorResponse.ServerError(ex)
-			);
-		}
-	}
-
-	public static async Task<IResult> WithTryCatch(
-		Func<Task<IResult>> handleRequest
-	)
-	{
-		try
-		{
-			return await handleRequest();
-		}
-		catch (Exception ex)
-		{
-			return Results.InternalServerError(
-				ErrorResponse.ServerError(ex)
-			);
-		}
 	}
 }

@@ -30,8 +30,4 @@
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Infrastructure\Binacle.Net.ServiceModule.Infrastructure.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="v0\Endpoints\Admin\Subscriptions\" />
-	</ItemGroup>
-
 </Project>

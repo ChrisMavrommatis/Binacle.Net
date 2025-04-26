@@ -10,6 +10,7 @@ public interface ISubscriptionRepository
 	Task<FluxUnion<Subscription, NotFound>> GetByAccountIdAsync(Guid accountId);
 	Task<FluxUnion<Success, Conflict>> CreateAsync(Subscription subscription);
 	Task<FluxUnion<Success, NotFound>> UpdateAsync(Subscription subscription);
+	Task<FluxUnion<Success, NotFound>> ForceUpdateAsync(Subscription subscription);
 	Task<FluxUnion<Success, NotFound>> DeleteAsync(Subscription subscription);
 }
 

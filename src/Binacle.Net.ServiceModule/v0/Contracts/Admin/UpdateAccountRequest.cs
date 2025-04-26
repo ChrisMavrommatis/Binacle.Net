@@ -3,6 +3,7 @@ using Binacle.Net.Kernel.Serialization;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Contracts.Common.Interfaces;
+using Binacle.Net.ServiceModule.v0.Resources;
 using FluentValidation;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
@@ -33,17 +34,13 @@ internal class UpdateAccountRequest : IWithUsername, IWithEmail, IWithPassword
 			Include(x => new EmailValidator());
 			Include(x => new PasswordValidator());
 		
-			var accountStatusValues = Enum.GetValues<AccountStatus>();
-		
 			RuleFor(x => x.Status)
 				.NotNull()
-				.WithMessage($"'{nameof(UpdateAccountRequest.Status)}' is required and must be one of the following values: {string.Join(", ", accountStatusValues)}");
-
-			var accountRoleValues = Enum.GetValues<AccountRole>();
+				.WithMessage(ErrorMessage.RequiredEnumValues<AccountStatus>(nameof(Status)));
 
 			RuleFor(x => x.Role)
 				.NotNull()
-				.WithMessage($"'{nameof(UpdateAccountRequest.Role)}' is required and must be one of the following values: {string.Join(", ", accountRoleValues)}");
+				.WithMessage(ErrorMessage.RequiredEnumValues<AccountRole>(nameof(Role)));
 
 		}
 	}
@@ -94,14 +91,14 @@ internal class UpdateAccountRequest : IWithUsername, IWithEmail, IWithPassword
 					"The length of 'Password' must be at least 10 characters. You entered 8 characters."
 				])
 			);
-			 
 			yield return OpenApiExample.Create(
 				"validationError2",
 				"Validation Error 2",
 				"Example response with validation errors",
 				ErrorResponse.ValidationError(
 				[
-					// TODO: Example
+					ErrorMessage.RequiredEnumValues<AccountStatus>(nameof(Status)),
+					ErrorMessage.RequiredEnumValues<AccountRole>(nameof(Role))
 				])
 			);
 		}

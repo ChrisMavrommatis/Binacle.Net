@@ -34,7 +34,7 @@ internal class List : IGroupedEndpoint<AdminGroup>
 		IAccountRepository accountRepository,
 		CancellationToken cancellationToken = default)
 	{
-		return await RequestValidationExtensions.WithTryCatch(async () =>
+		return await AccountRequestValidationExtensions.WithTryCatch(async () =>
 		{
 			if (pg is < 1)
 			{

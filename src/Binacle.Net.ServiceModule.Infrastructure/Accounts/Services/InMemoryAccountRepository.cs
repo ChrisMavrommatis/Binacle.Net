@@ -90,12 +90,9 @@ internal class InMemoryAccountRepository : IAccountRepository
 
 	public Task<FluxUnion<Success, NotFound>> DeleteAsync(Account account)
 	{
-		if (!_accounts.ContainsKey(account.Id))
-		{
-			return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.NotFound);
-		}
-
-		_accounts.Remove(account.Id);
-		return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.Success);
+		var removed = _accounts.Remove(account.Id);
+		return Task.FromResult<FluxUnion<Success, NotFound>>(
+			removed ? TypedResult.Success : TypedResult.NotFound
+		);
 	}
 }

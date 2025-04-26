@@ -36,7 +36,7 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			CancellationToken cancellationToken = default
 		)
 	{
-		return await RequestValidationExtensions.WithTryCatch(async () =>
+		return await AccountRequestValidationExtensions.WithTryCatch(async () =>
 		{
 			if (!Guid.TryParse(id, out var accountId))
 			{
