@@ -9,6 +9,7 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
 internal class GetAccountResponse
 {
+	public required Guid Id { get; set; }
 	public required string Username { get; set; }
 	
 	[JsonConverter(typeof(JsonStringEnumConverter))]
@@ -26,6 +27,7 @@ internal class GetAccountResponse
 	{
 		return new GetAccountResponse()
 		{
+			Id = account.Id,
 			Username = account.Username,
 			Role = account.Role,
 			Email = account.Email,
@@ -47,6 +49,7 @@ internal class GetAccountResponse
 				"Get Account Response",
 				new GetAccountResponse()
 				{
+					Id = Guid.Parse("7433FEEC-4863-41DF-BA45-57EB52C3F014"), 
 					Username = "user@binacle.net",
 					Role = AccountRole.User,
 					Email = "user@binacle.net",

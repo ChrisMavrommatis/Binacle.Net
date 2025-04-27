@@ -1,4 +1,4 @@
-@ID = 01966472-c08e-77b5-88a0-c8376ab48f15
+@ID = 019678a2-ba63-7d29-8300-6ecdad1d6a63
 
 DELETE https://{{HOST}}/api/admin/account/{{ID}}
 Accept: application/json

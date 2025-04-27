@@ -48,3 +48,31 @@ internal static class UpdateSubscriptionResponseDescription
 		.AppendLine()
 		.ToString();
 }
+
+internal static class DeleteSubscriptionResponseDescription
+{
+	public static string For204NoContent = new StringBuilder("**No Content**")
+		.AppendLine("<br />")
+		.AppendLine()
+		.AppendLine("When the Subscription was deleted.")
+		.AppendLine()
+		.ToString();
+}
+
+
+internal static class ListSubscriptionResponseDescription
+{
+	public static string For200OK = new StringBuilder("**OK**")
+		.AppendLine("<br />")
+		.AppendLine()
+		.AppendLine("When subscriptions exist")
+		.AppendLine()
+		.ToString();
+	
+	public static string For404NotFound = new StringBuilder("**Not Found**")
+		.AppendLine("<br />")
+		.AppendLine()
+		.AppendLine("When no subscriptions exist")
+		.AppendLine()
+		.ToString();
+}

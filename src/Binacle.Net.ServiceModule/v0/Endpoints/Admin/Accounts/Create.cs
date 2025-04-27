@@ -25,10 +25,12 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			.RequestExample<CreateAccountRequest.Example>("application/json")
 			.Produces(StatusCodes.Status201Created)
 			.WithResponseDescription(StatusCodes.Status201Created, CreateAccountResponseDescription.For201Created)
-			.ResponseExamples<CreateAccountRequest.ErrorResponseExamples>(
-				StatusCodes.Status400BadRequest,
-				"application/json"
-			)
+			// TODO
+			.ProducesValidationProblem()
+			// .ResponseExamples<CreateAccountRequest.ErrorResponseExamples>(
+			// 	StatusCodes.Status400BadRequest,
+			// 	"application/json"
+			// )
 			.Produces(StatusCodes.Status409Conflict)
 			.WithResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict);
 	}

@@ -17,8 +17,9 @@ internal class AdminGroup : IEndpointGroup
 			.WithTags("Admin")
 			.RequireAuthorization("Admin")
 			.WithGroupName(ServiceModuleApiDocument.DocumentName)
-			.AllEndpointsProduce<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			.AllEndpointsHaveResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			// TODO
+			// .AllEndpointsProduce<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			// .AllEndpointsHaveResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.AllEndpointsProduce(StatusCodes.Status401Unauthorized)
 			.AllEndpointsHaveResponseDescription(
 				StatusCodes.Status401Unauthorized,

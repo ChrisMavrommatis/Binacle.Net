@@ -82,6 +82,17 @@ public class Account : AuditableEntity
 
 		return TypedResult.Success;
 	}
+
+	public FluxUnion<Success, NotFound> RemoveSubscription()
+	{
+		if (!this.SubscriptionId.HasValue)
+		{
+			return TypedResult.NotFound;
+		}
+
+		this.SubscriptionId = null;
+		return TypedResult.Success;
+	}
 	
 	public bool HasSubscription()
 	{

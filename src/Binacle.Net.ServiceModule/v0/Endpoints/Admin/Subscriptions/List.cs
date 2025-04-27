@@ -1,38 +1,42 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
+using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
+using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
+using FluxResults.TypedResults;
+using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
 
-namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
+namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Subscriptions;
 
 internal class List : IGroupedEndpoint<AdminGroup>
 {
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		group.MapGet("/account/", HandleAsync)
-			.WithSummary("List accounts")
-			.WithDescription("Admins can use this endpoint to list all accounts.")
-			.Produces<ListAccountsResponse>(StatusCodes.Status200OK)
-			.WithResponseDescription(StatusCodes.Status200OK, ListAccountResponseDescription.For200OK)
-			.ResponseExample<ListAccountsResponse.Example>(StatusCodes.Status200OK, "application/json")
+		group.MapGet("/subscription/", HandleAsync)
+			.WithSummary("List subscriptions")
+			.WithDescription("Admins can use this endpoint to list all the subscriptions")
+			.Produces<ListSubscriptionsResponse>(StatusCodes.Status200OK)
+			.WithResponseDescription(StatusCodes.Status200OK, ListSubscriptionResponseDescription.For200OK)
+			.ResponseExample<ListSubscriptionsResponse.Example>(StatusCodes.Status200OK, "application/json")
 			.Produces(StatusCodes.Status400BadRequest)
-			.ResponseExamples<ListAccountsResponse.ErrorResponseExamples>(
+			.ResponseExamples<ListSubscriptionsResponse.ErrorResponseExamples>(
 				StatusCodes.Status400BadRequest,
 				"application/json"
 			)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, ListAccountResponseDescription.For404NotFound);
+			.WithResponseDescription(StatusCodes.Status404NotFound, ListSubscriptionResponseDescription.For404NotFound);
 	}
 
 	internal async Task<IResult> HandleAsync(
 		int? pg,
 		int? pz,
-		IAccountRepository accountRepository,
+		ISubscriptionRepository subscriptionRepository,
 		CancellationToken cancellationToken = default)
 	{
 		return await RequestValidationExtensions.WithTryCatch(async () =>
@@ -50,11 +54,11 @@ internal class List : IGroupedEndpoint<AdminGroup>
 					ErrorResponse.PageSizeError
 				);
 			}
-			var result = await accountRepository.GetAsync(pg ?? 1, pz ?? 10);
+			var result = await subscriptionRepository.GetAsync(pg ?? 1, pz ?? 10);
 
 			return result.Match(
-				accounts => Results.Ok(
-					ListAccountsResponse.From(accounts)
+				subscriptions => Results.Ok(
+					ListSubscriptionsResponse.From(subscriptions)
 				),
 				notFound => Results.NotFound()
 			);

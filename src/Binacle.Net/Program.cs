@@ -92,17 +92,18 @@ public class Program
 		});
 
 
-		// builder.Services.AddProblemDetails(options =>
-		// {
-		// 	options.CustomizeProblemDetails = context =>
-		// 	{
-		// 		context.ProblemDetails.Instance =
-		// 			$"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
-		// 		context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
-		// 		var activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
-		// 		context.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
-		// 	};
-		// });
+		builder.Services.AddExceptionHandler<InternalServerErrorExceptionHandler>();
+		builder.Services.AddProblemDetails(options =>
+		{
+			options.CustomizeProblemDetails = context =>
+			{
+				context.ProblemDetails.Instance =
+					$"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+				context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+				var activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+				context.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
+			};
+		});
 		
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
 
@@ -122,20 +123,13 @@ public class Program
 
 		// Slim builder
 		app.UseHttpsRedirection();
-
+		
 		if (app.Environment.IsDevelopment())
 		{
 			app.UseDeveloperExceptionPage();
 		}
 		
-		// app.UseExceptionHandler(exceptionHandlerApp =>
-		// {
-		// 	exceptionHandlerApp.Run(async httpContext =>
-		// 	{
-		// 		await Results.Problem()
-		// 			.ExecuteAsync(httpContext);
-		// 	});
-		// });
+		app.UseExceptionHandler();
 
 		// SWAGGER_UI from environment vars
 		if (Feature.IsEnabled("SWAGGER_UI"))

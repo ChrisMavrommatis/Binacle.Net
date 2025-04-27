@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using Binacle.Net.ServiceModule.Domain.Common.Models;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Common.Models;
@@ -20,6 +21,30 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 
 		return Task.FromResult<FluxUnion<Subscription, NotFound>>(TypedResult.NotFound);
 	}
+	
+	public Task<FluxUnion<PagedList<Subscription>, NotFound>> GetAsync(int page, int pageSize)
+	{
+		var subscriptions = _subscriptions.Values
+			.Where(x => !x.IsDeleted)
+			.Skip((page - 1) * pageSize)
+			.Take(pageSize)
+			.ToList();
+
+		if (subscriptions.Count == 0)
+		{
+			return Task.FromResult<FluxUnion<PagedList<Subscription>, NotFound>>(TypedResult.NotFound);
+		}
+
+		var pagedSubscriptions = new PagedList<Subscription>(
+			subscriptions,
+			subscriptions.Count,
+			pageSize,
+			page
+		);
+
+		return Task.FromResult<FluxUnion<PagedList<Subscription>, NotFound>>(pagedSubscriptions);
+	}
+
 
 	public Task<FluxUnion<Subscription, NotFound>> GetByAccountIdAsync(Guid accountId)
 	{

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin;
 
-internal static class AccountRequestValidationExtensions
+internal static class RequestValidationExtensions
 {
 	public static async Task<IResult> WithValidatedRequest<TRequest>(
 		this ValidatedBindingResult<TRequest> request,
@@ -21,10 +21,14 @@ internal static class AccountRequestValidationExtensions
 
 			if (!request.ValidationResult?.IsValid ?? false)
 			{
-				return Results.BadRequest(
-					ErrorResponse.ValidationError(
-						request.ValidationResult!.Errors.Select(x => x.ErrorMessage).ToArray()
-					)
+				// TODO
+				return Results.ValidationProblem(
+					request.ValidationResult!.Errors
+						.GroupBy(x => x.PropertyName)
+						.ToDictionary(
+							group => group.Key, 
+							group=> group.Select(x => x.ErrorMessage).ToArray()
+						)
 				);
 			}
 
