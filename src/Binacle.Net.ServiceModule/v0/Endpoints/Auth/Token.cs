@@ -56,7 +56,7 @@ internal class Token : IEndpoint
 	}
 
 	internal async Task<IResult> HandleAsync(
-		ValidatedBindingResult<TokenRequest> requestResult,
+		BindingResult<TokenRequest> bindingResult,
 		IAccountRepository accountRepository,
 		ISubscriptionRepository subscriptionRepository,
 		ITokenService tokenService,
@@ -64,7 +64,7 @@ internal class Token : IEndpoint
 		CancellationToken cancellationToken = default
 	)
 	{
-		return await requestResult.WithValidatedRequest(async request =>
+		return await bindingResult.ValidateAsync(async request =>
 		{
 			var accountResult = await accountRepository.GetByUsernameAsync(request.Username);
 			if (!accountResult.TryGetValue<Account>(out var account) || account is null)
@@ -100,45 +100,5 @@ internal class Token : IEndpoint
 				ex => Results.InternalServerError(AuthErrorResponse.ServerError(ex))
 			);
 		});
-	}
-}
-
-file static class RequestValidationExtensions
-{
-	public static async Task<IResult> WithValidatedRequest<TRequest>(
-		this ValidatedBindingResult<TRequest> request,
-		Func<TRequest, Task<IResult>> handleRequest
-	)
-	{
-		try
-		{
-			if (request.Value is null)
-			{
-				return Results.BadRequest(
-					AuthErrorResponse.Create(
-						"Malformed request",
-						["Marlformed request body"]
-					)
-				);
-			}
-
-			if (!request.ValidationResult?.IsValid ?? false)
-			{
-				return Results.BadRequest(
-					AuthErrorResponse.Create(
-						"Validation Error",
-						request.ValidationResult!.Errors.Select(x => x.ErrorMessage).ToArray()
-					)
-				);
-			}
-
-			return await handleRequest(request.Value);
-		}
-		catch (Exception ex)
-		{
-			return Results.InternalServerError(
-				AuthErrorResponse.ServerError(ex)
-			);
-		}
 	}
 }

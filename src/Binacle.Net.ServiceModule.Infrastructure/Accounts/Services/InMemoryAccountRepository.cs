@@ -21,7 +21,7 @@ internal class InMemoryAccountRepository : IAccountRepository
 		return Task.FromResult<FluxUnion<Account, NotFound>>(TypedResult.NotFound);
 	}
 
-	public Task<FluxUnion<PagedList<Account>, NotFound>> GetAsync(int page, int pageSize)
+	public Task<FluxUnion<PagedList<Account>, NotFound>> ListAsync(int page, int pageSize)
 	{
 		var accounts = _accounts.Values
 			.Where(x => !x.IsDeleted)

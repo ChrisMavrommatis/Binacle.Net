@@ -33,7 +33,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		ValidatedBindingResult<CustomPackRequest?> request,
+		LegacyValidatedBindingResult<CustomPackRequest?> request,
 		IBinacleService binacleService,
 		ILogger<ByCustom> logger,
 		CancellationToken cancellationToken = default

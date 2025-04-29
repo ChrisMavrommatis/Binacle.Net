@@ -34,12 +34,11 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 
 	internal async Task<IResult> HandleAsync(
 		string id,
-		ValidatedBindingResult<UpdateSubscriptionRequest> requestResult,
-		IAccountRepository accountRepository,
+		AccountBindingResult<UpdateSubscriptionRequest> requestResult,
 		ISubscriptionRepository subscriptionRepository,
 		CancellationToken cancellationToken = default)
 	{
-		return await requestResult.WithAccountValidatedRequest(accountRepository, id, async (request, account) =>
+		return await requestResult.ValidateAsync(id, async (request, account) =>
 		{
 			if (!account.HasSubscription())
 			{

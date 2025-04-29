@@ -36,14 +36,14 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		ValidatedBindingResult<CreateAccountRequest> requestResult,
+		BindingResult<CreateAccountRequest> bindingResult,
 		IAccountRepository accountRepository,
 		IPasswordService passwordService,
 		TimeProvider timeProvider,
 		CancellationToken cancellationToken = default)
 	{
-		return await requestResult.WithValidatedRequest(async request =>
-		{
+		 return await bindingResult.ValidateAsync(async request =>
+		 {
 			var getResult = await accountRepository.GetByUsernameAsync(request.Username);
 			if (getResult.Is<Account>())
 			{
@@ -67,6 +67,6 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 				success => Results.Created($"/api/admin/account/{newAccount.Id}", null),
 				conflict => Results.Conflict()
 			);
-		});
+		 });
 	}
 }

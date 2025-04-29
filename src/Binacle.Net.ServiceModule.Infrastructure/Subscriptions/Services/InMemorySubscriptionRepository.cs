@@ -22,7 +22,7 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 		return Task.FromResult<FluxUnion<Subscription, NotFound>>(TypedResult.NotFound);
 	}
 	
-	public Task<FluxUnion<PagedList<Subscription>, NotFound>> GetAsync(int page, int pageSize)
+	public Task<FluxUnion<PagedList<Subscription>, NotFound>> ListAsync(int page, int pageSize)
 	{
 		var subscriptions = _subscriptions.Values
 			.Where(x => !x.IsDeleted)

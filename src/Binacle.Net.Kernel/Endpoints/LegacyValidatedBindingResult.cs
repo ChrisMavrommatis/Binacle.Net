@@ -5,13 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Binacle.Net.Kernel.Endpoints;
 
-public record struct ValidatedBindingResult<T>(
+public record struct LegacyValidatedBindingResult<T>(
 	T? Value,
 	Exception? Exception,
 	ValidationResult? ValidationResult
 )
 {
-	public static async ValueTask<ValidatedBindingResult<T>> BindAsync(HttpContext httpContext)
+	public static async ValueTask<LegacyValidatedBindingResult<T>> BindAsync(HttpContext httpContext)
 	{
 		try
 		{

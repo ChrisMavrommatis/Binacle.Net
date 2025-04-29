@@ -1,19 +1,21 @@
 ﻿using System.Text.Json;
+using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
+using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Binacle.Net.Kernel.Endpoints;
+namespace Binacle.Net.ServiceModule.v0.Endpoints;
 
-public class BindingResult<T>
+internal class AccountBindingResult<T>
 {
 	private readonly IServiceProvider serviceProvider;
 	private readonly T? request;
 	private readonly Exception? exception;
 	private readonly CancellationToken cancelationToken;
 
-	private BindingResult(
+	private AccountBindingResult(
 		IServiceProvider serviceProvider,
 		T? request,
 		Exception? exception,
@@ -26,8 +28,20 @@ public class BindingResult<T>
 		this.cancelationToken = cancelationToken;
 	}
 
-	public async Task<IResult> ValidateAsync(Func<T, Task<IResult>> handleValidRequest)
+	public async Task<IResult> ValidateAsync(
+		string accountId, 
+		Func<T, Account, Task<IResult>> handleRequest
+		)
 	{
+		if (!Guid.TryParse(accountId, out var parsedAccountId))
+		{
+			var errors = new Dictionary<string, string[]>
+			{
+				{"id", ["The provided value is not a valid Guid"]}
+			};
+			return Results.ValidationProblem(errors);
+		}
+		
 		if (this.exception is not null)
 		{
 			var problemDetails = GetProblemDetails(this.exception);
@@ -56,7 +70,14 @@ public class BindingResult<T>
 			);
 		}
 
-		return await handleValidRequest(this.request!);
+		var accountRepository = this.serviceProvider.GetRequiredService<IAccountRepository>();
+		var accountResult = await accountRepository.GetByIdAsync(parsedAccountId);
+
+		var result = accountResult.Match(
+			account => handleRequest(this.request!, account!),
+			notFound => Task.FromResult<IResult>(Results.NotFound())
+		);
+		return await result;
 	}
 
 
@@ -81,7 +102,7 @@ public class BindingResult<T>
 		};
 	}
 
-	public static async ValueTask<BindingResult<T>> BindAsync(HttpContext httpContext)
+	public static async ValueTask<AccountBindingResult<T>> BindAsync(HttpContext httpContext)
 	{
 		try
 		{
@@ -94,3 +115,5 @@ public class BindingResult<T>
 		}
 	}
 }
+
+

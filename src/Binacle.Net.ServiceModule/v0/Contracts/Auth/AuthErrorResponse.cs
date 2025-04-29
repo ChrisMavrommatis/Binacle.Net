@@ -72,6 +72,4 @@ internal class AuthErrorResponse
 			);
 		}
 	}
-
-
 }

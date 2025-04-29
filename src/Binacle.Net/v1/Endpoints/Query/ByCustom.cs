@@ -32,7 +32,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		BindingResult<CustomQueryRequest> request,
+		LegacyBindingResult<CustomQueryRequest> request,
 		IValidator<CustomQueryRequest> validator,
 		ILegacyBinsService binsService,
 		ILogger<ByCustom> logger,

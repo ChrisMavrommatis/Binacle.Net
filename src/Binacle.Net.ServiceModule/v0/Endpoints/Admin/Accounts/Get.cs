@@ -26,7 +26,6 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 			)
 			.Produces(StatusCodes.Status404NotFound)
 			.WithResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound);
-
 	}
 
 	internal async Task<IResult> HandleAsync(
@@ -34,22 +33,20 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 		IAccountRepository accountRepository,
 		CancellationToken cancellationToken = default)
 	{
-		return await RequestValidationExtensions.WithTryCatch(async () =>
+		if (!Guid.TryParse(id, out var accountId))
 		{
-			if (!Guid.TryParse(id, out var accountId))
-			{
-				return Results.BadRequest(
-					ErrorResponse.IdToGuidParameterError
-				);
-			}
-			var result = await accountRepository.GetByIdAsync(accountId);
-
-			return result.Match(
-				account => Results.Ok(
-					GetAccountResponse.From(account)
-				),
-				notFound => Results.NotFound()
+			return Results.BadRequest(
+				ErrorResponse.IdToGuidParameterError
 			);
-		});
+		}
+
+		var result = await accountRepository.GetByIdAsync(accountId);
+
+		return result.Match(
+			account => Results.Ok(
+				GetAccountResponse.From(account)
+			),
+			notFound => Results.NotFound()
+		);
 	}
 }

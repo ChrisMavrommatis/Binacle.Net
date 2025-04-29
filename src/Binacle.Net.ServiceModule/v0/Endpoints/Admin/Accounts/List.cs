@@ -3,6 +3,7 @@ using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -30,34 +31,27 @@ internal class List : IGroupedEndpoint<AdminGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		int? pg,
-		int? pz,
+		[AsParameters] PagingQuery paging,
+		IValidator<PagingQuery> validator,
 		IAccountRepository accountRepository,
 		CancellationToken cancellationToken = default)
 	{
-		return await RequestValidationExtensions.WithTryCatch(async () =>
+		var validationResult =await validator.ValidateAsync(paging, cancellationToken);
+		if (!validationResult.IsValid)
 		{
-			if (pg is < 1)
-			{
-				return Results.BadRequest(
-					ErrorResponse.PageNumberError
-				);
-			}
-		
-			if (pz is < 1)
-			{
-				return Results.BadRequest(
-					ErrorResponse.PageSizeError
-				);
-			}
-			var result = await accountRepository.GetAsync(pg ?? 1, pz ?? 10);
-
-			return result.Match(
-				accounts => Results.Ok(
-					ListAccountsResponse.From(accounts)
-				),
-				notFound => Results.NotFound()
+			return Results.ValidationProblem(
+				validationResult!.GetValidationSummary()
 			);
-		});
+		}
+	
+
+		var result = await accountRepository.ListAsync(paging.PageNumber, paging.PageSize);
+
+		return result.Match(
+			accounts => Results.Ok(
+				ListAccountsResponse.From(accounts)
+			),
+			notFound => Results.NotFound()
+		);
 	}
 }

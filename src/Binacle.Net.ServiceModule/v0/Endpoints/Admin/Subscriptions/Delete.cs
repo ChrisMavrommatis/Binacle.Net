@@ -1,8 +1,10 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
+using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
+using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
 using FluxResults.TypedResults;
 using FluxResults.Unions;
@@ -21,7 +23,8 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			.WithSummary("Delete subscription")
 			.WithDescription("Admins can use this endpoint to delete the subscription for an account")
 			.Produces(StatusCodes.Status204NoContent)
-			.WithResponseDescription(StatusCodes.Status204NoContent, DeleteSubscriptionResponseDescription.For204NoContent)
+			.WithResponseDescription(StatusCodes.Status204NoContent,
+				DeleteSubscriptionResponseDescription.For204NoContent)
 			.Produces(StatusCodes.Status400BadRequest)
 			.ResponseExamples<DeleteSubscriptionErrorResponseExamples>(
 				StatusCodes.Status400BadRequest,
@@ -38,38 +41,46 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 		TimeProvider timeProvider,
 		CancellationToken cancellationToken = default)
 	{
-		return await SubscriptionsRequestValidationExtensions
-			.WithAccountValidatedTryCatch(accountRepository, id, async (account) =>
+		if (!Guid.TryParse(id, out var accountId))
 		{
-			if (!account.HasSubscription())
-			{
-				return Results.NotFound();
-			}
+			return Results.BadRequest(
+				ErrorResponse.IdToGuidParameterError
+			);
+		}
 
-			var getResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value);
-			if (!getResult.TryGetValue<Subscription>(out var subscription) || subscription is null)
-			{
-				return Results.NotFound();
-			}
+		var accountResult = await accountRepository.GetByIdAsync(accountId);
+		if (!accountResult.TryGetValue<Account>(out var account) || account is null)
+		{
+			return Results.NotFound();
+		}
 
-			var utcNow = timeProvider.GetUtcNow();
-			subscription.SoftDelete(utcNow);
-			var removeResult = account.RemoveSubscription();
-			if (!removeResult.Is<Success>())
-			{
-				return Results.NotFound();
-			}
+		if (!account.HasSubscription())
+		{
+			return Results.NotFound();
+		}
 
-			var updateAccountResult = await accountRepository.UpdateAsync(account);
-			var updateSubscriptionResult = await subscriptionRepository.ForceUpdateAsync(subscription);
+		var getResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value);
+		if (!getResult.TryGetValue<Subscription>(out var subscription) || subscription is null)
+		{
+			return Results.NotFound();
+		}
 
-			if (!updateAccountResult.Is<Success>() || !updateSubscriptionResult.Is<Success>())
-			{
-				return Results.NotFound();
-			}
-			
-			return Results.NoContent();
+		var utcNow = timeProvider.GetUtcNow();
+		subscription.SoftDelete(utcNow);
+		var removeResult = account.RemoveSubscription();
+		if (!removeResult.Is<Success>())
+		{
+			return Results.NotFound();
+		}
 
-		});
+		var updateAccountResult = await accountRepository.UpdateAsync(account);
+		var updateSubscriptionResult = await subscriptionRepository.ForceUpdateAsync(subscription);
+
+		if (!updateAccountResult.Is<Success>() || !updateSubscriptionResult.Is<Success>())
+		{
+			return Results.NotFound();
+		}
+
+		return Results.NoContent();
 	}
 }

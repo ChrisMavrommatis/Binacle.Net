@@ -5,6 +5,7 @@ using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
+using FluentValidation;
 using FluxResults.TypedResults;
 using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
@@ -34,34 +35,26 @@ internal class List : IGroupedEndpoint<AdminGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		int? pg,
-		int? pz,
+		[AsParameters] PagingQuery paging,
+		IValidator<PagingQuery> validator,
 		ISubscriptionRepository subscriptionRepository,
 		CancellationToken cancellationToken = default)
 	{
-		return await RequestValidationExtensions.WithTryCatch(async () =>
+		var validationResult = await validator.ValidateAsync(paging, cancellationToken);
+		if (!validationResult.IsValid)
 		{
-			if (pg is < 1)
-			{
-				return Results.BadRequest(
-					ErrorResponse.PageNumberError
-				);
-			}
-		
-			if (pz is < 1)
-			{
-				return Results.BadRequest(
-					ErrorResponse.PageSizeError
-				);
-			}
-			var result = await subscriptionRepository.GetAsync(pg ?? 1, pz ?? 10);
-
-			return result.Match(
-				subscriptions => Results.Ok(
-					ListSubscriptionsResponse.From(subscriptions)
-				),
-				notFound => Results.NotFound()
+			return Results.ValidationProblem(
+				validationResult!.GetValidationSummary()
 			);
-		});
+		}
+
+		var result = await subscriptionRepository.ListAsync(paging.PageNumber, paging.PageSize);
+
+		return result.Match(
+			subscriptions => Results.Ok(
+				ListSubscriptionsResponse.From(subscriptions)
+			),
+			notFound => Results.NotFound()
+		);
 	}
 }

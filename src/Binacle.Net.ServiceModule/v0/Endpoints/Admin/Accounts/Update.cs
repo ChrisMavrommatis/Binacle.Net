@@ -36,25 +36,13 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 
 	internal async Task<IResult> HandleAsync(
 		string id,
-		ValidatedBindingResult<UpdateAccountRequest> requestResult,
+		AccountBindingResult<UpdateAccountRequest> bindingResult,
 		IAccountRepository accountRepository,
 		IPasswordService passwordService,
 		CancellationToken cancellationToken = default)
 	{
-		return await requestResult.WithValidatedRequest(async request =>
+		return await bindingResult.ValidateAsync(id, async (request, account) =>
 		{
-			if (!Guid.TryParse(id, out var accountId))
-			{
-				return Results.BadRequest(
-					ErrorResponse.IdToGuidParameterError
-				);
-			}
-			var accountResult = await accountRepository.GetByIdAsync(accountId);
-			if (!accountResult.TryGetValue<Account>(out var account) || account is null)
-			{
-				return Results.NotFound();
-			}
-			
 			var usernameResult = await accountRepository.GetByUsernameAsync(request.Username);
 			if (usernameResult.TryGetValue<Account>(out var foundAccount) && account.Equals(foundAccount))
 			{

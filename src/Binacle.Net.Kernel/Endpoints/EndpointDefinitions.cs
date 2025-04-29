@@ -2,7 +2,7 @@
 
 namespace Binacle.Net.Kernel.Endpoints;
 
-public interface IGroupedEndpoint
+public interface IGroupedEndpoint : IEndpointDefinition
 {
 	void DefineEndpoint(RouteGroupBuilder group);
 }
@@ -16,8 +16,9 @@ public interface IGroupedEndpoint<TGroup> : IGroupedEndpoint
 {
 }
 
-public interface IEndpoint
+public interface IEndpoint : IEndpointDefinition
 {
 	void DefineEndpoint(IEndpointRouteBuilder endpoints);
 }
 
+public interface IEndpointDefinition;

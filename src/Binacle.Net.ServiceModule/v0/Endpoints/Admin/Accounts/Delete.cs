@@ -30,34 +30,33 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-			string id,
-			IAccountRepository accountRepository,
-			TimeProvider timeProvider,
-			CancellationToken cancellationToken = default
-		)
+		string id,
+		IAccountRepository accountRepository,
+		TimeProvider timeProvider,
+		CancellationToken cancellationToken = default
+	)
 	{
-		return await RequestValidationExtensions.WithTryCatch(async () =>
+		if (!Guid.TryParse(id, out var accountId))
 		{
-			if (!Guid.TryParse(id, out var accountId))
-			{
-				return Results.BadRequest(
-					ErrorResponse.IdToGuidParameterError
-				);
-			}
-			var accountResult = await accountRepository.GetByIdAsync(accountId);
-			if (!accountResult.TryGetValue<Account>(out var account) || account is null)
-			{
-				return Results.NotFound();
-			}
-			var now = timeProvider.GetUtcNow();
-			account.SoftDelete(now);
-
-			var result = await accountRepository.ForceUpdateAsync(account);
-
-			return result.Match(
-				success => Results.NoContent(),
-				notFound => Results.NotFound()
+			return Results.BadRequest(
+				ErrorResponse.IdToGuidParameterError
 			);
-		});
+		}
+
+		var accountResult = await accountRepository.GetByIdAsync(accountId);
+		if (!accountResult.TryGetValue<Account>(out var account) || account is null)
+		{
+			return Results.NotFound();
+		}
+
+		var now = timeProvider.GetUtcNow();
+		account.SoftDelete(now);
+
+		var result = await accountRepository.ForceUpdateAsync(account);
+
+		return result.Match(
+			success => Results.NoContent(),
+			notFound => Results.NotFound()
+		);
 	}
 }

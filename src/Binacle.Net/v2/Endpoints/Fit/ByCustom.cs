@@ -33,7 +33,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		BindingResult<CustomFitRequest> request,
+		LegacyBindingResult<CustomFitRequest> request,
 		IValidator<CustomFitRequest> validator,
 		ILegacyBinsService binsService,
 		ILogger<ByCustom> logger,

@@ -37,13 +37,13 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 
 	internal async Task<IResult> HandleAsync(
 		string id,
-		ValidatedBindingResult<CreateSubscriptionRequest> requestResult,
+		AccountBindingResult<CreateSubscriptionRequest> bindingResult,
 		IAccountRepository accountRepository,
 		ISubscriptionRepository subscriptionRepository,
 		TimeProvider timeProvider,
 		CancellationToken cancellationToken = default)
 	{
-		return await requestResult.WithAccountValidatedRequest(accountRepository, id, async (request, account) =>
+		return await bindingResult.ValidateAsync(id, async (request, account) =>
 		{
 			if (account.HasSubscription())
 			{

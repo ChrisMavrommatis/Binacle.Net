@@ -37,7 +37,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV1EndpointGroup>
 	
 	internal async Task<IResult> HandleAsync(
 		[FromRoute] string? preset,
-		BindingResult<PresetQueryRequest> request,
+		LegacyBindingResult<PresetQueryRequest> request,
 		IValidator<PresetQueryRequest> validator,
 		IOptions<BinPresetOptions> presetOptions,
 		ILegacyBinsService binsService,
