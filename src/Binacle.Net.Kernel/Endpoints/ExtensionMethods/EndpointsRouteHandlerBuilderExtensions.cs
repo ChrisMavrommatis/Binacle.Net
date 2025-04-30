@@ -6,17 +6,17 @@ namespace Binacle.Net;
 
 public static class EndpointsRouteHandlerBuilderExtensions
 {
-	public static RouteGroupBuilder AllEndpointsProduce<TResponse>(
+	public static RouteGroupBuilder Produces<TResponse>(
 		this RouteGroupBuilder builder,
 		int statusCode,
 		string? contentType = null,
 		params string[] additionalContentTypes
 	) 
 	{
-		return builder.AllEndpointsProduce(statusCode, typeof(TResponse), contentType, additionalContentTypes);
+		return builder.Produces(statusCode, typeof(TResponse), contentType, additionalContentTypes);
 	}
 
-	public static RouteGroupBuilder AllEndpointsProduce(
+	public static RouteGroupBuilder Produces(
 		this RouteGroupBuilder builder,
 		int statusCode,
 		Type? responseType = null,

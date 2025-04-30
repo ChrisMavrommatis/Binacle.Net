@@ -14,27 +14,37 @@ internal class AdminGroup : IEndpointGroup
 	public RouteGroupBuilder DefineEndpointGroup(IEndpointRouteBuilder endpoints)
 	{
 		return endpoints.MapGroup($"/api/admin")
-			.WithTags("Admin")
-			.RequireAuthorization("Admin")
-			.WithGroupName(ServiceModuleApiDocument.DocumentName)
-			// TODO
-			// .AllEndpointsProduce<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			// .AllEndpointsHaveResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.AllEndpointsProduce(StatusCodes.Status401Unauthorized)
-			.AllEndpointsHaveResponseDescription(
-				StatusCodes.Status401Unauthorized,
-				ResponseDescription.For401Unauthorized
-			)
-			.AllEndpointsProduce(StatusCodes.Status403Forbidden)
-			.AllEndpointsHaveResponseDescription(StatusCodes.Status403Forbidden, ResponseDescription.For403Forbidden)
-			.AllEndpointsProduce<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
-			.AllEndpointsHaveResponseDescription(
-				StatusCodes.Status500InternalServerError,
-				ResponseDescription.For500InternalServerError
-			)
-			.AllEndpointsHaveResponseExample<InternalServerErrorErrorResponseExample>(
-				StatusCodes.Status500InternalServerError,
-				"application/json"
-			);
+				.WithTags("Admin")
+				.RequireAuthorization("Admin")
+				.WithGroupName(ServiceModuleApiDocument.DocumentName)
+				
+				.ProducesProblem(StatusCodes.Status400BadRequest)
+				.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+				.ResponseExamples<Status400ResponseExamples>(
+					StatusCodes.Status400BadRequest,
+					"application/problem+json"
+				)
+				
+				.Produces(StatusCodes.Status401Unauthorized)
+				.ResponseDescription(
+					StatusCodes.Status401Unauthorized,
+					"When provided user token is invalid."
+				)
+				
+				.Produces(StatusCodes.Status403Forbidden)
+				.ResponseDescription(
+					StatusCodes.Status403Forbidden,
+					"When provided user token does not have permission."
+				)
+				
+				.ProducesProblem(StatusCodes.Status500InternalServerError)
+				.ResponseDescription(
+					StatusCodes.Status500InternalServerError,
+					ResponseDescription.For500InternalServerError
+				)
+				.ResponseExamples<Status500ResponseExamples>(
+					StatusCodes.Status500InternalServerError,
+					"application/problem+json"
+				);
 	}
 }

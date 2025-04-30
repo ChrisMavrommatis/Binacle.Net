@@ -20,15 +20,13 @@ internal class InternalServerErrorExceptionHandler : IExceptionHandler
 		CancellationToken cancellationToken
 		)
 	{
-		
 		var problemDetails = new ProblemDetails
 		{
 			Status = StatusCodes.Status500InternalServerError,
-			Title = "Internal Server Error",
-			Detail = "An unexpected error occurred.",
-			Type = "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+			Title = "Unexpected Server Error",
+			Detail = "An unexpected error occurred while processing your request. Please try again later or contact support.",
 		};
-
+		
 		if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
 		{
 			problemDetails.Extensions.TryAdd("exception", exception.GetType().Name);

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Binacle.Net.Kernel.OpenApi.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.RateLimiting;
@@ -10,12 +11,16 @@ namespace Binacle.Net.Kernel.OpenApi;
 
 internal class RateLimiterResponseOperationTransformer : IOpenApiOperationTransformer
 {
-	public static string For429TooManyRequests =new StringBuilder("**Too Many Requests**")
-		.AppendLine("<br />")
-		.AppendLine()
-		.AppendLine("You have reached the maximum number of requests allowed. Please try again later.")
-		.AppendLine()
-		.ToString();
+
+	public static readonly OpenApiResponse OpenApiResponseFor429TooManyRequests = new OpenApiResponse
+	{
+		Description = ResponseDescription.Format(
+			StatusCodes.Status429TooManyRequests,
+			"You have reached the maximum number of requests allowed. Please try again later."
+		)
+	};
+
+	public static string StatusCode429TooManyRequests => StatusCodes.Status429TooManyRequests.ToString();
 	
 	public Task TransformAsync(
 		OpenApiOperation operation,
@@ -37,11 +42,8 @@ internal class RateLimiterResponseOperationTransformer : IOpenApiOperationTransf
 		    .Any())
 		{
 			operation.Responses.Add(
-				StatusCodes.Status429TooManyRequests.ToString(),
-				new OpenApiResponse
-				{
-					Description = For429TooManyRequests
-				}
+				StatusCode429TooManyRequests,
+				OpenApiResponseFor429TooManyRequests
 			);
 		}
 

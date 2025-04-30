@@ -8,7 +8,7 @@ internal class TokenResponse
 {
 	public required string TokenType { get; set; }
 	public required string AccessToken { get; set; }
-	public int ExpiresIn { get; set; }
+	public required int ExpiresIn { get; set; }
 	public string? RefreshToken { get; set; }
 
 	public static TokenResponse Create(Token token)
@@ -20,22 +20,22 @@ internal class TokenResponse
 			ExpiresIn = token.ExpiresIn,
 		};
 	}
-	
-	internal class Example : ISingleOpenApiExamplesProvider<TokenResponse>
+}
+
+internal class TokenResponseExample : ISingleOpenApiExamplesProvider<TokenResponse>
+{
+	public IOpenApiExample<TokenResponse> GetExample()
 	{
-		public IOpenApiExample<TokenResponse> GetExample()
-		{
-			return OpenApiExample.Create(
-				"successfulTokenResponse",
-				"Successful Token Response",
-				new TokenResponse
-				{
-					AccessToken =
-						"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-					TokenType = "Bearer",
-					ExpiresIn = 3600
-				}
-			);
-		}
+		return OpenApiExample.Create(
+			"successfulTokenResponse",
+			"Successful Token Response",
+			new TokenResponse
+			{
+				AccessToken =
+					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+				TokenType = "Bearer",
+				ExpiresIn = 3600
+			}
+		);
 	}
 }

@@ -24,15 +24,15 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			.Accepts<CreateSubscriptionRequest>("application/json")
 			.RequestExample<CreateSubscriptionRequest.Example>("application/json")
 			.Produces(StatusCodes.Status201Created)
-			.WithResponseDescription(StatusCodes.Status201Created, CreateSubscriptionResponseDescription.For201Created)
+			.ResponseDescription(StatusCodes.Status201Created, CreateSubscriptionResponseDescription.For201Created)
 			.ResponseExamples<CreateSubscriptionRequest.ErrorResponseExamples>(
 				StatusCodes.Status400BadRequest,
 				"application/json"
 			)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound)
+			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound)
 			.Produces(StatusCodes.Status409Conflict)
-			.WithResponseDescription(StatusCodes.Status409Conflict, CreateSubscriptionResponseDescription.For409Conflict);
+			.ResponseDescription(StatusCodes.Status409Conflict, CreateSubscriptionResponseDescription.For409Conflict);
 	}
 
 	internal async Task<IResult> HandleAsync(

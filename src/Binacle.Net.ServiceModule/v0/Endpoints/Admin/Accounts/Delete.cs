@@ -20,13 +20,13 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			.WithSummary("Delete an account")
 			.WithDescription("Admins can use this endpoint to delete an account")
 			.Produces(StatusCodes.Status204NoContent)
-			.WithResponseDescription(StatusCodes.Status204NoContent, DeleteAccountResponseDescription.For204NoContent)
+			.ResponseDescription(StatusCodes.Status204NoContent, DeleteAccountResponseDescription.For204NoContent)
 			.ResponseExamples<DeleteAccountErrorResponseExamples>(
 				StatusCodes.Status400BadRequest,
 				"application/json"
 			)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound);
 	}
 
 	internal async Task<IResult> HandleAsync(

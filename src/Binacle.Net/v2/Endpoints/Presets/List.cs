@@ -19,9 +19,9 @@ internal class List : IGroupedEndpoint<ApiV2EndpointGroup>
 			.WithDescription("Lists the presets present in configuration.")
 			.Produces<PresetListResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, "application/json")
-			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPresets200OK)
+			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPresets200OK)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPresets404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPresets404NotFound);
 	}
 	
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously

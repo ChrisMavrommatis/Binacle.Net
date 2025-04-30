@@ -1,4 +1,5 @@
-﻿using Binacle.Net.ServiceModule.v0.Contracts.Common;
+﻿using System.ComponentModel.DataAnnotations;
+using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Contracts.Common.Interfaces;
 using FluentValidation;
 using OpenApiExamples;
@@ -10,31 +11,44 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Auth;
 
 internal class TokenRequest : IWithPassword
 {
+	[Required]
 	public string Username { get; set; }
+	[Required]
 	public string Password { get; set; }
+}
 
-	internal class Validator : AbstractValidator<TokenRequest>
+internal class TokenRequestValidator : AbstractValidator<TokenRequest>
+{
+	public TokenRequestValidator()
 	{
-		public Validator()
-		{
-			Include(x => new PasswordValidator());
-		}
+		Include(x => new PasswordValidator());
 	}
+}
 
-	internal class Example : ISingleOpenApiExamplesProvider<TokenRequest>
+internal class TokenRequestExample : ISingleOpenApiExamplesProvider<TokenRequest>
+{
+	public IOpenApiExample<TokenRequest> GetExample()
 	{
-		public IOpenApiExample<TokenRequest> GetExample()
-		{
-			return OpenApiExample.Create(
-				"authToken",
-				"Auth Token",
-				new TokenRequest
-				{
-					Username = "test_user",
-					Password = "testpassword"
-				}
-			);
-		}
+		return OpenApiExample.Create(
+			"authToken",
+			"Auth Token",
+			new TokenRequest
+			{
+				Username = "test_user", 
+				Password = "testpassword"
+			}
+		);
+	}
+}
 
+internal class TokenRequestValidationProblemDetailsExample : ValidationProblemResponseExample
+{
+	public override Dictionary<string, string[]> GetErrors()
+	{
+		return new Dictionary<string, string[]>()
+		{
+			{ "Email", ["'Email' is not a valid email address."] },
+			{ "Password", ["The length of 'Password' must be at least 10 characters. You entered 8 characters."] }
+		};
 	}
 }

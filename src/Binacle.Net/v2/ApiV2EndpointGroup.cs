@@ -12,9 +12,9 @@ internal class ApiV2EndpointGroup : IEndpointGroup
 	{
 		return endpoints.MapGroup($"/api/{ApiV2Document.DocumentName}")
 			.WithGroupName(ApiV2Document.DocumentName)
-			.AllEndpointsProduce<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
-			.AllEndpointsHaveResponseExample<ServerErrorResponseExample>(StatusCodes.Status500InternalServerError, "application/json")
-			.AllEndpointsHaveResponseDescription(
+			.Produces<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
+			.ResponseExample<ServerErrorResponseExample>(StatusCodes.Status500InternalServerError, "application/json")
+			.ResponseDescription(
 				StatusCodes.Status500InternalServerError,
 				ResponseDescription.For500InternalServerError
 			);

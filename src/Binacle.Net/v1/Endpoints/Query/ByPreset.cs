@@ -26,12 +26,12 @@ internal class ByPreset : IGroupedEndpoint<ApiV1EndpointGroup>
 			.RequestExample<PresetQueryRequestExample>("application/json")
 			.Produces<QueryResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExamples<PresetQueryResponseExamples>(StatusCodes.Status200OK, "application/json")
-			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForQueryResponse200OK)
+			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForQueryResponse200OK)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPreset404NotFound)
+			.ResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPreset404NotFound)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
-			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.RequireRateLimiting("Anonymous");
 	}
 	

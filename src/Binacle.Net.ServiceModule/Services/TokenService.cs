@@ -14,7 +14,7 @@ namespace Binacle.Net.ServiceModule.Services;
 
 public interface ITokenService
 {
-	FluxUnion<Token, Exception> GenerateToken(Account account, Subscription? subscription);
+	Token GenerateToken(Account account, Subscription? subscription);
 }
 
 internal class TokenService : ITokenService
@@ -31,50 +31,43 @@ internal class TokenService : ITokenService
 		this.timeProvider = timeProvider;
 	}
 
-	public FluxUnion<Token, Exception> GenerateToken(Account account, Subscription? subscription)
+	public Token GenerateToken(Account account, Subscription? subscription)
 	{
-		try
+		var claims = new List<Claim>()
 		{
-			var claims = new List<Claim>()
-			{
-				new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-				new(JwtRegisteredClaimNames.Sub, account.Id.ToString()),
-				new(JwtRegisteredClaimNames.Name, account.Username),
-				new(JwtRegisteredClaimNames.Email, account.Email),
-				new(ClaimTypes.Role, account.Role.ToString()),
-				new(ApplicationClaimTypes.SecurityStamp, account.SecurityStamp.ToString())
-			};
+			new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+			new(JwtRegisteredClaimNames.Sub, account.Id.ToString()),
+			new(JwtRegisteredClaimNames.Name, account.Username),
+			new(JwtRegisteredClaimNames.Email, account.Email),
+			new(ClaimTypes.Role, account.Role.ToString()),
+			new(ApplicationClaimTypes.SecurityStamp, account.SecurityStamp.ToString())
+		};
 
-			if (subscription is not null)
-			{
-				claims.Add(new (ApplicationClaimTypes.Subscription, subscription.Id.ToString()));
-				claims.Add(new (ApplicationClaimTypes.SubscriptionType, subscription.Type.ToString()));
-			}
-
-			var now = this.timeProvider.GetLocalNow();
-
-			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.options.Value.TokenSecret!));
-
-			var tokenDescriptor = new SecurityTokenDescriptor
-			{
-				Subject = new ClaimsIdentity(claims),
-				Expires = now.DateTime.AddSeconds(this.options.Value.ExpirationInSeconds),
-				Issuer = this.options.Value.Issuer,
-				Audience = this.options.Value.Audience,
-				IssuedAt = now.DateTime,
-				NotBefore = now.DateTime,
-				SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256Signature)
-			};
-
-			var tokenHandler = new JwtSecurityTokenHandler();
-			var securityToken = tokenHandler.CreateToken(tokenDescriptor);
-
-			var token = tokenHandler.WriteToken(securityToken);
-			return new Token(token, JwtBearerDefaults.AuthenticationScheme, this.options.Value.ExpirationInSeconds);
-		}
-		catch (Exception ex)
+		if (subscription is not null)
 		{
-			return ex;
+			claims.Add(new(ApplicationClaimTypes.Subscription, subscription.Id.ToString()));
+			claims.Add(new(ApplicationClaimTypes.SubscriptionType, subscription.Type.ToString()));
 		}
+
+		var now = this.timeProvider.GetLocalNow();
+
+		var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.options.Value.TokenSecret!));
+
+		var tokenDescriptor = new SecurityTokenDescriptor
+		{
+			Subject = new ClaimsIdentity(claims),
+			Expires = now.DateTime.AddSeconds(this.options.Value.ExpirationInSeconds),
+			Issuer = this.options.Value.Issuer,
+			Audience = this.options.Value.Audience,
+			IssuedAt = now.DateTime,
+			NotBefore = now.DateTime,
+			SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256Signature)
+		};
+
+		var tokenHandler = new JwtSecurityTokenHandler();
+		var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+
+		var token = tokenHandler.WriteToken(securityToken);
+		return new Token(token, JwtBearerDefaults.AuthenticationScheme, this.options.Value.ExpirationInSeconds);
 	}
 }

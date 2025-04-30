@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Kernel.OpenApi.Models;
+﻿using Binacle.Net.Kernel.OpenApi.Helpers;
+using Binacle.Net.Kernel.OpenApi.Models;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
 
@@ -22,15 +23,17 @@ internal class ResponseDescriptionOperationTransformer : IOpenApiOperationTransf
 
 		foreach (var item in metadata)
 		{
-			if (operation.Responses.ContainsKey(item.StatusCode.ToString()))
+			var statusCode = item.StatusCode.ToString();
+			var formattedDescription = ResponseDescription.Format(item);
+			if (operation.Responses.ContainsKey(statusCode))
 			{
-				operation.Responses[item.StatusCode.ToString()].Description = item.Description;
+				operation.Responses[statusCode].Description = formattedDescription;
 			}
 			else
 			{
 				operation.Responses.Add(
-					item.StatusCode.ToString(),
-					new OpenApiResponse { Description = item.Description }
+					statusCode,
+					new OpenApiResponse { Description = formattedDescription }
 				);
 			}
 		}

@@ -23,15 +23,15 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			.Accepts<UpdateAccountRequest>("application/json")
 			.RequestExample<UpdateAccountRequest.Example>("application/json")
 			.Produces(StatusCodes.Status204NoContent)
-			.WithResponseDescription(StatusCodes.Status204NoContent, UpdateAccountResponseDescription.For204NoContent)
+			.ResponseDescription(StatusCodes.Status204NoContent, UpdateAccountResponseDescription.For204NoContent)
 			.ResponseExamples<UpdateAccountRequest.ErrorResponseExamples>(
 				StatusCodes.Status400BadRequest,
 				"application/json"
 			)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound)
+			.ResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound)
 			.Produces(StatusCodes.Status409Conflict)
-			.WithResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict);
+			.ResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict);
 	}
 
 	internal async Task<IResult> HandleAsync(

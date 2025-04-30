@@ -18,6 +18,7 @@ internal class JsonOpenApiExamplesFormatter : IOpenApiExamplesFormatter
 	public IEnumerable<string> SupportedContentTypes =>
 	[
 		"application/json",
+		"application/problem+json",
 	];
 	
 	public ValueTask<IOpenApiAny> FormatAsync(object example)

@@ -39,8 +39,8 @@ public class BindingResult<T>
 			var problemDetails = new ProblemDetails
 			{
 				Status = StatusCodes.Status400BadRequest,
-				Title = "Bad Request",
-				Detail = "The server could not read the request",
+				Title = "Malformed Request",
+				Detail = "The server could not process the request because it is malformed or contains invalid data. Please verify the request format and try again.",
 			};
 
 			return Results.Problem(problemDetails);
@@ -52,7 +52,8 @@ public class BindingResult<T>
 		if (!validationResult.IsValid)
 		{
 			return Results.ValidationProblem(
-				validationResult!.GetValidationSummary()
+				validationResult!.GetValidationSummary(),
+				statusCode: StatusCodes.Status422UnprocessableEntity
 			);
 		}
 
@@ -66,19 +67,28 @@ public class BindingResult<T>
 		{
 			return new ProblemDetails
 			{
-				Status = StatusCodes.Status422UnprocessableEntity,
-				Title = "Malformed Json",
+				Status = StatusCodes.Status400BadRequest,
+				Title = "Invalid JSON Format",
 				Detail = jsonEx.Message,
 			};
 		}
 
 		// Generic fallback error
-		return new ProblemDetails
+		var problemDetails = new ProblemDetails
 		{
 			Status = StatusCodes.Status500InternalServerError,
-			Title = "Internal Server Error",
-			Detail = "An unexpected error occurred while processing the request.",
+			Title = "Unexpected Server Error",
+			Detail = "An unexpected error occurred while processing your request. Please try again later or contact support.",
 		};
+		
+		if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+		{
+			problemDetails.Extensions.TryAdd("exception", ex.GetType().Name);
+			problemDetails.Extensions.TryAdd("message", ex.Message);
+			problemDetails.Extensions.TryAdd("stackTrace", ex.StackTrace);
+		}
+
+		return problemDetails;
 	}
 
 	public static async ValueTask<BindingResult<T>> BindAsync(HttpContext httpContext)

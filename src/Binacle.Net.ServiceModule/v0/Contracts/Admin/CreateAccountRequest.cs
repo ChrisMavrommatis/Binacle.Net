@@ -1,4 +1,5 @@
-﻿using Binacle.Net.ServiceModule.v0.Contracts.Common;
+﻿using System.ComponentModel.DataAnnotations;
+using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Contracts.Common.Interfaces;
 using FluentValidation;
 using OpenApiExamples;
@@ -10,13 +11,17 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
 internal class CreateAccountRequest : IWithUsername, IWithPassword, IWithEmail
 {
-	public string Username { get; set; }
-	public string Password { get; set; }
-	public string Email { get; set; }
-	
-	internal class Validator : AbstractValidator<CreateAccountRequest>
+	[Required] public string Username { get; set; }
+
+	[Required] public string Password { get; set; }
+
+	[Required] public string Email { get; set; }
+}
+
+
+internal class CreateAccountRequestValidator : AbstractValidator<CreateAccountRequest>
 	{
-		public Validator()
+		public CreateAccountRequestValidator()
 		{
 			Include(x => new UsernameValidator());
 			Include(x => new PasswordValidator());
@@ -24,7 +29,7 @@ internal class CreateAccountRequest : IWithUsername, IWithPassword, IWithEmail
 		}
 	}
 	
-	internal class Example : ISingleOpenApiExamplesProvider<CreateAccountRequest>
+	internal class CreateAccountRequestExample : ISingleOpenApiExamplesProvider<CreateAccountRequest>
 	{
 		public IOpenApiExample<CreateAccountRequest> GetExample()
 		{
@@ -41,30 +46,18 @@ internal class CreateAccountRequest : IWithUsername, IWithPassword, IWithEmail
 		}
 	}
 	
-	internal class ErrorResponseExamples : IMultipleOpenApiExamplesProvider<ErrorResponse>
+	internal class CreateAccountRequestValidationProblemResponseExample : ValidationProblemResponseExample
 	{
-		public IEnumerable<IOpenApiExample<ErrorResponse>> GetExamples()
+		public override Dictionary<string, string[]> GetErrors()
 		{
-			yield return OpenApiExample.Create(
-				"validationError",
-				"Validation Error",
-				"Example response with validation errors",
-				ErrorResponse.ValidationError(
-				[
-					"'Email' is not a valid email address.",
-					"The length of 'Password' must be at least 10 characters. You entered 8 characters."
-				])
-			);
-
-			yield return OpenApiExample.Create(
-				"otherError",
-				"Other Error",
-				"Example response when something went wrong",
-				ErrorResponse.Create("Could not create user")
-			);
+			return new Dictionary<string, string[]>()
+			{
+				{ "Email", ["'Email' is not a valid email address."] },
+				{ "Password", ["The length of 'Password' must be at least 10 characters. You entered 8 characters."] }
+			};
 		}
 	}
-}
+
 
 
 

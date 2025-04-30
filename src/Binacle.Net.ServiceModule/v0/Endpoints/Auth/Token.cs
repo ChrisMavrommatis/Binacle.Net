@@ -6,6 +6,7 @@ using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Auth;
+using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
 using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
@@ -26,31 +27,34 @@ internal class Token : IEndpoint
 				"Use this endpoint if you have the credentials to get a token and use the service without limits"
 			)
 			.Accepts<TokenRequest>("application/json")
-			.RequestExample<TokenRequest.Example>("application/json")
+			.RequestExample<TokenRequestExample>("application/json")
+			
 			.Produces<TokenResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseExample<TokenResponse.Example>(StatusCodes.Status200OK, "application/json")
-			.WithResponseDescription(StatusCodes.Status200OK, AuthTokenResponseDescription.For200OK)
-			.Produces<AuthErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			.ResponseExamples<AuthErrorResponse.Examples>(StatusCodes.Status400BadRequest, "application/json")
-			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			.ResponseExample<TokenResponseExample>(StatusCodes.Status200OK, "application/json")
+			.ResponseDescription(StatusCodes.Status200OK, "When you have valid credentials.")
+			
+			.ProducesProblem(StatusCodes.Status400BadRequest)
+			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			
 			.Produces(StatusCodes.Status401Unauthorized)
-			.WithResponseDescription(
-				StatusCodes.Status401Unauthorized,
-				AuthTokenResponseDescription.For401Unauthorized
-			)
+			.ResponseDescription(StatusCodes.Status401Unauthorized, "When the credentials are invalid.")
+
 			.Produces(StatusCodes.Status403Forbidden)
-			.WithResponseDescription(
-				StatusCodes.Status403Forbidden,
-				AuthTokenResponseDescription.For403Forbidden
+			.ResponseDescription(StatusCodes.Status403Forbidden, "When the account is suspended.")
+			
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(StatusCodes.Status422UnprocessableEntity, ResponseDescription.For422UnprocessableEntity)
+			.ResponseExample<TokenRequestValidationProblemDetailsExample>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
 			)
-			.Produces<AuthErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
-			.WithResponseDescription(
+			
+			.ProducesProblem(StatusCodes.Status500InternalServerError)
+			.ResponseDescription(StatusCodes.Status500InternalServerError, ResponseDescription.For500InternalServerError)
+			.ResponseExamples<Status500ResponseExamples>(
 				StatusCodes.Status500InternalServerError,
-				ResponseDescription.For500InternalServerError
-			)
-			.ResponseExample<AuthErrorResponse.InternalServerErrorExample>(
-				StatusCodes.Status500InternalServerError,
-				"application/json"
+				"application/problem+json"
 			)
 			.RequireRateLimiting("Auth");
 	}
@@ -72,7 +76,7 @@ internal class Token : IEndpoint
 				return Results.Unauthorized();
 			}
 
-			if (!account.IsActive() || !account.HasPassword())
+			if (!account.HasPassword())
 			{
 				return Results.Unauthorized();
 			}
@@ -80,6 +84,11 @@ internal class Token : IEndpoint
 			if (!passwordService.PasswordMatches(account.Password!, request.Password))
 			{
 				return Results.Unauthorized();
+			}
+			
+			if (account.IsSuspended())
+			{
+				return Results.Forbid();
 			}
 
 			Subscription? subscription = null;
@@ -93,12 +102,8 @@ internal class Token : IEndpoint
 				}
 			}
 
-			var tokenResult = tokenService.GenerateToken(account, subscription);
-
-			return tokenResult.Match(
-				token => Results.Ok(TokenResponse.Create(token)),
-				ex => Results.InternalServerError(AuthErrorResponse.ServerError(ex))
-			);
+			var token = tokenService.GenerateToken(account, subscription);
+			return Results.Ok(TokenResponse.Create(token));
 		});
 	}
 }

@@ -18,14 +18,14 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 			.WithSummary("Get account")
 			.WithDescription("Admins can use this endpoint to get an account's information")
 			.Produces<GetAccountResponse>(StatusCodes.Status200OK)
-			.WithResponseDescription(StatusCodes.Status200OK, GetAccountResponseDescription.For200OK)
+			.ResponseDescription(StatusCodes.Status200OK, GetAccountResponseDescription.For200OK)
 			.ResponseExample<GetAccountResponse.Example>(StatusCodes.Status200OK, "application/json")
 			.ResponseExample<GetAccountResponse.ErrorResponseExample>(
 				StatusCodes.Status400BadRequest,
 				"application/json"
 			)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound);
 	}
 
 	internal async Task<IResult> HandleAsync(

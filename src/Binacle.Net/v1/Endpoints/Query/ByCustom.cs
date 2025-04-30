@@ -24,10 +24,10 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 			.RequestExample<CustomQueryRequestExample>("application/json")
 			.Produces<QueryResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExamples<CustomQueryResponseExamples>(StatusCodes.Status200OK, "application/json")
-			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForQueryResponse200OK)
+			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForQueryResponse200OK)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
-			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.RequireRateLimiting("Anonymous");
 	}
 

@@ -22,17 +22,23 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			.WithSummary("Create account")
 			.WithDescription("Admins can use this endpoint to create accounts")
 			.Accepts<CreateAccountRequest>("application/json")
-			.RequestExample<CreateAccountRequest.Example>("application/json")
+			.RequestExample<CreateAccountRequestExample>("application/json")
+			
 			.Produces(StatusCodes.Status201Created)
-			.WithResponseDescription(StatusCodes.Status201Created, CreateAccountResponseDescription.For201Created)
-			// TODO
-			.ProducesValidationProblem()
-			// .ResponseExamples<CreateAccountRequest.ErrorResponseExamples>(
-			// 	StatusCodes.Status400BadRequest,
-			// 	"application/json"
-			// )
+			.ResponseDescription(StatusCodes.Status201Created, CreateAccountResponseDescription.For201Created)
+			
 			.Produces(StatusCodes.Status409Conflict)
-			.WithResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict);
+			.ResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict)
+			
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For422UnprocessableEntity
+			)
+			.ResponseExample<CreateAccountRequestValidationProblemResponseExample>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			);;
 	}
 
 	internal async Task<IResult> HandleAsync(

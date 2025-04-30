@@ -21,7 +21,7 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 			.WithSummary("Get subscription")
 			.WithDescription("Admins can use this endpoint to get the subscription for an account")
 			.Produces<GetSubscriptionResponse>(StatusCodes.Status200OK)
-			.WithResponseDescription(StatusCodes.Status200OK, GetSubscriptionResponseDescription.For200OK)
+			.ResponseDescription(StatusCodes.Status200OK, GetSubscriptionResponseDescription.For200OK)
 			.Produces<GetSubscriptionResponse>(StatusCodes.Status200OK)
 			.Produces(StatusCodes.Status400BadRequest)
 			.ResponseExample<GetSubscriptionResponse.ErrorResponseExample>(
@@ -29,7 +29,7 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 				"application/json"
 			)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound);
 	}
 
 	internal async Task<IResult> HandleAsync(

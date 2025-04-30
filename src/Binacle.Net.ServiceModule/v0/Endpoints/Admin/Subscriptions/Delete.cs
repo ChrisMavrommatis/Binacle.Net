@@ -23,7 +23,7 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			.WithSummary("Delete subscription")
 			.WithDescription("Admins can use this endpoint to delete the subscription for an account")
 			.Produces(StatusCodes.Status204NoContent)
-			.WithResponseDescription(StatusCodes.Status204NoContent,
+			.ResponseDescription(StatusCodes.Status204NoContent,
 				DeleteSubscriptionResponseDescription.For204NoContent)
 			.Produces(StatusCodes.Status400BadRequest)
 			.ResponseExamples<DeleteSubscriptionErrorResponseExamples>(
@@ -31,7 +31,7 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 				"application/json"
 			)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound);
 	}
 
 	internal async Task<IResult> HandleAsync(

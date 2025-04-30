@@ -23,7 +23,7 @@ internal class List : IGroupedEndpoint<AdminGroup>
 			.WithSummary("List subscriptions")
 			.WithDescription("Admins can use this endpoint to list all the subscriptions")
 			.Produces<ListSubscriptionsResponse>(StatusCodes.Status200OK)
-			.WithResponseDescription(StatusCodes.Status200OK, ListSubscriptionResponseDescription.For200OK)
+			.ResponseDescription(StatusCodes.Status200OK, ListSubscriptionResponseDescription.For200OK)
 			.ResponseExample<ListSubscriptionsResponse.Example>(StatusCodes.Status200OK, "application/json")
 			.Produces(StatusCodes.Status400BadRequest)
 			.ResponseExamples<ListSubscriptionsResponse.ErrorResponseExamples>(
@@ -31,7 +31,7 @@ internal class List : IGroupedEndpoint<AdminGroup>
 				"application/json"
 			)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, ListSubscriptionResponseDescription.For404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, ListSubscriptionResponseDescription.For404NotFound);
 	}
 
 	internal async Task<IResult> HandleAsync(

@@ -22,14 +22,14 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			.Accepts<UpdateSubscriptionRequest>("application/json")
 			.RequestExample<UpdateSubscriptionRequest.Example>("application/json")
 			.Produces(StatusCodes.Status204NoContent)
-			.WithResponseDescription(StatusCodes.Status204NoContent,
+			.ResponseDescription(StatusCodes.Status204NoContent,
 				UpdateSubscriptionResponseDescription.For204NoContent)
 			.ResponseExamples<UpdateSubscriptionRequest.ErrorResponseExamples>(
 				StatusCodes.Status400BadRequest,
 				"application/json"
 			)
 			.Produces(StatusCodes.Status404NotFound)
-			.WithResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound);
 	}
 
 	internal async Task<IResult> HandleAsync(

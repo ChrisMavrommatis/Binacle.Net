@@ -39,11 +39,7 @@ public class Account : AuditableEntity
 		this.SecurityStamp = Guid.Empty;
 	}
 	
-	public bool HasPassword()
-	{
-		return this.Password is not null
-			&& this.SecurityStamp != Guid.Empty;
-	}
+	
 
 	public void ChangePassword(Password password)
 	{
@@ -94,18 +90,22 @@ public class Account : AuditableEntity
 		return TypedResult.Success;
 	}
 	
+	public bool HasPassword()
+	{
+		return this.Password is not null
+		       && this.SecurityStamp != Guid.Empty;
+	}
+	
+	public bool IsSuspended()
+	{
+		return this.Status == AccountStatus.Suspended;
+	}
+	
 	public bool HasSubscription()
 	{
 		return this.SubscriptionId.HasValue
 			&& this.SubscriptionId.Value != Guid.Empty;
 	}
-
-	public bool IsActive()
-	{
-		return !this.IsDeleted
-		       && this.Status == AccountStatus.Active;
-	}
-
 	
 }
 

@@ -25,10 +25,10 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			.RequestExample<CustomPackRequestExample>("application/json")
 			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExamples<CustomPackResponseExamples>(StatusCodes.Status200OK, "application/json")
-			.WithResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200OK)
+			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200OK)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
-			.WithResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.RequireRateLimiting("Anonymous");
 	}
 
