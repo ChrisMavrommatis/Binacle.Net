@@ -9,7 +9,6 @@ using OpenApiExamples.Abstractions;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
-#pragma warning disable CS8618
 internal class PartialUpdateSubscriptionRequest
 {
 	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<SubscriptionType>>))]

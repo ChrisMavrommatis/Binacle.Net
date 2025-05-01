@@ -39,7 +39,7 @@ public class Create : AdminEndpointsTestsBase
 	public Task Post_WithoutBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithoutBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new CreateAccountRequest()
+			var request = new AccountCreateRequest()
 			{
 				Username = this.newAccountCredentials.Username,
 				Email = this.newAccountCredentials.Email,
@@ -54,7 +54,7 @@ public class Create : AdminEndpointsTestsBase
 	public Task Post_WithExpiredBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithExpiredBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new CreateAccountRequest
+			var request = new AccountCreateRequest
 			{
 				Username = this.newAccountCredentials.Username,
 				Email = this.newAccountCredentials.Email,
@@ -68,7 +68,7 @@ public class Create : AdminEndpointsTestsBase
 	public Task Post_WithWrongIssuerBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new CreateAccountRequest
+			var request = new AccountCreateRequest
 			{
 				Username = this.newAccountCredentials.Username,
 				Email = this.newAccountCredentials.Email,
@@ -83,7 +83,7 @@ public class Create : AdminEndpointsTestsBase
 	public Task Post_WithWrongAudienceBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new CreateAccountRequest
+			var request = new AccountCreateRequest
 			{
 				Username = this.newAccountCredentials.Username,
 				Email = this.newAccountCredentials.Email,
@@ -98,7 +98,7 @@ public class Create : AdminEndpointsTestsBase
 	public Task Post_WithWronglySignedBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWronglySignedBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var request = new CreateAccountRequest
+			var request = new AccountCreateRequest
 			{
 				Username = this.newAccountCredentials.Username,
 				Email = this.newAccountCredentials.Email,
@@ -116,7 +116,7 @@ public class Create : AdminEndpointsTestsBase
 	public Task Post_WithoutAdminBearerToken_Returns_403Forbidden()
 		=> this.Action_WithoutAdminBearerToken_Returns_403Forbidden(async () =>
 		{
-			var request = new CreateAccountRequest
+			var request = new AccountCreateRequest
 			{
 				Username = this.newAccountCredentials.Username,
 				Email = this.newAccountCredentials.Email,
@@ -137,7 +137,7 @@ public class Create : AdminEndpointsTestsBase
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
 
-		var request = new CreateAccountRequest
+		var request = new AccountCreateRequest
 		{
 			Username = this.newAccountCredentials.Username,
 			Email = this.newAccountCredentials.Email,
@@ -159,7 +159,7 @@ public class Create : AdminEndpointsTestsBase
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
-		var request = new CreateAccountRequest
+		var request = new AccountCreateRequest
 		{
 			Username = this.newAccountCredentials.Username,
 			Email = "newuser.test",
@@ -175,7 +175,7 @@ public class Create : AdminEndpointsTestsBase
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
-		var request = new CreateAccountRequest
+		var request = new AccountCreateRequest
 		{
 			Username = this.newAccountCredentials.Username,
 			Email = this.newAccountCredentials.Email,
@@ -195,7 +195,7 @@ public class Create : AdminEndpointsTestsBase
 		await this.EnsureAccountExists(this.existingAccountCredentials);
 		await using (var scope = this.Sut.StartAuthenticationScope(this.AdminAccount))
 		{
-			var request = new CreateAccountRequest
+			var request = new AccountCreateRequest
 			{
 				Username = this.existingAccountCredentials.Username,
 				Email = this.existingAccountCredentials.Email,

@@ -11,9 +11,9 @@ internal class InMemoryAccountRepository : IAccountRepository
 {
 	private static readonly ConcurrentSortedDictionary<Guid, Account> _accounts = new();
 
-	public Task<FluxUnion<Account, NotFound>> GetByIdAsync(Guid id)
+	public Task<FluxUnion<Account, NotFound>> GetByIdAsync(Guid id, bool allowDeleted =false)
 	{
-		if (_accounts.TryGetValue(id, out var account) && !account.IsDeleted)
+		if (_accounts.TryGetValue(id, out var account) && (allowDeleted || !account.IsDeleted))
 		{
 			return Task.FromResult<FluxUnion<Account, NotFound>>(account);
 		}
@@ -21,18 +21,13 @@ internal class InMemoryAccountRepository : IAccountRepository
 		return Task.FromResult<FluxUnion<Account, NotFound>>(TypedResult.NotFound);
 	}
 
-	public Task<FluxUnion<PagedList<Account>, NotFound>> ListAsync(int page, int pageSize)
+	public Task<PagedList<Account>> ListAsync(int page, int pageSize)
 	{
 		var accounts = _accounts.Values
 			.Where(x => !x.IsDeleted)
 			.Skip((page - 1) * pageSize)
 			.Take(pageSize)
 			.ToList();
-
-		if (accounts.Count == 0)
-		{
-			return Task.FromResult<FluxUnion<PagedList<Account>, NotFound>>(TypedResult.NotFound);
-		}
 
 		var pagedAccounts = new PagedList<Account>(
 			accounts,
@@ -41,7 +36,7 @@ internal class InMemoryAccountRepository : IAccountRepository
 			page
 		);
 
-		return Task.FromResult<FluxUnion<PagedList<Account>, NotFound>>(pagedAccounts);
+		return Task.FromResult(pagedAccounts);
 	}
 
 	public Task<FluxUnion<Account, NotFound>> GetByUsernameAsync(string username)

@@ -7,14 +7,12 @@ using OpenApiExamples.Abstractions;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Auth;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-
 internal class TokenRequest : IWithPassword
 {
 	[Required]
-	public string Username { get; set; }
+	public string Username { get; set; } = null!;
 	[Required]
-	public string Password { get; set; }
+	public string Password { get; set; } = null!;
 }
 
 internal class TokenRequestValidator : AbstractValidator<TokenRequest>
@@ -41,7 +39,7 @@ internal class TokenRequestExample : ISingleOpenApiExamplesProvider<TokenRequest
 	}
 }
 
-internal class TokenRequestValidationProblemDetailsExample : ValidationProblemResponseExample
+internal class TokenRequestValidationProblemExample : ValidationProblemResponseExample
 {
 	public override Dictionary<string, string[]> GetErrors()
 	{

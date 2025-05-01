@@ -3,8 +3,10 @@ using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
 
@@ -17,34 +19,45 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 		group.MapGet("/account/{id}", HandleAsync)
 			.WithSummary("Get account")
 			.WithDescription("Admins can use this endpoint to get an account's information")
-			.Produces<GetAccountResponse>(StatusCodes.Status200OK)
-			.ResponseDescription(StatusCodes.Status200OK, GetAccountResponseDescription.For200OK)
-			.ResponseExample<GetAccountResponse.Example>(StatusCodes.Status200OK, "application/json")
-			.ResponseExample<GetAccountResponse.ErrorResponseExample>(
-				StatusCodes.Status400BadRequest,
-				"application/json"
-			)
+			.Produces<AccountGetResponse>(StatusCodes.Status200OK)
+			.ResponseDescription(StatusCodes.Status200OK, "The account exists")
+			.ResponseExample<AccountGetResponseExample>(StatusCodes.Status200OK, "application/json")
+			
 			.Produces(StatusCodes.Status404NotFound)
-			.ResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound)
+			
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For422UnprocessableEntity
+			)
+			.ResponseExample<AccountGetValidationProblemExample>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			);
 	}
 
 	internal async Task<IResult> HandleAsync(
-		string id,
+		[AsParameters] AccountId id,
+		[FromQuery] bool? allowDeleted,
+		IValidator<AccountId> validator,
 		IAccountRepository accountRepository,
 		CancellationToken cancellationToken = default)
 	{
-		if (!Guid.TryParse(id, out var accountId))
+		var validationResult = await validator.ValidateAsync(id, cancellationToken);
+		if (!validationResult.IsValid)
 		{
-			return Results.BadRequest(
-				ErrorResponse.IdToGuidParameterError
+			return Results.ValidationProblem(
+				validationResult!.GetValidationSummary(),
+				statusCode: StatusCodes.Status422UnprocessableEntity
 			);
 		}
 
-		var result = await accountRepository.GetByIdAsync(accountId);
+		var result = await accountRepository.GetByIdAsync(id.Value, allowDeleted ?? false);
 
 		return result.Match(
 			account => Results.Ok(
-				GetAccountResponse.From(account)
+				AccountGetResponse.From(account)
 			),
 			notFound => Results.NotFound()
 		);

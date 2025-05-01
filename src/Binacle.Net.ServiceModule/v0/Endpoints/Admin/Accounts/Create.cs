@@ -3,8 +3,8 @@ using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Common.Services;
-using Binacle.Net.ServiceModule.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
+using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
 using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
@@ -21,11 +21,18 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 		group.MapPost("/account", HandleAsync)
 			.WithSummary("Create account")
 			.WithDescription("Admins can use this endpoint to create accounts")
-			.Accepts<CreateAccountRequest>("application/json")
-			.RequestExample<CreateAccountRequestExample>("application/json")
+			.Accepts<AccountCreateRequest>("application/json")
+			.RequestExample<AccountCreateRequestExample>("application/json")
 			
 			.Produces(StatusCodes.Status201Created)
-			.ResponseDescription(StatusCodes.Status201Created, CreateAccountResponseDescription.For201Created)
+			.ResponseDescription(StatusCodes.Status201Created, "The account was created succesfully.")
+			
+			.ProducesProblem(StatusCodes.Status400BadRequest)
+			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			.ResponseExamples<Status400ResponseExamples>(
+				StatusCodes.Status400BadRequest,
+				"application/problem+json"
+			)
 			
 			.Produces(StatusCodes.Status409Conflict)
 			.ResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict)
@@ -35,14 +42,14 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For422UnprocessableEntity
 			)
-			.ResponseExample<CreateAccountRequestValidationProblemResponseExample>(
+			.ResponseExample<AccountCreateValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
-			);;
+			);
 	}
 
 	internal async Task<IResult> HandleAsync(
-		BindingResult<CreateAccountRequest> bindingResult,
+		BindingResult<AccountCreateRequest> bindingResult,
 		IAccountRepository accountRepository,
 		IPasswordService passwordService,
 		TimeProvider timeProvider,

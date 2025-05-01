@@ -5,6 +5,7 @@ using Binacle.Net.ServiceModule.Domain.Common.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
+using FluentValidation;
 using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -20,23 +21,38 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 		group.MapPatch("/account/{id}", HandleAsync)
 			.WithSummary("Partially update an account")
 			.WithDescription("Admins can use this endpoint to partially update an account")
-			.Accepts<PartialUpdateAccountRequest>("application/json")
-			.RequestExamples<PartialUpdateAccountRequest.Examples>("application/json")
+			.Accepts<AccountPatchRequest>("application/json")
+			.RequestExamples<AccountPatchRequestExamples>("application/json")
 			.Produces(StatusCodes.Status204NoContent)
-			.ResponseDescription(StatusCodes.Status204NoContent, UpdateAccountResponseDescription.For204NoContent)
-			.ResponseExamples<PartialUpdateAccountRequest.ErrorResponseExamples>(
+			.ResponseDescription(StatusCodes.Status204NoContent, "The account was updated succesfully")
+			
+			.ProducesProblem(StatusCodes.Status400BadRequest)
+			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			.ResponseExamples<Status400ResponseExamples>(
 				StatusCodes.Status400BadRequest,
-				"application/json"
+				"application/problem+json"
 			)
+			
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound)
+			
 			.Produces(StatusCodes.Status409Conflict)
-			.ResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict);
+			.ResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict)
+			
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For422UnprocessableEntity
+			)
+			.ResponseExamples<AccountPatchValidationProblemExamples>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			);
 	}
 
 	internal async Task<IResult> HandleAsync(
-		string id,
-		AccountBindingResult<PartialUpdateAccountRequest> bindingResult,
+		[AsParameters] AccountId id,
+		AccountBindingResult<AccountPatchRequest> bindingResult,
 		IAccountRepository accountRepository,
 		IPasswordService passwordService,
 		CancellationToken cancellationToken = default)

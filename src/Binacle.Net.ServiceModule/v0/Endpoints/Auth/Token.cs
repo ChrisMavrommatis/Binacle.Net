@@ -31,28 +31,28 @@ internal class Token : IEndpoint
 			
 			.Produces<TokenResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExample<TokenResponseExample>(StatusCodes.Status200OK, "application/json")
-			.ResponseDescription(StatusCodes.Status200OK, "When you have valid credentials.")
+			.ResponseDescription(StatusCodes.Status200OK, "The credentials are valid.")
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
 			
 			.Produces(StatusCodes.Status401Unauthorized)
-			.ResponseDescription(StatusCodes.Status401Unauthorized, "When the credentials are invalid.")
+			.ResponseDescription(StatusCodes.Status401Unauthorized, "The credentials are invalid.")
 
 			.Produces(StatusCodes.Status403Forbidden)
-			.ResponseDescription(StatusCodes.Status403Forbidden, "When the account is suspended.")
+			.ResponseDescription(StatusCodes.Status403Forbidden, "The account is suspended.")
 			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(StatusCodes.Status422UnprocessableEntity, ResponseDescription.For422UnprocessableEntity)
-			.ResponseExample<TokenRequestValidationProblemDetailsExample>(
+			.ResponseExample<TokenRequestValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			)
 			
 			.ProducesProblem(StatusCodes.Status500InternalServerError)
 			.ResponseDescription(StatusCodes.Status500InternalServerError, ResponseDescription.For500InternalServerError)
-			.ResponseExamples<Status500ResponseExamples>(
+			.ResponseExample<Status500ResponseExample>(
 				StatusCodes.Status500InternalServerError,
 				"application/problem+json"
 			)

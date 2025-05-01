@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
+using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,33 +14,36 @@ internal class AccountBindingResult<T>
 	private readonly IServiceProvider serviceProvider;
 	private readonly T? request;
 	private readonly Exception? exception;
-	private readonly CancellationToken cancelationToken;
+	private readonly CancellationToken cancellationToken;
 
 	private AccountBindingResult(
 		IServiceProvider serviceProvider,
 		T? request,
 		Exception? exception,
-		CancellationToken cancelationToken = default
+		CancellationToken cancellationToken = default
 	)
 	{
 		this.serviceProvider = serviceProvider;
 		this.request = request;
 		this.exception = exception;
-		this.cancelationToken = cancelationToken;
+		this.cancellationToken = cancellationToken;
 	}
 
 	public async Task<IResult> ValidateAsync(
-		string accountId, 
+		AccountId id, 
 		Func<T, Account, Task<IResult>> handleRequest
 		)
 	{
-		if (!Guid.TryParse(accountId, out var parsedAccountId))
+		var accountIdValidator = this.serviceProvider.GetRequiredService<IValidator<AccountId>>();
+
+		
+		var accountIdValidationResult = await accountIdValidator.ValidateAsync(id, this.cancellationToken);
+		if (!accountIdValidationResult.IsValid)
 		{
-			var errors = new Dictionary<string, string[]>
-			{
-				{"id", ["The provided value is not a valid Guid"]}
-			};
-			return Results.ValidationProblem(errors);
+			return Results.ValidationProblem(
+				accountIdValidationResult!.GetValidationSummary(),
+				statusCode: StatusCodes.Status422UnprocessableEntity
+			);
 		}
 		
 		if (this.exception is not null)
@@ -53,25 +57,26 @@ internal class AccountBindingResult<T>
 			var problemDetails = new ProblemDetails
 			{
 				Status = StatusCodes.Status400BadRequest,
-				Title = "Bad Request",
-				Detail = "The server could not read the request",
+				Title = "Malformed Request",
+				Detail = "The server could not process the request because it is malformed or contains invalid data. Please verify the request format and try again.",
 			};
 
 			return Results.Problem(problemDetails);
 		}
 
 		var validator = this.serviceProvider.GetRequiredService<IValidator<T>>();
-		var validationResult = await validator.ValidateAsync(this.request!, this.cancelationToken);
+		var validationResult = await validator.ValidateAsync(this.request!, this.cancellationToken);
 
 		if (!validationResult.IsValid)
 		{
 			return Results.ValidationProblem(
-				validationResult!.GetValidationSummary()
+				validationResult!.GetValidationSummary(),
+				statusCode: StatusCodes.Status422UnprocessableEntity
 			);
 		}
 
 		var accountRepository = this.serviceProvider.GetRequiredService<IAccountRepository>();
-		var accountResult = await accountRepository.GetByIdAsync(parsedAccountId);
+		var accountResult = await accountRepository.GetByIdAsync(id.Value);
 
 		var result = accountResult.Match(
 			account => handleRequest(this.request!, account!),
@@ -87,19 +92,28 @@ internal class AccountBindingResult<T>
 		{
 			return new ProblemDetails
 			{
-				Status = StatusCodes.Status422UnprocessableEntity,
-				Title = "Malformed Json",
+				Status = StatusCodes.Status400BadRequest,
+				Title = "Invalid JSON Format",
 				Detail = jsonEx.Message,
 			};
 		}
 
 		// Generic fallback error
-		return new ProblemDetails
+		var problemDetails = new ProblemDetails
 		{
 			Status = StatusCodes.Status500InternalServerError,
-			Title = "Internal Server Error",
-			Detail = "An unexpected error occurred while processing the request.",
+			Title = "Unexpected Server Error",
+			Detail = "An unexpected error occurred while processing your request. Please try again later or contact support.",
 		};
+		
+		if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+		{
+			problemDetails.Extensions.TryAdd("exception", ex.GetType().Name);
+			problemDetails.Extensions.TryAdd("message", ex.Message);
+			problemDetails.Extensions.TryAdd("stackTrace", ex.StackTrace);
+		}
+
+		return problemDetails;
 	}
 
 	public static async ValueTask<AccountBindingResult<T>> BindAsync(HttpContext httpContext)

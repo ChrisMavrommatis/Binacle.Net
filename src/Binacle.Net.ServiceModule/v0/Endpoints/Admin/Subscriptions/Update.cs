@@ -3,6 +3,7 @@ using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
+using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
 using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
@@ -33,7 +34,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		string id,
+		[AsParameters] AccountId id,
 		AccountBindingResult<UpdateSubscriptionRequest> requestResult,
 		ISubscriptionRepository subscriptionRepository,
 		CancellationToken cancellationToken = default)

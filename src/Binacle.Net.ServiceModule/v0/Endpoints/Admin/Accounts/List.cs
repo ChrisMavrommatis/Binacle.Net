@@ -18,16 +18,19 @@ internal class List : IGroupedEndpoint<AdminGroup>
 		group.MapGet("/account/", HandleAsync)
 			.WithSummary("List accounts")
 			.WithDescription("Admins can use this endpoint to list all accounts.")
-			.Produces<ListAccountsResponse>(StatusCodes.Status200OK)
-			.ResponseDescription(StatusCodes.Status200OK, ListAccountResponseDescription.For200OK)
-			.ResponseExample<ListAccountsResponse.Example>(StatusCodes.Status200OK, "application/json")
-			.Produces(StatusCodes.Status400BadRequest)
-			.ResponseExamples<ListAccountsResponse.ErrorResponseExamples>(
-				StatusCodes.Status400BadRequest,
-				"application/json"
+			.Produces<AccountListResponse>(StatusCodes.Status200OK)
+			.ResponseDescription(StatusCodes.Status200OK, "Lists the accounts with pagination")
+			.ResponseExample<AccountListResponseExample>(StatusCodes.Status200OK, "application/json")
+			
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For422UnprocessableEntity
 			)
-			.Produces(StatusCodes.Status404NotFound)
-			.ResponseDescription(StatusCodes.Status404NotFound, ListAccountResponseDescription.For404NotFound);
+			.ResponseExample<AccountListValidationProblemExample>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			);
 	}
 
 	internal async Task<IResult> HandleAsync(
@@ -36,22 +39,19 @@ internal class List : IGroupedEndpoint<AdminGroup>
 		IAccountRepository accountRepository,
 		CancellationToken cancellationToken = default)
 	{
-		var validationResult =await validator.ValidateAsync(paging, cancellationToken);
+		var validationResult = await validator.ValidateAsync(paging, cancellationToken);
 		if (!validationResult.IsValid)
 		{
 			return Results.ValidationProblem(
-				validationResult!.GetValidationSummary()
+				validationResult!.GetValidationSummary(),
+				statusCode: StatusCodes.Status422UnprocessableEntity
 			);
 		}
 	
-
 		var result = await accountRepository.ListAsync(paging.PageNumber, paging.PageSize);
 
-		return result.Match(
-			accounts => Results.Ok(
-				ListAccountsResponse.From(accounts)
-			),
-			notFound => Results.NotFound()
+		return Results.Ok(
+			AccountListResponse.Create(result)
 		);
 	}
 }

@@ -53,7 +53,7 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 	protected async Task EnsureAccountExists(AccountCredentials accountCredentials)
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-		var request = new CreateAccountRequest()
+		var request = new AccountCreateRequest()
 		{
 			Username = accountCredentials.Username,
 			Email = accountCredentials.Email,

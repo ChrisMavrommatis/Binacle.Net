@@ -29,9 +29,7 @@ public abstract partial class AdminEndpointsTestsBase
 		var jwtAuthOptions = this.Sut.Services.GetService<IOptions<JwtAuthOptions>>();
 		var tokenService = new TokenService(jwtAuthOptions!, timeProvider);
 
-		
-		var result = tokenService.GenerateToken(this.AdminAccount, null);
-		var token = result.Unwrap<Token>();
+		var token = tokenService.GenerateToken(this.AdminAccount, null);
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 
@@ -55,8 +53,7 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var tokenService = new TokenService(Options.Create(newJwtAuthOptions), TimeProvider.System);
 
-		var result = tokenService.GenerateToken(this.AdminAccount, null);
-		var token = result.Unwrap<Token>();
+		var token = tokenService.GenerateToken(this.AdminAccount, null);
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 
@@ -80,8 +77,7 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var tokenService = new TokenService(Options.Create(newJwtAuthOptions), TimeProvider.System);
 
-		var result = tokenService.GenerateToken(this.AdminAccount, null);
-		var token = result.Unwrap<Token>();
+		var token = tokenService.GenerateToken(this.AdminAccount, null);
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 
@@ -105,8 +101,7 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var tokenService = new TokenService(Options.Create(newJwtAuthOptions), TimeProvider.System);
 
-		var result = tokenService.GenerateToken(this.AdminAccount, null);
-		var token = result.Unwrap<Token>();
+		var token = tokenService.GenerateToken(this.AdminAccount, null);
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 

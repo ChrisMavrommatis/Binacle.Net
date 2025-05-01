@@ -18,23 +18,16 @@ internal class AdminGroup : IEndpointGroup
 				.RequireAuthorization("Admin")
 				.WithGroupName(ServiceModuleApiDocument.DocumentName)
 				
-				.ProducesProblem(StatusCodes.Status400BadRequest)
-				.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-				.ResponseExamples<Status400ResponseExamples>(
-					StatusCodes.Status400BadRequest,
-					"application/problem+json"
-				)
-				
 				.Produces(StatusCodes.Status401Unauthorized)
 				.ResponseDescription(
 					StatusCodes.Status401Unauthorized,
-					"When provided user token is invalid."
+					"The provided Bearer token is invalid."
 				)
 				
 				.Produces(StatusCodes.Status403Forbidden)
 				.ResponseDescription(
 					StatusCodes.Status403Forbidden,
-					"When provided user token does not have permission."
+					"The provided Bearer token does not have permission."
 				)
 				
 				.ProducesProblem(StatusCodes.Status500InternalServerError)
@@ -42,7 +35,7 @@ internal class AdminGroup : IEndpointGroup
 					StatusCodes.Status500InternalServerError,
 					ResponseDescription.For500InternalServerError
 				)
-				.ResponseExamples<Status500ResponseExamples>(
+				.ResponseExample<Status500ResponseExample>(
 					StatusCodes.Status500InternalServerError,
 					"application/problem+json"
 				);

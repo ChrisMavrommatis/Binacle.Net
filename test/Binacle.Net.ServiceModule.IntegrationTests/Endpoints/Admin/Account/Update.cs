@@ -31,7 +31,7 @@ public class Update : AdminEndpointsTestsBase
 		=> this.Action_WithoutBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			var request = new UpdateAccountRequest
+			var request = new AccountUpdateRequest
 			{
 				Username = this.existingAccountCredentials.Username,
 				Email = this.existingAccountCredentials.Email,
@@ -47,7 +47,7 @@ public class Update : AdminEndpointsTestsBase
 		=> this.Action_WithExpiredBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			var request = new UpdateAccountRequest
+			var request = new AccountUpdateRequest
 			{
 				Username = this.existingAccountCredentials.Username,
 				Email = this.existingAccountCredentials.Email,
@@ -64,7 +64,7 @@ public class Update : AdminEndpointsTestsBase
 		=> this.Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			var request = new UpdateAccountRequest
+			var request = new AccountUpdateRequest
 			{
 				Username = this.existingAccountCredentials.Username,
 				Email = this.existingAccountCredentials.Email,
@@ -80,7 +80,7 @@ public class Update : AdminEndpointsTestsBase
 		=> this.Action_WithWrongAudienceBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			var request = new UpdateAccountRequest
+			var request = new AccountUpdateRequest
 			{
 				Username = this.existingAccountCredentials.Username,
 				Email = this.existingAccountCredentials.Email,
@@ -96,7 +96,7 @@ public class Update : AdminEndpointsTestsBase
 		=> this.Action_WithWronglySignedBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			var request = new UpdateAccountRequest
+			var request = new AccountUpdateRequest
 			{
 				Username = this.existingAccountCredentials.Username,
 				Email = this.existingAccountCredentials.Email,
@@ -116,7 +116,7 @@ public class Update : AdminEndpointsTestsBase
 		=> this.Action_WithoutAdminBearerToken_Returns_403Forbidden(async () =>
 		{
 			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			var request = new UpdateAccountRequest
+			var request = new AccountUpdateRequest
 			{
 				Username = this.existingAccountCredentials.Username,
 				Email = this.existingAccountCredentials.Email,
@@ -137,7 +137,7 @@ public class Update : AdminEndpointsTestsBase
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
 		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-		var request = new UpdateAccountRequest
+		var request = new AccountUpdateRequest
 		{
 			Username = this.existingAccountCredentials.Username,
 			Email = this.existingAccountCredentials.Email,
@@ -159,7 +159,7 @@ public class Update : AdminEndpointsTestsBase
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-		var request = new UpdateAccountRequest
+		var request = new AccountUpdateRequest
 		{
 			Username = this.existingAccountCredentials.Username,
 			Email = "existinguser.test",
@@ -176,7 +176,7 @@ public class Update : AdminEndpointsTestsBase
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-		var request = new UpdateAccountRequest
+		var request = new AccountUpdateRequest
 		{
 			Username = this.existingAccountCredentials.Username,
 			Email = this.existingAccountCredentials.Email,
@@ -195,7 +195,7 @@ public class Update : AdminEndpointsTestsBase
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
 		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-		var request = new UpdateAccountRequest
+		var request = new AccountUpdateRequest
 		{
 			Username = this.existingAccountCredentials.Username,
 			Email = this.existingAccountCredentials.Email,
@@ -214,7 +214,7 @@ public class Update : AdminEndpointsTestsBase
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
 		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-		var request = new UpdateAccountRequest
+		var request = new AccountUpdateRequest
 		{
 			Username = this.existingAccountCredentials.Username,
 			Email = this.existingAccountCredentials.Email,
@@ -234,7 +234,7 @@ public class Update : AdminEndpointsTestsBase
 
 		var url = routePath.Replace("{id}", "invalid");
 
-		var request = new PartialUpdateAccountRequest
+		var request = new AccountUpdateRequest
 		{
 			Username = this.existingAccountCredentials.Username,
 			Email = this.existingAccountCredentials.Email,
@@ -258,7 +258,7 @@ public class Update : AdminEndpointsTestsBase
 		var nonExistentId = Guid.Parse("EF81C267-A003-44B8-AD89-4B48661C4AA5");
 
 		var url = routePath.Replace("{id}", nonExistentId.ToString());
-		var request = new UpdateAccountRequest
+		var request = new AccountUpdateRequest
 		{
 			Username = this.existingAccountCredentials.Username,
 			Email = this.existingAccountCredentials.Email,

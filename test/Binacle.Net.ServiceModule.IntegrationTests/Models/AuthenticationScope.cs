@@ -25,8 +25,7 @@ internal class AuthenticationScope : IAsyncDisposable, IDisposable
 	{
 		var tokenService = this.sut.Services.GetRequiredService<ITokenService>();
 
-		var result = tokenService.GenerateToken(account, null);
-		var token = result.Unwrap<Token>();
+		var token = tokenService.GenerateToken(account, null);
 
 		sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 	}

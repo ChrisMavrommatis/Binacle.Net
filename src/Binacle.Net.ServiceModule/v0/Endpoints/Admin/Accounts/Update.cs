@@ -20,23 +20,39 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 		group.MapPut("/account/{id}", HandleAsync)
 			.WithSummary("Update an account")
 			.WithDescription("Admins can use this endpoint to update an account")
-			.Accepts<UpdateAccountRequest>("application/json")
-			.RequestExample<UpdateAccountRequest.Example>("application/json")
+			.Accepts<AccountUpdateRequest>("application/json")
+			.RequestExample<AccountUpdateRequestExample>("application/json")
+			
 			.Produces(StatusCodes.Status204NoContent)
-			.ResponseDescription(StatusCodes.Status204NoContent, UpdateAccountResponseDescription.For204NoContent)
-			.ResponseExamples<UpdateAccountRequest.ErrorResponseExamples>(
+			.ResponseDescription(StatusCodes.Status204NoContent, "The account was updated succesfully")
+
+			.ProducesProblem(StatusCodes.Status400BadRequest)
+			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			.ResponseExamples<Status400ResponseExamples>(
 				StatusCodes.Status400BadRequest,
-				"application/json"
+				"application/problem+json"
 			)
+			
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound)
+			
 			.Produces(StatusCodes.Status409Conflict)
-			.ResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict);
+			.ResponseDescription(StatusCodes.Status409Conflict, AccountResponseDescription.For409Conflict)
+			
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For422UnprocessableEntity
+			)
+			.ResponseExample<AccountUpdateValidationProblemExample>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			);
 	}
 
 	internal async Task<IResult> HandleAsync(
-		string id,
-		AccountBindingResult<UpdateAccountRequest> bindingResult,
+		[AsParameters] AccountId id,
+		AccountBindingResult<AccountUpdateRequest> bindingResult,
 		IAccountRepository accountRepository,
 		IPasswordService passwordService,
 		CancellationToken cancellationToken = default)

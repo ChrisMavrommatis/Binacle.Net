@@ -5,7 +5,6 @@ using OpenApiExamples.Abstractions;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Common;
 
-#pragma warning disable CS8618
 internal abstract class ValidationProblemResponseExample : ISingleOpenApiExamplesProvider<ProblemDetails>
 {
 	public abstract Dictionary<string, string[]> GetErrors();
@@ -16,6 +15,10 @@ internal abstract class ValidationProblemResponseExample : ISingleOpenApiExample
 			"validationProblem",
 			"Validation Problem",
 			new HttpValidationProblemDetails(GetErrors())
+			{
+				Type= "https://tools.ietf.org/html/rfc4918#section-11.2",
+				Status = StatusCodes.Status422UnprocessableEntity
+			}
 		);
 	}
 }

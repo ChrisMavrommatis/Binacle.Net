@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Binacle.Net.ServiceModule.v0.Resources;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Common;
@@ -6,9 +7,9 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Common;
 
 internal class PagingQuery
 {
-	[FromQuery]
+	[FromQuery(Name = "pg")]
 	public int? Pg { get; set; }
-	[FromQuery]
+	[FromQuery(Name = "pz")]
 	public int? Pz { get; set; }
 
 	public int PageNumber => this.Pg ?? 1;
@@ -34,3 +35,4 @@ internal class PagingQueryValidator : AbstractValidator<PagingQuery>
 		});
 	}
 }
+

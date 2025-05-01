@@ -22,18 +22,13 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 		return Task.FromResult<FluxUnion<Subscription, NotFound>>(TypedResult.NotFound);
 	}
 	
-	public Task<FluxUnion<PagedList<Subscription>, NotFound>> ListAsync(int page, int pageSize)
+	public Task<PagedList<Subscription>> ListAsync(int page, int pageSize)
 	{
 		var subscriptions = _subscriptions.Values
 			.Where(x => !x.IsDeleted)
 			.Skip((page - 1) * pageSize)
 			.Take(pageSize)
 			.ToList();
-
-		if (subscriptions.Count == 0)
-		{
-			return Task.FromResult<FluxUnion<PagedList<Subscription>, NotFound>>(TypedResult.NotFound);
-		}
 
 		var pagedSubscriptions = new PagedList<Subscription>(
 			subscriptions,
@@ -42,7 +37,7 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 			page
 		);
 
-		return Task.FromResult<FluxUnion<PagedList<Subscription>, NotFound>>(pagedSubscriptions);
+		return Task.FromResult(pagedSubscriptions);
 	}
 
 

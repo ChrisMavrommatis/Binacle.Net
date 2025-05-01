@@ -50,11 +50,8 @@ internal class List : IGroupedEndpoint<AdminGroup>
 
 		var result = await subscriptionRepository.ListAsync(paging.PageNumber, paging.PageSize);
 
-		return result.Match(
-			subscriptions => Results.Ok(
-				ListSubscriptionsResponse.From(subscriptions)
-			),
-			notFound => Results.NotFound()
+		return Results.Ok(
+			ListSubscriptionsResponse.From(result)
 		);
 	}
 }

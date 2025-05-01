@@ -4,6 +4,7 @@ using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
+using FluentValidation;
 using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -20,30 +21,40 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			.WithSummary("Delete an account")
 			.WithDescription("Admins can use this endpoint to delete an account")
 			.Produces(StatusCodes.Status204NoContent)
-			.ResponseDescription(StatusCodes.Status204NoContent, DeleteAccountResponseDescription.For204NoContent)
-			.ResponseExamples<DeleteAccountErrorResponseExamples>(
-				StatusCodes.Status400BadRequest,
-				"application/json"
-			)
+			.ResponseDescription(StatusCodes.Status204NoContent, "The account was deleted")
+
 			.Produces(StatusCodes.Status404NotFound)
-			.ResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound)
+
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For422UnprocessableEntity
+			)
+			.ResponseExample<AccountDeleteValidationProblemExample>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			);
 	}
 
 	internal async Task<IResult> HandleAsync(
-		string id,
+		[AsParameters] AccountId id,
+		IValidator<AccountId> validator,
 		IAccountRepository accountRepository,
 		TimeProvider timeProvider,
 		CancellationToken cancellationToken = default
 	)
 	{
-		if (!Guid.TryParse(id, out var accountId))
+		var validationResult = await validator.ValidateAsync(id, cancellationToken);
+		if (!validationResult.IsValid)
 		{
-			return Results.BadRequest(
-				ErrorResponse.IdToGuidParameterError
+			return Results.ValidationProblem(
+				validationResult!.GetValidationSummary(),
+				statusCode: StatusCodes.Status422UnprocessableEntity
 			);
 		}
 
-		var accountResult = await accountRepository.GetByIdAsync(accountId);
+		var accountResult = await accountRepository.GetByIdAsync(id.Value);
 		if (!accountResult.TryGetValue<Account>(out var account) || account is null)
 		{
 			return Results.NotFound();

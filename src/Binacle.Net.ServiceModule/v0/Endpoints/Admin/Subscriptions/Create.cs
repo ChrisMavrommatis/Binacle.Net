@@ -4,6 +4,7 @@ using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
+using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
 using FluxResults.TypedResults;
 using FluxResults.Unions;
@@ -36,7 +37,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		string id,
+		[AsParameters] AccountId id,
 		AccountBindingResult<CreateSubscriptionRequest> bindingResult,
 		IAccountRepository accountRepository,
 		ISubscriptionRepository subscriptionRepository,

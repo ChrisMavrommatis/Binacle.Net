@@ -11,19 +11,19 @@ public class BindingResult<T>
 	private readonly IServiceProvider serviceProvider;
 	private readonly T? request;
 	private readonly Exception? exception;
-	private readonly CancellationToken cancelationToken;
+	private readonly CancellationToken cancellationToken;
 
 	private BindingResult(
 		IServiceProvider serviceProvider,
 		T? request,
 		Exception? exception,
-		CancellationToken cancelationToken = default
+		CancellationToken cancellationToken = default
 	)
 	{
 		this.serviceProvider = serviceProvider;
 		this.request = request;
 		this.exception = exception;
-		this.cancelationToken = cancelationToken;
+		this.cancellationToken = cancellationToken;
 	}
 
 	public async Task<IResult> ValidateAsync(Func<T, Task<IResult>> handleValidRequest)
@@ -47,7 +47,7 @@ public class BindingResult<T>
 		}
 
 		var validator = this.serviceProvider.GetRequiredService<IValidator<T>>();
-		var validationResult = await validator.ValidateAsync(this.request!, this.cancelationToken);
+		var validationResult = await validator.ValidateAsync(this.request!, this.cancellationToken);
 
 		if (!validationResult.IsValid)
 		{
