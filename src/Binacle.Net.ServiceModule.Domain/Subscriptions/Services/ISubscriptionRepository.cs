@@ -7,7 +7,7 @@ namespace Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 
 public interface ISubscriptionRepository
 {
-	Task<FluxUnion<Subscription, NotFound>> GetByIdAsync(Guid id);
+	Task<FluxUnion<Subscription, NotFound>> GetByIdAsync(Guid id, bool allowDeleted = false);
 	Task<PagedList<Subscription>> ListAsync(int page, int pageSize);
 	Task<FluxUnion<Subscription, NotFound>> GetByAccountIdAsync(Guid accountId);
 	Task<FluxUnion<Success, Conflict>> CreateAsync(Subscription subscription);

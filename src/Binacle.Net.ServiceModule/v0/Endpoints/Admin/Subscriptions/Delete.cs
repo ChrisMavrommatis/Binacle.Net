@@ -24,15 +24,20 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			.WithSummary("Delete subscription")
 			.WithDescription("Admins can use this endpoint to delete the subscription for an account")
 			.Produces(StatusCodes.Status204NoContent)
-			.ResponseDescription(StatusCodes.Status204NoContent,
-				DeleteSubscriptionResponseDescription.For204NoContent)
-			.Produces(StatusCodes.Status400BadRequest)
-			.ResponseExamples<DeleteSubscriptionErrorResponseExamples>(
-				StatusCodes.Status400BadRequest,
-				"application/json"
-			)
+			.ResponseDescription(StatusCodes.Status204NoContent, "The Subscription was deleted")
+			
 			.Produces(StatusCodes.Status404NotFound)
-			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound)
+			
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For422UnprocessableEntity
+			)
+			.ResponseExample<SubscriptionDeleteValidationProblemExample>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			);
 	}
 
 	internal async Task<IResult> HandleAsync(

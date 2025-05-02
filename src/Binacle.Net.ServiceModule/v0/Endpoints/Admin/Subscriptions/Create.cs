@@ -22,23 +22,32 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 		group.MapPost("/account/{id}/subscription", HandleAsync)
 			.WithSummary("Create subscription")
 			.WithDescription("Admins can use this endpoint to create a subscription for an account")
-			.Accepts<CreateSubscriptionRequest>("application/json")
-			.RequestExample<CreateSubscriptionRequest.Example>("application/json")
+			.Accepts<SubscriptionCreateRequest>("application/json")
+			.RequestExample<SubscriptionCreateRequestExample>("application/json")
+			
 			.Produces(StatusCodes.Status201Created)
-			.ResponseDescription(StatusCodes.Status201Created, CreateSubscriptionResponseDescription.For201Created)
-			.ResponseExamples<CreateSubscriptionRequest.ErrorResponseExamples>(
-				StatusCodes.Status400BadRequest,
-				"application/json"
-			)
+			.ResponseDescription(StatusCodes.Status201Created, "The subscription for the specified account was created succesfully")
+			
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound)
+			
 			.Produces(StatusCodes.Status409Conflict)
-			.ResponseDescription(StatusCodes.Status409Conflict, CreateSubscriptionResponseDescription.For409Conflict);
+			.ResponseDescription(StatusCodes.Status409Conflict, SubscriptionResponseDescription.For409Conflict)
+			
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For422UnprocessableEntity
+			)
+			.ResponseExample<SubscriptionCreateValidationProblemExample>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			);
 	}
 
 	internal async Task<IResult> HandleAsync(
 		[AsParameters] AccountId id,
-		AccountBindingResult<CreateSubscriptionRequest> bindingResult,
+		AccountBindingResult<SubscriptionCreateRequest> bindingResult,
 		IAccountRepository accountRepository,
 		ISubscriptionRepository subscriptionRepository,
 		TimeProvider timeProvider,

@@ -1,12 +1,27 @@
 ﻿using System.Text.Json.Serialization;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
+using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
+using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
+
+internal class AccountSubscription
+{
+	public required Guid Id { get; set; }
+
+	[JsonConverter(typeof(JsonStringEnumConverter))]
+	public required SubscriptionType Type { get; set; }
+
+	[JsonConverter(typeof(JsonStringEnumConverter))]
+	public required SubscriptionStatus Status { get; set; }
+
+	public required DateTimeOffset CreatedAtUtc { get; set; }
+}
 
 internal class AccountGetResponse
 {
@@ -15,18 +30,20 @@ internal class AccountGetResponse
 
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public required AccountRole Role { get; set; }
+
 	public required string Email { get; set; }
 
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public required AccountStatus Status { get; set; }
+
 	public string? PasswordHash { get; set; }
 	public required Guid SecurityStamp { get; set; }
-	public Guid? SubscriptionId { get; set; }
+	public AccountSubscription? Subscription { get; set; }
 	public required DateTimeOffset CreatedAtUtc { get; set; }
 
-	public static AccountGetResponse From(Account account)
+	public static AccountGetResponse From(Account account, Subscription? subscription = null)
 	{
-		return new AccountGetResponse()
+		var response = new AccountGetResponse()
 		{
 			Id = account.Id,
 			Username = account.Username,
@@ -35,9 +52,21 @@ internal class AccountGetResponse
 			Status = account.Status,
 			PasswordHash = account.Password?.ToString(),
 			SecurityStamp = account.SecurityStamp,
-			SubscriptionId = account.SubscriptionId,
 			CreatedAtUtc = account.CreatedAtUtc
 		};
+		
+		if (subscription is not null)
+		{
+			response.Subscription = new AccountSubscription()
+			{
+				Id = subscription.Id,
+				Type = subscription.Type,
+				Status = subscription.Status,
+				CreatedAtUtc = subscription.CreatedAtUtc
+			};
+		}
+
+		return response;
 	}
 }
 
@@ -57,8 +86,14 @@ internal class AccountGetResponseExample : ISingleOpenApiExamplesProvider<Accoun
 				Status = AccountStatus.Active,
 				PasswordHash = "type::hash::salt",
 				SecurityStamp = Guid.Parse("753A88E6-F69B-4362-8B7B-D4B1958C926F"),
-				SubscriptionId = Guid.Parse("7C8C06A8-6CD2-441F-AD3C-D25E1AAE1520"),
 				CreatedAtUtc = new DateTimeOffset(2025, 1, 11, 14, 30, 53, TimeSpan.Zero),
+				Subscription = new AccountSubscription()
+				{
+					Id = Guid.Parse("526501C7-653C-4430-9808-CF64AAF188FA"),
+					Type = SubscriptionType.Normal,
+					Status = SubscriptionStatus.Active,
+					CreatedAtUtc = new DateTimeOffset(2025, 1, 11, 14, 35, 23, TimeSpan.Zero),
+				}
 			}
 		);
 	}

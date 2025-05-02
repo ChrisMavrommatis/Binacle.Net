@@ -20,22 +20,29 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 		group.MapPut("/account/{id}/subscription", HandleAsync)
 			.WithSummary("Update subscription")
 			.WithDescription("Admins can use this endpoint to update the subscription for an account")
-			.Accepts<UpdateSubscriptionRequest>("application/json")
-			.RequestExample<UpdateSubscriptionRequest.Example>("application/json")
+			.Accepts<SubscriptionUpdateRequest>("application/json")
+			.RequestExample<SubscriptionUpdateRequestExample>("application/json")
+			
 			.Produces(StatusCodes.Status204NoContent)
-			.ResponseDescription(StatusCodes.Status204NoContent,
-				UpdateSubscriptionResponseDescription.For204NoContent)
-			.ResponseExamples<UpdateSubscriptionRequest.ErrorResponseExamples>(
-				StatusCodes.Status400BadRequest,
-				"application/json"
-			)
+			.ResponseDescription(StatusCodes.Status204NoContent, "The subscription was updated succesfully")
+
 			.Produces(StatusCodes.Status404NotFound)
-			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound)
+			
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For422UnprocessableEntity
+			)
+			.ResponseExample<SubscriptionUpdateValidationProblemExample>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			);
 	}
 
 	internal async Task<IResult> HandleAsync(
 		[AsParameters] AccountId id,
-		AccountBindingResult<UpdateSubscriptionRequest> requestResult,
+		AccountBindingResult<SubscriptionUpdateRequest> requestResult,
 		ISubscriptionRepository subscriptionRepository,
 		CancellationToken cancellationToken = default)
 	{

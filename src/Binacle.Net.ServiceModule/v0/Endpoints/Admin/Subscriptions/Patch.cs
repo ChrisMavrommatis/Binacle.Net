@@ -20,22 +20,28 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 		group.MapPatch("/account/{id}/subscription", HandleAsync)
 			.WithSummary("Partiually update the subscription")
 			.WithDescription("Admins can use this endpoint to partially update the subscription for an account")
-			.Accepts<PartialUpdateSubscriptionRequest>("application/json")
-			.RequestExamples<PartialUpdateSubscriptionRequest.Examples>("application/json")
+			.Accepts<SubscriptionPatchRequest>("application/json")
+			.RequestExamples<SubscriptionPatchRequestExamples>("application/json")
+
 			.Produces(StatusCodes.Status204NoContent)
-			.ResponseDescription(StatusCodes.Status204NoContent,
-				UpdateSubscriptionResponseDescription.For204NoContent)
-			.ResponseExamples<PartialUpdateSubscriptionRequest.ErrorResponseExamples>(
-				StatusCodes.Status400BadRequest,
-				"application/json"
-			)
+			.ResponseDescription(StatusCodes.Status204NoContent, "The subscription was updated succesfully")
+
 			.Produces(StatusCodes.Status404NotFound)
-			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound)
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For422UnprocessableEntity
+			)
+			.ResponseExample<SubscriptionPatchValidationProblemExample>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			);
 	}
 
 	internal async Task<IResult> HandleAsync(
 		[AsParameters] AccountId id,
-		AccountBindingResult<PartialUpdateSubscriptionRequest> requestResult,
+		AccountBindingResult<SubscriptionPatchRequest> requestResult,
 		ISubscriptionRepository subscriptionRepository,
 		CancellationToken cancellationToken = default)
 	{

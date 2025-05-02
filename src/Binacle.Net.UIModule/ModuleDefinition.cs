@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Binacle.Net.UIModule.Components;
-using Binacle.Net.Kernel;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -35,18 +34,18 @@ public static class ModuleDefinition
 
 			if (connectionString is not null)
 			{
-				httpClient.BaseAddress = new Uri(connectionString!.Get("endpoint")!);
+				httpClient.BaseAddress = new Uri(connectionString.Get("endpoint")!);
 				return;
 			}
 			
 			var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
 			var request = httpContextAccessor.HttpContext?.Request;
 
-			if (request != null)
-			{
-				var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
-				httpClient.BaseAddress = new Uri(baseUrl);
-			}
+			if (request is null) 
+				return;
+			
+			var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+			httpClient.BaseAddress = new Uri(baseUrl);
 		});
 
 		builder.Services.AddSingleton<Services.AppletsService>();

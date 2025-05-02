@@ -12,9 +12,9 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 {
 	private static readonly ConcurrentSortedDictionary<Guid, Subscription> _subscriptions = new();
 	
-	public Task<FluxUnion<Subscription, NotFound>> GetByIdAsync(Guid id)
+	public Task<FluxUnion<Subscription, NotFound>> GetByIdAsync(Guid id, bool allowDeleted = false)
 	{
-		if (_subscriptions.TryGetValue(id, out var subscription) && !subscription.IsDeleted)
+		if (_subscriptions.TryGetValue(id, out var subscription) && (!subscription.IsDeleted || allowDeleted))
 		{
 			return Task.FromResult<FluxUnion<Subscription, NotFound>>(subscription);
 		}

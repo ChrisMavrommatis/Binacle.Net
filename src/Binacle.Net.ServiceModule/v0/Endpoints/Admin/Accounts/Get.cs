@@ -1,9 +1,12 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
+using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
+using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
 using FluentValidation;
+using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +45,7 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 		[FromQuery] bool? allowDeleted,
 		IValidator<AccountId> validator,
 		IAccountRepository accountRepository,
+		ISubscriptionRepository subscriptionRepository,
 		CancellationToken cancellationToken = default)
 	{
 		var validationResult = await validator.ValidateAsync(id, cancellationToken);
@@ -53,13 +57,30 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 			);
 		}
 
-		var result = await accountRepository.GetByIdAsync(id.Value, allowDeleted ?? false);
+		var accountResult = await accountRepository.GetByIdAsync(id.Value, allowDeleted ?? false);
 
-		return result.Match(
-			account => Results.Ok(
+		if (!accountResult.TryGetValue<Account>(out var account) || account is null)
+		{
+			return Results.NotFound();
+		}
+
+		if (!account.HasSubscription())
+		{
+			Results.Ok(
 				AccountGetResponse.From(account)
+			);
+		}
+
+		var subscriptionResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value,  allowDeleted ?? false);
+		
+
+		return subscriptionResult.Match(
+			subscription => Results.Ok(
+				AccountGetResponse.From(account, subscription)
 			),
-			notFound => Results.NotFound()
+			notFound => Results.Ok(
+				AccountGetResponse.From(account)
+			)
 		);
 	}
 }

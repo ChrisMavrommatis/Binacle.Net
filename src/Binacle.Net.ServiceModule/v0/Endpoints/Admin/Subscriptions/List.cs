@@ -1,13 +1,9 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.ServiceModule.Domain.Accounts.Services;
-using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
 using FluentValidation;
-using FluxResults.TypedResults;
-using FluxResults.Unions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -22,16 +18,20 @@ internal class List : IGroupedEndpoint<AdminGroup>
 		group.MapGet("/subscription/", HandleAsync)
 			.WithSummary("List subscriptions")
 			.WithDescription("Admins can use this endpoint to list all the subscriptions")
-			.Produces<ListSubscriptionsResponse>(StatusCodes.Status200OK)
-			.ResponseDescription(StatusCodes.Status200OK, ListSubscriptionResponseDescription.For200OK)
-			.ResponseExample<ListSubscriptionsResponse.Example>(StatusCodes.Status200OK, "application/json")
+			.Produces<SubscriptionListResponse>(StatusCodes.Status200OK)
+			.ResponseDescription(StatusCodes.Status200OK, "Lists the subscriptions with pagination")
+			.ResponseExample<SubscriptionListResponseExample>(StatusCodes.Status200OK, "application/json")
 			.Produces(StatusCodes.Status400BadRequest)
-			.ResponseExamples<ListSubscriptionsResponse.ErrorResponseExamples>(
-				StatusCodes.Status400BadRequest,
-				"application/json"
+			
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For422UnprocessableEntity
 			)
-			.Produces(StatusCodes.Status404NotFound)
-			.ResponseDescription(StatusCodes.Status404NotFound, ListSubscriptionResponseDescription.For404NotFound);
+			.ResponseExample<SubscriptionListValidationProblemExample>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			);
 	}
 
 	internal async Task<IResult> HandleAsync(
@@ -51,7 +51,7 @@ internal class List : IGroupedEndpoint<AdminGroup>
 		var result = await subscriptionRepository.ListAsync(paging.PageNumber, paging.PageSize);
 
 		return Results.Ok(
-			ListSubscriptionsResponse.From(result)
+			SubscriptionListResponse.Create(result)
 		);
 	}
 }
