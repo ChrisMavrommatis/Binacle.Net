@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
 
-namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Subscriptions;
+namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Subscription;
 
 internal class Create : IGroupedEndpoint<AdminGroup>
 {
@@ -37,7 +37,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
-				ResponseDescription.For422UnprocessableEntity
+				ResponseDescription.For422UnprocessableContent
 			)
 			.ResponseExample<SubscriptionCreateValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
@@ -61,7 +61,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			}
 
 			var utcNow = timeProvider.GetUtcNow();
-			var subscription = new Subscription(
+			var subscription = new Domain.Subscriptions.Entities.Subscription(
 				account.Id,
 				SubscriptionStatus.Active,
 				request.Type!.Value,

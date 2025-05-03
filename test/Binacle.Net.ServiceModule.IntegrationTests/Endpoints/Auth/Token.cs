@@ -47,8 +47,8 @@ public class Token
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 	}
 
-	[Fact(DisplayName = $"POST {routePath}. With Invalid Credentials Returns 400 BadRequest")]
-	public async Task Post_WithInvalidCredentials_Returns_400BadRequest()
+	[Fact(DisplayName = $"POST {routePath}. With Invalid Credentials Returns 422 UnprocessableContent")]
+	public async Task Post_WithInvalidCredentials_Returns_422UnprocessableContent()
 	{
 		var request = new TokenRequest()
 		{
@@ -56,6 +56,6 @@ public class Token
 			Password = "pass"
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableContent);
 	}
 }

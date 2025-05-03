@@ -18,16 +18,15 @@ public class Create : AdminEndpointsTestsBase
 		this.newAccountCredentials = new AccountCredentials
 		{
 			Username = "newuser@binacle.net",
-			Email =  "newuser@binacle.net",
+			Email = "newuser@binacle.net",
 			Password = "N3wUs3rP@ssw0rd"
 		};
-		
+
 		this.existingAccountCredentials = new AccountCredentials()
 		{
-			Username =  "existinguser@binacle.net",
+			Username = "existinguser@binacle.net",
 			Email = "existinguser@binacle.net",
 			Password = "Ex1stingUs3rP@ssw0rd"
-
 		};
 	}
 
@@ -125,7 +124,6 @@ public class Create : AdminEndpointsTestsBase
 
 			return await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
 		});
-	
 
 	#endregion
 
@@ -135,7 +133,6 @@ public class Create : AdminEndpointsTestsBase
 	public async Task Post_WithValidCredentials_Returns_201Created()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
 
 		var request = new AccountCreateRequest
 		{
@@ -146,16 +143,37 @@ public class Create : AdminEndpointsTestsBase
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
 		response.StatusCode.ShouldBe(HttpStatusCode.Created);
-		
+
 		this.newAccountCredentials.Id = GetCreatedId(response);
 		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
 	}
+
 	#endregion
 
-	#region 400 Bad Request
+	#region 409 Conflict
 
-	[Fact(DisplayName = $"POST {routePath}. With Invalid Email Returns 400 BadRequest")]
-	public async Task Post_WithInvalidEmail_Returns_400BadRequest()
+	[Fact(DisplayName = $"POST {routePath}. For Existing Account Returns 409 Conflict")]
+	public async Task Post_ForExistingAccount_Returns_409Conflict()
+	{
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+
+		var request = new AccountCreateRequest
+		{
+			Username = this.existingAccountCredentials.Username,
+			Email = this.existingAccountCredentials.Email,
+			Password = this.existingAccountCredentials.Password
+		};
+
+		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+		response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+	}
+
+	#endregion
+
+	#region 422 Unprocessable Content
+
+	[Fact(DisplayName = $"POST {routePath}. With Invalid Email Returns 422 UnprocessableContent")]
+	public async Task Post_WithInvalidEmail_Returns_422UnprocessableContent()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
@@ -167,11 +185,11 @@ public class Create : AdminEndpointsTestsBase
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableContent);
 	}
 
-	[Fact(DisplayName = $"POST {routePath}. With Invalid Password Returns 400 BadRequest")]
-	public async Task Post_WithInvalidPassword_Returns_400BadRequest()
+	[Fact(DisplayName = $"POST {routePath}. With Invalid Password Returns 422 UnprocessableContent")]
+	public async Task Post_WithInvalidPassword_Returns_422UnprocessableContent()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
@@ -183,30 +201,20 @@ public class Create : AdminEndpointsTestsBase
 		};
 
 		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableContent);
 	}
+
 	#endregion
 
-	#region 409 Conflict
-
-	[Fact(DisplayName = $"POST {routePath}. For Existing User Returns 409 Conflict")]
-	public async Task Post_ForExistingUser_Returns_409Conflict()
+	public override async Task InitializeAsync()
 	{
 		await this.EnsureAccountExists(this.existingAccountCredentials);
-		await using (var scope = this.Sut.StartAuthenticationScope(this.AdminAccount))
-		{
-			var request = new AccountCreateRequest
-			{
-				Username = this.existingAccountCredentials.Username,
-				Email = this.existingAccountCredentials.Email,
-				Password = this.existingAccountCredentials.Password
-			};
-	
-			var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-			response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
-		}
-		await this.EnsureAccountDoesNotExist(this.existingAccountCredentials);
+		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
+		await base.InitializeAsync();
 	}
 
-	#endregion
+	public override async Task DisposeAsync()
+	{
+		await base.DisposeAsync();
+	}
 }

@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
 
-namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
+namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Account;
 
 internal class Create : IGroupedEndpoint<AdminGroup>
 {
@@ -40,7 +40,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
-				ResponseDescription.For422UnprocessableEntity
+				ResponseDescription.For422UnprocessableContent
 			)
 			.ResponseExample<AccountCreateValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
@@ -58,13 +58,13 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 		 return await bindingResult.ValidateAsync(async request =>
 		 {
 			var getResult = await accountRepository.GetByUsernameAsync(request.Username);
-			if (getResult.Is<Account>())
+			if (getResult.Is<Domain.Accounts.Entities.Account>())
 			{
 				return Results.Conflict();
 			}
 			
 			var utcNow = timeProvider.GetUtcNow();
-			var newAccount = new Account(
+			var newAccount = new Domain.Accounts.Entities.Account(
 				request.Username,
 				AccountRole.User,
 				request.Email.ToLowerInvariant(),

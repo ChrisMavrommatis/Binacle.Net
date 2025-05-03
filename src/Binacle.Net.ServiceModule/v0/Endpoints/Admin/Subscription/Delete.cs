@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
 
-namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Subscriptions;
+namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Subscription;
 
 internal class Delete : IGroupedEndpoint<AdminGroup>
 {
@@ -32,7 +32,7 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
-				ResponseDescription.For422UnprocessableEntity
+				ResponseDescription.For422UnprocessableContent
 			)
 			.ResponseExample<SubscriptionDeleteValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
@@ -57,7 +57,7 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			);
 		}
 		var accountResult = await accountRepository.GetByIdAsync(id.Value);
-		if (!accountResult.TryGetValue<Account>(out var account) || account is null)
+		if (!accountResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 		{
 			return Results.NotFound();
 		}
@@ -68,7 +68,7 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 		}
 
 		var getResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value);
-		if (!getResult.TryGetValue<Subscription>(out var subscription) || subscription is null)
+		if (!getResult.TryGetValue<Domain.Subscriptions.Entities.Subscription>(out var subscription) || subscription is null)
 		{
 			return Results.NotFound();
 		}

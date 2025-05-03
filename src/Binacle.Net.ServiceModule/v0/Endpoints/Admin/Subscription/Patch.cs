@@ -11,30 +11,29 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
 
-namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Subscriptions;
+namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Subscription;
 
-internal class Update : IGroupedEndpoint<AdminGroup>
+internal class Patch : IGroupedEndpoint<AdminGroup>
 {
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		group.MapPut("/account/{id}/subscription", HandleAsync)
-			.WithSummary("Update subscription")
-			.WithDescription("Admins can use this endpoint to update the subscription for an account")
-			.Accepts<SubscriptionUpdateRequest>("application/json")
-			.RequestExample<SubscriptionUpdateRequestExample>("application/json")
-			
+		group.MapPatch("/account/{id}/subscription", HandleAsync)
+			.WithSummary("Partiually update the subscription")
+			.WithDescription("Admins can use this endpoint to partially update the subscription for an account")
+			.Accepts<SubscriptionPatchRequest>("application/json")
+			.RequestExamples<SubscriptionPatchRequestExamples>("application/json")
+
 			.Produces(StatusCodes.Status204NoContent)
 			.ResponseDescription(StatusCodes.Status204NoContent, "The subscription was updated succesfully")
 
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound)
-			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
-				ResponseDescription.For422UnprocessableEntity
+				ResponseDescription.For422UnprocessableContent
 			)
-			.ResponseExample<SubscriptionUpdateValidationProblemExample>(
+			.ResponseExample<SubscriptionPatchValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			);
@@ -42,7 +41,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 
 	internal async Task<IResult> HandleAsync(
 		[AsParameters] AccountId id,
-		AccountBindingResult<SubscriptionUpdateRequest> requestResult,
+		AccountBindingResult<SubscriptionPatchRequest> requestResult,
 		ISubscriptionRepository subscriptionRepository,
 		CancellationToken cancellationToken = default)
 	{
@@ -54,12 +53,20 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			}
 
 			var getResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value);
-			if (!getResult.TryGetValue<Subscription>(out var subscription) || subscription is null)
+			if (!getResult.TryGetValue<Domain.Subscriptions.Entities.Subscription>(out var subscription) || subscription is null)
 			{
 				return Results.NotFound();
 			}
-			subscription.ChangeStatus(request.Status!.Value);
-			subscription.ChangeType(request.Type!.Value);
+
+			if (request.Status.HasValue)
+			{
+				subscription.ChangeStatus(request.Status.Value);
+			}
+			
+			if (request.Type.HasValue)
+			{
+				subscription.ChangeType(request.Type.Value);
+			}
 
 			var updateResult = await subscriptionRepository.ForceUpdateAsync(subscription);
 

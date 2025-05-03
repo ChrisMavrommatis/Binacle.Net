@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
 
-namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
+namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Account;
 
 internal class Update : IGroupedEndpoint<AdminGroup>
 {
@@ -42,7 +42,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
-				ResponseDescription.For422UnprocessableEntity
+				ResponseDescription.For422UnprocessableContent
 			)
 			.ResponseExample<AccountUpdateValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
@@ -60,7 +60,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 		return await bindingResult.ValidateAsync(id, async (request, account) =>
 		{
 			var usernameResult = await accountRepository.GetByUsernameAsync(request.Username);
-			if (usernameResult.TryGetValue<Account>(out var foundAccount) && account.Equals(foundAccount))
+			if (usernameResult.TryGetValue<Domain.Accounts.Entities.Account>(out var foundAccount) && account.Equals(foundAccount))
 			{
 				return Results.Conflict();
 			}

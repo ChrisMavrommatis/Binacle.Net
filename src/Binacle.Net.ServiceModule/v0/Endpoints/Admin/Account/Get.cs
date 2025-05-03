@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
 
-namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
+namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Account;
 
 internal class Get : IGroupedEndpoint<AdminGroup>
 {
@@ -32,7 +32,7 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
-				ResponseDescription.For422UnprocessableEntity
+				ResponseDescription.For422UnprocessableContent
 			)
 			.ResponseExample<AccountGetValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
@@ -59,14 +59,14 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 
 		var accountResult = await accountRepository.GetByIdAsync(id.Value, allowDeleted ?? false);
 
-		if (!accountResult.TryGetValue<Account>(out var account) || account is null)
+		if (!accountResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 		{
 			return Results.NotFound();
 		}
 
 		if (!account.HasSubscription())
 		{
-			Results.Ok(
+			return Results.Ok(
 				AccountGetResponse.From(account)
 			);
 		}

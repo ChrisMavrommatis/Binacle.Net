@@ -75,8 +75,8 @@ public class List : AdminEndpointsTestsBase
 
 	#region 20O OK
 
-	[Fact(DisplayName = $"GET {routePath}. With Existing User Returns 200 OK")]
-	public async Task Get_WithExistingUser_Returns_200OK()
+	[Fact(DisplayName = $"GET {routePath}. With Existing Account Returns 200 OK")]
+	public async Task Get_WithExistingAccount_Returns_200OK()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
@@ -85,36 +85,6 @@ public class List : AdminEndpointsTestsBase
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 	}
 	
-	#endregion
-
-	#region 400 Bad Request
-	
-	[Fact(DisplayName = $"GET {routePath}. With Invalid Page Returns 400 BadRequest")]
-	public async Task Get_WithInvalidPage_Returns_400BadRequest()
-	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-		var url = routePath + "?pg=0";
-		var response = await this.Sut.Client.GetAsync(url);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-		
-		var url2 = routePath + "?pg=-1";
-		var response2 = await this.Sut.Client.GetAsync(url2);
-		response2.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-	}
-	
-	[Fact(DisplayName = $"GET {routePath}. With Invalid Page Size Returns 400 BadRequest")]
-	public async Task Get_WithInvalidPageSize_Returns_400BadRequest()
-	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-		var url = routePath + "?pz=0";
-		var response = await this.Sut.Client.GetAsync(url);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-
-		var url2 = routePath + "?pz=-1";
-		var response2 = await this.Sut.Client.GetAsync(url2);
-		response2.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-	}
-
 	#endregion
 
 	#region 404 Not Found
@@ -127,6 +97,36 @@ public class List : AdminEndpointsTestsBase
 		
 		var response = await this.Sut.Client.GetAsync(url);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
+	}
+
+	#endregion
+	
+	#region 422 Unprocessable Content
+	
+	[Fact(DisplayName = $"GET {routePath}. With Invalid Page Returns 422 UnprocessableContent")]
+	public async Task Get_WithInvalidPage_Returns_422UnprocessableContent()
+	{
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		var url = routePath + "?pg=0";
+		var response = await this.Sut.Client.GetAsync(url);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
+		
+		var url2 = routePath + "?pg=-1";
+		var response2 = await this.Sut.Client.GetAsync(url2);
+		response2.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
+	}
+	
+	[Fact(DisplayName = $"GET {routePath}. With Invalid Page Size Returns 422 UnprocessableContent")]
+	public async Task Get_WithInvalidPageSize_Returns_422UnprocessableContent()
+	{
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		var url = routePath + "?pz=0";
+		var response = await this.Sut.Client.GetAsync(url);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
+
+		var url2 = routePath + "?pz=-1";
+		var response2 = await this.Sut.Client.GetAsync(url2);
+		response2.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
 	}
 
 	#endregion

@@ -167,77 +167,10 @@ public class Patch : AdminEndpointsTestsBase
 	
 	#endregion
 
-	#region 400 Bad Request
-
-	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Email Returns 400 BadRequest")]
-	public async Task Patch_WithInvalidEmail_Returns_400BadRequest()
-	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-		var request = new AccountPatchRequest
-		{
-			Email = "existinguser.test"
-		};
-		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-	}
-
-	
-	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Password Returns 400 BadRequest")]
-	public async Task Patch_WithInvalidPassword_Returns_400BadRequest()
-	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-
-		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-		var request = new AccountPatchRequest
-		{
-			Password = "invalid"
-		};
-
-		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-	}
-	
-	[Fact(DisplayName = $"PATCH {routePath}. With Empty Request Returns 400 BadRequest")]
-	public async Task Patch_WithEmptyRequest_Returns_400BadRequest()
-	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-
-		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-		var request = new AccountPatchRequest
-		{
-		};
-
-		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-	}
-	
-	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Id Returns 400 BadRequest")]
-	public async Task Patch_WithInvalidId_Returns_400BadRequest()
-	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-
-		var url = routePath.Replace("{id}", "invalid");
-
-		var request = new AccountPatchRequest
-		{
-			Username = this.existingAccountCredentials.Username,
-			Email = this.existingAccountCredentials.Email,
-			Password = this.existingAccountCredentials.Password,
-			Status =  AccountStatus.Active,
-			Role = AccountRole.User
-		};
-
-		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-	}
-
-	#endregion
-
 	#region 404 Not Found
 
-	[Fact(DisplayName = $"PATCH {routePath}. For Non Existing User Returns 404 Not Found")]
-	public async Task  Patch_ForNonExistingUser_Returns_404NotFound()
+	[Fact(DisplayName = $"PATCH {routePath}. For Non Existing Account Returns 404 Not Found")]
+	public async Task  Patch_ForNonExistingAccount_Returns_404NotFound()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 		var nonExistentId = Guid.Parse("EF81C267-A003-44B8-AD89-4B48661C4AA5");
@@ -257,6 +190,73 @@ public class Patch : AdminEndpointsTestsBase
 	}
 
 	#endregion
+	
+	#region 422 Unprocessable Content
+
+	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Email Returns 422 UnprocessableContent")]
+	public async Task Patch_WithInvalidEmail_Returns_422UnprocessableContent()
+	{
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+		var request = new AccountPatchRequest
+		{
+			Email = "existinguser.test"
+		};
+		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
+	}
+
+	
+	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Password Returns 422 UnprocessableContent")]
+	public async Task Patch_WithInvalidPassword_Returns_422UnprocessableContent()
+	{
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+
+		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+		var request = new AccountPatchRequest
+		{
+			Password = "invalid"
+		};
+
+		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
+	}
+	
+	[Fact(DisplayName = $"PATCH {routePath}. With Empty Request Returns 422 UnprocessableContent")]
+	public async Task Patch_WithEmptyRequest_Returns_422UnprocessableContent()
+	{
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+
+		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+		var request = new AccountPatchRequest
+		{
+		};
+
+		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
+	}
+	
+	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Id Returns 422 UnprocessableContent")]
+	public async Task Patch_WithInvalidId_Returns_422UnprocessableContent()
+	{
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+
+		var url = routePath.Replace("{id}", "invalid");
+
+		var request = new AccountPatchRequest
+		{
+			Username = this.existingAccountCredentials.Username,
+			Email = this.existingAccountCredentials.Email,
+			Password = this.existingAccountCredentials.Password,
+			Status =  AccountStatus.Active,
+			Role = AccountRole.User
+		};
+
+		var response = await this.Sut.Client.PatchAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
+	}
+
+	#endregion
 
 	public override async Task InitializeAsync()
 	{
@@ -266,7 +266,6 @@ public class Patch : AdminEndpointsTestsBase
 
 	public override async Task DisposeAsync()
 	{
-		await this.EnsureAccountExists(this.existingAccountCredentials);
 		await base.DisposeAsync();
 	}
 

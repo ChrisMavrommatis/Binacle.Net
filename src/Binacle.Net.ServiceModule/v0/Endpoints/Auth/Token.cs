@@ -44,7 +44,7 @@ internal class Token : IEndpoint
 			.ResponseDescription(StatusCodes.Status403Forbidden, "The account is suspended.")
 			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
-			.ResponseDescription(StatusCodes.Status422UnprocessableEntity, ResponseDescription.For422UnprocessableEntity)
+			.ResponseDescription(StatusCodes.Status422UnprocessableEntity, ResponseDescription.For422UnprocessableContent)
 			.ResponseExample<TokenRequestValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"

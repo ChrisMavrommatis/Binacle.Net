@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using OpenApiExamples;
 
-namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Accounts;
+namespace Binacle.Net.ServiceModule.v0.Endpoints.Admin.Account;
 
 internal class List : IGroupedEndpoint<AdminGroup>
 {
@@ -25,7 +25,7 @@ internal class List : IGroupedEndpoint<AdminGroup>
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
-				ResponseDescription.For422UnprocessableEntity
+				ResponseDescription.For422UnprocessableContent
 			)
 			.ResponseExample<AccountListValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,

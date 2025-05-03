@@ -83,8 +83,8 @@ public class Get : AdminEndpointsTestsBase
 
 	#region 20O OK
 
-	[Fact(DisplayName = $"GET {routePath}. With Existing User Returns 200 OK")]
-	public async Task Get_WithExistingUser_Returns_200OK()
+	[Fact(DisplayName = $"GET {routePath}. With Existing Account Returns 200 OK")]
+	public async Task Get_WithExistingAccount_Returns_200OK()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 
@@ -96,24 +96,10 @@ public class Get : AdminEndpointsTestsBase
 	
 	#endregion
 
-	#region 400 Bad Request
-	
-	[Fact(DisplayName = $"GET {routePath}. With Invalid Id Returns 400 BadRequest")]
-	public async Task Get_WithInvalidId_Returns_400BadRequest()
-	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-		var url = routePath.Replace("{id}", "invalid");
-
-		var response = await this.Sut.Client.GetAsync(url);
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
-	}
-
-	#endregion
-
 	#region 404 Not Found
 
-	[Fact(DisplayName = $"GET {routePath}. For Non Existing User Returns 404 Not Found")]
-	public async Task  Get_ForNonExistingUser_Returns_404NotFound()
+	[Fact(DisplayName = $"GET {routePath}. For Non Existing Account Returns 404 Not Found")]
+	public async Task  Get_ForNonExistingAccount_Returns_404NotFound()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 		var nonExistentId = Guid.Parse("EF81C267-A003-44B8-AD89-4B48661C4AA5");
@@ -122,6 +108,20 @@ public class Get : AdminEndpointsTestsBase
 		
 		var response = await this.Sut.Client.GetAsync(url);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
+	}
+
+	#endregion
+	
+	#region 422 Unprocessable Content
+	
+	[Fact(DisplayName = $"GET {routePath}. With Invalid Id Returns 422 UnprocessableContent")]
+	public async Task Get_WithInvalidId_Returns_422UnprocessableContent()
+	{
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		var url = routePath.Replace("{id}", "invalid");
+
+		var response = await this.Sut.Client.GetAsync(url);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
 	}
 
 	#endregion
@@ -134,7 +134,6 @@ public class Get : AdminEndpointsTestsBase
 
 	public override async Task DisposeAsync()
 	{
-		await this.EnsureAccountExists(this.existingAccountCredentials);
 		await base.DisposeAsync();
 	}
 

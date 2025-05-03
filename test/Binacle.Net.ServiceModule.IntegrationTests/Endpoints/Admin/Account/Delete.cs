@@ -102,24 +102,10 @@ public class Delete : AdminEndpointsTestsBase
 	}
 	#endregion
 
-	#region 400 Bad Request
-
-	[Fact(DisplayName = $"DELETE {routePath}. With Invalid Id Returns 400 BadRequest")]
-	public async Task Delete_WithInvalidId_Returns_400BadRequest()
-	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-
-		var url = routePath.Replace("{id}", "invalid");
-		var response = await this.Sut.Client.DeleteAsync(url);
-		response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-	}
-	
-	#endregion
-
 	#region 404 Not Found
 
-	[Fact(DisplayName = $"DELETE {routePath}. For Non Existing User Returns 404 Not Found")]
-	public async Task Delete_ForNonExistingUser_Returns_404NotFound()
+	[Fact(DisplayName = $"DELETE {routePath}. For Non Existing Account Returns 404 Not Found")]
+	public async Task Delete_ForNonExistingAccount_Returns_404NotFound()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
 		var nonExistentId = Guid.Parse("EF81C267-A003-44B8-AD89-4B48661C4AA5");
@@ -130,17 +116,31 @@ public class Delete : AdminEndpointsTestsBase
 	}
 
 	#endregion
+	
+	#region 422 Unprocessable Content
+
+	[Fact(DisplayName = $"DELETE {routePath}. With Invalid Id Returns 422 UnprocessableContent")]
+	public async Task Delete_WithInvalidId_Returns_422UnprocessableContent()
+	{
+		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+
+		var url = routePath.Replace("{id}", "invalid");
+		var response = await this.Sut.Client.DeleteAsync(url);
+		response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableContent);
+	}
+	
+	#endregion
 
 
 	public override async Task InitializeAsync()
 	{
 		await this.EnsureAccountExists(this.existingAccountCredentials);
+		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
 		await base.InitializeAsync();
 	}
 
 	public override async Task DisposeAsync()
 	{
-		await this.EnsureAccountDoesNotExist(this.existingAccountCredentials);
 		await base.DisposeAsync();
 	}
 }
