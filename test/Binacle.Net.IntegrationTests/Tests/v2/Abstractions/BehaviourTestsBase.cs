@@ -23,7 +23,8 @@ public abstract partial class BehaviourTestsBase
 		var response = await this.Sut.Client.PostAsJsonAsync(
 			url,
 			request,
-			this.Sut.JsonSerializerOptions
+			this.Sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
 		);
 
 		response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -36,7 +37,8 @@ public abstract partial class BehaviourTestsBase
 		var response = await this.Sut.Client.PostAsJsonAsync(
 			url,
 			request,
-			this.Sut.JsonSerializerOptions
+			this.Sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
 		);
 
 		response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -120,13 +122,17 @@ public abstract partial class BehaviourTestsBase
 		var response = await this.Sut.Client.PostAsJsonAsync(
 			url,
 			request,
-			this.Sut.JsonSerializerOptions
+			this.Sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
 		);
 
 		response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
 		var result = await response.Content
-			.ReadFromJsonAsync<PackResponse>(this.Sut.JsonSerializerOptions);
+			.ReadFromJsonAsync<PackResponse>(
+				this.Sut.JsonSerializerOptions,
+				TestContext.Current.CancellationToken
+			);
 
 		result.ShouldNotBeNull();
 		result!.Data.ShouldNotBeEmpty();

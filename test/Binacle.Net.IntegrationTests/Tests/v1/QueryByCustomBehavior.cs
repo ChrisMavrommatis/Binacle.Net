@@ -2,11 +2,11 @@
 
 namespace Binacle.Net.IntegrationTests.v1;
 
-[Collection(BinacleApiCollection.Name)]
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class QueryByCustomBehavior
 {
 	private readonly BinacleApiFactory sut;
+
 	private readonly Binacle.Net.v1.Requests.CustomQueryRequest sampleRequest = new()
 	{
 		Bins = new()
@@ -17,9 +17,9 @@ public class QueryByCustomBehavior
 		},
 		Items = new()
 		{
-			new (){ ID = "box_1", Quantity = 2, Length = 2, Width = 5, Height = 10 },
-			new (){ ID = "box_2", Quantity = 1, Length = 12, Width = 15, Height = 10 },
-			new (){ ID = "box_3", Quantity = 1, Length = 12, Width = 10, Height = 15 },
+			new() { ID = "box_1", Quantity = 2, Length = 2, Width = 5, Height = 10 },
+			new() { ID = "box_2", Quantity = 1, Length = 12, Width = 15, Height = 10 },
+			new() { ID = "box_3", Quantity = 1, Length = 12, Width = 10, Height = 15 },
 		}
 	};
 
@@ -33,7 +33,12 @@ public class QueryByCustomBehavior
 	[Fact(DisplayName = $"POST {routePath}. With Valid Request Returns 200 OK")]
 	public async Task Post_WithValidRequest_Returns_200Ok()
 	{
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(
+			routePath,
+			this.sampleRequest,
+			this.sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 	}
@@ -43,7 +48,12 @@ public class QueryByCustomBehavior
 	{
 		this.sampleRequest.Items!.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(
+			routePath,
+			this.sampleRequest, 
+			this.sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
@@ -53,21 +63,31 @@ public class QueryByCustomBehavior
 	{
 		this.sampleRequest.Bins!.FirstOrDefault(x => x.ID == "custom_bin_1")!.Length = 0;
 
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
-		
+		var response = await this.sut.Client.PostAsJsonAsync(
+			routePath, 
+			this.sampleRequest,
+			this.sut.JsonSerializerOptions, 
+			TestContext.Current.CancellationToken
+		);
+
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Same Id On Bins Returns 400 BadRequest")]
 	public async Task Post_WithSameIdOnBins_Returns400BadRequest()
 	{
-		foreach(var bin in this.sampleRequest.Bins!)
+		foreach (var bin in this.sampleRequest.Bins!)
 		{
 			bin.ID = "custom_bin_1";
 		}
 
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
-		
+		var response = await this.sut.Client.PostAsJsonAsync(
+			routePath, 
+			this.sampleRequest,
+			this.sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
+
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
 
@@ -79,7 +99,12 @@ public class QueryByCustomBehavior
 			bin.ID = "box_1";
 		}
 
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, this.sampleRequest, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(
+			routePath, 
+			this.sampleRequest,
+			this.sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}

@@ -3,7 +3,6 @@ using Binacle.Net.Models;
 
 namespace Binacle.Net.IntegrationTests.v3;
 
-[Collection(BinacleApiCollection.Name)]
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 {

@@ -1,5 +1,4 @@
 ﻿using Binacle.Net.Configuration.Models;
-using Binacle.Net.TestsKernel.TestPriority;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -10,53 +9,34 @@ using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.IntegrationTests.v2;
 
-[TestCaseOrderer("Binacle.Net.Tests.TestPriority.TestPriorityOrderer", "Binacle.Net.Tests")]
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
-public class ListPresetsBehavior : IClassFixture<WebApplicationFactory<IApiMarker>>
+public class ListPresetsBehavior
 {
 	private const string routePath = "/api/v2/presets";
-	private readonly WebApplicationFactory<IApiMarker> sut;
-	private readonly HttpClient client;
+	private readonly BinacleApiFactory sut;
+	private readonly BinacleApiFactoryWithoutPresets sutWithoutPresets;
 
-	public ListPresetsBehavior(WebApplicationFactory<IApiMarker> sut)
+	public ListPresetsBehavior(
+		BinacleApiFactory sut,
+		BinacleApiFactoryWithoutPresets sutWithoutPresets
+		)
 	{
-		this.sut = sut
-			.WithWebHostBuilder(builder =>
-			{
-				builder.UseEnvironment("Test");
-				builder.ConfigureTestServices(services =>
-				{
-					services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
-				});
-			});
-
-		this.client = this.sut.CreateClient();
+		this.sut = sut;
+		this.sutWithoutPresets = sutWithoutPresets;
 	}
 
-	internal void Dispose()
-	{
-		this.client.Dispose();
-		this.sut.Dispose();
-	}
-
-	[TestPriority(2)]
 	[Fact(DisplayName = $"GET {routePath}. With Presets Configured Returns 200 OK")]
 	public async Task Get_WithPresetsConfigured_Returns_200Ok()
 	{
-		var response = await this.client.GetAsync(routePath);
+		var response = await this.sut.Client.GetAsync(routePath, TestContext.Current.CancellationToken);
 
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 	}
 
-	[TestPriority(1)]
 	[Fact(DisplayName = $"GET {routePath}. Without Presets Configured Returns 404 NotFound")]
 	public async Task Get_WithoutPresetsConfigured_Returns_404NotFound()
 	{
-		// remove presets for this test
-		var presetOptions = this.sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
-		presetOptions.Value.Presets.Clear();
-
-		var response = await this.client.GetAsync(routePath);
+		var response = await this.sutWithoutPresets.Client.GetAsync(routePath, TestContext.Current.CancellationToken);
 
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 	}

@@ -1,5 +1,5 @@
 ﻿using Binacle.ViPaq.Helpers;
-using Bogus;
+using Binacle.ViPaq.UnitTests.Models;
 
 namespace Binacle.ViPaq.UnitTests;
 
@@ -16,7 +16,7 @@ public class BitSizeHelperTests
 	[Fact]
 	public void GetDimensionsBitSize_Returns_Eight_BitSize_When_Dimensions_Are_Less_Than_Or_Equal_To_Byte_MaxValue()
 	{
-		var binFaker = new Bogus.Faker<Models.Bin<ulong>>()
+		var binFaker = new Faker<Bin<ulong>>()
 			.RuleFor(x => x.Length, x => x.Random.ULong())
 			.RuleFor(x => x.Width, x => x.Random.ULong())
 			.RuleFor(x => x.Height, x => x.Random.ULong())
@@ -26,14 +26,14 @@ public class BitSizeHelperTests
 		
 		var bin = binFaker.Generate(1).FirstOrDefault()!;
 		
-		BitSizeHelper.GetDimensionsBitSize<Models.Bin<ulong>, ulong>(bin)
+		BitSizeHelper.GetDimensionsBitSize<Bin<ulong>, ulong>(bin)
 			.ShouldBe(BitSize.Eight);
 	}
 	
 	[Fact]
 	public void GetDimensionsBitSize_Returns_Sixteen_BitSize_When_Dimensions_Are_Less_Than_Or_Equal_To_UShort_MaxValue()
 	{
-		var binFaker = new Bogus.Faker<Models.Bin<ulong>>()
+		var binFaker = new Faker<Bin<ulong>>()
 			.RuleFor(x => x.Length, x => x.Random.ULong())
 			.RuleFor(x => x.Width, x => x.Random.ULong())
 			.RuleFor(x => x.Height, x => x.Random.ULong())
@@ -43,14 +43,14 @@ public class BitSizeHelperTests
 		
 		var bin = binFaker.Generate(1).FirstOrDefault()!;
 		
-		BitSizeHelper.GetDimensionsBitSize<Models.Bin<ulong>, ulong>(bin)
+		BitSizeHelper.GetDimensionsBitSize<Bin<ulong>, ulong>(bin)
 			.ShouldBe(BitSize.Sixteen);
 	}
 	
 	[Fact]
 	public void GetDimensionsBitSize_Returns_ThirtyTwo_BitSize_When_Dimensions_Are_Less_Than_Or_Equal_To_UInt_MaxValue()
 	{
-		var binFaker = new Bogus.Faker<Models.Bin<ulong>>()
+		var binFaker = new Faker<Bin<ulong>>()
 			.RuleFor(x => x.Length, x => x.Random.ULong())
 			.RuleFor(x => x.Width, x => x.Random.ULong())
 			.RuleFor(x => x.Height, x => x.Random.ULong())
@@ -60,14 +60,14 @@ public class BitSizeHelperTests
 		
 		var bin = binFaker.Generate(1).FirstOrDefault()!;
 		
-		BitSizeHelper.GetDimensionsBitSize<Models.Bin<ulong>, ulong>(bin)
+		BitSizeHelper.GetDimensionsBitSize<Bin<ulong>, ulong>(bin)
 			.ShouldBe(BitSize.ThirtyTwo);
 	}
 	
 	[Fact]
 	public void GetDimensionsBitSize_Returns_SixtyFour_BitSize_When_Dimensions_Are_Less_Than_Or_Equal_To_ULong_MaxValue()
 	{
-		var binFaker = new Bogus.Faker<Models.Bin<ulong>>()
+		var binFaker = new Faker<Bin<ulong>>()
 			.RuleFor(x => x.Length, x => x.Random.ULong())
 			.RuleFor(x => x.Width, x => x.Random.ULong())
 			.RuleFor(x => x.Height, x => x.Random.ULong())
@@ -77,7 +77,7 @@ public class BitSizeHelperTests
 		
 		var bin = binFaker.Generate(1).FirstOrDefault()!;
 		
-		BitSizeHelper.GetDimensionsBitSize<Models.Bin<ulong>, ulong>(bin)
+		BitSizeHelper.GetDimensionsBitSize<Bin<ulong>, ulong>(bin)
 			.ShouldBe(BitSize.SixtyFour);
 	}
 	#endregion
@@ -86,7 +86,7 @@ public class BitSizeHelperTests
 	[Fact]
 	public void GetCoordinatesBitSize_Returns_Eight_BitSize_When_Coordinates_Are_Less_Than_Or_Equal_To_Byte_MaxValue()
 	{
-		var itemFaker = new Bogus.Faker<Models.Item<ulong>>()
+		var itemFaker = new Faker<Item<ulong>>()
 			.RuleFor(x => x.Length, x => x.Random.ULong())
 			.RuleFor(x => x.Width, x => x.Random.ULong())
 			.RuleFor(x => x.Height, x => x.Random.ULong())
@@ -96,14 +96,14 @@ public class BitSizeHelperTests
 		
 		var item = itemFaker.Generate(1).FirstOrDefault()!;
 		
-		BitSizeHelper.GetCoordinatesBitSize<Models.Item<ulong>, ulong>(item)
+		BitSizeHelper.GetCoordinatesBitSize<Item<ulong>, ulong>(item)
 			.ShouldBe(BitSize.Eight);
 	}
 	
 	[Fact]
 	public void GetCoordinatesBitSize_Returns_Sixteen_BitSize_When_Coordinates_Are_Less_Than_Or_Equal_To_UShort_MaxValue()
 	{
-		var itemFaker = new Bogus.Faker<Models.Item<ulong>>()
+		var itemFaker = new Faker<Item<ulong>>()
 			.RuleFor(x => x.Length, x => x.Random.ULong())
 			.RuleFor(x => x.Width, x => x.Random.ULong())
 			.RuleFor(x => x.Height, x => x.Random.ULong())
@@ -113,14 +113,14 @@ public class BitSizeHelperTests
 		
 		var item = itemFaker.Generate(1).FirstOrDefault()!;
 		
-		BitSizeHelper.GetCoordinatesBitSize<Models.Item<ulong>, ulong>(item)
+		BitSizeHelper.GetCoordinatesBitSize<Item<ulong>, ulong>(item)
 			.ShouldBe(BitSize.Sixteen);
 	}
 	
 	[Fact]
 	public void GetCoordinatesBitSize_Returns_ThirtyTwo_BitSize_When_Coordinates_Are_Less_Than_Or_Equal_To_UInt_MaxValue()
 	{
-		var itemFaker = new Bogus.Faker<Models.Item<ulong>>()
+		var itemFaker = new Faker<Item<ulong>>()
 			.RuleFor(x => x.Length, x => x.Random.ULong())
 			.RuleFor(x => x.Width, x => x.Random.ULong())
 			.RuleFor(x => x.Height, x => x.Random.ULong())
@@ -130,14 +130,14 @@ public class BitSizeHelperTests
 		
 		var item = itemFaker.Generate(1).FirstOrDefault()!;
 		
-		BitSizeHelper.GetCoordinatesBitSize<Models.Item<ulong>, ulong>(item)
+		BitSizeHelper.GetCoordinatesBitSize<Item<ulong>, ulong>(item)
 			.ShouldBe(BitSize.ThirtyTwo);
 	}
 	
 	[Fact]
 	public void GetCoordinatesBitSize_Returns_SixtyFour_BitSize_When_Coordinates_Are_Less_Than_Or_Equal_To_ULong_MaxValue()
 	{
-		var itemFaker = new Bogus.Faker<Models.Item<ulong>>()
+		var itemFaker = new Faker<Item<ulong>>()
 			.RuleFor(x => x.Length, x => x.Random.ULong())
 			.RuleFor(x => x.Width, x => x.Random.ULong())
 			.RuleFor(x => x.Height, x => x.Random.ULong())
@@ -147,7 +147,7 @@ public class BitSizeHelperTests
 		
 		var item = itemFaker.Generate(1).FirstOrDefault()!;
 		
-		BitSizeHelper.GetCoordinatesBitSize<Models.Item<ulong>, ulong>(item)
+		BitSizeHelper.GetCoordinatesBitSize<Item<ulong>, ulong>(item)
 			.ShouldBe(BitSize.SixtyFour);
 	}
 	#endregion

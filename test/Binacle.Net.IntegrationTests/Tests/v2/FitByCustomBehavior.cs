@@ -4,7 +4,6 @@ using Binacle.Net.v2.Requests;
 
 namespace Binacle.Net.IntegrationTests.v2;
 
-[Collection(BinacleApiCollection.Name)]
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class FitByCustomBehavior : BehaviourTestsBase
 {

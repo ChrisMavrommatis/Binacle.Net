@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.IntegrationTests;
 
-[Collection(BinacleApiCollection.Name)]
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
 public class SanityTests
 {

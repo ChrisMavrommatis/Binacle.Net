@@ -8,7 +8,6 @@ using Binacle.Net.v2.Responses;
 
 namespace Binacle.Net.IntegrationTests.v2;
 
-[Collection(BinacleApiCollection.Name)]
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
 public class FitByCustomScenario
 {
@@ -68,12 +67,20 @@ public class FitByCustomScenario
 			}).ToList()
 		};
 
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(
+			routePath,
+			request,
+			this.sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 
 		response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
 		
-		var fitResponse = await response.Content.ReadFromJsonAsync<FitResponse>(this.sut.JsonSerializerOptions);
+		var fitResponse = await response.Content.ReadFromJsonAsync<FitResponse>(
+			this.sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 
 		fitResponse.ShouldNotBeNull();
 		fitResponse!.Data.ShouldHaveSingleItem();

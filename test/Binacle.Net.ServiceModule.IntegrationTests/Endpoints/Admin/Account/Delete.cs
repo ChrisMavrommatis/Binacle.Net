@@ -132,14 +132,14 @@ public class Delete : AdminEndpointsTestsBase
 	#endregion
 
 
-	public override async Task InitializeAsync()
+	public override async ValueTask InitializeAsync()
 	{
 		await this.EnsureAccountExists(this.existingAccountCredentials);
 		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
 		await base.InitializeAsync();
 	}
 
-	public override async Task DisposeAsync()
+	public override async ValueTask DisposeAsync()
 	{
 		await base.DisposeAsync();
 	}

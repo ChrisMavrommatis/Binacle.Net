@@ -1,7 +1,4 @@
-﻿using Binacle.ViPaq.Helpers;
-using Binacle.ViPaq.UnitTests.Models;
-using Bogus;
-using Version = Binacle.ViPaq.Version;
+﻿using Binacle.ViPaq.UnitTests.Models;
 
 namespace Binacle.ViPaq.UnitTests;
 

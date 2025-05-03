@@ -273,13 +273,13 @@ public class Update : AdminEndpointsTestsBase
 
 	#endregion
 
-	public override async Task InitializeAsync()
+	public override async ValueTask InitializeAsync()
 	{
 		await this.EnsureAccountExists(this.existingAccountCredentials);
 		await base.InitializeAsync();
 	}
 
-	public override async Task DisposeAsync()
+	public override async ValueTask DisposeAsync()
 	{
 		await base.DisposeAsync();
 	}

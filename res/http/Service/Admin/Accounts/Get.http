@@ -1,4 +1,4 @@
-﻿@ID = 019678a2-ba63-7d29-8300-6ecdad1d6a63
+﻿@ID = 0196977b-5f1d-7b76-8ec6-5bc5813b1f91
 
 GET https://{{HOST}}/api/admin/account/{{ID}}
 Accept: application/json

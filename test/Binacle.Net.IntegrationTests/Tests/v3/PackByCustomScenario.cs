@@ -8,7 +8,6 @@ using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.IntegrationTests.v3;
 
-[Collection(BinacleApiCollection.Name)]
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
 public class PackByCustomScenario
 {
@@ -71,11 +70,19 @@ public class PackByCustomScenario
 			}).ToList()
 		};
 
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(
+			routePath,
+			request,
+			this.sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 
-		var packResponse = await response.Content.ReadFromJsonAsync<Binacle.Net.v3.Responses.PackResponse>(this.sut.JsonSerializerOptions);
+		var packResponse = await response.Content.ReadFromJsonAsync<Binacle.Net.v3.Responses.PackResponse>(
+			this.sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 
 		packResponse.ShouldNotBeNull();
 		packResponse!.Data.ShouldHaveSingleItem();

@@ -1,6 +1,5 @@
-﻿using Binacle.ViPaq.Helpers;
-using Binacle.ViPaq.UnitTests.Models;
-using Bogus;
+﻿using Binacle.ViPaq.UnitTests.Models;
+using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
@@ -149,7 +148,7 @@ public class EncodingInfoHelperTests
 	}
 	
 	[Theory]
-	[ClassData(typeof(Providers.EncodingInfoByteDataProvider))]
+	[ClassData(typeof(EncodingInfoByteDataProvider))]
 	public void ToByte_Returns_Correct_Byte(
 		Version version,
 		BitSize binDimensionsBitSize, 
@@ -171,7 +170,7 @@ public class EncodingInfoHelperTests
 	}
 	
 	[Theory]
-	[ClassData(typeof(Providers.EncodingInfoByteDataProvider))]
+	[ClassData(typeof(EncodingInfoByteDataProvider))]
 	public void FromByte_Returns_Correct_EncodingInfo(
 		Version expectedVersion,
 		BitSize expectedBinDimensionsBitSize, 

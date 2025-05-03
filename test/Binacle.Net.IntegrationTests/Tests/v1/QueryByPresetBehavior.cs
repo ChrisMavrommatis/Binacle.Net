@@ -5,8 +5,6 @@ using System.Net.Http.Json;
 
 namespace Binacle.Net.IntegrationTests.v1;
 
-
-[Collection(BinacleApiCollection.Name)]
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class QueryByPresetBehavior
 {
@@ -36,7 +34,12 @@ public class QueryByPresetBehavior
 	{
 		var urlPath = routePath.Replace("{preset}", "non-existing-preset");
 
-		var response = await this.sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest!, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(
+			urlPath, 
+			this.sampleRequest!, 
+			this.sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 	}
@@ -46,7 +49,12 @@ public class QueryByPresetBehavior
 	{
 		var urlPath = routePath.Replace("{preset}", validPreset);
 
-		var response = await sut.Client.PostAsJsonAsync(urlPath, this.sampleRequest!, sut.JsonSerializerOptions);
+		var response = await sut.Client.PostAsJsonAsync(
+			urlPath, 
+			this.sampleRequest!, 
+			sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 	}
@@ -57,7 +65,12 @@ public class QueryByPresetBehavior
 		this.sampleRequest!.Items!.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 		var urlPath = routePath.Replace("{preset}", validPreset);
 
-		var response = await sut.Client.PostAsJsonAsync(urlPath, sampleRequest, sut.JsonSerializerOptions);
+		var response = await sut.Client.PostAsJsonAsync(
+			urlPath, 
+			this.sampleRequest!, 
+			sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 		
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}
@@ -70,7 +83,12 @@ public class QueryByPresetBehavior
 			bin.ID = "box_1";
 		}
 
-		var result = await sut.Client.PostAsJsonAsync(routePath, this.sampleRequest!, sut.JsonSerializerOptions);
+		var result = await sut.Client.PostAsJsonAsync(
+			routePath, 
+			this.sampleRequest!,
+			sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 
 		result.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 	}

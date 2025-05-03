@@ -8,7 +8,6 @@ using Binacle.Net.v1.Responses;
 
 namespace Binacle.Net.IntegrationTests.v1;
 
-[Collection(BinacleApiCollection.Name)]
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
 public class QueryByPresetScenario
 {
@@ -55,11 +54,18 @@ public class QueryByPresetScenario
 			}).ToList()
 		};
 
-		var response = await this.sut.Client.PostAsJsonAsync(urlPath, request, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(
+			urlPath,
+			request,
+			this.sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 
 		response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-		var result = await response.Content.ReadFromJsonAsync<QueryResponse>();
+		var result = await response.Content.ReadFromJsonAsync<QueryResponse>(
+			TestContext.Current.CancellationToken
+		);
 
 		result.ShouldNotBeNull();
 
