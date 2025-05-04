@@ -56,7 +56,7 @@ internal class Token : IEndpoint
 				StatusCodes.Status500InternalServerError,
 				"application/problem+json"
 			)
-			.RequireRateLimiting("Auth");
+			.RequireRateLimiting("AuthToken");
 	}
 
 	internal async Task<IResult> HandleAsync(

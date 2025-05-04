@@ -33,7 +33,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPreset404NotFound)
-			.RequireRateLimiting("Anonymous");
+			.RequireRateLimiting("ApiUsage");
 	}
 
 	internal async Task<IResult> HandleAsync(

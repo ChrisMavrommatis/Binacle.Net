@@ -96,8 +96,8 @@ public static class ModuleDefinition
 		{
 			options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-			options.AddPolicy<string, AnonymousRateLimitingPolicy>("Anonymous");
-			options.AddPolicy<string, AuthRateLimitingPolicy>("Auth");
+			options.AddPolicy<string, ApiUsageRateLimitingPolicy>("ApiUsage");
+			options.AddPolicy<string, AuthTokenRateLimitingPolicy>("AuthToken");
 		});
 		
 		builder.Services.Configure<FeatureOptions>(options =>

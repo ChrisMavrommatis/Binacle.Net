@@ -8,22 +8,22 @@ using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.ServiceModule.Services;
 
-internal class AnonymousRateLimitingPolicy : IRateLimiterPolicy<string>
+internal class ApiUsageRateLimitingPolicy : IRateLimiterPolicy<string>
 {
 	private readonly IOptions<RateLimiterConfigurationOptions> options;
-	private readonly ILogger<AnonymousRateLimitingPolicy> logger;
+	private readonly ILogger<ApiUsageRateLimitingPolicy> logger;
 	private readonly Func<OnRejectedContext, CancellationToken, ValueTask>?  onRejected;
 
-	public AnonymousRateLimitingPolicy(
+	public ApiUsageRateLimitingPolicy(
 		IOptions<RateLimiterConfigurationOptions> options,
-		ILogger<AnonymousRateLimitingPolicy> logger
+		ILogger<ApiUsageRateLimitingPolicy> logger
 	)
 	{
 		this.options = options;
 		this.logger = logger;
 		this.onRejected = (ctx, token) =>
 		{
-			logger.LogWarning("Request rejected by {Policy}", nameof(AnonymousRateLimitingPolicy));
+			logger.LogWarning("Request rejected by {Policy}", nameof(ApiUsageRateLimitingPolicy));
 			return ValueTask.CompletedTask;
 		};
 	}
@@ -36,9 +36,9 @@ internal class AnonymousRateLimitingPolicy : IRateLimiterPolicy<string>
 			return RateLimitPartition.GetNoLimiter("Authenticated");
 		}
 
-		var configuration = RateLimiterConfigurationParser.Parse(this.options.Value.Anonymous);
+		var configuration = RateLimiterConfigurationParser.Parse(this.options.Value.ApiUsageAnonymous);
 
-		return RateLimiterConfigurationBuilder.Build(configuration, "Anonymous");
+		return RateLimiterConfigurationBuilder.Build(configuration, "ApiUsageAnonymous");
 	}
 
 	public Func<OnRejectedContext, CancellationToken, ValueTask>? OnRejected => this.onRejected;

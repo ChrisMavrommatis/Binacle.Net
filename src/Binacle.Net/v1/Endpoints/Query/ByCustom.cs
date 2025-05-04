@@ -28,7 +28,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV1EndpointGroup>
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.RequireRateLimiting("Anonymous");
+			.RequireRateLimiting("ApiUsage");
 	}
 
 	internal async Task<IResult> HandleAsync(
