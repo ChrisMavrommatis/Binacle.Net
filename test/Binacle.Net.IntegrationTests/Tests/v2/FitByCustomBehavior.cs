@@ -32,7 +32,7 @@ public class FitByCustomBehavior : BehaviourTestsBase
 
 	private const string routePath = "/api/v2/fit/by-custom";
 
-	public FitByCustomBehavior(BinacleApiFactory sut) : base(sut)
+	public FitByCustomBehavior(BinacleApi sut) : base(sut)
 	{
 	}
 

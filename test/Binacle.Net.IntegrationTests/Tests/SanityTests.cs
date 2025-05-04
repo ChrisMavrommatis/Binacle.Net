@@ -7,9 +7,9 @@ namespace Binacle.Net.IntegrationTests;
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
 public class SanityTests
 {
-	private readonly BinacleApiFactory sut;
+	private readonly BinacleApi sut;
 
-	public SanityTests(BinacleApiFactory sut)
+	public SanityTests(BinacleApi sut)
 	{
 		this.sut = sut;
 	}

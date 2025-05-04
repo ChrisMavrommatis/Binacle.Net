@@ -8,9 +8,9 @@ namespace Binacle.Net.IntegrationTests.v2.Abstractions;
 
 public abstract partial class BehaviourTestsBase
 {
-	protected readonly BinacleApiFactory Sut;
+	protected readonly BinacleApi Sut;
 
-	public BehaviourTestsBase(BinacleApiFactory sut)
+	public BehaviourTestsBase(BinacleApi sut)
 	{
 		this.Sut = sut;
 	}

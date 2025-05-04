@@ -13,12 +13,12 @@ namespace Binacle.Net.IntegrationTests.v2;
 public class ListPresetsBehavior
 {
 	private const string routePath = "/api/v2/presets";
-	private readonly BinacleApiFactory sut;
-	private readonly BinacleApiFactoryWithoutPresets sutWithoutPresets;
+	private readonly BinacleApi sut;
+	private readonly BinacleApiWithoutPresets sutWithoutPresets;
 
 	public ListPresetsBehavior(
-		BinacleApiFactory sut,
-		BinacleApiFactoryWithoutPresets sutWithoutPresets
+		BinacleApi sut,
+		BinacleApiWithoutPresets sutWithoutPresets
 		)
 	{
 		this.sut = sut;

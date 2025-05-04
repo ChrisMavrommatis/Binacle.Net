@@ -11,9 +11,9 @@ namespace Binacle.Net.IntegrationTests.v1;
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
 public class QueryByPresetScenario
 {
-	private readonly BinacleApiFactory sut;
+	private readonly BinacleApi sut;
 
-	public QueryByPresetScenario(BinacleApiFactory sut)
+	public QueryByPresetScenario(BinacleApi sut)
 	{
 		this.sut = sut;
 	}

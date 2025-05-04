@@ -11,9 +11,9 @@ namespace Binacle.Net.IntegrationTests.v2;
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
 public class FitByCustomScenario
 {
-	private readonly BinacleApiFactory sut;
+	private readonly BinacleApi sut;
 
-	public FitByCustomScenario(BinacleApiFactory sut)
+	public FitByCustomScenario(BinacleApi sut)
 	{
 		this.sut = sut;
 	}

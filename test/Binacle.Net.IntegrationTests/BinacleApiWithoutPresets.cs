@@ -5,18 +5,19 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Binacle.Net.Configuration.Models;
 using Binacle.Net.IntegrationTests;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: AssemblyFixture(typeof(BinacleApiFactory))]
+[assembly: AssemblyFixture(typeof(BinacleApiWithoutPresets))]
 
 namespace Binacle.Net.IntegrationTests;
 
-public class BinacleApiFactory : WebApplicationFactory<Binacle.Net.IApiMarker>
+public class BinacleApiWithoutPresets : WebApplicationFactory<Binacle.Net.IApiMarker>
 {
-	public BinacleApiFactory()
+	public BinacleApiWithoutPresets()
 	{
 		this.Client = this.CreateClient();
 		this.BinCollectionsTestDataProvider = new BinCollectionsTestDataProvider();
@@ -58,6 +59,11 @@ public class BinacleApiFactory : WebApplicationFactory<Binacle.Net.IApiMarker>
 		builder.ConfigureTestServices(services =>
 		{
 			services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
+
+			services.Configure<BinPresetOptions>(options =>
+			{
+				options.Presets.Clear();
+			});
 		});
 	}
 

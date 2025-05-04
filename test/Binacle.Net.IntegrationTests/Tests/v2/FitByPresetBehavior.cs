@@ -30,7 +30,7 @@ public class FitByPresetBehavior :  BehaviourTestsBase
 	private const string routePath = "/api/v2/fit/by-preset/{preset}";
 	private const string validPreset = "rectangular-cuboids";
 
-	public FitByPresetBehavior(BinacleApiFactory sut) : base(sut)
+	public FitByPresetBehavior(BinacleApi sut) : base(sut)
 	{
 		this.presetOptions = this.Sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
 	}

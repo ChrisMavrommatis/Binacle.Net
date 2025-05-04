@@ -31,7 +31,7 @@ public class PackByPresetBehavior :  BehaviourTestsBase
 	private const string routePath = "/api/v2/pack/by-preset/{preset}";
 	private const string validPreset = "rectangular-cuboids";
 
-	public PackByPresetBehavior(BinacleApiFactory sut) : base(sut)
+	public PackByPresetBehavior(BinacleApi sut) : base(sut)
 	{
 		this.presetOptions = this.Sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
 	}

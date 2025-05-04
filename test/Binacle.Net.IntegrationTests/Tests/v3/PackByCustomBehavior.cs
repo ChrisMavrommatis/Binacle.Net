@@ -29,7 +29,7 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 	
 	private const string routePath = "/api/v3/pack/by-custom";
 
-	public PackByCustomBehavior(BinacleApiFactory sut) : base(sut)
+	public PackByCustomBehavior(BinacleApi sut) : base(sut)
 	{
 	}
 

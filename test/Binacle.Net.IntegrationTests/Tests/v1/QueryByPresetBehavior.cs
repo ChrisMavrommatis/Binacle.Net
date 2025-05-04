@@ -8,7 +8,7 @@ namespace Binacle.Net.IntegrationTests.v1;
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class QueryByPresetBehavior
 {
-	private readonly BinacleApiFactory sut;
+	private readonly BinacleApi sut;
 	private readonly IOptions<BinPresetOptions> presetOptions;
 	private readonly Binacle.Net.v1.Requests.PresetQueryRequest sampleRequest = new()
 	{
@@ -23,7 +23,7 @@ public class QueryByPresetBehavior
 	private const string routePath = "/api/v1/query/by-preset/{preset}";
 	private const string validPreset = "rectangular-cuboids";
 
-	public QueryByPresetBehavior(BinacleApiFactory sut)
+	public QueryByPresetBehavior(BinacleApi sut)
 	{
 		this.sut = sut;
 		this.presetOptions = this.sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();

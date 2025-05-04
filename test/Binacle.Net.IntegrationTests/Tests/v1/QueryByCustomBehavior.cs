@@ -5,7 +5,7 @@ namespace Binacle.Net.IntegrationTests.v1;
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class QueryByCustomBehavior
 {
-	private readonly BinacleApiFactory sut;
+	private readonly BinacleApi sut;
 
 	private readonly Binacle.Net.v1.Requests.CustomQueryRequest sampleRequest = new()
 	{
@@ -25,7 +25,7 @@ public class QueryByCustomBehavior
 
 	private const string routePath = "/api/v1/query/by-custom";
 
-	public QueryByCustomBehavior(BinacleApiFactory sut)
+	public QueryByCustomBehavior(BinacleApi sut)
 	{
 		this.sut = sut;
 	}
