@@ -9,9 +9,7 @@ using LibPackingParameters = Binacle.Lib.Packing.Models.PackingParameters;
 
 namespace Binacle.Net.Services;
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-
-public interface IBinacleService
+internal interface IBinacleService
 {
 	ValueTask<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
 		List<TBin> bins,

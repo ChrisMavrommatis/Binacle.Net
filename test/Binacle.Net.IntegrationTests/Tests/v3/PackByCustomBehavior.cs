@@ -6,7 +6,7 @@ namespace Binacle.Net.IntegrationTests.v3;
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 {
-	private readonly Binacle.Net.v3.Requests.CustomPackRequest sampleRequest = new()
+	private readonly Binacle.Net.v3.Contracts.PackByCustomRequest sampleRequest = new()
 	{
 		Parameters = new()
 		{
@@ -92,11 +92,11 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 		);
 	}
 	
-	private Binacle.Net.v3.Requests.CustomPackRequest CreateSpecialRequest(
-		Action<Binacle.Net.v3.Requests.PackRequestParameters>? modifyParameters = null
+	private Binacle.Net.v3.Contracts.PackByCustomRequest CreateSpecialRequest(
+		Action<Binacle.Net.v3.Contracts.PackRequestParameters>? modifyParameters = null
 	)
 	{
-		var request = new Binacle.Net.v3.Requests.CustomPackRequest
+		var request = new Binacle.Net.v3.Contracts.PackByCustomRequest
 		{
 			Parameters = new()
 			{

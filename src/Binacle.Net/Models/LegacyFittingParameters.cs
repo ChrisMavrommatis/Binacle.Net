@@ -2,9 +2,7 @@
 
 namespace Binacle.Net.Models;
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-
-public class LegacyFittingParameters : ILogConvertible
+internal class LegacyFittingParameters : ILogConvertible
 {
 	public bool ReportFittedItems { get; init; }
 	public bool ReportUnfittedItems { get; init; }

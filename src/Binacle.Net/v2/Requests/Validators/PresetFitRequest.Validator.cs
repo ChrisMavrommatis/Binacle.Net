@@ -22,9 +22,9 @@ internal class PresetFitRequestValidator : AbstractValidator<PresetFitRequest>
 
 		RuleForEach(x => x.Items).ChildRules(itemValidator =>
 		{
-			itemValidator.Include(new ItemWithQuantityValidator());
-			itemValidator.Include(new ItemWithDimensionsValidator());
-			itemValidator.Include(new ItemWithIDValidator());
+			itemValidator.Include(new QuantityValidator());
+			itemValidator.Include(new DimensionsValidator());
+			itemValidator.Include(new IDValidator());
 		});
 	}
 }

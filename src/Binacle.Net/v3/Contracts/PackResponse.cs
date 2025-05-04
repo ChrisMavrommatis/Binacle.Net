@@ -1,10 +1,10 @@
-﻿using Binacle.Net.v3.Models;
-using Binacle.Net.v3.Requests;
+﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Packing.Models;
 using Binacle.ViPaq;
 
-namespace Binacle.Net.v3.Responses;
+namespace Binacle.Net.v3.Contracts;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
@@ -116,3 +116,59 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 }
 
 
+
+public class BinPackResult
+{
+	[JsonPropertyOrder(0)]
+	[JsonConverter(typeof(JsonStringEnumConverter))]
+	public BinPackResultStatus Result { get; set; }
+	public required Bin Bin { get; set; }
+
+	public List<PackedBox>? PackedItems { get; set; }
+	public List<UnpackedBox>? UnpackedItems { get; set; }
+
+	public decimal? PackedItemsVolumePercentage { get; set; }
+	public decimal? PackedBinVolumePercentage { get; set; }
+	
+	public string? ViPaqData { get; set; }
+}
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum BinPackResultStatus
+{
+	[EnumMember(Value = nameof(Unknown))]
+	Unknown,
+	[EnumMember(Value = nameof(NotPacked))]
+	NotPacked,
+	[EnumMember(Value = nameof(PartiallyPacked))]
+	PartiallyPacked,
+	[EnumMember(Value = nameof(FullyPacked))]
+	FullyPacked,
+	[EnumMember(Value = nameof(EarlyFail_ContainerVolumeExceeded))]
+	EarlyFail_ContainerVolumeExceeded,
+	[EnumMember(Value = nameof(EarlyFail_ContainerDimensionExceeded))]
+	EarlyFail_ContainerDimensionExceeded,
+}
+
+
+public class PackedBox : 
+	IWithID, 
+	IWithDimensions, 
+	IWithCoordinates, 
+	ViPaq.Abstractions.IWithDimensions<int>,
+	ViPaq.Abstractions.IWithCoordinates<int>
+{
+	public required string ID { get; set; }
+	public required int Length { get; set; }
+	public required int Width { get; set; }
+	public required int Height { get; set; }
+	public required int X { get; set; }
+	public required int Y { get; set; }
+	public required int Z { get; set; }
+}
+
+public class UnpackedBox : IWithID
+{
+	public required string ID { get; set; }
+	public required int Quantity { get; set; }
+}

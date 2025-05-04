@@ -57,8 +57,8 @@ public abstract partial class BehaviourTestsBase
 	
 	protected async Task PackRequest_ValidateBasedOnParameters(
 		string url,
-		Binacle.Net.v3.Requests.CustomPackRequest request,
-		Action<Binacle.Net.v3.Responses.PackResponse>? additionalValidation = null
+		Binacle.Net.v3.Contracts.PackByCustomRequest request,
+		Action<Binacle.Net.v3.Contracts.PackResponse>? additionalValidation = null
 	)
 	{
 		var response = await this.Sut.Client.PostAsJsonAsync(
@@ -70,7 +70,7 @@ public abstract partial class BehaviourTestsBase
 
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 
-		var result = await response.Content.ReadFromJsonAsync<Binacle.Net.v3.Responses.PackResponse>(
+		var result = await response.Content.ReadFromJsonAsync<Binacle.Net.v3.Contracts.PackResponse>(
 			this.Sut.JsonSerializerOptions,
 			TestContext.Current.CancellationToken
 		);
@@ -80,7 +80,7 @@ public abstract partial class BehaviourTestsBase
 		foreach (var binPackResult in result.Data)
 		{
 			binPackResult.Bin.ShouldNotBeNull();
-			if (binPackResult.Result == Binacle.Net.v3.Models.BinPackResultStatus.FullyPacked)
+			if (binPackResult.Result == Binacle.Net.v3.Contracts.BinPackResultStatus.FullyPacked)
 			{
 				binPackResult.PackedItems.ShouldNotBeEmpty();
 				binPackResult.UnpackedItems.ShouldBeNullOrEmpty();

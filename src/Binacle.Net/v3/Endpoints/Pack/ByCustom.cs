@@ -2,13 +2,7 @@
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
-using Binacle.Net.v3.Models;
-using Binacle.Net.v3.Requests;
-using Binacle.Net.v3.Requests.Examples;
-using Binacle.Net.v3.Responses;
-using Binacle.Net.v3.Responses.Examples;
-using FluentValidation;
-using FluentValidation.Results;
+using Binacle.Net.v3.Contracts;
 using OpenApiExamples;
 
 namespace Binacle.Net.v3.Endpoints.Pack;
@@ -21,51 +15,53 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			.WithTags("Pack")
 			.WithSummary("Pack by Custom")
 			.WithDescription("Pack items using custom bins")
-			.Accepts<CustomPackRequest>("application/json")
-			.RequestExample<CustomPackRequestExample>("application/json")
+			
+			.Accepts<PackByCustomRequest>("application/json")
+			.RequestExample<PackByCustomRequestExample>("application/json")
+			
 			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseExamples<CustomPackResponseExamples>(StatusCodes.Status200OK, "application/json")
 			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200OK)
-			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
+			.ResponseExamples<PackByCustomResponseExamples>(StatusCodes.Status200OK, "application/json")
+			
+			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			// .ResponseExamples<Status400ResponseExamples>(
+			// 	StatusCodes.Status400BadRequest,
+			// 	"application/problem+json"
+			// )
+			
+			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+			.ResponseDescription(
+				StatusCodes.Status422UnprocessableEntity,
+				ResponseDescription.For400BadRequest
+			)
+			// .ResponseExample<AccountCreateValidationProblemExample>(
+			// 	StatusCodes.Status422UnprocessableEntity,
+			// 	"application/problem+json"
+			// )
+			// .Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
+			// .ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
+			// .ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.RequireRateLimiting("ApiUsage");
 	}
 
 	internal async Task<IResult> HandleAsync(
-		LegacyValidatedBindingResult<CustomPackRequest?> request,
+		BindingResult<PackByCustomRequest> bindingResult,
 		IBinacleService binacleService,
 		ILogger<ByCustom> logger,
 		CancellationToken cancellationToken = default
 	)
 	{
 		using var activity = Diagnostics.ActivitySource.StartActivity("Pack by Custom: v3");
-		try
+		
+		return await bindingResult.ValidateAsync(async request =>
 		{
-			if (request.Value is null)
-			{
-				return Results.BadRequest(
-					Response.ParameterError(
-						nameof(request),
-						request.Exception!.Message,
-						ErrorCategory.RequestError
-					)
-				);
-			}
-
-			if (!(request.ValidationResult?.IsValid ?? false))
-			{
-				return Results.BadRequest(
-					Response.ValidationError(request.ValidationResult!, ErrorCategory.ValidationError)
-				);
-			}
-
 			var operationResults = await binacleService.PackBinsAsync(
-				request.Value.Bins!,
-				request.Value.Items!,
+				request.Bins!,
+				request.Items!,
 				new PackingParameters
 				{
-					Algorithm = request.Value.Parameters!.Algorithm!.Value
+					Algorithm = request.Parameters!.Algorithm!.Value
 				}
 			);
 
@@ -73,21 +69,14 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			{
 				return Results.Ok(
 					PackResponse.Create(
-						request.Value.Bins!,
-						request.Value.Items!,
-						request.Value.Parameters,
+						request.Bins!,
+						request.Items!,
+						request.Parameters,
 						operationResults
 					)
 				);
 			}
-		}
-		catch (Exception ex)
-		{
-			logger.LogError(ex, "An exception occurred in {endpoint} endpoint", "Pack by Custom");
-			return Results.InternalServerError(
-				Response.ExceptionError(ex, ErrorCategory.ServerError)
-			);
-		}
+		});
 	}
 }
 

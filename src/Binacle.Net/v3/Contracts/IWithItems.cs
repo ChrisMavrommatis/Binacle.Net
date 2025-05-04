@@ -2,11 +2,18 @@
 using Binacle.Net.Validators;
 using FluentValidation;
 
-namespace Binacle.Net.v2.Requests.Validators;
+namespace Binacle.Net.v3.Contracts;
 
-internal class PresetPackRequestValidator : AbstractValidator<PresetPackRequest>
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+public interface IWithItems
 {
-	public PresetPackRequestValidator()
+	List<Box> Items { get; set; }
+}
+
+internal class ItemsValidator : AbstractValidator<IWithItems>
+{
+	public ItemsValidator()
 	{
 		RuleFor(x => x.Items)
 			.NotNull()

@@ -22,8 +22,8 @@ internal class CustomFitRequestValidator : AbstractValidator<CustomFitRequest>
 
 		RuleForEach(x => x.Bins).ChildRules(binValidator =>
 		{
-			binValidator.Include(new ItemWithDimensionsValidator());
-			binValidator.Include(new ItemWithIDValidator());
+			binValidator.Include(new DimensionsValidator());
+			binValidator.Include(new IDValidator());
 		});
 
 		RuleFor(x => x.Items)
@@ -38,9 +38,9 @@ internal class CustomFitRequestValidator : AbstractValidator<CustomFitRequest>
 
 		RuleForEach(x => x.Items).ChildRules(itemValidator =>
 		{
-			itemValidator.Include(new ItemWithQuantityValidator());
-			itemValidator.Include(new ItemWithDimensionsValidator());
-			itemValidator.Include(new ItemWithIDValidator());
+			itemValidator.Include(new QuantityValidator());
+			itemValidator.Include(new DimensionsValidator());
+			itemValidator.Include(new IDValidator());
 		});
 	}
 }

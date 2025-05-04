@@ -3,8 +3,7 @@ using Binacle.Net.Kernel.Logs.Models;
 
 namespace Binacle.Net.Models;
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public class LegacyPackingParameters : ILogConvertible
+internal class LegacyPackingParameters : ILogConvertible
 {
 	public required bool OptInToEarlyFails { get; init; }
 	public required bool ReportPackedItemsOnlyWhenFullyPacked { get; init; }

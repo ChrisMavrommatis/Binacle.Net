@@ -1,10 +1,59 @@
-﻿using Binacle.Net.v3.Models;
+﻿using Binacle.Net.Models;
+using FluentValidation;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 
-namespace Binacle.Net.v3.Responses.Examples;
+namespace Binacle.Net.v3.Contracts;
 
-internal class CustomPackResponseExamples : IMultipleOpenApiExamplesProvider<PackResponse>
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+public class PackByCustomRequest : IWithPackingParameters, IWithBins, IWithItems
+{
+	public PackRequestParameters Parameters { get; set; } = new();
+	public List<Bin> Bins { get; set; } = new();
+	public List<Box> Items { get; set; } = new();
+}
+
+internal class PackByCustomRequestValidator : AbstractValidator<PackByCustomRequest>
+{
+	public PackByCustomRequestValidator()
+	{
+		Include(new PackRequestParametersValidator());
+		Include(new BinsValidator());
+		Include(new ItemsValidator());
+	}
+}
+
+
+internal class PackByCustomRequestExample : ISingleOpenApiExamplesProvider<PackByCustomRequest>
+{
+	public IOpenApiExample<PackByCustomRequest> GetExample()
+	{
+		return OpenApiExample.Create(
+			"customPackRequest",
+			"Custom Pack Request",
+			new PackByCustomRequest()
+			{
+				Parameters = new PackRequestParameters
+				{
+					Algorithm = Algorithm.FFD
+				},
+				Bins = new List<Bin>
+				{
+					new() { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
+					new() { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
+				},
+				Items = new List<Box>
+				{
+					new() { ID = "box_1", Quantity = 2, Length = 2, Width = 5, Height = 10 },
+					new() { ID = "box_2", Quantity = 1, Length = 12, Width = 15, Height = 10 },
+					new() { ID = "box_3", Quantity = 1, Length = 12, Width = 10, Height = 15 },
+				}
+			});
+	}
+}
+
+internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<PackResponse>
 {
 	public IEnumerable<IOpenApiExample<PackResponse>> GetExamples()
 	{

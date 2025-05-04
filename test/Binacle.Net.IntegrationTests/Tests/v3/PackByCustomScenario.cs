@@ -45,14 +45,14 @@ public class PackByCustomScenario
 
 		var binPresetOption = presets.Value.Presets[binCollection];
 
-		var request = new Binacle.Net.v3.Requests.CustomPackRequest
+		var request = new Binacle.Net.v3.Contracts.PackByCustomRequest()
 		{
 			Parameters = new()
 			{
 				Algorithm = Algorithm.FFD
 			},
 			Bins = [
-				new Binacle.Net.v3.Models.Bin
+				new Binacle.Net.v3.Contracts.Bin
 				{
 					ID = expectedBin.ID,
 					Length = expectedBin.Length,
@@ -60,7 +60,7 @@ public class PackByCustomScenario
 					Height = expectedBin.Height
 				}
 			],
-			Items = scenario.Items.Select(x => new Binacle.Net.v3.Models.Box
+			Items = scenario.Items.Select(x => new Binacle.Net.v3.Contracts.Box
 			{
 				ID = x.ID,
 				Quantity = x.Quantity,
@@ -79,7 +79,7 @@ public class PackByCustomScenario
 
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 
-		var packResponse = await response.Content.ReadFromJsonAsync<Binacle.Net.v3.Responses.PackResponse>(
+		var packResponse = await response.Content.ReadFromJsonAsync<Binacle.Net.v3.Contracts.PackResponse>(
 			this.sut.JsonSerializerOptions,
 			TestContext.Current.CancellationToken
 		);
@@ -95,13 +95,13 @@ public class PackByCustomScenario
 
 		if (scenarioResult.Fits)
 		{
-			packResponse!.Result.ShouldBe(Binacle.Net.v3.Models.ResultType.Success);
-			result.Result.ShouldBe(Binacle.Net.v3.Models.BinPackResultStatus.FullyPacked);
+			packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Success);
+			result.Result.ShouldBe(Binacle.Net.v3.Contracts.BinPackResultStatus.FullyPacked);
 		}
 		else
 		{
-			packResponse!.Result.ShouldBe(Binacle.Net.v3.Models.ResultType.Failure);
-			result.Result.ShouldNotBe(Binacle.Net.v3.Models.BinPackResultStatus.FullyPacked);
+			packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Failure);
+			result.Result.ShouldNotBe(Binacle.Net.v3.Contracts.BinPackResultStatus.FullyPacked);
 		}
 	}
 }

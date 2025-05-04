@@ -2,8 +2,7 @@
 
 namespace Binacle.Net.Models;
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-public class PackingParameters : ILogConvertible
+internal class PackingParameters : ILogConvertible
 {
 	public required Algorithm Algorithm { get; init; }
 

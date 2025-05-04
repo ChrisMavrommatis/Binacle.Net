@@ -2,17 +2,15 @@
 using System.Text.Json.Serialization;
 using Binacle.Net.Kernel.Serialization;
 using Binacle.Net.Models;
-using Binacle.Net.v3.Models;
+using FluentValidation;
 
-namespace Binacle.Net.v3.Requests;
+namespace Binacle.Net.v3.Contracts;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class CustomPackRequest
+public interface IWithPackingParameters
 {
-	public PackRequestParameters Parameters { get; set; } = new();
-	public List<Bin> Bins { get; set; } = new();
-	public List<Box> Items { get; set; } = new();
+	PackRequestParameters Parameters { get; set; }
 }
 
 public class PackRequestParameters : IWithAlgorithm
@@ -21,4 +19,20 @@ public class PackRequestParameters : IWithAlgorithm
 	[Required]
 	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<Algorithm>>))]
 	public Algorithm? Algorithm { get; set; }
+}
+
+internal class PackRequestParametersValidator : AbstractValidator<IWithPackingParameters>
+{
+
+	public PackRequestParametersValidator()
+	{
+		RuleFor(x => x.Parameters)
+			.NotNull();
+
+		RuleFor(x => x.Parameters!)
+			.ChildRules(parametersValidator =>
+			{
+				parametersValidator.Include(new AlgorithmValidator());
+			});
+	}
 }

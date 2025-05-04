@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace Binacle.Net.Validators;
 
-internal class ItemWithDimensionsValidator : AbstractValidator<IWithReadOnlyDimensions<int>>
+internal class DimensionsValidator : AbstractValidator<IWithReadOnlyDimensions<int>>
 {
-	public ItemWithDimensionsValidator()
+	public DimensionsValidator()
 	{
 		RuleFor(x => x).Must(x => x.Height * x.Width * x.Length > -1).WithMessage(ErrorMessage.VolumeOverflow);
 		RuleFor(x => x.Length).NotNull().WithMessage(ErrorMessage.IsRequired);

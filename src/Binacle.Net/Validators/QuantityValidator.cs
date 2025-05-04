@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace Binacle.Net.Validators;
 
-internal class ItemWithQuantityValidator : AbstractValidator<IWithQuantity<int>>
+internal class QuantityValidator : AbstractValidator<IWithQuantity<int>>
 {
-	public ItemWithQuantityValidator()
+	public QuantityValidator()
 	{
 		RuleFor(x => x.Quantity).NotNull().WithMessage(ErrorMessage.IsRequired);
 		RuleFor(x => x.Quantity).GreaterThan(0).WithMessage(ErrorMessage.GreaterThanZero);

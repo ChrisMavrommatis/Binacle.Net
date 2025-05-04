@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace Binacle.Net.Validators;
 
-internal class ItemWithIDValidator : AbstractValidator<IWithID>
+internal class IDValidator : AbstractValidator<IWithID>
 {
-	public ItemWithIDValidator()
+	public IDValidator()
 	{
 		RuleFor(x => x.ID).NotNull().NotEmpty().WithMessage(ErrorMessage.IsRequired);
 	}
