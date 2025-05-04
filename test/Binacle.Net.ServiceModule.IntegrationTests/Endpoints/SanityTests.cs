@@ -5,12 +5,11 @@ using Binacle.Net.ServiceModule.v0.Contracts.Auth;
 namespace Binacle.Net.ServiceModule.IntegrationTests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
-[Collection(BinacleApiAsAServiceCollection.Name)]
 public class SanityTests
 {
-	private readonly BinacleApiAsAServiceFactory sut;
+	private readonly BinacleApi sut;
 
-	public SanityTests(BinacleApiAsAServiceFactory sut)
+	public SanityTests(BinacleApi sut)
 	{
 		this.sut = sut;
 	}
@@ -29,7 +28,13 @@ public class SanityTests
 			Username = "test@binacle.net",
 			Password = "password123"
 		};
-		var response = await this.sut.Client.PostAsJsonAsync("/api/auth/token", request, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(
+			"/api/auth/token",
+			request, 
+			this.sut.JsonSerializerOptions, 
+			TestContext.Current.CancellationToken
+		);
+		
 		response.StatusCode.ShouldNotBe(HttpStatusCode.NotFound);
 	}
 }

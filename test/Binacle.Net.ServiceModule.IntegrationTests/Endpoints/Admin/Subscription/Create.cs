@@ -8,27 +8,18 @@ using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Subscription;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
-[Collection(BinacleApiAsAServiceCollection.Name)]
 public class Create : AdminEndpointsTestsBase
 {
-	private readonly AccountCredentials accountCredentialsWithSubscription;
-	private readonly AccountCredentials accountCredentialsWithoutSubscription;
+	private readonly AccountCredentials accountCredentialsUnderTest;
 
-	public Create(BinacleApiAsAServiceFactory sut) : base(sut)
+	public Create(BinacleApi sut) : base(sut)
 	{
-		this.accountCredentialsWithSubscription = new AccountCredentials()
-		{
-			Username = "existinguser@binacle.net",
-			Email = "existinguser@binacle.net",
-			Password = "Ex1stingUs3rP@ssw0rd"
-		};
-
-		this.accountCredentialsWithoutSubscription = new AccountCredentials
-		{
-			Username = "newuser@binacle.net",
-			Email = "newuser@binacle.net",
-			Password = "N3wUs3rP@ssw0rd"
-		};
+		this.accountCredentialsUnderTest = new AccountCredentials(
+			Guid.Parse("3AD36BF1-9791-4899-AF6F-EB1F666D42D0"),
+			"subscriptioncreateuser@binacle.net",
+			"subscriptioncreateuser@binacle.net",
+			"SubscriptionCr34teUs3ersP@ssw0rd"
+		);
 	}
 
 	private const string routePath = "/api/admin/account/{id}/subscription";
@@ -43,9 +34,14 @@ public class Create : AdminEndpointsTestsBase
 			{
 				Type = SubscriptionType.Normal
 			};
-			var url = routePath.Replace("{id}", this.accountCredentialsWithSubscription.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PostAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions, 
+				TestContext.Current.CancellationToken
+			);
 		});
 
 
@@ -57,9 +53,14 @@ public class Create : AdminEndpointsTestsBase
 			{
 				Type = SubscriptionType.Normal
 			};
-			var url = routePath.Replace("{id}", this.accountCredentialsWithSubscription.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PostAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions, 
+				TestContext.Current.CancellationToken
+			);
 		});
 
 	[Fact(DisplayName = $"POST {routePath}. With Wrong Issuer Bearer Token Returns 401 Unauthorized")]
@@ -70,9 +71,14 @@ public class Create : AdminEndpointsTestsBase
 			{
 				Type = SubscriptionType.Normal
 			};
-			var url = routePath.Replace("{id}", this.accountCredentialsWithSubscription.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PostAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions, 
+				TestContext.Current.CancellationToken
+			);
 		});
 
 
@@ -84,9 +90,14 @@ public class Create : AdminEndpointsTestsBase
 			{
 				Type = SubscriptionType.Normal
 			};
-			var url = routePath.Replace("{id}", this.accountCredentialsWithSubscription.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PostAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions, 
+				TestContext.Current.CancellationToken
+			);
 		});
 
 
@@ -98,9 +109,14 @@ public class Create : AdminEndpointsTestsBase
 			{
 				Type = SubscriptionType.Normal
 			};
-			var url = routePath.Replace("{id}", this.accountCredentialsWithSubscription.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PostAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions, 
+				TestContext.Current.CancellationToken
+			);
 		});
 
 	#endregion
@@ -115,9 +131,14 @@ public class Create : AdminEndpointsTestsBase
 			{
 				Type = SubscriptionType.Normal
 			};
-			var url = routePath.Replace("{id}", this.accountCredentialsWithSubscription.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PostAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions, 
+				TestContext.Current.CancellationToken
+			);
 		});
 
 	#endregion
@@ -127,15 +148,20 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Valid Credentials Returns 201 Created")]
 	public async Task Post_WithValidCredentials_Returns_201Created()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
 		var request = new SubscriptionCreateRequest()
 		{
 			Type = SubscriptionType.Normal
 		};
-		var url = routePath.Replace("{id}", this.accountCredentialsWithoutSubscription.Id.ToString());
+		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-		var response = await this.Sut.Client.PostAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions, 
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(HttpStatusCode.Created);
 	}
 
@@ -146,17 +172,20 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. For Non Existing Account Returns 404 Not Found")]
 	public async Task Post_ForNonExistingAccount_Returns_404NotFound()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-
-		var nonExistentId = Guid.Parse("EF81C267-A003-44B8-AD89-4B48661C4AA5");
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
 		var request = new SubscriptionCreateRequest()
 		{
 			Type = SubscriptionType.Normal
 		};
-		var url = routePath.Replace("{id}", nonExistentId.ToString());
+		var url = routePath.Replace("{id}", this.Sut.NonExistentId.ToString());
 
-		var response = await this.Sut.Client.PostAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions, 
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 	}
 
@@ -167,15 +196,20 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. For Account With Subscription Returns 409 Conflict")]
 	public async Task Post_ForAccountWithSubscription_Returns_409Conflict()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
 		var request = new SubscriptionCreateRequest()
 		{
 			Type = SubscriptionType.Normal
 		};
-		var url = routePath.Replace("{id}", this.accountCredentialsWithSubscription.Id.ToString());
+		var url = routePath.Replace("{id}", this.Sut.ExistingAccountCredentials.Id.ToString());
 
-		var response = await this.Sut.Client.PostAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions, 
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
 	}
 
@@ -186,28 +220,38 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Id Returns 422 Unprocessable Content")]
 	public async Task Post_WithInvalidId_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 		var request = new SubscriptionCreateRequest()
 		{
 			Type = SubscriptionType.Normal
 		};
 		var url = routePath.Replace("{id}", "invalid");
 
-		var response = await this.Sut.Client.PostAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions, 
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableContent);
 	}
 	
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Request Type Returns 422 Unprocessable Content")]
 	public async Task Post_WithInvalidRequestType_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 		var request = new 
 		{
 			Type = "invalid"
 		};
-		var url = routePath.Replace("{id}", this.accountCredentialsWithSubscription.Id.ToString());
+		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-		var response = await this.Sut.Client.PostAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions, 
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableContent);
 	}
 
@@ -215,15 +259,13 @@ public class Create : AdminEndpointsTestsBase
 	
 	public override async ValueTask InitializeAsync()
 	{
-		await this.EnsureAccountExists(this.accountCredentialsWithSubscription);
-		await this.EnsureAccountHasSubscription(this.accountCredentialsWithSubscription);
-		await this.EnsureAccountExists(this.accountCredentialsWithoutSubscription);
+		await this.Sut.EnsureAccountExists(this.accountCredentialsUnderTest);
 		await base.InitializeAsync();
 	}
 
 	public override async ValueTask DisposeAsync()
 	{
-		await this.EnsureAccountDoesNotHaveSubscription(this.accountCredentialsWithoutSubscription);
+		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
 		await base.DisposeAsync();
 	}
 }

@@ -2,9 +2,7 @@
 using System.Net.Http.Headers;
 using Binacle.Net.ServiceModule.Configuration;
 using Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;
-using Binacle.Net.ServiceModule.Models;
 using Binacle.Net.ServiceModule.Services;
-using FluxResults.Unions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
@@ -29,7 +27,7 @@ public abstract partial class AdminEndpointsTestsBase
 		var jwtAuthOptions = this.Sut.Services.GetService<IOptions<JwtAuthOptions>>();
 		var tokenService = new TokenService(jwtAuthOptions!, timeProvider);
 
-		var token = tokenService.GenerateToken(this.AdminAccount, null);
+		var token = tokenService.GenerateToken(this.Sut.Admin, null);
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 
@@ -53,7 +51,7 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var tokenService = new TokenService(Options.Create(newJwtAuthOptions), TimeProvider.System);
 
-		var token = tokenService.GenerateToken(this.AdminAccount, null);
+		var token = tokenService.GenerateToken(this.Sut.Admin, null);
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 
@@ -77,7 +75,7 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var tokenService = new TokenService(Options.Create(newJwtAuthOptions), TimeProvider.System);
 
-		var token = tokenService.GenerateToken(this.AdminAccount, null);
+		var token = tokenService.GenerateToken(this.Sut.Admin, null);
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 
@@ -101,7 +99,7 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var tokenService = new TokenService(Options.Create(newJwtAuthOptions), TimeProvider.System);
 
-		var token = tokenService.GenerateToken(this.AdminAccount, null);
+		var token = tokenService.GenerateToken(this.Sut.Admin, null);
 
 		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 
@@ -113,7 +111,7 @@ public abstract partial class AdminEndpointsTestsBase
 
 	protected async Task Action_WithoutAdminBearerToken_Returns_403Forbidden(Func<Task<HttpResponseMessage>> action)
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.UserAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.User);
 
 		var response = await action();
 

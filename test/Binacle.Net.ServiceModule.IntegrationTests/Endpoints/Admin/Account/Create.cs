@@ -7,27 +7,18 @@ using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Account;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
-[Collection(BinacleApiAsAServiceCollection.Name)]
 public class Create : AdminEndpointsTestsBase
 {
-	private readonly AccountCredentials newAccountCredentials;
-	private readonly AccountCredentials existingAccountCredentials;
-
-	public Create(BinacleApiAsAServiceFactory sut) : base(sut)
+	private readonly AccountCredentials accountCredentialsUnderTest;
+	
+	public Create(BinacleApi sut) : base(sut)
 	{
-		this.newAccountCredentials = new AccountCredentials
-		{
-			Username = "newuser@binacle.net",
-			Email = "newuser@binacle.net",
-			Password = "N3wUs3rP@ssw0rd"
-		};
-
-		this.existingAccountCredentials = new AccountCredentials()
-		{
-			Username = "existinguser@binacle.net",
-			Email = "existinguser@binacle.net",
-			Password = "Ex1stingUs3rP@ssw0rd"
-		};
+		this.accountCredentialsUnderTest = new AccountCredentials(
+			Guid.Parse("C7A945CD-ECA7-4FA8-BCAC-46D678389905"),
+			"createuser@binacle.net",
+			"createuser@binacle.net",
+			"cr3AtEUs3ersP@ssw0rd"
+		);
 	}
 
 	private const string routePath = "/api/admin/account";
@@ -40,12 +31,17 @@ public class Create : AdminEndpointsTestsBase
 		{
 			var request = new AccountCreateRequest()
 			{
-				Username = this.newAccountCredentials.Username,
-				Email = this.newAccountCredentials.Email,
-				Password = this.newAccountCredentials.Password
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				routePath, 
+				request,
+				this.Sut.JsonSerializerOptions,
+				TestContext.Current.CancellationToken
+			);
 		});
 
 
@@ -55,12 +51,17 @@ public class Create : AdminEndpointsTestsBase
 		{
 			var request = new AccountCreateRequest
 			{
-				Username = this.newAccountCredentials.Username,
-				Email = this.newAccountCredentials.Email,
-				Password = this.newAccountCredentials.Password
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				routePath, 
+				request,
+				this.Sut.JsonSerializerOptions,
+				TestContext.Current.CancellationToken
+			);
 		});
 
 	[Fact(DisplayName = $"POST {routePath}. With Wrong Issuer Bearer Token Returns 401 Unauthorized")]
@@ -69,12 +70,17 @@ public class Create : AdminEndpointsTestsBase
 		{
 			var request = new AccountCreateRequest
 			{
-				Username = this.newAccountCredentials.Username,
-				Email = this.newAccountCredentials.Email,
-				Password = this.newAccountCredentials.Password
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				routePath, 
+				request,
+				this.Sut.JsonSerializerOptions,
+				TestContext.Current.CancellationToken
+			);
 		});
 
 
@@ -84,12 +90,17 @@ public class Create : AdminEndpointsTestsBase
 		{
 			var request = new AccountCreateRequest
 			{
-				Username = this.newAccountCredentials.Username,
-				Email = this.newAccountCredentials.Email,
-				Password = this.newAccountCredentials.Password
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				routePath, 
+				request,
+				this.Sut.JsonSerializerOptions,
+				TestContext.Current.CancellationToken
+			);
 		});
 
 
@@ -99,12 +110,17 @@ public class Create : AdminEndpointsTestsBase
 		{
 			var request = new AccountCreateRequest
 			{
-				Username = this.newAccountCredentials.Username,
-				Email = this.newAccountCredentials.Email,
-				Password = this.newAccountCredentials.Password
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				routePath, 
+				request,
+				this.Sut.JsonSerializerOptions,
+				TestContext.Current.CancellationToken
+			);
 		});
 
 	#endregion
@@ -117,12 +133,17 @@ public class Create : AdminEndpointsTestsBase
 		{
 			var request = new AccountCreateRequest
 			{
-				Username = this.newAccountCredentials.Username,
-				Email = this.newAccountCredentials.Email,
-				Password = this.newAccountCredentials.Password
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PostAsJsonAsync(
+				routePath, 
+				request,
+				this.Sut.JsonSerializerOptions,
+				TestContext.Current.CancellationToken
+			);
 		});
 
 	#endregion
@@ -132,20 +153,27 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Valid Credentials Returns 201 Created")]
 	public async Task Post_WithValidCredentials_Returns_201Created()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-
-		var request = new AccountCreateRequest
+		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
+		
+		await using (var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin))
 		{
-			Username = this.newAccountCredentials.Username,
-			Email = this.newAccountCredentials.Email,
-			Password = this.newAccountCredentials.Password
-		};
+			var request = new AccountCreateRequest
+			{
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password = this.accountCredentialsUnderTest.Password
+			};
 
-		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
-		response.StatusCode.ShouldBe(HttpStatusCode.Created);
+			var response = 	await this.Sut.Client.PostAsJsonAsync(
+				routePath, 
+				request,
+				this.Sut.JsonSerializerOptions,
+				TestContext.Current.CancellationToken
+			);
+			response.StatusCode.ShouldBe(HttpStatusCode.Created);
+		}
 
-		this.newAccountCredentials.Id = GetCreatedId(response);
-		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
+		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
 	}
 
 	#endregion
@@ -155,16 +183,21 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. For Existing Account Returns 409 Conflict")]
 	public async Task Post_ForExistingAccount_Returns_409Conflict()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
 		var request = new AccountCreateRequest
 		{
-			Username = this.existingAccountCredentials.Username,
-			Email = this.existingAccountCredentials.Email,
-			Password = this.existingAccountCredentials.Password
+			Username = this.Sut.ExistingAccountCredentials.Username,
+			Email = this.Sut.ExistingAccountCredentials.Email,
+			Password = this.Sut.ExistingAccountCredentials.Password
 		};
 
-		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			routePath,
+			request,
+			this.Sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
 	}
 
@@ -175,32 +208,42 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Email Returns 422 UnprocessableContent")]
 	public async Task Post_WithInvalidEmail_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
 		var request = new AccountCreateRequest
 		{
-			Username = this.newAccountCredentials.Username,
+			Username = this.accountCredentialsUnderTest.Username,
 			Email = "newuser.test",
-			Password = this.newAccountCredentials.Password
+			Password = this.accountCredentialsUnderTest.Password
 		};
 
-		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			routePath,
+			request,
+			this.Sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableContent);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Password Returns 422 UnprocessableContent")]
 	public async Task Post_WithInvalidPassword_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
 		var request = new AccountCreateRequest
 		{
-			Username = this.newAccountCredentials.Username,
-			Email = this.newAccountCredentials.Email,
+			Username = this.accountCredentialsUnderTest.Username,
+			Email = this.accountCredentialsUnderTest.Email,
 			Password = "password"
 		};
 
-		var response = await this.Sut.Client.PostAsJsonAsync(routePath, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			routePath,
+			request,
+			this.Sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableContent);
 	}
 
@@ -208,8 +251,6 @@ public class Create : AdminEndpointsTestsBase
 
 	public override async ValueTask InitializeAsync()
 	{
-		await this.EnsureAccountExists(this.existingAccountCredentials);
-		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
 		await base.InitializeAsync();
 	}
 

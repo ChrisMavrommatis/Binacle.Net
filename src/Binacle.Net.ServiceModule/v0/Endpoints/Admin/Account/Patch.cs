@@ -62,7 +62,7 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 			if (!string.IsNullOrWhiteSpace(request.Username))
 			{
 				var usernameResult = await accountRepository.GetByUsernameAsync(request.Username);
-				if (usernameResult.TryGetValue<Domain.Accounts.Entities.Account>(out var foundAccount) && account.Equals(foundAccount))
+				if (usernameResult.TryGetValue<Domain.Accounts.Entities.Account>(out var foundAccount) && !account.Equals(foundAccount))
 				{
 					return Results.Conflict();
 				}

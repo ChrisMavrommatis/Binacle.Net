@@ -60,7 +60,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 		return await bindingResult.ValidateAsync(id, async (request, account) =>
 		{
 			var usernameResult = await accountRepository.GetByUsernameAsync(request.Username);
-			if (usernameResult.TryGetValue<Domain.Accounts.Entities.Account>(out var foundAccount) && account.Equals(foundAccount))
+			if (usernameResult.TryGetValue<Domain.Accounts.Entities.Account>(out var foundAccount) && !account.Equals(foundAccount))
 			{
 				return Results.Conflict();
 			}

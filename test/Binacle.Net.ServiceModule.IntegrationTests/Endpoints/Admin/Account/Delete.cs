@@ -5,28 +5,18 @@ using Binacle.Net.ServiceModule.IntegrationTests.Models;
 namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Account;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
-[Collection(BinacleApiAsAServiceCollection.Name)]
 public class Delete : AdminEndpointsTestsBase
 {
-	private readonly AccountCredentials existingAccountCredentials;
-	private readonly AccountCredentials newAccountCredentials;
+	private readonly AccountCredentials accountCredentialsUnderTest;
 
-	public Delete(BinacleApiAsAServiceFactory sut) : base(sut)
+	public Delete(BinacleApi sut) : base(sut)
 	{
-		this.newAccountCredentials = new AccountCredentials
-		{
-			Username = "newuser@binacle.net",
-			Email =  "newuser@binacle.net",
-			Password = "N3wUs3rP@ssw0rd"
-		};
-		
-		this.existingAccountCredentials = new AccountCredentials()
-		{
-			Username =  "existinguser@binacle.net",
-			Email = "existinguser@binacle.net",
-			Password = "Ex1stingUs3rP@ssw0rd"
-
-		};
+		this.accountCredentialsUnderTest = new AccountCredentials(
+			Guid.Parse("DEF02C0F-FB96-4799-8A4A-8427D5AF29DC"),
+			"deleteuser@binacle.net",
+			"deleteuser@binacle.net",
+			"D3l3teUs3ersP@ssw0rd"
+		);
 	}
 	private const string routePath = "/api/admin/account/{id}";
 
@@ -36,16 +26,16 @@ public class Delete : AdminEndpointsTestsBase
 	public Task Delete_WithoutBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithoutBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			return await this.Sut.Client.DeleteAsync(url);
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
+			return await this.Sut.Client.DeleteAsync(url, TestContext.Current.CancellationToken);
 		});
 
 	[Fact(DisplayName = $"DELETE {routePath}. With Expired Bearer Token Returns 401 Unauthorized")]
 	public Task Delete_WithExpiredBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithExpiredBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			return await this.Sut.Client.DeleteAsync(url);
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
+			return await this.Sut.Client.DeleteAsync(url, TestContext.Current.CancellationToken);
 		});
 
 
@@ -53,24 +43,24 @@ public class Delete : AdminEndpointsTestsBase
 	public Task Delete_WithWrongIssuerBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			return await this.Sut.Client.DeleteAsync(url);
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
+			return await this.Sut.Client.DeleteAsync(url, TestContext.Current.CancellationToken);
 		});
 
 	[Fact(DisplayName = $"DELETE {routePath}. With Wrong Audience Bearer Token Returns 401 Unauthorized")]
 	public Task Delete_WithWrongAudienceBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWrongAudienceBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			return await this.Sut.Client.DeleteAsync(url);
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
+			return await this.Sut.Client.DeleteAsync(url, TestContext.Current.CancellationToken);
 		});
 
 	[Fact(DisplayName = $"DELETE {routePath}. With Wrongly Signed Bearer Token Returns 401 Unauthorized")]
 	public Task Delete_WithWronglySignedBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWronglySignedBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			return await this.Sut.Client.DeleteAsync(url);
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
+			return await this.Sut.Client.DeleteAsync(url, TestContext.Current.CancellationToken);
 		});
 
 	#endregion
@@ -81,8 +71,8 @@ public class Delete : AdminEndpointsTestsBase
 	public Task Delete_WithoutAdminBearerToken_Returns_403Forbidden()
 		=> this.Action_WithoutAdminBearerToken_Returns_403Forbidden(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
-			return await this.Sut.Client.DeleteAsync(url);
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
+			return await this.Sut.Client.DeleteAsync(url, TestContext.Current.CancellationToken);
 		});
 	
 	#endregion
@@ -92,12 +82,10 @@ public class Delete : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"DELETE {routePath}. With Valid Credentials Returns 204 No Content")]
 	public async Task Delete_WithValidCredentials_Returns_204NoContent()
 	{
-		await this.EnsureAccountExists(this.newAccountCredentials);
-
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 		
-		var url = routePath.Replace("{id}", this.newAccountCredentials.Id.ToString());
-		var response = await this.Sut.Client.DeleteAsync(url);
+		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
+		var response = await this.Sut.Client.DeleteAsync(url, TestContext.Current.CancellationToken);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NoContent);
 	}
 	#endregion
@@ -107,11 +95,10 @@ public class Delete : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"DELETE {routePath}. For Non Existing Account Returns 404 Not Found")]
 	public async Task Delete_ForNonExistingAccount_Returns_404NotFound()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-		var nonExistentId = Guid.Parse("EF81C267-A003-44B8-AD89-4B48661C4AA5");
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
-		var url = routePath.Replace("{id}", nonExistentId.ToString());
-		var response = await this.Sut.Client.DeleteAsync(url);
+		var url = routePath.Replace("{id}", this.Sut.NonExistentId.ToString());
+		var response = await this.Sut.Client.DeleteAsync(url, TestContext.Current.CancellationToken);
 		response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 	}
 
@@ -122,10 +109,10 @@ public class Delete : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"DELETE {routePath}. With Invalid Id Returns 422 UnprocessableContent")]
 	public async Task Delete_WithInvalidId_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", "invalid");
-		var response = await this.Sut.Client.DeleteAsync(url);
+		var response = await this.Sut.Client.DeleteAsync(url, TestContext.Current.CancellationToken);
 		response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableContent);
 	}
 	
@@ -134,13 +121,13 @@ public class Delete : AdminEndpointsTestsBase
 
 	public override async ValueTask InitializeAsync()
 	{
-		await this.EnsureAccountExists(this.existingAccountCredentials);
-		await this.EnsureAccountDoesNotExist(this.newAccountCredentials);
+		await this.Sut.EnsureAccountExists(this.accountCredentialsUnderTest);
 		await base.InitializeAsync();
 	}
 
 	public override async ValueTask DisposeAsync()
 	{
+		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
 		await base.DisposeAsync();
 	}
 }

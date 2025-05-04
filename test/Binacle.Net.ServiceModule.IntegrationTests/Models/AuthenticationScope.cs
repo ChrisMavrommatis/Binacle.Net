@@ -9,11 +9,11 @@ namespace Binacle.Net.ServiceModule.IntegrationTests.Models;
 
 internal class AuthenticationScope : IAsyncDisposable, IDisposable
 {
-	private readonly BinacleApiAsAServiceFactory sut;
+	private readonly BinacleApi sut;
 	private readonly Account account;
 
 	public AuthenticationScope(
-		BinacleApiAsAServiceFactory sut,
+		BinacleApi sut,
 		Account account
 		)
 	{

@@ -8,12 +8,11 @@ using Microsoft.Extensions.Options;
 namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Auth;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
-[Collection(BinacleApiAsAServiceCollection.Name)]
 public class Token
 {
-	private readonly BinacleApiAsAServiceFactory sut;
+	private readonly BinacleApi sut;
 
-	public Token(BinacleApiAsAServiceFactory sut)
+	public Token(BinacleApi sut)
 	{
 		this.sut = sut;
 	}
@@ -31,7 +30,12 @@ public class Token
 			Username = defaultAdmin.Username,
 			Password = defaultAdmin.Password
 		};
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(
+			routePath, 
+			request,
+			this.sut.JsonSerializerOptions, 
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(HttpStatusCode.OK);
 	}
 
@@ -43,7 +47,12 @@ public class Token
 			Username = "validemail@binacle.net",
 			Password = "Ag00dP@ssw0rd"
 		};
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(
+			routePath, 
+			request,
+			this.sut.JsonSerializerOptions, 
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 	}
 
@@ -55,7 +64,12 @@ public class Token
 			Username = "validemail@binacle.net",
 			Password = "pass"
 		};
-		var response = await this.sut.Client.PostAsJsonAsync(routePath, request, this.sut.JsonSerializerOptions);
+		var response = await this.sut.Client.PostAsJsonAsync(
+			routePath, 
+			request,
+			this.sut.JsonSerializerOptions, 
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableContent);
 	}
 }

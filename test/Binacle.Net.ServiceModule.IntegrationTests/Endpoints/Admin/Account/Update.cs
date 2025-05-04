@@ -7,20 +7,18 @@ using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Account;
 
 [Trait("Endpoint Tests", "Endpoint Integration tests")]
-[Collection(BinacleApiAsAServiceCollection.Name)]
 public class Update : AdminEndpointsTestsBase
 {
-	private readonly AccountCredentials existingAccountCredentials;
+	private readonly AccountCredentials accountCredentialsUnderTest;
 
-	public Update(BinacleApiAsAServiceFactory sut) : base(sut)
+	public Update(BinacleApi sut) : base(sut)
 	{
-		this.existingAccountCredentials = new AccountCredentials()
-		{
-			Username =  "existinguser@binacle.net",
-			Email = "existinguser@binacle.net",
-			Password = "Ex1stingUs3rP@ssw0rd"
-
-		};
+		this.accountCredentialsUnderTest = new AccountCredentials(
+			Guid.Parse("3430D348-072F-4931-B2A1-51775CBA26C5"),
+			"updateuser@binacle.net",
+			"updateuser@binacle.net",
+			"Upd4t3Us3ersP@ssw0rd"
+		);
 	}
 	private const string routePath = "/api/admin/account/{id}";
 
@@ -30,32 +28,42 @@ public class Update : AdminEndpointsTestsBase
 	public Task Put_WithoutBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithoutBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 			var request = new AccountUpdateRequest
 			{
-				Username = this.existingAccountCredentials.Username,
-				Email = this.existingAccountCredentials.Email,
-				Password =this.existingAccountCredentials.Password,
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password = this.accountCredentialsUnderTest.Password,
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PutAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions,	
+				TestContext.Current.CancellationToken
+			);
 		});
 
 	[Fact(DisplayName = $"PUT {routePath}. With Expired Bearer Token Returns 401 Unauthorized")]
 	public Task Put_WithExpiredBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithExpiredBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 			var request = new AccountUpdateRequest
 			{
-				Username = this.existingAccountCredentials.Username,
-				Email = this.existingAccountCredentials.Email,
-				Password =this.existingAccountCredentials.Password,
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password =this.accountCredentialsUnderTest.Password,
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PutAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions,	
+				TestContext.Current.CancellationToken
+			);
 		});
 
 
@@ -63,48 +71,63 @@ public class Update : AdminEndpointsTestsBase
 	public Task Put_WithWrongIssuerBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 			var request = new AccountUpdateRequest
 			{
-				Username = this.existingAccountCredentials.Username,
-				Email = this.existingAccountCredentials.Email,
-				Password =this.existingAccountCredentials.Password,
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password =this.accountCredentialsUnderTest.Password,
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PutAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions,	
+				TestContext.Current.CancellationToken
+			);
 		});
 
 	[Fact(DisplayName = $"PUT {routePath}. With Wrong Audience Bearer Token Returns 401 Unauthorized")]
 	public Task Put_WithWrongAudienceBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWrongAudienceBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 			var request = new AccountUpdateRequest
 			{
-				Username = this.existingAccountCredentials.Username,
-				Email = this.existingAccountCredentials.Email,
-				Password =this.existingAccountCredentials.Password,
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password =this.accountCredentialsUnderTest.Password,
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PutAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions,	
+				TestContext.Current.CancellationToken
+			);
 		});
 
 	[Fact(DisplayName = $"PUT {routePath}. With Wrongly Signed Bearer Token Returns 401 Unauthorized")]
 	public Task Put_WithWronglySignedBearerToken_Returns_401Unauthorized()
 		=> this.Action_WithWronglySignedBearerToken_Returns_401Unauthorized(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 			var request = new AccountUpdateRequest
 			{
-				Username = this.existingAccountCredentials.Username,
-				Email = this.existingAccountCredentials.Email,
-				Password =this.existingAccountCredentials.Password,
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password =this.accountCredentialsUnderTest.Password,
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PutAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions,	
+				TestContext.Current.CancellationToken
+			);
 		});
 
 	#endregion
@@ -115,16 +138,21 @@ public class Update : AdminEndpointsTestsBase
 	public Task Put_WithoutAdminBearerToken_Returns_403Forbidden()
 		=> this.Action_WithoutAdminBearerToken_Returns_403Forbidden(async () =>
 		{
-			var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 			var request = new AccountUpdateRequest
 			{
-				Username = this.existingAccountCredentials.Username,
-				Email = this.existingAccountCredentials.Email,
-				Password =this.existingAccountCredentials.Password,
+				Username = this.accountCredentialsUnderTest.Username,
+				Email = this.accountCredentialsUnderTest.Email,
+				Password =this.accountCredentialsUnderTest.Password,
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+			return await this.Sut.Client.PutAsJsonAsync(
+				url,
+				request,
+				this.Sut.JsonSerializerOptions,	
+				TestContext.Current.CancellationToken
+			);
 		});
 
 	#endregion
@@ -134,18 +162,23 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. With Valid Request Returns 204 No Content")]
 	public async Task Put_WithValidRequest_Returns_204NoContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
-		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 		var request = new AccountUpdateRequest
 		{
-			Username = this.existingAccountCredentials.Username,
-			Email = this.existingAccountCredentials.Email,
-			Password =this.existingAccountCredentials.Password,
+			Username = this.accountCredentialsUnderTest.Username,
+			Email = this.accountCredentialsUnderTest.Email,
+			Password =this.accountCredentialsUnderTest.Password,
 			Status =  AccountStatus.Active,
 			Role = AccountRole.User
 		};
-		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PutAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions,	
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NoContent);
 	}
 
@@ -157,20 +190,24 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. For Non Existing Account Returns 404 Not Found")]
 	public async Task Put_ForNonExistingAccount_Returns_404NotFound()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-		var nonExistentId = Guid.Parse("EF81C267-A003-44B8-AD89-4B48661C4AA5");
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
-		var url = routePath.Replace("{id}", nonExistentId.ToString());
+		var url = routePath.Replace("{id}", this.Sut.NonExistentId.ToString());
 		var request = new AccountUpdateRequest
 		{
-			Username = this.existingAccountCredentials.Username,
-			Email = this.existingAccountCredentials.Email,
-			Password = this.existingAccountCredentials.Password,
+			Username = this.accountCredentialsUnderTest.Username,
+			Email = this.accountCredentialsUnderTest.Email,
+			Password = this.accountCredentialsUnderTest.Password,
 			Status =  AccountStatus.Active,
 			Role = AccountRole.User
 		};
 
-		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PutAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions,	
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 	}
 
@@ -181,93 +218,118 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Email Returns 422 UnprocessableContent")]
 	public async Task Put_WithInvalidEmail_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 		var request = new AccountUpdateRequest
 		{
-			Username = this.existingAccountCredentials.Username,
+			Username = this.accountCredentialsUnderTest.Username,
 			Email = "existinguser.test",
-			Password =this.existingAccountCredentials.Password,
+			Password =this.accountCredentialsUnderTest.Password,
 			Status =  AccountStatus.Active,
 			Role = AccountRole.User
 		};
-		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PutAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions,	
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
 	}
 
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Status Returns 422 UnprocessableContent")]
 	public async Task Put_WithInvalidStatus_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
-		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 		var request = new AccountUpdateRequest
 		{
-			Username = this.existingAccountCredentials.Username,
-			Email = this.existingAccountCredentials.Email,
-			Password =this.existingAccountCredentials.Password,
+			Username = this.accountCredentialsUnderTest.Username,
+			Email = this.accountCredentialsUnderTest.Email,
+			Password =this.accountCredentialsUnderTest.Password,
 			Status =  null,
 			Role = AccountRole.User
 		};
 
-		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PutAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions,	
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
 	}
 
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Role Returns 422 UnprocessableContent")]
 	public async Task Put_WithInvalidRole_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
-		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 		var request = new AccountUpdateRequest
 		{
-			Username = this.existingAccountCredentials.Username,
-			Email = this.existingAccountCredentials.Email,
-			Password =this.existingAccountCredentials.Password,
+			Username = this.accountCredentialsUnderTest.Username,
+			Email = this.accountCredentialsUnderTest.Email,
+			Password =this.accountCredentialsUnderTest.Password,
 			Status =  AccountStatus.Active,
 			Role = null
 		};
 
-		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PutAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions,	
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
 	}
 	
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Password Returns 422 UnprocessableContent")]
 	public async Task Put_WithInvalidPassword_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
-		var url = routePath.Replace("{id}", this.existingAccountCredentials.Id.ToString());
+		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 		var request = new AccountUpdateRequest
 		{
-			Username = this.existingAccountCredentials.Username,
-			Email = this.existingAccountCredentials.Email,
+			Username = this.accountCredentialsUnderTest.Username,
+			Email = this.accountCredentialsUnderTest.Email,
 			Password = "invalid",
 			Status =  AccountStatus.Active,
 			Role = AccountRole.User
 		};
 
-		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PutAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions,	
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
 	}
 	
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Id Returns 422 UnprocessableContent")]
 	public async Task Put_WithInvalidId_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.AdminAccount);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", "invalid");
 
 		var request = new AccountUpdateRequest
 		{
-			Username = this.existingAccountCredentials.Username,
-			Email = this.existingAccountCredentials.Email,
-			Password = this.existingAccountCredentials.Password,
+			Username = this.accountCredentialsUnderTest.Username,
+			Email = this.accountCredentialsUnderTest.Email,
+			Password = this.accountCredentialsUnderTest.Password,
 			Status =  AccountStatus.Active,
 			Role = AccountRole.User
 		};
 
-		var response = await this.Sut.Client.PutAsJsonAsync(url, request, this.Sut.JsonSerializerOptions);
+		var response = await this.Sut.Client.PutAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions,	
+			TestContext.Current.CancellationToken
+		);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
 	}
 
@@ -275,12 +337,13 @@ public class Update : AdminEndpointsTestsBase
 
 	public override async ValueTask InitializeAsync()
 	{
-		await this.EnsureAccountExists(this.existingAccountCredentials);
+		await this.Sut.EnsureAccountExists(this.accountCredentialsUnderTest);
 		await base.InitializeAsync();
 	}
 
 	public override async ValueTask DisposeAsync()
 	{
+		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
 		await base.DisposeAsync();
 	}
 
