@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Kernel.Endpoints;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Binacle.Net.Kernel.OpenApi.ExtensionsMethods;
 
@@ -19,7 +18,7 @@ public static class OpenApiServiceCollectionExtensions
 		foreach(var openApiDocument in openApiDocuments)
 		{
 			services.AddSingleton(openApiDocument);
-			openApiDocument.Add(services);
+			services.AddOpenApi(openApiDocument.Name, openApiDocument.Configure);
 		}
 
 		return services;

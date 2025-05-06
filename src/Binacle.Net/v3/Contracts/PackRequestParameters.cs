@@ -17,7 +17,7 @@ public class PackRequestParameters : IWithAlgorithm
 {
 	// TODO: Investigate this as with this it fails
 	[Required]
-	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<Algorithm>>))]
+	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public Algorithm? Algorithm { get; set; }
 }
 

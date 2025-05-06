@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Kernel.OpenApi;
+using Microsoft.AspNetCore.OpenApi;
 using OpenApiExamples;
 
 namespace Binacle.Net.v1;
@@ -11,21 +12,18 @@ internal class ApiV1Document : IOpenApiDocument
 	public string Version => "1.0";
 	public bool IsDeprecated => true;
 	public bool IsExperimental => false;
-	public void Add(IServiceCollection services)
-	{
-		services.AddOpenApi(this.Name, options =>
-		{
-			options.AddDocumentTransformer((document, context, cancellationToken) =>
-			{
-				ApiDocument.Transform(this, document.Info);
-				return Task.CompletedTask;
-			});
-			options.AddResponseDescription();
-			options.AddExamples();
-			options.AddJwtAuthentication();
-			options.AddRateLimiterResponse();
-		});
-	}
-	
 
+	public void Configure(OpenApiOptions options)
+	{
+		options.AddDocumentTransformer((document, context, cancellationToken) =>
+		{
+			ApiDocument.Transform(this, document.Info);
+			return Task.CompletedTask;
+		});
+		options.AddResponseDescription();
+		options.AddExamples();
+		options.AddJwtAuthentication();
+		options.AddRateLimiterResponse();
+		options.AddEnumStringsSchema();
+	}
 }

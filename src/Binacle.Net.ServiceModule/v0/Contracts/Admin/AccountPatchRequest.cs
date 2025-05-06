@@ -20,10 +20,10 @@ internal class AccountPatchRequest : IWithUsername, IWithEmail, IWithPassword
 	public string? Email { get; set; }
 	public string? Password { get; set; }
 
-	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<AccountStatus>>))]
+	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public AccountStatus? Status { get; set; }
 
-	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<AccountRole>>))]
+	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public AccountRole? Role { get; set; }
 }
 

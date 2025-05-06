@@ -23,11 +23,11 @@ internal class AccountUpdateRequest : IWithUsername, IWithEmail, IWithPassword
 	public string Password { get; set; } = null!;
 
 	[Required]
-	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<AccountStatus>>))]
+	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public AccountStatus? Status { get; set; }
 
 	[Required]
-	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<AccountRole>>))]
+	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public AccountRole? Role { get; set; }
 }
 

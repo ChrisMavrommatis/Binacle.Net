@@ -10,10 +10,10 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
 internal class SubscriptionPatchRequest
 {
-	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<SubscriptionType>>))]
+	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public SubscriptionType? Type { get; set; }
 
-	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<SubscriptionStatus>>))]
+	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public SubscriptionStatus? Status { get; set; }
 }
 

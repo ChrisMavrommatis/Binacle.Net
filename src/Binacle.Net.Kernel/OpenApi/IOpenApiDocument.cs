@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.OpenApi;
 
 namespace Binacle.Net.Kernel.OpenApi;
 
@@ -10,5 +10,5 @@ public interface IOpenApiDocument
 	bool IsDeprecated { get; }
 	bool IsExperimental { get; }
 
-	void Add(IServiceCollection services);
+	void Configure(OpenApiOptions options);
 }

@@ -13,7 +13,7 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 internal class SubscriptionCreateRequest
 {
 	[Required]
-	[JsonConverter(typeof(JsonStringNullableEnumConverter<Nullable<SubscriptionType>>))]
+	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public SubscriptionType? Type { get; set; }
 }
 

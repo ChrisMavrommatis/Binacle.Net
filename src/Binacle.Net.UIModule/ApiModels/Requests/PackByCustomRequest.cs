@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using Binacle.Net.Kernel.Serialization;
 using Binacle.Net.UIModule.Models;
 
 namespace Binacle.Net.UIModule.ApiModels.Requests;

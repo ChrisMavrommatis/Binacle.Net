@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Binacle.Net.Kernel.OpenApi;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using OpenApiExamples;
@@ -10,41 +11,38 @@ internal class ServiceModuleApiDocument : IOpenApiDocument
 {
 	public const string DocumentName = "service";
 	public string Name => DocumentName;
-	public string Title => "Binacle.Net Service Module API";
-	public string Version => "2.0";
+	public string Title => "Binacle.Net Service";
+	public string Version => "1.0";
 	public bool IsDeprecated => false;
 	public bool IsExperimental => false;
 
-	public void Add(IServiceCollection services)
+	public void Configure(OpenApiOptions options)
 	{
-		services.AddOpenApi(this.Name, options =>
+		options.AddDocumentTransformer((document, context, cancellationToken) =>
 		{
-			options.AddDocumentTransformer((document, context, cancellationToken) =>
+			document.Info.Title = this.Title;
+			document.Info.Version = this.Version;
+			document.Info.Description = __description__;
+			// gpl 3 license
+			document.Info.License = new OpenApiLicense
 			{
-				document.Info.Title = this.Title;
-				document.Info.Version = this.Version;
-				document.Info.Description = __description__;
-				// gpl 3 license
-				document.Info.License = new OpenApiLicense
-				{
-					Name = "GNU General Public License v3.0",
-					Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.html")
-				};
-				return Task.CompletedTask;
-			});
-			options.AddResponseDescription();
-			options.AddExamples();
-			options.AddJwtAuthentication();
-			options.AddRateLimiterResponse();
+				Name = "GNU General Public License v3.0",
+				Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.html")
+			};
+			return Task.CompletedTask;
 		});
+		options.AddResponseDescription();
+		options.AddExamples();
+		options.AddJwtAuthentication();
+		options.AddRateLimiterResponse();
+		options.AddEnumStringsSchema();
+
 	}
-	
+
 	private static string __description__ = new StringBuilder()
-		.AppendLine("**Binacle.Net Service Module API**")
+		.AppendLine("**Binacle.Net Service API**")
 		.AppendLine()
-		.AppendLine("This api is designed only for when Binacle.Net is used as public service with the Service Module.")
-		.AppendLine()
-		.AppendLine("User Management is done only by a user of Admin Group.")
+		.AppendLine("This api is designed only for when Binacle.Net is used as public service.")
 		.AppendLine()
 		.AppendLine($"[View on Github]({Binacle.Net.Metadata.GitHub})")
 		.AppendLine()

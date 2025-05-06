@@ -13,6 +13,8 @@ using ChrisMavrommatis.StartupTasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi.Models;
 using OpenApiExamples;
 using Scalar.AspNetCore;
 using Serilog;
@@ -66,12 +68,12 @@ public class Program
 		builder.Services.ConfigureHttpJsonOptions(options =>
 		{
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+			options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 		});
 		builder.Services.Configure<JsonOptions>(options =>
 		{
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
-
 		builder.Services.AddTransient(typeof(IOptionalDependency<>), typeof(OptionalDependency<>));
 
 		builder.Services.AddSingleton(_ => TimeProvider.System);
@@ -104,7 +106,7 @@ public class Program
 				context.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
 			};
 		});
-		
+
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
 
 		builder.AddDiagnosticsModule();
@@ -123,38 +125,54 @@ public class Program
 
 		// Slim builder
 		app.UseHttpsRedirection();
-		
+
 		if (app.Environment.IsDevelopment())
 		{
 			app.UseDeveloperExceptionPage();
 		}
-		
+
 		app.UseExceptionHandler();
 
 		// SWAGGER_UI from environment vars
-		if (Feature.IsEnabled("SWAGGER_UI"))
+		var swaggerEnabled = Feature.IsEnabled("SWAGGER_UI");
+
+		// SCALAR_UI from environment vars
+		var scalarEnabled = Feature.IsEnabled("SCALAR_UI");
+
+		if (swaggerEnabled || scalarEnabled)
 		{
 			const string openApiEndpointPattern = "/openapi/{documentName}.json";
 			app.MapOpenApi(openApiEndpointPattern);
 
 			var openApiDocuments = app.Services.GetServices<IOpenApiDocument>();
 
-			app.UseSwaggerUI(options =>
+			if (swaggerEnabled)
 			{
-				foreach (var openApiDocument in openApiDocuments)
+				app.UseSwaggerUI(options =>
 				{
-					var endpoint = openApiEndpointPattern.Replace("{documentName}", openApiDocument.Name);
-					options.SwaggerEndpoint(endpoint, openApiDocument.Title);
-				}
-			});
+					foreach (var openApiDocument in openApiDocuments)
+					{
+						var endpoint = openApiEndpointPattern.Replace("{documentName}", openApiDocument.Name);
+						options.SwaggerEndpoint(endpoint, openApiDocument.Title);
+					}
 
-			app.MapScalarApiReference(options =>
+					options.EnablePersistAuthorization();
+					options.EnableValidator();
+					options.EnableDeepLinking();
+					options.DisplayRequestDuration();
+				});
+			}
+
+			if (scalarEnabled)
 			{
-				foreach (var openApiDocument in openApiDocuments)
+				app.MapScalarApiReference(options =>
 				{
-					options.AddDocument(openApiDocument.Name, openApiDocument.Title);
-				}
-			});
+					foreach (var openApiDocument in openApiDocuments)
+					{
+						options.AddDocument(openApiDocument.Name, openApiDocument.Title);
+					}
+				});
+			}
 		}
 
 		app.UseDiagnosticsModule();
@@ -175,3 +193,5 @@ public class Program
 		await app.RunAsync();
 	}
 }
+
+

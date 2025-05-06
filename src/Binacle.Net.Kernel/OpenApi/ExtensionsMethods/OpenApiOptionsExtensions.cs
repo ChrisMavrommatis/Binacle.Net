@@ -24,5 +24,11 @@ public static class OpenApiOptionsExtensions
 		options.AddOperationTransformer<RateLimiterResponseOperationTransformer>();
 		return options;
 	}
+	
+	public static OpenApiOptions AddEnumStringsSchema(this OpenApiOptions options)
+	{
+		options.AddSchemaTransformer<EnumStringsSchemaTransformer>();
+		return options;
+	}
 }
 

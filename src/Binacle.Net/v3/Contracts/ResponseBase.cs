@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Binacle.Net.v3.Contracts;
 
@@ -14,11 +13,8 @@ public abstract class ResponseBase<TModel>
 	public required TModel Data { get; set; }
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum ResultType
 {
-	[EnumMember(Value = nameof(Success))]
 	Success,
-	[EnumMember(Value = nameof(Failure))]
 	Failure
 }

@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Packing.Models;
 using Binacle.ViPaq;
@@ -121,7 +120,7 @@ public class BinPackResult
 {
 	[JsonPropertyOrder(0)]
 	[JsonConverter(typeof(JsonStringEnumConverter))]
-	public BinPackResultStatus Result { get; set; }
+	public required BinPackResultStatus Result { get; set; }
 	public required Bin Bin { get; set; }
 
 	public List<PackedBox>? PackedItems { get; set; }
@@ -133,20 +132,13 @@ public class BinPackResult
 	public string? ViPaqData { get; set; }
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum BinPackResultStatus
 {
-	[EnumMember(Value = nameof(Unknown))]
 	Unknown,
-	[EnumMember(Value = nameof(NotPacked))]
 	NotPacked,
-	[EnumMember(Value = nameof(PartiallyPacked))]
 	PartiallyPacked,
-	[EnumMember(Value = nameof(FullyPacked))]
 	FullyPacked,
-	[EnumMember(Value = nameof(EarlyFail_ContainerVolumeExceeded))]
 	EarlyFail_ContainerVolumeExceeded,
-	[EnumMember(Value = nameof(EarlyFail_ContainerDimensionExceeded))]
 	EarlyFail_ContainerDimensionExceeded,
 }
 
