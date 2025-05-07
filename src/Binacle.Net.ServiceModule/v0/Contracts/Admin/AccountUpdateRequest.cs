@@ -13,22 +13,17 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
 internal class AccountUpdateRequest : IWithUsername, IWithEmail, IWithPassword
 {
-	[Required] 
-	public string Username { get; set; } = null!;
+	public required string Username { get; set; }
 
-	[Required] 
-	public string Email { get; set; } = null!;
+	public required string Email { get; set; }
 
-	[Required] 
-	public string Password { get; set; } = null!;
+	public required string Password { get; set; }
 
-	[Required]
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
-	public AccountStatus? Status { get; set; }
+	public required AccountStatus? Status { get; set; }
 
-	[Required]
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
-	public AccountRole? Role { get; set; }
+	public required AccountRole? Role { get; set; }
 }
 
 internal class AccountUpdateRequestValidator : AbstractValidator<AccountUpdateRequest>

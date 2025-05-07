@@ -1,5 +1,4 @@
-﻿using Binacle.Net.UIModule.ExtensionMethods;
-using Binacle.Lib;
+﻿using Binacle.Lib;
 using Binacle.Lib.Abstractions.Models;
 using System.ComponentModel.DataAnnotations;
 

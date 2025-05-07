@@ -12,13 +12,11 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
 internal class SubscriptionUpdateRequest
 {
-	[Required]
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
-	public SubscriptionType? Type { get; set; }
+	public required SubscriptionType? Type { get; set; }
 
-	[Required]
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
-	public SubscriptionStatus? Status { get; set; }
+	public required SubscriptionStatus? Status { get; set; }
 }
 
 internal class SubscriptionUpdateRequestValidator : AbstractValidator<SubscriptionUpdateRequest>

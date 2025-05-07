@@ -12,9 +12,8 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
 internal class SubscriptionCreateRequest
 {
-	[Required]
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
-	public SubscriptionType? Type { get; set; }
+	public required SubscriptionType? Type { get; set; }
 }
 
 internal class SubscriptionCreateRequestValidator : AbstractValidator<SubscriptionCreateRequest>
@@ -46,6 +45,7 @@ internal class SubscriptionCreateValidationProblemExample : ValidationProblemRes
 {
 	public override Dictionary<string, string[]> GetErrors()
 	{
+		// TODO: Add Examples
 		// yield return OpenApiExample.Create(
 		// 	"idparametererror",
 		// 	"ID Parameter Error",

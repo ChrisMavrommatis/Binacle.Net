@@ -9,14 +9,9 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;
 
 internal class AccountCreateRequest : IWithUsername, IWithPassword, IWithEmail
 {
-	[Required] 
-	public string Username { get; set; } = null!;
-
-	[Required] 
-	public string Password { get; set; } = null!;
-
-	[Required] 
-	public string Email { get; set; } = null!;
+	public required string Username { get; set; }
+	public required string Password { get; set; }
+	public required string Email { get; set; }
 }
 
 internal class AccountCreateRequestValidator : AbstractValidator<AccountCreateRequest>

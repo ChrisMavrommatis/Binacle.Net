@@ -15,10 +15,8 @@ public interface IWithPackingParameters
 
 public class PackRequestParameters : IWithAlgorithm
 {
-	// TODO: Investigate this as with this it fails
-	[Required]
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
-	public Algorithm? Algorithm { get; set; }
+	public required Algorithm? Algorithm { get; set; }
 }
 
 internal class PackRequestParametersValidator : AbstractValidator<IWithPackingParameters>

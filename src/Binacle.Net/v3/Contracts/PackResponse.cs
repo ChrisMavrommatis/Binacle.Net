@@ -126,8 +126,8 @@ public class BinPackResult
 	public List<PackedBox>? PackedItems { get; set; }
 	public List<UnpackedBox>? UnpackedItems { get; set; }
 
-	public decimal? PackedItemsVolumePercentage { get; set; }
-	public decimal? PackedBinVolumePercentage { get; set; }
+	public required decimal PackedItemsVolumePercentage { get; set; }
+	public required decimal PackedBinVolumePercentage { get; set; }
 	
 	public string? ViPaqData { get; set; }
 }

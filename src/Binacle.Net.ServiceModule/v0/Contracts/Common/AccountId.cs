@@ -8,9 +8,8 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Common;
 
 internal class AccountId
 {
-	[Required] 
 	[FromRoute]
-	public string Id { get; set; } = null!;
+	public required string Id { get; set; } = null!;
 	
 	public Guid Value => Guid.Parse(Id);
 }

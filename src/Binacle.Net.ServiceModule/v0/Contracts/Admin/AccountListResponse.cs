@@ -24,28 +24,20 @@ internal class AccountListResponse : PagedResponse<MinimalAccount>
 {
 	public static AccountListResponse Create(PagedList<Account> pagedResult)
 	{
-		var response = new AccountListResponse()
+		return new AccountListResponse()
 		{
 			Total = pagedResult.TotalCount,
 			Page = pagedResult.PageNumber,
 			PageSize = pagedResult.PageSize,
 			TotalPages = pagedResult.TotalPages,
+			Items = pagedResult.Select(x =>new MinimalAccount
+			{
+				Id = x.Id,
+				Username = x.Username,
+				Role = x.Role,
+				Status = x.Status
+			}).ToList()
 		};
-
-		foreach (var account in pagedResult)
-		{
-			response.Items.Add(
-				new MinimalAccount
-				{
-					Id = account.Id,
-					Username = account.Username,
-					Role = account.Role,
-					Status = account.Status
-				}
-			);
-		}
-
-		return response;
 	}
 }
 

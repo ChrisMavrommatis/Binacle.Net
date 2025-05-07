@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Binacle.Net.Models;
 using FluentValidation;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
@@ -9,9 +10,9 @@ namespace Binacle.Net.v3.Contracts;
 
 public class PackByCustomRequest : IWithPackingParameters, IWithBins, IWithItems
 {
-	public PackRequestParameters Parameters { get; set; } = new();
-	public List<Bin> Bins { get; set; } = new();
-	public List<Box> Items { get; set; } = new();
+	public required PackRequestParameters Parameters { get; set; } 
+	public required List<Bin> Bins { get; set; } 
+	public required List<Box> Items { get; set; } 
 }
 
 internal class PackByCustomRequestValidator : AbstractValidator<PackByCustomRequest>

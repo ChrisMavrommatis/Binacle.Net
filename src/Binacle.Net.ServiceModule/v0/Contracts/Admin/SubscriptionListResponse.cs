@@ -24,25 +24,20 @@ internal class SubscriptionListResponse : PagedResponse<MinimalSubscription>
 {
 	public static SubscriptionListResponse Create(PagedList<Subscription> subscriptions)
 	{
-		var response = new SubscriptionListResponse()
+		return new SubscriptionListResponse()
 		{
 			Total = subscriptions.TotalCount,
 			Page = subscriptions.PageNumber,
 			PageSize = subscriptions.PageSize,
-			TotalPages = subscriptions.TotalPages
-		};
-		foreach (var subscription in subscriptions)
-		{
-			response.Items.Add(new MinimalSubscription()
+			TotalPages = subscriptions.TotalPages,
+			Items = subscriptions.Select(x => new MinimalSubscription()
 			{
-				Id = subscription.Id,
-				AccountId = subscription.AccountId,
-				Type = subscription.Type,
-				Status = subscription.Status
-			});
-		}
-
-		return response;
+				Id = x.Id,
+				AccountId = x.AccountId,
+				Type = x.Type,
+				Status = x.Status
+			}).ToList()
+		};
 	}
 }
 

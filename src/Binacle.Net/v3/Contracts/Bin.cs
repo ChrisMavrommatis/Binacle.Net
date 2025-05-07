@@ -1,4 +1,5 @@
-﻿using Binacle.Lib.Abstractions.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.Net.v3.Contracts;
 
@@ -9,8 +10,8 @@ public class Bin :
 	IWithDimensions,
 	ViPaq.Abstractions.IWithDimensions<int>
 {
-	public string ID { get; set; } = string.Empty;
-	public int Length { get; set; }
-	public int Width { get; set; }
-	public int Height { get; set; }
+	public required string ID { get; set; }
+	public required int Length { get; set; }
+	public required int Width { get; set; }
+	public required  int Height { get; set; }
 }

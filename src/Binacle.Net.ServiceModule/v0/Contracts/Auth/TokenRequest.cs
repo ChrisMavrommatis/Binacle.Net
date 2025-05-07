@@ -9,10 +9,8 @@ namespace Binacle.Net.ServiceModule.v0.Contracts.Auth;
 
 internal class TokenRequest : IWithPassword
 {
-	[Required]
-	public string Username { get; set; } = null!;
-	[Required]
-	public string Password { get; set; } = null!;
+	public required string Username { get; set; }
+	public required string Password { get; set; }
 }
 
 internal class TokenRequestValidator : AbstractValidator<TokenRequest>
