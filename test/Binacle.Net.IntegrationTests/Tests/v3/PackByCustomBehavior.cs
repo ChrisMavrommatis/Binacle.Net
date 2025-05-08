@@ -36,41 +36,41 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 	#region Response Statuses
 
 	[Fact(DisplayName = $"POST {routePath}. With Valid Request, Returns 200 OK")]
-	public Task Post_WithValidRequest_Returns_200Ok()
+	public Task Post_WithValidRequest_Returns200Ok()
 		=> base.Request_Returns_200Ok(routePath, this.sampleRequest);
 
-	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Item, Returns 400 BadRequest")]
-	public async Task Post_WithZeroDimensionOnItem_Returns_400BadRequest()
+	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Item, Returns 422 UnprocessableContent")]
+	public async Task Post_WithZeroDimensionOnItem_Returns422UnprocessableContent()
 	{
 		this.sampleRequest.Items!.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
-		await base.Request_Returns_400BadRequest(routePath, this.sampleRequest);
+		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
 	}
 
-	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Bin, Returns 400 BadRequest")]
-	public async Task Post_WithZeroDimensionOnBin_Returns400BadRequest()
+	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Bin, Returns 422 UnprocessableContent")]
+	public async Task Post_WithZeroDimensionOnBin_Returns422UnprocessableContent()
 	{
 		this.sampleRequest.Bins!.FirstOrDefault(x => x.ID == "custom_bin_1")!.Length = 0;
-		await base.Request_Returns_400BadRequest(routePath, this.sampleRequest);
+		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
 	}
 
-	[Fact(DisplayName = $"POST {routePath}. With Same Id On Bins, Returns 400 BadRequest")]
-	public async Task Post_WithSameIdOnBins_Returns400BadRequest()
+	[Fact(DisplayName = $"POST {routePath}. With Same Id On Bins, Returns 422 UnprocessableContent")]
+	public async Task Post_WithSameIdOnBins_Returns422UnprocessableContent()
 	{
 		foreach (var bin in this.sampleRequest.Bins!)
 		{
 			bin.ID = "custom_bin_1";
 		}
-		await base.Request_Returns_400BadRequest(routePath, this.sampleRequest);
+		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
 	}
 
-	[Fact(DisplayName = $"POST {routePath}. With Same Id On Items, Returns 400 BadRequest")]
-	public async Task Post_WithSameIdOnItems_Returns400BadRequest()
+	[Fact(DisplayName = $"POST {routePath}. With Same Id On Items, Returns 422 UnprocessableContent")]
+	public async Task Post_WithSameIdOnItems_Returns422UnprocessableContent()
 	{
 		foreach (var bin in this.sampleRequest.Items!)
 		{
 			bin.ID = "box_1";
 		}
-		await base.Request_Returns_400BadRequest(routePath, this.sampleRequest);
+		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
 	}
 
 	#endregion Response Statuses

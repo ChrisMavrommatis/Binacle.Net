@@ -26,7 +26,7 @@ public abstract partial class BehaviourTestsBase
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 	}
 
-	protected async Task Request_Returns_400BadRequest<TRequest>(
+	protected async Task Request_Returns_422UnprocessableContent<TRequest>(
 		string url,
 		TRequest request)
 	{
@@ -37,7 +37,7 @@ public abstract partial class BehaviourTestsBase
 			TestContext.Current.CancellationToken
 		);
 
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
 	}
 
 	protected async Task Request_Returns_404NotFound<TRequest>(

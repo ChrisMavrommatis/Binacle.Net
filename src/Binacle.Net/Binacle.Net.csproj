@@ -15,15 +15,15 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
-		<PackageReference Include="Scalar.AspNetCore" Version="2.1.13" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.2.7" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="ChrisMavrommatis.Features" Version="2.0.3" />
 		<PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.3" />
-		<PackageReference Include="FluentValidation" Version="11.11.0" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+		<PackageReference Include="FluentValidation" Version="12.0.0" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
