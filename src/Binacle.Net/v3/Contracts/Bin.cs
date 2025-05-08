@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Binacle.Lib.Abstractions.Models;
+﻿using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.Net.v3.Contracts;
 

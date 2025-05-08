@@ -1,5 +1,4 @@
 ﻿using Binacle.Net.Configuration.Models;
-using Binacle.Net.Constants;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
@@ -27,7 +26,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 			.RequestExample<PresetFitRequestExample>("application/json")
 			.Produces<FitResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExamples<PresetFitResponseExamples>(StatusCodes.Status200OK, "application/json")
-			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForFitResponse200OK)
+			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForFitResponse200Ok)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Binacle.Net.Kernel.Serialization;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
@@ -46,12 +45,12 @@ internal class SubscriptionCreateValidationProblemExample : ValidationProblemRes
 	public override Dictionary<string, string[]> GetErrors()
 	{
 		// TODO: Add Examples
-		// yield return OpenApiExample.Create(
-		// 	"idparametererror",
-		// 	"ID Parameter Error",
-		// 	ErrorResponse.IdToGuidParameterError
-		// );
-
+		/* yield return OpenApiExample.Create(
+		 	"idparametererror",
+		 	"ID Parameter Error",
+		 	ErrorResponse.IdToGuidParameterError
+		 );
+		*/
 		return new Dictionary<string, string[]>()
 		{
 			{ "Type", [ErrorMessage.RequiredEnumValues<SubscriptionType>(nameof(Type))] }

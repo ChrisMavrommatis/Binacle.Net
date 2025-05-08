@@ -103,6 +103,7 @@ public static class ModuleDefinition
 		builder.Services.Configure<FeatureOptions>(options =>
 		{
 			options.AddFeature("RateLimiter");
+			options.AddFeature("ServiceModule");
 		});
 
 		Log.Information("{moduleName} module. Status {status}", "Service", "Initialized");

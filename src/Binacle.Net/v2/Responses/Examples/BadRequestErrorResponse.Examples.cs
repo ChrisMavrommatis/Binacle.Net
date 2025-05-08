@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Constants;
-using Binacle.Net.v2.Models;
+﻿using Binacle.Net.v2.Models;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 

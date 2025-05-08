@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Constants;
-using Binacle.Net.Validators;
+﻿using Binacle.Net.Validators;
 using FluentValidation;
 
 namespace Binacle.Net.v3.Contracts;
@@ -16,13 +15,11 @@ internal class BinsValidator : AbstractValidator<IWithBins>
 	{
 		RuleFor(x => x.Bins)
 			.NotNull()
-			.NotEmpty()
-			.WithMessage(ErrorMessage.IsRequired);
+			.NotEmpty();
 
-		// Each Bin Id must be unique
 		RuleFor(x => x.Bins)
 			.Must(x => x!.Select(y => y.ID).Distinct().Count() == x!.Count)
-			.WithMessage(ErrorMessage.IdMustBeUnique);
+			.WithMessage("IDs in `Bins` must be unique");
 
 		RuleForEach(x => x.Bins).ChildRules(binValidator =>
 		{

@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Constants;
-using Binacle.Net.Kernel.Endpoints;
+﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
 using Binacle.Net.v3.Contracts;
@@ -20,11 +19,12 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			.RequestExample<PackByCustomRequestExample>("application/json")
 			
 			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200OK)
+			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200Ok)
 			.ResponseExamples<PackByCustomResponseExamples>(StatusCodes.Status200OK, "application/json")
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			// TODO: Example
 			// .ResponseExamples<Status400ResponseExamples>(
 			// 	StatusCodes.Status400BadRequest,
 			// 	"application/problem+json"
@@ -35,6 +35,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For400BadRequest
 			)
+			// TODO: Example
 			// .ResponseExample<AccountCreateValidationProblemExample>(
 			// 	StatusCodes.Status422UnprocessableEntity,
 			// 	"application/problem+json"

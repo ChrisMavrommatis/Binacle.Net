@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Constants;
-using Binacle.Net.Kernel.Endpoints;
+﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
 using Binacle.Net.v2.Models;
@@ -8,7 +7,6 @@ using Binacle.Net.v2.Requests.Examples;
 using Binacle.Net.v2.Responses;
 using Binacle.Net.v2.Responses.Examples;
 using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples;
 
 namespace Binacle.Net.v2.Endpoints.Pack;
@@ -25,7 +23,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 			.RequestExample<CustomPackRequestExample>("application/json")
 			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExamples<CustomPackResponseExamples>(StatusCodes.Status200OK, "application/json")
-			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200OK)
+			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200Ok)
 			.Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)

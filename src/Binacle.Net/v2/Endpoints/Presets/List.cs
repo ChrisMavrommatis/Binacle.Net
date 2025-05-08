@@ -1,5 +1,4 @@
 ﻿using Binacle.Net.Configuration.Models;
-using Binacle.Net.Constants;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v2.Models;
 using Binacle.Net.v2.Responses;
@@ -19,9 +18,9 @@ internal class List : IGroupedEndpoint<ApiV2EndpointGroup>
 			.WithDescription("Lists the presets present in configuration.")
 			.Produces<PresetListResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, "application/json")
-			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPresets200OK)
+			.ResponseDescription(StatusCodes.Status200OK, "Returns all of the configured presets wth the associated bins.")
 			.Produces(StatusCodes.Status404NotFound)
-			.ResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPresets404NotFound);
+			.ResponseDescription(StatusCodes.Status404NotFound, "If no presets are configured.");
 	}
 	
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously

@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Constants;
-using Binacle.Net.Kernel.Endpoints;
+﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v2.Responses;
 using Binacle.Net.v2.Responses.Examples;
 using OpenApiExamples;

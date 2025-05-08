@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Constants;
-using Binacle.Net.Validators;
+﻿using Binacle.Net.Validators;
 using FluentValidation;
 
 namespace Binacle.Net.v2.Requests.Validators;

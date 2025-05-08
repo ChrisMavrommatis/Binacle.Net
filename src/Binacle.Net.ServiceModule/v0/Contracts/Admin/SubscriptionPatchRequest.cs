@@ -69,13 +69,14 @@ internal class SubscriptionPatchValidationProblemExample : ValidationProblemResp
 {
 	public override Dictionary<string, string[]> GetErrors()
 	{
-		// yield return OpenApiExample.Create(
-		// 	"idparametererror",
-		// 	"ID Parameter Error",
-		// 	"Example response when you provide and ID that isn't Guid",
-		// 	ErrorResponse.IdToGuidParameterError
-		// );
-
+		// TODO: Example
+		/* yield return OpenApiExample.Create(
+		 	"idparametererror",
+		 	"ID Parameter Error",
+		 	"Example response when you provide and ID that isn't Guid",
+		 	ErrorResponse.IdToGuidParameterError
+		 );
+		*/
 		return new Dictionary<string, string[]>()
 		{
 			{ "", ["At least one field must be provided for update."] },

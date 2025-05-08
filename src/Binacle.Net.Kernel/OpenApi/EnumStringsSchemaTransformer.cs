@@ -56,7 +56,7 @@ internal class EnumStringsSchemaTransformer : IOpenApiSchemaTransformer
 		
 		var enumDesc = enumValues.Select(value =>
 		{
-			var field = enumType.GetField(value?.ToString());
+			var field = enumType.GetField(value.ToString()!);
 
 			return new
 			{

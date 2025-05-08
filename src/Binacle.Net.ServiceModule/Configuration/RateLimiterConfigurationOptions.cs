@@ -24,12 +24,12 @@ internal class RateLimiterConfigurationOptionsValidator : AbstractValidator<Rate
 
 		RuleFor(x => x.ApiUsageAnonymous)
 			.Must((value) => RateLimiterConfigurationParser.TryParse(value, out var _))
-			.WithMessage("Invalid configuration for ApiUsageAnonymous rate limiter. Please check the configuration."); 
+			.WithMessage($"Invalid configuration for '{nameof(RateLimiterConfigurationOptions.ApiUsageAnonymous)}' rate limiter. Please check the configuration."); 
 		
 		RuleFor(x => x.AuthToken).NotNull().NotEmpty();
 
 		RuleFor(x => x.AuthToken)
 			.Must((value) => RateLimiterConfigurationParser.TryParse(value, out var _))
-			.WithMessage("Invalid configuration for AuthToken rate limiter. Please check the configuration."); 
+			.WithMessage($"Invalid configuration for '{nameof(RateLimiterConfigurationOptions.AuthToken)}' rate limiter. Please check the configuration."); 
 	}
 }

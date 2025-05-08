@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Binacle.Net.Kernel.Serialization;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
@@ -51,12 +50,14 @@ internal class SubscriptionUpdateRequestExample : ISingleOpenApiExamplesProvider
 
 internal class SubscriptionUpdateValidationProblemExample : ValidationProblemResponseExample
 {
-	// yield return OpenApiExample.Create(
-	// "idparametererror",
-	// "ID Parameter Error",
-	// "Example response when you provide and ID that isn't Guid",
-	// ErrorResponse.IdToGuidParameterError
-	// );
+	// TODO: Example
+	/* yield return OpenApiExample.Create(
+	 "idparametererror",
+	 "ID Parameter Error",
+	 "Example response when you provide and ID that isn't Guid",
+	 ErrorResponse.IdToGuidParameterError
+	 );
+	 */
 
 	public override Dictionary<string, string[]> GetErrors()
 	{

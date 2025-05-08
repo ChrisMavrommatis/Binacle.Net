@@ -54,6 +54,7 @@ internal class AccountBindingResult<T>
 
 		if (this.request is null)
 		{
+			// TODO: Make Response
 			var problemDetails = new ProblemDetails
 			{
 				Status = StatusCodes.Status400BadRequest,
