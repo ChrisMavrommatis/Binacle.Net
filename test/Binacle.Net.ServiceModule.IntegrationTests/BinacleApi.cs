@@ -23,12 +23,11 @@ namespace Binacle.Net.ServiceModule.IntegrationTests;
 
 public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifetime
 {
-
 	public Domain.Accounts.Entities.Account Admin { get; private set; } = null!;
 	public Domain.Accounts.Entities.Account User { get; private set; } = null!;
 	public AccountCredentials ExistingAccountCredentials { get; private set; } = null!;
-	public readonly Guid NonExistentId; 
-	
+	public readonly Guid NonExistentId;
+
 	public BinacleApi()
 	{
 		this.Client = this.CreateClient();
@@ -38,7 +37,7 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 			PropertyNameCaseInsensitive = true,
 			PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 		};
-		this.NonExistentId = Guid.Parse("EF81C267-A003-44B8-AD89-4B48661C4AA5"); 
+		this.NonExistentId = Guid.Parse("EF81C267-A003-44B8-AD89-4B48661C4AA5");
 	}
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -48,7 +47,7 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 		var preBuildConfigurationValues = new Dictionary<string, string?>
 		{
 			{ "Features:SERVICE_MODULE", bool.TrueString },
-			{ "RateLimiter:Auth", "NoLimiter::0"}
+			{ "RateLimiter:Auth", "NoLimiter::0" }
 		};
 		var configuration = new ConfigurationBuilder()
 			.AddInMemoryCollection(preBuildConfigurationValues)
@@ -83,7 +82,7 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 
 	public HttpClient Client { get; init; }
 	public JsonSerializerOptions JsonSerializerOptions { get; init; }
-	
+
 	public async ValueTask InitializeAsync()
 	{
 		var passwordService = this.Services.GetRequiredService<IPasswordService>();
@@ -101,7 +100,7 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 			"existinguser@binacle.net",
 			"Ex1stingUs3rP@ssw0rd"
 		);
-		
+
 		this.User = new Domain.Accounts.Entities.Account(
 			this.ExistingAccountCredentials.Username,
 			AccountRole.User,
@@ -114,18 +113,6 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 		this.User.ChangePassword(usersPassword);
 
 		await accountRepository.CreateAsync(this.User);
-
-		var userSubscription = new Domain.Subscriptions.Entities.Subscription(
-			this.User.Id,
-			SubscriptionStatus.Active,
-			SubscriptionType.Normal,
-			new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero),
-			Guid.Parse("BB7FACE4-3ABD-406B-BC8D-A5F114AA3964")
-		);
-
-		await subscriptionRepository.CreateAsync(userSubscription);
-
-		this.User.SetSubscription(userSubscription);
 	}
 
 	public async ValueTask EnsureAccountExists(AccountCredentials credentials)
@@ -141,30 +128,72 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 			new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero),
 			credentials.Id
 		);
-		
+
 		var usersPassword = passwordService.Create(credentials.Password);
 		account.ChangePassword(usersPassword);
 		await accountRepository.CreateAsync(account);
 	}
-	
+
 	public async ValueTask EnsureAccountDoesNotExist(AccountCredentials credentials)
+	{
+		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
+		var getResult = await accountRepository.GetByIdAsync(credentials.Id);
+		if (!getResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
+		{
+			return;
+		}
+
+		await accountRepository.DeleteAsync(account);
+	}
+
+	public async ValueTask EnsureAccountExistsWithSubscription(AccountCredentialsWithSubscription credentials)
+	{
+		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
+		var passwordService = this.Services.GetRequiredService<IPasswordService>();
+		var subscriptionRepository = this.Services.GetRequiredService<ISubscriptionRepository>();
+
+		var account = new Domain.Accounts.Entities.Account(
+			credentials.Username,
+			AccountRole.User,
+			credentials.Email,
+			AccountStatus.Active,
+			new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero),
+			credentials.Id
+		);
+
+		var usersPassword = passwordService.Create(credentials.Password);
+		account.ChangePassword(usersPassword);
+
+		var subscription = new Domain.Subscriptions.Entities.Subscription(
+			account.Id,
+			SubscriptionStatus.Active,
+			SubscriptionType.Normal,
+			new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero),
+			credentials.SubscriptionId
+		);
+		
+		account.SetSubscription(subscription);
+		await accountRepository.CreateAsync(account);
+		await subscriptionRepository.CreateAsync(subscription);
+	}
+
+	public async ValueTask EnsureAccountWithSubscriptionDoesNotExist(AccountCredentialsWithSubscription credentials)
 	{
 		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
 		var subscriptionRepository = this.Services.GetRequiredService<ISubscriptionRepository>();
 		var getResult = await accountRepository.GetByIdAsync(credentials.Id);
-		if (!getResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is  null)
+		if (!getResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 		{
 			return;
-			
 		}
 
-		if (account.HasSubscription())
+		var subscriptionResult = await subscriptionRepository.GetByIdAsync(credentials.SubscriptionId);
+		if (subscriptionResult.TryGetValue<Domain.Subscriptions.Entities.Subscription>(out var subscription) &&
+		    subscription is not null)
 		{
-			var subscriptionResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value);
-			var subscription = subscriptionResult.Unwrap<Domain.Subscriptions.Entities.Subscription>();
 			await subscriptionRepository.DeleteAsync(subscription);
 		}
-		
+
 		await accountRepository.DeleteAsync(account);
 	}
 }

@@ -11,6 +11,7 @@ namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Subscriptio
 public class Create : AdminEndpointsTestsBase
 {
 	private readonly AccountCredentials accountCredentialsUnderTest;
+	private readonly AccountCredentialsWithSubscription accountCredentialsWithSubscriptionUnderTest;
 
 	public Create(BinacleApi sut) : base(sut)
 	{
@@ -19,6 +20,14 @@ public class Create : AdminEndpointsTestsBase
 			"subscriptioncreateuser@binacle.net",
 			"subscriptioncreateuser@binacle.net",
 			"SubscriptionCr34teUs3ersP@ssw0rd"
+		);
+		
+		this.accountCredentialsWithSubscriptionUnderTest = new AccountCredentialsWithSubscription(
+			Guid.Parse("283DA5A3-6670-4AAE-887C-59B5387CE897"),
+			"subscriptioneuser@binacle.net",
+			"subscriptioneuser@binacle.net",
+			"SubscriptionUs3ersP@ssw0rd",
+			Guid.Parse("D938CB5B-1288-4B40-8BE0-CB84597ED8B3")
 		);
 	}
 
@@ -145,8 +154,8 @@ public class Create : AdminEndpointsTestsBase
 
 	#region 201 Created
 
-	[Fact(DisplayName = $"POST {routePath}. With Valid Credentials Returns 201 Created")]
-	public async Task Post_WithValidCredentials_Returns_201Created()
+	[Fact(DisplayName = $"POST {routePath}. With Valid Request Returns 201 Created")]
+	public async Task Post_WithValidRequest_Returns_201Created()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
@@ -202,7 +211,7 @@ public class Create : AdminEndpointsTestsBase
 		{
 			Type = SubscriptionType.Normal
 		};
-		var url = routePath.Replace("{id}", this.Sut.ExistingAccountCredentials.Id.ToString());
+		var url = routePath.Replace("{id}", this.accountCredentialsWithSubscriptionUnderTest.Id.ToString());
 
 		var response = await this.Sut.Client.PostAsJsonAsync(
 			url,
@@ -236,8 +245,8 @@ public class Create : AdminEndpointsTestsBase
 		response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableContent);
 	}
 	
-	[Fact(DisplayName = $"POST {routePath}. With Invalid Request Type Returns 422 Unprocessable Content")]
-	public async Task Post_WithInvalidRequestType_Returns_422UnprocessableContent()
+	[Fact(DisplayName = $"POST {routePath}. With Invalid Subscription Type Returns 422 Unprocessable Content")]
+	public async Task Post_WithInvalidSubscriptionType_Returns_422UnprocessableContent()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 		var request = new 
@@ -260,12 +269,14 @@ public class Create : AdminEndpointsTestsBase
 	public override async ValueTask InitializeAsync()
 	{
 		await this.Sut.EnsureAccountExists(this.accountCredentialsUnderTest);
+		await this.Sut.EnsureAccountExistsWithSubscription(this.accountCredentialsWithSubscriptionUnderTest);
 		await base.InitializeAsync();
 	}
 
 	public override async ValueTask DisposeAsync()
 	{
 		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
+		await this.Sut.EnsureAccountWithSubscriptionDoesNotExist(this.accountCredentialsWithSubscriptionUnderTest);
 		await base.DisposeAsync();
 	}
 }

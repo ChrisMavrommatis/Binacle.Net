@@ -24,25 +24,17 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			// TODO: Example
-			// .ResponseExamples<Status400ResponseExamples>(
-			// 	StatusCodes.Status400BadRequest,
-			// 	"application/problem+json"
-			// )
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
 			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For400BadRequest
 			)
-			// TODO: Example
-			// .ResponseExample<AccountCreateValidationProblemExample>(
-			// 	StatusCodes.Status422UnprocessableEntity,
-			// 	"application/problem+json"
-			// )
-			// .Produces<ErrorResponse>(StatusCodes.Status400BadRequest, "application/json")
-			// .ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
-			// .ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+			.ResponseExamples<PackByCustomValidationProblemExamples>(
+				StatusCodes.Status422UnprocessableEntity,
+				"application/problem+json"
+			)
 			.RequireRateLimiting("ApiUsage");
 	}
 

@@ -33,7 +33,7 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For422UnprocessableContent
 			)
-			.ResponseExample<SubscriptionPatchValidationProblemExample>(
+			.ResponseExamples<SubscriptionPatchValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			);

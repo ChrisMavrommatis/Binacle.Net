@@ -1,5 +1,0 @@
-﻿@id = 019678a2-ba63-7d29-8300-6ecdad1d6a63
-
-GET https://{{HOST}}/api/admin/account/{{id}}/subscription/
-Accept: application/json
-Authorization: Bearer {{BEARERTOKEN}}

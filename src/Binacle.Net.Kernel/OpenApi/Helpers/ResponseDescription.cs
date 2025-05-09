@@ -19,7 +19,7 @@ public static class ResponseDescription
 
 	internal static string Format(ResponseDescriptionMetadata metadata)
 		=> Format(metadata.StatusCode, metadata.Description);
-	
+
 	public static string Format(HttpStatusCode statusCode, string description)
 		=> Format((int)statusCode, description);
 }

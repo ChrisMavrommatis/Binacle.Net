@@ -24,6 +24,6 @@ internal class AlgorithmValidator : AbstractValidator<IWithAlgorithm>
 		
 		RuleFor(x => x.Algorithm)
 			.NotNull()
-			.WithMessage($"Is required and must be one of the following values: {string.Join(", ", enumValues)}");
+			.WithMessage(ErrorMessage.RequiredEnumValues<Algorithm>(nameof(IWithAlgorithm.Algorithm)));
 	}
 }

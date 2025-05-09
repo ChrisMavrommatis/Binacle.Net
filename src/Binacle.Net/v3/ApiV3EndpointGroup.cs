@@ -1,4 +1,6 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
+using Binacle.Net.v3.Contracts;
+using OpenApiExamples;
 
 namespace Binacle.Net.v3;
 
@@ -13,18 +15,10 @@ internal class ApiV3EndpointGroup : IEndpointGroup
 			.ResponseDescription(
 				StatusCodes.Status500InternalServerError,
 				ResponseDescription.For500InternalServerError
+			)
+			.ResponseExample<Status500ResponseExample>(
+				StatusCodes.Status500InternalServerError,
+				"application/problem+json"
 			);
-		
-		// TODO: Example
-		// .ResponseExample<Status500ResponseExample>(
-		// 	StatusCodes.Status500InternalServerError,
-		// 	"application/problem+json"
-		// )
-		// .Produces<ErrorResponse>(StatusCodes.Status500InternalServerError, "application/json")
-		// .ResponseExample<ServerErrorResponseExample>(StatusCodes.Status500InternalServerError, "application/json")
-		// .ResponseDescription(
-		// 	StatusCodes.Status500InternalServerError,
-		// 	ResponseDescription.For500InternalServerError
-		// );
 	}
 }

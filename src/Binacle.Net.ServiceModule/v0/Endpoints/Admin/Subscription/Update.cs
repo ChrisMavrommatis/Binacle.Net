@@ -24,7 +24,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			.RequestExample<SubscriptionUpdateRequestExample>("application/json")
 			
 			.Produces(StatusCodes.Status204NoContent)
-			.ResponseDescription(StatusCodes.Status204NoContent, "The subscription was updated succesfully")
+			.ResponseDescription(StatusCodes.Status204NoContent, "The subscription was updated successfully")
 
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, SubscriptionResponseDescription.For404NotFound)
@@ -34,7 +34,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For422UnprocessableContent
 			)
-			.ResponseExample<SubscriptionUpdateValidationProblemExample>(
+			.ResponseExamples<SubscriptionUpdateValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			);

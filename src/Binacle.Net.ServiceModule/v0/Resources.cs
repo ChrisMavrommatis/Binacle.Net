@@ -29,7 +29,7 @@ internal static class ErrorMessage
 		var values = Enum.GetValues<TEnum>();
 
 		return
-			$"'{nameof(propertyName)}' is required and must be one of the following values: {string.Join(", ", values)}";
+			$"'{propertyName}' is required and must be one of the following values: {string.Join(", ", values)}";
 	}
 
 	public const string IdMustBeGuid = "The provided value for 'Id' must be a valid Guid";

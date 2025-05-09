@@ -182,7 +182,6 @@ public class Update : AdminEndpointsTestsBase
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NoContent);
 	}
 
-	
 	#endregion
 
 	#region 404 Not Found

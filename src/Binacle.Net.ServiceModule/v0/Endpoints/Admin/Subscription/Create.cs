@@ -39,7 +39,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For422UnprocessableContent
 			)
-			.ResponseExample<SubscriptionCreateValidationProblemExample>(
+			.ResponseExamples<SubscriptionCreateValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			);

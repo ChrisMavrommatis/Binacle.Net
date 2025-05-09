@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Binacle.Net.Kernel.OpenApi.Helpers;
 using Binacle.Net.Kernel.Serialization;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
@@ -113,46 +114,34 @@ internal class AccountPatchValidationProblemExamples : IMultipleOpenApiExamplesP
 {
 	public IEnumerable<IOpenApiExample<ProblemDetails>> GetExamples()
 	{
-		yield return OpenApiExample.Create(
+		yield return OpenApiValidationProblemExample.Create(
 			"validationProblem",
 			"Validation Problem",
 			"Example response with validation errors",
-			new HttpValidationProblemDetails(new Dictionary<string, string[]>()
+			new Dictionary<string, string[]>()
 			{
 				{ "Email", ["'Email' is not a valid email address."] },
 				{ "Password", ["The length of 'Password' must be at least 10 characters. You entered 8 characters."] }
-			})
-			{
-				Type= "https://tools.ietf.org/html/rfc4918#section-11.2",
-				Status = StatusCodes.Status422UnprocessableEntity
 			}
 		);
 
-		yield return OpenApiExample.Create(
+		yield return OpenApiValidationProblemExample.Create(
 			"invalidId",
 			"Invalid Id",
 			"Example response when you provide and ID that isn't Guid",
-			new HttpValidationProblemDetails(new Dictionary<string, string[]>()
+			new Dictionary<string, string[]>()
 			{
 				{ "Id", [ErrorMessage.IdMustBeGuid] },
-			})
-			{
-				Type= "https://tools.ietf.org/html/rfc4918#section-11.2",
-				Status = StatusCodes.Status422UnprocessableEntity
 			}
 		);
 
-		yield return OpenApiExample.Create(
+		yield return OpenApiValidationProblemExample.Create(
 			"validationProblem2",
 			"Validation Problem 2",
 			"Example response with validation errors",
-			new HttpValidationProblemDetails(new Dictionary<string, string[]>()
+			new Dictionary<string, string[]>()
 			{
 				{ "", ["At least one field must be provided for update."] },
-			})
-			{
-				Type= "https://tools.ietf.org/html/rfc4918#section-11.2",
-				Status = StatusCodes.Status422UnprocessableEntity
 			}
 		);
 	}

@@ -1,8 +1,10 @@
 ﻿using System.Text.Json.Serialization;
+using Binacle.Net.Kernel.OpenApi.Helpers;
 using Binacle.Net.Kernel.Serialization;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
-using Binacle.Net.ServiceModule.v0.Contracts.Common;
+using Binacle.Net.ServiceModule.v0.Resources;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 
@@ -65,21 +67,29 @@ internal class SubscriptionPatchRequestExamples : IMultipleOpenApiExamplesProvid
 	}
 }
 
-internal class SubscriptionPatchValidationProblemExample : ValidationProblemResponseExample
+internal class SubscriptionPatchValidationProblemExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
 {
-	public override Dictionary<string, string[]> GetErrors()
+	public IEnumerable<IOpenApiExample<ProblemDetails>> GetExamples()
 	{
-		// TODO: Example
-		/* yield return OpenApiExample.Create(
-		 	"idparametererror",
-		 	"ID Parameter Error",
-		 	"Example response when you provide and ID that isn't Guid",
-		 	ErrorResponse.IdToGuidParameterError
-		 );
-		*/
-		return new Dictionary<string, string[]>()
-		{
-			{ "", ["At least one field must be provided for update."] },
-		};
+		yield return OpenApiValidationProblemExample.Create(
+			"validationProblem",
+			"Validation Problem",
+			"Example response when you don't provide any field",
+			new Dictionary<string, string[]>()
+			{
+				{ "", ["At least one field must be provided for update."] },
+			}
+		);
+
+		yield return OpenApiValidationProblemExample.Create(
+			"invalidId",
+			"Invalid Id",
+			"Example response when you provide and ID that isn't Guid",
+			new Dictionary<string, string[]>()
+			{
+				{ "Id", [ErrorMessage.IdMustBeGuid] },
+			}
+		);
 	}
 }
+

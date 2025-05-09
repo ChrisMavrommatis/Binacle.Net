@@ -1,9 +1,10 @@
 ﻿using System.Text.Json.Serialization;
+using Binacle.Net.Kernel.OpenApi.Helpers;
 using Binacle.Net.Kernel.Serialization;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
-using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 
@@ -48,26 +49,32 @@ internal class SubscriptionUpdateRequestExample : ISingleOpenApiExamplesProvider
 	}
 }
 
-internal class SubscriptionUpdateValidationProblemExample : ValidationProblemResponseExample
+internal class SubscriptionUpdateValidationProblemExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
 {
-	// TODO: Example
-	/* yield return OpenApiExample.Create(
-	 "idparametererror",
-	 "ID Parameter Error",
-	 "Example response when you provide and ID that isn't Guid",
-	 ErrorResponse.IdToGuidParameterError
-	 );
-	 */
-
-	public override Dictionary<string, string[]> GetErrors()
+	public IEnumerable<IOpenApiExample<ProblemDetails>> GetExamples()
 	{
-		return new Dictionary<string, string[]>()
-		{
-			{ "Type", [ErrorMessage.RequiredEnumValues<SubscriptionType>(nameof(SubscriptionUpdateRequest.Type))] },
+		yield return OpenApiValidationProblemExample.Create(
+			"validationProblem",
+			"Validation Problem",
+			"Example response when you provide invalid Type and Status",
+			new Dictionary<string, string[]>()
 			{
-				"Status",
-				[ErrorMessage.RequiredEnumValues<SubscriptionStatus>(nameof(SubscriptionUpdateRequest.Status))]
+				{ "Type", [ErrorMessage.RequiredEnumValues<SubscriptionType>(nameof(SubscriptionUpdateRequest.Type))] },
+				{
+					"Status",
+					[ErrorMessage.RequiredEnumValues<SubscriptionStatus>(nameof(SubscriptionUpdateRequest.Status))]
+				}
 			}
-		};
+		);
+
+		yield return OpenApiValidationProblemExample.Create(
+			"invalidId",
+			"Invalid Id",
+			"Example response when you provide and ID that isn't Guid",
+			new Dictionary<string, string[]>()
+			{
+				{ "Id", [ErrorMessage.IdMustBeGuid] },
+			}
+		);
 	}
 }
