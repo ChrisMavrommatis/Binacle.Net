@@ -24,8 +24,12 @@ public static class ModuleDefinition
 		
 		builder.Services
 			.AddHttpContextAccessor()
-			.AddRazorComponents()
-			.AddInteractiveServerComponents();
+			.AddRazorComponents(options =>
+			{
+			})
+			.AddInteractiveServerComponents(options =>
+			{
+			});
 
 		builder.Services.AddHttpClient("BinacleApi", (serviceProvider, httpClient) =>
 		{
@@ -65,9 +69,6 @@ public static class ModuleDefinition
 		// Configure the HTTP request pipeline.
 		if (!app.Environment.IsDevelopment())
 		{
-			// TODO Investigate this
-			// app.UseExceptionHandler("/Error");
-			
 			// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 			app.UseHsts();
 		}
@@ -76,12 +77,14 @@ public static class ModuleDefinition
 
 		app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
-
+		
 		app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
 		app.Use(async(ctx, next) =>
 		{
-			if (ctx.Request.Path.Value?.StartsWith("/api/", StringComparison.OrdinalIgnoreCase) ?? false)
+			if (ctx.Request.Path.StartsWithSegments("/api")
+			    || ctx.Request.Path.StartsWithSegments("/swagger")
+			    || ctx.Request.Path.StartsWithSegments("/scalar"))
 			{
 				var statusCodeFeature = ctx.Features.Get<IStatusCodePagesFeature>();
 

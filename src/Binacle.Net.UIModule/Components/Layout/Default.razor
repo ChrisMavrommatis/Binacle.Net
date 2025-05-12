@@ -1,5 +1,13 @@
-﻿@inherits LayoutComponentBase
+﻿@using Binacle.Net.UIModule.Components.Pages
+@inherits LayoutComponentBase
 
 <main class="responsive padding">
-	@Body
+	<ErrorBoundary>
+		<ChildContent>
+			@Body
+		</ChildContent>
+		<ErrorContent>
+			<Error />
+		</ErrorContent>
+	</ErrorBoundary>
 </main>

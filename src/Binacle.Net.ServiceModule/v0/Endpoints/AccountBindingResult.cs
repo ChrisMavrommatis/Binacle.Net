@@ -31,7 +31,7 @@ internal class AccountBindingResult<T>
 
 	public async Task<IResult> ValidateAsync(
 		AccountId id, 
-		Func<T, Account, Task<IResult>> handleRequest
+		Func<T, Domain.Accounts.Entities.Account, Task<IResult>> handleRequest
 		)
 	{
 		var accountIdValidator = this.serviceProvider.GetRequiredService<IValidator<AccountId>>();

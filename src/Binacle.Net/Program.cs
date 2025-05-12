@@ -64,7 +64,7 @@ public class Program
 		);
 		builder.Services.AddEndpointsApiExplorer();
 
-
+		
 		builder.Services.ConfigureHttpJsonOptions(options =>
 		{
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
@@ -74,6 +74,7 @@ public class Program
 		{
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
+		
 		builder.Services.AddTransient(typeof(IOptionalDependency<>), typeof(OptionalDependency<>));
 
 		builder.Services.AddSingleton(_ => TimeProvider.System);
@@ -92,7 +93,7 @@ public class Program
 			options.LowercaseQueryStrings = true;
 			options.LowercaseUrls = true;
 		});
-
+		
 
 		builder.Services.AddExceptionHandler<InternalServerErrorExceptionHandler>();
 		builder.Services.AddProblemDetails(options =>
@@ -120,24 +121,31 @@ public class Program
 		{
 			builder.AddUIModule();
 		}
+		
+		// SWAGGER_UI from environment vars
+		var swaggerEnabled = Feature.IsEnabled("SWAGGER_UI");
+
+		// SCALAR_UI from environment vars
+		var scalarEnabled = Feature.IsEnabled("SCALAR_UI");
+		
+		builder.Services.Configure<FeatureOptions>(options =>
+		{
+			if (swaggerEnabled)
+			{
+				options.AddFeature("SwaggerUI");
+			}
+			if (scalarEnabled)
+			{
+				options.AddFeature("ScalarUI");
+			}
+		});
 
 		var app = builder.Build();
 
 		// Slim builder
 		app.UseHttpsRedirection();
 
-		if (app.Environment.IsDevelopment())
-		{
-			app.UseDeveloperExceptionPage();
-		}
-
 		app.UseExceptionHandler();
-
-		// SWAGGER_UI from environment vars
-		var swaggerEnabled = Feature.IsEnabled("SWAGGER_UI");
-
-		// SCALAR_UI from environment vars
-		var scalarEnabled = Feature.IsEnabled("SCALAR_UI");
 
 		if (swaggerEnabled || scalarEnabled)
 		{
@@ -188,10 +196,8 @@ public class Program
 		}
 
 		app.RegisterEndpointsFromAssemblyContaining<IApiMarker>();
-
+		
 		await app.RunStartupTasksAsync();
 		await app.RunAsync();
 	}
 }
-
-

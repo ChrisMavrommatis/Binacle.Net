@@ -71,7 +71,7 @@ internal class Token : IEndpoint
 		return await bindingResult.ValidateAsync(async request =>
 		{
 			var accountResult = await accountRepository.GetByUsernameAsync(request.Username);
-			if (!accountResult.TryGetValue<Account>(out var account) || account is null)
+			if (!accountResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 			{
 				return Results.Unauthorized();
 			}
