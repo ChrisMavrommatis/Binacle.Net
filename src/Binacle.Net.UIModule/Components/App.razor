@@ -14,7 +14,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <base href="." />
 
-    <link href="https://cdn.jsdelivr.net/npm/beercss@3.8.0/dist/cdn/beer.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="vendor/beercss/beer.min.css" >
     
     <link type="text/css" rel="stylesheet" href="css/main.css" media="screen,projection" />
     
@@ -24,10 +24,10 @@
 </head>
 
 <body class="@ThemeBodyClass">
-    <Header />
+    <Header></Header>
 	<Navbar />
     <Routes />
-    <Footer />
+    <Footer></Footer>
 
     <script src="_framework/blazor.web.js"></script>
 	<script src="js/cookies.js"></script>
@@ -35,18 +35,18 @@
     <script type="importmap">
         {
           "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/",
+            "three": "https://cdn.jsdelivr.net/npm/three@0.176.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.176.0/examples/jsm/",
             "binacle/addons/": "./js/addons/"
 
           }
         }
     </script>
     <script type="module" src="js/PackingVisualizer.js"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.8.0/dist/cdn/beer.min.js"></script>
+    <script type="module" src="vendor/beercss/beer.min.js"></script>
+    @* We recommend using the material-dynamic-colors only when your app needs to change theme at runtime. *@
+    @*<script type="module" src="vendor/material-dynamic-colors/material-dynamic-colors.min.js"></script>*@
     <script src="js/themeswitcher.js"></script>
-    
-    @* <script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script> *@
 </body>
 
 </html>

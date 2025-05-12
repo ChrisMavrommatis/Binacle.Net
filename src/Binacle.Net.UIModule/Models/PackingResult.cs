@@ -1,7 +1,10 @@
-﻿namespace Binacle.Net.UIModule.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Binacle.Net.UIModule.Models;
 
 internal class PackingResult
 {
+	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public PackResultType Result { get; set; }
 	public Bin? Bin { get; set; }
 	public List<PackedItem>? PackedItems { get; set; }

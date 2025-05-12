@@ -5,6 +5,8 @@ using Binacle.Net.UIModule.Services;
 using Binacle.Net.UIModule.ViewModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Bin = Binacle.Net.UIModule.ViewModels.Bin;
 using Item = Binacle.Net.UIModule.ViewModels.Item;
 
@@ -13,15 +15,12 @@ namespace Binacle.Net.UIModule.Components.Pages;
 public partial class PackingDemo : AppletComponentBase
 {
 	protected override string Ref => "PackingDemo";
-	
-	[Inject] 
-	internal ISampleDataService? SampleDataService { get; set; }
 
-	[Inject] 
-	protected IHttpClientFactory? HttpClientFactory { get; set; }
+	[Inject] internal ISampleDataService? SampleDataService { get; set; }
 
-	[Inject] 
-	internal MessagingService? MessagingService { get; set; }
+	[Inject] protected IHttpClientFactory? HttpClientFactory { get; set; }
+
+	[Inject] internal MessagingService? MessagingService { get; set; }
 
 	private Errors errors = new();
 	private List<PackingResult>? results;
@@ -109,124 +108,152 @@ public partial class PackingDemo : AppletComponentBase
 			this.errors.AddRange(messages);
 			return;
 		}
-		await this.MessagingService!.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
-			"UpdateScene",
-			async () =>
-			{
-				try
+
+		await this.MessagingService!
+			.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
+				"UpdateScene",
+				async () =>
 				{
-					var request = new ApiModels.Requests.PackByCustomRequest
+					try
 					{
-						Parameters = new ApiModels.Requests.PackRequestParameters()
+						var request = new ApiModels.Requests.PackByCustomRequest
 						{
-							Algorithm = this.Model.Algorithm switch
+							Parameters = new ApiModels.Requests.PackRequestParameters()
 							{
-								Algorithm.FirstFitDecreasing => ApiModels.Algorithm.FFD,
-								Algorithm.BestFitDecreasing => ApiModels.Algorithm.BFD,
-								Algorithm.WorstFitDecreasing => ApiModels.Algorithm.WFD,
-								_ => throw new ArgumentOutOfRangeException()
-							}
-						},
-						Bins = this.Model.Bins.Select(x => new UIModule.Models.Bin(x.ID, x)).ToList(),
-						Items = this.Model.Items.Select(x => new UIModule.Models.Item(x.ID, x, x.Quantity)).ToList()
-					};
-					var client = this.HttpClientFactory!.CreateClient("BinacleApi");
-					var response = await client.PostAsJsonAsync("api/v3/pack/by-custom", request);
-					if (response.StatusCode != HttpStatusCode.OK)
-					{
-						this.errors.Add($"Error: {response.StatusCode}.");
-						var errorResponse = await response.Content.ReadFromJsonAsync<ApiModels.Responses.ErrorResponse>();
-						if (errorResponse is null)
+								Algorithm = this.Model.Algorithm switch
+								{
+									Algorithm.FirstFitDecreasing => ApiModels.Algorithm.FFD,
+									Algorithm.BestFitDecreasing => ApiModels.Algorithm.BFD,
+									Algorithm.WorstFitDecreasing => ApiModels.Algorithm.WFD,
+									_ => throw new ArgumentOutOfRangeException()
+								}
+							},
+							Bins = this.Model.Bins.Select(x => new UIModule.Models.Bin(x.ID, x)).ToList(),
+							Items = this.Model.Items.Select(x => new UIModule.Models.Item(x.ID, x, x.Quantity)).ToList()
+						};
+						var client = this.HttpClientFactory!.CreateClient("BinacleApi");
+						var response = await client.PostAsJsonAsync("api/v3/pack/by-custom", request);
+						if (response.StatusCode != HttpStatusCode.OK)
 						{
-							this.errors.Add($"Could not read the response");
+							await this.HandleErrorResponse(response);
 							return (null, null);
 						}
 
-						if (!string.IsNullOrEmpty(errorResponse.Message))
+						var packResponse =
+							await response.Content.ReadFromJsonAsync<ApiModels.Responses.PackByCustomResponse>();
+						if (packResponse is null || packResponse.Data.Count < 1)
 						{
-							this.errors.Add(errorResponse.Message);
-						}
-
-						if (errorResponse.Data is null)
-						{
+							this.errors.Add($"No results found");
 							return (null, null);
 						}
-						foreach (var error in errorResponse.Data)
-						{
-							if (!string.IsNullOrEmpty(error.Field))
-							{
-								this.errors.Add($"{error.Field} - {error.FieldError}");
-							}
 
-							if (!string.IsNullOrEmpty(error.Parameter))
-							{
-								this.errors.Add($"{error.Parameter} - {error.Message}");
-							}
+						this.results = packResponse.Data ?? new List<PackingResult>();
+
+						var result = this.results!.FirstOrDefault()!;
+
+						if (result.Bin is null)
+						{
+							this.errors.Add($"Selected result has no bin");
+							return (null, null);
 						}
 
-						return (null, null);
+						this.selectedResult = result;
+						return (result.Bin, result.PackedItems);
 					}
-
-					var packResponse = await response.Content.ReadFromJsonAsync<ApiModels.Responses.PackByCustomResponse>();
-					if (packResponse is null || packResponse.Data is null || packResponse.Data.Count < 1)
+					catch (Exception ex)
 					{
-						this.errors.Add($"No results found");
+						this.errors.Add(ex.Message);
 						return (null, null);
 					}
-
-					this.results = packResponse.Data ?? new List<PackingResult>();
-
-					var result = this.results!.FirstOrDefault()!;
-
-					if (result.Bin is null)
-					{
-						this.errors.Add($"Selected result has no bin");
-						return (null, null);
-					}
-
-					this.selectedResult = result;
-					return (result.Bin, result.PackedItems);
-				}
-				catch (Exception ex)
-				{
-					this.errors.Add(ex.Message);
-					return (null, null);
-				}
-			});
+				});
 	}
-	
+
+	private async Task HandleErrorResponse(HttpResponseMessage response)
+	{
+		this.errors.Add($"Error: {response.StatusCode}.");
+
+		if (response.StatusCode == HttpStatusCode.UnprocessableContent)
+		{
+			var validationErrorResponse = await response.Content.ReadFromJsonAsync<HttpValidationProblemDetails>();
+			if (validationErrorResponse is null)
+			{
+				this.errors.Add($"Could not read the response");
+				return;
+			}
+
+			if (!string.IsNullOrEmpty(validationErrorResponse.Title))
+			{
+				this.errors.Add(validationErrorResponse.Title);
+			}
+
+			if (!string.IsNullOrEmpty(validationErrorResponse.Detail))
+			{
+				this.errors.Add(validationErrorResponse.Detail);
+			}
+
+			foreach (var (field, errorMsgs) in validationErrorResponse.Errors)
+			{
+				foreach (var error in errorMsgs)
+				{
+					this.errors.Add($"{field}: {error}");
+				}
+			}
+
+			return;
+		}
+		var errorResponse = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+		if (errorResponse is null)
+		{
+			this.errors.Add($"Could not read the response");
+			return;
+		}
+
+		
+		if (!string.IsNullOrEmpty(errorResponse.Title))
+		{
+			this.errors.Add(errorResponse.Title);
+		}
+
+		if (!string.IsNullOrEmpty(errorResponse.Detail))
+		{
+			this.errors.Add(errorResponse.Detail);
+		}
+	}
+
 	private async Task SelectResult(UIModule.Models.PackingResult result)
 	{
-		await this.MessagingService!.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
-			"UpdateScene",
-			() =>
-			{
-				try
+		await this.MessagingService!
+			.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
+				"UpdateScene",
+				() =>
 				{
-					if(result.Bin is null)
+					try
 					{
-						throw new InvalidOperationException("Selected result has no bin");
-					}
+						if (result.Bin is null)
+						{
+							throw new InvalidOperationException("Selected result has no bin");
+						}
 
-					var existingResult = this.results?.FirstOrDefault(x => x.Bin!.ID == result.Bin.ID);
-					if (existingResult is null)
-					{
-						throw new InvalidOperationException("Could not find selected result");
+						var existingResult = this.results?.FirstOrDefault(x => x.Bin!.ID == result.Bin.ID);
+						if (existingResult is null)
+						{
+							throw new InvalidOperationException("Could not find selected result");
+						}
+
+						this.selectedResult = result;
+						var returnedResult = (this.selectedResult.Bin, this.selectedResult.PackedItems);
+						return Task.FromResult(returnedResult)!;
 					}
-					
-					this.selectedResult = result;
-					var returnedResult = (this.selectedResult.Bin, this.selectedResult.PackedItems);
-					return Task.FromResult(returnedResult)!;
-				}
-				catch (Exception ex)
-				{
-					this.errors.Add(ex.Message);
-					var returnedResult = (default(UIModule.Models.Bin?), default(List<UIModule.Models.PackedItem>?));
-					return Task.FromResult(returnedResult)!;
-				}
-			});
+					catch (Exception ex)
+					{
+						this.errors.Add(ex.Message);
+						var returnedResult = (default(UIModule.Models.Bin?),
+							default(List<UIModule.Models.PackedItem>?));
+						return Task.FromResult(returnedResult)!;
+					}
+				});
 	}
-	
+
 	private string GetColorClass(UIModule.Models.PackingResult result)
 	{
 		var baseColor = result.Result switch
