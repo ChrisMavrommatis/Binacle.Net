@@ -22,10 +22,10 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			.WithDescription("Admins can use this endpoint to delete an account")
 			.Produces(StatusCodes.Status204NoContent)
 			.ResponseDescription(StatusCodes.Status204NoContent, "The account was deleted")
-
+			
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound)
-
+			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
@@ -54,7 +54,7 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			);
 		}
 
-		var accountResult = await accountRepository.GetByIdAsync(id.Value);
+		var accountResult = await accountRepository.GetByIdAsync(id.Value, cancellationToken: cancellationToken);
 		if (!accountResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 		{
 			return Results.NotFound();
@@ -63,7 +63,7 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 		var now = timeProvider.GetUtcNow();
 		account.SoftDelete(now);
 
-		var result = await accountRepository.ForceUpdateAsync(account);
+		var result = await accountRepository.UpdateAsync(account, cancellationToken);
 
 		return result.Match(
 			success => Results.NoContent(),

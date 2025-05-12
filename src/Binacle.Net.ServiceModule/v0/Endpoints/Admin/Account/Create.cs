@@ -57,7 +57,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 	{
 		 return await bindingResult.ValidateAsync(async request =>
 		 {
-			var getResult = await accountRepository.GetByUsernameAsync(request.Username);
+			var getResult = await accountRepository.GetByUsernameAsync(request.Username, cancellationToken);
 			if (getResult.Is<Domain.Accounts.Entities.Account>())
 			{
 				return Results.Conflict();
@@ -74,7 +74,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			
 			var password = passwordService.Create(request.Password);
 			newAccount.ChangePassword(password);
-			var createResult = await accountRepository.CreateAsync(newAccount);
+			var createResult = await accountRepository.CreateAsync(newAccount, cancellationToken);
 
 			return createResult.Match(
 				success => Results.Created($"/api/admin/account/{newAccount.Id}", null),

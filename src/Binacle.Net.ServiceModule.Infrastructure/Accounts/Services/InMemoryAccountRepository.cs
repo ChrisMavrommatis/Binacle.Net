@@ -11,7 +11,7 @@ internal class InMemoryAccountRepository : IAccountRepository
 {
 	private static readonly ConcurrentSortedDictionary<Guid, Account> _accounts = new();
 
-	public Task<FluxUnion<Account, NotFound>> GetByIdAsync(Guid id, bool allowDeleted =false)
+	public Task<FluxUnion<Account, NotFound>> GetByIdAsync(Guid id, bool allowDeleted = false, CancellationToken cancellationToken = default)
 	{
 		if (_accounts.TryGetValue(id, out var account) && (allowDeleted || !account.IsDeleted))
 		{
@@ -21,7 +21,7 @@ internal class InMemoryAccountRepository : IAccountRepository
 		return Task.FromResult<FluxUnion<Account, NotFound>>(TypedResult.NotFound);
 	}
 
-	public Task<PagedList<Account>> ListAsync(int page, int pageSize)
+	public Task<PagedList<Account>> ListAsync(int page, int pageSize, CancellationToken cancellationToken = default)
 	{
 		var accounts = _accounts.Values
 			.Where(x => !x.IsDeleted)
@@ -39,7 +39,7 @@ internal class InMemoryAccountRepository : IAccountRepository
 		return Task.FromResult(pagedAccounts);
 	}
 
-	public Task<FluxUnion<Account, NotFound>> GetByUsernameAsync(string username)
+	public Task<FluxUnion<Account, NotFound>> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
 	{
 		var account = _accounts.Values.FirstOrDefault(x => x.Username == username);
 		if (account is not null && !account.IsDeleted)
@@ -50,7 +50,7 @@ internal class InMemoryAccountRepository : IAccountRepository
 		return Task.FromResult<FluxUnion<Account, NotFound>>(TypedResult.NotFound);
 	}
 
-	public Task<FluxUnion<Success, Conflict>> CreateAsync(Account account)
+	public Task<FluxUnion<Success, Conflict>> CreateAsync(Account account, CancellationToken cancellationToken = default)
 	{
 		if (_accounts.ContainsKey(account.Id))
 		{
@@ -61,18 +61,7 @@ internal class InMemoryAccountRepository : IAccountRepository
 		return Task.FromResult<FluxUnion<Success, Conflict>>(TypedResult.Success);
 	}
 
-	public Task<FluxUnion<Success, NotFound>> UpdateAsync(Account account)
-	{
-		if (_accounts.TryGetValue(account.Id, out var existingAccount) && !existingAccount.IsDeleted)
-		{
-			_accounts[account.Id] = account;
-			return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.Success);
-		}
-
-		return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.NotFound);
-	}
-	
-	public Task<FluxUnion<Success, NotFound>> ForceUpdateAsync(Account account)
+	public Task<FluxUnion<Success, NotFound>> UpdateAsync(Account account, CancellationToken cancellationToken = default)
 	{
 		if (_accounts.TryGetValue(account.Id, out var existingAccount))
 		{
@@ -82,8 +71,8 @@ internal class InMemoryAccountRepository : IAccountRepository
 
 		return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.NotFound);
 	}
-
-	public Task<FluxUnion<Success, NotFound>> DeleteAsync(Account account)
+	
+	public Task<FluxUnion<Success, NotFound>> DeleteAsync(Account account, CancellationToken cancellationToken = default)
 	{
 		var removed = _accounts.Remove(account.Id);
 		return Task.FromResult<FluxUnion<Success, NotFound>>(

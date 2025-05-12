@@ -68,14 +68,14 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 				utcNow
 			);
 
-			var createResult = await subscriptionRepository.CreateAsync(subscription);
+			var createResult = await subscriptionRepository.CreateAsync(subscription, cancellationToken);
 			if (!createResult.Is<Success>())
 			{
 				return TypedResults.Conflict();
 			}
 
 			account.SetSubscription(subscription);
-			var updateAccountResult = await accountRepository.ForceUpdateAsync(account);
+			var updateAccountResult = await accountRepository.UpdateAsync(account, cancellationToken);
 			
 			if (!updateAccountResult.Is<Success>())
 			{

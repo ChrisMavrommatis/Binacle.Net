@@ -49,7 +49,7 @@ internal class List : IGroupedEndpoint<AdminGroup>
 			);
 		}
 
-		var result = await subscriptionRepository.ListAsync(paging.PageNumber, paging.PageSize);
+		var result = await subscriptionRepository.ListAsync(paging.PageNumber, paging.PageSize, cancellationToken);
 
 		return Results.Ok(
 			SubscriptionListResponse.Create(result)

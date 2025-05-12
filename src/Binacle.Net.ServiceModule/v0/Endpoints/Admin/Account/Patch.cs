@@ -61,7 +61,7 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 		{
 			if (!string.IsNullOrWhiteSpace(request.Username))
 			{
-				var usernameResult = await accountRepository.GetByUsernameAsync(request.Username);
+				var usernameResult = await accountRepository.GetByUsernameAsync(request.Username, cancellationToken);
 				if (usernameResult.TryGetValue<Domain.Accounts.Entities.Account>(out var foundAccount) && !account.Equals(foundAccount))
 				{
 					return Results.Conflict();
@@ -89,7 +89,7 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 				account.ChangeStatus(request.Status.Value);
 			}
 
-			var updateResult = await accountRepository.UpdateAsync(account);
+			var updateResult = await accountRepository.UpdateAsync(account, cancellationToken);
 
 			return updateResult.Match(
 				success => Results.NoContent(),

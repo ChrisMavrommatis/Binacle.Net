@@ -1,7 +1,5 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
-using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
@@ -56,7 +54,8 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 				statusCode: StatusCodes.Status422UnprocessableEntity
 			);
 		}
-		var accountResult = await accountRepository.GetByIdAsync(id.Value);
+
+		var accountResult = await accountRepository.GetByIdAsync(id.Value, cancellationToken: cancellationToken);
 		if (!accountResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 		{
 			return Results.NotFound();
@@ -67,8 +66,13 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			return Results.NotFound();
 		}
 
-		var getResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value);
-		if (!getResult.TryGetValue<Domain.Subscriptions.Entities.Subscription>(out var subscription) || subscription is null)
+		var getResult = await subscriptionRepository.GetByIdAsync(
+			account.SubscriptionId!.Value,
+			cancellationToken: cancellationToken
+		);
+		
+		if (!getResult.TryGetValue<Domain.Subscriptions.Entities.Subscription>(out var subscription) ||
+		    subscription is null)
 		{
 			return Results.NotFound();
 		}
@@ -81,8 +85,8 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			return Results.NotFound();
 		}
 
-		var updateAccountResult = await accountRepository.UpdateAsync(account);
-		var updateSubscriptionResult = await subscriptionRepository.ForceUpdateAsync(subscription);
+		var updateAccountResult = await accountRepository.UpdateAsync(account, cancellationToken);
+		var updateSubscriptionResult = await subscriptionRepository.UpdateAsync(subscription, cancellationToken);
 
 		if (!updateAccountResult.Is<Success>() || !updateSubscriptionResult.Is<Success>())
 		{

@@ -57,7 +57,11 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 			);
 		}
 
-		var accountResult = await accountRepository.GetByIdAsync(id.Value, allowDeleted ?? false);
+		var accountResult = await accountRepository.GetByIdAsync(
+			id.Value, 
+			allowDeleted ?? false, 
+			cancellationToken
+		);
 
 		if (!accountResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 		{
@@ -71,8 +75,12 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 			);
 		}
 
-		var subscriptionResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value,  allowDeleted ?? false);
-		
+		var subscriptionResult = await subscriptionRepository.GetByIdAsync(
+			account.SubscriptionId!.Value,
+			allowDeleted ?? false, 
+			cancellationToken
+		);
+
 
 		return subscriptionResult.Match(
 			subscription => Results.Ok(

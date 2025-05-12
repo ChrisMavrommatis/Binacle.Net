@@ -12,7 +12,7 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 {
 	private static readonly ConcurrentSortedDictionary<Guid, Subscription> _subscriptions = new();
 	
-	public Task<FluxUnion<Subscription, NotFound>> GetByIdAsync(Guid id, bool allowDeleted = false)
+	public Task<FluxUnion<Subscription, NotFound>> GetByIdAsync(Guid id, bool allowDeleted = false, CancellationToken cancellationToken = default)
 	{
 		if (_subscriptions.TryGetValue(id, out var subscription) && (!subscription.IsDeleted || allowDeleted))
 		{
@@ -22,7 +22,7 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 		return Task.FromResult<FluxUnion<Subscription, NotFound>>(TypedResult.NotFound);
 	}
 	
-	public Task<PagedList<Subscription>> ListAsync(int page, int pageSize)
+	public Task<PagedList<Subscription>> ListAsync(int page, int pageSize, CancellationToken cancellationToken = default)
 	{
 		var subscriptions = _subscriptions.Values
 			.Where(x => !x.IsDeleted)
@@ -41,7 +41,7 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 	}
 
 
-	public Task<FluxUnion<Subscription, NotFound>> GetByAccountIdAsync(Guid accountId)
+	public Task<FluxUnion<Subscription, NotFound>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
 	{
 		var subscription = _subscriptions.Values.FirstOrDefault(s => s.AccountId == accountId);
 		if (subscription is not null && !subscription.IsDeleted)
@@ -52,7 +52,7 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 		return Task.FromResult<FluxUnion<Subscription, NotFound>>(TypedResult.NotFound);
 	}
 
-	public Task<FluxUnion<Success, Conflict>> CreateAsync(Subscription subscription)
+	public Task<FluxUnion<Success, Conflict>> CreateAsync(Subscription subscription, CancellationToken cancellationToken = default)
 	{
 		if(_subscriptions.ContainsKey(subscription.Id))
 		{
@@ -62,18 +62,7 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 		return Task.FromResult<FluxUnion<Success, Conflict>>(TypedResult.Success);
 	}
 
-	public Task<FluxUnion<Success, NotFound>> UpdateAsync(Subscription subscription)
-	{
-		if (_subscriptions.TryGetValue(subscription.Id, out var existing) && !existing.IsDeleted)
-		{
-			_subscriptions[subscription.Id] = subscription;
-			return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.Success);
-		}
-
-		return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.NotFound);
-	}
-	
-	public Task<FluxUnion<Success, NotFound>> ForceUpdateAsync(Subscription subscription)
+	public Task<FluxUnion<Success, NotFound>> UpdateAsync(Subscription subscription, CancellationToken cancellationToken = default)
 	{
 		if (_subscriptions.TryGetValue(subscription.Id, out var existing))
 		{
@@ -83,8 +72,8 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 
 		return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.NotFound);
 	}
-
-	public Task<FluxUnion<Success, NotFound>> DeleteAsync(Subscription subscription)
+	
+	public Task<FluxUnion<Success, NotFound>> DeleteAsync(Subscription subscription, CancellationToken cancellationToken = default)
 	{
 		var removed = _subscriptions.Remove(subscription.Id);
 		return Task.FromResult<FluxUnion<Success, NotFound>>(

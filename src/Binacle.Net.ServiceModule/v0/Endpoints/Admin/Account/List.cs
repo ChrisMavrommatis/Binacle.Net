@@ -21,7 +21,6 @@ internal class List : IGroupedEndpoint<AdminGroup>
 			.Produces<AccountListResponse>(StatusCodes.Status200OK)
 			.ResponseDescription(StatusCodes.Status200OK, "Lists the accounts with pagination")
 			.ResponseExample<AccountListResponseExample>(StatusCodes.Status200OK, "application/json")
-			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
@@ -47,8 +46,8 @@ internal class List : IGroupedEndpoint<AdminGroup>
 				statusCode: StatusCodes.Status422UnprocessableEntity
 			);
 		}
-	
-		var result = await accountRepository.ListAsync(paging.PageNumber, paging.PageSize);
+
+		var result = await accountRepository.ListAsync(paging.PageNumber, paging.PageSize, cancellationToken);
 
 		return Results.Ok(
 			AccountListResponse.Create(result)

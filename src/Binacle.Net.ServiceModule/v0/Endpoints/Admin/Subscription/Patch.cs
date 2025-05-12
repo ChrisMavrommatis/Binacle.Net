@@ -52,7 +52,11 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 				return Results.NotFound();
 			}
 
-			var getResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value);
+			var getResult = await subscriptionRepository.GetByIdAsync(
+				account.SubscriptionId!.Value, 
+				cancellationToken: cancellationToken
+			);
+			
 			if (!getResult.TryGetValue<Domain.Subscriptions.Entities.Subscription>(out var subscription) || subscription is null)
 			{
 				return Results.NotFound();
@@ -68,7 +72,7 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 				subscription.ChangeType(request.Type.Value);
 			}
 
-			var updateResult = await subscriptionRepository.ForceUpdateAsync(subscription);
+			var updateResult = await subscriptionRepository.UpdateAsync(subscription, cancellationToken);
 
 			return updateResult.Match(
 				success => Results.NoContent(),

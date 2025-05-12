@@ -59,7 +59,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 	{
 		return await bindingResult.ValidateAsync(id, async (request, account) =>
 		{
-			var usernameResult = await accountRepository.GetByUsernameAsync(request.Username);
+			var usernameResult = await accountRepository.GetByUsernameAsync(request.Username, cancellationToken);
 			if (usernameResult.TryGetValue<Domain.Accounts.Entities.Account>(out var foundAccount) && !account.Equals(foundAccount))
 			{
 				return Results.Conflict();
@@ -71,7 +71,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			account.ChangeRole(request.Role!.Value);
 			account.ChangeStatus(request.Status!.Value);
 			
-			var updateResult = await accountRepository.UpdateAsync(account);
+			var updateResult = await accountRepository.UpdateAsync(account, cancellationToken);
 
 			return updateResult.Match(
 				success => Results.NoContent(),

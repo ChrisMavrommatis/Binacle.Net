@@ -7,12 +7,11 @@ namespace Binacle.Net.ServiceModule.Domain.Accounts.Services;
 
 public interface IAccountRepository
 {
-	Task<FluxUnion<Account, NotFound>> GetByIdAsync(Guid id, bool allowDeleted = false);
-	Task<PagedList<Account>> ListAsync(int page, int pageSize);
-	Task<FluxUnion<Account, NotFound>> GetByUsernameAsync(string username);
-	Task<FluxUnion<Success, Conflict>> CreateAsync(Account account);
-	Task<FluxUnion<Success, NotFound>> UpdateAsync(Account account);
-	Task<FluxUnion<Success, NotFound>> ForceUpdateAsync(Account account);
-	Task<FluxUnion<Success, NotFound>> DeleteAsync(Account account);
+	Task<FluxUnion<Account, NotFound>> GetByIdAsync(Guid id, bool allowDeleted = false, CancellationToken cancellationToken = default);
+	Task<PagedList<Account>> ListAsync(int page, int pageSize, CancellationToken cancellationToken = default);
+	Task<FluxUnion<Account, NotFound>> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
+	Task<FluxUnion<Success, Conflict>> CreateAsync(Account account, CancellationToken cancellationToken = default);
+	Task<FluxUnion<Success, NotFound>> UpdateAsync(Account account, CancellationToken cancellationToken = default);
+	Task<FluxUnion<Success, NotFound>> DeleteAsync(Account account, CancellationToken cancellationToken = default);
 }
 

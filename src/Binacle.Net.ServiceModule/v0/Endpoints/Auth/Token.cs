@@ -70,7 +70,7 @@ internal class Token : IEndpoint
 	{
 		return await bindingResult.ValidateAsync(async request =>
 		{
-			var accountResult = await accountRepository.GetByUsernameAsync(request.Username);
+			var accountResult = await accountRepository.GetByUsernameAsync(request.Username, cancellationToken);
 			if (!accountResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 			{
 				return Results.Unauthorized();
@@ -94,7 +94,11 @@ internal class Token : IEndpoint
 			Subscription? subscription = null;
 			if (account.HasSubscription())
 			{
-				var subscriptionResult = await subscriptionRepository.GetByAccountIdAsync(account.Id);
+				var subscriptionResult = await subscriptionRepository.GetByAccountIdAsync(
+					account.Id, 
+					cancellationToken: cancellationToken
+				);
+				
 				subscriptionResult.TryGetValue<Subscription>(out var foundSubscription);
 				if (foundSubscription is not null && foundSubscription.IsActive())
 				{
