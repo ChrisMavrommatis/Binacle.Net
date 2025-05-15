@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Azure;
 using Azure.Data.Tables;
 using Binacle.Net.ServiceModule.Domain.Common.Models;
@@ -7,12 +6,10 @@ using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Common.ExtensionMethods;
-using FluxResults.TypedResults;
-using FluxResults.Unions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Conflict = FluxResults.TypedResults.Conflict;
-using NotFound = FluxResults.TypedResults.NotFound;
+using Conflict = FluxResults.Conflict;
+using NotFound = FluxResults.NotFound;
 
 namespace Binacle.Net.ServiceModule.Infrastructure.Subscriptions.Services;
 

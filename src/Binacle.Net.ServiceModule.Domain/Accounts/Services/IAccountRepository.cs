@@ -1,7 +1,5 @@
 ﻿using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Common.Models;
-using FluxResults.TypedResults;
-using FluxResults.Unions;
 
 namespace Binacle.Net.ServiceModule.Domain.Accounts.Services;
 

@@ -11,6 +11,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\dep\FluxResults\FluxResults.csproj"/>
+      <PackageReference Include="FluxResults" Version="0.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="FluxResults"/>
     </ItemGroup>
 </Project>

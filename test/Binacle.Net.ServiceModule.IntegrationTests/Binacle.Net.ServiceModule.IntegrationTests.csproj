@@ -48,6 +48,7 @@
 	<ItemGroup>
 		<Using Include="Xunit"/>
 		<Using Include="Shouldly"/>
+		<Using Include="FluxResults"/>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,16 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using Binacle.Net.ServiceModule.Domain;
-using Binacle.Net.ServiceModule.Domain.Accounts.Models;
-using Binacle.Net.ServiceModule.Domain.Common.Services;
-using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
-using Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;
-using Binacle.Net.ServiceModule.IntegrationTests.Models;
-using Binacle.Net.ServiceModule.v0.Contracts.Admin;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-
-namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin;
+﻿namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin;
 
 public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 {

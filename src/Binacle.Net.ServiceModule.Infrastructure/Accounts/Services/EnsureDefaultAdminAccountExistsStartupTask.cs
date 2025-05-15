@@ -4,7 +4,6 @@ using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Common.Services;
 using ChrisMavrommatis.StartupTasks;
-using FluxResults.Unions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

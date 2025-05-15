@@ -20,14 +20,19 @@
 	<ItemGroup>
 		<PackageReference Include="FluentValidation" Version="12.0.0" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+		<PackageReference Include="FluxResults" Version="0.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\dep\FluxResults\FluxResults.csproj" />
 	  <ProjectReference Include="..\..\dep\OpenApiExamples\OpenApiExamples.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Domain\Binacle.Net.ServiceModule.Domain.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Infrastructure\Binacle.Net.ServiceModule.Infrastructure.csproj" />
 	</ItemGroup>
+	
+	<ItemGroup>
+		<Using Include="FluxResults"/>
+	</ItemGroup>
+	
 
 </Project>

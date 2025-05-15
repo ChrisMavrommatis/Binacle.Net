@@ -1,8 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
-using Binacle.Net.ServiceModule.Models;
 using Binacle.Net.ServiceModule.Services;
-using FluxResults.Unions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Binacle.Net.ServiceModule.IntegrationTests.Models;

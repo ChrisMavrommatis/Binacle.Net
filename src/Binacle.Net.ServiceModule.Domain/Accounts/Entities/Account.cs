@@ -2,8 +2,6 @@
 using Binacle.Net.ServiceModule.Domain.Common;
 using Binacle.Net.ServiceModule.Domain.Common.Models;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
-using FluxResults.TypedResults;
-using FluxResults.Unions;
 
 namespace Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 

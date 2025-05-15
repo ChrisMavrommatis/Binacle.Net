@@ -3,8 +3,6 @@ using Binacle.Net.ServiceModule.Domain.Common.Models;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Common.Models;
-using FluxResults.TypedResults;
-using FluxResults.Unions;
 
 namespace Binacle.Net.ServiceModule.Infrastructure.Subscriptions.Services;
 

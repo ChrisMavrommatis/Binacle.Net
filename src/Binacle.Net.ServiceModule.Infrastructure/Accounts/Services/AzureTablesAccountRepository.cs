@@ -6,8 +6,6 @@ using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Common.Models;
 using Binacle.Net.ServiceModule.Infrastructure.Common.ExtensionMethods;
-using FluxResults.TypedResults;
-using FluxResults.Unions;
 using Microsoft.AspNetCore.Http;
 
 namespace Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;

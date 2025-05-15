@@ -7,7 +7,6 @@ using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.IntegrationTests;
 using Binacle.Net.ServiceModule.IntegrationTests.Models;
-using FluxResults.Unions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;

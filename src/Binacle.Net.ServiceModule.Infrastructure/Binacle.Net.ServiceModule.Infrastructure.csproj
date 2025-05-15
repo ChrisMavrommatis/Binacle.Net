@@ -23,5 +23,7 @@
 	  <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Domain\Binacle.Net.ServiceModule.Domain.csproj" />
 	</ItemGroup>
-
+	<ItemGroup>
+		<Using Include="FluxResults"/>
+	</ItemGroup>
 </Project>
