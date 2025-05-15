@@ -25,7 +25,7 @@ public class SanityTests
 	{
 		var request = new TokenRequest()
 		{
-			Username = "test@binacle.net",
+			Username = "test@test.binacle.net",
 			Password = "password123"
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(

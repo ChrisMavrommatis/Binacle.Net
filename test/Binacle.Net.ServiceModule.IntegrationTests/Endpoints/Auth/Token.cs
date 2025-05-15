@@ -44,7 +44,7 @@ public class Token
 	{
 		var request = new TokenRequest()
 		{
-			Username = "validemail@binacle.net",
+			Username = "validemail@test.binacle.net",
 			Password = "Ag00dP@ssw0rd"
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(
@@ -61,7 +61,7 @@ public class Token
 	{
 		var request = new TokenRequest()
 		{
-			Username = "validemail@binacle.net",
+			Username = "validemail@test.binacle.net",
 			Password = "pass"
 		};
 		var response = await this.sut.Client.PostAsJsonAsync(

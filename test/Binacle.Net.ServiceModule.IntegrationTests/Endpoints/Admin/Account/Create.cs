@@ -1,8 +1,10 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;
 using Binacle.Net.ServiceModule.IntegrationTests.Models;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Account;
 
@@ -10,13 +12,13 @@ namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin.Account;
 public class Create : AdminEndpointsTestsBase
 {
 	private readonly AccountCredentials accountCredentialsUnderTest;
-	
+
 	public Create(BinacleApi sut) : base(sut)
 	{
 		this.accountCredentialsUnderTest = new AccountCredentials(
 			Guid.Parse("C7A945CD-ECA7-4FA8-BCAC-46D678389905"),
-			"createuser@binacle.net",
-			"createuser@binacle.net",
+			"createuser@test.binacle.net",
+			"createuser@test.binacle.net",
 			"cr3AtEUs3ersP@ssw0rd"
 		);
 	}
@@ -37,7 +39,7 @@ public class Create : AdminEndpointsTestsBase
 			};
 
 			return await this.Sut.Client.PostAsJsonAsync(
-				routePath, 
+				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
 				TestContext.Current.CancellationToken
@@ -57,7 +59,7 @@ public class Create : AdminEndpointsTestsBase
 			};
 
 			return await this.Sut.Client.PostAsJsonAsync(
-				routePath, 
+				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
 				TestContext.Current.CancellationToken
@@ -76,7 +78,7 @@ public class Create : AdminEndpointsTestsBase
 			};
 
 			return await this.Sut.Client.PostAsJsonAsync(
-				routePath, 
+				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
 				TestContext.Current.CancellationToken
@@ -96,7 +98,7 @@ public class Create : AdminEndpointsTestsBase
 			};
 
 			return await this.Sut.Client.PostAsJsonAsync(
-				routePath, 
+				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
 				TestContext.Current.CancellationToken
@@ -116,7 +118,7 @@ public class Create : AdminEndpointsTestsBase
 			};
 
 			return await this.Sut.Client.PostAsJsonAsync(
-				routePath, 
+				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
 				TestContext.Current.CancellationToken
@@ -139,7 +141,7 @@ public class Create : AdminEndpointsTestsBase
 			};
 
 			return await this.Sut.Client.PostAsJsonAsync(
-				routePath, 
+				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
 				TestContext.Current.CancellationToken
@@ -153,27 +155,25 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Valid Request Returns 201 Created")]
 	public async Task Post_WithValidRequest_Returns_201Created()
 	{
-		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
-		
-		await using (var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin))
+		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		var request = new AccountCreateRequest
 		{
-			var request = new AccountCreateRequest
-			{
-				Username = this.accountCredentialsUnderTest.Username,
-				Email = this.accountCredentialsUnderTest.Email,
-				Password = this.accountCredentialsUnderTest.Password
-			};
+			Username = this.accountCredentialsUnderTest.Username,
+			Email = this.accountCredentialsUnderTest.Email,
+			Password = this.accountCredentialsUnderTest.Password
+		};
 
-			var response = 	await this.Sut.Client.PostAsJsonAsync(
-				routePath, 
-				request,
-				this.Sut.JsonSerializerOptions,
-				TestContext.Current.CancellationToken
-			);
-			response.StatusCode.ShouldBe(HttpStatusCode.Created);
-		}
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			routePath,
+			request,
+			this.Sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
+		response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
+		var id = this.GetCreatedId(response);
+		var newAccount = this.accountCredentialsUnderTest with {Id = id};
+		await this.Sut.EnsureAccountDoesNotExist(newAccount);
 	}
 
 	#endregion
@@ -251,11 +251,13 @@ public class Create : AdminEndpointsTestsBase
 
 	public override async ValueTask InitializeAsync()
 	{
+		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
 		await base.InitializeAsync();
 	}
 
 	public override async ValueTask DisposeAsync()
 	{
+		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
 		await base.DisposeAsync();
 	}
 }

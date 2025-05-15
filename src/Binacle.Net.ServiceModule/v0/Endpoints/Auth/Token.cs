@@ -75,7 +75,7 @@ internal class Token : IEndpoint
 			{
 				return Results.Unauthorized();
 			}
-
+			
 			if (!account.HasPassword())
 			{
 				return Results.Unauthorized();
@@ -89,6 +89,11 @@ internal class Token : IEndpoint
 			if (account.IsSuspended())
 			{
 				return Results.Forbid();
+			}
+
+			if (!account.IsActive())
+			{
+				return Results.Unauthorized();
 			}
 
 			Subscription? subscription = null;

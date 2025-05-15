@@ -79,7 +79,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			
 			if (!updateAccountResult.Is<Success>())
 			{
-				await subscriptionRepository.DeleteAsync(subscription);
+				await subscriptionRepository.DeleteAsync(subscription, cancellationToken);
 				return Results.NotFound();
 			}
 

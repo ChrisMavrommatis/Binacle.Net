@@ -58,14 +58,14 @@ internal class AccountListResponseExample : ISingleOpenApiExamplesProvider<Accou
 					new MinimalAccount()
 					{
 						Id = Guid.Parse("7433FEEC-4863-41DF-BA45-57EB52C3F014"),
-						Username = "user@binacle.net",
+						Username = "user@example.binacle.net",
 						Role = AccountRole.User,
 						Status = AccountStatus.Active
 					},
 					new MinimalAccount()
 					{
 						Id = Guid.Parse("E766AC59-30BF-4D0B-A2B9-81434AA9CF15"),
-						Username = "user2@binacle.net",
+						Username = "user2@example.binacle.net",
 						Role = AccountRole.User,
 						Status = AccountStatus.Suspended
 					}

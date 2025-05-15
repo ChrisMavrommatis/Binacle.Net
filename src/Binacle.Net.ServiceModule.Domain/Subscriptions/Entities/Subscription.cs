@@ -7,8 +7,28 @@ public class Subscription : AuditableEntity
 {
 	public Guid AccountId { get; }
 	public SubscriptionType Type { get; private set; }
-	
 	public SubscriptionStatus Status { get; private set; }
+	
+	public Subscription(
+		Guid accountId,
+		SubscriptionStatus status,
+		SubscriptionType type,
+		DateTimeOffset creationDate,
+		Guid id,
+		bool? isDeleted = null,
+		DateTimeOffset? deletionDate = null
+	) 
+		: base(
+			id,
+			creationDate,
+			isDeleted ?? false,
+			deletionDate
+		)
+	{
+		this.AccountId = accountId;
+		this.Status = status;
+		this.Type = type;
+	}
 	
 	public Subscription(
 		Guid accountId,

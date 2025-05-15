@@ -17,15 +17,15 @@ public class Create : AdminEndpointsTestsBase
 	{
 		this.accountCredentialsUnderTest = new AccountCredentials(
 			Guid.Parse("3AD36BF1-9791-4899-AF6F-EB1F666D42D0"),
-			"subscriptioncreateuser@binacle.net",
-			"subscriptioncreateuser@binacle.net",
+			"subscriptioncreateuser@test.binacle.net",
+			"subscriptioncreateuser@test.binacle.net",
 			"SubscriptionCr34teUs3ersP@ssw0rd"
 		);
 		
 		this.accountCredentialsWithSubscriptionUnderTest = new AccountCredentialsWithSubscription(
 			Guid.Parse("283DA5A3-6670-4AAE-887C-59B5387CE897"),
-			"subscriptioneuser@binacle.net",
-			"subscriptioneuser@binacle.net",
+			"subscriptioneuser@test.binacle.net",
+			"subscriptioneuser@test.binacle.net",
 			"SubscriptionUs3ersP@ssw0rd",
 			Guid.Parse("D938CB5B-1288-4B40-8BE0-CB84597ED8B3")
 		);

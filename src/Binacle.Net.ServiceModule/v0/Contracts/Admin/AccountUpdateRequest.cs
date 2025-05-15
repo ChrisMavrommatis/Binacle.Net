@@ -53,8 +53,8 @@ internal class AccountUpdateRequestExample : ISingleOpenApiExamplesProvider<Acco
 			"Update Account Request",
 			new AccountUpdateRequest
 			{
-				Username = "user@binacle.net",
-				Email = "user@binacle.net",
+				Username = "user@example.binacle.net",
+				Email = "user@example.binacle.net",
 				Password = "userspassword",
 				Role = AccountRole.User,
 				Status = AccountStatus.Active

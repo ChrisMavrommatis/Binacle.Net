@@ -1,5 +1,5 @@
 ﻿@ID = 0196977b-5f1d-7b76-8ec6-5bc5813b1f91
 
-GET https://{{HOST}}/api/admin/account/{{ID}}
+GET https://{{HOST}}/api/admin/account/{{ID}}?allowDeleted=true
 Accept: application/json
 Authorization: Bearer {{BEARERTOKEN}}

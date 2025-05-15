@@ -15,8 +15,8 @@ public class Update : AdminEndpointsTestsBase
 	{
 		this.accountCredentialsUnderTest = new AccountCredentials(
 			Guid.Parse("3430D348-072F-4931-B2A1-51775CBA26C5"),
-			"updateuser@binacle.net",
-			"updateuser@binacle.net",
+			"updateuser@test.binacle.net",
+			"updateuser@test.binacle.net",
 			"Upd4t3Us3ersP@ssw0rd"
 		);
 	}

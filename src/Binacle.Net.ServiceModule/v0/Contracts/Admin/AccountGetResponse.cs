@@ -19,8 +19,9 @@ internal class AccountSubscription
 
 	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public required SubscriptionStatus Status { get; set; }
-
 	public required DateTimeOffset CreatedAtUtc { get; set; }
+	public required bool IsDeleted { get; set; }
+	public DateTimeOffset? DeletedAtUtc { get; set; }
 }
 
 internal class AccountGetResponse
@@ -40,6 +41,8 @@ internal class AccountGetResponse
 	public required Guid SecurityStamp { get; set; }
 	public AccountSubscription? Subscription { get; set; }
 	public required DateTimeOffset CreatedAtUtc { get; set; }
+	public required bool IsDeleted { get; set; }
+	public DateTimeOffset? DeletedAtUtc { get; set; }
 
 	public static AccountGetResponse From(Account account, Subscription? subscription = null)
 	{
@@ -52,7 +55,9 @@ internal class AccountGetResponse
 			Status = account.Status,
 			PasswordHash = account.Password?.ToString(),
 			SecurityStamp = account.SecurityStamp,
-			CreatedAtUtc = account.CreatedAtUtc
+			CreatedAtUtc = account.CreatedAtUtc,
+			IsDeleted = account.IsDeleted,
+			DeletedAtUtc = account.DeletedAtUtc
 		};
 		
 		if (subscription is not null)
@@ -62,7 +67,9 @@ internal class AccountGetResponse
 				Id = subscription.Id,
 				Type = subscription.Type,
 				Status = subscription.Status,
-				CreatedAtUtc = subscription.CreatedAtUtc
+				CreatedAtUtc = subscription.CreatedAtUtc,
+				IsDeleted = subscription.IsDeleted,
+				DeletedAtUtc = subscription.DeletedAtUtc
 			};
 		}
 
@@ -80,19 +87,21 @@ internal class AccountGetResponseExample : ISingleOpenApiExamplesProvider<Accoun
 			new AccountGetResponse()
 			{
 				Id = Guid.Parse("7433FEEC-4863-41DF-BA45-57EB52C3F014"),
-				Username = "user@binacle.net",
+				Username = "user@example.binacle.net",
 				Role = AccountRole.User,
-				Email = "user@binacle.net",
+				Email = "user@example.binacle.net",
 				Status = AccountStatus.Active,
 				PasswordHash = "type::hash::salt",
 				SecurityStamp = Guid.Parse("753A88E6-F69B-4362-8B7B-D4B1958C926F"),
 				CreatedAtUtc = new DateTimeOffset(2025, 1, 11, 14, 30, 53, TimeSpan.Zero),
+				IsDeleted = false,
 				Subscription = new AccountSubscription()
 				{
 					Id = Guid.Parse("526501C7-653C-4430-9808-CF64AAF188FA"),
 					Type = SubscriptionType.Normal,
 					Status = SubscriptionStatus.Active,
 					CreatedAtUtc = new DateTimeOffset(2025, 1, 11, 14, 35, 23, TimeSpan.Zero),
+					IsDeleted = false,
 				}
 			}
 		);

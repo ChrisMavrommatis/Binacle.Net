@@ -77,8 +77,11 @@ internal class AccountBindingResult<T>
 		}
 
 		var accountRepository = this.serviceProvider.GetRequiredService<IAccountRepository>();
-		var accountResult = await accountRepository.GetByIdAsync(id.Value);
-
+		var accountResult = await accountRepository.GetByIdAsync(
+			id.Value,
+			cancellationToken:this.cancellationToken
+		);
+		
 		var result = accountResult.Match(
 			account => handleRequest(this.request!, account!),
 			notFound => Task.FromResult<IResult>(Results.NotFound())

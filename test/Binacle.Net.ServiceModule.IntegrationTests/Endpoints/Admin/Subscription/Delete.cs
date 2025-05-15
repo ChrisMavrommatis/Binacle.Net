@@ -13,8 +13,8 @@ public class Delete : AdminEndpointsTestsBase
 	{
 		this.accountCredentialsUnderTest = new AccountCredentialsWithSubscription(
 			Guid.Parse("09E747ED-5F31-46D0-BC40-3A9DE774D667"),
-			"subscriptiondeleteuser@binacle.net",
-			"subscriptiondeleteuser@binacle.net",
+			"subscriptiondeleteuser@test.binacle.net",
+			"subscriptiondeleteuser@test.binacle.net",
 			"SubscriptionD3l3teUs3ersP@ssw0rd",
 			Guid.Parse("E639ED76-8382-46AD-A57B-069EAB59B412")
 		);
@@ -130,7 +130,7 @@ public class Delete : AdminEndpointsTestsBase
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
 
-		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
+		var url = routePath.Replace("{id}", this.Sut.NonExistentId.ToString());
 
 		var response = await this.Sut.Client.DeleteAsync(
 			url,
@@ -139,7 +139,7 @@ public class Delete : AdminEndpointsTestsBase
 		response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 	}
 	
-	[Fact(DisplayName = $"DELETE {routePath}. For Non Existing Account Returns 404 Not Found")]
+	[Fact(DisplayName = $"DELETE {routePath}. For Account Without Subscription Returns 404 Not Found")]
 	public async Task Delete_ForAccountWithoutSubscription_Returns_404NotFound()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);

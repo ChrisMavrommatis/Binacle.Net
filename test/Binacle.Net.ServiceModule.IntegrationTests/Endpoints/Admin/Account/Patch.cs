@@ -15,8 +15,8 @@ public class Patch : AdminEndpointsTestsBase
 	{
 		this.accountCredentialsUnderTest = new AccountCredentials(
 			Guid.Parse("2AC61F2A-C035-4F24-B4D7-9E337139A92B"),
-			"patchuser@binacle.net",
-			"patchuser@binacle.net",
+			"patchuser@test.binacle.net",
+			"patchuser@test.binacle.net",
 			"P4tchUs3ersP@ssw0rd"
 		);
 	}

@@ -13,8 +13,8 @@ public class Delete : AdminEndpointsTestsBase
 	{
 		this.accountCredentialsUnderTest = new AccountCredentials(
 			Guid.Parse("DEF02C0F-FB96-4799-8A4A-8427D5AF29DC"),
-			"deleteuser@binacle.net",
-			"deleteuser@binacle.net",
+			"deleteuser@test.binacle.net",
+			"deleteuser@test.binacle.net",
 			"D3l3teUs3ersP@ssw0rd"
 		);
 	}

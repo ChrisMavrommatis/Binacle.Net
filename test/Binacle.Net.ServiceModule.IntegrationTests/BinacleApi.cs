@@ -75,7 +75,7 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 			services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
 			services.Configure<ServiceModuleOptions>(options =>
 			{
-				options.DefaultAdminAccount = "testadmin@binacle.net:B1n4cl3Adm!nT3st";
+				options.DefaultAdminAccount = "testadmin@test.binacle.net:B1n4cl3Adm!nT3st";
 			});
 		});
 	}
@@ -90,14 +90,13 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 		var defaultAdmin = ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
 
 		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
-		var subscriptionRepository = this.Services.GetRequiredService<ISubscriptionRepository>();
 		var adminResult = await accountRepository.GetByUsernameAsync(defaultAdmin.Username);
 		this.Admin = adminResult.Unwrap<Domain.Accounts.Entities.Account>();
 
 		this.ExistingAccountCredentials = new AccountCredentials(
 			Guid.Parse("C68B22B5-E41F-4E1B-9FEB-50A5CD46D441"),
-			"existinguser@binacle.net",
-			"existinguser@binacle.net",
+			"existinguser@test.binacle.net",
+			"existinguser@test.binacle.net",
 			"Ex1stingUs3rP@ssw0rd"
 		);
 
@@ -113,6 +112,14 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 		this.User.ChangePassword(usersPassword);
 
 		await accountRepository.CreateAsync(this.User);
+	}
+
+	public override async ValueTask DisposeAsync()
+	{
+		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
+		await accountRepository.DeleteAsync(this.Admin);
+		await accountRepository.DeleteAsync(this.User);
+		await base.DisposeAsync();
 	}
 
 	public async ValueTask EnsureAccountExists(AccountCredentials credentials)
@@ -137,13 +144,26 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 	public async ValueTask EnsureAccountDoesNotExist(AccountCredentials credentials)
 	{
 		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
-		var getResult = await accountRepository.GetByIdAsync(credentials.Id);
+		var getResult = await accountRepository.GetByIdAsync(credentials.Id, allowDeleted: true);
 		if (!getResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 		{
 			return;
 		}
 
+		if (account.HasSubscription())
+		{
+			var subscriptionRepository = this.Services.GetRequiredService<ISubscriptionRepository>();
+			var subscriptionResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value, allowDeleted: true);
+			if (subscriptionResult.TryGetValue<Domain.Subscriptions.Entities.Subscription>(out var subscription) &&
+			    subscription is not null)
+			{
+				await subscriptionRepository.DeleteAsync(subscription);
+			}
+			
+		}
 		await accountRepository.DeleteAsync(account);
+		
+		
 	}
 
 	public async ValueTask EnsureAccountExistsWithSubscription(AccountCredentialsWithSubscription credentials)
@@ -181,13 +201,13 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 	{
 		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
 		var subscriptionRepository = this.Services.GetRequiredService<ISubscriptionRepository>();
-		var getResult = await accountRepository.GetByIdAsync(credentials.Id);
+		var getResult = await accountRepository.GetByIdAsync(credentials.Id, allowDeleted: true);
 		if (!getResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 		{
 			return;
 		}
 
-		var subscriptionResult = await subscriptionRepository.GetByIdAsync(credentials.SubscriptionId);
+		var subscriptionResult = await subscriptionRepository.GetByIdAsync(credentials.SubscriptionId, allowDeleted: true);
 		if (subscriptionResult.TryGetValue<Domain.Subscriptions.Entities.Subscription>(out var subscription) &&
 		    subscription is not null)
 		{

@@ -15,8 +15,8 @@ public class Get : AdminEndpointsTestsBase
 	{
 		this.accountCredentialsUnderTest = new AccountCredentials(
 			Guid.Parse("4CCC1EE2-3D94-4F85-8420-CF7903EB19EA"),
-			"getuser@binacle.net",
-			"getuser@binacle.net",
+			"getuser@test.binacle.net",
+			"getuser@test.binacle.net",
 			"G3tUs3ersP@ssw0rd"
 		);
 	}

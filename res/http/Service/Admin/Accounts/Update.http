@@ -6,8 +6,8 @@ Content-Type: application/json
 Authorization: Bearer {{BEARERTOKEN}}
 
 {
-  "Username" : "user@binacle.net",
-  "Email" : "user@binacle.net",
+  "Username" : "user@example.binacle.net",
+  "Email" : "user@example.binacle.net",
   "Password" : "userspassword",
   "Status": "Active",
   "Role": "User"

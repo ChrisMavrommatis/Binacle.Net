@@ -4,6 +4,7 @@ using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Common.Services;
 using ChrisMavrommatis.StartupTasks;
+using FluxResults.Unions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -24,23 +25,37 @@ internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 
 		var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
-		var passwordService = scope.ServiceProvider.GetRequiredService<IPasswordService>();
-		var utcNow = timeProvider.GetUtcNow();
+		
 		// get configuration
 		var options = scope.ServiceProvider.GetRequiredService<IOptions<ServiceModuleOptions>>();
 		var configuredAdminCredentials =
 			ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
 
+		var getResult = await accountRepository.GetByUsernameAsync(
+			configuredAdminCredentials.Username,
+			cancellationToken
+		);
+
+		if (getResult.Is<Account>())
+		{
+			return;
+		}
+		
+		var utcNow = timeProvider.GetUtcNow();
+		var passwordService = scope.ServiceProvider.GetRequiredService<IPasswordService>();
+		
 		var newAccount = new Account(
 			configuredAdminCredentials.Username,
 			AccountRole.Admin,
 			configuredAdminCredentials.Email.ToLowerInvariant(),
 			AccountStatus.Active,
-			utcNow
+			utcNow,
+			Guid.CreateVersion7()
 		);
+		
 		var password = passwordService.Create(configuredAdminCredentials.Password);
 		newAccount.ChangePassword(password);
-		var createResult = await accountRepository.CreateAsync(newAccount);
+		var createResult = await accountRepository.CreateAsync(newAccount, cancellationToken);
 
 		var success = createResult.Match(
 			account => true,

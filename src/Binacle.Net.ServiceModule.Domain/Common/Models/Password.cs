@@ -13,6 +13,55 @@ public class Password : ValueObject
 		this.Salt = salt;
 	}
 
+	public static Password? TryParse(string? password)
+	{
+		if(string.IsNullOrWhiteSpace(password))
+			return null;
+
+		try
+		{
+			return Parse(password!);
+		}
+		catch (Exception)
+		{
+			return null;
+		}
+	}
+	
+	public static Password Parse(string password)
+	{
+		if (string.IsNullOrWhiteSpace(password))
+			throw new ArgumentException("Password string cannot be null or empty.");
+
+		int openBracket = password.IndexOf('[');
+		int closeBracket = password.LastIndexOf(']');
+
+		if (openBracket <= 0 || closeBracket <= openBracket + 1 || closeBracket != password.Length - 1)
+			throw new ArgumentException("Invalid password format.");
+
+		string type = password.Substring(0, openBracket);
+		string inner = password.Substring(openBracket + 1, closeBracket - openBracket - 1);
+
+		string hash;
+		string? salt = null;
+
+		int colonIndex = inner.IndexOf(':');
+		if (colonIndex == -1)
+		{
+			// No salt
+			hash = inner;
+		}
+		else
+		{
+			hash = inner.Substring(0, colonIndex);
+			salt = inner.Substring(colonIndex + 1);
+		}
+
+		if (string.IsNullOrEmpty(type) || string.IsNullOrEmpty(hash))
+			throw new ArgumentException("Type and hash cannot be empty.");
+
+		return new Password(type, hash, salt);
+	}
 
 	public override string ToString()
 	{

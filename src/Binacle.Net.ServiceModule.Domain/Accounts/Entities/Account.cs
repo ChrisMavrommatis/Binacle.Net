@@ -13,12 +13,37 @@ public class Account : AuditableEntity
 	public AccountRole Role { get; private set; }
 	public string Email { get; private set; }
 	public AccountStatus Status { get; private set; }
-
 	public Password? Password { get; private set; }
 	public Guid SecurityStamp { get; private set; }
-	
 	public Guid? SubscriptionId { get; private set; }
-	
+
+	public Account(
+		string username,
+		AccountRole role,
+		string email,
+		AccountStatus status,
+		DateTimeOffset creationDate,
+		Guid id,
+		bool? isDeleted = null,
+		Guid? securityStamp = null,
+		Password? password = null,
+		DateTimeOffset? deletionDate = null,
+		Guid? subscriptionId = null
+		) : base(
+			id,
+			creationDate,
+			isDeleted ?? false,
+			deletionDate
+		)
+	{
+		this.Username = username;
+		this.Role = role;
+		this.Email = email;
+		this.Status = status;
+		this.Password = password;
+		this.SecurityStamp = securityStamp ?? Guid.Empty;
+		this.SubscriptionId = subscriptionId;
+	}
 	public Account(
 		string username,
 		AccountRole role,
@@ -38,8 +63,6 @@ public class Account : AuditableEntity
 		this.Status = status;
 		this.SecurityStamp = Guid.Empty;
 	}
-	
-	
 
 	public void ChangePassword(Password password)
 	{
@@ -95,7 +118,10 @@ public class Account : AuditableEntity
 		return this.Password is not null
 		       && this.SecurityStamp != Guid.Empty;
 	}
-	
+	public bool IsActive()
+	{
+		return this.Status == AccountStatus.Active;
+	}
 	public bool IsSuspended()
 	{
 		return this.Status == AccountStatus.Suspended;
