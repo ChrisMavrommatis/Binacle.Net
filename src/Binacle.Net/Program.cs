@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
-using OpenApiExamples;
+using OpenApiExamples.ExtensionMethods;
 using Scalar.AspNetCore;
 using Serilog;
 

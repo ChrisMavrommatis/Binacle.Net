@@ -1,6 +1,6 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v3.Contracts;
-using OpenApiExamples;
+using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.v3;
 

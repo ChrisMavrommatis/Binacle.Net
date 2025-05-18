@@ -1,6 +1,6 @@
 ﻿using Binacle.Net.Kernel.OpenApi;
 using Microsoft.AspNetCore.OpenApi;
-using OpenApiExamples;
+using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.v3;
 

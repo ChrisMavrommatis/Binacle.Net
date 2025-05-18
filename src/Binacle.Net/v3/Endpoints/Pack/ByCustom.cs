@@ -2,7 +2,7 @@
 using Binacle.Net.Models;
 using Binacle.Net.Services;
 using Binacle.Net.v3.Contracts;
-using OpenApiExamples;
+using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.v3.Endpoints.Pack;
 

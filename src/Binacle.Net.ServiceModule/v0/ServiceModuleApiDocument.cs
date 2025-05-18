@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using OpenApiExamples;
+using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.ServiceModule.v0;
 

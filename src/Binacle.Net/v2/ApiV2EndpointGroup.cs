@@ -1,7 +1,7 @@
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v2.Responses;
 using Binacle.Net.v2.Responses.Examples;
-using OpenApiExamples;
+using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.v2;
 

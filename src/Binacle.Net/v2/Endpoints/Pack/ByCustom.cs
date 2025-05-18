@@ -7,7 +7,7 @@ using Binacle.Net.v2.Requests.Examples;
 using Binacle.Net.v2.Responses;
 using Binacle.Net.v2.Responses.Examples;
 using FluentValidation;
-using OpenApiExamples;
+using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.v2.Endpoints.Pack;
 

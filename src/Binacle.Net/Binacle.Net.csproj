@@ -14,8 +14,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
-		<PackageReference Include="Scalar.AspNetCore" Version="2.2.7" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
+		<PackageReference Include="OpenApiExamples" Version="0.0.2" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.3.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.1" />
 	</ItemGroup>
 
@@ -29,7 +30,6 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\dep\Binacle.ViPaq\Binacle.ViPaq.csproj" />
 	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
-	  <ProjectReference Include="..\..\dep\OpenApiExamples\OpenApiExamples.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.DiagnosticsModule\Binacle.Net.DiagnosticsModule.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule\Binacle.Net.ServiceModule.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.UIModule\Binacle.Net.UIModule.csproj" />

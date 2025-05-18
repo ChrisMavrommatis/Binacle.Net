@@ -10,7 +10,7 @@ using Binacle.Net.v2.Responses.Examples;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using OpenApiExamples;
+using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.v2.Endpoints.Fit;
 

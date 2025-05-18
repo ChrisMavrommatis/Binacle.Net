@@ -4,7 +4,7 @@ using Binacle.Net.v2.Models;
 using Binacle.Net.v2.Responses;
 using Binacle.Net.v2.Responses.Examples;
 using Microsoft.Extensions.Options;
-using OpenApiExamples;
+using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.v2.Endpoints.Presets;
 
