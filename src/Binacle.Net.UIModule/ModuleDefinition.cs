@@ -24,9 +24,10 @@ public static class ModuleDefinition
 		
 		builder.Services
 			.AddHttpContextAccessor()
-			// TODO Removed interactive server
-			// Switch to Vue
 			.AddRazorComponents(options =>
+			{
+			})
+			.AddInteractiveServerComponents(options =>
 			{
 			});
 
@@ -74,7 +75,8 @@ public static class ModuleDefinition
 		
 		app.UseStaticFiles();
 
-		app.MapRazorComponents<App>();
+		app.MapRazorComponents<App>()
+			.AddInteractiveServerRenderMode();
 		
 		app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
