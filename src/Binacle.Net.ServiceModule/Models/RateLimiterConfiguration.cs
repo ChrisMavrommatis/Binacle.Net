@@ -36,7 +36,7 @@ internal class RateLimiterConfiguration
 				}
 			),
 			RateLimiterType.NoLimiter => RateLimitPartition.GetNoLimiter(partitionKey),
-			_ => throw new NotImplementedException($"No Implementation found for RateLimiter of type {configuration.Type}")
+			_ => throw new NotSupportedException($"No Implementation found for RateLimiter of type {configuration.Type}")
 		};
 	} 
 	public static bool TryParse(string? value, out RateLimiterConfiguration? configuration)

@@ -25,7 +25,7 @@ public class PackResponse : v2.Models.ResponseBase<List<v2.Models.BinPackResult>
 				Binacle.Lib.Packing.Models.PackingResultStatus.EarlyFail_ContainerVolumeExceeded => v2.Models.BinPackResultStatus.EarlyFail_ContainerVolumeExceeded,
 				Binacle.Lib.Packing.Models.PackingResultStatus.Unknown => v2.Models.BinPackResultStatus.Unknown,
 				Binacle.Lib.Packing.Models.PackingResultStatus.NotPacked => v2.Models.BinPackResultStatus.NotPacked,
-				_ => throw new NotImplementedException($"No Implementation exists for operation result  status {operationResult.Status.ToString()}"),
+				_ => throw new NotSupportedException($"No Implementation exists for operation result  status {operationResult.Status.ToString()}"),
 			};
 		}
 

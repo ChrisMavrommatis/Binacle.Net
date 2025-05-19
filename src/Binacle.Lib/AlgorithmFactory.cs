@@ -16,7 +16,7 @@ public class AlgorithmFactory : IAlgorithmFactory
 			Algorithm.FirstFitDecreasing => new Fitting.Algorithms.FirstFitDecreasing_v3<TBin, TItem>(bin, items),
 			Algorithm.WorstFitDecreasing => new Fitting.Algorithms.WorstFitDecreasing_v1<TBin, TItem>(bin, items),
 			Algorithm.BestFitDecreasing => new Fitting.Algorithms.BestFitDecreasing_v1<TBin, TItem>(bin, items),
-			_ => throw new NotImplementedException($"No Bin Fitting Algorithm exists for {algorithm}")
+			_ => throw new NotSupportedException($"No Bin Fitting Algorithm exists for {algorithm}")
 		});
 
 		return algorithmInstance;
@@ -31,7 +31,7 @@ public class AlgorithmFactory : IAlgorithmFactory
 			Algorithm.FirstFitDecreasing => new Packing.Algorithms.FirstFitDecreasing_v2<TBin, TItem>(bin, items),
 			Algorithm.WorstFitDecreasing => new Packing.Algorithms.WorstFitDecreasing_v1<TBin, TItem>(bin, items),
 			Algorithm.BestFitDecreasing => new Packing.Algorithms.BestFitDecreasing_v1<TBin, TItem>(bin, items),
-			_ => throw new NotImplementedException($"No Packing Algorithm exists for {algorithm}")
+			_ => throw new NotSupportedException($"No Packing Algorithm exists for {algorithm}")
 		});
 
 		return algorithmInstance;
