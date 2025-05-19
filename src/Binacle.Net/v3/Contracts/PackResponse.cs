@@ -28,7 +28,7 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 				PackingResultStatus.EarlyFail_ContainerVolumeExceeded => BinPackResultStatus.EarlyFail_ContainerVolumeExceeded,
 				PackingResultStatus.Unknown => BinPackResultStatus.Unknown,
 				PackingResultStatus.NotPacked => BinPackResultStatus.NotPacked,
-				_ => throw new NotImplementedException(),
+				_ => throw new NotImplementedException($"No Implementation exists for operation result  status {operationResult.Status.ToString()}"),
 			};
 		}
 

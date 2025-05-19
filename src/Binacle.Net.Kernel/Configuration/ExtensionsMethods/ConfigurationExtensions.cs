@@ -59,7 +59,8 @@ public static class ConfigurationExtensions
 	}
 	
 	public static void AddValidatableJsonConfigurationOptions<TOptions>(
-		this IHostApplicationBuilder builder
+		this IHostApplicationBuilder builder,
+		Action<TOptions>? postConfigure = null
 		)
 		where TOptions : class, IConfigurationOptions
 	{
@@ -76,11 +77,16 @@ public static class ConfigurationExtensions
 		builder.Configuration
 			.AddEnvironmentVariables();
 		
-		builder.Services
+		var optionsBuilder = builder.Services
 			.AddOptions<TOptions>()
 			.Bind(builder.Configuration.GetSection(TOptions.SectionName))
 			.ValidateFluently()
 			.ValidateOnStart();
+		
+		if(postConfigure is not null)
+		{
+			optionsBuilder.PostConfigure(postConfigure);
+		}
 	}
 	
 	public static TOptions? GetConfigurationOptions<TOptions>(

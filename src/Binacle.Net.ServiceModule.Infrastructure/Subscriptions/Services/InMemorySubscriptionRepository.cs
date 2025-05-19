@@ -20,25 +20,6 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 		return Task.FromResult<FluxUnion<Subscription, NotFound>>(TypedResult.NotFound);
 	}
 	
-	public Task<PagedList<Subscription>> ListAsync(int page, int pageSize, CancellationToken cancellationToken = default)
-	{
-		var subscriptions = _subscriptions.Values
-			.Where(x => !x.IsDeleted)
-			.Skip((page - 1) * pageSize)
-			.Take(pageSize)
-			.ToList();
-
-		var pagedSubscriptions = new PagedList<Subscription>(
-			subscriptions,
-			subscriptions.Count,
-			pageSize,
-			page
-		);
-
-		return Task.FromResult(pagedSubscriptions);
-	}
-
-
 	public Task<FluxUnion<Subscription, NotFound>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
 	{
 		var subscription = _subscriptions.Values.FirstOrDefault(s => s.AccountId == accountId);

@@ -1,7 +1,7 @@
 ﻿using System.Threading.RateLimiting;
 using Binacle.Net.ServiceModule.Configuration;
 using Binacle.Net.ServiceModule.ExtensionMethods;
-using Binacle.Net.ServiceModule.Helpers;
+using Binacle.Net.ServiceModule.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Logging;
@@ -32,10 +32,8 @@ internal class AuthTokenRateLimitingPolicy : IRateLimiterPolicy<string>
 	public RateLimitPartition<string> GetPartition(HttpContext httpContext)
 	{
 		var partitionKey = httpContext?.GetClientIp() ?? "unknown";
-		var configuration = RateLimiterConfigurationParser.Parse(this.options.Value.AuthToken);
-
-		return RateLimiterConfigurationBuilder.Build(configuration, partitionKey);
+		return RateLimiterConfiguration.Get(partitionKey, this.options.Value.AuthTokenConfiguration);
 	}
-
+	
 	public Func<OnRejectedContext, CancellationToken, ValueTask>? OnRejected => this.onRejected;
 }

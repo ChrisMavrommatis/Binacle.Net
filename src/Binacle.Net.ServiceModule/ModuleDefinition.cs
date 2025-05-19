@@ -5,6 +5,7 @@ using Binacle.Net.ServiceModule.Configuration;
 using Binacle.Net.ServiceModule.Domain;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Infrastructure;
+using Binacle.Net.ServiceModule.Models;
 using Binacle.Net.ServiceModule.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -40,7 +41,19 @@ public static class ModuleDefinition
 
 		builder.Services.AddValidatorsFromAssemblyContaining<IModuleMarker>(ServiceLifetime.Singleton, includeInternalTypes: true);
 
-		builder.AddValidatableJsonConfigurationOptions<RateLimiterConfigurationOptions>();
+		builder.AddValidatableJsonConfigurationOptions<RateLimiterConfigurationOptions>(
+			postConfigure: options =>
+			{
+				options.ApiUsageAnonymousConfiguration =
+					RateLimiterConfiguration.Parse(options.ApiUsageAnonymous);
+				
+				options.AuthTokenConfiguration = 
+					RateLimiterConfiguration.Parse(options.AuthToken);
+				
+				options.ApiUsageDemoSubscriptionConfiguration = 
+					RateLimiterConfiguration.Parse(options.ApiUsageDemoSubscription);
+			}
+		);
 
 		builder.AddValidatableJsonConfigurationOptions<JwtAuthOptions>();
 		

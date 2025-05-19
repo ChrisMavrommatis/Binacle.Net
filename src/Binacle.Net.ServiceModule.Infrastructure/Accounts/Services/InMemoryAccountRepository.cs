@@ -19,24 +19,6 @@ internal class InMemoryAccountRepository : IAccountRepository
 		return Task.FromResult<FluxUnion<Account, NotFound>>(TypedResult.NotFound);
 	}
 
-	public Task<PagedList<Account>> ListAsync(int page, int pageSize, CancellationToken cancellationToken = default)
-	{
-		var accounts = _accounts.Values
-			.Where(x => !x.IsDeleted)
-			.Skip((page - 1) * pageSize)
-			.Take(pageSize)
-			.ToList();
-
-		var pagedAccounts = new PagedList<Account>(
-			accounts,
-			accounts.Count,
-			pageSize,
-			page
-		);
-
-		return Task.FromResult(pagedAccounts);
-	}
-
 	public Task<FluxUnion<Account, NotFound>> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
 	{
 		var account = _accounts.Values.FirstOrDefault(x => x.Username == username);

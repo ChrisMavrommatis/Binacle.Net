@@ -47,15 +47,6 @@ internal class AzureTablesAccountRepository : IAccountRepository
 		return domainEntity;
 	}
 
-	public Task<PagedList<Account>> ListAsync(
-		int page, 
-		int pageSize, 
-		CancellationToken cancellationToken = default
-	)
-	{
-		throw new NotImplementedException();
-	}
-
 	public async Task<FluxUnion<Account, NotFound>> GetByUsernameAsync(
 		string username, 
 		CancellationToken cancellationToken = default

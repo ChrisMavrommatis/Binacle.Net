@@ -51,15 +51,6 @@ internal class AzureTablesSubscriptionRepository : ISubscriptionRepository
 		return domainEntity;
 	}
 
-	public Task<PagedList<Subscription>> ListAsync(
-		int page,
-		int pageSize,
-		CancellationToken cancellationToken = default
-	)
-	{
-		throw new NotImplementedException();
-	}
-
 	public async Task<FluxUnion<Subscription, NotFound>> GetByAccountIdAsync(
 		Guid accountId,
 		CancellationToken cancellationToken = default
