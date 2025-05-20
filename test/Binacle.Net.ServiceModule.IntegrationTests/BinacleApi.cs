@@ -46,7 +46,7 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 		var preBuildConfigurationValues = new Dictionary<string, string?>
 		{
 			{ "Features:SERVICE_MODULE", bool.TrueString },
-			{ "RateLimiter:Auth", "NoLimiter::0" }
+			{ "RateLimiter:AuthToken", "NoLimiter::0" }
 		};
 		var configuration = new ConfigurationBuilder()
 			.AddInMemoryCollection(preBuildConfigurationValues)
