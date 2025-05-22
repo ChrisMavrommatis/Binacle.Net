@@ -13,8 +13,6 @@ using ChrisMavrommatis.StartupTasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
 using OpenApiExamples.ExtensionMethods;
 using Scalar.AspNetCore;
 using Serilog;
@@ -64,7 +62,7 @@ public class Program
 		);
 		builder.Services.AddEndpointsApiExplorer();
 
-		
+
 		builder.Services.ConfigureHttpJsonOptions(options =>
 		{
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
@@ -74,7 +72,7 @@ public class Program
 		{
 			options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 		});
-		
+
 		builder.Services.AddTransient(typeof(IOptionalDependency<>), typeof(OptionalDependency<>));
 
 		builder.Services.AddSingleton(_ => TimeProvider.System);
@@ -93,7 +91,7 @@ public class Program
 			options.LowercaseQueryStrings = true;
 			options.LowercaseUrls = true;
 		});
-		
+
 
 		builder.Services.AddExceptionHandler<InternalServerErrorExceptionHandler>();
 		builder.Services.AddProblemDetails(options =>
@@ -121,19 +119,20 @@ public class Program
 		{
 			builder.AddUIModule();
 		}
-		
+
 		// SWAGGER_UI from environment vars
 		var swaggerEnabled = Feature.IsEnabled("SWAGGER_UI");
 
 		// SCALAR_UI from environment vars
 		var scalarEnabled = Feature.IsEnabled("SCALAR_UI");
-		
+
 		builder.Services.Configure<FeatureOptions>(options =>
 		{
 			if (swaggerEnabled)
 			{
 				options.AddFeature("SwaggerUI");
 			}
+
 			if (scalarEnabled)
 			{
 				options.AddFeature("ScalarUI");
@@ -196,7 +195,7 @@ public class Program
 		}
 
 		app.RegisterEndpointsFromAssemblyContaining<IApiMarker>();
-		
+
 		await app.RunStartupTasksAsync();
 		await app.RunAsync();
 	}
