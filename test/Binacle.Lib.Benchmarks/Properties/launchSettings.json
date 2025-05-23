@@ -1,45 +1,9 @@
 ﻿{
 	"$schema": "https://json.schemastore.org/launchsettings.json",
 	"profiles": {
-		"Scaling_Fitting_FFD": {
+		"LibBenchmarks": {
 			"commandName": "Project",
-			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *Scaling.Fitting_FFD*"
-		},
-		"Scaling_FittingComparison": {
-			"commandName": "Project",
-			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *Scaling.FittingComparison*"
-		},
-		"Scaling_Packing_FFD": {
-			"commandName": "Project",
-			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *Scaling.Packing_FFD*"
-		},
-		"Scaling_PackingComparison": {
-			"commandName": "Project",
-			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *Scaling.PackingComparison*"
-		},
-		"Combination_FittingSingleBaseLine": {
-			"commandName": "Project",
-			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *Combination.FittingSingleBaseLine*"
-		},
-		"Combination_PackingSingleBaseLine": {
-			"commandName": "Project",
-			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *Combination.PackingSingleBaseLine*"
-		},
-		"Combination_FittingMultipleBins": {
-			"commandName": "Project",
-			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *Combination.FittingMultipleBins*"
-		},
-		"Combination_PackingMultipleBins": {
-			"commandName": "Project",
-			"dotnetRunMessages": true,
-			"commandLineArgs": "--filter *Combination.PackingMultipleBins*"
+			"dotnetRunMessages": true
 		}
 	}
 }
