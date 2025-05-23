@@ -1,6 +1,6 @@
 ﻿services:
   binacle-net:
-    image: binacle/binacle-net:latest
+    image: binacle-net:local
     depends_on:
       azurite:
         condition: service_started
@@ -9,10 +9,6 @@
     ports:
       - "8080:8080"
     volumes:
-      - type: bind
-        source: ./Presets.json
-        target: /app/Config_Files/Presets.json
-        read_only: true
       - type: bind
         source: ./JwtAuth.json
         target: /app/Config_Files/ServiceModule/JwtAuth.json

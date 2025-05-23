@@ -15,10 +15,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}"
 	ProjectSection(SolutionItems) = preProject
-		build\build.sh = build\build.sh
 		build\README.md = build\README.md
-		build\docker-create.sh = build\docker-create.sh
 	EndProjectSection
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Local", "build\local\local.proj", "{84E99DD5-CDE6-433D-910B-29873AD23B51}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ContentProject", "build\contentproject\contentproject.proj", "{3A074859-B076-45C5-97AB-BE404A0E8434}"
 EndProject
@@ -57,6 +57,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8C31
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		samples\docker\README.md = samples\docker\README.md
+	EndProjectSection
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Binacle.Net.Samples.Docker.MinimalSetup", "samples\docker\minimal-setup\Binacle.Net.Samples.Docker.MinimalSetup.dcproj", "{EE4463F3-1386-45F0-AF4E-41D60999E5DC}"
 EndProject
@@ -317,6 +320,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{84E99DD5-CDE6-433D-910B-29873AD23B51} = {848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}
 		{3A074859-B076-45C5-97AB-BE404A0E8434} = {848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}
 		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{28105C4D-7776-4682-B103-5576E8D2E3F4} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}

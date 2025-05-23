@@ -45,13 +45,6 @@ public static class ModuleDefinition
 	{
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initializing");
 
-		// Required for local run with secrets
-		if (builder.Environment.IsDevelopment())
-		{
-			builder.Configuration
-				.AddUserSecrets<IModuleMarker>(optional: true, reloadOnChange: true);
-		}
-
 		// Logging
 		builder.AddJsonConfiguration(
 			filePath: "DiagnosticsModule/Serilog.json",

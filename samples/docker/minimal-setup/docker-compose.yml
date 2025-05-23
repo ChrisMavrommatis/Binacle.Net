@@ -13,3 +13,4 @@
         target: /app/data
     environment:
       - SWAGGER_UI=True
+      - SCALAR_UI=True
