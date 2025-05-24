@@ -18,7 +18,8 @@ internal class AlgorithmFamiliesCollection : Dictionary<string, Dictionary<strin
 		});
 		this.Add("BFD", new Dictionary<string, AlgorithmFactory<IPackingAlgorithm>>
 		{
-			{ "Packing_BFD_v1", AlgorithmFactories.Packing_BFD_v1 }
+			{ "Packing_BFD_v1", AlgorithmFactories.Packing_BFD_v1 },
+			{ "Packing_BFD_v2", AlgorithmFactories.Packing_BFD_v2 }
 		});
 	}
 }

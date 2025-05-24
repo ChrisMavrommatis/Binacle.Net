@@ -4,6 +4,17 @@ using ConsoleTables;
 
 namespace Binacle.Lib.PerformanceTests.Models;
 
+internal class MeasurementResult<T>
+	where T : struct,  INumber<T>, IComparable<T>
+{
+	public required string Algorithm { get; init; }
+	public required T Min { get; init; }
+	public required double Mean { get; init; }
+	public required double Median { get; init; }
+	public required T Max { get; init; }
+}
+
+
 internal class MeasurementResults<T> : List<MeasurementResult<T>>, IResult
 	where T : struct,  INumber<T>, IComparable<T>
 {

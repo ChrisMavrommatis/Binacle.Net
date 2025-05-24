@@ -92,7 +92,16 @@ internal class PackingEfficiency : ITest
 		
 		if (discrepancies.HasDiscrepancies())
 		{
-			// Need to do this
+			var discrepancyResults = discrepancies.GetDiscrepancyResults("%");
+			foreach(var discrepancyResult in discrepancyResults)
+			{
+				results.Add(new TestResult()
+				{
+					Title = $"{discrepancyResult.Family} Packing Efficiency Discrepancies",
+					// Description = "Shows the discrepancies in packing efficiency between algorithms",
+					Result = discrepancyResult
+				});
+			}
 		}
 
 		return results;

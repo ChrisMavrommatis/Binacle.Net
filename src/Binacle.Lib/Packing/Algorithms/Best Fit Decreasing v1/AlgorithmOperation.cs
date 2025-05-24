@@ -57,24 +57,6 @@ internal partial class BestFitDecreasing_v1<TBin, TItem>
 	{
 		return availableSpace
 			.OrderBy(x=> x.Volume)
-			// 	
-			// {
-			// 	// return x.Volume;
-			// 	
-			// 	//return x.Volume - orientation.Volume;
-			// 	
-			// 	var remainingLength = x.Dimensions.Length - orientation.Length;
-			// 	var remainingWidth = x.Dimensions.Width - orientation.Width;
-			// 	var remainingHeight = x.Dimensions.Height - orientation.Height;
-			// 	
-			// 	//return remainingLength * remainingWidth * remainingHeight;
-			// 	//
-			// 	var space1Volume = remainingLength * x.Dimensions.Width * x.Dimensions.Height;
-			// 	var space2Volume = orientation.Length * remainingWidth * x.Dimensions.Height;
-			// 	var space3Volume = orientation.Length * orientation.Width * remainingHeight;
-			// 	
-			// 	return space1Volume + space2Volume + space3Volume; 
-			// })
 			.FirstOrDefault(space => 
 				space.Dimensions.Length >= orientation.Length 
 				&& space.Dimensions.Width >= orientation.Width 

@@ -1,8 +1,10 @@
 ﻿using System.Collections;
+using System.Numerics;
 
 namespace Binacle.Lib.PerformanceTests.Models;
 
 internal class AlgorithmDiscrepancyTracker<T> : IEnumerable<KeyValuePair<string, Dictionary<string, Dictionary<string, T>>>>
+	where T : struct,  INumber<T>, IComparable<T>
 {
 	private readonly Dictionary<string, Dictionary<string, Dictionary<string, T>>> dictionary;
 
@@ -47,4 +49,24 @@ internal class AlgorithmDiscrepancyTracker<T> : IEnumerable<KeyValuePair<string,
 	{
 		return this.GetEnumerator();
 	}
+
+	public List<DiscrepancyResults<T>> GetDiscrepancyResults(string unit)
+	{
+		var list = new List<DiscrepancyResults<T>			//
+>();
+		foreach(var (familyKey, scenarioDiscrepancies) in this.dictionary)
+		{
+			var discrepancyResults = new DiscrepancyResults<T>()
+			{
+				Unit = unit,
+				Family = familyKey,
+				Algorithms = scenarioDiscrepancies.SelectMany(x => x.Value.Keys).Distinct().ToArray(),
+				ScenarioDiscrepancies = scenarioDiscrepancies
+			};
+			// Scenario, Alg 1, alg 2
+			list.Add(discrepancyResults);
+		}
+		return list;
+	}
 }
+

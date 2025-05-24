@@ -3,7 +3,7 @@ using Binacle.Lib.Packing.Models;
 
 namespace Binacle.Lib.Packing.Algorithms;
 
-internal partial class FirstFitDecreasing_v2<TBin, TItem>
+internal partial class WorstFitDecreasing_v2<TBin, TItem>
 {
 	public PackingResult Execute(PackingParameters parameters)
 	{
@@ -58,6 +58,7 @@ internal partial class FirstFitDecreasing_v2<TBin, TItem>
 
 	private SpaceVolume? FindAvailableSpace(Item orientation, List<SpaceVolume> availableSpace)
 	{
+		availableSpace.Sort((x, y) => y.Volume.CompareTo(x.Volume));
 		for (var i = 0; i < availableSpace.Count; i++)
 		{
 			var space = availableSpace[i];
