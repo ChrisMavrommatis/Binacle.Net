@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Binacle.Lib.Benchmarks.Order;
 using Binacle.Lib.Packing.Models;
-using Binacle.Lib;
 using Binacle.Net.TestsKernel.Models;
 
 namespace Binacle.Lib.Benchmarks.Combination;
@@ -42,9 +42,10 @@ public class PackingSingleBaseLine : MultipleBinsBenchmarkBase
 	public List<TestItem> Items { get; set; }
 
 	[Benchmark(Baseline = true)]
-	public PackingResult FFD()
+	[BenchmarkOrder(10)]
+	public PackingResult FFD_v1()
 	{
-		var algorithmInstance = this.algorithmFactory.CreatePacking(Algorithm.FirstFitDecreasing, this.testBin, this.Items);
+		var algorithmInstance = AlgorithmFactories.Packing_FFD_v1(this.testBin!, this.Items!);
 		var result = algorithmInstance.Execute(new PackingParameters()
 		{
 			OptInToEarlyFails = false,
@@ -52,12 +53,13 @@ public class PackingSingleBaseLine : MultipleBinsBenchmarkBase
 			ReportPackedItemsOnlyWhenFullyPacked = false
 		});
 		return result;
-		
 	}
+	
 	[Benchmark]
-	public PackingResult WFD()
+	[BenchmarkOrder(11)]
+	public PackingResult FFD_v2()
 	{
-		var algorithmInstance = this.algorithmFactory.CreatePacking(Algorithm.WorstFitDecreasing, this.testBin, this.Items);
+		var algorithmInstance = AlgorithmFactories.Packing_FFD_v2(this.testBin!, this.Items!);
 		var result = algorithmInstance.Execute(new PackingParameters()
 		{
 			OptInToEarlyFails = false,
@@ -65,12 +67,55 @@ public class PackingSingleBaseLine : MultipleBinsBenchmarkBase
 			ReportPackedItemsOnlyWhenFullyPacked = false
 		});
 		return result;
-		
 	}
+	
 	[Benchmark]
-	public PackingResult BFD()
+	[BenchmarkOrder(20)]
+	public PackingResult WFD_v1()
 	{
-		var algorithmInstance = this.algorithmFactory.CreatePacking(Algorithm.BestFitDecreasing, this.testBin, this.Items);
+		var algorithmInstance = AlgorithmFactories.Packing_WFD_v1(this.testBin!, this.Items!);
+		var result = algorithmInstance.Execute(new PackingParameters()
+		{
+			OptInToEarlyFails = false,
+			NeverReportUnpackedItems =false,
+			ReportPackedItemsOnlyWhenFullyPacked = false
+		});
+		return result;
+	}
+	
+	[Benchmark]
+	[BenchmarkOrder(21)]
+	public PackingResult WFD_v2()
+	{
+		var algorithmInstance = AlgorithmFactories.Packing_WFD_v2(this.testBin!, this.Items!);
+		var result = algorithmInstance.Execute(new PackingParameters()
+		{
+			OptInToEarlyFails = false,
+			NeverReportUnpackedItems =false,
+			ReportPackedItemsOnlyWhenFullyPacked = false
+		});
+		return result;
+	}
+	
+	[Benchmark]
+	[BenchmarkOrder(30)]
+	public PackingResult BFD_v1()
+	{
+		var algorithmInstance = AlgorithmFactories.Packing_BFD_v1(this.testBin!, this.Items!);
+		var result = algorithmInstance.Execute(new PackingParameters()
+		{
+			OptInToEarlyFails = false,
+			NeverReportUnpackedItems =false,
+			ReportPackedItemsOnlyWhenFullyPacked = false
+		});
+		return result;
+	}
+	
+	[Benchmark]
+	[BenchmarkOrder(31)]
+	public PackingResult BFD_v2()
+	{
+		var algorithmInstance = AlgorithmFactories.Packing_BFD_v2(this.testBin!, this.Items!);
 		var result = algorithmInstance.Execute(new PackingParameters()
 		{
 			OptInToEarlyFails = false,

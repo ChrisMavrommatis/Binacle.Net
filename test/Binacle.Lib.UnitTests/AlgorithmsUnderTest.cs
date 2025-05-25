@@ -20,6 +20,7 @@ internal static class AlgorithmsUnderTest
 		{ "Packing_FFD_v1", AlgorithmFactories.Packing_FFD_v1 },
 		{ "Packing_FFD_v2", AlgorithmFactories.Packing_FFD_v2 },
 		{ "Packing_WFD_v1", AlgorithmFactories.Packing_WFD_v1 },
+		{ "Packing_WFD_v2", AlgorithmFactories.Packing_WFD_v2 },
 		{ "Packing_BFD_v1", AlgorithmFactories.Packing_BFD_v1 },
 		{ "Packing_BFD_v2", AlgorithmFactories.Packing_BFD_v2 }
 	};

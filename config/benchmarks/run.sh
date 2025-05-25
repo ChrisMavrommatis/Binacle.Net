@@ -14,6 +14,7 @@ declare -A benchmark_aliases=(
     ["Scaling_FittingComparison"]="*Scaling.FittingComparison*"
     ["Scaling_Packing_FFD"]="*Scaling.Packing_FFD*"
     ["Scaling_Packing_BFD"]="*Scaling.Packing_BFD*"
+    ["Scaling_Packing_WFD"]="*Scaling.Packing_WFD*"
     ["Scaling_PackingComparison"]="*Scaling.PackingComparison*"
     ["Combination_FittingSingleBaseLine"]="*Combination.FittingSingleBaseLine*"
     ["Combination_PackingSingleBaseLine"]="*Combination.PackingSingleBaseLine*"

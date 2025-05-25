@@ -14,7 +14,8 @@ internal class AlgorithmFamiliesCollection : Dictionary<string, Dictionary<strin
 		});
 		this.Add("WFD", new Dictionary<string, AlgorithmFactory<IPackingAlgorithm>>
 		{
-			{ "Packing_WFD_v1", AlgorithmFactories.Packing_WFD_v1 }
+			{ "Packing_WFD_v1", AlgorithmFactories.Packing_WFD_v1 },
+			{ "Packing_WFD_v2", AlgorithmFactories.Packing_WFD_v2 }
 		});
 		this.Add("BFD", new Dictionary<string, AlgorithmFactory<IPackingAlgorithm>>
 		{
