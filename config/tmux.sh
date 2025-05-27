@@ -31,47 +31,60 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	
 	###-------------------------WINDOW 2----------------------------###
 	
-	# Create a new window named 'bench1'
-  tmux new-window -n 'bench1' -t $SESSION_NAME
+	# Create a new window named 'benchmarks_cube_scaling'
+  tmux new-window -n 'benchmarks_cube_scaling' -t $SESSION_NAME
   	
   # Create 4 panes
   # Split the 3rd window vertically
   tmux split-window -v -t $SESSION_NAME:2
-  # Split the 1st pane horizontally
-  tmux split-window -h -t $SESSION_NAME:2.0
-  # Split the 3rd pane horizontally
-  tmux split-window -h -t $SESSION_NAME:2.2
   
   # Set the cd to /config/benchmarks
   tmux send-keys -t $SESSION_NAME:2.0 'cd ./config/benchmarks' C-m
   tmux send-keys -t $SESSION_NAME:2.1 'cd ./config/benchmarks' C-m
-  tmux send-keys -t $SESSION_NAME:2.2 'cd ./config/benchmarks' C-m
-  tmux send-keys -t $SESSION_NAME:2.3 'cd ./config/benchmarks' C-m
+
   # Select the first pane
   tmux select-pane -t $SESSION_NAME:2.0
   	
 	###-------------------------WINDOW 2----------------------------###
-		
-	###-------------------------WINDOW 3----------------------------###
+	
+  ###-------------------------WINDOW 3----------------------------###
   	
-  	# Create a new window named 'bench2'
-    tmux new-window -n 'bench2' -t $SESSION_NAME
+  # Create a new window named 'benchmarks_multiple_bins'
+  tmux new-window -n 'benchmarks_multiple_bins' -t $SESSION_NAME
+    	
+  # Create 4 panes
+  # Split the 3rd window vertically
+  tmux split-window -v -t $SESSION_NAME:3
+    
+  # Set the cd to /config/benchmarks
+  tmux send-keys -t $SESSION_NAME:3.0 'cd ./config/benchmarks' C-m
+  tmux send-keys -t $SESSION_NAME:3.1 'cd ./config/benchmarks' C-m
+  
+  # Select the first pane
+  tmux select-pane -t $SESSION_NAME:3.0
+    	
+  ###-------------------------WINDOW 3----------------------------###
+		
+	###-------------------------WINDOW 4----------------------------###
+  	
+  	# Create a new window named 'bench'
+    tmux new-window -n 'bench' -t $SESSION_NAME
     	
     # Create 4 panes
     # Split the 4th window vertically
-    tmux split-window -v -t $SESSION_NAME:3
+    tmux split-window -v -t $SESSION_NAME:4
     # Split the 1st pane horizontally
-    tmux split-window -h -t $SESSION_NAME:3.0
+    tmux split-window -h -t $SESSION_NAME:4.0
     # Split the 3rd pane horizontally
-    tmux split-window -h -t $SESSION_NAME:3.2
+    tmux split-window -h -t $SESSION_NAME:4.2
     
     # Set the cd to /config/benchmarks
-    tmux send-keys -t $SESSION_NAME:3.0 'cd ./config/benchmarks' C-m
-    tmux send-keys -t $SESSION_NAME:3.1 'cd ./config/benchmarks' C-m
-    tmux send-keys -t $SESSION_NAME:3.2 'cd ./config/benchmarks' C-m
-    tmux send-keys -t $SESSION_NAME:3.3 'cd ./config/benchmarks' C-m
+    tmux send-keys -t $SESSION_NAME:4.0 'cd ./config/benchmarks' C-m
+    tmux send-keys -t $SESSION_NAME:4.1 'cd ./config/benchmarks' C-m
+    tmux send-keys -t $SESSION_NAME:4.2 'cd ./config/benchmarks' C-m
+    tmux send-keys -t $SESSION_NAME:4.3 'cd ./config/benchmarks' C-m
     # Select the first pane
-    tmux select-pane -t $SESSION_NAME:3.0
+    tmux select-pane -t $SESSION_NAME:4.0
     	
   ###-------------------------WINDOW 3----------------------------###
   

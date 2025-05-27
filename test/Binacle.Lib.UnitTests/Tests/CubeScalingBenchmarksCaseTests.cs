@@ -1,30 +1,28 @@
-﻿using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.Abstractions.Fitting;
-using Binacle.Lib.Fitting.Models;
+﻿using Binacle.Lib.Fitting.Models;
 using Binacle.Lib.Packing.Models;
-using Binacle.Net.TestsKernel.Models;
-using Binacle.Net.TestsKernel.Providers;
+using Binacle.Lib.UnitTests.Data.Providers.Benchmarks;
+using Binacle.Net.TestsKernel.Benchmarks.Models;
 
 namespace Binacle.Lib.UnitTests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
-public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
+public class CubeScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 {
 	private CommonTestingFixture Fixture { get; }
 
-	public ScalingBenchmarksCaseTests(CommonTestingFixture fixture)
+	public CubeScalingBenchmarksCaseTests(CommonTestingFixture fixture)
 	{
 		this.Fixture = fixture;
 	}
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.Benchmarks.FittingScalingBenchmarksProvider))]
-	public void Fitting_Algorithms(string algorithm, ScalingBenchmarkScenario scenario)
+	[ClassData(typeof(FittingCubeScalingBenchmarksProvider))]
+	public void Fitting_Algorithms(string algorithm, CubeScalingBenchmarkScenario scenario)
 		=> this.RunFittingScenarioTest(algorithm, scenario);
 
 	private void RunFittingScenarioTest(
 		string algorithmKey,
-		ScalingBenchmarkScenario scenario
+		CubeScalingBenchmarkScenario scenario
 	)
 	{
 		var algorithmFactory = this.Fixture.FittingAlgorithmsUnderTest[algorithmKey];
@@ -39,24 +37,24 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 
 			if (scenario.MaxInRange < noOfItems) // doesn't fit
 			{
-				result.Status.ShouldBe(Binacle.Lib.Fitting.Models.FittingResultStatus.Fail);
+				result.Status.ShouldBe(FittingResultStatus.Fail);
 			}
 			else
 			{
-				result.Status.ShouldBe(Binacle.Lib.Fitting.Models.FittingResultStatus.Success);
+				result.Status.ShouldBe(FittingResultStatus.Success);
 			}
 		}
 	}
 
 
 	[Theory]
-	[ClassData(typeof(Data.Providers.Benchmarks.PackingScalingBenchmarksProvider))]
-	public void Packing_Algorithms(string algorithm, ScalingBenchmarkScenario scenario)
+	[ClassData(typeof(PackingCubeScalingBenchmarksProvider))]
+	public void Packing_Algorithms(string algorithm, CubeScalingBenchmarkScenario scenario)
 		=> this.RunPackingScenarioTest(algorithm, scenario);
 	
 	private void RunPackingScenarioTest(
 		string algorithmKey,
-		ScalingBenchmarkScenario scenario
+		CubeScalingBenchmarkScenario scenario
 	)
 	{
 		var algorithmFactory = this.Fixture.PackingAlgorithmsUnderTest[algorithmKey];
@@ -76,11 +74,11 @@ public class ScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture>
 
 			if (scenario.MaxInRange < noOfItems) // doesn't fit
 			{
-				result.Status.ShouldNotBe(Binacle.Lib.Packing.Models.PackingResultStatus.FullyPacked);
+				result.Status.ShouldNotBe(PackingResultStatus.FullyPacked);
 			}
 			else
 			{
-				result.Status.ShouldBe(Binacle.Lib.Packing.Models.PackingResultStatus.FullyPacked);
+				result.Status.ShouldBe(PackingResultStatus.FullyPacked);
 			}
 		}
 	}

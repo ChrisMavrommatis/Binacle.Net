@@ -1,11 +1,13 @@
 ﻿using System.Collections;
+using Binacle.Net.TestsKernel.Benchmarks.Models;
 using Binacle.Net.TestsKernel.Models;
+using Binacle.Net.TestsKernel.Providers;
 
-namespace Binacle.Net.TestsKernel.Providers;
+namespace Binacle.Net.TestsKernel.Benchmarks;
 
-public class MultiBinsBenchmarkTestsDataProvider : IEnumerable<object[]>
+public class MultipleBinsBenchmarkTestsDataProvider : IEnumerable<object[]>
 {
-	private static readonly MultiBinsBenchmarkTestCase TestCase = new MultiBinsBenchmarkTestCase()
+	private static readonly MultipleBinsBenchmarkTestCase TestCase = new MultipleBinsBenchmarkTestCase()
 		.Add("Rectangular-Cuboids::Small", "BinaryDecision::DoesNotFit")  
 		.Add("Rectangular-Cuboids::Medium", "BinaryDecision::Fits")
 		.Add("Rectangular-Cuboids::Large", "BinaryDecision::Fits")			// 3 _ 2 

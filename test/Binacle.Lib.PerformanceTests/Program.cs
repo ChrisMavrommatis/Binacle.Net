@@ -1,5 +1,6 @@
 ﻿using Binacle.Lib.PerformanceTests.Services;
 using Binacle.Lib.PerformanceTests.Tests;
+using Binacle.Net.TestsKernel.Benchmarks;
 using Binacle.Net.TestsKernel.Data.Providers.PackingEddiciency;
 using Binacle.Net.TestsKernel.Providers;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +37,6 @@ internal class Program
 		builder.Services.AddSingleton<AlgorithmFamiliesCollection>();
 		builder.Services.AddSingleton<MarkdownFileWriter>();
 		builder.Services.AddSingleton<DistinctAlgorithmCollection>();
-		builder.Services.AddSingleton<ScalingBenchmarkTestsDataProvider>();
 		builder.Services.AddTransient<TestRunner>();
 		builder.Services.AddTransient<ITest, PackingEfficiency>();
 		builder.Services.AddTransient<ITest, PackingTime>();

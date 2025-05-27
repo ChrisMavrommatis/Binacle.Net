@@ -1,12 +1,12 @@
-﻿using Binacle.Net.TestsKernel.Providers;
+﻿using Binacle.Net.TestsKernel.Benchmarks;
 
 namespace Binacle.Lib.UnitTests.Data.Providers.Benchmarks;
 
-public class PackingMultiBinsBenchmarksProvider : MultiBinsBenchmarkTestsDataProvider
+public class FittingMultipleBinsBenchmarksProvider : MultipleBinsBenchmarkTestsDataProvider
 {
 	public override IEnumerator<object[]> GetEnumerator()
 	{
-		foreach (var (algorithmKey, algorithm) in AlgorithmsUnderTest.PackingAlgorithms)
+		foreach (var (algorithmKey, algorithm) in AlgorithmsUnderTest.FittingAlgorithms)
 		{
 			foreach (var scenario in this.AllScenarios)
 			{

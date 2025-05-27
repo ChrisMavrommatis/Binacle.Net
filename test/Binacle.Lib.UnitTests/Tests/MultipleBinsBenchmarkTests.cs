@@ -8,17 +8,17 @@ using Binacle.Net.TestsKernel.Models;
 namespace Binacle.Lib.UnitTests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]
-public class MultiBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
+public class MultipleBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 {
 	private CommonTestingFixture Fixture { get; }
 
-	public MultiBinsBenchmarkTests(CommonTestingFixture fixture)
+	public MultipleBinsBenchmarkTests(CommonTestingFixture fixture)
 	{
 		this.Fixture = fixture;
 	}
 
 	[Theory]
-	[ClassData(typeof(FittingMultiBinsBenchmarksProvider))]
+	[ClassData(typeof(FittingMultipleBinsBenchmarksProvider))]
 	public void Fitting_Algorithms(string algorithm, Scenario scenario)
 		=> this.RunFittingScenarioTest(algorithm, scenario);
 
@@ -52,7 +52,7 @@ public class MultiBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 
 
 	[Theory]
-	[ClassData(typeof(PackingMultiBinsBenchmarksProvider))]
+	[ClassData(typeof(PackingMultipleBinsBenchmarksProvider))]
 	public void Packing_Algorithms(string algorithm, Scenario scenario)
 		=> this.RunPackingScenarioTest(algorithm, scenario);
 

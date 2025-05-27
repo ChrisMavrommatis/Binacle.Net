@@ -1,15 +1,17 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Binacle.Net.TestsKernel.Benchmarks;
+using Binacle.Net.TestsKernel.Benchmarks.Models;
 using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.TestsKernel.Providers;
 
-namespace Binacle.Lib.Benchmarks.Scaling;
+namespace Binacle.Lib.Benchmarks.Abstractions;
 
-public abstract class SingleScenarioScalingBase
+public abstract class CubeScalingBenchmarkBase
 {
-	public SingleScenarioScalingBase(string scenarioName)
+	public CubeScalingBenchmarkBase(string scenarioName)
 	{
 		this.binCollectionsDataProvider = new BinCollectionsTestDataProvider();
-		this.scenario = ScalingBenchmarkTestsDataProvider.Scenarios[scenarioName];
+		this.scenario = CubeScalingBenchmarkTestsDataProvider.Scenarios[scenarioName];
 	}
 
 	[ParamsSource(nameof(NoOfItemsParamsSourceAccessor))]
@@ -21,7 +23,7 @@ public abstract class SingleScenarioScalingBase
 	}
 
 	private BinCollectionsTestDataProvider binCollectionsDataProvider;
-	private ScalingBenchmarkScenario scenario;
+	private CubeScalingBenchmarkScenario scenario;
 	protected TestBin? Bin { get; private set; }
 	protected List<TestItem>? Items { get; private set; }
 

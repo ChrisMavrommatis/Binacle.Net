@@ -1,15 +1,17 @@
-﻿namespace Binacle.Net.TestsKernel.Models;
+﻿using Binacle.Net.TestsKernel.Models;
 
-public sealed class MultiBinsBenchmarkTestCase
+namespace Binacle.Net.TestsKernel.Benchmarks.Models;
+
+public sealed class MultipleBinsBenchmarkTestCase
 {
 	private Dictionary<string, string> binCases;
 
-	public MultiBinsBenchmarkTestCase()
+	public MultipleBinsBenchmarkTestCase()
 	{
 		this.binCases = new();
 	}
 
-	public MultiBinsBenchmarkTestCase Add(string binString, string result)
+	public MultipleBinsBenchmarkTestCase Add(string binString, string result)
 	{
 		this.binCases.Add(binString, result);
 		return this;
