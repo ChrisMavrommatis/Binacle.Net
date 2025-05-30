@@ -1,7 +1,7 @@
-﻿using Binacle.Net.TestsKernel.Models;
-using Binacle.Net.TestsKernel.Providers;
+﻿using Binacle.Net.TestsKernel.Data.Providers;
+using Binacle.Net.TestsKernel.Helpers;
 
-namespace Binacle.Net.TestsKernel.Abstractions;
+namespace Binacle.Net.TestsKernel.Models;
 
 public abstract class BinScenarioBase
 {
@@ -22,7 +22,7 @@ public abstract class BinScenarioBase
 		}
 		if (binParts[0] == "Raw")
 		{
-			var dimensions = Helpers.DimensionHelper.ParseFromCompactString(binParts[1]);
+			var dimensions = DimensionHelper.ParseFromCompactString(binParts[1]);
 			this.bin = new TestBin(binParts[1], dimensions);
 			return;
 		}
@@ -47,7 +47,7 @@ public abstract class BinScenarioBase
 		return this.binCollectionKey;
 	}
 
-	public TestBin GetTestBin(BinCollectionsTestDataProvider provider)
+	public TestBin GetTestBin(BinCollectionsDataProvider provider)
 	{
 		if (this.bin is not null)
 		{

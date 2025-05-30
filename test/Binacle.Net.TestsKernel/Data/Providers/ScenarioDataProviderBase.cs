@@ -1,17 +1,18 @@
 ﻿using Binacle.Net.TestsKernel.Models;
 using System.Collections;
+using Binacle.Net.TestsKernel.Data.Providers;
 
 
-namespace Binacle.Net.TestsKernel.Providers;
+namespace Binacle.Net.TestsKernel.Data.Providers;
 
-public abstract class ScenarioTestDataProvider : IEnumerable<object[]>
+public abstract class ScenarioDataProviderBase : IEnumerable<object[]>
 {
-	protected readonly ScenarioCollectionsTestDataProvider ScenarioCollections;
+	protected readonly ScenarioCollectionsDataProvider ScenarioCollections;
 	protected readonly List<Scenario> Scenarios;
 
-	protected ScenarioTestDataProvider(string collectionKey)
+	protected ScenarioDataProviderBase(string collectionKey)
 	{
-		this.ScenarioCollections = new ScenarioCollectionsTestDataProvider();
+		this.ScenarioCollections = new ScenarioCollectionsDataProvider();
 		this.Scenarios = this.ScenarioCollections.GetCollection(collectionKey);
 	}
 

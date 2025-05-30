@@ -2,6 +2,7 @@
 using Binacle.Lib.Packing.Models;
 using Binacle.Lib.UnitTests.Data.Providers.Benchmarks;
 using Binacle.Net.TestsKernel.Benchmarks.Models;
+using Binacle.Net.TestsKernel.Models;
 
 namespace Binacle.Lib.UnitTests;
 
@@ -26,7 +27,7 @@ public class CubeScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture
 	)
 	{
 		var algorithmFactory = this.Fixture.FittingAlgorithmsUnderTest[algorithmKey];
-		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
+		var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
 		foreach (var noOfItems in scenario.GetNoOfItems())
 		{
 			var items = scenario.GetTestItems(noOfItems);
@@ -58,7 +59,7 @@ public class CubeScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture
 	)
 	{
 		var algorithmFactory = this.Fixture.PackingAlgorithmsUnderTest[algorithmKey];
-		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
+		var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
 		foreach (var noOfItems in scenario.GetNoOfItems())
 		{
 			var items = scenario.GetTestItems(noOfItems);

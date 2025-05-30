@@ -2,7 +2,7 @@
 
 namespace Binacle.Lib.UnitTests.Data.Providers.BinaryDecision;
 
-internal sealed class PackingAlgorithmsComplexScenariosProvider: ComplexScenarioTestDataProvider
+internal sealed class PackingAlgorithmsComplexScenariosProvider: ComplexScenarioDataProvider
 {
 	public override IEnumerator<object[]> GetEnumerator()
 	{

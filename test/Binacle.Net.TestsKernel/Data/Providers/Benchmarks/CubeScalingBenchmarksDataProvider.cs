@@ -1,9 +1,9 @@
 ﻿using System.Collections;
-using Binacle.Net.TestsKernel.Benchmarks.Models;
+using Binacle.Net.TestsKernel.Models;
 
-namespace Binacle.Net.TestsKernel.Benchmarks;
+namespace Binacle.Net.TestsKernel.Data.Providers.Benchmarks;
 
-public class CubeScalingBenchmarkTestsDataProvider : IEnumerable<object[]>
+public class CubeScalingBenchmarksDataProvider : IEnumerable<object[]>
 {
 	// 1 min
 	// 1 max

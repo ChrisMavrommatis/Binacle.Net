@@ -1,11 +1,9 @@
-﻿using Binacle.Net.TestsKernel.Providers;
-
-namespace Binacle.Net.TestsKernel.Data.Providers.PackingEddiciency;
+﻿namespace Binacle.Net.TestsKernel.Data.Providers.PackingEfficiency;
 
 
-public sealed class ORLibraryScenarioTestDataProvider : MultipleCollectionScenarioTestDataProvider
+public sealed class OrLibraryScenarioDataProvider : MultipleCollectionScenarioDataProvider
 {
-	public ORLibraryScenarioTestDataProvider() 
+	public OrLibraryScenarioDataProvider() 
 		: base([
 			"PackingEfficiency/orlib_thpack1",
 			"PackingEfficiency/orlib_thpack2",

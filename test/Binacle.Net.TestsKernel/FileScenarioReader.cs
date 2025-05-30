@@ -3,7 +3,7 @@ using Binacle.Net.TestsKernel.Helpers;
 using Binacle.Net.TestsKernel.Models;
 
 
-namespace Binacle.Net.TestsKernel.Providers;
+namespace Binacle.Net.TestsKernel;
 
 internal class EmbeddedResourceFileScenarioReader
 { 

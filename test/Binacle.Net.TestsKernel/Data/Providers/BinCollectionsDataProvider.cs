@@ -1,14 +1,14 @@
 ﻿using System.Text.Json;
-using Binacle.Net.TestsKernel.Data;
+using Binacle.Net.TestsKernel.Abstractions.Models;
 using Binacle.Net.TestsKernel.Models;
 
-namespace Binacle.Net.TestsKernel.Providers;
+namespace Binacle.Net.TestsKernel.Data.Providers;
 
-public class BinCollectionsTestDataProvider : CollectionTestDataProvider<List<TestBin>>
+public class BinCollectionsDataProvider : DataCollections<List<TestBin>>
 {
 	private const string binCollectionsKey = "BinCollections";
 
-	public BinCollectionsTestDataProvider()
+	public BinCollectionsDataProvider()
 	{
 	}
 

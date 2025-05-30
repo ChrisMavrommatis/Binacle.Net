@@ -2,7 +2,7 @@
 
 namespace Binacle.Lib.UnitTests.Data.Providers.BinaryDecision;
 
-internal sealed class FittingAlgorithmsBaselineScenariosProvider: BaselineScenarioTestDataProvider
+internal sealed class FittingAlgorithmsBaselineScenariosProvider: BaselineScenarioDataProvider
 {
 	public override IEnumerator<object[]> GetEnumerator()
 	{

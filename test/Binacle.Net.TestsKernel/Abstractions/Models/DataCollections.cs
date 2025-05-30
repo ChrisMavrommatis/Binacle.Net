@@ -1,15 +1,15 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Binacle.Net.TestsKernel.Providers;
+namespace Binacle.Net.TestsKernel.Abstractions.Models;
 
-public abstract class CollectionTestDataProvider<T>
+public abstract class DataCollections<T>
 	where T : class, new()
 {
 	private Dictionary<string, T> collections;
 
 	public ReadOnlyDictionary<string, T> Collections => this.collections.AsReadOnly();
 
-	protected CollectionTestDataProvider()
+	protected DataCollections()
 	{
 		this.collections = this.InitializeCollections();
 	}
@@ -26,5 +26,4 @@ public abstract class CollectionTestDataProvider<T>
 		return this.collections[normalizedKey];
 	}
 }
-
 

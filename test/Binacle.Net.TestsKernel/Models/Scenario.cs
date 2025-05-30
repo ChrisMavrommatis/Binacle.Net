@@ -2,6 +2,12 @@
 
 namespace Binacle.Net.TestsKernel.Models;
 
+public enum ScenarioResultType
+{
+	BinaryDecision,
+	PackingEfficiency
+}
+
 public sealed class Scenario : BinScenarioBase
 {
 	private Scenario(string binString) : base(binString)

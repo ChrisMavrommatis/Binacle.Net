@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.TestsKernel.Benchmarks.Models;
+﻿namespace Binacle.Net.TestsKernel.Models;
 
 public sealed class CubeScalingBenchmarkTestCase
 {
@@ -6,12 +6,12 @@ public sealed class CubeScalingBenchmarkTestCase
 	{
 		
 	}
-	public CubeScalingBenchmarkTestCase(string itemString, TestsKernel.Models.Range range)
+	public CubeScalingBenchmarkTestCase(string itemString, Range range)
 	{
 		this.ItemString = itemString;
 		this.Range = range;
 	}
 
 	public string ItemString { get; }
-	public TestsKernel.Models.Range Range { get; }
+	public Range Range { get; }
 }

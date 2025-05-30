@@ -1,13 +1,13 @@
-﻿using Binacle.Net.TestsKernel.Data;
+﻿using Binacle.Net.TestsKernel.Abstractions.Models;
 using Binacle.Net.TestsKernel.Models;
 
-namespace Binacle.Net.TestsKernel.Providers;
+namespace Binacle.Net.TestsKernel.Data.Providers;
 
-public class ScenarioCollectionsTestDataProvider : CollectionTestDataProvider<List<Scenario>>
+public class ScenarioCollectionsDataProvider : DataCollections<List<Scenario>>
 {
 	private const string scenariosPrefixKey = "Scenarios";
 
-	public ScenarioCollectionsTestDataProvider()
+	public ScenarioCollectionsDataProvider()
 	{
 	}
 

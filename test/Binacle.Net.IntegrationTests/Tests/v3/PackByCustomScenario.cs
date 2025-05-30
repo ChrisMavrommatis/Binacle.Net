@@ -21,17 +21,17 @@ public class PackByCustomScenario
 	private const string routePath = "/api/v3/pack/by-custom";
 
 	[Theory]
-	[ClassData(typeof(BaselineScenarioTestDataProvider))]
+	[ClassData(typeof(BaselineScenarioDataProvider))]
 	public Task BinaryDecision_Baseline(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 
 	[Theory]
-	[ClassData(typeof(SimpleScenarioTestDataProvider))]
+	[ClassData(typeof(SimpleScenarioDataProvider))]
 	public Task BinaryDecision_Simple(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 
 	[Theory]
-	[ClassData(typeof(ComplexScenarioTestDataProvider))]
+	[ClassData(typeof(ComplexScenarioDataProvider))]
 	public Task BinaryDecision_Complex(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 
@@ -39,7 +39,7 @@ public class PackByCustomScenario
 	{
 		var presets = this.sut.Services.GetService<IOptions<BinPresetOptions>>();
 		var binCollection = scenario.GetBinCollectionKey();
-		var expectedBin = scenario.GetTestBin(this.sut.BinCollectionsTestDataProvider);
+		var expectedBin = scenario.GetTestBin(this.sut.BinCollectionsDataProvider);
 
 		presets!.Value.Presets.ShouldContainKey(binCollection);
 

@@ -1,12 +1,12 @@
 ﻿using Binacle.Net.TestsKernel.Models;
 using System.Reflection;
 
-namespace Binacle.Net.TestsKernel.Data;
+namespace Binacle.Net.TestsKernel;
 
 public static class EmbeddedResourceFileProvider
 {
 	// should be Binacle.Net.TestsKernel.Data.
-	private static string prefix = $"{typeof(EmbeddedResourceFileProvider).Namespace}.";
+	private static string prefix = $"{typeof(EmbeddedResourceFileProvider).Namespace}.Data.";
 
 	private static Dictionary<string, List<EmbeddedResourceFile>> files = new Dictionary<string,List<EmbeddedResourceFile>>();
 

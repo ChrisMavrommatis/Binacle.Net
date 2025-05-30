@@ -1,30 +1,30 @@
 ﻿using System.Diagnostics;
+using Binacle.Lib.Packing.Models;
 using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Services;
-using Binacle.Lib.Packing.Models;
-using Binacle.Net.TestsKernel.Data.Providers.PackingEddiciency;
+using Binacle.Net.TestsKernel.Data.Providers;
+using Binacle.Net.TestsKernel.Data.Providers.PackingEfficiency;
 using Binacle.Net.TestsKernel.Models;
-using Binacle.Net.TestsKernel.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Binacle.Lib.PerformanceTests.Tests;
 
 internal class PackingTime : ITest
 {
-	private readonly ORLibraryScenarioTestDataProvider scenarioProvider;
-	private readonly BinCollectionsTestDataProvider binTestDataProvider;
+	private readonly OrLibraryScenarioDataProvider scenarioProvider;
+	private readonly BinCollectionsDataProvider binDataProvider;
 	private readonly AlgorithmFamiliesCollection algorithmFamilies;
 	private readonly ILogger<PackingTime> logger;
 
 	public PackingTime(
-		ORLibraryScenarioTestDataProvider scenarioProvider,
-		BinCollectionsTestDataProvider binTestDataProvider,
+		OrLibraryScenarioDataProvider scenarioProvider,
+		BinCollectionsDataProvider binDataProvider,
 		AlgorithmFamiliesCollection algorithmFamilies,
 		ILogger<PackingTime> logger
 	)
 	{
 		this.scenarioProvider = scenarioProvider;
-		this.binTestDataProvider = binTestDataProvider;
+		this.binDataProvider = binDataProvider;
 		this.algorithmFamilies = algorithmFamilies;
 		this.logger = logger;
 	}
@@ -42,7 +42,7 @@ internal class PackingTime : ITest
 
 				foreach (var (algorithmName, algorithmFactory) in algorithms)
 				{
-					var bin = scenario.GetTestBin(this.binTestDataProvider);
+					var bin = scenario.GetTestBin(this.binDataProvider);
 
 					var algorithmInstance = algorithmFactory(bin, scenario.Items);
 

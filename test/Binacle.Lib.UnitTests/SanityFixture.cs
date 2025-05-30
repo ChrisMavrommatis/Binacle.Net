@@ -1,27 +1,27 @@
-﻿using Binacle.Net.TestsKernel.Models;
-using Binacle.Net.TestsKernel.Providers;
+﻿using Binacle.Net.TestsKernel.Data.Providers;
+using Binacle.Net.TestsKernel.Models;
 
 namespace Binacle.Lib.UnitTests;
 
 public sealed class SanityFixture : IDisposable
 {
-	public BinCollectionsTestDataProvider BinCollectionsTestDataProvider { get; }
-	public ScenarioCollectionsTestDataProvider ScenarioCollectionsTestDataProvider { get; }
+	public BinCollectionsDataProvider BinCollectionsDataProvider { get; }
+	public ScenarioCollectionsDataProvider ScenarioCollectionsDataProvider { get; }
 
 	public SanityFixture()
 	{
-		BinCollectionsTestDataProvider = new BinCollectionsTestDataProvider();
-		ScenarioCollectionsTestDataProvider = new ScenarioCollectionsTestDataProvider();
+		this.BinCollectionsDataProvider = new BinCollectionsDataProvider();
+		this.ScenarioCollectionsDataProvider = new ScenarioCollectionsDataProvider();
 	}
 
 	public List<TestBin> GetBins(string collectionKey)
 	{
-		return BinCollectionsTestDataProvider.GetCollection(collectionKey);
+		return this.BinCollectionsDataProvider.GetCollection(collectionKey);
 	}
 
 	public List<Scenario> GetScenarios(string collectionKey)
 	{
-		return ScenarioCollectionsTestDataProvider.GetCollection(collectionKey);
+		return this.ScenarioCollectionsDataProvider.GetCollection(collectionKey);
 	}
 	public void Dispose()
 	{

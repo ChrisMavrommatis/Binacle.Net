@@ -1,7 +1,8 @@
-﻿using Binacle.Net.TestsKernel.Abstractions;
+﻿using Binacle.Net.TestsKernel.Data.Providers.Benchmarks;
 using Binacle.Net.TestsKernel.Helpers;
 
-namespace Binacle.Net.TestsKernel.Benchmarks.Models;
+namespace Binacle.Net.TestsKernel.Models;
+
 
 public sealed class CubeScalingBenchmarkScenario : BinScenarioBase
 {
@@ -23,14 +24,14 @@ public sealed class CubeScalingBenchmarkScenario : BinScenarioBase
 	{
 		var rangeDiff = this.testCase.Range.Max - this.testCase.Range.Min;
 
-		var step = rangeDiff / (CubeScalingBenchmarkTestsDataProvider.TestsPerCase +1);
+		var step = rangeDiff / (CubeScalingBenchmarksDataProvider.TestsPerCase +1);
 
 
 		// min
 		yield return this.testCase.Range.Min;
 
 		// med
-		for(var i=1; i<= CubeScalingBenchmarkTestsDataProvider.TestsPerCase; i++)
+		for(var i=1; i<= CubeScalingBenchmarksDataProvider.TestsPerCase; i++)
 		{
 			yield return this.testCase.Range.Min + step * i;
 		}
@@ -42,11 +43,11 @@ public sealed class CubeScalingBenchmarkScenario : BinScenarioBase
 		yield return this.testCase.Range.Max + this.testCase.Range.Min;
 	}
 
-	public List<TestsKernel.Models.TestItem> GetTestItems(int noOfItems)
+	public List<TestItem> GetTestItems(int noOfItems)
 	{
 		var dimensions = DimensionHelper.ParseFromCompactString(this.testCase.ItemString);
 		return [
-			new TestsKernel.Models.TestItem(this.testCase.ItemString, dimensions, noOfItems)
+			new TestItem(this.testCase.ItemString, dimensions, noOfItems)
 		];
 	}
 }

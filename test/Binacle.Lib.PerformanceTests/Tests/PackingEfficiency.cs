@@ -2,9 +2,9 @@
 using Binacle.Lib.Packing.Models;
 using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Services;
-using Binacle.Net.TestsKernel.Data.Providers.PackingEddiciency;
+using Binacle.Net.TestsKernel.Data.Providers;
+using Binacle.Net.TestsKernel.Data.Providers.PackingEfficiency;
 using Binacle.Net.TestsKernel.Models;
-using Binacle.Net.TestsKernel.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Binacle.Lib.PerformanceTests.Tests;
@@ -12,14 +12,14 @@ namespace Binacle.Lib.PerformanceTests.Tests;
 internal class PackingEfficiency : ITest
 {
 	private readonly AlgorithmFamiliesCollection algorithmFamilies;
-	private readonly ORLibraryScenarioTestDataProvider scenarioProvider;
-	private readonly BinCollectionsTestDataProvider binsProvider;
+	private readonly OrLibraryScenarioDataProvider scenarioProvider;
+	private readonly BinCollectionsDataProvider binsProvider;
 	private readonly ILogger<PackingEfficiency> logger;
 
 	public PackingEfficiency(
 		AlgorithmFamiliesCollection algorithmFamilies,
-		ORLibraryScenarioTestDataProvider scenarioProvider,
-		BinCollectionsTestDataProvider binsProvider,
+		OrLibraryScenarioDataProvider scenarioProvider,
+		BinCollectionsDataProvider binsProvider,
 		ILogger<PackingEfficiency> logger
 		)
 	{

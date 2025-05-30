@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using Binacle.Net.TestsKernel.Benchmarks.Models;
 using Binacle.Net.TestsKernel.Models;
-using Binacle.Net.TestsKernel.Providers;
 
-namespace Binacle.Net.TestsKernel.Benchmarks;
+namespace Binacle.Net.TestsKernel.Data.Providers.Benchmarks;
 
-public class MultipleBinsBenchmarkTestsDataProvider : IEnumerable<object[]>
+public class MultipleBinsBenchmarksDataProvider : IEnumerable<object[]>
 {
 	private static readonly MultipleBinsBenchmarkTestCase TestCase = new MultipleBinsBenchmarkTestCase()
 		.Add("Rectangular-Cuboids::Small", "BinaryDecision::DoesNotFit")  
@@ -89,7 +88,7 @@ public class MultipleBinsBenchmarkTestsDataProvider : IEnumerable<object[]>
 		
 	protected readonly Scenario[] AllScenarios = TestCase.GetScenarios(ItemsHolder).ToArray();
 	
-	public List<TestBin> GetAllBins(BinCollectionsTestDataProvider binCollectionsDataProvider)
+	public List<TestBin> GetAllBins(BinCollectionsDataProvider binCollectionsDataProvider)
 	{
 		var bins = new List<TestBin>();
 		foreach (var scenario in this.AllScenarios)
@@ -112,7 +111,7 @@ public class MultipleBinsBenchmarkTestsDataProvider : IEnumerable<object[]>
 		return result.Fits;
 	}).ToArray();
 	
-	public List<TestBin> GetSuccessfulBins(BinCollectionsTestDataProvider binCollectionsDataProvider)
+	public List<TestBin> GetSuccessfulBins(BinCollectionsDataProvider binCollectionsDataProvider)
 	{
 		var bins = new List<TestBin>();
 		foreach (var scenario in this.SuccessfulScenarios)

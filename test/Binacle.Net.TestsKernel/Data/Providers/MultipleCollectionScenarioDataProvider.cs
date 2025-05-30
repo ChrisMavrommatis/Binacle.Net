@@ -2,15 +2,15 @@
 using System.Collections;
 
 
-namespace Binacle.Net.TestsKernel.Providers;
+namespace Binacle.Net.TestsKernel.Data.Providers;
 
-public class MultipleCollectionScenarioTestDataProvider : IEnumerable<object[]>
+public class MultipleCollectionScenarioDataProvider : IEnumerable<object[]>
 {
-	private readonly ScenarioCollectionsTestDataProvider scenarioCollections;
+	private readonly ScenarioCollectionsDataProvider scenarioCollections;
 	private readonly List<Scenario> scenarios;
-	protected MultipleCollectionScenarioTestDataProvider(string[] collectionKeys)
+	protected MultipleCollectionScenarioDataProvider(string[] collectionKeys)
 	{
-		this.scenarioCollections = new ScenarioCollectionsTestDataProvider();
+		this.scenarioCollections = new ScenarioCollectionsDataProvider();
 		this.scenarios = new List<Scenario>();
 		foreach (var collectionKey in collectionKeys)
 		{

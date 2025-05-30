@@ -37,7 +37,7 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 	)
 	{
 		var algorithmFactory = this.Fixture.FittingAlgorithmsUnderTest[algorithmKey];
-		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
+		var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
 
@@ -80,7 +80,7 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 	)
 	{
 		var algorithmFactory = this.Fixture.PackingAlgorithmsUnderTest[algorithmKey];
-		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
+		var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
 

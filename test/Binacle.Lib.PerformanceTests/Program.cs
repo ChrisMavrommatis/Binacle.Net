@@ -1,12 +1,12 @@
 ﻿using Binacle.Lib.PerformanceTests.Services;
 using Binacle.Lib.PerformanceTests.Tests;
-using Binacle.Net.TestsKernel.Benchmarks;
-using Binacle.Net.TestsKernel.Data.Providers.PackingEddiciency;
-using Binacle.Net.TestsKernel.Providers;
+using Binacle.Net.TestsKernel.Data.Providers;
+using Binacle.Net.TestsKernel.Data.Providers.PackingEfficiency;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Binacle.Lib.PerformanceTests;
 
@@ -21,7 +21,7 @@ internal class Program
 			.Enrich.WithThreadId()
 			.WriteTo.Console(
 				outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {NewLine}",
-				theme: Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme.Code
+				theme: AnsiConsoleTheme.Code
 			)
 			.CreateBootstrapLogger();
 
@@ -29,11 +29,11 @@ internal class Program
 		builder.Logging.ClearProviders();
 		builder.Logging.AddSerilog();
 
-		builder.Services.AddSingleton<BinCollectionsTestDataProvider>(sp =>
+		builder.Services.AddSingleton<BinCollectionsDataProvider>(sp =>
 		{
-			return new BinCollectionsTestDataProvider();
+			return new BinCollectionsDataProvider();
 		});
-		builder.Services.AddSingleton<ORLibraryScenarioTestDataProvider>();
+		builder.Services.AddSingleton<OrLibraryScenarioDataProvider>();
 		builder.Services.AddSingleton<AlgorithmFamiliesCollection>();
 		builder.Services.AddSingleton<MarkdownFileWriter>();
 		builder.Services.AddSingleton<DistinctAlgorithmCollection>();

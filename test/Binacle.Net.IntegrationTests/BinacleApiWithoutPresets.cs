@@ -1,26 +1,26 @@
-﻿using Binacle.Net.TestsKernel.Providers;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Binacle.Net.Configuration.Models;
 using Binacle.Net.IntegrationTests;
+using Binacle.Net.TestsKernel.Data.Providers;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 [assembly: AssemblyFixture(typeof(BinacleApiWithoutPresets))]
 
 namespace Binacle.Net.IntegrationTests;
 
-public class BinacleApiWithoutPresets : WebApplicationFactory<Binacle.Net.IApiMarker>
+public class BinacleApiWithoutPresets : WebApplicationFactory<IApiMarker>
 {
 	public BinacleApiWithoutPresets()
 	{
 		this.Client = this.CreateClient();
-		this.BinCollectionsTestDataProvider = new BinCollectionsTestDataProvider();
+		this.BinCollectionsDataProvider = new BinCollectionsDataProvider();
 
 		this.JsonSerializerOptions = new()
 		{
@@ -68,6 +68,6 @@ public class BinacleApiWithoutPresets : WebApplicationFactory<Binacle.Net.IApiMa
 	}
 
 	public HttpClient Client { get; init; }
-	public BinCollectionsTestDataProvider BinCollectionsTestDataProvider { get; }
+	public BinCollectionsDataProvider BinCollectionsDataProvider { get; }
 	public JsonSerializerOptions JsonSerializerOptions { get; init; }
 }

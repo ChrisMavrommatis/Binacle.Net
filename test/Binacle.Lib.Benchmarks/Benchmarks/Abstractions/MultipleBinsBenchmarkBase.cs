@@ -1,20 +1,20 @@
 ﻿using BenchmarkDotNet.Attributes;
-using Binacle.Net.TestsKernel.Benchmarks;
+using Binacle.Net.TestsKernel.Data.Providers;
+using Binacle.Net.TestsKernel.Data.Providers.Benchmarks;
 using Binacle.Net.TestsKernel.Models;
-using Binacle.Net.TestsKernel.Providers;
 
 namespace Binacle.Lib.Benchmarks.Abstractions;
 
 public abstract class MultipleBinsBenchmarkBase
 {
-	protected readonly BinCollectionsTestDataProvider BinCollectionsDataProvider;
-	protected readonly MultipleBinsBenchmarkTestsDataProvider DataProvider;
+	protected readonly BinCollectionsDataProvider BinCollectionsDataProvider;
+	protected readonly MultipleBinsBenchmarksDataProvider DataProvider;
 	protected readonly LoopBinProcessor LoopProcessor;
 	protected readonly ParallelBinProcessor ParallelProcessor;
 	public MultipleBinsBenchmarkBase()
 	{
-		this.BinCollectionsDataProvider = new BinCollectionsTestDataProvider();
-		this.DataProvider = new MultipleBinsBenchmarkTestsDataProvider();
+		this.BinCollectionsDataProvider = new BinCollectionsDataProvider();
+		this.DataProvider = new MultipleBinsBenchmarksDataProvider();
 		var algorithmFactory = new AlgorithmFactory();
 		this.LoopProcessor = new LoopBinProcessor(algorithmFactory);
 		this.ParallelProcessor = new ParallelBinProcessor(algorithmFactory);

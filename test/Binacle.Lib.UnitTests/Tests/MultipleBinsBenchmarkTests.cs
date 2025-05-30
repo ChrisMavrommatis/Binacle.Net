@@ -1,6 +1,4 @@
-﻿using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.Abstractions.Fitting;
-using Binacle.Lib.Fitting.Models;
+﻿using Binacle.Lib.Fitting.Models;
 using Binacle.Lib.Packing.Models;
 using Binacle.Lib.UnitTests.Data.Providers.Benchmarks;
 using Binacle.Net.TestsKernel.Models;
@@ -18,7 +16,7 @@ public class MultipleBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 	}
 
 	[Theory]
-	[ClassData(typeof(FittingMultipleBinsBenchmarksProvider))]
+	[ClassData(typeof(FittingMultipleBinsBenchmarksesProvider))]
 	public void Fitting_Algorithms(string algorithm, Scenario scenario)
 		=> this.RunFittingScenarioTest(algorithm, scenario);
 
@@ -28,7 +26,7 @@ public class MultipleBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 	)
 	{
 		var algorithmFactory = this.Fixture.FittingAlgorithmsUnderTest[algorithmKey];
-		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
+		var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
 
@@ -52,7 +50,7 @@ public class MultipleBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 
 
 	[Theory]
-	[ClassData(typeof(PackingMultipleBinsBenchmarksProvider))]
+	[ClassData(typeof(PackingMultipleBinsBenchmarksesProvider))]
 	public void Packing_Algorithms(string algorithm, Scenario scenario)
 		=> this.RunPackingScenarioTest(algorithm, scenario);
 
@@ -62,7 +60,7 @@ public class MultipleBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 	)
 	{
 		var algorithmFactory = this.Fixture.PackingAlgorithmsUnderTest[algorithmKey];
-		var bin = scenario.GetTestBin(this.Fixture.BinTestDataProvider);
+		var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
 

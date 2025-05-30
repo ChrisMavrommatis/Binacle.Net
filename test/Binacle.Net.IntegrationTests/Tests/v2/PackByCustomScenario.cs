@@ -21,24 +21,24 @@ public class PackByCustomScenario
 	private const string routePath = "/api/v2/pack/by-custom";
 
 	[Theory]
-	[ClassData(typeof(BaselineScenarioTestDataProvider))]
+	[ClassData(typeof(BaselineScenarioDataProvider))]
 	public Task BinaryDecision_Baseline(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 
 	[Theory]
-	[ClassData(typeof(SimpleScenarioTestDataProvider))]
+	[ClassData(typeof(SimpleScenarioDataProvider))]
 	public Task BinaryDecision_Simple(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 
 	[Theory]
-	[ClassData(typeof(ComplexScenarioTestDataProvider))]
+	[ClassData(typeof(ComplexScenarioDataProvider))]
 	public Task BinaryDecision_Complex(Scenario scenario)
 		=> RunBinaryDecisionScenarioTest(scenario);
 
 	private async Task RunBinaryDecisionScenarioTest(Scenario scenario)
 	{
 		var binCollection = scenario.GetBinCollectionKey();
-		var expectedBin = scenario.GetTestBin(this.sut.BinCollectionsTestDataProvider);
+		var expectedBin = scenario.GetTestBin(this.sut.BinCollectionsDataProvider);
 
 		var request = new CustomPackRequest
 		{
