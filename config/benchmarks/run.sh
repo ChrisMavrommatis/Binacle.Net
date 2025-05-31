@@ -15,6 +15,10 @@ declare -A benchmark_aliases=(
     
     ["FittingMultipleBins"]="*FittingMultipleBins*"
     ["PackingMultipleBins"]="*PackingMultipleBins*"
+    
+    ["FittingMultipleItems"]="*FittingMultipleItems*"
+    ["PackingMultipleItems"]="*PackingMultipleItems*"
+    ["PackingCubeScalingMultiAlgorithm"]="*PackingCubeScalingMultiAlgorithm*"
    
 #    ["Scaling_Fitting_FFD"]="*Scaling.Fitting_FFD*"
 #    ["Scaling_FittingComparison"]="*Scaling.FittingComparison*"
