@@ -14,8 +14,8 @@ public class AlgorithmFactory : IAlgorithmFactory
 		var algorithmInstance = (IFittingAlgorithm)(algorithm switch
 		{
 			Algorithm.FirstFitDecreasing => new Fitting.Algorithms.FirstFitDecreasing_v3<TBin, TItem>(bin, items),
-			Algorithm.WorstFitDecreasing => new Fitting.Algorithms.WorstFitDecreasing_v1<TBin, TItem>(bin, items),
-			Algorithm.BestFitDecreasing => new Fitting.Algorithms.BestFitDecreasing_v1<TBin, TItem>(bin, items),
+			Algorithm.WorstFitDecreasing => new Fitting.Algorithms.WorstFitDecreasing_v3<TBin, TItem>(bin, items),
+			Algorithm.BestFitDecreasing => new Fitting.Algorithms.BestFitDecreasing_v3<TBin, TItem>(bin, items),
 			_ => throw new NotSupportedException($"No Bin Fitting Algorithm exists for {algorithm}")
 		});
 

@@ -12,7 +12,11 @@ internal static class AlgorithmsUnderTest
 		{ "Fitting_FFD_v2", AlgorithmFactories.Fitting_FFD_v2 },
 		{ "Fitting_FFD_v3", AlgorithmFactories.Fitting_FFD_v3 },
 		{ "Fitting_WFD_v1", AlgorithmFactories.Fitting_WFD_v1 },
-		{ "Fitting_BFD_v1", AlgorithmFactories.Fitting_BFD_v1 }
+		{ "Fitting_WFD_v2", AlgorithmFactories.Fitting_WFD_v2 },
+		{ "Fitting_WFD_v3", AlgorithmFactories.Fitting_WFD_v3 },
+		{ "Fitting_BFD_v1", AlgorithmFactories.Fitting_BFD_v1 },
+		{ "Fitting_BFD_v2", AlgorithmFactories.Fitting_BFD_v2 },
+		{ "Fitting_BFD_v3", AlgorithmFactories.Fitting_BFD_v3 }
 	};
 	
 	public static readonly Dictionary<string, AlgorithmFactory<IPackingAlgorithm>> PackingAlgorithms = new()

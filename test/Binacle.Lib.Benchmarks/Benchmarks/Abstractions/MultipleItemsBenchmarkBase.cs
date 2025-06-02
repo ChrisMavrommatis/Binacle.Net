@@ -22,6 +22,7 @@ public abstract class MultipleItemsBenchmarkBase
 			.GetSuccessfulBins(this.BinCollectionsDataProvider)
 			.Take(2)
 			.ToList();
+		this.Items = new List<TestItem>();
 	}
 	
 	/// 4,12, 24, 44, 58 
