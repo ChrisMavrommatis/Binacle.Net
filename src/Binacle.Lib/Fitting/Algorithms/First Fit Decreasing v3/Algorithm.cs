@@ -8,8 +8,7 @@ internal sealed partial class FirstFitDecreasing_v3<TBin, TItem> : IFittingAlgor
 	where TBin : class, IWithID, IWithReadOnlyDimensions
 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 {
-	public string Name => "First Fit Decreasing";
-	public int Version => 3;
+	public AlgorithmInfo AlgorithmInfo => new(Algorithm.FirstFitDecreasing, "First Fit Decreasing", 3);
 
 	private List<VolumetricItem>? availableSpace;
 	private readonly Bin bin;

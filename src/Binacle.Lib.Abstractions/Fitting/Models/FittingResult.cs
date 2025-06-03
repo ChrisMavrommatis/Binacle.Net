@@ -1,4 +1,6 @@
-﻿namespace Binacle.Lib.Fitting.Models;
+﻿using Binacle.Lib.Abstractions.Models;
+
+namespace Binacle.Lib.Fitting.Models;
 public class FittingResult
 {
 	internal FittingResult()
@@ -7,6 +9,8 @@ public class FittingResult
 	}
 
 	public required string BinID { get; init; }
+	
+	public required AlgorithmInfo AlgorithmInfo { get; init; }
 	public FittingResultStatus Status { get; internal set; }
 	public FittingFailedResultReason? Reason { get; internal set; }
 

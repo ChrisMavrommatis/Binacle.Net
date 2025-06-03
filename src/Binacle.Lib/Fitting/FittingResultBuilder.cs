@@ -7,6 +7,7 @@ internal class FittingResultBuilder<TBin, TItem>
 	where TBin : IWithID, IWithReadOnlyVolume
 	where TItem : IWithID, IWithReadOnlyDimensions, IWithReadOnlyVolume
 {
+	private readonly AlgorithmInfo algorithmInfo;
 	private readonly TBin bin;
 	private readonly int totalItems;
 	private readonly int totalItemsVolume;
@@ -15,16 +16,12 @@ internal class FittingResultBuilder<TBin, TItem>
 
 	private IEnumerable<TItem>? fittedItems;
 	private IEnumerable<TItem>? unfittedItems;
-	internal FittingResultBuilder(TBin bin, int totalItems, int totalItemsVolume)
+	internal FittingResultBuilder(AlgorithmInfo algorithmInfo, TBin bin, int totalItems, int totalItemsVolume)
 	{
+		this.algorithmInfo = algorithmInfo;
 		this.bin = bin;
 		this.totalItems = totalItems;
 		this.totalItemsVolume = totalItemsVolume;
-	}
-
-	internal static FittingResultBuilder<TBin, TItem> Create(TBin bin, int totalItems, int totalItemsVolume)
-	{
-		return new FittingResultBuilder<TBin, TItem>(bin, totalItems, totalItemsVolume);
 	}
 
 	internal FittingResultBuilder<TBin, TItem> WithFittedItems(IEnumerable<TItem> items)
@@ -50,7 +47,8 @@ internal class FittingResultBuilder<TBin, TItem>
 		
 		var result = new FittingResult()
 		{
-			BinID = this.bin.ID
+			BinID = this.bin.ID,
+			AlgorithmInfo = this.algorithmInfo
 		};
 
 		if (parameters.ReportFittedItems)

@@ -1,10 +1,11 @@
-﻿using Binacle.Lib.Packing.Models;
+﻿using Binacle.Lib.Abstractions.Models;
+using Binacle.Lib.Packing.Models;
 
 namespace Binacle.Lib.Abstractions.Algorithms;
 
 public interface IPackingAlgorithm
 {
-	string Name { get; }
-	int Version { get; }
+	AlgorithmInfo AlgorithmInfo { get; }
+	
 	PackingResult Execute(PackingParameters parameters);
 }

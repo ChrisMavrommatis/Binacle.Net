@@ -7,7 +7,7 @@ internal partial class FirstFitDecreasing_v2<TBin, TItem>
 {
 	public PackingResult Execute(PackingParameters parameters)
 	{
-		var resultBuilder = PackingResultBuilder<Bin, Item>.Create(this.bin, this.items.Length, this.totalItemsVolume);
+		var resultBuilder = this.CreateResultBuilder<Bin, Item>(this.bin, this.items.Length, this.totalItemsVolume);
 
 		if (parameters.OptInToEarlyFails)
 		{

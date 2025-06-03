@@ -6,7 +6,7 @@ internal sealed partial class BestFitDecreasing_v2<TBin, TItem>
 {
 	public FittingResult Execute(FittingParameters parameters)
 	{
-		var resultBuilder = FittingResultBuilder<Bin, Item>.Create(this.bin, this.items.Count, this.totalItemsVolume);
+		var resultBuilder = this.CreateResultBuilder<Bin, Item>(this.bin, this.items.Count, totalItemsVolume);
 
 		if (this.totalItemsVolume > this.bin.Volume)
 		{

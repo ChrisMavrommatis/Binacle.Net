@@ -2,6 +2,8 @@
 using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.DiagnosticsModule.Configuration.Models;
 using Binacle.Net.DiagnosticsModule.Middleware;
+using Binacle.Net.DiagnosticsModule.Services;
+using Binacle.Net.Kernel;
 using FluentValidation;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
@@ -159,6 +161,12 @@ public static class ModuleDefinition
 		// Add health checks
 		builder.Services
 			.AddHealthChecks();
+		
+		builder.Services.AddHealthCheck<SystemHealthCheck>(
+			"System",
+			HealthStatus.Unhealthy,
+			new[] { "Core" }
+		);
 
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initialized");
 	}

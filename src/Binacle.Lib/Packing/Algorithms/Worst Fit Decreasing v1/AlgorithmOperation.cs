@@ -7,7 +7,7 @@ internal partial class WorstFitDecreasing_v1<TBin, TItem>
 {
 	public PackingResult Execute(PackingParameters parameters)
 	{
-		var resultBuilder = PackingResultBuilder<Bin, Item>.Create(this.bin, this.items.Count, this.totalItemsVolume);
+		var resultBuilder = this.CreateResultBuilder<Bin, Item>(this.bin, this.items.Count, this.totalItemsVolume);
 
 		if (parameters.OptInToEarlyFails)
 		{

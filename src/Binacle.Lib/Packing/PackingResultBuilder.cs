@@ -1,4 +1,6 @@
-﻿using Binacle.Lib.Abstractions.Models;
+﻿using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.Lib.Abstractions.Models;
+using Binacle.Lib.Fitting;
 using Binacle.Lib.Packing.Models;
 
 namespace Binacle.Lib.Packing;
@@ -7,6 +9,7 @@ internal class PackingResultBuilder<TBin, TItem>
 	where TBin : IWithID, IWithReadOnlyVolume
 	where TItem : IWithID, IWithReadOnlyDimensions, IWithReadOnlyVolume, IWithReadOnlyCoordinates
 {
+	private readonly AlgorithmInfo algorithmInfo;
 	private readonly TBin bin;
 	private readonly int totalItems;
 	private readonly int totalItemsVolume;
@@ -14,15 +17,12 @@ internal class PackingResultBuilder<TBin, TItem>
 	private IEnumerable<TItem>? packedItems;
 	private IEnumerable<TItem>? unpackedItems;
 
-	internal PackingResultBuilder(TBin bin, int totalItems, int totalItemsVolume)
+	internal PackingResultBuilder(AlgorithmInfo algorithmInfo, TBin bin, int totalItems, int totalItemsVolume)
 	{
+		this.algorithmInfo = algorithmInfo;
 		this.bin = bin;
 		this.totalItems = totalItems;
 		this.totalItemsVolume = totalItemsVolume;
-	}
-	internal static PackingResultBuilder<TBin, TItem> Create(TBin bin, int totalItems, int totalItemsVolume)
-	{
-		return new PackingResultBuilder<TBin, TItem>(bin, totalItems, totalItemsVolume);
 	}
 
 	internal PackingResultBuilder<TBin, TItem> WithForcedStatus(PackingResultStatus status)
@@ -51,6 +51,7 @@ internal class PackingResultBuilder<TBin, TItem>
 		{
 			BinID = this.bin.ID,
 			Status = this.forcedStatus.HasValue ? this.forcedStatus.Value : PackingResultStatus.Unknown,
+			AlgorithmInfo = this.algorithmInfo
 		};
 
 		if (!parameters.NeverReportUnpackedItems)

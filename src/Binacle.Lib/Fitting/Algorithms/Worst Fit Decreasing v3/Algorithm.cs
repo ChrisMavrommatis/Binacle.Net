@@ -8,8 +8,7 @@ internal sealed partial class WorstFitDecreasing_v3<TBin, TItem> : IFittingAlgor
 	where TBin : class, IWithID, IWithReadOnlyDimensions
 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 {
-	public string Name => "Worst Fit Decreasing";
-	public int Version => 3;
+	public AlgorithmInfo AlgorithmInfo => new(Algorithm.WorstFitDecreasing, "Worst Fit Decreasing", 3);
 
 	private List<VolumetricItem>? availableSpace;
 	private readonly Bin bin;

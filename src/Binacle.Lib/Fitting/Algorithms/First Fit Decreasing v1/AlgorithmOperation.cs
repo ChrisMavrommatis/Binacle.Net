@@ -9,7 +9,7 @@ internal sealed partial class FirstFitDecreasing_v1<TBin, TItem> : IFittingAlgor
 	{
 		int totalItemsVolume = _items.Sum(x => x.Volume);
 
-		var resultBuilder = FittingResultBuilder<Bin, Item>.Create(_bin, _items.Count, totalItemsVolume);
+		var resultBuilder = this.CreateResultBuilder<Bin, Item>(_bin, _items.Count, totalItemsVolume);
 
 		if (totalItemsVolume > _bin.Volume)
 		{

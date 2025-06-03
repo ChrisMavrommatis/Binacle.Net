@@ -10,8 +10,8 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 	where TBin : class, IWithID, IWithReadOnlyDimensions
 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 {
-	public string Name => "First Fit Decreasing";
-	public int Version => 1;
+	public AlgorithmInfo AlgorithmInfo => new(Algorithm.FirstFitDecreasing, "First Fit Decreasing", 1);
+
 
 	private readonly Bin bin;
 	private readonly List<Item> items;

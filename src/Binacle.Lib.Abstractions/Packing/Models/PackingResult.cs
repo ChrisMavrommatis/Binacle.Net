@@ -1,4 +1,6 @@
-﻿namespace Binacle.Lib.Packing.Models;
+﻿using Binacle.Lib.Abstractions.Models;
+
+namespace Binacle.Lib.Packing.Models;
 
 public class PackingResult
 {
@@ -8,6 +10,8 @@ public class PackingResult
 	}
 
 	public required string BinID { get; init; }
+	
+	public required AlgorithmInfo AlgorithmInfo { get; init; }
 	public PackingResultStatus Status { get; internal set; }
 
 	public List<ResultItem>? PackedItems { get; internal set; }

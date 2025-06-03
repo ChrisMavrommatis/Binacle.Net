@@ -7,6 +7,8 @@ namespace Binacle.Lib;
 
 public class AlgorithmFactory : IAlgorithmFactory
 {
+	private static Algorithm[] _algorithmTypes = Enum.GetValues<Algorithm>();
+	
 	public IFittingAlgorithm CreateFitting<TBin, TItem>(Algorithm algorithm, TBin bin, IList<TItem> items)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
@@ -20,6 +22,19 @@ public class AlgorithmFactory : IAlgorithmFactory
 		});
 
 		return algorithmInstance;
+	}
+	
+	public IFittingAlgorithm[] CreateFitting<TBin, TItem>(TBin bin, IList<TItem> items)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+	{
+		var algorithms = new IFittingAlgorithm[_algorithmTypes.Length];
+		for (var i = 0; i < _algorithmTypes.Length; i++)
+		{
+			algorithms[i] = this.CreateFitting<TBin, TItem>(_algorithmTypes[i], bin, items);
+		}
+		return algorithms;
+		
 	}
 
 	public IPackingAlgorithm CreatePacking<TBin, TItem>(Algorithm algorithm, TBin bin, IList<TItem> items)
@@ -35,5 +50,18 @@ public class AlgorithmFactory : IAlgorithmFactory
 		});
 
 		return algorithmInstance;
+	}
+	
+	public IPackingAlgorithm[] CreatePacking<TBin, TItem>(TBin bin, IList<TItem> items)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+	{
+		var algorithms = new IPackingAlgorithm[_algorithmTypes.Length];
+		for (var i = 0; i < _algorithmTypes.Length; i++)
+		{
+			algorithms[i] = this.CreatePacking<TBin, TItem>(_algorithmTypes[i], bin, items);
+		}
+		return algorithms;
+		
 	}
 }
