@@ -1,0 +1,19 @@
+﻿---
+layout: page
+---
+
+{% include header.html %}
+
+<nav class="left drawer no-padding surface-container m l scroll">
+    {% include sidebar.html %}
+</nav>
+<dialog class="left no-padding surface-container scroll" id="mobile-menu">
+    {% include sidebar.html %}
+</dialog>
+
+<main class="responsive padding">
+    <h1>{{ page.title }}</h1>
+    {{ content }}
+</main>
+
+{% include footer.html %}

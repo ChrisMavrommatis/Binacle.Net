@@ -1,0 +1,27 @@
+﻿<header class="fixed top responsive max primary">
+    <nav>
+        <button class="circle transparent s" data-ui="#mobile-menu">
+            <i>menu</i>
+        </button>
+        {% include breadcrumbs.html %}
+       
+
+        <div class="max center-align"></div>
+        <a href="@link.Url" title="@link.Title" target="@link.GetTarget()">
+            <img src="/assets/github/github-mark-white.png" height="20">
+        </a>
+        <a href="@link.Url" title="@link.Title" target="@link.GetTarget()">
+            <img src="/assets/docker/docker-mark-white.png" height="20">
+        </a>
+        <!--        <button class="circle transparent">-->
+        <!--            <i>menu</i>-->
+        <!--        </button>-->
+        <!--        <h1 class="max center-align">Headline</h1>-->
+
+        <button class="transparent circle" data-role="theme-button">
+            <i class="page top active">
+                light_mode
+            </i>
+        </button>
+    </nav>
+</header>

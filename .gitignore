@@ -36,3 +36,11 @@ src/Binacle.Net/wwwroot/
 
 ## data
 azurite/
+
+_site
+build/docs
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor
+Gemfile.lock

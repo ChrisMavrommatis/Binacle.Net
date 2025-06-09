@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.56">
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="**/*.md"/>
+		<None Include="**/*.yml"/>
+		<None Include="**/*.markdown"/>
+		<None Include="**/*.html"/>
+		<None Include="**/*.png"/>
+		<None Include="**/*.css"/>
+		<None Include="**/*.js"/>
+		<None Include="**/*.scss"/>
+		<None Include="**/*.woff2"/>
+		<None Include="**/*.ico"/>
+		<None Include="**/*.svg"/>
+		<None Include="Gemfile"/>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="$(MSBuildThisFileDirectory)_data\" />
+	</ItemGroup>
+</Project>
