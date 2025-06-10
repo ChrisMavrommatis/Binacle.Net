@@ -8,16 +8,16 @@ nav:
 Getting started with Binacle.Net is easy! You can run it locally using Docker or deploy it to the cloud, all with
 minimal setup. The setup runs Binacle.Net with **Swagger UI** and the **UI Module**.
 
-##### 🖥️ Run Locally with Docker
+## 🖥️ Run Locally with Docker
 
 The fastest way to try Binacle.Net is by running it in a Docker container.
 
-###### 1️⃣ Install Docker
+### 1️⃣ Install Docker
 
 Ensure Docker is installed on your system. If not, follow the instructions on
 the [Docker website](https://www.docker.com/get-started/).
 
-###### 2️⃣ Run Binacle.Net
+### 2️⃣ Run Binacle.Net
 
 Open your terminal and run:
 
@@ -31,12 +31,12 @@ This command will:
 - ✔️ Start the container with the **Swagger UI** and **UI Module** enabled.
 - ✔️ Expose the API on port 8080.
 
-###### 3️⃣ Access Binacle.Net
+### 3️⃣ Access Binacle.Net
 
 - **Swagger UI**: http://localhost:8080/swagger/
 - **UI Module**: http://localhost:8080/
 
-##### 📦 Run with Docker Compose
+## 📦 Run with Docker Compose
 
 For more advanced setups, you can use Docker Compose. Choose one of the
 provided [Samples](https://github.com/ChrisMavrommatis/Binacle.Net/tree/main/samples/docker) for a quick start:
@@ -48,7 +48,7 @@ provided [Samples](https://github.com/ChrisMavrommatis/Binacle.Net/tree/main/sam
 - 🔹 [UI Module Only](https://github.com/ChrisMavrommatis/Binacle.Net/tree/main/samples/docker/ui-module-only): Run
   Binacle.Net with just the UI Module for quick visual demos.
 
-##### ☁️ Cloud Deployment
+## ☁️ Cloud Deployment
 
 Want to deploy Binacle.Net to the cloud? Here are the recommended platforms:
 
@@ -57,7 +57,7 @@ Want to deploy Binacle.Net to the cloud? Here are the recommended platforms:
   serverless container management.
 - 🟢 [Google Cloud Run](https://cloud.google.com/run)
 
-##### 🗂️ Choosing the Right Option
+## 🗂️ Choosing the Right Option
 
 | Deployment     | Best For                                                        | Platform                                                                             |
 |----------------|-----------------------------------------------------------------|--------------------------------------------------------------------------------------|

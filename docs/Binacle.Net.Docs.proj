@@ -22,4 +22,9 @@
 	<ItemGroup>
 	  <Folder Include="$(MSBuildThisFileDirectory)_data\" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="$(MSBuildThisFileDirectory)_plugins\sanitization_filters.rb" />
+	  <Content Include="$(MSBuildThisFileDirectory)_plugins\VLink.rb" />
+	</ItemGroup>
 </Project>

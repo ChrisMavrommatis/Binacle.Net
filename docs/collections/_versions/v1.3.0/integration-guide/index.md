@@ -1,6 +1,6 @@
 ---
 title: Integration Guide
-permalink: /version/v1.3.0/integration-guide
+permalink: /version/v1.3.0/integration-guide/
 nav:
   order: 4
   icon: 🔗
@@ -8,7 +8,7 @@ nav:
 
 Successfully integrating Binacle.Net into your business requires attention to several key factors. This guide walks you through the key steps to ensure a smooth and successful integration.
 
-##### 📌 What to Expect from Integration
+## 📌 What to Expect from Integration
 Integrating Binacle.Net means:
 - ✅ Structuring product data correctly for accurate packing results
 - ✅ Configuring bins to match your operational needs
@@ -19,9 +19,7 @@ The following sections break down these critical areas, providing clear explanat
 
 ---
 
-<br>
-
-##### 📏 Dimensions and Unit of Measurement
+## 📏 Dimensions and Unit of Measurement
 To achieve accurate packing, your system must define product dimensions correctly. This section covers:
 
 - 🧮 Choosing the Right Measurement Unit
@@ -30,19 +28,19 @@ To achieve accurate packing, your system must define product dimensions correctl
 - ⚖️ Weight Considerations
 - ⚙️ Additional Best Practices
 
-➡️ Read more: [Dimensions and Unit of Measurement](integration-guide/dimensions-and-unit-of-measurement)
+➡️ Read more: [Dimensions and Unit of Measurement](./dimensions-and-unit-of-measurement/)
 
-##### 📦 Your Bin Set
+## 📦 Your Bin Set
 Selecting the appropriate bins is critical to maximizing packing efficiency. This section covers:
 
 - Using final bin destination dimensions (e.g., lockers or storage bins).
 - Using your own packaging boxes as predefined bins.
 - Additional considerations to ensure scalability, customer experience, and operational efficiency.
 
-➡️ Read more: [Your-Bin-Set](integration-guide/your-bin-set)
+➡️ Read more: [Your Bin Set](./your-bin-set/)
 
 
-##### 🌟 Typical Integration Process
+## 🌟 Typical Integration Process
 This section provides a comprehensive overview of the typical integration process for Binacle.Net, from initial setup to real-time packing decisions. Follow the steps below to successfully integrate Binacle.Net into your system.
 
 You’ll learn:
@@ -51,5 +49,5 @@ You’ll learn:
 - How to handle API responses and integrate packing solutions into your workflow
 - Best practices for optimizing packing efficiency and ensuring seamless user experience
 
-➡️ For the full, detailed guide, check out the [Typical Integration Process](integration-guide/typical-integration-process).
+➡️ For the full, detailed guide, check out the [Typical Integration Process](./typical-integration-process/).
 
