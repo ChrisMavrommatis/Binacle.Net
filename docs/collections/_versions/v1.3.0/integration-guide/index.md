@@ -28,7 +28,7 @@ To achieve accurate packing, your system must define product dimensions correctl
 - ⚖️ Weight Considerations
 - ⚙️ Additional Best Practices
 
-➡️ Read more: [Dimensions and Unit of Measurement](./dimensions-and-unit-of-measurement/)
+➡️ Read more: [Dimensions and Unit of Measurement]({% vlink /integration-guide/dimensions-and-unit-of-measurement.md %})
 
 ## 📦 Your Bin Set
 Selecting the appropriate bins is critical to maximizing packing efficiency. This section covers:
@@ -37,7 +37,7 @@ Selecting the appropriate bins is critical to maximizing packing efficiency. Thi
 - Using your own packaging boxes as predefined bins.
 - Additional considerations to ensure scalability, customer experience, and operational efficiency.
 
-➡️ Read more: [Your Bin Set](./your-bin-set/)
+➡️ Read more: [Your Bin Set]({% vlink /integration-guide/your-bin-set.md %})
 
 
 ## 🌟 Typical Integration Process
@@ -49,5 +49,5 @@ You’ll learn:
 - How to handle API responses and integrate packing solutions into your workflow
 - Best practices for optimizing packing efficiency and ensuring seamless user experience
 
-➡️ For the full, detailed guide, check out the [Typical Integration Process](./typical-integration-process/).
+➡️ For the full, detailed guide, check out the [Typical Integration Process]({% vlink /integration-guide/typical-integration-process.md %}).
 

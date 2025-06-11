@@ -34,7 +34,7 @@ You can modify the health check settings through **Production Overrides** by cre
 - 📁 **Location**: `/app/Config_Files/DiagnosticsModule`
 - 📌 **Full Path**: `/app/Config_Files/DiagnosticsModule/HealthChecks.Production.json`
 
-For more information on overriding configurations, refer to the [Configuration](../../#%EF%B8%8F-overriding-configuration) page.
+For more information on overriding configurations, refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
 
 
 ## 🔧 Configuration Options

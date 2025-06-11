@@ -36,27 +36,27 @@ app
 ## 🗄️ Database
 The Service Module relies on a database to manage users. You must configure a database for proper operation.
 
-🔗 [Learn more about database configuration →](./database/)
+🔗 [Learn more about database configuration →]({% vlink /configuration/service-module/database.md %})
 
 ## 🔐 Authentication
 The module uses **stateless JWT tokens** for authentication. Users authenticate using their **email and password** to receive a token.
 
-🔗 [See authentication configuration →](./authentication/)
+🔗 [See authentication configuration →]({% vlink /configuration/service-module/authentication.md %})
 
 ## 👥 Users
 When the Service Module is first enabled, a default admin user is created.
 
-🔗 [Users configuration guide →](./users/)
+🔗 [Users configuration guide →]({% vlink /configuration/service-module/users.md %})
 
 ## 📊 Rate Limiter
 To prevent excessive requests, unauthenticated users are rate-limited.
 
-🔗 [Configure rate limiting →](./rate-limiter/)
+🔗 [Configure rate limiting →]({% vlink /configuration/service-module/rate-limiter.md %})
 
 ## 📡 API Endpoints
 Once enabled, the Service Module exposes additional API endpoints for user authentication and management.
 
-🔗 [See User's API details →](../../../api/users/)
+🔗 [See User's API details →]({% vlink /api/users.md %})
 
 ## 🔧 Activating the Service Module
 To enable the Service Module, set the environment variable:

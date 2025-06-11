@@ -132,17 +132,17 @@ Each module adds functionality to Binacle.Net. This section provides an overview
 
 ### 🏗️ Binacle.Net Core
 The foundation of Binacle.Net. Provides essential API functionality, Swagger UI, and presets.
-- [🔍 Core Overview](./core/)
-- [📖 Presets](./core/presets/)
+- [🔍 Core Overview]({% vlink /configuration/core/index.md %})
+- [📖 Presets]({% vlink /configuration/core/presets.md %})
 
 
 ### 📊 Diagnostics Module
 Handles system health monitoring, logging, and telemetry. This module is always enabled, but not all of its features come enabled by default.
-- [🔍 Diagnostics Module Overview](./diagnostics-module/)
-- [📜 Logging](./diagnostics-module/logging/)
-- [❤️‍🩹 Health Checks](./diagnostics-module/health-checks/)
-- [📦 Packing Logs](./diagnostics-module/packing-logs/)
-- [📡 OpenTelemetry](./diagnostics-module/open-telemetry/)
+- [🔍 Diagnostics Module Overview]({% vlink /configuration/diagnostics-module/index.md %})
+- [📜 Logging]({% vlink /configuration/diagnostics-module/logging.md %})
+- [❤️‍🩹 Health Checks]({% vlink /configuration/diagnostics-module/health-checks.md %})
+- [📦 Packing Logs]({% vlink /configuration/diagnostics-module/packing-logs.md %})
+- [📡 OpenTelemetry]({% vlink /configuration/diagnostics-module/open-telemetry.md %})
 
 ### 🛡️ Service Module
 Allows Binacle.Net to run as a managed service with authentication and rate limiting.

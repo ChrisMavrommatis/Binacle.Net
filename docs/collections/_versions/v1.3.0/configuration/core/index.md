@@ -8,7 +8,7 @@ nav:
 ---
 
 
-The Core module is the foundation of Binacle.Net, providing essential API functionality, as detailed in the [About the API](../../api/) page. It also supports customizable presets and includes Swagger UI, which is disabled by default.
+The Core module is the foundation of Binacle.Net, providing essential API functionality, as detailed in the [About the API]({% vlink /api/index.md %}) page. It also supports customizable presets and includes Swagger UI, which is disabled by default.
 
 ## ⚙️ Configuration
 All configuration files for Binacle.Net Core are located in the `/app/Config_Files` directory.
@@ -23,7 +23,7 @@ app
 ## 🎛️ Presets
 Binacle.Net allows you to predefine bin configurations using presets, so you don’t have to send them with each request.
 
-visit the [Presets](./presets/) page for more details.
+visit the [Presets]({% vlink /configuration/core/presets.md %}) page for more details.
 
 ## 🔑 Swagger UI
 Swagger UI provides an interactive interface for exploring and testing the API.

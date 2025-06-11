@@ -55,5 +55,5 @@ If automatic detection fails, you can manually specify the API endpoint for **Bi
 }
 ```
 
-🔗 For more details on how to configure connection strings, refer to the [Connection String Fallbacks section](../#-connection-string-fallbacks).
+🔗 For more details on how to configure connection strings, refer to the [Connection String Fallbacks section]({% vlink /configuration/index.md %}#-connection-string-fallbacks).
 

@@ -53,5 +53,5 @@ Binacle.Net provides two essential functions to address your packing needs: **Fi
 
 These functions are designed for speed and precision, enabling quick, real-time packing decisions.
 
-📌 For a deeper dive into these functions, visit the [About the API](../api/) page.
+📌 For a deeper dive into these functions, visit the [About the API]({% vlink /api/index.md %}) page.
 

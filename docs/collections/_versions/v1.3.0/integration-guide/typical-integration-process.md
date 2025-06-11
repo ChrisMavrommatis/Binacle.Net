@@ -16,7 +16,7 @@ Integrating Binacle.Net requires some custom development, typically involving cr
 - **Run Binacle.Net**: Deploy Binacle.Net using Docker on your infrastructure. You can utilize a single instance across multiple environments (testing, staging, production), as long as your presets remain consistent.
 
 **⚙️ Configure Your Presets**
-- **Customize Presets**: Define the bin presets based on your specific packaging requirements. You'll set the dimensions and capacities of the bins that you’ll use for packing. For detailed instructions, refer to the [Presets](../../configuration/core/presets/) Page.
+- **Customize Presets**: Define the bin presets based on your specific packaging requirements. You'll set the dimensions and capacities of the bins that you’ll use for packing. For detailed instructions, refer to the [Presets]({% vlink /configuration/core/presets.md %}) Page.
 
 
 ## 📦 Step 2: Integrate Locker Shipping Providers

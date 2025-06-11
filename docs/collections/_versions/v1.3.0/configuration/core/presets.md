@@ -50,7 +50,7 @@ This file contains predefined bin configurations that can be used directly in yo
 
 You can modify the presets using **Production Overrides** by creating a `Presets.Production.json` file.
 
-For more information on this refer to the [Configuration](../../#%EF%B8%8F-overriding-configuration) page.
+For more information on this refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
 
 However, unlike other configurations, presets are rarely modified incrementally. In most cases, it’s best to override the entire file instead of making selective changes.
 

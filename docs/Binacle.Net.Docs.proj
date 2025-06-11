@@ -17,14 +17,6 @@
 		<None Include="**/*.ico"/>
 		<None Include="**/*.svg"/>
 		<None Include="Gemfile"/>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="$(MSBuildThisFileDirectory)_data\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Include="$(MSBuildThisFileDirectory)_plugins\sanitization_filters.rb" />
-	  <Content Include="$(MSBuildThisFileDirectory)_plugins\VLink.rb" />
+		<None Include="**/*.rb"/>
 	</ItemGroup>
 </Project>

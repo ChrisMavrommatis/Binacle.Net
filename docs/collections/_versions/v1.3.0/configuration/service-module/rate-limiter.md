@@ -25,7 +25,7 @@ You can modify the Rate Limiter using **Production Overrides** by creating a `Ra
 - 📁 **Location**: `/app/Config_Files/ServiceModule`
 - 📌 **Full Path**: `/app/Config_Files/ServiceModule/RateLimiter.Production.json`
 
-For more information on this refer to the [Configuration](../../#%EF%B8%8F-overriding-configuration) page.
+For more information on this refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
 
 ## 🔧 Configuration Options
 
