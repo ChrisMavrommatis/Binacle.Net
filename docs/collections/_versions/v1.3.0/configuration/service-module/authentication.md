@@ -30,11 +30,10 @@ You can modify the JWT Settings using **Production Overrides** by creating a `Jw
 
 For more information on this refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
 
-> [!Warning]
->
 > Environment variables take precedence over settings defined in the `JwtAuth.json` and `JwtAuth.Production.json` files.
 >
 > This enables you to securely store only the **TokenSecret** as an environment variable while keeping the rest of the configuration in the JSON file.
+{: .block-warning}
 
 
 ## 🔧 Configuration Options

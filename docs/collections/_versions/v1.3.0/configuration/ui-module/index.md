@@ -9,8 +9,8 @@ nav:
 
 The UI Module provides a user-friendly interface for interacting with Binacle.Net, allowing users to explore its features visually. This makes it easier to demonstrate and understand the system’s capabilities without making direct API calls.
 
-> [!Note]
 > This module is disabled by default.
+{: .block-note}
 
 ## ⚙️ Configuration
 All configuration files for the UI Module are located in the `/app/Config_Files/UiModule` directory.

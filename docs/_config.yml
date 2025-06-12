@@ -2,11 +2,32 @@
 # Site settings
 ############################################################
 title                   : "Binacle.Net Docs"
-email: your-email@example.com
 description             : >-
   Binacle.Net Docs
+  
+# the base hostname & protocol for your site, e.g. http://example.com# Welcome to Jekyll!
+url                     : "http://localhost:7195"
 
-url                     : "http://localhost:7195" # the base hostname & protocol for your site, e.g. http://example.com# Welcome to Jekyll!
+logo:
+  src                  : /assets/logo/binacle-logo-512x512a.png
+  alt                  : "Binacle.Net Logo"
+
+copyright: "© 2023-2025 Chris Mavrommatis / Binacle.Net. All Rights Reserved"
+
+license:
+  name: "GNU General Public License v3.0"
+  url: "https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/LICENSE"
+
+github:
+  title: "Check out my GitHub"
+  url: "https://github.com/ChrisMavrommatis/Binacle.Net"
+  image: "/assets/github/github-mark-white.png"
+dockerhub:
+  title: "Visit Binacle.Net on Dockerhub"
+  url: "https://hub.docker.com/r/binacle/binacle-net"
+  image: "/assets/docker/docker-mark-white.png"
+
+default_theme: "dark"
 
 ############################################################
 # Where things are

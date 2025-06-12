@@ -1,12 +1,12 @@
 <header>
     <article class="middle-align center-align secondary-container">
         <div>
-            <a href="/">
-                <img class="large" src="/assets/logo/binacle-logo-512x512a.png" alt="Binacle.Net Logo"/>
+            <a href="{{ vlink /index.md }}">
+                <img class="large" src="{{ site.logo.src }}" alt="{{ site.logo.alt }}"/>
             </a>
             <div class="max">
-                <a href="/">
-                    <h5>Binacle.Net Docs</h5>
+                <a href="{{ vlink /index.md }}">
+                    <h5>{{ site.title }}</h5>
                 </a>
             </div>
             {% assign uniq_versions = site.versions | map: 'version' | uniq %}
@@ -28,7 +28,7 @@
     </article>
 </header>
 <div>
-    {% assign menu_items = site.versions | where: 'version',page.version | where: 'nav.parent',nil %}
+    {% assign menu_items = site.versions | where: 'nav.exclude',nill | where: 'version',page.version | where: 'nav.parent',nil %}
     
     {% include menu.html menu_items=menu_items menu_level=0 %}
 </div>

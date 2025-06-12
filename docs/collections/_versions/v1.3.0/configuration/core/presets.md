@@ -8,8 +8,8 @@ nav:
 
 Using presets in Binacle.Net can significantly streamline your packing process, especially when bin configurations are consistent. Instead of including bin definitions in every API request, you can define them once in the preset file and reuse them across multiple requests.
 
-> [!Caution]
 > While Binacle.Net assumes the use of centimeters, you can use any measurement system as long as the dimensions are integers and consistent across bins and items.
+{: .block-caution}
 
 ## 🛠️ Configuration
 Presets are stored in the `Presets.json` file.
@@ -72,16 +72,15 @@ There are multiple ways to override the default `Presets.json` file, particularl
 docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro binacle/binacle-net:latest
 ```
 
-> [!Tip]
->
 > If you are running under **Windows** replace `$(pwd)` with `%cd%`, so the command looks like this:
+{: .block-tip}
 
 ```cmd
 docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro binacle/binacle-net:latest
 ```
-> [!Note]
->
+
 > Since we are using a bind mount for a single file, the full path must be provided.
+{: .block-note}
 
 ### 📝 Option 2: Docker Compose
 If you prefer to use Docker Compose, follow these steps:
@@ -97,10 +96,12 @@ docker compose up
 
 **Docker Compose File Template**
 
-> [!Note]
 > Using the long syntax in the Docker Compose file allows you to specify a relative path rather than an absolute one.
+{: .block-note}
 
-```yaml
+<br>
+
+```yml
 services:
   binacle-net:
     image: binacle/binacle-net:latest

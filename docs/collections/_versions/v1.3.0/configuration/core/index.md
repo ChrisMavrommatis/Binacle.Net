@@ -31,9 +31,7 @@ Swagger UI provides an interactive interface for exploring and testing the API.
 By default, it is **disabled**. To enable it, set the environment variable:
 
 ```bash
-
 SWAGGER_UI=True
-
 ```
 
 ## 🔌 Changing the Internal Port

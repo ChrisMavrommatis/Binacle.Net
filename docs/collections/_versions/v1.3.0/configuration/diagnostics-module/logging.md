@@ -75,8 +75,8 @@ You can modify the logging configuration through **Production Overrides** by cre
 
 For more details on overriding configurations, refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
 
-> [!Warning]
 > Modifying the logging configuration is not recommended unless you fully understand its implications, as improper configurations can impact application stability or even cause crashes.
+{: .block-warning}
 
 ---
 

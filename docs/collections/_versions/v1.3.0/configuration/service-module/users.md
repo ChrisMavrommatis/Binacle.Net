@@ -27,17 +27,17 @@ You can modify the Users using **Production Overrides** by creating a `Users.Pro
 
 For more information on this refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
 
-> [!Warning]
 > Environment variables take precedence over settings defined in the `Users.json` and `Users.Production.json` files.
 >
 > This allows you to securely store the default admin credentials without exposing them in configuration files.
+{: .block-warning}
 
 ## 🔧 Configuration Options
 - **DefaultAdminUser** : Specifies the default admin user. The fomat is `{email}:{password}`.
 
-> [!Note]
->
 > The Service Module will always ensure the default admin exists in the database. However, it does not enforce whether the account is active.
+{: .block-note}
+
 
 ## 🔑 Recovering Admin Access
 In the event that you accidentally demote yourself or deactivate the only active admin user, and the default admin is also inactive, you have two options to recover access:

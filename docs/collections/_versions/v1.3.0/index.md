@@ -3,6 +3,7 @@ title       : Welcome to Binacle.Net Docs!
 menu_title  : v1.3.0
 permalink: /version/v1.3.0/
 nav:
+  exclude: true
   order: 1
   icon: 🏠
 ---

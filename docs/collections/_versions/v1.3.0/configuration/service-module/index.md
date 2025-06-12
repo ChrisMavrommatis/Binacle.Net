@@ -14,8 +14,8 @@ The Service Module enables Binacle.Net to function as a managed service in publi
 
 Authenticated users can bypass rate limits, ensuring seamless access to API endpoints.
 
-> [!Note]
 > This module is disabled by default.
+{: .block-note}
 
 While Binacle.Net is primarily designed for private cloud hosting, the Service Module enables controlled public deployment by balancing performance, security, and cost-effectiveness.
 

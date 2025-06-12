@@ -1,18 +1,33 @@
+// Variables
+$font-h1: 2.25rem;
+$font-h2: 1.75rem;
+$font-h3: 1.5rem;
+$margin-hr: 1.75rem;
+// Theme colors
+$primary: var(--primary);
+$secondary: var(--secondary);
+
 main {
   a {
-    color: var(--secondary) !important;
+    color: $primary;
   }
-  h1 {
-    font-size: 2.25rem;
+  h1 { font-size: $font-h1; }
+  h2 { font-size: $font-h2; }
+  h3 { font-size: $font-h3; }
+  hr  { margin-bottom: $margin-hr; }
+}
+
+// Dark Mode Overrides
+body.dark {
+  main {
+    a {
+      color: $secondary;
+    }
   }
-  h2 {
-    font-size: 1.75rem;
-  }
-  h3 {
-    font-size: 1.5rem;
-  }
-  
-  hr {
-    margin-bottom: 1.75rem !important;
-  }
-} 
+}
+
+
+.highlight .s,
+.highlight .m {
+  display: inline !important;
+}
