@@ -6,7 +6,7 @@ description             : >-
   Binacle.Net Docs
   
 # the base hostname & protocol for your site, e.g. http://example.com# Welcome to Jekyll!
-url                     : "https://chrismavrommatis.github.io"
+url                     : "https://docs.binacle.net"
 
 logo:
   src                  : /assets/logo/binacle-logo-512x512a.png
