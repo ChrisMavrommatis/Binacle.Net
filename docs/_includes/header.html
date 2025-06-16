@@ -9,10 +9,10 @@
         <div class="max center-align"></div>
 
         <a href="{{ site.github.url }}" title="{{ site.github.title }}" target="_blank">
-            <img src="{{ site.github.image }}" alt="Github" height="20">
+            <img src="{{ site.github.image | relative_url }}" alt="Github" height="20">
         </a>
         <a href="{{ site.dockerhub.url }}" title="{{ site.dockerhub.title }}" target="_blank">
-            <img src="{{ site.dockerhub.image }}" alt="Docker" height="20">
+            <img src="{{ site.dockerhub.image | relative_url }}" alt="Docker" height="20">
         </a>
 
         <button class="transparent circle" data-role="theme-button">

@@ -21,10 +21,10 @@
     <meta http-equiv="refresh" content="0; url={{ redirect_to }}">
     <meta name="robots" content="noindex">
 
-    <link type="text/css" rel="stylesheet" href="/css/beercss/beer.min.css">
-    <link href="/css/main.css" rel="stylesheet"/>
-    <link href="/css/pygments.css" rel="stylesheet"/>
-    <link rel="icon" href="/favicon.ico"/>
+    <link type="text/css" rel="stylesheet" href="{{ '/css/beercss/beer.min.css' | relative_url }}" >
+    <link href="{{ '/css/main.css' | relative_url }}" rel="stylesheet"/>
+    <link href="{{ '/css/pygments.css' | relative_url }}" rel="stylesheet"/>
+    <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" />
 </head>
 <body class="{{ site.default_theme }}">
 
@@ -45,9 +45,9 @@
 </main>
 {% include footer.html %}
 
-<script type="module" src="/css/beercss/beer.min.js"></script>
-<script src="/js/main.js"></script>
-<script src="/js/cookies.js"></script>
-<script src="/js/themeSwitcher.js"></script>
+<script type="module" src="{{ '/css/beercss/beer.min.js' | relative_url }}"></script>
+<script src="{{ '/js/main.js' | relative_url }}"></script>
+<script src="{{ '/js/cookies.js' | relative_url }}"></script>
+<script src="{{ '/js/themeSwitcher.js' | relative_url }}"></script>
 </body>
 </html>
