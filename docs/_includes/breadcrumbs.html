@@ -1,6 +1,8 @@
-﻿<nav class="tiny-space">
+﻿{% unless page.breadcrumbs == false  %}
+
+<nav class="tiny-space">
     {% assign crumbs = page.url | remove:'/index.html' | split: '/' %}
-    <a href="/">
+    <a href="{% vlink /index.md %}">
         <i class="small">home</i>
     </a>
     {% for crumb in crumbs offset: 1 %}
@@ -18,14 +20,22 @@
             {% endfor %}
             {% assign crumb_title = crumb | replace:'-',' ' | remove:'.html' %}
             <span>
-                <a href="{{ crumb_url }}">
+                {% if crumb_title contains 'version' %}
+                    <a href="{% vlink /index.md %}">
+                        {{ crumb_title | capitalize }}
+                    </a>
+                {% else %}
+                    <a href="{{ crumb_url }}">
                     {% if crumb_title contains '.' %}
                         {{ crumb }}
                     {% else %}
                         {{ crumb_title | capitalize }}
                     {% endif %}
-                </a>
+                    </a>
+                {% endif %}
             </span>
         {% endif %}
     {% endfor %}
 </nav>
+
+{% endunless %}

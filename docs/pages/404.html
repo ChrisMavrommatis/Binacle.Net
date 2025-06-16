@@ -1,25 +1,23 @@
 ---
-permalink: /404.html
+title: Page Not Found
+permalink: /404
 layout: page
+breadcrumbs: false
 ---
 
-<style type="text/css" media="screen">
-  .container {
-    margin: 10px auto;
-    max-width: 600px;
-    text-align: center;
-  }
-  h1 {
-    margin: 30px 0;
-    font-size: 4em;
-    line-height: 1;
-    letter-spacing: -1px;
-  }
-</style>
 
-<div class="container">
-  <h1>404</h1>
+{% include header.html %}
 
-  <p><strong>Page not found :(</strong></p>
-  <p>The requested page could not be found.</p>
-</div>
+<main class="responsive padding">
+
+  <div class="padding medium middle-align center-align">
+    <div>
+      <h1>Page not found</h1>
+      <h2>:(</h2>
+      <p>The requested page could not be found.</p>
+      <a href="/" class="button primary">Go to Home</a>
+    </div>
+  </div>
+</main>
+
+{% include footer.html %}

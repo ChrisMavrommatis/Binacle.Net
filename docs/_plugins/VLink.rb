@@ -25,7 +25,6 @@ module Jekyll
         version = page['version']
       
         relative_path = Liquid::Template.parse(@relative_path).render(context)
-        relative_path_with_leading_slash = PathManager.join("", relative_path)
         
         versioned_path = PathManager.join("_versions", PathManager.join(version, relative_path))
         versioned_path_with_leading_slash = PathManager.join("", versioned_path)

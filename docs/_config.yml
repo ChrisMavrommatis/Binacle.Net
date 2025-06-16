@@ -141,14 +141,8 @@ defaults:
       path           : "pages/**"
       type           : "pages"
     values:
-      layout          : "default"
-      title           : "NOTITLE"
       locale          : "en_US"
       hreflang        : "en"
-      sitemap:
-        lastmod		 : "current"
-        changefreq	 : "weekly"
-        priority	 : 1.0
   -
     scope:
       path           : "**/**"
@@ -170,10 +164,10 @@ defaults:
     values:
       version: "v1.3.0"
   - scope:
-      path: "**/v2.0.0/**"
+      path: "**/latest/**"
       type: "versions"
     values:
-      version: "v2.0.0"
+      version: "latest"
 
 
 

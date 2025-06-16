@@ -1,6 +1,6 @@
 ---
 title: Redirecting to latest version&hellip;
-permalink: /
+permalink: /version/
 layout: redirect
 breadcrumbs: false
 ---

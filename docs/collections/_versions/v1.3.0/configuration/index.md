@@ -92,7 +92,7 @@ You can manually modify configuration files or replace them entirely using:
 >
 > This approach overrides all default settings, which may lead to unexpected behavior.
 > Only use this if you want a completely custom configuration.
-> {: .block-warning}
+{: .block-warning}
 
 ### 📝 Production Overrides
 
