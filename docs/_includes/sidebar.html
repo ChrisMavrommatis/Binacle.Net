@@ -12,7 +12,7 @@
             {% assign uniq_versions = site.versions | map: 'version' | uniq %}
             {% if uniq_versions.size != 0 %}
             <div class="field suffix small">
-                <select id="version-select" onchange="location.href={{ '/version/' | relative_url }} + this.value;">
+                <select id="version-select" onchange="location.href='{{ '/version/' | relative_url }}' + this.value;">
                     {% for uniq_version in uniq_versions %}
                     {% if uniq_version == page.version %}
                     <option selected>{{ uniq_version }}</option>

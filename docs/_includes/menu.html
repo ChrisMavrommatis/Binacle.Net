@@ -19,7 +19,7 @@
                 <strong>{{ item.title }}</strong>       
             </span>
             {% else %}
-            <a href="{{ item.url }}">
+            <a href="{{ item.url | relative_url }}">
                 {{ item.title }}
             </a>
             {% endif %}
@@ -34,7 +34,7 @@
                         <strong>{{ item.title }}</strong>
                     </span>
                     {% else %}
-                    <a href="{{ item.url }}">
+                    <a href="{{ item.url | relative_url }}">
                         {{ item.title }}
                     </a>
                     {% endif %}
