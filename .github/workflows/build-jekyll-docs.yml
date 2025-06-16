@@ -40,13 +40,13 @@ jobs:
           ruby-version: '3.1' # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
-          working-directory: ./docs
+          working-directory: ./docs/
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
-        run:  bundle exec jekyll build --destination ../build/docs 
+        run:  bundle exec jekyll build --destination ../build/docs/ 
         working-directory: ./docs
         env:
           JEKYLL_ENV: production
@@ -54,7 +54,7 @@ jobs:
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '../build/docs' # Path to the built site directory
+          path: './build/docs/' # Path to the built site directory
 
   # Deployment job
   deploy:
