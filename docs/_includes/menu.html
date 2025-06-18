@@ -12,7 +12,7 @@
         {% endif %}
         {% assign child_menu_items = site.versions | where: 'nav.exclude',nil | where: 'version', item.version | where: 'nav.parent',item.title %}
         {% if child_menu_items.size == 0 %}
-        <li class="tiny-space {% if is_active %}surface-container-highest{% endif %}">
+        <li class="tiny-space{% if is_active %} surface-container-highest{% endif %}">
             <span>{{ item.nav.icon }}</span>
             {% if is_active %}
             <span data-active>

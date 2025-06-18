@@ -1,5 +1,5 @@
 <header>
-    <article class="middle-align center-align secondary-container">
+    <article class="middle-align center-align secondary no-radius">
         <div>
             <a href="{% vlink /index.md %}">
                 <img class="large" src="{{ site.logo.src | relative_url }}" alt="{{ site.logo.alt }}"/>
@@ -12,7 +12,7 @@
             {% assign uniq_versions = site.versions | map: 'version' | uniq %}
             {% if uniq_versions.size != 0 %}
             <div class="field suffix small">
-                <select id="version-select" onchange="location.href='{{ '/version/' | relative_url }}' + this.value;">
+                <select id="version-select" data-versionselect="{{ '/version/' | relative_url }}">
                     {% for uniq_version in uniq_versions %}
                     {% if uniq_version == page.version %}
                     <option selected>{{ uniq_version }}</option>

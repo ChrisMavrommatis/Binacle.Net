@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
+    
+    const versionSelect = document.querySelector('[data-versionselect]');
+    versionSelect.addEventListener('change', function (event) {
+        const url = versionSelect.dataset.versionselect;
+        const selectedVersion = event.target.value;
+        if (selectedVersion) {
+            window.location.href = url + selectedVersion;
+        }
+    });
+    
     // Find the active span
     const activeSpans = document.querySelectorAll('span[data-active]');
     if (!activeSpans) return;
