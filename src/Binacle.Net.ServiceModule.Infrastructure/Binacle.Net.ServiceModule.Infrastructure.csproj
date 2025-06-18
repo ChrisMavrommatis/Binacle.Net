@@ -12,11 +12,11 @@
 	<ItemGroup>
 	  <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
 	  <PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.3" />
-	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.11.0" />
+	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.12.0" />
 	</ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.6" />
 	</ItemGroup>
 	
 	<ItemGroup>
