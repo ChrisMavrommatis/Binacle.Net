@@ -3,7 +3,7 @@ title: UI Module Only
 permalink: /version/v1.3.0/samples/docker/ui-module-only/
 nav:
   order: 3
-  parent: Docker Compose Samples
+  parent: Docker
   icon: 3️⃣
 ---
 

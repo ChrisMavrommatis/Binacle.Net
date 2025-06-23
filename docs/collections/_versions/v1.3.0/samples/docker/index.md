@@ -1,5 +1,5 @@
 ---
-title: Docker Compose Samples
+title: Docker
 permalink: /version/v1.3.0/samples/docker/
 nav:
   order: 1

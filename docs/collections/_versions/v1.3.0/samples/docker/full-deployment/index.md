@@ -3,7 +3,7 @@ title: Full Deployment
 permalink: /version/v1.3.0/samples/docker/full-deployment/
 nav:
   order: 2
-  parent: Docker Compose Samples
+  parent: Docker
   icon: 2️⃣
 ---
 

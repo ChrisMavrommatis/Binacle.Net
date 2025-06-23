@@ -3,7 +3,7 @@ title: Minimal Setup
 permalink: /version/v1.3.0/samples/docker/minimal-setup/
 nav:
   order: 1
-  parent: Docker Compose Samples
+  parent: Docker
   icon: 1️⃣
 ---
 

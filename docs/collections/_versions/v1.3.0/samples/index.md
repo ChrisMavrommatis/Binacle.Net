@@ -10,7 +10,7 @@ This section provides sample configurations to run Binacle.Net with various tech
 
 Choose the setup that fits your needs, whether it's a minimal setup, a full deployment, or a UI-only configuration.
 
-## Docker Compose Samples
+## Docker
 These samples demonstrate how to run Binacle.Net using Docker Compose.
 
 - [Minimal Setup]({% vlink samples/docker/minimal-setup/index.md %}): A minimal Docker Compose setup for Binacle.Net.
