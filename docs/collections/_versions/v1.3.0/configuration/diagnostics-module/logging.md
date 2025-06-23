@@ -15,7 +15,7 @@ By default, Binacle.Net logs events to both the Console and File outputs, ensuri
 ✅ Logs are output to the console, allowing you to monitor real-time activity.
 
 ## 📁 File Logging
-✅ Logs are stored in the `app/data/logs/` directory. Logs are created daily with the following naming format:
+✅ Logs are stored in the `/app/data/logs/` directory. Logs are created daily with the following naming format:
 
 ```bash
 log-{date}.txt

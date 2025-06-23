@@ -51,4 +51,4 @@ Customize Binacle.Net to suit your environment. Explore the following configurat
 
 ---
 
-This wiki will guide you through every aspect of using and integrating Binacle.Net. Whether you're looking for a quick deployment or deep customization, all the resources you need are here!
+Binacle.Net Docs will guide you through every aspect of using and integrating Binacle.Net. Whether you're looking for a quick deployment or deep customization, all the resources you need are here!

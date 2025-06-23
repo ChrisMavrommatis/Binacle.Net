@@ -5,37 +5,44 @@
     <a href="{% vlink /index.md %}">
         <i class="small">home</i>
     </a>
+
     {% for crumb in crumbs offset: 1 %}
+        {% assign crumb_limit = forloop.index | plus: 1 %}
+        {% assign crumb_url = '' %}
+        {% for crumb in crumbs limit: crumb_limit %}
+        {% assign crumb_url = crumb_url | append: crumb | append: '/' %}
+        {% endfor %}
+        {% assign crumb_title = crumb | replace:'-',' ' | remove:'.html' %}
+    
+        {% if crumb_title contains 'version' %}
+        {% continue %}
+        {% endif %}
+    
+        {% if crumb_title contains '.' %}
+        {% continue %}
+        {% endif %}
+    
+        {% if crumb_title contains 'latest' %}
+        {% continue %}
+        {% endif %}
         <span>/</span>
         {% if forloop.last %}
             <span>
                 {{ page.menu_title | default: page.title }}
             </span>
-
         {% else %}
-            {% assign crumb_limit = forloop.index | plus: 1 %}
-            {% assign crumb_url = '' %}
-            {% for crumb in crumbs limit: crumb_limit %}
-            {% assign crumb_url = crumb_url | append: crumb | append: '/' %}
-            {% endfor %}
-            {% assign crumb_title = crumb | replace:'-',' ' | remove:'.html' %}
             <span>
-                {% if crumb_title contains 'version' %}
-                    <a href="{% vlink /index.md %}">
-                        {{ crumb_title | capitalize }}
-                    </a>
-                {% else %}
-                    <a href="{{ crumb_url }}">
-                    {% if crumb_title contains '.' %}
-                        {{ crumb }}
-                    {% else %}
-                        {{ crumb_title | capitalize }}
-                    {% endif %}
-                    </a>
-                {% endif %}
+                <a href="{{ crumb_url }}">
+                    {{ crumb_title | capitalize_all  }}
+                </a>
             </span>
         {% endif %}
     {% endfor %}
 </nav>
 
 {% endunless %}
+
+
+
+
+

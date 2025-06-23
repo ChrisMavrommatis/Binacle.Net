@@ -162,11 +162,13 @@ defaults:
       type: "versions"
     values:
       version: "v1.3.0"
+      version_tag: "1.3.0"
   - scope:
       path: "**/latest/**"
       type: "versions"
     values:
       version: "latest"
+      version_tag: "latest"
 
 
 

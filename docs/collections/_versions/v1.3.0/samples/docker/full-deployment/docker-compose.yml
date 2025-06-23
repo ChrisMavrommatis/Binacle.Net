@@ -1,0 +1,54 @@
+services:
+  binacle-net:
+    image: binacle/binacle-net:1.3.0
+    depends_on:
+      azurite:
+        condition: service_started
+      aspire-dashboard:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./Presets.json
+        target: /app/Config_Files/Presets.json
+        read_only: true
+      - type: bind
+        source: ./JwtAuth.json
+        target: /app/Config_Files/ServiceModule/JwtAuth.json
+        read_only: true
+      - type: bind
+        source: ./OpenTelemetry.Production.json
+        target: /app/Config_Files/DiagnosticsModule/OpenTelemetry.Production.json
+        read_only: true
+      - type: bind
+        source: ./data
+        target: /app/data/
+    environment:
+      - SWAGGER_UI=True
+      - UI_MODULE=True
+      - SERVICE_MODULE=True
+      - AZURESTORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1
+      - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/
+      - OTEL_EXPORTER_OTLP_HEADERS=x-otlp-api-key=9EFB07A6-E9F9-4AC1-A0DE-DBE829B7236B
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    volumes:
+      - type: bind
+        source: ./azurite
+        target: /data
+    ports:
+      - '10000:10000'
+      - '10001:10001'
+      - '10002:10002'
+  aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0
+    ports:
+      - '18888:18888'
+    volumes:
+      - type: bind
+        source: ./aspire-dashboard-config.json
+        target: /app/config_files/aspire-dashboard-config.json
+        read_only: true
+    environment:
+      - DOTNET_DASHBOARD_CONFIG_FILE_PATH=config_files/aspire-dashboard-config.json

@@ -14,7 +14,7 @@ The JWT Auth settings are configured via the `JwtAuth.json` file.
 
 **Default configuration:**
 ```json
-﻿{
+{
   "JwtAuth": {
     "Issuer": "https://localhost:7194",
     "Audience": "https://localhost:7194",

@@ -63,20 +63,20 @@ However, unlike other configurations, presets are rarely modified incrementally.
 There are multiple ways to override the default `Presets.json` file, particularly when using Docker. Below are two methods for overriding the presets file in a Docker environment:
 
 ### 🖥️ Option 1: Command Line
-1. Download the [Presets.json](https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/src/Binacle.Net.Api/Config_Files/Presets.json) file and modify it according to your needs.
+1. Download the [Presets.json]({% vlink /downloads/Presets.json %}){:download="" target="_blank"} file and modify it according to your needs.
 2. Place the modified `Presets.json` file anywhere on your system.
 3. Open your terminal and navigate to the directory containing your modified Presets.json file.
 4. Run the following Docker command to mount the updated presets file:
 
 ```bash
-docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro binacle/binacle-net:latest
+docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro binacle/binacle-net:{{ page.version_tag }}
 ```
 
 > If you are running under **Windows** replace `$(pwd)` with `%cd%`, so the command looks like this:
 {: .block-tip}
 
 ```cmd
-docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro binacle/binacle-net:latest
+docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.json:/app/Config_Files/Presets.json:ro binacle/binacle-net:{{ page.version_tag }}
 ```
 
 > Since we are using a bind mount for a single file, the full path must be provided.
@@ -86,7 +86,7 @@ docker run --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -v %cd%/Presets.js
 If you prefer to use Docker Compose, follow these steps:
 
 1. Create a Docker Compose file (compose.yaml) if you don’t already have one.
-2. Download the [Presets.json](https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/src/Binacle.Net.Api/Config_Files/Presets.json) file and modify it according to your needs.
+2. Download the [Presets.json]({% vlink /downloads/Presets.json %}){:download="" target="_blank"} file and modify it according to your needs.
 3. Place the modified Presets.json file in the same directory as your compose.yaml.
 4. Navigate to the directory containing both the Presets.json and compose.yaml files.
 5. Run the following command:
@@ -104,7 +104,7 @@ docker compose up
 ```yml
 services:
   binacle-net:
-    image: binacle/binacle-net:latest
+    image: binacle/binacle-net:{{ page.version_tag }}
     ports:
       - "8080:8080"
     volumes:

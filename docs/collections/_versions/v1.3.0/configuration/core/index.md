@@ -45,5 +45,5 @@ docker run --name binacle-net \
   -e ASPNETCORE_HTTP_PORTS=80 \
   -e SWAGGER_UI=True \
   -p 8080:80 \
-  binacle/binacle-net:latest
+  binacle/binacle-net:{{ page.version_tag }}
 ```

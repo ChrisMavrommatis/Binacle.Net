@@ -47,12 +47,14 @@ For more information on overriding configurations, refer to the [Configuration](
 By default, health checks are publicly accessible. However, you can restrict access by specifying allowed IPs or subnets in the `RestrictedIPs` array:
 
 ```json
-"RestrictedIPs": [
-  "192.168.1.1",                // Single IP
-  "192.168.1.0-192.168.1.255",  // IP Range
-  "192.168.1.0/24",             // CIDR notation 
-  "10.0.0.0/8"                  // Larger subnet range
-]
+{
+  "RestrictedIPs": [
+    "192.168.1.1",                // Single IP
+    "192.168.1.0-192.168.1.255",  // IP Range
+    "192.168.1.0/24",             // CIDR notation 
+    "10.0.0.0/8"                  // Larger subnet range
+  ]
+}
 ```
 This ensures that only authorized systems can query the health check endpoint.
 
@@ -64,9 +66,11 @@ Binacle.Net comes with built-in health checks, including:
 You can disable specific health checks by listing them in the `RestrictedChecks` array. For example, to disable the **Database Check**, you can configure it like this:
 
 ```json
-"RestrictedChecks": [
-  "Database"
-]
+{
+  "RestrictedChecks": [
+    "Database"
+  ]  
+}
 ```
 
 This feature is useful if you cannot restrict access using `RestrictedIPs` but still want to limit exposure to sensitive system details.

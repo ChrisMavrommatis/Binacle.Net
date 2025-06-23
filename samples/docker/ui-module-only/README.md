@@ -68,7 +68,7 @@ This will grant full access to `./data` and its subdirectories.
 > 777 gives full access to all users. Adjust permissions as needed for security.
 
 ## 📄 Additional Resources
-- [Binacle.Net Documentation](https://github.com/ChrisMavrommatis/Binacle.Net/wiki)
+- [Binacle.Net Documentation](https://docs.binacle.net/)
 - [Docker Compose Reference](https://docs.docker.com/compose/)
 
 Happy packing! 📦✨
