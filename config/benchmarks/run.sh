@@ -1,12 +1,12 @@
 ﻿#!/bin/bash
 
-BENCH_FILE_PATH=$( realpath "$0"  )
-BENCH_FILE_DIR=$( dirname "$BENCH_FILE_PATH" )
-ROOT_DIR=$( dirname "$( dirname "$BENCH_FILE_DIR" )" )
-BENCHMARKS_PROJECT_PATH='test/Binacle.Lib.Benchmarks/'
+FILE_PATH=$( realpath "$0"  )
+FILE_DIR=$( dirname "$FILE_PATH" )
+ROOT_DIR=$( dirname "$( dirname "$FILE_DIR" )" )
+PROJECT_PATH='test/Binacle.Lib.Benchmarks/'
 
 # set working directory to the root of the project
-cd "$ROOT_DIR/$BENCHMARKS_PROJECT_PATH" || exit 1
+cd "$ROOT_DIR/$PROJECT_PATH" || exit 1
 
 # Create a dictionary to hold aliases for the benchmark projects
 declare -A benchmark_aliases=(
