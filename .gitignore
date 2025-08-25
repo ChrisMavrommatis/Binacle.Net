@@ -43,4 +43,3 @@ build/docs
 .jekyll-cache
 .jekyll-metadata
 vendor
-Gemfile.lock
