@@ -15,14 +15,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />
-		<PackageReference Include="OpenApiExamples" Version="0.0.2" />
-		<PackageReference Include="Scalar.AspNetCore" Version="2.7.0" />
+		<PackageReference Include="OpenApiExamples" Version="0.0.3" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.7.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ChrisMavrommatis.Features" Version="2.0.3" />
-		<PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.3" />
+		<PackageReference Include="ChrisMavrommatis.Features" Version="2.0.4" />
+		<PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.4" />
 		<PackageReference Include="FluentValidation" Version="12.0.0" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
 	</ItemGroup>
