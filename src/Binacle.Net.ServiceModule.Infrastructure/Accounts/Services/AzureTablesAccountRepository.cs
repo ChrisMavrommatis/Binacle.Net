@@ -4,7 +4,6 @@ using Azure.Data.Tables;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
-using Binacle.Net.ServiceModule.Domain.Common.Models;
 using Binacle.Net.ServiceModule.Infrastructure.Common.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 
@@ -83,7 +82,7 @@ internal class AzureTablesAccountRepository : IAccountRepository
 
 			return TypedResult.Conflict;
 		}
-		catch (Azure.RequestFailedException)
+		catch (RequestFailedException)
 		{
 			return TypedResult.Conflict;
 		}
@@ -97,7 +96,7 @@ internal class AzureTablesAccountRepository : IAccountRepository
 		var entity = new AccountTableEntity(account);
 		var response = await tableClient.UpdateEntityAsync(
 			entity,
-			Azure.ETag.All,
+			ETag.All,
 			cancellationToken: cancellationToken
 		);
 
@@ -154,7 +153,7 @@ internal class AzureTablesAccountRepository : IAccountRepository
 		public AccountTableEntity(Account account)
 		{
 			this.RowKey = account.Id.ToString();
-			this.PartitionKey = AzureTablesAccountRepository.TablePartitionKey;
+			this.PartitionKey = TablePartitionKey;
 			this.Username = account.Username;
 			this.Role = account.Role;
 			this.Email = account.Email;
@@ -189,3 +188,5 @@ internal class AzureTablesAccountRepository : IAccountRepository
 		}
 	}
 }
+
+

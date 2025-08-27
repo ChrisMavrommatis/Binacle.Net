@@ -1,12 +1,15 @@
-﻿using Binacle.Net.Kernel;
+﻿using System.Data;
+using Binacle.Net.Kernel;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Common.Services;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;
 using Binacle.Net.ServiceModule.Infrastructure.AzureTables;
 using Binacle.Net.ServiceModule.Infrastructure.Common.Services;
+using Binacle.Net.ServiceModule.Infrastructure.Sqlite;
 using Binacle.Net.ServiceModule.Infrastructure.Subscriptions.Services;
 using ChrisMavrommatis.StartupTasks;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -50,6 +53,20 @@ public static class Setup
 
 			 builder.Services.AddStartupTask<EnsureRequiredAzureTablesExistStartupTask>();
 		 }
+		 else
+		 {
+			 Log.Information("Registering {StorageProvider} as infrastructure provider", "Sqlite");
+			 builder.Services.AddTransient<IDbConnection>(sp => new SqliteConnection("Data Source=data/binacle-net.db"));
+			 builder.Services
+				 .AddScoped<IAccountRepository, SqliteAccountRepository>()
+				 .AddScoped<ISubscriptionRepository, SqliteSubscriptionRepository>();
+			 
+			 builder.Services.AddStartupTask<EnsureRequiredSqliteTablesExistStartupTask>();
+			 
+		 }
+		 
+		 
+		 
 		 
 		 builder.Services
 			 .AssertServiceWasRegistered<IAccountRepository>()
