@@ -7,7 +7,7 @@ public class ConnectionString
 	internal ConnectionString(string value)
 	{
 		this.value = value;
-		var parts = this.value.Split(";");
+		var parts = this.value.Split(";", StringSplitOptions.RemoveEmptyEntries);
 		this.keyValuePairs = new Dictionary<string, string>();
 
 		foreach (var part in parts)

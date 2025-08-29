@@ -1,5 +1,5 @@
 ﻿{
 	"ConnectionStrings": {
-		"AzureStorage": "UseDevelopmentStorage=true"
-	}
+    "Sqlite": "DataSource=binacle-net-service.test.db;"
+  }
 }

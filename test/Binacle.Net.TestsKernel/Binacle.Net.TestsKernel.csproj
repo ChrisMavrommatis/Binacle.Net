@@ -21,11 +21,5 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
 	</ItemGroup>
-	
-	<ItemGroup>
-		<None Update="Data\BinCollections\*.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
 
 </Project>

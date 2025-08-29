@@ -15,29 +15,114 @@ internal class SqliteSubscriptionRepository : ISubscriptionRepository
 		this.connection = connection;
 	}
 
-	public Task<FluxUnion<Subscription, NotFound>> GetByIdAsync(Guid id, bool allowDeleted = false, CancellationToken cancellationToken = default)
+	public async Task<FluxUnion<Subscription, NotFound>> GetByIdAsync(
+		Guid id,
+		bool allowDeleted = false,
+		CancellationToken cancellationToken = default
+		)
 	{
-		throw new NotImplementedException();
+		const string sql = "SELECT * FROM Subscriptions WHERE Id = @Id AND IsDeleted = 0 LIMIT 1";
+		const string allowDeletedSql = "SELECT * FROM Subscriptions WHERE Id = @Id LIMIT 1";
+		var dto = await this.connection.QueryFirstOrDefaultAsync<SubscriptionDto>(
+			allowDeleted ? allowDeletedSql : sql,
+			new { Id = id.ToString() }
+		);
+
+		if (dto is null)
+		{
+			return TypedResult.NotFound;
+		}
+
+		return dto.ToDomain();
 	}
 
-	public Task<FluxUnion<Subscription, NotFound>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
+	public async Task<FluxUnion<Subscription, NotFound>> GetByAccountIdAsync(
+		Guid accountId, 
+		CancellationToken cancellationToken = default
+		)
 	{
-		throw new NotImplementedException();
+		const string sql = "SELECT * FROM Subscriptions WHERE AccountId = @AccountId AND IsDeleted = 0 LIMIT 1";
+
+		var dto = await this.connection.QueryFirstOrDefaultAsync<SubscriptionDto>(sql, new { AccountId = accountId.ToString() });
+
+		if (dto is null)
+		{
+			return TypedResult.NotFound;
+		}
+
+		return dto.ToDomain();
 	}
 
-	public Task<FluxUnion<Success, Conflict>> CreateAsync(Subscription subscription, CancellationToken cancellationToken = default)
+	public async Task<FluxUnion<Success, Conflict>> CreateAsync(
+		Subscription subscription, 
+		CancellationToken cancellationToken = default
+		)
 	{
-		throw new NotImplementedException();
+		const string sql = @"
+			INSERT INTO Subscriptions
+			(Id, AccountId, Type, Status, CreatedAtUtc, IsDeleted, DeletedAtUtc)
+			VALUES 
+			(@Id, @AccountId, @Type, @Status, @CreatedAtUtc, @IsDeleted, @DeletedAtUtc);
+		";
+		try
+		{
+			var dto = SubscriptionDto.FromDomain(subscription);
+			int affectedRows = await connection.ExecuteAsync(sql, dto);
+			if (affectedRows != 1)
+			{
+				return TypedResult.Conflict;
+			}
+
+			return TypedResult.Success;
+		}
+		catch (Exception)
+		{
+			return TypedResult.Conflict;
+		}
 	}
 
-	public Task<FluxUnion<Success, NotFound>> UpdateAsync(Subscription subscription, CancellationToken cancellationToken = default)
+	public async Task<FluxUnion<Success, NotFound>> UpdateAsync(
+		Subscription subscription, 
+		CancellationToken cancellationToken = default
+		)
 	{
-		throw new NotImplementedException();
+		const string sql = @"
+			UPDATE Subscriptions
+			SET
+				AccountId = @AccountId,
+				Type = @Type,
+				Status = @Status,
+				CreatedAtUtc = @CreatedAtUtc,
+				IsDeleted = @IsDeleted,
+				DeletedAtUtc = @DeletedAtUtc
+			WHERE Id = @Id
+		";
+
+		var dto = SubscriptionDto.FromDomain(subscription);
+		var affectedRows = await connection.ExecuteAsync(sql, dto);
+
+		if (affectedRows <= 0)
+		{
+			return TypedResult.NotFound;
+		}
+
+		return TypedResult.Success;
 	}
 
-	public Task<FluxUnion<Success, NotFound>> DeleteAsync(Subscription subscription, CancellationToken cancellationToken = default)
+	public async Task<FluxUnion<Success, NotFound>> DeleteAsync(
+		Subscription subscription, 
+		CancellationToken cancellationToken = default
+		)
 	{
-		throw new NotImplementedException();
+		const string sql = @"DELETE FROM Subscriptions WHERE Id = @Id";
+		var affectedRows = await connection.ExecuteAsync(sql, new { Id = subscription.Id.ToString() });
+
+		if (affectedRows <= 0)
+		{
+			return TypedResult.NotFound;
+		}
+
+		return TypedResult.Success;
 	}
 
 	private class SubscriptionDto
@@ -81,7 +166,6 @@ internal class SqliteSubscriptionRepository : ISubscriptionRepository
 		}
 		
 	}
-
 
 	internal static async Task EnsureTableExistsAsync(IDbConnection connection)
 	{

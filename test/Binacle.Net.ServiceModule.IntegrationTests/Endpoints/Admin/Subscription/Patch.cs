@@ -173,7 +173,7 @@ public class Patch : AdminEndpointsTestsBase
 	}
 	
 	
-	[Fact(DisplayName = $"PATCH {routePath}. With Partial Valid Request Returns 204 No Content")]
+	[Fact(DisplayName = $"PATCH {routePath}. With Status Only Returns 204 No Content")]
 	public async Task Patch_WithStatusOnly_Returns_204NoContent()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
@@ -192,7 +192,7 @@ public class Patch : AdminEndpointsTestsBase
 		response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 	}
 	
-	[Fact(DisplayName = $"PATCH {routePath}. With Partial Valid Request Returns 204 No Content")]
+	[Fact(DisplayName = $"PATCH {routePath}. With Type Only Returns 204 No Content")]
 	public async Task Patch_WithTypeOnly_Returns_204NoContent()
 	{
 		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);

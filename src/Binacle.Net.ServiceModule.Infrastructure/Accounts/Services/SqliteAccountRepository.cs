@@ -27,7 +27,7 @@ internal class SqliteAccountRepository : IAccountRepository
 
 		var dto = await this.connection.QueryFirstOrDefaultAsync<AccountDto>(
 			allowDeleted ? allowDeletedSql : sql,
-			new { id = id }
+			new { Id = id.ToString() }
 		);
 
 		if (dto is null)
@@ -75,7 +75,7 @@ internal class SqliteAccountRepository : IAccountRepository
 
 			return TypedResult.Success;
 		}
-		catch (Exception ex)
+		catch (Exception)
 		{
 			return TypedResult.Conflict;
 		}
@@ -117,7 +117,7 @@ internal class SqliteAccountRepository : IAccountRepository
 		CancellationToken cancellationToken = default)
 	{
 		const string sql = @"DELETE FROM Accounts WHERE Id = @Id";
-		var affectedRows = await connection.ExecuteAsync(sql, new { Id = account.Id });
+		var affectedRows = await connection.ExecuteAsync(sql, new { Id = account.Id.ToString() });
 
 		if (affectedRows <= 0)
 		{
