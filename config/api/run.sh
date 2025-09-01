@@ -8,7 +8,7 @@ PROJECT_PATH='src/Binacle.Net/'
 # set working directory to the root of the project
 cd "$ROOT_DIR/$PROJECT_PATH" || exit 1
 
-# Create a dictionary to hold aliases for the benchmark projects
+# Create a dictionary to hold aliases for the launch profiles
 #WithUiModuleOnly WithAllModules WithServiceModuleOnly Normal
 declare -A launch_profile_aliases=(
     ["Normal"]="Normal"

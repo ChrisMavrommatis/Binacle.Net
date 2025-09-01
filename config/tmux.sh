@@ -12,7 +12,7 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	tmux split-window -h -t $SESSION_NAME:0 
 
 	# set the cd to /src/Binacle.Net
-	tmux send-keys -t $SESSION_NAME:0.0 'cd ./src/Binacle.Net' C-m
+	tmux send-keys -t $SESSION_NAME:0.0 'cd ./config/api' C-m
 	
 	# Set the cd to ../_data
 	tmux send-keys -t $SESSION_NAME:0.1 'cd ./config/aspire-dashboard-otel' C-m
@@ -22,71 +22,88 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	###-------------------------WINDOW 0----------------------------###
 	
 	###-------------------------WINDOW 1----------------------------###
-	# Create a new window named 'build'
-	tmux new-window -n 'build' -t $SESSION_NAME
+  # Create a new window named 'docs'
+  tmux new-window -n 'docs' -t $SESSION_NAME
+  
+  # set the cd to /config/tests
+  tmux send-keys -t $SESSION_NAME:1 'cd ./config/docs' C-m
+  ###-------------------------WINDOW 1----------------------------###
 	
-	# set the cd to /build/local
-	tmux send-keys -t $SESSION_NAME:1 'cd ./build/local' C-m
-	###-------------------------WINDOW 1----------------------------###
+  ###-------------------------WINDOW 2----------------------------###
+  # Create a new window named 'tests'
+  tmux new-window -n 'tests' -t $SESSION_NAME
+  
+  # set the cd to /config/tests
+  tmux send-keys -t $SESSION_NAME:2 'cd ./config/tests' C-m
+  ###-------------------------WINDOW 2----------------------------###
+
+  ###-------------------------WINDOW 3----------------------------###
+  # Create a new window named 'tests'
+  tmux new-window -n 'misc' -t $SESSION_NAME
+  
+  # set the cd to /config/tests
+  tmux send-keys -t $SESSION_NAME:3 'cd ./config' C-m
+  ###-------------------------WINDOW 3----------------------------###	
 	
-	###-------------------------WINDOW 2----------------------------###
 	
-	# Create a new window named 'benchmarks_cube_scaling'
-  tmux new-window -n 'benchmarks_cube_scaling' -t $SESSION_NAME
+	###-------------------------WINDOW 4----------------------------###
+	
+	# Create a new window named 'bench_1
+  tmux new-window -n 'bench_1' -t $SESSION_NAME
   	
   # Create 4 panes
-  # Split the 3rd window vertically
-  tmux split-window -v -t $SESSION_NAME:2
+  # Split the window vertically
+  tmux split-window -v -t $SESSION_NAME:4
   
   # Set the cd to /config/benchmarks
-  tmux send-keys -t $SESSION_NAME:2.0 'cd ./config/benchmarks' C-m
-  tmux send-keys -t $SESSION_NAME:2.1 'cd ./config/benchmarks' C-m
+  tmux send-keys -t $SESSION_NAME:4.0 'cd ./config/benchmarks' C-m
+  tmux send-keys -t $SESSION_NAME:4.1 'cd ./config/benchmarks' C-m
 
   # Select the first pane
-  tmux select-pane -t $SESSION_NAME:2.0
+  tmux select-pane -t $SESSION_NAME:4.0
   	
-	###-------------------------WINDOW 2----------------------------###
+	###-------------------------WINDOW 4----------------------------###
 	
-  ###-------------------------WINDOW 3----------------------------###
+  ###-------------------------WINDOW 5----------------------------###
   	
-  # Create a new window named 'benchmarks_multiple_bins'
-  tmux new-window -n 'benchmarks_multiple_bins' -t $SESSION_NAME
+  # Create a new window named 'bench_2'
+  tmux new-window -n 'bench_2' -t $SESSION_NAME
     	
   # Create 4 panes
-  # Split the 3rd window vertically
-  tmux split-window -v -t $SESSION_NAME:3
+  # Split the window vertically
+  tmux split-window -v -t $SESSION_NAME:5
     
   # Set the cd to /config/benchmarks
-  tmux send-keys -t $SESSION_NAME:3.0 'cd ./config/benchmarks' C-m
-  tmux send-keys -t $SESSION_NAME:3.1 'cd ./config/benchmarks' C-m
+  tmux send-keys -t $SESSION_NAME:5.0 'cd ./config/benchmarks' C-m
+  tmux send-keys -t $SESSION_NAME:5.1 'cd ./config/benchmarks' C-m
   
   # Select the first pane
-  tmux select-pane -t $SESSION_NAME:3.0
+  tmux select-pane -t $SESSION_NAME:5.0
     	
-  ###-------------------------WINDOW 3----------------------------###
+  ###-------------------------WINDOW 5----------------------------###
 		
-	###-------------------------WINDOW 4----------------------------###
+	###-------------------------WINDOW 6----------------------------###
   	
-  	# Create a new window named 'bench'
-    tmux new-window -n 'bench' -t $SESSION_NAME
+  	# Create a new window named 'bench_3'
+    tmux new-window -n 'bench_3' -t $SESSION_NAME
     	
     # Create 4 panes
     # Split the 4th window vertically
-    tmux split-window -v -t $SESSION_NAME:4
+    tmux split-window -v -t $SESSION_NAME:6
     # Split the 1st pane horizontally
-    tmux split-window -h -t $SESSION_NAME:4.0
+    tmux split-window -h -t $SESSION_NAME:6.0
     # Split the 3rd pane horizontally
-    tmux split-window -h -t $SESSION_NAME:4.2
+    tmux split-window -h -t $SESSION_NAME:6.2
     
     # Set the cd to /config/benchmarks
-    tmux send-keys -t $SESSION_NAME:4.0 'cd ./config/benchmarks' C-m
-    tmux send-keys -t $SESSION_NAME:4.1 'cd ./config/benchmarks' C-m
-    tmux send-keys -t $SESSION_NAME:4.2 'cd ./config/benchmarks' C-m
-    tmux send-keys -t $SESSION_NAME:4.3 'cd ./config/benchmarks' C-m
+    tmux send-keys -t $SESSION_NAME:6.0 'cd ./config/benchmarks' C-m
+    tmux send-keys -t $SESSION_NAME:6.1 'cd ./config/benchmarks' C-m
+    tmux send-keys -t $SESSION_NAME:6.2 'cd ./config/benchmarks' C-m
+    tmux send-keys -t $SESSION_NAME:6.3 'cd ./config/benchmarks' C-m
     # Select the first pane
-    tmux select-pane -t $SESSION_NAME:4.0
+    tmux select-pane -t $SESSION_NAME:6.0
     	
-  ###-------------------------WINDOW 3----------------------------###
+  ###-------------------------WINDOW 6----------------------------###
   
   # Select the first window 
   tmux select-window -t $SESSION_NAME:0

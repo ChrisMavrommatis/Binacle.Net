@@ -1,6 +1,7 @@
 ﻿{
 	"ConnectionStrings": {
 		"AzureStorage": "",
+		"Postgres": "",
     "Sqlite": ""
 	}
 }

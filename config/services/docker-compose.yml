@@ -21,3 +21,16 @@
       - '10000:10000'
       - '10001:10001'
       - '10002:10002'
+  postgres:
+    image: postgres:17.6
+    ports:
+      - '5432:5432'
+    volumes:
+      - type: bind
+        source: ./postgres
+        target: /var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=appuser
+      - POSTGRES_PASSWORD=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3
+      - POSTGRES_DB=binacle_net
+    
