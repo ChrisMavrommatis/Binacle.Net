@@ -28,8 +28,8 @@ public static class ModuleDefinition
 		builder.AddJsonConfiguration(
 			filePath: "ServiceModule/ConnectionStrings.json",
 			environmentFilePath:$"ServiceModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json",
-			optional: false,
-			reloadOnChange: true
+			optional: true,
+			reloadOnChange: false
 		);
 		
 		// Required for local run with secrets

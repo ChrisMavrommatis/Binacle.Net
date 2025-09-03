@@ -4,14 +4,15 @@ using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Common.Models;
 using Dapper;
+using Npgsql;
 
 namespace Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;
 
-internal class PostgresAccountRepository : IAccountRepository
+internal class NpgsqlAccountRepository : IAccountRepository
 {
 	private readonly IDbConnection connection;
 
-	public PostgresAccountRepository(IDbConnection connection)
+	public NpgsqlAccountRepository(IDbConnection connection)
 	{
 		this.connection = connection;
 	}

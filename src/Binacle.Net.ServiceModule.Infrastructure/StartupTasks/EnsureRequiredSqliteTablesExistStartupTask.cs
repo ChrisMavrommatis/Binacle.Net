@@ -2,16 +2,16 @@
 using Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Subscriptions.Services;
 using ChrisMavrommatis.StartupTasks;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
 
-namespace Binacle.Net.ServiceModule.Infrastructure.Postgres;
+namespace Binacle.Net.ServiceModule.Infrastructure.StartupTasks;
 
-internal class EnsureRequiredPostgresTablesExistStartupTask  : IStartupTask
+internal class EnsureRequiredSqliteTablesExistStartupTask  : IStartupTask
 {
 	private readonly IServiceProvider serviceProvider;
 
-	public EnsureRequiredPostgresTablesExistStartupTask(IServiceProvider serviceProvider)
+	public EnsureRequiredSqliteTablesExistStartupTask(IServiceProvider serviceProvider)
 	{
 		this.serviceProvider = serviceProvider;
 	}
@@ -19,14 +19,12 @@ internal class EnsureRequiredPostgresTablesExistStartupTask  : IStartupTask
 	public async Task ExecuteAsync(CancellationToken cancellationToken = default)
 	{
 		using var scope = this.serviceProvider.CreateScope();
-		var connection = scope.ServiceProvider.GetRequiredService<IDbConnection>() as NpgsqlConnection;
+		var connection = scope.ServiceProvider.GetRequiredService<SqliteConnection>();
 
 		await connection!.OpenAsync(cancellationToken);
 
-		await PostgresAccountRepository.EnsureTableExistsAsync(connection);
-		await PostgresSubscriptionRepository.EnsureTableExistsAsync(connection);
+		await SqliteAccountRepository.EnsureTableExistsAsync(connection);
+		await SqliteSubscriptionRepository.EnsureTableExistsAsync(connection);
 
 	}
-
-	
 }

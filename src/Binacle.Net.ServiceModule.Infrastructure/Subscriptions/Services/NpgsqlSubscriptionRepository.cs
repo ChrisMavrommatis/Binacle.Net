@@ -6,11 +6,11 @@ using Dapper;
 
 namespace Binacle.Net.ServiceModule.Infrastructure.Subscriptions.Services;
 
-internal class PostgresSubscriptionRepository : ISubscriptionRepository
+internal class NpgsqlSubscriptionRepository : ISubscriptionRepository
 {
 	private readonly IDbConnection connection;
 
-	public PostgresSubscriptionRepository(IDbConnection connection)
+	public NpgsqlSubscriptionRepository(IDbConnection connection)
 	{
 		this.connection = connection;
 	}

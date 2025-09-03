@@ -2,11 +2,9 @@
 using Binacle.Net.ServiceModule.Domain.Common.Services;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;
-using Binacle.Net.ServiceModule.Infrastructure.AzureTables;
+using Binacle.Net.ServiceModule.Infrastructure.Providers;
 using Binacle.Net.ServiceModule.Infrastructure.Common;
 using Binacle.Net.ServiceModule.Infrastructure.Common.Services;
-using Binacle.Net.ServiceModule.Infrastructure.Postgres;
-using Binacle.Net.ServiceModule.Infrastructure.Sqlite;
 using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,7 +17,7 @@ public static class Setup
 	private static readonly IInfrastructureProvider[] _infrastructureProviders =
 	[
 		new AzureStorageInfrastructureProvider(),
-		new PostgresInfrastructureProvider(),
+		new NpgsqlInfrastructureProvider(),
 		new SqliteInfrastructureProvider()
 	];
 

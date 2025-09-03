@@ -7,7 +7,7 @@ public class JwtAuthOptions : IConfigurationOptions
 {
 	public static string FilePath => "ServiceModule/JwtAuth.json";
 	public static string SectionName => "JwtAuth";
-	public static bool Optional => false;
+	public static bool Optional => true;
 	public static bool ReloadOnChange => false;
 	public static string GetEnvironmentFilePath(string environment) => $"ServiceModule/JwtAuth.{environment}.json";
 

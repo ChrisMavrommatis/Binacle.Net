@@ -4,7 +4,7 @@ using Binacle.Net.ServiceModule.Infrastructure.Subscriptions.Services;
 using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Binacle.Net.ServiceModule.Infrastructure.AzureTables;
+namespace Binacle.Net.ServiceModule.Infrastructure.StartupTasks;
 
 internal class EnsureRequiredAzureTablesExistStartupTask : IStartupTask
 {

@@ -18,7 +18,7 @@ public static class ModuleDefinition
 		builder.AddJsonConfiguration(
 			filePath: "UiModule/ConnectionStrings.json",
 			environmentFilePath: $"UiModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json",
-			optional: false,
+			optional: true,
 			reloadOnChange: true
 		);
 		

@@ -4,6 +4,8 @@ using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Common;
+using Binacle.Net.ServiceModule.Infrastructure.HealthChecks;
+using Binacle.Net.ServiceModule.Infrastructure.StartupTasks;
 using Binacle.Net.ServiceModule.Infrastructure.Subscriptions.Services;
 using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.Azure;
@@ -11,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 
-namespace Binacle.Net.ServiceModule.Infrastructure.AzureTables;
+namespace Binacle.Net.ServiceModule.Infrastructure.Providers;
 
 internal class AzureStorageInfrastructureProvider : IInfrastructureProvider
 {
@@ -24,9 +26,9 @@ internal class AzureStorageInfrastructureProvider : IInfrastructureProvider
 			.AddScoped<ISubscriptionRepository, AzureTablesSubscriptionRepository>();
 		
 		builder.Services.AddHealthCheck<AzureTablesHeathCheck>(
-			"AzureTables",
+			"Database",
 			HealthStatus.Unhealthy,
-			new[] { "Database" }
+			new[] { "Service" }
 		);
 		 	
 		builder.Services.AddAzureClients(clientBuilder =>
@@ -36,5 +38,8 @@ internal class AzureStorageInfrastructureProvider : IInfrastructureProvider
 
 		builder.Services.AddStartupTask<EnsureRequiredAzureTablesExistStartupTask>();
 	}
-}
+	
+	
 
+
+}

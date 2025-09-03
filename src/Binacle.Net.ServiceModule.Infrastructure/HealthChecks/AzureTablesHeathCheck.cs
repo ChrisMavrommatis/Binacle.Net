@@ -1,17 +1,17 @@
 ﻿using Azure.Data.Tables;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace Binacle.Net.ServiceModule.Infrastructure.AzureTables;
+namespace Binacle.Net.ServiceModule.Infrastructure.HealthChecks;
 
 internal class AzureTablesHeathCheck : IHealthCheck
 {
 	private readonly TableServiceClient tableServiceClient;
-
+    
 	public AzureTablesHeathCheck(TableServiceClient tableServiceClient)
 	{
 		this.tableServiceClient = tableServiceClient;
 	}
-
+    
 	public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
 		CancellationToken cancellationToken = default)
 	{
@@ -19,7 +19,7 @@ internal class AzureTablesHeathCheck : IHealthCheck
 		try
 		{
 			var response = await tableServiceClient.GetPropertiesAsync(cancellationToken: cancellationToken);
-			return HealthCheckResult.Healthy();
+			return HealthCheckResult.Healthy("Azure Tables");
 		}
 		catch (Exception ex)
 		{

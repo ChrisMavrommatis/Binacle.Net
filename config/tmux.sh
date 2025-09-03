@@ -15,7 +15,7 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	tmux send-keys -t $SESSION_NAME:0.0 'cd ./config/api' C-m
 	
 	# Set the cd to ../_data
-	tmux send-keys -t $SESSION_NAME:0.1 'cd ./config/aspire-dashboard-otel' C-m
+	tmux send-keys -t $SESSION_NAME:0.1 'cd ./config/services' C-m
 	
 	# Select the first pane
 	tmux select-pane -t $SESSION_NAME:0.0
