@@ -1,7 +1,8 @@
-﻿
+﻿{% unless page.breadcrumbs == false  %}
+
 <nav class="tiny-space">
     {% assign crumbs = page.url | remove:'/index.html' | split: '/' %}
-    <a href="{% link pages/index.md %}">
+    <a href="{% vlink /index.md %}">
         <i class="small">home</i>
     </a>
 
@@ -13,6 +14,17 @@
         {% endfor %}
         {% assign crumb_title = crumb | replace:'-',' ' | remove:'.html' %}
     
+        {% if crumb_title contains 'version' %}
+        {% continue %}
+        {% endif %}
+    
+        {% if crumb_title contains '.' %}
+        {% continue %}
+        {% endif %}
+    
+        {% if crumb_title contains 'latest' %}
+        {% continue %}
+        {% endif %}
         <span>/</span>
         {% if forloop.last %}
             <span>
@@ -28,6 +40,7 @@
     {% endfor %}
 </nav>
 
+{% endunless %}
 
 
 

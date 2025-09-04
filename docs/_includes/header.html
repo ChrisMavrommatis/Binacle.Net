@@ -4,8 +4,12 @@
             <i>menu</i>
         </button>
         
-        {% include breadcrumbs.html %}
-
+        {% if page.version != nil %}
+            {% include versions/breadcrumbs.html %}
+        {% else %}
+            {% include breadcrumbs.html %}
+        {% endif %}
+        
         <div class="max center-align"></div>
 
         <a href="{{ site.github.url }}" title="{{ site.github.title }}" target="_blank">

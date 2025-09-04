@@ -1,0 +1,30 @@
+---
+title: Versions
+permalink: /version/
+layout: default
+breadcrumbs: false
+nav:
+  order: 1
+  icon: 🔗
+---
+
+Below is a list of available Binacle.Net documentation versions. Select the version that matches your environment or product release to find the relevant docs.
+
+
+{% assign uniq_versions = site.versions | map: 'version' | uniq %}
+{% if uniq_versions.size != 0 %}
+
+<article class="responsive border no-padding">
+    <ul class="list border">
+        {% for uniq_version in uniq_versions %}
+        <li>
+            <a href="{{ '/version/' | append: uniq_version | append: '/' | relative_url }}">
+                {{ uniq_version }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</article>
+
+
+{% endif %}

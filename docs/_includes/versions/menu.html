@@ -2,6 +2,7 @@
 {% assign menu_level = include.menu_level %}
 {% assign menu_level = menu_level | plus: 1 %}
 
+
 {% unless menu_items.size == 0 %}
 <ul class="list border" data-level="{{ menu_level }}">
     {% for item in menu_items %}
@@ -9,8 +10,7 @@
         {% if item.url == page.url %}
             {% assign is_active = true %}
         {% endif %}
-    
-        {% assign child_menu_items = site.pages | where: 'nav.exclude',nil | where: 'nav.parent',item.title %}
+        {% assign child_menu_items = site.versions | where: 'nav.exclude',nil | where: 'version', item.version | where: 'nav.parent',item.title %}
         {% if child_menu_items.size == 0 %}
         <li class="tiny-space{% if is_active %} surface-container-highest{% endif %}">
             <span>{{ item.nav.icon }}</span>
@@ -40,7 +40,7 @@
                     {% endif %}
                     <i>arrow_drop_down</i>
                 </summary>
-                {% include menu.html menu_items=child_menu_items menu_level=menu_level %}
+                {% include versions/menu.html menu_items=child_menu_items menu_level=menu_level %}
             </details>
         </li>
         {% endif %}

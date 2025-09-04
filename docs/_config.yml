@@ -140,6 +140,7 @@ defaults:
       path           : "pages/**"
       type           : "pages"
     values:
+      layout          : "default"
       locale          : "en_US"
       hreflang        : "en"
   -
@@ -147,7 +148,7 @@ defaults:
       path           : "**/**"
       type           : "versions"
     values:
-      layout          : "default"
+      layout          : "versions/default"
       title           : "NOTITLE"
       path_prefix     : "version"
       locale          : "en_US"
