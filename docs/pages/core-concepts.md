@@ -1,5 +1,5 @@
----
-title: How Binacle.Net Works
+﻿---
+title: Core Concepts
 nav:
   order: 2
   icon: 🔍

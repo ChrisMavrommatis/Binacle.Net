@@ -143,6 +143,8 @@ defaults:
       layout          : "default"
       locale          : "en_US"
       hreflang        : "en"
+      nav:
+        order         : 99
   -
     scope:
       path           : "**/**"
@@ -157,6 +159,8 @@ defaults:
         lastmod		 : "current"
         changefreq	 : "weekly"
         priority	 : 0.5
+      nav:
+        order        : 99
   -
     scope:
       path: "**/v1.3.0/**"
