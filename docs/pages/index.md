@@ -4,7 +4,7 @@ permalink: /
 breadcrumbs: false
 nav:
   order: 0
-  icon: 🚀
+  icon: 🏠
   title: Home
 ---
 
@@ -15,14 +15,15 @@ This documentation site provides comprehensive guides, references, and versioned
 
 ---
 
-## 📚 Core Concepts
-Learn about the algorithms and real-time strategies that power Binacle.Net’s packing solutions.
-
-
-## 🚀 Quick Start
+## 🚀 [Quick Start]({% link pages/quick-start.md %})
 Get up and running quickly with the essential steps to use Binacle.Net.
 
+## 🔍 [Core Concepts]({% link pages/core-concepts.md %})
+Learn about the algorithms and real-time strategies that power Binacle.Net’s packing solutions.
 
-## 🔗 Integration Guide
+## 🔗 [Integration Guide]({% link pages/integration-guide/index.md %})
 Step-by-step instructions for integrating Binacle.Net into your platform.
+
+## 📚 [Versions]({% link pages/version.html %})  
+Access documentation for different versions of Binacle.Net to ensure compatibility and leverage new features.
 
