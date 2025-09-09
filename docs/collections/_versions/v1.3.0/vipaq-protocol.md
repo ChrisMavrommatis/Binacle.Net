@@ -23,7 +23,7 @@ While Binacle.Net’s API returns detailed packing data, responses can become la
 ViPaq encodes the bin's dimensions along with each item's dimensions and coordinates in a serialized format. This ensures all essential data is preserved for visualization and decoding.
 
 ## 📌 Data Structure
-```bash
+```text
 [Header] [Number of Items] [Bin: Length, Width, Height] [Item 1: Length, Width, Height, X, Y, Z] [Item 2: Length, Width, Height, X, Y, Z] ... [Item N: Length, Width, Height, X, Y, Z]
 ```
 

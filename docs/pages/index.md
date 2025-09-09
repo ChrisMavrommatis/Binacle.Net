@@ -9,9 +9,11 @@ nav:
 ---
 
 
-Binacle.Net is an API created to address the 3D Bin Packing Problem in real time. It enables fast, efficient packing solutions for ecommerce, logistics, and warehousing applications.
+Binacle.Net is an API created to address the 3D Bin Packing Problem in real time. 
+It enables fast, efficient packing solutions for ecommerce, logistics, and warehousing applications.
 
-This documentation site provides comprehensive guides, references, and versioned information to help developers and users get started quickly and make the most of Binacle.Net's capabilities.
+This documentation site provides comprehensive guides, references, and versioned information to help developers 
+and users get started quickly and make the most of Binacle.Net's capabilities.
 
 ---
 
@@ -21,9 +23,11 @@ Get up and running quickly with the essential steps to use Binacle.Net.
 ## 🔍 [Core Concepts]({% link pages/core-concepts.md %})
 Learn about the algorithms and real-time strategies that power Binacle.Net’s packing solutions.
 
-## 🔗 [Integration Guide]({% link pages/integration-guide/index.md %})
+## 🔗 [Integration Guide]({% link pages/integration-guide.md %})
 Step-by-step instructions for integrating Binacle.Net into your platform.
 
 ## 📚 [Versions]({% link pages/version.html %})  
 Access documentation for different versions of Binacle.Net to ensure compatibility and leverage new features.
 
+## 🗜️ [ViPaq Protocol]({% link pages/vipaq-protocol.md %})
+Understand the compact encoding format for sharing packing information efficiently.

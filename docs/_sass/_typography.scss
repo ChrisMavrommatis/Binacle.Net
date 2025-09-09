@@ -2,6 +2,8 @@
 $font-h1: 2.25rem;
 $font-h2: 1.75rem;
 $font-h3: 1.5rem;
+$font-h4: 1.25rem; 
+$font-h5: 1rem;
 $margin-hr: 1.75rem;
 // Theme colors
 $primary: var(--primary);
@@ -14,6 +16,8 @@ main {
   h1 { font-size: $font-h1; }
   h2 { font-size: $font-h2; }
   h3 { font-size: $font-h3; }
+  h4 { font-size: $font-h4; }
+  h5 { font-size: $font-h5; }
   hr  { margin-bottom: $margin-hr; }
 }
 

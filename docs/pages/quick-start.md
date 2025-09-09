@@ -6,62 +6,61 @@ nav:
   icon: 🚀
 ---
 
-Getting started with Binacle.Net is easy! You can run it locally using Docker or deploy it to the cloud, all with
-minimal setup. The setup runs Binacle.Net with **Swagger UI** and the **UI Module**.
+Getting started with Binacle.Net is simple.
+Run it locally using Docker or deploy it to the cloud with minimal setup.
 
-For more information visit the dedicated **Quick Start Guide** in the specific version documentation.
+The default setup includes **Swagger UI** and the **UI Module** for easy testing and interaction.
+
+For version-specific details, see the dedicated **Quick Start Guide** in the documentation.
 
 ## 🖥️ Run Locally with Docker
 
-To run Binacle.Net locally using Docker, follow these steps:
+##### 1️⃣ Install Docker
 
-### 1️⃣ Install Docker
+Download and install Docker from [docker.com](https://www.docker.com/get-started).
 
-Make sure you have Docker installed on your machine. You can download it from
-the [Docker Website](https://www.docker.com/get-started).
+##### 2️⃣ Launch Binacle.Net
 
-### 2️⃣ Run Binacle.Net
-
-Open your terminal and run the following command to start Binacle.Net:
+Run this command in your terminal:
 
 ```bash
 docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -e UI_MODULE=True binacle/binacle-net:latest
 ```
 
-This command does the following:
+This starts Binacle.Net with Swagger UI and the UI Module on port 8080.
 
-- `-d`: Runs the container in detached mode.
-- `--name binacle-net`: Names the container "binacle-net".
-- `-p 8080:8080`: Maps port 8080 of the container to port 8080 on your host machine.
-- `-e SWAGGER_UI=True`: Enables Swagger UI.
-- `-e UI_MODULE=True`: Enables the UI Module.
-- `binacle/binacle-net:latest`: Specifies the Docker image to use.
+##### 3️⃣ Access Locally
 
-### 3️⃣ Access Binacle.Net
+- Swagger UI: [http://localhost:8080/swagger/](http://localhost:8080/swagger/)
+- UI Module: [http://localhost:8080/](http://localhost:8080/)
 
-- **Swagger UI**: http://localhost:8080/swagger/
-- **UI Module**: http://localhost:8080/
+---
 
-## ☁️ Cloud Deployment
+## ☁️ Recommended Cloud Deployment Platforms
 
-Want to deploy Binacle.Net to the cloud? Here are the recommended platforms:
+Binacle.Net works on all major cloud platforms. Choose based on your needs:
 
-- 🔷 [Azure App Service](https://azure.microsoft.com/en-us/products/app-service/)
-- 🟠 [AWS Elastic Container Service (ECS)](https://aws.amazon.com/ecs/) or [Fargate](https://aws.amazon.com/fargate/) for
-  serverless container management.
-- 🟢 [Google Cloud Run](https://cloud.google.com/run)
-- 🟣 [Koyeb](https://www.koyeb.com/)
-- 🌊 [Digital Ocean App Platform](https://www.digitalocean.com/products/app-platform/)
+- 🔷 **Azure App Service**: Tight Microsoft ecosystem integration; scalable web apps.
+- 🟠 **AWS ECS / Fargate**: Powerful container orchestration; flexible microservice scaling.
+- 🟢 **Google Cloud Run**: Serverless container runtime; automatic scaling.
+- 🟣 **Koyeb**: Simple deployment with affordable pricing, ideal for smaller workloads.
+- 🌊 **Digital Ocean App Platform**: User-friendly with straightforward app management, good for small to medium
+  deployments.
 
-## 🗂️ Choosing the Right Option
+---
 
-| Deployment     | Best For                                                        | Platform                                                                             |
-|----------------|-----------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| Local (Docker) | Quick development, testing, and demos                           | [Docker](https://www.docker.com/)                                                    |
-| Azure          | Seamless integration with Microsoft services, scalable web apps | [Azure App Service](https://azure.microsoft.com/en-us/products/app-service/)         |
-| AWS            | High-scale microservices, flexible container management         | [AWS ECS](https://aws.amazon.com/ecs/) or [Fargate](https://aws.amazon.com/fargate/) |
-| Google Cloud   | Serverless deployments, cost-effective auto-scaling APIs        | [Google Cloud Run](https://cloud.google.com/run)                                     |
-| Koyeb          | Simple, easy to use and offers affordable pricing.              | [Koyeb](https://www.koyeb.com/)                                                      |
-| Digital Ocean  | Easy-to-use platform for small to medium apps.                  | [Digital Ocean App Platform](https://www.digitalocean.com/products/app-platform/)    |
+## 🗂️ Deployment Options Comparison
 
-You’re now ready to get started with Binacle.Net—locally or in the cloud! 🚀
+| Deployment     | Best Use Case                                | Platform URL                                                                        |
+|----------------|----------------------------------------------|-------------------------------------------------------------------------------------|
+| Local (Docker) | Quick development, testing, demos            | [Docker](https://www.docker.com/)                                                   |
+| Azure          | Microsoft stack integration, scalable apps   | [Azure App Service](https://azure.microsoft.com/en-us/products/app-service/)        |
+| AWS            | Large-scale microservices, container scaling | [AWS ECS](https://aws.amazon.com/ecs/) / [Fargate](https://aws.amazon.com/fargate/) |
+| Google Cloud   | Serverless, efficient API deployment         | [Google Cloud Run](https://cloud.google.com/run)                                    |
+| Koyeb          | Simple, cost-effective small workloads       | [Koyeb](https://www.koyeb.com/)                                                     |
+| Digital Ocean  | Easy, affordable for SMB apps                | [Digital Ocean](https://www.digitalocean.com/products/app-platform/)                |
+
+---
+
+Choose the platform that aligns best with your workload, scalability needs, and budget to deploy Binacle.Net smoothly in
+the cloud. 🚀

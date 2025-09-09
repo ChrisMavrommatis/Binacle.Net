@@ -7,7 +7,8 @@ nav:
   icon: 1️⃣
 ---
 
-This sample demonstrates how to set up and run Binacle.Net with custom presets using Docker Compose. It is a minimal setup that showcases basic API functionality with customizable bin configurations.
+This sample demonstrates how to set up and run Binacle.Net with custom presets using Docker Compose.
+It is a minimal setup that showcases basic API functionality with customizable bin configurations.
 
 ## 🛠️ Prerequisites
 
@@ -71,7 +72,9 @@ Your custom presets will now be active in the API.
 
 
 ## 📂 Logs Folder
-When running the application, a `./data` folder will be created to store application data, including logs for monitoring and debugging. It's important to ensure that the `./data` and `./data/logs` directories have write permissions for proper functionality.
+When running the application, a `./data` folder will be created to store application data, 
+including logs for monitoring and debugging. It's important to ensure that the `./data` and `./data/logs` 
+directories have write permissions for proper functionality.
 
 
 ### Setting Permissions

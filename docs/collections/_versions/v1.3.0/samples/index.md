@@ -6,7 +6,9 @@ nav:
   icon: 📦
 ---
 
-This section provides sample configurations to run Binacle.Net with various technologies. You can find Docker Compose samples here, enabling different feature sets and deployment options.
+This section provides sample configurations to run Binacle.Net with various technologies.
+
+You can find Docker Compose samples here, enabling different feature sets and deployment options.
 
 Choose the setup that fits your needs, whether it's a minimal setup, a full deployment, or a UI-only configuration.
 

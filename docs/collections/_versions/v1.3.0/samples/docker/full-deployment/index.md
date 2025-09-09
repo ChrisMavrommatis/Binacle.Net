@@ -7,7 +7,9 @@ nav:
   icon: 2️⃣
 ---
 
-This guide demonstrates how to set up and run Binacle.Net with all features enabled, including Azurite as the database provider for the Service Module, OpenTelemetry for monitoring, and Aspire Dashboard for observability.
+This guide demonstrates how to set up and run Binacle.Net with all features enabled,
+including Azurite as the database provider for the Service Module, OpenTelemetry for monitoring, and Aspire Dashboard 
+for observability.
 
 
 ## 🛠️ Prerequisites
@@ -49,7 +51,8 @@ docker compose up
 
 This will launch Binacle.Net with the following features:
 - 🌐 **Swagger UI**: http://localhost:8080/swagger/ for easy API exploration.
-- 💾 **Azurite Storage Emulator**: Simulates Azure Storage locally. Data is persisted in the ./azurite folder across container restarts.
+- 💾 **Azurite Storage Emulator**: Simulates Azure Storage locally. Data is persisted in the `./azurite` folder 
+  across container restarts.
 - ⚙️ **Service Module**: Uses Azurite as its database provider for local storage operations.
 - 🖥️ **UI Module**: Accessible via http://localhost:8080/, offering an interactive packing demo.
 - 📊 **OpenTelemetry**: Collects telemetry data for monitoring and exports it to the **Aspire Dashboard**.
@@ -88,7 +91,9 @@ This will launch Binacle.Net with the following features:
   Adjust settings in `aspire-dashboard-config.json` to fine-tune the dashboard.
 
 ## 📂 Logs Folder
-When running the application, a `./data` folder will be created to store application data, including logs for monitoring and debugging. It's important to ensure that the `./data` and `./data/logs` directories have write permissions for proper functionality.
+When running the application, a `./data` folder will be created to store application data, 
+including logs for monitoring and debugging. It's important to ensure that the `./data` and `./data/logs` 
+directories have write permissions for proper functionality.
 
 ### Setting Permissions
 Run the following commands to create the directory and set the required permissions:

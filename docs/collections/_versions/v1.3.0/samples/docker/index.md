@@ -7,7 +7,9 @@ nav:
   icon: 🐳
 ---
 
-This section provides sample configurations to run Binacle.Net with Docker Compose, showcasing different features and modules. You can choose the setup that fits your needs, from basic API functionality to full-featured setups with UI and Service Modules.
+This section provides sample configurations to run Binacle.Net with Docker Compose, 
+showcasing different features and modules. 
+You can choose the setup that fits your needs, from basic API functionality to full-featured setups with UI and Service Modules.
 
 ## 1️⃣ Minimal Setup
 This sample demonstrates a minimal Docker Compose setup for Binacle.Net with essential features.
