@@ -33,7 +33,7 @@ The Packing Demo allows users to interact with the packing process visually by s
 The Protocol Decoder enables users to decode ViPaq-encoded packing data and visualize the container layouts interactively. It helps analyze packing arrangements and navigate through the layout easily.
 
 - 📌 To obtain ViPaq data, use [Version 3]({% vlink /api/index.md %}) of the API.
-- 📖 For more details on ViPaq, refer to the [ViPaq Protocol]({% vlink /vipaq-protocol.md %}).
+
 
 ## 🔧 Activating the UI Module
 To enable the UIModule, set the environment variable:

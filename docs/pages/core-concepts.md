@@ -64,10 +64,27 @@ unused space in the bin.
 ---
 
 ## 🛠️ Functions
-Binacle.Net provides two ecore operations.
+Binacle.Net provides two core operations.
 
-- 🧩 **Fitting**: Determines if a set of items can physically fit inside a bin.
-- 📦 **Packing**: Calculates if items fit and provides their exact placement coordinates within the bin.
+- 🧩 **Fitting**: Checks whether a set of items can fit inside a bin.
+- 📦 **Packing**: Not only determines if items fit but also calculates their exact placement within the bin.
+
+### 🧩 Fitting
+The Fitting function evaluates if a given set of items can fit into a specified bin.
+
+**Why use Fitting?**
+- ✅ Ideal for pre-checks, ensuring items fit before checkout or shipping
+- ✅ Returns results indicating which items fit and which do not
+- ✅ Provides a quick, real-time assessment of bin suitability
+
+### 📦 Packing
+The Packing function goes beyond simple fitting. It determines where each item is placed within the bin. If all items don't fit, it optimizes placement to pack as many items as possible.
+
+**Why use Packing?**
+- ✅ Tracks the exact position of each item within the bin
+- ✅ Optimizes space usage, maximizing packing efficiency
+- ✅ Helps fulfillment teams by providing step-by-step instructions for packing
+
 
 Both functions are engineered for high-speed performance and precision, enabling instantaneous packing decisions for production environments.
 

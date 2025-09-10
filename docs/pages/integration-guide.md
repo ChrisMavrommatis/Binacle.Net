@@ -34,19 +34,19 @@ and optimizing for performance.
 
 **Approach 1: Final Destination Dimensions**
 - Define bins by locker/storage sizes
-- Maximizes space, adapts to provider changes
+- Maximizes space, and eases provider changes
 - Requires tracking bin specs per provider and increases complexity
 
 **Approach 2: Standardized Packaging Boxes**
 - Predefine box sizes as bins
 - Simple inventory, consistent packing, potential for bulk cost savings
-- May waste space if boxes don't match lockers well, initial setup can be manual
+- May waste space if boxes don't match lockers well, initial setup will require manual labor
 
 **Consider:**
 - Impact on customer experience
 - Scalability to higher order volumes
 - Long-term logistics and packaging costs
-- Environmental goals—choose efficient, sustainable packing materials
+- Environmental goals, choose efficient, sustainable packing materials
 
 ---
 

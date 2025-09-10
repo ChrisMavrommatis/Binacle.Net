@@ -28,7 +28,7 @@ Explore the following sections to get started and learn more about Binacle.Net:
 ## 🚀 [Quick Start]({% vlink /quick-start.md %})
 Get started with Binacle.Net in just a few steps! The Quick Start Guide covers the basics you need to run it quickly.
 
-## 🔍 [How Binacle.Net Works]({% vlink /how-binacle-net-works.md %})
+## 🔍 [Core Concepts]({% link pages/core-concepts.md %})
 Discover the algorithms behind Binacle.Net and learn how it handles fitting and packing items into bins.
 
 ## 📡 [About the API]({% vlink /api/index.md %})
@@ -41,13 +41,6 @@ Below are the main API versions and related resources:
   positions of the items.
 - 🧪 [V3]({% vlink /api/v3.md %}): Introduces algorithm selection: **This version is still experimental**
 - 👥 [Users]({% vlink /api/users.md %}): Becomes available only after you enable the Service Module.
-
-## 🔗 [Integration Guide]({% vlink /integration-guide/index.md %})
-Learn how to integrate Binacle.Net into your platform. Includes detailed sections on:
-
-- [📏 Dimensions and Unit of Measurement]({% vlink /integration-guide/dimensions-and-unit-of-measurement.md %})
-- [📦 Your Bin Set]({% vlink /integration-guide/your-bin-set.md %})
-- [🌟 Typical Integration Process]({% vlink /integration-guide/typical-integration-process.md %})
 
 ## 🔧 [Configuration]({% vlink /configuration/index.md %})
 Customize Binacle.Net to suit your environment. Explore the following configuration modules:
