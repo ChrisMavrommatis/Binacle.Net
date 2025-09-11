@@ -49,3 +49,11 @@ It also introduces ViPaq, a protocol for encoding packing information efficientl
 ➡️ Learn more about [Version 3]({% vlink /api/v3.md %})
 
 ---
+
+## 👥 Users
+The User Management API is available after enabling the **Service Module**, along with the Authentication API endpoint.
+
+➡️ Learn more about [User Management]({% vlink /api/users.md %})
+
+➡️ Learn more about the [Service Module]({% vlink /configuration/service-module/index.md %})
+

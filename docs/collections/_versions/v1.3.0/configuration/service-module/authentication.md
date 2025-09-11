@@ -6,7 +6,8 @@ nav:
   icon: 🔐
 ---
 
-The **Service Module** in Binacle.Net uses **stateless JWT tokens** to authenticate users and bypass the rate limiter. These tokens are generated through the authentication endpoint and remain valid for a specified duration.
+The **Service Module** in Binacle.Net uses **stateless JWT tokens** to authenticate users and bypass the rate limiter. 
+These tokens are generated through the authentication endpoint and remain valid for a specified duration.
 
 
 ## 🛠️ Configuration
@@ -24,15 +25,18 @@ The JWT Auth settings are configured via the `JwtAuth.json` file.
 }
 ```
 
-You can modify the JWT Settings using **Production Overrides** by creating a `JwtAuth.Production.json` file, or by using **Environment Variables**.
+You can modify the JWT Settings using **Production Overrides** by creating a `JwtAuth.Production.json` file, 
+or by using **Environment Variables**.
 - 📁 **Location**: `/app/Config_Files/ServiceModule`
 - 📌 **Full Path**: `/app/Config_Files/ServiceModule/JwtAuth.Production.json`
 
-For more information on this refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
+For more information on this refer to the 
+[Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
 
 > Environment variables take precedence over settings defined in the `JwtAuth.json` and `JwtAuth.Production.json` files.
 >
-> This enables you to securely store only the **TokenSecret** as an environment variable while keeping the rest of the configuration in the JSON file.
+> This enables you to securely store only the **TokenSecret** as an environment variable while 
+> keeping the rest of the configuration in the JSON file.
 {: .block-warning}
 
 

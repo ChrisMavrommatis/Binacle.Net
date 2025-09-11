@@ -17,7 +17,8 @@ Authenticated users can bypass rate limits, ensuring seamless access to API endp
 > This module is disabled by default.
 {: .block-note}
 
-While Binacle.Net is primarily designed for private cloud hosting, the Service Module enables controlled public deployment by balancing performance, security, and cost-effectiveness.
+While Binacle.Net is primarily designed for private cloud hosting, the Service Module enables controlled
+public deployment by balancing performance, security, and cost-effectiveness.
 
 ## ⚙️ Configuration
 All configuration files for the Service Module are located in the `/app/Config_Files/ServiceModule` directory.
@@ -39,7 +40,8 @@ The Service Module relies on a database to manage users. You must configure a da
 🔗 [Learn more about database configuration →]({% vlink /configuration/service-module/database.md %})
 
 ## 🔐 Authentication
-The module uses **stateless JWT tokens** for authentication. Users authenticate using their **email and password** to receive a token.
+The module uses **stateless JWT tokens** for authentication. Users authenticate using their 
+**email and password** to receive a token.
 
 🔗 [See authentication configuration →]({% vlink /configuration/service-module/authentication.md %})
 

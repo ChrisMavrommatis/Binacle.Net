@@ -6,10 +6,14 @@ nav:
   icon: 📜
 ---
 
-Binacle.Net uses Serilog as its logging framework to provide structured, flexible, and efficient logging capabilities. While Serilog offers many advanced features, Binacle.Net supports a predefined subset to ensure stability. It is recommended to stick with the provided configuration and avoid using unsupported Serilog features.
+Binacle.Net uses Serilog as its logging framework to provide structured, flexible, and efficient logging capabilities.
+
+While Serilog offers many advanced features, Binacle.Net supports a predefined subset to ensure stability. 
+
+It is recommended to stick with the provided configuration and avoid using unsupported Serilog features.
 
 ## ⚙️ Default Logging Behavior
-By default, Binacle.Net logs events to both the Console and File outputs, ensuring real-time monitoring and historical log retention.
+By default, Binacle.Net logs to both the Console and File outputs, ensuring real-time monitoring and historical log retention.
 
 ## 📟 Console Logging
 ✅ Logs are output to the console, allowing you to monitor real-time activity.
@@ -73,9 +77,11 @@ You can modify the logging configuration through **Production Overrides** by cre
 - 📁 **Location**: `/app/Config_Files/DiagnosticsModule`
 - 📌 **Full Path**: `/app/Config_Files/DiagnosticsModule/Serilog.Production.json`
 
-For more details on overriding configurations, refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
+For more details on overriding configurations, 
+refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
 
-> Modifying the logging configuration is not recommended unless you fully understand its implications, as improper configurations can impact application stability or even cause crashes.
+> Modifying the logging configuration is not recommended unless you fully understand its implications,
+> as improper configurations can impact application stability or even cause crashes.
 {: .block-warning}
 
 ---

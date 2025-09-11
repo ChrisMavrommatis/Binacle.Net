@@ -6,7 +6,11 @@ nav:
   icon: 📡
 ---
 
-**OpenTelemetry** offers distributed tracing, metrics, and logging, enabling you to monitor and analyze your application's performance. If Binacle.Net is part of your system, you can push telemetry data to popular platforms like **Grafana**, **Jaeger**, **Prometheus**, and **Azure Application Insights** for real-time observability.
+**OpenTelemetry** offers distributed tracing, metrics, and logging, enabling you to monitor and 
+analyze your application's performance. 
+
+If Binacle.Net is part of your system, you can push telemetry data to popular platforms like 
+**Grafana**, **Jaeger**, **Prometheus**, and **Azure Application Insights** for real-time observability.
 
 ## 🛠️ Configuration
 OpenTelemetry is configured via the `OpenTelemetry.json` file.
@@ -57,12 +61,14 @@ Below is the default configuration:
 }
 ```
 
-You can modify OpenTelemetry configuration using **Production Overrides** by creating an `OpenTelemetry.Production.json` file, or by using **Environment Variables**.
+You can modify OpenTelemetry configuration using **Production Overrides** by creating an 
+`OpenTelemetry.Production.json` file, or by using **Environment Variables**.
 
 - 📁 **Location**: `/app/Config_Files/DiagnosticsModule`
 - 📌 **Full Path**: `/app/Config_Files/DiagnosticsModule/OpenTelemetry.Production.json`
 
-For more information on overriding configurations, refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
+For more information on overriding configurations, refer to the 
+[Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
 
 ## 🔧 Configuration Options
 
@@ -80,7 +86,10 @@ For more information on overriding configurations, refer to the [Configuration](
 - `AdditionalAttributes` (_object_) – Custom attributes for log entries.
 
 ### 🌐 OTLP (OpenTelemetry Protocol) Exporter
-The OTLP Exporter is the recommended way to send OpenTelemetry data. It allows you to export traces, metrics, and logs to platforms like **Grafana**, **Jaeger**, **Tempo**, **Prometheus**, and more.
+The OTLP Exporter is the recommended way to send OpenTelemetry data. 
+
+It allows you to export traces, metrics, and logs to platforms like 
+**Grafana**, **Jaeger**, **Tempo**, **Prometheus**, and more.
 
 - `Enabled` (_boolean_) – Enables or disables the OTLP exporter.
 - `Endpoint` (_string?_) – The OTLP collector URL (e.g., `http://localhost:4317`).
@@ -99,6 +108,9 @@ The Azure Monitor Exporter sends telemetry to Azure Application Insights for mon
 - `Enabled` (_boolean_) – Enables or disables the Azure Monitor exporter.
 - `ConnectionString` (_string?_) – The Azure Monitor connection string.
 - `EnableLiveMetrics` (_boolean_) – Enables live metrics streaming in Application Insights.
-- `SamplingRatio` (_float_, default: `1`) – Defines how much telemetry data to sample (1 = 100% of requests, 0.5 = 50%, etc.).
+- `SamplingRatio` (_float_, default: `1`) – Defines how much telemetry data to sample 
+  (1 = 100% of requests, 0.5 = 50%, etc.).
 
-🔹 Azure Monitor Exporter requires an Application Insights resource. You can retrieve your connection string from the Azure Portal under the "Instrumentation Key" section of your Application Insights instance.
+🔹 Azure Monitor Exporter requires an Application Insights resource. 
+You can retrieve your connection string from the Azure Portal under the "Instrumentation Key" 
+section of your Application Insights instance.

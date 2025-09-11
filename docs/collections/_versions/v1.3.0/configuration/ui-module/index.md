@@ -24,13 +24,15 @@ app
 ```
 
 ## 📦 Packing Demo
-The Packing Demo allows users to interact with the packing process visually by submitting bin and item data and observing how items are packed into bins.
+The Packing Demo allows users to interact with the packing process visually by submitting bin and 
+item data and observing how items are packed into bins.
 
 - 🔹 Step-by-step Interaction: Users can navigate through the packing process, handling items one by one.
 - 🔹 Real-time Visualization: Watch as each item is placed inside the bins in real-time.
 
 ## 📜 Protocol Decoder
-The Protocol Decoder enables users to decode ViPaq-encoded packing data and visualize the container layouts interactively. It helps analyze packing arrangements and navigate through the layout easily.
+The Protocol Decoder enables users to decode ViPaq-encoded packing data and visualize the container layouts interactively. 
+It helps analyze packing arrangements and navigate through the layout easily.
 
 - 📌 To obtain ViPaq data, use [Version 3]({% vlink /api/index.md %}) of the API.
 
@@ -42,9 +44,12 @@ UI_MODULE=True
 ```
 
 ## 🛠️ Configuration
-The UI Module attempts to auto-detect the **Binacle.Net API URL** by default. However, in some cases—particularly when using proxies or forwarding services—automatic detection may fail, leading to issues with the Packing Demo or API communication.
+The UI Module attempts to auto-detect the **Binacle.Net API URL** by default. 
+However, in some cases—particularly when using proxies or forwarding services—automatic detection may fail, 
+leading to issues with the Packing Demo or API communication.
 
-If automatic detection fails, you can manually specify the API endpoint for **BinacleApi** in the ConnectionStrings.json file.
+If automatic detection fails, you can manually specify the API endpoint for **BinacleApi** in the 
+`ConnectionStrings.json` file.
 
 **Default configuration:**
 ```json
@@ -55,5 +60,6 @@ If automatic detection fails, you can manually specify the API endpoint for **Bi
 }
 ```
 
-🔗 For more details on how to configure connection strings, refer to the [Connection String Fallbacks section]({% vlink /configuration/index.md %}#-connection-string-fallbacks).
+🔗 For more details on how to configure connection strings, refer to the 
+[Connection String Fallbacks section]({% vlink /configuration/index.md %}#-connection-string-fallbacks).
 

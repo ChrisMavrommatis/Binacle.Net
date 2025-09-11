@@ -7,7 +7,10 @@ nav:
 ---
 
 
-Health checks are vital for ensuring the reliability and availability of your application. In Binacle.Net, health checks offer a structured way to monitor system health and integrate seamlessly with external monitoring tools. Enabling health checks helps you to:
+Health checks are vital for ensuring the reliability and availability of your application. 
+
+In Binacle.Net, health checks offer a structured way to monitor system health and integrate seamlessly
+with external monitoring tools. Enabling health checks helps you to:
 
 - ✅ Detect failures early to prevent service disruptions.
 - 🚦 Integrate with load balancers to route traffic only to healthy instances.
@@ -29,12 +32,14 @@ Health checks are configured via the `HealthChecks.json` file.
 }
 ```
 
-You can modify the health check settings through **Production Overrides** by creating a `HealthChecks.Production.json` file, or by using **Environment Variables**.
+You can modify the health check settings through **Production Overrides** by creating a 
+`HealthChecks.Production.json` file, or by using **Environment Variables**.
 
 - 📁 **Location**: `/app/Config_Files/DiagnosticsModule`
 - 📌 **Full Path**: `/app/Config_Files/DiagnosticsModule/HealthChecks.Production.json`
 
-For more information on overriding configurations, refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
+For more information on overriding configurations, refer to the 
+[Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
 
 
 ## 🔧 Configuration Options
@@ -44,7 +49,8 @@ For more information on overriding configurations, refer to the [Configuration](
 - `RestrictedChecks` (_array_) – Excludes specific health checks from execution.
 
 ## 🔒 Restricting Access
-By default, health checks are publicly accessible. However, you can restrict access by specifying allowed IPs or subnets in the `RestrictedIPs` array:
+By default, health checks are publicly accessible. 
+However, you can restrict access by specifying allowed IPs or subnets in the `RestrictedIPs` array:
 
 ```json
 {
@@ -63,7 +69,8 @@ Binacle.Net comes with built-in health checks, including:
 
 - ✅ **Database Check** – (Available with the **Service Module**) Verifies the health of the database connection.
 
-You can disable specific health checks by listing them in the `RestrictedChecks` array. For example, to disable the **Database Check**, you can configure it like this:
+You can disable specific health checks by listing them in the `RestrictedChecks` array. 
+For example, to disable the **Database Check**, you can configure it like this:
 
 ```json
 {
@@ -73,4 +80,5 @@ You can disable specific health checks by listing them in the `RestrictedChecks`
 }
 ```
 
-This feature is useful if you cannot restrict access using `RestrictedIPs` but still want to limit exposure to sensitive system details.
+This feature is useful if you cannot restrict access using `RestrictedIPs` but still want to limit exposure 
+to sensitive system details.

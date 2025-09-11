@@ -7,7 +7,10 @@ nav:
 ---
 
 
-When the **Service Module** is enabled, **rate limiting** is applied to calculation endpoints to prevent abuse and ensure fair usage. By default, Binacle.Net enforces a predefined rate limit, but you can customize these settings to fit your needs.
+When the **Service Module** is enabled, **rate limiting** is applied to calculation endpoints 
+to prevent abuse and ensure fair usage. 
+
+By default, Binacle.Net enforces a predefined rate limit, but you can customize these settings to fit your needs.
 
 ## 🛠️ Configuration
 The rate limiter is configured via the `RateLimiter.json` file.
@@ -21,18 +24,21 @@ The rate limiter is configured via the `RateLimiter.json` file.
 }
 ```
 
-You can modify the Rate Limiter using **Production Overrides** by creating a `RateLimiter.Production.json` file, or by using **Environment Variables**.
+You can modify the Rate Limiter using **Production Overrides** by creating a `RateLimiter.Production.json`
+file, or by using **Environment Variables**.
 - 📁 **Location**: `/app/Config_Files/ServiceModule`
 - 📌 **Full Path**: `/app/Config_Files/ServiceModule/RateLimiter.Production.json`
 
-For more information on this refer to the [Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
+For more information on this refer to the 
+[Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
 
 ## 🔧 Configuration Options
 
 ### 👤 Anonymous Requests
 The Anonymous setting defines the rate limit for unauthenticated users.
 
-This global limit applies collectively to all anonymous users, meaning if the limit is set to 10 requests per minute, it applies across all anonymous users, not individually.
+This global limit applies collectively to all anonymous users, meaning if the limit is set to 10 requests per minute,
+it applies across all anonymous users, not individually.
 
 ## ⚙️ Rate Limiter Configuration
 The rate limiter follows this syntax:
@@ -46,7 +52,8 @@ The rate limiter follows this syntax:
 
 
 ## 🕰️ Fixed Window
-The **Fixed Window** strategy enforces a strict limit within a fixed time window. Once the window resets, users can make new requests.
+The **Fixed Window** strategy enforces a strict limit within a fixed time window. 
+Once the window resets, users can make new requests.
 
 **Format:**
 ```text
@@ -65,7 +72,8 @@ FixedWindow::10/60
 If a user exceeds this limit, their requests are rejected until the next window.
 
 ## ↔️ Sliding Window
-The **Sliding Window** strategy provides a more flexible limit by dividing the time window into smaller segments. This helps smooth traffic distribution and prevents sudden bursts.
+The **Sliding Window** strategy provides a more flexible limit by dividing the time window into smaller segments. 
+This helps smooth traffic distribution and prevents sudden bursts.
 
 **Format:**
 ```text

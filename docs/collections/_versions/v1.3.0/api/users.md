@@ -6,29 +6,86 @@ nav:
   icon: 👥
 ---
 
-The User Management API becomes available only after you enable the Service Module. Along with this, the Authentication API endpoint will also be accessible.
+The User Management API is available after enabling the Service Module, along with the Authentication API endpoint.
 
-## 🔑 Authentication API
-The Authentication API is used to authenticate users and obtain a JWT token for accessing protected endpoints.
+---
+## 📑 Contents
+- [🔑 Auth Token](#-auth-token)
+- [👥 User Management (Admin Only)](#-user-management-admin-only)
+- [🔑 User Management Rules](#-user-management-rules)
+- [📧 Email and Password Requirements](#-email-and-password-requirements)
+- [🔒 Recommended Practice: Creating a New Admin](#-recommended-practice-creating-a-new-admin)
 
-- `POST /api/auth/token` – Authenticates a user using email and password, returning a JWT token.<br>
-  The token must be included in the Authorization header as a Bearer token for API requests.
+---
 
-## 👥 User Management API (Admin Only)
-Admin-only endpoints allow you to manage users, including creating, updating, and deleting users.
+## 🔑 Auth Token
+`POST /api/auth/token`
+Authenticate and obtain a JWT token for making the calls without rate limits.
 
+**Request Example**
+```json
+{
+  "email": "test@test.com",
+  "password": "testpassword"
+}
+```
 
-- `POST /api/users` – Create a new user.
-- `PUT /api/users/{email}` – Promote or demote a user, and make them active or inactive.
-- `PATCH /api/users/{email}` – Change a user’s password.
-- `DELETE /api/users/{email}` – Soft-delete a user (users remain in the database but cannot be restored).
+**Response Example**
+```json
+{
+  "tokenType": "Bearer",
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "expiresIn": 3600
+}
+```
+
+---
+
+## 👥 User Management (Admin Only)
+
+### Create User
+`POST /api/users`
+
+**Request Example**
+```json
+{
+  "email": "useremail@domain.com",
+  "password": "userspassword"
+}
+```
+
+### Update User
+`PUT /api/users/{email}`
+
+**Request Example**
+```json
+{
+  "type": "User", // User/Admin
+  "status": "Active" // Active/Inactive
+}
+```
+
+### Change Password
+`PATCH /api/users/{email}`
+
+**Request Example**
+```json
+{
+  "newPassword": "newpassword"
+}
+```
+
+### Delete User
+`DELETE /api/users/{email}`
 
 ---
 
 ## 🔑 User Management Rules
-- ✔️ Admin users are the only ones who can manage other users, including creation, deletion, activation, deactivation, and promotion/demotion.
-- ✔️ Only active users can interact with the API.
-- ✔️ Soft-delete ensures the user remains in the database but cannot interact with the API. Once soft-deleted, the user cannot be restored.
+- ✔️ Admin users are the only ones who can manage other users, including creation, deletion, activation, 
+deactivation, and promotion/demotion.
+- ✔️ Only active users can interact with the API without rate limits.
+- ✔️ Delete performs a soft-delete and ensures the user remains in the database but cannot interact with the API. 
+ Once soft-deleted, the user cannot be restored.
 - ✔️ A new user with the same email can be created after a soft-deletion.
 
 --- 

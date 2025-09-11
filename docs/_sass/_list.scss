@@ -10,3 +10,8 @@
   color: inherit;      /* optional: inherit text color */
   padding: 0;          /* optional: reset padding if needed */
 }
+
+// ul inside li
+li ul {
+  margin-block-start: 0.1rem !important; 
+}
