@@ -7,7 +7,7 @@ namespace Binacle.Net.DiagnosticsModule.ExtensionMethods;
 internal static class LogProcessorHandlingExtensions
 {
 	public static Dictionary<string, object> ConvertToLogObject(
-		this PackingLogChannelRequestBase request)
+		this PackingLogChannelRequest request)
 	{
 		var log = new Dictionary<string, object>();
 		log.Add("Bins", request.Bins.ConvertToLogObject());
@@ -22,7 +22,7 @@ internal static class LogProcessorHandlingExtensions
 	}
 	
 	public static Dictionary<string, object> ConvertToLogObject(
-		this FittingLogChannelRequestBase request)
+		this FittingLogChannelRequest request)
 	{
 		var log = new Dictionary<string, object>();
 		log.Add("Bins", request.Bins.ConvertToLogObject());

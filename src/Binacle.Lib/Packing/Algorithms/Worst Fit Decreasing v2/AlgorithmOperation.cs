@@ -1,11 +1,12 @@
-﻿using Binacle.Lib.Models;
+﻿using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.Lib.Models;
 using Binacle.Lib.Packing.Models;
 
 namespace Binacle.Lib.Packing.Algorithms;
 
 internal partial class WorstFitDecreasing_v2<TBin, TItem>
 {
-	public PackingResult Execute(PackingParameters parameters)
+	public PackingResult Execute(IPackingParameters parameters)
 	{
 		var resultBuilder = this.CreateResultBuilder<Bin, Item>(this.bin, this.items.Length, this.totalItemsVolume);
 

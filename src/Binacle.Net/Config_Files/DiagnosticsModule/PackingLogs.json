@@ -1,14 +1,8 @@
 ﻿{
 	"PackingLogs" : {
 		"Enabled": false,
-		"LegacyPacking" : {
-			"Path" : "data/pack-logs/legacy-packing/",
-			"FileName" : "{0}.ndjson",
-			"DateFormat" : "yyyyMMdd",
-			"ChannelLimit" : 100
-		},
-		"LegacyFitting" : {
-			"Path" : "data/pack-logs/legacy-fitting/",
+		"Fitting" : {
+			"Path" : "data/pack-logs/fitting/",
 			"FileName" : "{0}.ndjson",
 			"DateFormat" : "yyyyMMdd",
 			"ChannelLimit" : 100

@@ -87,8 +87,9 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 			var operationResults = await binsService.PackBinsAsync(
 				presetOption.Bins,
 				request.Value.Items!,
-				new LegacyPackingParameters
+				new PackingParameters
 				{
+					Algorithm = Algorithm.FFD,
 					StopAtSmallestBin = request.Value.Parameters?.StopAtSmallestBin ?? false,
 					NeverReportUnpackedItems = request.Value.Parameters?.NeverReportUnpackedItems ?? false,
 					OptInToEarlyFails = request.Value.Parameters?.OptInToEarlyFails ?? false,

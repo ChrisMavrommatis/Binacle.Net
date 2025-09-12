@@ -42,7 +42,7 @@ internal class PackingResultBuilder<TBin, TItem>
 		return this;
 	}
 
-	internal PackingResult Build(PackingParameters parameters)
+	internal PackingResult Build(IPackingParameters parameters)
 	{
 		using var activity = Diagnostics.ActivitySource
 			.StartActivity("Build Packing Result");

@@ -3,6 +3,7 @@ using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Lib.Abstractions;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Packing.Models;
+using Binacle.Net.ExtensionMethods;
 using ChrisMavrommatis.Logging;
 using ApiPackingParameters = Binacle.Net.Models.PackingParameters;
 using LibPackingParameters = Binacle.Lib.Packing.Models.PackingParameters;
@@ -53,7 +54,7 @@ internal class BinacleService : IBinacleService
 		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
 
 		var results = this.loopBinProcessor.ProcessPacking(
-			parameters.GetMappedAlgorithm(),
+			parameters.Algorithm.ToLibAlgorithm(),
 			bins,
 			items,
 			new LibPackingParameters

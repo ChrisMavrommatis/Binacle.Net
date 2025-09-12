@@ -1,29 +1,50 @@
-﻿using Binacle.Net.Kernel.Logs.Models;
+﻿using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.Net.ExtensionMethods;
+using Binacle.Net.Kernel.Logs.Models;
 
 namespace Binacle.Net.Models;
 
-internal class PackingParameters : ILogConvertible
+internal class PackingParameters : ILogConvertible, IPackingParameters
 {
 	public required Algorithm Algorithm { get; init; }
-
-	internal Binacle.Lib.Algorithm GetMappedAlgorithm()
-	{
-		return this.Algorithm switch
-		{
-			Algorithm.FFD => Binacle.Lib.Algorithm.FirstFitDecreasing,
-			Algorithm.WFD => Binacle.Lib.Algorithm.WorstFitDecreasing,
-			Algorithm.BFD => Binacle.Lib.Algorithm.BestFitDecreasing,
-			_ => throw new NotSupportedException($"Algorithm {this.Algorithm} is not supported.")
-		};
-		
-	}
-
+	public required bool OptInToEarlyFails { get; init; }
+	public required bool ReportPackedItemsOnlyWhenFullyPacked { get; init; }
+	public required bool NeverReportUnpackedItems { get; init; }
+	
+	// This property is deprecated and doesn't work in V3 endpoints
+	public bool StopAtSmallestBin { get; init; }
+	
 	public object ConvertToLogObject()
 	{
-		List<string> parameters =
-		[
-			this.Algorithm.ToString()
-		];
+		// Algorithm Is Always added
+		var paramsCount = 1;
+
+		if (this.OptInToEarlyFails)
+			paramsCount++;
+		if (this.ReportPackedItemsOnlyWhenFullyPacked)
+			paramsCount++;
+		if (this.NeverReportUnpackedItems)
+			paramsCount++;
+		if (this.StopAtSmallestBin)
+			paramsCount++;
+
+		var parameters = new string[paramsCount];
+
+		if (this.StopAtSmallestBin)
+			parameters[--paramsCount] = "StopAtSmallestBin";
+		
+		if (this.NeverReportUnpackedItems)
+			parameters[--paramsCount] = "NeverReportUnpackedItems";
+		
+		if (this.ReportPackedItemsOnlyWhenFullyPacked)
+			parameters[--paramsCount] = "ReportPackedItemsOnlyWhenFullyPacked";
+		
+		if (this.OptInToEarlyFails)
+			parameters[--paramsCount] = "OptInToEarlyFails";
+
+		parameters[--paramsCount] = this.Algorithm.ToFastString();
+		
 		return parameters;
 	}
+	
 }

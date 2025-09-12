@@ -86,8 +86,9 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 			var operationResults = await binsService.FitBinsAsync(
 				presetOption.Bins,
 				request.Value.Items!,
-				new LegacyFittingParameters
+				new FittingParameters
 				{
+					Algorithm = Algorithm.FFD,
 					FindSmallestBinOnly = request.Value.Parameters?.FindSmallestBinOnly ?? true,
 					ReportFittedItems = request.Value.Parameters?.ReportFittedItems ?? false,
 					ReportUnfittedItems = request.Value.Parameters?.ReportUnfittedItems ?? false,

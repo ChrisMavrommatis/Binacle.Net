@@ -140,13 +140,8 @@ public static class ModuleDefinition
 		if (packingLogsOptionsIsEnabled)
 		{
 			builder.Services
-				.AddOptionsBasedLogProcessor<LegacyFittingLogChannelRequest>(
-					optionsSelector: options => options.LegacyFitting!,
-					logFormatter: request => request.ConvertToLogObject());
-
-			builder.Services
-				.AddOptionsBasedLogProcessor<LegacyPackingLogChannelRequest>(
-					optionsSelector: options => options.LegacyPacking!,
+				.AddOptionsBasedLogProcessor<FittingLogChannelRequest>(
+					optionsSelector: options => options.Fitting!,
 					logFormatter: request => request.ConvertToLogObject());
 
 			builder.Services

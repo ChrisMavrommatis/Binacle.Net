@@ -1,5 +1,6 @@
-﻿using Binacle.Lib.Abstractions.Models;
-using Binacle.Lib;
+﻿using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.Lib.Abstractions.Fitting;
+using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Fitting.Models;
 using Binacle.Lib.Packing.Models;
 
@@ -11,7 +12,7 @@ public interface IBinProcessor
 		Algorithm algorithm,
 		IList<TBin> bins,
 		IList<TItem> items,
-		FittingParameters parameters
+		IFittingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
@@ -19,7 +20,7 @@ public interface IBinProcessor
 	public IDictionary<string, FittingResult[]> ProcessFitting<TBin, TItem>(
 		IList<TBin> bins,
 		IList<TItem> items,
-		FittingParameters parameters
+		IFittingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
@@ -29,7 +30,7 @@ public interface IBinProcessor
 		Algorithm algorithm,
 		IList<TBin> bins,
 		IList<TItem> items,
-		PackingParameters parameters
+		IPackingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
@@ -37,7 +38,7 @@ public interface IBinProcessor
 	public IDictionary<string, PackingResult[]> ProcessPacking<TBin, TItem>(
 		IList<TBin> bins,
 		IList<TItem> items,
-		PackingParameters parameters
+		IPackingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;

@@ -1,4 +1,5 @@
-﻿using Binacle.Lib.Abstractions.Models;
+﻿using Binacle.Lib.Abstractions.Fitting;
+using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Fitting.Models;
 
 namespace Binacle.Lib.Fitting;
@@ -40,7 +41,7 @@ internal class FittingResultBuilder<TBin, TItem>
 		this.reason = reason;
 		return this;
 	}
-	internal FittingResult Build(FittingParameters parameters)
+	internal FittingResult Build(IFittingParameters parameters)
 	{
 		using var activity = Diagnostics.ActivitySource
 			.StartActivity("Build Fitting Result");

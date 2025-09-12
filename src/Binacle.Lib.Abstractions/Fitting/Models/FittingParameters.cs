@@ -1,6 +1,9 @@
-﻿namespace Binacle.Lib.Fitting.Models;
+﻿using Binacle.Lib.Abstractions.Fitting;
 
-public class FittingParameters
+
+namespace Binacle.Lib.Fitting.Models;
+
+public class FittingParameters : IFittingParameters
 {
 	public required bool ReportFittedItems { get; init; }
 	public required bool ReportUnfittedItems { get; init; }

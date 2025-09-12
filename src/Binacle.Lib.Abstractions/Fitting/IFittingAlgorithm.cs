@@ -7,6 +7,5 @@ public interface IFittingAlgorithm
 {
 	AlgorithmInfo AlgorithmInfo { get; }
 
-	FittingResult Execute(FittingParameters parameters);
+	FittingResult Execute(IFittingParameters parameters);
 }
-

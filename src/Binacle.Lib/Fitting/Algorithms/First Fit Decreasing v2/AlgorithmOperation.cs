@@ -1,10 +1,11 @@
-﻿using Binacle.Lib.Fitting.Models;
+﻿using Binacle.Lib.Abstractions.Fitting;
+using Binacle.Lib.Fitting.Models;
 
 namespace Binacle.Lib.Fitting.Algorithms;
 
 internal sealed partial class FirstFitDecreasing_v2<TBin, TItem>
 {
-	public FittingResult Execute(FittingParameters parameters)
+	public FittingResult Execute(IFittingParameters parameters)
 	{
 		var resultBuilder = this.CreateResultBuilder<Bin, Item>(this.bin, this.items.Count, totalItemsVolume);
 

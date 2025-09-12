@@ -9,11 +9,7 @@ internal class PackingLogsConfigurationOptionsValidator : AbstractValidator<Pack
 	{
 		When(x => x.Enabled, () =>
 		{
-			RuleFor(x => x.LegacyPacking)
-				.NotNull()
-				.ChildRules(x => x.Include(new PackingLogOptionsValidator()));
-
-			RuleFor(x => x.LegacyFitting)
+			RuleFor(x => x.Fitting)
 				.NotNull()
 				.ChildRules(x => x.Include(new PackingLogOptionsValidator()));
 

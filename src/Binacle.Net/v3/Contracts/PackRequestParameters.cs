@@ -17,6 +17,10 @@ public class PackRequestParameters : IWithAlgorithm
 {
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public required Algorithm? Algorithm { get; set; }
+
+	public bool OptInToEarlyFails { get; set; } = false;
+	public bool ReportPackedItemsOnlyWhenFullyPacked { get; set; } = false;
+	public bool NeverReportUnpackedItems { get; set; } = false;
 }
 
 internal class PackRequestParametersValidator : AbstractValidator<IWithPackingParameters>

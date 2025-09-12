@@ -11,8 +11,7 @@ internal class PackingLogsConfigurationOptions : IConfigurationOptions
 	public static string GetEnvironmentFilePath(string environment) => $"DiagnosticsModule/PackingLogs.{environment}.json";
 	
 	public bool Enabled { get; set; }
-	public PackingLogOptions? LegacyPacking { get; set; }
-	public PackingLogOptions? LegacyFitting { get; set; }
+	public PackingLogOptions? Fitting { get; set; }
 	public PackingLogOptions? Packing { get; set; }
 
 }

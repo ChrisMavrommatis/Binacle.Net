@@ -54,7 +54,10 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 				request.Items!,
 				new PackingParameters
 				{
-					Algorithm = request.Parameters!.Algorithm!.Value
+					Algorithm = request.Parameters!.Algorithm!.Value,
+					OptInToEarlyFails = request.Parameters.OptInToEarlyFails,
+					ReportPackedItemsOnlyWhenFullyPacked = request.Parameters.ReportPackedItemsOnlyWhenFullyPacked,
+					NeverReportUnpackedItems = request.Parameters.NeverReportUnpackedItems
 				}
 			);
 

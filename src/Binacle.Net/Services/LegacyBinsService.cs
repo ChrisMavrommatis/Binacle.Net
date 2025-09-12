@@ -1,14 +1,14 @@
 ﻿using System.Threading.Channels;
-using Binacle.Net.Kernel.Logs.Models;
-using Binacle.Net.Models;
 using Binacle.Lib;
 using Binacle.Lib.Abstractions;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Fitting.Models;
 using Binacle.Lib.Packing.Models;
+using Binacle.Net.Kernel.Logs.Models;
 using ChrisMavrommatis.Logging;
 using LibAlgorithm = Binacle.Lib.Algorithm;
-using LibPackingParameters = Binacle.Lib.Packing.Models.PackingParameters;
+using ApiPackingParameters = Binacle.Net.Models.PackingParameters;
+using ApiFittingParameters = Binacle.Net.Models.FittingParameters;
 
 namespace Binacle.Net.Services;
 
@@ -17,7 +17,7 @@ internal interface ILegacyBinsService
 	ValueTask<IDictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(
 		List<TBin> bins, 
 		List<TBox> items,
-		LegacyFittingParameters parameters
+		ApiFittingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
@@ -25,7 +25,7 @@ internal interface ILegacyBinsService
 	ValueTask<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
 		List<TBin> bins, 
 		List<TBox> items,
-		LegacyPackingParameters parameters
+		ApiPackingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
@@ -34,14 +34,14 @@ internal interface ILegacyBinsService
 internal class LegacyBinsService : ILegacyBinsService
 {
 	private readonly IAlgorithmFactory algorithmFactory;
-	private readonly Channel<LegacyFittingLogChannelRequest>? fittingChannel;
-	private readonly Channel<LegacyPackingLogChannelRequest>? packingChannel;
+	private readonly Channel<FittingLogChannelRequest>? fittingChannel;
+	private readonly Channel<PackingLogChannelRequest>? packingChannel;
 	private readonly ILogger<LegacyBinsService> logger;
 
 	public LegacyBinsService(
 		IAlgorithmFactory algorithmFactory,
-		IOptionalDependency<Channel<LegacyFittingLogChannelRequest>> fittingChannel,
-		IOptionalDependency<Channel<LegacyPackingLogChannelRequest>> packingChannel,
+		IOptionalDependency<Channel<FittingLogChannelRequest>> fittingChannel,
+		IOptionalDependency<Channel<PackingLogChannelRequest>> packingChannel,
 		ILogger<LegacyBinsService> logger
 	)
 	{
@@ -54,7 +54,7 @@ internal class LegacyBinsService : ILegacyBinsService
 	public async ValueTask<IDictionary<string, FittingResult>> FitBinsAsync<TBin, TBox>(
 		List<TBin> bins,
 		List<TBox> items,
-		LegacyFittingParameters parameters
+		ApiFittingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
@@ -66,11 +66,7 @@ internal class LegacyBinsService : ILegacyBinsService
 		foreach (var bin in bins.OrderBy(x => x.CalculateVolume()))
 		{
 			var algorithmInstance = this.algorithmFactory.CreateFitting(LibAlgorithm.FirstFitDecreasing, bin, items);
-			var result = algorithmInstance.Execute(new FittingParameters
-			{
-				ReportFittedItems = parameters.ReportFittedItems,
-				ReportUnfittedItems = parameters.ReportUnfittedItems
-			});
+			var result = algorithmInstance.Execute(parameters);
 
 			if (parameters.FindSmallestBinOnly)
 			{
@@ -93,7 +89,7 @@ internal class LegacyBinsService : ILegacyBinsService
 	private async ValueTask WriteToChannelAsync<TBin, TBox>(
 		List<TBin> bins,
 		List<TBox> items,
-		LegacyFittingParameters parameters,
+		ApiFittingParameters parameters,
 		Dictionary<string, FittingResult> results
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
@@ -111,7 +107,7 @@ internal class LegacyBinsService : ILegacyBinsService
 			await this.fittingChannel
 				.Writer
 				.WriteAsync(
-					LegacyFittingLogChannelRequest.From(bins, items, parameters, results)
+					FittingLogChannelRequest.From(bins, items, parameters, results)
 				);
 		}
 		catch (Exception ex)
@@ -123,7 +119,7 @@ internal class LegacyBinsService : ILegacyBinsService
 	public async ValueTask<IDictionary<string, PackingResult>> PackBinsAsync<TBin, TBox>(
 		List<TBin> bins,
 		List<TBox> items,
-		LegacyPackingParameters parameters
+		ApiPackingParameters parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
@@ -135,12 +131,7 @@ internal class LegacyBinsService : ILegacyBinsService
 		foreach (var bin in bins.OrderBy(x => x.CalculateVolume()))
 		{
 			var algorithmInstance = this.algorithmFactory.CreatePacking(LibAlgorithm.FirstFitDecreasing, bin, items);
-			var result = algorithmInstance.Execute(new LibPackingParameters
-			{
-				NeverReportUnpackedItems = parameters.NeverReportUnpackedItems,
-				OptInToEarlyFails = parameters.OptInToEarlyFails,
-				ReportPackedItemsOnlyWhenFullyPacked = parameters.ReportPackedItemsOnlyWhenFullyPacked
-			});
+			var result = algorithmInstance.Execute(parameters);
 			if (parameters.StopAtSmallestBin)
 			{
 				if (result.Status == PackingResultStatus.FullyPacked)
@@ -162,7 +153,7 @@ internal class LegacyBinsService : ILegacyBinsService
 	private async ValueTask WriteToChannelAsync<TBin, TBox>(
 		List<TBin> bins,
 		List<TBox> items,
-		LegacyPackingParameters parameters,
+		ApiPackingParameters parameters,
 		Dictionary<string, PackingResult> results
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
@@ -180,7 +171,7 @@ internal class LegacyBinsService : ILegacyBinsService
 			await this.packingChannel
 				.Writer
 				.WriteAsync(
-					LegacyPackingLogChannelRequest.From(bins, items, parameters, results)
+					PackingLogChannelRequest.From(bins, items, parameters, results)
 				);
 		}
 		catch (Exception ex)

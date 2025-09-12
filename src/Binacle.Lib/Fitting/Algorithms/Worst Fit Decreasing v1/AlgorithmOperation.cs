@@ -5,7 +5,7 @@ namespace Binacle.Lib.Fitting.Algorithms;
 
 internal sealed partial class WorstFitDecreasing_v1<TBin, TItem> : IFittingAlgorithm
 {
-	public FittingResult Execute(FittingParameters parameters)
+	public FittingResult Execute(IFittingParameters parameters)
 	{
 		int totalItemsVolume = _items.Sum(x => x.Volume);
 

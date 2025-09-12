@@ -7,5 +7,5 @@ public interface IPackingAlgorithm
 {
 	AlgorithmInfo AlgorithmInfo { get; }
 	
-	PackingResult Execute(PackingParameters parameters);
+	PackingResult Execute(IPackingParameters parameters);
 }
