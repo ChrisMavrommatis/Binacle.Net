@@ -12,7 +12,7 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 	internal static PackResponse Create<TBin, TItem>(
 		List<TBin> bins,
 		List<TItem> items,
-		PackRequestParameters? parameters,
+		PackRequestParameters parameters,
 		IDictionary<string, PackingResult> operationResults
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
@@ -73,12 +73,15 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 					}).ToList()
 			};
 
-			if (result.PackedItems is not null && result.PackedItems.Any())
+			if (parameters.IncludeViPaqData)
 			{
-				var serializedResult = ViPaqSerializer.SerializeInt32(result.Bin, result.PackedItems!);
-				result.ViPaqData = Convert.ToBase64String(serializedResult);
+				if (result.PackedItems is not null && result.PackedItems.Count > 0)
+				{
+					var serializedResult = ViPaqSerializer.SerializeInt32(result.Bin, result.PackedItems!);
+					result.ViPaqData = Convert.ToBase64String(serializedResult);
+				}				
 			}
-
+			
 			results.Add(result);
 		}
 

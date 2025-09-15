@@ -1,5 +1,6 @@
 ﻿using Binacle.Net.Kernel.OpenApi.Helpers;
 using Binacle.Net.Models;
+using Binacle.Net.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples;
@@ -7,34 +8,30 @@ using OpenApiExamples.Abstractions;
 
 namespace Binacle.Net.v3.Contracts;
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-
-public class PackByCustomRequest : IWithPackingParameters, IWithBins, IWithItems
+#pragma warning disable CS1591
+public class PresetPackRequest : IWithPackingParameters, IWithItems
 {
 	public required PackRequestParameters Parameters { get; set; } 
-	public required List<Bin> Bins { get; set; } 
 	public required List<Box> Items { get; set; } 
 }
 
-internal class PackByCustomRequestValidator : AbstractValidator<PackByCustomRequest>
+internal class PresetPackRequestValidator : AbstractValidator<PresetPackRequest>
 {
-	public PackByCustomRequestValidator()
+	public PresetPackRequestValidator()
 	{
 		Include(new PackRequestParametersValidator());
-		Include(new BinsValidator());
 		Include(new ItemsValidator());
 	}
 }
 
-
-internal class PackByCustomRequestExample : ISingleOpenApiExamplesProvider<PackByCustomRequest>
+internal class PresetPackRequestExample : ISingleOpenApiExamplesProvider<PresetPackRequest>
 {
-	public IOpenApiExample<PackByCustomRequest> GetExample()
+	public IOpenApiExample<PresetPackRequest> GetExample()
 	{
 		return OpenApiExample.Create(
-			"customPackRequest",
-			"Custom Pack Request",
-			new PackByCustomRequest()
+			"presetPackRequest",
+			"Preset Pack Request",
+			new PresetPackRequest
 			{
 				Parameters = new PackRequestParameters
 				{
@@ -44,22 +41,18 @@ internal class PackByCustomRequestExample : ISingleOpenApiExamplesProvider<PackB
 					ReportPackedItemsOnlyWhenFullyPacked = false,
 					IncludeViPaqData = true,
 				},
-				Bins = new List<Bin>
-				{
-					new() { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
-					new() { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
-				},
 				Items = new List<Box>
 				{
 					new() { ID = "box_1", Quantity = 2, Length = 2, Width = 5, Height = 10 },
 					new() { ID = "box_2", Quantity = 1, Length = 12, Width = 15, Height = 10 },
 					new() { ID = "box_3", Quantity = 1, Length = 12, Width = 10, Height = 15 },
 				}
-			});
+			}
+		);
 	}
 }
 
-internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<PackResponse>
+internal class PresetPackResponseExamples : IMultipleOpenApiExamplesProvider<PackResponse>
 {
 	public IEnumerable<IOpenApiExample<PackResponse>> GetExamples()
 	{
@@ -71,7 +64,7 @@ internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<P
 				[
 					new BinPackResult()
 					{
-						Bin = new Bin { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
+						Bin = new Bin { ID = "preset_bin_1", Length = 10, Width = 40, Height = 60 },
 						Result = BinPackResultStatus.FullyPacked,
 						PackedItems =
 						[
@@ -93,7 +86,7 @@ internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<P
 								Height = 10,
 								X = 0,
 								Y = 12,
-								Z = 0
+								Z = 0,
 							},
 						],
 						UnpackedItems = [],
@@ -103,11 +96,11 @@ internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<P
 					},
 					new BinPackResult()
 					{
-						Bin = new Bin { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
+						Bin = new Bin { ID = "preset_bin_1", Length = 20, Width = 40, Height = 60 },
 						Result = BinPackResultStatus.FullyPacked,
 						PackedItems =
 						[
-							new PackedBox()
+							new PackedBox
 							{
 								ID = "box_2",
 								Length = 12,
@@ -115,9 +108,9 @@ internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<P
 								Height = 10,
 								X = 0,
 								Y = 0,
-								Z = 0
+								Z = 0,
 							},
-							new PackedBox()
+							new PackedBox
 							{
 								ID = "box_1",
 								Length = 2,
@@ -126,7 +119,7 @@ internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<P
 								X = 12,
 								Y = 0,
 								Z = 0
-							}
+							},
 						],
 						UnpackedItems = [],
 						PackedItemsVolumePercentage = 100.00m,
@@ -134,8 +127,8 @@ internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<P
 						ViPaqData = "AAQAFCg8DA8KAAAADAoPAA8AAgUKDAAAAgUKAAAK"
 					}
 				]
-			));
-
+			)
+		);
 
 		yield return OpenApiExample.Create(
 			"partiallypackedresponse",
@@ -145,11 +138,11 @@ internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<P
 				[
 					new BinPackResult()
 					{
-						Bin = new Bin { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
+						Bin = new Bin { ID = "preset_bin_1", Length = 20, Width = 40, Height = 60 },
 						Result = BinPackResultStatus.PartiallyPacked,
 						PackedItems =
 						[
-							new PackedBox()
+							new PackedBox
 							{
 								ID = "box_1",
 								Length = 2,
@@ -172,11 +165,13 @@ internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<P
 						PackedBinVolumePercentage = 0.42m,
 					}
 				]
-			));
+			)
+		);
 	}
 }
 
-internal class PackByCustomValidationProblemExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
+
+internal class PresetPackValidationProblemExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
 {
 	public IEnumerable<IOpenApiExample<ProblemDetails>> GetExamples()
 	{
@@ -191,22 +186,12 @@ internal class PackByCustomValidationProblemExamples : IMultipleOpenApiExamplesP
 		);
 
 		yield return OpenApiValidationProblemExample.Create(
-			"ivalidBinData",
-			"Invalid Bin Data",
-			"Example response when you provide invalid Bin data",
-			new Dictionary<string, string[]>()
-			{
-				{ "Bins", ["IDs in `Bins` must be unique"] },
-				{ "Bins[0].Length", ["'Length' must be greater than '0'."] }
-			}
-		);
-		
-		yield return OpenApiValidationProblemExample.Create(
 			"ivalidItemData",
 			"Invalid Item Data",
 			"Example response when you provide invalid Item data",
 			new Dictionary<string, string[]>()
 			{
+				{ "Items", ["IDs in `Items` must be unique"] },
 				{ "Items[1].Length", ["'Length' must be less than or equal to '65535'."] }
 			}
 		);

@@ -73,7 +73,7 @@ internal class PresetPackResponseExamples : IMultipleOpenApiExamplesProvider<Pac
 					new BinPackResult()
 					{
 						Bin = new Bin { ID = "preset_bin_1", Length = 20, Width = 40, Height = 60 },
-						Result = BinPackResultStatus.FullyPacked,
+						Result = BinPackResultStatus.PartiallyPacked,
 						PackedItems =
 						[
 							new ResultBox

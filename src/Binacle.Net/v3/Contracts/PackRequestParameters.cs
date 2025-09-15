@@ -21,6 +21,8 @@ public class PackRequestParameters : IWithAlgorithm
 	public bool OptInToEarlyFails { get; set; } = false;
 	public bool ReportPackedItemsOnlyWhenFullyPacked { get; set; } = false;
 	public bool NeverReportUnpackedItems { get; set; } = false;
+	
+	public bool IncludeViPaqData { get; set; } = false;
 }
 
 internal class PackRequestParametersValidator : AbstractValidator<IWithPackingParameters>

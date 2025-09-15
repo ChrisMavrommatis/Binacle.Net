@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using Binacle.Net.v3.Contracts;
 
 namespace Binacle.Net.IntegrationTests.v3.Abstractions;
 
@@ -55,11 +56,12 @@ public abstract partial class BehaviourTestsBase
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 	}
 	
-	protected async Task PackRequest_ValidateBasedOnParameters(
+	protected async Task PackRequest_ValidateBasedOnParameters<TRequest>(
 		string url,
-		Binacle.Net.v3.Contracts.PackByCustomRequest request,
+		TRequest request,
 		Action<Binacle.Net.v3.Contracts.PackResponse>? additionalValidation = null
-	)
+	) 
+		where TRequest : class, IWithPackingParameters
 	{
 		var response = await this.Sut.Client.PostAsJsonAsync(
 			url,
@@ -80,14 +82,47 @@ public abstract partial class BehaviourTestsBase
 		foreach (var binPackResult in result.Data)
 		{
 			binPackResult.Bin.ShouldNotBeNull();
-			if (binPackResult.Result == Binacle.Net.v3.Contracts.BinPackResultStatus.FullyPacked)
+			if (binPackResult.Result == BinPackResultStatus.FullyPacked)
 			{
 				binPackResult.PackedItems.ShouldNotBeEmpty();
+			}
+			
+			if (request.Parameters.ReportPackedItemsOnlyWhenFullyPacked)
+			{
+				if (binPackResult.Result != BinPackResultStatus.FullyPacked)
+				{
+					binPackResult.PackedItems.ShouldBeNullOrEmpty();
+				}
+			}
+
+
+			if (request.Parameters.OptInToEarlyFails)
+			{
+				if (binPackResult.Result == BinPackResultStatus.EarlyFail_ContainerVolumeExceeded
+				    || binPackResult.Result == BinPackResultStatus.EarlyFail_ContainerDimensionExceeded)
+				{
+					binPackResult.PackedItems.ShouldBeNullOrEmpty();
+				}
+			}
+			
+
+			if ((request.Parameters.NeverReportUnpackedItems) ||
+			    binPackResult.Result == BinPackResultStatus.FullyPacked)
+			{
 				binPackResult.UnpackedItems.ShouldBeNullOrEmpty();
 			}
 			else
 			{
 				binPackResult.UnpackedItems.ShouldNotBeEmpty();
+			}
+
+			if (request.Parameters.IncludeViPaqData && binPackResult.PackedItems?.Count > 0)
+			{
+				binPackResult.ViPaqData.ShouldNotBeNullOrEmpty();
+			}
+			else
+			{
+				binPackResult.ViPaqData.ShouldBeNullOrEmpty();
 			}
 		}
 

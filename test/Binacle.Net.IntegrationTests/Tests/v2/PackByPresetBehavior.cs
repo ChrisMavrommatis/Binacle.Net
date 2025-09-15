@@ -41,9 +41,8 @@ public class PackByPresetBehavior :  BehaviourTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Existing Preset And Valid Request Returns 200 OK")]
 	public async Task Post_WithExistingPresetAndValidRequest_Returns200Ok()
 	{
-		this.sampleRequest!.Items!.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 		var urlPath = routePath.Replace("{preset}", validPreset);
-		await base.Request_Returns_400BadRequest(urlPath, this.sampleRequest);
+		await base.Request_Returns_200Ok(urlPath, this.sampleRequest);
 	}
 	
 	[Fact(DisplayName = $"POST {routePath}. With Non Existing Preset Returns 404 NotFound")]

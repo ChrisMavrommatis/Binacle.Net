@@ -72,14 +72,12 @@ internal class PackingResultBuilder<TBin, TItem>
 				unpackedItemsCount++;
 				unpackedItemsVolume += unpackedItem.Volume;
 
-				if (parameters.NeverReportUnpackedItems)
+				if (!parameters.NeverReportUnpackedItems)
 				{
-					continue;
+					result.UnpackedItems!.Add(
+						new ResultItem(unpackedItem.ID, unpackedItem)
+					);
 				}
-
-				result.UnpackedItems!.Add(
-					new ResultItem(unpackedItem.ID, unpackedItem)
-				);
 			}
 		}
 
@@ -97,14 +95,12 @@ internal class PackingResultBuilder<TBin, TItem>
 				packedItemsCount++;
 				packedItemsVolume += packedItem.Volume;
 
-				if (!reportPackedItems)
+				if (reportPackedItems)
 				{
-					continue;
+					result.PackedItems!.Add(
+						new ResultItem(packedItem.ID, packedItem, packedItem)
+					);
 				}
-
-				result.PackedItems!.Add(
-					new ResultItem(packedItem.ID, packedItem, packedItem)
-				);
 			}
 		}
 

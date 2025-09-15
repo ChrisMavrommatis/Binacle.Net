@@ -74,7 +74,7 @@ internal class CustomPackResponseExamples : IMultipleOpenApiExamplesProvider<Pac
 					new BinPackResult()
 					{
 						Bin = new Bin { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
-						Result = BinPackResultStatus.FullyPacked,
+						Result = BinPackResultStatus.PartiallyPacked,
 						PackedItems =
 						[
 							new ResultBox

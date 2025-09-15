@@ -4,7 +4,7 @@ namespace Binacle.Net.DiagnosticsModule.Services;
 
 internal class SystemHealthCheck : IHealthCheck
 {
-	public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
+	public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
 		CancellationToken cancellationToken = default)
 	{
 		try
@@ -13,12 +13,17 @@ internal class SystemHealthCheck : IHealthCheck
 			{
 				{"Processors", Environment.ProcessorCount},
 			};
-			return HealthCheckResult.Healthy("System Info", data);
+			return Task.FromResult(HealthCheckResult.Healthy("System Info", data));
 		}
 		catch (Exception ex)
 		{
-			return new HealthCheckResult(context.Registration.FailureStatus, "Health check for Azure Tables failed",
-				ex);
+			return Task.FromResult(
+				new HealthCheckResult(
+					context.Registration.FailureStatus, 
+					"System health check failed",
+					ex
+				)
+			);
 		}
 	}
 }

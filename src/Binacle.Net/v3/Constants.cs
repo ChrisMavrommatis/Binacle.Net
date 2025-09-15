@@ -12,4 +12,6 @@ internal static class ResponseDescription
 		.ToString();
 
 	public const string ForPackResponse200Ok = "Returns an array of results indicating the result per bin.";
+	
+	public const string ForPreset404NotFound = "If the preset does not exist.";
 }
