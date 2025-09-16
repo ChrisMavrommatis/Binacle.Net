@@ -22,7 +22,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 			.WithTags("Fit")
 			.WithSummary("Fit by Preset")
 			.WithDescription("Perform a bin fit function using a specified bin preset.")
-			.Accepts<CustomFitRequest>("application/json")
+			.Accepts<PresetFitRequest>("application/json")
 			.RequestExample<PresetFitRequestExample>("application/json")
 			.Produces<FitResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExamples<PresetFitResponseExamples>(StatusCodes.Status200OK, "application/json")

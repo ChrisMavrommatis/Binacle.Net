@@ -9,37 +9,36 @@ namespace Binacle.Net.v3.Contracts;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class PackByCustomRequest : IWithPackingParameters, IWithBins, IWithItems
+public class FitByCustomRequest : IWithFittingParameters, IWithBins, IWithItems
 {
-	public required PackRequestParameters Parameters { get; set; } 
+	public required FitRequestParameters Parameters { get; set; } 
 	public required List<Bin> Bins { get; set; } 
 	public required List<Box> Items { get; set; } 
 }
 
-internal class PackByCustomRequestValidator : AbstractValidator<PackByCustomRequest>
+internal class FitByCustomRequestValidator : AbstractValidator<FitByCustomRequest>
 {
-	public PackByCustomRequestValidator()
+	public FitByCustomRequestValidator()
 	{
-		Include(new PackRequestParametersValidator());
+		Include(new FitRequestParametersValidator());
 		Include(new BinsValidator());
 		Include(new ItemsValidator());
 	}
 }
 
 
-internal class PackByCustomRequestExample : ISingleOpenApiExamplesProvider<PackByCustomRequest>
+internal class FitByCustomRequestExample : ISingleOpenApiExamplesProvider<FitByCustomRequest>
 {
-	public IOpenApiExample<PackByCustomRequest> GetExample()
+	public IOpenApiExample<FitByCustomRequest> GetExample()
 	{
 		return OpenApiExample.Create(
-			"customPackRequest",
-			"Custom Pack Request",
-			new PackByCustomRequest()
+			"customFitRequest",
+			"Custom Fit Request",
+			new FitByCustomRequest()
 			{
-				Parameters = new PackRequestParameters
+				Parameters = new FitRequestParameters
 				{
 					Algorithm = Algorithm.FFD,
-					IncludeViPaqData = true,
 				},
 				Bins = new List<Bin>
 				{
@@ -56,124 +55,144 @@ internal class PackByCustomRequestExample : ISingleOpenApiExamplesProvider<PackB
 	}
 }
 
-internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<PackResponse>
+internal class FitByCustomResponseExamples : IMultipleOpenApiExamplesProvider<FitResponse>
 {
-	public IEnumerable<IOpenApiExample<PackResponse>> GetExamples()
+	public IEnumerable<IOpenApiExample<FitResponse>> GetExamples()
 	{
 		yield return OpenApiExample.Create(
-			"fullypackedresponse",
-			"Fully Packed Response",
-			"Fully Packed Response example.",
-			PackResponse.Create(
+			"fullresponse",
+			"Full Response",
+			"Response Example indicating all items fit.",
+			FitResponse.Create(
 				[
-					new BinPackResult()
+					new BinFitResult()
 					{
 						Bin = new Bin { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
-						Result = BinPackResultStatus.FullyPacked,
-						PackedItems =
+						Result = BinFitResultStatus.AllItemsFit,
+						FittedItems  =
 						[
-							new PackedBox()
+							new FittedBox()
 							{
 								ID = "box_2",
 								Length = 10,
 								Width = 12,
 								Height = 15,
-								X = 0,
-								Y = 0,
-								Z = 0
 							},
-							new PackedBox
+							new FittedBox
 							{
 								ID = "box_1",
 								Length = 2,
 								Width = 5,
 								Height = 10,
-								X = 0,
-								Y = 12,
-								Z = 0
 							},
 						],
-						UnpackedItems = [],
-						PackedItemsVolumePercentage = 100.00m,
-						PackedBinVolumePercentage = 7.92m,
-						ViPaqData = "AAQACig8CgwPAAAACgwPAAwAAgUKAAAPAgUKABgA"
+						UnfittedItems  = [],
+						FittedItemsVolumePercentage  = 100.00m,
+						FittedBinVolumePercentage  = 8.33m,
 					},
-					new BinPackResult()
+					new BinFitResult()
 					{
 						Bin = new Bin { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
-						Result = BinPackResultStatus.FullyPacked,
-						PackedItems =
+						Result = BinFitResultStatus.AllItemsFit,
+						FittedItems =
 						[
-							new PackedBox()
+							new FittedBox()
 							{
 								ID = "box_2",
 								Length = 12,
 								Width = 15,
 								Height = 10,
-								X = 0,
-								Y = 0,
-								Z = 0
 							},
-							new PackedBox()
+							new FittedBox()
 							{
 								ID = "box_1",
 								Length = 2,
 								Width = 5,
 								Height = 10,
-								X = 12,
-								Y = 0,
-								Z = 0
 							}
 						],
-						UnpackedItems = [],
-						PackedItemsVolumePercentage = 100.00m,
-						PackedBinVolumePercentage = 3.96m,
-						ViPaqData = "AAQAFCg8DA8KAAAADAoPAA8AAgUKDAAAAgUKAAAK"
+						UnfittedItems = [],
+						FittedItemsVolumePercentage  = 100.00m,
+						FittedBinVolumePercentage  = 3.96m,
+					}
+				]
+			));
+
+		yield return OpenApiExample.Create(
+			"binnotfitresponse",
+			"Bin Not Fit Response",
+			"Response example when a bin can't accommodate all the items",
+			FitResponse.Create(
+				[
+					new BinFitResult()
+					{
+						Bin = new Bin { ID = "custom_small_bin_1", Length = 20, Width = 20, Height = 15 },
+						FittedItems =
+						[
+							new FittedBox
+							{
+								ID = "box_2",
+								Length = 12,
+								Width = 15,
+								Height = 10,
+							}
+						],
+						UnfittedItems =
+						[
+							new UnfittedBox
+							{
+								ID = "box_1",
+								Quantity = 1
+							},
+							new UnfittedBox
+							{
+								ID = "box_2",
+								Quantity = 1
+							},
+						],
+						Result = BinFitResultStatus.NotAllItemsFit,
+						FittedItemsVolumePercentage = 48.65m,
+						FittedBinVolumePercentage = 30.00m,
 					}
 				]
 			));
 
 
 		yield return OpenApiExample.Create(
-			"partiallypackedresponse",
-			"Partially Packed Response",
-			"Partially Packed Response example.",
-			PackResponse.Create(
+			"earlyfailresponse",
+			"Early fail Response",
+			"Response example when a bin can't accommodate all the items due to an early fail check",
+			FitResponse.Create(
 				[
-					new BinPackResult()
+					new BinFitResult()
 					{
-						Bin = new Bin { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
-						Result = BinPackResultStatus.PartiallyPacked,
-						PackedItems =
+						Bin = new Bin { ID = "custom_small_bin_1", Length = 10, Width = 10, Height = 10 },
+						FittedItems = [],
+						UnfittedItems =
 						[
-							new PackedBox()
-							{
-								ID = "box_1",
-								Length = 2,
-								Width = 5,
-								Height = 10,
-								X = 0,
-								Y = 0,
-								Z = 0
-							}
-						],
-						UnpackedItems =
-						[
-							new UnpackedBox()
+							new UnfittedBox
 							{
 								ID = "box_2",
+								Quantity = 2
+							},
+							new UnfittedBox
+							{
+								ID = "box_1",
 								Quantity = 1
-							}
+							},
 						],
-						PackedItemsVolumePercentage = 2.70m,
-						PackedBinVolumePercentage = 0.42m,
+						Result = BinFitResultStatus.EarlyFail_TotalVolumeExceeded,
+						FittedItemsVolumePercentage = 0.00m,
+						FittedBinVolumePercentage = 0.00m,
 					}
 				]
-			));
+			)
+		);
+		
 	}
 }
 
-internal class PackByCustomValidationProblemExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
+internal class FitByCustomValidationProblemExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
 {
 	public IEnumerable<IOpenApiExample<ProblemDetails>> GetExamples()
 	{

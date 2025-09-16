@@ -13,5 +13,7 @@ internal static class ResponseDescription
 
 	public const string ForPackResponse200Ok = "Returns an array of results indicating the result per bin.";
 	
+	public const string ForFitResponse200Ok = "Returns an array of results indicating if a bin can accommodate all the items.";
+	
 	public const string ForPreset404NotFound = "If the preset does not exist.";
 }

@@ -9,36 +9,33 @@ using OpenApiExamples.Abstractions;
 namespace Binacle.Net.v3.Contracts;
 
 #pragma warning disable CS1591
-public class PresetPackRequest : IWithPackingParameters, IWithItems
+public class PackByPresetRequest : IWithPackingParameters, IWithItems
 {
 	public required PackRequestParameters Parameters { get; set; } 
 	public required List<Box> Items { get; set; } 
 }
 
-internal class PresetPackRequestValidator : AbstractValidator<PresetPackRequest>
+internal class PackByPresetRequestValidator : AbstractValidator<PackByPresetRequest>
 {
-	public PresetPackRequestValidator()
+	public PackByPresetRequestValidator()
 	{
 		Include(new PackRequestParametersValidator());
 		Include(new ItemsValidator());
 	}
 }
 
-internal class PresetPackRequestExample : ISingleOpenApiExamplesProvider<PresetPackRequest>
+internal class PackByPresetRequestExample : ISingleOpenApiExamplesProvider<PackByPresetRequest>
 {
-	public IOpenApiExample<PresetPackRequest> GetExample()
+	public IOpenApiExample<PackByPresetRequest> GetExample()
 	{
 		return OpenApiExample.Create(
 			"presetPackRequest",
 			"Preset Pack Request",
-			new PresetPackRequest
+			new PackByPresetRequest
 			{
 				Parameters = new PackRequestParameters
 				{
 					Algorithm = Algorithm.FFD,
-					NeverReportUnpackedItems = false,
-					OptInToEarlyFails = false,
-					ReportPackedItemsOnlyWhenFullyPacked = false,
 					IncludeViPaqData = true,
 				},
 				Items = new List<Box>
@@ -52,7 +49,7 @@ internal class PresetPackRequestExample : ISingleOpenApiExamplesProvider<PresetP
 	}
 }
 
-internal class PresetPackResponseExamples : IMultipleOpenApiExamplesProvider<PackResponse>
+internal class PackByPresetResponseExamples : IMultipleOpenApiExamplesProvider<PackResponse>
 {
 	public IEnumerable<IOpenApiExample<PackResponse>> GetExamples()
 	{
@@ -171,7 +168,7 @@ internal class PresetPackResponseExamples : IMultipleOpenApiExamplesProvider<Pac
 }
 
 
-internal class PresetPackValidationProblemExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
+internal class PackByPresetValidationProblemExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
 {
 	public IEnumerable<IOpenApiExample<ProblemDetails>> GetExamples()
 	{

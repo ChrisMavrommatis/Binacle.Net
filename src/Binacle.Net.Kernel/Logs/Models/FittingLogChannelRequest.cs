@@ -8,7 +8,7 @@ public class FittingLogChannelRequest
 	public required IReadOnlyCollection<IWithReadOnlyDimensions> Bins { get; init; }
 	public required IReadOnlyCollection<IWithReadOnlyDimensions> Items { get; init; }
 	public ILogConvertible? Parameters { get; set; }
-	public required Dictionary<string, FittingResult> Results { get; init; }
+	public required IDictionary<string, FittingResult> Results { get; init; }
 
 	internal FittingLogChannelRequest()
 	{
@@ -18,7 +18,7 @@ public class FittingLogChannelRequest
 		List<TBin> bins,
 		List<TItem> items,
 		TParams parameters,
-		Dictionary<string, FittingResult> results
+		IDictionary<string, FittingResult> results
 	)
 		where TBin: IWithID, IWithReadOnlyDimensions
 		where TItem: IWithID, IWithReadOnlyDimensions, IWithQuantity

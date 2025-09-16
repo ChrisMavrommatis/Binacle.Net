@@ -1,5 +1,4 @@
-﻿
-using Binacle.Net.Models;
+﻿using Binacle.Net.Models;
 
 namespace Binacle.Net.IntegrationTests.v3;
 
@@ -10,7 +9,8 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 	{
 		Parameters = new()
 		{
-			Algorithm = Algorithm.FFD
+			Algorithm = Algorithm.FFD,
+			IncludeViPaqData = false
 		},
 		Bins = new()
 		{
@@ -92,6 +92,25 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 		);
 	}
 	
+	
+	[Fact(DisplayName = $"POST {routePath}. With ViPaq Data, Returns ViPaq Data")]
+	public async Task Post_WithViPaqData_ReturnsViPaqData()
+	{
+		var request = this.CreateSpecialRequest(parameters => parameters.IncludeViPaqData = true);
+
+		await base.PackRequest_ValidateBasedOnParameters(
+			routePath,
+			request,
+			result =>
+			{
+				foreach (var packResult in result.Data)
+				{
+					packResult.ViPaqData.ShouldNotBeNullOrEmpty();
+				}
+			}
+		);
+	}
+	
 	private Binacle.Net.v3.Contracts.PackByCustomRequest CreateSpecialRequest(
 		Action<Binacle.Net.v3.Contracts.PackRequestParameters>? modifyParameters = null
 	)
@@ -100,7 +119,8 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 		{
 			Parameters = new()
 			{
-				Algorithm = Algorithm.FFD
+				Algorithm = Algorithm.FFD,
+				IncludeViPaqData = false
 			},
 			Bins = new()
 			{

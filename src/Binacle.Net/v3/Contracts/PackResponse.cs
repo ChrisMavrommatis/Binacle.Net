@@ -85,35 +85,21 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 			results.Add(result);
 		}
 
-		var resultStatus = results.Any(x => 
-			x.Result == BinPackResultStatus.FullyPacked
-		) ? ResultType.Success : ResultType.Failure;
-
-		return new PackResponse()
-		{
-			Data = results,
-			Result = resultStatus
-		};
+		return Create(results);
 	}
 
 
 	internal static PackResponse Create(List<BinPackResult> results)
 	{
+		var isSuccess = results.Any(x =>
+			x.Result == BinPackResultStatus.FullyPacked
+		);
+		
 		return new PackResponse
 		{
 			Data = results,
-			Result = CalculateResultType(results)
+			Result = isSuccess ? ResultType.Success : ResultType.Failure
 		};
-	}
-
-	private static ResultType CalculateResultType(List<BinPackResult> results)
-	{
-		var isSuccess = results.Any(x =>
-			x.Result == BinPackResultStatus.FullyPacked
-			|| x.Result == BinPackResultStatus.PartiallyPacked
-		);
-		
-		return isSuccess ? ResultType.Success : ResultType.Failure;
 	}
 }
 
@@ -149,9 +135,7 @@ public enum BinPackResultStatus
 public class PackedBox : 
 	IWithID, 
 	IWithDimensions, 
-	IWithCoordinates, 
-	ViPaq.Abstractions.IWithDimensions<int>,
-	ViPaq.Abstractions.IWithCoordinates<int>
+	IWithCoordinates, ViPaq.Abstractions.IWithDimensions<int>, ViPaq.Abstractions.IWithCoordinates<int>
 {
 	public required string ID { get; set; }
 	public required int Length { get; set; }

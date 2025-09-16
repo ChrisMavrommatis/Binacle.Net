@@ -82,47 +82,14 @@ public abstract partial class BehaviourTestsBase
 		foreach (var binPackResult in result.Data)
 		{
 			binPackResult.Bin.ShouldNotBeNull();
-			if (binPackResult.Result == BinPackResultStatus.FullyPacked)
+			if (binPackResult.Result == Binacle.Net.v3.Contracts.BinPackResultStatus.FullyPacked)
 			{
 				binPackResult.PackedItems.ShouldNotBeEmpty();
-			}
-			
-			if (request.Parameters.ReportPackedItemsOnlyWhenFullyPacked)
-			{
-				if (binPackResult.Result != BinPackResultStatus.FullyPacked)
-				{
-					binPackResult.PackedItems.ShouldBeNullOrEmpty();
-				}
-			}
-
-
-			if (request.Parameters.OptInToEarlyFails)
-			{
-				if (binPackResult.Result == BinPackResultStatus.EarlyFail_ContainerVolumeExceeded
-				    || binPackResult.Result == BinPackResultStatus.EarlyFail_ContainerDimensionExceeded)
-				{
-					binPackResult.PackedItems.ShouldBeNullOrEmpty();
-				}
-			}
-			
-
-			if ((request.Parameters.NeverReportUnpackedItems) ||
-			    binPackResult.Result == BinPackResultStatus.FullyPacked)
-			{
 				binPackResult.UnpackedItems.ShouldBeNullOrEmpty();
 			}
 			else
 			{
 				binPackResult.UnpackedItems.ShouldNotBeEmpty();
-			}
-
-			if (request.Parameters.IncludeViPaqData && binPackResult.PackedItems?.Count > 0)
-			{
-				binPackResult.ViPaqData.ShouldNotBeNullOrEmpty();
-			}
-			else
-			{
-				binPackResult.ViPaqData.ShouldBeNullOrEmpty();
 			}
 		}
 

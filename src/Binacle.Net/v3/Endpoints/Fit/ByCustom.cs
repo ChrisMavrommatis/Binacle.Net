@@ -4,23 +4,23 @@ using Binacle.Net.Services;
 using Binacle.Net.v3.Contracts;
 using OpenApiExamples.ExtensionMethods;
 
-namespace Binacle.Net.v3.Endpoints.Pack;
+namespace Binacle.Net.v3.Endpoints.Fit;
 
-internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
+internal class ByCustom: IGroupedEndpoint<ApiV3EndpointGroup>
 {
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		group.MapPost("pack/by-custom", HandleAsync)
-			.WithTags("Pack")
-			.WithSummary("Pack by Custom")
-			.WithDescription("Pack items using custom bins")
+		group.MapPost("fit/by-custom", HandleAsync)
+			.WithTags("Fit")
+			.WithSummary("Fit by Custom")
+			.WithDescription("Perform a bin fitting function using custom bins.")
 			
-			.Accepts<PackByCustomRequest>("application/json")
-			.RequestExample<PackByCustomRequestExample>("application/json")
+			.Accepts<FitByCustomRequest>("application/json")
+			.RequestExample<FitByCustomRequestExample>("application/json")
 			
-			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200Ok)
-			.ResponseExamples<PackByCustomResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.Produces<FitResponse>(StatusCodes.Status200OK, "application/json")
+			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForFitResponse200Ok)
+			.ResponseExamples<FitByCustomResponseExamples>(StatusCodes.Status200OK, "application/json")
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
@@ -31,7 +31,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For400BadRequest
 			)
-			.ResponseExamples<PackByCustomValidationProblemExamples>(
+			.ResponseExamples<FitByCustomValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			)
@@ -39,32 +39,31 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		BindingResult<PackByCustomRequest> bindingResult,
+		BindingResult<FitByCustomRequest> bindingResult,
 		IBinacleService binacleService,
 		ILogger<ByCustom> logger,
 		CancellationToken cancellationToken = default
 	)
 	{
-		using var activity = Diagnostics.ActivitySource.StartActivity("Pack by Custom: v3");
+		using var activity = Diagnostics.ActivitySource.StartActivity("Fit by Custom: v3");
 		
 		return await bindingResult.ValidateAsync(async request =>
 		{
-			var operationResults = await binacleService.PackBinsAsync(
+			var operationResults = await binacleService.FitBinsAsync(
 				request.Bins!,
 				request.Items!,
-				new PackingParameters
+				new FittingParameters
 				{
 					Algorithm = request.Parameters!.Algorithm!.Value,
-					OptInToEarlyFails = false,
-					ReportPackedItemsOnlyWhenFullyPacked = false,
-					NeverReportUnpackedItems = false
+					ReportFittedItems = true,
+					ReportUnfittedItems = true
 				}
 			);
 
 			using (var responseActivity = Diagnostics.ActivitySource.StartActivity("Create Response"))
 			{
 				return Results.Ok(
-					PackResponse.Create(
+					FitResponse.Create(
 						request.Bins!,
 						request.Items!,
 						request.Parameters,
@@ -75,4 +74,5 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 		});
 	}
 }
+
 

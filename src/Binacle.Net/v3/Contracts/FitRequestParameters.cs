@@ -7,23 +7,21 @@ namespace Binacle.Net.v3.Contracts;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public interface IWithPackingParameters
+public interface IWithFittingParameters
 {
-	PackRequestParameters Parameters { get; set; }
+	FitRequestParameters Parameters { get; set; }
 }
 
-public class PackRequestParameters : IWithAlgorithm
+public class FitRequestParameters : IWithAlgorithm
 {
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public required Algorithm? Algorithm { get; set; }
-
-	public bool IncludeViPaqData { get; set; } = false;
 }
 
-internal class PackRequestParametersValidator : AbstractValidator<IWithPackingParameters>
+internal class FitRequestParametersValidator : AbstractValidator<IWithFittingParameters>
 {
 
-	public PackRequestParametersValidator()
+	public FitRequestParametersValidator()
 	{
 		RuleFor(x => x.Parameters)
 			.NotNull();

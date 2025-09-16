@@ -7,23 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using OpenApiExamples.ExtensionMethods;
 
-namespace Binacle.Net.v3.Endpoints.Pack;
+namespace Binacle.Net.v3.Endpoints.Fit;
 
 internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 {
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		group.MapPost("pack/by-preset/{preset}", HandleAsync)
-			.WithTags("Pack")
-			.WithSummary("Pack by Preset")
-			.WithDescription("Pack items using a specified bin preset.")
+		group.MapPost("fit/by-preset/{preset}", HandleAsync)
+			.WithTags("Fit")
+			.WithSummary("Fit by Preset")
+			.WithDescription("Perform a bin fit function using a specified bin preset.")
 			
-			.Accepts<PackByPresetRequest>("application/json")
-			.RequestExample<PackByPresetRequestExample>("application/json")
+			.Accepts<FitByPresetRequest>("application/json")
+			.RequestExample<FitByPresetRequestExample>("application/json")
 			
-			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseExamples<PackByPresetResponseExamples>(StatusCodes.Status200OK, "application/json")
-			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200Ok)
+			.Produces<FitResponse>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<FitByPresetResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForFitResponse200Ok)
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
@@ -37,7 +37,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For400BadRequest
 			)
-			.ResponseExamples<PackByPresetValidationProblemExamples>(
+			.ResponseExamples<FitByPresetValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			)
@@ -46,14 +46,14 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 
 	internal async Task<IResult> HandleAsync(
 		[FromRoute] string preset,
-		BindingResult<PackByPresetRequest> bindingResult,
+		BindingResult<FitByPresetRequest> bindingResult,
 		IOptions<BinPresetOptions> presetOptions,
 		IBinacleService binacleService,
 		ILogger<ByPreset> logger,
 		CancellationToken cancellationToken = default
 	)
 	{
-		using var activity = Diagnostics.ActivitySource.StartActivity("Pack by Preset: v3");
+		using var activity = Diagnostics.ActivitySource.StartActivity("Fit by Preset: v3");
 		
 		return await bindingResult.ValidateAsync(async request =>
 		{
@@ -62,22 +62,21 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 				return Results.NotFound(null);
 			}
 			
-			var operationResults = await binacleService.PackBinsAsync(
+			var operationResults = await binacleService.FitBinsAsync(
 				presetOption.Bins!,
 				request.Items!,
-				new PackingParameters
+				new FittingParameters
 				{
 					Algorithm = request.Parameters!.Algorithm!.Value,
-					OptInToEarlyFails = false,
-					ReportPackedItemsOnlyWhenFullyPacked = false,
-					NeverReportUnpackedItems = false
+					ReportFittedItems =true,
+					ReportUnfittedItems = true
 				}
 			);
 
 			using (var responseActivity = Diagnostics.ActivitySource.StartActivity("Create Response"))
 			{
 				return Results.Ok(
-					PackResponse.Create(
+					FitResponse.Create(
 						presetOption.Bins!,
 						request.Items!,
 						request.Parameters,

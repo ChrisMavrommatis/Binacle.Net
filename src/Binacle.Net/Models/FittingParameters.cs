@@ -9,6 +9,8 @@ internal class FittingParameters : ILogConvertible, IFittingParameters
 	public required Algorithm Algorithm { get; init; }
 	public bool ReportFittedItems { get; init; }
 	public bool ReportUnfittedItems { get; init; }
+	
+	// This property is deprecated and doesn't work in V3 endpoints
 	public bool FindSmallestBinOnly { get; init; }
 
 	public object ConvertToLogObject()

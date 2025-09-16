@@ -9,16 +9,16 @@ using Microsoft.Extensions.Options;
 namespace Binacle.Net.IntegrationTests.v3;
 
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
-public class PackByCustomScenario
+public class PackByPresetScenario
 {
 	private readonly BinacleApi sut;
 
-	public PackByCustomScenario(BinacleApi sut)
+	public PackByPresetScenario(BinacleApi sut)
 	{
 		this.sut = sut;
 	}
 
-	private const string routePath = "/api/v3/pack/by-custom";
+	private const string routePath = "/api/v3/pack/by-preset/{preset}";
 
 	[Theory]
 	[ClassData(typeof(BaselineScenarioDataProvider))]
@@ -43,24 +43,16 @@ public class PackByCustomScenario
 
 		presets!.Value.Presets.ShouldContainKey(binCollection);
 
-		var binPresetOption = presets.Value.Presets[binCollection];
+		var preset = presets.Value.Presets[binCollection];
+		var urlPath = routePath.Replace("{preset}", binCollection);
 
-		var request = new Binacle.Net.v3.Contracts.PackByCustomRequest()
+		var request = new Binacle.Net.v3.Contracts.PackByPresetRequest()
 		{
 			Parameters = new()
 			{
 				Algorithm = Algorithm.FFD,
 				IncludeViPaqData = false
 			},
-			Bins = [
-				new Binacle.Net.v3.Contracts.Bin
-				{
-					ID = expectedBin.ID,
-					Length = expectedBin.Length,
-					Width = expectedBin.Width,
-					Height = expectedBin.Height
-				}
-			],
 			Items = scenario.Items.Select(x => new Binacle.Net.v3.Contracts.Box
 			{
 				ID = x.ID,
@@ -72,7 +64,7 @@ public class PackByCustomScenario
 		};
 
 		var response = await this.sut.Client.PostAsJsonAsync(
-			routePath,
+			urlPath,
 			request,
 			this.sut.JsonSerializerOptions,
 			TestContext.Current.CancellationToken
@@ -86,7 +78,7 @@ public class PackByCustomScenario
 		);
 
 		packResponse.ShouldNotBeNull();
-		packResponse!.Data.ShouldHaveSingleItem();
+		packResponse!.Data.ShouldHaveCount(preset.Bins.Count);
 		var result = packResponse.Data.FirstOrDefault(x => x.Bin.ID == expectedBin.ID);
 		result.ShouldNotBeNull();
 		result!.Bin.ShouldNotBeNull();
@@ -96,12 +88,14 @@ public class PackByCustomScenario
 
 		if (scenarioResult.Fits)
 		{
-			packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Success);
+			// Can't guarantee it as multiple bins are evaluated
+			// packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Success);
 			result.Result.ShouldBe(Binacle.Net.v3.Contracts.BinPackResultStatus.FullyPacked);
 		}
 		else
 		{
-			packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Failure);
+			// Can't guarantee it as multiple bins are evaluated
+			// packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Failure);
 			result.Result.ShouldNotBe(Binacle.Net.v3.Contracts.BinPackResultStatus.FullyPacked);
 		}
 	}
