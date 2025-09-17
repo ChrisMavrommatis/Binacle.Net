@@ -1,10 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
         <OutputType>Exe</OutputType>
-        <Nullable>enable</Nullable>
         <!--
             To enable the Microsoft Testing Platform 'dotnet test' experience, add property:
             <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>

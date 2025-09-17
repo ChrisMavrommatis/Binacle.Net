@@ -47,6 +47,9 @@ collections:
   versions:
     output          : true
     permalink       : /version/:path/
+  common_pages:
+    output          : true
+    permalink       : /:path/
     
 ############################################################
 # Handling Reading
@@ -139,6 +142,16 @@ defaults:
     scope:
       path           : "pages/**"
       type           : "pages"
+    values:
+      layout          : "default"
+      locale          : "en_US"
+      hreflang        : "en"
+      nav:
+        order         : 99
+  -
+    scope:
+      path            : "**/**"
+      type            : "common_pages"
     values:
       layout          : "default"
       locale          : "en_US"

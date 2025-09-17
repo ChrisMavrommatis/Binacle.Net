@@ -10,7 +10,7 @@
             {% assign is_active = true %}
         {% endif %}
     
-        {% assign child_menu_items = site.pages | where: 'nav.exclude',nil | where: 'nav.parent',item.title %}
+        {% assign child_menu_items = site.common_pages | where: 'nav.exclude',nil | where: 'nav.parent',item.title %}
         {% if child_menu_items.size == 0 %}
         <li class="tiny-space{% if is_active %} surface-container-highest{% endif %}">
             <span>{{ item.nav.icon }}</span>

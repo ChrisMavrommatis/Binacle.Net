@@ -1,6 +1,5 @@
 --- 
 title: ViPaq Protocol
-permalink: vipaq-protocol
 nav:
   icon: 🗜️
   order: 99

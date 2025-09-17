@@ -1,6 +1,5 @@
 ---
 title: Integration Guide
-permalink: integration-guide
 nav:
   order: 3
   icon: 🔗

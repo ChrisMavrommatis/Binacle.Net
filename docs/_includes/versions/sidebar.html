@@ -15,9 +15,9 @@
                 <select id="version-select" data-versionselect="{{ '/version/' | relative_url }}">
                     {% for uniq_version in uniq_versions %}
                     {% if uniq_version == page.version %}
-                    <option selected>{{ uniq_version }}</option>
+                    <option value="{{ uniq_version }}" selected>{{ uniq_version | capitalize }}</option>
                     {% else %}
-                    <option>{{ uniq_version }}</option>
+                    <option value="{{ uniq_version }}">{{ uniq_version | capitalize }}</option>
                     {% endif %}
                     {% endfor %}
                 </select>

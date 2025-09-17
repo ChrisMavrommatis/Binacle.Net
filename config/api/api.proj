@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.Build.NoTargets/3.7.56">
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 

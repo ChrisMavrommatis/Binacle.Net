@@ -17,17 +17,17 @@ and users get started quickly and make the most of Binacle.Net's capabilities.
 
 ---
 
-## 🚀 [Quick Start]({% link pages/quick-start.md %})
+## 🚀 [Quick Start]({% link _common_pages/quick-start.md %})
 Get up and running quickly with the essential steps to use Binacle.Net.
 
-## 🔍 [Core Concepts]({% link pages/core-concepts.md %})
+## 🔍 [Core Concepts]({% link _common_pages/core-concepts.md %})
 Learn about the algorithms and real-time strategies that power Binacle.Net’s packing solutions.
 
-## 🔗 [Integration Guide]({% link pages/integration-guide.md %})
+## 🔗 [Integration Guide]({% link _common_pages/integration-guide.md %})
 Step-by-step instructions for integrating Binacle.Net into your platform.
 
-## 📚 [Versions]({% link pages/version.html %})  
+## 📚 [Versions]({% link _common_pages/version.html %})  
 Access documentation for different versions of Binacle.Net to ensure compatibility and leverage new features.
 
-## 🗜️ [ViPaq Protocol]({% link pages/vipaq-protocol.md %})
+## 🗜️ [ViPaq Protocol]({% link _common_pages/vipaq-protocol.md %})
 Understand the compact encoding format for sharing packing information efficiently.

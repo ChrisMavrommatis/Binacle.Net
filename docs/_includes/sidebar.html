@@ -14,7 +14,7 @@
     </article>
 </header>
 <div>
-    {% assign menu_items = site.pages | where: 'nav.exclude',nill | where: 'nav.parent',nil %}
+    {% assign menu_items = site.common_pages | where: 'nav.exclude',nill | where: 'nav.parent',nil %}
     
     {% include menu.html menu_items=menu_items menu_level=0 %}
 </div>

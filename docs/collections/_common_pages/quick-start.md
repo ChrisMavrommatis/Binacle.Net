@@ -1,6 +1,5 @@
 ---
 title: Quick Start
-permalink: quick-start
 nav:
   order: 1
   icon: 🚀

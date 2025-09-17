@@ -1,6 +1,5 @@
 ---
 title: Core Concepts
-permalink: core-concepts
 nav:
   order: 2
   icon: 🔍
@@ -20,8 +19,8 @@ and e-commerce applications.
 Binacle.Net leverages specialized algorithms and techniques to address various aspects of the bin packing problem.
 
 Below are the key sections detailing how the system functions:
-- [🧠 Algorithms](#algorithms)
-- [🛠️ Functions](#functions)
+- [🧠 Algorithms](#-algorithms)
+- [🛠️ Functions](#️-functions)
 
 ---
 
