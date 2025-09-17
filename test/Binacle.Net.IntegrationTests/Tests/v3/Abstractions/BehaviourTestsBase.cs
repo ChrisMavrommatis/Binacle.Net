@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using Binacle.Net.v3.Contracts;
 
 namespace Binacle.Net.IntegrationTests.v3.Abstractions;
@@ -54,6 +55,39 @@ public abstract partial class BehaviourTestsBase
 		);
 
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
+	}
+	
+	protected async Task FitRequest_ValidateBasedOnParameters<TRequest>(
+		string url,
+		TRequest request,
+		Action<FitResponse>? additionalValidation = null
+	)
+		where TRequest : class, IWithFittingParameters
+	{
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions
+		);
+
+		response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+		var result = await response.Content
+			.ReadFromJsonAsync<FitResponse>(this.Sut.JsonSerializerOptions);
+
+		result.ShouldNotBeNull();
+		result!.Data.ShouldNotBeEmpty();
+		
+
+		foreach (var binFitResult in result.Data)
+		{
+			binFitResult.Bin.ShouldNotBeNull();
+		}
+
+		if (additionalValidation is not null)
+		{
+			additionalValidation.Invoke(result);
+		}
 	}
 	
 	protected async Task PackRequest_ValidateBasedOnParameters<TRequest>(
