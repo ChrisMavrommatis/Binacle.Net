@@ -1,9 +1,9 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Binacle.Net.ServiceModule.Domain.Common.Models;
-using Binacle.Net.ServiceModule.Domain.Common.Services;
+using Binacle.Net.ServiceModule.Infrastructure.Common.Services;
 
-namespace Binacle.Net.ServiceModule.Infrastructure.Common.Services;
+namespace Binacle.Net.ServiceModule.Infrastructure.Services;
 
 internal class Sha256PasswordHasher : IPasswordHasher
 {

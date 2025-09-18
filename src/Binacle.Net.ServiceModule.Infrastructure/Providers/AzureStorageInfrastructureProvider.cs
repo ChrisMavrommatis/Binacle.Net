@@ -38,8 +38,4 @@ internal class AzureStorageInfrastructureProvider : IInfrastructureProvider
 
 		builder.Services.AddStartupTask<EnsureRequiredAzureTablesExistStartupTask>();
 	}
-	
-	
-
-
 }

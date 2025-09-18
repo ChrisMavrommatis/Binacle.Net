@@ -18,7 +18,7 @@
 			{
 				"Name": "File",
 				"Args": {
-					"path": "data/logs/log-.txt",
+					"path": "data/logs/.ndjson",
 					"formatter": "Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact",
 					"rollingInterval": "Day",
 					"retainedFileCountLimit": 7

@@ -8,6 +8,7 @@ using Binacle.Net.ServiceModule.Infrastructure.Common.Services;
 using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace Binacle.Net.ServiceModule.Infrastructure;
@@ -26,9 +27,9 @@ public static class Setup
 	{
 		builder.Services
 			.AddSingleton<IPasswordService, PasswordService>()
-			.AddSingleton<IPasswordHasher, PlainTextPasswordHasher>()
-			.AddSingleton<IPasswordHasher, Sha256PasswordHasher>()
-			.AddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>();
+			.AddSingleton<IPasswordHasher, Services.PlainTextPasswordHasher>()
+			.AddSingleton<IPasswordHasher, Services.Sha256PasswordHasher>()
+			.AddSingleton<IPasswordHasher, Services.Pbkdf2PasswordHasher>();
 
 		foreach (var infrastructureProvider in _infrastructureProviders)
 		{
@@ -49,6 +50,24 @@ public static class Setup
 			.AssertServiceWasRegistered<ISubscriptionRepository>();
 
 		builder.Services.AddStartupTask<EnsureDefaultAdminAccountExistsStartupTask>();
+		
+		var backupToS3ConnectionString = builder.Configuration
+			.GetConnectionStringWithEnvironmentVariableFallback("BackupToS3");
+		if (backupToS3ConnectionString is not null)
+		{
+			Log.Information("Registering {ServiceName} as a hosted service", "BackupToS3");
+			builder.Services.AddHostedService<Services.BackupToS3>(sp =>
+			{
+				return new Services.BackupToS3(
+					sp.GetRequiredService<IHostEnvironment>(),
+					sp.GetRequiredService<TimeProvider>(),
+					sp.GetRequiredService<ILogger<Services.BackupToS3>>(),
+					backupToS3ConnectionString
+				);
+			});
+		}
+		
+		
 
 		return builder;
 	}

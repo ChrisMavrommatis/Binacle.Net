@@ -1,5 +1,6 @@
 ﻿using Binacle.Net.ServiceModule.Domain.Common.Models;
 using Binacle.Net.ServiceModule.Domain.Common.Services;
+using Binacle.Net.ServiceModule.Infrastructure.Services;
 
 namespace Binacle.Net.ServiceModule.Infrastructure.Common.Services;
 
