@@ -6,13 +6,13 @@ nav:
   icon: 📖
 ---
 
-Using presets in Binacle.Net can significantly streamline your packing process, 
+Using presets in Binacle.Net can significantly streamline your packing process,
 especially when bin configurations are consistent.
 
-Instead of including bin definitions in every API request, 
+Instead of including bin definitions in every API request,
 you can define them once in the preset file and reuse them across multiple requests.
 
-> While Binacle.Net assumes the use of centimeters, you can use any measurement system as 
+> While Binacle.Net assumes the use of centimeters, you can use any measurement system as
 > long as the dimensions are integers and consistent across bins and items.
 {: .block-caution}
 
@@ -65,13 +65,13 @@ section of the page for more information on overriding configurations.
 ---
 
 ## 🔄 Overriding Presets
-There are multiple ways to override the default `Presets.json` file, particularly when using Docker. 
+There are multiple ways to override the default `Presets.json` file, particularly when using Docker.
 
 Below are two methods for overriding the presets file in a Docker environment:
 
 ### 🖥️ Option 1: Command Line
-1. Download the [Presets.json]({% vlink /downloads/Presets.json %}){:download="" target="_blank"} 
-  file and modify it according to your needs.
+1. Download the [Presets.json]({% vlink /downloads/Presets.json %}){:download="" target="_blank"}
+   file and modify it according to your needs.
 2. Place the modified `Presets.json` file anywhere on your system.
 3. Open your terminal and navigate to the directory containing your modified Presets.json file.
 4. Run the following Docker command to mount the updated presets file:
@@ -102,8 +102,8 @@ docker run --name binacle-net ^
 If you prefer to use Docker Compose, follow these steps:
 
 1. Create a Docker Compose file (compose.yaml) if you don’t already have one.
-2. Download the [Presets.json]({% vlink /downloads/Presets.json %}){:download="" target="_blank"} 
-  file and modify it according to your needs.
+2. Download the [Presets.json]({% vlink /downloads/Presets.json %}){:download="" target="_blank"}
+   file and modify it according to your needs.
 3. Place the modified Presets.json file in the same directory as your compose.yaml.
 4. Navigate to the directory containing both the Presets.json and compose.yaml files.
 5. Run the following command:
@@ -131,5 +131,6 @@ services:
         read_only: true
     environment:
       - SWAGGER_UI=True
+      - SCALAR_UI=True 
 ```
 

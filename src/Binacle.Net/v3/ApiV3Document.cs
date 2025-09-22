@@ -11,7 +11,7 @@ internal class ApiV3Document : IOpenApiDocument
 	public string Title => $"Binacle.Net API {DocumentName}";
 	public string Version => "3.0";
 	public bool IsDeprecated => false;
-	public bool IsExperimental => true;
+	public bool IsExperimental => false;
 
 	public void Configure(OpenApiOptions options)
 	{

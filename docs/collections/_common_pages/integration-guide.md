@@ -1,7 +1,7 @@
 ---
 title: Integration Guide
 nav:
-  order: 3
+  order: 10
   icon: 🔗
 ---
 

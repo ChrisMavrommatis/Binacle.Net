@@ -1,6 +1,6 @@
 ---
 title: Configuration
-permalink: /version/v1.3.0/configuration/
+permalink: /version/latest/configuration/
 nav:
   order: 6
   icon: 🔧
@@ -15,11 +15,11 @@ Make sure to read [Configuration Basics]({% link _common_pages/configuration-bas
 specifics for this version.
 
 ---
-
 ## 📖 Table of Contents
 
 - [📂 Configuration Files](#-configuration-files)
     - [📑 Directory Structure](#-directory-structure)
+
 - [🔧 Modules Overview](#-binaclenet-modules-overview)
     - [🏗️ Core](#%EF%B8%8F-binaclenet-core)
     - [📊 Diagnostics Module](#-diagnostics-module)
@@ -42,18 +42,12 @@ app
     │   ├── HealthChecks.json
     │   ├── OpenTelemetry.json
     │   ├── PackingLogs.json
-    │   ├── Serilog.json
-    ├── ServiceModule
-    │   ├── ConnectionStrings.json
-    │   ├── JwtAuth.json
-    │   ├── RateLimiter.json
-    │   └── Users.json
+    │   └── Serilog.json
     └── UiModule
         └── ConnectionStrings.json
 ```
 
 ---
-
 ## 🔧 Binacle.Net Modules Overview
 
 Each module adds functionality to Binacle.Net. This section provides an overview and links to detailed configuration
@@ -81,14 +75,15 @@ come enabled by default.
 
 Allows Binacle.Net to run as a managed service with authentication and rate limiting.
 
-- [🔍 Service Module Overview]({% vlink /configuration/service-module/index.md %})
-- [🗄️ Database](% vlink /configuration/service-module/database.md %})
-- [🔐 Authentication](.% vlink /configuration/service-module/authentication.md %})
-- [👥 Users](% vlink /configuration/service-module/users.md %})
-- [📉 Rate Limiter](% vlink /configuration/service-module/rate-limiter.md %})
+This module is primarily made for the official Binacle.Net cloud service.
+It is still possible to enable it for self-hosted instances, but no documentation is provided for that use case.
+
+Please refer to the [Service Module]({% vlink /configuration/service-module/index.md %}) page for more details.
 
 ### 🖥️ UI Module
 
 Provides a web-based UI for packing demos and protocol decoding.
 
 - [🔍 UI Module Overview](% vlink /configuration/ui-module/index.md %})
+
+

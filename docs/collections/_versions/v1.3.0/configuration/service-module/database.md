@@ -26,8 +26,8 @@ The database is configured via the `ConnectionStrings.json` file.
 > Ensure only one database provider is configured at a time.
 {: .block-warning}
 
-🔗 For more details on how to configure connection strings, refer to the 
-[Connection String Fallbacks section]({% vlink /configuration/index.md %}#-connection-string-fallbacks).
+🔗 For more details on how to configure connection strings, refer to the
+[Configuration Basics > Connection String Fallbacks]({% link _common_pages/configuration-basics.md %}#-connection-string-fallbacks) section.
 
 ---
 

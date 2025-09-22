@@ -29,8 +29,8 @@ file, or by using **Environment Variables**.
 - 📁 **Location**: `/app/Config_Files/ServiceModule`
 - 📌 **Full Path**: `/app/Config_Files/ServiceModule/RateLimiter.Production.json`
 
-For more information on this refer to the 
-[Configuration]({% vlink /configuration/index.md %}#%EF%B8%8F-overriding-configuration) page.
+For more information on this refer to the
+[Configuration Basics]({% link _common_pages/configuration-basics.md %}#%EF%B8%8F-overriding-configuration) page.
 
 ## 🔧 Configuration Options
 
