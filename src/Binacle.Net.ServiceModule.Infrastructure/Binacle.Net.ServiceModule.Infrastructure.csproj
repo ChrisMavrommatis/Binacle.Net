@@ -5,8 +5,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="AWSSDK.S3" Version="4.0.7.2" />
-	  <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
+ 	  <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
 	  <PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.4" />
 	  <PackageReference Include="Dapper" Version="2.1.66" />
 	  <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.9" />

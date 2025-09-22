@@ -2,7 +2,6 @@
 	"ConnectionStrings": {
 		"AzureStorage": "",
     "Postgres": "Host=localhost;Port=5432;Database=binacle_net;Username=appuser;Password=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3",
-    "Sqlite": "Data Source=data/binacle-net-service.db;",
-    "BackupToS3": "ServiceUrl=http://localhost:9000;AccessKeyId=minioadmin;SecretAccessKey=minioadmin123;BucketName=binacledata;"
+    "Sqlite": "Data Source=data/binacle-net-service.db;"
 	}
 }

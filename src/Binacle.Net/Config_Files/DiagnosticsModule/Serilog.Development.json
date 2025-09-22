@@ -3,8 +3,7 @@
 		"MinimumLevel": {
 			"Override": {
 				"Microsoft.AspNetCore": "Information",
-				"Azure.Core":  "Information",
-        "Binacle.Net.ServiceModule.Infrastructure.Services.BackupToS3": "Debug"
+				"Azure.Core":  "Information"
 			}
 		}
 	}

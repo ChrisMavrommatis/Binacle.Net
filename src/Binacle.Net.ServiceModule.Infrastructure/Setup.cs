@@ -51,24 +51,6 @@ public static class Setup
 
 		builder.Services.AddStartupTask<EnsureDefaultAdminAccountExistsStartupTask>();
 		
-		var backupToS3ConnectionString = builder.Configuration
-			.GetConnectionStringWithEnvironmentVariableFallback("BackupToS3");
-		if (backupToS3ConnectionString is not null)
-		{
-			Log.Information("Registering {ServiceName} as a hosted service", "BackupToS3");
-			builder.Services.AddHostedService<Services.BackupToS3>(sp =>
-			{
-				return new Services.BackupToS3(
-					sp.GetRequiredService<IHostEnvironment>(),
-					sp.GetRequiredService<TimeProvider>(),
-					sp.GetRequiredService<ILogger<Services.BackupToS3>>(),
-					backupToS3ConnectionString
-				);
-			});
-		}
-		
-		
-
 		return builder;
 	}
 
