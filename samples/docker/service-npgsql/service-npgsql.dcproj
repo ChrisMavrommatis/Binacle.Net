@@ -4,7 +4,7 @@
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
     <DockerServiceName>Binacle.Net</DockerServiceName>
-    <ProjectGuid>4ecfa9fa-2751-4a4c-9c26-e67f534a42c1</ProjectGuid>
+    <ProjectGuid>291a9588-4ec8-46f8-9764-c4094d09b1f0</ProjectGuid>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>

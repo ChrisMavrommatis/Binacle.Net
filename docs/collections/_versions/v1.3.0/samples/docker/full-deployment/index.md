@@ -100,7 +100,7 @@ Run the following commands to create the directory and set the required permissi
 
 ```bash
 mkdir -p ./data/logs
-sudo chmod -R 777 ./data ./data/logs
+sudo chmod -R 777 ./data
 ```
 This will grant full access to `./data` and its subdirectories.
 

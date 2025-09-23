@@ -31,6 +31,9 @@
       - SERVICE_MODULE=True
       - AZURESTORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1
       - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/
+      - BINACLE_ADMIN_CREDENTIALS=admin@binacle.net:B1n4cl3Adm!n
+      - PackingLogs__Enabled=True
+      - HealthChecks__Enabled=True
       - OTEL_EXPORTER_OTLP_HEADERS=x-otlp-api-key=9EFB07A6-E9F9-4AC1-A0DE-DBE829B7236B
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite:latest
@@ -53,4 +56,3 @@
         read_only: true
     environment:
       - DOTNET_DASHBOARD_CONFIG_FILE_PATH=config_files/aspire-dashboard-config.json
-

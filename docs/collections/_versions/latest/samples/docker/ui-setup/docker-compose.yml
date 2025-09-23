@@ -1,4 +1,4 @@
-﻿services:
+services:
   binacle-net:
     image: binacle/binacle-net:latest
     ports:
@@ -10,4 +10,9 @@
         read_only: true
       - type: bind
         source: ./data
-        target: /app/data
+        target: /app/data/
+    environment:
+      - SWAGGER_UI=True
+      - UI_MODULE=True
+      - SCALAR_UI=True
+      - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/

@@ -1,4 +1,4 @@
-﻿{
+{
   "OpenTelemetry" : {
     "Otlp": {
       "Enabled": true,

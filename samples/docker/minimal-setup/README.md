@@ -1,5 +1,6 @@
 # Binacle.Net - Minimal Setup
-This sample demonstrates how to set up and run Binacle.Net with custom presets using Docker Compose. It is a minimal setup that showcases basic API functionality with customizable bin configurations.
+This sample demonstrates how to set up and run Binacle.Net with custom presets using Docker Compose.
+It is a minimal setup that showcases basic API functionality with customizable bin configurations.
 
 ## 🛠️ Prerequisites
 Before you start, make sure you have [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose/) installed on your machine.
@@ -13,12 +14,12 @@ Before you start, make sure you have [Docker](https://www.docker.com) and [Docke
    ```
    Alternatively, download the contents of this folder directly.
 
-3. **Verify Files**<br>
+2. **Verify Files**<br>
    Ensure the following files are present in the same directory:
    - `docker-compose.yml` – Docker Compose configuration for all services.
    - `Presets.json` – Your custom bin configurations.
 
-4. **Customize (Optional)**<br>
+3. **Customize (Optional)**<br>
    Edit the `Presets.json` file to adjust the bin configurations as per your needs.
 
 ## 🚀 Running the Application
@@ -27,15 +28,14 @@ In the project directory, start the application by running:
 docker compose up
 ```
 This will launch the Binacle.Net API with:
-- 🌐 **Swagger UI**: http://localhost:8080/swagger/ for easy API exploration.
+- 📖 **Custom Presets**: Loaded from your `Presets.json`.
 - 📂 **Logs Folder**: A `./data/logs` folder will be created to store API logs for monitoring and debugging.
 
 ##🌐 Accessing the API
-Once the containers are running, open your browser and go to:
+Once the containers are running, you can start to interact with the API on:
 ```bash
-http://localhost:8080/swagger/
+http://localhost:8080/
 ```
-Here, you can explore and test the API endpoints with an intuitive interface.
 
 ## ⚙️ Customizing Presets
 To modify bin configurations:
@@ -46,17 +46,17 @@ To modify bin configurations:
     docker compose down
     docker compose up
     ```
-Your custom presets will now be active in the API.
 
 ## 📂 Logs Folder
-When running the application, a `./data` folder will be created to store application data, including logs for monitoring and debugging. It's important to ensure that the `./data` and `./data/logs` directories have write permissions for proper functionality.
+When running the application, a `./data` folder will be created to store application data, including logs for monitoring and debugging. 
+It's important to ensure that the `./data` and `./data/logs` directories have write permissions for proper functionality.
 
 ### Setting Permissions
 Run the following commands to create the directory and set the required permissions:
 
 ```bash
 mkdir -p ./data/logs
-sudo chmod -R 777 ./data ./data/logs
+sudo chmod -R 777 ./data
 ```
 This will grant full access to `./data` and its subdirectories.
 

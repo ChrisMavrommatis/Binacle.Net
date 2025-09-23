@@ -1,0 +1,43 @@
+﻿services:
+  binacle-net:
+    image: binacle/binacle-net:latest
+    depends_on:
+      postgres:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./Presets.json
+        target: /app/Config_Files/Presets.json
+        read_only: true
+      - type: bind
+        source: ./JwtAuth.json
+        target: /app/Config_Files/ServiceModule/JwtAuth.json
+        read_only: true
+      - type: bind
+        source: ./data
+        target: /app/data/
+    environment:
+      - SWAGGER_UI=True
+      - SCALAR_UI=True
+      - UI_MODULE=True
+      - SERVICE_MODULE=True
+      - POSTGRES_CONNECTION_STRING=Host=localhost;Port=5432;Database=binacle_net;Username=appuser;Password=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3
+      - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/
+      - BINACLE_ADMIN_CREDENTIALS=admin@binacle.net:B1n4cl3Adm!n
+      - PackingLogs__Enabled=True
+      - HealthChecks__Enabled=True
+  postgres:
+    image: postgres:17.6
+    ports:
+      - '5432:5432'
+    volumes:
+      - type: bind
+        source: ./postgres
+        target: /var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=appuser
+      - POSTGRES_PASSWORD=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3
+      - POSTGRES_DB=binacle_net
+
