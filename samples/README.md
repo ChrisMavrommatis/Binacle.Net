@@ -14,4 +14,4 @@ These samples demonstrate how to run Binacle.Net using Docker Compose.
 ## Kubernetes Samples
 These samples will demonstrate how to run Binacle.Net using Kubernetes on an existing cluster.
 
-- [Minimal Setup](https://github.com/ChrisMavrommatis/Binacle.Net/tree/main/samples/kubernetes/minimal-setup): A minimal Kubernetes setup for Binacle.Net.
+- [Minimal Setup](kubernetes/minimal-setup/): A minimal Kubernetes setup for Binacle.Net.
