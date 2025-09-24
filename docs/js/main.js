@@ -1,15 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
     
-    const versionSelect = document.querySelector('[data-versionselect]');
+    const versionSelects = document.querySelectorAll('[data-versionselect]');
     
-    if(!!versionSelect){
-        versionSelect.addEventListener('change', function (event) {
-            const url = versionSelect.dataset.versionselect;
-            const selectedVersion = event.target.value;
-            if (selectedVersion) {
-                window.location.href = url + selectedVersion;
-            }
-        });    
+    if(!!versionSelects){
+        versionSelects.forEach(versionSelect => {
+            versionSelect.addEventListener('change', function (event) {
+                const url = versionSelect.dataset.versionselect;
+                const selectedVersion = event.target.value;
+                if (selectedVersion) {
+                    window.location.href = url + selectedVersion;
+                }
+            });
+        });
     }
     
     // Find the active span

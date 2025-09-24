@@ -10,7 +10,7 @@ nav:
 
 The Core module is the foundation of Binacle.Net.
 
-It provides essential API functionality, as detailed in the [About the API]({% vlink /api/index.md %}) page.
+It provides essential API functionality, as detailed in the [API]({% vlink /api/index.md %}) page.
 
 It also supports customizable presets and includes Swagger UI, which is disabled by default.
 

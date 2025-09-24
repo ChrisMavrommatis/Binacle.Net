@@ -26,13 +26,10 @@ or utilize pre-defined boxes designed to fit seamlessly within those lockers.
 ## 🚀 [Quick Start]({% vlink /quick-start.md %})
 Get started with Binacle.Net in just a few steps! The Quick Start Guide covers the basics you need to run it quickly.
 
-## [Release Notes]({% vlink release-notes.md %})
+## 🛠️ [Release Notes]({% vlink release-notes.md %})
 See what's new in the {{ page.version }} version of Binacle.Net.
 
-## 🔍 [Core Concepts]({% link _common_pages/core-concepts.md %})
-Discover the algorithms behind Binacle.Net and learn how it handles fitting and packing items into bins.
-
-## 📡 [About the API]({% vlink /api/index.md %})
+## 📡 [API]({% vlink /api/index.md %})
 Understand the API endpoints, including how to use presets, send custom bin and item data, and query by preset to
 find the most efficient packing solution.
 
