@@ -37,16 +37,16 @@ Understand the API endpoints, including how to use presets, send custom bin and 
 find the most efficient packing solution.
 
 Below are the main API versions and related resources:
-- ⚖️ [V2]({% vlink /api/v2.md %}): ...TODO...
-- 🧪 [V3]({% vlink /api/v3.md %}): ...TODO...
+- ⚖️ [V2]({% vlink /api/v2.md %}): Offers the Fitting and Packing functions with fixed algorithm.
+- 🧪 [V3]({% vlink /api/v3.md %}): Introduces algorithm selection and deprecates some V2 features.
 
 ## 🔧 Configuration
 Customize Binacle.Net to suit your environment. Explore the following configuration modules:
 
-- 🏗️ Core: Provides essential API functionality, including Presets customization.
-- 📊 Diagnostics Module: Configure logging, health checks, and telemetry.
-- 🛡️ Service Module: Enable rate limiting, authentication, and cloud logging.
-- 🖥️ UI Module: Enable the visual demo interface for packing simulations.
+- [🏗️ Core]({% vlink /configuration/core/index.md %}): Provides essential API functionality, including Presets customization.
+- [📊 Diagnostics Module]({% vlink /configuration/diagnostics-module/index.md %}): Configure logging, health checks, and telemetry.
+- [🛡️ Service Module]({% vlink /configuration/service-module/index.md %}): Allows Binacle.Net to run as a Service.
+- [🖥️ UI Module]({% vlink /configuration/ui-module/index.md %}): Enable the visual demo interface for packing simulations.
 
 ---
 

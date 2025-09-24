@@ -1,0 +1,12 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: binacle-net-service
+spec:
+  selector:
+    app: binacle-net
+  ports:
+    - protocol: TCP
+      port: 8080       # service port
+      targetPort: 8080 # container port
+  type: ClusterIP     # internal only

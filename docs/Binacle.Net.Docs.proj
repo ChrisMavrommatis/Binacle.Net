@@ -6,6 +6,7 @@
 	<ItemGroup>
 		<None Include="**/*.md"/>
 		<None Include="**/*.yml"/>
+		<None Include="**/*.yaml"/>
 		<None Include="**/*.markdown"/>
 		<None Include="**/*.html"/>
 		<None Include="**/*.png"/>
