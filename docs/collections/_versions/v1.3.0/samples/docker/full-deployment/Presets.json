@@ -1,0 +1,50 @@
+{
+  "PresetOptions": {
+    "Presets": {
+      "custom-preset-1": {
+        "Bins": [
+          {
+            "ID": "bin-1",
+            "Length": 60,
+            "Width": 40,
+            "Height": 10
+          },
+          {
+            "ID": "bin-2",
+            "Length": 60,
+            "Width": 40,
+            "Height": 20
+          }
+        ]
+      },
+      "custom-preset-2": {
+        "Bins": [
+          {
+            "ID": "bin-1",
+            "Length": 10,
+            "Width": 20,
+            "Height": 30
+          },
+          {
+            "ID": "bin-2",
+            "Length": 20,
+            "Width": 40,
+            "Height": 60
+          },
+          {
+            "ID": "bin-3",
+            "Length": 40,
+            "Width": 80,
+            "Height": 120
+          },
+          {
+            "ID": "bin-4",
+            "Length": 80,
+            "Width": 120,
+            "Height": 140
+          }
+        ]
+      }
+    }
+  }
+}

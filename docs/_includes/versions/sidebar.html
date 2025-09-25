@@ -1,0 +1,38 @@
+<header>
+    <article class="middle-align center-align secondary no-radius">
+        <div>
+            <a href="{% vlink /index.md %}">
+                <img class="large" src="{{ site.logo.src | relative_url }}" alt="{{ site.logo.alt }}"/>
+            </a>
+            <div class="max">
+                <a href="{% vlink /index.md %}">
+                    <h5>{{ site.title }}</h5>
+                </a>
+            </div>
+            {% assign uniq_versions = site.versions | map: 'version' | uniq %}
+            {% if uniq_versions.size != 0 %}
+            <div class="field suffix small">
+                <select id="version-select" data-versionselect="{{ '/version/' | relative_url }}">
+                    {% for uniq_version in uniq_versions %}
+                    {% if uniq_version == page.version %}
+                    <option value="{{ uniq_version }}" selected>{{ uniq_version | capitalize }}</option>
+                    {% else %}
+                    <option value="{{ uniq_version }}">{{ uniq_version | capitalize }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                <i>arrow_drop_down</i>
+            </div>
+            {% endif %}
+            <a class="button small fill" href="{% link pages/index.md %}">
+                <i>arrow_back</i>
+                General Docs
+            </a>
+        </div>
+    </article>
+</header>
+<div>
+    {% assign menu_items = site.versions | where: 'nav.exclude',nill | where: 'version',page.version | where: 'nav.parent',nil %}
+    
+    {% include versions/menu.html menu_items=menu_items menu_level=0 %}
+</div>

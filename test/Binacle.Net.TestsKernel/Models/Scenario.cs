@@ -2,6 +2,12 @@
 
 namespace Binacle.Net.TestsKernel.Models;
 
+public enum ScenarioResultType
+{
+	BinaryDecision,
+	PackingEfficiency
+}
+
 public sealed class Scenario : BinScenarioBase
 {
 	private Scenario(string binString) : base(binString)
@@ -44,7 +50,7 @@ public sealed class Scenario : BinScenarioBase
 		{
 			ScenarioResultType.BinaryDecision => BinaryDecisionScenarioResult.Create(resultParts[1]),
 			ScenarioResultType.PackingEfficiency => PackingEfficiencyScenarioResult.Create(resultParts[1]),
-			_ => throw new NotImplementedException($"Result type {resultParts[0]} not implemented")
+			_ => throw new NotSupportedException($"Scenario Result type {resultParts[0]} not implemented")
 		};
 		return new Scenario(bin)
 		{

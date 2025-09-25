@@ -1,0 +1,35 @@
+﻿
+<nav class="tiny-space">
+    {% assign crumbs = page.url | remove:'/index.html' | split: '/' %}
+    <a href="{% link pages/index.md %}">
+        <i class="small">home</i>
+    </a>
+
+    {% for crumb in crumbs offset: 1 %}
+        {% assign crumb_limit = forloop.index | plus: 1 %}
+        {% assign crumb_url = '' %}
+        {% for crumb in crumbs limit: crumb_limit %}
+        {% assign crumb_url = crumb_url | append: crumb | append: '/' %}
+        {% endfor %}
+        {% assign crumb_title = crumb | replace:'-',' ' | remove:'.html' %}
+    
+        <span>/</span>
+        {% if forloop.last %}
+            <span>
+                {{ page.menu_title | default: page.title }}
+            </span>
+        {% else %}
+            <span>
+                <a href="{{ crumb_url }}">
+                    {{ crumb_title | capitalize_all  }}
+                </a>
+            </span>
+        {% endif %}
+    {% endfor %}
+</nav>
+
+
+
+
+
+

@@ -1,0 +1,15 @@
+services:
+  binacle-net:
+    image: binacle/binacle-net:1.3.0
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./Presets.json
+        target: /app/Config_Files/Presets.json
+        read_only: true
+      - type: bind
+        source: ./data
+        target: /app/data
+    environment:
+      - SWAGGER_UI=True

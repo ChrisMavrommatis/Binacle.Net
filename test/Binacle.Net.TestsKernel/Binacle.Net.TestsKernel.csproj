@@ -1,9 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -13,18 +10,13 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="xunit.extensibility.core" Version="2.9.3"/>
+		<PackageReference Include="xunit.v3.extensibility.core" Version="3.0.1" />
+		<PackageReference Include="xunit.v3.common" Version="3.0.1" />
 	</ItemGroup>
 
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj"/>
-	</ItemGroup>
-	
-	<ItemGroup>
-		<None Update="Data\BinCollections\*.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
+		<ProjectReference Include="..\..\src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

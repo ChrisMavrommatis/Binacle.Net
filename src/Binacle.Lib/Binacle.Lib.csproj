@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(ProjectName).UnitTests" />
+		<InternalsVisibleTo Include="$(ProjectName).Benchmarks" />
+		<InternalsVisibleTo Include="$(ProjectName).PerformanceTests" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>

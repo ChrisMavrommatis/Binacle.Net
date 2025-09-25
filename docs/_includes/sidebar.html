@@ -1,0 +1,25 @@
+<header>
+    <article class="middle-align center-align secondary no-radius">
+        <div>
+            <a href="{% link pages/index.md %}">
+                <img class="large" src="{{ site.logo.src | relative_url }}" alt="{{ site.logo.alt }}"/>
+            </a>
+            <div class="max">
+                <a href="{% link pages/index.md %}">
+                    <h5>{{ site.title }}</h5>
+                </a>
+            </div>
+            <nav class="center-align">
+                <a class="button small fill" href="{% link _versions/latest/index.md %}">
+                    <i>menu_book</i>
+                    Latest Version Docs 
+                </a>    
+            </nav>
+        </div>
+    </article>
+</header>
+<div>
+    {% assign menu_items = site.common_pages | where: 'nav.exclude',nill | where: 'nav.parent',nil %}
+    
+    {% include menu.html menu_items=menu_items menu_level=0 %}
+</div>

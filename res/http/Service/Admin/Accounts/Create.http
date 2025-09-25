@@ -1,0 +1,11 @@
+﻿
+POST https://{{HOST}}/api/admin/account/
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{BEARERTOKEN}}
+
+{
+  "username": "user@example.binacle.net",
+  "email" : "user@example.binacle.net",
+  "password": "userspassword"
+}

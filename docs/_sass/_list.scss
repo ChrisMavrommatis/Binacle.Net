@@ -1,0 +1,17 @@
+﻿.list > li > details > .list {
+  padding: 0 0 0 1rem;
+}
+
+.list li a {
+  display: block;      /* make the <a> a block element */
+  width: 100%;         /* full width of li */
+  height: 100%;        /* full height of li */
+  text-decoration: none; /* optional: style adjustments */
+  color: inherit;      /* optional: inherit text color */
+  padding: 0;          /* optional: reset padding if needed */
+}
+
+// ul inside li
+li ul {
+  margin-block-start: 0.1rem !important; 
+}

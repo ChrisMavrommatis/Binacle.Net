@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<UserSecretsId>Binacle_Net_Secrets</UserSecretsId>
+		<DisableScopedCssBundling>true</DisableScopedCssBundling>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Serilog" Version="4.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\dep\Binacle.ViPaq\Binacle.ViPaq.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
+	  <ProjectReference Include="..\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<UIFiles Include="wwwroot\**\*.*" />
+	</ItemGroup>
+
+	<!-- This target runs on every build -->
+	<Target Name="CopyUIFiles" BeforeTargets="Build;Rebuild">
+		<Copy SourceFiles="@(UIFiles)" DestinationFolder="..\Binacle.Net\wwwroot\%(UIFiles.RecursiveDir)" />
+	</Target>
+
+</Project>

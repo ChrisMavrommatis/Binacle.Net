@@ -1,0 +1,9 @@
+.no-radius {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+:has(> nav.fixed.bottom.fab)
+{
+  --_bottom: 0rem !important;
+}

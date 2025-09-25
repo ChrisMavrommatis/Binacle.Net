@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Lib.Abstractions.Models;
+﻿using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.Net.TestsKernel.Models;
 

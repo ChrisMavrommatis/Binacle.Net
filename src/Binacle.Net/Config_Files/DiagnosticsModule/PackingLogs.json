@@ -1,0 +1,17 @@
+﻿{
+	"PackingLogs" : {
+		"Enabled": false,
+		"Fitting" : {
+			"Path" : "data/pack-logs/fitting/",
+			"FileName" : "{0}.ndjson",
+			"DateFormat" : "yyyyMMdd",
+			"ChannelLimit" : 100
+		},
+		"Packing" : {
+			"Path" : "data/pack-logs/packing/",
+			"FileName" : "{0}.ndjson",
+			"DateFormat" : "yyyyMMdd",
+			"ChannelLimit" : 100
+		}
+	}
+}

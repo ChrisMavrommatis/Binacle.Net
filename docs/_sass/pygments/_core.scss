@@ -1,0 +1,60 @@
+.highlight .hll { background-color: var(--hl-bg); }
+.highlight .c,
+.highlight .cm,
+.highlight .cp,
+.highlight .c1,
+.highlight .cs,
+.highlight .gu { color: var(--hl-comment); }
+.highlight .err { color: var(--hl-error); background-color: var(--hl-error-bg); }
+.highlight .k,
+.highlight .kc,
+.highlight .kd,
+.highlight .kp,
+.highlight .kr { color: var(--hl-keyword); }
+.highlight .kn,
+.highlight .nt,
+.highlight .ow,
+.highlight .gd { color: var(--hl-namespace); }
+.highlight .l,
+.highlight .ld { color: var(--hl-literal); }
+.highlight .m,
+.highlight .mf,
+.highlight .mh,
+.highlight .mi,
+.highlight .mo,
+.highlight .il { color: var(--hl-number); }
+.highlight .n,
+.highlight .nb,
+.highlight .ni,
+.highlight .nl,
+.highlight .nn,
+.highlight .nv,
+.highlight .py,
+.highlight .bp,
+.highlight .vc,
+.highlight .vg,
+.highlight .vi,
+.highlight .w { color: var(--hl-fg); }
+.highlight .p { color: var(--hl-fg); }
+.highlight .s,
+.highlight .sb,
+.highlight .sc,
+.highlight .sd,
+.highlight .s2,
+.highlight .sh,
+.highlight .si,
+.highlight .sx,
+.highlight .sr,
+.highlight .s1,
+.highlight .ss { color: var(--hl-string); }
+.highlight .na,
+.highlight .nd,
+.highlight .nx,
+.highlight .se { color: var(--hl-attr); }
+.highlight .nc,
+.highlight .ne,
+.highlight .nf { color: var(--hl-class); }
+.highlight .gi { color: var(--hl-inserted); }
+.highlight .ge { font-style: var(--hl-emph); }
+.highlight .gs { font-weight: var(--hl-strong); }
+.highlight .gh { /* Heading & Diff Header (no color) */ }

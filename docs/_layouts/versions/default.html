@@ -1,0 +1,25 @@
+﻿---
+layout: page
+---
+
+{% include header.html %}
+
+<nav class="left drawer no-padding surface-container m l scroll">
+    {% include versions/sidebar.html %}
+</nav>
+<dialog class="left no-padding surface-container scroll no-radius" id="mobile-menu">
+    {% include versions/sidebar.html %}
+</dialog>
+
+<main class="responsive padding">
+    <h1>{{ page.title }}</h1>
+    {{ content }}
+</main>
+
+<nav class="fixed transparent bottom right-align min fab s">
+    <button class="left-round top-round">
+        <span>{{ page.version | capitalize }}</span>
+    </button>
+</nav>
+
+{% include footer.html %}

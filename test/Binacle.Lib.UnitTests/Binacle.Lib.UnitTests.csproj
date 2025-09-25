@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<!--
+            To enable the Microsoft Testing Platform 'dotnet test' experience, add property:
+            <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+
+            To enable the Microsoft Testing Platform native command line experience, add property:
+            <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+
+            For more information on Microsoft Testing Platform support in xUnit.net, please visit:
+            https://xunit.net/docs/getting-started/v3/microsoft-testing-platform
+         -->
+		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="Bogus" Version="35.6.3" />
+		<PackageReference Include="coverlet.collector" Version="6.0.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="Shouldly" Version="4.3.0" />
+		<PackageReference Include="xunit.v3" Version="3.0.1" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit"/>
+		<Using Include="Shouldly"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\dep\ChrisMavrommatis.Shouldly\ChrisMavrommatis.Shouldly.csproj" />
+		<ProjectReference Include="..\..\src\Binacle.Lib\Binacle.Lib.csproj" />
+		<ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj"/>
+	</ItemGroup>
+
+</Project>

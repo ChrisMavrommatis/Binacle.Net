@@ -1,0 +1,9 @@
+﻿{
+	"$schema": "https://json.schemastore.org/launchsettings.json",
+	"profiles": {
+		"LibBenchmarks": {
+			"commandName": "Project",
+			"dotnetRunMessages": true
+		}
+	}
+}

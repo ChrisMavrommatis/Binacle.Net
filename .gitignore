@@ -31,8 +31,21 @@ PerformanceTestsArtifacts
 Output
 output
 
+
 ## Copied from UI Module
-src/Binacle.Net.Api/wwwroot/ 
+src/Binacle.Net/wwwroot/ 
 
 ## data
 azurite/
+minio_data/
+*.db
+*.sqlite
+*.ndjson
+
+## Docs Jekyll
+_site
+build/docs
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor

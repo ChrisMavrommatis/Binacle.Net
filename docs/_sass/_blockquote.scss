@@ -1,0 +1,94 @@
+/* Common styles for all blocks */
+.block-tip, .block-warning, .block-caution, .block-note {
+  border-radius: 6px;
+  border-left: 6px solid;
+  margin: 1.5em 0;
+  padding: 1em 1.2em;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+.block-tip p, .block-warning p, .block-caution p, .block-note p {
+  padding-top: 1.25rem;
+}
+.block-tip > *, .block-warning > *, .block-caution > *, .block-note > * {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+.block-tip::before, .block-note::before, .block-warning::before, .block-caution::before {
+  font-weight: bold;
+  font-size: 1.1em;
+  position: absolute;
+  left: 1em;
+  top: 1em;
+}
+
+/* Light mode styles */
+.block-tip {
+  border-color: #42b983;
+  background: #f3f8f7;
+}
+.block-note {
+  border-color: #3182ce;
+  background: #ebf8ff;
+}
+.block-warning {
+  border-color: #e7c000;
+  background: #fffbe6;
+}
+.block-caution {
+  border-color: #c00;
+  background: #fff0f0;
+}
+.block-tip::before {
+  content: "TIP";
+  color: #42b983;
+}
+.block-note::before {
+  content: "NOTE";
+  color: #3182ce;
+}
+.block-warning::before {
+  content: "WARNING";
+  color: #e7c000;
+}
+.block-caution::before {
+  content: "CAUTION";
+  color: #c00;
+}
+
+/* Dark mode overrides */
+body.dark {
+  .block-tip, .block-warning, .block-caution, .block-note {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.16);
+    color: #e6e6e6;
+    background: #23272e;
+  }
+  .block-tip {
+    border-color: #42b983;
+    background: #26332c;
+  }
+  .block-note {
+    border-color: #63b3ed;
+    background: #223046;
+  }
+  .block-warning {
+    border-color: #ffe066;
+    background: #4a4320;
+  }
+  .block-caution {
+    border-color: #ff6b6b;
+    background: #3a2323;
+  }
+  .block-tip::before {
+    color: #42b983;
+  }
+  .block-note::before {
+    color: #63b3ed;
+  }
+  .block-warning::before {
+    color: #ffe066;
+  }
+  .block-caution::before {
+    color: #ff6b6b;
+  }
+}

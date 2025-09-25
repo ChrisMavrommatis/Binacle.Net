@@ -3,15 +3,13 @@
 ## 📝 Overview
 Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.
 
-It is an ideal fit for e-commerce platforms offering parcel shipments to self-service locker systems, providing optimal bin packing calculations to ensure efficient use of space and smooth customer experiences during checkout.
+It is an ideal fit for e-commerce platforms offering parcel shipments to self-service locker systems,
+providing optimal bin packing calculations to ensure efficient use of space and smooth customer experiences during checkout.
 
 Explore the following sections to get started and learn more about Binacle.Net:
 
 
-## 🚀 [Quick Start](https://github.com/ChrisMavrommatis/Binacle.Net/wiki/Quick-Start)
-Get started with Binacle.Net in just a few steps! The [Quick Start](https://github.com/ChrisMavrommatis/Binacle.Net/wiki/Quick-Start) Guide covers the basics you need to run it quickly.
-
-### ⚡ Run Binacle.Net with Docker and UI Module
+## 🚀 Quick Start
 Simply execute the following command in your terminal:
 
 ```bash

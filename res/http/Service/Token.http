@@ -1,0 +1,11 @@
+@Username = admin@binacle.net
+@Password = B1n4cl3Adm!n
+
+POST https://{{HOST}}/api/auth/token
+Accept: application/json
+Content-Type: application/json
+
+{
+  "username": "{{Username}}",
+  "password" : "{{Password}}"
+}

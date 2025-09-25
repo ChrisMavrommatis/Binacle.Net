@@ -1,5 +1,5 @@
 ﻿using Binacle.ViPaq.Helpers;
-using Bogus;
+using Binacle.ViPaq.UnitTests.Models;
 
 namespace Binacle.ViPaq.UnitTests;
 
@@ -16,42 +16,42 @@ public class BitSizeHelperBehaviorTests
 	[Fact]
 	public void GetDimensionsBitSize_Throws_ArgumentOutOfRangeException_When_Length_Is_Zero()
 	{
-		var binFaker = new Bogus.Faker<Models.Bin<int>>()
+		var binFaker = new Faker<Bin<int>>()
 			.RuleFor(x => x.Length, x => 0)
 			.RuleFor(x => x.Width, x => x.Random.Int(1))
 			.RuleFor(x => x.Height, x => x.Random.Int(1));
 		
 		var bin = binFaker.Generate(1).FirstOrDefault()!;
 		
-		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetDimensionsBitSize<Models.Bin<int>, int>(bin))
+		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetDimensionsBitSize<Bin<int>, int>(bin))
 			.ParamName.ShouldBe(nameof(bin.Length));
 	}
 	
 	[Fact]
 	public void GetDimensionsBitSize_Throws_ArgumentOutOfRangeException_When_Width_Is_Zero()
 	{
-		var binFaker = new Bogus.Faker<Models.Bin<int>>()
+		var binFaker = new Faker<Bin<int>>()
 			.RuleFor(x => x.Length, x => x.Random.Int(1))
 			.RuleFor(x => x.Width, x => 0)
 			.RuleFor(x => x.Height, x => x.Random.Int(1));
 		
 		var bin = binFaker.Generate(1).FirstOrDefault()!;
 		
-		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetDimensionsBitSize<Models.Bin<int>, int>(bin))
+		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetDimensionsBitSize<Bin<int>, int>(bin))
 			.ParamName.ShouldBe(nameof(bin.Width));
 	}
 	
 	[Fact]
 	public void GetDimensionsBitSize_Throws_ArgumentOutOfRangeException_When_Height_Is_Zero()
 	{
-		var binFaker = new Bogus.Faker<Models.Bin<int>>()
+		var binFaker = new Faker<Bin<int>>()
 			.RuleFor(x => x.Length, x => x.Random.Int(1))
 			.RuleFor(x => x.Width, x => x.Random.Int(1))
 			.RuleFor(x => x.Height, x => 0);
 		
 		var bin = binFaker.Generate(1).FirstOrDefault()!;
 		
-		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetDimensionsBitSize<Models.Bin<int>, int>(bin))
+		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetDimensionsBitSize<Bin<int>, int>(bin))
 			.ParamName.ShouldBe(nameof(bin.Height));
 	}
 	#endregion
@@ -60,7 +60,7 @@ public class BitSizeHelperBehaviorTests
 	[Fact]
 	public void GetCoordinatesBitSize_Throws_ArgumentOutOfRangeException_When_X_Is_Less_Than_Zero()
 	{
-		var itemFaker = new Bogus.Faker<Models.Item<int>>()
+		var itemFaker = new Faker<Item<int>>()
 			.RuleFor(x => x.Length, x => x.Random.Int())
 			.RuleFor(x => x.Width, x => x.Random.Int())
 			.RuleFor(x => x.Height, x => x.Random.Int())
@@ -70,14 +70,14 @@ public class BitSizeHelperBehaviorTests
 		
 		var item = itemFaker.Generate(1).FirstOrDefault()!;
 		
-		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetCoordinatesBitSize<Models.Item<int>, int>(item))
+		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetCoordinatesBitSize<Item<int>, int>(item))
 			.ParamName.ShouldBe(nameof(item.X));
 	}
 	
 	[Fact]
 	public void GetCoordinatesBitSize_Throws_ArgumentOutOfRangeException_When_Y_Is_Less_Than_Zero()
 	{
-		var itemFaker = new Bogus.Faker<Models.Item<int>>()
+		var itemFaker = new Faker<Item<int>>()
 			.RuleFor(x => x.Length, x => x.Random.Int())
 			.RuleFor(x => x.Width, x => x.Random.Int())
 			.RuleFor(x => x.Height, x => x.Random.Int())
@@ -87,14 +87,14 @@ public class BitSizeHelperBehaviorTests
 		
 		var item = itemFaker.Generate(1).FirstOrDefault()!;
 		
-		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetCoordinatesBitSize<Models.Item<int>, int>(item))
+		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetCoordinatesBitSize<Item<int>, int>(item))
 			.ParamName.ShouldBe(nameof(item.Y));
 	}
 	
 	[Fact]
 	public void GetCoordinatesBitSize_Throws_ArgumentOutOfRangeException_When_Z_Is_Less_Than_Zero()
 	{
-		var itemFaker = new Bogus.Faker<Models.Item<int>>()
+		var itemFaker = new Faker<Item<int>>()
 			.RuleFor(x => x.Length, x => x.Random.Int())
 			.RuleFor(x => x.Width, x => x.Random.Int())
 			.RuleFor(x => x.Height, x => x.Random.Int())
@@ -104,7 +104,7 @@ public class BitSizeHelperBehaviorTests
 		
 		var item = itemFaker.Generate(1).FirstOrDefault()!;
 		
-		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetCoordinatesBitSize<Models.Item<int>, int>(item))
+		Should.Throw<ArgumentOutOfRangeException>(() => BitSizeHelper.GetCoordinatesBitSize<Item<int>, int>(item))
 			.ParamName.ShouldBe(nameof(item.Z));
 	}
 	#endregion

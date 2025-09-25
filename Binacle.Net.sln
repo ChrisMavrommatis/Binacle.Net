@@ -11,14 +11,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8
 		Nuget.config = Nuget.config
 		README.md = README.md
 		.dockerignore = .dockerignore
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}"
 	ProjectSection(SolutionItems) = preProject
-		build\build.sh = build\build.sh
 		build\README.md = build\README.md
-		build\docker-create.sh = build\docker-create.sh
 	EndProjectSection
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Local", "build\local\local.proj", "{84E99DD5-CDE6-433D-910B-29873AD23B51}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ContentProject", "build\contentproject\contentproject.proj", "{3A074859-B076-45C5-97AB-BE404A0E8434}"
 EndProject
@@ -28,11 +29,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{C74DE1
 		config\tmux.sh = config\tmux.sh
 	EndProjectSection
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Binacle.Net.AspireDashboardOtel", "config\aspire-dashboard-otel\Binacle.Net.AspireDashboardOtel.dcproj", "{1756A39D-E259-4888-BDB4-F06140DF95CB}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Benchmarks", "config\benchmarks\benchmarks.proj", "{56B1A9D0-E233-4A2F-AA08-6930A0E07E57}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "API", "config\api\api.proj", "{36D64047-17B3-4B3D-8382-7CB0326C6826}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Docs", "config\docs\docs.proj", "{5E1ADA60-2746-4AFD-8995-91AB1049FD29}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Tests", "config\tests\tests.proj", "{196E6492-8522-470E-9D87-D50DB7361B07}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Services", "config\services\services.dcproj", "{1756A39D-E259-4888-BDB4-F06140DF95CB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dep", "dep", "{5EE822B0-B4A4-43DF-8967-91D3CFC190F8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Swashbuckle", "dep\ChrisMavrommatis.Swashbuckle\ChrisMavrommatis.Swashbuckle.csproj", "{882F3C14-EAC8-4D7D-881B-61A6663E38B6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Logging", "dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj", "{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}"
 EndProject
@@ -45,13 +52,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{88EC1702-D37
 		doc\README.md = doc\README.md
 	EndProjectSection
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.Net.Tests.BenchmarkResults", "doc\benchmark-results\Binacle.Net.Tests.BenchmarkResults.proj", "{61DCF326-13CF-47B8-A327-C22B2F5E1CD7}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.TestResults.Benchmarks", "doc\benchmark-results\Binacle.TestResults.Benchmarks.proj", "{61DCF326-13CF-47B8-A327-C22B2F5E1CD7}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.Net.Tests.PackingEfficiencyResults", "doc\packing-efficiency-results\Binacle.Net.Tests.PackingEfficiencyResults.proj", "{4261E056-EC16-4AD7-8CD1-F327386C8BE9}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.TestResults.PackingEfficiency", "doc\packing-efficiency-results\Binacle.TestResults.PackingEfficiency.proj", "{4261E056-EC16-4AD7-8CD1-F327386C8BE9}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.Net.Docs", "docs\Binacle.Net.Docs.proj", "{BA4B82B3-58AE-4101-A29D-649A5A5AC957}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "res", "res", "{D91D976D-F7CC-4AEF-B942-5B5EE97832F7}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.Net.Http", "res\http\Binacle.Net.Http.proj", "{5E845E8C-E566-4C95-9282-EBA7D18319D5}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Http", "res\http\http.proj", "{5E845E8C-E566-4C95-9282-EBA7D18319D5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8C31D46E-8778-404A-AEA5-FF4466499CD6}"
 	ProjectSection(SolutionItems) = preProject
@@ -59,51 +68,66 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8C31
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		samples\docker\README.md = samples\docker\README.md
+	EndProjectSection
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Binacle.Net.Samples.Docker.MinimalSetup", "samples\docker\minimal-setup\Binacle.Net.Samples.Docker.MinimalSetup.dcproj", "{EE4463F3-1386-45F0-AF4E-41D60999E5DC}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Minimal-Setup", "samples\docker\minimal-setup\minimal-setup.dcproj", "{EE4463F3-1386-45F0-AF4E-41D60999E5DC}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Binacle.Net.Samples.Docker.WithUiModuleOnly", "samples\docker\ui-module-only\Binacle.Net.Samples.Docker.WithUiModuleOnly.dcproj", "{291A9588-4EC8-46F8-9764-C4094D09B1F0}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "UI-Setup", "samples\docker\ui-setup\ui-setup.dcproj", "{291A9588-4EC8-46F8-9764-C4094D09B1F0}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Binacle.Net.Samples.Docker.FullDeployment", "samples\docker\full-deployment\Binacle.Net.Samples.Docker.FullDeployment.dcproj", "{4ECFA9FA-2751-4A4C-9C26-E67F534A42C1}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Service-Npgsql", "samples\docker\service-npgsql\service-npgsql.dcproj", "{A0B54D75-3199-4A40-AC93-2C067C452F96}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Service-Azure", "samples\docker\service-azure\service-azure.dcproj", "{C6058E3B-76C9-46FF-9806-08E1BA8B19F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kubernetes", "kubernetes", "{36B5BEA4-E4F0-4CB5-8C06-1D1CF872040E}"
+	ProjectSection(SolutionItems) = preProject
+		samples\kubernetes\README.md = samples\kubernetes\README.md
+	EndProjectSection
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Minimal-Setup", "samples\kubernetes\minimal-setup\minimal-setup.proj", "{C756BC58-4EA7-46A8-AFB8-37B7F59BC124}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AF3732DE-2A08-4636-9087-2C070CDF67F8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib", "src\Binacle.Net.Lib\Binacle.Net.Lib.csproj", "{231D1EB6-7755-4AE5-BC5D-AFE071C1B10D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib", "src\Binacle.Lib\Binacle.Lib.csproj", "{231D1EB6-7755-4AE5-BC5D-AFE071C1B10D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.Abstractions", "src\Binacle.Net.Lib.Abstractions\Binacle.Net.Lib.Abstractions.csproj", "{2E28813F-4DF6-43BD-BD40-D049F508430F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib.Abstractions", "src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj", "{2E28813F-4DF6-43BD-BD40-D049F508430F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api", "src\Binacle.Net.Api\Binacle.Net.Api.csproj", "{7645D2E0-69FF-42BD-A6C3-C527E2472E15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net", "src\Binacle.Net\Binacle.Net.csproj", "{7645D2E0-69FF-42BD-A6C3-C527E2472E15}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule", "src\Binacle.Net.Api.ServiceModule\Binacle.Net.Api.ServiceModule.csproj", "{217F952B-6689-4284-83B3-07251CB5AB2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.DiagnosticsModule", "src\Binacle.Net.DiagnosticsModule\Binacle.Net.DiagnosticsModule.csproj", "{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule.Infrastructure", "src\Binacle.Net.Api.ServiceModule.Infrastructure\Binacle.Net.Api.ServiceModule.Infrastructure.csproj", "{325E39DF-D285-4400-905B-C5CFCB858829}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Kernel", "src\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj", "{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables", "src\Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables\Binacle.Net.Api.ServiceModule.Infrastructure.AzureTables.csproj", "{7053062D-E3AA-492E-B409-7F7D868ED6D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule", "src\Binacle.Net.ServiceModule\Binacle.Net.ServiceModule.csproj", "{217F952B-6689-4284-83B3-07251CB5AB2F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule.Domain", "src\Binacle.Net.Api.ServiceModule.Domain\Binacle.Net.Api.ServiceModule.Domain.csproj", "{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule.Domain", "src\Binacle.Net.ServiceModule.Domain\Binacle.Net.ServiceModule.Domain.csproj", "{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.Kernel", "src\Binacle.Net.Api.Kernel\Binacle.Net.Api.Kernel.csproj", "{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule.Infrastructure", "src\Binacle.Net.ServiceModule.Infrastructure\Binacle.Net.ServiceModule.Infrastructure.csproj", "{325E39DF-D285-4400-905B-C5CFCB858829}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.UIModule", "src\Binacle.Net.Api.UIModule\Binacle.Net.Api.UIModule.csproj", "{3020B942-5FCA-4821-B425-B1CF76C5BE85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.UIModule", "src\Binacle.Net.UIModule\Binacle.Net.UIModule.csproj", "{3020B942-5FCA-4821-B425-B1CF76C5BE85}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.DiagnosticsModule", "src\Binacle.Net.Api.DiagnosticsModule\Binacle.Net.Api.DiagnosticsModule.csproj", "{DEE04EC4-596A-4268-8936-2C85BB5FE8B9}"
-EndProject
+
+
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{33E52B99-426D-45F3-A663-E34A612626B0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib.Benchmarks", "test\Binacle.Lib.Benchmarks\Binacle.Lib.Benchmarks.csproj", "{E07A46C2-5FAE-4373-AA86-FF95FA5BCBD1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib.PerformanceTests", "test\Binacle.Lib.PerformanceTests\Binacle.Lib.PerformanceTests.csproj", "{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Lib.UnitTests", "test\Binacle.Lib.UnitTests\Binacle.Lib.UnitTests.csproj", "{F2367457-E8A0-42BE-A64B-DF12621B9CBA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.IntegrationTests", "test\Binacle.Net.IntegrationTests\Binacle.Net.IntegrationTests.csproj", "{A987C6F6-D895-467B-BA8C-CBF86F4BFC3F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.ServiceModule.IntegrationTests", "test\Binacle.Net.ServiceModule.IntegrationTests\Binacle.Net.ServiceModule.IntegrationTests.csproj", "{0987E640-1DFA-4176-90F0-339907209288}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.TestsKernel", "test\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj", "{198E9FA1-54ED-44D3-9DBE-49CBBA785833}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.UnitTests", "test\Binacle.Net.Lib.UnitTests\Binacle.Net.Lib.UnitTests.csproj", "{F2367457-E8A0-42BE-A64B-DF12621B9CBA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.Benchmarks", "test\Binacle.Net.Lib.Benchmarks\Binacle.Net.Lib.Benchmarks.csproj", "{E07A46C2-5FAE-4373-AA86-FF95FA5BCBD1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.IntegrationTests", "test\Binacle.Net.Api.IntegrationTests\Binacle.Net.Api.IntegrationTests.csproj", "{A987C6F6-D895-467B-BA8C-CBF86F4BFC3F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Api.ServiceModule.IntegrationTests", "test\Binacle.Net.Api.ServiceModule.IntegrationTests\Binacle.Net.Api.ServiceModule.IntegrationTests.csproj", "{0987E640-1DFA-4176-90F0-339907209288}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.Lib.PerformanceTests", "test\Binacle.Net.Lib.PerformanceTests\Binacle.Net.Lib.PerformanceTests.csproj", "{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.ViPaq.UnitTests", "test\Binacle.ViPaq.UnitTests\Binacle.ViPaq.UnitTests.csproj", "{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}"
 EndProject
+
+
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -116,14 +140,6 @@ Global
 		{3A074859-B076-45C5-97AB-BE404A0E8434}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{3A074859-B076-45C5-97AB-BE404A0E8434}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A074859-B076-45C5-97AB-BE404A0E8434}.Release|x86.ActiveCfg = Release|Any CPU
-		{882F3C14-EAC8-4D7D-881B-61A6663E38B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{882F3C14-EAC8-4D7D-881B-61A6663E38B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{882F3C14-EAC8-4D7D-881B-61A6663E38B6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{882F3C14-EAC8-4D7D-881B-61A6663E38B6}.Debug|x86.Build.0 = Debug|Any CPU
-		{882F3C14-EAC8-4D7D-881B-61A6663E38B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{882F3C14-EAC8-4D7D-881B-61A6663E38B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{882F3C14-EAC8-4D7D-881B-61A6663E38B6}.Release|x86.ActiveCfg = Release|Any CPU
-		{882F3C14-EAC8-4D7D-881B-61A6663E38B6}.Release|x86.Build.0 = Release|Any CPU
 		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -176,14 +192,6 @@ Global
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Release|x86.ActiveCfg = Release|Any CPU
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Release|x86.Build.0 = Release|Any CPU
-		{4ECFA9FA-2751-4A4C-9C26-E67F534A42C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4ECFA9FA-2751-4A4C-9C26-E67F534A42C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4ECFA9FA-2751-4A4C-9C26-E67F534A42C1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4ECFA9FA-2751-4A4C-9C26-E67F534A42C1}.Debug|x86.Build.0 = Debug|Any CPU
-		{4ECFA9FA-2751-4A4C-9C26-E67F534A42C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4ECFA9FA-2751-4A4C-9C26-E67F534A42C1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4ECFA9FA-2751-4A4C-9C26-E67F534A42C1}.Release|x86.ActiveCfg = Release|Any CPU
-		{4ECFA9FA-2751-4A4C-9C26-E67F534A42C1}.Release|x86.Build.0 = Release|Any CPU
 		{231D1EB6-7755-4AE5-BC5D-AFE071C1B10D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{231D1EB6-7755-4AE5-BC5D-AFE071C1B10D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{231D1EB6-7755-4AE5-BC5D-AFE071C1B10D}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -224,14 +232,6 @@ Global
 		{325E39DF-D285-4400-905B-C5CFCB858829}.Release|Any CPU.Build.0 = Release|Any CPU
 		{325E39DF-D285-4400-905B-C5CFCB858829}.Release|x86.ActiveCfg = Release|Any CPU
 		{325E39DF-D285-4400-905B-C5CFCB858829}.Release|x86.Build.0 = Release|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Debug|x86.Build.0 = Debug|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Release|x86.ActiveCfg = Release|Any CPU
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9}.Release|x86.Build.0 = Release|Any CPU
 		{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -333,24 +333,26 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{84E99DD5-CDE6-433D-910B-29873AD23B51} = {848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}
 		{3A074859-B076-45C5-97AB-BE404A0E8434} = {848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}
-		{882F3C14-EAC8-4D7D-881B-61A6663E38B6} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{28105C4D-7776-4682-B103-5576E8D2E3F4} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{27243C7C-94C8-4F85-A924-83674E764906} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{61DCF326-13CF-47B8-A327-C22B2F5E1CD7} = {88EC1702-D375-496F-B26A-384DBEA8E0AA}
 		{4261E056-EC16-4AD7-8CD1-F327386C8BE9} = {88EC1702-D375-496F-B26A-384DBEA8E0AA}
+		{BA4B82B3-58AE-4101-A29D-649A5A5AC957} = {88EC1702-D375-496F-B26A-384DBEA8E0AA}
 		{5E845E8C-E566-4C95-9282-EBA7D18319D5} = {D91D976D-F7CC-4AEF-B942-5B5EE97832F7}
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {8C31D46E-8778-404A-AEA5-FF4466499CD6}
 		{EE4463F3-1386-45F0-AF4E-41D60999E5DC} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{4ECFA9FA-2751-4A4C-9C26-E67F534A42C1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{A0B54D75-3199-4A40-AC93-2C067C452F96} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C6058E3B-76C9-46FF-9806-08E1BA8B19F9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C756BC58-4EA7-46A8-AFB8-37B7F59BC124} = {36B5BEA4-E4F0-4CB5-8C06-1D1CF872040E}
 		{231D1EB6-7755-4AE5-BC5D-AFE071C1B10D} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{2E28813F-4DF6-43BD-BD40-D049F508430F} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{7645D2E0-69FF-42BD-A6C3-C527E2472E15} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{217F952B-6689-4284-83B3-07251CB5AB2F} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{325E39DF-D285-4400-905B-C5CFCB858829} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
-		{7053062D-E3AA-492E-B409-7F7D868ED6D9} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{08F20ED6-CB4C-4FDB-AF84-6793A0D7CD1A} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{2ED5D14B-56C3-40A8-88F0-0BC88C95BA2D} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
 		{3020B942-5FCA-4821-B425-B1CF76C5BE85} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
@@ -362,7 +364,12 @@ Global
 		{0987E640-1DFA-4176-90F0-339907209288} = {33E52B99-426D-45F3-A663-E34A612626B0}
 		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9} = {33E52B99-426D-45F3-A663-E34A612626B0}
 		{43A084F6-C19B-48F6-8D24-FD79AE3F53E4} = {33E52B99-426D-45F3-A663-E34A612626B0}
+		{56B1A9D0-E233-4A2F-AA08-6930A0E07E57} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
+		{36D64047-17B3-4B3D-8382-7CB0326C6826} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
+		{5E1ADA60-2746-4AFD-8995-91AB1049FD29} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
+		{196E6492-8522-470E-9D87-D50DB7361B07} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
 		{1756A39D-E259-4888-BDB4-F06140DF95CB} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
+		{36B5BEA4-E4F0-4CB5-8C06-1D1CF872040E} = {8C31D46E-8778-404A-AEA5-FF4466499CD6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}

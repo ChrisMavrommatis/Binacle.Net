@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<!--
+            To enable the Microsoft Testing Platform 'dotnet test' experience, add property:
+            <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+
+            To enable the Microsoft Testing Platform native command line experience, add property:
+            <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+
+            For more information on Microsoft Testing Platform support in xUnit.net, please visit:
+            https://xunit.net/docs/getting-started/v3/microsoft-testing-platform
+         -->
+		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="Config_Files\**\*.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="xunit.runner.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" Version="6.0.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.9" />
+		<PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0"/>
+		<PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="9.9.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="Shouldly" Version="4.3.0" />
+		<PackageReference Include="xunit.v3" Version="3.0.1" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit"/>
+		<Using Include="Shouldly"/>
+		<Using Include="FluxResults"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Binacle.Net.ServiceModule\Binacle.Net.ServiceModule.csproj" />
+		<ProjectReference Include="..\..\src\Binacle.Net\Binacle.Net.csproj" />
+		<ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj"/>
+	</ItemGroup>
+
+</Project>

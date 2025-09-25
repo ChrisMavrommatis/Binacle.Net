@@ -1,0 +1,50 @@
+﻿{% assign menu_items = include.menu_items | sort: "nav.order" %}
+{% assign menu_level = include.menu_level %}
+{% assign menu_level = menu_level | plus: 1 %}
+
+
+{% unless menu_items.size == 0 %}
+<ul class="list border" data-level="{{ menu_level }}">
+    {% for item in menu_items %}
+        {% assign is_active = false %}
+        {% if item.url == page.url %}
+            {% assign is_active = true %}
+        {% endif %}
+        {% assign child_menu_items = site.versions | where: 'nav.exclude',nil | where: 'version', item.version | where: 'nav.parent',item.title %}
+        {% if child_menu_items.size == 0 %}
+        <li class="tiny-space{% if is_active %} surface-container-highest{% endif %}">
+            <span>{{ item.nav.icon }}</span>
+            {% if is_active %}
+            <span data-active>
+                <strong>{{ item.title }}</strong>       
+            </span>
+            {% else %}
+            <a href="{{ item.url | relative_url }}">
+                {{ item.title }}
+            </a>
+            {% endif %}
+        </li>
+        {% else %}
+        <li class="tiny-space">
+            <details>
+                <summary class="{% if is_active %}surface-container-highest{% endif %}">
+                    <span>{{ item.nav.icon }}</span>
+                    {% if is_active %}
+                    <span data-active>
+                        <strong>{{ item.title }}</strong>
+                    </span>
+                    {% else %}
+                    <a href="{{ item.url | relative_url }}">
+                        {{ item.title }}
+                    </a>
+                    {% endif %}
+                    <i>arrow_drop_down</i>
+                </summary>
+                {% include versions/menu.html menu_items=child_menu_items menu_level=menu_level %}
+            </details>
+        </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endunless %}
+

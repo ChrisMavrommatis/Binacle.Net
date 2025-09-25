@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.56">
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="**/*.md"/>
+		<None Include="**/*.yml"/>
+		<None Include="**/*.yaml"/>
+		<None Include="**/*.markdown"/>
+		<None Include="**/*.html"/>
+		<None Include="**/*.png"/>
+		<None Include="**/*.css"/>
+		<None Include="**/*.js"/>
+		<None Include="**/*.scss"/>
+		<None Include="**/*.woff2"/>
+		<None Include="**/*.ico"/>
+		<None Include="**/*.svg"/>
+		<None Include="Gemfile"/>
+		<None Include="**/*.rb"/>
+		<None Include="**/*.json"/>
+	</ItemGroup>
+
+</Project>
