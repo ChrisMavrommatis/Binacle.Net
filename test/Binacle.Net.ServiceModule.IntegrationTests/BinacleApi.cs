@@ -47,8 +47,8 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 		{
 			{ "Features:SERVICE_MODULE", bool.TrueString },
 			{ "RateLimiter:AuthToken", "NoLimiter::0" },
-			// { "ConnectionString:AzureStorage", "UseDevelopmentStorage=true"},
-			{ "ConnectionStrings:Postgres", "Host=localhost;Port=5432;Database=binacle_net;Username=appuser;Password=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3" },
+			{ "ConnectionStrings:AzureStorage", "UseDevelopmentStorage=true"},
+			// { "ConnectionStrings:Postgres", "Host=localhost;Port=5432;Database=binacle_net;Username=appuser;Password=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3" },
 			// { "ConnectionStrings:Sqlite", "DataSource=binacle-net-service.test.db;" },
 			{ "JwtAuth:Issuer", "ForTestsOnly"},
 			{ "JwtAuth:Audience", "ForTestsOnly" },	
