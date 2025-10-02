@@ -18,6 +18,7 @@ internal class ApiV2Document : IOpenApiDocument
 		options.AddDocumentTransformer((document, context, cancellationToken) =>
 		{
 			ApiDocument.Transform(this, document.Info);
+			document.Servers.Clear();
 			return Task.CompletedTask;
 		});
 		options.AddResponseDescription();

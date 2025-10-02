@@ -30,6 +30,8 @@ internal class ServiceModuleApiDocument : IOpenApiDocument
 				Name = "GNU General Public License v3.0",
 				Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.html")
 			};
+
+			document.Servers.Clear();
 			return Task.CompletedTask;
 		});
 		options.AddResponseDescription();
