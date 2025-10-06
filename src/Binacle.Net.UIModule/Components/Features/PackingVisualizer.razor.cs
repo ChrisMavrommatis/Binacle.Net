@@ -41,6 +41,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 	public void Dispose()
 	{
 		this.MessagingService?.Off<AsyncCallback<(Bin?, List<PackedItem>?)>>("UpdateScene");
+		this.cancellationTokenSource?.Dispose();
 	}
 
 	protected override async Task OnParametersSetAsync()
@@ -193,6 +194,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 		this.controls["repeat"].Icon = "repeat_one";
 		this.UpdateControlsStatus();
 		this.StateHasChanged();
+		
 	}
 
 	private async Task StopRepeatingAsync()
