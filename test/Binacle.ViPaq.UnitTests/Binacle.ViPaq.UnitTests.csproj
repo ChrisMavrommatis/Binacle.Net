@@ -43,7 +43,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\dep\Binacle.ViPaq\Binacle.ViPaq.csproj"/>
+        <ProjectReference Include="..\..\src\Binacle.ViPaq\Binacle.ViPaq.csproj"/>
         <ProjectReference Include="..\..\dep\ChrisMavrommatis.Shouldly\ChrisMavrommatis.Shouldly.csproj"/>
     </ItemGroup>
 
