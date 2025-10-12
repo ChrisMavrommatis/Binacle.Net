@@ -1,0 +1,165 @@
+############################################################
+# Site settings
+############################################################
+title                   : "Binacle.Net"
+description             : >-
+  Binacle.Net
+
+author:
+  name                  : "Chris Mavrommatis"
+  url                   : "https://github.com/ChrisMavrommatis"
+  
+# the base hostname & protocol for your site, e.g. http://example.com# Welcome to Jekyll!
+url                     : "https://www.binacle.net"
+
+logo:
+  src                  : /assets/logo/binacle-logo-512x512a.png
+  alt                  : "Binacle.Net Logo"
+
+copyright: "© 2023-2025 Chris Mavrommatis / Binacle.Net. All Rights Reserved"
+  
+license:
+  name: "CC BY-SA 4.0"
+  url: "https://creativecommons.org/licenses/by-sa/4.0/"
+
+github:
+  title: "Check out my GitHub"
+  url: "https://github.com/ChrisMavrommatis/Binacle.Net"
+  image: "/assets/github/github-mark-white.png"
+dockerhub:
+  title: "Visit Binacle.Net on Dockerhub"
+  url: "https://hub.docker.com/r/binacle/binacle-net"
+  image: "/assets/docker/docker-mark-white.png"
+
+default_theme: "dark"
+
+############################################################
+# Where things are
+############################################################
+source              : ./
+destination         : ../build/docs
+collections_dir     : collections
+plugins_dir         : _plugins       # takes an array of strings and loads plugins in that order
+layouts_dir         : _layouts
+includes_dir        : _includes
+data_dir            : _data
+sass:
+  sass_dir          : _sass
+  cache             : false
+  style             : compressed
+collections:
+  posts:
+    output          : false
+    permalink       : /post/:slug/
+    
+############################################################
+# Handling Reading
+############################################################
+safe                : false
+include             :
+  - ".htaccess"
+exclude             :
+  - "Gemfile"
+  - "Gemfile.lock"
+  - "node_modules"
+  - "vendor/bundle/"
+  - "vendor/cache/"
+  - "vendor/gems/"
+  - "vendor/ruby/"
+  - "*.proj"
+  - "obj/*"
+  - "bin/*"
+  - "README.md"
+keep_files          : [".git", ".svn"]
+encoding            : "utf-8"
+markdown_ext        : "markdown,mkdown,mkdn,mkd,md"
+strict_front_matter : false
+############################################################
+# Filtering Content
+############################################################
+show_drafts         : false
+limit_posts         : 0
+future              : false
+unpublished         : false
+
+############################################################
+# Serving
+############################################################
+detach              : false
+port                : 7195
+host                : 127.0.0.1
+baseurl             : ""    # does not include hostname
+show_dir_listing    : false
+disable_disk_cache  : true
+
+############################################################
+# Conversion
+############################################################
+markdown            : kramdown
+highlighter         : rouge
+lsi                 : false
+excerpt_separator   : "\n\n"
+incremental         : false
+
+############################################################
+# Outputting
+############################################################
+permalink           : date        #pretty
+paginate_path       : /page:num
+timezone            : "Europe/Athens"
+quiet               : false
+verbose             : false
+liquid:
+  error_mode        : warn
+  strict_filters    : false
+  strict_variables  : false
+
+############################################################
+# Markdown Processors
+############################################################
+kramdown:
+  auto_ids          : true
+  entity_output     : as_char
+  toc_levels        : '1..6'
+  smart_quotes      : lsquo,rsquo,ldquo,rdquo
+  input             : GFM
+  hard_wrap         : false
+  footnote_nr       : 1
+  show_warnings     : false
+  parse_block_html  : true
+
+############################################################
+# Plugins
+############################################################
+whitelist           : []
+plugins             :
+  - jekyll-tidy
+
+############################################################
+# Front Matter Defaults
+############################################################
+defaults:
+  -
+    scope:
+      path           : "pages/**"
+      type           : "pages"
+    values:
+      layout          : "default"
+      locale          : "en_US"
+      hreflang        : "en"
+      nav:
+        order         : 99
+ 
+
+############################################################
+################### END OF BASE CONFIG #####################
+############################################################
+
+
+############################################################
+# jekyll-tidy
+############################################################
+jekyll_tidy:
+  exclude       : []       # an array of files to exclude from tidying.
+  ignore_env    : null     # a JEKYLL_ENV string on which to skip tidying entirely.
+  compress_html : false    # a flag for whether or not to compress the HTML output
