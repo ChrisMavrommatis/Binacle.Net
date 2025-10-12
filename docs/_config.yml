@@ -4,6 +4,10 @@
 title                   : "Binacle.Net Docs"
 description             : >-
   Binacle.Net Docs
+
+author:
+  name                  : "Chris Mavrommatis"
+  url                   : "https://github.com/ChrisMavrommatis"
   
 # the base hostname & protocol for your site, e.g. http://example.com# Welcome to Jekyll!
 url                     : "https://docs.binacle.net"
@@ -13,10 +17,10 @@ logo:
   alt                  : "Binacle.Net Logo"
 
 copyright: "© 2023-2025 Chris Mavrommatis / Binacle.Net. All Rights Reserved"
-
+  
 license:
-  name: "GNU General Public License v3.0"
-  url: "https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/LICENSE"
+  name: "CC BY-SA 4.0"
+  url: "https://creativecommons.org/licenses/by-sa/4.0/"
 
 github:
   title: "Check out my GitHub"

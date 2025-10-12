@@ -19,7 +19,6 @@
 		<None Include="Gemfile"/>
 		<None Include="**/*.rb"/>
 		<None Include="**/*.json"/>
-		<None Include="LICENSE"/>
 	</ItemGroup>
 
 </Project>

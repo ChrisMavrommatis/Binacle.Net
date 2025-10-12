@@ -33,3 +33,12 @@ Start exploring Binacle.Net now! 🚀
 ├── /src                # Source Code
 ├── /test               # Test Projects
 ```
+
+## License
+This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
+
+Some parts of this repository are licensed under different licenses as follows:
+
+- The documentation (*Binacle.Net Docs** in the `/docs` folder is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. See `/docs/LICENSE` for details.
+- Dependencies in the `/dep` folder are licensed under the MIT License. See `/dep/LICENSE` for details.
+
