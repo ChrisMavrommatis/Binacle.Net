@@ -13,7 +13,7 @@ jobs:
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
         with:
-          fail-on-severity: none   # Do not fail on vulnerabilities or license issues
+          fail-on-severity: low
       - name: 'Report'
         # make sure this step runs even if the previous failed
         if: ${{ failure() && steps.review.conclusion == 'failure' }}
