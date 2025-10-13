@@ -1,44 +1,33 @@
 name: 'Dependency Review'
 on:
   workflow_dispatch:
-    inputs:
-      base_ref:
-        description: 'Base branch (e.g., main)'
-        required: true
-        default: 'main'
-      head_ref:
-        description: 'Head branch or commit to compare'
-        required: true
-        default: ''
+  
 
 permissions:
   contents: read
 
 jobs:
-  dependency-review:
+  depchecktest:
     runs-on: ubuntu-latest
+    name: depecheck_test
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build project with Maven
+        run: mvn clean install
+      - name: Depcheck
+        uses: dependency-check/Dependency-Check_Action@main
+        id: Depcheck
         with:
-          ref: ${{ github.event.inputs.head_ref }}
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v4
+          project: 'Binacle.Net.sln'
+          path: '.'
+          format: 'HTML'
+          out: 'reports' # this is the default, no need to specify unless you wish to override it
+          args: >
+            --failOnCVSS 7
+            --enableRetired
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
         with:
-          fail-on-severity: low
-          base-ref: ${{ github.event.inputs.base_ref }}
-          head-ref: ${{ github.event.inputs.head_ref }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: 'Report'
-        # make sure this step runs even if the previous failed
-        shell: bash
-        env: # store comment HTML data in an environment variable
-          COMMENT: ${{ steps.review.outputs.comment-content }}
-        run: | # do something with the comment:
-          echo "$COMMENT"
-      - name: 'List vulnerable dependencies'
-        # make sure this step runs even if the previous failed
-        shell: bash
-        env: # store JSON data in an environment variable
-          VULNERABLE_CHANGES: ${{ steps.review.outputs.vulnerable-changes }}
-        run: | # do something with the JSON:
-          echo "$VULNERABLE_CHANGES" | jq '.[].package_url'
+           name: Depcheck report
+           path: ${{github.workspace}}/reports
