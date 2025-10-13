@@ -36,13 +36,22 @@ Start exploring Binacle.Net now! 🚀
 
 ## 📄 License
 
-The code in this project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
+## Code
+The code in this project is licensed under the GNU General Public License v3.0. <br/>
 
-All documentation, images, and other content files in this project are licensed under a
-[Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/)
+See the [LICENSE](LICENSE) file for details.
+
+## Documentation and Content
+All documentation, images, and other content files in this project are licensed under the
+[Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/).
+
 See [LICENSE-CC-BY-SA-4.0](LICENSE-CC-BY-SA-4.0) for the full license text.
 
+## Third-Party Libraries
+Binacle.Net used several third-party libraries. 
 
-Binacle.Net used several third-party libraries. See the [NOTICE](NOTICE) file for details.
+See the [NOTICE](NOTICE) file for details.
+
+---
 
 Copyright (c) 2023-2025 Chris Mavrommatis. All rights reserved.
