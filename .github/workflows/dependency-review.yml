@@ -1,0 +1,17 @@
+name: 'Dependency Review'
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: none   # Do not fail on vulnerabilities or license issues
+          output-format: text      # Output issues to logs
