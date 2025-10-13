@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8
 		README.md = README.md
 		.dockerignore = .dockerignore
 		Directory.Build.props = Directory.Build.props
+		NOTICE = NOTICE
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}"

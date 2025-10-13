@@ -1,0 +1,32 @@
+Binacle.Net
+
+Copyright (c) 2023-2025 Chris Mavrommatis. All rights reserved.
+
+This project is licensed under the GNU General Public License v3.0 (GPLv3).
+
+The documentation is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0).
+
+This product includes software developed by:
+
+Serilog Contributors (Apache License 2.0)
+https://github.com/serilog/serilog/blob/main/LICENSE
+
+Jeremy Skinner and the .NET Foundation (FluentValidation) (Apache License 2.0)
+https://github.com/FluentValidation/FluentValidation/blob/main/License.txt
+
+The .NET Foundation and The gRPC Authors (OpenTelemetry) (Apache License 2.0)
+https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/LICENSE.TXT
+https://github.com/grpc/grpc/blob/master/LICENSE
+
+Richard Morris and contributors (Swashbuckle) (BSD-3-Clause License)
+https://github.com/domaindrivendev/Swashbuckle/blob/master/LICENSE
+
+The Npgsql Development Team (PostgreSQL License)
+https://github.com/npgsql/npgsql/blob/main/LICENSE
+
+Shouldly Contributors (BSD-3-Clause License)
+https://github.com/shouldly/shouldly/blob/master/LICENSE.txt
+
+Microsoft Corporation and other contributors (MIT License)
+Azure.Data.Tables, Microsoft.Data.Sqlite, ConsoleTables, and others
+https://opensource.org/licenses/MIT

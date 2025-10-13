@@ -36,9 +36,10 @@ Start exploring Binacle.Net now! 🚀
 
 ## License
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
+The documentation (*Binacle.Net Docs*) is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/).  
+See [LICENSE-CC-BY-SA-4.0](LICENSE-CC-BY-SA-4.0) for the full license text.
 
-Some parts of this repository are licensed under different licenses as follows:
 
-- The documentation (*Binacle.Net Docs*) in the `/docs` folder is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. See `/docs/LICENSE` for details.
-- Dependencies in the `/dep` folder are licensed under the MIT License. See `/dep/LICENSE` for details.
+Binacle.Net used several third-party libraries. See the [NOTICE](NOTICE) file for details.
 
+Copyright (c) 2023-2025 Chris Mavrommatis. All rights reserved.
