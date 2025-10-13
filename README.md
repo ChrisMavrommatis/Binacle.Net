@@ -39,13 +39,13 @@ Start exploring Binacle.Net now! 🚀
 ## Code
 The code in this project is licensed under the GNU General Public License v3.0. <br/>
 
-See the [LICENSE](LICENSE) file for details.
+See the [LICENSE.GPL-3.0](LICENSE.GPL-3.0) file for details.
 
 ## Documentation and Content
 All documentation, images, and other content files in this project are licensed under the
 [Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/).
 
-See [LICENSE-CC-BY-SA-4.0](LICENSE-CC-BY-SA-4.0) for the full license text.
+See [LICENSE.CC-BY-SA-4.0](LICENSE.CC-BY-SA-4.0) for the full license text.
 
 ## Third-Party Libraries
 Binacle.Net used several third-party libraries. 
