@@ -30,7 +30,6 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Report'
         # make sure this step runs even if the previous failed
-        if: ${{ failure() && steps.review.conclusion == 'failure' }}
         shell: bash
         env: # store comment HTML data in an environment variable
           COMMENT: ${{ steps.review.outputs.comment-content }}
@@ -38,7 +37,6 @@ jobs:
           echo "$COMMENT"
       - name: 'List vulnerable dependencies'
         # make sure this step runs even if the previous failed
-        if: ${{ failure() && steps.review.conclusion == 'failure' }}
         shell: bash
         env: # store JSON data in an environment variable
           VULNERABLE_CHANGES: ${{ steps.review.outputs.vulnerable-changes }}
