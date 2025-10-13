@@ -37,7 +37,7 @@ default_theme: "dark"
 # Where things are
 ############################################################
 source              : ./
-destination         : ../build/docs
+destination         : ../build/web
 collections_dir     : collections
 plugins_dir         : _plugins       # takes an array of strings and loads plugins in that order
 layouts_dir         : _layouts
@@ -86,7 +86,7 @@ unpublished         : false
 # Serving
 ############################################################
 detach              : false
-port                : 7195
+port                : 7196
 host                : 127.0.0.1
 baseurl             : ""    # does not include hostname
 show_dir_listing    : false
