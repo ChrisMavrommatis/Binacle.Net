@@ -1,6 +1,15 @@
 name: 'Dependency Review'
 on:
   workflow_dispatch:
+    inputs:
+      base_ref:
+        description: 'Base branch (e.g., main)'
+        required: true
+        default: 'main'
+      head_ref:
+        description: 'Head branch or commit to compare'
+        required: true
+        default: ''
 
 permissions:
   contents: read
@@ -10,10 +19,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.inputs.head_ref }}
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: low
+          base-ref: ${{ github.event.inputs.base_ref }}
+          head-ref: ${{ github.event.inputs.head_ref }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Report'
         # make sure this step runs even if the previous failed
         if: ${{ failure() && steps.review.conclusion == 'failure' }}
