@@ -37,8 +37,6 @@ jobs:
             --enableRetired
             --scan ./
             --enableExperimental
-            --includeLicense
-            --licenseReport
 
       - name: Upload Dependency-Check report
         uses: actions/upload-artifact@v4
