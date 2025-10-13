@@ -19,7 +19,7 @@ docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -e UI_MODULE=Tr
 
 Start exploring Binacle.Net now! 🚀
 
-## Repository Structure
+## 📂 Repository Structure
 
 ```text
 /Binacle.Net  # Root directory
@@ -34,7 +34,7 @@ Start exploring Binacle.Net now! 🚀
 ├── /test               # Test Projects
 ```
 
-## License
+## 📄 License
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
 
 The documentation (*Binacle.Net Docs*) is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/).  
