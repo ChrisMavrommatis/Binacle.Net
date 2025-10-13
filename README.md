@@ -36,6 +36,10 @@ Start exploring Binacle.Net now! 🚀
 
 ## 📄 License
 
+This work is dual-licensed under the GNU General Public License v3.0 and the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0).
+
+`SPDX-License-Identifier: GPL-3.0 AND CC-BY-SA-4.0`
+
 ## Code
 The code in this project is licensed under the GNU General Public License v3.0. <br/>
 
