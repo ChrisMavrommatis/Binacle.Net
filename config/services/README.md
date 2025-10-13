@@ -1,3 +1,5 @@
-# Aspire Dashboard for local development
+# Services
 
-This project contains the azurite and Aspire dashboard for local development
+This directory contains the dependent services Binacle.Net uses, mainly when run as a service.
+
+

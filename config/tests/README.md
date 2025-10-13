@@ -1,4 +1,4 @@
 # Tests
 
-Simple project containing scripts for running the tests for Binacle.Net project
+Simple project containing scripts for running the tests for Binacle.Net
 
