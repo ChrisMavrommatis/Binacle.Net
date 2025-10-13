@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8
 		.dockerignore = .dockerignore
 		Directory.Build.props = Directory.Build.props
 		NOTICE = NOTICE
+		LICENSE-CC-BY-SA-4.0 = LICENSE-CC-BY-SA-4.0
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}"
@@ -43,9 +44,6 @@ EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Services", "config\services\services.dcproj", "{1756A39D-E259-4888-BDB4-F06140DF95CB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dep", "dep", "{5EE822B0-B4A4-43DF-8967-91D3CFC190F8}"
-	ProjectSection(SolutionItems) = preProject
-		dep\LICENSE = dep\LICENSE
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Logging", "dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj", "{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}"
 EndProject
@@ -53,9 +51,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Shouldly",
 EndProject
 
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{88EC1702-D375-496F-B26A-384DBEA8E0AA}"
-	ProjectSection(SolutionItems) = preProject
-		doc\README.md = doc\README.md
-	EndProjectSection
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.TestResults.Benchmarks", "doc\benchmark-results\Binacle.TestResults.Benchmarks.proj", "{61DCF326-13CF-47B8-A327-C22B2F5E1CD7}"
 EndProject
