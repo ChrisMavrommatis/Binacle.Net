@@ -1,0 +1,47 @@
+name: 'Dependency & License Review'
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  depchecktest:
+    runs-on: ubuntu-latest
+    name: OWASP Dependency & License Check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build project
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Run OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        id: Depcheck
+        with:
+          project: 'Binacle.Net'
+          path: '.'
+          format: 'HTML'
+          out: 'reports'
+          args: >
+            --failOnCVSS 7
+            --enableRetired
+            --scan ./
+            --enableExperimental
+            --includeLicense
+            --licenseReport
+
+      - name: Upload Dependency-Check report
+        uses: actions/upload-artifact@v3
+        with:
+          name: Depcheck report
+          path: reports
