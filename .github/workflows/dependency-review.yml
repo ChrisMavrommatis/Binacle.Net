@@ -14,4 +14,19 @@ jobs:
         uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: none   # Do not fail on vulnerabilities or license issues
-          output-format: text      # Output issues to logs
+      - name: 'Report'
+        # make sure this step runs even if the previous failed
+        if: ${{ failure() && steps.review.conclusion == 'failure' }}
+        shell: bash
+        env: # store comment HTML data in an environment variable
+          COMMENT: ${{ steps.review.outputs.comment-content }}
+        run: | # do something with the comment:
+          echo "$COMMENT"
+      - name: 'List vulnerable dependencies'
+        # make sure this step runs even if the previous failed
+        if: ${{ failure() && steps.review.conclusion == 'failure' }}
+        shell: bash
+        env: # store JSON data in an environment variable
+          VULNERABLE_CHANGES: ${{ steps.review.outputs.vulnerable-changes }}
+        run: | # do something with the JSON:
+          echo "$VULNERABLE_CHANGES" | jq '.[].package_url'
