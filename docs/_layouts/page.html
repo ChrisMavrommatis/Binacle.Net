@@ -10,8 +10,10 @@
     <link href="{{ '/css/main.css' | relative_url }}" rel="stylesheet"/>
     <link href="{{ '/css/pygments.css' | relative_url }}" rel="stylesheet"/>
     <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" />
+    {% gtm_head site.gtm %}
 </head>
 <body class="{{ site.default_theme }}">
+    {% gtm_body site.gtm %}
     {{ content }}
 
     <script type="module" src="{{ '/css/beercss/beer.min.js' | relative_url }}"></script>

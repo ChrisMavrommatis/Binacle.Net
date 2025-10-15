@@ -1,0 +1,22 @@
+---
+layout   : null
+---
+<?xml version="1.0" encoding="utf-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {% assign versions = site.versions | where: "version", "latest" %}
+  {% for page in versions %}
+    {% if page.sitemap != nil and page.sitemap.exclude == false %}
+      <url>
+        <loc>{{ page.url | remove: "index.html" | absolute_url }}</loc>
+        {% assign page_last_mod = page.sitemap.lastmod %}
+        {% if page.sitemap.lastmod == "current" %}
+        {% assign page_last_mod = site.time %}
+        {% endif %}
+        <lastmod>{{ page_last_mod | date_to_xmlschema }}</lastmod>
+        <changefreq>{{ page.sitemap.changefreq }}</changefreq>
+        <priority>{{ page.sitemap.priority }}</priority>
+      </url>
+    {% endif %}
+  {% endfor %}
+</urlset>
+
