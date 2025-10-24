@@ -21,6 +21,7 @@
 		<None Include="**/*.json"/>
 		<None Include="**/*.txt"/>
 		<None Include="**/*.xml"/>
+		<None Include=".ruby-version"/>
 	</ItemGroup>
 
 </Project>
