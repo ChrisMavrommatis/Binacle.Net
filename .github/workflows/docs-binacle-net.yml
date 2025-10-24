@@ -1,4 +1,6 @@
 name: Deploy docs.binacle.net
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:  # Enables manual trigger from GitHub UI
