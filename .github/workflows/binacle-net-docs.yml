@@ -18,8 +18,7 @@ jobs:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
       - name: Build with Jekyll
-        # Outputs to the './_site' directory by default
-        run: bundle exec jekyll build
+        run: cd docs && bundle exec jekyll build
         env:
           JEKYLL_ENV: production
 
@@ -42,6 +41,7 @@ jobs:
           app_location: "build/docs" 
           skip_app_build: true
           ###### End of Repository/Build Configurations ######
+
 
 
 
