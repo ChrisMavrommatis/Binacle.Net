@@ -1,0 +1,22 @@
+<header class="fixed top responsive max primary">
+    <nav>
+        <div class="s">
+            {% include logo.html %}
+        </div>
+
+        <h5 class="max center-align">{{ site.title }}</h5>
+        {% for link in site.data.header_links %}
+        <a href="{{ link.url }}" title="{{ link.title }}" target="{{ link.target }}">
+            {% if link.image != nil %}
+            <img src="{{ link.image.url | relative_url }}" alt="{{ link.image.alt }}"  height="{{ link.image.height }}" />
+            {% endif %}
+        </a>
+        {% endfor %}
+
+        <button class="transparent circle" data-role="theme-button">
+            <i class="page top active">
+                {{ site.default_theme }}_mode
+            </i>
+        </button>
+    </nav>
+</header>

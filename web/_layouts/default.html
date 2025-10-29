@@ -2,8 +2,13 @@
 layout: page
 ---
 
+{% include header.html %}
+{% include navbar/index.html %}
 
 <main class="responsive padding">
     <h1>{{ page.title }}</h1>
     {{ content }}
 </main>
+
+
+{% include footer.html %}

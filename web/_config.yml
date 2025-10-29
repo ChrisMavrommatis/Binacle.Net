@@ -3,7 +3,7 @@
 ############################################################
 title                   : "Binacle.Net"
 description             : >-
-  Binacle.Net
+  Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.
 
 author:
   name                  : "Chris Mavrommatis"
@@ -15,6 +15,8 @@ url                     : "https://www.binacle.net"
 logo:
   src                  : /assets/logo/binacle-logo-512x512a.png
   alt                  : "Binacle.Net Logo"
+
+gtm: 'GTM-5QXPDD5S'
 
 copyright: "© 2023-2025 Chris Mavrommatis / Binacle.Net. All Rights Reserved"
   
@@ -48,9 +50,9 @@ sass:
   cache             : false
   style             : compressed
 collections:
-  posts:
-    output          : false
-    permalink       : /post/:slug/
+  apps:
+    output          : true
+    permalink       : /app/:name/
     
 ############################################################
 # Handling Reading
@@ -147,9 +149,26 @@ defaults:
       layout          : "default"
       locale          : "en_US"
       hreflang        : "en"
-      nav:
-        order         : 99
- 
+      sitemap:
+        lastmod       : "current"
+        changefreq    : "monthly"
+        priority      : 1.0
+        exclude       : false
+  -  
+    scope:
+      path            : "**/**"
+      type            : "apps"
+    values:
+      layout          : "default"
+      title           : "NOTITLE"
+      locale          : "en_US"
+      hreflang        : "en"
+      sitemap:
+        lastmod       : "current"
+        changefreq    : "monthly"
+        priority      : 1.0
+        exclude       : false
+   
 
 ############################################################
 ################### END OF BASE CONFIG #####################

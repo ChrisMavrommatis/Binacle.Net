@@ -4,6 +4,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Include=".ruby-version" />
 		<None Include="**/*.md"/>
 		<None Include="**/*.yml"/>
 		<None Include="**/*.yaml"/>

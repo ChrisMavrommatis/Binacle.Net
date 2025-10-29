@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="{{ page.hreflang }}">
 <head>
+    
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -8,15 +9,15 @@
     {% include seo.html %}
     <link type="text/css" rel="stylesheet" href="{{ '/css/beercss/beer.min.css' | relative_url }}" >
     <link href="{{ '/css/main.css' | relative_url }}" rel="stylesheet"/>
-    <link href="{{ '/css/pygments.css' | relative_url }}" rel="stylesheet"/>
     <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" />
+    {% gtm_head site.gtm %}
 </head>
 <body class="{{ site.default_theme }}">
+    {% gtm_body site.gtm %}
     {{ content }}
 
-    <script type="module" src="{{ '/css/beercss/beer.min.js' | relative_url }}"></script>
-    <script src="{{ '/js/main.js' | relative_url }}"></script>
     <script src="{{ '/js/cookies.js' | relative_url }}"></script>
+    <script type="module" src="{{ '/css/beercss/beer.min.js' | relative_url }}"></script>
     <script src="{{ '/js/themeSwitcher.js' | relative_url }}"></script>
 </body>
 </html>

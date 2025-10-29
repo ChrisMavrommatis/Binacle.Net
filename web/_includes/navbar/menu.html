@@ -1,0 +1,24 @@
+{% for item in site.apps %}
+{% assign is_active = false %}
+{% if item.url == page.url %}
+{% assign is_active = true %}
+{% endif %}
+
+{% if is_active %}
+<a href="{{ item.url | relative_url }}" class="active">
+    <i class="material-symbols">
+        {{ item.icon }}
+    </i>
+        
+    <span>{{ item.title }}</span>
+</a>
+{% else %}
+<a href="{{ item.url | relative_url }}">
+    <i class="material-symbols">
+        {{ item.icon }}
+    </i>
+    <span>{{ item.title }}</span>
+</a>
+{% endif %}
+
+{% endfor %}

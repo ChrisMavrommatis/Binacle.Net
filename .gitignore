@@ -45,6 +45,7 @@ minio_data/
 ## Docs Jekyll
 _site
 build/docs
+build/web
 .sass-cache
 .jekyll-cache
 .jekyll-metadata
