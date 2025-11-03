@@ -34,7 +34,7 @@ nav:
 
 User-Agent: *
 
-Content-Signals: ai-train=no, search=yes, ai-input=no
+# Content-Signals: ai-train=no, search=yes, ai-input=no
 
 {% for sitemap in site.sitemaps %}
 Sitemap: {{ sitemap.url | absolute_url }}
