@@ -1,0 +1,30 @@
+﻿articles:
+  - title: "About Binacle.Net"
+    content: 
+      - "Binacle.Net is an API created to address the 3D Bin Packing Problem in real time."
+  - title: "Help Binacle.Net"
+    content:
+      - "Its an open source project that aims to remain open source and free forever."
+      - "Help it grow, visit the Help it grow, visit the <a class=\"inverse-primary-text\" href=\"https://github.com/ChrisMavrommatis/Binacle.Net\">Github</a> and give it a star."
+  
+badges:
+  - title: "GitHub Repo stars"
+    url: "https://github.com/ChrisMavrommatis/Binacle.Net"
+    target: "_blank"
+    image:
+      url: "https://img.shields.io/github/stars/chrismavrommatis/binacle.net?logoSize=auto"
+      alt: "GitHub Repo stars"
+      
+  - title: "Docker Image Version"
+    url: "https://hub.docker.com/r/binacle/binacle-net"
+    target: "_blank"
+    image:
+      url: "https://img.shields.io/docker/v/binacle/binacle-net?sort=semver&logo=docker&logoSize=auto&labelColor=white&color=blue"
+      alt: "Docker Image Version"
+        
+copyright: "© 2023-{now} Chris Mavrommatis / Binacle.Net. All Rights Reserved"
+
+license:
+  title: "GNU General Public License v3.0"
+  url: "https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/LICENSE.GPL-3.0"
+  target: "_blank"

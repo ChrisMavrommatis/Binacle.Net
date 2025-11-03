@@ -16,22 +16,7 @@ logo:
   src                  : /assets/logo/binacle-logo-512x512a.png
   alt                  : "Binacle.Net Logo"
 
-gtm: 'GTM-5QXPDD5S'
-
-copyright: "© 2023-2025 Chris Mavrommatis / Binacle.Net. All Rights Reserved"
-  
-license:
-  name: "CC BY-SA 4.0"
-  url: "https://creativecommons.org/licenses/by-sa/4.0/"
-
-github:
-  title: "Check out my GitHub"
-  url: "https://github.com/ChrisMavrommatis/Binacle.Net"
-  image: "/assets/github/github-mark-white.png"
-dockerhub:
-  title: "Visit Binacle.Net on Dockerhub"
-  url: "https://hub.docker.com/r/binacle/binacle-net"
-  image: "/assets/docker/docker-mark-white.png"
+gtm: 'GTM-N23CTC7C'
 
 default_theme: "dark"
 
@@ -53,6 +38,9 @@ collections:
   apps:
     output          : true
     permalink       : /app/:name/
+  sitemaps:
+    output          : true
+    permalink       : /sitemap/:name:output_ext
     
 ############################################################
 # Handling Reading
@@ -141,8 +129,7 @@ plugins             :
 # Front Matter Defaults
 ############################################################
 defaults:
-  -
-    scope:
+  - scope:
       path           : "pages/**"
       type           : "pages"
     values:
@@ -154,8 +141,7 @@ defaults:
         changefreq    : "monthly"
         priority      : 1.0
         exclude       : false
-  -  
-    scope:
+  - scope:
       path            : "**/**"
       type            : "apps"
     values:
@@ -168,7 +154,12 @@ defaults:
         changefreq    : "monthly"
         priority      : 1.0
         exclude       : false
-   
+  - scope:
+      path: "**/**"
+      type: "sitemaps"
+    values:
+      title: "Sitemap"
+
 
 ############################################################
 ################### END OF BASE CONFIG #####################

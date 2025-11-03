@@ -11,6 +11,10 @@
     <link href="{{ '/css/main.css' | relative_url }}" rel="stylesheet"/>
     <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" />
     {% gtm_head site.gtm %}
+    
+    {% if page.interactive %}
+    <script defer src="{{ '/js/alpine/alpine.min.js' | relative_url }}"></script>
+    {% endif %}
 </head>
 <body class="{{ site.default_theme }}">
     {% gtm_body site.gtm %}
@@ -19,5 +23,11 @@
     <script src="{{ '/js/cookies.js' | relative_url }}"></script>
     <script type="module" src="{{ '/css/beercss/beer.min.js' | relative_url }}"></script>
     <script src="{{ '/js/themeSwitcher.js' | relative_url }}"></script>
+
+    {% if page.scripts %}
+    {% for script in page.scripts %}
+    <script src="{{ script | relative_url }}"></script>
+    {% endfor %}
+    {% endif %}
 </body>
 </html>

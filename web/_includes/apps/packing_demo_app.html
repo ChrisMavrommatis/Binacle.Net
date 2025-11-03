@@ -1,0 +1,91 @@
+{% raw %}
+<form class="grid" x-data="packingdemoapp">
+<!--    <DataAnnotationsValidator/>-->
+
+    <article class="s12 primary-container">
+        <fieldset>
+            <legend>Bins</legend>
+            <template x-for="(bin, index) in bins" :key="index">
+                <div class="row">
+                    <div class="max">
+                        <div class="field label small padless">
+                            <input type="number" x-model="bin.length" id="length" class="small padless"/>
+                            <label for="length">Length</label>
+                        </div>
+                    </div>
+                    <div class="max">
+                        <div class="field label small padless">
+                            <input type="number" x-model="bin.width" id="width" class="small padless"/>
+                            <label for="width">Width</label>
+                        </div>
+                    </div>
+                    <div class="max">
+                        <div class="field label small padless">
+                            <input type="number" x-model="bin.height" id="height" class="small padless" />
+                            <label for="height">Height</label>
+                        </div>
+                    </div>
+                    <button type="button" class="transparent circle" x-on:click="removeBin(index)">
+                        <i class="material-symbols">delete</i>
+                    </button>
+                </div>
+            </template>
+        </fieldset>
+        <nav>
+            <button class="max" type="button" x-on:click="addBin()">
+                <i class="material-symbols">add</i>
+                <span class="m l">Add Bin</span>
+            </button>
+            <button class="max" type="button" x-on:click="clearAllBins()">
+                <i class="material-symbols">delete_forever</i>
+                <span class="m l">Clear All Bins</span>
+            </button>
+            <button class="max" type="button" x-on:click="randomizeBinsFromSamples">
+                <i class="material-symbols">refresh</i>
+                <span class="m l">Randomize from samples</span>
+            </button>
+        </nav>
+    </article>
+
+    <article class="s12 secondary-container">
+        <fieldset>
+            <legend>Items</legend>
+           
+        </fieldset>
+        <nav>
+            
+        </nav>
+    </article>
+
+    <fieldset class="s12">
+        <div class="grid">
+            <div class="s12 m6 max">
+               
+            </div>
+            <div class="s12 m6 row">
+                <button class="max tertiary" type="submit">
+                    <span>Get Results</span>
+                </button>
+            </div>
+
+        </div>
+    </fieldset>
+</form>
+
+<div class="grid">
+    <div class="s12">
+    </div>
+</div>
+
+<div class="grid">
+    <div class="s12">
+        <article class="surface-variant">
+            <fieldset>
+                <legend>Results</legend>
+               
+            </fieldset>
+        </article>
+    </div>
+</div>
+
+{% endraw %}

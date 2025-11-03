@@ -5,7 +5,7 @@
         </div>
 
         <h5 class="max center-align">{{ site.title }}</h5>
-        {% for link in site.data.header_links %}
+        {% for link in site.data.header.links %}
         <a href="{{ link.url }}" title="{{ link.title }}" target="{{ link.target }}">
             {% if link.image != nil %}
             <img src="{{ link.image.url | relative_url }}" alt="{{ link.image.alt }}"  height="{{ link.image.height }}" />

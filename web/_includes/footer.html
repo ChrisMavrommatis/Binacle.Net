@@ -1,9 +1,38 @@
 <footer class="responsive max secondary-container">
     <div class="grid">
-       
+       {% for article in site.data.footer.articles %}
+        <article class="s12 m6 l4 transparent">
+            <h5>{{ article.title }}</h5>
+            {% for paragraph in article.content %}
+            <p>
+                {{ paragraph }}
+            </p>
+            {% endfor %}
+        </article>
+       {% endfor %}
+        <article class="s12 m12 l4 transparent">
+            <div class="grid no-space">
+                {% for badge in site.data.footer.badges %}
+                <div class="s6 m4 l12">
+                    <a href="{{ badge.url }}" target="{{ badge.target }}">
+                        <img src="{{ badge.image.url }}" alt="{{ badge.image.alt }}"/>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </article>
     </div>
     <div class="grid center-align">
-      
+        <div class="s6">
+            {% assign now_year = site.time | date: "%Y" %}
+            {% assign copyright = site.data.footer.copyright | replace: "{now}", now_year %}
+            {{ copyright }}
+        </div>
+        <div class="s6">
+            <a href="{{ site.data.footer.license.url }}" target="{{ site.data.footer.license.target }}">
+                {{ site.data.footer.license.title }}
+            </a>
+        </div>
     </div>
     
 </footer>
