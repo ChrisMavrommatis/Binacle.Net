@@ -51,4 +51,3 @@ build/web
 .jekyll-cache
 .jekyll-metadata
 vendor
-docs/assets/js
