@@ -12,17 +12,16 @@
         
         <div class="max center-align"></div>
 
-        <a href="{{ site.github.url }}" title="{{ site.github.title }}" target="_blank">
-            <img src="{{ site.github.image | relative_url }}" alt="Github" height="20">
+        {% for link in site.data.header.links %}
+        <a href="{{ link.url }}" title="{{ link.title }}" target="{{ link.target }}">
+            {% if link.image != nil %}
+            <img src="{{ link.image.url | relative_url }}" alt="{{ link.image.alt }}"  height="{{ link.image.height }}" />
+            {% endif %}
         </a>
-        <a href="{{ site.dockerhub.url }}" title="{{ site.dockerhub.title }}" target="_blank">
-            <img src="{{ site.dockerhub.image | relative_url }}" alt="Docker" height="20">
-        </a>
+        {% endfor %}
 
-        <button class="transparent circle" data-role="theme-button">
-            <i class="page top active">
-                {{ site.default_theme }}_mode
-            </i>
+        <button is="theme-switcher" class="transparent circle" data-default-theme="{{ site.default_theme }}">
+
         </button>
     </nav>
 </header>

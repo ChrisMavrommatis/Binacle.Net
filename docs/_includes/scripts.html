@@ -1,0 +1,3 @@
+﻿{% for item in include.items %}
+<script type="{{ item.type }}" src="{{ item.src | relative_url }}"></script>
+{% endfor %}

@@ -13,25 +13,10 @@ author:
 url                     : "https://docs.binacle.net"
 
 logo:
-  src                  : /assets/logo/binacle-logo-512x512a.png
+  src                  : /assets/media/logo/binacle-logo-512x512a.png
   alt                  : "Binacle.Net Logo"
 
 gtm: 'GTM-5QXPDD5S'
-
-copyright: "© 2023-2025 Chris Mavrommatis / Binacle.Net. All Rights Reserved"
-  
-license:
-  name: "CC BY-SA 4.0"
-  url: "https://creativecommons.org/licenses/by-sa/4.0/"
-
-github:
-  title: "Check out my GitHub"
-  url: "https://github.com/ChrisMavrommatis/Binacle.Net"
-  image: "/assets/github/github-mark-white.png"
-dockerhub:
-  title: "Visit Binacle.Net on Dockerhub"
-  url: "https://hub.docker.com/r/binacle/binacle-net"
-  image: "/assets/docker/docker-mark-white.png"
 
 default_theme: "dark"
 
@@ -78,6 +63,7 @@ exclude             :
   - "obj/*"
   - "bin/*"
   - "README.md"
+  - "_js"
 keep_files          : [".git", ".svn"]
 encoding            : "utf-8"
 markdown_ext        : "markdown,mkdown,mkdn,mkd,md"

@@ -1,15 +1,13 @@
 ﻿<footer class="responsive max secondary-container">
     <div class="grid center-align">
         <div class="s6">
-            {{ site.copyright }}
+            {% assign now_year = site.time | date: "%Y" %}
+            {% assign copyright = site.data.footer.copyright | replace: "{now}", now_year %}
+            {{ copyright }}
         </div>
         <div class="s6">
-            <a href="{{ site.url }}">{{ site.title }}</a> © 2025 by 
-            <a href="{{ site.author.url }}">{{ site.author.name }}</a> is licensed under
-            <a href="{{ site.license.url }}">{{ site.license.name }}</a>
-            <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;">
-            <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;">
-            <img src="https://mirrors.creativecommons.org/presskit/icons/sa.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;">
+            {% assign license = site.data.footer.license | replace: "{now}", now_year %}
+            {{ license }}
         </div>
     </div>
 </footer>

@@ -1,3 +1,5 @@
+import ThemeSwitcherButtonElement from "./themeSwitcher";
+
 document.addEventListener('DOMContentLoaded', function () {
     
     const versionSelects = document.querySelectorAll('[data-versionselect]');
@@ -29,6 +31,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });    
     }
 
-    
-    
+    customElements.define('theme-switcher', ThemeSwitcherButtonElement);
+
 });

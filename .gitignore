@@ -20,7 +20,7 @@ obj/
 .idea
 
 # Node
-/node_modules
+node_modules
 
 # Project Specific
 logs/
@@ -30,6 +30,7 @@ BenchmarkDotNet.Artifacts
 PerformanceTestsArtifacts
 Output
 output
+
 
 
 ## Copied from UI Module
@@ -50,3 +51,4 @@ build/web
 .jekyll-cache
 .jekyll-metadata
 vendor
+docs/assets/js
