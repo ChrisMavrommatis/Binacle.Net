@@ -31,8 +31,6 @@ PerformanceTestsArtifacts
 Output
 output
 
-
-
 ## Copied from UI Module
 src/Binacle.Net/wwwroot/ 
 
@@ -43,11 +41,15 @@ minio_data/
 *.sqlite
 *.ndjson
 
-## Docs Jekyll
+## Jekyll
 _site
-build/docs
-build/web
 .sass-cache
 .jekyll-cache
 .jekyll-metadata
-vendor
+
+## Docs
+build/web
+docs/assets/js
+
+## Website
+build/docs
