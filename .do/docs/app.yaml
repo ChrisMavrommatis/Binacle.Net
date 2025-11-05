@@ -16,4 +16,4 @@ static_sites:
       branch: main
       repo: ChrisMavrommatis/Binacle.Net
     name: binacle-net-docs
-    source_dir: docs
+    source_dir: build/docs
