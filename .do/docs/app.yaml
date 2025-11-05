@@ -1,0 +1,8 @@
+﻿name: binacle-net-docs
+static_sites:
+  - environment_slug: html
+    github:
+      branch: main
+      repo: ChrisMavrommatis/Binacle.Net
+    name: binacle-net-docs
+    source_dir: docs
