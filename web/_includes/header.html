@@ -13,10 +13,8 @@
         </a>
         {% endfor %}
 
-        <button class="transparent circle" data-role="theme-button">
-            <i class="page top active">
-                {{ site.default_theme }}_mode
-            </i>
-        </button>
+        <theme-switcher class="transparent circle" data-default-theme="{{ site.default_theme }}">
+
+        </theme-switcher>
     </nav>
 </header>

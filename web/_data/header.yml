@@ -2,14 +2,14 @@
   - title: 'Check out my GitHub'
     url: 'https://github.com/ChrisMavrommatis/Binacle.Net'
     image:
-      url: 'assets/github/github-mark-white.png'
+      url: 'media/github/github-mark-white.png'
       alt: 'Github'
       height: 20
     target: '_blank'
   - title: 'Visit Binacle.Net on Dockerhub'
     url: 'https://hub.docker.com/r/binacle/binacle-net'
     image:
-      url: 'assets/docker/docker-mark-white.png'
+      url: 'media/docker/docker-mark-white.png'
       alt: 'Dockerhub'
       height: 20
     target: '_blank'

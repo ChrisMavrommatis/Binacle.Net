@@ -24,17 +24,36 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	###-------------------------WINDOW 1----------------------------###
   # Create a new window named 'docs'
   tmux new-window -n 'docs' -t $SESSION_NAME
-  
-  # set the cd to /config/tests
-  tmux send-keys -t $SESSION_NAME:1 'cd ./config/docs' C-m
+
+	# split the 2nd window horizontally
+ 	tmux split-window -h -t $SESSION_NAME:1
+
+  # set the cd to /config/docs
+  tmux send-keys -t $SESSION_NAME:1.0 'cd ./config/docs' C-m
+
+  # Set the cd to /docs
+  tmux send-keys -t $SESSION_NAME:1.1 'cd ./docs' C-m
+
+  # Select the first pane
+  tmux select-pane -t $SESSION_NAME:1.0
+
   ###-------------------------WINDOW 1----------------------------###
   
   ###-------------------------WINDOW 2----------------------------###
   # Create a new window named 'web'
   tmux new-window -n 'web' -t $SESSION_NAME
   
-  # set the cd to /config/tests
-  tmux send-keys -t $SESSION_NAME:2 'cd ./config/web' C-m
+	# split the window horizontally
+ 	tmux split-window -h -t $SESSION_NAME:2
+
+  # set the cd to /config/docs
+  tmux send-keys -t $SESSION_NAME:2.0 'cd ./config/web' C-m
+
+  # Set the cd to /docs
+  tmux send-keys -t $SESSION_NAME:2.1 'cd ./web' C-m
+
+  # Select the first pane
+  tmux select-pane -t $SESSION_NAME:2.0
   ###-------------------------WINDOW 2----------------------------###
 	
   ###-------------------------WINDOW 3----------------------------###

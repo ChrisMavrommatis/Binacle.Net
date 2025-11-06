@@ -16,4 +16,21 @@ nav:
     It enables fast, efficient packing solutions for ecommerce, logistics, and warehousing applications.
 </p>
 
-{% include components/apps_list.html %}
+
+<div class="grid medium space">
+    {% for item in site.apps %}
+    <article class="s12 m6">
+        <div class="row">
+            <div class="max">
+                <h5>{{ item.title }}</h5>
+                <p>{{ item.description }})</p>
+            </div>
+        </div>
+        <nav>
+            <a href="{{ item.url | relative_url }}" class="button">
+                Try it out!
+            </a>
+        </nav>
+    </article>
+    {% endfor %}
+</div>
