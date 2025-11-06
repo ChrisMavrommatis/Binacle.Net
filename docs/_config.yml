@@ -13,7 +13,7 @@ author:
 url                     : "https://docs.binacle.net"
 
 logo:
-  src                  : /assets/media/logo/binacle-logo-512x512a.png
+  src                  : /media/logo/binacle-logo-512x512a.png
   alt                  : "Binacle.Net Logo"
 
 gtm: 'GTM-5QXPDD5S'

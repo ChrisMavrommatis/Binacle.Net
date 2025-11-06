@@ -1,6 +1,6 @@
 ﻿const path = require('path');
 
-const dest = 'assets/js';
+const dest = 'js';
 
 module.exports = (env, argv) => {
     this.parallelism = 1;

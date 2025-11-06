@@ -48,8 +48,8 @@ _site
 .jekyll-metadata
 
 ## Docs
-build/web
-docs/assets/js
+build/docs
+docs/js
 
 ## Website
-build/docs
+build/web
