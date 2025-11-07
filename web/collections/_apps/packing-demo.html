@@ -3,115 +3,185 @@ title: Packing Demo
 icon: deployed_code
 description: Allows you to visualize how Binacle.Net packs them into a container using it's algorithms.
 scripts:
- - src: "/js/packing-demo.js"
-   type: "text/javascript"
+- src: "/js/packing-demo.js"
+type: "text/javascript"
 ---
 
 <p>
-    An interactive tool that lets test different packing algorithms with your own items and bins,
-    and explore detailed visualizations of how items are efficiently arranged within a container.
+  An interactive tool that lets test different packing algorithms with your own items and bins,
+  and explore detailed visualizations of how items are efficiently arranged within a container.
 </p>
 <p>
-    This demo uses the experimental V3 API.   
+  This demo uses the experimental V3 API.
 </p>
 
 <form class="grid" x-data="packingdemoapp">
-    <!--    <DataAnnotationsValidator/>-->
-
-    <article class="s12 primary-container">
-        <fieldset>
-            <legend>Bins</legend>
-            <template x-for="(bin, index) in bins" :key="index">
-                <div class="row">
-                    <div class="max">
-                        <div class="field label small padless">
-                            <input t type="number"
-                                   class="small padless"
-                                   x-model="bin.length"
-                                   :id="'bin_' + index + '_length'"
-                                   :name="'bin[' + index + '].length'"/>
-                            <label :for="'bin_' + index + '_length'">Length</label>
-                        </div>
-                    </div>
-                    <div class="max">
-                        <div class="field label small padless">
-                            <input type="number"
-                                   class="small padless"
-                                   x-model="bin.width"
-                                   :id="'bin_' + index + '_width'"
-                                   :name="'bin[' + index + '].width'" />
-                            <label :for="'bin_' + index + '_width'">Width</label>
-                        </div>
-                    </div>
-                    <div class="max">
-                        <div class="field label small padless">
-                            <input type="number"
-                                   class="small padless"
-                                   x-model="bin.height"
-                                   :id="'bin_' + index + '_height'"
-                                   :name="'bin[' + index + '].height'" />
-                            <label :for="'bin_' + index + '_height'">Height</label>
-                        </div>
-                    </div>
-                    <button type="button" class="transparent circle" x-on:click="removeBin(index)">
-                        <i class="material-symbols">delete</i>
-                    </button>
-                </div>
+  <article class="s12 primary-container">
+    <fieldset>
+      <legend>Bins</legend>
+      <template x-for="(bin, index) in bins" :key="index">
+        <div :class="index >= 1 ? 'row-container' : ''">
+          <div class="row">
+            <div class="max">
+              <div class="field label small padless" :class="bin.isFieldValid('Length') ? '' : 'invalid'">
+                <input type="number"
+                       class="small padless"
+                       x-model="bin.length"
+                       :id="'bin_' + index + '_length'"
+                       :name="'bin[' + index + '].length'"/>
+                <label :for="'bin_' + index + '_length'">Length</label>
+              </div>
+            </div>
+            <div class="max">
+              <div class="field label small padless" :class="bin.isFieldValid('Width') ? '' : 'invalid'">
+                <input type="number"
+                       class="small padless"
+                       x-model="bin.width"
+                       :id="'bin_' + index + '_width'"
+                       :name="'bin[' + index + '].width'"/>
+                <label :for="'bin_' + index + '_width'">Width</label>
+              </div>
+            </div>
+            <div class="max">
+              <div class="field label small padless" :class="bin.isFieldValid('Height') ? '' : 'invalid'">
+                <input type="number"
+                       class="small padless"
+                       x-model="bin.height"
+                       :id="'bin_' + index + '_height'"
+                       :name="'bin[' + index + '].height'"/>
+                <label :for="'bin_' + index + '_height'">Height</label>
+              </div>
+            </div>
+            <button type="button" class="transparent circle" x-on:click="removeBin(index)">
+              <i class="material-symbols">delete</i>
+            </button>
+          </div>
+          <div class="">
+            <template x-for="(error, errIndex) in bin.allErrorMessages" :key="errIndex">
+              <div class="error-text" x-text="error"></div>
             </template>
-        </fieldset>
-        <nav>
-            <button class="max" type="button" x-on:click="addBin()">
-                <i class="material-symbols">add</i>
-                <span class="m l">Add Bin</span>
-            </button>
-            <button class="max" type="button" x-on:click="clearAllBins()">
-                <i class="material-symbols">delete_forever</i>
-                <span class="m l">Clear All Bins</span>
-            </button>
-            <button class="max" type="button" x-on:click="randomizeBinsFromSamples">
-                <i class="material-symbols">refresh</i>
-                <span class="m l">Randomize from samples</span>
-            </button>
-        </nav>
-    </article>
-
-    <article class="s12 secondary-container">
-        <fieldset>
-            <legend>Items</legend>
-
-        </fieldset>
-        <nav>
-
-        </nav>
-    </article>
-
-    <fieldset class="s12">
-        <div class="grid">
-            <div class="s12 m6 max">
-
-            </div>
-            <div class="s12 m6 row">
-                <button class="max tertiary" type="submit">
-                    <span>Get Results</span>
-                </button>
-            </div>
-
+          </div>
         </div>
+      </template>
     </fieldset>
+    <nav>
+      <button class="max" type="button" x-on:click="addBin()">
+        <i class="material-symbols">add</i>
+        <span class="m l">Add Bin</span>
+      </button>
+      <button class="max" type="button" x-on:click="clearAllBins()">
+        <i class="material-symbols">delete_forever</i>
+        <span class="m l">Clear All Bins</span>
+      </button>
+      <button class="max" type="button" x-on:click="randomizeBinsFromSamples">
+        <i class="material-symbols">refresh</i>
+        <span class="m l">Randomize from samples</span>
+      </button>
+    </nav>
+  </article>
+
+  <article class="s12 secondary-container">
+    <fieldset>
+      <legend>Items</legend>
+      <template x-for="(item, index) in items" :key="index">
+        <div :class="index >= 1 ? 'row-container' : ''">
+          <div class="row">
+            <div class="max">
+              <div class="field label small padless" :class="item.isFieldValid('Length') ? '' : 'invalid'">
+                <input t type="number"
+                       class="small padless"
+                       x-model="item.length"
+                       :id="'item_' + index + '_length'"
+                       :name="'item[' + index + '].length'"/>
+                <label :for="'item_' + index + '_length'">Length</label>
+              </div>
+            </div>
+            <div class="max">
+              <div class="field label small padless" :class="item.isFieldValid('Width') ? '' : 'invalid'">
+                <input type="number"
+                       class="small padless"
+                       x-model="item.width"
+                       :id="'item_' + index + '_width'"
+                       :name="'item[' + index + '].width'"/>
+                <label :for="'item_' + index + '_width'">Width</label>
+              </div>
+            </div>
+            <div class="max">
+              <div class="field label small padless" :class="item.isFieldValid('Height') ? '' : 'invalid'">
+                <input type="number"
+                       class="small padless"
+                       x-model="item.height"
+                       :id="'item_' + index + '_height'"
+                       :name="'item[' + index + '].height'"/>
+                <label :for="'item_' + index + '_height'">Height</label>
+              </div>
+            </div>
+            <div class="max">
+              <div class="field label small padless" :class="item.isFieldValid('Quantity') ? '' : 'invalid'">
+                <input type="number"
+                       class="small padless"
+                       x-model="item.quantity"
+                       :id="'item_' + index + '_quantity'"
+                       :name="'item[' + index + '].quantity'"/>
+                <label :for="'item_' + index + '_quantity'">Quantity</label>
+              </div>
+            </div>
+            <button type="button" class="transparent circle" x-on:click="removeItem(index)">
+              <i class="material-symbols">delete</i>
+            </button>
+          </div>
+          <div class="">
+            <template x-for="(error, errIndex) in item.allErrorMessages" :key="errIndex">
+              <div class="error-text" x-text="error"></div>
+            </template>
+          </div>
+        </div>
+      </template>
+
+    </fieldset>
+    <nav>
+      <button class="max secondary" type="button" x-on:click="addItem()">
+        <i class="material-symbols">add</i>
+        <span class="m l">Add Item</span>
+      </button>
+      <button class="max secondary" type="button" x-on:click="clearAllItems()">
+        <i class="material-symbols">delete_forever</i>
+        <span class="m l">Clear All Items</span>
+      </button>
+      <button class="max secondary" type="button" x-on:click="randomizeItemsFromSamples">
+        <i class="material-symbols">refresh</i>
+        <span class="m l">Randomize from samples</span>
+      </button>
+    </nav>
+  </article>
+
+  <fieldset class="s12">
+    <div class="grid">
+      <div class="s12 m6 max">
+
+      </div>
+      <div class="s12 m6 row">
+        <button class="max tertiary" type="submit">
+          <span>Get Results</span>
+        </button>
+      </div>
+
+    </div>
+  </fieldset>
 </form>
 
 <div class="grid">
-    <div class="s12">
-    </div>
+  <div class="s12">
+  </div>
 </div>
 
 <div class="grid">
-    <div class="s12">
-        <article class="surface-variant">
-            <fieldset>
-                <legend>Results</legend>
+  <div class="s12">
+    <article class="surface-variant">
+      <fieldset>
+        <legend>Results</legend>
 
-            </fieldset>
-        </article>
-    </div>
+      </fieldset>
+    </article>
+  </div>
 </div>

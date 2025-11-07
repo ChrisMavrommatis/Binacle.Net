@@ -37,7 +37,7 @@ sass:
 collections:
   apps:
     output          : true
-    permalink       : /app/:name/
+    permalink       : /apps/:name/
   sitemaps:
     output          : true
     permalink       : /sitemap/:name:output_ext

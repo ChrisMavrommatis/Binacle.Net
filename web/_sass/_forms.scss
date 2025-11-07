@@ -1,0 +1,10 @@
+﻿.s:not(.m), .l:not(.m), .s.l:not(.m) {
+  .field.padless > :is(input, textarea) {
+    padding: 0 0;
+    padding-block-start: 1rem;
+  }
+
+  .field.label.padless > label {
+    inset: -.5rem auto auto 0.1rem;
+  }
+}

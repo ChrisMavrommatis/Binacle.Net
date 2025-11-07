@@ -1,0 +1,26 @@
+---
+title: Apps
+permalink: /apps
+---
+
+<p>
+    Explore the collection of interactive applications designed to demonstrate the capabilities of Binacle.Net.
+</p>
+
+<div class="grid medium space">
+    {% for item in site.apps %}
+    <article class="s12 m6">
+        <div class="row">
+            <div class="max">
+                <h5>{{ item.title }}</h5>
+                <p>{{ item.description }}</p>
+            </div>
+        </div>
+        <nav>
+            <a href="{{ item.url | relative_url }}" class="button">
+                Try it out!
+            </a>
+        </nav>
+    </article>
+    {% endfor %}
+</div>
