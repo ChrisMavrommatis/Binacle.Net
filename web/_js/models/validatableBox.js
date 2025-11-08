@@ -47,6 +47,10 @@ export class ValidatableBox {
 		this.height = height;
 	}
 
+	get id() {
+		return `${this.length}x${this.width}x${this.height}`;
+	}
+
 	isFieldValid(fieldName) {
 		const errors = this.errorState;
 		if (fieldName) {

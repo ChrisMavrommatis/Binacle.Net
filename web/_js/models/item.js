@@ -7,7 +7,7 @@ class Item extends ValidatableBox {
 	}
 
 	get id() {
-		return `${this.length}x${this.width}x${this.height}-${this.quantity}`;
+		return `${super.id}-${this.quantity}`;
 	}
 
 	getDimensions() {

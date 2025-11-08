@@ -1,0 +1,20 @@
+<article id="visualizer-container" class="no-padding transparent" x-data="packingvisualizer">
+  <article class="medium no-padding tertiary-container top-round" id="renderer-container"></article>
+  <progress id="loader" class="circle absolute center middle"></progress>
+  <div>
+    <nav class="no-space">
+
+      <template x-for="control in controls" :key="control.id">
+        <button type="button"
+                :id="control.id"
+                class="border tertiary-container class max"
+                :class="control.classes"
+                :disabled="control.enabled ? null : 'disabled'"
+                @click="control.onClick"
+                >
+        <i class="material-symbols-outlined" x-text="control.icon"></i>
+        </button>
+      </template>
+    </nav>
+  </div>
+</article>
