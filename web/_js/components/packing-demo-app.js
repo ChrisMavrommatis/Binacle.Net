@@ -1,55 +1,24 @@
-import Bin from '../models/bin.js'
-import Item from '../models/item.js'
+export default (base_url) => ({
 
-export default () => ({
-	model: {
-		bins: [],
-		items: [],
-		algorithm: '',
+	getResults(request){
+		console.log('Getting results from Packing Demo App', request);
+		fetch(`${base_url}/api/v3/pack/by-custom`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(request)
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log('Packing results:', data);
+			})
+			.catch(error => {
+				console.error('Error fetching packing results:', error);
+			});
+
 	},
-	algorithms: [
-		{ value: 'FFD', text: 'First Fit Decreasing' },
-		{ value: 'BFD', text: 'Best Fit Decreasing' },
-		{ value: 'WFD', text: 'Worst Fit Decreasing' },
-	],
-	removeBin(index) {
-		this.model.bins.splice(index, 1);
-	},
-	addBin() {
-		this.model.bins.push(new Bin(0, 0, 0));
-	},
-	clearAllBins() {
-		this.model.bins = [];
-	},
-	randomizeBinsFromSamples() {
-		this.model.bins = [
-			new Bin(60, 40, 30),
-			new Bin(60, 40, 40),
-			new Bin(60, 40, 60),
-		];
-	},
-	removeItem(index) {
-		this.model.items.splice(index, 1);
-	},
-	addItem() {
-		this.model.items.push(new Item(0, 0, 0, 1));
-	},
-	clearAllItems() {
-		this.model.items = [];
-	},
-	randomizeItemsFromSamples() {
-		this.model.items = [
-			new Item(2, 5, 10, 7),
-			new Item(12, 15, 10, 3),
-			new Item(10, 15, 15, 2)
-		];
-	},
-	init() {
-		this.randomizeBinsFromSamples();
-		this.randomizeItemsFromSamples();
-		this.model.algorithm = this.algorithms.at(0).value;
-	},
-	getResults(){
-		console.log(this.model);
-	}
+
 });
+
+

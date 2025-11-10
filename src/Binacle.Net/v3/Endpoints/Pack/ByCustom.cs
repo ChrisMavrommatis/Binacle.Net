@@ -35,7 +35,8 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			)
-			.RequireRateLimiting("ApiUsage");
+			.RequireRateLimiting("ApiUsage")
+			.RequireCors("Frontend");
 	}
 
 	internal async Task<IResult> HandleAsync(

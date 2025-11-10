@@ -106,6 +106,17 @@ public class Program
 			};
 		});
 
+		// TODO: fix cors
+		builder.Services.AddCors(options =>
+			{
+				options.AddPolicy("Frontend", policy => 
+				{
+					policy.WithOrigins("http://localhost:7196")
+					.AllowAnyHeader()
+					.AllowAnyMethod();
+				});
+			});
+
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
 
 		builder.AddDiagnosticsModule();
@@ -144,7 +155,9 @@ public class Program
 		// Slim builder
 		app.UseHttpsRedirection();
 
+
 		app.UseExceptionHandler();
+
 
 		if (swaggerEnabled || scalarEnabled)
 		{
@@ -182,6 +195,7 @@ public class Program
 			}
 		}
 
+
 		app.UseDiagnosticsModule();
 
 		if (Feature.IsEnabled("SERVICE_MODULE"))
@@ -193,6 +207,8 @@ public class Program
 		{
 			app.UseUIModule();
 		}
+
+		app.UseCors("Frontend");
 
 		app.RegisterEndpointsFromAssemblyContaining<IApiMarker>();
 

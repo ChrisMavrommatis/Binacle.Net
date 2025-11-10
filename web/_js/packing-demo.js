@@ -1,9 +1,16 @@
 ﻿import Alpine from 'alpinejs';
-import packingdemoapp from './components/packing-demo-app.js';
+import packingDemoForm from './components/packing-demo-form.js';
+import packingDemoApp from './components/packing-demo-app.js';
 import packingVisualizer from "./components/packing-visualizer";
 
 
-Alpine.data('packingdemoapp', packingdemoapp);
+import fieldPlugin from './plugins/field.js';
+
+Alpine.plugin(fieldPlugin)
+
+Alpine.data('packingdemoapp', (base_url) => packingDemoApp(base_url));
+Alpine.data('packingdemoform', packingDemoForm);
 Alpine.data('packingvisualizer', packingVisualizer);
 
 Alpine.start();
+
