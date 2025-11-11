@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using Binacle.Net.Configuration.Models;
+using Binacle.Net.Configuration;
 using Binacle.Net.TestsKernel.Data.Providers.BinaryDecision;
 using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.v2.Models;

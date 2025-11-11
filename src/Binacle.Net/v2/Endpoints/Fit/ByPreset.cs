@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Configuration.Models;
+﻿using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
@@ -32,7 +32,8 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPreset404NotFound)
-			.RequireRateLimiting("ApiUsage");
+			.RequireRateLimiting("ApiUsage")
+			.RequireCors("Frontend");
 	}
 
 	internal async Task<IResult> HandleAsync(

@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Configuration.Models;
+﻿using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
@@ -41,7 +41,8 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			)
-			.RequireRateLimiting("ApiUsage");
+			.RequireRateLimiting("ApiUsage")
+			.RequireCors("Frontend");
 	}
 
 	internal async Task<IResult> HandleAsync(

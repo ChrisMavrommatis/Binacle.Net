@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Binacle.Net.Configuration.Models;
+using Binacle.Net.Configuration;
 using Binacle.Net.DiagnosticsModule;
 using Binacle.Net.ExtensionMethods;
 using Binacle.Net.Kernel.OpenApi;
@@ -49,6 +49,7 @@ public class Program
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initializing");
 
 		builder.AddValidatableJsonConfigurationOptions<BinPresetOptions>();
+		builder.AddValidatableJsonConfigurationOptions<CorsOptions>();
 
 		// Feature Management
 		Feature.Manager = new FeatureManagerConfiguration()
@@ -106,16 +107,23 @@ public class Program
 			};
 		});
 
-		// TODO: fix cors
-		builder.Services.AddCors(options =>
+		var corsOptions = builder.Configuration
+			.GetSection(CorsOptions.SectionName)
+			.Get<CorsOptions>()!;
+		
+		if(corsOptions.Enabled)
+		{
+			builder.Services.AddCors(options =>
 			{
 				options.AddPolicy("Frontend", policy => 
 				{
-					policy.WithOrigins("http://localhost:7196")
-					.AllowAnyHeader()
-					.AllowAnyMethod();
+					policy.WithOrigins(corsOptions.Frontend!.AllowedOrigins!)
+						.AllowAnyHeader()
+						.AllowAnyMethod();
 				});
 			});
+		}
+		
 
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
 
@@ -148,6 +156,10 @@ public class Program
 			{
 				options.AddFeature("ScalarUI");
 			}
+			if(corsOptions.Enabled)
+			{
+				options.AddFeature("Cors");
+			}
 		});
 
 		var app = builder.Build();
@@ -155,9 +167,12 @@ public class Program
 		// Slim builder
 		app.UseHttpsRedirection();
 
-
 		app.UseExceptionHandler();
-
+		
+		if(corsOptions.Enabled)
+		{
+			app.UseCors();
+		}
 
 		if (swaggerEnabled || scalarEnabled)
 		{
@@ -195,7 +210,6 @@ public class Program
 			}
 		}
 
-
 		app.UseDiagnosticsModule();
 
 		if (Feature.IsEnabled("SERVICE_MODULE"))
@@ -207,8 +221,6 @@ public class Program
 		{
 			app.UseUIModule();
 		}
-
-		app.UseCors("Frontend");
 
 		app.RegisterEndpointsFromAssemblyContaining<IApiMarker>();
 

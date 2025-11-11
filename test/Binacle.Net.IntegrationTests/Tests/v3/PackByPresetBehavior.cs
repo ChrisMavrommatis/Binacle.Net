@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Configuration.Models;
+﻿using Binacle.Net.Configuration;
 using Binacle.Net.Models;
 using Binacle.Net.v3.Contracts;
 using Microsoft.Extensions.DependencyInjection;

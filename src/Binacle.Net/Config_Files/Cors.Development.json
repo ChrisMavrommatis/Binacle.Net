@@ -1,0 +1,8 @@
+{
+  "Cors": {
+    "Enabled": true,
+    "Frontend": {
+      "AllowedOrigins": [ "http://localhost:7196" ]
+    }
+  }
+}

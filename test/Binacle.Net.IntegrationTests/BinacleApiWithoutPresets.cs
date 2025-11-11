@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Binacle.Net.Configuration.Models;
+using Binacle.Net.Configuration;
 using Binacle.Net.IntegrationTests;
 using Binacle.Net.TestsKernel.Data.Providers;
 using Microsoft.AspNetCore.Hosting;

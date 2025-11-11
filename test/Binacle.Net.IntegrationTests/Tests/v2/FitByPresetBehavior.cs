@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Configuration.Models;
+﻿using Binacle.Net.Configuration;
 using Binacle.Net.IntegrationTests.v2.Abstractions;
 using Binacle.Net.v2.Models;
 using Binacle.Net.v2.Requests;

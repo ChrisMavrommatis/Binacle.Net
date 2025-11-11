@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using Binacle.Net.Configuration.Models;
+using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v3.Contracts;
 using Microsoft.Extensions.Options;
@@ -18,7 +18,8 @@ internal class List : IGroupedEndpoint<ApiV3EndpointGroup>
 			.Produces<PresetListResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, "application/json")
 			.ResponseDescription(StatusCodes.Status200OK,
-				"Returns all of the configured presets wth the associated bins.");
+				"Returns all of the configured presets wth the associated bins."
+			).RequireCors("Frontend");
 	}
 
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
