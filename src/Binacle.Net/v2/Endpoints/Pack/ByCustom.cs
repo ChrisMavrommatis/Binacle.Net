@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Kernel.Endpoints;
+﻿using Binacle.Net.Configuration;
+using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
 using Binacle.Net.v2.Models;
@@ -28,7 +29,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV2EndpointGroup>
 			.ResponseExamples<BadRequestErrorResponseExamples>(StatusCodes.Status400BadRequest, "application/json")
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.RequireRateLimiting("ApiUsage")
-			.RequireCors("Frontend");
+			.RequireCors(CorsPolicy.CoreApi);
 	}
 	
 	internal async Task<IResult> HandleAsync(

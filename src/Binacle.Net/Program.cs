@@ -115,9 +115,9 @@ public class Program
 		{
 			builder.Services.AddCors(options =>
 			{
-				options.AddPolicy("Frontend", policy => 
+				options.AddPolicy(CorsPolicy.CoreApi, policy => 
 				{
-					policy.WithOrigins(corsOptions.Frontend!.AllowedOrigins!)
+					policy.WithOrigins(corsOptions.CoreApi!.AllowedOrigins!)
 						.AllowAnyHeader()
 						.AllowAnyMethod();
 				});

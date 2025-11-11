@@ -21,7 +21,7 @@ internal class List : IGroupedEndpoint<ApiV2EndpointGroup>
 			.ResponseDescription(StatusCodes.Status200OK, "Returns all of the configured presets wth the associated bins.")
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, "If no presets are configured.")
-			.RequireCors("Frontend");
+			.RequireCors(CorsPolicy.CoreApi);
 	}
 	
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously

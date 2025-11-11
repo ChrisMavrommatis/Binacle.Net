@@ -5,6 +5,12 @@ namespace Binacle.Net.Configuration;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+internal static class CorsPolicy
+{
+	public const string CoreApi = "CoreApi";
+
+}
+
 public class CorsOptions: IConfigurationOptions
 {
 	public static string FilePath => "Cors.json";
@@ -15,7 +21,7 @@ public class CorsOptions: IConfigurationOptions
 
 	
 	public bool Enabled {get;set;}
-	public CorsPolicyOptions? Frontend {get;set;}
+	public CorsPolicyOptions? CoreApi {get;set;}
 }
 
 public class CorsPolicyOptions
@@ -28,12 +34,12 @@ internal class CorsOptionsOptionsValidator : AbstractValidator<CorsOptions>
 {
 	public CorsOptionsOptionsValidator()
 	{
-		RuleFor(x => x.Frontend)
+		RuleFor(x => x.CoreApi)
 			.NotNull()
 			.When(x => x.Enabled)
-			.WithMessage("Frontend Policy Option must be provided when CORS is enabled.");
+			.WithMessage("CoreApi policy option must be provided when CORS is enabled.");
 
-		RuleFor(x => x.Frontend)
+		RuleFor(x => x.CoreApi)
 			.ChildRules(childRule =>
 			{
 				childRule.RuleFor(x => x!.AllowedOrigins)

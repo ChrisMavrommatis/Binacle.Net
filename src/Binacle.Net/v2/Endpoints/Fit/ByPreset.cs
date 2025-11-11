@@ -33,7 +33,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV2EndpointGroup>
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPreset404NotFound)
 			.RequireRateLimiting("ApiUsage")
-			.RequireCors("Frontend");
+			.RequireCors(CorsPolicy.CoreApi);
 	}
 
 	internal async Task<IResult> HandleAsync(

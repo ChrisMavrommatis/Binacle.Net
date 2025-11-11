@@ -19,7 +19,7 @@ internal class List : IGroupedEndpoint<ApiV3EndpointGroup>
 			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, "application/json")
 			.ResponseDescription(StatusCodes.Status200OK,
 				"Returns all of the configured presets wth the associated bins."
-			).RequireCors("Frontend");
+			).RequireCors(CorsPolicy.CoreApi);
 	}
 
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously

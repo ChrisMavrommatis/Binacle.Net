@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Kernel.Endpoints;
+﻿using Binacle.Net.Configuration;
+using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
 using Binacle.Net.v3.Contracts;
@@ -36,7 +37,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 				"application/problem+json"
 			)
 			.RequireRateLimiting("ApiUsage")
-			.RequireCors("Frontend");
+			.RequireCors(CorsPolicy.CoreApi);
 	}
 
 	internal async Task<IResult> HandleAsync(

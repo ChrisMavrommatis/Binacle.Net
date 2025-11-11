@@ -42,7 +42,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 				"application/problem+json"
 			)
 			.RequireRateLimiting("ApiUsage")
-			.RequireCors("Frontend");
+			.RequireCors(CorsPolicy.CoreApi);
 	}
 
 	internal async Task<IResult> HandleAsync(
