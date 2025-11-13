@@ -12,7 +12,7 @@ module.exports = (env, argv) => {
         output: {
             filename: 'main.js',
             path: path.resolve(__dirname, dest),
-            clean: true,
+            clean: false,
         },
         module: {
             rules: [
@@ -21,15 +21,23 @@ module.exports = (env, argv) => {
         plugins: [
         ],
         optimization: {
-            minimize: false
+            minimize: true
         }
     }
 
     const packing_demo_app ={
-        entry: './_js/packing-demo.js',
         mode: 'production',
+        entry: {
+			packing_visualizer: {
+				import: './_js/components/packing_visualizer.js',
+			},
+			packing_demo: {
+				import: './_js/packing_demo.js',
+				dependOn: ['packing_visualizer']
+			},
+		},
         output: {
-            filename: 'packing-demo.js',
+            filename: '[name].js',
             path: path.resolve(__dirname, dest),
             clean: false,
         },

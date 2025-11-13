@@ -3,8 +3,10 @@ title: Packing Demo
 icon: deployed_code
 description: Allows you to visualize how Binacle.Net packs them into a container using it's algorithms.
 scripts:
-- src: "/js/packing-demo.js"
-type: "text/javascript"
+  - src: "/js/packing_visualizer.js"
+    type: "text/javascript"
+  - src: "/js/packing_demo.js"
+    type: "text/javascript"
 ---
 
 <p>
@@ -15,9 +17,9 @@ type: "text/javascript"
   This demo uses the experimental V3 API.
 </p>
 
-<div x-data="packingdemoapp('{{ site.api_url }}')" @get-results.prevent.stop="getResults($event.detail)" >
+<div x-data="packing_demo_app('{{ site.api_url }}')">
 
-  <form class="grid" x-data="packingdemoform">
+  <form method="post" class="grid" @submit.prevent.stop="onSubmit">
     <article class="s12 primary-container">
       <fieldset x-field-prefix="bin">
         <legend>Bins</legend>
@@ -170,7 +172,7 @@ type: "text/javascript"
           </div>
         </div>
         <div class="s12 m6 row">
-          <button class="max tertiary" type="submit" x-bind="getResults">
+          <button class="max tertiary" type="submit">
             <span>Get Results</span>
           </button>
         </div>
@@ -181,7 +183,6 @@ type: "text/javascript"
   <div class="grid">
     <div class="s12">
       {% include components/packing-visualizer.html %}
-
     </div>
   </div>
 
@@ -190,7 +191,34 @@ type: "text/javascript"
       <article class="surface-variant">
         <fieldset>
           <legend>Results</legend>
+          <template x-if="results.length <= 0">
+            <span>No Results</span>
+          </template>
+          <template x-for="(result, index) in results" :key="index">
+            <a class="row wave padding"
+               :class="isSelected(result) ? 'surface-container border' : ''"
+               @click.prevent.stop="selectResult(result)">
+              <i class="material-symbols large"
+                 :class="colorClass(result) + '-text'">package_2</i>
+              <div class="grid no-space max">
+								<span class="s4" x-text="resultTitle(result)">
+								</span>
+                <span class="s8 right-align" x-text="resultBinPercentageText(result)">
+								</span>
+                <progress :value="result.packedBinVolumePercentage" max="100"
+                          class="s12 surface-container-lowest"
+                          :class="colorClass(result) + '-text'">
+                </progress>
 
+                <div class="s4" x-text="result.result">
+                </div>
+                <template x-if="resultIsFullyPacked(result)">
+                  <div class="s8 right-align" x-text="resultItemPercentageText(result)">
+                  </div>
+                </template>
+              </div>
+            </a>
+          </template>
         </fieldset>
       </article>
     </div>

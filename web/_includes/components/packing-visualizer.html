@@ -1,5 +1,9 @@
-<article id="visualizer-container" class="no-padding transparent" x-data="packingvisualizer">
-  <article class="medium no-padding tertiary-container top-round" id="renderer-container"></article>
+<article id="visualizer-container"
+         class="no-padding tertiary-container"
+         x-data="packing_visualizer"
+         @update-scene.window="updateScene($event.detail)"
+         x-ref="visualizercontainer">
+  <article class="medium no-padding transparent" id="renderer-container" x-ref="renderercontainer"></article>
   <progress id="loader" class="circle absolute center middle"></progress>
   <div>
     <nav class="no-space">
@@ -7,7 +11,7 @@
       <template x-for="control in controls" :key="control.id">
         <button type="button"
                 :id="control.id"
-                class="border tertiary-container class max"
+                class="border tertiary-container max"
                 :class="control.classes"
                 :disabled="control.enabled ? null : 'disabled'"
                 @click="control.onClick"

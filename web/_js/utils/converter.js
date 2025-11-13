@@ -1,4 +1,4 @@
-﻿class Converter {
+﻿export default class Converter {
     static read(value) {
         if (value[0] === '"') {
             value = value.slice(1, -1)
@@ -13,5 +13,3 @@
         )
     }
 }
-
-export default Converter;

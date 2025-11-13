@@ -1,9 +1,7 @@
-﻿import {ValidatableBox} from "./validatableBox";
+﻿import ValidatableBox from "./validatableBox";
 
-class Bin extends ValidatableBox {
+export default class Bin extends ValidatableBox {
 	constructor(length, width, height) {
 		super(length, width, height);
 	}
 }
-
-export default Bin;

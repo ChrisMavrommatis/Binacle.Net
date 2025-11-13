@@ -1,6 +1,6 @@
-import Converter from './converter.js';
+import Converter from './converter';
 
-class Cookies {
+export default class Cookies {
     static __defaultAttributes = {
         path: '/',
         expires: 90,
@@ -84,4 +84,3 @@ class Cookies {
     }
 }
 
-export default Cookies

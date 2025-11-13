@@ -1,13 +1,11 @@
-import Cookies from './cookies.js';
+import Cookies from './cookies';
 
-class ThemeSwitcherButtonElement extends HTMLElement {
+export default class ThemeSwitcherButtonElement extends HTMLElement {
     constructor() {
         super();
         this._defaultMode = 'light';
         this._themeIcon = null;
     }
-
-
 
     connectedCallback() {
         this._defaultMode = this.getAttribute("data-default-theme") || 'light';
@@ -74,8 +72,4 @@ class ThemeSwitcherButtonElement extends HTMLElement {
             element.setAttribute(attribute, themeValue);
         });
     }
-
-
 }
-
-export default ThemeSwitcherButtonElement;

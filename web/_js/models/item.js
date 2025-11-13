@@ -1,6 +1,6 @@
-import {ValidatableBox} from "./validatableBox";
+import ValidatableBox from "./validatableBox";
 
-class Item extends ValidatableBox {
+export default class Item extends ValidatableBox {
 	constructor(length, width, height, quantity) {
 		super(length, width, height);
 		this.quantity = quantity;
@@ -17,5 +17,3 @@ class Item extends ValidatableBox {
 	}
 
 }
-
-export default Item;
