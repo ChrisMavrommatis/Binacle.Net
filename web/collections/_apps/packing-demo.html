@@ -3,6 +3,12 @@ title: Packing Demo
 icon: deployed_code
 description: Allows you to visualize how Binacle.Net packs them into a container using it's algorithms.
 scripts:
+  - src: "/js/runtime.js"
+    type: "text/javascript"
+  - src: "/js/alpine.js"
+    type: "text/javascript"
+  - src: "/js/three.js"
+    type: "text/javascript"
   - src: "/js/packing_visualizer.js"
     type: "text/javascript"
   - src: "/js/packing_demo.js"
@@ -77,9 +83,9 @@ scripts:
           <i class="material-symbols">delete_forever</i>
           <span class="m l">Clear All Bins</span>
         </button>
-        <button class="max" type="button" x-bind="randomizeBinsFromSamples">
+        <button class="max" type="button" x-bind="randomizeBins">
           <i class="material-symbols">refresh</i>
-          <span class="m l">Randomize from samples</span>
+          <span class="m l">Randomize</span>
         </button>
       </nav>
     </article>
@@ -152,9 +158,9 @@ scripts:
           <i class="material-symbols">delete_forever</i>
           <span class="m l">Clear All Items</span>
         </button>
-        <button class="max secondary" type="button" x-bind="randomizeItemsFromSamples">
+        <button class="max secondary" type="button" x-bind="randomizeItems">
           <i class="material-symbols">refresh</i>
-          <span class="m l">Randomize from samples</span>
+          <span class="m l">Randomize</span>
         </button>
       </nav>
     </article>

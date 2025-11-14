@@ -7,4 +7,13 @@ export default class Control {
 		this.onClick = onClick;
 		this.enabled = false;
 	}
+
+	enable(){
+		this.enabled = true;
+	}
+
+	disable(){
+		this.enabled = false;
+	}
+
 }

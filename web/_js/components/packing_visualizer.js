@@ -1,5 +1,5 @@
 import Control from '../models/control';
-import { getThemeColors } from '../utils/theme';
+import {getThemeColors} from '../utils/theme';
 import Bin from '../models/bin';
 import {
 	cameraFov,
@@ -49,16 +49,18 @@ function themeChangedHandler(event) {
 	const themeColors = getThemeColors(window.document.body, "tertiary-container");
 	_State.renderer.setClearColor(themeColors.color);
 	const bin = _State.scene.getObjectByName('bin');
-	if(bin){
+	if (bin) {
 		bin.material.color.setHex(themeColors.onColor);
 	}
 
 };
+
 function animate() {
 	requestAnimationFrame(animate);
 	_State.controls.update();
 	render();
 };
+
 function render() {
 	_State.renderer.render(
 		_State.scene,
@@ -70,97 +72,105 @@ function render() {
 export default () => ({
 	controls: {},
 	repeating: false,
+	repeatingInterval: null,
 	itemsRendered: 0,
 	sceneData: {
 		bin: null,
 		items: []
 	},
-	updateScene(resultPromise){
+	updateScene(resultPromise) {
 		this.stopRepeating();
 		// loading
-		this.disableAllControls();
+		startLoading(_visualizerContainer);
+		this.controls.disableAll();
 
 		resultPromise()
 			.then(result => {
-				if(result.bin && result.packedItems){
+				if (result.bin && result.packedItems) {
 					this.sceneData = {
 						bin: result.bin,
 						items: result.packedItems
 					};
 
-					this.$logger.log("[Binacle] Redraw Scene", result.bin, result.packedItems);
+					this.redrawScene(result.bin, result.packedItems);
 
-					redrawScene(_State.scene, _State.camera, result.bin, result.packedItems);
-
-					this.$logger.log("[Binacle] Scene Redrawn");
 
 					this.itemsRendered = this.sceneData.items.length;
 				}
-				this.updateControlsStatus();
+				this.controls.updateStatus(this.sceneData, this.itemsRendered);
+				stopLoading(_visualizerContainer);
 			});
+	},
+	redrawScene(bin, packedItems) {
+		this.$logger.log("[Binacle] Redraw Scene", bin, packedItems);
 
+		redrawScene(_State.scene, _State.camera, bin, packedItems);
 
-
+		this.$logger.log("[Binacle] Scene Redrawn");
 	},
 	first() {
-
+		this.controls.disableAll();
+		this.redrawScene(this.sceneData.bin, null);
+		this.itemsRendered = 0;
+		this.controls.updateStatus(this.sceneData, this.itemsRendered);
 	},
 	previous() {
-
+		this.controls.disableAll();
+		const index = this.itemsRendered - 1;
+		if (index > -1) {
+			removeItemFromScene(_State.scene, index);
+			this.itemsRendered -= 1;
+		}
+		this.controls.updateStatus(this.sceneData, this.itemsRendered);
 	},
 	repeat() {
+		if (this.repeating) {
+			this.stopRepeating();
+			return;
+		}
+		this.repeating = true;
+		this.controls.repeat.icon = 'cancel';
+		this.controls.repeat.enable();
 
+		this.itemsRendered = 0;
+		this.redrawScene(this.sceneData.bin, null);
+
+		let index = 0;
+		this.repeatingInterval = setInterval(() => {
+			if (!this.repeating || index >= this.sceneData.items.length) {
+				this.stopRepeating();
+				return;
+			}
+			const item = this.sceneData.items[index];
+			addItemToScene(_State.scene, this.sceneData.bin, item, index);
+			this.itemsRendered += 1;
+			index += 1;
+		}, 1000);
+	},
+	stopRepeating() {
+		if (this.repeatingInterval) {
+			clearInterval(this.repeatingInterval);
+		}
+		this.repeating = false;
+
+		this.controls.repeat.icon = "repeat_one";
+		this.controls.updateStatus(this.sceneData, this.itemsRendered);
 	},
 	next() {
-
+		this.controls.disableAll();
+		const index = this.itemsRendered;
+		if (index < this.sceneData.items.length) {
+			const item = this.sceneData.items[index];
+			addItemToScene(_State.scene, this.sceneData.bin, item, index);
+			this.itemsRendered += 1;
+		}
+		this.controls.updateStatus(this.sceneData, this.itemsRendered);
 	},
 	last() {
-
-	},
-	disableAllControls(){
-		for (const key in this.controls)
-		{
-			this.controls[key].enabled = false;
-		}
-
-	},
-	updateControlsStatus()
-	{
-		if (!this.sceneData.bin || !this.sceneData.items || this.sceneData.items.length <= 0)
-		{
-			this.disableAllControls();
-			return;
-		}
-
-		this.controls.repeat.enabled = true;
-
-		if (this.itemsRendered <= 0)
-		{
-			this.controls.first.enabled = false;
-			this.controls.previous.enabled = false;
-			this.controls.next.enabled = true;
-			this.controls.last.enabled = true;
-			return;
-		}
-
-		if (this.itemsRendered >= this.sceneData.items.length)
-		{
-			this.controls.first.enabled = true;
-			this.controls.previous.enabled = true;
-			this.controls.next.enabled = false;
-			this.controls.last.enabled = false;
-			return;
-		}
-
-		this.controls.first.enabled = true;
-		this.controls.previous.enabled = true;
-		this.controls.repeat.enabled = true;
-		this.controls.next.enabled = true;
-		this.controls.last.enabled = true;
-	},
-	stopRepeating(){
-		this.repeating = false;
-		this.controls.repeat.icon = "repeat_one";
+		this.controls.disableAll();
+		this.redrawScene(this.sceneData.bin, this.sceneData.items);
+		this.itemsRendered = this.sceneData.items.length;
+		this.controls.updateStatus(this.sceneData, this.itemsRendered);
 	},
 	init() {
 		this.controls = {
@@ -169,8 +179,49 @@ export default () => ({
 			repeat: new Control(2, "control-repeat", "repeat_one", 'zero-round', this.repeat),
 			next: new Control(3, "control-next", "chevron_right", 'zero-round', this.next),
 			last: new Control(4, "control-last", "last_page", 'bottom-right-round', this.last),
+			all(){
+				return [
+					this.first,
+					this.previous,
+					this.repeat,
+					this.next,
+					this.last
+				];
+			},
+			disableAll() {
+				this.all().forEach(control => control.disable());
+			},
+			enableAll() {
+				this.all().forEach(control => control.enable());
+			},
+			updateStatus(sceneData, itemsRendered) {
+				if (!sceneData.bin || !sceneData.items || sceneData.items.length <= 0) {
+					this.disableAll();
+					return;
+				}
+
+				this.repeat.enable();
+
+				if (itemsRendered <= 0) {
+					this.first.disable();
+					this.previous.disable();
+					this.next.enable();
+					this.last.enable();
+					return;
+				}
+
+				if (itemsRendered >= sceneData.items.length) {
+					this.first.enable();
+					this.previous.enable();
+					this.next.disable();
+					this.last.disable();
+					return;
+				}
+
+				this.enableAll();
+			}
 		};
-		this.sceneData.bin = new Bin(60,40,30);
+		this.sceneData.bin = new Bin(60, 40, 10);
 
 		this.$logger.log("[Binacle] Initialize");
 
@@ -181,7 +232,6 @@ export default () => ({
 		window.binacle.visualizerState = _State;
 		window.binacle.rendererContainer = _rendererContainer;
 		window.binacle.visualizerContainer = _visualizerContainer;
-
 
 
 		_State.aspectRatio = window.innerWidth / window.innerHeight;
@@ -227,5 +277,4 @@ export default () => ({
 
 		this.$logger.log("[Binacle] Initialized");
 	}
-
 });

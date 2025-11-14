@@ -2,6 +2,21 @@ import {getRandomInt} from "../utils/math";
 import Bin from '../models/bin.js'
 import Item from '../models/item.js'
 
+
+function getRandomBin(){
+	const length = getRandomInt(10, 60);
+	const width = getRandomInt(10, 60);
+	const height = getRandomInt(10, 60);
+	return new Bin(length, width, height);
+}
+function getRandomItem(quantityOverride = null){
+	const length = getRandomInt(5, 30);
+	const width = getRandomInt(5, 30);
+	const height = getRandomInt(5, 30);
+	const quantity = quantityOverride || getRandomInt(1, 10);
+	return new Item(length, width, height, quantity);
+}
+
 export default (base_url) => ({
 	model: {
 		bins: [],
@@ -17,9 +32,9 @@ export default (base_url) => ({
 	selectedResult: null,
 	init() {
 		this.model.bins = [
+			new Bin(60, 40, 10),
+			new Bin(60, 40, 20),
 			new Bin(60, 40, 30),
-			new Bin(60, 40, 40),
-			new Bin(60, 40, 60),
 		];
 		this.model.items = [
 			new Item(2, 5, 10, 7),
@@ -33,32 +48,31 @@ export default (base_url) => ({
 		const itemsValid = this.model.items.every(item => !item.hasErrors());
 		return binsValid && itemsValid;
 	},
-
 	removeBin(index) {
 		this.model.bins.splice(index, 1);
 	},
 	addBin: {
 		['@click']() {
-			// random 1-60
-			const length = getRandomInt(10, 60);
-			const width = getRandomInt(10, 60);
-			const height = getRandomInt(10, 60);
-			this.model.bins.push(new Bin(length, width, height));
+			this.model.bins.push(
+				getRandomBin()
+			);
 		}
 	},
 	clearAllBins: {
 		['@click']() {
-			// random 1-60
 			this.model.bins = [];
 		}
 	},
-	randomizeBinsFromSamples: {
+	randomizeBins: {
 		['@click']() {
-			this.model.bins = [
-				new Bin(60, 40, 30),
-				new Bin(60, 40, 40),
-				new Bin(60, 40, 60),
-			];
+			const noOfVariedBins = getRandomInt(2, 5);
+			const bins = [];
+			for (let i = 0; i < noOfVariedBins; i++) {
+				bins.push(
+					getRandomBin()
+				);
+			}
+			this.model.bins = bins;
 		}
 	},
 	removeItem(index) {
@@ -66,10 +80,9 @@ export default (base_url) => ({
 	},
 	addItem: {
 		['@click']() {
-			const length = getRandomInt(10, 60);
-			const width = getRandomInt(10, 60);
-			const height = getRandomInt(10, 60);
-			this.model.items.push(new Item(length, width, height, 1));
+			this.model.items.push(
+				getRandomItem(1)
+			);
 		}
 	},
 	clearAllItems: {
@@ -77,13 +90,16 @@ export default (base_url) => ({
 			this.model.items = [];
 		}
 	},
-	randomizeItemsFromSamples: {
+	randomizeItems: {
 		['@click']() {
-			this.model.items = [
-				new Item(2, 5, 10, 7),
-				new Item(12, 15, 10, 3),
-				new Item(10, 15, 15, 2)
-			];
+			const noOfVariedItems = getRandomInt(3, 7);
+			const items = [];
+			for (let i = 0; i < noOfVariedItems; i++) {
+				items.push(
+					getRandomItem()
+				);
+			}
+			this.model.items = items;
 		}
 	},
 	async getResults(request){
@@ -138,6 +154,10 @@ export default (base_url) => ({
 	},
 	selectResult(result) {
 		this.selectedResult = result;
+		this.$dispatch('update-scene', async () =>
+		{
+			return result;
+		});
 	},
 	colorClass(result){
 		if(result.result === 'FullyPacked'){
