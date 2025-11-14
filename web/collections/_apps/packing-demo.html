@@ -218,7 +218,7 @@ scripts:
 
                 <div class="s4" x-text="result.result">
                 </div>
-                <template x-if="resultIsFullyPacked(result)">
+                <template x-if="!resultIsFullyPacked(result)">
                   <div class="s8 right-align" x-text="resultItemPercentageText(result)">
                   </div>
                 </template>
