@@ -62,7 +62,7 @@ internal class LogsProcessor<TRequest> : BackgroundService
 			}
 			catch (Exception ex)
 			{
-				this.logger.LogError(ex, "An error occured while processing logs for {LogProcessorRequest}",
+				this.logger.LogError(ex, "An error occurred while processing logs for {LogProcessorRequest}",
 					typeof(TRequest).Name);
 				exceptionsCount++;
 

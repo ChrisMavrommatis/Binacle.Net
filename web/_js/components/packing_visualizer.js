@@ -86,18 +86,20 @@ export default () => ({
 
 		resultPromise()
 			.then(result => {
-				if (result.bin && result.packedItems) {
+				if (result && result.bin && result.packedItems) {
 					this.sceneData = {
 						bin: result.bin,
 						items: result.packedItems
 					};
-
 					this.redrawScene(result.bin, result.packedItems);
-
-
 					this.itemsRendered = this.sceneData.items.length;
 				}
 				this.controls.updateStatus(this.sceneData, this.itemsRendered);
+				stopLoading(_visualizerContainer);
+			})
+			.catch((error) => {
+				this.$logger.error("[Binacle] Error while updating scene", error);
+				this.$dispatch('error-occured', ['Error while updating packing visualizer. Please try again later.']);
 				stopLoading(_visualizerContainer);
 			});
 	},

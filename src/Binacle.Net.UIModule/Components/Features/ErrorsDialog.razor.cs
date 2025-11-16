@@ -5,7 +5,7 @@ namespace Binacle.Net.UIModule.Components.Features;
 
 public partial class ErrorsDialog : ComponentBase
 {
-	private string Title = "One or more Errors occured!";
+	private string Title = "One or more Errors occurred!";
 	private string Button = "Close";
 	
 	

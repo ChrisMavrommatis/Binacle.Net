@@ -3,13 +3,14 @@ import Bin from '../models/bin.js'
 import Item from '../models/item.js'
 
 
-function getRandomBin(){
+function getRandomBin() {
 	const length = getRandomInt(10, 60);
 	const width = getRandomInt(10, 60);
 	const height = getRandomInt(10, 60);
 	return new Bin(length, width, height);
 }
-function getRandomItem(quantityOverride = null){
+
+function getRandomItem(quantityOverride = null) {
 	const length = getRandomInt(5, 30);
 	const width = getRandomInt(5, 30);
 	const height = getRandomInt(5, 30);
@@ -102,15 +103,44 @@ export default (base_url) => ({
 			this.model.items = items;
 		}
 	},
-	async getResults(request){
-		const response = await fetch(`${base_url}/api/v3/pack/by-custom`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(request)
-		});
-		return await response.json();
+	async getResults(request) {
+		try {
+			const response = await fetch(`${base_url}/api/v3/pack/by-custom`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(request)
+			})
+			const responseJson = await response.json();
+			if(response.status !== 200){
+				let event = {
+					errors: []
+				};
+				event.errors.push(`Error: ${response.status}.`);
+				if(responseJson?.title){
+					event.title = responseJson.title;
+				}
+				if(responseJson?.detail){
+					event.errors.push(responseJson.detail);
+				}
+				if(response.status == 422){
+					for(const key in responseJson?.errors){
+						const fieldErrors = responseJson.errors[key];
+						fieldErrors.forEach(err => {
+							event.errors.push(`${key}: ${err}`);
+						});
+					}
+				}
+				this.$dispatch('error-occurred', event);
+				return null;
+			}
+			return responseJson;
+		} catch (error) {
+			this.$logger.error("[Binacle] Error while fetching packing results", error);
+			this.$dispatch('error-occurred', ['Error while fetching packing results. Please try again later.']);
+			return [];
+		}
 	},
 	onSubmit() {
 		if (!this.isValid()) {
@@ -137,33 +167,36 @@ export default (base_url) => ({
 			}))
 		};
 
-		this.$dispatch('update-scene', async () =>
-		{
+		this.$dispatch('update-scene', async () => {
 			this.$logger.log('[Binacle] Packing request sent', request);
 			const response = await this.getResults(request);
 			this.$logger.log('[Binacle] Packing results received', response);
+			if(!response || !response.data){
+				this.results = [];
+				this.selectedResult = null;
+				return null;
+			}
 			const firstSuccessfulResult = response.data.find(x => !!x.bin);
 			this.results = response.data;
-			this.selectResult(firstSuccessfulResult);
+			this.selectedResult = firstSuccessfulResult || null;
 			return firstSuccessfulResult;
 		});
 
 	},
-	isSelected(result){
+	isSelected(result) {
 		return this.selectedResult === result;
 	},
 	selectResult(result) {
 		this.selectedResult = result;
-		this.$dispatch('update-scene', async () =>
-		{
+		this.$dispatch('update-scene', async () => {
 			return result;
 		});
 	},
-	colorClass(result){
-		if(result.result === 'FullyPacked'){
+	colorClass(result) {
+		if (result.result === 'FullyPacked') {
 			return 'green';
 		}
-		if(result.result === 'PartiallyPacked'){
+		if (result.result === 'PartiallyPacked') {
 			return 'orange';
 		}
 		return 'red';
@@ -171,13 +204,13 @@ export default (base_url) => ({
 	resultTitle(result) {
 		return `Bin: ${result.bin.id}`;
 	},
-	resultBinPercentageText(result){
+	resultBinPercentageText(result) {
 		return `Packed Bin Volume: ${result.packedBinVolumePercentage}%`;
 	},
 	resultItemPercentageText(result) {
 		return `Packed Items Volume: ${result.packedItemsVolumePercentage}%`
 	},
-	resultIsFullyPacked(result){
+	resultIsFullyPacked(result) {
 		return result.result === 'FullyPacked';
 	}
 });

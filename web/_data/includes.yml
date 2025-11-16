@@ -8,8 +8,10 @@
 
 
 scripts_body_end:
-  - type: 'module'
-    src: '/lib/beercss/beer.min.js'
-  - type: 'text/javascript'
-    src: '/js/main.js'
+  - src: '/lib/beercss/beer.min.js'
+    type: 'module'
+  - src: "/js/runtime.js"
+    type: "text/javascript"
+  - src: '/js/main.js'
+    type: 'text/javascript'
 

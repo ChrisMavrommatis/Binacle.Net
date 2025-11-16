@@ -9,7 +9,7 @@ internal class Status500ResponseExample : ISingleOpenApiExamplesProvider<Problem
 {
 	public IOpenApiExample<ProblemDetails> GetExample()
 	{
-		var ex = new InvalidOperationException("An example exception occured for testing");
+		var ex = new InvalidOperationException("An example exception occurred for testing");
 		var problemDetails = new ProblemDetails
 		{
 			Type = "https://tools.ietf.org/html/rfc9110#section-15.6.1",
