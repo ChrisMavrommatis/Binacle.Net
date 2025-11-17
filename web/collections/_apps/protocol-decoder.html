@@ -2,11 +2,51 @@
 title: Protocol Decoder
 icon: deployed_code_update
 description: Decode, analyze, and visualize packing layouts with the ViPaq Protocol.
+scripts:
+  - src: "/js/alpine.js"
+    type: "text/javascript"
+  - src: "/js/three.js"
+    type: "text/javascript"
+  - src: "/js/packing_visualizer.js"
+    type: "text/javascript"
+  - src: "/js/protocol_decoder.js"
+    type: "text/javascript"
+
 ---
 
 <p>
     The Protocol Decoder enables you to decode ViPaq-encoded packing data, providing clear, interactive visualizations of container layouts for easy analysis and validation.
 </p>
 
+<div class="grid" x-data="protocol_decoder_app">
+  <article class="no-padding s12 m5 l3" @click.prevent.stop="addResult" @keyup.enter.prevent.stop="addResult">
+    <article class="medium transparent">
+      <div class="field label textarea border max-height ">
+        <textarea name="result" id="result" x-model="model.result" class="word-wrap" placeholder=""></textarea>
+        <label for="result">Add Result</label>
+      </div>
+    </article>
+    <div>
+      <nav class="no-space padding">
+        <button type="button" class="border surface-container max" >
+          <i class="material-symbols-outlined">library_add</i>
+        </button>
+      </nav>
+    </div>
 
+  </article>
+
+
+  <div class="s12 m7 l9">
+
+  </div>
+  <article class="s12 surface-variant">
+    <fieldset class="scroll" style="block-size: 30rem;">
+      <legend>Saved Results</legend>
+
+    </fieldset>
+  </article>
+</div>
+
+{% include components/errors-dialog.html %}
 

@@ -1,0 +1,15 @@
+{
+  "name": "binacle-net",
+  "version": "2.0.1",
+  "description": "Monorepo for Binacle.Net",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChrisMavrommatis/Binacle.Net.git"
+  },
+  "author": "Chris Mavrommatis",
+  "license": "GPL-3.0 AND CC-BY-SA-4.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}

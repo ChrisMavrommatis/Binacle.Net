@@ -1,4 +1,4 @@
-import ThemeSwitcherButtonElement from "./themeSwitcher";
+import { ThemeSwitcherButtonElement } from "theme-switcher";
 
 document.addEventListener('DOMContentLoaded', function () {
     

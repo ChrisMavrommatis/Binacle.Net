@@ -1,0 +1,6 @@
+{
+  "name": "cookies",
+  "version": "0.0.0",
+  "description": "Utility for cookies, based on js-cookie v3.0.5",
+  "main": "index.js"
+}

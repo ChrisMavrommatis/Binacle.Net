@@ -10,8 +10,10 @@
 scripts_body_end:
   - src: '/lib/beercss/beer.min.js'
     type: 'module'
+#   We recommend using the material-dynamic-colors only when your app needs to change theme at runtime
+#  - src: '/lib/material-dynamic-colors/material-dynamic-colors.min.js'
+#    type: 'module'
   - src: "/js/runtime.js"
     type: "text/javascript"
   - src: '/js/main.js'
     type: 'text/javascript'
-
