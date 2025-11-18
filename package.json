@@ -6,10 +6,16 @@
     "type": "git",
     "url": "git+https://github.com/ChrisMavrommatis/Binacle.Net.git"
   },
+  "scripts": {
+    "copyFiles": "gulp copy-files"
+  },
   "author": "Chris Mavrommatis",
   "license": "GPL-3.0 AND CC-BY-SA-4.0",
   "private": true,
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "devDependencies": {
+    "gulp": "^5.0.1"
+  }
 }

@@ -50,7 +50,15 @@ _site
 ## Docs
 build/docs
 docs/js
+docs/media
+docs/lib
+docs/*.ico
+docs/*.png
 
 ## Website
 build/web
 web/js
+web/media
+web/lib
+web/*.ico
+web/*.png

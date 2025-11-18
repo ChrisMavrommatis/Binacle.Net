@@ -1,3 +1,15 @@
+PATH
+  remote: ../gems/jekyll-filters
+  specs:
+    jekyll-filters (0.0.0)
+      jekyll (>= 4.2)
+
+PATH
+  remote: ../gems/jekyll-gtm
+  specs:
+    jekyll-gtm (0.0.0)
+      jekyll (>= 4.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -72,6 +84,8 @@ PLATFORMS
 DEPENDENCIES
   http_parser.rb (~> 0.6.0)
   jekyll (~> 4.2.1)
+  jekyll-filters!
+  jekyll-gtm!
   jekyll-include-cache
   jekyll-tidy
   kramdown-parser-gfm

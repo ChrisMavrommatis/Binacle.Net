@@ -131,6 +131,8 @@ kramdown:
 whitelist           : []
 plugins             :
   - jekyll-tidy
+  - jekyll-gtm
+  - jekyll-filters
 
 ############################################################
 # Front Matter Defaults
