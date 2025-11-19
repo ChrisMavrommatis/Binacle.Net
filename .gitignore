@@ -37,6 +37,8 @@ src/Binacle.Net/wwwroot/
 ## data
 azurite/
 minio_data/
+postgres/
+data/
 *.db
 *.sqlite
 *.ndjson

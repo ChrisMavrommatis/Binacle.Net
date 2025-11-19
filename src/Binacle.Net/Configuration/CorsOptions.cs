@@ -20,7 +20,6 @@ public class CorsOptions: IConfigurationOptions
 	public static string? GetEnvironmentFilePath(string environment) => $"Cors.{environment}.json";
 
 	
-	public bool Enabled {get;set;}
 	public CorsPolicyOptions? CoreApi {get;set;}
 }
 
@@ -34,20 +33,6 @@ internal class CorsOptionsOptionsValidator : AbstractValidator<CorsOptions>
 {
 	public CorsOptionsOptionsValidator()
 	{
-		RuleFor(x => x.CoreApi)
-			.NotNull()
-			.When(x => x.Enabled)
-			.WithMessage("CoreApi policy option must be provided when CORS is enabled.");
-
-		RuleFor(x => x.CoreApi)
-			.ChildRules(childRule =>
-			{
-				childRule.RuleFor(x => x!.AllowedOrigins)
-					.NotNull()
-					.NotEmpty()
-					.WithMessage("AllowedOrigins must be provided and contain at least one origin.");
-			})
-			.When(x => x.Enabled);
-
+		
 	}
 }

@@ -26,8 +26,9 @@ internal class InternalServerErrorExceptionHandler : IExceptionHandler
 			Title = "Unexpected Server Error",
 			Detail = "An unexpected error occurred while processing your request. Please try again later or contact support.",
 		};
-		
-		if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+
+		var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+		if (environment == "Development" || environment == "Test")
 		{
 			problemDetails.Extensions.TryAdd("exception", exception.GetType().Name);
 			problemDetails.Extensions.TryAdd("message", exception.Message);

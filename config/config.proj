@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.Build.NoTargets/3.7.56">
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="*.json" />
+        <Content Include="*.md"/>
+        <Content Include="*.sh"/>
+        <Content Include="*.yml"/>
+        <Content Include=".env"/>
+    </ItemGroup>
+</Project>

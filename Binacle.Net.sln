@@ -7,63 +7,45 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{609E09F8
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		Dockerfile = Dockerfile
-		LICENSE.GPL-3.0 = LICENSE.GPL-3.0
-		Nuget.config = Nuget.config
 		README.md = README.md
 		.dockerignore = .dockerignore
-		Directory.Build.props = Directory.Build.props
-		NOTICE = NOTICE
-		LICENSE.CC-BY-SA-4.0 = LICENSE.CC-BY-SA-4.0
+		gulpfile.js = gulpfile.js
+		package.json = package.json
 	EndProjectSection
 EndProject
+
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "docs", "docs\docs.proj", "{BA4B82B3-58AE-4101-A29D-649A5A5AC957}"
+EndProject
+
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "web", "web\web.proj", "{5B491E90-E11A-4367-B396-54747D309736}"
+EndProject
+
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "assets", "assets\assets.proj", "{51BBD761-5797-46CE-83DD-ECC66DEBF50D}"
+EndProject
+
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "config", "config\config.proj", "{87EBB744-2FF7-410E-801E-CC433310740F}"
+EndProject
+
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}"
 	ProjectSection(SolutionItems) = preProject
 		build\README.md = build\README.md
 	EndProjectSection
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Local", "build\local\local.proj", "{84E99DD5-CDE6-433D-910B-29873AD23B51}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ContentProject", "build\contentproject\contentproject.proj", "{3A074859-B076-45C5-97AB-BE404A0E8434}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{C74DE1C5-A76A-433C-8FCA-272FBDE3713F}"
-	ProjectSection(SolutionItems) = preProject
-		config\README.md = config\README.md
-		config\tmux.sh = config\tmux.sh
-	EndProjectSection
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Benchmarks", "config\benchmarks\benchmarks.proj", "{56B1A9D0-E233-4A2F-AA08-6930A0E07E57}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "API", "config\api\api.proj", "{36D64047-17B3-4B3D-8382-7CB0326C6826}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Docs", "config\docs\docs.proj", "{5E1ADA60-2746-4AFD-8995-91AB1049FD29}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Web", "config\web\web.proj", "{7A92F105-0BE6-44C0-9DF5-8779CFE2D4E2}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Tests", "config\tests\tests.proj", "{196E6492-8522-470E-9D87-D50DB7361B07}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Services", "config\services\services.dcproj", "{1756A39D-E259-4888-BDB4-F06140DF95CB}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dep", "dep", "{5EE822B0-B4A4-43DF-8967-91D3CFC190F8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Logging", "dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj", "{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChrisMavrommatis.Shouldly", "dep\ChrisMavrommatis.Shouldly\ChrisMavrommatis.Shouldly.csproj", "{28105C4D-7776-4682-B103-5576E8D2E3F4}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "local", "build\local\local.proj", "{84E99DD5-CDE6-433D-910B-29873AD23B51}"
 EndProject
 
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{88EC1702-D375-496F-B26A-384DBEA8E0AA}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.TestResults.Benchmarks", "doc\benchmark-results\Binacle.TestResults.Benchmarks.proj", "{61DCF326-13CF-47B8-A327-C22B2F5E1CD7}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "benchmark-results", "doc\benchmark-results\benchmark-results.proj", "{61DCF326-13CF-47B8-A327-C22B2F5E1CD7}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.TestResults.PackingEfficiency", "doc\packing-efficiency-results\Binacle.TestResults.PackingEfficiency.proj", "{4261E056-EC16-4AD7-8CD1-F327386C8BE9}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "packing-efficiency-results", "doc\packing-efficiency-results\packing-efficiency-results.proj", "{4261E056-EC16-4AD7-8CD1-F327386C8BE9}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.Net.Docs", "docs\Binacle.Net.Docs.proj", "{BA4B82B3-58AE-4101-A29D-649A5A5AC957}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Binacle.Net.Web", "web\Binacle.Net.Web.proj", "{5B491E90-E11A-4367-B396-54747D309736}"
-EndProject
+
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "res", "res", "{D91D976D-F7CC-4AEF-B942-5B5EE97832F7}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Http", "res\http\http.proj", "{5E845E8C-E566-4C95-9282-EBA7D18319D5}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "http", "res\http\http.proj", "{5E845E8C-E566-4C95-9282-EBA7D18319D5}"
 EndProject
+
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{8C31D46E-8778-404A-AEA5-FF4466499CD6}"
 	ProjectSection(SolutionItems) = preProject
 		samples\README.md = samples\README.md
@@ -74,20 +56,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{02EA68
 		samples\docker\README.md = samples\docker\README.md
 	EndProjectSection
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Minimal-Setup", "samples\docker\minimal-setup\minimal-setup.dcproj", "{EE4463F3-1386-45F0-AF4E-41D60999E5DC}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "minimal-setup", "samples\docker\minimal-setup\minimal-setup.dcproj", "{EE4463F3-1386-45F0-AF4E-41D60999E5DC}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "UI-Setup", "samples\docker\ui-setup\ui-setup.dcproj", "{291A9588-4EC8-46F8-9764-C4094D09B1F0}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "ui-Setup", "samples\docker\ui-setup\ui-setup.dcproj", "{291A9588-4EC8-46F8-9764-C4094D09B1F0}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Service-Npgsql", "samples\docker\service-npgsql\service-npgsql.dcproj", "{A0B54D75-3199-4A40-AC93-2C067C452F96}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "service-npgsql", "samples\docker\service-npgsql\service-npgsql.dcproj", "{A0B54D75-3199-4A40-AC93-2C067C452F96}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "Service-Azure", "samples\docker\service-azure\service-azure.dcproj", "{C6058E3B-76C9-46FF-9806-08E1BA8B19F9}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "service-azure", "samples\docker\service-azure\service-azure.dcproj", "{C6058E3B-76C9-46FF-9806-08E1BA8B19F9}"
 EndProject
+
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kubernetes", "kubernetes", "{36B5BEA4-E4F0-4CB5-8C06-1D1CF872040E}"
 	ProjectSection(SolutionItems) = preProject
 		samples\kubernetes\README.md = samples\kubernetes\README.md
 	EndProjectSection
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Minimal-Setup", "samples\kubernetes\minimal-setup\minimal-setup.proj", "{C756BC58-4EA7-46A8-AFB8-37B7F59BC124}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "minimal-setup", "samples\kubernetes\minimal-setup\minimal-setup.proj", "{C756BC58-4EA7-46A8-AFB8-37B7F59BC124}"
+
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AF3732DE-2A08-4636-9087-2C070CDF67F8}"
 EndProject
@@ -111,6 +95,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.UIModule", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.ViPaq", "src\Binacle.ViPaq\Binacle.ViPaq.csproj", "{27243C7C-94C8-4F85-A924-83674E764906}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChrisMavrommatis.Logging", "src\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj", "{18BB4008-2DA0-43BC-9DA5-4C004DA44A7E}"
+EndProject
 
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{33E52B99-426D-45F3-A663-E34A612626B0}"
 EndProject
@@ -128,8 +114,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.Net.TestsKernel", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binacle.ViPaq.UnitTests", "test\Binacle.ViPaq.UnitTests\Binacle.ViPaq.UnitTests.csproj", "{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}"
 EndProject
-
-
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChrisMavrommatis.Shouldly", "test\ChrisMavrommatis.Shouldly\ChrisMavrommatis.Shouldly.csproj", "{6D4B4D28-265C-4A6C-A7FB-01E2CC52CFD1}"
+EndProject
 
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,26 +125,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3A074859-B076-45C5-97AB-BE404A0E8434}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3A074859-B076-45C5-97AB-BE404A0E8434}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3A074859-B076-45C5-97AB-BE404A0E8434}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3A074859-B076-45C5-97AB-BE404A0E8434}.Release|x86.ActiveCfg = Release|Any CPU
-		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Debug|x86.Build.0 = Debug|Any CPU
-		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Release|x86.ActiveCfg = Release|Any CPU
-		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD}.Release|x86.Build.0 = Release|Any CPU
-		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Debug|x86.Build.0 = Debug|Any CPU
-		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Release|x86.ActiveCfg = Release|Any CPU
-		{28105C4D-7776-4682-B103-5576E8D2E3F4}.Release|x86.Build.0 = Release|Any CPU
 		{27243C7C-94C8-4F85-A924-83674E764906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{27243C7C-94C8-4F85-A924-83674E764906}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27243C7C-94C8-4F85-A924-83674E764906}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -167,28 +133,21 @@ Global
 		{27243C7C-94C8-4F85-A924-83674E764906}.Release|Any CPU.Build.0 = Release|Any CPU
 		{27243C7C-94C8-4F85-A924-83674E764906}.Release|x86.ActiveCfg = Release|Any CPU
 		{27243C7C-94C8-4F85-A924-83674E764906}.Release|x86.Build.0 = Release|Any CPU
-		{61DCF326-13CF-47B8-A327-C22B2F5E1CD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{61DCF326-13CF-47B8-A327-C22B2F5E1CD7}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{61DCF326-13CF-47B8-A327-C22B2F5E1CD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61DCF326-13CF-47B8-A327-C22B2F5E1CD7}.Release|x86.ActiveCfg = Release|Any CPU
-		{4261E056-EC16-4AD7-8CD1-F327386C8BE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4261E056-EC16-4AD7-8CD1-F327386C8BE9}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{4261E056-EC16-4AD7-8CD1-F327386C8BE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4261E056-EC16-4AD7-8CD1-F327386C8BE9}.Release|x86.ActiveCfg = Release|Any CPU
-		{5E845E8C-E566-4C95-9282-EBA7D18319D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5E845E8C-E566-4C95-9282-EBA7D18319D5}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{5E845E8C-E566-4C95-9282-EBA7D18319D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E845E8C-E566-4C95-9282-EBA7D18319D5}.Release|x86.ActiveCfg = Release|Any CPU
-		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Debug|x86.Build.0 = Debug|Any CPU
 		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Release|x86.ActiveCfg = Release|Any CPU
 		{EE4463F3-1386-45F0-AF4E-41D60999E5DC}.Release|x86.Build.0 = Release|Any CPU
-		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Debug|x86.Build.0 = Debug|Any CPU
 		{291A9588-4EC8-46F8-9764-C4094D09B1F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -323,27 +282,36 @@ Global
 		{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}.Release|x86.ActiveCfg = Release|Any CPU
 		{43A084F6-C19B-48F6-8D24-FD79AE3F53E4}.Release|x86.Build.0 = Release|Any CPU
-		{1756A39D-E259-4888-BDB4-F06140DF95CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1756A39D-E259-4888-BDB4-F06140DF95CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1756A39D-E259-4888-BDB4-F06140DF95CB}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{1756A39D-E259-4888-BDB4-F06140DF95CB}.Debug|x86.Build.0 = Debug|Any CPU
 		{1756A39D-E259-4888-BDB4-F06140DF95CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1756A39D-E259-4888-BDB4-F06140DF95CB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1756A39D-E259-4888-BDB4-F06140DF95CB}.Release|x86.ActiveCfg = Release|Any CPU
 		{1756A39D-E259-4888-BDB4-F06140DF95CB}.Release|x86.Build.0 = Release|Any CPU
+		{18BB4008-2DA0-43BC-9DA5-4C004DA44A7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18BB4008-2DA0-43BC-9DA5-4C004DA44A7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18BB4008-2DA0-43BC-9DA5-4C004DA44A7E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{18BB4008-2DA0-43BC-9DA5-4C004DA44A7E}.Debug|x86.Build.0 = Debug|Any CPU
+		{18BB4008-2DA0-43BC-9DA5-4C004DA44A7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18BB4008-2DA0-43BC-9DA5-4C004DA44A7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18BB4008-2DA0-43BC-9DA5-4C004DA44A7E}.Release|x86.ActiveCfg = Release|Any CPU
+		{18BB4008-2DA0-43BC-9DA5-4C004DA44A7E}.Release|x86.Build.0 = Release|Any CPU
+		{6D4B4D28-265C-4A6C-A7FB-01E2CC52CFD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D4B4D28-265C-4A6C-A7FB-01E2CC52CFD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D4B4D28-265C-4A6C-A7FB-01E2CC52CFD1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6D4B4D28-265C-4A6C-A7FB-01E2CC52CFD1}.Debug|x86.Build.0 = Debug|Any CPU
+		{6D4B4D28-265C-4A6C-A7FB-01E2CC52CFD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D4B4D28-265C-4A6C-A7FB-01E2CC52CFD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D4B4D28-265C-4A6C-A7FB-01E2CC52CFD1}.Release|x86.ActiveCfg = Release|Any CPU
+		{6D4B4D28-265C-4A6C-A7FB-01E2CC52CFD1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{84E99DD5-CDE6-433D-910B-29873AD23B51} = {848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}
-		{3A074859-B076-45C5-97AB-BE404A0E8434} = {848A5F14-ADCA-44AB-8048-4B8F6EFBDED8}
-		{F5BE53E9-DCBB-4C26-9B7D-21A475C132CD} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
-		{28105C4D-7776-4682-B103-5576E8D2E3F4} = {5EE822B0-B4A4-43DF-8967-91D3CFC190F8}
 		{61DCF326-13CF-47B8-A327-C22B2F5E1CD7} = {88EC1702-D375-496F-B26A-384DBEA8E0AA}
 		{4261E056-EC16-4AD7-8CD1-F327386C8BE9} = {88EC1702-D375-496F-B26A-384DBEA8E0AA}
-		{BA4B82B3-58AE-4101-A29D-649A5A5AC957} = {88EC1702-D375-496F-B26A-384DBEA8E0AA}
-		{5B491E90-E11A-4367-B396-54747D309736} = {88EC1702-D375-496F-B26A-384DBEA8E0AA}
 		{5E845E8C-E566-4C95-9282-EBA7D18319D5} = {D91D976D-F7CC-4AEF-B942-5B5EE97832F7}
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {8C31D46E-8778-404A-AEA5-FF4466499CD6}
 		{EE4463F3-1386-45F0-AF4E-41D60999E5DC} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
@@ -368,13 +336,9 @@ Global
 		{0987E640-1DFA-4176-90F0-339907209288} = {33E52B99-426D-45F3-A663-E34A612626B0}
 		{1587BFCD-D6D3-4F1B-85E0-4A1F296210A9} = {33E52B99-426D-45F3-A663-E34A612626B0}
 		{43A084F6-C19B-48F6-8D24-FD79AE3F53E4} = {33E52B99-426D-45F3-A663-E34A612626B0}
-		{56B1A9D0-E233-4A2F-AA08-6930A0E07E57} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
-		{36D64047-17B3-4B3D-8382-7CB0326C6826} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
-		{5E1ADA60-2746-4AFD-8995-91AB1049FD29} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
-		{7A92F105-0BE6-44C0-9DF5-8779CFE2D4E2} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
-		{196E6492-8522-470E-9D87-D50DB7361B07} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
-		{1756A39D-E259-4888-BDB4-F06140DF95CB} = {C74DE1C5-A76A-433C-8FCA-272FBDE3713F}
 		{36B5BEA4-E4F0-4CB5-8C06-1D1CF872040E} = {8C31D46E-8778-404A-AEA5-FF4466499CD6}
+		{18BB4008-2DA0-43BC-9DA5-4C004DA44A7E} = {AF3732DE-2A08-4636-9087-2C070CDF67F8}
+		{6D4B4D28-265C-4A6C-A7FB-01E2CC52CFD1} = {33E52B99-426D-45F3-A663-E34A612626B0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5D69F33-D984-4971-9197-3A82735FFD13}

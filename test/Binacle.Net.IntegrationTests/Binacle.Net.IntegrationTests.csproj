@@ -46,7 +46,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\dep\ChrisMavrommatis.Shouldly\ChrisMavrommatis.Shouldly.csproj" />
+		<ProjectReference Include="..\ChrisMavrommatis.Shouldly\ChrisMavrommatis.Shouldly.csproj" />
 		<ProjectReference Include="..\..\src\Binacle.Net\Binacle.Net.csproj" />
 		<ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj"/>
 	</ItemGroup>

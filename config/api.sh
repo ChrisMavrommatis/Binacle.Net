@@ -1,7 +1,7 @@
-﻿#!/bin/bash
+#!/bin/bash
 
 FILE_PATH=$( realpath "$0"  )
-FILE_DIR=$( dirname "$FILE_PATH" )
+ROOT_DIR=$( dirname "$FILE_PATH" )
 ROOT_DIR=$( dirname "$( dirname "$FILE_DIR" )" )
 PROJECT_PATH='src/Binacle.Net/'
 

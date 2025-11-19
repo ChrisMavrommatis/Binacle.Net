@@ -4,7 +4,7 @@
   "description": "This is the documentation site for Binacle.Net.",
   "scripts": {
     "build": "npx webpack --env build=dist",
-    "watch": "npx webpack --watch --env build=docs "
+    "watch": "npx webpack --watch --env build=docs"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,8 @@
   "devDependencies": {
     "webpack": "^5.102.1",
     "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "binacle-net": "file:.."
   }
 }

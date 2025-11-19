@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.Build.NoTargets/3.7.56">
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="**/*.js" />
+        <Content Include="**/*.css" />
+        <Content Include="**/*.woff2" />
+        <Content Include="**/*.png" />
+        <Content Include="**/*.ico" />
+        <Content Include="**/*.svg" />
+		<Content Include="*.json" />
+		<Content Include="*.md"/>
+	</ItemGroup>
+</Project>

@@ -1,3 +1,3 @@
 # Build
 
-Files related to building the project.
+Contains build scripts, generated files, and output artifacts.

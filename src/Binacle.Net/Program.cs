@@ -109,21 +109,19 @@ public class Program
 
 		var corsOptions = builder.Configuration
 			.GetSection(CorsOptions.SectionName)
-			.Get<CorsOptions>()!;
-		
-		if(corsOptions.Enabled)
+			.Get<CorsOptions>();
+
+
+		builder.Services.AddCors(options =>
 		{
-			builder.Services.AddCors(options =>
+			options.AddPolicy(CorsPolicy.CoreApi, policy =>
 			{
-				options.AddPolicy(CorsPolicy.CoreApi, policy => 
-				{
-					policy.WithOrigins(corsOptions.CoreApi!.AllowedOrigins!)
-						.AllowAnyHeader()
-						.AllowAnyMethod();
-				});
+				policy.WithOrigins(corsOptions?.CoreApi?.AllowedOrigins ?? [])
+					.AllowAnyHeader()
+					.AllowAnyMethod();
 			});
-		}
-		
+		});
+
 
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
 
@@ -156,10 +154,6 @@ public class Program
 			{
 				options.AddFeature("ScalarUI");
 			}
-			if(corsOptions.Enabled)
-			{
-				options.AddFeature("Cors");
-			}
 		});
 
 		var app = builder.Build();
@@ -168,11 +162,8 @@ public class Program
 		app.UseHttpsRedirection();
 
 		app.UseExceptionHandler();
-		
-		if(corsOptions.Enabled)
-		{
-			app.UseCors();
-		}
+
+		app.UseCors();
 
 		if (swaggerEnabled || scalarEnabled)
 		{
