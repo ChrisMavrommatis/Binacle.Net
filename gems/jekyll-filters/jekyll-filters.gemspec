@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
     spec.name = "jekyll-filters"
-    spec.version = "0.0.0"
+    spec.version = "1.0.0"
     spec.authors = ["Chris Mavrommatis"]
     spec.summary = "Various Jekyll filters"
     spec.files = Dir["lib/**/*.rb"]

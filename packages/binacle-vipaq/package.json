@@ -1,0 +1,6 @@
+{
+  "name": "binacle-vipaq",
+  "version": "1.0.0",
+  "description": "Binacle.ViPaq implementation in JS",
+  "main": "index.js"
+}
