@@ -1,13 +1,13 @@
 PATH
   remote: ../gems/jekyll-filters
   specs:
-    jekyll-filters (0.0.0)
+    jekyll-filters (1.0.0)
       jekyll (>= 4.2)
 
 PATH
   remote: ../gems/jekyll-gtm
   specs:
-    jekyll-gtm (0.0.0)
+    jekyll-gtm (1.0.0)
       jekyll (>= 4.2)
 
 GEM
