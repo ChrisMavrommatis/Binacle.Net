@@ -4,7 +4,7 @@
   "description": "This is the website for Binacle.Net",
   "scripts": {
     "build": "npx webpack --env build=dist",
-    "serve": "bundle exec jekyll serve --livereload",
+    "serve": "bundle exec jekyll serve",
     "watch": "npx webpack --watch --env build=watch"
   },
   "repository": {

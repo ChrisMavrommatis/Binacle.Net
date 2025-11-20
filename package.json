@@ -7,7 +7,8 @@
     "url": "git+https://github.com/ChrisMavrommatis/Binacle.Net.git"
   },
   "scripts": {
-    "copyFiles": "gulp copy-files"
+    "copy-assets-to-docs": "gulp copy-assets-to-docs",
+    "copy-assets-to-web": "gulp copy-assets-to-web"
   },
   "author": "Chris Mavrommatis",
   "license": "GPL-3.0 AND CC-BY-SA-4.0",
