@@ -12,10 +12,10 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	tmux split-window -h -t $SESSION_NAME:0 
 
 	# set the cd to /src/Binacle.Net
-	tmux send-keys -t $SESSION_NAME:0.0 'cd ./config/api' C-m
+	tmux send-keys -t $SESSION_NAME:0.0 'cd ./config' C-m
 	
 	# Set the cd to ../_data
-	tmux send-keys -t $SESSION_NAME:0.1 'cd ./config/services' C-m
+	tmux send-keys -t $SESSION_NAME:0.1 'cd ./config' C-m
 	
 	# Select the first pane
 	tmux select-pane -t $SESSION_NAME:0.0
@@ -28,8 +28,8 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the 2nd window horizontally
  	tmux split-window -h -t $SESSION_NAME:1
 
-  # set the cd to /config/docs
-  tmux send-keys -t $SESSION_NAME:1.0 'cd ./config/docs' C-m
+  # set the cd to /docs
+  tmux send-keys -t $SESSION_NAME:1.0 'cd ./docs' C-m
 
   # Set the cd to /docs
   tmux send-keys -t $SESSION_NAME:1.1 'cd ./docs' C-m
@@ -46,10 +46,10 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the window horizontally
  	tmux split-window -h -t $SESSION_NAME:2
 
-  # set the cd to /config/docs
-  tmux send-keys -t $SESSION_NAME:2.0 'cd ./config/web' C-m
+  # set the cd to /web
+  tmux send-keys -t $SESSION_NAME:2.0 'cd ./web' C-m
 
-  # Set the cd to /docs
+  # Set the cd to /web
   tmux send-keys -t $SESSION_NAME:2.1 'cd ./web' C-m
 
   # Select the first pane
@@ -60,15 +60,15 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
   # Create a new window named 'tests'
   tmux new-window -n 'tests' -t $SESSION_NAME
   
-  # set the cd to /config/tests
-  tmux send-keys -t $SESSION_NAME:3 'cd ./config/tests' C-m
+  # set the cd to /config
+  tmux send-keys -t $SESSION_NAME:3 'cd ./config' C-m
   ###-------------------------WINDOW 3----------------------------###
 
   ###-------------------------WINDOW 4----------------------------###
   # Create a new window named 'tests'
   tmux new-window -n 'misc' -t $SESSION_NAME
   
-  # set the cd to /config/tests
+  # set the cd to /config
   tmux send-keys -t $SESSION_NAME:4 'cd ./config' C-m
   ###-------------------------WINDOW 4----------------------------###	
 	
@@ -82,9 +82,9 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
   # Split the window vertically
   tmux split-window -v -t $SESSION_NAME:4
   
-  # Set the cd to /config/benchmarks
-  tmux send-keys -t $SESSION_NAME:5.0 'cd ./config/benchmarks' C-m
-  tmux send-keys -t $SESSION_NAME:5.1 'cd ./config/benchmarks' C-m
+  # Set the cd to /config
+  tmux send-keys -t $SESSION_NAME:5.0 'cd ./config' C-m
+  tmux send-keys -t $SESSION_NAME:5.1 'cd ./config' C-m
 
   # Select the first pane
   tmux select-pane -t $SESSION_NAME:5.0
@@ -100,9 +100,9 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
   # Split the window vertically
   tmux split-window -v -t $SESSION_NAME:6
     
-  # Set the cd to /config/benchmarks
-  tmux send-keys -t $SESSION_NAME:6.0 'cd ./config/benchmarks' C-m
-  tmux send-keys -t $SESSION_NAME:6.1 'cd ./config/benchmarks' C-m
+  # Set the cd to /config
+  tmux send-keys -t $SESSION_NAME:6.0 'cd ./config' C-m
+  tmux send-keys -t $SESSION_NAME:6.1 'cd ./config' C-m
   
   # Select the first pane
   tmux select-pane -t $SESSION_NAME:6.0
@@ -122,11 +122,11 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
     # Split the 3rd pane horizontally
     tmux split-window -h -t $SESSION_NAME:7.2
     
-    # Set the cd to /config/benchmarks
-    tmux send-keys -t $SESSION_NAME:7.0 'cd ./config/benchmarks' C-m
-    tmux send-keys -t $SESSION_NAME:7.1 'cd ./config/benchmarks' C-m
-    tmux send-keys -t $SESSION_NAME:7.2 'cd ./config/benchmarks' C-m
-    tmux send-keys -t $SESSION_NAME:7.3 'cd ./config/benchmarks' C-m
+    # Set the cd to /config
+    tmux send-keys -t $SESSION_NAME:7.0 'cd ./config' C-m
+    tmux send-keys -t $SESSION_NAME:7.1 'cd ./config' C-m
+    tmux send-keys -t $SESSION_NAME:7.2 'cd ./config' C-m
+    tmux send-keys -t $SESSION_NAME:7.3 'cd ./config' C-m
     # Select the first pane
     tmux select-pane -t $SESSION_NAME:7.0
     	

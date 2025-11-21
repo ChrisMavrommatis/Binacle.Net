@@ -1,8 +1,8 @@
 #!/bin/bash
 
 FILE_PATH=$( realpath "$0"  )
-ROOT_DIR=$( dirname "$FILE_PATH" )
-ROOT_DIR=$( dirname "$( dirname "$FILE_DIR" )" )
+FILE_DIR=$( dirname "$FILE_PATH" )
+ROOT_DIR=$( dirname "$FILE_DIR" )
 PROJECT_PATH='src/Binacle.Net/'
 
 # set working directory to the root of the project

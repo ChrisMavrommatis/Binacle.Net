@@ -17,18 +17,28 @@ module.exports = {
 		},
 		protocol_decoder: {
 			import: './_js/protocol_decoder.js',
-			dependOn: ['packing_visualizer', 'alpine']
+			dependOn: ['binacle_vipaq', 'packing_visualizer', 'alpine']
 		},
 		three: 'three',
 		alpine: 'alpinejs',
+		binacle_vipaq: 'binacle-vipaq',
 	},
 	output: {
 		filename: '[name].js',
 		path: path.resolve(__dirname, dest),
 		clean: true,
 	},
+	resolve: {
+		extensions: ['.ts', '.js', '.json']
+	},
 	module: {
-		rules: [],
+		rules: [
+			{
+				test: /\.ts?$/,
+				use: 'ts-loader',
+				exclude: /node_modules/,
+			},
+		],
 	},
 	plugins: [],
 	optimization: {

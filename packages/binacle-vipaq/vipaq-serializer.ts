@@ -1,4 +1,6 @@
-export default class ViPaqSerializer{
-	Deserialize: (data: Uint8Array) => void;
+import {deserialize} from './vipaq-serializer.deserialize'
+
+export default class ViPaqSerializer {
+	static deserialize = deserialize;
 
 }
