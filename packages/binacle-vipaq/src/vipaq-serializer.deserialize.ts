@@ -7,8 +7,7 @@ import Item from "./models/Item";
 import DeserializedResult from "./models/DeserializedResult";
 
 
-
-export async function deserialize(data: Uint8Array): Promise<DeserializedResult> {
+export async function deserialize(data: Uint8Array<ArrayBuffer>): Promise<DeserializedResult> {
 	if (!data || data.length < 1) {
 		throw new Error("Data is invalid or empty.");
 	}
@@ -20,15 +19,11 @@ export async function deserialize(data: Uint8Array): Promise<DeserializedResult>
 	const encodingInfo = EncodingInfoHelper.fromByte(firstByte);
 	// EncodingInfoHelper.ThrowOnInvalidEncodingInfo<T>(encodingInfo);
 
-	const dataStream = await getDecodingDataStream(restOfData, encodingInfo);
 	// Determine if the data is compressed
+	const dataStream = await getDecodingDataStream(restOfData, encodingInfo);
 	const protocolReader = new ProtocolReader(dataStream);
 	const numberOfItems = protocolReader.readUint16();
 
-	// Create a minimal bin and items list so we return a valid DeserializedResult.
-	// The original implementation reads dimensions and coordinates based on encodingInfo,
-	// but those helpers are not implemented here yet. Returning placeholder objects
-	// that consumers can inspect is safer than leaving the function without a return.
 	const bin = new Bin();
 	protocolReader.readDimensions(bin, encodingInfo.binDimensionsBitSize);
 
@@ -37,14 +32,14 @@ export async function deserialize(data: Uint8Array): Promise<DeserializedResult>
 		const item = new Item();
 		protocolReader.readDimensions(item, encodingInfo.itemDimensionsBitSize);
 		protocolReader.readCoordinates(item, encodingInfo.itemCoordinatesBitSize);
-
 		items.push(item);
 	}
 
 	return new DeserializedResult(bin, items);
 }
 
-async function getDecodingDataStream(data: Uint8Array, encodingInfo: EncodingInfo): Promise<DataView<ArrayBuffer>> {
+async function getDecodingDataStream(data: Uint8Array<ArrayBuffer>, encodingInfo: EncodingInfo): Promise<DataView<ArrayBuffer>> {
+
 	if (encodingInfo.version == Version.Uncompressed) {
 		return new DataView(data.buffer);
 	}
@@ -70,6 +65,6 @@ async function getDecodingDataStream(data: Uint8Array, encodingInfo: EncodingInf
 		return new DataView(decompressed.buffer);
 	}
 
-	throw new Error(`version ${encodingInfo.version} is not supported`);
+	throw new Error(`Version ${encodingInfo.version} is not supported`);
 
 }
