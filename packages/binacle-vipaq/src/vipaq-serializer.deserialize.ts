@@ -1,4 +1,3 @@
-import {EncodingInfoHelper} from "./helpers/EncodingInfoHelper";
 import {ProtocolReader} from "./ProtocolReader";
 import {EncodingInfo} from "./models/EncodingInfo";
 import {Version} from "./models/Version";
@@ -16,7 +15,7 @@ export async function deserialize(data: Uint8Array<ArrayBuffer>): Promise<Deseri
 	const firstByte = data[0];
 	const restOfData = data.slice(1);
 
-	const encodingInfo = EncodingInfoHelper.fromByte(firstByte);
+	const encodingInfo = EncodingInfo.fromByte(firstByte);
 	// EncodingInfoHelper.ThrowOnInvalidEncodingInfo<T>(encodingInfo);
 
 	// Determine if the data is compressed
