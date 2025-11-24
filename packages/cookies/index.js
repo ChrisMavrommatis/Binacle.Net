@@ -1,1 +1,1 @@
-export { default as Cookies } from './cookies.js';
+export { default as Cookies } from './src/api';

@@ -2,6 +2,7 @@ Gem::Specification.new do |spec|
     spec.name = "jekyll-gtm"
     spec.version = "1.0.0"
     spec.authors = ["Chris Mavrommatis"]
+    spec.licenses = ["MIT"]
     spec.summary = "GTM tags for Jekyll"
     spec.files = Dir["lib/**/*.rb"]
     spec.require_paths = ["lib"]

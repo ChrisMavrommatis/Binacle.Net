@@ -1,1 +1,1 @@
-export { default as ThemeSwitcherButtonElement } from './theme-switcher.js';
+export { default as ThemeSwitcherButtonElement } from './src/theme-switcher.js';
