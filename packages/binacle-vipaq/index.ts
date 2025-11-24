@@ -1,1 +1,1 @@
-export { default as ViPaqSerializer } from './src/vipaq-serializer';
+export { default as ViPaqSerializer } from './src/ViPaqSerializer';
