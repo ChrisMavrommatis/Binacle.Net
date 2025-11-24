@@ -24,7 +24,7 @@ describe('encodingInfoUtils', () => {
 		}
 	);
 
-	test.each(EncodingInfoData.All)("FromByte_Returns_Correct_EncodingInfo",
+	test.each(EncodingInfoData.All)("encodingInfoFromByte Returns Correct EncodingInfo",
 		(encodingInfoData) => {
 
 			const encodingInfo = encodingInfoFromByte(encodingInfoData.expectedByte);
