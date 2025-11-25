@@ -6,6 +6,7 @@ using Binacle.Net.UIModule.Components;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Binacle.Net.UIModule;
 
@@ -15,6 +16,7 @@ public static class ModuleDefinition
 	{
 		Log.Information("{moduleName} module. Status {status}", "UI", "Initializing");
 
+		builder.WebHost.UseStaticWebAssets();
 		builder.AddJsonConfiguration(
 			filePath: "UiModule/ConnectionStrings.json",
 			environmentFilePath: $"UiModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json",
@@ -72,7 +74,6 @@ public static class ModuleDefinition
 			// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 			app.UseHsts();
 		}
-		
 		app.MapStaticAssets();
 
 		app.MapRazorComponents<App>()

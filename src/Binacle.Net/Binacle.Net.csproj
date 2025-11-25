@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<UserSecretsId>Binacle_Net_Secrets</UserSecretsId>
+		<RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>
 	</PropertyGroup>
 
 	<ItemGroup>
