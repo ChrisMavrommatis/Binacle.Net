@@ -1,7 +1,7 @@
-﻿using Binacle.Net.Services;
+using Binacle.Net.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Binacle.Net.Kernel.OpenApi;
 
@@ -34,7 +34,7 @@ internal class JwtBearerSecuritySchemeDocumentTransformer : IOpenApiDocumentTran
 		}
 
 		// Add the security scheme at the document level
-		var requirements = new Dictionary<string, OpenApiSecurityScheme>
+		var requirements = new Dictionary<string, IOpenApiSecurityScheme>
 		{
 			["Bearer"] = new OpenApiSecurityScheme
 			{

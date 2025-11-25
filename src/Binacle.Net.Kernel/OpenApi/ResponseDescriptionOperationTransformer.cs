@@ -1,7 +1,7 @@
-﻿using Binacle.Net.Kernel.OpenApi.Helpers;
+using Binacle.Net.Kernel.OpenApi.Helpers;
 using Binacle.Net.Kernel.OpenApi.Models;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Binacle.Net.Kernel.OpenApi;
 

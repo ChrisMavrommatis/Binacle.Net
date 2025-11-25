@@ -1,6 +1,6 @@
-﻿using System.Text;
+using System.Text;
 using Binacle.Net.Kernel.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Binacle.Net;
 

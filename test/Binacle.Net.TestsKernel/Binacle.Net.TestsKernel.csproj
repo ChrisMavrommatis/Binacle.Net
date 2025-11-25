@@ -5,13 +5,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Data\**\*.json"/>
+		<EmbeddedResource Include="Data\**\*.json" />
 	</ItemGroup>
 
 
 	<ItemGroup>
-		<PackageReference Include="xunit.v3.extensibility.core" Version="3.0.1" />
-		<PackageReference Include="xunit.v3.common" Version="3.0.1" />
+		<PackageReference Include="xunit.v3.extensibility.core" Version="3.2.0" />
+		<PackageReference Include="xunit.v3.common" Version="3.2.0" />
 	</ItemGroup>
 
 

@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Binacle.Net.ServiceModule.IntegrationTests"/>
+		<InternalsVisibleTo Include="Binacle.Net.ServiceModule.IntegrationTests" />
 	</ItemGroup>
 
 	<ItemGroup>
  	  <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
 	  <PackageReference Include="ChrisMavrommatis.StartupTasks" Version="2.0.4" />
 	  <PackageReference Include="Dapper" Version="2.1.66" />
-	  <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.9" />
-	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.13.0" />
-	  <PackageReference Include="Npgsql" Version="9.0.3" />
+	  <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.13.1" />
+	  <PackageReference Include="Npgsql" Version="10.0.0" />
 	</ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -22,6 +22,6 @@
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule.Domain\Binacle.Net.ServiceModule.Domain.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<Using Include="FluxResults"/>
+		<Using Include="FluxResults" />
 	</ItemGroup>
 </Project>

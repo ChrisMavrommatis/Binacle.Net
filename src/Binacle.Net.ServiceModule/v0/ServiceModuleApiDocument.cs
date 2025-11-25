@@ -1,9 +1,7 @@
-﻿using System.Text;
+using System.Text;
 using Binacle.Net.Kernel.OpenApi;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using OpenApiExamples;
+using Microsoft.OpenApi;
 using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.ServiceModule.v0;

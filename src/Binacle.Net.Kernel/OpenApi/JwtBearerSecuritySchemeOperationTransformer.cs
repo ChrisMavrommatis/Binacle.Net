@@ -1,8 +1,8 @@
-﻿using Binacle.Net.Services;
+using Binacle.Net.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Binacle.Net.Kernel.OpenApi;
 
@@ -43,16 +43,7 @@ internal class JwtBearerSecuritySchemeOperationTransformer : IOpenApiOperationTr
 
 		operation.Security.Add(new OpenApiSecurityRequirement
 		{
-			[
-				new OpenApiSecurityScheme
-				{
-					Reference = new OpenApiReference
-					{
-						Id = "Bearer",
-						Type = ReferenceType.SecurityScheme
-					}
-				}
-			] = Array.Empty<string>()
+			[new OpenApiSecuritySchemeReference("bearer")] = []
 		});
 	}
 }

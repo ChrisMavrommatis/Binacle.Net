@@ -1,4 +1,4 @@
-﻿@using Binacle.Net.UIModule.Components.Layout
+@using Binacle.Net.UIModule.Components.Layout
 @using Microsoft.AspNetCore.Http
 
 @inject Services.ThemeService ThemeService
@@ -12,11 +12,10 @@
     @* Let browser know website is optimized for mobile *@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <base href="." />
-
-    <link type="text/css" rel="stylesheet" href="vendor/beercss/beer.min.css" >
+    <base href="/" />
+    <link type="text/css" rel="stylesheet" href="@Assets["/vendor/beercss/beer.min.css"]">
     
-    <link type="text/css" rel="stylesheet" href="css/main.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="@Assets["/css/main.css"]" media="screen,projection" />
     
     @* Favicon *@
     <link rel="icon" href="favicon.ico" />
@@ -29,7 +28,7 @@
     <Routes />
     <Footer></Footer>
 
-    <script src="_framework/blazor.web.js"></script>
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
 	<script src="js/cookies.js"></script>
 
     <script type="importmap">

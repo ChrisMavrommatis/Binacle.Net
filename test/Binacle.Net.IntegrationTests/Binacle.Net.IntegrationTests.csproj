@@ -30,25 +30,25 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.9" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
 		<PackageReference Include="Shouldly" Version="4.3.0" />
-		<PackageReference Include="xunit.v3" Version="3.0.1" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
+		<PackageReference Include="xunit.v3" Version="3.2.0" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
-		<Using Include="Xunit"/>
-		<Using Include="Shouldly"/>
+		<Using Include="Xunit" />
+		<Using Include="Shouldly" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\ChrisMavrommatis.Shouldly\ChrisMavrommatis.Shouldly.csproj" />
 		<ProjectReference Include="..\..\src\Binacle.Net\Binacle.Net.csproj" />
-		<ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj"/>
+		<ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj" />
 	</ItemGroup>
 
 </Project>

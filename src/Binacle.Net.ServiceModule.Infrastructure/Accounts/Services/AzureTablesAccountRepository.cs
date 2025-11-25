@@ -1,10 +1,9 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Azure;
 using Azure.Data.Tables;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
-using Binacle.Net.ServiceModule.Infrastructure.Common.ExtensionMethods;
 using Microsoft.AspNetCore.Http;
 
 namespace Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;

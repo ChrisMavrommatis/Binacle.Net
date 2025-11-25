@@ -1,8 +1,8 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using Binacle.Net.Kernel.Serialization;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Binacle.Net.Kernel.OpenApi;
 
@@ -27,7 +27,7 @@ internal class EnumStringsSchemaTransformer : IOpenApiSchemaTransformer
 		var converterType = context?.JsonPropertyInfo?.CustomConverter?.GetType();
 		if (converterType == typeof(JsonStringEnumConverter))
 		{
-			schema.Type = "string";
+			schema.Type = JsonSchemaType.String;
 			return Task.CompletedTask;
 		}
 
@@ -35,14 +35,14 @@ internal class EnumStringsSchemaTransformer : IOpenApiSchemaTransformer
 		// TODO: if property required then remove nullable and from name
 		if ((converterType?.IsGenericType ?? false) && converterType?.GetGenericTypeDefinition() == typeof(JsonStringNullableEnumConverter<>))
 		{
-			schema.Type = "string";
+			schema.Type = JsonSchemaType.String;
 			schema.Enum = this.GetEnumOptions(underlyingPropertyType);
 			return Task.CompletedTask;
 		}
 		
 		if (converterType == typeof(JsonStringNullableEnumConverter))
 		{
-			schema.Type = "string";
+			schema.Type = JsonSchemaType.String;
 			schema.Enum = this.GetEnumOptions(underlyingPropertyType);
 			return Task.CompletedTask;
 		}
@@ -50,7 +50,7 @@ internal class EnumStringsSchemaTransformer : IOpenApiSchemaTransformer
 
 	}
 
-	private IList<IOpenApiAny> GetEnumOptions(Type enumType)
+	private IList<JsonNode> GetEnumOptions(Type enumType)
 	{
 		var enumValues = Enum.GetValues(enumType).Cast<object>();
 		
@@ -65,12 +65,12 @@ internal class EnumStringsSchemaTransformer : IOpenApiSchemaTransformer
 			};
 		});
 		
-		var enumValuesArr = new OpenApiArray();
+		var result = new List<JsonNode>();
 		foreach (var item in enumDesc)
 		{
-			enumValuesArr.Add(new OpenApiString(item.Name));
+			result.Add(JsonValue.Create(item.Name)!);
 		}
 
-		return enumValuesArr;
+		return result;
 	}
 }

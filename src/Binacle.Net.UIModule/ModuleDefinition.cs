@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -73,7 +73,7 @@ public static class ModuleDefinition
 			app.UseHsts();
 		}
 		
-		app.UseStaticFiles();
+		app.MapStaticAssets();
 
 		app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();

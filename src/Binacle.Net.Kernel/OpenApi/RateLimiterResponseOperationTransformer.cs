@@ -1,10 +1,10 @@
-﻿using System.Text;
+using System.Text;
 using Binacle.Net.Kernel.OpenApi.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Binacle.Net.Kernel.OpenApi;
