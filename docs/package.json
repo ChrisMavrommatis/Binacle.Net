@@ -16,8 +16,5 @@
   "devDependencies": {
     "webpack": "^5.102.1",
     "webpack-cli": "^6.0.1"
-  },
-  "dependencies": {
-    "binacle-net": "file:.."
   }
 }
