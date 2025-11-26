@@ -26,8 +26,14 @@ internal class Pbkdf2PasswordHasher : IPasswordHasher
 
 		var saltBytes = Convert.FromBase64String(salt!);
 
-		using var pbkdf2 = new Rfc2898DeriveBytes(plainTextPassword, saltBytes, _iterations, HashAlgorithmName.SHA256);
-		var hash = Convert.ToBase64String(pbkdf2.GetBytes(_hashSize));
+		var hashBytes = Rfc2898DeriveBytes.Pbkdf2(
+			plainTextPassword,
+			saltBytes,
+			_iterations, 
+			HashAlgorithmName.SHA256,
+			_hashSize
+		);
+		var hash = Convert.ToBase64String(hashBytes);
 		return new Password(Type, hash, salt);
 	}
 }

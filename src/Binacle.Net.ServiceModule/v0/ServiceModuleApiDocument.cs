@@ -29,7 +29,7 @@ internal class ServiceModuleApiDocument : IOpenApiDocument
 				Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.html")
 			};
 
-			document.Servers.Clear();
+			document.Servers?.Clear();
 			return Task.CompletedTask;
 		});
 		options.AddResponseDescription();

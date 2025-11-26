@@ -41,7 +41,7 @@ internal class JwtBearerSecuritySchemeOperationTransformer : IOpenApiOperationTr
 			return;
 		}
 
-		operation.Security.Add(new OpenApiSecurityRequirement
+		operation.Security?.Add(new OpenApiSecurityRequirement
 		{
 			[new OpenApiSecuritySchemeReference("bearer")] = []
 		});

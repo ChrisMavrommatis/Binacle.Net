@@ -5,6 +5,9 @@ using Binacle.Lib.Packing.Models;
 using Binacle.Lib.UnitTests.Data.Providers.BinaryDecision;
 using Binacle.Net.TestsKernel.Models;
 
+#pragma warning disable xUnit1007 
+
+
 namespace Binacle.Lib.UnitTests;
 
 [Trait("Scenario Tests", "Actual calculation for the algorithms.")]

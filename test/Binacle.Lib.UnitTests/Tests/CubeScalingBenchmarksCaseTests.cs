@@ -4,6 +4,9 @@ using Binacle.Lib.UnitTests.Data.Providers.Benchmarks;
 using Binacle.Net.TestsKernel.Benchmarks.Models;
 using Binacle.Net.TestsKernel.Models;
 
+#pragma warning disable xUnit1007 
+
+
 namespace Binacle.Lib.UnitTests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]

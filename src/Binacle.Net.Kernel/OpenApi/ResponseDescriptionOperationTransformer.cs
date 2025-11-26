@@ -25,13 +25,13 @@ internal class ResponseDescriptionOperationTransformer : IOpenApiOperationTransf
 		{
 			var statusCode = item.StatusCode.ToString();
 			var formattedDescription = ResponseDescription.Format(item);
-			if (operation.Responses.ContainsKey(statusCode))
+			if (operation.Responses?.ContainsKey(statusCode) ?? false)
 			{
 				operation.Responses[statusCode].Description = formattedDescription;
 			}
 			else
 			{
-				operation.Responses.Add(
+				operation.Responses?.Add(
 					statusCode,
 					new OpenApiResponse { Description = formattedDescription }
 				);

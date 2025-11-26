@@ -41,7 +41,7 @@ internal class RateLimiterResponseOperationTransformer : IOpenApiOperationTransf
 		    .OfType<EnableRateLimitingAttribute>()
 		    .Any())
 		{
-			operation.Responses.Add(
+			operation.Responses?.Add(
 				StatusCode429TooManyRequests,
 				OpenApiResponseFor429TooManyRequests
 			);
