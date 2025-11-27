@@ -10,21 +10,9 @@ cd "$ROOT_DIR/$PROJECT_PATH" || exit 1
 
 # Create a dictionary to hold aliases for the benchmark projects
 declare -A benchmark_aliases=(
-    ["FittingCubeScaling"]="*FittingCubeScaling*"
-    ["PackingCubeScaling"]="*PackingCubeScaling*"
-    
-    ["FittingMultipleBins"]="*FittingMultipleBins*"
-    ["PackingMultipleBins"]="*PackingMultipleBins*"
-    
-    ["FittingMultipleItems"]="*FittingMultipleItems*"
-    ["PackingMultipleItems"]="*PackingMultipleItems*"
-    
-    ["PackingCubeScalingMultiAlgorithm"]="*PackingCubeScalingMultiAlgorithm*"
-    ["FittingCubeScalingMultiAlgorithm"]="*FittingCubeScalingMultiAlgorithm*"
-    
-    ["PackingMultiAlgorithm"]="*PackingMultiAlgorithm*"
-    ["FittingMultiAlgorithm"]="*FittingMultiAlgorithm*"
-   
+    ["AlgorithmVersion"]="*AlgorithmVersion*"
+    ["MultipleBins"]="*MultipleBins*"
+    ["MultipleItems"]="*MultipleItems*"
 )
 
 echo "Running from $ROOT_DIR"

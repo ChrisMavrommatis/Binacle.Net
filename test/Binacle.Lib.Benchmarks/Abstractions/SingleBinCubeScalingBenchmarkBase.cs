@@ -1,13 +1,17 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.Lib.Abstractions.Fitting;
+using Binacle.Lib.Fitting.Models;
+using Binacle.Lib.Packing.Models;
 using Binacle.Net.TestsKernel.Data.Providers;
 using Binacle.Net.TestsKernel.Data.Providers.Benchmarks;
 using Binacle.Net.TestsKernel.Models;
 
 namespace Binacle.Lib.Benchmarks.Abstractions;
 
-public abstract class CubeScalingBenchmarkBase
+public abstract class SingleBinCubeScalingBenchmarkBase
 {
-	public CubeScalingBenchmarkBase(string scenarioName)
+	public SingleBinCubeScalingBenchmarkBase(string scenarioName)
 	{
 		this.binCollectionsDataProvider = new BinCollectionsDataProvider();
 		this.scenario = CubeScalingBenchmarksDataProvider.Scenarios[scenarioName];
@@ -38,5 +42,32 @@ public abstract class CubeScalingBenchmarkBase
 	{
 		this.Bin = null;
 		this.Items = null;
+	}
+	
+	protected FittingResult Run(AlgorithmFactory<IFittingAlgorithm> algorithmFactory, TestBin bin, List<TestItem> items)
+	{
+		var algorithmInstance = algorithmFactory(bin, items);
+		var result = algorithmInstance.Execute(new FittingParameters
+		{
+			ReportFittedItems = false,
+			ReportUnfittedItems = false
+		});
+		return result;
+	}
+	
+	protected PackingResult Run(
+		AlgorithmFactory<IPackingAlgorithm> algorithmFactory,
+		TestBin bin,
+		List<TestItem> items
+	)
+	{
+		var algorithmInstance = algorithmFactory(bin, items);
+		var result = algorithmInstance.Execute(new PackingParameters
+		{
+			NeverReportUnpackedItems = false,
+			ReportPackedItemsOnlyWhenFullyPacked = false,
+			OptInToEarlyFails = true
+		});
+		return result;
 	}
 }
