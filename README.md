@@ -52,7 +52,7 @@ All documentation, images, and other content files in this project are licensed 
 See [LICENSE.CC-BY-SA-4.0](LICENSE.CC-BY-SA-4.0) for the full license text.
 
 ## Third-Party Libraries
-Binacle.Net used several third-party libraries. 
+Binacle.Net uses several third-party libraries. 
 
 See the [NOTICE](NOTICE) file for details.
 
