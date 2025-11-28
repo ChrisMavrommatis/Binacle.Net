@@ -17,15 +17,6 @@ public interface IBinProcessor
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 	
-	// public IDictionary<string, FittingResult[]> ProcessFitting<TBin, TItem>(
-	// 	IList<TBin> bins,
-	// 	IList<TItem> items,
-	// 	IFittingParameters parameters
-	// )
-	// 	where TBin : class, IWithID, IWithReadOnlyDimensions
-	// 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
-
-
 	public IDictionary<string, PackingResult> ProcessPacking<TBin, TItem>(
 		Algorithm algorithm,
 		IList<TBin> bins,
@@ -34,12 +25,4 @@ public interface IBinProcessor
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
-	
-	// public IDictionary<string, PackingResult[]> ProcessPacking<TBin, TItem>(
-	// 	IList<TBin> bins,
-	// 	IList<TItem> items,
-	// 	IPackingParameters parameters
-	// )
-	// 	where TBin : class, IWithID, IWithReadOnlyDimensions
-	// 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 }
