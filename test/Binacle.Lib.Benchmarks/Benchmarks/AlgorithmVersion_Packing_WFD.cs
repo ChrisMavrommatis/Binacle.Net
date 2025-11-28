@@ -3,12 +3,12 @@ using Binacle.Lib.Benchmarks.Abstractions;
 using Binacle.Lib.Benchmarks.Order;
 using Binacle.Lib.Packing.Models;
 
-namespace Binacle.Lib.Benchmarks.AlgorithmVersion;
+namespace Binacle.Lib.Benchmarks;
 
 [MemoryDiagnoser]
-public class Packing_WFD : SingleBinCubeScalingBenchmarkBase
+public class AlgorithmVersion_Packing_WFD : SingleBinCubeScalingBenchmarkBase
 {
-	public Packing_WFD() : base("Rectangular-Cuboids::Small")
+	public AlgorithmVersion_Packing_WFD() : base("Rectangular-Cuboids::Small")
 	{
 	}
 
