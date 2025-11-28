@@ -3,10 +3,10 @@ using Binacle.Lib.Benchmarks.Abstractions;
 using Binacle.Lib.Benchmarks.Order;
 using Binacle.Lib.Fitting.Models;
 
-namespace Binacle.Lib.Benchmarks.Benchmarks.MultipleBins;
+namespace Binacle.Lib.Benchmarks.Benchmarks;
 
 [MemoryDiagnoser]
-public class FittingAlgorithms : MultipleBinsBenchmarkBase
+public class MultipleBins_FittingAlgorithms : MultipleBinsBenchmarkBase
 {
 	[Benchmark(Baseline = true)]
 	[BenchmarkOrder(10)]
