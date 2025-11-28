@@ -66,7 +66,7 @@ public abstract class SingleBinCubeScalingBenchmarkBase
 		{
 			NeverReportUnpackedItems = false,
 			ReportPackedItemsOnlyWhenFullyPacked = false,
-			OptInToEarlyFails = true
+			OptInToEarlyFails = false
 		});
 		return result;
 	}

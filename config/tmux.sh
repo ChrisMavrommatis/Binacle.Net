@@ -60,16 +60,28 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
   # Create a new window named 'tests'
   tmux new-window -n 'tests' -t $SESSION_NAME
   
-  # set the cd to /config
-  tmux send-keys -t $SESSION_NAME:3 'cd ./config' C-m
+	# split the window horizontally
+ 	tmux split-window -h -t $SESSION_NAME:3
+
+  # set the cd to /web
+  tmux send-keys -t $SESSION_NAME:3.0 'cd ./config' C-m
+
+  # Set the cd to /web
+  tmux send-keys -t $SESSION_NAME:3.1 'cd ./config' C-m
   ###-------------------------WINDOW 3----------------------------###
 
   ###-------------------------WINDOW 4----------------------------###
-  # Create a new window named 'tests'
+  # Create a new window named 'misc'
   tmux new-window -n 'misc' -t $SESSION_NAME
   
-  # set the cd to /config
-  tmux send-keys -t $SESSION_NAME:4 'cd ./config' C-m
+	# split the window horizontally
+ 	tmux split-window -h -t $SESSION_NAME:4
+
+  # set the cd to /web
+  tmux send-keys -t $SESSION_NAME:4.0 'cd ./config' C-m
+
+  # Set the cd to /web
+  tmux send-keys -t $SESSION_NAME:4.1 'cd ./config' C-m
   ###-------------------------WINDOW 4----------------------------###	
 	
 	
@@ -79,13 +91,18 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
   tmux new-window -n 'bench_1' -t $SESSION_NAME
   	
   # Create 4 panes
-  # Split the window vertically
-  tmux split-window -v -t $SESSION_NAME:4
+  # Split the 4th window vertically
+  tmux split-window -v -t $SESSION_NAME:5
+  # Split the 1st pane horizontally
+  tmux split-window -h -t $SESSION_NAME:5.0
+  # Split the 3rd pane horizontally
+  tmux split-window -h -t $SESSION_NAME:5.2
   
   # Set the cd to /config
   tmux send-keys -t $SESSION_NAME:5.0 'cd ./config' C-m
   tmux send-keys -t $SESSION_NAME:5.1 'cd ./config' C-m
-
+  tmux send-keys -t $SESSION_NAME:5.2 'cd ./config' C-m
+  tmux send-keys -t $SESSION_NAME:5.3 'cd ./config' C-m
   # Select the first pane
   tmux select-pane -t $SESSION_NAME:5.0
   	
@@ -96,16 +113,21 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
   # Create a new window named 'bench_2'
   tmux new-window -n 'bench_2' -t $SESSION_NAME
     	
-  # Create 4 panes
-  # Split the window vertically
-  tmux split-window -v -t $SESSION_NAME:6
+    # Create 4 panes
+    # Split the 4th window vertically
+    tmux split-window -v -t $SESSION_NAME:6
+    # Split the 1st pane horizontally
+    tmux split-window -h -t $SESSION_NAME:6.0
+    # Split the 3rd pane horizontally
+    tmux split-window -h -t $SESSION_NAME:6.2
     
-  # Set the cd to /config
-  tmux send-keys -t $SESSION_NAME:6.0 'cd ./config' C-m
-  tmux send-keys -t $SESSION_NAME:6.1 'cd ./config' C-m
-  
-  # Select the first pane
-  tmux select-pane -t $SESSION_NAME:6.0
+    # Set the cd to /config
+    tmux send-keys -t $SESSION_NAME:6.0 'cd ./config' C-m
+    tmux send-keys -t $SESSION_NAME:6.1 'cd ./config' C-m
+    tmux send-keys -t $SESSION_NAME:6.2 'cd ./config' C-m
+    tmux send-keys -t $SESSION_NAME:6.3 'cd ./config' C-m
+    # Select the first pane
+    tmux select-pane -t $SESSION_NAME:6.0
     	
   ###-------------------------WINDOW 6----------------------------###
 		
