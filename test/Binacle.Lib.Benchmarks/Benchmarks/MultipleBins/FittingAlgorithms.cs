@@ -1,15 +1,12 @@
-﻿using System.Collections.Concurrent;
 using BenchmarkDotNet.Attributes;
-using Binacle.Lib.Fitting.Models;
-using Binacle.Lib;
 using Binacle.Lib.Benchmarks.Abstractions;
 using Binacle.Lib.Benchmarks.Order;
-using Binacle.Net.TestsKernel.Models;
+using Binacle.Lib.Fitting.Models;
 
-namespace Binacle.Lib.Benchmarks;
+namespace Binacle.Lib.Benchmarks.Benchmarks.MultipleBins;
 
 [MemoryDiagnoser]
-public class FittingMultipleBins : MultipleBinsBenchmarkBase
+public class FittingAlgorithms : MultipleBinsBenchmarkBase
 {
 	[Benchmark(Baseline = true)]
 	[BenchmarkOrder(10)]
