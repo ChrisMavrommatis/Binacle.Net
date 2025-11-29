@@ -1,3 +1,3 @@
 # Build
 
-Contains build scripts, generated files, and output artifacts.
+Contains generated files, and output artifacts.

@@ -2,7 +2,7 @@
 
 BUILD_FILE_PATH=$( realpath "$0"  )
 BUILD_FILE_DIR=$( dirname "$BUILD_FILE_PATH" )
-ROOT_DIR=$( dirname "$( dirname "$BUILD_FILE_DIR" )" )
+ROOT_DIR=$( dirname "$BUILD_FILE_DIR" )
 API_PROJECT_PATH='src/Binacle.Net/Binacle.Net.csproj'
 VER=local
 
@@ -13,8 +13,7 @@ REQUIRED_DIRS=(
   "$BUILD_FILE_DIR/data/"
   "$BUILD_FILE_DIR/data/logs/"
   "$BUILD_FILE_DIR/data/pack-logs/"
-  "$BUILD_FILE_DIR/data/pack-logs/legacy-fitting/"
-  "$BUILD_FILE_DIR/data/pack-logs/legacy-packing/"
+  "$BUILD_FILE_DIR/data/pack-logs/fitting/"
   "$BUILD_FILE_DIR/data/pack-logs/packing/"
 )
   
@@ -29,8 +28,10 @@ echo "Building from $ROOT_DIR"
 
 
 
-dotnet restore --runtime linux-x64
+dotnet restore $API_PROJECT_PATH --runtime linux-x64
 
 dotnet publish $API_PROJECT_PATH -c Release -o build/output --no-restore --self-contained --runtime linux-x64
 
 docker build --build-arg VERSION=$VER -t binacle-net:$VER .
+
+docker compose -f ./config/docker-compose.build.yml --env-file ./config/.env.build up

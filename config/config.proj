@@ -4,6 +4,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Content Include="$(MSBuildThisFileDirectory).env.build" />
         <Content Include="*.json" />
         <Content Include="*.md"/>
         <Content Include="*.sh"/>

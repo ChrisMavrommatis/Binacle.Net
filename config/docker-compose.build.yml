@@ -1,4 +1,45 @@
-﻿services:
+﻿configs:
+  asprice_dashboard_config:
+    content: |
+      {
+        "Dashboard": {
+          "TelemetryLimits": {
+            "MaxLogCount": 100,
+            "MaxTraceCount": 100,
+            "MaxMetricsCount": 100
+          },
+          "Otlp": {
+            "AuthMode": "ApiKey",
+            "PrimaryApiKey": "9EFB07A6-E9F9-4AC1-A0DE-DBE829B7236B"
+          }
+        }
+      }
+  jwt_auth:
+    content: |
+      {
+        "JwtAuth": {
+          "Issuer": "https://localhost:8080",
+          "Audience": "https://localhost:8080",
+          "TokenSecret": "ThisIsAVerySecretKeyMeantToBeStoredSecurelyAndNotLikeThisSoPleaseChangeIt",
+          "ExpirationInSeconds": 3600
+        }
+      }
+  open_telemetry_production:
+    content: |
+      {
+        "OpenTelemetry" : {
+          "Otlp": {
+            "Enabled": true,
+            "Endpoint": "http://aspire-dashboard:18889"
+          }
+        }
+      }
+
+      
+      
+
+
+services:
   binacle-net:
     image: binacle-net:local
     depends_on:
@@ -8,15 +49,12 @@
         condition: service_started
     ports:
       - "8080:8080"
-    volumes:
-      - type: bind
-        source: ./JwtAuth.json
+    configs:
+      - source: jwt_auth
         target: /app/Config_Files/ServiceModule/JwtAuth.json
-        read_only: true
-      - type: bind
-        source: ./OpenTelemetry.Production.json
+      - source: open_telemetry_production
         target: /app/Config_Files/DiagnosticsModule/OpenTelemetry.Production.json
-        read_only: true
+    volumes:
       - type: bind
         source: ./data
         target: /app/data/
@@ -25,6 +63,8 @@
       - SCALAR_UI=True
       - UI_MODULE=True
       - SERVICE_MODULE=True
+      - HealthChecks__Enabled=True
+      - PackingLogs__Enabled=True
       - AZURESTORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1
       - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/
       - OTEL_EXPORTER_OTLP_HEADERS=x-otlp-api-key=9EFB07A6-E9F9-4AC1-A0DE-DBE829B7236B
@@ -39,14 +79,12 @@
       - '10001:10001'
       - '10002:10002'
   aspire-dashboard:
-    image: mcr.microsoft.com/dotnet/aspire-dashboard:9.0
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
     ports:
       - '18888:18888'
-    volumes:
-      - type: bind
-        source: ./aspire-dashboard-config.json
+    configs:
+      - source: asprice_dashboard_config
         target: /app/config_files/aspire-dashboard-config.json
-        read_only: true
     environment:
       - DOTNET_DASHBOARD_CONFIG_FILE_PATH=config_files/aspire-dashboard-config.json
-
+  

@@ -23,15 +23,19 @@ Start exploring Binacle.Net now! 🚀
 
 ```text
 /Binacle.Net  # Root directory
+├── /assets             # Static assets copyed by build 
 ├── /build              # Build scripts, generated files and output artifacts
 ├── /config             # Configuration files for running the API, Benchmarks, Tests, Docs locally
 ├── /dep                # Dependency Projects Not part of Binacle.Net, Binacle.Lib or Binacle.ViPaq
-├── /docs               # Documentation Site
 ├── /doc                # Documentation files
+├── /docs               # Documentation Site
+├── /gems               # Ruby gems 
+├── /packages           # Js Packages
 ├── /res                # Resources (Http Requests, etc)
 ├── /samples            # Example Projects for running Binacle.Net 
 ├── /src                # Source Code
 ├── /test               # Test Projects
+├── /web                # Binacle.Net Website
 ```
 
 ## 📄 License
