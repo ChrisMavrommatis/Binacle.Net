@@ -4,6 +4,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="*.md"/>
+		<None Include="**/*.md"/>
 	</ItemGroup>
 </Project>

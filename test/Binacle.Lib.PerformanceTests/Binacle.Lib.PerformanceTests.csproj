@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="PerformanceTestsArtifacts\" />
+  </ItemGroup>
+
 </Project>
