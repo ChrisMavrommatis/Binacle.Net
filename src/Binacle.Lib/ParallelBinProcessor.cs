@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using Binacle.Lib.Abstractions;
 using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Abstractions.Fitting;

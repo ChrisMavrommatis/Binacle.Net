@@ -16,7 +16,7 @@ public class AlgorithmVersion_Packing_WFD : SingleBinCubeScalingBenchmarkBase
 	[BenchmarkOrder(10)]
 	public PackingResult WFD_v1()
 		=> this.Run(AlgorithmFactories.Packing_WFD_v1, this.Bin!, this.Items!);
-	
+
 	[Benchmark]
 	[BenchmarkOrder(20)]
 	public PackingResult WFD_v2()

@@ -16,7 +16,7 @@ public class AlgorithmVersion_Packing_BFD : SingleBinCubeScalingBenchmarkBase
 	[BenchmarkOrder(10)]
 	public PackingResult BFD_v1()
 		=> this.Run(AlgorithmFactories.Packing_BFD_v1, this.Bin!, this.Items!);
-	
+
 	[Benchmark]
 	[BenchmarkOrder(20)]
 	public PackingResult BFD_v2()

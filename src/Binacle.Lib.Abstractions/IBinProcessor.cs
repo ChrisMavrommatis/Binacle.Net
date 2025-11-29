@@ -1,4 +1,4 @@
-﻿using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Abstractions.Fitting;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Fitting.Models;

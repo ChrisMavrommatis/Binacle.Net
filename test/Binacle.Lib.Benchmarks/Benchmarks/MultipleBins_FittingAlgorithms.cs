@@ -1,9 +1,9 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using Binacle.Lib.Benchmarks.Abstractions;
 using Binacle.Lib.Benchmarks.Order;
 using Binacle.Lib.Fitting.Models;
 
-namespace Binacle.Lib.Benchmarks;
+namespace Binacle.Lib.Benchmarks.Benchmarks;
 
 [MemoryDiagnoser]
 public class MultipleBins_FittingAlgorithms : MultipleBinsBenchmarkBase
