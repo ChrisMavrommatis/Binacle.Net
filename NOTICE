@@ -2,32 +2,96 @@ Binacle.Net
 
 Copyright (c) 2023-2025 Chris Mavrommatis. All rights reserved.
 
-This project is licensed under the GNU General Public License v3.0 (GPLv3).
+This product is dual-licensed:
+- Code is licensed under the GNU General Public License v3.0 (GPL-3.0)
+  See LICENSE.GPL-3.0 or https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/LICENSE.GPL-3.0
 
-All documentation, images, and other content files in this project are licensed under the
-Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0).
+- Documentation and content are licensed under Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)
+  See LICENSE.CC-BY-SA-4.0 or https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/LICENSE.CC-BY-SA-4.0
 
-This product includes software developed by:
+================================================================================
+THIRD-PARTY SOFTWARE NOTICES
+================================================================================
 
-Serilog Contributors (Apache License 2.0)
-https://github.com/serilog/serilog/blob/main/LICENSE
+This product includes software developed by third parties under various licenses.
 
-Jeremy Skinner and the .NET Foundation (FluentValidation) (Apache License 2.0)
-https://github.com/FluentValidation/FluentValidation/blob/main/License.txt
+--------------------------------------------------------------------------------
+Apache License 2.0 Components
+--------------------------------------------------------------------------------
 
-The .NET Foundation and The gRPC Authors (OpenTelemetry) (Apache License 2.0)
-https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/LICENSE.TXT
-https://github.com/grpc/grpc/blob/master/LICENSE
+FluentValidation
+  Copyright Jeremy Skinner and the .NET Foundation
+  https://github.com/FluentValidation/FluentValidation
 
-Richard Morris and contributors (Swashbuckle) (BSD-3-Clause License)
-https://github.com/domaindrivendev/Swashbuckle/blob/master/LICENSE
+Serilog
+  Copyright Serilog Contributors
+  https://github.com/serilog/serilog
 
-The Npgsql Development Team (PostgreSQL License)
-https://github.com/npgsql/npgsql/blob/main/LICENSE
+OpenTelemetry
+  Copyright The .NET Foundation and The gRPC Authors
+  https://github.com/open-telemetry/opentelemetry-dotnet
 
-Shouldly Contributors (BSD-3-Clause License)
-https://github.com/shouldly/shouldly/blob/master/LICENSE.txt
+xUnit
+  Copyright .NET Foundation
+  https://github.com/xunit/xunit
 
-Microsoft Corporation and other contributors (MIT License)
-Azure.Data.Tables, Microsoft.Data.Sqlite, ConsoleTables, and others
-https://opensource.org/licenses/MIT
+Dapper
+  Copyright The Dapper Contributors
+  https://github.com/DapperLib/Dapper
+
+TypeScript
+  Copyright Microsoft Corporation
+  https://github.com/microsoft/TypeScript
+
+--------------------------------------------------------------------------------
+BSD-3-Clause License Components
+--------------------------------------------------------------------------------
+
+Swashbuckle.AspNetCore
+  Copyright (c) 2016 Richard Morris
+  https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/LICENSE
+
+Shouldly
+  Copyright (c) 2010 Dave Newman, Jeremy Skinner, Xerxes Battiwalla, Anthony Egerton,
+  Jason Dentler, Travis Illig, James Foster, James Gregory, John Gietzen, Rob Fonseca-Ensor,
+  Joseph Woodward, Jake Ginnivan
+  https://github.com/shouldly/shouldly/blob/master/LICENSE.txt
+
+Redistribution and use in binary form must reproduce the above copyright notices
+and license terms in the documentation and/or other materials provided with the
+distribution.
+
+--------------------------------------------------------------------------------
+PostgreSQL License Components
+--------------------------------------------------------------------------------
+
+Npgsql
+  Copyright (c) 2002-2021, Npgsql
+  https://github.com/npgsql/npgsql/blob/main/LICENSE
+
+Permission to use, copy, modify, and distribute this software and its documentation
+for any purpose, without fee, and without a written agreement is hereby granted,
+provided that the above copyright notice and this paragraph appear in all copies.
+
+--------------------------------------------------------------------------------
+MIT License Components
+--------------------------------------------------------------------------------
+
+This product includes numerous components licensed under the MIT License, including
+but not limited to:
+- Microsoft .NET libraries (Microsoft.Extensions.*, Azure.Data.Tables, etc.)
+- BenchmarkDotNet
+- ConsoleTables
+- Coverlet
+- Bogus
+- Jest, Gulp, and other build tools
+- Jekyll and Ruby gems for documentation
+
+The MIT License allows use, modification, and distribution with minimal restrictions.
+Full license texts are included with their respective components.
+
+================================================================================
+
+For a complete list of all dependencies (direct and transitive) and their licenses,
+see the Software Bill of Materials (SBOM) file included with this distribution or
+available at: https://github.com/ChrisMavrommatis/Binacle.Net
