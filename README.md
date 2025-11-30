@@ -22,20 +22,20 @@ Start exploring Binacle.Net now! 🚀
 ## 📂 Repository Structure
 
 ```text
-/Binacle.Net  # Root directory
-├── /assets             # Static assets copyed by build 
-├── /build              # Build scripts, generated files and output artifacts
-├── /config             # Configuration files for running the API, Benchmarks, Tests, Docs locally
-├── /dep                # Dependency Projects Not part of Binacle.Net, Binacle.Lib or Binacle.ViPaq
-├── /doc                # Documentation files
-├── /docs               # Documentation Site
-├── /gems               # Ruby gems 
-├── /packages           # Js Packages
-├── /res                # Resources (Http Requests, etc)
-├── /samples            # Example Projects for running Binacle.Net 
-├── /src                # Source Code
-├── /test               # Test Projects
-├── /web                # Binacle.Net Website
+/Binacle.Net # Root directory
+├── /assets     # Static assets copied by build
+├── /build      # Build scripts, generated files and output artifacts
+├── /config     # Configuration files for running the API, Benchmarks, Tests, Docs locally
+├── /dep        # Dependency Projects Not part of Binacle.Net, Binacle.Lib or Binacle.ViPaq
+├── /doc        # Documentation files
+├── /docs       # Documentation Site
+├── /gems       # Ruby gems
+├── /packages   # JS Packages
+├── /res        # Resources (HTTP Requests, etc)
+├── /samples    # Example Projects for running Binacle.Net
+├── /src        # Source Code
+├── /test       # Test Projects
+├── /web        # Binacle.Net Website
 ```
 
 ## 📄 License
@@ -56,9 +56,9 @@ All documentation, images, and other content files in this project are licensed 
 See [LICENSE.CC-BY-SA-4.0](LICENSE.CC-BY-SA-4.0) for the full license text.
 
 ## Third-Party Libraries
-Binacle.Net uses several third-party libraries. 
+Binacle.Net uses third-party libraries and dependencies. 
 
-See the [NOTICE](NOTICE) file for details.
+See the [NOTICE](NOTICE) file for complete attribution details.
 
 ---
 
