@@ -61,7 +61,6 @@ Binacle.Net uses third-party libraries and dependencies.
 See the [NOTICE](NOTICE) file for complete attribution details.
 
 ## Security
-
 See [SECURITY.md](SECURITY.md) for my security policy and how to report vulnerabilities.
 
 ---
