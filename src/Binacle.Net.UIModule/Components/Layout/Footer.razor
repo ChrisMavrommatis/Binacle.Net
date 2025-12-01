@@ -71,15 +71,15 @@
 		var version = Environment.GetEnvironmentVariable("BINACLE_VERSION");
 		var githubStarsImage = new Image("https://img.shields.io/github/stars/chrismavrommatis/binacle.net?logoSize=auto", "GitHub Repo stars");
 		var binacleVersionImage = new Image($"https://img.shields.io/badge/Current_Version-{version}-ff9100?labelColor=448aff", "Binacle.Net Version");
-		var dockerImageVersionImage = new Image("https://img.shields.io/docker/v/binacle/binacle-net?sort=semver&logo=docker&logoSize=auto&labelColor=white&color=blue", "Docker Image Version");
-		var dotNetVersionImage = new Image($"https://img.shields.io/badge/_-9-512BD4?logo=dotnet&logoSize=auto&labelColor=512BD4", "dotNet Version");
+		var dockerImageVersionImage = new Image("https://img.shields.io/docker/v/binacle/binacle-net?sort=semver&logo=docker&logoSize=auto&labelColor=white&color=blue&cacheSeconds=3600", "Docker Image Version");
+		var dotNetVersionImage = new Image($"https://img.shields.io/badge/_-10-512BD4?logo=dotnet&logoSize=auto&labelColor=512BD4", "dotNet Version");
 
 		List<Models.LinkWithContent> badges =
 		[
 			new("GitHub Repo stars", Binacle.Net.Metadata.GitHub, githubStarsImage, Models.Target.Blank),
 			new("Binacle.Net Version", $"{Binacle.Net.Metadata.GitHub}/releases/tag/{version}", binacleVersionImage, Models.Target.Blank),
 			new("Docker Image Version", Binacle.Net.Metadata.Dockerhub, dockerImageVersionImage, Models.Target.Blank),
-			new("dotNet Version", "https://dotnet.microsoft.com/en-us/download/dotnet/9.0", dotNetVersionImage, Models.Target.Blank),
+			new("dotNet Version", "https://dotnet.microsoft.com/en-us/download/dotnet/10.0", dotNetVersionImage, Models.Target.Blank),
 		];
 		
 		if(FeatureOptions.Value.IsFeatureEnabled("SwaggerUI"))
