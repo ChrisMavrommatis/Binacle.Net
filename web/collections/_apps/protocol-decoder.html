@@ -16,11 +16,12 @@ scripts:
 ---
 
 <p>
-    The Protocol Decoder enables you to decode ViPaq-encoded packing data, providing clear, interactive visualizations of container layouts for easy analysis and validation.
+  The Protocol Decoder enables you to decode ViPaq-encoded packing data, providing clear, interactive visualizations of
+  container layouts for easy analysis and validation.
 </p>
 
 <div class="grid" x-data="protocol_decoder_app">
-  <article class="no-padding s12 m5 l3" @click.prevent.stop="addResult" @keyup.enter.prevent.stop="addResult">
+  <article class="no-padding s12 m5 l3" >
     <article class="medium transparent">
       <div class="field label textarea border max-height ">
         <textarea name="result" id="result" x-model="model.result" class="word-wrap" placeholder=""></textarea>
@@ -29,7 +30,7 @@ scripts:
     </article>
     <div>
       <nav class="no-space padding">
-        <button type="button" class="border surface-container max" >
+        <button type="button" class="border surface-container max" @click.prevent.stop="addResult">
           <i class="material-symbols-outlined">library_add</i>
         </button>
       </nav>
@@ -39,11 +40,38 @@ scripts:
 
 
   <div class="s12 m7 l9">
-
+    {% include components/packing-visualizer.html %}
   </div>
   <article class="s12 surface-variant">
     <fieldset class="scroll" style="block-size: 30rem;">
       <legend>Saved Results</legend>
+      <template x-if="results.length <= 0">
+        <span>No Results</span>
+      </template>
+      <template x-for="(result, index) in results" :key="index">
+        <a class="row wave padding max"
+           :class="isSelected(result) ? 'surface-container border' : ''"
+           @click.prevent.stop="selectResult(result)"
+        >
+          <i class="material-symbols large">package_2</i>
+          <div class="grid no-space max">
+							<span class="s4" x-text="resultTitle(result)">
+							</span>
+            <span class="s8 right-align" x-text="resultBinPercentageText(result)">
+							</span>
+            <progress :value="result.packedBinVolumePercentage()" max="100"
+                      class="s12 surface-container-lowest"
+            >
+            </progress>
+            <div class="s4" x-text="result.items.length + ' Items'">
+            </div>
+          </div>
+          <button type="button" class="transparent circle" style="z-index:10">
+            <i class="material-symbols">delete</i>
+          </button>
+        </a>
+      </template>
+
 
     </fieldset>
   </article>

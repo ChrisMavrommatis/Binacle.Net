@@ -3,6 +3,11 @@ export default function (Alpine) {
 		return {
 			enabled: true,
 			_logger: window.console,
+			info() {
+				if(this.enabled) {
+					this._logger.info.apply(this._logger, arguments);
+				}
+			},
 			log(){
 				if (this.enabled) {
 					this._logger.log.apply(this._logger, arguments);

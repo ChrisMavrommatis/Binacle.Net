@@ -179,7 +179,10 @@ export default (base_url) => ({
 			const firstSuccessfulResult = response.data.find(x => !!x.bin);
 			this.results = response.data;
 			this.selectedResult = firstSuccessfulResult || null;
-			return firstSuccessfulResult;
+			return {
+				bin: firstSuccessfulResult?.bin,
+				items: firstSuccessfulResult?.packedItems || []
+			};
 		});
 
 	},
@@ -189,7 +192,10 @@ export default (base_url) => ({
 	selectResult(result) {
 		this.selectedResult = result;
 		this.$dispatch('update-scene', async () => {
-			return result;
+			return {
+				bin: result?.bin,
+				items: result?.packedItems || []
+			};
 		});
 	},
 	colorClass(result) {

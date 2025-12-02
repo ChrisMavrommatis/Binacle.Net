@@ -86,12 +86,12 @@ export default () => ({
 
 		resultPromise()
 			.then(result => {
-				if (result && result.bin && result.packedItems) {
+				if (result && result.bin && result.items) {
 					this.sceneData = {
 						bin: result.bin,
-						items: result.packedItems
+						items: result.items
 					};
-					this.redrawScene(result.bin, result.packedItems);
+					this.redrawScene(result.bin, result.items);
 					this.itemsRendered = this.sceneData.items.length;
 				}
 				this.controls.updateStatus(this.sceneData, this.itemsRendered);
@@ -103,10 +103,10 @@ export default () => ({
 				stopLoading(_visualizerContainer);
 			});
 	},
-	redrawScene(bin, packedItems) {
-		this.$logger.log("[Binacle] Redraw Scene", bin, packedItems);
+	redrawScene(bin, items) {
+		this.$logger.log("[Binacle] Redraw Scene", bin, items);
 
-		redrawScene(_State.scene, _State.camera, bin, packedItems);
+		redrawScene(_State.scene, _State.camera, bin, items);
 
 		this.$logger.log("[Binacle] Scene Redrawn");
 	},
@@ -126,6 +126,8 @@ export default () => ({
 		this.controls.updateStatus(this.sceneData, this.itemsRendered);
 	},
 	repeat() {
+		this.controls.disableAll();
+
 		if (this.repeating) {
 			this.stopRepeating();
 			return;
@@ -223,7 +225,6 @@ export default () => ({
 				this.enableAll();
 			}
 		};
-		this.sceneData.bin = new Bin(60, 40, 10);
 
 		this.$logger.log("[Binacle] Initialize");
 
