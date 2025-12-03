@@ -7,25 +7,61 @@ export default () => ({
 	},
 	results: [],
 	selectedResult: null,
+	init(){
+		const savedResults = localStorage.getItem('ProtocolDecoderSavedResults');
+		if(savedResults) {
+			const encodedResults = JSON.parse(savedResults);
+			encodedResults.forEach(encodedResult => {
+				const data = Uint8Array.fromBase64(encodedResult);
+				ViPaqSerializer.deserialize(data)
+					.then(result => {
+						const decodedResult = new DecodedPackingResult(encodedResult, result.bin, result.items);
+						this.results.push(decodedResult);
+						if (this.results.length === 1) {
+							this.selectResult(decodedResult);
+						}
+					})
+					.catch(error => {
+						this.$dispatch('error-occurred', ['Error deserializing saved ViPaq data', error]);
+					});
+			});
+		}
+	},
 	addResult() {
 		if (!this.model.result) {
-			// TODO: show error to user
-			this.$logger.error("[Binacle] No ViPaq data to deserialize");
+			this.$dispatch('error-occurred', ['No ViPaq data to deserialize']);
 			return;
 		}
-		const data = Uint8Array.fromBase64(this.model.result);
 
-		ViPaqSerializer.deserialize(data)
-			.then(result => {
-				const decodedResult = new DecodedPackingResult(this.model.result, result.bin, result.items);
+		const found = this.results.find(x => x.encodedResult === this.model.result);
+		if(found){
+			this.$dispatch('error-occurred', ['This ViPaq data has already been added']);
+			this.model.result = null;
+			return;
+		}
 
-				this.$logger.info("[Binacle] ViPaq data", result);
-				this.results.push(decodedResult);
-				this.selectResult(decodedResult);
-			})
-			.catch(error => {
-				this.$logger.error("[Binacle] Error deserializing ViPaq data:", error);
-			});
+		try {
+			const data = Uint8Array.fromBase64(this.model.result);
+
+			ViPaqSerializer.deserialize(data)
+				.then(result => {
+					const decodedResult = new DecodedPackingResult(this.model.result, result.bin, result.items);
+
+					this.$logger.info("[Binacle] ViPaq data", result);
+					this.results.push(decodedResult);
+					if (this.results.length === 1) {
+						this.selectResult(decodedResult);
+					}
+					this.model.result = null;
+					localStorage.setItem('ProtocolDecoderSavedResults', JSON.stringify(this.results.map(r => r.encodedResult)));
+				})
+				.catch(error => {
+					this.$dispatch('error-occurred', ['Error deserializing ViPaq data', error]);
+				});
+		} catch (error) {
+			this.$dispatch('error-occurred', ['Error deserializing ViPaq data', error]);
+		}
+
 	},
 	isSelected(result) {
 		return this.selectedResult === result;

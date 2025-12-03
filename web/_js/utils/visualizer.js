@@ -74,7 +74,11 @@ export function getCameraPosition(bin) {
 }
 
 export function getBin(scene){
-	const bin = scene.getObjectByName('bin').geometry.parameters.geometry.parameters;
+	const binObject = scene.getObjectByName('bin');
+	if(!binObject){
+		return null;
+	}
+	const bin = binObject.geometry.parameters.geometry.parameters;
 	return {
 		length : bin.width,
 		width: bin.depth,

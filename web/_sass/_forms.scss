@@ -8,3 +8,13 @@
     inset: -.5rem auto auto 0.1rem;
   }
 }
+
+
+.result-container{
+  display:flex;
+  flex-direction: column;
+}
+.result-input-container{
+  flex: 0 1 auto;
+  height: 100% !important;
+}

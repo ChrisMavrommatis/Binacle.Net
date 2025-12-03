@@ -19,7 +19,7 @@ badges:
     url: "https://hub.docker.com/r/binacle/binacle-net"
     target: "_blank"
     image:
-      url: "https://img.shields.io/docker/v/binacle/binacle-net?sort=semver&logo=docker&logoSize=auto&labelColor=white&color=blue"
+      url: "https://img.shields.io/docker/v/binacle/binacle-net?sort=semver&logo=docker&logoSize=auto&labelColor=white&color=blue&cacheSeconds=3600"
       alt: "Docker Image Version"
         
 copyright: "© 2023-{now} Chris Mavrommatis / Binacle.Net. All Rights Reserved"

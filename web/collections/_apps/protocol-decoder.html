@@ -21,8 +21,8 @@ scripts:
 </p>
 
 <div class="grid" x-data="protocol_decoder_app">
-  <article class="no-padding s12 m5 l3" >
-    <article class="medium transparent">
+  <article class="no-padding s12 m5 l3 result-container" @keyup.enter.prevent.stop="addResult">
+    <article class="medium transparent result-input-container">
       <div class="field label textarea border max-height ">
         <textarea name="result" id="result" x-model="model.result" class="word-wrap" placeholder=""></textarea>
         <label for="result">Add Result</label>
