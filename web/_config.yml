@@ -10,7 +10,7 @@ author:
   url                   : "https://github.com/ChrisMavrommatis"
   
 # the base hostname & protocol for your site, e.g. http://example.com# Welcome to Jekyll!
-url                     : "https://www.binacle.net"
+url                     : "http://localhost:7196"
 
 api_url                 : "https://localhost:7194"
 
