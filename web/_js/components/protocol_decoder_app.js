@@ -72,6 +72,17 @@ export default () => ({
 			return result;
 		});
 	},
+	deleteResult(result){
+		const isSelected = this.isSelected(result);
+		const index = this.results.indexOf(result);
+		if(index !== -1){
+			this.results.splice(index, 1);
+			localStorage.setItem('ProtocolDecoderSavedResults', JSON.stringify(this.results.map(r => r.encodedResult)));
+			if(isSelected) {
+				this.selectResult(this.results.length > 0 ? this.results[0] : null);
+			}
+		}
+	},
 	resultTitle(result) {
 		return `Bin: ${result.bin.length}x${result.bin.width}x${result.bin.height}`;
 	},

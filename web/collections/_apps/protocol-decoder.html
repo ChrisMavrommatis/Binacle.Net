@@ -66,7 +66,7 @@ scripts:
             <div class="s4" x-text="result.items.length + ' Items'">
             </div>
           </div>
-          <button type="button" class="transparent circle" style="z-index:10">
+          <button type="button" class="transparent circle" style="z-index:10" @click.prevent.stop="deleteResult(result)">
             <i class="material-symbols">delete</i>
           </button>
         </a>
