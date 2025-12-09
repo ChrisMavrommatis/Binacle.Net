@@ -1,0 +1,16 @@
+{
+  "name": "binacle-net-ui",
+  "version": "1.0.0",
+  "description": "Binacle.Net.UIModule elements implementation in TS",
+  "main": "index.ts",
+  "license": "GPL-3.0-only",
+  "scripts": {},
+  "dependencies": {
+    "alpinejs": "^3.15.2",
+    "three": "^0.181.1"
+  },
+  "devDependencies": {
+    "@types/alpinejs": "^3.13.11",
+    "@types/three": "^0.181.0"
+  }
+}

@@ -17,6 +17,10 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@types/three": "^0.181.0",
     "gulp": "^5.0.1"
+  },
+  "dependencies": {
+    "three": "^0.181.2"
   }
 }
