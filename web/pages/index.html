@@ -1,12 +1,44 @@
 ---
 title: Welcome to Binacle.Net
+layout: homepage
 permalink: /
+excerpt: |
+ Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.
+ It enables fast, efficient packing solutions for ecommerce, logistics, and warehousing applications.
+
 ---
 
-<p>
-    Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.
-</p>
 
-<p>
-    It enables fast, efficient packing solutions for ecommerce, logistics, and warehousing applications.
-</p>
+<article class="middle-align center-align">
+  <div>
+    <h1>{{ page.title }}</h1>
+    <p>
+      Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.
+    </p>
+
+    <p>
+      It enables fast, efficient packing solutions for ecommerce, logistics, and warehousing applications.
+    </p>
+  </div>
+</article>
+
+<div class="grid medium space">
+  {% assign items = site.pages | where: 'layout', 'homepage' | where_exp: 'item', 'item.permalink != "/"' %}
+  {% for item in items %}
+  <article class="s12 m6 no-padding">
+    <div class="grid no-space">
+      <div class="s12">
+        <div class="padding">
+          <h5>{{ item.title }}</h5>
+          <p>{{ item.excerpt | default: item.description }}</p>
+          <nav>
+            <a href="{% link pages/apps.html %}" class="button">
+              Explore More
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+</div>
