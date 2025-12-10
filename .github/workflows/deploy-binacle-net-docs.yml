@@ -1,0 +1,22 @@
+name: Deploy Binacle.Net Docs
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Binacle.Net Docs
+    runs-on: ubuntu-latest
+    environment:
+      name: binacle-net-docs
+      url: docs.binacle.net
+    steps:
+      - name: Deploy to DigitalOcean App Platform
+        uses: digitalocean/app_action/deploy@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          app_name: 'binacle-net-docs'
+
+
