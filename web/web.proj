@@ -21,11 +21,4 @@
 		<None Include="**/*.rb"/>
 		<None Include="**/*.json"/>
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Include="$(MSBuildThisFileDirectory)collections\_sitemaps\apps.xml" />
-	  <Content Include="$(MSBuildThisFileDirectory)collections\_sitemaps\pages.xml" />
-	  <Content Include="$(MSBuildThisFileDirectory)pages\robots.txt" />
-	</ItemGroup>
-
 </Project>
