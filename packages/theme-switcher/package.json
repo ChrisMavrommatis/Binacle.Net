@@ -3,5 +3,6 @@
   "version": "1.0.0",
   "description": "Theme switcher custom element for the Binacle.Net websites",
   "main": "index.js",
-  "license": "GPL-3.0-only"
+  "license": "GPL-3.0-only",
+  "private": true
 }

@@ -1,0 +1,20 @@
+{
+  "name": "binacle-net-ui",
+  "version": "1.0.0",
+  "description": "Binacle.Net.UIModule implementation in TS",
+  "main": "index.ts",
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChrisMavrommatis/Binacle.Net.git"
+  },
+  "private": true,
+  "dependencies": {
+    "alpinejs": "^3.15.2",
+    "three": "^0.182.0"
+  },
+  "devDependencies": {
+    "@types/alpinejs": "^3.13.11",
+    "@types/three": "^0.182.0"
+  }
+}

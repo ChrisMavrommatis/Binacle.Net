@@ -52,7 +52,6 @@ function themeChangedHandler(event) {
 	if (bin) {
 		bin.material.color.setHex(themeColors.onColor);
 	}
-
 };
 
 function animate() {

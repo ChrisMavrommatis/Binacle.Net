@@ -3,5 +3,6 @@
   "version": "3.0.5",
   "description": "Utility for cookies, based on js-cookie v3.0.5. License is the same as the original library (MIT).",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "private": true
 }
