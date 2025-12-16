@@ -6,7 +6,7 @@ import {
 	getBin,
 	getThemeColors,
 	redrawScene,
-	removeItemFromScene,
+	removeItemFromScene, startLoading,
 	stopLoading
 } from "../utils";
 import {ControlsManager} from "./index";
@@ -87,6 +87,40 @@ export const packingVisualizer = defineComponent(() => ({
 		bin: null,
 		items: []
 	} as SceneData,
+	updateScene(resultPromise: () => Promise<{bin: Dimensions, items: (Dimensions & Coordinates)[]} | null>) {
+		this.stopRepeating();
+		// loading
+		if(window.binacle?.visualizerContainer){
+			startLoading(window.binacle.visualizerContainer);
+		}
+
+		this.controls.disableAll();
+
+		resultPromise()
+			.then(result => {
+				if (result && result.bin && result.items) {
+					this.sceneData = {
+						bin: result.bin,
+						items: result.items
+					};
+					this.redrawScene(result.bin, result.items);
+					this.itemsRendered = this.sceneData.items.length;
+				}
+				this.controls.updateStatus(this.sceneData, this.itemsRendered);
+				if(window.binacle?.visualizerContainer){
+					stopLoading(window.binacle.visualizerContainer);
+				}
+
+			})
+			.catch((error) => {
+				this.$logger.error("[Binacle] Error while updating scene", error);
+				this.$dispatch('error-occured', ['Error while updating packing visualizer. Please try again later.']);
+				if(window.binacle?.visualizerContainer){
+					stopLoading(window.binacle.visualizerContainer);
+				}
+
+			});
+	},
 	redrawScene(bin: Dimensions, items: (Dimensions & Coordinates)[] | null) {
 		const state = window.binacle?.visualizerState;
 		if (!state) {
@@ -222,16 +256,18 @@ export const packingVisualizer = defineComponent(() => ({
 		window.addEventListener('resize', windowResizeHandler, false);
 		window.addEventListener("themeChanged", themeChangedHandler, false);
 
-		window.binacle.rendererContainer = rendererContainer;
-		window.binacle.visualizerContainer = visualizerContainer;
-		window.binacle.visualizerState = new VisualizerState(
-			aspectRatio,
-			scene,
-			camera,
-			light,
-			renderer,
-			controls
-		);
+		window.binacle = {
+			rendererContainer: rendererContainer,
+			visualizerContainer: visualizerContainer,
+			visualizerState: new VisualizerState(
+				aspectRatio,
+				scene,
+				camera,
+				light,
+				renderer,
+				controls
+			)
+		};
 
 		animate();
 

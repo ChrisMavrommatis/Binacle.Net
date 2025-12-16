@@ -18,7 +18,13 @@ export default class ErrorCollection {
 		const messages = [] as string[];
 		for (const fieldName in this) {
 			if (this.hasOwnProperty(fieldName)) {
-				messages.push(...this.fields[fieldName]);
+				const errors = this.fields[fieldName];
+				if (errors) {
+					for (const errorMessage of errors) {
+						messages.push();
+					}
+				}
+
 			}
 		}
 		return messages;

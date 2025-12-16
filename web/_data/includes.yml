@@ -17,3 +17,7 @@ scripts_body_end:
     type: "text/javascript"
   - src: '/js/main.js'
     type: 'text/javascript'
+  - src: '/js/vendors.js'
+    type: 'text/javascript'
+  - src: '/js/binacle-net-ui.js'
+    type: 'text/javascript'
