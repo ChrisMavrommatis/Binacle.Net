@@ -21,3 +21,5 @@ scripts_body_end:
     type: 'text/javascript'
   - src: '/js/binacle-net-ui.js'
     type: 'text/javascript'
+  - src: '/js/binacle-vipaq.js'
+    type: 'text/javascript'

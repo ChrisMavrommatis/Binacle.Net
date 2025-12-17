@@ -1,6 +1,6 @@
-import {BitSize} from "../models/BitSize";
+import {BitSize} from "../models";
 
-export default class Sizes {
+export class Sizes {
 	public static bitSizes: Record<string, BitSize> = {
 		// For byte, sbyte, short, ushort, int, uint, long, ulong, use 'number'
 		'byte': BitSize.Eight,

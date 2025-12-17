@@ -1,6 +1,5 @@
-import createEncodingInfo from '../../src/utils/createEncodingInfo';
-import Sizes from '../../src/utils/sizes';
-import {BitSize} from "../../src/models/BitSize";
+import {createEncodingInfo, Sizes} from '../../src/utils';
+import {BitSize} from "../../src/models";
 import {createFakeBin, createFakeItems} from "../utils";
 import {faker} from '@faker-js/faker';
 

@@ -1,9 +1,7 @@
 import type { Alpine as AlpineType } from 'alpinejs';
 import {defineComponent, getRandomBin, getRandomInt, getRandomItem} from "../utils";
 import {Bin, Item} from "../viewModels";
-import {PackingParameters} from "../apiModels/packingParameters";
-import {PackingRequest} from "../apiModels/packingRequest";
-import {PackingResponse} from "../apiModels";
+import {PackingParameters, PackingRequest, PackingResponse} from "../apiModels";
 import {PackedData} from "../apiModels/packingResponse";
 
 export function packingDemoAppPlugin(Alpine: AlpineType) {

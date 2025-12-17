@@ -1,6 +1,5 @@
-import {BitSize} from "./BitSize";
-import {Version} from "./Version";
-
+import {BitSize} from "./bitSize";
+import {Version} from "./version";
 
 export default class EncodingInfo {
 	// 2 Bits

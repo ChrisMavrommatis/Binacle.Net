@@ -1,7 +1,8 @@
 import EncodingInfoData from "../encodingInfoData";
 import EncodingInfo from "../../src/models/EncodingInfo";
-import {encodingInfoFromByte, encodingInfoToByte} from "../../src/utils/encodingUtils";
 import {faker} from '@faker-js/faker';
+import {encodingInfoFromByte} from "../../src/utils/encodingInfoFromByte";
+import {encodingInfoToByte} from "../../src/utils/encodingInfoToByte";
 
 faker.seed(605080);
 

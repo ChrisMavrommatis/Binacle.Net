@@ -1,6 +1,4 @@
-import Bin from "./models/Bin";
-import {BitSize} from "./models/BitSize";
-import Item from "./models/Item";
+import {Bin, BitSize, Coordinates, Dimensions} from "./models";
 
 export class ProtocolReader {
 	private data: DataView<ArrayBuffer>;
@@ -37,7 +35,7 @@ export class ProtocolReader {
 		return result;
 	}
 
-	readDimensions(item: Bin, bitSize: BitSize){
+	readDimensions(item: Dimensions, bitSize: BitSize){
 		switch (bitSize) {
 			case BitSize.Eight:
 				item.length = this.readByte();
@@ -64,7 +62,7 @@ export class ProtocolReader {
 		}
 	}
 
-	readCoordinates(item: Item, bitSize: BitSize){
+	readCoordinates(item: Coordinates, bitSize: BitSize){
 		switch (bitSize) {
 			case BitSize.Eight:
 				item.x = this.readByte();

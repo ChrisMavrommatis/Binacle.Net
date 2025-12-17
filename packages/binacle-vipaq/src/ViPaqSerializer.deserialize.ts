@@ -1,8 +1,6 @@
+import {encodingInfoFromByte, getDecodingDataStream} from "./utils";
+import {Bin, DeserializedResult, Item} from "./models";
 import {ProtocolReader} from "./ProtocolReader";
-import Bin from "./models/Bin";
-import Item from "./models/Item";
-import DeserializedResult from "./models/DeserializedResult";
-import {encodingInfoFromByte, getDecodingDataStream} from "./utils/encodingUtils";
 
 
 export async function deserialize(data: Uint8Array<ArrayBuffer>): Promise<DeserializedResult> {

@@ -56,6 +56,13 @@ module.exports = (env, argv) => {
 						enforce: true,
 						priority: 20, // higher than vendors
 					},
+					binacleViPaq: {
+						test: /[\\/]packages[\\/]binacle-vipaq[\\/]/,
+						name: 'binacle-vipaq',
+						chunks: 'all',
+						enforce: true,
+						priority: 20, // higher than vendors
+					},
 				},
 			},
 		},

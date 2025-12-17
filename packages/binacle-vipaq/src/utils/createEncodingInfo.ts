@@ -1,12 +1,9 @@
-import EncodingInfo from "../models/EncodingInfo";
-import Item from "../models/Item";
-import Bin from "../models/Bin";
-import Sizes from "./sizes";
-import {getCoordinatesBitSize, getDimensionsBitSize} from "./bitSizeUtils";
-import {BitSize} from "../models/BitSize";
-import {Version} from "../models/Version";
+import {BitSize, Coordinates, Dimensions, EncodingInfo, Version} from "../models";
+import {Sizes} from "./sizes";
+import {getDimensionsBitSize} from "./getDimensionsBitSize";
+import {getCoordinatesBitSize} from "./getCoordinatesBitSize";
 
-export default function createEncodingInfo(bin: Bin, items: Item[]): EncodingInfo {
+export function createEncodingInfo(bin: Dimensions, items: (Dimensions & Coordinates)[]): EncodingInfo {
 	if (items.length > Sizes.uShortMaxValue) {
 		throw new Error(`Items cannot be more than ${Sizes.uShortMaxValue}`);
 	}

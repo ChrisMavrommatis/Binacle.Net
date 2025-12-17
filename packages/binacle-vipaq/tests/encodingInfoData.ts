@@ -1,5 +1,4 @@
-import {BitSize} from "../src/models/BitSize";
-import {Version} from "../src/models/Version";
+import {BitSize, Version} from "../src/models";
 
 export default class EncodingInfoData {
 	public version: Version;

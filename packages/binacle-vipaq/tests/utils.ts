@@ -1,6 +1,5 @@
 import {faker} from '@faker-js/faker';
-import Bin from "../src/models/Bin";
-import Item from "../src/models/Item";
+import {Bin, Item} from "../src/models";
 
 export function createFakeBin(min: number, max: number) {
 	const bin = new Bin();

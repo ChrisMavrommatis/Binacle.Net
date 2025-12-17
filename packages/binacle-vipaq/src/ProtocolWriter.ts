@@ -1,6 +1,4 @@
-import Bin from "./models/Bin";
-import {BitSize} from "./models/BitSize";
-import Item from "./models/Item";
+import {BitSize, Coordinates, Dimensions} from "./models";
 
 export class ProtocolWriter {
 	private offset: number;
@@ -36,7 +34,7 @@ export class ProtocolWriter {
 		this.offset += 8;
 	}
 
-	writeDimensions(item: Bin, bitSize: BitSize){
+	writeDimensions(item: Dimensions, bitSize: BitSize){
 		switch (bitSize) {
 			case BitSize.Eight:
 				this.writeByte(item.length);
@@ -63,7 +61,7 @@ export class ProtocolWriter {
 		}
 	}
 
-	writeCoordinates(item: Item, bitSize: BitSize){
+	writeCoordinates(item: Coordinates, bitSize: BitSize){
 		switch (bitSize) {
 			case BitSize.Eight:
 				this.writeByte(item.x);

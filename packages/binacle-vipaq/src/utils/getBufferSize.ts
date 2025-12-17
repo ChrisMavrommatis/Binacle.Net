@@ -1,7 +1,8 @@
-import EncodingInfo from "../models/EncodingInfo";
-import {getByteSize} from "./bitSizeUtils";
+import {EncodingInfo} from "../models";
 
-export default function getBufferSize(encodingInfo: EncodingInfo, itemsCount: number): number{
+import {getByteSize} from "./getByteSize";
+
+export function getBufferSize(encodingInfo: EncodingInfo, itemsCount: number): number{
 
 	// [Version]
 	// [2 Bits]

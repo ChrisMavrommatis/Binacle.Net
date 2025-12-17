@@ -1,14 +1,8 @@
-import Bin from "./models/Bin";
-import Item from "./models/Item";
-import createEncodingInfo from "./utils/createEncodingInfo";
+import {Coordinates, Dimensions, Version} from "./models";
+import {compressBuffer, createEncodingInfo, getBufferSize, Sizes, writeEncodingInfoToBuffer} from "./utils";
 import {ProtocolWriter} from "./ProtocolWriter";
-import getBufferSize from "./utils/getBufferSize";
-import Sizes from "./utils/sizes";
-import {Version} from "./models/Version";
-import {compressBuffer, writeEncodingInfoToBuffer} from "./utils/encodingUtils";
 
-
-export async function serialize(bin: Bin, items: Item[]): Promise<Uint8Array<ArrayBuffer>> {
+export async function serialize(bin: Dimensions, items: (Dimensions & Coordinates)[]): Promise<Uint8Array<ArrayBuffer>> {
 	if (!bin) {
 		throw new Error("No Bin provided");
 	}
