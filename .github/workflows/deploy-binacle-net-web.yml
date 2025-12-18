@@ -1,6 +1,6 @@
 name: Deploy Binacle.Net Web
 permissions:
-  contents: read
+  contents: write
 
 on:
   workflow_dispatch:
@@ -13,6 +13,18 @@ jobs:
       name: binacle-net-web
       url: www.binacle.net
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Tag Commit for Web Deployment
+        run: |
+          TAG_NAME="web-release-${GITHUB_RUN_NUMBER}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$TAG_NAME" $GITHUB_SHA
+          git push origin "$TAG_NAME"
+        env:
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          GITHUB_SHA: ${{ github.sha }}
       - name: Deploy to DigitalOcean App Platform
         uses: digitalocean/app_action/deploy@v2
         with:
