@@ -6,9 +6,9 @@ module.exports = (env, argv) => {
 	const production = buildType === 'dist';
 	console.log(`Environment Build: ${buildType}`);
 
-    return {
-		mode:  production ? 'production': 'development',
-        entry: {
+	return {
+		mode: production ? 'production' : 'development',
+		entry: {
 			main: './_js/main.js'
 		},
 		output: {
@@ -19,7 +19,7 @@ module.exports = (env, argv) => {
 		resolve: {
 			extensions: ['.ts', '.js', '.json']
 		},
-        module: {
+		module: {
 			rules: [
 				{
 					test: /\.ts$/,
@@ -27,10 +27,10 @@ module.exports = (env, argv) => {
 					exclude: /node_modules/,
 				},
 			],
-        },
-        plugins: [
-        ],
-        optimization: {
+		},
+		plugins: [
+		],
+		optimization: {
 			minimize: production ? true : false,
 			splitChunks: {
 				chunks: 'all',
@@ -43,20 +43,13 @@ module.exports = (env, argv) => {
 						chunks: 'all',
 						enforce: true,
 						priority: 10,
-					},
-					binacleNetUi: {
-						test: /[\\/]packages[\\/]binacle-net-ui[\\/]/,
-						name: 'binacle-net-ui',
-						chunks: 'all',
-						enforce: true,
-						priority: 20, // higher than vendors
-					},
+					}
 				},
 			},
-        },
+		},
 		cache: {
 			type: 'filesystem',
 		},
-		devtool:  production ? false : 'source-map',
-    };
+		devtool: production ? false : 'source-map',
+	};
 }

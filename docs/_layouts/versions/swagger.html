@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="{{ page.hreflang }}">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" />
+
+  {% assign page_title = site.title %}
+  {% if page.title %}
+  {% assign page_title = page.title | append: ' | ' | append: site.title %}
+  {% endif %}
+
+  <title>
+    {{ page_title }}
+  </title>
+  {% assign site_meta_description = site.description | markdownify | clean_content: 160 %}
+  {% assign content_meta_description = page.content | markdownify | clean_content: 160 %}
+  {% assign excerpt_meta_description = page.excerpt | markdownify | clean_content: 160 %}
+  {% assign meta_description = excerpt_meta_description | default: content_meta_description | default: site_meta_description %}
+
+  <meta name="description" content="{{ meta_description }}">
+
+  <link rel="canonical" href="{{ page.url | remove: "index.html" | absolute_url }}">
+
+  <link rel="robots" content="noindex, nofollow">
+
+  <link rel="stylesheet" href="{{ '/lib/swagger-ui/swagger-ui.css' | relative_url }}" />
+  {% gtm_head site.gtm %}
+</head>
+<body>
+{% gtm_body site.gtm %}
+{{ content }}
+
+<div id="swagger-ui"></div>
+<script src="{{ '/lib/swagger-ui/swagger-ui-bundle.js' | relative_url }}"></script>
+<script>
+  window.onload = () => {
+    window.ui = SwaggerUIBundle({
+      url: '{% vlink /swagger/{{ page.swagger }}.json %}',
+      dom_id: '#swagger-ui',
+
+      // Minimize display options
+      defaultModelsExpandDepth: -1,     // Hide schemas section completely [web:46][web:47]
+      defaultModelExpandDepth: 1,       // Limit model detail expansion [web:47]
+      docExpansion: "list",             // Only show tags, collapse operations [web:47]
+      displayRequestDuration: true,     // Show request timing (useful)
+      filter: false,                     // Enable search/filter bar
+
+      // Optional: further minimization
+      deepLinking: false,                // Enable deep linking to operations
+      displayOperationId: false,        // Hide operation IDs [web:47]
+      showExtensions: false,            // Hide vendor extensions
+      showCommonExtensions: false       // Hide common extensions
+    });
+  };
+
+</script>
+</body>
+</html>

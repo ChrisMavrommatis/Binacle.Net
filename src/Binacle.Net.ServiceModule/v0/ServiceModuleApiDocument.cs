@@ -49,7 +49,5 @@ internal class ServiceModuleApiDocument : IOpenApiDocument
 		.AppendLine()
 		.AppendLine($"[🐳 Binacle.Net on Dockerhub]({Binacle.Net.Metadata.Dockerhub})")
 		.AppendLine()
-		.AppendLine($"[Get Postman collection]({Binacle.Net.Metadata.Postman})")
-		.AppendLine()
 		.ToString();
 }

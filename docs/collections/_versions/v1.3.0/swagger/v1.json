@@ -1,0 +1,373 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Binacle.Net API",
+    "description": "Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.\n\n\n\n**This API version has been deprecated and will be removed on the next major version.** <br/>**Please use one of the newer APIs available from the explorer.**\n\n[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)\n\n[🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/binacle/binacle-net)\n\n",
+    "license": {
+      "name": "GNU General Public License v3.0",
+      "url": "https://www.gnu.org/licenses/gpl-3.0.html"
+    },
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/v1/presets": {
+      "get": {
+        "tags": [
+          "Presets"
+        ],
+        "summary": "Lists the presets present in configuration.",
+        "responses": {
+          "200": {
+            "description": "<b>OK</b>\r\n\n\r\n<p>\r\n            \tReturns the all of the configured presets wth the associated bins.\r\n            </p>",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresetListResponse"
+                },
+                "example": "{\"presets\":{\"preset1\":[{\"id\":\"preset1_bin1\",\"length\":10,\"width\":10,\"height\":10},{\"id\":\"preset1_bin2\",\"length\":20,\"width\":20,\"height\":20},{\"id\":\"preset1_bin3\",\"length\":30,\"width\":30,\"height\":30}],\"preset2\":[{\"id\":\"preset2_bin1\",\"length\":10,\"width\":20,\"height\":30},{\"id\":\"preset2_bin2\",\"length\":30,\"width\":60,\"height\":60}]},\"result\":\"Success\"}"
+              }
+            }
+          },
+          "404": {
+            "description": "<b>Not Found</b>\r\n\n\r\n<p>\r\n            \tIf no presets are configured.\r\n            </p>"
+          },
+          "500": {
+            "description": "<b>Internal Server Error</b>\r\n\n\r\n<p>\r\n            \tIf an unexpected error occurs.\r\n            </p>\r\n<p>\r\n            \tException details will only be shown when in a development environment.\r\n            </p>",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": "{\"result\":\"Error\",\"message\":\"An internal server error occurred while processing the request\",\"errors\":[]}"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/query/by-custom": {
+      "post": {
+        "tags": [
+          "Query"
+        ],
+        "summary": "Perform a bin fit query using custom bins.",
+        "description": "Example request:\r\n    \r\n    POST /api/v1/query/by-custom\r\n    {\r\n\t\t\"bins\" : [\r\n\t\t  {\r\n\t\t     \"id\": \"custom_bin_1\",\r\n\t\t     \"length\": 10,\r\n             \"width\": 40,\r\n             \"height\": 60\r\n\t\t   },\r\n\t\t   {\r\n\t\t     \"id\": \"custom_bin_2\",\r\n\t\t     \"length\": 20,\r\n             \"width\": 40,\r\n             \"height\": 60\r\n\t\t   }\r\n\t\t],\r\n        \"items\": [\r\n          {\r\n            \"id\": \"box_1\",\r\n            \"quantity\": 2,\r\n            \"length\": 2,\r\n            \"width\": 5,\r\n            \"height\": 10\r\n          },\r\n          {\r\n            \"id\": \"box_2\",\r\n            \"quantity\": 1,\r\n            \"length\": 12,\r\n            \"width\": 15,\r\n            \"height\": 10\r\n          }\r\n        ]\r\n    }",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomQueryRequest"
+              },
+              "example": "{\"bins\":[{\"id\":\"custom_bin_1\",\"length\":10,\"width\":40,\"height\":60},{\"id\":\"custom_bin_2\",\"length\":20,\"width\":40,\"height\":60}],\"items\":[{\"id\":\"box_1\",\"quantity\":2,\"length\":2,\"width\":5,\"height\":10},{\"id\":\"box_2\",\"quantity\":1,\"length\":12,\"width\":15,\"height\":10},{\"id\":\"box_3\",\"quantity\":1,\"length\":12,\"width\":10,\"height\":15}]}"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "<b>OK</b>\r\n\n\r\n<p>\r\n            \tReturns the bin that fits all of the items, or empty if they don't fit.\r\n            </p>",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Found Bin",
+                    "description": "Response example when a bin is found",
+                    "value": "{\"bin\":{\"id\":\"custom_bin_1\",\"length\":10,\"width\":40,\"height\":60},\"result\":\"Success\"}"
+                  },
+                  "failure": {
+                    "summary": "Bin not Found",
+                    "description": "Response example when a bin is not found",
+                    "value": "{\"result\":\"Failure\",\"message\":\"Failed to find bin. Reason: ItemDimensionExceeded\"}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "<b>Bad Request</b>\r\n\n\r\n<p>\r\n            \tIf the request is invalid.\r\n            </p>",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Validation Error": {
+                    "summary": "Validation Error",
+                    "description": "Example response with validation errors",
+                    "value": "{\"result\":\"Error\",\"message\":\"One or more validation errors occurred\",\"errors\":[{\"$type\":\"FieldValidationError\",\"field\":\"Items[0].Height\",\"error\":\"Must be greater than 0.\"}]}"
+                  },
+                  "Request Error": {
+                    "summary": "Request Error",
+                    "description": "Example response when the request is malformed",
+                    "value": "{\"result\":\"Error\",\"message\":\"Malformed request\",\"errors\":[{\"$type\":\"ParameterError\",\"parameter\":\"request\",\"message\":\"Malformed request body.\"}]}"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "<b>Internal Server Error</b>\r\n\n\r\n<p>\r\n            \tIf an unexpected error occurs.\r\n            </p>\r\n<p>\r\n            \tException details will only be shown when in a development environment.\r\n            </p>",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": "{\"result\":\"Error\",\"message\":\"An internal server error occurred while processing the request\",\"errors\":[]}"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/query/by-preset/{preset}": {
+      "post": {
+        "tags": [
+          "Query"
+        ],
+        "summary": "Perform a bin fit query using a specified bin preset.",
+        "description": "Example request using the \"rectangular-cuboids\" preset:\r\n    \r\n    POST /api/v1/query/by-preset/rectangular-cuboids\r\n    {\r\n        \"items\": [\r\n          {\r\n            \"id\": \"box_1\",\r\n            \"quantity\": 2,\r\n            \"length\": 2,\r\n            \"width\": 5,\r\n            \"height\": 10\r\n          },\r\n          {\r\n            \"id\": \"box_2\",\r\n            \"quantity\": 1,\r\n            \"length\": 12,\r\n            \"width\": 15,\r\n            \"height\": 10\r\n          },\r\n          {\r\n            \"id\": \"box_3\",\r\n            \"quantity\": 1,\r\n            \"length\": 12,\r\n            \"width\": 10,\r\n            \"height\": 15\r\n          }\r\n        ]\r\n    }",
+        "parameters": [
+          {
+            "name": "preset",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresetQueryRequest"
+              },
+              "example": "{\"items\":[{\"id\":\"box_1\",\"quantity\":2,\"length\":2,\"width\":5,\"height\":10},{\"id\":\"box_2\",\"quantity\":1,\"length\":12,\"width\":15,\"height\":10},{\"id\":\"box_3\",\"quantity\":1,\"length\":12,\"width\":10,\"height\":15}]}"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "<b>OK</b>\r\n\n\r\n<p>\r\n            \tReturns the bin that fits all the items, or empty if they don't fit.\r\n            </p>",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryResponse"
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Found Bin",
+                    "description": "Response example when a bin is found",
+                    "value": "{\"bin\":{\"id\":\"Small\",\"length\":10,\"width\":40,\"height\":60},\"result\":\"Success\"}"
+                  },
+                  "Failure": {
+                    "summary": "Bin not Found",
+                    "description": "Response example when a bin is not found",
+                    "value": "{\"result\":\"Failure\",\"message\":\"Failed to find bin. Reason: ItemDimensionExceeded\"}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "<b>Bad Request</b>\r\n\n\r\n<p>\r\n            \tIf the request is invalid.\r\n            </p>",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Validation Error": {
+                    "summary": "Validation Error",
+                    "description": "Example response with validation errors",
+                    "value": "{\"result\":\"Error\",\"message\":\"One or more validation errors occurred\",\"errors\":[{\"$type\":\"FieldValidationError\",\"field\":\"Items[0].Height\",\"error\":\"Must be greater than 0.\"}]}"
+                  },
+                  "Request Error": {
+                    "summary": "Request Error",
+                    "description": "Example response when the request is malformed",
+                    "value": "{\"result\":\"Error\",\"message\":\"Malformed request\",\"errors\":[{\"$type\":\"ParameterError\",\"parameter\":\"request\",\"message\":\"Malformed request body.\"}]}"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<b>Not Found</b>\r\n\n\r\n<p>\r\n            \tIf the preset does not exist.\r\n            </p>"
+          },
+          "500": {
+            "description": "<b>Internal Server Error</b>\r\n\n\r\n<p>\r\n            \tIf an unexpected error occurs.\r\n            </p>\r\n<p>\r\n            \tException details will only be shown when in a development environment.\r\n            </p>",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": "{\"result\":\"Error\",\"message\":\"An internal server error occurred while processing the request\",\"errors\":[]}"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Bin": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "length": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Box": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "length": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomQueryRequest": {
+        "type": "object",
+        "properties": {
+          "bins": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Bin"
+            },
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IApiError"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IApiError": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PresetListResponse": {
+        "required": [
+          "presets"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "presets": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Bin"
+              }
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PresetQueryRequest": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "QueryResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "bin": {
+            "$ref": "#/components/schemas/Bin"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResultType": {
+        "enum": [
+          "Success",
+          "Failure",
+          "Error"
+        ],
+        "type": "string"
+      }
+    }
+  }
+}

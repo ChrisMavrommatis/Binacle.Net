@@ -32,8 +32,6 @@ internal static class ApiDocument
 		.AppendLine()
 		.AppendLine($"[🐳 Binacle.Net on Dockerhub]({Binacle.Net.Metadata.Dockerhub})")
 		.AppendLine()
-		.AppendLine($"[Get Postman collection]({Binacle.Net.Metadata.Postman})")
-		.AppendLine()
 		.ToString();
 	
 	private const string __experimentalMessage__ =

@@ -1,0 +1,411 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Binacle.Net API",
+    "description": "Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.\n\n**Warning: This API version is experimental and may change any time, introducing breaking changes.**\n\n\n\n[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)\n\n[🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/binacle/binacle-net)\n\n",
+    "license": {
+      "name": "GNU General Public License v3.0",
+      "url": "https://www.gnu.org/licenses/gpl-3.0.html"
+    },
+    "version": "3.0"
+  },
+  "paths": {
+    "/api/v3/pack/by-custom": {
+      "post": {
+        "tags": [
+          "Pack"
+        ],
+        "summary": "Pack items using custom bins.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomPackRequest"
+              },
+              "example": "{\"parameters\":{\"algorithm\":\"FFD\"},\"bins\":[{\"id\":\"custom_bin_1\",\"length\":10,\"width\":40,\"height\":60},{\"id\":\"custom_bin_2\",\"length\":20,\"width\":40,\"height\":60}],\"items\":[{\"id\":\"box_1\",\"quantity\":2,\"length\":2,\"width\":5,\"height\":10},{\"id\":\"box_2\",\"quantity\":1,\"length\":12,\"width\":15,\"height\":10},{\"id\":\"box_3\",\"quantity\":1,\"length\":12,\"width\":10,\"height\":15}]}"
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "<b>OK</b>\r\n\n\r\n<p>\r\n            \tAn array of results indicating the result per bin.\r\n            </p>",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackResponse"
+                },
+                "examples": {
+                  "fullypackedresponse": {
+                    "summary": "Fully Packed Response",
+                    "description": "Fully Packed Response example.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"FullyPacked\",\"bin\":{\"id\":\"custom_bin_1\",\"length\":10,\"width\":40,\"height\":60},\"packedItems\":[{\"id\":\"box_2\",\"length\":10,\"width\":12,\"height\":15,\"x\":0,\"y\":0,\"z\":0},{\"id\":\"box_1\",\"length\":2,\"width\":5,\"height\":10,\"x\":0,\"y\":12,\"z\":0}],\"unpackedItems\":[],\"packedItemsVolumePercentage\":100.00,\"packedBinVolumePercentage\":7.92},{\"result\":\"FullyPacked\",\"bin\":{\"id\":\"custom_bin_2\",\"length\":20,\"width\":40,\"height\":60},\"packedItems\":[{\"id\":\"box_2\",\"length\":12,\"width\":15,\"height\":10,\"x\":0,\"y\":0,\"z\":0},{\"id\":\"box_1\",\"length\":2,\"width\":5,\"height\":10,\"x\":12,\"y\":0,\"z\":0}],\"unpackedItems\":[],\"packedItemsVolumePercentage\":100.00,\"packedBinVolumePercentage\":3.96}]}"
+                  },
+                  "partiallypackedresponse": {
+                    "summary": "Partially Packed Response",
+                    "description": "Partially Packed Response example.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"FullyPacked\",\"bin\":{\"id\":\"custom_bin_2\",\"length\":20,\"width\":40,\"height\":60},\"packedItems\":[{\"id\":\"box_1\",\"length\":2,\"width\":5,\"height\":10,\"x\":0,\"y\":0,\"z\":0}],\"unpackedItems\":[{\"id\":\"box_2\",\"quantity\":1}],\"packedItemsVolumePercentage\":2.70,\"packedBinVolumePercentage\":0.42}]}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "<b>Bad Request</b>\r\n\n\r\n<p>\r\n            \tIf the request is invalid.\r\n            </p>",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "Validation Error": {
+                    "summary": "Validation Error",
+                    "description": "Example response with validation errors",
+                    "value": "{\"result\":\"Error\",\"data\":[{\"$type\":\"FieldValidationError\",\"field\":\"Items[0].Height\",\"error\":\"Must be greater than 0.\"}],\"message\":\"One or more validation errors occurred\"}"
+                  },
+                  "Request Error": {
+                    "summary": "Request Error",
+                    "description": "Example response when the request is malformed",
+                    "value": "{\"result\":\"Error\",\"data\":[{\"$type\":\"ParameterError\",\"parameter\":\"request\",\"message\":\"Malformed request body.\"}],\"message\":\"One or more validation errors occurred\"}"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "<b>Internal Server Error</b>\r\n\n\r\n<p>\r\n            \tIf an unexpected error occurs.\r\n            </p>\r\n<p>\r\n            \tException details will only be shown when in a development environment.\r\n            </p>",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": "{\"result\":\"Error\",\"data\":[],\"message\":\"An internal server error occurred while processing the request\"}"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Algorithm": {
+        "enum": [
+          "FFD",
+          "WFD",
+          "BFD"
+        ],
+        "type": "string"
+      },
+      "Bin": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "length": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BinPackResult": {
+        "required": [
+          "bin"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/BinPackResultStatus"
+          },
+          "bin": {
+            "$ref": "#/components/schemas/Bin"
+          },
+          "packedItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PackedBox"
+            },
+            "nullable": true
+          },
+          "unpackedItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnpackedBox"
+            },
+            "nullable": true
+          },
+          "packedItemsVolumePercentage": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "packedBinVolumePercentage": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "viPaqData": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BinPackResultStatus": {
+        "enum": [
+          "Unknown",
+          "NotPacked",
+          "PartiallyPacked",
+          "FullyPacked",
+          "EarlyFail_ContainerVolumeExceeded",
+          "EarlyFail_ContainerDimensionExceeded"
+        ],
+        "type": "string"
+      },
+      "Box": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "length": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomPackRequest": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "$ref": "#/components/schemas/PackRequestParameters"
+          },
+          "bins": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Bin"
+            },
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErrorResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/FieldValidationError"
+                },
+                {
+                  "$ref": "#/components/schemas/ParameterError"
+                },
+                {
+                  "$ref": "#/components/schemas/ExceptionError"
+                }
+              ]
+            },
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExceptionError": {
+        "required": [
+          "exceptionType",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "exceptionType": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "stackTrace": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FieldValidationError": {
+        "required": [
+          "error",
+          "field"
+        ],
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "nullable": true
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PackRequestParameters": {
+        "type": "object",
+        "properties": {
+          "algorithm": {
+            "$ref": "#/components/schemas/Algorithm"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PackResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BinPackResult"
+            },
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PackedBox": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "length": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "z": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParameterError": {
+        "required": [
+          "message",
+          "parameter"
+        ],
+        "type": "object",
+        "properties": {
+          "parameter": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResultType": {
+        "enum": [
+          "Success",
+          "Failure",
+          "Error"
+        ],
+        "type": "string"
+      },
+      "UnpackedBox": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
