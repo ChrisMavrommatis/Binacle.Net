@@ -11,14 +11,12 @@ author:
   
 # the base hostname & protocol for your site, e.g. http://example.com# Welcome to Jekyll!
 url                     : "http://localhost:7196"
-
 api_url                 : "https://localhost:7194"
+gtm                     : ''
 
 logo:
   src                  : /media/logo/binacle-logo-16x16.svg
   alt                  : "Binacle.Net Logo"
-
-gtm: 'GTM-N23CTC7C'
 
 default_theme: "dark"
 

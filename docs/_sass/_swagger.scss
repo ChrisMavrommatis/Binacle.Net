@@ -1,9 +1,40 @@
+@use 'variables' as *;
+
 .swagger-fab {
   margin-bottom: 75px !important;
 }
 
 
 .swagger-dialog{
-  width: 95vw !important;
+  width: 70vw !important;
   height: 100vh !important;
+
+  iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important; // Removes border from iframe
+    display: block !important; // Ensures proper iframe display
+  }
+
+  .close-btn {
+    position: absolute;
+    border-radius: 50% !important; // Circle shape
+    inline-size: 2.5rem !important;
+    block-size: 2.5rem !important;
+
+    i {
+      font-size: 1.25rem; // Material icon size
+    }
+  }
+
+  // Mobile - Full width
+  @media only screen and (max-width: $breakpoint-mobile-max) {
+    width: 90vw !important;
+  }
+
+  // Tablet - Slightly constrained
+  @media only screen and (min-width: $breakpoint-tablet-min) and (max-width: $breakpoint-tablet-max) {
+    width: 80vw !important;
+  }
+
 }

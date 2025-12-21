@@ -1,0 +1,1076 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Binacle.Net API",
+    "description": "Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.\n\n\n\n\n\n[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)\n\n[🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/binacle/binacle-net)\n\n",
+    "license": {
+      "name": "GNU General Public License v3.0",
+      "url": "https://www.gnu.org/licenses/gpl-3.0.html"
+    },
+    "version": "2.1"
+  },
+  "paths": {
+    "/api/v2/presets": {
+      "get": {
+        "tags": [
+          "Presets"
+        ],
+        "summary": "List Presets",
+        "description": "Lists the presets present in configuration.",
+        "responses": {
+          "500": {
+            "description": "**Internal Server Error**<br />\n\nIf an unexpected error occurs.\nException details will only be shown when in a development environment.\n\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": "{\"result\":\"Error\",\"data\":[],\"message\":\"An internal server error occurred while processing the request\"}"
+              }
+            }
+          },
+          "200": {
+            "description": "**OK**<br />\n\nReturns all of the configured presets wth the associated bins.\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresetListResponse"
+                },
+                "example": "{\"result\":\"Success\",\"data\":{\"preset1\":[{\"id\":\"preset1_bin1\",\"length\":10,\"width\":10,\"height\":10},{\"id\":\"preset1_bin2\",\"length\":20,\"width\":20,\"height\":20},{\"id\":\"preset1_bin3\",\"length\":30,\"width\":30,\"height\":30}],\"preset2\":[{\"id\":\"preset2_bin1\",\"length\":10,\"width\":20,\"height\":30},{\"id\":\"preset2_bin2\",\"length\":30,\"width\":60,\"height\":60}]}}"
+              }
+            }
+          },
+          "404": {
+            "description": "**Not Found**<br />\n\nIf no presets are configured.\n\n"
+          }
+        }
+      }
+    },
+    "/api/v2/pack/by-custom": {
+      "post": {
+        "tags": [
+          "Pack"
+        ],
+        "summary": "Pack by Custom",
+        "description": "Pack items using custom bins",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomPackRequest"
+              },
+              "example": "{\"parameters\":{\"optInToEarlyFails\":false,\"reportPackedItemsOnlyWhenFullyPacked\":false,\"neverReportUnpackedItems\":false,\"stopAtSmallestBin\":false},\"bins\":[{\"id\":\"custom_bin_1\",\"length\":10,\"width\":40,\"height\":60},{\"id\":\"custom_bin_2\",\"length\":20,\"width\":40,\"height\":60}],\"items\":[{\"id\":\"box_1\",\"quantity\":2,\"length\":2,\"width\":5,\"height\":10},{\"id\":\"box_2\",\"quantity\":1,\"length\":12,\"width\":15,\"height\":10},{\"id\":\"box_3\",\"quantity\":1,\"length\":12,\"width\":10,\"height\":15}]}"
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "**Internal Server Error**<br />\n\nIf an unexpected error occurs.\nException details will only be shown when in a development environment.\n\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": "{\"result\":\"Error\",\"data\":[],\"message\":\"An internal server error occurred while processing the request\"}"
+              }
+            }
+          },
+          "200": {
+            "description": "**OK**<br />\n\nReturns an array of results indicating the result per bin.\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackResponse"
+                },
+                "examples": {
+                  "fullypackedresponse": {
+                    "summary": "Fully Packed Response",
+                    "description": "Fully Packed Response example.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"FullyPacked\",\"bin\":{\"id\":\"custom_bin_1\",\"length\":10,\"width\":40,\"height\":60},\"packedItems\":[{\"id\":\"box_2\",\"dimensions\":{\"length\":10,\"width\":12,\"height\":15},\"coordinates\":{\"x\":0,\"y\":0,\"z\":0}},{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10},\"coordinates\":{\"x\":0,\"y\":12,\"z\":0}}],\"unpackedItems\":[],\"packedItemsVolumePercentage\":100.00,\"packedBinVolumePercentage\":7.92},{\"result\":\"FullyPacked\",\"bin\":{\"id\":\"custom_bin_2\",\"length\":20,\"width\":40,\"height\":60},\"packedItems\":[{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10},\"coordinates\":{\"x\":0,\"y\":0,\"z\":0}},{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10},\"coordinates\":{\"x\":12,\"y\":0,\"z\":0}}],\"unpackedItems\":[],\"packedItemsVolumePercentage\":100.00,\"packedBinVolumePercentage\":3.96}]}"
+                  },
+                  "partiallypackedresponse": {
+                    "summary": "Partially Packed Response",
+                    "description": "Partially Packed Response example.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"PartiallyPacked\",\"bin\":{\"id\":\"custom_bin_2\",\"length\":20,\"width\":40,\"height\":60},\"packedItems\":[{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10},\"coordinates\":{\"x\":0,\"y\":0,\"z\":0}}],\"unpackedItems\":[{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":20}}],\"packedItemsVolumePercentage\":2.70,\"packedBinVolumePercentage\":0.42}]}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "**Bad Request**<br />\n\nIf the request is invalid.\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "validationError": {
+                    "summary": "Validation Error",
+                    "description": "Example response with validation errors",
+                    "value": "{\"result\":\"Error\",\"data\":[{\"$type\":\"FieldValidationError\",\"field\":\"Items[0].Height\",\"error\":\"Must be greater than 0.\"}],\"message\":\"One or more validation errors occurred\"}"
+                  },
+                  "requestError": {
+                    "summary": "Request Error",
+                    "description": "Example response when the request is malformed",
+                    "value": "{\"result\":\"Error\",\"data\":[{\"$type\":\"ParameterError\",\"parameter\":\"request\",\"message\":\"Malformed request body.\"}],\"message\":\"One or more validation errors occurred\"}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pack/by-preset/{preset}": {
+      "post": {
+        "tags": [
+          "Pack"
+        ],
+        "summary": "Pack by Preset",
+        "description": "Pack items using a specified bin preset.",
+        "parameters": [
+          {
+            "name": "preset",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresetPackRequest"
+              },
+              "example": "{\"parameters\":{\"optInToEarlyFails\":false,\"reportPackedItemsOnlyWhenFullyPacked\":false,\"neverReportUnpackedItems\":false,\"stopAtSmallestBin\":false},\"items\":[{\"id\":\"box_1\",\"quantity\":2,\"length\":2,\"width\":5,\"height\":10},{\"id\":\"box_2\",\"quantity\":1,\"length\":12,\"width\":15,\"height\":10},{\"id\":\"box_3\",\"quantity\":1,\"length\":12,\"width\":10,\"height\":15}]}"
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "**Internal Server Error**<br />\n\nIf an unexpected error occurs.\nException details will only be shown when in a development environment.\n\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": "{\"result\":\"Error\",\"data\":[],\"message\":\"An internal server error occurred while processing the request\"}"
+              }
+            }
+          },
+          "200": {
+            "description": "**OK**<br />\n\nReturns an array of results indicating the result per bin.\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackResponse"
+                },
+                "examples": {
+                  "fullypackedresponse": {
+                    "summary": "Fully Packed Response",
+                    "description": "Fully Packed Response example.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"FullyPacked\",\"bin\":{\"id\":\"preset_bin_1\",\"length\":10,\"width\":40,\"height\":60},\"packedItems\":[{\"id\":\"box_2\",\"dimensions\":{\"length\":10,\"width\":12,\"height\":15},\"coordinates\":{\"x\":0,\"y\":0,\"z\":0}},{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10},\"coordinates\":{\"x\":0,\"y\":12,\"z\":0}}],\"unpackedItems\":[],\"packedItemsVolumePercentage\":100.00,\"packedBinVolumePercentage\":7.92},{\"result\":\"FullyPacked\",\"bin\":{\"id\":\"preset_bin_1\",\"length\":20,\"width\":40,\"height\":60},\"packedItems\":[{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10},\"coordinates\":{\"x\":0,\"y\":0,\"z\":0}},{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10},\"coordinates\":{\"x\":12,\"y\":0,\"z\":0}}],\"unpackedItems\":[],\"packedItemsVolumePercentage\":100.00,\"packedBinVolumePercentage\":3.96}]}"
+                  },
+                  "partiallypackedresponse": {
+                    "summary": "Partially Packed Response",
+                    "description": "Partially Packed Response example.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"PartiallyPacked\",\"bin\":{\"id\":\"preset_bin_1\",\"length\":20,\"width\":40,\"height\":60},\"packedItems\":[{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10},\"coordinates\":{\"x\":0,\"y\":0,\"z\":0}}],\"unpackedItems\":[{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":20}}],\"packedItemsVolumePercentage\":2.70,\"packedBinVolumePercentage\":0.42}]}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "**Bad Request**<br />\n\nIf the request is invalid.\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "validationError": {
+                    "summary": "Validation Error",
+                    "description": "Example response with validation errors",
+                    "value": "{\"result\":\"Error\",\"data\":[{\"$type\":\"FieldValidationError\",\"field\":\"Items[0].Height\",\"error\":\"Must be greater than 0.\"}],\"message\":\"One or more validation errors occurred\"}"
+                  },
+                  "requestError": {
+                    "summary": "Request Error",
+                    "description": "Example response when the request is malformed",
+                    "value": "{\"result\":\"Error\",\"data\":[{\"$type\":\"ParameterError\",\"parameter\":\"request\",\"message\":\"Malformed request body.\"}],\"message\":\"One or more validation errors occurred\"}"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "**Not Found**<br />\n\nIf the preset does not exist.\n\n"
+          }
+        }
+      }
+    },
+    "/api/v2/fit/by-custom": {
+      "post": {
+        "tags": [
+          "Fit"
+        ],
+        "summary": "Fit by Custom",
+        "description": "Perform a bin fitting function using custom bins.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFitRequest"
+              },
+              "example": "{\"parameters\":{\"reportFittedItems\":true,\"reportUnfittedItems\":true,\"findSmallestBinOnly\":false},\"bins\":[{\"id\":\"custom_bin_1\",\"length\":10,\"width\":40,\"height\":60},{\"id\":\"custom_bin_2\",\"length\":20,\"width\":40,\"height\":60}],\"items\":[{\"id\":\"box_1\",\"quantity\":2,\"length\":2,\"width\":5,\"height\":10},{\"id\":\"box_2\",\"quantity\":1,\"length\":12,\"width\":15,\"height\":10},{\"id\":\"box_3\",\"quantity\":1,\"length\":12,\"width\":10,\"height\":15}]}"
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "**Internal Server Error**<br />\n\nIf an unexpected error occurs.\nException details will only be shown when in a development environment.\n\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": "{\"result\":\"Error\",\"data\":[],\"message\":\"An internal server error occurred while processing the request\"}"
+              }
+            }
+          },
+          "200": {
+            "description": "**OK**<br />\n\nReturns an array of results indicating if a bin can accommodate all the items.\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FitResponse"
+                },
+                "examples": {
+                  "fullresponse": {
+                    "summary": "Full Response",
+                    "description": "Response example when you opt in to report all bins and all items.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"AllItemsFit\",\"bin\":{\"id\":\"custom_bin_1\",\"length\":10,\"width\":40,\"height\":60},\"fittedItems\":[{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10}},{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}}],\"unfittedItems\":[],\"fittedItemsVolumePercentage\":100.00,\"fittedBinVolumePercentage\":8.33},{\"result\":\"AllItemsFit\",\"bin\":{\"id\":\"custom_bin_2\",\"length\":20,\"width\":40,\"height\":60},\"fittedItems\":[{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10}},{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}}],\"unfittedItems\":[],\"fittedItemsVolumePercentage\":100.00,\"fittedBinVolumePercentage\":4.17}]}"
+                  },
+                  "itemsomittedresponse": {
+                    "summary": "Items Omitted Response",
+                    "description": "Response example when you omit the items.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"AllItemsFit\",\"bin\":{\"id\":\"custom_bin_1\",\"length\":10,\"width\":40,\"height\":60},\"fittedItemsVolumePercentage\":100.00,\"fittedBinVolumePercentage\":8.33},{\"result\":\"AllItemsFit\",\"bin\":{\"id\":\"custom_bin_2\",\"length\":20,\"width\":40,\"height\":60},\"fittedItemsVolumePercentage\":100.00,\"fittedBinVolumePercentage\":4.17}]}"
+                  },
+                  "smallestbinresponse": {
+                    "summary": "Smallest Bin Response",
+                    "description": "Response example when you request to report only the smallest bin.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"AllItemsFit\",\"bin\":{\"id\":\"custom_bin_1\",\"length\":10,\"width\":40,\"height\":60},\"fittedItemsVolumePercentage\":100.00,\"fittedBinVolumePercentage\":8.33}]}"
+                  },
+                  "binnotfitresponse": {
+                    "summary": "Bin Not Fit Response",
+                    "description": "Response example when a bin can't accommodate all the items",
+                    "value": "{\"result\":\"Failure\",\"data\":[{\"result\":\"NotAllItemsFit\",\"bin\":{\"id\":\"custom_small_bin_1\",\"length\":20,\"width\":20,\"height\":15},\"fittedItems\":[{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}}],\"unfittedItems\":[{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10}},{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}}],\"fittedItemsVolumePercentage\":48.65,\"fittedBinVolumePercentage\":30.00}]}"
+                  },
+                  "earlyfailresponse": {
+                    "summary": "Early fail Response",
+                    "description": "Response example when a bin can't accommodate all the items due to an early fail check",
+                    "value": "{\"result\":\"Failure\",\"data\":[{\"result\":\"EarlyFail_TotalVolumeExceeded\",\"bin\":{\"id\":\"custom_small_bin_1\",\"length\":10,\"width\":10,\"height\":10},\"fittedItems\":[],\"unfittedItems\":[{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}},{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10}},{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}}],\"fittedItemsVolumePercentage\":0.00,\"fittedBinVolumePercentage\":0.00}]}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "**Bad Request**<br />\n\nIf the request is invalid.\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "validationError": {
+                    "summary": "Validation Error",
+                    "description": "Example response with validation errors",
+                    "value": "{\"result\":\"Error\",\"data\":[{\"$type\":\"FieldValidationError\",\"field\":\"Items[0].Height\",\"error\":\"Must be greater than 0.\"}],\"message\":\"One or more validation errors occurred\"}"
+                  },
+                  "requestError": {
+                    "summary": "Request Error",
+                    "description": "Example response when the request is malformed",
+                    "value": "{\"result\":\"Error\",\"data\":[{\"$type\":\"ParameterError\",\"parameter\":\"request\",\"message\":\"Malformed request body.\"}],\"message\":\"One or more validation errors occurred\"}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/fit/by-preset/{preset}": {
+      "post": {
+        "tags": [
+          "Fit"
+        ],
+        "summary": "Fit by Preset",
+        "description": "Perform a bin fit function using a specified bin preset.",
+        "parameters": [
+          {
+            "name": "preset",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresetFitRequest"
+              },
+              "example": "{\"parameters\":{\"reportFittedItems\":true,\"reportUnfittedItems\":true,\"findSmallestBinOnly\":false},\"items\":[{\"id\":\"box_1\",\"quantity\":2,\"length\":2,\"width\":5,\"height\":10},{\"id\":\"box_2\",\"quantity\":1,\"length\":12,\"width\":15,\"height\":10},{\"id\":\"box_3\",\"quantity\":1,\"length\":12,\"width\":10,\"height\":15}]}"
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "**Internal Server Error**<br />\n\nIf an unexpected error occurs.\nException details will only be shown when in a development environment.\n\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": "{\"result\":\"Error\",\"data\":[],\"message\":\"An internal server error occurred while processing the request\"}"
+              }
+            }
+          },
+          "200": {
+            "description": "**OK**<br />\n\nReturns an array of results indicating if a bin can accommodate all the items.\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FitResponse"
+                },
+                "examples": {
+                  "fullresponse": {
+                    "summary": "Full Response",
+                    "description": "Response example when you opt in to report all bins and all items.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"AllItemsFit\",\"bin\":{\"id\":\"preset_bin_1\",\"length\":10,\"width\":40,\"height\":60},\"fittedItems\":[{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10}},{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}}],\"unfittedItems\":[],\"fittedItemsVolumePercentage\":100.00,\"fittedBinVolumePercentage\":8.33},{\"result\":\"AllItemsFit\",\"bin\":{\"id\":\"preset_bin_2\",\"length\":20,\"width\":40,\"height\":60},\"fittedItems\":[{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10}},{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}}],\"unfittedItems\":[],\"fittedItemsVolumePercentage\":100.00,\"fittedBinVolumePercentage\":4.17}]}"
+                  },
+                  "itemsomittedresponse": {
+                    "summary": "Items Omitted Response",
+                    "description": "Response example when you omit the items.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"AllItemsFit\",\"bin\":{\"id\":\"preset_bin_1\",\"length\":10,\"width\":40,\"height\":60},\"fittedItemsVolumePercentage\":100.00,\"fittedBinVolumePercentage\":8.33},{\"result\":\"AllItemsFit\",\"bin\":{\"id\":\"preset_bin_2\",\"length\":20,\"width\":40,\"height\":60},\"fittedItemsVolumePercentage\":100.00,\"fittedBinVolumePercentage\":4.17}]}"
+                  },
+                  "smallestbinresponse": {
+                    "summary": "Smallest Bin Response",
+                    "description": "Response example when you request to report only the smallest bin.",
+                    "value": "{\"result\":\"Success\",\"data\":[{\"result\":\"AllItemsFit\",\"bin\":{\"id\":\"preset_bin_1\",\"length\":10,\"width\":40,\"height\":60},\"fittedItemsVolumePercentage\":100.00,\"fittedBinVolumePercentage\":8.33}]}"
+                  },
+                  "binnotfitresponse": {
+                    "summary": "Bin Not Fit Response",
+                    "description": "Response example when a bin can't accommodate all the items",
+                    "value": "{\"result\":\"Failure\",\"data\":[{\"result\":\"NotAllItemsFit\",\"bin\":{\"id\":\"preset_small_bin_1\",\"length\":20,\"width\":20,\"height\":15},\"fittedItems\":[{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}}],\"unfittedItems\":[{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10}},{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}}],\"fittedItemsVolumePercentage\":48.65,\"fittedBinVolumePercentage\":30.00}]}"
+                  },
+                  "earlyfailresponse": {
+                    "summary": "Early fail Response",
+                    "description": "Response example when a bin can't accommodate all the items due to an early fail check",
+                    "value": "{\"result\":\"Failure\",\"data\":[{\"result\":\"EarlyFail_TotalVolumeExceeded\",\"bin\":{\"id\":\"preset_small_bin_1\",\"length\":10,\"width\":10,\"height\":10},\"fittedItems\":[],\"unfittedItems\":[{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}},{\"id\":\"box_1\",\"dimensions\":{\"length\":2,\"width\":5,\"height\":10}},{\"id\":\"box_2\",\"dimensions\":{\"length\":12,\"width\":15,\"height\":10}}],\"fittedItemsVolumePercentage\":0.00,\"fittedBinVolumePercentage\":0.00}]}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "**Bad Request**<br />\n\nIf the request is invalid.\n\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "validationError": {
+                    "summary": "Validation Error",
+                    "description": "Example response with validation errors",
+                    "value": "{\"result\":\"Error\",\"data\":[{\"$type\":\"FieldValidationError\",\"field\":\"Items[0].Height\",\"error\":\"Must be greater than 0.\"}],\"message\":\"One or more validation errors occurred\"}"
+                  },
+                  "requestError": {
+                    "summary": "Request Error",
+                    "description": "Example response when the request is malformed",
+                    "value": "{\"result\":\"Error\",\"data\":[{\"$type\":\"ParameterError\",\"parameter\":\"request\",\"message\":\"Malformed request body.\"}],\"message\":\"One or more validation errors occurred\"}"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "**Not Found**<br />\n\nIf the preset does not exist.\n\n"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Bin": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "length": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "width": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "height": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "BinFitResult": {
+        "required": [
+          "bin"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/BinFitResultStatus"
+          },
+          "bin": {
+            "$ref": "#/components/schemas/Bin"
+          },
+          "fittedItems": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ResultBox"
+            }
+          },
+          "unfittedItems": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ResultBox"
+            }
+          },
+          "fittedItemsVolumePercentage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "fittedBinVolumePercentage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "BinFitResultStatus": {
+        "enum": [
+          "AllItemsFit",
+          "NotAllItemsFit",
+          "EarlyFail_TotalVolumeExceeded",
+          "EarlyFail_ItemDimensionExceeded"
+        ],
+        "type": "string"
+      },
+      "BinPackResult": {
+        "required": [
+          "bin"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/BinPackResultStatus"
+          },
+          "bin": {
+            "$ref": "#/components/schemas/Bin"
+          },
+          "packedItems": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ResultBox"
+            }
+          },
+          "unpackedItems": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ResultBox"
+            }
+          },
+          "packedItemsVolumePercentage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "packedBinVolumePercentage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "BinPackResultStatus": {
+        "enum": [
+          "Unknown",
+          "NotPacked",
+          "PartiallyPacked",
+          "FullyPacked",
+          "EarlyFail_ContainerVolumeExceeded",
+          "EarlyFail_ContainerDimensionExceeded"
+        ],
+        "type": "string"
+      },
+      "Box": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "length": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "width": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "height": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "Coordinates": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "y": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "z": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "CustomFitRequest": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FitRequestParameters"
+              }
+            ]
+          },
+          "bins": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Bin"
+            }
+          },
+          "items": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            }
+          }
+        }
+      },
+      "CustomPackRequest": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PackRequestParameters"
+              }
+            ]
+          },
+          "bins": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Bin"
+            }
+          },
+          "items": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            }
+          }
+        }
+      },
+      "Dimensions": {
+        "type": "object",
+        "properties": {
+          "length": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "width": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "height": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "data": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/IApiError"
+            }
+          },
+          "message": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "FitRequestParameters": {
+        "type": "object",
+        "properties": {
+          "reportFittedItems": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "reportUnfittedItems": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "findSmallestBinOnly": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          }
+        }
+      },
+      "FitResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "data": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/BinFitResult"
+            }
+          },
+          "message": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "IApiError": {
+        "required": [
+          "$type"
+        ],
+        "type": "object",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/IApiErrorFieldValidationError"
+          },
+          {
+            "$ref": "#/components/schemas/IApiErrorParameterError"
+          },
+          {
+            "$ref": "#/components/schemas/IApiErrorExceptionError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "$type",
+          "mapping": {
+            "FieldValidationError": "#/components/schemas/IApiErrorFieldValidationError",
+            "ParameterError": "#/components/schemas/IApiErrorParameterError",
+            "ExceptionError": "#/components/schemas/IApiErrorExceptionError"
+          }
+        }
+      },
+      "IApiErrorExceptionError": {
+        "required": [
+          "exceptionType",
+          "message"
+        ],
+        "properties": {
+          "$type": {
+            "enum": [
+              "ExceptionError"
+            ],
+            "type": "string"
+          },
+          "exceptionType": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "stackTrace": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "IApiErrorFieldValidationError": {
+        "required": [
+          "field",
+          "error"
+        ],
+        "properties": {
+          "$type": {
+            "enum": [
+              "FieldValidationError"
+            ],
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "IApiErrorParameterError": {
+        "required": [
+          "parameter",
+          "message"
+        ],
+        "properties": {
+          "$type": {
+            "enum": [
+              "ParameterError"
+            ],
+            "type": "string"
+          },
+          "parameter": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "PackRequestParameters": {
+        "type": "object",
+        "properties": {
+          "optInToEarlyFails": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "reportPackedItemsOnlyWhenFullyPacked": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "neverReportUnpackedItems": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "stopAtSmallestBin": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          }
+        }
+      },
+      "PackResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "data": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/BinPackResult"
+            }
+          },
+          "message": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PresetFitRequest": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FitRequestParameters"
+              }
+            ]
+          },
+          "items": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            }
+          }
+        }
+      },
+      "PresetListResponse": {
+        "required": [
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "data": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Bin"
+              }
+            }
+          },
+          "message": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PresetPackRequest": {
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PackRequestParameters"
+              }
+            ]
+          },
+          "items": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            }
+          }
+        }
+      },
+      "ResultBox": {
+        "required": [
+          "id",
+          "dimensions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/Dimensions"
+          },
+          "coordinates": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Coordinates"
+              }
+            ]
+          }
+        }
+      },
+      "ResultType": {
+        "enum": [
+          "Success",
+          "Failure",
+          "Error"
+        ],
+        "type": "string"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Presets"
+    },
+    {
+      "name": "Pack"
+    },
+    {
+      "name": "Fit"
+    }
+  ]
+}

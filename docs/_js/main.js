@@ -3,7 +3,6 @@ import { ThemeSwitcherButtonElement } from "theme-switcher";
 document.addEventListener('DOMContentLoaded', function () {
     
     const versionSelects = document.querySelectorAll('[data-versionselect]');
-    
     if(!!versionSelects){
         versionSelects.forEach(versionSelect => {
             versionSelect.addEventListener('change', function (event) {
@@ -30,6 +29,27 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });    
     }
+
+
+	const closeButtons = document.querySelectorAll('button.close-btn');
+	if(!!closeButtons) {
+		closeButtons.forEach(button => {
+			button.addEventListener('click', function () {
+				// emulate escape key
+				const dialog = button.closest('dialog');
+				if(!!dialog){
+					dialog.close();
+					dialog.classList.remove('active');
+					const overlay = dialog.previousElementSibling;
+					if(!!overlay){
+						overlay.classList.remove('active');
+					}
+				}
+
+			});
+		});
+
+	}
 
     customElements.define('theme-switcher', ThemeSwitcherButtonElement);
 
