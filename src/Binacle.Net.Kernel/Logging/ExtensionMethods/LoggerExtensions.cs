@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
-namespace ChrisMavrommatis.Logging;
-
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+namespace Binacle.Net;
 
 public static class LoggerExtensions
 {

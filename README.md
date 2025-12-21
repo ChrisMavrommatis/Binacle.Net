@@ -26,7 +26,6 @@ Start exploring Binacle.Net now! 🚀
 ├── /assets     # Static assets copied by build
 ├── /build      # Build scripts, generated files and output artifacts
 ├── /config     # Configuration files for running the API, Benchmarks, Tests, Docs locally
-├── /dep        # Dependency Projects Not part of Binacle.Net, Binacle.Lib or Binacle.ViPaq
 ├── /doc        # Documentation files
 ├── /docs       # Documentation Site
 ├── /gems       # Ruby gems

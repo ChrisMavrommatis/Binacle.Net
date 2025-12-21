@@ -1,7 +1,7 @@
-﻿using ChrisMavrommatis.Logging.Operations;
+using Binacle.Net.Kernel.Logging;
 using Microsoft.Extensions.Logging;
 
-namespace ChrisMavrommatis.Logging;
+namespace Binacle.Net;
 
 public static class TimedOperationExtensions
 {

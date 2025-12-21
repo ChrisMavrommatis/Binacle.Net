@@ -5,7 +5,6 @@ using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Fitting.Models;
 using Binacle.Lib.Packing.Models;
 using Binacle.Net.ExtensionMethods;
-using ChrisMavrommatis.Logging;
 using ApiPackingParameters = Binacle.Net.Models.PackingParameters;
 using ApiFittingParameters = Binacle.Net.Models.FittingParameters;
 

@@ -38,7 +38,6 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<ProjectReference Include="..\..\dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
 		<ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
 	</ItemGroup>
 

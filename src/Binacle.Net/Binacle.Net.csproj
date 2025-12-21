@@ -25,7 +25,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Binacle.ViPaq\Binacle.ViPaq.csproj" />
-	  <ProjectReference Include="..\..\dep\ChrisMavrommatis.Logging\ChrisMavrommatis.Logging.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.DiagnosticsModule\Binacle.Net.DiagnosticsModule.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule\Binacle.Net.ServiceModule.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.UIModule\Binacle.Net.UIModule.csproj" />

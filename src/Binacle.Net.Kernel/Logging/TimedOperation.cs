@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
-namespace ChrisMavrommatis.Logging.Operations;
+namespace Binacle.Net.Kernel.Logging;
 
 public class TimedOperation : IDisposable
 {

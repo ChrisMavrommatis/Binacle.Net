@@ -1,7 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <ItemGroup>
-      <PackageReference Include="Shouldly" Version="4.3.0" />
-    </ItemGroup>
-
-</Project>
