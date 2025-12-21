@@ -3,7 +3,7 @@ using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Common.Services;
-using ChrisMavrommatis.StartupTasks;
+using Binacle.Net.Kernel.StartupTasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

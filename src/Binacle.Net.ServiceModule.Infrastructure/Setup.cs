@@ -5,10 +5,8 @@ using Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Providers;
 using Binacle.Net.ServiceModule.Infrastructure.Common;
 using Binacle.Net.ServiceModule.Infrastructure.Common.Services;
-using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace Binacle.Net.ServiceModule.Infrastructure;

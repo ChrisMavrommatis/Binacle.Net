@@ -1,7 +1,6 @@
-﻿using System.Data;
+﻿using Binacle.Net.Kernel.StartupTasks;
 using Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Subscriptions.Services;
-using ChrisMavrommatis.StartupTasks;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 
-namespace Binacle.Net.Kernel;
+namespace Binacle.Net;
 
 public static class HealthCheckServiceCollectionExtensions
 {
