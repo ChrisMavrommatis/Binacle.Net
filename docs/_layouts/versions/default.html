@@ -32,10 +32,12 @@ layout: page
 
 
 {% if page.swagger %}
-<dialog id="swagger-dialog" class="white no-padding swagger-dialog">
-  <button type="button" class="close-btn top right circle small transparent">
-    <i class="material-icons black-text">close</i>
-  </button>
-  <iframe src="{% vlink /swagger/{{ page.swagger | downcase }}.md %}"></iframe>
-</dialog>
+<div>
+  <dialog id="swagger-dialog" class="white no-padding swagger-dialog">
+    <button type="button" class="close-btn top right circle small transparent">
+      <i class="material-icons black-text">close</i>
+    </button>
+    <iframe src="{% vlink /swagger/{{ page.swagger | downcase }}.md %}"></iframe>
+  </dialog>
+</div>
 {% endif %}

@@ -21,6 +21,7 @@
     border-radius: 50% !important; // Circle shape
     inline-size: 2.5rem !important;
     block-size: 2.5rem !important;
+    z-index: 1000 !important; // Ensures button is above other elements
 
     i {
       font-size: 1.25rem; // Material icon size

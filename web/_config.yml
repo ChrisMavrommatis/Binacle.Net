@@ -64,6 +64,7 @@ exclude             :
   - "package.json"
   - "package-lock.json"
   - "webpack.config.js"
+  - "tsconfig.json"
 keep_files          : [".git", ".svn"]
 encoding            : "utf-8"
 markdown_ext        : "markdown,mkdown,mkdn,mkd,md"
@@ -176,6 +177,8 @@ defaults:
 # jekyll-tidy
 ############################################################
 jekyll_tidy:
-  exclude       : []       # an array of files to exclude from tidying.
+  exclude:                 # an array of files to exclude from tidying.
+    - "**/*.txt"
+    - "**/*.json"
   ignore_env    : null     # a JEKYLL_ENV string on which to skip tidying entirely.
   compress_html : false    # a flag for whether or not to compress the HTML output
