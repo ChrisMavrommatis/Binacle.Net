@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: binacle-net-docs
-      url: docs.binacle.net
+      url: https://docs.binacle.net
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
