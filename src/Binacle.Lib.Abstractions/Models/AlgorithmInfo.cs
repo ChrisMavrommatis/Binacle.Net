@@ -2,14 +2,14 @@
 
 public readonly struct AlgorithmInfo
 {
-	public Algorithm Algorithm { get; }
-	public string Name { get; }
-	public int Version  { get; }
+	public readonly AlgorithmOperation Operation;
+	public readonly Algorithm Algorithm;
+	public readonly int Version;
 
-	public AlgorithmInfo(Algorithm algorithm, string name, int version)
+	public AlgorithmInfo(Algorithm algorithm, int version, AlgorithmOperation operation)
 	{
+		this.Operation = operation;
 		this.Algorithm = algorithm;
-		this.Name = name;
 		this.Version = version;
 	}
 	
