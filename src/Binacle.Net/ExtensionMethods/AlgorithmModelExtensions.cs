@@ -1,4 +1,6 @@
-﻿namespace Binacle.Net.ExtensionMethods;
+﻿using Binacle.Lib;
+
+namespace Binacle.Net.ExtensionMethods;
 
 internal static class AlgorithmModelExtensions
 {
@@ -21,6 +23,15 @@ internal static class AlgorithmModelExtensions
 			Models.Algorithm.WFD => nameof(Models.Algorithm.WFD),
 			Models.Algorithm.BFD => nameof(Models.Algorithm.BFD),
 			_ => throw new NotSupportedException($"Algorithm {algorithm} is not supported.")
+		};
+	}
+	internal static string ToFastString(this AlgorithmOperation operation)
+	{
+		return operation switch
+		{
+			AlgorithmOperation.Fitting => nameof(AlgorithmOperation.Fitting),
+			AlgorithmOperation.Packing => nameof(AlgorithmOperation.Packing),
+			_ => throw new NotSupportedException($"Algorithm operation {operation} is not supported.")
 		};
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Configuration;
+﻿using Binacle.Lib;
+using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
@@ -63,14 +64,13 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 				return Results.NotFound(null);
 			}
 			
-			var operationResults = await binacleService.FitBinsAsync(
+			var operationResults = await binacleService.OperateAsync(
 				presetOption.Bins!,
 				request.Items!,
-				new FittingParameters
+				new OperationParameters
 				{
 					Algorithm = request.Parameters!.Algorithm!.Value,
-					ReportFittedItems =true,
-					ReportUnfittedItems = true
+					Operation = AlgorithmOperation.Fitting
 				}
 			);
 

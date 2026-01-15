@@ -2,11 +2,11 @@
 
 namespace Binacle.Lib.UnitTests.Data.Providers.Benchmarks;
 
-public class FittingCubeScalingBenchmarksProvider : CubeScalingBenchmarksDataProvider
+public class CubeScalingBenchmarksProvider : CubeScalingBenchmarksDataProvider
 {
 	public override IEnumerator<object[]> GetEnumerator()
 	{
-		foreach (var (algorithmKey, algorithm) in AlgorithmsUnderTest.FittingAlgorithms)
+		foreach (var (algorithmKey, algorithm) in AlgorithmsUnderTest.All)
 		{
 			foreach (var (scenarioKey, scenario) in CubeScalingBenchmarksDataProvider.Scenarios)
 			{

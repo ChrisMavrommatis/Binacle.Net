@@ -52,7 +52,7 @@ public class CubeScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture
 
 
 	[Theory]
-	[ClassData(typeof(PackingCubeScalingBenchmarksProvider))]
+	[ClassData(typeof(CubeScalingBenchmarksProvider))]
 	public void Packing_Algorithms(string algorithm, CubeScalingBenchmarkScenario scenario)
 		=> this.RunPackingScenarioTest(algorithm, scenario);
 	
@@ -61,7 +61,7 @@ public class CubeScalingBenchmarksCaseTests : IClassFixture<CommonTestingFixture
 		CubeScalingBenchmarkScenario scenario
 	)
 	{
-		var algorithmFactory = this.Fixture.PackingAlgorithmsUnderTest[algorithmKey];
+		var algorithmFactory = this.Fixture.AlgorithmsUnderTest[algorithmKey];
 		var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
 		foreach (var noOfItems in scenario.GetNoOfItems())
 		{

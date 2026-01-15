@@ -63,17 +63,17 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 	}
 
 	[Theory]
-	[ClassData(typeof(PackingAlgorithmsBaselineScenariosProvider))]
+	[ClassData(typeof(AlgorithmsBaselineScenariosProvider))]
 	public void Packing_Algorithms_Baseline_Scenarios(string algorithm, Scenario scenario)
 		=> this.RunPackingScenarioTest(algorithm, scenario);
 
 	[Theory]
-	[ClassData(typeof(PackingAlgorithmsSimpleScenariosProvider))]
+	[ClassData(typeof(AlgorithmsSimpleScenariosProvider))]
 	public void Packing_Algorithms_Simple_Scenarios(string algorithm, Scenario scenario)
 		=> this.RunPackingScenarioTest(algorithm, scenario);
 
 	[Theory]
-	[ClassData(typeof(PackingAlgorithmsComplexScenariosProvider))]
+	[ClassData(typeof(AlgorithmsComplexScenariosProvider))]
 	public void Packing_Algorithms_Complex_Scenarios(string algorithm, Scenario scenario)
 		=> this.RunPackingScenarioTest(algorithm, scenario);
 
@@ -82,7 +82,7 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 		Scenario scenario
 	)
 	{
-		var algorithmFactory = this.Fixture.PackingAlgorithmsUnderTest[algorithmKey];
+		var algorithmFactory = this.Fixture.AlgorithmsUnderTest[algorithmKey];
 		var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);

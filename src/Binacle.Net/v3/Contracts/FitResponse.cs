@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using Binacle.Lib.Abstractions.Models;
-using Binacle.Lib.Fitting.Models;
 
 namespace Binacle.Net.v3.Contracts;
 
@@ -12,28 +11,22 @@ public class FitResponse : ResponseBase<List<BinFitResult>>
 		List<TBin> bins,
 		List<TItem> items,
 		FitRequestParameters parameters,
-		IDictionary<string, FittingResult> operationResults
+		IDictionary<string, OperationResult> operationResults
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions
 	{
-		BinFitResultStatus GetResultStatus(FittingResult operationResult)
+		BinFitResultStatus GetResultStatus(OperationResult operationResult)
 		{
-			if (operationResult.Status == FittingResultStatus.Success)
+			return operationResult.Status switch
 			{
-				return BinFitResultStatus.AllItemsFit;
-			}
-
-			if (operationResult.Reason == FittingFailedResultReason.TotalVolumeExceeded)
-			{
-				return BinFitResultStatus.EarlyFail_TotalVolumeExceeded;
-			}
-			if (operationResult.Reason == FittingFailedResultReason.ItemDimensionExceeded)
-			{
-				return BinFitResultStatus.EarlyFail_ItemDimensionExceeded;
-			}
-
-			return BinFitResultStatus.NotAllItemsFit;
+				OperationResultStatus.FullyPacked => BinFitResultStatus.AllItemsFit,
+				OperationResultStatus.PartiallyPacked => BinFitResultStatus.NotAllItemsFit,
+				OperationResultStatus.EarlyFail_ContainerDimensionExceeded => BinFitResultStatus.EarlyFail_ItemDimensionExceeded,
+				OperationResultStatus.EarlyFail_ContainerVolumeExceeded => BinFitResultStatus.EarlyFail_TotalVolumeExceeded,
+				OperationResultStatus.NotPacked => BinFitResultStatus.NotAllItemsFit,
+				_ => throw new NotSupportedException($"No Implementation exists for operation result  status {operationResult.Status.ToString()}"),
+			};
 		}
 
 		var results = new List<BinFitResult>();
@@ -55,21 +48,20 @@ public class FitResponse : ResponseBase<List<BinFitResult>>
 					Width = bin.Width
 				},
 				Result = GetResultStatus(operationResult),
-				FittedBinVolumePercentage  = operationResult.FittedBinVolumePercentage,
-				FittedItemsVolumePercentage  = operationResult.FittedItemsVolumePercentage,
-				FittedItems  = operationResult.FittedItems?
+				FittedBinVolumePercentage  = operationResult.PackedBinVolumePercentage,
+				FittedItemsVolumePercentage  = operationResult.PackedItemsVolumePercentage,
+				FittedItems  = operationResult.PackedItems?
 					.Select(x => new FittedBox()
 					{
 						ID = x.ID,
-						Length = x.Length,
-						Width = x.Width,
-						Height = x.Height,
+						Length = x.Dimensions.Length,
+						Width = x.Dimensions.Width,
+						Height = x.Dimensions.Height,
 					}).ToList(),
-				UnfittedItems = operationResult.UnfittedItems?				
-					.GroupBy(x => x.ID)
+				UnfittedItems = operationResult.UnpackedItems?				
 					.Select(x => new UnfittedBox{
-						ID = x.Key,
-						Quantity = x.Count()
+						ID = x.ID,
+						Quantity = x.Quantity
 					}).ToList()
 			};
 

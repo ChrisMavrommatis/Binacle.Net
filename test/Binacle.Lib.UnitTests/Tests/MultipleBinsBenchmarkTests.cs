@@ -52,7 +52,7 @@ public class MultipleBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 
 
 	[Theory]
-	[ClassData(typeof(PackingMultipleBinsBenchmarksesProvider))]
+	[ClassData(typeof(MultipleBinsBenchmarksesProvider))]
 	public void Packing_Algorithms(string algorithm, Scenario scenario)
 		=> this.RunPackingScenarioTest(algorithm, scenario);
 
@@ -61,7 +61,7 @@ public class MultipleBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 		Scenario scenario
 	)
 	{
-		var algorithmFactory = this.Fixture.PackingAlgorithmsUnderTest[algorithmKey];
+		var algorithmFactory = this.Fixture.AlgorithmsUnderTest[algorithmKey];
 		var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);

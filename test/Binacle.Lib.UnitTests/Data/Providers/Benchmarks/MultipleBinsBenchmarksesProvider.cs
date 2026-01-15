@@ -2,11 +2,11 @@
 
 namespace Binacle.Lib.UnitTests.Data.Providers.Benchmarks;
 
-public class FittingMultipleBinsBenchmarksesProvider : MultipleBinsBenchmarksDataProvider
+public class MultipleBinsBenchmarksesProvider : MultipleBinsBenchmarksDataProvider
 {
 	public override IEnumerator<object[]> GetEnumerator()
 	{
-		foreach (var (algorithmKey, algorithm) in AlgorithmsUnderTest.FittingAlgorithms)
+		foreach (var (algorithmKey, algorithm) in AlgorithmsUnderTest.All)
 		{
 			foreach (var scenario in this.AllScenarios)
 			{

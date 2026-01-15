@@ -1,7 +1,5 @@
-﻿
-using Binacle.Net.IntegrationTests.v3.Abstractions;
+﻿using Binacle.Net.IntegrationTests.v3.Abstractions;
 using Binacle.Net.Models;
-using Binacle.Net.v2.Requests;
 using Binacle.Net.v3.Contracts;
 using FitRequestParameters = Binacle.Net.v3.Contracts.FitRequestParameters;
 

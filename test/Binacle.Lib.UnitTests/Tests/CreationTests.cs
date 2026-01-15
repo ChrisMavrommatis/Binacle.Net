@@ -42,7 +42,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 			});
 		}
 
-		foreach (var (algorithmKey, algorithmFactory) in this.fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.fixture.AlgorithmsUnderTest)
 		{
 			Should.Throw<ArgumentNullException>(() =>
 			{
@@ -69,7 +69,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 
 		}
 
-		foreach (var (algorithmKey, algorithmFactory) in this.fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.fixture.AlgorithmsUnderTest)
 		{
 			Should.Throw<ArgumentNullException>(() =>
 			{
@@ -98,7 +98,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 			});
 		}
 
-		foreach (var (algorithmKey, algorithmFactory) in this.fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.fixture.AlgorithmsUnderTest)
 		{
 			Should.Throw<DimensionException>(() =>
 			{
@@ -125,7 +125,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 			});
 		}
 
-		foreach (var (algorithmKey, algorithmFactory) in this.fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.fixture.AlgorithmsUnderTest)
 		{
 			Should.Throw<DimensionException>(() =>
 			{

@@ -1,31 +1,17 @@
 ﻿using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.Abstractions.Fitting;
 using Binacle.Net.TestsKernel.Models;
 
 namespace Binacle.Lib.UnitTests;
 
 internal static class AlgorithmsUnderTest
 {
-	public static readonly Dictionary<string, AlgorithmFactory<IFittingAlgorithm>> FittingAlgorithms = new()
+	public static readonly Dictionary<string, AlgorithmFactory<IPackingAlgorithm>> All = new()
 	{
-		{ "Fitting_FFD_v1", AlgorithmFactories.Fitting_FFD_v1 },
-		{ "Fitting_FFD_v2", AlgorithmFactories.Fitting_FFD_v2 },
-		{ "Fitting_FFD_v3", AlgorithmFactories.Fitting_FFD_v3 },
-		{ "Fitting_WFD_v1", AlgorithmFactories.Fitting_WFD_v1 },
-		{ "Fitting_WFD_v2", AlgorithmFactories.Fitting_WFD_v2 },
-		{ "Fitting_WFD_v3", AlgorithmFactories.Fitting_WFD_v3 },
-		{ "Fitting_BFD_v1", AlgorithmFactories.Fitting_BFD_v1 },
-		{ "Fitting_BFD_v2", AlgorithmFactories.Fitting_BFD_v2 },
-		{ "Fitting_BFD_v3", AlgorithmFactories.Fitting_BFD_v3 }
-	};
-	
-	public static readonly Dictionary<string, AlgorithmFactory<IPackingAlgorithm>> PackingAlgorithms = new()
-	{
-		{ "Packing_FFD_v1", AlgorithmFactories.Packing_FFD_v1 },
-		{ "Packing_FFD_v2", AlgorithmFactories.Packing_FFD_v2 },
-		{ "Packing_WFD_v1", AlgorithmFactories.Packing_WFD_v1 },
-		{ "Packing_WFD_v2", AlgorithmFactories.Packing_WFD_v2 },
-		{ "Packing_BFD_v1", AlgorithmFactories.Packing_BFD_v1 },
-		{ "Packing_BFD_v2", AlgorithmFactories.Packing_BFD_v2 }
+		{ "FFD_v1", AlgorithmFactories.FFD_v1 },
+		{ "FFD_v2", AlgorithmFactories.FFD_v2 },
+		{ "WFD_v1", AlgorithmFactories.WFD_v1 },
+		{ "WFD_v2", AlgorithmFactories.WFD_v2 },
+		{ "BFD_v1", AlgorithmFactories.BFD_v1 },
+		{ "BFD_v2", AlgorithmFactories.BFD_v2 }
 	};
 }

@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using Binacle.Lib.Abstractions.Models;
-using Binacle.Lib.Packing.Models;
 using Binacle.ViPaq;
 
 namespace Binacle.Net.v3.Contracts;
@@ -13,21 +12,21 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 		List<TBin> bins,
 		List<TItem> items,
 		PackRequestParameters parameters,
-		IDictionary<string, PackingResult> operationResults
+		IDictionary<string, OperationResult> operationResults
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions
 	{
-		BinPackResultStatus GetResultStatus(PackingResult operationResult)
+		BinPackResultStatus GetResultStatus(OperationResult operationResult)
 		{
 			return operationResult.Status switch
 			{
-				PackingResultStatus.FullyPacked => BinPackResultStatus.FullyPacked,
-				PackingResultStatus.PartiallyPacked => BinPackResultStatus.PartiallyPacked,
-				PackingResultStatus.EarlyFail_ContainerDimensionExceeded => BinPackResultStatus.EarlyFail_ContainerDimensionExceeded,
-				PackingResultStatus.EarlyFail_ContainerVolumeExceeded => BinPackResultStatus.EarlyFail_ContainerVolumeExceeded,
-				PackingResultStatus.Unknown => BinPackResultStatus.Unknown,
-				PackingResultStatus.NotPacked => BinPackResultStatus.NotPacked,
+				OperationResultStatus.FullyPacked => BinPackResultStatus.FullyPacked,
+				OperationResultStatus.PartiallyPacked => BinPackResultStatus.PartiallyPacked,
+				OperationResultStatus.EarlyFail_ContainerDimensionExceeded => BinPackResultStatus.EarlyFail_ContainerDimensionExceeded,
+				OperationResultStatus.EarlyFail_ContainerVolumeExceeded => BinPackResultStatus.EarlyFail_ContainerVolumeExceeded,
+				OperationResultStatus.Unknown => BinPackResultStatus.Unknown,
+				OperationResultStatus.NotPacked => BinPackResultStatus.NotPacked,
 				_ => throw new NotSupportedException($"No Implementation exists for operation result  status {operationResult.Status.ToString()}"),
 			};
 		}
@@ -60,16 +59,15 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 						Length = x.Dimensions.Length,
 						Width = x.Dimensions.Width,
 						Height = x.Dimensions.Height,
-						X = x.Coordinates!.Value.X,
-						Y = x.Coordinates!.Value.Y,
-						Z = x.Coordinates!.Value.Z
+						X = x.Coordinates.X,
+						Y = x.Coordinates.Y,
+						Z = x.Coordinates.Z
 					}).ToList(),
 				UnpackedItems = operationResult.UnpackedItems?
-					.GroupBy(x => x.ID)
 					.Select(x => new UnpackedBox
 					{
-						ID = x.Key,
-						Quantity = x.Count()
+						ID = x.ID,
+						Quantity = x.Quantity
 					}).ToList()
 			};
 

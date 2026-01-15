@@ -2,11 +2,11 @@
 
 namespace Binacle.Lib.UnitTests.Data.Providers.BinaryDecision;
 
-public sealed class FittingAlgorithmsBaselineScenariosProvider: BaselineScenarioDataProvider
+public sealed class AlgorithmsSimpleScenariosProvider: SimpleScenarioDataProvider
 {
 	public override IEnumerator<object[]> GetEnumerator()
 	{
-		foreach (var (algorithmKey, algorithm) in AlgorithmsUnderTest.FittingAlgorithms)
+		foreach (var (algorithmKey, algorithm)  in AlgorithmsUnderTest.All)
 		{
 			foreach (var scenario in this.Scenarios)
 			{

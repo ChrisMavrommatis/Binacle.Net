@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Configuration;
+﻿using Binacle.Lib;
+using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
@@ -51,15 +52,13 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 		
 		return await bindingResult.ValidateAsync(async request =>
 		{
-			var operationResults = await binacleService.PackBinsAsync(
+			var operationResults = await binacleService.OperateAsync(
 				request.Bins!,
 				request.Items!,
-				new PackingParameters
+				new OperationParameters
 				{
 					Algorithm = request.Parameters!.Algorithm!.Value,
-					OptInToEarlyFails = false,
-					ReportPackedItemsOnlyWhenFullyPacked = false,
-					NeverReportUnpackedItems = false
+					Operation = AlgorithmOperation.Packing
 				}
 			);
 

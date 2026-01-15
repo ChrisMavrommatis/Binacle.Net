@@ -46,7 +46,7 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			ReportPackedItemsOnlyWhenFullyPacked = false 
 		};
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.AlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -83,7 +83,7 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			ReportPackedItemsOnlyWhenFullyPacked = false
 		};
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.AlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -113,7 +113,7 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			ReportPackedItemsOnlyWhenFullyPacked = true
 		};
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.AlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -143,7 +143,7 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			ReportPackedItemsOnlyWhenFullyPacked = false
 		};
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.AlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -173,7 +173,7 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			ReportPackedItemsOnlyWhenFullyPacked = true
 		};
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.AlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -209,7 +209,7 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			ReportPackedItemsOnlyWhenFullyPacked = false
 		};
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.AlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);
@@ -238,7 +238,7 @@ public class PackingBehaviorTests : IClassFixture<CommonTestingFixture>
 			ReportPackedItemsOnlyWhenFullyPacked = false
 		};
 
-		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.PackingAlgorithmsUnderTest)
+		foreach (var (algorithmKey, algorithmFactory) in this.Fixture.AlgorithmsUnderTest)
 		{
 			var algorithmInstance = algorithmFactory(this.TestBin, testItems);
 			var result = algorithmInstance.Execute(parameters);

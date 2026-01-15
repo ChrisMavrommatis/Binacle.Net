@@ -2,11 +2,11 @@
 
 namespace Binacle.Lib.UnitTests.Data.Providers.BinaryDecision;
 
-public sealed class PackingAlgorithmsComplexScenariosProvider: ComplexScenarioDataProvider
+public sealed class AlgorithmsComplexScenariosProvider: ComplexScenarioDataProvider
 {
 	public override IEnumerator<object[]> GetEnumerator()
 	{
-		foreach (var (algorithmKey, algorithm)  in AlgorithmsUnderTest.PackingAlgorithms)
+		foreach (var (algorithmKey, algorithm)  in AlgorithmsUnderTest.All)
 		{
 			foreach (var scenario in this.Scenarios)
 			{

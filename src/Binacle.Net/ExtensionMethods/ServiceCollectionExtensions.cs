@@ -13,7 +13,6 @@ internal static class ServiceCollectionExtensions
 		services.AddSingleton<IAlgorithmFactory, AlgorithmFactory>();
 		services.AddKeyedSingleton<IBinProcessor, LoopBinProcessor>("loop");
 		services.AddKeyedSingleton<IBinProcessor, ParallelBinProcessor>("parallel");
-		services.AddSingleton<ILegacyBinsService, LegacyBinsService>();
 		services.AddSingleton<IBinacleService, BinacleService>();
 		return services;
 	}
