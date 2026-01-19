@@ -1,8 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.Abstractions.Fitting;
-using Binacle.Lib.Fitting.Models;
-using Binacle.Lib.Packing.Models;
+using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.TestsKernel.Data.Providers;
 using Binacle.Net.TestsKernel.Data.Providers.Benchmarks;
 using Binacle.Net.TestsKernel.Models;
@@ -44,29 +42,17 @@ public abstract class SingleBinCubeScalingBenchmarkBase
 		this.Items = null;
 	}
 	
-	protected FittingResult Run(AlgorithmFactory<IFittingAlgorithm> algorithmFactory, TestBin bin, List<TestItem> items)
-	{
-		var algorithmInstance = algorithmFactory(bin, items);
-		var result = algorithmInstance.Execute(new FittingParameters
-		{
-			ReportFittedItems = false,
-			ReportUnfittedItems = false
-		});
-		return result;
-	}
-	
-	protected PackingResult Run(
+	protected OperationResult Run(
 		AlgorithmFactory<IPackingAlgorithm> algorithmFactory,
+		AlgorithmOperation operation,
 		TestBin bin,
 		List<TestItem> items
 	)
 	{
 		var algorithmInstance = algorithmFactory(bin, items);
-		var result = algorithmInstance.Execute(new PackingParameters
+		var result = algorithmInstance.Execute(new OperationParameters
 		{
-			NeverReportUnpackedItems = false,
-			ReportPackedItemsOnlyWhenFullyPacked = false,
-			OptInToEarlyFails = false
+			Operation = operation
 		});
 		return result;
 	}

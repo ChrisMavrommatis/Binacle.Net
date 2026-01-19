@@ -7,11 +7,11 @@ internal class DistinctAlgorithmCollection : Dictionary<string, AlgorithmFactory
 {
 	public DistinctAlgorithmCollection()
 	{
-		this.Add("FFD", AlgorithmFactories.Packing_FFD_v1);
-		this.Add("FFD2", AlgorithmFactories.Packing_FFD_v2);
-		this.Add("WFD", AlgorithmFactories.Packing_WFD_v1);
-		this.Add("WFD2", AlgorithmFactories.Packing_WFD_v2);
-		this.Add("BFD", AlgorithmFactories.Packing_BFD_v1);
-		this.Add("BFD2", AlgorithmFactories.Packing_BFD_v2);
+		this.Add("FFD", AlgorithmFactories.FFD_v1);
+		this.Add("FFD2", AlgorithmFactories.FFD_v2);
+		this.Add("WFD", AlgorithmFactories.WFD_v1);
+		this.Add("WFD2", AlgorithmFactories.WFD_v2);
+		this.Add("BFD", AlgorithmFactories.BFD_v1);
+		this.Add("BFD2", AlgorithmFactories.BFD_v2);
 	}
 }

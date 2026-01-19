@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Binacle.Lib.Packing.Models;
 using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Services;
 using Binacle.Net.TestsKernel.Data.Providers;
@@ -48,11 +47,9 @@ internal class PackingTime : ITest
 
 					var time = this.MeasureAverageForRuns(10, () =>
 					{
-						var result = algorithmInstance.Execute(new PackingParameters
+						var result = algorithmInstance.Execute(new OperationParameters()
 						{
-							NeverReportUnpackedItems = false,
-							ReportPackedItemsOnlyWhenFullyPacked = false,
-							OptInToEarlyFails = true
+							Operation = AlgorithmOperation.Packing
 						});
 					});
 

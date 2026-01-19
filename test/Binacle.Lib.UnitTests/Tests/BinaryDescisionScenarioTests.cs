@@ -1,7 +1,4 @@
-﻿using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.Abstractions.Fitting;
-using Binacle.Lib.Fitting.Models;
-using Binacle.Lib.Packing.Models;
+﻿using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.UnitTests.Data.Providers.BinaryDecision;
 using Binacle.Net.TestsKernel.Models;
 
@@ -20,66 +17,39 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 	}
 
 	[Theory]
-	[ClassData(typeof(FittingAlgorithmsBaselineScenariosProvider))]
+	[ClassData(typeof(AlgorithmsBaselineScenariosProvider))]
 	public void Fitting_Algorithms_Baseline_Scenarios(string algorithm, Scenario scenario)
-		=> this.RunFittingScenarioTest(algorithm, scenario);
+		=> this.RunScenarioTest(algorithm, scenario, AlgorithmOperation.Fitting);
 
 	[Theory]
-	[ClassData(typeof(FittingAlgorithmsSimpleScenariosProvider))]
+	[ClassData(typeof(AlgorithmsSimpleScenariosProvider))]
 	public void Fitting_Algorithms_Simple_Scenarios(string algorithm, Scenario scenario)
-		=> this.RunFittingScenarioTest(algorithm, scenario);
+		=> this.RunScenarioTest(algorithm, scenario, AlgorithmOperation.Fitting);
 
 	[Theory]
-	[ClassData(typeof(FittingAlgorithmsComplexScenariosProvider))]
+	[ClassData(typeof(AlgorithmsComplexScenariosProvider))]
 	public void Fitting_Algorithms_Complex_Scenarios(string algorithm, Scenario scenario)
-		=> this.RunFittingScenarioTest(algorithm, scenario);
-
-	private void RunFittingScenarioTest(
-		string algorithmKey,
-		Scenario scenario
-	)
-	{
-		var algorithmFactory = this.Fixture.FittingAlgorithmsUnderTest[algorithmKey];
-		var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
-
-		var algorithmInstance = algorithmFactory(bin, scenario.Items);
-
-		var result = algorithmInstance.Execute(new FittingParameters
-		{
-			ReportFittedItems = false,
-			ReportUnfittedItems = false
-		});
-
-		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
-
-		if (scenarioResult.Fits)
-		{
-			result.Status.ShouldBe(FittingResultStatus.Success);
-		}
-		else
-		{
-			result.Status.ShouldBe(FittingResultStatus.Fail);
-		}
-	}
+		=> this.RunScenarioTest(algorithm, scenario, AlgorithmOperation.Fitting);
 
 	[Theory]
 	[ClassData(typeof(AlgorithmsBaselineScenariosProvider))]
 	public void Packing_Algorithms_Baseline_Scenarios(string algorithm, Scenario scenario)
-		=> this.RunPackingScenarioTest(algorithm, scenario);
+		=> this.RunScenarioTest(algorithm, scenario, AlgorithmOperation.Packing);
 
 	[Theory]
 	[ClassData(typeof(AlgorithmsSimpleScenariosProvider))]
 	public void Packing_Algorithms_Simple_Scenarios(string algorithm, Scenario scenario)
-		=> this.RunPackingScenarioTest(algorithm, scenario);
+		=> this.RunScenarioTest(algorithm, scenario, AlgorithmOperation.Packing);
 
 	[Theory]
 	[ClassData(typeof(AlgorithmsComplexScenariosProvider))]
 	public void Packing_Algorithms_Complex_Scenarios(string algorithm, Scenario scenario)
-		=> this.RunPackingScenarioTest(algorithm, scenario);
+		=> this.RunScenarioTest(algorithm, scenario, AlgorithmOperation.Packing);
 
-	private void RunPackingScenarioTest(
+	private void RunScenarioTest(
 		string algorithmKey,
-		Scenario scenario
+		Scenario scenario,
+		AlgorithmOperation operation
 	)
 	{
 		var algorithmFactory = this.Fixture.AlgorithmsUnderTest[algorithmKey];
@@ -87,22 +57,20 @@ public class BinaryDecisionScenarioTests : IClassFixture<CommonTestingFixture>
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
 
-		var result = algorithmInstance.Execute(new PackingParameters
+		var result = algorithmInstance.Execute(new OperationParameters
 		{
-			NeverReportUnpackedItems = true,
-			ReportPackedItemsOnlyWhenFullyPacked = true,
-			OptInToEarlyFails = true
+			Operation = operation
 		});
 
 		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
 
 		if (scenarioResult.Fits)
 		{
-			result.Status.ShouldBe(PackingResultStatus.FullyPacked);
+			result.Status.ShouldBe(OperationResultStatus.FullyPacked);
 		}
 		else
 		{
-			result.Status.ShouldNotBe(PackingResultStatus.FullyPacked);
+			result.Status.ShouldNotBe(OperationResultStatus.FullyPacked);
 		}
 	}
 }

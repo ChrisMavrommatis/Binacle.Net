@@ -1,5 +1,5 @@
 ﻿using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.Packing.Models;
+using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Services;
 using Binacle.Net.TestsKernel.Data.Providers;
@@ -45,7 +45,7 @@ internal class PackingEfficiencyComparison : ITest
 				throw new InvalidOperationException("Algorithm factory not found");
 			}
 
-			var baselineResult = this.RunPackingAlgorithm(baselineAlgorithm, scenario);
+			var baselineResult = this.RunAlgorithm(baselineAlgorithm, scenario);
 			discrepanciesTracker.AddValue(scenario.Name, this.baselineAlgorithm,
 				baselineResult.PackedBinVolumePercentage);
 			this.logger.LogDebug(
@@ -62,7 +62,7 @@ internal class PackingEfficiencyComparison : ITest
 					continue;
 				}
 				
-				var result = this.RunPackingAlgorithm(factory, scenario);
+				var result = this.RunAlgorithm(factory, scenario);
 				discrepanciesTracker.AddValue(scenario.Name, algorithm, result.PackedBinVolumePercentage);
 				
 				if (result.PackedBinVolumePercentage > baselineResult.PackedBinVolumePercentage)
@@ -98,7 +98,7 @@ internal class PackingEfficiencyComparison : ITest
 		return results;
 	}
 
-	private PackingResult RunPackingAlgorithm<TAlgorithm>(
+	private OperationResult RunAlgorithm<TAlgorithm>(
 		AlgorithmFactory<TAlgorithm> algorithmFactory,
 		Scenario scenario
 	)
@@ -108,11 +108,9 @@ internal class PackingEfficiencyComparison : ITest
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
 
-		var result = algorithmInstance.Execute(new PackingParameters
+		var result = algorithmInstance.Execute(new OperationParameters()
 		{
-			NeverReportUnpackedItems = false,
-			ReportPackedItemsOnlyWhenFullyPacked = false,
-			OptInToEarlyFails = true
+			Operation = AlgorithmOperation.Packing
 		});
 
 		return result;

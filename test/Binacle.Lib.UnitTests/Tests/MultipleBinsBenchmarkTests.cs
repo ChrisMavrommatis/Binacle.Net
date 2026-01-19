@@ -1,5 +1,4 @@
-﻿using Binacle.Lib.Fitting.Models;
-using Binacle.Lib.Packing.Models;
+﻿using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.UnitTests.Data.Providers.Benchmarks;
 using Binacle.Net.TestsKernel.Models;
 
@@ -18,47 +17,19 @@ public class MultipleBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 	}
 
 	[Theory]
-	[ClassData(typeof(FittingMultipleBinsBenchmarksesProvider))]
-	public void Fitting_Algorithms(string algorithm, Scenario scenario)
-		=> this.RunFittingScenarioTest(algorithm, scenario);
-
-	private void RunFittingScenarioTest(
-		string algorithmKey,
-		Scenario scenario
-	)
-	{
-		var algorithmFactory = this.Fixture.FittingAlgorithmsUnderTest[algorithmKey];
-		var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
-
-		var algorithmInstance = algorithmFactory(bin, scenario.Items);
-
-		var result = algorithmInstance.Execute(new FittingParameters()
-		{
-			ReportFittedItems = false,
-			ReportUnfittedItems = false
-		});
-
-		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
-
-		if (scenarioResult.Fits)
-		{
-			result.Status.ShouldBe(FittingResultStatus.Success);
-		}
-		else
-		{
-			result.Status.ShouldBe(FittingResultStatus.Fail);
-		}
-	}
-
+	[ClassData(typeof(MultipleBinsBenchmarksesProvider))]
+	public void Fitting(string algorithm, Scenario scenario)
+		=> this.RunScenarioTest(algorithm, scenario, AlgorithmOperation.Fitting);
 
 	[Theory]
 	[ClassData(typeof(MultipleBinsBenchmarksesProvider))]
-	public void Packing_Algorithms(string algorithm, Scenario scenario)
-		=> this.RunPackingScenarioTest(algorithm, scenario);
+	public void Packing(string algorithm, Scenario scenario)
+		=> this.RunScenarioTest(algorithm, scenario, AlgorithmOperation.Packing);
 
-	private void RunPackingScenarioTest(
+	private void RunScenarioTest(
 		string algorithmKey,
-		Scenario scenario
+		Scenario scenario,
+		AlgorithmOperation operation
 	)
 	{
 		var algorithmFactory = this.Fixture.AlgorithmsUnderTest[algorithmKey];
@@ -66,22 +37,20 @@ public class MultipleBinsBenchmarkTests : IClassFixture<CommonTestingFixture>
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
 
-		var result = algorithmInstance.Execute(new PackingParameters
+		var result = algorithmInstance.Execute(new OperationParameters
 		{
-			NeverReportUnpackedItems = true,
-			ReportPackedItemsOnlyWhenFullyPacked = true,
-			OptInToEarlyFails = true
+			Operation = operation
 		});
 
 		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
 
 		if (scenarioResult.Fits)
 		{
-			result.Status.ShouldBe(PackingResultStatus.FullyPacked);
+			result.Status.ShouldBe(OperationResultStatus.FullyPacked);
 		}
 		else
 		{
-			result.Status.ShouldNotBe(PackingResultStatus.FullyPacked);
+			result.Status.ShouldNotBe(OperationResultStatus.FullyPacked);
 		}
 	}
 

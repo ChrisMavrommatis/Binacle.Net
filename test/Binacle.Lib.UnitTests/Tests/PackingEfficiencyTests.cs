@@ -1,5 +1,4 @@
-﻿using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.Packing.Models;
+﻿using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.TestsKernel.Data.Providers.PackingEfficiency;
 using Binacle.Net.TestsKernel.Models;
 
@@ -19,37 +18,35 @@ public class PackingEfficiencyTests : IClassFixture<CommonTestingFixture>
 
 	[Theory]
 	[ClassData(typeof(OrLibraryScenarioDataProvider))]
-	public void OR_Library_Packing_FFD(Scenario scenario)
-		=> this.RunPackingScenarioTests("FFD", scenario);
+	public void OR_Library_FFD(Scenario scenario)
+		=> this.RunScenarioTests("FFD", scenario);
 
 	[Theory]
 	[ClassData(typeof(OrLibraryScenarioDataProvider))]
-	public void OR_Library_Packing_WFD(Scenario scenario)
-		=> this.RunPackingScenarioTests("WFD", scenario);
+	public void OR_Library_WFD(Scenario scenario)
+		=> this.RunScenarioTests("WFD", scenario);
 
 	[Theory]
 	[ClassData(typeof(OrLibraryScenarioDataProvider))]
-	public void OR_Library_Packing_BFD(Scenario scenario)
-		=> this.RunPackingScenarioTests("BFD", scenario);
+	public void OR_Library_BFD(Scenario scenario)
+		=> this.RunScenarioTests("BFD", scenario);
 
 
-	private void RunPackingScenarioTests(
+	private void RunScenarioTests(
 		string algorithmFamily,
 		Scenario scenario
 	)
 	{
 		var algorithms = this.algorithmFamilies[algorithmFamily];
-		var results = new Dictionary<string, PackingResult>();
+		var results = new Dictionary<string, OperationResult>();
 		foreach (var (algorithmKey, algorithmFactory) in algorithms)
 		{
 			var bin = scenario.GetTestBin(this.Fixture.BinDataProvider);
 			var algorithmInstance = algorithmFactory(bin, scenario.Items);
 
-			var result = algorithmInstance.Execute(new PackingParameters
+			var result = algorithmInstance.Execute(new OperationParameters
 			{
-				NeverReportUnpackedItems = false,
-				ReportPackedItemsOnlyWhenFullyPacked = false,
-				OptInToEarlyFails = true
+				Operation = AlgorithmOperation.Packing
 			});
 
 			var scenarioResult = scenario.ResultAs<PackingEfficiencyScenarioResult>();

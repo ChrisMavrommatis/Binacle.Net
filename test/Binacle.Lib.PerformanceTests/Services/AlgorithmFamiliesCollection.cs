@@ -9,18 +9,18 @@ internal class AlgorithmFamiliesCollection : Dictionary<string, Dictionary<strin
 	{
 		this.Add("FFD", new Dictionary<string, AlgorithmFactory<IPackingAlgorithm>>
 		{
-			{ "Packing_FFD_v1", AlgorithmFactories.Packing_FFD_v1 },
-			{ "Packing_FFD_v2", AlgorithmFactories.Packing_FFD_v2 }
+			{ "FFD_v1", AlgorithmFactories.FFD_v1 },
+			{ "FFD_v2", AlgorithmFactories.FFD_v2 }
 		});
 		this.Add("WFD", new Dictionary<string, AlgorithmFactory<IPackingAlgorithm>>
 		{
-			{ "Packing_WFD_v1", AlgorithmFactories.Packing_WFD_v1 },
-			{ "Packing_WFD_v2", AlgorithmFactories.Packing_WFD_v2 }
+			{ "WFD_v1", AlgorithmFactories.WFD_v1 },
+			{ "WFD_v2", AlgorithmFactories.WFD_v2 }
 		});
 		this.Add("BFD", new Dictionary<string, AlgorithmFactory<IPackingAlgorithm>>
 		{
-			{ "Packing_BFD_v1", AlgorithmFactories.Packing_BFD_v1 },
-			{ "Packing_BFD_v2", AlgorithmFactories.Packing_BFD_v2 }
+			{ "BFD_v1", AlgorithmFactories.BFD_v1 },
+			{ "BFD_v2", AlgorithmFactories.BFD_v2 }
 		});
 	}
 }

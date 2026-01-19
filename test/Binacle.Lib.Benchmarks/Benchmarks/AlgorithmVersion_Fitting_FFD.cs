@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
+using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Benchmarks.Abstractions;
 using Binacle.Lib.Benchmarks.Order;
-using Binacle.Lib.Fitting.Models;
 
 namespace Binacle.Lib.Benchmarks;
 
@@ -14,16 +14,13 @@ public class AlgorithmVersion_Fitting_FFD : SingleBinCubeScalingBenchmarkBase
 
 	[Benchmark(Baseline = true)]
 	[BenchmarkOrder(10)]
-	public FittingResult FFD_v1()
-		=> this.Run(AlgorithmFactories.Fitting_FFD_v1, this.Bin!, this.Items!);
+	public OperationResult FFD_v1()
+		=> this.Run(AlgorithmFactories.FFD_v1, AlgorithmOperation.Fitting, this.Bin!, this.Items!);
 
 	[Benchmark]
 	[BenchmarkOrder(20)]
-	public FittingResult FFD_v2()
-		=> this.Run(AlgorithmFactories.Fitting_FFD_v2, this.Bin!, this.Items!);
+	public OperationResult FFD_v2()
+		=> this.Run(AlgorithmFactories.FFD_v2, AlgorithmOperation.Fitting, this.Bin!, this.Items!);
 
-	[Benchmark]
-	[BenchmarkOrder(30)]
-	public FittingResult FFD_v3()
-		=> this.Run(AlgorithmFactories.Fitting_FFD_v3, this.Bin!, this.Items!);
+	
 }

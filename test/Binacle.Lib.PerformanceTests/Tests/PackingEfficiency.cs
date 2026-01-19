@@ -1,5 +1,5 @@
 ﻿using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.Packing.Models;
+using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Services;
 using Binacle.Net.TestsKernel.Data.Providers;
@@ -44,7 +44,7 @@ internal class PackingEfficiency : ITest
 				
 				foreach(var (algorithmName, algorithmFactory) in algorithms)
 				{
-					var result = this.RunPackingAlgorithm(algorithmFactory, scenario);
+					var result = this.RunAlgorithm(algorithmFactory, scenario);
 					scenarioDiscrepancyTracker.Add(algorithmName, (double)result.PackedBinVolumePercentage);
 					packingPercentages.AddValue(algorithmName, (double)result.PackedBinVolumePercentage);
 					var adjustedPackingPercentage =  Math.Round((result.PackedBinVolumePercentage / scenarioResult.MaxPotentialPackingEfficiencyPercentage) * 100, 2);
@@ -107,7 +107,7 @@ internal class PackingEfficiency : ITest
 		return results;
 	}
 
-	private PackingResult RunPackingAlgorithm<TAlgorithm>(
+	private OperationResult RunAlgorithm<TAlgorithm>(
 		AlgorithmFactory<TAlgorithm> algorithmFactory,
 		Scenario scenario
 	)
@@ -117,11 +117,9 @@ internal class PackingEfficiency : ITest
 
 		var algorithmInstance = algorithmFactory(bin, scenario.Items);
 
-		var result = algorithmInstance.Execute(new PackingParameters
+		var result = algorithmInstance.Execute(new OperationParameters()
 		{
-			NeverReportUnpackedItems = false,
-			ReportPackedItemsOnlyWhenFullyPacked = false,
-			OptInToEarlyFails = true
+			Operation = AlgorithmOperation.Packing
 		});
 
 		return result;
