@@ -51,7 +51,7 @@ public class PackingEfficiencyTests : IClassFixture<CommonTestingFixture>
 
 			var scenarioResult = scenario.ResultAs<PackingEfficiencyScenarioResult>();
 
-			var totalItems = result.PackedItems!.Count + result.UnpackedItems!.Count;
+			var totalItems = result.PackedItems!.Count + result.UnpackedItems!.Sum(x => x.Quantity);
 			totalItems.ShouldBe((int)scenarioResult.TotalItemCount);
 			result.PackedBinVolumePercentage
 				.ShouldBeLessThan(
