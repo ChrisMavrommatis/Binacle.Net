@@ -2,5 +2,5 @@
 
 public interface IWithID : IWithReadOnlyID
 {
-	string ID { get; set; }
+	new string ID { get; set; }
 }

@@ -11,5 +11,5 @@ public interface IWithQuantity : IWithQuantity<int>
 public interface IWithQuantity<T> : IWithReadOnlyQuantity<T>
 	where T : INumber<T>
 {
-	T Quantity { get; set; }
+	new T Quantity { get; set; }
 }
