@@ -32,8 +32,8 @@ public abstract class AlgorithmBenchmarkBase
 	
 	private TestBin[] bins;
 	private TestItem[] items;
-	private LoopBinProcessor loopProcessor;
-	private ParallelBinProcessor parallelProcessor;
+	private LoopBinProcessor? loopProcessor;
+	private ParallelBinProcessor? parallelProcessor;
 
 	private const int RandomSeed = 596333;
 
@@ -69,7 +69,7 @@ public abstract class AlgorithmBenchmarkBase
 		var algorithm = this.GetAlgorithm();
 		if (this.ExecutionMode == ExecutionMode.Loop)
 		{
-			return this.loopProcessor.Process(
+			return this.loopProcessor!.Process(
 				algorithm,
 				this.bins,
 				this.items,
@@ -80,7 +80,7 @@ public abstract class AlgorithmBenchmarkBase
 		}
 		else
 		{
-			return this.parallelProcessor.Process(
+			return this.parallelProcessor!.Process(
 				algorithm,
 				this.bins,
 				this.items,
