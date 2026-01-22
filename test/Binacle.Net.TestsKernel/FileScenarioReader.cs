@@ -66,5 +66,3 @@ internal class EmbeddedResourceFileScenarioReader
 		return resultScenarios;
 	}
 }
-
-

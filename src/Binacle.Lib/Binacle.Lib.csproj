@@ -3,6 +3,7 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="$(ProjectName).UnitTests" />
 		<InternalsVisibleTo Include="$(ProjectName).Benchmarks" />
+		<InternalsVisibleTo Include="$(ProjectName).AlgorithmCostBenchmarks" />
 		<InternalsVisibleTo Include="$(ProjectName).PerformanceTests" />
 	</ItemGroup>
 

@@ -6,9 +6,6 @@ namespace Binacle.Lib;
 
 public class AlgorithmFactory : IAlgorithmFactory
 {
-	private static Algorithm[] _algorithmTypes = Enum.GetValues<Algorithm>();
-	
-
 	public IPackingAlgorithm Create<TBin, TItem>(Algorithm algorithm, TBin bin, IList<TItem> items)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
@@ -22,18 +19,5 @@ public class AlgorithmFactory : IAlgorithmFactory
 		});
 
 		return algorithmInstance;
-	}
-	
-	public IPackingAlgorithm[] Create<TBin, TItem>(TBin bin, IList<TItem> items)
-		where TBin : class, IWithID, IWithReadOnlyDimensions
-		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
-	{
-		var algorithms = new IPackingAlgorithm[_algorithmTypes.Length];
-		for (var i = 0; i < _algorithmTypes.Length; i++)
-		{
-			algorithms[i] = this.Create<TBin, TItem>(_algorithmTypes[i], bin, items);
-		}
-		return algorithms;
-		
 	}
 }

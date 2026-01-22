@@ -60,6 +60,7 @@
     <Project Path="src/Binacle.ViPaq/Binacle.ViPaq.csproj" />
   </Folder>
   <Folder Name="/test/">
+    <Project Path="test/Binacle.Lib.AlgorithmCostBenchmarks/Binacle.Lib.AlgorithmCostBenchmarks.csproj" />
     <Project Path="test/Binacle.Lib.Benchmarks/Binacle.Lib.Benchmarks.csproj" />
     <Project Path="test/Binacle.Lib.PerformanceTests/Binacle.Lib.PerformanceTests.csproj" />
     <Project Path="test/Binacle.Lib.UnitTests/Binacle.Lib.UnitTests.csproj" />

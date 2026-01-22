@@ -8,8 +8,4 @@ public interface IAlgorithmFactory
 	public IPackingAlgorithm Create<TBin, TItem>(Algorithm algorithm, TBin bin, IList<TItem> items)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
-
-	public IPackingAlgorithm[] Create<TBin, TItem>(TBin bin, IList<TItem> items)
-		where TBin : class, IWithID, IWithReadOnlyDimensions
-		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
 }
