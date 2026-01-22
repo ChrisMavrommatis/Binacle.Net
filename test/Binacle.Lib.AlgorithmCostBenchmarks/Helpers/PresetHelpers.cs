@@ -62,26 +62,37 @@ internal static class ConstructionHelper
 	    ItemSizeDistribution distribution, 
 	    BinSize binSize)
     {
-	    var items = new TestItem[itemCount];
 	    var binRange = PresetHelper.GetBinDimensionRange(binSize);
-        
+
 	    // Item dimensions are 5% to 90% of max bin dimension
 	    int minDim = Math.Max(1, (int)(binRange.Min * 0.2));
 	    int maxDim = (int)(binRange.Max * 0.9);
 
-	    for (int i = 0; i < itemCount; i++)
+	    var itemList = new List<TestItem>();
+	    int remainingCount = itemCount;
+	    int itemIndex = 0;
+
+	    while (remainingCount > 0)
 	    {
+		    // Quantity between 1 and min(10, remainingCount)
+		    int maxQty = Math.Min(10, remainingCount);
+		    int quantity = random.Next(1, maxQty + 1);
+
 		    var dims = GenerateDimensions(random, distribution, minDim, maxDim);
-		    items[i] = new TestItem
+		    itemList.Add(new TestItem
 		    {
-			    ID = $"Item_{i}",
+			    ID = $"Item_{itemIndex}",
 			    Length = dims.L,
 			    Width = dims.W,
-			    Height = dims.H
-		    };
+			    Height = dims.H,
+			    Quantity = quantity
+		    });
+
+		    remainingCount -= quantity;
+		    itemIndex++;
 	    }
 
-	    return items;
+	    return itemList.ToArray();
     }
     
     private static (int L, int W, int H) GenerateDimensions(
