@@ -67,6 +67,7 @@
     <Project Path="test/Binacle.Net.IntegrationTests/Binacle.Net.IntegrationTests.csproj" />
     <Project Path="test/Binacle.Net.ServiceModule.IntegrationTests/Binacle.Net.ServiceModule.IntegrationTests.csproj" />
     <Project Path="test/Binacle.Net.TestsKernel/Binacle.Net.TestsKernel.csproj" />
+    <Project Path="test/Binacle.TestsKernel/Binacle.TestsKernel.csproj" />
     <Project Path="test/Binacle.ViPaq.UnitTests/Binacle.ViPaq.UnitTests.csproj" />
   </Folder>
   <Folder Name="/_root/">

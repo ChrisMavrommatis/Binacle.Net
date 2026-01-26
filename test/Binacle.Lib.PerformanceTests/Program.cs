@@ -33,7 +33,7 @@ internal class Program
 		{
 			return new BinCollectionsDataProvider();
 		});
-		builder.Services.AddSingleton<OrLibraryScenarioDataProvider>();
+		builder.Services.AddSingleton<BischoffSuiteDataProvider>();
 		builder.Services.AddSingleton<AlgorithmFamiliesCollection>();
 		builder.Services.AddSingleton<MarkdownFileWriter>();
 		builder.Services.AddSingleton<DistinctAlgorithmCollection>();

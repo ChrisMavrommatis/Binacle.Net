@@ -1,6 +1,6 @@
-﻿namespace Binacle.Net.TestsKernel.Helpers;
+namespace Binacle.TestsKernel.Helpers;
 
-public static class DimensionHelper
+public static class DimensionsHelper
 {
 	public static Models.DimensionsAndQuantity ParseFromCompactString(string compactString)
 	{
@@ -35,9 +35,9 @@ public static class DimensionHelper
 		}
 
 		if (!int.TryParse(dimensions[0], out int length)
-			|| !int.TryParse(dimensions[1], out int width)
-			|| !int.TryParse(dimensions[2], out int height)
-			)
+		    || !int.TryParse(dimensions[1], out int width)
+		    || !int.TryParse(dimensions[2], out int height)
+		   )
 		{
 			throw new ArgumentException($"Invalid dimension number. Value {compactString} should have format 'LxWxH-Q' or 'LxWxH'.");
 		}

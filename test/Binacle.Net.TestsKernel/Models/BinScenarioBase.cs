@@ -18,7 +18,7 @@ public abstract class BinScenarioBase
 		var binParts = binString.Split("::");
 		if (binParts.Length != 2)
 		{
-			throw new InvalidOperationException($"Unexpected Bin format {binString}. Bin should be 'CollectionKey::Bin' or 'Raw::LxWxH'");
+			throw new InvalidOperationException($"Unexpected Bin format {binString}. Bin should be 'CollectionKey::Bin' or 'LxWxH'");
 		}
 		if (binParts[0] == "Raw")
 		{
@@ -32,7 +32,7 @@ public abstract class BinScenarioBase
 		if (string.IsNullOrWhiteSpace(this.binCollectionKey)
 			|| string.IsNullOrWhiteSpace(this.binFromCollection))
 		{
-			throw new InvalidOperationException($"Unexpected Bin format {binString}. Bin should be 'CollectionKey::Bin' or 'Raw::LxWxH'");
+			throw new InvalidOperationException($"Unexpected Bin format {binString}. Bin should be 'CollectionKey::Bin' or 'LxWxH'");
 		}
 
 	}

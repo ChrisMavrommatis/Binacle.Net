@@ -11,14 +11,14 @@ namespace Binacle.Lib.PerformanceTests.Tests;
 
 internal class PackingEfficiencyComparison : ITest
 {
-	private readonly OrLibraryScenarioDataProvider scenarioProvider;
+	private readonly BischoffSuiteDataProvider scenarioProvider;
 	private readonly BinCollectionsDataProvider binsProvider;
 	private readonly DistinctAlgorithmCollection algorithms;
 	private readonly ILogger<PackingEfficiencyComparison> logger;
 	private readonly string baselineAlgorithm;
 
 	public PackingEfficiencyComparison(
-		OrLibraryScenarioDataProvider scenarioProvider,
+		BischoffSuiteDataProvider scenarioProvider,
 		BinCollectionsDataProvider binsProvider,
 		DistinctAlgorithmCollection algorithms,
 		ILogger<PackingEfficiencyComparison> logger

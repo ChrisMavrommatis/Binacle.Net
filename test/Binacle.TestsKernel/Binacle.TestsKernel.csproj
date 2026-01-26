@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <IsPackable>false</IsPackable>
+
+  </PropertyGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Data\**\*.json" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>

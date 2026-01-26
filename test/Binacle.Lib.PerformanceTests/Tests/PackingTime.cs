@@ -10,13 +10,13 @@ namespace Binacle.Lib.PerformanceTests.Tests;
 
 internal class PackingTime : ITest
 {
-	private readonly OrLibraryScenarioDataProvider scenarioProvider;
+	private readonly BischoffSuiteDataProvider scenarioProvider;
 	private readonly BinCollectionsDataProvider binDataProvider;
 	private readonly AlgorithmFamiliesCollection algorithmFamilies;
 	private readonly ILogger<PackingTime> logger;
 
 	public PackingTime(
-		OrLibraryScenarioDataProvider scenarioProvider,
+		BischoffSuiteDataProvider scenarioProvider,
 		BinCollectionsDataProvider binDataProvider,
 		AlgorithmFamiliesCollection algorithmFamilies,
 		ILogger<PackingTime> logger

@@ -7,18 +7,53 @@ using Binacle.Net.TestsKernel.Data.Providers.PackingEfficiency;
 using Binacle.Net.TestsKernel.Models;
 using Microsoft.Extensions.Logging;
 
+
 namespace Binacle.Lib.PerformanceTests.Tests;
+
+
+internal class BischoffSuitePackingEfficiency : ITest
+{
+	private readonly BischoffSuiteDataProvider scenarioProvider;
+
+	public BischoffSuitePackingEfficiency(
+		BischoffSuiteDataProvider scenarioProvider
+		)
+	{
+		this.scenarioProvider = scenarioProvider;
+	}
+	public TestResultList Run()
+	{
+		foreach (var objectArray in this.scenarioProvider)
+		{
+			var scenario = objectArray[0] as Scenario;
+			var scenarioResult = scenario!.ResultAs<PackingEfficiencyScenarioResult>();
+
+			foreach (var algorithmFactory in AlgorithmFactories.All)
+			{
+					var result = this.RunAlgorithm(algorithmFactory, scenario);
+			}
+		}
+		
+		var results = new TestResultList()
+		{
+			Title = "Bischoff Suite Packing Efficiency",
+			Description = "Shows the packing efficiency of each algorithm in the Bischoff Suite",
+			Filename = "BischoffSuitePackingEfficiency"
+		};
+		return results;
+	}
+}
 
 internal class PackingEfficiency : ITest
 {
 	private readonly AlgorithmFamiliesCollection algorithmFamilies;
-	private readonly OrLibraryScenarioDataProvider scenarioProvider;
+	private readonly BischoffSuiteDataProvider scenarioProvider;
 	private readonly BinCollectionsDataProvider binsProvider;
 	private readonly ILogger<PackingEfficiency> logger;
 
 	public PackingEfficiency(
 		AlgorithmFamiliesCollection algorithmFamilies,
-		OrLibraryScenarioDataProvider scenarioProvider,
+		BischoffSuiteDataProvider scenarioProvider,
 		BinCollectionsDataProvider binsProvider,
 		ILogger<PackingEfficiency> logger
 		)
@@ -123,6 +158,5 @@ internal class PackingEfficiency : ITest
 		});
 
 		return result;
-
 	}
 }

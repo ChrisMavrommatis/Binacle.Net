@@ -17,17 +17,17 @@ public class PackingEfficiencyTests : IClassFixture<CommonTestingFixture>
 	}
 
 	[Theory]
-	[ClassData(typeof(OrLibraryScenarioDataProvider))]
+	[ClassData(typeof(BischoffSuiteDataProvider))]
 	public void OR_Library_FFD(Scenario scenario)
 		=> this.RunScenarioTests("FFD", scenario);
 
 	[Theory]
-	[ClassData(typeof(OrLibraryScenarioDataProvider))]
+	[ClassData(typeof(BischoffSuiteDataProvider))]
 	public void OR_Library_WFD(Scenario scenario)
 		=> this.RunScenarioTests("WFD", scenario);
 
 	[Theory]
-	[ClassData(typeof(OrLibraryScenarioDataProvider))]
+	[ClassData(typeof(BischoffSuiteDataProvider))]
 	public void OR_Library_BFD(Scenario scenario)
 		=> this.RunScenarioTests("BFD", scenario);
 

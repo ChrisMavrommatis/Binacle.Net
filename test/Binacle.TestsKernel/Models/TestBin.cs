@@ -1,6 +1,6 @@
-﻿using Binacle.Lib.Abstractions.Models;
+using Binacle.Lib.Abstractions.Models;
 
-namespace Binacle.Net.TestsKernel.Models;
+namespace Binacle.TestsKernel.Models;
 
 public sealed class TestBin : IWithID, IWithDimensions
 {

@@ -11,68 +11,68 @@ public class MultipleBinsBenchmarksDataProvider : IEnumerable<object[]>
 		.Add("Rectangular-Cuboids::Medium", "BinaryDecision::Fits")
 		.Add("Rectangular-Cuboids::Large", "BinaryDecision::Fits")			// 3 _ 2 
 		
-		.Add("Raw::60x40x10", "BinaryDecision::DoesNotFit")
-		.Add("Raw::60x10x40", "BinaryDecision::DoesNotFit")
-		.Add("Raw::40x60x10", "BinaryDecision::DoesNotFit")
-		.Add("Raw::40x10x60", "BinaryDecision::DoesNotFit")
-		.Add("Raw::10x40x60", "BinaryDecision::DoesNotFit")
-		.Add("Raw::10x60x40", "BinaryDecision::DoesNotFit")					// 9 _ 2
+		.Add("60x40x10", "BinaryDecision::DoesNotFit")
+		.Add("60x10x40", "BinaryDecision::DoesNotFit")
+		.Add("40x60x10", "BinaryDecision::DoesNotFit")
+		.Add("40x10x60", "BinaryDecision::DoesNotFit")
+		.Add("10x40x60", "BinaryDecision::DoesNotFit")
+		.Add("10x60x40", "BinaryDecision::DoesNotFit")					// 9 _ 2
 		
-		.Add("Raw::60x40x11", "BinaryDecision::DoesNotFit")
-		.Add("Raw::60x11x40", "BinaryDecision::DoesNotFit")
-		.Add("Raw::40x60x11", "BinaryDecision::DoesNotFit")
-		.Add("Raw::40x11x60", "BinaryDecision::DoesNotFit")
-		.Add("Raw::11x40x60", "BinaryDecision::DoesNotFit")
-		.Add("Raw::11x60x40", "BinaryDecision::DoesNotFit")					// 15 _ 2
+		.Add("60x40x11", "BinaryDecision::DoesNotFit")
+		.Add("60x11x40", "BinaryDecision::DoesNotFit")
+		.Add("40x60x11", "BinaryDecision::DoesNotFit")
+		.Add("40x11x60", "BinaryDecision::DoesNotFit")
+		.Add("11x40x60", "BinaryDecision::DoesNotFit")
+		.Add("11x60x40", "BinaryDecision::DoesNotFit")					// 15 _ 2
 		
-		.Add("Raw::60x40x12", "BinaryDecision::DoesNotFit")
-		.Add("Raw::60x12x40", "BinaryDecision::DoesNotFit")
-		.Add("Raw::40x60x12", "BinaryDecision::DoesNotFit")
-		.Add("Raw::40x12x60", "BinaryDecision::DoesNotFit")
-		.Add("Raw::12x40x60", "BinaryDecision::DoesNotFit")
-		.Add("Raw::12x60x40", "BinaryDecision::DoesNotFit") 				// 21 _ 2
+		.Add("60x40x12", "BinaryDecision::DoesNotFit")
+		.Add("60x12x40", "BinaryDecision::DoesNotFit")
+		.Add("40x60x12", "BinaryDecision::DoesNotFit")
+		.Add("40x12x60", "BinaryDecision::DoesNotFit")
+		.Add("12x40x60", "BinaryDecision::DoesNotFit")
+		.Add("12x60x40", "BinaryDecision::DoesNotFit") 				// 21 _ 2
 		
-		.Add("Raw::60x40x20", "BinaryDecision::Fits")
-		.Add("Raw::60x20x40", "BinaryDecision::Fits")
-		.Add("Raw::40x60x20", "BinaryDecision::Fits")
-		.Add("Raw::40x20x60", "BinaryDecision::Fits")
-		.Add("Raw::20x40x60", "BinaryDecision::Fits")
-		.Add("Raw::20x60x40", "BinaryDecision::Fits") 					    // 27 _ 8
+		.Add("60x40x20", "BinaryDecision::Fits")
+		.Add("60x20x40", "BinaryDecision::Fits")
+		.Add("40x60x20", "BinaryDecision::Fits")
+		.Add("40x20x60", "BinaryDecision::Fits")
+		.Add("20x40x60", "BinaryDecision::Fits")
+		.Add("20x60x40", "BinaryDecision::Fits") 					    // 27 _ 8
 		
-		.Add("Raw::60x40x21", "BinaryDecision::Fits")
-		.Add("Raw::60x21x40", "BinaryDecision::Fits")
-		.Add("Raw::40x60x21", "BinaryDecision::Fits")
-		.Add("Raw::40x21x60", "BinaryDecision::Fits")
-		.Add("Raw::21x40x60", "BinaryDecision::Fits")
-		.Add("Raw::21x60x40", "BinaryDecision::Fits") 						// 33 _ 14
+		.Add("60x40x21", "BinaryDecision::Fits")
+		.Add("60x21x40", "BinaryDecision::Fits")
+		.Add("40x60x21", "BinaryDecision::Fits")
+		.Add("40x21x60", "BinaryDecision::Fits")
+		.Add("21x40x60", "BinaryDecision::Fits")
+		.Add("21x60x40", "BinaryDecision::Fits") 						// 33 _ 14
 		
-		.Add("Raw::60x40x22", "BinaryDecision::Fits")
-        .Add("Raw::60x22x40", "BinaryDecision::Fits")
-        .Add("Raw::40x60x22", "BinaryDecision::Fits")
-        .Add("Raw::40x22x60", "BinaryDecision::Fits")
-        .Add("Raw::22x40x60", "BinaryDecision::Fits") 
-        .Add("Raw::22x60x40", "BinaryDecision::Fits") 						// 39 _ 20
+		.Add("60x40x22", "BinaryDecision::Fits")
+        .Add("60x22x40", "BinaryDecision::Fits")
+        .Add("40x60x22", "BinaryDecision::Fits")
+        .Add("40x22x60", "BinaryDecision::Fits")
+        .Add("22x40x60", "BinaryDecision::Fits") 
+        .Add("22x60x40", "BinaryDecision::Fits") 						// 39 _ 20
 		
-		.Add("Raw::60x40x30", "BinaryDecision::Fits")
-		.Add("Raw::60x30x40", "BinaryDecision::Fits")
-		.Add("Raw::40x60x30", "BinaryDecision::Fits")
-		.Add("Raw::40x30x60", "BinaryDecision::Fits")
-		.Add("Raw::30x40x60", "BinaryDecision::Fits")
-		.Add("Raw::30x60x40", "BinaryDecision::Fits") 						// 45 _ 26
+		.Add("60x40x30", "BinaryDecision::Fits")
+		.Add("60x30x40", "BinaryDecision::Fits")
+		.Add("40x60x30", "BinaryDecision::Fits")
+		.Add("40x30x60", "BinaryDecision::Fits")
+		.Add("30x40x60", "BinaryDecision::Fits")
+		.Add("30x60x40", "BinaryDecision::Fits") 						// 45 _ 26
 		
-		.Add("Raw::60x40x31", "BinaryDecision::Fits")
-		.Add("Raw::60x31x40", "BinaryDecision::Fits")
-		.Add("Raw::40x60x31", "BinaryDecision::Fits")
-		.Add("Raw::40x31x60", "BinaryDecision::Fits")
-		.Add("Raw::31x40x60", "BinaryDecision::Fits")
-		.Add("Raw::31x60x40", "BinaryDecision::Fits") 						// 51 _ 32
+		.Add("60x40x31", "BinaryDecision::Fits")
+		.Add("60x31x40", "BinaryDecision::Fits")
+		.Add("40x60x31", "BinaryDecision::Fits")
+		.Add("40x31x60", "BinaryDecision::Fits")
+		.Add("31x40x60", "BinaryDecision::Fits")
+		.Add("31x60x40", "BinaryDecision::Fits") 						// 51 _ 32
 		
-		.Add("Raw::60x40x32", "BinaryDecision::Fits")
-		.Add("Raw::60x32x40", "BinaryDecision::Fits")
-		.Add("Raw::40x60x32", "BinaryDecision::Fits")
-		.Add("Raw::40x32x60", "BinaryDecision::Fits")
-		.Add("Raw::32x40x60", "BinaryDecision::Fits")
-		.Add("Raw::32x60x40", "BinaryDecision::Fits") 						// 57 _ 38
+		.Add("60x40x32", "BinaryDecision::Fits")
+		.Add("60x32x40", "BinaryDecision::Fits")
+		.Add("40x60x32", "BinaryDecision::Fits")
+		.Add("40x32x60", "BinaryDecision::Fits")
+		.Add("32x40x60", "BinaryDecision::Fits")
+		.Add("32x60x40", "BinaryDecision::Fits") 						// 57 _ 38
 		;
 
 	private static readonly ItemsCollection ItemsHolder = new ItemsCollection()

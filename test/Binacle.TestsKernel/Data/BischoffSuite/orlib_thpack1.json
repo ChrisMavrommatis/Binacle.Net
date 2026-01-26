@@ -1,8 +1,8 @@
 [
   {
     "Name": "OrLibrary_thpack1_1",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29736390 30089620 112",
+    "Bin": "587x233x220",
+    "Result": "29736390 30089620 112",
     "Items": [
       "108x76x30-40",
       "110x43x25-33",
@@ -11,8 +11,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_2",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29747753 30089620 138",
+    "Bin": "587x233x220",
+    "Result": "29747753 30089620 138",
     "Items": [
       "49x25x21-41",
       "60x51x41-53",
@@ -21,8 +21,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_3",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29963259 30089620 127",
+    "Bin": "587x233x220",
+    "Result": "29963259 30089620 127",
     "Items": [
       "97x81x27-41",
       "102x78x39-42",
@@ -31,8 +31,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_4",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30036306 30089620 197",
+    "Bin": "587x233x220",
+    "Result": "30036306 30089620 197",
     "Items": [
       "113x92x33-67",
       "52x37x28-60",
@@ -41,8 +41,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_5",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29934375 30089620 136",
+    "Bin": "587x233x220",
+    "Result": "29934375 30089620 136",
     "Items": [
       "88x54x39-51",
       "94x54x36-38",
@@ -51,8 +51,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_6",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30039660 30089620 147",
+    "Bin": "587x233x220",
+    "Result": "30039660 30089620 147",
     "Items": [
       "86x84x45-56",
       "81x45x34-56",
@@ -61,8 +61,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_7",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30030422 30089620 126",
+    "Bin": "587x233x220",
+    "Result": "30030422 30089620 126",
     "Items": [
       "118x79x51-37",
       "86x32x31-44",
@@ -71,8 +71,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_8",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30015080 30089620 180",
+    "Bin": "587x233x220",
+    "Result": "30015080 30089620 180",
     "Items": [
       "75x58x57-58",
       "57x37x30-66",
@@ -81,8 +81,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_9",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29845092 30089620 101",
+    "Bin": "587x233x220",
+    "Result": "29845092 30089620 101",
     "Items": [
       "90x70x63-29",
       "84x78x28-32",
@@ -91,8 +91,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_10",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29964912 30089620 130",
+    "Bin": "587x233x220",
+    "Result": "29964912 30089620 130",
     "Items": [
       "68x66x31-44",
       "120x34x26-41",
@@ -101,8 +101,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_11",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29729166 30089620 102",
+    "Bin": "587x233x220",
+    "Result": "29729166 30089620 102",
     "Items": [
       "74x63x61-33",
       "71x60x25-36",
@@ -111,8 +111,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_12",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29999728 30089620 104",
+    "Bin": "587x233x220",
+    "Result": "29999728 30089620 104",
     "Items": [
       "95x80x57-38",
       "112x87x23-29",
@@ -121,8 +121,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_13",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30043476 30089620 284",
+    "Bin": "587x233x220",
+    "Result": "30043476 30089620 284",
     "Items": [
       "52x36x25-112",
       "63x37x21-76",
@@ -131,8 +131,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_14",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29687592 30089620 132",
+    "Bin": "587x233x220",
+    "Result": "29687592 30089620 132",
     "Items": [
       "68x48x31-45",
       "104x80x63-41",
@@ -141,8 +141,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_15",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30041680 30089620 119",
+    "Bin": "587x233x220",
+    "Result": "30041680 30089620 119",
     "Items": [
       "100x44x37-32",
       "90x78x55-49",
@@ -151,8 +151,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_16",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30030633 30089620 159",
+    "Bin": "587x233x220",
+    "Result": "30030633 30089620 159",
     "Items": [
       "43x40x39-49",
       "97x76x40-51",
@@ -161,8 +161,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_17",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29918160 30089620 213",
+    "Bin": "587x233x220",
+    "Result": "29918160 30089620 213",
     "Items": [
       "72x49x35-72",
       "75x66x47-76",
@@ -171,8 +171,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_18",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29624112 30089620 82",
+    "Bin": "587x233x220",
+    "Result": "29624112 30089620 82",
     "Items": [
       "104x55x30-25",
       "92x89x73-24",
@@ -181,8 +181,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_19",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30063480 30089620 130",
+    "Bin": "587x233x220",
+    "Result": "30063480 30089620 130",
     "Items": [
       "60x45x26-40",
       "71x43x39-40",
@@ -191,8 +191,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_20",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30025368 30089620 88",
+    "Bin": "587x233x220",
+    "Result": "30025368 30089620 88",
     "Items": [
       "97x77x66-28",
       "81x69x69-32",
@@ -201,8 +201,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_21",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30014288 30089620 79",
+    "Bin": "587x233x220",
+    "Result": "30014288 30089620 79",
     "Items": [
       "109x93x72-27",
       "95x67x32-26",
@@ -211,8 +211,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_22",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29908086 30089620 116",
+    "Bin": "587x233x220",
+    "Result": "29908086 30089620 116",
     "Items": [
       "89x78x50-29",
       "73x65x46-51",
@@ -221,8 +221,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_23",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29992180 30089620 128",
+    "Bin": "587x233x220",
+    "Result": "29992180 30089620 128",
     "Items": [
       "84x81x23-50",
       "115x72x64-34",
@@ -231,8 +231,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_24",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29931360 30089620 114",
+    "Bin": "587x233x220",
+    "Result": "29931360 30089620 114",
     "Items": [
       "113x80x29-35",
       "98x65x62-34",
@@ -241,8 +241,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_25",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30076410 30089620 139",
+    "Bin": "587x233x220",
+    "Result": "30076410 30089620 139",
     "Items": [
       "75x54x35-47",
       "107x60x49-45",
@@ -251,8 +251,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_26",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29952116 30089620 124",
+    "Bin": "587x233x220",
+    "Result": "29952116 30089620 124",
     "Items": [
       "86x71x41-46",
       "75x58x58-41",
@@ -261,8 +261,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_27",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29864124 30089620 103",
+    "Bin": "587x233x220",
+    "Result": "29864124 30089620 103",
     "Items": [
       "118x66x47-39",
       "99x56x25-34",
@@ -271,8 +271,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_28",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29861312 30089620 111",
+    "Bin": "587x233x220",
+    "Result": "29861312 30089620 111",
     "Items": [
       "62x59x52-32",
       "54x52x50-39",
@@ -281,8 +281,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_29",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30003672 30089620 109",
+    "Bin": "587x233x220",
+    "Result": "30003672 30089620 109",
     "Items": [
       "91x58x57-40",
       "92x78x53-33",
@@ -291,8 +291,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_30",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30036328 30089620 405",
+    "Bin": "587x233x220",
+    "Result": "30036328 30089620 405",
     "Items": [
       "64x53x32-154",
       "51x42x28-117",
@@ -301,8 +301,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_31",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30048858 30089620 129",
+    "Bin": "587x233x220",
+    "Result": "30048858 30089620 129",
     "Items": [
       "70x63x49-45",
       "84x54x49-42",
@@ -311,8 +311,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_32",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30045564 30089620 155",
+    "Bin": "587x233x220",
+    "Result": "30045564 30089620 155",
     "Items": [
       "95x76x44-57",
       "81x47x34-58",
@@ -321,8 +321,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_33",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29942910 30089620 282",
+    "Bin": "587x233x220",
+    "Result": "29942910 30089620 282",
     "Items": [
       "40x36x21-84",
       "76x45x31-103",
@@ -331,8 +331,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_34",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29801736 30089620 160",
+    "Bin": "587x233x220",
+    "Result": "29801736 30089620 160",
     "Items": [
       "68x35x27-47",
       "118x57x43-54",
@@ -341,8 +341,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_35",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29999712 30089620 150",
+    "Bin": "587x233x220",
+    "Result": "29999712 30089620 150",
     "Items": [
       "100x33x31-46",
       "84x68x42-58",
@@ -351,8 +351,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_36",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29778638 30089620 172",
+    "Bin": "587x233x220",
+    "Result": "29778638 30089620 172",
     "Items": [
       "41x39x26-57",
       "110x40x34-70",
@@ -361,8 +361,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_37",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29947300 30089620 99",
+    "Bin": "587x233x220",
+    "Result": "29947300 30089620 99",
     "Items": [
       "98x73x44-25",
       "60x60x38-37",
@@ -371,8 +371,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_38",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30025060 30089620 93",
+    "Bin": "587x233x220",
+    "Result": "30025060 30089620 93",
     "Items": [
       "104x94x50-34",
       "102x87x36-25",
@@ -381,8 +381,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_39",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29993916 30089620 243",
+    "Bin": "587x233x220",
+    "Result": "29993916 30089620 243",
     "Items": [
       "89x56x45-97",
       "53x37x34-69",
@@ -391,8 +391,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_40",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29957776 30089620 107",
+    "Bin": "587x233x220",
+    "Result": "29957776 30089620 107",
     "Items": [
       "85x77x62-28",
       "94x63x32-39",
@@ -401,8 +401,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_41",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30048518 30089620 109",
+    "Bin": "587x233x220",
+    "Result": "30048518 30089620 109",
     "Items": [
       "109x80x68-35",
       "90x45x31-37",
@@ -411,8 +411,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_42",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30077040 30089620 168",
+    "Bin": "587x233x220",
+    "Result": "30077040 30089620 168",
     "Items": [
       "76x74x50-50",
       "86x40x29-61",
@@ -421,8 +421,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_43",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29872850 30089620 141",
+    "Bin": "587x233x220",
+    "Result": "29872850 30089620 141",
     "Items": [
       "82x80x71-35",
       "66x37x27-49",
@@ -431,8 +431,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_44",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29956426 30089620 142",
+    "Bin": "587x233x220",
+    "Result": "29956426 30089620 142",
     "Items": [
       "114x67x25-61",
       "92x79x25-44",
@@ -441,8 +441,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_45",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30011085 30089620 140",
+    "Bin": "587x233x220",
+    "Result": "30011085 30089620 140",
     "Items": [
       "63x55x31-51",
       "120x43x23-39",
@@ -451,8 +451,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_46",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29737434 30089620 116",
+    "Bin": "587x233x220",
+    "Result": "29737434 30089620 116",
     "Items": [
       "86x58x36-37",
       "71x69x22-37",
@@ -461,8 +461,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_47",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29839484 30089620 137",
+    "Bin": "587x233x220",
+    "Result": "29839484 30089620 137",
     "Items": [
       "118x54x42-51",
       "112x95x20-41",
@@ -471,8 +471,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_48",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30055172 30089620 153",
+    "Bin": "587x233x220",
+    "Result": "30055172 30089620 153",
     "Items": [
       "59x49x48-43",
       "79x63x46-54",
@@ -481,8 +481,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_49",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29920320 30089620 86",
+    "Bin": "587x233x220",
+    "Result": "29920320 30089620 86",
     "Items": [
       "91x54x45-32",
       "105x77x72-24",
@@ -491,8 +491,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_50",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29921040 30089620 168",
+    "Bin": "587x233x220",
+    "Result": "29921040 30089620 168",
     "Items": [
       "60x40x32-64",
       "98x75x55-40",
@@ -501,8 +501,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_51",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30023149 30089620 129",
+    "Bin": "587x233x220",
+    "Result": "30023149 30089620 129",
     "Items": [
       "66x64x36-47",
       "97x73x49-49",
@@ -511,8 +511,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_52",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30083392 30089620 187",
+    "Bin": "587x233x220",
+    "Result": "30083392 30089620 187",
     "Items": [
       "96x72x31-61",
       "75x72x47-56",
@@ -521,8 +521,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_53",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30055886 30089620 170",
+    "Bin": "587x233x220",
+    "Result": "30055886 30089620 170",
     "Items": [
       "78x37x27-63",
       "89x70x25-52",
@@ -531,8 +531,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_54",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30089374 30089620 142",
+    "Bin": "587x233x220",
+    "Result": "30089374 30089620 142",
     "Items": [
       "99x68x23-54",
       "68x52x40-53",
@@ -541,8 +541,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_55",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29879890 30089620 114",
+    "Bin": "587x233x220",
+    "Result": "29879890 30089620 114",
     "Items": [
       "100x94x28-40",
       "81x78x66-36",
@@ -551,8 +551,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_56",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30010372 30089620 408",
+    "Bin": "587x233x220",
+    "Result": "30010372 30089620 408",
     "Items": [
       "90x41x34-133",
       "64x32x28-131",
@@ -561,8 +561,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_57",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29940978 30089620 124",
+    "Bin": "587x233x220",
+    "Result": "29940978 30089620 124",
     "Items": [
       "85x73x40-39",
       "73x62x54-42",
@@ -571,8 +571,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_58",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30070062 30089620 92",
+    "Bin": "587x233x220",
+    "Result": "30070062 30089620 92",
     "Items": [
       "105x81x46-38",
       "115x81x61-22",
@@ -581,8 +581,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_59",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30082496 30089620 195",
+    "Bin": "587x233x220",
+    "Result": "30082496 30089620 195",
     "Items": [
       "76x52x46-74",
       "66x59x31-52",
@@ -591,8 +591,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_60",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30044871 30089620 105",
+    "Bin": "587x233x220",
+    "Result": "30044871 30089620 105",
     "Items": [
       "78x72x58-36",
       "107x57x57-37",
@@ -601,8 +601,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_61",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29620808 30089620 101",
+    "Bin": "587x233x220",
+    "Result": "29620808 30089620 101",
     "Items": [
       "109x68x64-28",
       "84x58x55-31",
@@ -611,8 +611,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_62",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29972940 30089620 120",
+    "Bin": "587x233x220",
+    "Result": "29972940 30089620 120",
     "Items": [
       "70x63x50-33",
       "100x53x34-39",
@@ -621,8 +621,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_63",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30020248 30089620 94",
+    "Bin": "587x233x220",
+    "Result": "30020248 30089620 94",
     "Items": [
       "82x76x59-32",
       "60x51x50-29",
@@ -631,8 +631,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_64",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30080292 30089620 139",
+    "Bin": "587x233x220",
+    "Result": "30080292 30089620 139",
     "Items": [
       "114x54x20-42",
       "92x87x50-46",
@@ -641,8 +641,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_65",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30087516 30089620 476",
+    "Bin": "587x233x220",
+    "Result": "30087516 30089620 476",
     "Items": [
       "55x50x26-160",
       "48x42x37-167",
@@ -651,8 +651,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_66",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29937696 30089620 145",
+    "Bin": "587x233x220",
+    "Result": "29937696 30089620 145",
     "Items": [
       "87x45x32-47",
       "84x63x46-52",
@@ -661,8 +661,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_67",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29974389 30089620 221",
+    "Bin": "587x233x220",
+    "Result": "29974389 30089620 221",
     "Items": [
       "119x41x38-57",
       "90x44x35-79",
@@ -671,8 +671,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_68",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30064080 30089620 238",
+    "Bin": "587x233x220",
+    "Result": "30064080 30089620 238",
     "Items": [
       "60x44x36-74",
       "76x42x40-81",
@@ -681,8 +681,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_69",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29810560 30089620 144",
+    "Bin": "587x233x220",
+    "Result": "29810560 30089620 144",
     "Items": [
       "91x50x32-52",
       "118x66x40-48",
@@ -691,8 +691,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_70",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29917072 30089620 163",
+    "Bin": "587x233x220",
+    "Result": "29917072 30089620 163",
     "Items": [
       "56x32x28-46",
       "92x68x39-69",
@@ -701,8 +701,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_71",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29989116 30089620 96",
+    "Bin": "587x233x220",
+    "Result": "29989116 30089620 96",
     "Items": [
       "99x64x62-38",
       "110x43x37-30",
@@ -711,8 +711,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_72",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29962940 30089620 74",
+    "Bin": "587x233x220",
+    "Result": "29962940 30089620 74",
     "Items": [
       "96x95x68-28",
       "69x61x35-24",
@@ -721,8 +721,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_73",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29967660 30089620 127",
+    "Bin": "587x233x220",
+    "Result": "29967660 30089620 127",
     "Items": [
       "90x73x37-44",
       "102x95x33-44",
@@ -731,8 +731,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_74",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29880178 30089620 132",
+    "Bin": "587x233x220",
+    "Result": "29880178 30089620 132",
     "Items": [
       "86x79x69-38",
       "53x46x31-47",
@@ -741,8 +741,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_75",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30019680 30089620 137",
+    "Bin": "587x233x220",
+    "Result": "30019680 30089620 137",
     "Items": [
       "101x81x24-50",
       "94x72x29-43",
@@ -751,8 +751,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_76",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29988740 30089620 269",
+    "Bin": "587x233x220",
+    "Result": "29988740 30089620 269",
     "Items": [
       "77x42x30-89",
       "98x45x28-95",
@@ -761,8 +761,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_77",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30027130 30089620 194",
+    "Bin": "587x233x220",
+    "Result": "30027130 30089620 194",
     "Items": [
       "73x73x36-74",
       "87x49x26-67",
@@ -771,8 +771,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_78",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30069290 30089620 169",
+    "Bin": "587x233x220",
+    "Result": "30069290 30089620 169",
     "Items": [
       "105x68x42-61",
       "75x37x24-53",
@@ -781,8 +781,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_79",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30029968 30089620 200",
+    "Bin": "587x233x220",
+    "Result": "30029968 30089620 200",
     "Items": [
       "64x48x46-79",
       "79x25x22-55",
@@ -791,8 +791,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_80",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30078720 30089620 133",
+    "Bin": "587x233x220",
+    "Result": "30078720 30089620 133",
     "Items": [
       "78x59x54-40",
       "120x52x20-57",
@@ -801,8 +801,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_81",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29829120 30089620 73",
+    "Bin": "587x233x220",
+    "Result": "29829120 30089620 73",
     "Items": [
       "110x60x55-23",
       "80x78x71-28",
@@ -811,8 +811,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_82",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29934402 30089620 164",
+    "Bin": "587x233x220",
+    "Result": "29934402 30089620 164",
     "Items": [
       "65x51x50-51",
       "113x78x28-56",
@@ -821,8 +821,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_83",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29868786 30089620 120",
+    "Bin": "587x233x220",
+    "Result": "29868786 30089620 120",
     "Items": [
       "83x71x46-43",
       "76x63x54-46",
@@ -831,8 +831,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_84",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30065466 30089620 69",
+    "Bin": "587x233x220",
+    "Result": "30065466 30089620 69",
     "Items": [
       "114x77x42-31",
       "105x81x74-23",
@@ -841,8 +841,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_85",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30056994 30089620 319",
+    "Bin": "587x233x220",
+    "Result": "30056994 30089620 319",
     "Items": [
       "55x37x22-117",
       "72x55x31-103",
@@ -851,8 +851,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_86",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29849472 30089620 156",
+    "Bin": "587x233x220",
+    "Result": "29849472 30089620 156",
     "Items": [
       "87x33x28-60",
       "97x70x57-44",
@@ -861,8 +861,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_87",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30072012 30089620 98",
+    "Bin": "587x233x220",
+    "Result": "30072012 30089620 98",
     "Items": [
       "119x34x28-39",
       "84x69x48-32",
@@ -871,8 +871,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_88",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30068808 30089620 126",
+    "Bin": "587x233x220",
+    "Result": "30068808 30089620 126",
     "Items": [
       "100x60x40-45",
       "89x67x34-44",
@@ -881,8 +881,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_89",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29914048 30089620 96",
+    "Bin": "587x233x220",
+    "Result": "29914048 30089620 96",
     "Items": [
       "95x92x46-32",
       "65x60x40-32",
@@ -891,8 +891,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_90",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29885976 30089620 90",
+    "Bin": "587x233x220",
+    "Result": "29885976 30089620 90",
     "Items": [
       "91x52x33-30",
       "87x81x63-26",
@@ -901,8 +901,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_91",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30004408 30089620 238",
+    "Bin": "587x233x220",
+    "Result": "30004408 30089620 238",
     "Items": [
       "86x65x57-66",
       "61x37x32-80",
@@ -911,8 +911,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_92",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30050106 30089620 88",
+    "Bin": "587x233x220",
+    "Result": "30050106 30089620 88",
     "Items": [
       "96x82x63-32",
       "74x63x59-33",
@@ -921,8 +921,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_93",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30055544 30089620 100",
+    "Bin": "587x233x220",
+    "Result": "30055544 30089620 100",
     "Items": [
       "78x69x37-26",
       "115x90x58-37",
@@ -931,8 +931,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_94",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29791218 30089620 133",
+    "Bin": "587x233x220",
+    "Result": "29791218 30089620 133",
     "Items": [
       "75x73x69-46",
       "66x56x40-55",
@@ -941,8 +941,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_95",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29784276 30089620 139",
+    "Bin": "587x233x220",
+    "Result": "29784276 30089620 139",
     "Items": [
       "101x69x20-50",
       "108x66x54-40",
@@ -951,8 +951,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_96",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30041812 30089620 182",
+    "Bin": "587x233x220",
+    "Result": "30041812 30089620 182",
     "Items": [
       "64x42x26-62",
       "92x58x52-53",
@@ -961,8 +961,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_97",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29970760 30089620 140",
+    "Bin": "587x233x220",
+    "Result": "29970760 30089620 140",
     "Items": [
       "74x60x32-48",
       "100x50x43-50",
@@ -971,8 +971,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_98",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30088004 30089620 122",
+    "Bin": "587x233x220",
+    "Result": "30088004 30089620 122",
     "Items": [
       "106x55x38-46",
       "69x50x48-42",
@@ -981,8 +981,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_99",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::30080504 30089620 154",
+    "Bin": "587x233x220",
+    "Result": "30080504 30089620 154",
     "Items": [
       "51x46x44-64",
       "95x92x47-46",
@@ -991,8 +991,8 @@
   },
   {
     "Name": "OrLibrary_thpack1_100",
-    "Bin": "Raw::587x233x220",
-    "Result": "PackingEfficiency::29961138 30089620 214",
+    "Bin": "587x233x220",
+    "Result": "29961138 30089620 214",
     "Items": [
       "78x49x47-70",
       "46x45x43-75",
