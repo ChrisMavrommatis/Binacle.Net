@@ -26,7 +26,7 @@ public class ScenarioCollectionsDataProvider
 
 	private string GetCollectionKey(IFile file)
 	{
-		return $"{file.Folder.Replace("\\", "/").Trim('/')}/{file.Name}";
+		return $"{file.Folder.Replace("\\", "/").Trim('/')}/{file.Name}".ToLower();
 	}
 	
 	public List<Scenario> GetScenarios(string collectionKey)

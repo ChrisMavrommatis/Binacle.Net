@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Order;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
@@ -24,15 +24,15 @@ internal class AttributeOrderer : IOrderer
 	{
 		// First group by the parameters, then order within the group by BenchmarkOrder
 		return benchmarksCases
-		   .GroupBy(b => b.Parameters.DisplayInfo)
-		   .SelectMany(group => group.OrderBy(b => GetBenchmarkOrder(b)));
+			.GroupBy(b => b.Parameters.DisplayInfo)
+			.SelectMany(group => group.OrderBy(b => GetBenchmarkOrder(b)));
 	}
 
 	private int GetBenchmarkOrder(BenchmarkCase benchmarkCase)
 	{
 		var orderAttr = benchmarkCase.Descriptor.WorkloadMethod
-		  .GetCustomAttributes(typeof(BenchmarkOrderAttribute), false)
-		  .FirstOrDefault() as BenchmarkOrderAttribute;
+			.GetCustomAttributes(typeof(BenchmarkOrderAttribute), false)
+			.FirstOrDefault() as BenchmarkOrderAttribute;
 
 		return orderAttr?.Order ?? int.MaxValue; // Default to the end if no order specified
 	}

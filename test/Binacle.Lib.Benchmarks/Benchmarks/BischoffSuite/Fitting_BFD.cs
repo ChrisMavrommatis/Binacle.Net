@@ -1,0 +1,24 @@
+using BenchmarkDotNet.Attributes;
+using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.Lib.Abstractions.Models;
+using Binacle.Lib.Benchmarks.Abstractions;
+using Binacle.Lib.Benchmarks.Order;
+using Binacle.Lib.Benchmarks.Providers;
+using Binacle.TestsKernel;
+using Binacle.TestsKernel.Models;
+
+namespace Binacle.Lib.Benchmarks.BischoffSuite;
+
+[MemoryDiagnoser]
+public class Fitting_BFD : BischoffSuiteBenchmarkBase
+{
+	[Benchmark(Baseline = true)]
+	[BenchmarkOrder(10)]
+	public OperationResult BFD_v1()
+		=> this.Run(AlgorithmFactories.BFD_v1, AlgorithmOperation.Fitting);
+
+	[Benchmark]
+	[BenchmarkOrder(20)]
+	public OperationResult BFD_v2()
+		=> this.Run(AlgorithmFactories.BFD_v2, AlgorithmOperation.Fitting);
+}

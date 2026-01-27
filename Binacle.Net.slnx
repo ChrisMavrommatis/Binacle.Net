@@ -60,13 +60,11 @@
     <Project Path="src/Binacle.ViPaq/Binacle.ViPaq.csproj" />
   </Folder>
   <Folder Name="/test/">
-    <Project Path="test/Binacle.Lib.AlgorithmCostBenchmarks/Binacle.Lib.AlgorithmCostBenchmarks.csproj" />
     <Project Path="test/Binacle.Lib.Benchmarks/Binacle.Lib.Benchmarks.csproj" />
     <Project Path="test/Binacle.Lib.PerformanceTests/Binacle.Lib.PerformanceTests.csproj" />
     <Project Path="test/Binacle.Lib.UnitTests/Binacle.Lib.UnitTests.csproj" />
     <Project Path="test/Binacle.Net.IntegrationTests/Binacle.Net.IntegrationTests.csproj" />
     <Project Path="test/Binacle.Net.ServiceModule.IntegrationTests/Binacle.Net.ServiceModule.IntegrationTests.csproj" />
-    <Project Path="test/Binacle.Net.TestsKernel/Binacle.Net.TestsKernel.csproj" />
     <Project Path="test/Binacle.TestsKernel/Binacle.TestsKernel.csproj" />
     <Project Path="test/Binacle.ViPaq.UnitTests/Binacle.ViPaq.UnitTests.csproj" />
   </Folder>

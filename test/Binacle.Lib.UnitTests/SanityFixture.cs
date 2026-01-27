@@ -1,5 +1,5 @@
 ﻿using Binacle.Net.TestsKernel.Data.Providers;
-using Binacle.Net.TestsKernel.Models;
+using Binacle.TestsKernel.Models;
 
 namespace Binacle.Lib.UnitTests;
 

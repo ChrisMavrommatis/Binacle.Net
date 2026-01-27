@@ -1,4 +1,4 @@
-﻿namespace Binacle.Lib.PerformanceTests.Models;
+namespace Binacle.Lib.PerformanceTests.Models;
 
 internal class TaskList<T> : List<Task<T>>
 {

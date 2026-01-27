@@ -47,7 +47,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Binacle.Net\Binacle.Net.csproj" />
-		<ProjectReference Include="..\Binacle.Net.TestsKernel\Binacle.Net.TestsKernel.csproj" />
 	</ItemGroup>
 
 </Project>
