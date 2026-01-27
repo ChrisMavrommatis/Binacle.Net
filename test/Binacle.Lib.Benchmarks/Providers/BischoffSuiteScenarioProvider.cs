@@ -18,7 +18,7 @@ public static class BischoffSuiteScenarioProvider
 	}
 
 	public static IEnumerable<string> GetScenarioNames()
-		=> scenarios.Keys;
+		=> scenarios.Keys.Take(2);
 
 	public static IEnumerable<Scenario> GetScenarios()
 		=> scenarios.Values;

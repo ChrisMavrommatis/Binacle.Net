@@ -9,10 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\Binacle.Lib\Binacle.Lib.csproj" />
     <ProjectReference Include="..\Binacle.TestsKernel\Binacle.TestsKernel.csproj" />
   </ItemGroup>

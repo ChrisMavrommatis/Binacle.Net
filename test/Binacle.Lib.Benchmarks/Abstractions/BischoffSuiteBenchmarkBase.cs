@@ -10,13 +10,13 @@ namespace Binacle.Lib.Benchmarks.Abstractions;
 public abstract class BischoffSuiteBenchmarkBase
 {
 	[ParamsSource(typeof(BischoffSuiteScenarioProvider), nameof(BischoffSuiteScenarioProvider.GetScenarioNames))]
-	public string ScenarioName { get; set; }
-	public Scenario Scenario { get; set; }
+	public string? ScenarioName { get; set; }
+	public Scenario? Scenario { get; set; }
 	
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		this.Scenario = BischoffSuiteScenarioProvider.GetScenarioByName(this.ScenarioName);
+		this.Scenario = BischoffSuiteScenarioProvider.GetScenarioByName(this.ScenarioName!);
 	}
 	
 	[GlobalCleanup]
@@ -25,7 +25,7 @@ public abstract class BischoffSuiteBenchmarkBase
 	}
 	protected OperationResult Run(TestAlgorithmFactory<IPackingAlgorithm> algorithmFactory, AlgorithmOperation operation)
 	{
-		var algorithmInstance = algorithmFactory(this.Scenario.Bin, this.Scenario.Items);
+		var algorithmInstance = algorithmFactory(this.Scenario!.Bin, this.Scenario!.Items);
 		var result = algorithmInstance.Execute(new TestOperationParameters()
 		{
 			Operation = operation
