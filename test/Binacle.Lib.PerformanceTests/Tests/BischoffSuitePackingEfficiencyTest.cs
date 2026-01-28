@@ -11,16 +11,13 @@ namespace Binacle.Lib.PerformanceTests.Tests;
 
 internal class BischoffSuitePackingEfficiencyTest : ITest
 {
-	private readonly BischoffSuiteDataProvider dataProvider;
 	private readonly ILogger<BischoffSuitePackingEfficiencyTest> logger;
 	private readonly TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest;
 
 	public BischoffSuitePackingEfficiencyTest(
-		BischoffSuiteDataProvider dataProvider,
 		ILogger<BischoffSuitePackingEfficiencyTest> logger
 	)
 	{
-		this.dataProvider = dataProvider;
 		this.logger = logger;
 		this.algorithmsUnderTest =
 		[
@@ -36,11 +33,8 @@ internal class BischoffSuitePackingEfficiencyTest : ITest
 public TestResult Run()
 {
 	var scenarioCollectionResults = new ScenarioCollectionResult<double>("Scenario Name");
-	foreach (var objectArray in this.dataProvider)
+	foreach (var scenario in BischoffSuiteScenarioProvider.GetScenarios())
 	{
-		var scenario = objectArray[0] as Scenario;
-		// var scenarioResult = scenario!.ResultAs<PackingEfficiencyScenarioResult>();
-
 		var algorithmResults = new ColumnResult<double>();
 		foreach (var algorithmFactory in this.algorithmsUnderTest)
 		{

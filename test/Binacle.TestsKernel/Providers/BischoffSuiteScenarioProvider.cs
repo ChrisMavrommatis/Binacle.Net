@@ -1,7 +1,7 @@
+using System.ComponentModel;
 using Binacle.TestsKernel.Models;
-using Binacle.TestsKernel.Providers;
 
-namespace Binacle.Lib.Benchmarks.Providers;
+namespace Binacle.TestsKernel.Providers;
 
 public static class BischoffSuiteScenarioProvider
 {
@@ -18,7 +18,7 @@ public static class BischoffSuiteScenarioProvider
 	}
 
 	public static IEnumerable<string> GetScenarioNames()
-		=> scenarios.Keys.Take(2);
+		=> scenarios.Keys;
 
 	public static IEnumerable<Scenario> GetScenarios()
 		=> scenarios.Values;

@@ -17,7 +17,7 @@ public sealed class OperationResult
 		
 	}
 
-	public required string BinID { get; init; }
+	public required PackedBin Bin { get; init; }
 	
 	public required AlgorithmInfo AlgorithmInfo { get; init; }
 	public OperationResultStatus Status { get; internal set; }

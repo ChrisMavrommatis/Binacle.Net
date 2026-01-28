@@ -4,7 +4,7 @@ using Binacle.Lib.Abstractions.Models;
 namespace Binacle.Lib.Models;
 
 internal class OperationResultBuilder<TBin, TItem>
-	where TBin : IWithID, IWithReadOnlyVolume
+	where TBin : IWithID, IWithReadOnlyDimensions, IWithReadOnlyVolume
 	where TItem : IWithID, IWithReadOnlyDimensions, IWithReadOnlyVolume, IWithReadOnlyCoordinates
 {
 	private readonly AlgorithmInfo algorithmInfo;
@@ -116,7 +116,7 @@ internal class OperationResultBuilder<TBin, TItem>
 
 		var result = new OperationResult()
 		{
-			BinID = this.bin.ID,
+			Bin = new PackedBin(this.bin.ID, this.bin),
 			Status = OperationResultStatus.Unknown,
 			AlgorithmInfo = this.algorithmInfo,
 			PackedItems = packedResultItems.AsReadOnly(),

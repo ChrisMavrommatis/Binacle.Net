@@ -9,6 +9,7 @@ internal class ScenarioReader
 	{
 		public string? Name { get; set; }
 		public string? Bin{ get; set; }
+		public string? Metrics { get; set; }
 		public string? Result { get; set; }
 		public string[]? Items { get; set; }
 	}
@@ -34,6 +35,10 @@ internal class ScenarioReader
 				{
 					throw new ArgumentNullException("No bin found in scenario");
 				}
+				if (string.IsNullOrWhiteSpace(readScenario.Metrics))
+				{
+					throw new ArgumentNullException("No metrics found in scenario");
+				}
 				if (string.IsNullOrWhiteSpace(readScenario.Result))
 				{
 					throw new ArgumentNullException("No result found in scenario");
@@ -46,7 +51,8 @@ internal class ScenarioReader
 				var resultScenario = Scenario.Create(
 					readScenario.Name,
 					readScenario.Bin,
-					readScenario.Items,
+					readScenario.Items, 
+					readScenario.Metrics,
 					readScenario.Result
 				);
 

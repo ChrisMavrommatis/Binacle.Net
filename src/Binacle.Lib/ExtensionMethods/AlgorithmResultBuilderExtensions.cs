@@ -13,7 +13,7 @@ internal static class AlgorithmResultBuilderExtensions
 		int totalItemsVolume,
 		IOperationParameters parameters
 	)
-		where TBin : IWithID, IWithReadOnlyVolume
+		where TBin : IWithID, IWithReadOnlyDimensions, IWithReadOnlyVolume
 		where TItem : IWithID, IWithReadOnlyDimensions, IWithReadOnlyVolume, IWithReadOnlyCoordinates
 	{
 		var algorithmInfo = new AlgorithmInfo(

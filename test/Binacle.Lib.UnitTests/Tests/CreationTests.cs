@@ -1,5 +1,5 @@
 ﻿using Binacle.Lib.Exceptions;
-using Binacle.Net.TestsKernel.Models;
+using Binacle.TestsKernel.Models;
 using Bogus;
 
 namespace Binacle.Lib.UnitTests;

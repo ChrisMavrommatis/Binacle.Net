@@ -27,8 +27,7 @@ internal class Program
 	    var builder = Host.CreateApplicationBuilder();
 	    builder.Logging.ClearProviders();
 	    builder.Logging.AddSerilog();
-
-	    builder.Services.AddSingleton<BischoffSuiteDataProvider>();
+	    
 	    builder.Services.AddSingleton<IFileWriter, MarkdownFileWriter>();
 	    builder.Services.AddTransient<TestRunner>();
 	    builder.Services.AddTransient<ITest, BischoffSuitePackingEfficiencyTest>();

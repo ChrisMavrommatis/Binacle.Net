@@ -1,6 +1,6 @@
 namespace Binacle.TestsKernel.Providers;
 
-public class BischoffSuiteDataProvider : MultipleScenarioCollectionsDataProvider
+internal class BischoffSuiteDataProvider : MultipleScenarioCollectionsDataProvider
 {
 	public BischoffSuiteDataProvider()
 		: base([
