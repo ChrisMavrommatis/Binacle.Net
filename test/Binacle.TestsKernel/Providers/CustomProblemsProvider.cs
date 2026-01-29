@@ -1,8 +1,8 @@
 namespace Binacle.TestsKernel.Providers;
 
-internal class CustomProblemsDataProvider : MultipleScenarioCollectionsDataProvider
+internal class CustomProblemsProvider : MultipleScenarioCollectionsProvider
 {
-	public CustomProblemsDataProvider()
+	public CustomProblemsProvider()
 		: base([
 				"CustomProblems/baseline",
 				"CustomProblems/simple",

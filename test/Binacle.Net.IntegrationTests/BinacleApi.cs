@@ -1,7 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using Binacle.Net.Configuration;
 using Binacle.Net.IntegrationTests;
-using Binacle.Net.TestsKernel.Data.Providers;
+using Binacle.TestsKernel.Providers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -16,11 +17,10 @@ namespace Binacle.Net.IntegrationTests;
 
 public class BinacleApi : WebApplicationFactory<IApiMarker>
 {
+	
 	public BinacleApi()
 	{
 		this.Client = this.CreateClient();
-		this.BinCollectionsDataProvider = new BinCollectionsDataProvider();
-
 		this.JsonSerializerOptions = new()
 		{
 			PropertyNameCaseInsensitive = true,
@@ -58,10 +58,75 @@ public class BinacleApi : WebApplicationFactory<IApiMarker>
 		builder.ConfigureTestServices(services =>
 		{
 			services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
+			services.Configure<BinPresetOptions>(options =>
+			{
+
+				options.Presets.Clear();
+				
+				var customProblemBins = CustomProblemsScenarioRegistry
+					.GetScenarios()
+					.Select(x => x.Bin)
+					.DistinctBy(x => x.ID)
+					.Select(x => new BinOption
+					{
+						ID = x.ID,
+						Length = x.Length,
+						Width = x.Width,
+						Height = x.Height
+					}).ToList();
+				
+				options.Presets.Add(PresetKeys.CustomProblems, new BinPresetOption()
+				{
+					Bins = customProblemBins
+				});
+				
+				var bischoffSuiteBins = BischoffSuiteScenarioRegistry
+					.GetScenarios()
+					.Select(x => x.Bin)
+					.DistinctBy(x => x.ID)
+					.Select(x => new BinOption
+					{
+						ID = x.ID,
+						Length = x.Length,
+						Width = x.Width,
+						Height = x.Height
+					}).ToList();
+				
+				options.Presets.Add(PresetKeys.BiscoffSuite, new BinPresetOption()
+				{
+					Bins = bischoffSuiteBins
+				});
+
+				options.Presets.Add(PresetKeys.SpecialSet, new BinPresetOption()
+				{
+					Bins = [
+						new BinOption
+						{
+							ID= "special_bin_1",
+							Length= 60,
+							Width= 40,
+							Height= 10
+						},
+						new BinOption
+						{
+							ID= "special_bin_2",
+							Length= 60,
+							Width= 40,
+							Height= 11
+						},
+						new BinOption
+						{
+							ID= "special_bin_3",
+							Length= 60,
+							Width= 40,
+							Height= 12
+						}
+					]
+				});
+			});
 		});
 	}
 
 	public HttpClient Client { get; init; }
-	public BinCollectionsDataProvider BinCollectionsDataProvider { get; }
 	public JsonSerializerOptions JsonSerializerOptions { get; init; }
 }

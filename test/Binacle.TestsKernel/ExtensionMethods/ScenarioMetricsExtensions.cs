@@ -22,8 +22,9 @@ public static class ScenarioMetricsExtensions
 		{
 			throw new InvalidOperationException($"Items count mismatch. Expected: {metrics.ItemsCount}, Actual: {totalItemsCount}");
 		}
-
-		if (metrics.Percentage <= result.PackedBinVolumePercentage)
+		
+		var percentageResult = new PercentageComparer().Compare(result.PackedBinVolumePercentage, metrics.Percentage);
+		if (percentageResult > 0)
 		{
 			throw new InvalidOperationException($"Packed volume percentage too high. Expected at most: {metrics.Percentage}, Actual: {result.PackedBinVolumePercentage}");
 		}

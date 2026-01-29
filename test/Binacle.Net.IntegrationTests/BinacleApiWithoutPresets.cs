@@ -2,7 +2,6 @@
 using System.Text.Json.Serialization;
 using Binacle.Net.Configuration;
 using Binacle.Net.IntegrationTests;
-using Binacle.Net.TestsKernel.Data.Providers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -20,7 +19,6 @@ public class BinacleApiWithoutPresets : WebApplicationFactory<IApiMarker>
 	public BinacleApiWithoutPresets()
 	{
 		this.Client = this.CreateClient();
-		this.BinCollectionsDataProvider = new BinCollectionsDataProvider();
 
 		this.JsonSerializerOptions = new()
 		{
@@ -68,6 +66,5 @@ public class BinacleApiWithoutPresets : WebApplicationFactory<IApiMarker>
 	}
 
 	public HttpClient Client { get; init; }
-	public BinCollectionsDataProvider BinCollectionsDataProvider { get; }
 	public JsonSerializerOptions JsonSerializerOptions { get; init; }
 }

@@ -25,8 +25,9 @@ public class SanityTests
 	{
 		var presetOptions = sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
 		presetOptions.Value.Presets.ShouldNotBeEmpty();
-		presetOptions.Value.Presets.ShouldHaveCount(2);
-		presetOptions.Value.Presets.ShouldContainKey("rectangular-cuboids");
-		presetOptions.Value.Presets.ShouldContainKey("special");
+		presetOptions.Value.Presets.ShouldHaveCount(3);
+		presetOptions.Value.Presets.ShouldContainKey(PresetKeys.CustomProblems);
+		presetOptions.Value.Presets.ShouldContainKey(PresetKeys.BiscoffSuite);
+		presetOptions.Value.Presets.ShouldContainKey(PresetKeys.SpecialSet);
 	}
 }

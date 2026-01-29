@@ -27,7 +27,6 @@ public class FitByPresetBehavior :  BehaviourTestsBase
 	};
 
 	private const string routePath = "/api/v3/fit/by-preset/{preset}";
-	private const string validPreset = "rectangular-cuboids";
 
 	public FitByPresetBehavior(BinacleApi sut) : base(sut)
 	{
@@ -39,7 +38,7 @@ public class FitByPresetBehavior :  BehaviourTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Existing Preset And Valid Request, Returns 200 OK")]
 	public async Task Post_WithExistingPresetAndValidRequest_Returns200Ok()
 	{
-		var urlPath = routePath.Replace("{preset}", validPreset);
+		var urlPath = routePath.Replace("{preset}", PresetKeys.CustomProblems);
 		await base.Request_Returns_200Ok(urlPath, this.sampleRequest);
 	}
 	
@@ -54,14 +53,14 @@ public class FitByPresetBehavior :  BehaviourTestsBase
 	public async Task Post_WithZeroDimensions_Returns422UnprocessableContent()
 	{
 		this.sampleRequest!.Items!.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
-		var urlPath = routePath.Replace("{preset}", validPreset);
+		var urlPath = routePath.Replace("{preset}", PresetKeys.CustomProblems);
 		await base.Request_Returns_422UnprocessableContent(urlPath, this.sampleRequest);
 	}
 
 	[Fact(DisplayName = $"POST {routePath}. With Same Id, Returns 422 UnprocessableContent")]
 	public async Task Post_WithSameId_Returns422UnprocessableContent()
 	{
-		var urlPath = routePath.Replace("{preset}", validPreset);
+		var urlPath = routePath.Replace("{preset}", PresetKeys.CustomProblems);
 		foreach (var bin in this.sampleRequest!.Items!)
 		{
 			bin.ID = "box_1";
@@ -79,8 +78,8 @@ public class FitByPresetBehavior :  BehaviourTestsBase
 		var request = this.CreateSpecialRequest();
 		request.Items!.FirstOrDefault(x => x.ID == "special_box_1")!.Quantity = 3;
 
-		var preset = presetOptions.Value.Presets["special"];
-		var urlPath = routePath.Replace("{preset}", "special");
+		var preset = presetOptions.Value.Presets[PresetKeys.SpecialSet];
+		var urlPath = routePath.Replace("{preset}", PresetKeys.SpecialSet);
 		
 		await base.FitRequest_ValidateBasedOnParameters(
 			urlPath,
@@ -105,8 +104,8 @@ public class FitByPresetBehavior :  BehaviourTestsBase
 		specialBox.Width = 5;
 		specialBox.Height = 5;
 
-		var preset = presetOptions.Value.Presets["special"];
-		var urlPath = routePath.Replace("{preset}", "special");
+		var preset = presetOptions.Value.Presets[PresetKeys.SpecialSet];
+		var urlPath = routePath.Replace("{preset}", PresetKeys.SpecialSet);
 
 		await base.FitRequest_ValidateBasedOnParameters(
 			urlPath,

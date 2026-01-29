@@ -1,10 +1,10 @@
-﻿using System.Net.Http.Json;
-using Binacle.Net.Configuration;
-using Binacle.Net.Models;
-using Binacle.Net.TestsKernel.Data.Providers.BinaryDecision;
-using Binacle.Net.TestsKernel.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+﻿using System.Net;
+using System.Net.Http.Json;
+using Binacle.Lib;
+using Binacle.Net.v3.Contracts;
+using Binacle.TestsKernel;
+using Binacle.TestsKernel.Providers;
+using Algorithm = Binacle.Net.Models.Algorithm;
 
 namespace Binacle.Net.IntegrationTests.v3;
 
@@ -21,31 +21,15 @@ public class PackByCustomScenario
 	private const string routePath = "/api/v3/pack/by-custom";
 
 	[Theory]
-	[ClassData(typeof(BaselineScenarioDataProvider))]
-	public Task BinaryDecision_Baseline(Scenario scenario)
-		=> RunBinaryDecisionScenarioTest(scenario);
+	[ClassData(typeof(CustomProblemsScenarioNameProvider))]
+	public Task Custom_Problems(string scenario)
+		=> RunTest(scenario);
 
-	[Theory]
-	[ClassData(typeof(SimpleScenarioDataProvider))]
-	public Task BinaryDecision_Simple(Scenario scenario)
-		=> RunBinaryDecisionScenarioTest(scenario);
-
-	[Theory]
-	[ClassData(typeof(ComplexScenarioDataProvider))]
-	public Task BinaryDecision_Complex(Scenario scenario)
-		=> RunBinaryDecisionScenarioTest(scenario);
-
-	private async Task RunBinaryDecisionScenarioTest(Scenario scenario)
+	private async Task RunTest(string scenarioName)
 	{
-		var presets = this.sut.Services.GetService<IOptions<BinPresetOptions>>();
-		var binCollection = scenario.GetBinCollectionKey();
-		var expectedBin = scenario.GetTestBin(this.sut.BinCollectionsDataProvider);
-
-		presets!.Value.Presets.ShouldContainKey(binCollection);
-
-		var binPresetOption = presets.Value.Presets[binCollection];
-
-		var request = new Binacle.Net.v3.Contracts.PackByCustomRequest()
+		var scenario = AllScenariosRegistry.GetScenarioByName(scenarioName);
+		
+		var request = new PackByCustomRequest()
 		{
 			Parameters = new()
 			{
@@ -53,15 +37,15 @@ public class PackByCustomScenario
 				IncludeViPaqData = false
 			},
 			Bins = [
-				new Binacle.Net.v3.Contracts.Bin
+				new Bin
 				{
-					ID = expectedBin.ID,
-					Length = expectedBin.Length,
-					Width = expectedBin.Width,
-					Height = expectedBin.Height
+					ID = scenario.Bin.ID,
+					Length = scenario.Bin.Length,
+					Width = scenario.Bin.Width,
+					Height = scenario.Bin.Height
 				}
 			],
-			Items = scenario.Items.Select(x => new Binacle.Net.v3.Contracts.Box
+			Items = scenario.Items.Select(x => new Box
 			{
 				ID = x.ID,
 				Quantity = x.Quantity,
@@ -78,31 +62,38 @@ public class PackByCustomScenario
 			TestContext.Current.CancellationToken
 		);
 
-		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+		response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-		var packResponse = await response.Content.ReadFromJsonAsync<Binacle.Net.v3.Contracts.PackResponse>(
+		var packResponse = await response.Content.ReadFromJsonAsync<PackResponse>(
 			this.sut.JsonSerializerOptions,
 			TestContext.Current.CancellationToken
 		);
 
 		packResponse.ShouldNotBeNull();
 		packResponse!.Data.ShouldHaveSingleItem();
-		var result = packResponse.Data.FirstOrDefault(x => x.Bin.ID == expectedBin.ID);
+		var result = packResponse.Data.FirstOrDefault(x => x.Bin.ID == scenario.Bin.ID);
 		result.ShouldNotBeNull();
 		result!.Bin.ShouldNotBeNull();
-		result.Bin.ID.ShouldBe(expectedBin.ID);
+		result.Bin.ID.ShouldBe(scenario.Bin.ID);
 
-		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
+		result.Bin.CalculateVolume().ShouldBe(scenario.Metrics.BinVolume);
 
-		if (scenarioResult.Fits)
-		{
-			packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Success);
-			result.Result.ShouldBe(Binacle.Net.v3.Contracts.BinPackResultStatus.FullyPacked);
-		}
-		else
-		{
-			packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Failure);
-			result.Result.ShouldNotBe(Binacle.Net.v3.Contracts.BinPackResultStatus.FullyPacked);
-		}
+		var itemsCount = (result.PackedItems?.Count ?? 0) 
+		                 + (result.UnpackedItems?.Select(x => x.Quantity).Sum() ?? 0);
+		itemsCount.ShouldBe(scenario.Metrics.ItemsCount);
+
+		result.PackedBinVolumePercentage
+			.ShouldBeLessThanOrEqualTo(scenario.Metrics.Percentage, new PercentageComparer());
+
+		// if (scenarioResult.Fits)
+		// {
+		// 	packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Success);
+		// 	result.Result.ShouldBe(Binacle.Net.v3.Contracts.BinPackResultStatus.FullyPacked);
+		// }
+		// else
+		// {
+		// 	packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Failure);
+		// 	result.Result.ShouldNotBe(Binacle.Net.v3.Contracts.BinPackResultStatus.FullyPacked);
+		// }
 	}
 }

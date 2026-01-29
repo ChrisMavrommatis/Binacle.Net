@@ -1,14 +1,13 @@
-using System.ComponentModel;
 using Binacle.TestsKernel.Models;
 
 namespace Binacle.TestsKernel.Providers;
 
-public static class BischoffSuiteScenarioProvider
+public static class CustomProblemsScenarioRegistry
 {
 	private static readonly Dictionary<string, Scenario> scenarios;
-	static BischoffSuiteScenarioProvider()
+	static CustomProblemsScenarioRegistry()
 	{
-		var dataProvider = new BischoffSuiteDataProvider();
+		var dataProvider = new CustomProblemsProvider();
 		scenarios = new Dictionary<string, Scenario>();
 		foreach (var objectArray in dataProvider)
 		{

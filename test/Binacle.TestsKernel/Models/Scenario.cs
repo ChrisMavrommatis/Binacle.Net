@@ -15,8 +15,7 @@ public class Scenario
 		string name, 
 		string bin,
 		string[] items,
-		string metrics,
-		string result)
+		string metrics)
 	{
 		var parsedBinDimensions = DimensionsHelper.ParseFromCompactString(bin);
 		var parsedItems = items.Select(x =>

@@ -9,14 +9,14 @@ namespace Binacle.Lib.Benchmarks.Abstractions;
 
 public abstract class BischoffSuiteBenchmarkBase
 {
-	[ParamsSource(typeof(BischoffSuiteScenarioProvider), nameof(BischoffSuiteScenarioProvider.GetScenarioNames))]
+	[ParamsSource(typeof(BischoffSuiteScenarioRegistry), nameof(BischoffSuiteScenarioRegistry.GetScenarioNames))]
 	public string? ScenarioName { get; set; }
 	public Scenario? Scenario { get; set; }
 	
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		this.Scenario = BischoffSuiteScenarioProvider.GetScenarioByName(this.ScenarioName!);
+		this.Scenario = BischoffSuiteScenarioRegistry.GetScenarioByName(this.ScenarioName!);
 	}
 	
 	[GlobalCleanup]

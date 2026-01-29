@@ -26,7 +26,7 @@ public class PackByPresetBehavior:  Abstractions.BehaviourTestsBase
 	};
 
 	private const string routePath = "/api/v3/pack/by-preset/{preset}";
-	private const string validPreset = "rectangular-cuboids";
+
 	public PackByPresetBehavior(BinacleApi sut) : base(sut)
 	{
 		this.presetOptions = this.Sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
@@ -36,7 +36,7 @@ public class PackByPresetBehavior:  Abstractions.BehaviourTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Existing Preset And Valid Request Returns 200 OK")]
 	public async Task Post_WithExistingPresetAndValidRequest_Returns200Ok()
 	{
-		var urlPath = routePath.Replace("{preset}", validPreset);
+		var urlPath = routePath.Replace("{preset}", PresetKeys.CustomProblems);
 		await base.Request_Returns_200Ok(urlPath, this.sampleRequest);
 	}
 	
@@ -50,7 +50,7 @@ public class PackByPresetBehavior:  Abstractions.BehaviourTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Item, Returns 422 UnprocessableContent")]
 	public async Task Post_WithZeroDimensionOnItem_Returns422UnprocessableContent()
 	{
-		var urlPath = routePath.Replace("{preset}", validPreset);
+		var urlPath = routePath.Replace("{preset}", PresetKeys.CustomProblems);
 		
 		this.sampleRequest.Items!.FirstOrDefault(x => x.ID == "box_2")!.Length = 0;
 		await base.Request_Returns_422UnprocessableContent(urlPath, this.sampleRequest);
@@ -63,7 +63,7 @@ public class PackByPresetBehavior:  Abstractions.BehaviourTestsBase
 		{
 			bin.ID = "box_1";
 		}
-		var urlPath = routePath.Replace("{preset}", validPreset);
+		var urlPath = routePath.Replace("{preset}", PresetKeys.CustomProblems);
 		await base.Request_Returns_422UnprocessableContent(urlPath, this.sampleRequest);
 	}
 
@@ -76,8 +76,8 @@ public class PackByPresetBehavior:  Abstractions.BehaviourTestsBase
 	public async Task Post_WithDefaultParameters_ReportsAllItems()
 	{
 		var request = this.CreateSpecialRequest();
-		var preset = presetOptions.Value.Presets["special"];
-		var urlPath = routePath.Replace("{preset}", "special");
+		var preset = presetOptions.Value.Presets[PresetKeys.SpecialSet];
+		var urlPath = routePath.Replace("{preset}", PresetKeys.SpecialSet);
 		await base.PackRequest_ValidateBasedOnParameters(
 			urlPath,
 			request,
@@ -93,8 +93,8 @@ public class PackByPresetBehavior:  Abstractions.BehaviourTestsBase
 	public async Task Post_WithViPaqData_ReturnsViPaqData()
 	{
 		var request = this.CreateSpecialRequest(parameters => parameters.IncludeViPaqData = true);
-		var preset = presetOptions.Value.Presets["special"];
-		var urlPath = routePath.Replace("{preset}", "special");
+		var preset = presetOptions.Value.Presets[PresetKeys.SpecialSet];
+		var urlPath = routePath.Replace("{preset}", PresetKeys.SpecialSet);
 		await base.PackRequest_ValidateBasedOnParameters(
 			urlPath,
 			request,

@@ -6,7 +6,7 @@ public class CustomProblemsScenarioNameProvider : IEnumerable<object[]>
 {
 	public virtual IEnumerator<object[]> GetEnumerator()
 	{
-		foreach (var scenario in CustomProblemsScenarioProvider.GetScenarioNames())
+		foreach (var scenario in CustomProblemsScenarioRegistry.GetScenarioNames())
 		{
 			yield return new object[] { scenario };
 		}

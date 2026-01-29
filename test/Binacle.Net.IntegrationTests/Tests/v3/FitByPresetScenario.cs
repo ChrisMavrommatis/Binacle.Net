@@ -1,12 +1,13 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Binacle.Net.Configuration;
-using Binacle.Net.Models;
-using Binacle.Net.TestsKernel.Data.Providers.BinaryDecision;
-using Binacle.Net.TestsKernel.Models;
 using Binacle.Net.v3.Contracts;
+using Binacle.Lib;
+using Binacle.TestsKernel;
+using Binacle.TestsKernel.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+
 
 namespace Binacle.Net.IntegrationTests.v3;
 
@@ -23,36 +24,24 @@ public class FitByPresetScenario
 	private const string routePath = "/api/v3/fit/by-preset/{preset}";
 
 	[Theory]
-	[ClassData(typeof(BaselineScenarioDataProvider))]
-	public Task BinaryDecision_Baseline(Scenario scenario)
-		=> RunBinaryDecisionScenarioTest(scenario);
+	[ClassData(typeof(CustomProblemsScenarioNameProvider))]
+	public Task Custom_Problems(string scenario)
+		=> RunTest(scenario);
 
-	[Theory]
-	[ClassData(typeof(SimpleScenarioDataProvider))]
-	public Task BinaryDecision_Simple(Scenario scenario)
-		=> RunBinaryDecisionScenarioTest(scenario);
-
-	[Theory]
-	[ClassData(typeof(ComplexScenarioDataProvider))]
-	public Task BinaryDecision_Complex(Scenario scenario)
-		=> RunBinaryDecisionScenarioTest(scenario);
-
-	private async Task RunBinaryDecisionScenarioTest(Scenario scenario)
+	private async Task RunTest(string scenarioName)
 	{
+		var scenario = AllScenariosRegistry.GetScenarioByName(scenarioName);
+		
 		var presets = this.sut.Services.GetService<IOptions<BinPresetOptions>>();
-
-		var binCollection = scenario.GetBinCollectionKey();
-		var expectedBin = scenario.GetTestBin(sut.BinCollectionsDataProvider);
+		var preset = presets!.Value.Presets[PresetKeys.CustomProblems];
 		
-		var preset = presets!.Value.Presets[binCollection];
-		
-		var urlPath = routePath.Replace("{preset}", binCollection);
+		var urlPath = routePath.Replace("{preset}", PresetKeys.CustomProblems);
 
 		var request = new FitByPresetRequest
 		{
 			Parameters = new()
 			{
-				Algorithm = Algorithm.FFD
+				Algorithm = Binacle.Net.Models.Algorithm.FFD
 			},
 			Items = scenario.Items.Select(x => new Box
 			{
@@ -80,20 +69,27 @@ public class FitByPresetScenario
 
 		fitResponse.ShouldNotBeNull();
 		fitResponse!.Data.ShouldHaveCount(preset.Bins.Count);
-		var result = fitResponse.Data.FirstOrDefault(x => x.Bin.ID == expectedBin.ID);
+		var result = fitResponse.Data.FirstOrDefault(x => x.Bin.ID == scenario.Bin.ID);
 		result.ShouldNotBeNull();
 		result!.Bin.ShouldNotBeNull();
-		result.Bin.ID.ShouldBe(expectedBin.ID);
+		result.Bin.ID.ShouldBe(scenario.Bin.ID);
 
-		var scenarioResult = scenario.ResultAs<BinaryDecisionScenarioResult>();
+		result.Bin.CalculateVolume().ShouldBe(scenario.Metrics.BinVolume);
 
-		if (scenarioResult.Fits)
-		{
-			result.Result.ShouldBe(BinFitResultStatus.AllItemsFit);
-		}
-		else
-		{
-			result.Result.ShouldNotBe(BinFitResultStatus.AllItemsFit);
-		}
+		var itemsCount = (result.FittedItems?.Count ?? 0) 
+		                 + (result.UnfittedItems?.Select(x => x.Quantity).Sum() ?? 0);
+		itemsCount.ShouldBe(scenario.Metrics.ItemsCount);
+
+		result.FittedBinVolumePercentage!.Value
+			.ShouldBeLessThanOrEqualTo(scenario.Metrics.Percentage, new PercentageComparer());
+		
+		// if (scenarioResult.Fits)
+		// {
+		// 	result.Result.ShouldBe(BinFitResultStatus.AllItemsFit);
+		// }
+		// else
+		// {
+		// 	result.Result.ShouldNotBe(BinFitResultStatus.AllItemsFit);
+		// }
 	}
 }

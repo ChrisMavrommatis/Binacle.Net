@@ -39,10 +39,10 @@ internal class ScenarioReader
 				{
 					throw new ArgumentNullException("No metrics found in scenario");
 				}
-				if (string.IsNullOrWhiteSpace(readScenario.Result))
-				{
-					throw new ArgumentNullException("No result found in scenario");
-				}
+				// if (string.IsNullOrWhiteSpace(readScenario.Result))
+				// {
+				// 	throw new ArgumentNullException("No result found in scenario");
+				// }
 				if (readScenario.Items is null || readScenario.Items.Length < 1)
 				{
 					throw new ArgumentNullException("No items found in scenario");
@@ -52,8 +52,7 @@ internal class ScenarioReader
 					readScenario.Name,
 					readScenario.Bin,
 					readScenario.Items, 
-					readScenario.Metrics,
-					readScenario.Result
+					readScenario.Metrics
 				);
 
 				resultScenarios.Add(resultScenario);

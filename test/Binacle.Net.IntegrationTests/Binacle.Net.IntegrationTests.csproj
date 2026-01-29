@@ -47,6 +47,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Binacle.Net\Binacle.Net.csproj" />
+		<ProjectReference Include="..\..\src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+		<ProjectReference Include="..\..\test\Binacle.TestsKernel\Binacle.TestsKernel.csproj" />
 	</ItemGroup>
 
 </Project>

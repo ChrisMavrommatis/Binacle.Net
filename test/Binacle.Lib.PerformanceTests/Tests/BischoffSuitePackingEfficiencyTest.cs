@@ -33,7 +33,7 @@ internal class BischoffSuitePackingEfficiencyTest : ITest
 public TestResult Run()
 {
 	var scenarioCollectionResults = new ScenarioCollectionResult<double>("Scenario Name");
-	foreach (var scenario in BischoffSuiteScenarioProvider.GetScenarios())
+	foreach (var scenario in BischoffSuiteScenarioRegistry.GetScenarios())
 	{
 		var algorithmResults = new ColumnResult<double>();
 		foreach (var algorithmFactory in this.algorithmsUnderTest)

@@ -32,7 +32,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 	{
 		var testItems = this.testItemsFaker.Generate(2);
 
-		foreach (var (algorithmKey, algorithmFactory) in this.fixture.AlgorithmsUnderTest)
+		foreach (var algorithmFactory in this.fixture.AlgorithmsUnderTest)
 		{
 			Should.Throw<ArgumentNullException>(() =>
 			{
@@ -46,7 +46,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 	{
 		var bin = this.testBinsFaker.Generate(1).FirstOrDefault()!;
 
-		foreach (var (algorithmKey, algorithmFactory) in this.fixture.AlgorithmsUnderTest)
+		foreach (var algorithmFactory in this.fixture.AlgorithmsUnderTest)
 		{
 			Should.Throw<ArgumentNullException>(() =>
 			{
@@ -67,7 +67,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 		var binWith0Dimension = this.testBinsFaker.Generate(1).FirstOrDefault()!;
 		binWith0Dimension.Width = 0;
 
-		foreach (var (algorithmKey, algorithmFactory) in this.fixture.AlgorithmsUnderTest)
+		foreach (var algorithmFactory in this.fixture.AlgorithmsUnderTest)
 		{
 			Should.Throw<DimensionException>(() =>
 			{
@@ -86,7 +86,7 @@ public class CreationTests : IClassFixture<CommonTestingFixture>
 
 		var bin = this.testBinsFaker.Generate(1).FirstOrDefault()!;
 
-		foreach (var (algorithmKey, algorithmFactory) in this.fixture.AlgorithmsUnderTest)
+		foreach (var algorithmFactory in this.fixture.AlgorithmsUnderTest)
 		{
 			Should.Throw<DimensionException>(() =>
 			{

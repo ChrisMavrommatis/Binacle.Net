@@ -1,8 +1,8 @@
 namespace Binacle.TestsKernel.Providers;
 
-internal class BischoffSuiteDataProvider : MultipleScenarioCollectionsDataProvider
+internal class BischoffSuiteProvider : MultipleScenarioCollectionsProvider
 {
-	public BischoffSuiteDataProvider()
+	public BischoffSuiteProvider()
 		: base([
 				"BischoffSuite/orlib_thpack1",
 				"BischoffSuite/orlib_thpack2",

@@ -3,12 +3,12 @@ using Binacle.TestsKernel.Models;
 
 namespace Binacle.TestsKernel.Providers;
 
-public class ScenarioCollectionsDataProvider
+public class ScenarioCollectionsProvider
 {
 	private readonly Dictionary<string, List<Scenario>> collections;
 
 	public ReadOnlyDictionary<string, List<Scenario>> Collections => this.collections.AsReadOnly();
-	public ScenarioCollectionsDataProvider()
+	public ScenarioCollectionsProvider()
 	{
 		this.collections = new Dictionary<string, List<Scenario>>();
 

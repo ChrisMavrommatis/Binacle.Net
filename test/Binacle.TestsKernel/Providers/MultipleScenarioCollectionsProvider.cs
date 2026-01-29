@@ -3,12 +3,12 @@ using Binacle.TestsKernel.Models;
 
 namespace Binacle.TestsKernel.Providers;
 
-public class MultipleScenarioCollectionsDataProvider : IEnumerable<object[]>
+public class MultipleScenarioCollectionsProvider : IEnumerable<object[]>
 {
 	private readonly List<Scenario> scenarios;
-	protected MultipleScenarioCollectionsDataProvider(string[] collectionKeys)
+	protected MultipleScenarioCollectionsProvider(string[] collectionKeys)
 	{
-		var scenarioCollections = new ScenarioCollectionsDataProvider();
+		var scenarioCollections = new ScenarioCollectionsProvider();
 		this.scenarios = new List<Scenario>();
 		foreach (var collectionKey in collectionKeys)
 		{

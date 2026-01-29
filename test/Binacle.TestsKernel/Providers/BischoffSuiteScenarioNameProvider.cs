@@ -6,7 +6,7 @@ public class BischoffSuiteScenarioNameProvider : IEnumerable<object[]>
 {
 	public virtual IEnumerator<object[]> GetEnumerator()
 	{
-		foreach (var scenario in BischoffSuiteScenarioProvider.GetScenarioNames())
+		foreach (var scenario in BischoffSuiteScenarioRegistry.GetScenarioNames())
 		{
 			yield return new object[] { scenario };
 		}
