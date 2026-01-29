@@ -13,7 +13,8 @@ declare -A test_project_aliases=(
     ["lib"]="Binacle.Lib.UnitTests"
     ["api"]="Binacle.Net.IntegrationTests"
     ["api_service"]="Binacle.Net.ServiceModule.IntegrationTests"
-    ["vipaq"]="Binacle.ViPaq.UnitTests"
+    ["vipaq"]="Binacle.ViPaq.UnitTests",
+    ["performance"]="Binacle.Lib.PerformanceTests"
 )
 
 echo "Running from $ROOT_DIR/$TESTS_ROOT_DIR"

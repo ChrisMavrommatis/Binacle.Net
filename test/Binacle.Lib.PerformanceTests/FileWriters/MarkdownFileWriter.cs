@@ -6,7 +6,16 @@ internal class MarkdownFileWriter : IFileWriter
 {
 	public async Task WriteAsync(TestResult result)
 	{
-		var filepath = $"./PerformanceTestsArtifacts/{result.Filename}.md";
+		var projectRoot = Path.Combine(
+			AppDomain.CurrentDomain.BaseDirectory, 
+			"..", "..", ".."
+		);
+		
+		var filepath = Path.Combine(
+			projectRoot, 
+			"PerformanceTests.Artifacts", 
+			$"{result.Filename}.md"
+		);
 
 		var directoryName = Path.GetDirectoryName(filepath)!;
 		//ensure directory exists

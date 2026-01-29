@@ -1,23 +1,23 @@
 using System.Data;
 using System.Numerics;
 
-namespace Binacle.Lib.PerformanceTests.Services;
+namespace Binacle.Lib.PerformanceTests.Results;
 
 internal class ScenarioCollectionResult<T> : IResult
 	where T :  struct, INumber<T>, IComparable<T>
 {
 	private readonly string resultColumnName;
-	private readonly IDictionary<string, ColumnResult<T>> results;
+	private readonly IDictionary<string, AlgorithmResult<T>> results;
 
 	public ScenarioCollectionResult(string resultColumnName)
 	{
 		this.resultColumnName = resultColumnName;
-		this.results = new Dictionary<string, ColumnResult<T>>();
+		this.results = new Dictionary<string, AlgorithmResult<T>>();
 	}
 	
-	public void Add(string resultKey, ColumnResult<T> columnResult)
+	public void Add(string resultKey, AlgorithmResult<T> algorithmResult)
 	{
-		this.results[resultKey] = columnResult;
+		this.results[resultKey] = algorithmResult;
 	}
 	
 	public DataTable ToDataTable()

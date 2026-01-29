@@ -1,5 +1,5 @@
 using System.Text;
-using Binacle.Lib.PerformanceTests.Services;
+using Binacle.Lib.PerformanceTests.Results;
 using ConsoleTables;
 
 namespace Binacle.Lib.PerformanceTests.Models;

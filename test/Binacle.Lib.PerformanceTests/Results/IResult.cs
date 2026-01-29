@@ -1,12 +1,8 @@
 using System.Data;
 
-namespace Binacle.Lib.PerformanceTests.Services;
+namespace Binacle.Lib.PerformanceTests.Results;
 
 internal interface IResult
 {
 	DataTable ToDataTable();
-}
-
-internal class ColumnResult<T> : Dictionary<string, T>
-{
 }

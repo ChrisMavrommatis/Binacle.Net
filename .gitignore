@@ -28,6 +28,7 @@ pack-logs/
 packing-logs/
 BenchmarkDotNet.Artifacts
 PerformanceTestsArtifacts
+PerformanceTests.Artifacts
 Output
 output
 
