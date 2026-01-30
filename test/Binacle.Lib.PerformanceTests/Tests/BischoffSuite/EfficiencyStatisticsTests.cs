@@ -6,25 +6,25 @@ using Binacle.TestsKernel.Models;
 using Binacle.TestsKernel.Providers;
 using Microsoft.Extensions.Logging;
 
-namespace Binacle.Lib.PerformanceTests.Tests;
+namespace Binacle.Lib.PerformanceTests.Tests.BischoffSuite;
 
-internal class BischoffEfficiencyStatisticsTests : ITest
+internal class EfficiencyStatisticsTests : ITest
 {
 	private readonly string title;
 	private readonly string description;
 	private readonly string filename;
 	private readonly ScenarioCollectionsProvider scenarioCollectionsProvider;
 	private readonly TestAlgorithmFactory<IPackingAlgorithm> algorithmUnderTest;
-	private readonly ILogger<RegressionTests> logger;
+	private readonly ILogger<EfficiencyStatisticsTests> logger;
 	private readonly string[] collectionKeys;
 
-	public BischoffEfficiencyStatisticsTests(
+	public EfficiencyStatisticsTests(
 		string title,
 		string description,
 		string filename,
 		ScenarioCollectionsProvider scenarioCollectionsProvider,
 		TestAlgorithmFactory<IPackingAlgorithm> algorithmUnderTest,
-		ILogger<RegressionTests> logger
+		ILogger<EfficiencyStatisticsTests> logger
 	)
 	{
 		this.title = title;

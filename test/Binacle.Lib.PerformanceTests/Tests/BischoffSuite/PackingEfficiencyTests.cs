@@ -6,15 +6,15 @@ using Binacle.TestsKernel.Models;
 using Binacle.TestsKernel.Providers;
 using Microsoft.Extensions.Logging;
 
-namespace Binacle.Lib.PerformanceTests.Tests;
+namespace Binacle.Lib.PerformanceTests.Tests.BischoffSuite;
 
-internal class BischoffSuiteTests : ITest
+internal class PackingEfficiencyTests : ITest
 {
-	private readonly ILogger<BischoffSuiteTests> logger;
+	private readonly ILogger<PackingEfficiencyTests> logger;
 	private readonly TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest;
 
-	public BischoffSuiteTests(
-		ILogger<BischoffSuiteTests> logger
+	public PackingEfficiencyTests(
+		ILogger<PackingEfficiencyTests> logger
 	)
 	{
 		this.logger = logger;
