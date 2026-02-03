@@ -3,10 +3,10 @@ using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Benchmarks.Abstractions;
 using Binacle.Lib.Benchmarks.Order;
 
-namespace Binacle.Lib.Benchmarks.Benchmarks.AlgorithmRacing.v2;
+namespace Binacle.Lib.Benchmarks.AlgorithmRacing;
 
 [MemoryDiagnoser]
-public class FFD_BFD_WFD_Racing : AlgorithmRacingBase
+public class FFD_BFD_WFD_Packing_Racing_v2 : AlgorithmRacingBase
 {
 	[Benchmark(Baseline = true)]
 	[BenchmarkOrder(10)]

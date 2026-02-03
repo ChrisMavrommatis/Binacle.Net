@@ -10,26 +10,18 @@ namespace Binacle.Lib.Benchmarks.Abstractions;
 
 public abstract class AlgorithmRacingBase
 {
-	/*
-	Scenario	BFD		FFD		WFD		Purpose
-	thpack1_7	80.30%	78.08%	78.08%	Representative baseline
-	thpack1_44	83.86%	62.65%	69.43%	BFD dominance (medium)
-	thpack2_30	88.17%	87.75%	87.40%	High efficiency / low variance
-	thpack2_35	85.86%	75.77%	56.82%	WFD weakness
-	thpack7_56	84.65%	65.36%	60.74%	Hardest / max complexity
-	*/
-	
 	[ParamsSource(typeof(Providers.BenchmarkScenariosProvider), nameof(Providers.BenchmarkScenariosProvider.GetBenchmarkScenarios))]
-	public string? ScenarioName { get; set; }
+	public string? Description { get; set; }
 	
-	[ParamsSource(typeof(Providers.ConcurrencyProvider), nameof(Providers.ConcurrencyProvider.GetConcurrencyLevels))]
-	public int ConcurrencyLevel { get; set; }
+	[ParamsSource(typeof(Providers.ConcurrencyProvider), nameof(Providers.ConcurrencyProvider.GetProcessorCount))]
+	public int ProcessorCount { get; set; }
 	public Scenario? Scenario { get; set; }
 	
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		this.Scenario = BischoffSuiteScenarioRegistry.GetScenarioByName(this.ScenarioName!);
+		var scenarioName = Providers.BenchmarkScenariosProvider.ScenarioDescriptions[this.Description!];
+		this.Scenario = BischoffSuiteScenarioRegistry.GetScenarioByName(scenarioName);
 	}
 	
 	[GlobalCleanup]
@@ -64,7 +56,7 @@ public abstract class AlgorithmRacingBase
 	)
 	{
 		var results =
-			new ConcurrentDictionary<string, OperationResult>(this.ConcurrencyLevel, algorithmFactories.Length);
+			new ConcurrentDictionary<string, OperationResult>(this.ProcessorCount, algorithmFactories.Length);
 
 		Parallel.For(0, algorithmFactories.Length, i =>
 		{

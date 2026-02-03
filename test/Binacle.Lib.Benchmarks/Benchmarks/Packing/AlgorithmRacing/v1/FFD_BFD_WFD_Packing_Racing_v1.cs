@@ -3,10 +3,10 @@ using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Benchmarks.Abstractions;
 using Binacle.Lib.Benchmarks.Order;
 
-namespace Binacle.Lib.Benchmarks.Benchmarks.AlgorithmRacing.v1;
+namespace Binacle.Lib.Benchmarks.AlgorithmRacing;
 
 [MemoryDiagnoser]
-public class FFD_WFD_Racing : AlgorithmRacingBase
+public class FFD_BFD_WFD_Packing_Racing_v1 : AlgorithmRacingBase
 {
 	[Benchmark(Baseline = true)]
 	[BenchmarkOrder(10)]
@@ -14,6 +14,7 @@ public class FFD_WFD_Racing : AlgorithmRacingBase
 		=> this.RunLoop(
 			[
 				AlgorithmFactories.FFD_v1,
+				AlgorithmFactories.BFD_v1,
 				AlgorithmFactories.WFD_v1,
 			],
 			AlgorithmOperation.Packing
@@ -25,6 +26,7 @@ public class FFD_WFD_Racing : AlgorithmRacingBase
 		=> this.RunParallelConcurrent(
 			[
 				AlgorithmFactories.FFD_v1,
+				AlgorithmFactories.BFD_v1,
 				AlgorithmFactories.WFD_v1,
 			],
 			AlgorithmOperation.Packing
@@ -36,6 +38,7 @@ public class FFD_WFD_Racing : AlgorithmRacingBase
 		=> this.RunParallelConcurrent(
 			[
 				AlgorithmFactories.FFD_v1,
+				AlgorithmFactories.BFD_v1,
 				AlgorithmFactories.WFD_v1,
 			],
 			AlgorithmOperation.Packing

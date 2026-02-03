@@ -10,12 +10,18 @@ public static class BenchmarkScenariosProvider
 		thpack2_35	85.86%	75.77%	56.82%	WFD weakness
 		thpack7_56	84.65%	65.36%	60.74%	Hardest / max complexity
 	*/
+	
+	
+	public static Dictionary<string ,string> ScenarioDescriptions { get; }
+		= new()
+		{
+			{ "Representative baseline", "OrLibrary_thpack1_7" },
+			{ "BFD dominance (medium)", "OrLibrary_thpack1_44" },
+			{ "High efficiency / low variance", "OrLibrary_thpack2_30"  },
+			{ "WFD weakness" , "OrLibrary_thpack2_35" },
+			{ "Hardest / max complexity", "OrLibrary_thpack7_56" },
+		};
+	
 	public static string[] GetBenchmarkScenarios()
-		=> [
-			"OrLibrary_thpack1_7",
-			"OrLibrary_thpack1_44",
-			"OrLibrary_thpack2_30",
-			"OrLibrary_thpack2_35",
-			"OrLibrary_thpack7_56",
-		];
+		=> ScenarioDescriptions.Keys.ToArray();
 }
