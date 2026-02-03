@@ -21,7 +21,7 @@ public class FFD_BFD_WFD_Packing_Racing_v2 : AlgorithmRacingBase
 		);
 	
 	[Benchmark]
-	[BenchmarkOrder(10)]
+	[BenchmarkOrder(20)]
 	public IDictionary<string, OperationResult> ParallelConcurrent()
 		=> this.RunParallelConcurrent(
 			[
@@ -33,7 +33,7 @@ public class FFD_BFD_WFD_Packing_Racing_v2 : AlgorithmRacingBase
 		);
 	
 	[Benchmark]
-	[BenchmarkOrder(10)]
+	[BenchmarkOrder(30)]
 	public IDictionary<string, OperationResult> ParallelLock()
 		=> this.RunParallelConcurrent(
 			[
