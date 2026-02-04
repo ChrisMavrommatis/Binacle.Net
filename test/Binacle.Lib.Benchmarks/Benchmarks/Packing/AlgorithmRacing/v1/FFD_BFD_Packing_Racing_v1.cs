@@ -1,43 +1,19 @@
 using BenchmarkDotNet.Attributes;
-using Binacle.Lib.Abstractions.Models;
+using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Benchmarks.Abstractions;
-using Binacle.Lib.Benchmarks.Order;
+using Binacle.TestsKernel;
 
 namespace Binacle.Lib.Benchmarks.AlgorithmRacing;
 
 [MemoryDiagnoser]
 public class FFD_BFD_Packing_Racing_v1 : AlgorithmRacingBase
 {
-	[Benchmark(Baseline = true)]
-	[BenchmarkOrder(10)]
-	public IDictionary<string, OperationResult> Loop()
-		=> this.RunLoop(
-			[
-				AlgorithmFactories.FFD_v1,
-				AlgorithmFactories.BFD_v1,
-			],
-			AlgorithmOperation.Packing
-		);
-	
-	[Benchmark]
-	[BenchmarkOrder(20)]
-	public IDictionary<string, OperationResult> ParallelConcurrent()
-		=> this.RunParallelConcurrent(
-			[
-				AlgorithmFactories.FFD_v1,
-				AlgorithmFactories.BFD_v1,
-			],
-			AlgorithmOperation.Packing
-		);
-	
-	[Benchmark]
-	[BenchmarkOrder(30)]
-	public IDictionary<string, OperationResult> ParallelLock()
-		=> this.RunParallelConcurrent(
-			[
-				AlgorithmFactories.FFD_v1,
-				AlgorithmFactories.BFD_v1,
-			],
-			AlgorithmOperation.Packing
-		);
+	protected override TestAlgorithmFactory<IPackingAlgorithm>[] Algorithms =>
+	[
+		AlgorithmFactories.FFD_v1,
+		AlgorithmFactories.BFD_v1,
+	];
+
+	protected override AlgorithmOperation AlgorithmOperation =>
+		AlgorithmOperation.Packing;
 }

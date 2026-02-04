@@ -1,34 +1,16 @@
 using BenchmarkDotNet.Attributes;
-using Binacle.Lib.Abstractions.Models;
+using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Benchmarks.Abstractions;
-using Binacle.Lib.Benchmarks.Order;
+using Binacle.TestsKernel;
 
 namespace Binacle.Lib.Benchmarks.BinProcessing;
 
 [MemoryDiagnoser]
 public class TippingPoint_Packing_BFD_v2 : TippingPointBenchmarkBase
 {
-	[Benchmark(Baseline = true)]
-	[BenchmarkOrder(10)]
-	public IDictionary<string, OperationResult> Loop()
-		=> this.RunLoop(
-			AlgorithmFactories.BFD_v2,
-			AlgorithmOperation.Packing
-		);
+	protected override TestAlgorithmFactory<IPackingAlgorithm> AlgorithmFactory
+		=> AlgorithmFactories.BFD_v2;
 
-	[Benchmark]
-	[BenchmarkOrder(20)]
-	public IDictionary<string, OperationResult> ParallelConcurrent()
-		=> this.RunParallelConcurrent(
-			AlgorithmFactories.BFD_v2,
-			AlgorithmOperation.Packing
-		);
-
-	[Benchmark]
-	[BenchmarkOrder(30)]
-	public IDictionary<string, OperationResult> ParallelLock()
-		=> this.RunParallelConcurrent(
-			AlgorithmFactories.BFD_v2,
-			AlgorithmOperation.Packing
-		);
+	protected override AlgorithmOperation AlgorithmOperation
+		=> AlgorithmOperation.Packing;
 }

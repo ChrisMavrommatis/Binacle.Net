@@ -2,6 +2,8 @@ using System.Collections.Concurrent;
 using BenchmarkDotNet.Attributes;
 using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Abstractions.Models;
+using Binacle.Lib.Benchmarks.Order;
+using Binacle.Lib.Benchmarks.Providers;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
 
@@ -15,7 +17,7 @@ public abstract class TippingPointBenchmarkBase
 	[Params(4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60)]
 	public int ItemCount { get; set; }
 
-	[ParamsSource(typeof(Providers.ConcurrencyProvider), nameof(Providers.ConcurrencyProvider.GetProcessorCount))]
+	[ParamsSource(typeof(ConcurrencyProvider), nameof(ConcurrencyProvider.GetProcessorCount))]
 	public int ProcessorCount { get; set; }
 
 	public List<TestBin> Bins { get; set; }
@@ -24,7 +26,7 @@ public abstract class TippingPointBenchmarkBase
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		var generator = new Generator(8875223);
+		var generator = new Generator(596333);
 		this.Bins = generator.GenerateBins(this.BinCount, 100, 100, 100);
 		this.Items = generator.GenerateItems(this.ItemCount, 5,25);
 	}
@@ -33,21 +35,23 @@ public abstract class TippingPointBenchmarkBase
 	public void GlobalCleanup()
 	{
 	}
-
-	protected IDictionary<string, OperationResult> RunLoop(
-		TestAlgorithmFactory<IPackingAlgorithm> algorithmFactory,
-		AlgorithmOperation operation
-	)
+	
+	protected abstract TestAlgorithmFactory<IPackingAlgorithm> AlgorithmFactory { get; }
+	protected abstract AlgorithmOperation AlgorithmOperation { get; }
+	
+	[Benchmark(Baseline = true)]
+	[BenchmarkOrder(10)]
+	public IDictionary<string, OperationResult> Loop()
 	{
 		var results = new Dictionary<string, OperationResult>(this.Bins.Count);
 
 		for (var i = 0; i < this.Bins.Count; i++)
 		{
 			var bin = this.Bins[i];
-			var algorithmInstance = algorithmFactory(bin, this.Items);
+			var algorithmInstance = this.AlgorithmFactory(bin, this.Items);
 			var result = algorithmInstance.Execute(new TestOperationParameters()
 			{
-				Operation = operation
+				Operation = this.AlgorithmOperation
 			});
 			results[bin.ID] = result;
 		}
@@ -55,20 +59,19 @@ public abstract class TippingPointBenchmarkBase
 		return results;
 	}
 
-	protected IDictionary<string, OperationResult> RunParallelConcurrent(
-		TestAlgorithmFactory<IPackingAlgorithm> algorithmFactory,
-		AlgorithmOperation operation
-	)
+	[Benchmark]
+	[BenchmarkOrder(20)]
+	public IDictionary<string, OperationResult> ParallelConcurrent()
 	{
 		var results = new ConcurrentDictionary<string, OperationResult>(this.ProcessorCount, this.Bins.Count);
 
 		Parallel.For(0, this.Bins.Count, i =>
 		{
 			var bin = this.Bins[i];
-			var algorithmInstance = algorithmFactory(bin, this.Items);
+			var algorithmInstance = this.AlgorithmFactory(bin, this.Items);
 			var result = algorithmInstance.Execute(new TestOperationParameters()
 			{
-				Operation = operation
+				Operation = this.AlgorithmOperation
 			});
 			results[bin.ID] = result;
 		});
@@ -76,10 +79,9 @@ public abstract class TippingPointBenchmarkBase
 		return results;
 	}
 
-	protected IDictionary<string, OperationResult> RunParallelLock(
-		TestAlgorithmFactory<IPackingAlgorithm> algorithmFactory,
-		AlgorithmOperation operation
-	)
+	[Benchmark]
+	[BenchmarkOrder(30)]
+	public IDictionary<string, OperationResult> ParallelLock()
 	{
 		var results = new Dictionary<string, OperationResult>(this.Bins.Count);
 		var resultsLock = new object();
@@ -87,10 +89,10 @@ public abstract class TippingPointBenchmarkBase
 		Parallel.For(0, this.Bins.Count, i =>
 		{
 			var bin = this.Bins[i];
-			var algorithmInstance = algorithmFactory(bin, this.Items);
+			var algorithmInstance = this.AlgorithmFactory(bin, this.Items);
 			var result = algorithmInstance.Execute(new TestOperationParameters()
 			{
-				Operation = operation
+				Operation = this.AlgorithmOperation
 			});
 			lock (resultsLock)
 			{

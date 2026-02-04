@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using BenchmarkDotNet.Attributes;
 using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Abstractions.Models;
+using Binacle.Lib.Benchmarks.Order;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
 using Binacle.TestsKernel.Providers;
@@ -29,20 +30,22 @@ public abstract class AlgorithmRacingBase
 	{
 	}
 	
-	protected IDictionary<string,OperationResult> RunLoop(
-		TestAlgorithmFactory<IPackingAlgorithm>[] algorithmFactories, 
-		AlgorithmOperation operation
-	)
+	protected abstract TestAlgorithmFactory<IPackingAlgorithm>[] Algorithms { get; }
+	protected abstract AlgorithmOperation AlgorithmOperation { get; }
+	
+	[Benchmark(Baseline = true)]
+	[BenchmarkOrder(10)]
+	public IDictionary<string,OperationResult> Loop()
 	{
-		var results = new Dictionary<string, OperationResult>(algorithmFactories.Length);
+		var results = new Dictionary<string, OperationResult>(this.Algorithms.Length);
 
-		for (var i = 0; i < algorithmFactories.Length; i++)
+		for (var i = 0; i < this.Algorithms.Length; i++)
 		{
-			var algorithmFactory = algorithmFactories[i];
+			var algorithmFactory = this.Algorithms[i];
 			var algorithmInstance = algorithmFactory(this.Scenario!.Bin, this.Scenario!.Items);
 			var result = algorithmInstance.Execute(new TestOperationParameters()
 			{
-				Operation = operation
+				Operation = this.AlgorithmOperation
 			});
 			results[algorithmInstance.GetAlgorithmIdentifierName()] = result;
 		}
@@ -50,21 +53,20 @@ public abstract class AlgorithmRacingBase
 		return results;
 	}
 
-	protected IDictionary<string, OperationResult> RunParallelConcurrent(
-		TestAlgorithmFactory<IPackingAlgorithm>[] algorithmFactories,
-		AlgorithmOperation operation
-	)
+	[Benchmark]
+	[BenchmarkOrder(20)]
+	public IDictionary<string, OperationResult> ParallelConcurrent()
 	{
 		var results =
-			new ConcurrentDictionary<string, OperationResult>(this.ProcessorCount, algorithmFactories.Length);
+			new ConcurrentDictionary<string, OperationResult>(this.ProcessorCount, this.Algorithms.Length);
 
-		Parallel.For(0, algorithmFactories.Length, i =>
+		Parallel.For(0, this.Algorithms.Length, i =>
 		{
-			var algorithmFactory = algorithmFactories[i];
+			var algorithmFactory = this.Algorithms[i];
 			var algorithmInstance = algorithmFactory(this.Scenario!.Bin, this.Scenario!.Items);
 			var result = algorithmInstance.Execute(new TestOperationParameters()
 			{
-				Operation = operation
+				Operation = this.AlgorithmOperation
 			});
 			results[algorithmInstance.GetAlgorithmIdentifierName()] = result;
 		});
@@ -72,21 +74,20 @@ public abstract class AlgorithmRacingBase
 		return results;
 	}
 	
-	protected IDictionary<string, OperationResult> RunParallelLock(
-		TestAlgorithmFactory<IPackingAlgorithm>[] algorithmFactories,
-		AlgorithmOperation operation
-	)
+	[Benchmark]
+	[BenchmarkOrder(30)]
+	public IDictionary<string, OperationResult> ParallelLock()
 	{
-		var results = new Dictionary<string, OperationResult>(algorithmFactories.Length);
+		var results = new Dictionary<string, OperationResult>(this.Algorithms.Length);
 		var resultsLock = new object();
 
-		Parallel.For(0, algorithmFactories.Length, i =>
+		Parallel.For(0, this.Algorithms.Length, i =>
 		{
-			var algorithmFactory = algorithmFactories[i];
+			var algorithmFactory = this.Algorithms[i];
 			var algorithmInstance = algorithmFactory(this.Scenario!.Bin, this.Scenario!.Items);
 			var result = algorithmInstance.Execute(new TestOperationParameters()
 			{
-				Operation = operation
+				Operation = this.AlgorithmOperation
 			});
 			lock (resultsLock)
 			{
