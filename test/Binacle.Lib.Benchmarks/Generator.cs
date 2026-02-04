@@ -11,7 +11,7 @@ public class Generator
 		this.random = new Random(seed);
 		
 	}
-	public List<TestBin> GenerateBins(int length, int width, int height, int count)
+	public List<TestBin> GenerateBins(int count, int length, int width, int height)
 	{
 		var bins = new List<TestBin>(count);
 		for (int i = 0; i < count; i++)
@@ -27,14 +27,14 @@ public class Generator
 		return bins;
 	}
 	
-	public List<TestBin> GenerateBins(int count, int mixSize, int maxSize)
+	public List<TestBin> GenerateBins(int count, int minSize, int maxSize)
 	{
 		var bins = new List<TestBin>(count);
 		for (int i = 0; i < count; i++)
 		{
-			var length = this.random.Next(mixSize, maxSize + 1);
-			var width = this.random.Next(mixSize, maxSize + 1);
-			var height = this.random.Next(mixSize, maxSize + 1);
+			var length = this.random.Next(minSize, maxSize + 1);
+			var width = this.random.Next(minSize, maxSize + 1);
+			var height = this.random.Next(minSize, maxSize + 1);
 			bins.Add(new TestBin
 			{
 				ID = $"{length}x{width}x{height}",
