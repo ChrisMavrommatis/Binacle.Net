@@ -20,15 +20,15 @@ public abstract class TippingPointBenchmarkBase
 	[ParamsSource(typeof(ConcurrencyProvider), nameof(ConcurrencyProvider.GetProcessorCount))]
 	public int ProcessorCount { get; set; }
 
-	public List<TestBin> Bins { get; set; }
-	public List<TestItem> Items { get; set; }
+	public List<TestBin> Bins { get; set; } = null!;
+	public List<TestItem> Items { get; set; } = null!;
 	
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
 		var generator = new Generator(596333);
 		this.Bins = generator.GenerateBins(this.BinCount, 100, 100, 100);
-		this.Items = generator.GenerateItems(this.ItemCount, 5,25);
+		this.Items = generator.GenerateItems(this.ItemCount, 5, 25);
 	}
 
 	[GlobalCleanup]

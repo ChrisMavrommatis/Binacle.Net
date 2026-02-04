@@ -33,7 +33,7 @@ public class PackByPresetScenario
 		
 		var presets = this.sut.Services.GetService<IOptions<BinPresetOptions>>();
 
-		var preset = presets.Value.Presets[PresetKeys.CustomProblems];
+		var preset = presets!.Value.Presets[PresetKeys.CustomProblems];
 		var urlPath = routePath.Replace("{preset}", PresetKeys.CustomProblems);
 
 		var request = new PackByPresetRequest()
