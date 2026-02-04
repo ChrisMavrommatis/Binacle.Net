@@ -24,8 +24,9 @@ public abstract class TippingPointBenchmarkBase
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		this.Bins = Generator.GenerateBins(this.BinCount, 100, 100, 100);
-		this.Items = Generator.GenerateItems(this.ItemCount, 5,25);
+		var generator = new Generator(8875223);
+		this.Bins = generator.GenerateBins(this.BinCount, 100, 100, 100);
+		this.Items = generator.GenerateItems(this.ItemCount, 5,25);
 	}
 
 	[GlobalCleanup]
