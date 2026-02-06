@@ -24,4 +24,7 @@ public static class BenchmarkScenariosProvider
 	
 	public static string[] GetBenchmarkScenarios()
 		=> ScenarioDescriptions.Keys.ToArray();
+
+	public static string[] RepresentativeBaselineScenarios()
+		=> [ScenarioDescriptions.Keys.First()];
 }
