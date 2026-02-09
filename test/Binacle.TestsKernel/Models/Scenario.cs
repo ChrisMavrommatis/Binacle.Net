@@ -8,6 +8,8 @@ public class Scenario
 	public required TestBin Bin { get; init; }
 	public required ScenarioMetrics Metrics { get; init; }
 	public required List<TestItem> Items { get; init; }
+	
+	public required ScenarioResult Result { get; init; }
 	public override string ToString() => Name;
 
 
@@ -15,7 +17,8 @@ public class Scenario
 		string name, 
 		string bin,
 		string[] items,
-		string metrics)
+		string metrics,
+		string result)
 	{
 		var parsedBinDimensions = DimensionsHelper.ParseFromCompactString(bin);
 		var parsedItems = items.Select(x =>
@@ -25,12 +28,14 @@ public class Scenario
 		}).ToList();
 		
 		var parsedMetrics = ScenarioMetricsHelper.ParseFromCompactString(metrics);
+		var parsedResult = ScenarioResultHelper.ParseFromCompactString(result);
 		return new Scenario
 		{
 			Name = name,
 			Bin = new TestBin(bin, parsedBinDimensions),
 			Metrics = parsedMetrics,
-			Items = parsedItems
+			Items = parsedItems,
+			Result = parsedResult
 		};
 	}
 }

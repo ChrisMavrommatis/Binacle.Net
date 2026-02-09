@@ -3,7 +3,7 @@
     "Name": "Baseline_5x5x5-1_FitsIn_60x40x10",
     "Bin": "60x40x10",
     "Metrics": "125 24000 1 0.5",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "5x5x5-1"
     ]
@@ -12,7 +12,7 @@
     "Name": "Baseline_15x15x15-1_FitsIn_60x40x20",
     "Bin": "60x40x20",
     "Metrics": "3375 48000 1 7.0",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "15x15x15-1"
     ]
@@ -21,7 +21,7 @@
     "Name": "Baseline_25x25x25-1_FitsIn_60x40x30",
     "Bin": "60x40x30",
     "Metrics": "15625 72000 1 21.7",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "25x25x25-1"
     ]
@@ -30,7 +30,7 @@
     "Name": "Baseline_40x40x40-1_DoesNotFit_60x40x30",
     "Bin": "60x40x30",
     "Metrics": "64000 72000 1 88.9",
-    "Result": "BinaryDecision::DoesNotFit",
+    "Result": "NotPacked NotPacked",
     "Items": [
       "40x40x40-1"
     ]
@@ -39,7 +39,7 @@
     "Name": "Baseline_5x5x80-1_TooLong_DoesNotFitIn_60x40x30",
     "Bin": "60x40x30",
     "Metrics": "2000 72000 1 2.8",
-    "Result": "BinaryDecision::DoesNotFit",
+    "Result": "NotPacked EarlyFail_ContainerDimensionExceeded",
     "Items": [
       "5x5x80-1"
     ]

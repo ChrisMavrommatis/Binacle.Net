@@ -5,12 +5,13 @@ using Binacle.Lib.Benchmarks.Order;
 
 namespace Binacle.Lib.Benchmarks.FastValidation;
 
+[MemoryDiagnoser]
 public class ValidateFast_Packing_BFD : FastValidatonBenchmarkBase
 {
 	[Benchmark(Baseline = true)]
 	[BenchmarkOrder(10)]
 	public OperationResult BFD_v1()
-		=> this.Run(AlgorithmFactories.FFD_v1, AlgorithmOperation.Packing);
+		=> this.Run(AlgorithmFactories.BFD_v1, AlgorithmOperation.Packing);
 
 	[Benchmark]
 	[BenchmarkOrder(20)]

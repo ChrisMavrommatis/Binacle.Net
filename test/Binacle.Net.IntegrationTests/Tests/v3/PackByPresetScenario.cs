@@ -83,18 +83,7 @@ public class PackByPresetScenario
 		result.PackedBinVolumePercentage
 			.ShouldBeLessThanOrEqualTo(scenario.Metrics.Percentage, new PercentageComparer());
 
-		// if (scenarioResult.Fits)
-		// {
-		// 	// Can't guarantee it as multiple bins are evaluated
-		// 	// packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Success);
-		// 	result.Result.ShouldBe(BinPackResultStatus.FullyPacked);
-		// }
-		// else
-		// {
-		// 	// Can't guarantee it as multiple bins are evaluated
-		// 	// packResponse!.Result.ShouldBe(Binacle.Net.v3.Contracts.ResultType.Failure);
-		// 	result.Result.ShouldNotBe(BinPackResultStatus.FullyPacked);
-		// }
+		scenario.Result.EvaluateResult(result);
 	}
 	
 }

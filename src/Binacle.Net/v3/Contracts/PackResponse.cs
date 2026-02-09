@@ -8,6 +8,20 @@ namespace Binacle.Net.v3.Contracts;
 
 public class PackResponse : ResponseBase<List<BinPackResult>>
 {
+	internal static BinPackResultStatus MapResultStatus(OperationResultStatus operationResultStatus)
+	{
+		return operationResultStatus switch
+		{
+			OperationResultStatus.FullyPacked => BinPackResultStatus.FullyPacked,
+			OperationResultStatus.PartiallyPacked => BinPackResultStatus.PartiallyPacked,
+			OperationResultStatus.EarlyFail_ContainerDimensionExceeded => BinPackResultStatus.EarlyFail_ContainerDimensionExceeded,
+			OperationResultStatus.EarlyFail_ContainerVolumeExceeded => BinPackResultStatus.EarlyFail_ContainerVolumeExceeded,
+			OperationResultStatus.Unknown => BinPackResultStatus.Unknown,
+			OperationResultStatus.NotPacked => BinPackResultStatus.NotPacked,
+			_ => throw new NotSupportedException($"No Implementation exists for operation result  status {operationResultStatus.ToString()}"),
+		};
+	}
+	
 	internal static PackResponse Create<TBin, TItem>(
 		List<TBin> bins,
 		List<TItem> items,
@@ -17,20 +31,6 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions
 	{
-		BinPackResultStatus GetResultStatus(OperationResult operationResult)
-		{
-			return operationResult.Status switch
-			{
-				OperationResultStatus.FullyPacked => BinPackResultStatus.FullyPacked,
-				OperationResultStatus.PartiallyPacked => BinPackResultStatus.PartiallyPacked,
-				OperationResultStatus.EarlyFail_ContainerDimensionExceeded => BinPackResultStatus.EarlyFail_ContainerDimensionExceeded,
-				OperationResultStatus.EarlyFail_ContainerVolumeExceeded => BinPackResultStatus.EarlyFail_ContainerVolumeExceeded,
-				OperationResultStatus.Unknown => BinPackResultStatus.Unknown,
-				OperationResultStatus.NotPacked => BinPackResultStatus.NotPacked,
-				_ => throw new NotSupportedException($"No Implementation exists for operation result  status {operationResult.Status.ToString()}"),
-			};
-		}
-
 		var results = new List<BinPackResult>();
 		for (var i = 0; i < bins.Count; i++)
 		{
@@ -49,7 +49,7 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 					Length = bin.Length,
 					Width = bin.Width
 				},
-				Result = GetResultStatus(operationResult),
+				Result = MapResultStatus(operationResult.Status),
 				PackedBinVolumePercentage = operationResult.PackedBinVolumePercentage,
 				PackedItemsVolumePercentage = operationResult.PackedItemsVolumePercentage,
 				PackedItems = operationResult.PackedItems?

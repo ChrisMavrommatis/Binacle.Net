@@ -3,7 +3,7 @@
     "Name": "Complex_FitsInSmall_1",
     "Bin": "60x40x10",
     "Metrics": "7500 24000 5 31.2",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "5x5x5-2",
       "15x10x15-1",
@@ -15,7 +15,7 @@
     "Name": "Complex_FitsInMedium_1",
     "Bin": "60x40x20",
     "Metrics": "24250 48000 16 50.5",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "5x5x5-2",
       "10x20x10-4",

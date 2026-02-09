@@ -30,7 +30,8 @@ public sealed class CommonTestingFixture : IDisposable
 
 	public void RunTest(
 		TestAlgorithmFactory<IPackingAlgorithm> algorithmFactory,
-		string scenarioName
+		string scenarioName,
+		AlgorithmOperation operation
 	)
 	{
 		var scenario = AllScenariosRegistry.GetScenarioByName(scenarioName);
@@ -38,18 +39,9 @@ public sealed class CommonTestingFixture : IDisposable
 
 		var result = algorithmInstance.Execute(new TestOperationParameters
 		{
-			Operation = AlgorithmOperation.Packing
+			Operation = operation
 		});
 		scenario.Metrics.EvaluateResult(result);
-
-
-		// if (scenarioResult.Fits)
-		// {
-		// 	result.Status.ShouldBe(OperationResultStatus.FullyPacked);
-		// }
-		// else
-		// {
-		// 	result.Status.ShouldNotBe(OperationResultStatus.FullyPacked);
-		// }
+		scenario.Result.EvaluateResult(result);
 	}
 }

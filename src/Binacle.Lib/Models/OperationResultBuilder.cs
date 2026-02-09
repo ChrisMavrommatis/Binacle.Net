@@ -122,7 +122,8 @@ internal class OperationResultBuilder<TBin, TItem>
 			PackedItems = packedResultItems.AsReadOnly(),
 			UnpackedItems = unpackedResultItems.AsReadOnly(),
 			PackedBinVolumePercentage = packedBinVolumePercentage,
-			PackedItemsVolumePercentage = packedItemsVolumePercentage
+			PackedItemsVolumePercentage = packedItemsVolumePercentage,
+			AlgorithmOperation = this.operationParameters.Operation
 		};
 		if (packedItemsCount == this.totalItems)
 		{

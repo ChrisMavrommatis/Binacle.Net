@@ -5,6 +5,7 @@ using Binacle.Lib.Benchmarks.Order;
 
 namespace Binacle.Lib.Benchmarks.FastValidation;
 
+[MemoryDiagnoser]
 public class ValidateFast_Packing_WFD : FastValidatonBenchmarkBase
 {
 	[Benchmark(Baseline = true)]

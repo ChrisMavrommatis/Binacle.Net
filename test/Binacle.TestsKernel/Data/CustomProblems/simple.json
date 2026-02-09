@@ -3,7 +3,7 @@
     "Name": "Simple_2Same_FitIn_60x40x10",
     "Bin": "60x40x10",
     "Metrics": "12500 24000 2 52.1",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "25x25x10-2"
     ]
@@ -12,7 +12,7 @@
     "Name": "Simple_2Same_FitIn_60x40x20",
     "Bin": "60x40x20",
     "Metrics": "9900 48000 2 20.6",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "15x22x15-2"
     ]
@@ -21,7 +21,7 @@
     "Name": "Simple_2Same_1Rotated_FitIn_60x40x10",
     "Bin": "60x40x10",
     "Metrics": "12500 24000 2 52.1",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "25x25x10-1",
       "10x25x25-1"
@@ -31,7 +31,7 @@
     "Name": "Simple_2Same_1Rotated_FitIn_60x40x20",
     "Bin": "60x40x20",
     "Metrics": "9900 48000 2 20.6",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "15x22x15-1",
       "15x15x22-1"
@@ -41,7 +41,7 @@
     "Name": "Simple_5x5x5-100_FitIn_60x40x10",
     "Bin": "60x40x10",
     "Metrics": "12500 24000 100 52.1",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "5x5x5-100"
     ]
@@ -50,7 +50,7 @@
     "Name": "Simple_15x15x15-8_FitIn_60x40x20",
     "Bin": "60x40x20",
     "Metrics": "27000 48000 8 56.2",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "15x15x15-8"
     ]
@@ -59,7 +59,7 @@
     "Name": "Simple_30x30x30-2_FitIn_60x40x30",
     "Bin": "60x40x30",
     "Metrics": "54000 72000 2 75.0",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "30x30x30-2"
     ]
@@ -68,7 +68,7 @@
     "Name": "Simple_30x30x30-3_DoesNotFitIn_60x40x30",
     "Bin": "60x40x30",
     "Metrics": "81000 72000 3 112.5",
-    "Result": "BinaryDecision::DoesNotFit",
+    "Result": "PartiallyPacked EarlyFail_ContainerVolumeExceeded",
     "Items": [
       "30x30x30-3"
     ]
@@ -77,7 +77,7 @@
     "Name": "Simple_15x15x15-16_FitIn_60x40x30",
     "Bin": "60x40x30",
     "Metrics": "54000 72000 16 75.0",
-    "Result": "BinaryDecision::Fits",
+    "Result": "FullyPacked FullyPacked",
     "Items": [
       "15x15x15-16"
     ]

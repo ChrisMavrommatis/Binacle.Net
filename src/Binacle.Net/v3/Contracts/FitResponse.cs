@@ -7,6 +7,19 @@ namespace Binacle.Net.v3.Contracts;
 
 public class FitResponse : ResponseBase<List<BinFitResult>>
 {
+	internal static BinFitResultStatus MapResultStatus(OperationResultStatus operationResultStatus)
+	{
+		return operationResultStatus switch
+		{
+			OperationResultStatus.FullyPacked => BinFitResultStatus.AllItemsFit,
+			OperationResultStatus.PartiallyPacked => BinFitResultStatus.NotAllItemsFit,
+			OperationResultStatus.EarlyFail_ContainerDimensionExceeded => BinFitResultStatus.EarlyFail_ItemDimensionExceeded,
+			OperationResultStatus.EarlyFail_ContainerVolumeExceeded => BinFitResultStatus.EarlyFail_TotalVolumeExceeded,
+			OperationResultStatus.NotPacked => BinFitResultStatus.NotAllItemsFit,
+			_ => throw new NotSupportedException($"No Implementation exists for operation result  status {operationResultStatus.ToString()}"),
+		};
+	}
+	
 	internal static FitResponse Create<TBin, TItem>(
 		List<TBin> bins,
 		List<TItem> items,
@@ -16,19 +29,6 @@ public class FitResponse : ResponseBase<List<BinFitResult>>
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions
 	{
-		BinFitResultStatus GetResultStatus(OperationResult operationResult)
-		{
-			return operationResult.Status switch
-			{
-				OperationResultStatus.FullyPacked => BinFitResultStatus.AllItemsFit,
-				OperationResultStatus.PartiallyPacked => BinFitResultStatus.NotAllItemsFit,
-				OperationResultStatus.EarlyFail_ContainerDimensionExceeded => BinFitResultStatus.EarlyFail_ItemDimensionExceeded,
-				OperationResultStatus.EarlyFail_ContainerVolumeExceeded => BinFitResultStatus.EarlyFail_TotalVolumeExceeded,
-				OperationResultStatus.NotPacked => BinFitResultStatus.NotAllItemsFit,
-				_ => throw new NotSupportedException($"No Implementation exists for operation result  status {operationResult.Status.ToString()}"),
-			};
-		}
-
 		var results = new List<BinFitResult>();
 		for (var i = 0; i < bins.Count; i++)
 		{
@@ -47,7 +47,7 @@ public class FitResponse : ResponseBase<List<BinFitResult>>
 					Length = bin.Length,
 					Width = bin.Width
 				},
-				Result = GetResultStatus(operationResult),
+				Result = MapResultStatus(operationResult.Status),
 				FittedBinVolumePercentage  = operationResult.PackedBinVolumePercentage,
 				FittedItemsVolumePercentage  = operationResult.PackedItemsVolumePercentage,
 				FittedItems  = operationResult.PackedItems?
