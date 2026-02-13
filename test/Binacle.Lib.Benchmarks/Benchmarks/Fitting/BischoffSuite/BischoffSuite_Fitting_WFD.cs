@@ -6,7 +6,7 @@ using Binacle.Lib.Benchmarks.Order;
 namespace Binacle.Lib.Benchmarks.BischoffSuite;
 
 [MemoryDiagnoser]
-public class Fitting_WFD : BischoffSuiteBenchmarkBase
+public class BischoffSuite_Fitting_WFD : BischoffSuiteBenchmarkBase
 {
 	[Benchmark(Baseline = true)]
 	[BenchmarkOrder(10)]

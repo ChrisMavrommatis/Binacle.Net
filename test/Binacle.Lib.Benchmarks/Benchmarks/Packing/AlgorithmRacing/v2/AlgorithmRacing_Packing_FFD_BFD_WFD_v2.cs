@@ -6,11 +6,12 @@ using Binacle.TestsKernel;
 namespace Binacle.Lib.Benchmarks.AlgorithmRacing;
 
 [MemoryDiagnoser]
-public class FFD_WFD_Packing_Racing_v2 : AlgorithmRacingBase
+public class AlgorithmRacing_Packing_FFD_BFD_WFD_v2 : AlgorithmRacingBase
 {
 	protected override TestAlgorithmFactory<IPackingAlgorithm>[] Algorithms =>
 	[
 		AlgorithmFactories.FFD_v2,
+		AlgorithmFactories.BFD_v2,
 		AlgorithmFactories.WFD_v2
 	];
 

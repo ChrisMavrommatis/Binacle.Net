@@ -6,15 +6,15 @@ using Binacle.Lib.Benchmarks.Order;
 namespace Binacle.Lib.Benchmarks.FastValidation;
 
 [MemoryDiagnoser]
-public class ValidateFast_Packing_BFD : FastValidatonBenchmarkBase
+public class FastValidation_Fitting_WFD : FastValidatonBenchmarkBase
 {
 	[Benchmark(Baseline = true)]
 	[BenchmarkOrder(10)]
-	public OperationResult BFD_v1()
-		=> this.Run(AlgorithmFactories.BFD_v1, AlgorithmOperation.Packing);
+	public OperationResult WFD_v1()
+		=> this.Run(AlgorithmFactories.WFD_v1, AlgorithmOperation.Fitting);
 
 	[Benchmark]
 	[BenchmarkOrder(20)]
-	public OperationResult BFD_v2()
-		=> this.Run(AlgorithmFactories.BFD_v2, AlgorithmOperation.Packing);
+	public OperationResult WFD_v2()
+		=> this.Run(AlgorithmFactories.WFD_v2, AlgorithmOperation.Fitting);
 }

@@ -32,7 +32,7 @@ internal class TestResult
 	public string MarkdownPrint()
 	{
 		var sb = new StringBuilder();
-		sb.AppendLine($"## {this.Title}");
+		sb.AppendLine($"# {this.Title}");
 		if (!string.IsNullOrEmpty(this.Description))
 		{
 			sb.AppendLine(this.Description);
