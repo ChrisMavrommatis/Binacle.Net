@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Binacle.Net.Models;
+namespace Binacle.Net.v3.Contracts;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 

@@ -12,9 +12,9 @@ public class AlgorithmFactory : IAlgorithmFactory
 	{
 		var algorithmInstance = (IPackingAlgorithm)(algorithm switch
 		{
-			Algorithm.FirstFitDecreasing => new Algorithms.FirstFitDecreasing_v2<TBin, TItem>(bin, items),
-			Algorithm.WorstFitDecreasing => new Algorithms.WorstFitDecreasing_v2<TBin, TItem>(bin, items),
-			Algorithm.BestFitDecreasing => new Algorithms.BestFitDecreasing_v2<TBin, TItem>(bin, items),
+			Algorithm.FFD => new Algorithms.FirstFitDecreasing_v2<TBin, TItem>(bin, items),
+			Algorithm.WFD => new Algorithms.WorstFitDecreasing_v2<TBin, TItem>(bin, items),
+			Algorithm.BFD => new Algorithms.BestFitDecreasing_v2<TBin, TItem>(bin, items),
 			_ => throw new NotSupportedException($"No Packing Algorithm exists for {algorithm}")
 		});
 

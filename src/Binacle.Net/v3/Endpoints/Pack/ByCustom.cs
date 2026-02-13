@@ -57,7 +57,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 				request.Items!,
 				new OperationParameters
 				{
-					Algorithm = request.Parameters!.Algorithm!.Value,
+					Algorithm = request.Parameters!.Algorithm!.Value.ToLibAlgorithm(),
 					Operation = AlgorithmOperation.Packing
 				}
 			);

@@ -13,9 +13,9 @@ public static class AlgorithmExtensions
 	{
 		return algorithm.Algorithm switch
 		{
-			Algorithm.FirstFitDecreasing => $"FFD",
-			Algorithm.BestFitDecreasing => $"BFD",
-			Algorithm.WorstFitDecreasing => $"WFD",
+			Algorithm.FFD => $"FFD",
+			Algorithm.BFD => $"BFD",
+			Algorithm.WFD => $"WFD",
 			_ => $"UNK"
 		};
 	}

@@ -3,42 +3,37 @@ using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
-using Binacle.Net.v3.Contracts;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Binacle.Net.v4.Contracts;
 using OpenApiExamples.ExtensionMethods;
 
-namespace Binacle.Net.v3.Endpoints.Pack;
+namespace Binacle.Net.v4.Endpoints.Pack;
 
-internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
+internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 {
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
-		group.MapPost("pack/by-preset/{preset}", HandleAsync)
+		group.MapPost("pack/bin", HandleAsync)
 			.WithTags("Pack")
-			.WithSummary("Pack by Preset")
-			.WithDescription("Pack items using a specified bin preset.")
+			.WithSummary("Pack a Custom Bin")
+			.WithDescription("Pack items into a custom bin.")
 			
-			.Accepts<PackByPresetRequest>("application/json")
-			.RequestExample<PackByPresetRequestExample>("application/json")
+			.Accepts<PackCustomBinRequest>("application/json")
+			.RequestExample<PackCustomBinRequestExample>("application/json")
 			
 			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseExamples<PackByPresetResponseExamples>(StatusCodes.Status200OK, "application/json")
 			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200Ok)
+			.ResponseExamples<PackByCustomResponseExamples>(StatusCodes.Status200OK, "application/json")
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
-			
-			.Produces(StatusCodes.Status404NotFound)
-			.ResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPreset404NotFound)
 			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For400BadRequest
 			)
-			.ResponseExamples<PackByPresetValidationProblemExamples>(
+			.ResponseExamples<PackByCustomValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			)
@@ -47,29 +42,22 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		[FromRoute] string preset,
-		BindingResult<PackByPresetRequest> bindingResult,
-		IOptions<BinPresetOptions> presetOptions,
+		BindingResult<PackCustomBinRequest> bindingResult,
 		IBinacleService binacleService,
-		ILogger<ByPreset> logger,
+		ILogger<CustomBin> logger,
 		CancellationToken cancellationToken = default
 	)
 	{
-		using var activity = Diagnostics.ActivitySource.StartActivity("Pack by Preset: v3");
+		using var activity = Diagnostics.ActivitySource.StartActivity("Pack by Custom: v3");
 		
 		return await bindingResult.ValidateAsync(async request =>
 		{
-			if (!presetOptions.Value.Presets.TryGetValue(preset, out var presetOption))
-			{
-				return Results.NotFound(null);
-			}
-			
 			var operationResults = await binacleService.OperateAsync(
-				presetOption.Bins!,
+				request.Bins!,
 				request.Items!,
 				new OperationParameters
 				{
-					Algorithm = request.Parameters!.Algorithm!.Value.ToLibAlgorithm(),
+					Algorithm = request.Parameters!.Algorithm!.Value,
 					Operation = AlgorithmOperation.Packing
 				}
 			);
@@ -78,7 +66,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 			{
 				return Results.Ok(
 					PackResponse.Create(
-						presetOption.Bins!,
+						request.Bins!,
 						request.Items!,
 						request.Parameters,
 						operationResults

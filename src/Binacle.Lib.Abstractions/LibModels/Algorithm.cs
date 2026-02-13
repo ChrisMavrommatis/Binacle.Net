@@ -2,8 +2,8 @@
 
 public enum Algorithm
 {
-	FirstFitDecreasing,
-	WorstFitDecreasing,
-	BestFitDecreasing
+	FFD,
+	WFD,
+	BFD
 }
 

@@ -8,7 +8,7 @@ internal partial class BestFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 	where TBin : class, IWithID, IWithReadOnlyDimensions
 	where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 {
-	public Algorithm Algorithm => Algorithm.BestFitDecreasing;
+	public Algorithm Algorithm => Algorithm.BFD;
 	public int Version => 1;
 	
 	private readonly Bin bin;

@@ -51,7 +51,7 @@ internal class BinacleService : IBinacleService
 		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
 
 		var results = this.loopBinProcessor.Process(
-			parameters.Algorithm.ToLibAlgorithm(),
+			parameters.Algorithm,
 			bins,
 			items,
 			parameters
