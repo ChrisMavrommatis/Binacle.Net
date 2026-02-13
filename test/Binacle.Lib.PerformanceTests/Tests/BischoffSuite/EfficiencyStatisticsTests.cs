@@ -12,16 +12,17 @@ internal class EfficiencyStatisticsTests : ITest
 {
 	private readonly string title;
 	private readonly string description;
-	private readonly string filename;
 	private readonly ScenarioCollectionsProvider scenarioCollectionsProvider;
 	private readonly TestAlgorithmFactory<IPackingAlgorithm> algorithmUnderTest;
 	private readonly ILogger<EfficiencyStatisticsTests> logger;
 	private readonly string[] collectionKeys;
 
+	public Models.ResultFile File { get; private set; }
+	
 	public EfficiencyStatisticsTests(
 		string title,
 		string description,
-		string filename,
+		Models.ResultFile file,
 		ScenarioCollectionsProvider scenarioCollectionsProvider,
 		TestAlgorithmFactory<IPackingAlgorithm> algorithmUnderTest,
 		ILogger<EfficiencyStatisticsTests> logger
@@ -29,7 +30,7 @@ internal class EfficiencyStatisticsTests : ITest
 	{
 		this.title = title;
 		this.description = description;
-		this.filename = filename;
+		this.File = file;
 		this.scenarioCollectionsProvider = scenarioCollectionsProvider;
 		this.algorithmUnderTest = algorithmUnderTest;
 		this.logger = logger;
@@ -58,8 +59,8 @@ internal class EfficiencyStatisticsTests : ITest
 		return new TestResult()
 		{
 			Title = this.title,
+			File = this.File,
 			Description = this.description,
-			Filename = this.filename,
 			Result = collectionResults
 		};
 	}

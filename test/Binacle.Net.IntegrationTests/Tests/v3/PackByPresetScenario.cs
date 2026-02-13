@@ -40,7 +40,7 @@ public class PackByPresetScenario
 		{
 			Parameters = new()
 			{
-				Algorithm = Binacle.Net.Models.Algorithm.FFD,
+				Algorithm = Binacle.Net.v3.Contracts.Algorithm.FFD,
 				IncludeViPaqData = false
 			},
 			Items = scenario.Items.Select(x => new Box

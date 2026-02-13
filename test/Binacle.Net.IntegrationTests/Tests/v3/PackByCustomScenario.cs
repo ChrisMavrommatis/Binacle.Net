@@ -4,7 +4,6 @@ using Binacle.Lib;
 using Binacle.Net.v3.Contracts;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Providers;
-using Algorithm = Binacle.Net.Models.Algorithm;
 
 namespace Binacle.Net.IntegrationTests.v3;
 
@@ -33,7 +32,7 @@ public class PackByCustomScenario
 		{
 			Parameters = new()
 			{
-				Algorithm = Algorithm.FFD,
+				Algorithm = Binacle.Net.v3.Contracts.Algorithm.FFD,
 				IncludeViPaqData = false
 			},
 			Bins = [

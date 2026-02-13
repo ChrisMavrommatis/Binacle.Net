@@ -7,8 +7,8 @@ namespace Binacle.Lib.PerformanceTests.Models;
 internal class TestResult
 {
 	public required string Title { get; init; }
+	public required Models.ResultFile File { get; init; }
 	public string? Description { get; set; }
-	public required string? Filename { get; init; }
 	public required IResult Result { get; init; }
 
 	public string ConsolePrint()
@@ -32,7 +32,7 @@ internal class TestResult
 	public string MarkdownPrint()
 	{
 		var sb = new StringBuilder();
-		sb.AppendLine($"# {this.Title}");
+		sb.AppendLine($"## {this.Title}");
 		if (!string.IsNullOrEmpty(this.Description))
 		{
 			sb.AppendLine(this.Description);

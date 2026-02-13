@@ -12,15 +12,15 @@ internal class BaselineComparisonTests : ITest
 {
 	private readonly string title;
 	private readonly string description;
-	private readonly string filename;
 	private readonly TestAlgorithmFactory<IPackingAlgorithm> baselineAlgorithm;
 	private readonly TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest;
 	private readonly ILogger<BaselineComparisonTests> logger;
 
+	public Models.ResultFile File { get; private set; }
 	public BaselineComparisonTests(
 		string title,
 		string description,
-		string filename,
+		Models.ResultFile file,
 		TestAlgorithmFactory<IPackingAlgorithm> baselineAlgorithm,
 		TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest,
 		ILogger<BaselineComparisonTests> logger
@@ -29,7 +29,7 @@ internal class BaselineComparisonTests : ITest
 	{
 		this.title = title;
 		this.description = description;
-		this.filename = filename;
+		this.File = file;
 		this.baselineAlgorithm = baselineAlgorithm;
 		this.algorithmsUnderTest = algorithmsUnderTest;
 		this.logger = logger;
@@ -87,8 +87,8 @@ internal class BaselineComparisonTests : ITest
 		return new TestResult()
 		{
 			Title = this.title,
+			File = this.File,
 			Description = this.description,
-			Filename = this.filename,
 			Result = scenarioCollectionResults
 		};
 	}

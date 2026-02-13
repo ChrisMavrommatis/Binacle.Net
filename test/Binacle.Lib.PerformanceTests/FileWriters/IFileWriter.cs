@@ -4,5 +4,5 @@ namespace Binacle.Lib.PerformanceTests.Services;
 
 internal interface IFileWriter
 {
-	Task WriteAsync(TestResult result);
+	Task WriteAsync(ResultFile file, TestResult[] results);
 }

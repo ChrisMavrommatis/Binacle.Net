@@ -4,7 +4,7 @@ namespace Binacle.Lib.PerformanceTests.Services;
 
 internal class MarkdownFileWriter : IFileWriter
 {
-	public async Task WriteAsync(TestResult result)
+	public async Task WriteAsync(Models.ResultFile file, TestResult[] results)
 	{
 		var projectRoot = Path.Combine(
 			AppDomain.CurrentDomain.BaseDirectory, 
@@ -14,7 +14,7 @@ internal class MarkdownFileWriter : IFileWriter
 		var filepath = Path.Combine(
 			projectRoot, 
 			"PerformanceTests.Artifacts", 
-			$"{result.Filename}.md"
+			$"{file.Filename}.md"
 		);
 
 		var directoryName = Path.GetDirectoryName(filepath)!;
@@ -28,17 +28,20 @@ internal class MarkdownFileWriter : IFileWriter
 
 		using var writer = new StreamWriter(filepath);
 
-		await writer.WriteLineAsync($"# {result.Title}");
+		await writer.WriteLineAsync($"# {file.Title}");
 		await writer.WriteLineAsync(string.Empty);
 
-		if (!string.IsNullOrWhiteSpace(result.Description))
+		if (!string.IsNullOrWhiteSpace(file.Description))
 		{
-			await writer.WriteLineAsync(result.Description);
+			await writer.WriteLineAsync(file.Description);
 			await writer.WriteLineAsync(string.Empty);
 		}
 
-		await writer.WriteLineAsync(string.Empty);
-		await writer.WriteAsync(result.MarkdownPrint());
-		await writer.WriteLineAsync(string.Empty);
+		foreach (var result in results)
+		{
+			await writer.WriteLineAsync(string.Empty);
+			await writer.WriteAsync(result.MarkdownPrint());
+			await writer.WriteLineAsync(string.Empty);
+		}
 	}
 }

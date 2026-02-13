@@ -13,10 +13,14 @@ internal class PackingEfficiencyTests : ITest
 	private readonly ILogger<PackingEfficiencyTests> logger;
 	private readonly TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest;
 
+	public Models.ResultFile File { get; private set; }
+	
 	public PackingEfficiencyTests(
+		Models.ResultFile file,
 		ILogger<PackingEfficiencyTests> logger
 	)
 	{
+		this.File = file;
 		this.logger = logger;
 		this.algorithmsUnderTest =
 		[
@@ -62,8 +66,8 @@ internal class PackingEfficiencyTests : ITest
 		return new TestResult()
 		{
 			Title = "Bischoff Suite Tests",
+			File = this.File,
 			Description = "Packing Efficiency test using the Bischoff Suite scenarios.",
-			Filename = "Bischoff_Suite",
 			Result = scenarioCollectionResults
 		};
 	}

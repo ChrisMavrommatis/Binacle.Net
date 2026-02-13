@@ -1,5 +1,4 @@
-﻿using Binacle.Net.Models;
-
+﻿
 namespace Binacle.Net.IntegrationTests.v3;
 
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
@@ -9,7 +8,7 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 	{
 		Parameters = new()
 		{
-			Algorithm = Algorithm.FFD,
+			Algorithm = Binacle.Net.v3.Contracts.Algorithm.FFD,
 			IncludeViPaqData = false
 		},
 		Bins = new()
@@ -119,7 +118,7 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 		{
 			Parameters = new()
 			{
-				Algorithm = Algorithm.FFD,
+				Algorithm = Binacle.Net.v3.Contracts.Algorithm.FFD,
 				IncludeViPaqData = false
 			},
 			Bins = new()

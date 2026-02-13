@@ -12,21 +12,22 @@ internal class RegressionTests : ITest
 {
 	private readonly string title;
 	private readonly string description;
-	private readonly string filename;
 	private readonly ILogger<RegressionTests> logger;
 	private readonly TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest;
 
+	public Models.ResultFile File { get; private set; }
+	
 	public RegressionTests(
 		string title,
 		string description,
-		string filename,
+		Models.ResultFile file,
 		TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest,
 		ILogger<RegressionTests> logger
 	)
 	{
 		this.title = title;
 		this.description = description;
-		this.filename = filename;
+		this.File = file;
 		this.logger = logger;
 		this.algorithmsUnderTest = algorithmsUnderTest;
 	}
@@ -65,8 +66,8 @@ internal class RegressionTests : ITest
 		return new TestResult()
 		{
 			Title = this.title,
+			File = this.File,
 			Description = this.description,
-			Filename = this.filename,
 			Result = scenarioCollectionResults
 		};
 	}

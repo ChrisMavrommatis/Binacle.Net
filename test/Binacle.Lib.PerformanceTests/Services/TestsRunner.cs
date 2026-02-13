@@ -30,16 +30,20 @@ internal class TestRunner
 			tasks.Add(Task.Run(() => test.Run()));
 		}
 
-		var testResultList = await Task.WhenAll(tasks);
+		var testResultList = (await Task.WhenAll(tasks)).GroupBy(x => x.File);
 
-		foreach (var testResult in testResultList)
+		foreach (var testResultGroup in testResultList)
 		{
-			var text = testResult.ConsolePrint();
-			this.logger.LogInformation(text);
+			var file = testResultGroup.Key;
+			var results = testResultGroup.ToArray();
+			foreach (var result in results)
+			{
+				this.logger.LogInformation(result.ConsolePrint());
+			}
 
 			foreach (var fileWriter in fileWriters)
 			{
-				await fileWriter.WriteAsync(testResult);
+				await fileWriter.WriteAsync(file, results);
 			}
 		}
 	}
