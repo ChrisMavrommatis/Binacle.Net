@@ -10,9 +10,8 @@ cd "$ROOT_DIR/$PROJECT_PATH" || exit 1
 
 # Create a dictionary to hold aliases for the benchmark projects
 declare -A benchmark_aliases=(
-    ["AlgorithmVersion"]="*AlgorithmVersion*"
-    ["MultipleBins"]="*MultipleBins*"
-    ["MultipleItems"]="*MultipleItems*"
+    ["FastValidation"]="*FastValidation*"
+    ["AlgorithmRacing"]="*AlgorithmRacing*"
 )
 
 echo "Running from $ROOT_DIR"
