@@ -6,7 +6,6 @@ using Binacle.Lib.Benchmarks.Order;
 namespace Binacle.Lib.Benchmarks.BischoffSuite;
 
 [MemoryDiagnoser]
-[MarkdownExporter]
 public class BischoffSuite_Fitting_BFD : BischoffSuiteBenchmarkBase
 {
 	[Benchmark(Baseline = true)]

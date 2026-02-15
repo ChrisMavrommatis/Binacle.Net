@@ -6,7 +6,6 @@ using Binacle.Lib.Benchmarks.Order;
 namespace Binacle.Lib.Benchmarks.FastValidation;
 
 [MemoryDiagnoser]
-[MarkdownExporter]
 public class FastValidation_Fitting_BFD : FastValidatonBenchmarkBase
 {
 	[Benchmark(Baseline = true)]
