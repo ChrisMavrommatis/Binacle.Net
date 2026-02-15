@@ -3,7 +3,7 @@ using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Models;
 using Binacle.Net.Services;
-using Binacle.Net.v4.Contracts;
+using Binacle.Net.v4.Contracts.Pack;
 using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.v4.Endpoints.Pack;
@@ -20,7 +20,7 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			.Accepts<PackCustomBinRequest>("application/json")
 			.RequestExample<PackCustomBinRequestExample>("application/json")
 			
-			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<BinPackResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200Ok)
 			.ResponseExamples<PackByCustomResponseExamples>(StatusCodes.Status200OK, "application/json")
 			
@@ -53,7 +53,7 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 		return await bindingResult.ValidateAsync(async request =>
 		{
 			var operationResults = await binacleService.OperateAsync(
-				request.Bins!,
+				request.Bin!,
 				request.Items!,
 				new OperationParameters
 				{
