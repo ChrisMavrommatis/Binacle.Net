@@ -3,13 +3,13 @@ using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
-using Binacle.TestsKernel.Providers;
+using Binacle.TestsKernel.ScenarioProviders;
 
 namespace Binacle.Lib.Benchmarks.Abstractions;
 
-public abstract class FastValidatonBenchmarkBase
+public abstract class FastValidationBenchmarkBase
 {
-	[ParamsSource(typeof(Providers.BenchmarkScenariosProvider), nameof(Providers.BenchmarkScenariosProvider.RepresentativeBaselineScenarios))]
+	[ParamsSource(typeof(Providers.BischoffCuratedProblemsProvider), nameof(Providers.BischoffCuratedProblemsProvider.RepresentativeBaselineScenarios))]
 	public string? Description { get; set; }
 	
 	public Scenario? Scenario { get; set; }
@@ -17,8 +17,8 @@ public abstract class FastValidatonBenchmarkBase
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		var scenarioName = Providers.BenchmarkScenariosProvider.ScenarioDescriptions[this.Description!];
-		this.Scenario = BischoffSuiteScenarioRegistry.GetScenarioByName(scenarioName);
+		var scenarioName = Providers.BischoffCuratedProblemsProvider.ScenarioDescriptions[this.Description!];
+		this.Scenario = BischoffSuiteScenarioProvider.GetScenarioByName(scenarioName);
 	}
 	
 	[GlobalCleanup]

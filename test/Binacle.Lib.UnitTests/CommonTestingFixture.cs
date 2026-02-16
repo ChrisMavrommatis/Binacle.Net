@@ -2,7 +2,7 @@
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.ExtensionMethods;
 using Binacle.TestsKernel.Models;
-using Binacle.TestsKernel.Providers;
+using Binacle.TestsKernel.ScenarioProviders;
 
 namespace Binacle.Lib.UnitTests;
 
@@ -34,7 +34,7 @@ public sealed class CommonTestingFixture : IDisposable
 		AlgorithmOperation operation
 	)
 	{
-		var scenario = AllScenariosRegistry.GetScenarioByName(scenarioName);
+		var scenario = AllScenariosProvider.GetScenarioByName(scenarioName);
 		var algorithmInstance = algorithmFactory(scenario.Bin, scenario.Items);
 
 		var result = algorithmInstance.Execute(new TestOperationParameters

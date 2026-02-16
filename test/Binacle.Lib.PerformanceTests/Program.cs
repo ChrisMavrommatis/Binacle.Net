@@ -1,7 +1,7 @@
 ﻿using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Services;
 using Binacle.Lib.PerformanceTests.Tests;
-using Binacle.TestsKernel.Providers;
+using Binacle.TestsKernel.ScenarioProviders;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -30,7 +30,6 @@ internal class Program
 	    builder.Logging.AddSerilog();
 	    
 	    builder.Services.AddSingleton<IFileWriter, MarkdownFileWriter>();
-	    builder.Services.AddSingleton<ScenarioCollectionsProvider>();
 	    builder.Services.AddTransient<TestRunner>();
 	    
 	    builder.Services.AddTransient<ITest, Tests.BischoffSuite.PackingEfficiencyTests>(sp => new Tests.BischoffSuite.PackingEfficiencyTests(
@@ -74,7 +73,7 @@ internal class Program
 	    
 	    var statisticsFile = new Models.ResultFile
 	    {
-		    Filename = "EfficiencyStaticstics",
+		    Filename = "EfficiencyStatistics",
 		    Title = "Efficiency Statistics",
 		    Description = "Efficiency statistics for various algorithms using the Bischoff Suite scenarios"
 	    };
@@ -82,7 +81,6 @@ internal class Program
 		    title: "FFD Bischoff Statistics Tests",
 		    description: "Efficiency statistics tests for First Fit Decreasing algorithms using the Bischoff Suite scenarios",
 		    file: statisticsFile,
-		    scenarioCollectionsProvider: sp.GetRequiredService<ScenarioCollectionsProvider>(),
 		    algorithmUnderTest: AlgorithmFactories.FFD_v2,
 		    sp.GetRequiredService<ILogger<Tests.BischoffSuite.EfficiencyStatisticsTests>>()
 	    ));
@@ -90,7 +88,6 @@ internal class Program
 		    title: "WFD Bischoff Statistics Tests",
 		    description: "Efficiency statistics tests for Worst Fit Decreasing algorithms using the Bischoff Suite scenarios",
 		    file: statisticsFile,
-		    scenarioCollectionsProvider: sp.GetRequiredService<ScenarioCollectionsProvider>(),
 		    algorithmUnderTest: AlgorithmFactories.WFD_v2,
 		    sp.GetRequiredService<ILogger<Tests.BischoffSuite.EfficiencyStatisticsTests>>()
 	    ));
@@ -98,7 +95,6 @@ internal class Program
 		    title: "BFD Bischoff Statistics Tests",
 		    description: "Efficiency statistics tests for Best Fit Decreasing algorithms using the Bischoff Suite scenarios",
 		    file: statisticsFile,
-		    scenarioCollectionsProvider: sp.GetRequiredService<ScenarioCollectionsProvider>(),
 		    algorithmUnderTest: AlgorithmFactories.BFD_v2,
 		    sp.GetRequiredService<ILogger<Tests.BischoffSuite.EfficiencyStatisticsTests>>()
 	    ));

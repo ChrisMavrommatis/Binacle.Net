@@ -2,6 +2,12 @@ using Binacle.TestsKernel.Helpers;
 
 namespace Binacle.TestsKernel.Models;
 
+public record CollectionScenario(
+	string ConnectionKey,
+	Scenario Scenario
+);
+
+
 public class Scenario
 {
 	public required string Name { get; init; }

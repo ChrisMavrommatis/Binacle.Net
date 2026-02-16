@@ -1,16 +1,16 @@
 using System.Reflection;
 
-namespace Binacle.TestsKernel;
+namespace Binacle.TestsKernel.Files;
 
 
-public static class EmbeddedResourceFileRegistry
+public static class EmbeddedResourceFileProvider
 {
 	// should be Binacle.TestsKernel.Data.
 	private static string prefix = $"Binacle.TestsKernel.Data.";
 
 	private static Dictionary<string, List<IFile>> files = new Dictionary<string,List<IFile>>();
 
-	static EmbeddedResourceFileRegistry()
+	static EmbeddedResourceFileProvider()
 	{
 		var assembly = Assembly.GetExecutingAssembly();
 

@@ -1,4 +1,4 @@
-﻿using Binacle.TestsKernel.Providers;
+﻿using Binacle.TestsKernel.ScenarioProviders;
 
 #pragma warning disable xUnit1007 
 
@@ -15,32 +15,32 @@ public class PackingCustomProblemsTests : IClassFixture<CommonTestingFixture>
 	}
 
 	[Theory]
-	[ClassData(typeof(CustomProblemsScenarioNameProvider))]
+	[MemberData(nameof(CustomProblemsScenarioProvider.ScenarioNames), MemberType = typeof(CustomProblemsScenarioProvider))]
 	public void CustomProblems_Packing_FFD_v1(string scenario)
 		=> this.Fixture.RunTest(AlgorithmFactories.FFD_v1, scenario, AlgorithmOperation.Packing);
 
 	[Theory]
-	[ClassData(typeof(CustomProblemsScenarioNameProvider))]
+	[MemberData(nameof(CustomProblemsScenarioProvider.ScenarioNames), MemberType = typeof(CustomProblemsScenarioProvider))]
 	public void CustomProblems_Packing_FFD_v2(string scenario)
 		=> this.Fixture.RunTest(AlgorithmFactories.FFD_v2, scenario, AlgorithmOperation.Packing);
 
 	[Theory]
-	[ClassData(typeof(CustomProblemsScenarioNameProvider))]
+	[MemberData(nameof(CustomProblemsScenarioProvider.ScenarioNames), MemberType = typeof(CustomProblemsScenarioProvider))]
 	public void CustomProblems_Packing_WFD_v1(string scenario)
 		=> this.Fixture.RunTest(AlgorithmFactories.WFD_v1, scenario, AlgorithmOperation.Packing);
 
 	[Theory]
-	[ClassData(typeof(CustomProblemsScenarioNameProvider))]
+	[MemberData(nameof(CustomProblemsScenarioProvider.ScenarioNames), MemberType = typeof(CustomProblemsScenarioProvider))]
 	public void CustomProblems_Packing_WFD_v2(string scenario)
 		=> this.Fixture.RunTest(AlgorithmFactories.WFD_v2, scenario, AlgorithmOperation.Packing);
 
 	[Theory]
-	[ClassData(typeof(CustomProblemsScenarioNameProvider))]
+	[MemberData(nameof(CustomProblemsScenarioProvider.ScenarioNames), MemberType = typeof(CustomProblemsScenarioProvider))]
 	public void CustomProblems_Packing_BFD_v1(string scenario)
 		=> this.Fixture.RunTest(AlgorithmFactories.BFD_v1, scenario, AlgorithmOperation.Packing);
 
 	[Theory]
-	[ClassData(typeof(CustomProblemsScenarioNameProvider))]
+	[MemberData(nameof(CustomProblemsScenarioProvider.ScenarioNames), MemberType = typeof(CustomProblemsScenarioProvider))]
 	public void CustomProblems_Packing_BFD_v2(string scenario)
 		=> this.Fixture.RunTest(AlgorithmFactories.BFD_v2, scenario, AlgorithmOperation.Packing);
 }

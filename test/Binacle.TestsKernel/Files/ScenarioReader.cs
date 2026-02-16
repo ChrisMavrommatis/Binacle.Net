@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Binacle.TestsKernel.Models;
 
-namespace Binacle.TestsKernel;
+namespace Binacle.TestsKernel.Files;
 
 internal class ScenarioReader
 { 

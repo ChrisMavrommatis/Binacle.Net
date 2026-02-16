@@ -3,7 +3,7 @@ using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Results;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
-using Binacle.TestsKernel.Providers;
+using Binacle.TestsKernel.ScenarioProviders;
 using Microsoft.Extensions.Logging;
 
 namespace Binacle.Lib.PerformanceTests.Tests.BischoffSuite;
@@ -35,7 +35,7 @@ internal class RegressionTests : ITest
 	public TestResult Run()
 	{
 		var scenarioCollectionResults = new ScenarioCollectionResult<double>("Scenario Name");
-		foreach (var scenario in BischoffSuiteScenarioRegistry.GetScenarios())
+		foreach (var scenario in BischoffSuiteScenarioProvider.GetScenarios())
 		{
 			var algorithmResults = new AlgorithmResult<double>();
 			foreach (var algorithmFactory in this.algorithmsUnderTest)

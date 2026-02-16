@@ -1,6 +1,6 @@
 namespace Binacle.Lib.Benchmarks.Providers;
 
-public static class BenchmarkScenariosProvider
+public static class BischoffCuratedProblemsProvider
 {
 	/*
 		Scenario	BFD		FFD		WFD		Purpose
@@ -15,11 +15,11 @@ public static class BenchmarkScenariosProvider
 	public static Dictionary<string ,string> ScenarioDescriptions { get; }
 		= new()
 		{
-			{ "Representative baseline", "OrLibrary_thpack1_7" },
-			{ "BFD dominance (medium)", "OrLibrary_thpack1_44" },
-			{ "High efficiency / low variance", "OrLibrary_thpack2_30"  },
+			{ "Baseline", "OrLibrary_thpack1_7" },
+			{ "BFD dominance", "OrLibrary_thpack1_44" },
+			{ "High efficiency", "OrLibrary_thpack2_30"  },
 			{ "WFD weakness" , "OrLibrary_thpack2_35" },
-			{ "Hardest / max complexity", "OrLibrary_thpack7_56" },
+			{ "Max complexity", "OrLibrary_thpack7_56" },
 		};
 	
 	public static string[] GetBenchmarkScenarios()

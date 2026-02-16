@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using Binacle.Net.Configuration;
 using Binacle.Net.IntegrationTests;
-using Binacle.TestsKernel.Providers;
+using Binacle.TestsKernel.ScenarioProviders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -63,7 +63,7 @@ public class BinacleApi : WebApplicationFactory<IApiMarker>
 
 				options.Presets.Clear();
 				
-				var customProblemBins = CustomProblemsScenarioRegistry
+				var customProblemBins = CustomProblemsScenarioProvider
 					.GetScenarios()
 					.Select(x => x.Bin)
 					.DistinctBy(x => x.ID)
@@ -80,7 +80,7 @@ public class BinacleApi : WebApplicationFactory<IApiMarker>
 					Bins = customProblemBins
 				});
 				
-				var bischoffSuiteBins = BischoffSuiteScenarioRegistry
+				var bischoffSuiteBins = BischoffSuiteScenarioProvider
 					.GetScenarios()
 					.Select(x => x.Bin)
 					.DistinctBy(x => x.ID)

@@ -4,7 +4,7 @@ using Binacle.Net.Configuration;
 using Binacle.Net.v3.Contracts;
 using Binacle.Lib;
 using Binacle.TestsKernel;
-using Binacle.TestsKernel.Providers;
+using Binacle.TestsKernel.ScenarioProviders;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -24,13 +24,13 @@ public class FitByPresetScenario
 	private const string routePath = "/api/v3/fit/by-preset/{preset}";
 
 	[Theory]
-	[ClassData(typeof(CustomProblemsScenarioNameProvider))]
+	[MemberData(nameof(CustomProblemsScenarioProvider.ScenarioNames), MemberType = typeof(CustomProblemsScenarioProvider))]
 	public Task Custom_Problems(string scenario)
 		=> RunTest(scenario);
 
 	private async Task RunTest(string scenarioName)
 	{
-		var scenario = AllScenariosRegistry.GetScenarioByName(scenarioName);
+		var scenario = AllScenariosProvider.GetScenarioByName(scenarioName);
 		
 		var presets = this.sut.Services.GetService<IOptions<BinPresetOptions>>();
 		var preset = presets!.Value.Presets[PresetKeys.CustomProblems];

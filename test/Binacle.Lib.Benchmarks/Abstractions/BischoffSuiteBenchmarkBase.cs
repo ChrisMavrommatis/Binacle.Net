@@ -3,20 +3,20 @@ using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
-using Binacle.TestsKernel.Providers;
+using Binacle.TestsKernel.ScenarioProviders;
 
 namespace Binacle.Lib.Benchmarks.Abstractions;
 
 public abstract class BischoffSuiteBenchmarkBase
 {
-	[ParamsSource(typeof(BischoffSuiteScenarioRegistry), nameof(BischoffSuiteScenarioRegistry.GetScenarioNames))]
+	[ParamsSource(typeof(BischoffSuiteScenarioProvider), nameof(BischoffSuiteScenarioProvider.GetScenarioNames))]
 	public string? ScenarioName { get; set; }
 	public Scenario? Scenario { get; set; }
 	
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		this.Scenario = BischoffSuiteScenarioRegistry.GetScenarioByName(this.ScenarioName!);
+		this.Scenario = BischoffSuiteScenarioProvider.GetScenarioByName(this.ScenarioName!);
 	}
 	
 	[GlobalCleanup]

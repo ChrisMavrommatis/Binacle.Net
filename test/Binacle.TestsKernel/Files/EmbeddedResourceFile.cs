@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Binacle.TestsKernel;
+namespace Binacle.TestsKernel.Files;
 
 internal class EmbeddedResourceFile : IFile
 {

@@ -5,13 +5,13 @@ using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Benchmarks.Order;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
-using Binacle.TestsKernel.Providers;
+using Binacle.TestsKernel.ScenarioProviders;
 
 namespace Binacle.Lib.Benchmarks.Abstractions;
 
 public abstract class AlgorithmRacingBase
 {
-	[ParamsSource(typeof(Providers.BenchmarkScenariosProvider), nameof(Providers.BenchmarkScenariosProvider.GetBenchmarkScenarios))]
+	[ParamsSource(typeof(Providers.BischoffCuratedProblemsProvider), nameof(Providers.BischoffCuratedProblemsProvider.GetBenchmarkScenarios))]
 	public string? Description { get; set; }
 	
 	[ParamsSource(typeof(Providers.ConcurrencyProvider), nameof(Providers.ConcurrencyProvider.GetProcessorCount))]
@@ -21,8 +21,8 @@ public abstract class AlgorithmRacingBase
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
-		var scenarioName = Providers.BenchmarkScenariosProvider.ScenarioDescriptions[this.Description!];
-		this.Scenario = BischoffSuiteScenarioRegistry.GetScenarioByName(scenarioName);
+		var scenarioName = Providers.BischoffCuratedProblemsProvider.ScenarioDescriptions[this.Description!];
+		this.Scenario = BischoffSuiteScenarioProvider.GetScenarioByName(scenarioName);
 	}
 	
 	[GlobalCleanup]

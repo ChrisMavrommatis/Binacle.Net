@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using Binacle.Lib;
 using Binacle.Net.v3.Contracts;
 using Binacle.TestsKernel;
-using Binacle.TestsKernel.Providers;
+using Binacle.TestsKernel.ScenarioProviders;
 
 namespace Binacle.Net.IntegrationTests.v3;
 
@@ -20,13 +20,13 @@ public class PackByCustomScenario
 	private const string routePath = "/api/v3/pack/by-custom";
 
 	[Theory]
-	[ClassData(typeof(CustomProblemsScenarioNameProvider))]
+	[MemberData(nameof(CustomProblemsScenarioProvider.ScenarioNames), MemberType = typeof(CustomProblemsScenarioProvider))]
 	public Task Custom_Problems(string scenario)
 		=> RunTest(scenario);
 
 	private async Task RunTest(string scenarioName)
 	{
-		var scenario = AllScenariosRegistry.GetScenarioByName(scenarioName);
+		var scenario = AllScenariosProvider.GetScenarioByName(scenarioName);
 		
 		var request = new PackByCustomRequest()
 		{
