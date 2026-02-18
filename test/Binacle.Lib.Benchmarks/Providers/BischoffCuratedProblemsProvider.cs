@@ -24,7 +24,4 @@ public static class BischoffCuratedProblemsProvider
 	
 	public static string[] GetBenchmarkScenarios()
 		=> ScenarioDescriptions.Keys.ToArray();
-
-	public static string[] RepresentativeBaselineScenarios()
-		=> [ScenarioDescriptions.Keys.First()];
 }
