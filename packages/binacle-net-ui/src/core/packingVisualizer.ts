@@ -114,7 +114,7 @@ export const packingVisualizer = defineComponent(() => ({
 			})
 			.catch((error) => {
 				this.$logger.error("[Binacle] Error while updating scene", error);
-				this.$dispatch('error-occured', ['Error while updating packing visualizer. Please try again later.']);
+				this.$dispatch('error-occurred', ['Error while updating packing visualizer. Please try again later.']);
 				if(window.binacle?.visualizerContainer){
 					stopLoading(window.binacle.visualizerContainer);
 				}

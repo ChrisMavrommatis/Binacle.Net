@@ -15,6 +15,7 @@ export {getMeshPosition} from './getMeshPosition';
 export {getRandomBin} from './getRandomBin';
 export {getRandomInt} from './getRandomInt';
 export {getRandomItem} from './getRandomItem';
+export {getResponseStatusText} from './getResponseStatusText';
 export {getThemeColors} from './getThemeColors';
 export {redrawScene} from './redrawScene';
 export {removeItemFromScene} from './removeItemFromScene';

@@ -1,6 +1,6 @@
 import type { Alpine as AlpineType } from 'alpinejs';
-import {defineComponent, getRandomBin, getRandomInt, getRandomItem} from "../utils";
-import {Bin, Item} from "../viewModels";
+import {defineComponent, getRandomBin, getRandomInt, getRandomItem, getResponseStatusText} from "../utils";
+import {Bin, Item, Error} from "../viewModels";
 import {PackingParameters, PackingRequest, PackingResponse} from "../apiModels";
 import {PackedData} from "../apiModels/packingResponse";
 
@@ -93,6 +93,35 @@ export const packingDemoApp = defineComponent((base_url: string) => ({
 			this.model.items = items;
 		}
 	},
+	async handleErrorResponse(response: Response) {
+		let errorObj = {
+			title: `Error: ${response.statusText || getResponseStatusText(response.status) || response.status}`,
+			errors: []
+		} as Error;
+
+		try {
+			const responseJson = await response.json();
+			if(responseJson?.title){
+				errorObj.title = responseJson.title;
+			}
+			if(responseJson?.detail){
+				errorObj.errors.push(responseJson.detail);
+			}
+			if(response.status === 422 && responseJson?.errors){
+				for(const key in responseJson.errors){
+					const fieldErrors = responseJson.errors[key];
+					fieldErrors.forEach((err: string) => {
+						errorObj.errors.push(`${key}: ${err}`);
+					});
+				}
+			}
+		}
+		catch (error) {
+			this.$logger.error("[Binacle] Error while parsing error response", error);
+			errorObj.errors.push('An error occurred, but the error response could not be parsed.');
+		}
+		this.$dispatch('error-occurred', errorObj);
+	},
 	async getResults(request: PackingRequest) : Promise<PackingResponse | null> {
 		try {
 			const response = await fetch(`${base_url}/api/v3/pack/by-custom`, {
@@ -102,35 +131,18 @@ export const packingDemoApp = defineComponent((base_url: string) => ({
 				},
 				body: JSON.stringify(request)
 			})
-			const responseJson = await response.json();
-
-			// TODO: Handle errors properly
-			// if(response.status !== 200){
-			// 	let event = {
-			// 		errors: []
-			// 	};
-			// 	event.errors.push(`Error: ${response.status}.`);
-			// 	if(responseJson?.title){
-			// 		event.title = responseJson.title;
-			// 	}
-			// 	if(responseJson?.detail){
-			// 		event.errors.push(responseJson.detail);
-			// 	}
-			// 	if(response.status == 422){
-			// 		for(const key in responseJson?.errors){
-			// 			const fieldErrors = responseJson.errors[key];
-			// 			fieldErrors.forEach(err => {
-			// 				event.errors.push(`${key}: ${err}`);
-			// 			});
-			// 		}
-			// 	}
-			// 	this.$dispatch('error-occurred', event);
-			// 	return null;
-			// }
-			return responseJson as PackingResponse;
+			if(response.status === 200){
+				const responseJson = await response.json();
+				return responseJson as PackingResponse;
+			}
+			await this.handleErrorResponse(response);
+			return null;
 		} catch (error) {
 			this.$logger.error("[Binacle] Error while fetching packing results", error);
-			this.$dispatch('error-occurred', ['Error while fetching packing results. Please try again later.']);
+			this.$dispatch('error-occurred', {
+				title: "Error while fetching packing results",
+				errors: [error instanceof Error ? error.message : String(error)]
+			});
 			return null;
 		}
 	},
