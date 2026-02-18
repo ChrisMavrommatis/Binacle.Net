@@ -1,4 +1,4 @@
-import type { Alpine as AlpineType } from 'alpinejs';
+import type {Alpine as AlpineType} from 'alpinejs';
 import {defineComponent} from "../utils";
 import {Error} from "../viewModels";
 
@@ -13,23 +13,20 @@ export const errorsDialog = defineComponent((default_title: string) => ({
 	hasErrors() {
 		return this.errors.length > 0;
 	},
-	closeDialog(){
+	closeDialog() {
 		this.errors = [];
 		this.title = this.defaultTitle;
 	},
-	onErrorOccurred(data: string[] | Error){
-		if(data && Array.isArray(data)){
+	onErrorOccurred(data: string[] | Error) {
+		if (Array.isArray(data)) {
 			this.errors = data;
 		}
-		if(data instanceof Error){
-			const error = data as Error;
-			if(error.title){
-				this.title = error.title;
-			}
-			if(error.errors){
-				this.errors = error.errors;
-			}
+		const error = data as Error;
+		if (error.title) {
+			this.title = error.title;
 		}
-
+		if (error.errors) {
+			this.errors = error.errors;
+		}
 	}
 }));
