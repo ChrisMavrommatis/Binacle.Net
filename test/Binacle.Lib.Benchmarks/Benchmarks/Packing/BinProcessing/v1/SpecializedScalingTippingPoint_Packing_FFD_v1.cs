@@ -6,10 +6,10 @@ using Binacle.TestsKernel;
 namespace Binacle.Lib.Benchmarks.BinProcessing;
 
 [MemoryDiagnoser]
-public class TippingPoint_Packing_WFD_v2 : TippingPointBenchmarkBase
+public class SpecializedScalingTippingPoint_Packing_FFD_v1 : SpecializedScalingTippingPointBenchmarkBase
 {
 	protected override TestAlgorithmFactory<IPackingAlgorithm> AlgorithmFactory
-		=> AlgorithmFactories.WFD_v2;
+		=> AlgorithmFactories.FFD_v1;
 
 	protected override AlgorithmOperation AlgorithmOperation
 		=> AlgorithmOperation.Packing;

@@ -9,7 +9,7 @@ using Binacle.TestsKernel.Models;
 
 namespace Binacle.Lib.Benchmarks.Abstractions;
 
-public abstract class TippingPointBenchmarkBase
+public abstract class SpecializedScalingTippingPointBenchmarkBase
 {
     [Params(1, 2, 3, 4, 5, 6, 7)] 
     public int BinCount { get; set; }
