@@ -11,95 +11,94 @@ namespace Binacle.Lib.Benchmarks.Abstractions;
 
 public abstract class TippingPointBenchmarkBase
 {
-	[Params(1, 2, 3, 4, 5, 6, 7)]
-	public int BinCount { get; set; }
+    [Params(1, 2, 3, 4, 5, 6, 7)] 
+    public int BinCount { get; set; }
 
-	[Params(4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60)]
-	public int ItemCount { get; set; }
+    [Params(3, 7, 13, 17, 23, 29, 37, 47, 59, 67, 79)]
+    public int ItemCount { get; set; }
 
-	[ParamsSource(typeof(ConcurrencyProvider), nameof(ConcurrencyProvider.GetProcessorCount))]
-	public int ProcessorCount { get; set; }
+    [ParamsSource(typeof(ConcurrencyProvider), nameof(ConcurrencyProvider.GetProcessorCount))]
+    public int ProcessorCount { get; set; }
 
-	public List<TestBin> Bins { get; set; } = null!;
-	public List<TestItem> Items { get; set; } = null!;
-	
-	[GlobalSetup]
-	public void GlobalSetup()
-	{
-		var generator = new Generator(596333);
-		this.Bins = generator.GenerateBins(this.BinCount, 100, 100, 100);
-		this.Items = generator.GenerateItems(this.ItemCount, 5, 25);
-	}
+    public List<TestBin> Bins { get; set; } = null!;
+    public List<TestItem> Items { get; set; } = null!;
 
-	[GlobalCleanup]
-	public void GlobalCleanup()
-	{
-	}
-	
-	protected abstract TestAlgorithmFactory<IPackingAlgorithm> AlgorithmFactory { get; }
-	protected abstract AlgorithmOperation AlgorithmOperation { get; }
-	
-	[Benchmark(Baseline = true)]
-	[BenchmarkOrder(10)]
-	public IDictionary<string, OperationResult> Loop()
-	{
-		var results = new Dictionary<string, OperationResult>(this.Bins.Count);
+    [GlobalSetup]
+    public void GlobalSetup()
+    {
+        this.Bins = SpecializedScalingProblemsProvider.GetBins(this.BinCount);
+        this.Items = SpecializedScalingProblemsProvider.GetItems(this.ItemCount);
+    }
 
-		for (var i = 0; i < this.Bins.Count; i++)
-		{
-			var bin = this.Bins[i];
-			var algorithmInstance = this.AlgorithmFactory(bin, this.Items);
-			var result = algorithmInstance.Execute(new TestOperationParameters()
-			{
-				Operation = this.AlgorithmOperation
-			});
-			results[bin.ID] = result;
-		}
+    [GlobalCleanup]
+    public void GlobalCleanup()
+    {
+    }
 
-		return results;
-	}
+    protected abstract TestAlgorithmFactory<IPackingAlgorithm> AlgorithmFactory { get; }
+    protected abstract AlgorithmOperation AlgorithmOperation { get; }
 
-	[Benchmark]
-	[BenchmarkOrder(20)]
-	public IDictionary<string, OperationResult> ParallelConcurrent()
-	{
-		var results = new ConcurrentDictionary<string, OperationResult>(this.ProcessorCount, this.Bins.Count);
+    [Benchmark(Baseline = true)]
+    [BenchmarkOrder(10)]
+    public IDictionary<string, OperationResult> Loop()
+    {
+        var results = new Dictionary<string, OperationResult>(this.Bins.Count);
 
-		Parallel.For(0, this.Bins.Count, i =>
-		{
-			var bin = this.Bins[i];
-			var algorithmInstance = this.AlgorithmFactory(bin, this.Items);
-			var result = algorithmInstance.Execute(new TestOperationParameters()
-			{
-				Operation = this.AlgorithmOperation
-			});
-			results[bin.ID] = result;
-		});
+        for (var i = 0; i < this.Bins.Count; i++)
+        {
+            var bin = this.Bins[i];
+            var algorithmInstance = this.AlgorithmFactory(bin, this.Items);
+            var result = algorithmInstance.Execute(new TestOperationParameters()
+            {
+                Operation = this.AlgorithmOperation
+            });
+            results[bin.ID] = result;
+        }
 
-		return results;
-	}
+        return results;
+    }
 
-	[Benchmark]
-	[BenchmarkOrder(30)]
-	public IDictionary<string, OperationResult> ParallelLock()
-	{
-		var results = new Dictionary<string, OperationResult>(this.Bins.Count);
-		var resultsLock = new object();
+    [Benchmark]
+    [BenchmarkOrder(20)]
+    public IDictionary<string, OperationResult> ParallelConcurrent()
+    {
+        var results = new ConcurrentDictionary<string, OperationResult>(this.ProcessorCount, this.Bins.Count);
 
-		Parallel.For(0, this.Bins.Count, i =>
-		{
-			var bin = this.Bins[i];
-			var algorithmInstance = this.AlgorithmFactory(bin, this.Items);
-			var result = algorithmInstance.Execute(new TestOperationParameters()
-			{
-				Operation = this.AlgorithmOperation
-			});
-			lock (resultsLock)
-			{
-				results[bin.ID] = result;
-			}
-		});
+        Parallel.For(0, this.Bins.Count, i =>
+        {
+            var bin = this.Bins[i];
+            var algorithmInstance = this.AlgorithmFactory(bin, this.Items);
+            var result = algorithmInstance.Execute(new TestOperationParameters()
+            {
+                Operation = this.AlgorithmOperation
+            });
+            results[bin.ID] = result;
+        });
 
-		return results;
-	}
+        return results;
+    }
+
+    [Benchmark]
+    [BenchmarkOrder(30)]
+    public IDictionary<string, OperationResult> ParallelLock()
+    {
+        var results = new Dictionary<string, OperationResult>(this.Bins.Count);
+        var resultsLock = new object();
+
+        Parallel.For(0, this.Bins.Count, i =>
+        {
+            var bin = this.Bins[i];
+            var algorithmInstance = this.AlgorithmFactory(bin, this.Items);
+            var result = algorithmInstance.Execute(new TestOperationParameters()
+            {
+                Operation = this.AlgorithmOperation
+            });
+            lock (resultsLock)
+            {
+                results[bin.ID] = result;
+            }
+        });
+
+        return results;
+    }
 }
