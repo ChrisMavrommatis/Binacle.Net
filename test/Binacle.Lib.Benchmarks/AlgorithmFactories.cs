@@ -1,3 +1,4 @@
+using Binacle.Lib.Abstractions;
 using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
@@ -24,3 +25,4 @@ internal static class AlgorithmFactories
 	public static TestAlgorithmFactory<IPackingAlgorithm> BFD_v2 = (bin, items)
 		=> new Binacle.Lib.Algorithms.BestFitDecreasing_v2<TestBin, TestItem>(bin, items);
 }
+
