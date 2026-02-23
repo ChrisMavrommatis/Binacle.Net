@@ -5,6 +5,8 @@ namespace Binacle.Lib.Benchmarks.Providers;
 
 public static class SpecializedScalingProblemsProvider
 {
+	public const string MaxSizeBin = "60x40x40";
+	
 	public static Scenario GetBaseline()
 	{
 		return Scenario.Create(
@@ -16,7 +18,7 @@ public static class SpecializedScalingProblemsProvider
 		);
 	}
 	
-    private static TestBin CreateBin(string bin)
+    public static TestBin CreateBin(string bin)
     {
         var dimensions = DimensionsHelper.ParseFromCompactString(bin);
         return new TestBin(bin, dimensions);

@@ -5,7 +5,7 @@ using Binacle.Lib.Benchmarks.Abstractions;
 namespace Binacle.Lib.Benchmarks.BinProcessing;
 
 [MemoryDiagnoser]
-public class SpecializedScalingTippingPoint_Packing_v1 : SpecializedScalingTippingPointBenchmarkBase
+public class BinParallelizationThreshold_Packing_v1 : BinParallelizationThresholdBenchmarkBase
 {
 	protected override IAlgorithmFactory AlgorithmFactory =>
 		new AlgorithmFactory_v1();

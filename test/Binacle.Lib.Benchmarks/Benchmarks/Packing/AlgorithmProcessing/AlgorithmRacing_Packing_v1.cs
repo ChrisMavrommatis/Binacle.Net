@@ -2,7 +2,7 @@ using BenchmarkDotNet.Attributes;
 using Binacle.Lib.Abstractions;
 using Binacle.Lib.Benchmarks.Abstractions;
 
-namespace Binacle.Lib.Benchmarks.AlgorithmRacing;
+namespace Binacle.Lib.Benchmarks.AlgorithmProcessing;
 
 [MemoryDiagnoser]
 public class AlgorithmRacing_Packing_v1 : AlgorithmRacingBenchmarksBase

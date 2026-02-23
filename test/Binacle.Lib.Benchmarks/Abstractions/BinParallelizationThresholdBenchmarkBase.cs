@@ -7,7 +7,7 @@ using Binacle.TestsKernel.Models;
 
 namespace Binacle.Lib.Benchmarks.Abstractions;
 
-public abstract class SpecializedScalingTippingPointBenchmarkBase
+public abstract class BinParallelizationThresholdBenchmarkBase
 {
     private LoopBinProcessor loopBinProcessor = null!;
     private ParallelBinProcessor parallelBinProcessor = null!;
