@@ -1,8 +1,6 @@
 ﻿using Binacle.Lib;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.Models;
-using Binacle.Net.Services;
 using Binacle.Net.v4.Contracts.Pack;
 using OpenApiExamples.ExtensionMethods;
 
@@ -21,29 +19,29 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			.RequestExample<PackCustomBinRequestExample>("application/json")
 			
 			.Produces<BinPackResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200Ok)
-			.ResponseExamples<PackByCustomResponseExamples>(StatusCodes.Status200OK, "application/json")
+			// .ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200Ok)
+			// .ResponseExamples<PackByCustomResponseExamples>(StatusCodes.Status200OK, "application/json")
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			// .ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
 			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For400BadRequest
 			)
-			.ResponseExamples<PackByCustomValidationProblemExamples>(
-				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
-			)
+			//.ResponseExamples<PackByCustomValidationProblemExamples>(
+			//	StatusCodes.Status422UnprocessableEntity,
+			// "application/problem+json"
+			//)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 
 	internal async Task<IResult> HandleAsync(
 		BindingResult<PackCustomBinRequest> bindingResult,
-		IBinacleService binacleService,
+		// IBinacleService binacleService,
 		ILogger<CustomBin> logger,
 		CancellationToken cancellationToken = default
 	)
@@ -52,25 +50,25 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 		
 		return await bindingResult.ValidateAsync(async request =>
 		{
-			var operationResults = await binacleService.OperateAsync(
-				request.Bin!,
-				request.Items!,
-				new OperationParameters
-				{
-					Algorithm = request.Parameters!.Algorithm!.Value,
-					Operation = AlgorithmOperation.Packing
-				}
-			);
+			//  var operationResults = await binacleService.OperateAsync(
+			//	  request.Bin!,
+			//	  request.Items!,
+			//	  new OperationParameters
+			//	  {
+			//	  	Algorithm = request.Parameters!.Algorithm!.Value.ToLibAlgorithm(),
+			//	  	Operation = AlgorithmOperation.Packing
+			//	  }
+			//  );
 
 			using (var responseActivity = Diagnostics.ActivitySource.StartActivity("Create Response"))
 			{
 				return Results.Ok(
-					PackResponse.Create(
-						request.Bins!,
-						request.Items!,
-						request.Parameters,
-						operationResults
-					)
+					// PackResponse.Create(
+					// 	request.Bins!,
+					// 	request.Items!,
+					// 	request.Parameters,
+					// 	operationResults
+					// )
 				);
 			}
 		});

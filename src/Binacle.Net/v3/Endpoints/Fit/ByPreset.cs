@@ -1,9 +1,7 @@
-﻿using Binacle.Lib;
-using Binacle.Net.Configuration;
+﻿using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
-using Binacle.Net.Models;
-using Binacle.Net.Services;
 using Binacle.Net.v3.Contracts;
+using Binacle.Net.v3.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using OpenApiExamples.ExtensionMethods;
@@ -67,11 +65,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 			var operationResults = await binacleService.OperateAsync(
 				presetOption.Bins!,
 				request.Items!,
-				new OperationParameters
-				{
-					Algorithm = request.Parameters!.Algorithm!.Value.ToLibAlgorithm(),
-					Operation = AlgorithmOperation.Fitting
-				}
+				request.Parameters!
 			);
 
 			using (var responseActivity = Diagnostics.ActivitySource.StartActivity("Create Response"))

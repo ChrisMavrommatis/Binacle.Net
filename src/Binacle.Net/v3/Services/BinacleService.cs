@@ -1,21 +1,24 @@
 ﻿using System.Threading.Channels;
 using Binacle.Lib.Abstractions;
+using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Abstractions.Models;
-using Binacle.Net.ExtensionMethods;
 using Binacle.Net.Kernel.Logs.Models;
-using ApiOperationParameters = Binacle.Net.Models.OperationParameters;
+using Binacle.Net.Services;
+using Binacle.Net.v3.Contracts;
+using Binacle.Net.v3.ExtensionMethods;
 
-namespace Binacle.Net.Services;
+namespace Binacle.Net.v3.Services;
 
 internal interface IBinacleService
 {
-	ValueTask<IDictionary<string, OperationResult>> OperateAsync<TBin, TBox>(
+	ValueTask<IDictionary<string, OperationResult>> OperateAsync<TBin, TBox, TParams>(
 		List<TBin> bins,
 		List<TBox> items,
-		ApiOperationParameters parameters
+		TParams parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
-		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+		where TParams : class, IWithAlgorithm, IOperationParameters, ILogConvertible;
 }
 
 internal class BinacleService : IBinacleService
@@ -38,20 +41,21 @@ internal class BinacleService : IBinacleService
 		this.logger = logger;
 	}
 
-	public async ValueTask<IDictionary<string, OperationResult>> OperateAsync<TBin, TBox>(
+	public async ValueTask<IDictionary<string, OperationResult>> OperateAsync<TBin, TBox, TParams>(
 		List<TBin> bins,
 		List<TBox> items,
-		ApiOperationParameters parameters
+		TParams parameters
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+		where TParams : class, IWithAlgorithm, IOperationParameters, ILogConvertible
 	{
 		using var activity = Diagnostics.ActivitySource.StartActivity("Pack Bins");
 
 		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
 
 		var results = this.loopBinProcessor.Process(
-			parameters.Algorithm,
+			parameters.Algorithm.ToLibAlgorithm(),
 			bins,
 			items,
 			parameters
@@ -61,14 +65,15 @@ internal class BinacleService : IBinacleService
 		return results;
 	}
 
-	private async ValueTask WriteToChannelAsync<TBin, TBox>(
+	private async ValueTask WriteToChannelAsync<TBin, TBox, TParams>(
 		List<TBin> bins,
 		List<TBox> items,
-		ApiOperationParameters parameters,
+		TParams parameters,
 		IDictionary<string, OperationResult> results
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+		where TParams : class, IWithAlgorithm, IOperationParameters, ILogConvertible
 	{
 		using var channelActivity = Diagnostics.ActivitySource.StartActivity("Send Channel Request");
 
