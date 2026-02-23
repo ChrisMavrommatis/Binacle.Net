@@ -1,5 +1,4 @@
 ﻿using Binacle.Net.Kernel.OpenApi.Helpers;
-using Binacle.Net.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples;
