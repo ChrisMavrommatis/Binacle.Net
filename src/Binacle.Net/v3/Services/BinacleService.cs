@@ -2,6 +2,7 @@
 using Binacle.Lib.Abstractions;
 using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Abstractions.Models;
+using Binacle.Net.ExtensionMethods;
 using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.Services;
 using Binacle.Net.v3.Contracts;
@@ -61,38 +62,7 @@ internal class BinacleService : IBinacleService
 			parameters
 		);
 
-		await this.WriteToChannelAsync(bins, items, parameters, results);
+		await this.logChannel.WriteToChannelAsync(bins, items, parameters, results, this.logger);
 		return results;
-	}
-
-	private async ValueTask WriteToChannelAsync<TBin, TBox, TParams>(
-		List<TBin> bins,
-		List<TBox> items,
-		TParams parameters,
-		IDictionary<string, OperationResult> results
-	)
-		where TBin : class, IWithID, IWithReadOnlyDimensions
-		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
-		where TParams : class, IWithAlgorithm, IOperationParameters, ILogConvertible
-	{
-		using var channelActivity = Diagnostics.ActivitySource.StartActivity("Send Channel Request");
-
-		if (this.logChannel is null)
-		{
-			return;
-		}
-
-		try
-		{
-			await this.logChannel
-				.Writer
-				.WriteAsync(
-					AlgorithmOperationLogChannelRequest.From(bins, items, parameters, results)
-				);
-		}
-		catch (Exception ex)
-		{
-			this.logger.LogError(ex, "Error while writing to channel");
-		}
 	}
 }
