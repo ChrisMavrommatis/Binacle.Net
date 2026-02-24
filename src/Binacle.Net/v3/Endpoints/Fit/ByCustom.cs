@@ -1,7 +1,7 @@
 ﻿using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v3.Contracts;
-using Binacle.Net.v3.Services;
+using Binacle.Net.Services;
 using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.v3.Endpoints.Fit;

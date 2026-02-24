@@ -4,11 +4,9 @@ using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.ExtensionMethods;
 using Binacle.Net.Kernel.Logs.Models;
-using Binacle.Net.Services;
-using Binacle.Net.v3.Contracts;
-using Binacle.Net.v3.ExtensionMethods;
+using Binacle.Net.Models;
 
-namespace Binacle.Net.v3.Services;
+namespace Binacle.Net.Services;
 
 internal interface IBinacleService
 {
@@ -19,7 +17,7 @@ internal interface IBinacleService
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
-		where TParams : class, IWithAlgorithm, IOperationParameters, ILogConvertible;
+		where TParams : class, ILibAlgorithmConvertible, IOperationParameters, ILogConvertible;
 }
 
 internal class BinacleService : IBinacleService
@@ -49,14 +47,14 @@ internal class BinacleService : IBinacleService
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
-		where TParams : class, IWithAlgorithm, IOperationParameters, ILogConvertible
+		where TParams : class, ILibAlgorithmConvertible, IOperationParameters, ILogConvertible
 	{
 		using var activity = Diagnostics.ActivitySource.StartActivity("Pack Bins");
 
 		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
 
 		var results = this.loopBinProcessor.Process(
-			parameters.Algorithm.ToLibAlgorithm(),
+			parameters.GetAlgorithm(),
 			bins,
 			items,
 			parameters
@@ -65,4 +63,6 @@ internal class BinacleService : IBinacleService
 		await this.logChannel.WriteToChannelAsync(bins, items, parameters, results, this.logger);
 		return results;
 	}
+	
+	
 }

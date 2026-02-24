@@ -40,7 +40,6 @@
 	<ItemGroup>
 	  <Folder Include="v4\Contracts\Fit\" />
 	  <Folder Include="v4\Endpoints\Fit\" />
-	  <Folder Include="v4\Services\" />
 	</ItemGroup>
 
 </Project>

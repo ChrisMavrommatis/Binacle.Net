@@ -4,6 +4,7 @@ using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Net.ExtensionMethods;
 using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.Kernel.Serialization;
+using Binacle.Net.Models;
 using Binacle.Net.v3.ExtensionMethods;
 using FluentValidation;
 
@@ -16,7 +17,11 @@ public interface IWithFittingParameters
 	FitRequestParameters Parameters { get; set; }
 }
 
-public class FitRequestParameters : IWithAlgorithm, IOperationParameters, ILogConvertible
+public class FitRequestParameters : 
+	IWithAlgorithm, 
+	ILibAlgorithmConvertible,
+	IOperationParameters,
+	ILogConvertible
 {
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public required Algorithm? Algorithm { get; set; }
@@ -36,6 +41,7 @@ public class FitRequestParameters : IWithAlgorithm, IOperationParameters, ILogCo
 	
 	[JsonIgnore]
 	public AlgorithmOperation Operation => AlgorithmOperation.Fitting;
+	public Lib.Algorithm GetAlgorithm() => this.Algorithm.ToLibAlgorithm();
 }
 
 

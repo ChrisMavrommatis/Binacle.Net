@@ -1,5 +1,6 @@
 ﻿using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
+using Binacle.Net.Services;
 using Binacle.Net.v3.Contracts;
 using OpenApiExamples.ExtensionMethods;
 
@@ -40,7 +41,7 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 
 	internal async Task<IResult> HandleAsync(
 		BindingResult<PackByCustomRequest> bindingResult,
-		Services.IBinacleService binacleService,
+		IBinacleService binacleService,
 		ILogger<ByCustom> logger,
 		CancellationToken cancellationToken = default
 	)

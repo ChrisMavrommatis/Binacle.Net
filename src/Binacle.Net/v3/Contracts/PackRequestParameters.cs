@@ -4,6 +4,7 @@ using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Net.ExtensionMethods;
 using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.Kernel.Serialization;
+using Binacle.Net.Models;
 using Binacle.Net.v3.ExtensionMethods;
 using FluentValidation;
 
@@ -16,7 +17,11 @@ public interface IWithPackingParameters
 	PackRequestParameters Parameters { get; set; }
 }
 
-public class PackRequestParameters : IWithAlgorithm, IOperationParameters, ILogConvertible
+public class PackRequestParameters : 
+	IWithAlgorithm, 
+	ILibAlgorithmConvertible, 
+	IOperationParameters, 
+	ILogConvertible
 {
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public required Algorithm? Algorithm { get; set; }
@@ -38,6 +43,8 @@ public class PackRequestParameters : IWithAlgorithm, IOperationParameters, ILogC
 
 	[JsonIgnore]
 	public AlgorithmOperation Operation => AlgorithmOperation.Packing;
+
+	public Lib.Algorithm GetAlgorithm() => this.Algorithm.ToLibAlgorithm();
 }
 
 internal class PackRequestParametersValidator : AbstractValidator<IWithPackingParameters>
