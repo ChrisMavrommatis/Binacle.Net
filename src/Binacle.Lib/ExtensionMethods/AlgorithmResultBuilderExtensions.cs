@@ -18,8 +18,7 @@ internal static class AlgorithmResultBuilderExtensions
 	{
 		var algorithmInfo = new AlgorithmInfo(
 			algorithmInstance.Algorithm,
-			version: algorithmInstance.Version,
-			operation: parameters.Operation
+			version: algorithmInstance.Version
 		);
 		return new OperationResultBuilder<TBin, TItem>(algorithmInfo, bin, totalItems, totalItemsVolume, parameters);
 	}

@@ -23,19 +23,16 @@ internal interface IBinacleService
 internal class BinacleService : IBinacleService
 {
 	private readonly Channel<AlgorithmOperationLogChannelRequest>? logChannel;
+	private readonly IBinProcessorFactory binProcessorFactory;
 	private readonly ILogger<BinacleService> logger;
-	private readonly IBinProcessor loopBinProcessor;
-	private readonly IBinProcessor parallelBinProcessor;
 
 	public BinacleService(
-		[FromKeyedServices("loop")] IBinProcessor loopBinProcessor,
-		[FromKeyedServices("parallel")] IBinProcessor parallelBinProcessor,
+		IBinProcessorFactory binProcessorFactory,
 		ILogger<BinacleService> logger,
 		IOptionalDependency<Channel<AlgorithmOperationLogChannelRequest>> logChannel
 	)
 	{
-		this.loopBinProcessor = loopBinProcessor;
-		this.parallelBinProcessor = parallelBinProcessor;
+		this.binProcessorFactory = binProcessorFactory;
 		this.logChannel = logChannel.Value;
 		this.logger = logger;
 	}
@@ -53,7 +50,8 @@ internal class BinacleService : IBinacleService
 
 		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
 
-		var results = this.loopBinProcessor.Process(
+		var binProcessor = this.binProcessorFactory.Create(bins.Count, items.Count);
+		var results = binProcessor.Process(
 			parameters.GetAlgorithm(),
 			bins,
 			items,

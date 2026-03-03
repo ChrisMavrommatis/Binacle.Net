@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="Binacle.Lib" />
-	</ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Binacle.Lib"/>
+        <InternalsVisibleTo Include="Binacle.Lib.UnitTests"/>
+    </ItemGroup>
 
 </Project>
