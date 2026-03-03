@@ -3,6 +3,7 @@
     <ItemGroup>
         <InternalsVisibleTo Include="Binacle.Lib"/>
         <InternalsVisibleTo Include="Binacle.Lib.UnitTests"/>
+        <InternalsVisibleTo Include="Binacle.TestsKernel"/>
     </ItemGroup>
 
 </Project>
