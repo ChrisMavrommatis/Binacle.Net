@@ -6,18 +6,8 @@
   </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Algorithms\Data\BischoffSuite\orlib_thpack1.json" />
-        <EmbeddedResource Include="Algorithms\Data\BischoffSuite\orlib_thpack2.json" />
-        <EmbeddedResource Include="Algorithms\Data\BischoffSuite\orlib_thpack3.json" />
-        <EmbeddedResource Include="Algorithms\Data\BischoffSuite\orlib_thpack4.json" />
-        <EmbeddedResource Include="Algorithms\Data\BischoffSuite\orlib_thpack5.json" />
-        <EmbeddedResource Include="Algorithms\Data\BischoffSuite\orlib_thpack6.json" />
-        <EmbeddedResource Include="Algorithms\Data\BischoffSuite\orlib_thpack7.json" />
-        <EmbeddedResource Include="Algorithms\Data\CustomProblems\baseline.json" />
-        <EmbeddedResource Include="Algorithms\Data\CustomProblems\complex.json" />
-        <EmbeddedResource Include="Algorithms\Data\CustomProblems\simple.json" />
-        <EmbeddedResource Include="Data\**\*.json" />
-        <EmbeddedResource Include="ResultSelection\Data\BestAlgorithm\baseline.json" />
+        <EmbeddedResource Include="Algorithms\Data\**\*.json" />
+        <EmbeddedResource Include="ResultSelection\Data\**\*.json" />
     </ItemGroup>
 
 

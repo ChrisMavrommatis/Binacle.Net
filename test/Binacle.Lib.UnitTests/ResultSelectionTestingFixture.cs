@@ -1,6 +1,6 @@
+using Binacle.Lib.Abstractions;
 using Binacle.Lib.Abstractions.Models;
-using Binacle.TestsKernel.Helpers;
-using Xunit.Internal;
+using Binacle.TestsKernel.ResultSelection.Providers;
 
 namespace Binacle.Lib.UnitTests;
 
@@ -16,26 +16,15 @@ public sealed class ResultSelectionTestingFixture : IDisposable
 	{
 	}
 	
-	public OperationResult MakeResult(
-		string binString,
-		string algorithmString,
-		OperationResultStatus status,
-		decimal binPct,
-		decimal itemsPct
+	public void RunTest(
+		string scenarioName, 
+		IResultSelectionStrategy selectionStrategy,
+		Func<OperationResult, string> resultSelector
 		)
 	{
-		var bin = DimensionsHelper.ParseFromCompactString(binString);
-		var algorithmInfo = AlgorithmInfoHelper.ParseFromCompactString(algorithmString);
-		return new OperationResult()
-		{
-			Bin = new PackedBin(binString, bin),
-			AlgorithmInfo = algorithmInfo,
-			AlgorithmOperation =  AlgorithmOperation.Packing,
-			Status = status,
-			PackedItems = Enumerable.Empty<PackedItem>().CastOrToReadOnlyList(),
-			UnpackedItems = Enumerable.Empty<UnpackedItem>().CastOrToReadOnlyList(),
-			PackedBinVolumePercentage = binPct,
-			PackedItemsVolumePercentage = itemsPct
-		};
+		var scenario = AllScenariosProvider.GetScenarioByName(scenarioName);
+		var selected = selectionStrategy.Select(scenario.Results);
+		var selectedResult = resultSelector(selected);
+		selectedResult.ShouldBe(scenario.ExpectedResult);
 	}
 }

@@ -1,4 +1,4 @@
-namespace Binacle.TestsKernel;
+namespace Binacle.TestsKernel.Algorithms;
 
 public static class CollectionKeys
 {

@@ -2,12 +2,12 @@ using Binacle.TestsKernel.ResultSelection.Models;
 
 namespace Binacle.TestsKernel.ResultSelection.Providers;
 
-public static class BestAlgorithmScenarioProvider
+public static class BestBinScenarioProvider
 {
     private static readonly Dictionary<string, Scenario> scenarios;
-    static BestAlgorithmScenarioProvider()
+    static BestBinScenarioProvider()
     {
-        var dataProvider = new MultipleScenarioCollectionsProvider(CollectionKeys.BestAlgorithm.ToArray());
+        var dataProvider = new MultipleScenarioCollectionsProvider(CollectionKeys.BestBin.ToArray());
         scenarios = new Dictionary<string, Scenario>();
         foreach (var collectionScenario in dataProvider)
         {

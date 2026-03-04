@@ -18,7 +18,7 @@ public class BestBin_v1 : IResultSelectionStrategy
 
         // fallback: most of the order packed
         return results.Values
-            .OrderByDescending(r => r.PackedItemsVolumePercentage)
+            .OrderByDescending(r => r.PackedBinVolumePercentage)
             .First();
     }
 }
