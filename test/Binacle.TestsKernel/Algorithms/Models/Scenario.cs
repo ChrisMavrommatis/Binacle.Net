@@ -1,6 +1,8 @@
+using Binacle.TestsKernel.Algorithms.Helpers;
 using Binacle.TestsKernel.Helpers;
+using Binacle.TestsKernel.Models;
 
-namespace Binacle.TestsKernel.Models;
+namespace Binacle.TestsKernel.Algorithms.Models;
 
 public record CollectionScenario(
 	string ConnectionKey,

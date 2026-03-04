@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
+using Binacle.TestsKernel.Algorithms.Models;
 using Binacle.TestsKernel.Files;
-using Binacle.TestsKernel.Models;
 
-namespace Binacle.TestsKernel.ScenarioProviders;
+namespace Binacle.TestsKernel.Algorithms;
 
 public static class ScenarioCollectionsProvider
 {
@@ -14,7 +14,7 @@ public static class ScenarioCollectionsProvider
 		collections = new Dictionary<string, List<Scenario>>();
 
 		var scenarioReader = new ScenarioReader();
-		var files = EmbeddedResourceFileProvider.All();
+		var files = EmbeddedResourceFileProvider.ByPrefix("Binacle.TestsKernel.Algorithms.Data.");
 
 		foreach (var file in files)
 		{

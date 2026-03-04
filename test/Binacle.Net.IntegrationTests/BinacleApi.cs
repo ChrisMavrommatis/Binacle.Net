@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using Binacle.Net.Configuration;
 using Binacle.Net.IntegrationTests;
-using Binacle.TestsKernel.ScenarioProviders;
+using Binacle.TestsKernel.Algorithms.Providers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;

@@ -3,7 +3,7 @@ using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Results;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
-using Binacle.TestsKernel.ScenarioProviders;
+using Binacle.TestsKernel.Algorithms.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace Binacle.Lib.PerformanceTests.Tests.BischoffSuite;

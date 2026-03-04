@@ -4,7 +4,7 @@ using Binacle.Net.Configuration;
 using Binacle.Net.v3.Contracts;
 using Binacle.TestsKernel;
 using Binacle.Lib;
-using Binacle.TestsKernel.ScenarioProviders;
+using Binacle.TestsKernel.Algorithms.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

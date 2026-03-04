@@ -1,0 +1,29 @@
+[
+  {
+    "Name": "Best Algorithm - One Fully Packed winner",
+    "ExpectedResult": "BFD_v2",
+    "Results": {
+      "FFD_v2": "60x40x10 FFD_v2 PartiallyPacked 70 95",
+      "BFD_v2": "60x40x10 BFD_v2 FullyPacked 75 100",
+      "WFD_v2": "60x40x10 WFD_v2 PartiallyPacked 68 90"
+    }
+  },
+  {
+    "Name": "Best Algorithm - Multiple Fully Packed",
+    "ExpectedResult": "FFD_v2",
+    "Results": {
+        "FFD_v2": "60x40x10 FFD_v2 FullyPacked 75 100",
+        "BFD_v2": "60x40x10 BFD_v2 FullyPacked 75 100",
+        "WFD_v2": "60x40x10 WFD_v2 FullyPacked 75 100"
+    }
+  },
+  {
+    "Name": "Best Algorithm - All Partially Packed",
+    "ExpectedResult": "BFD_v2",
+    "Results": {
+        "FFD_v2": "60x40x10 FFD_v2 PartiallyPacked 65 85",
+        "BFD_v2": "60x40x10 BFD_v2 PartiallyPacked 70 90",
+        "WFD_v2": "60x40x10 WFD_v2 PartiallyPacked 60 80"
+    }
+  }
+]

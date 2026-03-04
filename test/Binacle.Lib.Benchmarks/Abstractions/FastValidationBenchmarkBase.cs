@@ -3,8 +3,8 @@ using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.Benchmarks.Order;
 using Binacle.TestsKernel;
+using Binacle.TestsKernel.Algorithms.Models;
 using Binacle.TestsKernel.Models;
-using Binacle.TestsKernel.ScenarioProviders;
 
 namespace Binacle.Lib.Benchmarks.Abstractions;
 

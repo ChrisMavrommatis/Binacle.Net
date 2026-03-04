@@ -1,6 +1,6 @@
-using Binacle.TestsKernel.Models;
+using Binacle.TestsKernel.Algorithms.Models;
 
-namespace Binacle.TestsKernel.ScenarioProviders;
+namespace Binacle.TestsKernel.Algorithms.Providers;
 
 public static class BischoffSuiteScenarioProvider
 {

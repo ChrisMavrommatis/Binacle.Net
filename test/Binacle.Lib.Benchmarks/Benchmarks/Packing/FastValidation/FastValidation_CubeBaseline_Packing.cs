@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using Binacle.Lib.Benchmarks.Abstractions;
 using Binacle.Lib.Benchmarks.Providers;
-using Binacle.TestsKernel.Models;
+using Binacle.TestsKernel.Algorithms.Models;
 
 namespace Binacle.Lib.Benchmarks.FastValidation;
 

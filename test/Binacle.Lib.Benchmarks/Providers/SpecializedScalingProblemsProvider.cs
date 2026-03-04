@@ -1,3 +1,4 @@
+using Binacle.TestsKernel.Algorithms.Models;
 using Binacle.TestsKernel.Helpers;
 using Binacle.TestsKernel.Models;
 

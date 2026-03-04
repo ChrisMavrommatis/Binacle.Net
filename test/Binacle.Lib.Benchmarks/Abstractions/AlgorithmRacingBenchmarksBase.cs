@@ -5,7 +5,8 @@ using Binacle.Lib.AlgorithmProcessing;
 using Binacle.Lib.Benchmarks.Order;
 using Binacle.Lib.Benchmarks.Providers;
 using Binacle.TestsKernel.Models;
-using Binacle.TestsKernel.ScenarioProviders;
+using Binacle.TestsKernel.Algorithms.Models;
+using Binacle.TestsKernel.Algorithms.Providers;
 
 namespace Binacle.Lib.Benchmarks.Abstractions;
 

@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using Binacle.Lib;
 using Binacle.Net.v3.Contracts;
 using Binacle.TestsKernel;
-using Binacle.TestsKernel.ScenarioProviders;
+using Binacle.TestsKernel.Algorithms.Providers;
 
 namespace Binacle.Net.IntegrationTests.v3;
 

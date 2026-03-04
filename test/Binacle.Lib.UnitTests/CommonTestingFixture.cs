@@ -1,8 +1,8 @@
 ﻿using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.TestsKernel;
-using Binacle.TestsKernel.ExtensionMethods;
+using Binacle.TestsKernel.Algorithms.ExtensionMethods;
 using Binacle.TestsKernel.Models;
-using Binacle.TestsKernel.ScenarioProviders;
+using Binacle.TestsKernel.Algorithms.Providers;
 
 namespace Binacle.Lib.UnitTests;
 

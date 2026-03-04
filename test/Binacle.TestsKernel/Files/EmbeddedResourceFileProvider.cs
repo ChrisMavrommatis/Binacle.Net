@@ -5,13 +5,17 @@ namespace Binacle.TestsKernel.Files;
 
 public static class EmbeddedResourceFileProvider
 {
-	// should be Binacle.TestsKernel.Data.
-	private static string prefix = $"Binacle.TestsKernel.Data.";
+	private static Dictionary<string, List<IFile>> filesByPrefix = new Dictionary<string,List<IFile>>();
 
-	private static Dictionary<string, List<IFile>> files = new Dictionary<string,List<IFile>>();
-
-	static EmbeddedResourceFileProvider()
+	public static List<IFile> ByPrefix(string prefix)
 	{
+		if (filesByPrefix.TryGetValue(prefix, out var files))
+		{
+			return files;
+		}
+
+		files = new List<IFile>();
+		
 		var assembly = Assembly.GetExecutingAssembly();
 
 		var resources = assembly.GetManifestResourceNames()
@@ -33,16 +37,9 @@ public static class EmbeddedResourceFileProvider
 
 			var file = new EmbeddedResourceFile(resource, relativePath);
 			
-			if (!files.ContainsKey(file.Folder))
-			{
-				files.Add(file.Folder, new List<IFile>());
-			}
-			files[file.Folder].Add(file);
+			files.Add(file);
 		}
-	}
-
-	public static List<IFile> All()
-	{
-		return files.SelectMany(x => x.Value).ToList();
+		filesByPrefix[prefix] = files;
+		return files;
 	}
 }

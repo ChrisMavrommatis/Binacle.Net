@@ -1,11 +1,11 @@
 using Binacle.Lib.Abstractions.Models;
-using Binacle.TestsKernel.Models;
+using Binacle.TestsKernel.ExtensionMethods;
 
-namespace Binacle.TestsKernel.ExtensionMethods;
+namespace Binacle.TestsKernel.Algorithms.ExtensionMethods;
 
 public static class ScenarioMetricsExtensions
 {
-	public static void EvaluateResult(this ScenarioMetrics metrics, OperationResult result)
+	public static void EvaluateResult(this Models.ScenarioMetrics metrics, OperationResult result)
 	{
 		var totalItemsVolume = result.TotalItemsVolume();
 		if (metrics.ItemsVolume != totalItemsVolume)

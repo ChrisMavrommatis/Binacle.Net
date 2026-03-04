@@ -1,6 +1,6 @@
 using Binacle.Lib.Abstractions.Models;
 
-namespace Binacle.TestsKernel.Helpers;
+namespace Binacle.TestsKernel.Algorithms.Helpers;
 
 public static class ScenarioResultHelper
 {

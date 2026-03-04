@@ -1,7 +1,6 @@
 ﻿using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Services;
 using Binacle.Lib.PerformanceTests.Tests;
-using Binacle.TestsKernel.ScenarioProviders;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

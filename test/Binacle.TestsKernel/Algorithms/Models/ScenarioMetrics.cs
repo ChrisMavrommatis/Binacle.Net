@@ -1,4 +1,4 @@
-namespace Binacle.TestsKernel.Models;
+namespace Binacle.TestsKernel.Algorithms.Models;
 
 public class ScenarioMetrics
 {
