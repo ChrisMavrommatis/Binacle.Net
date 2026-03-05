@@ -1,6 +1,7 @@
-﻿using Binacle.Lib;
+﻿using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
+using Binacle.Net.Services;
 using Binacle.Net.v4.Contracts.Pack;
 using OpenApiExamples.ExtensionMethods;
 
@@ -41,34 +42,45 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 
 	internal async Task<IResult> HandleAsync(
 		BindingResult<PackCustomBinRequest> bindingResult,
-		// IBinacleService binacleService,
+		IBinacleService binacleService,
 		ILogger<CustomBin> logger,
 		CancellationToken cancellationToken = default
 	)
 	{
-		using var activity = Diagnostics.ActivitySource.StartActivity("Pack by Custom: v3");
+		using var activity = Diagnostics.ActivitySource.StartActivity("Pack Custom Bin: v4");
 		
 		return await bindingResult.ValidateAsync(async request =>
 		{
-			//  var operationResults = await binacleService.OperateAsync(
-			//	  request.Bin!,
-			//	  request.Items!,
-			//	  new OperationParameters
-			//	  {
-			//	  	Algorithm = request.Parameters!.Algorithm!.Value.ToLibAlgorithm(),
-			//	  	Operation = AlgorithmOperation.Packing
-			//	  }
-			//  );
-
+			var algorithm = request.Parameters.GetAlgorithm();
+			
+			OperationResult result = null!;
+			if (algorithm.HasValue)
+			{
+				result = await binacleService.SingleBinAsync(
+					algorithm.Value,
+					request.Bin!,
+					request.Items!,
+					request.Parameters.UsedForPack()
+				);
+			}
+			else
+			{
+				result = await binacleService.SingleBinAsync(
+					request.Bin!,
+					request.Items!,
+					request.Parameters.UsedForPack()
+				);
+			}
+			
 			using (var responseActivity = Diagnostics.ActivitySource.StartActivity("Create Response"))
 			{
 				return Results.Ok(
-					// PackResponse.Create(
-					// 	request.Bins!,
-					// 	request.Items!,
-					// 	request.Parameters,
-					// 	operationResults
-					// )
+					BinPackResponse.Create(
+						request.Bin!,
+						request.Items!,
+						request.Parameters,
+						result
+					)
 				);
 			}
 		});

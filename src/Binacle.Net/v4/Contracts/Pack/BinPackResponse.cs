@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.Net.v4.Contracts.Pack;
 
@@ -6,7 +7,20 @@ namespace Binacle.Net.v4.Contracts.Pack;
 
 public class BinPackResponse
 {
-	
+    internal static BinPackResponse Create<TBin, TItem>(
+        TBin bin,
+        List<TItem> items,
+        OperationParameters parameters,
+        OperationResult operationResult
+    )
+        where TBin : class, IWithID, IWithReadOnlyDimensions
+        where TItem : class, IWithID, IWithReadOnlyDimensions
+    {
+        return new BinPackResponse()
+        {
+
+        };
+    }
 }
 
 

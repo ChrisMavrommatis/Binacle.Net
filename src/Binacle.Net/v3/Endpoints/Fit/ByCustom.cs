@@ -2,6 +2,7 @@
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v3.Contracts;
 using Binacle.Net.Services;
+using Binacle.Net.v3.ExtensionMethods;
 using OpenApiExamples.ExtensionMethods;
 
 namespace Binacle.Net.v3.Endpoints.Fit;
@@ -50,7 +51,8 @@ internal class ByCustom: IGroupedEndpoint<ApiV3EndpointGroup>
 		
 		return await bindingResult.ValidateAsync(async request =>
 		{
-			var operationResults = await binacleService.OperateAsync(
+			var operationResults = await binacleService.CompareBinsAsync(
+				request.Parameters!.Algorithm.ToLibAlgorithm(),
 				request.Bins!,
 				request.Items!,
 				request.Parameters!

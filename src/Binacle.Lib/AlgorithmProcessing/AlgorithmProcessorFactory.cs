@@ -10,7 +10,7 @@ public class AlgorithmProcessorFactory : IAlgorithmProcessorFactory
     {
         this.algorithmFactory = algorithmFactory;
     }
-    public IAlgorithmProcessor Create(int binCount, int itemCount)
+    public IAlgorithmProcessor Create(int itemCount)
     {
         return new LoopAlgorithmProcessor(
             [Algorithm.FFD, Algorithm.WFD, Algorithm.BFD],

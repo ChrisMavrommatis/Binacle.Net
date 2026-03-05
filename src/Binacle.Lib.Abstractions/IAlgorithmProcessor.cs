@@ -6,7 +6,7 @@ namespace Binacle.Lib.Abstractions;
 public interface IAlgorithmProcessor
 {
     public IDictionary<string, OperationResult> Process<TBin, TItem>(
-        TBin bins,
+        TBin bin,
         IList<TItem> items,
         IOperationParameters parameters
     )

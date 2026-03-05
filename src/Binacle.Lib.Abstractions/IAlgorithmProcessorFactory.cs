@@ -2,5 +2,5 @@ namespace Binacle.Lib.Abstractions;
 
 public interface IAlgorithmProcessorFactory
 {
-    IAlgorithmProcessor Create(int binCount, int itemCount);
+    IAlgorithmProcessor Create(int itemCount);
 }

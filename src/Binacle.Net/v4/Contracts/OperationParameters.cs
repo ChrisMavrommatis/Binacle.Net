@@ -1,4 +1,8 @@
 using System.Text.Json.Serialization;
+using Binacle.Lib;
+using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.Net.ExtensionMethods;
+using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.Kernel.Serialization;
 using FluentValidation;
 
@@ -8,29 +12,88 @@ namespace Binacle.Net.v4.Contracts;
 
 public interface IWithOperationParameters
 {
-	OperationParameters Parameters { get; set; }
+    OperationParameters Parameters { get; set; }
 }
 
-public class OperationParameters : IWithAlgorithm
+public class OperationParameters :
+    IWithAlgorithm,
+    ILogConvertible,
+    IOperationParameters
 {
-	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
-	public required Algorithm? Algorithm { get; set; }
+    [JsonConverter(typeof(JsonStringNullableEnumConverter))]
+    public required Algorithm? Algorithm { get; set; }
 
-	public bool IncludeViPaqData { get; set; } = false;
+    public bool IncludeViPaqData { get; set; } = false;
+
+    public Lib.Algorithm? GetAlgorithm()
+    {
+        if (!this.Algorithm.HasValue)
+        {
+            return null;
+        }
+
+        return this.Algorithm.Value switch
+        {
+            Contracts.Algorithm.FFD => Lib.Algorithm.FFD,
+            Contracts.Algorithm.WFD => Lib.Algorithm.WFD,
+            Contracts.Algorithm.BFD => Lib.Algorithm.BFD,
+            _ => null
+        };
+    }
+
+    public object ConvertToLogObject()
+    {
+        // Algorithm Is Always added
+        var paramsCount = 2;
+
+        var parameters = new string[paramsCount];
+
+        parameters[--paramsCount] = this.AlgorithmFastString();
+        parameters[--paramsCount] = this.Operation.ToFastString();
+
+        return parameters;
+    }
+
+    private string AlgorithmFastString()
+    {
+        if(!this.Algorithm.HasValue)
+        {
+            return "None";
+        }
+        return this.Algorithm.Value switch
+        {
+            Contracts.Algorithm.FFD => nameof(Contracts.Algorithm.FFD),
+            Contracts.Algorithm.WFD => nameof(Contracts.Algorithm.WFD),
+            Contracts.Algorithm.BFD => nameof(Contracts.Algorithm.BFD),
+            Contracts.Algorithm.Best => nameof(Contracts.Algorithm.Best),
+            _ => throw new NotSupportedException($"Algorithm {this.Algorithm.Value} is not supported.")
+        };
+    }
+
+    [JsonIgnore]
+    public AlgorithmOperation Operation { get; private set; }
+
+    internal OperationParameters UsedForFit()
+    {
+        this.Operation = AlgorithmOperation.Fitting;
+        return this;
+    }
+
+    internal OperationParameters UsedForPack()
+    {
+        this.Operation = AlgorithmOperation.Packing;
+        return this;
+    }
 }
 
 internal class OperationParametersValidator : AbstractValidator<IWithOperationParameters>
 {
+    public OperationParametersValidator()
+    {
+        RuleFor(x => x.Parameters)
+            .NotNull();
 
-	public OperationParametersValidator()
-	{
-		RuleFor(x => x.Parameters)
-			.NotNull();
-
-		RuleFor(x => x.Parameters!)
-			.ChildRules(parametersValidator =>
-			{
-				parametersValidator.Include(new AlgorithmValidator());
-			});
-	}
+        RuleFor(x => x.Parameters!)
+            .ChildRules(parametersValidator => { parametersValidator.Include(new AlgorithmValidator()); });
+    }
 }
