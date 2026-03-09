@@ -13,4 +13,26 @@ public class Bin :
 	public required int Length { get; set; }
 	public required int Width { get; set; }
 	public required  int Height { get; set; }
+	
+	
+	internal static Bin From(string id, int length, int width, int height)
+	{
+		return new Bin()
+		{
+			ID = id,
+			Length = length,
+			Width = width,
+			Height = height
+		};
+	}
+	internal static Bin From(PackedBin bin)
+	{
+		return new Bin()
+		{
+			ID = bin.ID,
+			Height = bin.Dimensions.Height,
+			Length = bin.Dimensions.Length,
+			Width = bin.Dimensions.Width
+		};
+	}
 }

@@ -1,19 +1,35 @@
 ﻿using Binacle.Lib;
+using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.Net.ExtensionMethods;
 
 internal static class AlgorithmModelExtensions
 {
-	internal static string ToFastString(this Lib.Algorithm algorithm)
+	internal static string ToFastString(this Algorithm algorithm)
 	{
 		return algorithm switch
 		{
-			Binacle.Lib.Algorithm.FFD => nameof(Binacle.Lib.Algorithm.FFD),
-			Binacle.Lib.Algorithm.WFD => nameof(Binacle.Lib.Algorithm.WFD),
-			Binacle.Lib.Algorithm.BFD => nameof(Binacle.Lib.Algorithm.BFD),
+			Algorithm.FFD => nameof(Algorithm.FFD),
+			Algorithm.WFD => nameof(Algorithm.WFD),
+			Algorithm.BFD => nameof(Algorithm.BFD),
 			_ => throw new NotSupportedException($"Algorithm {algorithm} is not supported.")
 		};
 	}
+	
+	internal static string ToFastString(this OperationResultStatus operationResultStatus)
+	{
+		return operationResultStatus switch
+		{ 
+			OperationResultStatus.Unknown => nameof(OperationResultStatus.Unknown),
+			OperationResultStatus.FullyPacked => nameof(OperationResultStatus.FullyPacked),
+			OperationResultStatus.PartiallyPacked => nameof(OperationResultStatus.PartiallyPacked),
+			OperationResultStatus.NotPacked => nameof(OperationResultStatus.NotPacked),
+			OperationResultStatus.EarlyFail_ContainerDimensionExceeded => nameof(OperationResultStatus.EarlyFail_ContainerDimensionExceeded),
+			OperationResultStatus.EarlyFail_ContainerVolumeExceeded => nameof(OperationResultStatus.EarlyFail_ContainerVolumeExceeded),
+			_ => throw new NotSupportedException($"Operation result status {operationResultStatus} is not supported.")
+		};
+	}
+	
 	internal static string ToFastString(this AlgorithmOperation operation)
 	{
 		return operation switch

@@ -2,6 +2,7 @@
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Services;
+using Binacle.Net.v4.Contracts;
 using Binacle.Net.v4.Contracts.Pack;
 using OpenApiExamples.ExtensionMethods;
 
@@ -19,23 +20,24 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			.Accepts<PackCustomBinRequest>("application/json")
 			.RequestExample<PackCustomBinRequestExample>("application/json")
 			
-			.Produces<BinPackResponse>(StatusCodes.Status200OK, "application/json")
-			// .ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200Ok)
-			// .ResponseExamples<PackByCustomResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.Produces<PackBinResponse>(StatusCodes.Status200OK, "application/json")
+			.ResponseDescription(StatusCodes.Status200OK, 
+				"Returns the result of the packing operation for the specified custom bin and items.")
+			.ResponseExamples<PackCustomBinResponseExamples>(StatusCodes.Status200OK, "application/json")
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			// .ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
 			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For400BadRequest
 			)
-			//.ResponseExamples<PackByCustomValidationProblemExamples>(
-			//	StatusCodes.Status422UnprocessableEntity,
-			// "application/problem+json"
-			//)
+			.ResponseExamples<PackCustomBinValidationProblemResponseExamples>(
+				StatusCodes.Status422UnprocessableEntity,
+			 "application/problem+json"
+			)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
 	}
@@ -60,7 +62,7 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 					algorithm.Value,
 					request.Bin!,
 					request.Items!,
-					request.Parameters.UsedForPack()
+					request.Parameters.ForPackingOperation()
 				);
 			}
 			else
@@ -68,16 +70,14 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 				result = await binacleService.SingleBinAsync(
 					request.Bin!,
 					request.Items!,
-					request.Parameters.UsedForPack()
+					request.Parameters.ForPackingOperation()
 				);
 			}
 			
 			using (var responseActivity = Diagnostics.ActivitySource.StartActivity("Create Response"))
 			{
 				return Results.Ok(
-					BinPackResponse.Create(
-						request.Bin!,
-						request.Items!,
+					PackBinResponse.From(
 						request.Parameters,
 						result
 					)

@@ -18,4 +18,31 @@ public class PackedBox :
 	public required int X { get; set; }
 	public required int Y { get; set; }
 	public required int Z { get; set; }
+
+	internal static PackedBox From(string id, int length, int width, int height, int x, int y, int z)
+	{
+		return new PackedBox()
+		{
+			ID = id,
+			Length = length,
+			Width = width,
+			Height = height,
+			X = x,
+			Y = y,
+			Z = z
+		};
+	}
+	internal static PackedBox From(PackedItem packedItem)
+	{
+		return new PackedBox()
+		{
+			ID = packedItem.ID,
+			Length = packedItem.Dimensions.Length,
+			Width = packedItem.Dimensions.Width,
+			Height = packedItem.Dimensions.Height,
+			X = packedItem.Coordinates.X,
+			Y = packedItem.Coordinates.Y,
+			Z = packedItem.Coordinates.Z
+		};
+	}
 }

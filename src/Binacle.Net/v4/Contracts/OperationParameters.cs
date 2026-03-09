@@ -73,13 +73,13 @@ public class OperationParameters :
     [JsonIgnore]
     public AlgorithmOperation Operation { get; private set; }
 
-    internal OperationParameters UsedForFit()
+    internal OperationParameters ForFittingOperation()
     {
         this.Operation = AlgorithmOperation.Fitting;
         return this;
     }
 
-    internal OperationParameters UsedForPack()
+    internal OperationParameters ForPackingOperation()
     {
         this.Operation = AlgorithmOperation.Packing;
         return this;
