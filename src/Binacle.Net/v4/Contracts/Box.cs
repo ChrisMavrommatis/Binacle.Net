@@ -12,4 +12,16 @@ public class Box : IWithID, IWithDimensions, IWithQuantity
 	public required int Length { get; set; }
 	public required int Width { get; set; }
 	public required int Height { get; set; }
+	
+	internal static Box From(string id, int length, int width, int height, int quantity)
+	{
+		return new Box()
+		{
+			ID = id,
+			Length = length,
+			Width = width,
+			Height = height,
+			Quantity = quantity,
+		};
+	}
 }

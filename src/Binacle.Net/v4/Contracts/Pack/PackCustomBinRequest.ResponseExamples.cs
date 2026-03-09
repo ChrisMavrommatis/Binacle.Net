@@ -10,7 +10,7 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 	public IEnumerable<IOpenApiExample<PackBinResponse>> GetExamples()
 	{
 		yield return OpenApiExample.Create(
-			"fullypackedresponse",
+			"fullyPackedResponse",
 			"Fully Packed Response",
 			"Example response when all items fit into the bin and no items are left unpacked.",
 			new PackBinResponse
@@ -32,7 +32,7 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 			});
 
 		yield return OpenApiExample.Create(
-			"partiallypackedresponse",
+			"partiallyPackedResponse",
 			"Partially Packed Response",
 			"Example response when some items fit into the bin but some items are left unpacked",
 			new PackBinResponse()
@@ -55,7 +55,7 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 			});
 
 		yield return OpenApiExample.Create(
-			"unpackedresponse",
+			"unpackedResponse",
 			"Unpacked Response",
 			"Example response when no items fit into the bin and all items are left unpacked",
 			new PackBinResponse()
