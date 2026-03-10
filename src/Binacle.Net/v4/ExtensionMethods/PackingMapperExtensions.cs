@@ -1,5 +1,6 @@
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.ExtensionMethods;
+using Binacle.Net.v4.Contracts.Fit;
 using Binacle.Net.v4.Contracts.Pack;
 
 namespace Binacle.Net.v4.ExtensionMethods;
@@ -16,5 +17,13 @@ internal static class PackingMapperExtensions
             OperationResultStatus.NotPacked => BinPackResultStatus.NotPacked,
             _ => throw new NotSupportedException($"No Implementation exists for operation result  status {operationResultStatus.ToFastString()}"),
         };
+    }
+    
+    public static BinFitResultStatus MapToBinFitResultStatus(this OperationResultStatus operationResultStatus)
+    {
+	    return operationResultStatus switch
+	    {
+		   
+	    };
     }
 }

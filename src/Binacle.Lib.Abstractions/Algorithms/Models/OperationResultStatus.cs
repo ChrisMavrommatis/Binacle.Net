@@ -6,9 +6,16 @@ public enum OperationResultStatus
 	FullyPacked = 0,                          // FullyPacked
 	PartiallyPacked = 1,                      // PartiallyPacked (includes at least 1 items packed)
 	NotPacked = 2,                            // NotPacked
-	EarlyFail_ContainerVolumeExceeded = 10,
-	EarlyFail_ContainerDimensionExceeded = 11
+	EarlyExit = 3,
 }
+
+public enum EarlyExitReason
+{
+	None = 0,
+	ContainerVolumeExceeded = 1,
+	ContainerDimensionExceeded = 2
+}
+
 
 public sealed class OperationResult
 {
@@ -21,6 +28,7 @@ public sealed class OperationResult
 	
 	public required AlgorithmInfo AlgorithmInfo { get; init; }
 	public OperationResultStatus Status { get; internal set; }
+	public EarlyExitReason EarlyExitReason { get; internal set; }
 	public AlgorithmOperation AlgorithmOperation { get; init; }
 
 	public required IReadOnlyList<PackedItem> PackedItems { get; init; }

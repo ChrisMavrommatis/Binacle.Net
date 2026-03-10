@@ -8,19 +8,26 @@ namespace Binacle.Net.v3.Contracts;
 
 public class PackResponse : ResponseBase<List<BinPackResult>>
 {
-	internal static BinPackResultStatus MapResultStatus(OperationResultStatus operationResultStatus)
+	internal static BinPackResultStatus MapResultStatus(OperationResultStatus resultStatus, EarlyExitReason earlyExitReason)
 	{
-		return operationResultStatus switch
+		if (resultStatus == OperationResultStatus.EarlyExit)
+		{
+			return earlyExitReason switch
+			{
+				EarlyExitReason.ContainerDimensionExceeded => BinPackResultStatus.EarlyFail_ContainerDimensionExceeded,
+				EarlyExitReason.ContainerVolumeExceeded => BinPackResultStatus.EarlyFail_ContainerVolumeExceeded,
+				_ => throw new NotSupportedException($"No Implementation exists for operation result early exit reason {earlyExitReason.ToString()}"),
+			};
+		}
+		return resultStatus switch
 		{
 			OperationResultStatus.FullyPacked => BinPackResultStatus.FullyPacked,
 			OperationResultStatus.PartiallyPacked => BinPackResultStatus.PartiallyPacked,
-			OperationResultStatus.EarlyFail_ContainerDimensionExceeded => BinPackResultStatus.EarlyFail_ContainerDimensionExceeded,
-			OperationResultStatus.EarlyFail_ContainerVolumeExceeded => BinPackResultStatus.EarlyFail_ContainerVolumeExceeded,
-			OperationResultStatus.Unknown => BinPackResultStatus.Unknown,
 			OperationResultStatus.NotPacked => BinPackResultStatus.NotPacked,
-			_ => throw new NotSupportedException($"No Implementation exists for operation result  status {operationResultStatus.ToString()}"),
+			_ => throw new NotSupportedException($"No Implementation exists for operation result  status {resultStatus.ToString()}"),
 		};
 	}
+
 	
 	internal static PackResponse Create<TBin, TItem>(
 		List<TBin> bins,
@@ -49,7 +56,7 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 					Length = bin.Length,
 					Width = bin.Width
 				},
-				Result = MapResultStatus(operationResult.Status),
+				Result = MapResultStatus(operationResult.Status, operationResult.EarlyExitReason),
 				PackedBinVolumePercentage = operationResult.PackedBinVolumePercentage,
 				PackedItemsVolumePercentage = operationResult.PackedItemsVolumePercentage,
 				PackedItems = operationResult.PackedItems?

@@ -15,21 +15,31 @@ internal static class AlgorithmModelExtensions
 			_ => throw new NotSupportedException($"Algorithm {algorithm} is not supported.")
 		};
 	}
-	
+
 	internal static string ToFastString(this OperationResultStatus operationResultStatus)
 	{
 		return operationResultStatus switch
-		{ 
+		{
 			OperationResultStatus.Unknown => nameof(OperationResultStatus.Unknown),
 			OperationResultStatus.FullyPacked => nameof(OperationResultStatus.FullyPacked),
 			OperationResultStatus.PartiallyPacked => nameof(OperationResultStatus.PartiallyPacked),
 			OperationResultStatus.NotPacked => nameof(OperationResultStatus.NotPacked),
-			OperationResultStatus.EarlyFail_ContainerDimensionExceeded => nameof(OperationResultStatus.EarlyFail_ContainerDimensionExceeded),
-			OperationResultStatus.EarlyFail_ContainerVolumeExceeded => nameof(OperationResultStatus.EarlyFail_ContainerVolumeExceeded),
+			OperationResultStatus.EarlyExit => nameof(OperationResultStatus.EarlyExit),
 			_ => throw new NotSupportedException($"Operation result status {operationResultStatus} is not supported.")
 		};
 	}
-	
+
+	internal static string ToFastString(this EarlyExitReason earlyExitReason)
+	{
+		return earlyExitReason switch
+		{
+			EarlyExitReason.None => nameof(EarlyExitReason.None),
+			EarlyExitReason.ContainerVolumeExceeded => nameof(EarlyExitReason.ContainerVolumeExceeded),
+			EarlyExitReason.ContainerDimensionExceeded => nameof(EarlyExitReason.ContainerDimensionExceeded),
+			_ => throw new NotSupportedException($"Early exit reason {earlyExitReason} is not supported.")
+		};
+	}
+
 	internal static string ToFastString(this AlgorithmOperation operation)
 	{
 		return operation switch

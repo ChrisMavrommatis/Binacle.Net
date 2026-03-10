@@ -68,7 +68,7 @@
     "Name": "Simple_30x30x30-3_DoesNotFitIn_60x40x30",
     "Bin": "60x40x30",
     "Metrics": "81000 72000 3 112.5",
-    "Result": "PartiallyPacked EarlyFail_ContainerVolumeExceeded",
+    "Result": "PartiallyPacked EarlyExit-ContainerVolumeExceeded",
     "Items": [
       "30x30x30-3"
     ]

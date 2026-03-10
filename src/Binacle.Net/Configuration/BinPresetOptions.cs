@@ -1,4 +1,6 @@
-﻿using Binacle.Lib.Abstractions.Models;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
+using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Kernel.Configuration.Models;
 using FluentValidation;
 
@@ -16,6 +18,39 @@ public class BinPresetOptions : IConfigurationOptions
 
 
 	public Dictionary<string, BinPresetOption> Presets { get; set; } = new();
+	
+	private ConcurrentDictionary<string, BinOption> _binCache = new();
+	
+	public bool TryGetPreset(string presetName, [NotNullWhen(true)] out BinPresetOption? presetOption)
+	{
+		return this.Presets.TryGetValue(presetName, out presetOption);
+	}
+	
+	public bool TryGetPresetBin(string presetName, string bin, [NotNullWhen(true)] out BinOption? binOption)
+	{
+		var key = $"{presetName}:{bin}";
+		if (_binCache.TryGetValue(key, out binOption))
+		{
+			return true;
+		}
+		
+		if (!this.Presets.TryGetValue(presetName, out var presetOption))
+		{
+			binOption = null;
+			return false;
+		}
+		
+		var foundBin = presetOption.Bins.FirstOrDefault(b => b.ID == bin);
+		if (foundBin is null)
+		{
+			binOption = null;
+			return false;
+		}
+		
+		binOption = foundBin;
+		_binCache[key] = binOption;
+		return true;
+	}
 }
 
 public class BinPresetOption

@@ -43,12 +43,8 @@ internal class OperationResultBuilder<TBin, TItem>
 	internal OperationResult EarlyExit(EarlyExitReason reason)
 	{
 		var result = this.Complete();
-		result.Status = reason switch
-		{
-			EarlyExitReason.ContainerDimensionExceeded => OperationResultStatus.EarlyFail_ContainerDimensionExceeded,
-			EarlyExitReason.ContainerVolumeExceeded => OperationResultStatus.EarlyFail_ContainerVolumeExceeded,
-			_ => throw new NotImplementedException($"The specified early exit reason {reason} is not implemented.")
-		};
+		result.Status = OperationResultStatus.EarlyExit;
+		result.EarlyExitReason = reason;
 		return result;
 	}
 	

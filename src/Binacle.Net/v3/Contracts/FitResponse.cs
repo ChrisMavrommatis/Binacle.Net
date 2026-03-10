@@ -7,16 +7,23 @@ namespace Binacle.Net.v3.Contracts;
 
 public class FitResponse : ResponseBase<List<BinFitResult>>
 {
-	internal static BinFitResultStatus MapResultStatus(OperationResultStatus operationResultStatus)
+	internal static BinFitResultStatus MapResultStatus(OperationResultStatus resultStatus, EarlyExitReason earlyExitReason)
 	{
-		return operationResultStatus switch
+		if (resultStatus == OperationResultStatus.EarlyExit)
+		{
+			return earlyExitReason switch
+			{
+				EarlyExitReason.ContainerDimensionExceeded => BinFitResultStatus.EarlyFail_ItemDimensionExceeded,
+				EarlyExitReason.ContainerVolumeExceeded => BinFitResultStatus.EarlyFail_TotalVolumeExceeded,
+				_ => throw new NotSupportedException($"No Implementation exists for operation result early exit reason {earlyExitReason.ToString()}"),
+			};
+		}
+		return resultStatus switch
 		{
 			OperationResultStatus.FullyPacked => BinFitResultStatus.AllItemsFit,
 			OperationResultStatus.PartiallyPacked => BinFitResultStatus.NotAllItemsFit,
-			OperationResultStatus.EarlyFail_ContainerDimensionExceeded => BinFitResultStatus.EarlyFail_ItemDimensionExceeded,
-			OperationResultStatus.EarlyFail_ContainerVolumeExceeded => BinFitResultStatus.EarlyFail_TotalVolumeExceeded,
 			OperationResultStatus.NotPacked => BinFitResultStatus.NotAllItemsFit,
-			_ => throw new NotSupportedException($"No Implementation exists for operation result  status {operationResultStatus.ToString()}"),
+			_ => throw new NotSupportedException($"No Implementation exists for operation result  status {resultStatus.ToString()}"),
 		};
 	}
 	
@@ -47,7 +54,7 @@ public class FitResponse : ResponseBase<List<BinFitResult>>
 					Length = bin.Length,
 					Width = bin.Width
 				},
-				Result = MapResultStatus(operationResult.Status),
+				Result = MapResultStatus(operationResult.Status, operationResult.EarlyExitReason),
 				FittedBinVolumePercentage  = operationResult.PackedBinVolumePercentage,
 				FittedItemsVolumePercentage  = operationResult.PackedItemsVolumePercentage,
 				FittedItems  = operationResult.PackedItems?

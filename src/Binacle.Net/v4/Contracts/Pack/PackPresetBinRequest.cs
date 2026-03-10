@@ -7,38 +7,35 @@ using OpenApiExamples.Abstractions;
 namespace Binacle.Net.v4.Contracts.Pack;
 
 #pragma warning disable CS1591
-public class PackCustomBinRequest : IWithOperationParameters, IWithBin, IWithItems
+public class PackPresetBinRequest : IWithOperationParameters, IWithItems
 {
-    public required OperationParameters Parameters { get; set; }
-    public required Bin Bin { get; set; } 
-    public required List<Box> Items { get; set; }
+	public required OperationParameters Parameters { get; set; }
+	public required List<Box> Items { get; set; }
 }
 
-internal class PackCustomBinRequestValidator : AbstractValidator<PackCustomBinRequest>
+internal class PackPresetBinRequestValidator : AbstractValidator<PackPresetBinRequest>
 {
-	public PackCustomBinRequestValidator()
+	public PackPresetBinRequestValidator()
 	{
 		Include(new OperationParametersValidator());
-		Include(new BinValidator());
 		Include(new ItemsValidator());
 	}
 }
 
-internal class PackCustomBinRequestExample : ISingleOpenApiExamplesProvider<PackCustomBinRequest>
+internal class PackPresetBinRequestExample : ISingleOpenApiExamplesProvider<PackPresetBinRequest>
 {
-	public IOpenApiExample<PackCustomBinRequest> GetExample()
+	public IOpenApiExample<PackPresetBinRequest> GetExample()
 	{
 		return OpenApiExample.Create(
-			"packCustomBinRequest",
-			"Pack Custom Bin Request",
-			new PackCustomBinRequest()
+			"packPresetBinRequest",
+			"Pack Preset Bin Request",
+			new PackPresetBinRequest()
 			{
 				Parameters = new OperationParameters()
 				{
 					Algorithm = Algorithm.Best,
 					IncludeViPaqData = true,
 				},
-				Bin = Bin.From("custom_bin", 10, 40, 60),
 				Items =
 				[
 					Box.From("box_1", 2, 5, 10, 2),
@@ -50,7 +47,7 @@ internal class PackCustomBinRequestExample : ISingleOpenApiExamplesProvider<Pack
 }
 
 
-internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<PackBinResponse>
+internal class PackPresetBinResponseExamples : IMultipleOpenApiExamplesProvider<PackBinResponse>
 {
 	public IEnumerable<IOpenApiExample<PackBinResponse>> GetExamples()
 	{
@@ -61,7 +58,7 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 			new PackBinResponse
 			{
 				Status = BinPackResultStatus.FullyPacked,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
+				Bin = Bin.From("preset_bin_1", 10, 40, 60),
 				AlgorithmUsed = "FFD",
 				PackedItems =
 				[
@@ -83,7 +80,7 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 			new PackBinResponse()
 			{
 				Status = BinPackResultStatus.PartiallyPacked,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
+				Bin = Bin.From("preset_bin_1", 10, 40, 60),
 				AlgorithmUsed = "FFD",
 				PackedItems =
 				[
@@ -106,7 +103,7 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 			new PackBinResponse()
 			{
 				Status = BinPackResultStatus.NotPacked,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
+				Bin = Bin.From("preset_bin_1", 10, 40, 60),
 				AlgorithmUsed = "FFD",
 				PackedItems = [],
 				UnpackedItems =[
@@ -120,7 +117,7 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 	}
 }
 
-internal class PackCustomBinValidationProblemResponseExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
+internal class PackPresetBinValidationProblemResponseExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
 {
 	public IEnumerable<IOpenApiExample<ProblemDetails>> GetExamples()
 	{
@@ -134,16 +131,6 @@ internal class PackCustomBinValidationProblemResponseExamples : IMultipleOpenApi
 			}
 		);
 
-		yield return OpenApiValidationProblemExample.Create(
-			"invalidBinData",
-			"Invalid Bin Data",
-			"Example response when you provide invalid Bin data",
-			new Dictionary<string, string[]>()
-			{
-				{ "Bin.Length", ["'Length' must be greater than '0'."] }
-			}
-		);
-		
 		yield return OpenApiValidationProblemExample.Create(
 			"invalidItemData",
 			"Invalid Item Data",

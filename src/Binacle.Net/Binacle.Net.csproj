@@ -37,9 +37,4 @@
 		</Content>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="v4\Contracts\Fit\" />
-	  <Folder Include="v4\Endpoints\Fit\" />
-	</ItemGroup>
-
 </Project>
