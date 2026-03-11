@@ -42,7 +42,7 @@ internal class PresetBin : IGroupedEndpoint<ApiV4EndpointGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For400BadRequest
 			)
-			.ResponseExamples<PackPresetBinValidationProblemResponseExamples>(
+			.ResponseExamples<PresetBinValidationProblemResponseExamples>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			)

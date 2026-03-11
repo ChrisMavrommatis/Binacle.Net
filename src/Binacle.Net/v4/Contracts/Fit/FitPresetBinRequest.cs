@@ -4,36 +4,34 @@ using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 
-namespace Binacle.Net.v4.Contracts.Pack;
+namespace Binacle.Net.v4.Contracts.Fit;
 
 #pragma warning disable CS1591
-public class PackCustomBinRequest : CustomBinRequestBase;
+public class FitPresetBinRequest : PresetBinRequestBase;
 
-internal class PackCustomBinRequestValidator : AbstractValidator<PackCustomBinRequest>
+internal class FitPresetBinRequestValidator : AbstractValidator<FitPresetBinRequest>
 {
-	public PackCustomBinRequestValidator()
+	public FitPresetBinRequestValidator()
 	{
 		Include(new OperationParametersValidator());
-		Include(new BinValidator());
 		Include(new ItemsValidator());
 	}
 }
 
-internal class PackCustomBinRequestExample : ISingleOpenApiExamplesProvider<PackCustomBinRequest>
+internal class FitPresetBinRequestExample : ISingleOpenApiExamplesProvider<FitPresetBinRequest>
 {
-	public IOpenApiExample<PackCustomBinRequest> GetExample()
+	public IOpenApiExample<FitPresetBinRequest> GetExample()
 	{
 		return OpenApiExample.Create(
-			"packCustomBinRequest",
-			"Pack Custom Bin Request",
-			new PackCustomBinRequest()
+			"fitPresetBinRequest",
+			"Fit Preset Bin Request",
+			new FitPresetBinRequest()
 			{
 				Parameters = new OperationParameters()
 				{
 					Algorithm = Algorithm.Best,
 					IncludeViPaqData = true,
 				},
-				Bin = Bin.From("custom_bin", 10, 40, 60),
 				Items =
 				[
 					Box.From("box_1", 2, 5, 10, 2),
@@ -45,18 +43,19 @@ internal class PackCustomBinRequestExample : ISingleOpenApiExamplesProvider<Pack
 }
 
 
-internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<PackBinResponse>
+internal class FitPresetBinResponseExamples : IMultipleOpenApiExamplesProvider<FitBinResponse>
 {
-	public IEnumerable<IOpenApiExample<PackBinResponse>> GetExamples()
+	public IEnumerable<IOpenApiExample<FitBinResponse>> GetExamples()
 	{
 		yield return OpenApiExample.Create(
-			"fullyPackedResponse",
-			"Fully Packed Response",
+			"fitResponse",
+			"Fit Response",
 			"Example response when all items fit into the bin and no items are left unpacked.",
-			new PackBinResponse
+			new FitBinResponse
 			{
-				Status = BinPackResultStatus.FullyPacked,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
+				Status = BinFitResultStatus.Fits,
+				EarlyExitReason = BinFitEarlyExitReason.None,
+				Bin = Bin.From("preset_bin_1", 10, 40, 60),
 				AlgorithmUsed = "FFD",
 				PackedItems =
 				[
@@ -72,13 +71,14 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 			});
 
 		yield return OpenApiExample.Create(
-			"partiallyPackedResponse",
-			"Partially Packed Response",
-			"Example response when some items fit into the bin but some items are left unpacked",
-			new PackBinResponse()
+			"doesNotFitResponse",
+			"Does Not Fit Response",
+			"Example response when some items don't fit into the bin.",
+			new FitBinResponse()
 			{
-				Status = BinPackResultStatus.PartiallyPacked,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
+				Status = BinFitResultStatus.DoesNotFit,
+				EarlyExitReason = BinFitEarlyExitReason.None,
+				Bin = Bin.From("preset_bin_1", 10, 40, 60),
 				AlgorithmUsed = "FFD",
 				PackedItems =
 				[
@@ -95,19 +95,18 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 			});
 
 		yield return OpenApiExample.Create(
-			"unpackedResponse",
-			"Unpacked Response",
-			"Example response when no items fit into the bin and all items are left unpacked",
-			new PackBinResponse()
+			"earlyExitResponse",
+			"Early Exit Response",
+			"Example response when the early exit condition is met and the algorithm exits before starting.",
+			new FitBinResponse()
 			{
-				Status = BinPackResultStatus.NotPacked,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
+				Status = BinFitResultStatus.EarlyExit,
+				EarlyExitReason = BinFitEarlyExitReason.ContainerDimensionExceeded,
+				Bin = Bin.From("preset_bin_1", 10, 40, 60),
 				AlgorithmUsed = "FFD",
 				PackedItems = [],
 				UnpackedItems =[
-					UnpackedBox.From("box_2", 1),
-					UnpackedBox.From("box_3", 1),
-					UnpackedBox.From("box_1", 2)
+					UnpackedBox.From("large_box", 1),
 				],
 				PackedItemsVolumePercentage = 0,
 				PackedBinVolumePercentage = 0,

@@ -34,7 +34,7 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For400BadRequest
 			)
-			.ResponseExamples<FitCustomBinValidationProblemResponseExamples>(
+			.ResponseExamples<CustomBinValidationProblemResponseExamples>(
 				StatusCodes.Status422UnprocessableEntity,
 			 "application/problem+json"
 			)

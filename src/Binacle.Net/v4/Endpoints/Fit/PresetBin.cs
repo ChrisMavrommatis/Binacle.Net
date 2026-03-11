@@ -19,7 +19,7 @@ internal class PresetBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			.WithSummary("Fit a bin from a preset")
 			.WithDescription("Attempt to Fit items into a bin from a preset. The preset and bin must be specified in the URL path.")
 			
-			.Accepts<PackPresetBinRequest>("application/json")
+			.Accepts<FitPresetBinRequest>("application/json")
 			.RequestExample<FitPresetBinRequestExample>("application/json")
 			
 			.Produces<FitBinResponse>(StatusCodes.Status200OK, "application/json")
@@ -42,7 +42,7 @@ internal class PresetBin : IGroupedEndpoint<ApiV4EndpointGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For400BadRequest
 			)
-			.ResponseExamples<FitPresetBinValidationProblemResponseExamples>(
+			.ResponseExamples<PresetBinValidationProblemResponseExamples>(
 				StatusCodes.Status422UnprocessableEntity,
 				"application/problem+json"
 			)
@@ -93,7 +93,7 @@ internal class PresetBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			using (var responseActivity = Diagnostics.ActivitySource.StartActivity("Create Response"))
 			{
 				return Results.Ok(
-					FitkBinResponse.From(
+					FitBinResponse.From(
 						request.Parameters,
 						result
 					)
