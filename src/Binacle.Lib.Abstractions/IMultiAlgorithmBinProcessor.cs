@@ -1,0 +1,15 @@
+using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.Lib.Abstractions.Models;
+
+namespace Binacle.Lib.Abstractions;
+
+public interface IMultiAlgorithmBinProcessor
+{
+	public IDictionary<string, OperationResult> Process<TBin, TItem>(
+		IList<TBin> bins,
+		IList<TItem> items,
+		IOperationParameters parameters
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity;
+}

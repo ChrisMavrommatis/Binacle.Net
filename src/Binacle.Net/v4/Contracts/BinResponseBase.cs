@@ -8,7 +8,6 @@ namespace Binacle.Net.v4.Contracts;
 
 public abstract class BinResponseBase
 {
-
 	public Bin Bin { get; set; } = null!;
 	public string AlgorithmUsed { get; set; } = null!;
 	public List<PackedBox>? PackedItems { get; set; }

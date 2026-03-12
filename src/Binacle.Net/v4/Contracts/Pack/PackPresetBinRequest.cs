@@ -10,14 +10,7 @@ namespace Binacle.Net.v4.Contracts.Pack;
 
 public class PackPresetBinRequest : PresetBinRequestBase;
 
-internal class PackPresetBinRequestValidator : AbstractValidator<PackPresetBinRequest>
-{
-	public PackPresetBinRequestValidator()
-	{
-		Include(new OperationParametersValidator());
-		Include(new ItemsValidator());
-	}
-}
+internal class PackPresetBinRequestValidator : PresetBinRequestBaseValidator;
 
 internal class PackPresetBinRequestExample : ISingleOpenApiExamplesProvider<PackPresetBinRequest>
 {

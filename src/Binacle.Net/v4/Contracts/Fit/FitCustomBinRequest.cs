@@ -8,15 +8,7 @@ namespace Binacle.Net.v4.Contracts.Fit;
 
 public class FitCustomBinRequest : CustomBinRequestBase;
 
-internal class FitCustomBinRequestValidator : AbstractValidator<FitCustomBinRequest>
-{
-	public FitCustomBinRequestValidator()
-	{
-		Include(new OperationParametersValidator());
-		Include(new BinValidator());
-		Include(new ItemsValidator());
-	}
-}
+internal class FitCustomBinRequestValidator : CustomBinRequestBaseValidator;
 
 internal class FitCustomBinRequestExample : ISingleOpenApiExamplesProvider<FitCustomBinRequest>
 {

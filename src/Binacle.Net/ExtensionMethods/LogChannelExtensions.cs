@@ -31,6 +31,33 @@ internal static class LogChannelExtensions
             logger
         );
     }
+    
+    internal static ValueTask WriteToChannelAsync<TBin, TBox, TParams>(
+	    this Channel<AlgorithmOperationLogChannelRequest>? logChannel,
+	    List<TBin> bins,
+	    List<TBox> items,
+	    TParams parameters,
+	    (string Key, OperationResult Result) result,
+	    ILogger? logger = null
+    )
+	    where TBin : class, IWithID, IWithReadOnlyDimensions
+	    where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+	    where TParams : class, ILogConvertible
+    {
+	    if (logChannel is null)
+	    {
+		    return ValueTask.CompletedTask;
+	    }
+        
+	    return logChannel.WriteToChannelAsync(
+		    bins,
+		    items,
+		    parameters,
+		    new Dictionary<string, OperationResult>() { { result.Key, result.Result} },
+		    logger
+	    );
+    }
+    
     internal static async ValueTask WriteToChannelAsync<TBin, TBox, TParams>(
         this Channel<AlgorithmOperationLogChannelRequest>? logChannel,
         List<TBin> bins,

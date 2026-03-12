@@ -1,32 +1,39 @@
-using Binacle.Net.Kernel.OpenApi.Helpers;
 using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 
 namespace Binacle.Net.v4.Contracts.Pack;
 
 #pragma warning disable CS1591
+public class PackCustomSmallestBinRequest : CustomBinsRequestBase;
 
-public class PackCustomBinRequest : CustomBinRequestBase;
-
-internal class PackCustomBinRequestValidator : CustomBinRequestBaseValidator;
-
-internal class PackCustomBinRequestExample : ISingleOpenApiExamplesProvider<PackCustomBinRequest>
+internal class PackCustomSmallestBinRequestValidator : AbstractValidator<PackCustomSmallestBinRequest>
 {
-	public IOpenApiExample<PackCustomBinRequest> GetExample()
+	public PackCustomSmallestBinRequestValidator()
+	{
+		Include(new CustomBinsRequestBaseValidator());
+	}
+}
+
+internal class PackCustomSmallestBinRequestExample : ISingleOpenApiExamplesProvider<PackCustomSmallestBinRequest>
+{
+	public IOpenApiExample<PackCustomSmallestBinRequest> GetExample()
 	{
 		return OpenApiExample.Create(
-			"packCustomBinRequest",
-			"Pack Custom Bin Request",
-			new PackCustomBinRequest()
+			"packSmallestBinRequest",
+			"Pack Smallest Bin Request",
+			new PackCustomSmallestBinRequest()
 			{
 				Parameters = new OperationParameters()
 				{
 					Algorithm = Algorithm.Best,
 					IncludeViPaqData = true,
 				},
-				Bin = Bin.From("custom_bin", 10, 40, 60),
+				Bins =[
+					Bin.From("custom_bin_1", 10, 40, 60),
+					Bin.From("custom_bin_2", 20, 40, 60),
+					Bin.From("custom_bin_3", 30, 40, 60),
+				],
 				Items =
 				[
 					Box.From("box_1", 2, 5, 10, 2),
@@ -38,7 +45,7 @@ internal class PackCustomBinRequestExample : ISingleOpenApiExamplesProvider<Pack
 }
 
 
-internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<PackBinResponse>
+internal class PackCustomSmallestBinResponseExamples : IMultipleOpenApiExamplesProvider<PackBinResponse>
 {
 	public IEnumerable<IOpenApiExample<PackBinResponse>> GetExamples()
 	{
@@ -49,7 +56,7 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 			new PackBinResponse
 			{
 				Status = BinPackResultStatus.FullyPacked,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
+				Bin = Bin.From("custom_bin_1", 10, 40, 60),
 				AlgorithmUsed = "FFD",
 				PackedItems =
 				[
@@ -71,7 +78,7 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 			new PackBinResponse()
 			{
 				Status = BinPackResultStatus.PartiallyPacked,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
+				Bin = Bin.From("custom_bin_1", 10, 40, 60),
 				AlgorithmUsed = "FFD",
 				PackedItems =
 				[
@@ -94,7 +101,7 @@ internal class PackCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<
 			new PackBinResponse()
 			{
 				Status = BinPackResultStatus.NotPacked,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
+				Bin = Bin.From("custom_bin_1", 10, 40, 60),
 				AlgorithmUsed = "FFD",
 				PackedItems = [],
 				UnpackedItems =[

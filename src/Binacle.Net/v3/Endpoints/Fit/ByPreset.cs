@@ -63,7 +63,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 				return Results.NotFound(null);
 			}
 			
-			var operationResults = await binacleService.CompareBinsAsync(
+			var operationResults = await binacleService.MultipleBinsAsync(
 				request.Parameters!.Algorithm.ToLibAlgorithm(),
 				presetOption.Bins!,
 				request.Items!,

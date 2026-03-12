@@ -1,28 +1,17 @@
 using Binacle.Net.Kernel.OpenApi.Helpers;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples.Abstractions;
 
 namespace Binacle.Net.v4.Contracts;
 
 #pragma warning disable CS1591
-
-public abstract class PresetBinRequestBase : IWithOperationParameters, IWithItems
+public abstract class PresetBinsRequestBase : IWithOperationParameters, IWithItems
 {
 	public required OperationParameters Parameters { get; set; }
 	public required List<Box> Items { get; set; }
 }
 
-internal class PresetBinRequestBaseValidator : AbstractValidator<PresetBinRequestBase>
-{
-	public PresetBinRequestBaseValidator()
-	{
-		Include(new OperationParametersValidator());
-		Include(new ItemsValidator());
-	}
-}
-
-internal class PresetBinValidationProblemResponseExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
+internal class PresetBinsValidationProblemResponseExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
 {
 	public IEnumerable<IOpenApiExample<ProblemDetails>> GetExamples()
 	{

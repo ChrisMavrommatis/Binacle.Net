@@ -1,4 +1,5 @@
 using Binacle.Net.Kernel.OpenApi.Helpers;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples.Abstractions;
 
@@ -13,7 +14,15 @@ public abstract class CustomBinRequestBase : IWithOperationParameters, IWithBin,
 	public required List<Box> Items { get; set; }
 }
 
-
+internal abstract class CustomBinRequestBaseValidator : AbstractValidator<CustomBinRequestBase>
+{
+	public CustomBinRequestBaseValidator()
+	{
+		Include(new OperationParametersValidator());
+		Include(new BinValidator());
+		Include(new ItemsValidator());
+	}
+}
 
 internal class CustomBinValidationProblemResponseExamples : IMultipleOpenApiExamplesProvider<ProblemDetails>
 {

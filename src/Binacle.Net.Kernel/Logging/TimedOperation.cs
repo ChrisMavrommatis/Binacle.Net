@@ -25,7 +25,7 @@ public class TimedOperation : IDisposable
 		this.startingTimestamp = Stopwatch.GetTimestamp();
 	}
 
-	public void Dispose()
+	public virtual void Dispose()
 	{
 		var delta = Stopwatch.GetElapsedTime(this.startingTimestamp);
 		this.args[^1] = delta.TotalMilliseconds;

@@ -9,14 +9,7 @@ namespace Binacle.Net.v4.Contracts.Fit;
 #pragma warning disable CS1591
 public class FitPresetBinRequest : PresetBinRequestBase;
 
-internal class FitPresetBinRequestValidator : AbstractValidator<FitPresetBinRequest>
-{
-	public FitPresetBinRequestValidator()
-	{
-		Include(new OperationParametersValidator());
-		Include(new ItemsValidator());
-	}
-}
+internal class FitPresetBinRequestValidator : PresetBinRequestBaseValidator;
 
 internal class FitPresetBinRequestExample : ISingleOpenApiExamplesProvider<FitPresetBinRequest>
 {

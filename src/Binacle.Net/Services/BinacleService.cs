@@ -11,15 +11,6 @@ namespace Binacle.Net.Services;
 internal interface IBinacleService
 {
 	ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
-		TBin bin,
-		List<TBox> items,
-		TParams parameters
-	)
-		where TBin : class, IWithID, IWithReadOnlyDimensions
-		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
-		where TParams : class, IOperationParameters, ILogConvertible;
-
-	ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
 		Algorithm algorithm,
 		TBin bin,
 		List<TBox> items,
@@ -29,7 +20,17 @@ internal interface IBinacleService
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 		where TParams : class, IOperationParameters, ILogConvertible;
 	
-	ValueTask<IDictionary<string, OperationResult>> CompareBinsAsync<TBin, TBox, TParams>(
+	ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
+		TBin bin,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+		where TParams : class, IOperationParameters, ILogConvertible;
+
+	
+	ValueTask<IDictionary<string, OperationResult>> MultipleBinsAsync<TBin, TBox, TParams>(
 		Algorithm algorithm,
 		List<TBin> bins,
 		List<TBox> items,
@@ -38,6 +39,35 @@ internal interface IBinacleService
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 		where TParams : class, IOperationParameters, ILogConvertible;
+	
+	ValueTask<IDictionary<string, OperationResult>> MultipleBinsAsync<TBin, TBox, TParams>(
+		List<TBin> bins,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+		where TParams : class, IOperationParameters, ILogConvertible;
+	
+	ValueTask<OperationResult> SmallestBinAsync<TBin, TBox, TParams>(
+		Algorithm algorithm,
+		List<TBin> bins,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+		where TParams : class, IOperationParameters, ILogConvertible;
+	
+	ValueTask<OperationResult> SmallestBinAsync<TBin, TBox, TParams>(
+		List<TBin> bins,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+		where TParams : class, IOperationParameters, ILogConvertible;
+
 }
 
 internal class BinacleService : IBinacleService
@@ -67,36 +97,6 @@ internal class BinacleService : IBinacleService
 	}
 
 	public async ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
-		TBin bin,
-		List<TBox> items,
-		TParams parameters
-	)
-		where TBin : class, IWithID, IWithReadOnlyDimensions
-		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
-		where TParams : class, IOperationParameters, ILogConvertible
-	{
-		using var activity = Diagnostics.ActivitySource.StartActivity("Single Bin Operation");
-
-		using var timedOperation = this.logger.BeginTimedOperation("Single Bin Operation");
-		var algorithmProcessor = this.algorithmProcessorFactory.Create(items.Count);
-		var results = algorithmProcessor.Process(
-			bin,
-			items,
-			parameters
-		);
-		
-		var result = resultSelector.BestAlgorithm(results);
-		await this.logChannel.WriteToChannelAsync(
-			bin,
-			items,
-			parameters,
-			(result.AlgorithmInfo.GetAlgorithmIdentifierName(), result), 
-			this.logger
-		);
-		return result;
-	}
-	
-	public async ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
 		Algorithm algorithm,
 		TBin bin,
 		List<TBox> items,
@@ -106,9 +106,7 @@ internal class BinacleService : IBinacleService
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 		where TParams : class, IOperationParameters, ILogConvertible
 	{
-		using var activity = Diagnostics.ActivitySource.StartActivity("Single Bin Operation");
-
-		using var timedOperation = this.logger.BeginTimedOperation("Single Bin Operation");
+		using var timedOperation = this.logger.BeginTimedActivityOperation("Single Bin Operation");
 		var algorithmInstance = this.algorithmFactory.Create(algorithm, bin, items);
 		var result = algorithmInstance.Execute(parameters);
 		
@@ -121,8 +119,38 @@ internal class BinacleService : IBinacleService
 		);
 		return result;
 	}
+	
+	public async ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
+		TBin bin,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+		where TParams : class, IOperationParameters, ILogConvertible
+	{
+		using var timedOperation = this.logger.BeginTimedActivityOperation("Single Bin Operation");
+		var algorithmProcessor = this.algorithmProcessorFactory.Create(items.Count);
+		var results = algorithmProcessor.Process(
+			bin,
+			items,
+			parameters
+		);
+		
+		var result = this.resultSelector.BestAlgorithm(results);
+		await this.logChannel.WriteToChannelAsync(
+			bin,
+			items,
+			parameters,
+			(result.AlgorithmInfo.GetAlgorithmIdentifierName(), result), 
+			this.logger
+		);
+		return result;
+	}
+	
+	
 
-	public async ValueTask<IDictionary<string, OperationResult>> CompareBinsAsync<TBin, TBox, TParams>(
+	public async ValueTask<IDictionary<string, OperationResult>> MultipleBinsAsync<TBin, TBox, TParams>(
 		Algorithm algorithm,
 		List<TBin> bins,
 		List<TBox> items,
@@ -132,9 +160,7 @@ internal class BinacleService : IBinacleService
 		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
 		where TParams : class, IOperationParameters, ILogConvertible
 	{
-		using var activity = Diagnostics.ActivitySource.StartActivity("Pack Bins");
-
-		using var timedOperation = this.logger.BeginTimedOperation("Pack Bins");
+		using var timedOperation = this.logger.BeginTimedActivityOperation("Multiple Bin Operation");
 
 		var binProcessor = this.binProcessorFactory.Create(bins.Count, items.Count);
 		var results = binProcessor.Process(
@@ -147,4 +173,87 @@ internal class BinacleService : IBinacleService
 		await this.logChannel.WriteToChannelAsync(bins, items, parameters, results, this.logger);
 		return results;
 	}
+
+	public async ValueTask<IDictionary<string, OperationResult>> MultipleBinsAsync<TBin, TBox, TParams>(
+		List<TBin> bins,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+		where TParams : class, IOperationParameters, ILogConvertible
+	{
+		using var timedOperation = this.logger.BeginTimedActivityOperation("Multiple Bin Operation");
+
+		var binProcessor = this.binProcessorFactory.CreateMultiAlgorithm(bins.Count, items.Count);
+		var results = binProcessor.Process(
+			bins,
+			items,
+			parameters
+		);
+
+		await this.logChannel.WriteToChannelAsync(bins, items, parameters, results, this.logger);
+		return results;
+	}
+	
+	public async ValueTask<OperationResult> SmallestBinAsync<TBin, TBox, TParams>(
+		Algorithm algorithm,
+		List<TBin> bins,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+		where TParams : class, IOperationParameters, ILogConvertible
+	{
+		using var timedOperation = this.logger.BeginTimedActivityOperation("Smallest Bin Operation");
+
+		var binProcessor = this.binProcessorFactory.Create(bins.Count, items.Count);
+		var results = binProcessor.Process(
+			algorithm,
+			bins,
+			items,
+			parameters
+		);
+		var result = this.resultSelector.SmallestBin(results);
+
+		await this.logChannel.WriteToChannelAsync(
+			bins, 
+			items,
+			parameters,
+			(result.Bin.ID, result),
+			this.logger
+		);
+		return result;
+	}
+
+	public async ValueTask<OperationResult> SmallestBinAsync<TBin, TBox, TParams>(
+		List<TBin> bins,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IWithReadOnlyDimensions
+		where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+		where TParams : class, IOperationParameters, ILogConvertible
+	{
+		using var timedOperation = this.logger.BeginTimedActivityOperation("Smallest Bin Operation");
+
+		var binProcessor = this.binProcessorFactory.CreateMultiAlgorithm(bins.Count, items.Count);
+		var results = binProcessor.Process(
+			bins,
+			items,
+			parameters
+		);
+		var result = this.resultSelector.SmallestBin(results);
+
+		await this.logChannel.WriteToChannelAsync(
+			bins, 
+			items,
+			parameters,
+			(result.Bin.ID, result),
+			this.logger
+		);
+		return result;
+	}
+
 }
