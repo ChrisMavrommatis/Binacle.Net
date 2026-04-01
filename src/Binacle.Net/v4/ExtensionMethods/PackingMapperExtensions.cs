@@ -15,7 +15,7 @@ internal static class PackingMapperExtensions
 			OperationResultStatus.Unknown => BinPackResultStatus.Unknown,
 			OperationResultStatus.NotPacked => BinPackResultStatus.NotPacked,
 			_ => throw new NotSupportedException(
-				$"No Implementation exists for operation result  status {operationResultStatus.ToFastString()}"),
+				$"No Bin Pack Result Status Implementation exists for operation result status {operationResultStatus.ToFastString()}"),
 		};
 	}
 }

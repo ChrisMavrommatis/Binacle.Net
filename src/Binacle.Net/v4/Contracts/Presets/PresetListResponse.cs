@@ -2,6 +2,8 @@ using Binacle.Net.Configuration;
 
 namespace Binacle.Net.v4.Contracts.Presets;
 
+#pragma warning disable CS1591
+
 public class PresetListResponse
 {
 	public required IDictionary<string, List<Bin>> Presets { get; init; }
