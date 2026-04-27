@@ -10,7 +10,7 @@ namespace Binacle.Net.v4.Contracts.Pack;
 
 public class PackCustomBinRequest : CustomBinRequestBase;
 
-internal class PackCustomBinRequestValidator : CustomBinRequestBaseValidator;
+internal class PackCustomBinRequestValidator : CustomBinRequestBaseValidator<PackCustomBinRequest>;
 
 internal class PackCustomBinRequestExample : ISingleOpenApiExamplesProvider<PackCustomBinRequest>
 {

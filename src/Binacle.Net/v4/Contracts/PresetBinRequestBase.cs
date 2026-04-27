@@ -13,9 +13,10 @@ public abstract class PresetBinRequestBase : IWithOperationParameters, IWithItem
 	public required List<Box> Items { get; set; }
 }
 
-internal class PresetBinRequestBaseValidator : AbstractValidator<PresetBinRequestBase>
+internal abstract class PresetBinRequestBaseValidator<T> : AbstractValidator<T>
+	where T : PresetBinRequestBase
 {
-	public PresetBinRequestBaseValidator()
+	protected PresetBinRequestBaseValidator()
 	{
 		Include(new OperationParametersValidator());
 		Include(new ItemsValidator());

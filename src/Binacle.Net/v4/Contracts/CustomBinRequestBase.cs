@@ -14,9 +14,10 @@ public abstract class CustomBinRequestBase : IWithOperationParameters, IWithBin,
 	public required List<Box> Items { get; set; }
 }
 
-internal abstract class CustomBinRequestBaseValidator : AbstractValidator<CustomBinRequestBase>
+internal abstract class CustomBinRequestBaseValidator<T> : AbstractValidator<T>
+	where T : CustomBinRequestBase
 {
-	public CustomBinRequestBaseValidator()
+	protected CustomBinRequestBaseValidator()
 	{
 		Include(new OperationParametersValidator());
 		Include(new BinValidator());
