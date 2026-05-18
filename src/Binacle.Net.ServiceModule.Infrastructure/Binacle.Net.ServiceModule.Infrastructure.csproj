@@ -7,13 +7,13 @@
 	<ItemGroup>
  	  <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
 	  <PackageReference Include="Dapper" Version="2.1.72" />
-	  <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.5" />
-	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.13.1" />
+	  <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.7" />
+	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.14.0" />
 	  <PackageReference Include="Npgsql" Version="10.0.2" />
 	</ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
 	</ItemGroup>
 	
 	<ItemGroup>
