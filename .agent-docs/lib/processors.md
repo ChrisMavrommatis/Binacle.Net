@@ -4,18 +4,8 @@ description: Bin processors, algorithm processors, factories, and result selecti
 
 # Processors
 
-## IBinacleService
-
-Defined in `src/Binacle.Net/Services/BinacleService.cs`. The API layer calls this — it does not touch processors directly.
-
-| Method | What it does |
-|---|---|
-| `SingleBinAsync(algorithm, bin, items, params)` | Runs one algorithm on one bin directly via `IAlgorithmFactory` |
-| `SingleBinAsync(bin, items, params)` | Runs all algorithms on one bin via `IAlgorithmProcessorFactory`, picks `BestAlgorithm` |
-| `MultipleBinsAsync(algorithm, bins, items, params)` | Runs one algorithm on each bin via `IBinProcessorFactory.Create` |
-| `MultipleBinsAsync(bins, items, params)` | Runs all algorithms on each bin via `IBinProcessorFactory.CreateMultiAlgorithm` |
-| `SmallestBinAsync(algorithm, bins, items, params)` | Same as multiple explicit, then picks `SmallestBin` |
-| `SmallestBinAsync(bins, items, params)` | Same as multiple auto-select, then picks `SmallestBin` |
+The API layer calls `IBinacleService` — it does not touch processors directly.
+See [service.md](../api/service.md) for the full method table and how to call it from an endpoint.
 
 ## BinProcessorFactory
 

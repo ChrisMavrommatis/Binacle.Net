@@ -17,7 +17,8 @@ Three heuristics, each with two versions:
 Each lives under `src/Binacle.Lib/Algorithms/<Heuristic> v<N>/`.
 
 All versions of a heuristic produce the same results. Newer versions are faster and use less memory.
-The API uses one version at a time (usually the latest).
+The API currently uses **v2 for all three heuristics** — this is set in `src/Binacle.Lib/AlgorithmFactory.cs`.
+When writing new code, always use the latest version (currently v2).
 Old versions are kept so you can benchmark without changing what the API uses — do not remove them.
 
 ## Operation Types
