@@ -27,67 +27,32 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 
 ## Commands
 
-All scripts live in `config/` and are run from the repo root.
+See [Commands](commands.md) — how to run the API, tests, benchmarks, and build the Docker image.
 
-### Run the API
+## Common Tasks
 
-```bash
-./config/api.sh [N|S|U|A]
-```
-
-- `N` / `Normal` — core API only (default)
-- `S` / `WithServiceModuleOnly` — with ServiceModule (auth, rate limiting)
-- `U` / `WithUiModuleOnly` — with UIModule
-- `A` / `WithAllModules` — everything
-
-### Run Tests
-
-```bash
-./config/tests.sh <alias>
-```
-
-Aliases: `lib`, `api`, `api_service`, `vipaq`, `performance`
-
-To run a single test project directly:
-```bash
-cd test/<ProjectName> && dotnet run
-```
-
-### Benchmarks
-
-```bash
-./config/benchmarks.sh [FastValidation|AlgorithmRacing]
-# No argument = all benchmarks
-```
-
-### Build (Docker image)
-
-```bash
-./config/build.sh
-```
-
-### JS Packages (npm workspaces at root)
-
-```bash
-npm install
-npm run copy-assets-to-docs
-npm run copy-assets-to-web
-```
-
-### ViPaq TypeScript tests
-
-```bash
-cd packages/binacle-vipaq && npm test
-```
+| Task | Read these |
+|---|---|
+| Add a v4 endpoint | `api/endpoints.md`, `api/add-endpoint.md`, `api/contracts.md`, `api/service.md`, `api/kernel.md` |
+| Work with ServiceModule (auth, rate limiting) | `api/module-service.md`, `api/modules.md` |
+| Understand startup and module wiring | `api/README.md`, `api/modules.md`, `api/kernel.md` |
+| Understand fit vs pack | `concepts/fit-vs-pack.md` |
+| Understand how results are selected | `lib/result-selection.md`, `lib/processors.md` |
+| Understand how OperationResult is built | `lib/result-building.md` |
+| Add or modify algorithm processing | `lib/algorithm-factory.md`, `lib/processors.md` |
+| Add or modify a test | `tests/README.md`, `tests/scenarios.md` |
+| Work with presets | `api/presets.md`, `api/v3-vs-v4.md` |
+| Understand v3 vs v4 differences | `api/v3-vs-v4.md` |
+| Work with ViPaq | `vipaq/README.md` |
 
 ## Slice Docs
 
-- [Concepts](concepts/README.md) — overarching ideas that span multiple slices
-- [API](api/README.md) — `Binacle.Net` and `Binacle.Net.Kernel`
-- [Lib](lib/README.md) — `Binacle.Lib` and `Binacle.Lib.Abstractions`
-- [Tests](tests/README.md) — all test projects
-- [ViPaq](vipaq/README.md) — `Binacle.ViPaq` and `packages/binacle-vipaq`
-- [Packages](packages/README.md) — TypeScript packages
-- [Gems](gems/README.md) — Ruby gems
+- [Concepts](concepts/README.md) — fit vs pack; ideas that span slices
+- [API](api/README.md) — endpoints, contracts, service, kernel, modules (Diagnostics, ServiceModule, UIModule)
+- [Lib](lib/README.md) — algorithms, processors, result building and selection
+- [Tests](tests/README.md) — all test projects, fixture patterns, scenario data
+- [ViPaq](vipaq/README.md) — `Binacle.ViPaq` binary format and TypeScript mirror
+- [Packages](packages/README.md) — TypeScript npm packages
+- [Gems](gems/README.md) — Ruby/Jekyll plugins
 - [Docs Site](docs/README.md) — Jekyll docs site
-- [Web Site](web/README.md) — Jekyll web site
+- [Web Site](web/README.md) — Jekyll marketing site

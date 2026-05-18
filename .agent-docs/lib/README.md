@@ -13,8 +13,7 @@ Two projects:
 
 - [Algorithms](algorithms.md) — heuristics, versions, operation types
 - [Algorithm Factory](algorithm-factory.md) — IAlgorithmFactory, DI registration, how tests construct algorithms
-- [Algorithm Processor](algorithm-processor.md) — IAlgorithmProcessor, factories, algorithm sets per path
-- [Processors](processors.md) — bin processors and result selection overview
+- [Processors](processors.md) — IAlgorithmProcessor, bin processors, factories, algorithm sets per path
 - [Result Building](result-building.md) — OperationResultBuilder, status rules, volume percentages
 - [Result Selection](result-selection.md) — BestAlgorithm, SmallestBin, BestBin strategies and scoring
 

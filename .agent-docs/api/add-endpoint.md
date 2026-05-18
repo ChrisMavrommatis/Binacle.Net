@@ -34,8 +34,8 @@ internal class MyEndpoint : IGroupedEndpoint<ApiV4EndpointGroup>
             .Produces<MyResponse>(StatusCodes.Status200OK, "application/json")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
-            .RequireRateLimiting("ApiUsage")
-            .RequireCors(CorsPolicy.CoreApi);
+            .RequireRateLimiting("ApiUsage")   // only when ServiceModule is active
+            .RequireCors(CorsPolicy.CoreApi);   // only when ServiceModule is active
     }
 
     internal async Task<IResult> HandleAsync(
@@ -62,9 +62,6 @@ The endpoint is auto-registered. No changes to `Program.cs` or any registration 
 
 ## Choosing the Service Method
 
-| Scenario | Service method |
-|---|---|
-| Single bin, specific algorithm | `SingleBinAsync(algorithm, bin, items, parameters)` |
-| Single bin, auto-select best | `SingleBinAsync(bin, items, parameters)` |
-| Smallest fitting bin, specific algorithm | `SmallestBinAsync(algorithm, bins, items, parameters)` |
-| Smallest fitting bin, auto-select best | `SmallestBinAsync(bins, items, parameters)` |
+See [service.md](service.md) for the full method reference and call pattern.
+Quick reference: single bin → `SingleBinAsync`, multiple bins → `MultipleBinsAsync`, smallest bin → `SmallestBinAsync`.
+Each has an explicit-algorithm overload and an auto-select overload.

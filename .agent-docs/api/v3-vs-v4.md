@@ -28,14 +28,33 @@ Set the mode with `.ForFittingOperation()` or `.ForPackingOperation()` before ca
 - `POST /api/v3/pack/by-custom`
 - `POST /api/v3/pack/by-preset`
 
-**v4:**
-- `POST /api/v4/fit/bin`
-- `POST /api/v4/fit/bin/{preset}/{bin}`
-- `POST /api/v4/pack/bin`
-- `POST /api/v4/pack/bin/{preset}/{bin}`
-- `POST /api/v4/pack/smallest-bin`
+**v4 — implemented:**
 
-See [.plans/v4-endpoints.md](../../.plans/v4-endpoints.md) for the full planned v4 endpoint list.
+| Method | Route | Description |
+|---|---|---|
+| POST | `/api/v4/fit/bin` | Fit-check a custom bin |
+| POST | `/api/v4/fit/bin/{preset}/{bin}` | Fit-check one specific bin from a preset |
+| POST | `/api/v4/pack/bin` | Pack a custom bin |
+| POST | `/api/v4/pack/bin/{preset}/{bin}` | Pack one specific bin from a preset |
+| POST | `/api/v4/pack/smallest-bin` | Custom bins → smallest successful pack |
+| GET | `/api/v4/presets` | List all preset names |
+
+**v4 — planned (not yet implemented):**
+
+| Method | Route | Description |
+|---|---|---|
+| POST | `/api/v4/pack/compare` | Pack all custom bins, return all results |
+| POST | `/api/v4/pack/compare/{preset}` | Pack all preset bins, return all results |
+| POST | `/api/v4/fit/compare` | Fit-check all custom bins, return all results |
+| POST | `/api/v4/fit/compare/{preset}` | Fit-check all preset bins, return all results |
+| POST | `/api/v4/pack/smallest/{preset}` | Preset bins → smallest successful pack |
+| POST | `/api/v4/pack/best-fit` | Custom bins → highest utilization |
+| POST | `/api/v4/pack/best-fit/{preset}` | Preset bins → highest utilization |
+| POST | `/api/v4/pack/first-fit` | Custom bins → first success |
+| POST | `/api/v4/pack/first-fit/{preset}` | Preset bins → first success |
+| POST | `/api/v4/fit/smallest` | Custom bins → smallest viable fit |
+| POST | `/api/v4/fit/smallest/{preset}` | Preset bins → smallest viable fit |
+| GET | `/api/v4/presets/{preset}` | Get bin definitions for a preset |
 
 ## Fit Response
 

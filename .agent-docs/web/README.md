@@ -1,5 +1,5 @@
 ---
-description: Jekyll web/marketing site at web/
+description: Jekyll web/marketing site at web/. Site structure and build steps not yet documented.
 ---
 
 # Web Site

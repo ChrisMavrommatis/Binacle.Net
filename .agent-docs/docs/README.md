@@ -1,5 +1,5 @@
 ---
-description: Jekyll documentation site at docs/
+description: Jekyll documentation site at docs/. Site structure and build steps not yet documented.
 ---
 
 # Docs Site
