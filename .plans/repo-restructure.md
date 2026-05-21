@@ -166,17 +166,34 @@ Tasks once decided:
 
 ## Phase 4 — Cleanup and annotations
 
-- [ ] Add `README.md` to `ruby/` explaining the gems and which sites use them
+- [x] Add `README.md` to `ruby/` explaining the gems and which sites use them
 
-- [ ] Add `README.md` to `shared/` explaining `Binacle.TestsKernel` and who depends on it
+- [x] Add `README.md` to `shared/` explaining `Binacle.TestsKernel` and who depends on it
 
-- [ ] Annotate `api/src/Binacle.Net.ServiceModule/v0/` in the agent docs and README
-  - Currently undocumented alongside v2/v3/v4 — at minimum note its existence and purpose
+- [x] Annotate `api/src/Binacle.Net.ServiceModule/v0/` in the agent docs and README
+  - v0 endpoints are fully documented in `.agent-docs/api/module-service.md` — no gaps
 
-- [ ] Add `spec/` test suites to both Ruby gems (`jekyll-filters`, `jekyll-gtm`)
-  - Convention: RSpec, `spec/` folder, `spec_helper.rb`
+- [x] Add `spec/` test suites to both Ruby gems (`jekyll-filters`, `jekyll-gtm`)
+  - `spec/spec_helper.rb`, `spec/capitalization_filters_spec.rb`, `spec/sanitization_filters_spec.rb`
+  - `spec/spec_helper.rb`, `spec/gtm_tags_spec.rb`
+  - Added `rspec ~> 3.0` as dev dependency in both gemspecs
 
-- [ ] Add `v4/` to `api/requests/` with HTTP test files for all new v4 endpoints
+- [x] Add `v4/` to `api/requests/` with HTTP test files for all new v4 endpoints
+  - 6 files: List All Presets, Fit By Custom Bin, Fit By Preset Bin, Pack By Custom Bin, Pack By Preset Bin, Pack Smallest Bin
+
+---
+
+## Phase 5 — Tidy-ups
+
+- [ ] Collapse `api/requests/http/` — move all contents up one level into `api/requests/` directly.
+  The `http/` subfolder was inherited from `res/http/` where it shared a parent with `or-library-packing-data/`.
+  Now that `requests/` is its own dedicated folder the extra level adds no value.
+  - Rename `http.proj` → `requests.proj` and update the `<None Include>` globs inside it
+  - Update `Binacle.Net.slnx` — folder entry `/api/requests/` and project path
+
+- [ ] Rename `.agent-docs/gems/` → `.agent-docs/ruby/`
+  - Update all internal links in `.agent-docs/README.md` (`gems/README.md` → `ruby/README.md`)
+  - The frontmatter description in the file already says `ruby/` — just the folder name lags
 
 ---
 
