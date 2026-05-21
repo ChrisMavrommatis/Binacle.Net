@@ -15,8 +15,10 @@ New endpoints go in **v4 only**. v3 is stable and must not be modified.
 Add request/response types under `src/Binacle.Net/v4/Contracts/`.
 
 Request types should use the relevant `IWith*` interfaces (`IWithBin`, `IWithBins`, `IWithItems`, `IWithOperationParameters`).
+See [contracts.md](contracts.md) for the full interface table and a concrete example request class.
 Add a FluentValidation validator in the same file.
-Add OpenAPI examples next to the contract types.
+Add OpenAPI examples next to the contract types — see [contracts.md](contracts.md) for the pattern.
+Example classes use `RequestExample<T>`, `ResponseExamples<T>` from `OpenApiExamples.ExtensionMethods`.
 
 ### 2. Create the endpoint class
 
@@ -30,12 +32,26 @@ internal class MyEndpoint : IGroupedEndpoint<ApiV4EndpointGroup>
         group.MapPost("my-route", HandleAsync)
             .WithTags("MyTag")
             .WithSummary("...")
+            .WithDescription("...")
+
             .Accepts<MyRequest>("application/json")
+            .RequestExample<MyRequestExample>("application/json")
+
             .Produces<MyResponse>(StatusCodes.Status200OK, "application/json")
+            .ResponseDescription(StatusCodes.Status200OK, "...")
+            .ResponseExamples<MyResponseExamples>(StatusCodes.Status200OK, "application/json")
+
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
+            .ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+
             .ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
+            .ResponseDescription(StatusCodes.Status422UnprocessableEntity, ResponseDescription.For400BadRequest)
+            .ResponseExamples<MyValidationProblemResponseExamples>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
+
             .RequireRateLimiting("ApiUsage")   // only when ServiceModule is active
             .RequireCors(CorsPolicy.CoreApi);   // only when ServiceModule is active
+            // do NOT add .ProducesProblem(500) — ApiV4EndpointGroup sets it for all endpoints
     }
 
     internal async Task<IResult> HandleAsync(
@@ -56,7 +72,30 @@ internal class MyEndpoint : IGroupedEndpoint<ApiV4EndpointGroup>
 }
 ```
 
-### 3. Done
+### 3. Create the response type (if new)
+
+Subclass `BinResponseBase` and add a static `From()` factory:
+
+```csharp
+public class MyResponse : BinResponseBase
+{
+    public MyStatus Status { get; set; }
+
+    internal static MyResponse From(OperationParameters parameters, OperationResult result)
+    {
+        var response = From<MyResponse>(parameters, result);
+        response.Status = ...; // map from result
+        return response;
+    }
+}
+```
+
+`BinResponseBase.From<T>()` populates the common fields (Bin, AlgorithmUsed, PackedItems, UnpackedItems,
+volume percentages, ViPaqData). Your subclass only needs to set what's specific to the operation.
+
+Response types live in `src/Binacle.Net/v4/Contracts/`. See [contracts.md](contracts.md) for existing types.
+
+### 4. Done
 
 The endpoint is auto-registered. No changes to `Program.cs` or any registration file needed.
 
@@ -65,3 +104,6 @@ The endpoint is auto-registered. No changes to `Program.cs` or any registration 
 See [service.md](service.md) for the full method reference and call pattern.
 Quick reference: single bin → `SingleBinAsync`, multiple bins → `MultipleBinsAsync`, smallest bin → `SmallestBinAsync`.
 Each has an explicit-algorithm overload and an auto-select overload.
+
+To understand how the service runs algorithms and picks results, see [processors.md](../lib/processors.md)
+and [result-selection.md](../lib/result-selection.md).

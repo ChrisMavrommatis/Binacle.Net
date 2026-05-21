@@ -21,6 +21,10 @@ IResultSelectionStrategy.Select(IDictionary<string, OperationResult> results) �
 ```
 
 All strategies: throw `ArgumentException` if the dictionary is empty; return immediately if it has one entry.
+Called by `LoopMultiAlgorithmBinProcessor` (per bin) and by `BinacleService` — see [processors.md](processors.md).
+
+`OperationResultStatus` includes `Unknown = -1` as a sentinel default. If you implement a new strategy,
+guard against it — a result with `Unknown` status should never win.
 
 ## DI Registration
 

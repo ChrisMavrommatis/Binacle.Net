@@ -77,6 +77,7 @@ After this point, `Feature.IsEnabled("FLAG_NAME")` is available anywhere.
 Used in `Program.cs` to conditionally call `AddServiceModule()` and `AddUIModule()`.
 
 Flags checked in `Program.cs`: `SERVICE_MODULE`, `UI_MODULE`, `SWAGGER_UI`, `SCALAR_UI`.
+See [modules.md](modules.md) for what each flag enables and how modules use them.
 
 ## IModuleMarker
 
@@ -90,6 +91,7 @@ app.RegisterEndpointsFromAssemblyContaining<IModuleMarker>();
 ```
 
 This keeps each module's validators, OpenAPI docs, and endpoints isolated to its own assembly.
+Used by [DiagnosticsModule](module-diagnostics.md) and [ServiceModule](module-service.md).
 
 ## IOpenApiDocument
 
@@ -99,7 +101,7 @@ Each module registers its own OpenAPI document by implementing `IOpenApiDocument
 ## IStartupTask
 
 Post-build async initialization. Registered via `services.AddStartupTask<T>()`, run via `app.RunStartupTasksAsync()`.
-Used by Infrastructure to create database schemas before the app starts serving requests.
+Used by Infrastructure to create database schemas before the app starts serving requests — see [ServiceModule](module-service.md).
 
 ## IConfigurationOptions
 

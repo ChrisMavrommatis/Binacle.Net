@@ -56,3 +56,43 @@ npm run copy-assets-to-web
 ```bash
 cd packages/binacle-vipaq && npm test
 ```
+
+## Docker
+
+<!-- sourced from docs site; verify against current code if behaviour changes -->
+
+Image: `binacle/binacle-net:latest`. Default internal port: `8080`.
+
+Basic run:
+
+```bash
+docker run -d --name binacle-net -p 8080:8080 binacle/binacle-net:latest
+```
+
+With all UIs and modules enabled:
+
+```bash
+docker run -d --name binacle-net -p 8080:8080 \
+  -e SWAGGER_UI=True \
+  -e SCALAR_UI=True \
+  -e UI_MODULE=True \
+  binacle/binacle-net:latest
+```
+
+Override preset file (read-only bind mount):
+
+```bash
+-v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro
+```
+
+Change the internal port (e.g. run on 80 inside the container, expose as 8080 on the host):
+
+```bash
+-e ASPNETCORE_HTTP_PORTS=80 -p 8080:80
+```
+
+Persist logs — bind a host path to `/app/data/logs` (or `/app/data` for all data):
+
+```bash
+-v $(pwd)/data/logs:/app/data/logs
+```

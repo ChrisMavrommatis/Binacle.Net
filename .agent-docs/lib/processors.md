@@ -1,8 +1,17 @@
 ---
-description: Algorithm and bin processors — IAlgorithmProcessor, BinProcessorFactory, algorithm sets per execution path, result selection, and diagnostics
+description: IAlgorithmProcessor and IBinProcessor, their factories, and which algorithms each execution path uses
 ---
 
 # Processors
+
+## Two axes
+
+Pick the right processor by bins × algorithms:
+
+| | One algorithm | Many algorithms |
+|---|---|---|
+| **One bin** | `IAlgorithmProcessor` (explicit) | `IAlgorithmProcessor` (auto — via `AlgorithmProcessorFactory`) |
+| **Many bins** | `IBinProcessor` → `LoopBinProcessor` | `IBinProcessor` → `LoopMultiAlgorithmBinProcessor` |
 
 ## What it does
 
@@ -75,11 +84,12 @@ After processors produce results, `IResultSelector` picks one. Quick reference:
 |---|---|
 | `BestAlgorithm` | `SingleBinAsync` auto-select; `LoopMultiAlgorithmBinProcessor` per bin |
 | `SmallestBin` | `SmallestBinAsync` — picks smallest successful bin |
-| `BestBin` | On the interface; not currently called by the service |
+| `BestBin` | On the interface; not currently called by the service — see [result-selection.md](result-selection.md) |
 
 See [result-selection.md](result-selection.md) for scoring rules and how tests verify each strategy.
 
 ## Parallel variants
 
-`ParallelAlgorithmProcessor` and `ParallelBinProcessor` / `ParallelMultiAlgorithmBinProcessor` exist in the codebase
-but are **not wired up** by any factory. Do not use them until they are.
+`ParallelAlgorithmProcessor` (`src/Binacle.Lib/AlgorithmProcessing/`) and `ParallelBinProcessor` /
+`ParallelMultiAlgorithmBinProcessor` (`src/Binacle.Lib/BinProcessing/`) exist but are **not wired up** by any factory.
+Do not use them until they are.

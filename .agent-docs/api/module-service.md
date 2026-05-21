@@ -110,6 +110,11 @@ Each provider registers its own `IAccountRepository`, `ISubscriptionRepository`,
 JWT secret, issuer, and audience are in `JwtAuthOptions` (loaded from same file).
 In Development, `dotnet user-secrets` is also loaded for the `IModuleMarker` assembly.
 
+## Adding an Admin Endpoint
+
+Admin and v0 endpoints follow the same `IGroupedEndpoint` pattern as v4.
+See [add-endpoint.md](add-endpoint.md) for the template — use `ApiV0EndpointGroup` as the group type instead of `ApiV4EndpointGroup`.
+
 ## Related Tests
 
 `test/Binacle.Net.ServiceModule.IntegrationTests` (alias: `api_service`) — covers auth token endpoint

@@ -28,8 +28,10 @@ The returned `IPackingAlgorithm` exposes `Algorithm`, `Version`, and `Execute(pa
 | `Algorithm.BFD` | `BestFitDecreasing_v2` |
 
 Throws `NotSupportedException` for any other value.
+Class files live under `src/Binacle.Lib/Algorithms/<Heuristic> v<N>/` — see [algorithms.md](algorithms.md).
 
-`AlgorithmFactory_v1` and `AlgorithmFactory_v2` are `internal` — used for benchmarks only.
+`AlgorithmFactory_v1` and `AlgorithmFactory_v2` are `internal` — used for benchmarks only
+(`test/Binacle.Lib.Benchmarks`, BenchmarkDotNet runner).
 
 ## DI Registration
 
@@ -49,3 +51,4 @@ AlgorithmFactories.FFD_v2 = (bin, items) => new FirstFitDecreasing_v2<TestBin, T
 
 `CommonTestingFixture` runs all six versions (FFD/WFD/BFD × v1/v2) against every scenario.
 This keeps old versions tested without coupling them to the factory.
+See [tests/scenarios.md](../tests/scenarios.md) for how scenarios and fixtures are structured.

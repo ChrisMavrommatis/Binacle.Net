@@ -4,6 +4,9 @@ description: All test projects — stack, aliases, and what each covers
 
 # Tests
 
+If you don't know where to start, read [scenarios.md](scenarios.md) first.
+For run commands and aliases, see [Commands](../commands.md).
+
 ## Stack
 
 All test projects use xUnit v3 + Shouldly. Random data uses Bogus. Run with `dotnet run`.
@@ -48,6 +51,11 @@ Tests for the ViPaq binary format. Covers encoding/decoding and roundtrip behavi
 
 Console runner (not xUnit) for algorithm performance tests. Outputs to console and file.
 Separate from the BenchmarkDotNet benchmarks in `Binacle.Lib.Benchmarks`.
+
+### `Binacle.Lib.Benchmarks`
+
+BenchmarkDotNet runner for algorithm comparison. Uses internal `AlgorithmFactory_v1` and `AlgorithmFactory_v2`
+to race algorithm versions against each other. Not xUnit — run directly via `dotnet run`.
 
 ## Shared Infrastructure
 

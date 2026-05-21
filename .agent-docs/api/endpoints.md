@@ -1,5 +1,5 @@
 ---
-description: Endpoint pattern, registration, and request validation flow
+description: Endpoint pattern, registration, request validation flow, and route groups for v3 and v4
 ---
 
 # Endpoints
@@ -21,24 +21,78 @@ app.RegisterEndpointsFromAssemblyContaining<IModuleMarker>();
 ## Interfaces (in `Binacle.Net.Kernel`)
 
 ```
-IEndpointGroup           — sets the route prefix and shared metadata
-IGroupedEndpoint<TGroup> — one endpoint inside a group
-IEndpoint                — one endpoint, not in a group
+IEndpointGroup           — defines a route group prefix and shared metadata
+IGroupedEndpoint<TGroup> — one endpoint inside a group; implements DefineEndpoint(RouteGroupBuilder)
+IEndpoint                — standalone endpoint, not part of a group
 ```
+
+`RegisterEndpointsFromAssemblyContaining<T>` scans the assembly for all three and wires them up.
+
+## Route Groups
+
+| Group class | Route prefix | Used by |
+|---|---|---|
+| `ApiV3EndpointGroup` | `/api/v3` | All v3 endpoints |
+| `ApiV4EndpointGroup` | `/api/v4` | All v4 endpoints |
+
+`ApiV4EndpointGroup` sets shared metadata for every v4 endpoint:
+- `ProducesProblem(500)` — do **not** add this per-endpoint
+- 500 `ResponseDescription` and `ResponseExample`
+
+## Endpoint Anatomy
+
+A typical v4 endpoint:
+
+```csharp
+internal class MyEndpoint : IGroupedEndpoint<ApiV4EndpointGroup>
+{
+    public void DefineEndpoint(RouteGroupBuilder group)
+    {
+        group.MapPost("my-route", HandleAsync)
+            .WithTags("MyTag")
+            .WithSummary("...")
+            // ... OpenAPI + produces declarations
+    }
+
+    internal async Task<IResult> HandleAsync(
+        BindingResult<MyRequest> bindingResult,
+        IBinacleService binacleService,
+        ILogger<MyEndpoint> logger,
+        CancellationToken cancellationToken = default
+    )
+    {
+        using var activity = Diagnostics.ActivitySource.StartActivity("My Operation: v4");
+
+        return await bindingResult.ValidateAsync(async request =>
+        {
+            // call binacleService, return Results.Ok(...)
+        });
+    }
+}
+```
+
+Tags group endpoints in OpenAPI. Current tags: `Fit`, `Pack`, `Presets`.
 
 ## Request Validation Flow
 
-Requests go through `BindingResult<TRequest>`, which runs FluentValidation. The handler always starts with:
+Requests go through `BindingResult<TRequest>`, which handles JSON binding and FluentValidation:
 
-```csharp
-return await bindingResult.ValidateAsync(async request => {
-    // request is the validated, typed model
-});
-```
+| Failure | HTTP response |
+|---|---|
+| Malformed JSON | `400 Bad Request` |
+| Null body | `400 Bad Request` |
+| Validation failure | `422 UnprocessableEntity` |
 
-Validation failures return `422 UnprocessableEntity`.
+The handler only runs if binding and validation both pass.
+
+## Rate Limiting
+
+`.RequireRateLimiting("ApiUsage")` and `.RequireCors(CorsPolicy.CoreApi)` are no-ops when
+ServiceModule is not loaded — safe to include but only active when the module is enabled.
 
 ## Contracts Location
 
-- `src/Binacle.Net/v3/Contracts/` — request/response types, validators, examples
-- `src/Binacle.Net/v4/Contracts/` — same structure for v4
+- `src/Binacle.Net/v4/Contracts/` — request/response types, validators, OpenAPI examples
+- `src/Binacle.Net/v3/Contracts/` — same structure for v3
+
+See [contracts.md](contracts.md) for the full contract shape and [add-endpoint.md](add-endpoint.md) for a step-by-step guide.

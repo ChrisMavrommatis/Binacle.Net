@@ -18,6 +18,8 @@ if (Feature.IsEnabled("UI_MODULE"))      builder.AddUIModule();
 
 UI flags (`SWAGGER_UI`, `SCALAR_UI`) work the same way.
 
+See [configuration.md](configuration.md) for the full feature-flag list, env-var conventions, and config file layout.
+
 ## Module Structure
 
 Each module follows the same pattern:
@@ -32,11 +34,17 @@ public static void UseXModule(this WebApplication app) { ... }
 
 ## Available Modules
 
-| Module | Flag | Adds |
-|---|---|---|
-| `ServiceModule` | `SERVICE_MODULE` | JWT auth, rate limiting, account management, subscriptions |
-| `UIModule` | `UI_MODULE` | Razor/Blazor interactive packing demo |
-| `DiagnosticsModule` | always on | Diagnostics middleware and services |
+<!-- sourced from docs site; verify against current code if behaviour changes -->
+
+| Module | Env var to enable | Default | Adds |
+|---|---|---|---|
+| `DiagnosticsModule` | always on | always on | Logging, health checks, OpenTelemetry, packing logs |
+| `ServiceModule` | `SERVICE_MODULE=True` | disabled | JWT auth, rate limiting, account management, subscriptions |
+| `UIModule` | `UI_MODULE=True` | disabled | Razor/Blazor interactive packing demo |
+| Swagger UI | `SWAGGER_UI=True` | disabled | Swagger UI at `/swagger` |
+| Scalar UI | `SCALAR_UI=True` | disabled | Scalar UI (alternative OpenAPI interface) |
+
+See [configuration.md](configuration.md) for full details on env-var conventions and config file layout.
 
 ## Launch Profiles
 

@@ -1,8 +1,10 @@
 ---
-description: The full API slice — core API, Kernel, and all modules
+description: Index for API slice docs — endpoints, contracts, service, kernel, presets, and module docs (Diagnostics, ServiceModule, UIModule)
 ---
 
 # API
+
+If you don't know where to start, read [add-endpoint.md](add-endpoint.md) first.
 
 ## Projects
 
@@ -13,8 +15,8 @@ description: The full API slice — core API, Kernel, and all modules
 **Modules:**
 - `src/Binacle.Net.DiagnosticsModule` — always-on; logging, OpenTelemetry, health checks, packing logs
 - `src/Binacle.Net.ServiceModule` — optional (`SERVICE_MODULE` flag); JWT auth, rate limiting, account management
-- `src/Binacle.Net.ServiceModule.Domain` — domain layer for ServiceModule; entities, repository interfaces
-- `src/Binacle.Net.ServiceModule.Infrastructure` — data layer; SQLite / PostgreSQL / Azure Tables backends
+  - `src/Binacle.Net.ServiceModule.Domain` — domain layer; entities, repository interfaces
+  - `src/Binacle.Net.ServiceModule.Infrastructure` — data layer; SQLite / PostgreSQL / Azure Tables backends
 - `src/Binacle.Net.UIModule` — optional (`UI_MODULE` flag); Blazor interactive demo
 
 ## Startup Order
@@ -33,6 +35,26 @@ RegisterEndpointsFromAssemblyContaining<IApiMarker>()   // v3, v4 endpoints
 RunStartupTasksAsync()
 ```
 
+## Project Dependency Map
+
+```
+Binacle.Lib.Abstractions   (no dependencies)
+Binacle.Lib                → Binacle.Lib.Abstractions
+Binacle.Net.Kernel         → Binacle.Lib.Abstractions
+Binacle.Net.DiagnosticsModule → Binacle.Net.Kernel
+Binacle.Net.ServiceModule.Domain (no dependencies)
+Binacle.Net.ServiceModule.Infrastructure → Binacle.Net.Kernel, ServiceModule.Domain
+Binacle.Net.ServiceModule  → Binacle.Net.Kernel, ServiceModule.Domain, ServiceModule.Infrastructure
+Binacle.Net.UIModule       → Binacle.Net.Kernel, Binacle.Lib.Abstractions, Binacle.ViPaq
+Binacle.Net                → Binacle.Lib, all modules, Binacle.ViPaq
+```
+
+Key rules:
+- Kernel has no dependency on `Binacle.Net` or any module — safe to use from anywhere
+- Lib and Lib.Abstractions have no API dependencies — pure algorithm layer
+- Modules depend on Kernel but not on each other
+- `Binacle.Net` is the only project that references everything
+
 ## Active Development
 
 - **v3** (`/api/v3`) — stable, do not modify
@@ -45,7 +67,9 @@ RunStartupTasksAsync()
 - [Contracts](contracts.md) — request/response types, validators
 - [Service](service.md) — IBinacleService methods and how to call them from an endpoint
 - [Presets](presets.md) — what presets are, config format, route params, adding test presets
-- [v3 vs v4](v3-vs-v4.md) — how the two versions differ
+- [Configuration](configuration.md) — config file layout, env-var conventions, override precedence, feature flags
+- [v3](v3.md) — stable API, endpoints, response shape (do not modify)
+- [v4](v4.md) — active development, implemented and planned endpoints
 - [How to Add an Endpoint](add-endpoint.md)
 
 ## Module Docs
@@ -63,6 +87,7 @@ RunStartupTasksAsync()
 | `test/Binacle.Net.ServiceModule.IntegrationTests` | `api_service` | Auth and rate limiting (ServiceModule only) |
 
 See [Tests](../tests/README.md) for stack, fixture patterns, and scenario data format.
+See [Commands](../commands.md) for how to run the API locally.
 
 ## Concepts
 

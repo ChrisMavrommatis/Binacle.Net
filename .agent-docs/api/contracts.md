@@ -1,5 +1,5 @@
 ---
-description: Request/response contract types and validators for v3 and v4
+description: Request/response contract types, validators, and OpenAPI examples for v4 (v3 follows the same shape)
 ---
 
 # Contracts
@@ -42,6 +42,10 @@ Sent in every request as `Parameters`.
 | Field | Type | Notes |
 |---|---|---|
 | `Algorithm` | `Algorithm?` | `FFD`, `WFD`, `BFD`, or `Best`. `Best` and `null` both trigger multi-algorithm path. |
+
+> **Two `Algorithm` enums exist.** `Binacle.Net.v4.Contracts.Algorithm` (API layer) has `FFD`, `WFD`, `BFD`, and `Best`.
+> `Binacle.Lib.Algorithm` (Lib layer) has only `FFD`, `WFD`, `BFD` — no `Best`.
+> `GetAlgorithm()` maps the API enum to the Lib enum, converting `Best` → `null`.
 | `IncludeViPaqData` | `bool` | Default `false`. If `true`, response includes a base64 ViPaq payload. |
 | `Operation` | `AlgorithmOperation` | Not in JSON — set by the endpoint via `.ForFittingOperation()` or `.ForPackingOperation()`. |
 
@@ -49,7 +53,8 @@ Sent in every request as `Parameters`.
 
 ## Response Types
 
-Both fit and pack share a common base (`BinResponseBase`):
+Both fit and pack share a common base (`BinResponseBase` in `src/Binacle.Net/v4/Contracts/BinResponseBase.cs`).
+Subclasses call `From<T>(parameters, operationResult)` to populate common fields — see step 3 in [add-endpoint.md](add-endpoint.md).
 
 | Field | Type | Notes |
 |---|---|---|
@@ -59,6 +64,8 @@ Both fit and pack share a common base (`BinResponseBase`):
 | `UnpackedItems` | `List<UnpackedBox>?` | Items that didn't fit |
 | `PackedItemsVolumePercentage` | `decimal` | Percentage of total item volume that was packed |
 | `PackedBinVolumePercentage` | `decimal` | Percentage of bin volume occupied by packed items |
+
+Volume percentage formulas and rounding rules are in [result-building.md](../lib/result-building.md).
 | `ViPaqData` | `string?` | Base64 ViPaq payload — only present if `IncludeViPaqData: true` and items were packed |
 
 ### FitBinResponse

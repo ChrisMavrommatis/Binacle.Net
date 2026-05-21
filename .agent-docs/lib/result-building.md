@@ -6,10 +6,12 @@ description: OperationResultBuilder — how OperationResult is constructed, stat
 
 ## OperationResultBuilder
 
-`OperationResultBuilder<TBin, TItem>` is internal to `Binacle.Lib`. It's the only way an `OperationResult` is created —
-`OperationResult` has an internal constructor and cannot be instantiated directly.
+`OperationResultBuilder<TBin, TItem>` (`src/Binacle.Lib/Models/OperationResultBuilder.cs`) is internal to `Binacle.Lib`.
+It's the only way an `OperationResult` is created — `OperationResult` (`src/Binacle.Lib.Abstractions/Algorithms/Models/OperationResultStatus.cs`)
+has an internal constructor and cannot be instantiated directly.
 
 Each algorithm creates a builder during initialisation and calls it at the end of `Execute()`.
+See [algorithms.md](algorithms.md) for where the algorithm implementations live.
 
 ## Usage pattern
 
@@ -21,6 +23,14 @@ builder
 ```
 
 `EarlyExit(reason)` calls `Complete()` first, then overwrites the status to `EarlyExit` and sets the reason.
+
+`EarlyExitReason` values (from `src/Binacle.Lib.Abstractions/Algorithms/Models/OperationResultStatus.cs`):
+
+| Value | When set |
+|---|---|
+| `None` | Default — no early exit |
+| `ContainerVolumeExceeded` | Total item volume exceeds bin volume |
+| `ContainerDimensionExceeded` | An item dimension exceeds a bin dimension |
 
 ## Status rules
 

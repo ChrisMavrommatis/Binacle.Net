@@ -34,6 +34,7 @@ See [Commands](commands.md) — how to run the API, tests, benchmarks, and build
 | Task | Read these |
 |---|---|
 | Add a v4 endpoint | `api/endpoints.md`, `api/add-endpoint.md`, `api/contracts.md`, `api/service.md`, `api/kernel.md` |
+| Add or understand a contract type | `api/contracts.md`, `api/add-endpoint.md` |
 | Work with ServiceModule (auth, rate limiting) | `api/module-service.md`, `api/modules.md` |
 | Understand startup and module wiring | `api/README.md`, `api/modules.md`, `api/kernel.md` |
 | Understand fit vs pack | `concepts/fit-vs-pack.md` |
@@ -41,14 +42,16 @@ See [Commands](commands.md) — how to run the API, tests, benchmarks, and build
 | Understand how OperationResult is built | `lib/result-building.md` |
 | Add or modify algorithm processing | `lib/algorithm-factory.md`, `lib/processors.md` |
 | Add or modify a test | `tests/README.md`, `tests/scenarios.md` |
-| Work with presets | `api/presets.md`, `api/v3-vs-v4.md` |
-| Understand v3 vs v4 differences | `api/v3-vs-v4.md` |
+| Work with presets | `api/presets.md`, `api/v4.md` |
+| Understand v3 vs v4 differences | `api/v3.md`, `api/v4.md` |
 | Work with ViPaq | `vipaq/README.md` |
+| Configure modules / env vars / overrides | `api/configuration.md` |
 
 ## Slice Docs
 
 - [Concepts](concepts/README.md) — fit vs pack; ideas that span slices
 - [API](api/README.md) — endpoints, contracts, service, kernel, modules (Diagnostics, ServiceModule, UIModule)
+- [Configuration](api/configuration.md) — config file layout, env-var conventions, feature flags
 - [Lib](lib/README.md) — algorithms, processors, result building and selection
 - [Tests](tests/README.md) — all test projects, fixture patterns, scenario data
 - [ViPaq](vipaq/README.md) — `Binacle.ViPaq` binary format and TypeScript mirror

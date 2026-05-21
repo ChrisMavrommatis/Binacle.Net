@@ -4,6 +4,8 @@ description: Binacle.Lib and Binacle.Lib.Abstractions — the algorithm layer
 
 # Lib
 
+If you don't know where to start, read [processors.md](processors.md) first.
+
 Two projects:
 
 - `src/Binacle.Lib.Abstractions` — interfaces only; used by both `Binacle.Lib` and the API layer
@@ -11,6 +13,7 @@ Two projects:
 
 ## Docs
 
+- [Models](models.md) — Bin, Item, IWith* interfaces, packed/unpacked result types
 - [Algorithms](algorithms.md) — heuristics, versions, operation types
 - [Algorithm Factory](algorithm-factory.md) — IAlgorithmFactory, DI registration, how tests construct algorithms
 - [Processors](processors.md) — IAlgorithmProcessor, bin processors, factories, algorithm sets per path
@@ -25,6 +28,11 @@ Two projects:
 | `test/Binacle.Lib.PerformanceTests` | `performance` | Algorithm performance (console runner, not xUnit) |
 
 See [Tests](../tests/README.md) for stack, fixture patterns, and scenario data format.
+
+## Notes
+
+- Custom exceptions live in `src/Binacle.Lib/Exceptions/` — use these rather than inventing new types.
+- Guard clauses live in `src/Binacle.Lib/GuardClauses/` (Null, NullOrEmpty, Dimensions, Volume, Quantity).
 
 ## Concepts
 
