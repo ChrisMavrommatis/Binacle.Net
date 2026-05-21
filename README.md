@@ -64,4 +64,4 @@ See [SECURITY.md](SECURITY.md) for my security policy and how to report vulnerab
 
 ---
 
-Copyright (c) 2023-2025 Chris Mavrommatis. All rights reserved.
+Copyright (c) 2023-2026 Chris Mavrommatis. All rights reserved.
