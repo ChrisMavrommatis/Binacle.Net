@@ -11,7 +11,6 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the 1st window horizontally
 	tmux split-window -h -t $SESSION_NAME:0 
 
-	# set the cd to /src/Binacle.Net
 	tmux send-keys -t $SESSION_NAME:0.0 'cd ./config' C-m
 	
 	# Set the cd to ../_data

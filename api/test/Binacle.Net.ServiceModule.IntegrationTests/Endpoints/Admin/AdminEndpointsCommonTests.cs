@@ -13,7 +13,7 @@ public abstract partial class AdminEndpointsTestsBase
 {
 	protected async Task Action_WithoutBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
 	{
-		this.Sut.Client.DefaultRequestHeaders.Authorization = null;
+		this.Client.DefaultRequestHeaders.Authorization = null;
 		var response = await action();
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 	}
@@ -29,12 +29,12 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var token = tokenService.GenerateToken(this.Sut.Admin, null);
 
-		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
+		this.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 
 		var response = await action();
 
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
-		this.Sut.Client.DefaultRequestHeaders.Authorization = null;
+		this.Client.DefaultRequestHeaders.Authorization = null;
 	}
 
 	protected async Task Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
@@ -53,12 +53,12 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var token = tokenService.GenerateToken(this.Sut.Admin, null);
 
-		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
+		this.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 
 		var response = await action();
 
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
-		this.Sut.Client.DefaultRequestHeaders.Authorization = null;
+		this.Client.DefaultRequestHeaders.Authorization = null;
 	}
 
 	protected async Task Action_WithWrongAudienceBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
@@ -77,12 +77,12 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var token = tokenService.GenerateToken(this.Sut.Admin, null);
 
-		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
+		this.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 
 		var response = await action();
 
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
-		this.Sut.Client.DefaultRequestHeaders.Authorization = null;
+		this.Client.DefaultRequestHeaders.Authorization = null;
 	}
 
 	protected async Task Action_WithWronglySignedBearerToken_Returns_401Unauthorized(Func<Task<HttpResponseMessage>> action)
@@ -101,17 +101,17 @@ public abstract partial class AdminEndpointsTestsBase
 
 		var token = tokenService.GenerateToken(this.Sut.Admin, null);
 
-		this.Sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
+		this.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 
 		var response = await action();
 
 		response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
-		this.Sut.Client.DefaultRequestHeaders.Authorization = null;
+		this.Client.DefaultRequestHeaders.Authorization = null;
 	}
 
 	protected async Task Action_WithoutAdminBearerToken_Returns_403Forbidden(Func<Task<HttpResponseMessage>> action)
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.User);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.User);
 
 		var response = await action();
 

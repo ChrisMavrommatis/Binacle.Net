@@ -38,7 +38,7 @@ public class Patch : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -58,7 +58,7 @@ public class Patch : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -77,7 +77,7 @@ public class Patch : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -97,7 +97,7 @@ public class Patch : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -117,7 +117,7 @@ public class Patch : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -140,7 +140,7 @@ public class Patch : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -155,7 +155,7 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Full Valid Request Returns 204 No Content")]
 	public async Task Patch_WithFullValidRequest_Returns_204NoContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var request = new SubscriptionPatchRequest()
 		{
 			Type = SubscriptionType.Normal,
@@ -163,7 +163,7 @@ public class Patch : AdminEndpointsTestsBase
 		};
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -176,14 +176,14 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Status Only Returns 204 No Content")]
 	public async Task Patch_WithStatusOnly_Returns_204NoContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var request = new SubscriptionPatchRequest()
 		{
 			Status = SubscriptionStatus.Active
 		};
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -195,14 +195,14 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Type Only Returns 204 No Content")]
 	public async Task Patch_WithTypeOnly_Returns_204NoContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var request = new SubscriptionPatchRequest()
 		{
 			Type = SubscriptionType.Normal
 		};
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -218,7 +218,7 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. For Non Existing Account Returns 404 Not Found")]
 	public async Task Patch_ForNonExistingAccount_Returns_404NotFound()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var request = new SubscriptionPatchRequest()
 		{
@@ -227,7 +227,7 @@ public class Patch : AdminEndpointsTestsBase
 		};
 		var url = routePath.Replace("{id}", this.Sut.NonExistentId.ToString());
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -240,7 +240,7 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. For Account Without Subscription Returns 404 Not Found")]
 	public async Task Patch_ForAccountWithoutSubscription_Returns_404NotFound()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var request = new SubscriptionPatchRequest()
 		{
@@ -249,7 +249,7 @@ public class Patch : AdminEndpointsTestsBase
 		};
 		var url = routePath.Replace("{id}", this.Sut.ExistingAccountCredentials.Id.ToString());
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -265,7 +265,7 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Id Returns 422 Unprocessable Content")]
 	public async Task Patch_WithInvalidId_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var request = new SubscriptionPatchRequest()
 		{
 			Type = SubscriptionType.Normal,
@@ -273,7 +273,7 @@ public class Patch : AdminEndpointsTestsBase
 		};
 		var url = routePath.Replace("{id}", "invalid");
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -285,14 +285,14 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Subscription Type Returns 422 Unprocessable Content")]
 	public async Task Patch_WithInvalidSubscriptionType_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var request = new SubscriptionPatchRequest
 		{
 			Type = null,
 		};
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -304,14 +304,14 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Subscription Status Returns 422 Unprocessable Content")]
 	public async Task Patch_WithInvalidSubscriptionStatus_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var request = new SubscriptionPatchRequest
 		{
 			Status = null
 		};
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 

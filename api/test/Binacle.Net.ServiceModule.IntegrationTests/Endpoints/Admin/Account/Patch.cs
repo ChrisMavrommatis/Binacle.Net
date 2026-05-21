@@ -37,7 +37,7 @@ public class Patch : AdminEndpointsTestsBase
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -58,7 +58,7 @@ public class Patch : AdminEndpointsTestsBase
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -80,7 +80,7 @@ public class Patch : AdminEndpointsTestsBase
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -101,7 +101,7 @@ public class Patch : AdminEndpointsTestsBase
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -122,7 +122,7 @@ public class Patch : AdminEndpointsTestsBase
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -147,7 +147,7 @@ public class Patch : AdminEndpointsTestsBase
 				Status =  AccountStatus.Active,
 				Role = AccountRole.User
 			};
-			return await this.Sut.Client.PatchAsJsonAsync(
+			return await this.Client.PatchAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -162,7 +162,7 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Full Valid Request Returns 204 No Content")]
 	public async Task Patch_WithFullValidRequest_Returns_204NoContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 		var request = new AccountPatchRequest
@@ -173,7 +173,7 @@ public class Patch : AdminEndpointsTestsBase
 			Status =  AccountStatus.Active,
 			Role = AccountRole.User
 		};
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -185,7 +185,7 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Partial Valid Request Returns 204 No Content")]
 	public async Task Patch_WithPartialValidequest_Returns_204NoContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 		var request = new AccountPatchRequest
@@ -193,7 +193,7 @@ public class Patch : AdminEndpointsTestsBase
 			Status =  AccountStatus.Active,
 			Role = AccountRole.User
 		};
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -210,7 +210,7 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. For Non Existing Account Returns 404 Not Found")]
 	public async Task  Patch_ForNonExistingAccount_Returns_404NotFound()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", this.Sut.NonExistentId.ToString());
 		var request = new AccountPatchRequest
@@ -222,7 +222,7 @@ public class Patch : AdminEndpointsTestsBase
 			Role = AccountRole.User
 		};
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -238,13 +238,13 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Email Returns 422 UnprocessableContent")]
 	public async Task Patch_WithInvalidEmail_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 		var request = new AccountPatchRequest
 		{
 			Email = "existinguser.test"
 		};
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -257,7 +257,7 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Password Returns 422 UnprocessableContent")]
 	public async Task Patch_WithInvalidPassword_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 		var request = new AccountPatchRequest
@@ -265,7 +265,7 @@ public class Patch : AdminEndpointsTestsBase
 			Password = "invalid"
 		};
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -277,14 +277,14 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Empty Request Returns 422 UnprocessableContent")]
 	public async Task Patch_WithEmptyRequest_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 		var request = new AccountPatchRequest
 		{
 		};
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -296,7 +296,7 @@ public class Patch : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PATCH {routePath}. With Invalid Id Returns 422 UnprocessableContent")]
 	public async Task Patch_WithInvalidId_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", "invalid");
 
@@ -309,7 +309,7 @@ public class Patch : AdminEndpointsTestsBase
 			Role = AccountRole.User
 		};
 
-		var response = await this.Sut.Client.PatchAsJsonAsync(
+		var response = await this.Client.PatchAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 

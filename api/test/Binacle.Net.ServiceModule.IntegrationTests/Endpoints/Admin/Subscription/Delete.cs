@@ -30,7 +30,7 @@ public class Delete : AdminEndpointsTestsBase
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.DeleteAsync(
+			return await this.Client.DeleteAsync(
 				url,
 				TestContext.Current.CancellationToken
 			);
@@ -43,7 +43,7 @@ public class Delete : AdminEndpointsTestsBase
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.DeleteAsync(
+			return await this.Client.DeleteAsync(
 				url,
 				TestContext.Current.CancellationToken
 			);
@@ -55,7 +55,7 @@ public class Delete : AdminEndpointsTestsBase
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.DeleteAsync(
+			return await this.Client.DeleteAsync(
 				url,
 				TestContext.Current.CancellationToken
 			);
@@ -68,7 +68,7 @@ public class Delete : AdminEndpointsTestsBase
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.DeleteAsync(
+			return await this.Client.DeleteAsync(
 				url,
 				TestContext.Current.CancellationToken
 			);
@@ -81,7 +81,7 @@ public class Delete : AdminEndpointsTestsBase
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.DeleteAsync(
+			return await this.Client.DeleteAsync(
 				url,
 				TestContext.Current.CancellationToken
 			);
@@ -97,7 +97,7 @@ public class Delete : AdminEndpointsTestsBase
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.DeleteAsync(
+			return await this.Client.DeleteAsync(
 				url,
 				TestContext.Current.CancellationToken
 			);
@@ -110,11 +110,11 @@ public class Delete : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"DELETE {routePath}. For Account With Subscription Returns 204 No Content")]
 	public async Task Delete_ForAccountWithSubscription_Returns_204NoContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-		var response = await this.Sut.Client.DeleteAsync(
+		var response = await this.Client.DeleteAsync(
 			url,
 			TestContext.Current.CancellationToken
 		);
@@ -128,11 +128,11 @@ public class Delete : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"DELETE {routePath}. For Non Existing Account Returns 404 Not Found")]
 	public async Task Delete_ForNonExistingAccount_Returns_404NotFound()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", this.Sut.NonExistentId.ToString());
 
-		var response = await this.Sut.Client.DeleteAsync(
+		var response = await this.Client.DeleteAsync(
 			url,
 			TestContext.Current.CancellationToken
 		);
@@ -142,11 +142,11 @@ public class Delete : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"DELETE {routePath}. For Account Without Subscription Returns 404 Not Found")]
 	public async Task Delete_ForAccountWithoutSubscription_Returns_404NotFound()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", this.Sut.ExistingAccountCredentials.Id.ToString());
 
-		var response = await this.Sut.Client.DeleteAsync(
+		var response = await this.Client.DeleteAsync(
 			url,
 			TestContext.Current.CancellationToken
 		);
@@ -160,11 +160,11 @@ public class Delete : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"DELETE {routePath}. With Invalid Id Returns 422 Unprocessable Content")]
 	public async Task Delete_WithInvalidId_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		
 		var url = routePath.Replace("{id}", "invalid");
 
-		var response = await this.Sut.Client.DeleteAsync(
+		var response = await this.Client.DeleteAsync(
 			url,
 			TestContext.Current.CancellationToken
 		);

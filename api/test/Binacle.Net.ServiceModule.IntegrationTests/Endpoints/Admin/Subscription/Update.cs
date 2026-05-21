@@ -38,7 +38,7 @@ public class Update : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PutAsJsonAsync(
+			return await this.Client.PutAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -58,7 +58,7 @@ public class Update : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PutAsJsonAsync(
+			return await this.Client.PutAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -77,7 +77,7 @@ public class Update : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PutAsJsonAsync(
+			return await this.Client.PutAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -97,7 +97,7 @@ public class Update : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PutAsJsonAsync(
+			return await this.Client.PutAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -117,7 +117,7 @@ public class Update : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PutAsJsonAsync(
+			return await this.Client.PutAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -140,7 +140,7 @@ public class Update : AdminEndpointsTestsBase
 			};
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-			return await this.Sut.Client.PutAsJsonAsync(
+			return await this.Client.PutAsJsonAsync(
 				url,
 				request,
 				this.Sut.JsonSerializerOptions, 
@@ -155,7 +155,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. With Valid Request Returns 204 No Content")]
 	public async Task Put_WithValidRequest_Returns_204NoContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var request = new SubscriptionUpdateRequest()
 		{
 			Type = SubscriptionType.Normal,
@@ -163,7 +163,7 @@ public class Update : AdminEndpointsTestsBase
 		};
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-		var response = await this.Sut.Client.PutAsJsonAsync(
+		var response = await this.Client.PutAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -179,7 +179,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. For Non Existing Account Returns 404 Not Found")]
 	public async Task Put_ForNonExistingAccount_Returns_404NotFound()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var request = new SubscriptionUpdateRequest()
 		{
@@ -188,7 +188,7 @@ public class Update : AdminEndpointsTestsBase
 		};
 		var url = routePath.Replace("{id}", this.Sut.NonExistentId.ToString());
 
-		var response = await this.Sut.Client.PutAsJsonAsync(
+		var response = await this.Client.PutAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -201,7 +201,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. For Account Without Subscription Returns 404 Not Found")]
 	public async Task Put_ForAccountWithoutSubscription_Returns_404NotFound()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var request = new SubscriptionUpdateRequest()
 		{
@@ -210,7 +210,7 @@ public class Update : AdminEndpointsTestsBase
 		};
 		var url = routePath.Replace("{id}", this.Sut.ExistingAccountCredentials.Id.ToString());
 
-		var response = await this.Sut.Client.PutAsJsonAsync(
+		var response = await this.Client.PutAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -226,7 +226,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Id Returns 422 Unprocessable Content")]
 	public async Task Put_WithInvalidId_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var request = new SubscriptionUpdateRequest()
 		{
 			Type = SubscriptionType.Normal,
@@ -234,7 +234,7 @@ public class Update : AdminEndpointsTestsBase
 		};
 		var url = routePath.Replace("{id}", "invalid");
 
-		var response = await this.Sut.Client.PutAsJsonAsync(
+		var response = await this.Client.PutAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -246,7 +246,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Subscription Type Returns 422 Unprocessable Content")]
 	public async Task Put_WithInvalidSubscriptionType_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var request = new SubscriptionUpdateRequest
 		{
 			Type = null,
@@ -254,7 +254,7 @@ public class Update : AdminEndpointsTestsBase
 		};
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-		var response = await this.Sut.Client.PutAsJsonAsync(
+		var response = await this.Client.PutAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 
@@ -266,7 +266,7 @@ public class Update : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"PUT {routePath}. With Invalid Subscription Status Returns 422 Unprocessable Content")]
 	public async Task Put_WithInvalidSubscriptionStatus_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var request = new SubscriptionUpdateRequest
 		{
 			Type = SubscriptionType.Normal,
@@ -274,7 +274,7 @@ public class Update : AdminEndpointsTestsBase
 		};
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 
-		var response = await this.Sut.Client.PutAsJsonAsync(
+		var response = await this.Client.PutAsJsonAsync(
 			url,
 			request,
 			this.Sut.JsonSerializerOptions, 

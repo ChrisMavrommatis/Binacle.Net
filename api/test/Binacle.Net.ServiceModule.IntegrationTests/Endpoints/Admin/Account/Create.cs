@@ -38,7 +38,7 @@ public class Create : AdminEndpointsTestsBase
 				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(
+			return await this.Client.PostAsJsonAsync(
 				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
@@ -58,7 +58,7 @@ public class Create : AdminEndpointsTestsBase
 				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(
+			return await this.Client.PostAsJsonAsync(
 				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
@@ -77,7 +77,7 @@ public class Create : AdminEndpointsTestsBase
 				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(
+			return await this.Client.PostAsJsonAsync(
 				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
@@ -97,7 +97,7 @@ public class Create : AdminEndpointsTestsBase
 				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(
+			return await this.Client.PostAsJsonAsync(
 				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
@@ -117,7 +117,7 @@ public class Create : AdminEndpointsTestsBase
 				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(
+			return await this.Client.PostAsJsonAsync(
 				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
@@ -140,7 +140,7 @@ public class Create : AdminEndpointsTestsBase
 				Password = this.accountCredentialsUnderTest.Password
 			};
 
-			return await this.Sut.Client.PostAsJsonAsync(
+			return await this.Client.PostAsJsonAsync(
 				routePath,
 				request,
 				this.Sut.JsonSerializerOptions,
@@ -155,7 +155,7 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Valid Request Returns 201 Created")]
 	public async Task Post_WithValidRequest_Returns_201Created()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var request = new AccountCreateRequest
 		{
 			Username = this.accountCredentialsUnderTest.Username,
@@ -163,7 +163,7 @@ public class Create : AdminEndpointsTestsBase
 			Password = this.accountCredentialsUnderTest.Password
 		};
 
-		var response = await this.Sut.Client.PostAsJsonAsync(
+		var response = await this.Client.PostAsJsonAsync(
 			routePath,
 			request,
 			this.Sut.JsonSerializerOptions,
@@ -183,7 +183,7 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. For Existing Account Returns 409 Conflict")]
 	public async Task Post_ForExistingAccount_Returns_409Conflict()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var request = new AccountCreateRequest
 		{
@@ -192,7 +192,7 @@ public class Create : AdminEndpointsTestsBase
 			Password = this.Sut.ExistingAccountCredentials.Password
 		};
 
-		var response = await this.Sut.Client.PostAsJsonAsync(
+		var response = await this.Client.PostAsJsonAsync(
 			routePath,
 			request,
 			this.Sut.JsonSerializerOptions,
@@ -208,7 +208,7 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Email Returns 422 UnprocessableContent")]
 	public async Task Post_WithInvalidEmail_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var request = new AccountCreateRequest
 		{
@@ -217,7 +217,7 @@ public class Create : AdminEndpointsTestsBase
 			Password = this.accountCredentialsUnderTest.Password
 		};
 
-		var response = await this.Sut.Client.PostAsJsonAsync(
+		var response = await this.Client.PostAsJsonAsync(
 			routePath,
 			request,
 			this.Sut.JsonSerializerOptions,
@@ -229,7 +229,7 @@ public class Create : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Invalid Password Returns 422 UnprocessableContent")]
 	public async Task Post_WithInvalidPassword_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var request = new AccountCreateRequest
 		{
@@ -238,7 +238,7 @@ public class Create : AdminEndpointsTestsBase
 			Password = "password"
 		};
 
-		var response = await this.Sut.Client.PostAsJsonAsync(
+		var response = await this.Client.PostAsJsonAsync(
 			routePath,
 			request,
 			this.Sut.JsonSerializerOptions,
@@ -251,13 +251,13 @@ public class Create : AdminEndpointsTestsBase
 
 	public override async ValueTask InitializeAsync()
 	{
-		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
+		await this.Sut.EnsureAccountWithUsernameDoesNotExist(this.accountCredentialsUnderTest.Username);
 		await base.InitializeAsync();
 	}
 
 	public override async ValueTask DisposeAsync()
 	{
-		await this.Sut.EnsureAccountDoesNotExist(this.accountCredentialsUnderTest);
+		await this.Sut.EnsureAccountWithUsernameDoesNotExist(this.accountCredentialsUnderTest.Username);
 		await base.DisposeAsync();
 	}
 }

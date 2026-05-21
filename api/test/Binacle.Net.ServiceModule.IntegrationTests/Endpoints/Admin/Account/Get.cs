@@ -29,7 +29,7 @@ public class Get : AdminEndpointsTestsBase
 		=> this.Action_WithoutBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
-			return await this.Sut.Client.GetAsync(url, TestContext.Current.CancellationToken);
+			return await this.Client.GetAsync(url, TestContext.Current.CancellationToken);
 		});
 
 	[Fact(DisplayName = $"GET {routePath}. With Expired Bearer Token Returns 401 Unauthorized")]
@@ -37,7 +37,7 @@ public class Get : AdminEndpointsTestsBase
 		=> this.Action_WithExpiredBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
-			return await this.Sut.Client.GetAsync(url, TestContext.Current.CancellationToken);
+			return await this.Client.GetAsync(url, TestContext.Current.CancellationToken);
 		});
 
 
@@ -46,7 +46,7 @@ public class Get : AdminEndpointsTestsBase
 		=> this.Action_WithWrongIssuerBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
-			return await this.Sut.Client.GetAsync(url, TestContext.Current.CancellationToken);
+			return await this.Client.GetAsync(url, TestContext.Current.CancellationToken);
 		});
 
 	[Fact(DisplayName = $"GET {routePath}. With Wrong Audience Bearer Token Returns 401 Unauthorized")]
@@ -54,7 +54,7 @@ public class Get : AdminEndpointsTestsBase
 		=> this.Action_WithWrongAudienceBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
-			return await this.Sut.Client.GetAsync(url, TestContext.Current.CancellationToken);
+			return await this.Client.GetAsync(url, TestContext.Current.CancellationToken);
 		});
 
 	[Fact(DisplayName = $"GET {routePath}. With Wrongly Signed Bearer Token Returns 401 Unauthorized")]
@@ -62,7 +62,7 @@ public class Get : AdminEndpointsTestsBase
 		=> this.Action_WithWronglySignedBearerToken_Returns_401Unauthorized(async () =>
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
-			return await this.Sut.Client.GetAsync(url, TestContext.Current.CancellationToken);
+			return await this.Client.GetAsync(url, TestContext.Current.CancellationToken);
 		});
 
 	#endregion
@@ -74,7 +74,7 @@ public class Get : AdminEndpointsTestsBase
 		=> this.Action_WithoutAdminBearerToken_Returns_403Forbidden(async () =>
 		{
 			var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
-			return await this.Sut.Client.GetAsync(url, TestContext.Current.CancellationToken);
+			return await this.Client.GetAsync(url, TestContext.Current.CancellationToken);
 		});
 
 	#endregion
@@ -84,11 +84,11 @@ public class Get : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"GET {routePath}. With Existing Account Returns 200 OK")]
 	public async Task Get_WithExistingAccount_Returns_200OK()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", this.accountCredentialsUnderTest.Id.ToString());
 	
-		var response = await this.Sut.Client.GetAsync(url, TestContext.Current.CancellationToken);
+		var response = await this.Client.GetAsync(url, TestContext.Current.CancellationToken);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 	}
 	
@@ -99,11 +99,11 @@ public class Get : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"GET {routePath}. For Non Existing Account Returns 404 Not Found")]
 	public async Task  Get_ForNonExistingAccount_Returns_404NotFound()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 
 		var url = routePath.Replace("{id}", this.Sut.NonExistentId.ToString());
 		
-		var response = await this.Sut.Client.GetAsync(url, TestContext.Current.CancellationToken);
+		var response = await this.Client.GetAsync(url, TestContext.Current.CancellationToken);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 	}
 
@@ -114,10 +114,10 @@ public class Get : AdminEndpointsTestsBase
 	[Fact(DisplayName = $"GET {routePath}. With Invalid Id Returns 422 UnprocessableContent")]
 	public async Task Get_WithInvalidId_Returns_422UnprocessableContent()
 	{
-		await using var scope = this.Sut.StartAuthenticationScope(this.Sut.Admin);
+		await using var scope = this.Sut.StartAuthenticationScope(this.Client, this.Sut.Admin);
 		var url = routePath.Replace("{id}", "invalid");
 
-		var response = await this.Sut.Client.GetAsync(url, TestContext.Current.CancellationToken);
+		var response = await this.Client.GetAsync(url, TestContext.Current.CancellationToken);
 		response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableContent);
 	}
 

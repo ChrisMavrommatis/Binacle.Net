@@ -3,12 +3,14 @@
 public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 {
 	protected readonly BinacleApi Sut;
-	
+	protected readonly HttpClient Client;
+
 	public AdminEndpointsTestsBase(BinacleApi sut)
 	{
 		this.Sut = sut;
+		this.Client = sut.CreateClient();
 	}
-	
+
 	public virtual ValueTask InitializeAsync()
 	{
 		return ValueTask.CompletedTask;
@@ -16,6 +18,7 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 
 	public virtual ValueTask DisposeAsync()
 	{
+		this.Client.Dispose();
 		return ValueTask.CompletedTask;
 	}
 	

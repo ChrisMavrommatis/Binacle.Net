@@ -148,6 +148,28 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 		await accountRepository.CreateAsync(account);
 	}
 
+	public async ValueTask EnsureAccountWithUsernameDoesNotExist(string username)
+	{
+		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
+		var getResult = await accountRepository.GetByUsernameAsync(username);
+		if (!getResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
+		{
+			return;
+		}
+
+		if (account.HasSubscription())
+		{
+			var subscriptionRepository = this.Services.GetRequiredService<ISubscriptionRepository>();
+			var subscriptionResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value, allowDeleted: true);
+			if (subscriptionResult.TryGetValue<Domain.Subscriptions.Entities.Subscription>(out var subscription) &&
+			    subscription is not null)
+			{
+				await subscriptionRepository.DeleteAsync(subscription);
+			}
+		}
+		await accountRepository.DeleteAsync(account);
+	}
+
 	public async ValueTask EnsureAccountDoesNotExist(AccountCredentials credentials)
 	{
 		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();

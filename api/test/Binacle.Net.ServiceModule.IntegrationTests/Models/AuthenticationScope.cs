@@ -8,14 +8,17 @@ namespace Binacle.Net.ServiceModule.IntegrationTests.Models;
 internal class AuthenticationScope : IAsyncDisposable, IDisposable
 {
 	private readonly BinacleApi sut;
+	private readonly HttpClient client;
 	private readonly Account account;
 
 	public AuthenticationScope(
 		BinacleApi sut,
+		HttpClient client,
 		Account account
 		)
 	{
 		this.sut = sut;
+		this.client = client;
 		this.account = account;
 	}
 
@@ -25,17 +28,17 @@ internal class AuthenticationScope : IAsyncDisposable, IDisposable
 
 		var token = tokenService.GenerateToken(account, null);
 
-		sut.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
+		this.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenValue);
 	}
-	
+
 	public void Dispose()
 	{
-		this.sut.Client.DefaultRequestHeaders.Authorization = null;
+		this.client.DefaultRequestHeaders.Authorization = null;
 	}
 
 	public ValueTask DisposeAsync()
 	{
-		this.sut.Client.DefaultRequestHeaders.Authorization = null;
+		this.client.DefaultRequestHeaders.Authorization = null;
 		return ValueTask.CompletedTask;
 	}
 }
