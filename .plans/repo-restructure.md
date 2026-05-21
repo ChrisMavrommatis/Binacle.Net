@@ -23,19 +23,19 @@ assets/  samples/  config/          unchanged
 
 ## Phase 1 — Quick wins (no .slnx changes needed)
 
-- [ ] Rename `gems/` → `ruby/`
+- [x] Rename `gems/` → `ruby/`
   - Update `docs/Gemfile`: 2 path references (`../gems/` → `../ruby/`)
   - Update `web/Gemfile`: 2 path references (`../gems/` → `../ruby/`)
 
-- [ ] Rename `doc/` → `results/`
+- [x] Rename `doc/` → `results/`
   - Update any README or script references to `doc/`
   - See Phase 4 for migrating the content into the docs/web site
 
-- [ ] Move `res/or-library-packing-data/` → `shared/data/`
+- [x] Move `res/or-library-packing-data/` → `shared/data/`
   - It's test input used by Lib benchmarks and performance tests — belongs with shared test infrastructure
   - Add a `README.md` explaining what the datasets are and where they come from
 
-- [ ] Move `res/http/` → `api/requests/`
+- [x] Move `res/http/` → `api/requests/`
   - All `.http` files test API or ServiceModule endpoints — everything lives in `api/`
   - Admin site calls ServiceModule endpoints, no separate `admin/requests/` needed
   - Add `v4/` folder (missing, branch is actively adding v4 endpoints)
