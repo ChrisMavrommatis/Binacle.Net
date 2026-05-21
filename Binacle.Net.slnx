@@ -14,8 +14,8 @@
       <Platform Project="AnyCPU" />
     </Project>
   </Folder>
-  <Folder Name="/api/requests/">
-    <Project Path="api/requests/http/http.proj" Type="Shared">
+  <Folder Name="/api/">
+    <Project Path="api/requests/requests.proj" Type="Shared">
       <Platform Project="AnyCPU" />
     </Project>
   </Folder>

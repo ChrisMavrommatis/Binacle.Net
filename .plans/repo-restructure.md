@@ -185,15 +185,12 @@ Tasks once decided:
 
 ## Phase 5 — Tidy-ups
 
-- [ ] Collapse `api/requests/http/` — move all contents up one level into `api/requests/` directly.
-  The `http/` subfolder was inherited from `res/http/` where it shared a parent with `or-library-packing-data/`.
-  Now that `requests/` is its own dedicated folder the extra level adds no value.
-  - Rename `http.proj` → `requests.proj` and update the `<None Include>` globs inside it
-  - Update `Binacle.Net.slnx` — folder entry `/api/requests/` and project path
+- [x] Collapse `api/requests/http/` — moved all contents up into `api/requests/` directly.
+  - Renamed `http.proj` → `requests.proj`; globs unchanged (still relative, still correct)
+  - Updated `Binacle.Net.slnx` project path
 
-- [ ] Rename `.agent-docs/gems/` → `.agent-docs/ruby/`
-  - Update all internal links in `.agent-docs/README.md` (`gems/README.md` → `ruby/README.md`)
-  - The frontmatter description in the file already says `ruby/` — just the folder name lags
+- [x] Renamed `.agent-docs/gems/` → `.agent-docs/ruby/`
+  - Updated `[Gems](gems/README.md)` → `[Ruby](ruby/README.md)` in `.agent-docs/README.md`
 
 ---
 

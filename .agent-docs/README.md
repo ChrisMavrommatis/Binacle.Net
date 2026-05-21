@@ -60,6 +60,6 @@ See [Commands](commands.md) — how to run the API, tests, benchmarks, and build
 - [Tests](tests/README.md) — all test projects, fixture patterns, scenario data
 - [ViPaq](vipaq/README.md) — `Binacle.ViPaq` binary format and TypeScript mirror
 - [Packages](packages/README.md) — TypeScript npm packages
-- [Gems](gems/README.md) — Ruby/Jekyll plugins
+- [Ruby](ruby/README.md) — Ruby/Jekyll plugins
 - [Docs Site](docs/README.md) — Jekyll docs site
 - [Web Site](web/README.md) — Jekyll marketing site
