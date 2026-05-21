@@ -13,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+	  <ProjectReference Include="..\..\..\lib\src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
 	</ItemGroup>
 
 

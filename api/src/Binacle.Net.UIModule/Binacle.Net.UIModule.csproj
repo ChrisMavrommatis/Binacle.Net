@@ -14,9 +14,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Binacle.ViPaq\Binacle.ViPaq.csproj" />
+	  <ProjectReference Include="..\..\..\vipaq\src\Binacle.ViPaq\Binacle.ViPaq.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
-	  <ProjectReference Include="..\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+	  <ProjectReference Include="..\..\..\lib\src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
 	</ItemGroup>
 
 	<!--<ItemGroup>

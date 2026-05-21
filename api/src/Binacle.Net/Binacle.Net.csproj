@@ -24,11 +24,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Binacle.ViPaq\Binacle.ViPaq.csproj" />
+	  <ProjectReference Include="..\..\..\vipaq\src\Binacle.ViPaq\Binacle.ViPaq.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.DiagnosticsModule\Binacle.Net.DiagnosticsModule.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.ServiceModule\Binacle.Net.ServiceModule.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.UIModule\Binacle.Net.UIModule.csproj" />
-	  <ProjectReference Include="..\Binacle.Lib\Binacle.Lib.csproj" />
+	  <ProjectReference Include="..\..\..\lib\src\Binacle.Lib\Binacle.Lib.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

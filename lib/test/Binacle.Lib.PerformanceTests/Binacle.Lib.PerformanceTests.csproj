@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Binacle.Lib\Binacle.Lib.csproj" />
-    <ProjectReference Include="..\Binacle.TestsKernel\Binacle.TestsKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\Binacle.TestsKernel\Binacle.TestsKernel.csproj" />
   </ItemGroup>
 
 </Project>
