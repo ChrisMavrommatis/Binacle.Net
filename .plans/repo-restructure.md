@@ -82,12 +82,9 @@ vipaq/binacle-vipaq/               TS npm package — keep its internal src/test
 shared/Binacle.TestsKernel
 ```
 
-### packages/ (move from root packages/, no internal structure change)
-```
-packages/binacle-net-ui
-packages/cookies
-packages/theme-switcher
-```
+### packages/
+`binacle-net-ui`, `cookies`, `theme-switcher` stay at `packages/` — no move needed.
+`binacle-vipaq` moves out of `packages/` into `vipaq/binacle-vipaq/` — remove from `packages/`.
 
 ---
 
@@ -133,7 +130,7 @@ Every path that pointed into `src/`, `test/`, `packages/`, or `gems/` needs upda
 - [ ] `Properties/launchSettings.json` in each project — paths are relative to the project so
   should survive the move, but verify each one runs correctly after
 - [ ] `*.proj` files (`http.proj`, `docs.proj`, `web.proj`, `benchmark-results.proj`,
-  `packing-efficiency-results.proj`, `http.proj`) — check if any reference sibling paths
+  `packing-efficiency-results.proj`) — check if any reference sibling paths
 
 ### Jekyll config
 - [ ] `docs/_config.yml` and `docs/_config.prod.yml` — check `source`, `plugins_dir`,
