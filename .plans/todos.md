@@ -1,12 +1,12 @@
 # TODOs
 
-Found across `src/`, `test/`. Grouped by area.
+Found across `lib/`, `api/`, `vipaq/`, `shared/`. Grouped by area.
 
 ---
 
 ## OpenAPI / Schema
 
-- `src/Binacle.Net.Kernel/OpenApi/EnumStringsSchemaTransformer.cs:35`
+- `api/src/Binacle.Net.Kernel/OpenApi/EnumStringsSchemaTransformer.cs:35`
   If the property is required, remove nullable and strip `?` from the name.
   Currently applies `JsonStringNullableEnumConverter` even when not needed.
 
