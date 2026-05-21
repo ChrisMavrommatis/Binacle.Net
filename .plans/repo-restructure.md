@@ -43,7 +43,7 @@ assets/  samples/  config/          unchanged
 
 ---
 
-## Phase 2 — Main restructure (touches .slnx)
+## Phase 2 — Main restructure (touches .slnx) ✓ done
 
 Do this in one pass. Every .csproj path in `Binacle.Net.slnx` changes.
 Check `Directory.Build.props` for relative paths that assume the old depth.
@@ -93,49 +93,48 @@ shared/Binacle.TestsKernel
 Every path that pointed into `src/`, `test/`, `packages/`, or `gems/` needs updating.
 
 ### .NET
-- [ ] `Binacle.Net.slnx` — all `<Project>` paths (every project moves)
-- [ ] `Directory.Build.props` — check for relative paths that assume old folder depth
-- [ ] Each `.csproj` with `<ProjectReference>` — paths to sibling projects change
+- [x] `Binacle.Net.slnx` — all `<Project>` paths (every project moves)
+- [x] `Directory.Build.props` — no relative paths, no changes needed
+- [x] Each `.csproj` with `<ProjectReference>` — paths to sibling projects change
 
 ### npm / TypeScript
-- [ ] Root `package.json` — workspace globs: `packages/*` is unchanged, but `vipaq/binacle-vipaq`
-  is now a workspace member at a new path — add it explicitly if not already
-- [ ] `gulpfile.js` — any copy task source paths referencing `packages/` or `src/`
-- [ ] `docs/webpack.config.js` and `web/webpack.config.js` — check for package path aliases
-- [ ] `docs/package.json` and `web/package.json` — check workspace package references
+- [x] Root `package.json` — added `vipaq/binacle-vipaq` as explicit workspace member
+- [x] `gulpfile.js` — only references `assets/`, `docs/`, `web/` — no changes needed
+- [x] `docs/webpack.config.js` — no package path aliases, no changes needed
+- [x] `web/webpack.config.js` — updated `packages/binacle-vipaq` cache group → `vipaq/binacle-vipaq`
+- [x] `docs/package.json` and `web/package.json` — no workspace references, no changes needed
 
 ### Ruby
-- [ ] `docs/Gemfile` — `../gems/` → `../ruby/` (2 lines, already in Phase 1)
-- [ ] `web/Gemfile` — same
+- [x] `docs/Gemfile` — `../gems/` → `../ruby/` (done in Phase 1)
+- [x] `web/Gemfile` — same
 
 ### Shell scripts
-- [ ] `config/api.sh` — likely references `src/Binacle.Net`
-- [ ] `config/build.sh` — likely references `src/` paths
-- [ ] `config/tests.sh` — likely references `test/` paths
-- [ ] `config/benchmarks.sh` — likely references `test/Binacle.Lib.Benchmarks`
+- [x] `config/api.sh` — `src/Binacle.Net/` → `api/src/Binacle.Net/`
+- [x] `config/build.sh` — `src/Binacle.Net/Binacle.Net.csproj` → `api/src/Binacle.Net/Binacle.Net.csproj`
+- [x] `config/tests.sh` — restructured: each alias now holds a full path from root
+- [x] `config/benchmarks.sh` — `test/Binacle.Lib.Benchmarks/` → `lib/test/Binacle.Lib.Benchmarks/`
 
 ### CI/CD
-- [ ] `.github/workflows/release-docker-image.yml` — check Dockerfile context path
-- [ ] `.github/workflows/deploy-binacle-net-docs.yml` — check working directory
-- [ ] `.github/workflows/deploy-binacle-net-web.yml` — check working directory
+- [x] `.github/workflows/release-docker-image.yml` — uses `${{ vars.API_PROJECT_PATH }}` (GitHub Actions variable).
+  No file change needed — update the `API_PROJECT_PATH` repo variable in GitHub settings to `api/src/Binacle.Net/Binacle.Net.csproj`
+- [x] `.github/workflows/deploy-binacle-net-docs.yml` — no path references, no changes needed
+- [x] `.github/workflows/deploy-binacle-net-web.yml` — no path references, no changes needed
 
 ### Docker
-- [ ] `Dockerfile` — `COPY` instructions reference `src/` project paths
-- [ ] `.dockerignore` — exclusion patterns may reference `src/` or `test/`
-- [ ] `config/docker-compose.yml` — volume mounts or build context paths
-- [ ] `samples/` docker-compose files — check build context paths
+- [x] `Dockerfile` — only copies from `build/output`, no source paths — no changes needed
+- [x] `.dockerignore` — only `**/*.Development.json` — no changes needed
+- [x] `config/docker-compose.yml` — infrastructure services only, no source paths — no changes needed
+- [x] `samples/` docker-compose files — no build context paths referencing `src/` or `test/`
 
 ### IDE / project files
 - ~~`Binacle.Net.sln.DotSettings.user`~~ — gitignored (`*.user`), local only, no action needed
-- [ ] `Properties/launchSettings.json` in each project — paths are relative to the project so
-  should survive the move, but verify each one runs correctly after
-- [ ] `*.proj` files (`http.proj`, `docs.proj`, `web.proj`, `benchmark-results.proj`,
-  `packing-efficiency-results.proj`) — check if any reference sibling paths
+- [x] `Properties/launchSettings.json` in each project — paths relative to project, survive the move
+- [x] `*.proj` files (`http.proj`, `docs.proj`, `web.proj`, `benchmark-results.proj`,
+  `packing-efficiency-results.proj`) — no sibling path references, no changes needed
 
 ### Jekyll config
-- [ ] `docs/_config.yml` and `docs/_config.prod.yml` — check `source`, `plugins_dir`,
-  or any hardcoded paths
-- [ ] `web/_config.yml` and `web/_config.prod.yml` — same
+- [x] `docs/_config.yml` and `docs/_config.prod.yml` — uses `source: ./` and `../build/docs`, no changes needed
+- [x] `web/_config.yml` and `web/_config.prod.yml` — same
 
 ### Documentation
 - [ ] `README.md` — any path references to `src/`, `test/`, `packages/`, `gems/`, `doc/`

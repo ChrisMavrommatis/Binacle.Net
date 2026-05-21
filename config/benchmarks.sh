@@ -3,7 +3,7 @@
 FILE_PATH=$( realpath "$0"  )
 FILE_DIR=$( dirname "$FILE_PATH" )
 ROOT_DIR=$( dirname "$FILE_DIR" )
-PROJECT_PATH='test/Binacle.Lib.Benchmarks/'
+PROJECT_PATH='lib/test/Binacle.Lib.Benchmarks/'
 
 # set working directory to the root of the project
 cd "$ROOT_DIR/$PROJECT_PATH" || exit 1

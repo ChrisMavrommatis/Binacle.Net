@@ -3,7 +3,7 @@
 BUILD_FILE_PATH=$( realpath "$0"  )
 BUILD_FILE_DIR=$( dirname "$BUILD_FILE_PATH" )
 ROOT_DIR=$( dirname "$BUILD_FILE_DIR" )
-API_PROJECT_PATH='src/Binacle.Net/Binacle.Net.csproj'
+API_PROJECT_PATH='api/src/Binacle.Net/Binacle.Net.csproj'
 VER=local
 
 # set working directory to the root of the project

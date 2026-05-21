@@ -3,7 +3,7 @@
 FILE_PATH=$( realpath "$0"  )
 FILE_DIR=$( dirname "$FILE_PATH" )
 ROOT_DIR=$( dirname "$FILE_DIR" )
-PROJECT_PATH='src/Binacle.Net/'
+PROJECT_PATH='api/src/Binacle.Net/'
 
 # set working directory to the root of the project
 cd "$ROOT_DIR/$PROJECT_PATH" || exit 1
