@@ -27,7 +27,9 @@ Aliases: `lib`, `api`, `api_service`, `vipaq`, `performance`
 
 To run a single test project directly:
 ```bash
-cd test/<ProjectName> && dotnet run
+cd lib/test/<ProjectName> && dotnet run   # lib tests
+cd api/test/<ProjectName> && dotnet run   # api tests
+cd vipaq/test/<ProjectName> && dotnet run # vipaq tests
 ```
 
 ## Benchmarks
@@ -54,7 +56,7 @@ npm run copy-assets-to-web
 ## ViPaq TypeScript tests
 
 ```bash
-cd packages/binacle-vipaq && npm test
+cd vipaq/binacle-vipaq && npm test
 ```
 
 ## Docker

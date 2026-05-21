@@ -28,10 +28,10 @@ The returned `IPackingAlgorithm` exposes `Algorithm`, `Version`, and `Execute(pa
 | `Algorithm.BFD` | `BestFitDecreasing_v2` |
 
 Throws `NotSupportedException` for any other value.
-Class files live under `src/Binacle.Lib/Algorithms/<Heuristic> v<N>/` — see [algorithms.md](algorithms.md).
+Class files live under `lib/src/Binacle.Lib/Algorithms/<Heuristic> v<N>/` — see [algorithms.md](algorithms.md).
 
 `AlgorithmFactory_v1` and `AlgorithmFactory_v2` are `internal` — used for benchmarks only
-(`test/Binacle.Lib.Benchmarks`, BenchmarkDotNet runner).
+(`lib/test/Binacle.Lib.Benchmarks`, BenchmarkDotNet runner).
 
 ## DI Registration
 

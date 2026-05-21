@@ -9,15 +9,15 @@ If you don't know where to start, read [add-endpoint.md](add-endpoint.md) first.
 ## Projects
 
 **Core:**
-- `src/Binacle.Net.Kernel` — shared patterns used by all projects (endpoints, validation, feature flags, config)
-- `src/Binacle.Net` — entry point; versioned endpoint groups; `Program.cs` wires everything
+- `api/src/Binacle.Net.Kernel` — shared patterns used by all projects (endpoints, validation, feature flags, config)
+- `api/src/Binacle.Net` — entry point; versioned endpoint groups; `Program.cs` wires everything
 
 **Modules:**
-- `src/Binacle.Net.DiagnosticsModule` — always-on; logging, OpenTelemetry, health checks, packing logs
-- `src/Binacle.Net.ServiceModule` — optional (`SERVICE_MODULE` flag); JWT auth, rate limiting, account management
-  - `src/Binacle.Net.ServiceModule.Domain` — domain layer; entities, repository interfaces
-  - `src/Binacle.Net.ServiceModule.Infrastructure` — data layer; SQLite / PostgreSQL / Azure Tables backends
-- `src/Binacle.Net.UIModule` — optional (`UI_MODULE` flag); Blazor interactive demo
+- `api/src/Binacle.Net.DiagnosticsModule` — always-on; logging, OpenTelemetry, health checks, packing logs
+- `api/src/Binacle.Net.ServiceModule` — optional (`SERVICE_MODULE` flag); JWT auth, rate limiting, account management
+  - `api/src/Binacle.Net.ServiceModule.Domain` — domain layer; entities, repository interfaces
+  - `api/src/Binacle.Net.ServiceModule.Infrastructure` — data layer; SQLite / PostgreSQL / Azure Tables backends
+- `api/src/Binacle.Net.UIModule` — optional (`UI_MODULE` flag); Blazor interactive demo
 
 ## Startup Order
 
@@ -83,8 +83,8 @@ Key rules:
 
 | Project | Alias | What it covers |
 |---|---|---|
-| `test/Binacle.Net.IntegrationTests` | `api` | HTTP behavior and scenario tests for v3 and v4 endpoints |
-| `test/Binacle.Net.ServiceModule.IntegrationTests` | `api_service` | Auth and rate limiting (ServiceModule only) |
+| `api/test/Binacle.Net.IntegrationTests` | `api` | HTTP behavior and scenario tests for v3 and v4 endpoints |
+| `api/test/Binacle.Net.ServiceModule.IntegrationTests` | `api_service` | Auth and rate limiting (ServiceModule only) |
 
 See [Tests](../tests/README.md) for stack, fixture patterns, and scenario data format.
 See [Commands](../commands.md) for how to run the API locally.

@@ -7,7 +7,7 @@ description: Binacle.ViPaq — compact binary format for encoding packing result
 > **Warning: ViPaq is experimental and may change.**
 
 `Binacle.ViPaq` is a compact binary format for encoding packing results (bin dimensions + item positions).
-The TypeScript mirror lives at `packages/binacle-vipaq`.
+The TypeScript mirror lives at `vipaq/binacle-vipaq`.
 
 Used in v3 and v4 API responses when `includeViPaqData: true` is set — returns a base64 payload for 3D visualization.
 
@@ -40,8 +40,8 @@ Three techniques are applied to the binary payload:
 
 | Project | Alias | What it covers |
 |---|---|---|
-| `test/Binacle.ViPaq.UnitTests` | `vipaq` | Encoding, decoding, and roundtrip behaviour |
-| `packages/binacle-vipaq` | — | TypeScript mirror — run with `npm test` in that directory |
+| `vipaq/test/Binacle.ViPaq.UnitTests` | `vipaq` | Encoding, decoding, and roundtrip behaviour |
+| `vipaq/binacle-vipaq` | — | TypeScript mirror — run with `npm test` in that directory |
 
 ## Gap
 

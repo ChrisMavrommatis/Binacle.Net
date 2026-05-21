@@ -65,7 +65,7 @@ WFD is excluded from the multi-bin path. This is intentional.
 
 ## Diagnostics
 
-All active processors start an OpenTelemetry activity via `Diagnostics.ActivitySource` (`src/Binacle.Lib/Diagnostics.cs`).
+All active processors start an OpenTelemetry activity via `Diagnostics.ActivitySource` (`lib/src/Binacle.Lib/Diagnostics.cs`).
 If you add a new processor, follow the same pattern:
 
 ```csharp
@@ -90,6 +90,6 @@ See [result-selection.md](result-selection.md) for scoring rules and how tests v
 
 ## Parallel variants
 
-`ParallelAlgorithmProcessor` (`src/Binacle.Lib/AlgorithmProcessing/`) and `ParallelBinProcessor` /
-`ParallelMultiAlgorithmBinProcessor` (`src/Binacle.Lib/BinProcessing/`) exist but are **not wired up** by any factory.
+`ParallelAlgorithmProcessor` (`lib/src/Binacle.Lib/AlgorithmProcessing/`) and `ParallelBinProcessor` /
+`ParallelMultiAlgorithmBinProcessor` (`lib/src/Binacle.Lib/BinProcessing/`) exist but are **not wired up** by any factory.
 Do not use them until they are.

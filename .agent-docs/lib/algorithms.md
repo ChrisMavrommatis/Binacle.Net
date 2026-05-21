@@ -14,11 +14,11 @@ Three heuristics, each with two versions:
 | Best Fit Decreasing (BFD) | v1, v2 |
 | Worst Fit Decreasing (WFD) | v1, v2 |
 
-Each lives under `src/Binacle.Lib/Algorithms/<Heuristic> v<N>/`.
+Each lives under `lib/src/Binacle.Lib/Algorithms/<Heuristic> v<N>/`.
 See [Algorithm Factory](algorithm-factory.md) for the concrete class names (`FirstFitDecreasing_v2`, etc.).
 
 All versions of a heuristic produce the same results. Newer versions are faster and use less memory.
-The API currently uses **v2 for all three heuristics** — this is set in `src/Binacle.Lib/AlgorithmFactory.cs`.
+The API currently uses **v2 for all three heuristics** — this is set in `lib/src/Binacle.Lib/AlgorithmFactory.cs`.
 When writing new code, always use the latest version (currently v2).
 Old versions are kept so you can benchmark without changing what the API uses — do not remove them.
 

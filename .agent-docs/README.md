@@ -11,17 +11,21 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 
 | Path | What it is |
 |---|---|
-| `src/Binacle.Net` | Main API — entry point, versioned endpoints, `Program.cs` |
-| `src/Binacle.Net.Kernel` | Shared tools: endpoint registration, OpenAPI, feature flags, validation |
-| `src/Binacle.Lib` | Core bin-packing algorithms and processors |
-| `src/Binacle.Lib.Abstractions` | Interfaces shared between `Binacle.Lib` and the API layer |
-| `src/Binacle.Net.ServiceModule` | Optional: JWT auth, rate limiting, account management |
-| `src/Binacle.Net.UIModule` | Optional: Blazor/Razor interactive packing demo |
-| `src/Binacle.Net.DiagnosticsModule` | Diagnostics middleware, always on |
-| `src/Binacle.ViPaq` | Compact binary format for encoding packing results |
-| `test/` | All test projects |
+| `api/src/Binacle.Net` | Main API — entry point, versioned endpoints, `Program.cs` |
+| `api/src/Binacle.Net.Kernel` | Shared tools: endpoint registration, OpenAPI, feature flags, validation |
+| `api/src/Binacle.Net.DiagnosticsModule` | Diagnostics middleware, always on |
+| `api/src/Binacle.Net.ServiceModule` | Optional: JWT auth, rate limiting, account management |
+| `api/src/Binacle.Net.UIModule` | Optional: Blazor/Razor interactive packing demo |
+| `api/test/` | API integration tests |
+| `lib/src/Binacle.Lib` | Core bin-packing algorithms and processors |
+| `lib/src/Binacle.Lib.Abstractions` | Interfaces shared between `Binacle.Lib` and the API layer |
+| `lib/test/` | Lib unit tests, performance tests, benchmarks |
+| `vipaq/src/Binacle.ViPaq` | Compact binary format for encoding packing results |
+| `vipaq/test/` | ViPaq unit tests |
+| `vipaq/binacle-vipaq/` | TypeScript mirror of ViPaq |
+| `shared/Binacle.TestsKernel` | Shared test fixtures and scenario data |
 | `packages/` | TypeScript packages (npm workspaces) |
-| `gems/` | Ruby gems (Jekyll plugins) |
+| `ruby/` | Ruby gems (Jekyll plugins) |
 | `docs/` | Jekyll documentation site |
 | `web/` | Jekyll marketing/web site |
 

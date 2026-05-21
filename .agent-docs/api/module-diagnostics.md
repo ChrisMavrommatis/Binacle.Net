@@ -4,7 +4,7 @@ description: DiagnosticsModule — always-on logging, OpenTelemetry, health chec
 
 # DiagnosticsModule
 
-`src/Binacle.Net.DiagnosticsModule`
+`api/src/Binacle.Net.DiagnosticsModule`
 
 Always registered — no feature flag. Must be added before optional modules in `Program.cs`.
 

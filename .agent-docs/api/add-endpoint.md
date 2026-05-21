@@ -12,7 +12,7 @@ New endpoints go in **v4 only**. v3 is stable and must not be modified.
 
 ### 1. Create contract types (if new)
 
-Add request/response types under `src/Binacle.Net/v4/Contracts/`.
+Add request/response types under `api/src/Binacle.Net/v4/Contracts/`.
 
 Request types should use the relevant `IWith*` interfaces (`IWithBin`, `IWithBins`, `IWithItems`, `IWithOperationParameters`).
 See [contracts.md](contracts.md) for the full interface table and a concrete example request class.
@@ -22,7 +22,7 @@ Example classes use `RequestExample<T>`, `ResponseExamples<T>` from `OpenApiExam
 
 ### 2. Create the endpoint class
 
-Create a file under `src/Binacle.Net/v4/Endpoints/<Tag>/`.
+Create a file under `api/src/Binacle.Net/v4/Endpoints/<Tag>/`.
 
 ```csharp
 internal class MyEndpoint : IGroupedEndpoint<ApiV4EndpointGroup>
@@ -93,7 +93,7 @@ public class MyResponse : BinResponseBase
 `BinResponseBase.From<T>()` populates the common fields (Bin, AlgorithmUsed, PackedItems, UnpackedItems,
 volume percentages, ViPaqData). Your subclass only needs to set what's specific to the operation.
 
-Response types live in `src/Binacle.Net/v4/Contracts/`. See [contracts.md](contracts.md) for existing types.
+Response types live in `api/src/Binacle.Net/v4/Contracts/`. See [contracts.md](contracts.md) for existing types.
 
 ### 4. Done
 

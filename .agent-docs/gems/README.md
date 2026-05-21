@@ -1,5 +1,5 @@
 ---
-description: Ruby gems under gems/ — Jekyll plugins used by docs and web sites. Gem details not yet documented.
+description: Ruby gems under ruby/ — Jekyll plugins used by docs and web sites. Gem details not yet documented.
 ---
 
 # Gems

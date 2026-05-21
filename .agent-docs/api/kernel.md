@@ -4,7 +4,7 @@ description: Binacle.Net.Kernel — shared patterns used by all API projects and
 
 # Kernel
 
-`src/Binacle.Net.Kernel` is the foundation every other project references.
+`api/src/Binacle.Net.Kernel` is the foundation every other project references.
 It provides no business logic — only patterns, infrastructure, and helpers.
 
 ## BindingResult\<T\>

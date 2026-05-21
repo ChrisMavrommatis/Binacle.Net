@@ -8,7 +8,7 @@ npm workspaces at the repo root. Packages:
 
 | Package | Description |
 |---|---|
-| `binacle-vipaq` | TypeScript mirror of the ViPaq binary format |
+| `binacle-vipaq` | TypeScript mirror of the ViPaq binary format — moved to `vipaq/binacle-vipaq/` |
 | `binacle-net-ui` | UI components |
 | `cookies` | Cookie utilities |
 | `theme-switcher` | Theme switching |
@@ -19,4 +19,4 @@ npm workspaces at the repo root. Packages:
 
 | Project | What it covers |
 |---|---|
-| `packages/binacle-vipaq` | Has its own test suite — run with `npm test` inside the package directory |
+| `vipaq/binacle-vipaq` | Has its own test suite — run with `npm test` inside the package directory |

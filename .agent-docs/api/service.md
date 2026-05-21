@@ -4,7 +4,7 @@ description: IBinacleService — method reference for SingleBinAsync, MultipleBi
 
 # IBinacleService
 
-Defined in `src/Binacle.Net/Services/BinacleService.cs`.
+Defined in `api/src/Binacle.Net/Services/BinacleService.cs`.
 Endpoint handlers inject this and call the appropriate method. They do not touch processors or factories directly.
 
 ## Methods

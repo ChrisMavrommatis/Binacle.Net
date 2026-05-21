@@ -4,7 +4,7 @@ description: Lib model types and IWith* interfaces — Bin, Item, packed/unpacke
 
 # Models
 
-All types live in `src/Binacle.Lib.Abstractions/` unless noted.
+All types live in `lib/src/Binacle.Lib.Abstractions/` unless noted.
 
 ## Input models
 

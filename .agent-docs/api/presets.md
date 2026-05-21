@@ -11,8 +11,8 @@ See [configuration.md](configuration.md) for where config files live and how to 
 
 ## Config
 
-Presets live in `src/Binacle.Net/Config_Files/Presets.json`, loaded into `BinPresetOptions`
-(`src/Binacle.Net/Configuration/BinPresetOptions.cs`).
+Presets live in `api/src/Binacle.Net/Config_Files/Presets.json`, loaded into `BinPresetOptions`
+(`api/src/Binacle.Net/Configuration/BinPresetOptions.cs`).
 
 Structure:
 
@@ -81,8 +81,8 @@ but any consistent unit works).
 
 ## Adding a preset for tests
 
-Integration tests use a separate `Presets.json` at `test/Binacle.Net.IntegrationTests/Config_Files/Presets.json`
-(same format). Preset name constants live in `test/Binacle.Net.IntegrationTests/PresetKeys.cs`.
+Integration tests use a separate `Presets.json` at `api/test/Binacle.Net.IntegrationTests/Config_Files/Presets.json`
+(same format). Preset name constants live in `api/test/Binacle.Net.IntegrationTests/PresetKeys.cs`.
 
 To add a preset for testing:
 1. Add the entry to the test `Presets.json`

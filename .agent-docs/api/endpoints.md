@@ -92,7 +92,7 @@ ServiceModule is not loaded — safe to include but only active when the module 
 
 ## Contracts Location
 
-- `src/Binacle.Net/v4/Contracts/` — request/response types, validators, OpenAPI examples
-- `src/Binacle.Net/v3/Contracts/` — same structure for v3
+- `api/src/Binacle.Net/v4/Contracts/` — request/response types, validators, OpenAPI examples
+- `api/src/Binacle.Net/v3/Contracts/` — same structure for v3
 
 See [contracts.md](contracts.md) for the full contract shape and [add-endpoint.md](add-endpoint.md) for a step-by-step guide.

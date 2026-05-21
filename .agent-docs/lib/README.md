@@ -8,8 +8,8 @@ If you don't know where to start, read [processors.md](processors.md) first.
 
 Two projects:
 
-- `src/Binacle.Lib.Abstractions` — interfaces only; used by both `Binacle.Lib` and the API layer
-- `src/Binacle.Lib` — the actual algorithm code and processors
+- `lib/src/Binacle.Lib.Abstractions` — interfaces only; used by both `Binacle.Lib` and the API layer
+- `lib/src/Binacle.Lib` — the actual algorithm code and processors
 
 ## Docs
 
@@ -24,15 +24,15 @@ Two projects:
 
 | Project | Alias | What it covers |
 |---|---|---|
-| `test/Binacle.Lib.UnitTests` | `lib` | All algorithm versions × all scenarios; result selection strategies |
-| `test/Binacle.Lib.PerformanceTests` | `performance` | Algorithm performance (console runner, not xUnit) |
+| `lib/test/Binacle.Lib.UnitTests` | `lib` | All algorithm versions × all scenarios; result selection strategies |
+| `lib/test/Binacle.Lib.PerformanceTests` | `performance` | Algorithm performance (console runner, not xUnit) |
 
 See [Tests](../tests/README.md) for stack, fixture patterns, and scenario data format.
 
 ## Notes
 
-- Custom exceptions live in `src/Binacle.Lib/Exceptions/` — use these rather than inventing new types.
-- Guard clauses live in `src/Binacle.Lib/GuardClauses/` (Null, NullOrEmpty, Dimensions, Volume, Quantity).
+- Custom exceptions live in `lib/src/Binacle.Lib/Exceptions/` — use these rather than inventing new types.
+- Guard clauses live in `lib/src/Binacle.Lib/GuardClauses/` (Null, NullOrEmpty, Dimensions, Volume, Quantity).
 
 ## Concepts
 

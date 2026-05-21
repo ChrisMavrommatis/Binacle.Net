@@ -4,7 +4,7 @@ description: Request/response contract types, validators, and OpenAPI examples f
 
 # Contracts
 
-All contracts live under `src/Binacle.Net/v4/Contracts/` (v4) or `src/Binacle.Net/v3/Contracts/` (v3).
+All contracts live under `api/src/Binacle.Net/v4/Contracts/` (v4) or `api/src/Binacle.Net/v3/Contracts/` (v3).
 
 ## IWith* Interfaces
 
@@ -53,7 +53,7 @@ Sent in every request as `Parameters`.
 
 ## Response Types
 
-Both fit and pack share a common base (`BinResponseBase` in `src/Binacle.Net/v4/Contracts/BinResponseBase.cs`).
+Both fit and pack share a common base (`BinResponseBase` in `api/src/Binacle.Net/v4/Contracts/BinResponseBase.cs`).
 Subclasses call `From<T>(parameters, operationResult)` to populate common fields — see step 3 in [add-endpoint.md](add-endpoint.md).
 
 | Field | Type | Notes |

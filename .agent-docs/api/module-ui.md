@@ -4,7 +4,7 @@ description: UIModule — optional Blazor/Razor interactive packing demo. Not re
 
 # UIModule
 
-`src/Binacle.Net.UIModule`
+`api/src/Binacle.Net.UIModule`
 
 Optional Blazor Server interactive demo. Enabled by the `UI_MODULE` feature flag.
 

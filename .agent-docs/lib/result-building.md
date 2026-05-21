@@ -6,8 +6,8 @@ description: OperationResultBuilder — how OperationResult is constructed, stat
 
 ## OperationResultBuilder
 
-`OperationResultBuilder<TBin, TItem>` (`src/Binacle.Lib/Models/OperationResultBuilder.cs`) is internal to `Binacle.Lib`.
-It's the only way an `OperationResult` is created — `OperationResult` (`src/Binacle.Lib.Abstractions/Algorithms/Models/OperationResultStatus.cs`)
+`OperationResultBuilder<TBin, TItem>` (`lib/src/Binacle.Lib/Models/OperationResultBuilder.cs`) is internal to `Binacle.Lib`.
+It's the only way an `OperationResult` is created — `OperationResult` (`lib/src/Binacle.Lib.Abstractions/Algorithms/Models/OperationResultStatus.cs`)
 has an internal constructor and cannot be instantiated directly.
 
 Each algorithm creates a builder during initialisation and calls it at the end of `Execute()`.
@@ -24,7 +24,7 @@ builder
 
 `EarlyExit(reason)` calls `Complete()` first, then overwrites the status to `EarlyExit` and sets the reason.
 
-`EarlyExitReason` values (from `src/Binacle.Lib.Abstractions/Algorithms/Models/OperationResultStatus.cs`):
+`EarlyExitReason` values (from `lib/src/Binacle.Lib.Abstractions/Algorithms/Models/OperationResultStatus.cs`):
 
 | Value | When set |
 |---|---|

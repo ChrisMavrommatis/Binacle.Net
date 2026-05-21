@@ -137,16 +137,13 @@ Every path that pointed into `src/`, `test/`, `packages/`, or `gems/` needs upda
 - [x] `web/_config.yml` and `web/_config.prod.yml` — same
 
 ### Documentation
-- [ ] `README.md` — any path references to `src/`, `test/`, `packages/`, `gems/`, `doc/`
-- [ ] `.agent-docs/` — extensive path references throughout; update all docs that mention:
+- [x] `README.md` — no path references, no changes needed
+- [x] `.agent-docs/` — all path references updated across all 23 affected files:
   - `src/Binacle.*` → `lib/src/`, `api/src/`, `vipaq/src/`
   - `test/Binacle.*` → `lib/test/`, `api/test/`, `vipaq/test/`, `shared/`
   - `packages/binacle-vipaq` → `vipaq/binacle-vipaq`
-  - `gems/` → `ruby/`
-  - `doc/` → `results/`
-  - `res/http/` → `api/requests/`
-  - `res/or-library-packing-data/` → `shared/data/`
-- [ ] `CLAUDE.md` — check if it references any paths directly
+  - `gems/` description text → `ruby/`
+- [x] `CLAUDE.md` — no direct path references, no changes needed
 
 ---
 

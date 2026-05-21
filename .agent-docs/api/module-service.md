@@ -10,9 +10,9 @@ Three projects, one feature. Enabled by the `SERVICE_MODULE` feature flag.
 
 | Project | Layer | What it is |
 |---|---|---|
-| `src/Binacle.Net.ServiceModule` | Application | Endpoints, JWT config, rate limiting, token service |
-| `src/Binacle.Net.ServiceModule.Domain` | Domain | Entities, repository interfaces, value objects |
-| `src/Binacle.Net.ServiceModule.Infrastructure` | Infrastructure | Concrete repositories, DB backends, password hashers |
+| `api/src/Binacle.Net.ServiceModule` | Application | Endpoints, JWT config, rate limiting, token service |
+| `api/src/Binacle.Net.ServiceModule.Domain` | Domain | Entities, repository interfaces, value objects |
+| `api/src/Binacle.Net.ServiceModule.Infrastructure` | Infrastructure | Concrete repositories, DB backends, password hashers |
 
 **Dependency direction:** ServiceModule → Domain ← Infrastructure.
 Neither ServiceModule nor Infrastructure knows about each other — both depend on Domain abstractions only.
@@ -117,5 +117,5 @@ See [add-endpoint.md](add-endpoint.md) for the template — use `ApiV0EndpointGr
 
 ## Related Tests
 
-`test/Binacle.Net.ServiceModule.IntegrationTests` (alias: `api_service`) — covers auth token endpoint
+`api/test/Binacle.Net.ServiceModule.IntegrationTests` (alias: `api_service`) — covers auth token endpoint
 and all Admin account/subscription CRUD endpoints.
