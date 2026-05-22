@@ -1,5 +1,6 @@
 ---
 description: Optional module system — feature flags, structure, available modules
+verified: 2026-05-23
 ---
 
 # Modules

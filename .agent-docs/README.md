@@ -1,5 +1,6 @@
 ---
 description: Repo overview and index of agent documentation
+verified: 2026-05-23
 ---
 
 # Binacle.Net — Agent Docs

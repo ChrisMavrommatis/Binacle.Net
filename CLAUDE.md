@@ -21,3 +21,18 @@ Detailed documentation for agents is in `.agent-docs/`:
 
 @.agent-docs/README.md
 @.agent-docs/_index.md
+
+## Critical Rules
+
+- **Do not modify v3.** All new endpoints go in v4 only.
+- **Always use `BindingResult<T>`** in endpoint handlers — never bind the request body directly.
+- **Add `.RequireRateLimiting("ApiUsage")`** to v4 endpoints that handle user requests (fit, pack, presets).
+  Safe to include unconditionally — no-op when ServiceModule is off.
+- **Add `.RequireCors(CorsPolicy.CoreApi)`** where CORS protection is needed. Check existing endpoints
+  in the same group for the expected pattern before deciding.
+- **Never add `.ProducesProblem(500)` per endpoint** — `ApiV4EndpointGroup` sets it for all v4 endpoints.
+- **`Algorithm` is required** — the `NotNull()` validator rejects null. Never treat a missing algorithm as valid.
+- **Never construct `OperationResult` directly** — only `OperationResultBuilder` can create one.
+- **`Presets.json` is required** — the app fails to start without it.
+- **If adding a new module**, create its own `IModuleMarker` in that module's assembly.
+- **When you edit a doc in `.agent-docs/`**, update its `verified:` frontmatter date to today.

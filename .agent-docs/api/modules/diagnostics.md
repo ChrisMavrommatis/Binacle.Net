@@ -1,5 +1,6 @@
 ---
 description: DiagnosticsModule — always-on logging, OpenTelemetry, health checks, and packing logs
+verified: 2026-05-23
 ---
 
 # DiagnosticsModule

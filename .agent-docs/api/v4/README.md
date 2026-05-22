@@ -1,5 +1,6 @@
 ---
 description: v4 API — active development. Endpoints (implemented and planned), algorithm selection, parameters, contracts, and response shape.
+verified: 2026-05-23
 ---
 
 # v4 API

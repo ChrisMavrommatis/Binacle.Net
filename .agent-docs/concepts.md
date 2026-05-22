@@ -1,5 +1,6 @@
 ---
 description: Fit exits early on first failure; pack continues and returns positions. Both return the same result shape — packed items and unpacked items. Used by both Lib algorithms and API endpoints.
+verified: 2026-05-23
 ---
 
 # Concepts

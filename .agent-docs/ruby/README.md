@@ -1,5 +1,6 @@
 ---
 description: Ruby gems under ruby/ — Jekyll plugins used by docs and web sites. Gem details not yet documented.
+verified: 2026-05-23
 ---
 
 # Gems

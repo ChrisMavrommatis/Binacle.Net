@@ -1,5 +1,6 @@
 ---
 description: Step-by-step guide for adding a new v4 endpoint
+verified: 2026-05-23
 ---
 
 # How to Add an Endpoint

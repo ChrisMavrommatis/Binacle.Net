@@ -1,5 +1,6 @@
 ---
 description: Request/response contract types, validators, and OpenAPI examples for v4 (v3 follows the same shape)
+verified: 2026-05-23
 ---
 
 # Contracts

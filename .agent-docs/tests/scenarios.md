@@ -1,5 +1,6 @@
 ---
 description: Shared test infrastructure — scenario data, compact format, providers, and fixtures
+verified: 2026-05-23
 ---
 
 # Test Scenarios

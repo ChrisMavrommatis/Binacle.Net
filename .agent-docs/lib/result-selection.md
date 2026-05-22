@@ -1,5 +1,6 @@
 ---
 description: IResultSelector, IResultSelectionStrategy, and the three selection strategies — scoring rules, tie-breaking, and how tests verify them
+verified: 2026-05-23
 ---
 
 # Result Selection

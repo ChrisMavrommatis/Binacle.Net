@@ -1,5 +1,6 @@
 ---
 description: Binacle.ViPaq — compact binary format for encoding packing results. High-level wire layout, encoding techniques, and C# / TypeScript API surface.
+verified: 2026-05-23
 ---
 
 # ViPaq

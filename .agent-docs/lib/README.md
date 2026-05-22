@@ -1,5 +1,6 @@
 ---
 description: Binacle.Lib and Binacle.Lib.Abstractions — the algorithm layer
+verified: 2026-05-23
 ---
 
 # Lib

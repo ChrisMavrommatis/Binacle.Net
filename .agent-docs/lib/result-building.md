@@ -1,5 +1,6 @@
 ---
 description: OperationResultBuilder — how OperationResult is constructed, status rules, volume percentages, and integrity checks
+verified: 2026-05-23
 ---
 
 # Result Building

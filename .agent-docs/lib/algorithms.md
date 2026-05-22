@@ -1,5 +1,6 @@
 ---
 description: Packing heuristics (FFD/WFD/BFD) — versions, operation types, trade-offs, and the fit/pack guarantee
+verified: 2026-05-23
 ---
 
 # Algorithms

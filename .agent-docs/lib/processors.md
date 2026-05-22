@@ -1,5 +1,6 @@
 ---
 description: IAlgorithmProcessor, IBinProcessor, and IMultiAlgorithmBinProcessor — their factories and which algorithms each execution path uses
+verified: 2026-05-23
 ---
 
 # Processors

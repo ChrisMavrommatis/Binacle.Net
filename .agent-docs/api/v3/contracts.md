@@ -1,5 +1,6 @@
 ---
 description: v3 request and response contracts — field names, outer response wrapper, and enum values for fit and pack.
+verified: 2026-05-23
 ---
 
 # v3 Contracts

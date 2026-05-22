@@ -1,5 +1,6 @@
 ---
 description: Endpoint pattern, registration, request validation flow, and route groups for v3 and v4
+verified: 2026-05-23
 ---
 
 # Endpoints

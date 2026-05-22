@@ -1,5 +1,6 @@
 ---
 description: UIModule — optional Blazor Web App interactive packing demo. Pages, JS stack, API connection, config, and services.
+verified: 2026-05-23
 ---
 
 # UIModule

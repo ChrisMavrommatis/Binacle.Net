@@ -1,5 +1,6 @@
 ---
 description: Index for API slice docs — endpoints, contracts, service, kernel, presets, and module docs (Diagnostics, ServiceModule, UIModule)
+verified: 2026-05-23
 ---
 
 # API

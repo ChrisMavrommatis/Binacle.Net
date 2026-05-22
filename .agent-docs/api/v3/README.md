@@ -1,5 +1,6 @@
 ---
 description: v3 API — stable, do not modify. Endpoints, algorithm selection, response shape, field names, and enum values.
+verified: 2026-05-23
 ---
 
 # v3 API

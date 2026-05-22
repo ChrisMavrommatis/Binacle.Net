@@ -1,5 +1,6 @@
 ---
 description: Binacle.Net.Kernel — shared patterns used by all API projects and modules
+verified: 2026-05-23
 ---
 
 # Kernel

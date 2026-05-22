@@ -1,5 +1,6 @@
 ---
 description: Config file layout, env-var conventions, override precedence, and feature flag list
+verified: 2026-05-23
 ---
 
 # Configuration

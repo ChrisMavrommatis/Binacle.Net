@@ -1,5 +1,6 @@
 ---
 description: TypeScript packages under packages/ (npm workspaces). Package APIs not yet documented.
+verified: 2026-05-23
 ---
 
 # Packages

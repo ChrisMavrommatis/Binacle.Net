@@ -1,5 +1,6 @@
 ---
 description: IAlgorithmFactory — how algorithm instances are created, DI registration, and how tests construct algorithms directly
+verified: 2026-05-23
 ---
 
 # Algorithm Factory

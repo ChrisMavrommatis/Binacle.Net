@@ -1,5 +1,6 @@
 ---
 description: All test projects — stack, aliases, and what each covers
+verified: 2026-05-23
 ---
 
 # Tests

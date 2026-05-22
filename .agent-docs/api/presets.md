@@ -1,5 +1,6 @@
 ---
 description: What presets are, where they're configured, how route params map to bins, and how to add one for tests
+verified: 2026-05-23
 ---
 
 # Presets

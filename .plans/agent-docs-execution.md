@@ -59,8 +59,8 @@ Legend: `done` | `pending` | `deferred`
 
 | # | Item | Status |
 |---|------|--------|
-| 30 | Draft "Critical Rules" block for CLAUDE.md — present to user for approval | pending |
-| 31 | Draft `verified: YYYY-MM-DD` frontmatter for each doc — present to user | pending |
+| 30 | Draft "Critical Rules" block for CLAUDE.md — present to user for approval | done |
+| 31 | Draft `verified: YYYY-MM-DD` frontmatter for each doc — present to user | done |
 | 32 | Draft "Done when:" verification lines — present to user | pending |
 | 33 | Draft "Also update:" side-effect notes — present to user | pending |
 | 34 | Draft `status:` stability markers (frozen/stable/active/planned) — present to user | pending |
