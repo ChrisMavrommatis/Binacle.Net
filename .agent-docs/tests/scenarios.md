@@ -6,7 +6,11 @@ description: Shared test infrastructure — scenario data, compact format, provi
 
 ## Shared Library — `Binacle.TestsKernel`
 
-Not an executable. Used by `Binacle.Lib.UnitTests` and `Binacle.Net.IntegrationTests`.
+Not an executable. Used by four projects:
+- `Binacle.Lib.UnitTests`
+- `Binacle.Net.IntegrationTests`
+- `Binacle.Lib.Benchmarks`
+- `Binacle.Lib.PerformanceTests`
 
 ## Scenario Suites
 

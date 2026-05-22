@@ -13,6 +13,7 @@ See [configuration.md](configuration.md) for where config files live and how to 
 
 Presets live in `api/src/Binacle.Net/Config_Files/Presets.json`, loaded into `BinPresetOptions`
 (`api/src/Binacle.Net/Configuration/BinPresetOptions.cs`).
+This file is **required** (`Optional: false`) — the app fails to start if it is missing.
 
 Structure:
 
@@ -34,7 +35,7 @@ Built-in presets: `rectangular-cuboids`, `perfect-cubes`, `sample`. Each has `Sm
 
 ## Route Params
 
-Preset endpoints use `{preset}/{bin}` in the URL path.
+**v4** preset endpoints use `{preset}/{bin}` — pick one specific bin by name:
 
 - `{preset}` — the top-level key in `Presets` (e.g., `rectangular-cuboids`)
 - `{bin}` — the `ID` of a bin within that preset (e.g., `Small`)
@@ -43,6 +44,9 @@ Example: `POST /api/v4/fit/bin/rectangular-cuboids/Small`
 
 The endpoint looks this up via `BinPresetOptions.TryGetPresetBin(preset, bin, out binOption)`.
 Returns `404` if the preset or bin name doesn't exist.
+
+**v3** preset endpoints use only `{preset}` — no `{bin}`. They run all bins in the preset and return
+one result per bin. Example: `POST /api/v3/fit/by-preset/rectangular-cuboids`
 
 ## Lookup is cached
 
@@ -81,10 +85,10 @@ but any consistent unit works).
 
 ## Adding a preset for tests
 
-Integration tests use a separate `Presets.json` at `api/test/Binacle.Net.IntegrationTests/Config_Files/Presets.json`
-(same format). Preset name constants live in `api/test/Binacle.Net.IntegrationTests/PresetKeys.cs`.
+Integration tests do **not** use a separate `Presets.json` file. Presets are configured in code inside
+`BinacleApi.ConfigureWebHost` — the defaults are cleared and test presets are added programmatically.
 
 To add a preset for testing:
-1. Add the entry to the test `Presets.json`
-2. Add a constant to `PresetKeys.cs`
-3. Reference it in the test via `PresetKeys.YourPreset`
+1. Add a constant to `api/test/Binacle.Net.IntegrationTests/PresetKeys.cs`
+2. In `BinacleApi.ConfigureWebHost`, add an entry via `options.Presets.Add(PresetKeys.YourKey, ...)`
+3. Reference it in tests via `PresetKeys.YourKey`

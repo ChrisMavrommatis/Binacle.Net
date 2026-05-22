@@ -1,5 +1,5 @@
 ---
-description: IAlgorithmProcessor and IBinProcessor, their factories, and which algorithms each execution path uses
+description: IAlgorithmProcessor, IBinProcessor, and IMultiAlgorithmBinProcessor — their factories and which algorithms each execution path uses
 ---
 
 # Processors
@@ -11,7 +11,11 @@ Pick the right processor by bins × algorithms:
 | | One algorithm | Many algorithms |
 |---|---|---|
 | **One bin** | `IAlgorithmProcessor` (explicit) | `IAlgorithmProcessor` (auto — via `AlgorithmProcessorFactory`) |
-| **Many bins** | `IBinProcessor` → `LoopBinProcessor` | `IBinProcessor` → `LoopMultiAlgorithmBinProcessor` |
+| **Many bins, one algorithm** | `IBinProcessor` → `LoopBinProcessor` | — |
+| **Many bins, many algorithms** | — | `IMultiAlgorithmBinProcessor` → `LoopMultiAlgorithmBinProcessor` |
+
+`IBinProcessor` and `IMultiAlgorithmBinProcessor` are separate interfaces.
+`IBinProcessor.Process` takes an explicit `Algorithm` argument; `IMultiAlgorithmBinProcessor.Process` does not.
 
 ## What it does
 

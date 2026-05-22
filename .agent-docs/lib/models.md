@@ -19,11 +19,16 @@ These are what you pass into the algorithm factory and processors.
 
 Returned inside `OperationResult` after an algorithm runs.
 
+All three result types extend `ResultItem` (`Algorithms/Models/ResultItem.cs`) — an abstract base that
+copies `ID` and `Dimensions` from the source object and computes `Volume`. It is not a reference to the
+original input object; it is a snapshot with its own copy of the data.
+
 | Type | File | What it holds |
 |---|---|---|
-| `PackedItem` | `Algorithms/Models/PackedItem.cs` | ID, dimensions, `Coordinates` (x/y/z position in bin) |
-| `UnpackedItem` | `Algorithms/Models/UnpackedItem.cs` | ID, dimensions, quantity (grouped by ID) |
-| `PackedBin` | `Algorithms/Models/PackedBin.cs` | Bin reference used in result output |
+| `ResultItem` (abstract) | `Algorithms/Models/ResultItem.cs` | `ID`, `Dimensions` (copied value), `Volume` (computed) |
+| `PackedItem` | `Algorithms/Models/PackedItem.cs` | Extends `ResultItem`; adds `Coordinates` (x/y/z position in bin) |
+| `UnpackedItem` | `Algorithms/Models/UnpackedItem.cs` | Extends `ResultItem`; adds `Quantity` (count of items that didn't fit, grouped by ID) |
+| `PackedBin` | `Algorithms/Models/PackedBin.cs` | Extends `ResultItem`; carries the bin's ID, dimensions, and volume for the result output |
 
 ## IWith* interfaces
 
@@ -51,4 +56,4 @@ Used as type constraints on generic methods (e.g. `IAlgorithmFactory.Create<TBin
 | `AlgorithmInfo` | `Models/AlgorithmInfo.cs` | Algorithm name + version, used to key results |
 
 The `IWith*` interfaces in `Binacle.Net.v4.Contracts` (e.g. `IWithBin`, `IWithItems`) are separate — those
-are API-level request composition interfaces. See [contracts.md](../api/contracts.md).
+are API-level request composition interfaces. See [contracts.md](../api/v4/contracts.md).

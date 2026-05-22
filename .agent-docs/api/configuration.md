@@ -13,18 +13,27 @@ All config files live under `/app/Config_Files` in the container.
 ```text
 app
 └── Config_Files
-    ├── Presets.json
+    ├── Presets.json                             required — app fails to start without this
     ├── DiagnosticsModule
     │   ├── HealthChecks.json
+    │   ├── HealthChecks.{Environment}.json      optional override
     │   ├── OpenTelemetry.json
+    │   ├── OpenTelemetry.{Environment}.json     optional override
     │   ├── PackingLogs.json
-    │   └── Serilog.json
+    │   ├── PackingLogs.{Environment}.json       optional override
+    │   ├── Serilog.json
+    │   └── Serilog.{Environment}.json           optional override
+    ├── ServiceModule
+    │   ├── ConnectionStrings.json               optional — DB connection strings
+    │   ├── RateLimiter.json                     required when SERVICE_MODULE=True — rate limiter rules
+    │   └── JwtAuth.json                         optional — JWT issuer, audience, secret
     └── UiModule
-        └── ConnectionStrings.json
+        └── ConnectionStrings.json               optional — override BinacleApi connection string
 ```
 
-Each file can be overridden by a `.Production.json` sibling (see below). Bind-mount individual files
-in Docker with `-v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro`.
+Each file can be overridden by a `.{EnvironmentName}.json` sibling (any ASP.NET environment name:
+Development, Production, Staging, etc.). Only include the keys you want to change.
+Bind-mount individual files in Docker with `-v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro`.
 
 ## Override Conventions
 
@@ -77,12 +86,16 @@ All flags are boolean env vars. All default to `False` (disabled).
 | `SERVICE_MODULE=True` | JWT auth, rate limiting, account management | False |
 | `UI_MODULE=True` | Blazor/Razor interactive packing demo | False |
 | `SWAGGER_UI=True` | Swagger UI at `/swagger` | False |
-| `SCALAR_UI=True` | Scalar UI (alternative OpenAPI UI) | False |
+| `SCALAR_UI=True` | Scalar UI at `/scalar` (alternative OpenAPI UI) | False |
 
 `ASPNETCORE_HTTP_PORTS` controls the internal listen port. Default is `8080`.
+
+`BINACLE_ADMIN_CREDENTIALS` — sets the default admin account credentials on first run (ServiceModule only).
+Not a feature flag and not in any config file — set it as an environment variable.
+Format is defined by ServiceModule; see [modules/service.md](modules/service.md) for details.
 
 ```bash
 ASPNETCORE_HTTP_PORTS=80
 ```
 
-See [modules.md](modules.md) for how modules are wired at startup.
+See [modules/README.md](modules/README.md) for how modules are wired at startup.

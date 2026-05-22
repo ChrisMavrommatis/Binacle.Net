@@ -20,3 +20,4 @@ At that point, rephrase to add a full stop, or just break the line.
 Detailed documentation for agents is in `.agent-docs/`:
 
 @.agent-docs/README.md
+@.agent-docs/_index.md

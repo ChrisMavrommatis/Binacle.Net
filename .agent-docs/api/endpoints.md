@@ -22,11 +22,18 @@ app.RegisterEndpointsFromAssemblyContaining<IModuleMarker>();
 
 ```
 IEndpointGroup           — defines a route group prefix and shared metadata
-IGroupedEndpoint<TGroup> — one endpoint inside a group; implements DefineEndpoint(RouteGroupBuilder)
+IGroupedEndpoint         — non-generic base; declares DefineEndpoint(RouteGroupBuilder)
+IGroupedEndpoint<TGroup> — adds the group type constraint; use this in your endpoint class
 IEndpoint                — standalone endpoint, not part of a group
 ```
 
 `RegisterEndpointsFromAssemblyContaining<T>` scans the assembly for all three and wires them up.
+
+### IModuleMarker
+
+Each module (DiagnosticsModule, ServiceModule, UIModule) defines its own `IModuleMarker` inside that module's assembly.
+It has no members — just a marker for `RegisterEndpointsFromAssemblyContaining<T>`.
+If you add a new module, create your own `IModuleMarker` in that module's project.
 
 ## Route Groups
 
@@ -95,4 +102,4 @@ ServiceModule is not loaded — safe to include but only active when the module 
 - `api/src/Binacle.Net/v4/Contracts/` — request/response types, validators, OpenAPI examples
 - `api/src/Binacle.Net/v3/Contracts/` — same structure for v3
 
-See [contracts.md](contracts.md) for the full contract shape and [add-endpoint.md](add-endpoint.md) for a step-by-step guide.
+See [contracts.md](v4/contracts.md) for the full contract shape and [add-endpoint.md](v4/add-endpoint.md) for a step-by-step guide.

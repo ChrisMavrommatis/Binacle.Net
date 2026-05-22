@@ -33,18 +33,20 @@ if (Feature.IsEnabled("SERVICE_MODULE")) {
 
 ## Endpoints (v0)
 
+`v0` is code organisation only — it does not appear in the URL.
+
 | Method | Route | Auth |
 |---|---|---|
-| POST | `/api/v0/auth/token` | none |
-| POST | `/api/v0/admin/accounts` | Admin |
-| GET | `/api/v0/admin/accounts/{id}` | Admin |
-| PUT | `/api/v0/admin/accounts/{id}` | Admin |
-| PATCH | `/api/v0/admin/accounts/{id}` | Admin |
-| DELETE | `/api/v0/admin/accounts/{id}` | Admin |
-| POST | `/api/v0/admin/accounts/{id}/subscriptions` | Admin |
-| PUT | `/api/v0/admin/accounts/{id}/subscriptions/{subId}` | Admin |
-| PATCH | `/api/v0/admin/accounts/{id}/subscriptions/{subId}` | Admin |
-| DELETE | `/api/v0/admin/accounts/{id}/subscriptions/{subId}` | Admin |
+| POST | `/api/auth/token` | none |
+| POST | `/api/admin/account` | Admin |
+| GET | `/api/admin/account/{id}` | Admin |
+| PUT | `/api/admin/account/{id}` | Admin |
+| PATCH | `/api/admin/account/{id}` | Admin |
+| DELETE | `/api/admin/account/{id}` | Admin |
+| POST | `/api/admin/account/{id}/subscription` | Admin |
+| PUT | `/api/admin/account/{id}/subscription` | Admin |
+| PATCH | `/api/admin/account/{id}/subscription` | Admin |
+| DELETE | `/api/admin/account/{id}/subscription` | Admin |
 
 Admin policy requires: authenticated + `ClaimTypes.Role == "Admin"`.
 
@@ -57,8 +59,10 @@ Two policies registered by this module:
 | `ApiUsage` | Core API endpoints (`v3/`, `v4/`) via `.RequireRateLimiting("ApiUsage")` |
 | `AuthToken` | Auth token endpoint |
 
-Rate limiter config is rule-based (window, token count, operations) — loaded from
-`Config_Files/ServiceModule/ConnectionStrings.json` or env vars.
+Rate limiter config is rule-based (sliding window) — loaded from `Config_Files/ServiceModule/RateLimiter.json`.
+`RateLimiter.json` has three named configs: `ApiUsageAnonymous`, `AuthToken`, and `ApiUsageDemoSubscription`.
+Only `ApiUsage` and `AuthToken` are registered as ASP.NET policies; `ApiUsageDemoSubscription` is used
+internally by the `ApiUsage` policy to apply different limits based on subscription type.
 
 When ServiceModule is off, `.RequireRateLimiting("ApiUsage")` on core endpoints is a no-op.
 
@@ -84,7 +88,7 @@ When ServiceModule is off, `.RequireRateLimiting("ApiUsage")` on core endpoints 
 **DB backend selection** — `Setup.AddInfrastructure()` tries providers in order until one matches a connection string:
 
 1. Azure Storage (connection string name: `AzureStorage`)
-2. PostgreSQL / Npgsql (connection string name: `Npgsql`)
+2. PostgreSQL (connection string name: `Postgres`)
 3. SQLite (connection string name: `Sqlite`)
 
 If none match, startup throws `ApplicationException` — the app will not start.
@@ -102,18 +106,18 @@ Each provider registers its own `IAccountRepository`, `ISubscriptionRepository`,
 
 ## Config files
 
-| File | What it configures |
-|---|---|
-| `Config_Files/ServiceModule/ConnectionStrings.json` | DB connection strings, rate limiter rules, JWT options |
-| `Config_Files/ServiceModule/ConnectionStrings.{Environment}.json` | Environment overrides |
+| File | Required | What it configures |
+|---|---|---|
+| `Config_Files/ServiceModule/ConnectionStrings.json` | optional | DB connection strings (AzureStorage, Postgres, Sqlite) |
+| `Config_Files/ServiceModule/RateLimiter.json` | required when SERVICE_MODULE=True | Rate limiter rules (sliding window configs) |
+| `Config_Files/ServiceModule/JwtAuth.json` | optional | JWT issuer, audience, and secret (`JwtAuthOptions`) |
 
-JWT secret, issuer, and audience are in `JwtAuthOptions` (loaded from same file).
-In Development, `dotnet user-secrets` is also loaded for the `IModuleMarker` assembly.
+In Development, `dotnet user-secrets` is also loaded for the `IModuleMarker` assembly (useful for JWT secrets).
 
 ## Adding an Admin Endpoint
 
 Admin and v0 endpoints follow the same `IGroupedEndpoint` pattern as v4.
-See [add-endpoint.md](add-endpoint.md) for the template — use `ApiV0EndpointGroup` as the group type instead of `ApiV4EndpointGroup`.
+See [add-endpoint.md](../v4/add-endpoint.md) for the template — use `ApiV0EndpointGroup` as the group type instead of `ApiV4EndpointGroup`.
 
 ## Related Tests
 

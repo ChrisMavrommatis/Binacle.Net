@@ -31,7 +31,8 @@ Endpoint handlers inject this and call the appropriate method. They do not touch
 ## Calling it
 
 The handler reads the algorithm from `request.Parameters.GetAlgorithm()`.
-`GetAlgorithm()` returns `null` for `Best` or when no algorithm is set — that means use the auto-select overload.
+`GetAlgorithm()` returns `null` only for `Best` — that means use the auto-select overload.
+(Null from the request body fails the `NotNull()` validator and never reaches the handler.)
 
 ```csharp
 var algorithm = request.Parameters.GetAlgorithm();

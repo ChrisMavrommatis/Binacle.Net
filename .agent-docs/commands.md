@@ -9,13 +9,13 @@ All scripts live in `config/` and are run from the repo root.
 ## Run the API
 
 ```bash
-./config/api.sh [N|S|U|A]
+./config/api.sh [N|S|U|All]
 ```
 
 - `N` / `Normal` — core API only (default)
 - `S` / `WithServiceModuleOnly` — with ServiceModule (auth, rate limiting)
 - `U` / `WithUiModuleOnly` — with UIModule
-- `A` / `WithAllModules` — everything
+- `All` / `WithAllModules` — everything
 
 ## Run Tests
 
@@ -38,6 +38,15 @@ cd vipaq/test/<ProjectName> && dotnet run # vipaq tests
 ./config/benchmarks.sh [FastValidation|AlgorithmRacing]
 # No argument = all benchmarks
 ```
+
+## Run Full Stack (Docker Compose)
+
+```bash
+docker compose -f config/docker-compose.yml up
+```
+
+Use `docker-compose.build.yml` to also build the image locally instead of pulling.
+This is the easiest way to run the API with all its dependencies (DB, etc.) locally.
 
 ## Build (Docker image)
 

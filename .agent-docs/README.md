@@ -14,9 +14,12 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `api/src/Binacle.Net` | Main API — entry point, versioned endpoints, `Program.cs` |
 | `api/src/Binacle.Net.Kernel` | Shared tools: endpoint registration, OpenAPI, feature flags, validation |
 | `api/src/Binacle.Net.DiagnosticsModule` | Diagnostics middleware, always on |
-| `api/src/Binacle.Net.ServiceModule` | Optional: JWT auth, rate limiting, account management |
+| `api/src/Binacle.Net.ServiceModule` | Optional module (3 projects): JWT auth, rate limiting, account management |
+| `api/src/Binacle.Net.ServiceModule.Domain` | Domain layer for ServiceModule — entities and repository interfaces |
+| `api/src/Binacle.Net.ServiceModule.Infrastructure` | Infrastructure layer for ServiceModule — DB providers |
 | `api/src/Binacle.Net.UIModule` | Optional: Blazor/Razor interactive packing demo |
-| `api/test/` | API integration tests |
+| `api/test/Binacle.Net.IntegrationTests` | HTTP tests for v3 and v4 endpoints |
+| `api/test/Binacle.Net.ServiceModule.IntegrationTests` | Tests for auth and rate limiting (ServiceModule only) |
 | `lib/src/Binacle.Lib` | Core bin-packing algorithms and processors |
 | `lib/src/Binacle.Lib.Abstractions` | Interfaces shared between `Binacle.Lib` and the API layer |
 | `lib/test/` | Lib unit tests, performance tests, benchmarks |
@@ -28,6 +31,9 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `ruby/` | Ruby gems (Jekyll plugins) |
 | `docs/` | Jekyll documentation site |
 | `web/` | Jekyll marketing/web site |
+| `api/requests/` | HTTP request files for manual testing (subfolders: v2, v3, v4, Service) |
+| `samples/` | Docker and Kubernetes deployment samples |
+| `shared/data/` | OR-library packing benchmark data |
 
 ## Commands
 
@@ -37,23 +43,23 @@ See [Commands](commands.md) — how to run the API, tests, benchmarks, and build
 
 | Task | Read these |
 |---|---|
-| Add a v4 endpoint | `api/endpoints.md`, `api/add-endpoint.md`, `api/contracts.md`, `api/service.md`, `api/kernel.md` |
-| Add or understand a contract type | `api/contracts.md`, `api/add-endpoint.md` |
-| Work with ServiceModule (auth, rate limiting) | `api/module-service.md`, `api/modules.md` |
-| Understand startup and module wiring | `api/README.md`, `api/modules.md`, `api/kernel.md` |
-| Understand fit vs pack | `concepts/fit-vs-pack.md` |
+| Add a v4 endpoint | `api/endpoints.md`, `api/v4/add-endpoint.md`, `api/v4/contracts.md`, `api/service.md`, `api/kernel.md` |
+| Add or understand a contract type | `api/v4/contracts.md`, `api/v4/add-endpoint.md` |
+| Work with ServiceModule (auth, rate limiting) | `api/modules/service.md`, `api/modules/README.md` |
+| Understand startup and module wiring | `api/README.md`, `api/modules/README.md`, `api/kernel.md` |
+| Understand fit vs pack | `concepts.md` |
 | Understand how results are selected | `lib/result-selection.md`, `lib/processors.md` |
 | Understand how OperationResult is built | `lib/result-building.md` |
 | Add or modify algorithm processing | `lib/algorithm-factory.md`, `lib/processors.md` |
 | Add or modify a test | `tests/README.md`, `tests/scenarios.md` |
-| Work with presets | `api/presets.md`, `api/v4.md` |
-| Understand v3 vs v4 differences | `api/v3.md`, `api/v4.md` |
+| Work with presets | `api/presets.md`, `api/v4/README.md` |
+| Understand v3 vs v4 differences | `api/v3/README.md`, `api/v4/README.md` |
 | Work with ViPaq | `vipaq/README.md` |
 | Configure modules / env vars / overrides | `api/configuration.md` |
 
 ## Slice Docs
 
-- [Concepts](concepts/README.md) — fit vs pack; ideas that span slices
+- [Concepts](concepts.md) — fit vs pack; ideas that span slices
 - [API](api/README.md) — endpoints, contracts, service, kernel, modules (Diagnostics, ServiceModule, UIModule)
 - [Configuration](api/configuration.md) — config file layout, env-var conventions, feature flags
 - [Lib](lib/README.md) — algorithms, processors, result building and selection

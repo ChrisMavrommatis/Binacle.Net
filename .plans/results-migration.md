@@ -7,6 +7,39 @@ Currently raw markdown sitting in the repo. Goal is to surface this content some
 
 ---
 
+## Current Contents
+
+### `results/benchmark-results/`
+
+Dated benchmark reports (hand-written summaries):
+`2024-02-20.md`, `2024-04-12.md`, `2024-08-30.md`, `2024-09-03.md`, `2024-09-11.md`,
+`2024-09-12.md`, `2024-09-15.md`, `2024-10-15.md`, `2024-10-18.md`, `2024-11-15.md`,
+`2024-11-22.md`, `2024-11-24.md`, `2024-11-27.md`, `2024-11-27_WFD.md`,
+`2024-12-09_BFD.md`, `2024-12-12.md`, `2025-02-10.md`
+
+Raw BenchmarkDotNet GitHub-flavoured markdown reports (auto-generated):
+- `results_net9/` — 10 files (FFD/BFD/WFD, fitting + packing, multiple bins/items)
+- `results_net9_windows/` — same 10 files, Windows run
+- `results_net9_10Installed/` — same 10 files, .NET 9 with .NET 10 also installed
+- `results_net10/` — same 10 files, .NET 10 run
+- `results_net10_windows/` — same 10 files, .NET 10 Windows run
+
+Also: `benchmark-results.proj` (MSBuild project), `README.md` (empty stub)
+
+### `results/packing-efficiency-results/`
+
+Named analysis docs:
+- `PackingEfficiency.md` — efficiency analysis write-up
+- `PackingEfficiencyComparison.md` — comparison across algorithms
+- `PackingTime.md` — timing analysis
+
+Dated snapshots: `2024-11-24.md`, `2024-11-27.md`, `2024-11-27_WFD.md`,
+`2024-12-09_BFD.md`, `2025-02-10.md`
+
+Also: `packing-efficiency-results.proj` (MSBuild project), `README.md` (empty stub)
+
+---
+
 ## Decision 1 — Where does the content live?
 
 - **Option A: docs site** — add a "Performance" or "Benchmarks" section under the Jekyll docs site

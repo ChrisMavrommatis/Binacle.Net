@@ -49,8 +49,8 @@ internal class MyEndpoint : IGroupedEndpoint<ApiV4EndpointGroup>
             .ResponseDescription(StatusCodes.Status422UnprocessableEntity, ResponseDescription.For400BadRequest)
             .ResponseExamples<MyValidationProblemResponseExamples>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
 
-            .RequireRateLimiting("ApiUsage")   // only when ServiceModule is active
-            .RequireCors(CorsPolicy.CoreApi);   // only when ServiceModule is active
+            .RequireRateLimiting("ApiUsage")   // always include — no-op if ServiceModule is not loaded
+            .RequireCors(CorsPolicy.CoreApi);   // always include — no-op if ServiceModule is not loaded
             // do NOT add .ProducesProblem(500) — ApiV4EndpointGroup sets it for all endpoints
     }
 
@@ -98,6 +98,18 @@ Response types live in `api/src/Binacle.Net/v4/Contracts/`. See [contracts.md](c
 ### 4. Done
 
 The endpoint is auto-registered. No changes to `Program.cs` or any registration file needed.
+
+## Preset Endpoints — 404 Case
+
+If your endpoint takes `{preset}` or `{bin}` route params, you must handle the not-found case.
+The preset or bin may not exist. Return `Results.NotFound()` and declare it in `DefineEndpoint`:
+
+```csharp
+.Produces(StatusCodes.Status404NotFound)
+.ResponseDescription(StatusCodes.Status404NotFound, "Preset or bin not found.")
+```
+
+See `PresetBin.cs` in the existing v4 endpoints for a working example.
 
 ## Choosing the Service Method
 

@@ -52,10 +52,13 @@ Path and enabled state are configured via `HealthCheckConfigurationOptions`.
 | File | What it configures |
 |---|---|
 | `Config_Files/DiagnosticsModule/Serilog.json` | Serilog sinks, enrichers, log levels |
-| `Config_Files/DiagnosticsModule/Serilog.{Environment}.json` | Environment overrides |
+| `Config_Files/DiagnosticsModule/Serilog.{Environment}.json` | Environment override |
 | `Config_Files/DiagnosticsModule/HealthChecks.json` | Health check path, IP restrictions, enabled state |
+| `Config_Files/DiagnosticsModule/HealthChecks.{Environment}.json` | Environment override |
 | `Config_Files/DiagnosticsModule/OpenTelemetry.json` | OTLP and Azure Monitor exporters |
+| `Config_Files/DiagnosticsModule/OpenTelemetry.{Environment}.json` | Environment override |
 | `Config_Files/DiagnosticsModule/PackingLogs.json` | Packing log channels and file paths |
+| `Config_Files/DiagnosticsModule/PackingLogs.{Environment}.json` | Environment override |
 
 ## Logging
 

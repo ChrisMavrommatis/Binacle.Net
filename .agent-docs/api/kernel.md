@@ -77,12 +77,13 @@ After this point, `Feature.IsEnabled("FLAG_NAME")` is available anywhere.
 Used in `Program.cs` to conditionally call `AddServiceModule()` and `AddUIModule()`.
 
 Flags checked in `Program.cs`: `SERVICE_MODULE`, `UI_MODULE`, `SWAGGER_UI`, `SCALAR_UI`.
-See [modules.md](modules.md) for what each flag enables and how modules use them.
+See [modules/README.md](modules/README.md) for what each flag enables and how modules use them.
 
-## IModuleMarker
+## IModuleMarker / IApiMarker
 
-Each module (and the core API) defines its own `IModuleMarker` interface.
-It's used purely as an assembly anchor for scanning:
+Each module defines its own `IModuleMarker` — DiagnosticsModule, ServiceModule, and UIModule each have one.
+The core API (`Binacle.Net`) uses `IApiMarker` instead (a separate interface, same pattern).
+Neither interface has members — they exist only as assembly anchors for scanning:
 
 ```csharp
 services.AddValidatorsFromAssemblyContaining<IModuleMarker>(...);
@@ -91,7 +92,7 @@ app.RegisterEndpointsFromAssemblyContaining<IModuleMarker>();
 ```
 
 This keeps each module's validators, OpenAPI docs, and endpoints isolated to its own assembly.
-Used by [DiagnosticsModule](module-diagnostics.md) and [ServiceModule](module-service.md).
+All three modules use this pattern: [DiagnosticsModule](modules/diagnostics.md), [ServiceModule](modules/service.md), [UIModule](modules/ui.md).
 
 ## IOpenApiDocument
 
@@ -101,7 +102,7 @@ Each module registers its own OpenAPI document by implementing `IOpenApiDocument
 ## IStartupTask
 
 Post-build async initialization. Registered via `services.AddStartupTask<T>()`, run via `app.RunStartupTasksAsync()`.
-Used by Infrastructure to create database schemas before the app starts serving requests — see [ServiceModule](module-service.md).
+Used by Infrastructure to create database schemas before the app starts serving requests — see [ServiceModule](modules/service.md).
 
 ## IConfigurationOptions
 

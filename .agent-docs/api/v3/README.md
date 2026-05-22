@@ -1,10 +1,10 @@
 ---
-description: v3 API — stable, do not modify. Endpoints, algorithm selection, parameters, and response shape.
+description: v3 API — stable, do not modify. Endpoints, algorithm selection, response shape, field names, and enum values.
 ---
 
 # v3 API
 
-> **Do not modify v3.** It is stable and locked. All active development goes in v4.
+> **Do not modify v3. Do not add endpoints here.** It is stable and locked. All active development goes in v4.
 
 Route prefix: `/api/v3`
 
@@ -13,10 +13,13 @@ Route prefix: `/api/v3`
 | Method | Route | Description |
 |---|---|---|
 | GET | `/api/v3/presets` | List all configured presets |
-| POST | `/api/v3/fit/by-preset/{preset}` | Fit-check a preset bin |
-| POST | `/api/v3/fit/by-custom` | Fit-check a custom bin |
-| POST | `/api/v3/pack/by-preset/{preset}` | Pack a preset bin |
-| POST | `/api/v3/pack/by-custom` | Pack a custom bin |
+| POST | `/api/v3/fit/by-preset/{preset}` | Fit-check all bins in a preset (one result per bin) |
+| POST | `/api/v3/fit/by-custom` | Fit-check a list of custom bins (one result per bin) |
+| POST | `/api/v3/pack/by-preset/{preset}` | Pack all bins in a preset (one result per bin) |
+| POST | `/api/v3/pack/by-custom` | Pack a list of custom bins (one result per bin) |
+
+v3 custom endpoints take `List<Bin> Bins` — multiple bins per request. Each bin is packed/fitted independently
+and the response contains one result per bin. This is different from v4, which takes a single bin per request.
 
 ## Algorithm Selection
 
@@ -31,15 +34,61 @@ Separate types per operation: `FitRequestParameters` and `PackRequestParameters`
 
 ## Response Shape
 
+All v3 responses have an outer wrapper:
+
+```json
+{ "result": "Success" | "Failure", "data": [...] }
+```
+
+`result` at the top level reflects whether any bin succeeded, not an individual bin's result.
+
 | | Fit | Pack |
 |---|---|---|
 | Early exit | yes | no |
 | Coordinates | no | yes |
 | ViPaqData | no | optional (`includeViPaqData: true`) |
 
-Fit returns pass/fail status and volume percentages only — no item coordinates.
+Both fit and pack return a list of per-bin results. Each bin result includes the items that were
+fitted/packed and the items that were not.
 
-See [v4.md](v4.md) for how v4 differs.
+## Field Names
+
+v3 uses different field names from v4:
+
+| v3 field | v4 equivalent | Notes |
+|---|---|---|
+| `result` | `status` | Per-bin result (string enum) |
+| `fittedItems` | `packedItems` | Fit only — items that fit (no coordinates) |
+| `unfittedItems` | `unpackedItems` | Fit only |
+| `fittedBinVolumePercentage` | `packedBinVolumePercentage` | Fit only |
+| `fittedItemsVolumePercentage` | `packedItemsVolumePercentage` | Fit only |
+| `packedItems` | `packedItems` | Pack — same name, includes coordinates |
+| `unpackedItems` | `unpackedItems` | Pack — same name |
+
+## Fit Status Enum (`BinFitResultStatus`)
+
+```
+AllItemsFit
+NotAllItemsFit
+EarlyFail_TotalVolumeExceeded
+EarlyFail_ItemDimensionExceeded
+```
+
+## Pack Status Enum (`BinPackResultStatus`)
+
+```
+Unknown
+NotPacked
+PartiallyPacked
+FullyPacked
+EarlyFail_ContainerVolumeExceeded   ← dead code; pack never triggers early exit
+EarlyFail_ContainerDimensionExceeded ← dead code; pack never triggers early exit
+```
+
+The two `EarlyFail_*` values on pack are never set at runtime — pack always runs to completion.
+They exist in the enum but are unreachable.
+
+See [v4/README.md](../v4/README.md) for how v4 differs.
 
 ## Request Example
 

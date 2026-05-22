@@ -26,14 +26,15 @@ Two projects:
 |---|---|---|
 | `lib/test/Binacle.Lib.UnitTests` | `lib` | All algorithm versions × all scenarios; result selection strategies |
 | `lib/test/Binacle.Lib.PerformanceTests` | `performance` | Algorithm performance (console runner, not xUnit) |
+| `lib/test/Binacle.Lib.Benchmarks` | (none) | BenchmarkDotNet microbenchmarks — run via `./config/benchmarks.sh [AlgorithmRacing\|FastValidation]` |
 
 See [Tests](../tests/README.md) for stack, fixture patterns, and scenario data format.
 
 ## Notes
 
-- Custom exceptions live in `lib/src/Binacle.Lib/Exceptions/` — use these rather than inventing new types.
+- One custom exception: `DimensionException` in `lib/src/Binacle.Lib/Exceptions/` — use it rather than inventing new types.
 - Guard clauses live in `lib/src/Binacle.Lib/GuardClauses/` (Null, NullOrEmpty, Dimensions, Volume, Quantity).
 
 ## Concepts
 
-This slice implements [Fit vs Pack](../concepts/fit-vs-pack.md).
+This slice implements [Fit vs Pack](../concepts.md).

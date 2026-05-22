@@ -45,4 +45,4 @@ Set `AlgorithmOperation` on the parameters before calling the algorithm.
 - `Fitting` — exits early as soon as an item doesn't fit
 - `Packing` — keeps going and packs as many items as it can
 
-See [Fit vs Pack](../concepts/fit-vs-pack.md).
+See [Fit vs Pack](../concepts.md).

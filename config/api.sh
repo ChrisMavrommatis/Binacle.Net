@@ -18,7 +18,7 @@ declare -A launch_profile_aliases=(
     ["S"]="WithServiceModuleOnly"
     
     ["WithUiModuleOnly"]="WithUiModuleOnly"
-    ["U"]="WithServiceModuleOnly"
+    ["U"]="WithUiModuleOnly"
     
     ["WithAllModules"]="WithAllModules"
     ["All"]="WithAllModules"

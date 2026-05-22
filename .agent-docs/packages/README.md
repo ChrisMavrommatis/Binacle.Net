@@ -8,10 +8,11 @@ npm workspaces at the repo root. Packages:
 
 | Package | Description |
 |---|---|
-| `binacle-vipaq` | TypeScript mirror of the ViPaq binary format — moved to `vipaq/binacle-vipaq/` |
 | `binacle-net-ui` | UI components |
 | `cookies` | Cookie utilities |
 | `theme-switcher` | Theme switching |
+
+The ViPaq TypeScript mirror lives at `vipaq/binacle-vipaq/` — see [vipaq/README.md](../vipaq/README.md).
 
 > **Gap** — expand each package with: purpose, public API, how it relates to the C# side.
 

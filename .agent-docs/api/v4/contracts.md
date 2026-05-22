@@ -25,8 +25,8 @@ Concrete request types extend these. They compose the `IWith*` interfaces and ch
 |---|---|---|
 | `CustomBinRequestBase` | `IWithOperationParameters`, `IWithBin`, `IWithItems` | `FitCustomBinRequest`, `PackCustomBinRequest` |
 | `PresetBinRequestBase` | `IWithOperationParameters`, `IWithItems` | `FitPresetBinRequest`, `PackPresetBinRequest` |
-| `CustomBinsRequestBase` | `IWithOperationParameters`, `IWithBins`, `IWithItems` | multi-bin requests |
-| `PresetBinsRequestBase` | `IWithOperationParameters`, `IWithItems` | preset multi-bin requests |
+| `CustomBinsRequestBase` | `IWithOperationParameters`, `IWithBins`, `IWithItems` | `PackCustomSmallestBinRequest` (only current user) |
+| `PresetBinsRequestBase` | `IWithOperationParameters`, `IWithItems` | nothing yet — base exists for planned endpoints |
 
 Concrete types are thin — usually just a one-liner:
 
@@ -41,11 +41,11 @@ Sent in every request as `Parameters`.
 
 | Field | Type | Notes |
 |---|---|---|
-| `Algorithm` | `Algorithm?` | `FFD`, `WFD`, `BFD`, or `Best`. `Best` and `null` both trigger multi-algorithm path. |
+| `Algorithm` | `Algorithm` | Required. `FFD`, `WFD`, `BFD`, or `Best`. Null fails the `NotNull()` validator — you cannot omit this field. |
 
 > **Two `Algorithm` enums exist.** `Binacle.Net.v4.Contracts.Algorithm` (API layer) has `FFD`, `WFD`, `BFD`, and `Best`.
 > `Binacle.Lib.Algorithm` (Lib layer) has only `FFD`, `WFD`, `BFD` — no `Best`.
-> `GetAlgorithm()` maps the API enum to the Lib enum, converting `Best` → `null`.
+> `GetAlgorithm()` maps the API enum to the Lib enum, converting `Best` → `null` to trigger the multi-algorithm path.
 | `IncludeViPaqData` | `bool` | Default `false`. If `true`, response includes a base64 ViPaq payload. |
 | `Operation` | `AlgorithmOperation` | Not in JSON — set by the endpoint via `.ForFittingOperation()` or `.ForPackingOperation()`. |
 
@@ -71,13 +71,13 @@ Volume percentage formulas and rounding rules are in [result-building.md](../lib
 ### FitBinResponse
 
 Adds:
-- `Status`: `Fits`, `DoesNotFit`, `EarlyExit`
+- `Status` (`BinFitResultStatus`): `Unknown = -1`, `Fits`, `DoesNotFit`, `EarlyExit`
 - `EarlyExitReason`: `None`, `ContainerVolumeExceeded`, `ContainerDimensionExceeded`
 
 ### PackBinResponse
 
 Adds:
-- `Status`: `FullyPacked`, `PartiallyPacked`, `NotPacked`
+- `Status` (`BinPackResultStatus`): `Unknown = -1`, `FullyPacked`, `PartiallyPacked`, `NotPacked`
 
 ### PackedBox
 
