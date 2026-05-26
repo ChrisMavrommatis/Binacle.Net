@@ -1,6 +1,9 @@
 ---
 description: v3 request and response contracts — field names, outer response wrapper, and enum values for fit and pack.
 verified: 2026-05-23
+check: Field names and enum values match api/src/Binacle.Net/v3/Contracts/
+also_update:
+  - api/v3/README.md
 ---
 
 # v3 Contracts

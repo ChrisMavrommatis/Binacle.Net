@@ -1,6 +1,9 @@
 ---
 description: ServiceModule — JWT auth, rate limiting, account/subscription management. Three projects using clean architecture.
 verified: 2026-05-23
+check: Routes, config file names, and connection string name match ServiceModule source
+also_update:
+  - api/configuration.md
 ---
 
 # ServiceModule

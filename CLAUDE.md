@@ -36,3 +36,5 @@ Detailed documentation for agents is in `.agent-docs/`:
 - **`Presets.json` is required** — the app fails to start without it.
 - **If adding a new module**, create its own `IModuleMarker` in that module's assembly.
 - **When you edit a doc in `.agent-docs/`**, update its `verified:` frontmatter date to today.
+  Also check its `also_update:` field — those docs may also be stale.
+- **When verifying a doc in `.agent-docs/`**, read its `check:` field to know exactly what to confirm.

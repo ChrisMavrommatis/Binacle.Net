@@ -1,6 +1,9 @@
 ---
 description: Index for API slice docs — endpoints, contracts, service, kernel, presets, and module docs (Diagnostics, ServiceModule, UIModule)
 verified: 2026-05-23
+check: Startup sequence matches Program.cs; dep map matches actual project references
+also_update:
+  - api/modules/README.md
 ---
 
 # API

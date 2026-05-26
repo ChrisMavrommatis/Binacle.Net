@@ -25,7 +25,7 @@ Full list of every doc in `.agent-docs/`. Read the relevant file for details.
 | [api/v4/README.md](api/v4/README.md) | v4 API — active development. Endpoints (implemented and planned), algorithm selection, parameters, contracts, and response shape. |
 | [commands.md](commands.md) | How to run the API, tests, benchmarks, and build the Docker image |
 | [concepts.md](concepts.md) | Fit exits early on first failure; pack continues and returns positions. Both return the same result shape — packed items and unpacked items. Used by both Lib algorithms and API endpoints. |
-| [docs/README.md](docs/README.md) | Jekyll documentation site at docs/. Site structure and build steps not yet documented. |
+| [docs/README.md](docs/README.md) | Jekyll documentation site at docs/ — versioned API docs with Swagger UI embed. |
 | [lib/algorithm-factory.md](lib/algorithm-factory.md) | IAlgorithmFactory — how algorithm instances are created, DI registration, and how tests construct algorithms directly |
 | [lib/algorithms.md](lib/algorithms.md) | Packing heuristics (FFD/WFD/BFD) — versions, operation types, trade-offs, and the fit/pack guarantee |
 | [lib/models.md](lib/models.md) | Lib model types and IWith* interfaces — Bin, Item, packed/unpacked results, and the constraints used in generic type parameters |
@@ -33,10 +33,10 @@ Full list of every doc in `.agent-docs/`. Read the relevant file for details.
 | [lib/README.md](lib/README.md) | Binacle.Lib and Binacle.Lib.Abstractions — the algorithm layer |
 | [lib/result-building.md](lib/result-building.md) | OperationResultBuilder — how OperationResult is constructed, status rules, volume percentages, and integrity checks |
 | [lib/result-selection.md](lib/result-selection.md) | IResultSelector, IResultSelectionStrategy, and the three selection strategies — scoring rules, tie-breaking, and how tests verify them |
-| [packages/README.md](packages/README.md) | TypeScript packages under packages/ (npm workspaces). Package APIs not yet documented. |
+| [packages/README.md](packages/README.md) | TypeScript packages under packages/ (npm workspaces) — UI components, cookie utilities, and theme switching. |
 | [README.md](README.md) | Repo overview and index of agent documentation |
-| [ruby/README.md](ruby/README.md) | Ruby gems under ruby/ — Jekyll plugins used by docs and web sites. Gem details not yet documented. |
+| [ruby/README.md](ruby/README.md) | Ruby gems under ruby/ — Jekyll plugins used by docs/ and web/ sites. |
 | [tests/README.md](tests/README.md) | All test projects — stack, aliases, and what each covers |
 | [tests/scenarios.md](tests/scenarios.md) | Shared test infrastructure — scenario data, compact format, providers, and fixtures |
 | [vipaq/README.md](vipaq/README.md) | Binacle.ViPaq — compact binary format for encoding packing results. High-level wire layout, encoding techniques, and C# / TypeScript API surface. |
-| [web/README.md](web/README.md) | Jekyll web/marketing site at web/. Site structure and build steps not yet documented. |
+| [web/README.md](web/README.md) | Jekyll marketing/landing site at web/ — product home, apps listing, and interactive packing demo. |

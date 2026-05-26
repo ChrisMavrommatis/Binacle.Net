@@ -1,6 +1,10 @@
 ---
 description: Step-by-step guide for adding a new v4 endpoint
 verified: 2026-05-23
+check: Code template matches a real v4 endpoint file and compiles
+also_update:
+  - api/v4/README.md
+  - api/v4/contracts.md
 ---
 
 # How to Add an Endpoint

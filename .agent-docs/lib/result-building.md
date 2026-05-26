@@ -1,6 +1,7 @@
 ---
 description: OperationResultBuilder — how OperationResult is constructed, status rules, volume percentages, and integrity checks
 verified: 2026-05-23
+check: OperationResultBuilder API matches source in lib/src/Binacle.Lib/
 ---
 
 # Result Building

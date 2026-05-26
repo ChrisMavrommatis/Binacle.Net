@@ -1,6 +1,7 @@
 ---
 description: IBinacleService — method reference for SingleBinAsync, MultipleBinsAsync, SmallestBinAsync; return types, call pattern, and algorithm selection
 verified: 2026-05-23
+check: Method signatures match IBinacleService in lib/src/Binacle.Lib.Abstractions/
 ---
 
 # IBinacleService

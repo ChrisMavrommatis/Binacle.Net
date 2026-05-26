@@ -1,6 +1,9 @@
 ---
 description: All test projects — stack, aliases, and what each covers
 verified: 2026-05-23
+check: Project list and aliases match solution test projects
+also_update:
+  - lib/README.md
 ---
 
 # Tests

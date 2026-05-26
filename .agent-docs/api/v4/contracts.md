@@ -1,6 +1,9 @@
 ---
 description: Request/response contract types, validators, and OpenAPI examples for v4 (v3 follows the same shape)
 verified: 2026-05-23
+check: Types and validators match api/src/Binacle.Net/v4/Contracts/
+also_update:
+  - api/v4/README.md
 ---
 
 # Contracts

@@ -1,6 +1,9 @@
 ---
 description: v3 API — stable, do not modify. Endpoints, algorithm selection, response shape, field names, and enum values.
 verified: 2026-05-23
+check: Endpoint list, field names, and enum values match api/src/Binacle.Net/v3/
+also_update:
+  - api/v3/contracts.md
 ---
 
 # v3 API

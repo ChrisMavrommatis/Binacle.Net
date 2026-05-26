@@ -1,6 +1,10 @@
 ---
 description: Optional module system — feature flags, structure, available modules
 verified: 2026-05-23
+check: Module list and feature flags match Feature.Manager source
+also_update:
+  - api/README.md
+  - api/configuration.md
 ---
 
 # Modules

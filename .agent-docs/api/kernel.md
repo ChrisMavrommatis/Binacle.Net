@@ -1,6 +1,9 @@
 ---
 description: Binacle.Net.Kernel — shared patterns used by all API projects and modules
 verified: 2026-05-23
+check: IApiMarker and registration helpers match api/src/Binacle.Net.Kernel/
+also_update:
+  - api/endpoints.md
 ---
 
 # Kernel

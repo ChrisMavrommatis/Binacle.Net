@@ -1,6 +1,9 @@
 ---
 description: Packing heuristics (FFD/WFD/BFD) — versions, operation types, trade-offs, and the fit/pack guarantee
 verified: 2026-05-23
+check: Heuristic directory names match lib/src/Binacle.Lib/Algorithms/; v2 default confirmed in AlgorithmFactory.cs
+also_update:
+  - lib/algorithm-factory.md
 ---
 
 # Algorithms

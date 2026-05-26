@@ -1,6 +1,9 @@
 ---
 description: Lib model types and IWith* interfaces — Bin, Item, packed/unpacked results, and the constraints used in generic type parameters
 verified: 2026-05-23
+check: Type and interface names match lib/src/Binacle.Lib.Abstractions/
+also_update:
+  - api/v4/contracts.md
 ---
 
 # Models

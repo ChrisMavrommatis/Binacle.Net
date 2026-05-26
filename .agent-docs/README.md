@@ -1,6 +1,7 @@
 ---
 description: Repo overview and index of agent documentation
 verified: 2026-05-23
+check: Repo layout table matches actual directories in the root
 ---
 
 # Binacle.Net — Agent Docs

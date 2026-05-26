@@ -1,6 +1,9 @@
 ---
 description: Binacle.Lib and Binacle.Lib.Abstractions — the algorithm layer
 verified: 2026-05-23
+check: Project list and test aliases match the solution
+also_update:
+  - tests/README.md
 ---
 
 # Lib

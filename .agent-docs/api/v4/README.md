@@ -1,6 +1,9 @@
 ---
 description: v4 API — active development. Endpoints (implemented and planned), algorithm selection, parameters, contracts, and response shape.
 verified: 2026-05-23
+check: Endpoint table matches files in api/src/Binacle.Net/v4/Endpoints/
+also_update:
+  - api/v4/contracts.md
 ---
 
 # v4 API

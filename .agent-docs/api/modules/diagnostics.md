@@ -1,6 +1,9 @@
 ---
 description: DiagnosticsModule — always-on logging, OpenTelemetry, health checks, and packing logs
 verified: 2026-05-23
+check: Env var names match DiagnosticsModule config handling
+also_update:
+  - api/configuration.md
 ---
 
 # DiagnosticsModule

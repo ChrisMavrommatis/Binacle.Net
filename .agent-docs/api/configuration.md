@@ -1,6 +1,11 @@
 ---
 description: Config file layout, env-var conventions, override precedence, and feature flag list
 verified: 2026-05-23
+check: Config keys and env var names match appsettings.json and module config files
+also_update:
+  - api/modules/service.md
+  - api/modules/diagnostics.md
+  - api/modules/README.md
 ---
 
 # Configuration

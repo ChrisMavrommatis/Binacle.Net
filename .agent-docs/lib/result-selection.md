@@ -1,6 +1,9 @@
 ---
 description: IResultSelector, IResultSelectionStrategy, and the three selection strategies — scoring rules, tie-breaking, and how tests verify them
 verified: 2026-05-23
+check: Strategy class names and scoring rules match lib/src/Binacle.Lib/
+also_update:
+  - api/service.md
 ---
 
 # Result Selection

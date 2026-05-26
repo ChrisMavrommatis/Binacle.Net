@@ -1,6 +1,9 @@
 ---
 description: What presets are, where they're configured, how route params map to bins, and how to add one for tests
 verified: 2026-05-23
+check: Route patterns match endpoint files; Presets.json optional:false confirmed in config
+also_update:
+  - api/configuration.md
 ---
 
 # Presets

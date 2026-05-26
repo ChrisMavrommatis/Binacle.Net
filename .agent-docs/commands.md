@@ -1,6 +1,7 @@
 ---
 description: How to run the API, tests, benchmarks, and build the Docker image
 verified: 2026-05-23
+check: All aliases match config/api.sh
 ---
 
 # Commands
