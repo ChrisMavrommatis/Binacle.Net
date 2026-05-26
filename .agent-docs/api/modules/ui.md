@@ -1,7 +1,9 @@
 ---
 description: UIModule — optional Blazor Web App interactive packing demo. Pages, JS stack, API connection, config, and services.
-verified: 2026-05-23
-check: Pages, JS imports, and services match api/src/Binacle.Net.UIModule/
+verified: 2026-05-26
+check: Pages, JS imports, services, and window.binacle API match api/src/Binacle.Net.UIModule/
+also_update:
+  - packages/README.md
 ---
 
 # UIModule
@@ -17,6 +19,9 @@ Not relevant to core API or Lib work. Skip this doc unless you are working on th
 Blazor Web App with Interactive Server rendering (not classic Blazor Server).
 Uses `AddInteractiveServerComponents()` / `AddInteractiveServerRenderMode()`.
 
+**No Alpine.js.** All reactivity is Blazor (`@onclick`, `@onchange`, component bindings).
+BeerCSS handles Material Design animations and interactions.
+
 ## Pages
 
 | Route | Page | What it does |
@@ -29,26 +34,70 @@ Uses `AddInteractiveServerComponents()` / `AddInteractiveServerRenderMode()`.
 
 ## JS Stack
 
-Three.js is loaded from CDN via an importmap in `App.razor`:
+`App.razor` is the root layout (equivalent to `_Host.cshtml`). It loads scripts in this order:
+
+1. `blazor.web.js` — Blazor runtime
+2. `cookies.js` — adds `window.Cookies` globally (plain script, no modules)
+3. importmap — tells the browser how to resolve ES module imports
+4. `PackingVisualizer.js` — loads as `type="module"`, imports Three.js via the importmap
+5. `beer.min.js` — Material Design interactions
+6. `themeswitcher.js` — plain script for light/dark toggle
+
+### The `@Assets` Helper
+
+All static file paths go through Blazor's `@Assets["_content/Binacle.Net.UIModule/..."]` helper.
+This resolves paths to the module's `wwwroot/` at `/_content/Binacle.Net.UIModule/`.
+You'll see this pattern everywhere in `App.razor` — it's not magic, just Blazor's static web asset system.
+
+### Importmap
+
+Defined inline in `App.razor`:
 
 ```json
 {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.176.0/build/three.module.js",
-  "binacle/addons/": "/js/addons/"
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.176.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.176.0/examples/jsm/",
+    "binacle/addons/": "/_content/Binacle.Net.UIModule/js/addons/"
+  }
 }
 ```
 
-`binacle/addons/` maps to local files in `wwwroot/js/addons/`.
+`binacle/addons/` maps to `wwwroot/js/addons/` (local ES module helpers).
 
-Custom JS files (in `wwwroot/js/`):
-- `PackingVisualizer.js` — Three.js 3D scene for rendering packing results
-- `PackingVisualizer.utils.js` — Three.js helper utilities
-- `cookies.js` — cookie read/write helpers
-- `themeswitcher.js` — light/dark theme toggle
+### wwwroot/js/ Files
 
-Vendor bundles (in `wwwroot/vendor/`):
-- BeerCSS — CSS framework
-- `material-dynamic-colors` — dynamic Material You color theming
+| File | Type | What it does |
+|---|---|---|
+| `PackingVisualizer.js` | ES module | Creates and manages the Three.js scene; exposes `window.binacle` |
+| `addons/PackingVisualizer.utils.js` | ES module | Three.js mesh/camera helpers, imported by `PackingVisualizer.js` |
+| `cookies.js` | Plain script | Adds `window.Cookies` — used for theme persistence |
+| `themeswitcher.js` | Plain script | Adds theme switching logic |
+
+### window.binacle API
+
+`PackingVisualizer.js` creates a `window.binacle` object that C# calls via JS interop:
+
+| Method | What it does |
+|---|---|
+| `binacle.initialize(bin)` | Creates the Three.js scene for the given bin |
+| `binacle.redrawScene(bin, packedItems)` | Replaces the scene contents |
+| `binacle.addItemToScene(bin, packedItem, index)` | Animates adding one item |
+| `binacle.removeItemFromScene(index)` | Animates removing one item |
+
+Communication is **one-way: C# → JS only**. There are no `[JSInvokable]` methods — JS never calls back into C#.
+
+## JS Interop Bridge
+
+`BinacleVisualizerService` wraps `IJSRuntime` and calls the `window.binacle.*` methods above.
+It's the only service that touches `IJSRuntime`. Everything else is pure Blazor or C#.
+
+## Component Coordination
+
+`MessagingService` is a scoped in-process pub/sub bus.
+`PackingVisualizer.razor` subscribes to `"UpdateScene"` messages.
+`PackingDemo` and `ProtocolDecoder` publish them when the user triggers a visualization update.
+The handler invokes `BinacleVisualizerService` which calls into the JS visualizer.
 
 ## API Connection
 
