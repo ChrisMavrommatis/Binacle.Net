@@ -1,6 +1,6 @@
 ---
 description: Repo overview and index of agent documentation
-verified: 2026-05-23
+verified: 2026-06-09
 check: Repo layout table matches actual directories in the root
 ---
 
@@ -53,7 +53,7 @@ See [Commands](commands.md) — how to run the API, tests, benchmarks, and build
 | Understand how results are selected | `lib/result-selection.md`, `lib/processors.md` |
 | Understand how OperationResult is built | `lib/result-building.md` |
 | Add or modify algorithm processing | `lib/algorithm-factory.md`, `lib/processors.md` |
-| Add or modify a test | `tests/README.md`, `tests/scenarios.md` |
+| Add or modify a test | `tests/README.md`, `tests/scenarios.md`, `tests/integration-conventions.md` |
 | Work with presets | `api/presets.md`, `api/v4/README.md` |
 | Understand v3 vs v4 differences | `api/v3/README.md`, `api/v4/README.md` |
 | Work with ViPaq | `vipaq/README.md` |

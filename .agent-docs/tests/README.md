@@ -1,6 +1,6 @@
 ---
 description: All test projects — stack, aliases, and what each covers
-verified: 2026-05-23
+verified: 2026-06-09
 check: Project list and aliases match solution test projects
 also_update:
   - lib/README.md
@@ -41,6 +41,9 @@ Runs in `"Test"` mode with logging off and test presets loaded.
 Tests are organized by API version (`Tests/v3/`, `Tests/v4/`) with two types:
 - **Behavior tests** — check HTTP status codes: 200, 422, 400, 404
 - **Scenario tests** — check response payloads (bin results, item lists, early exit statuses)
+
+For the conventions these tests follow (v3 array vs v4 single result, naming, hardcoded bin IDs,
+test data), see [integration-conventions.md](integration-conventions.md).
 
 ### `Binacle.Net.ServiceModule.IntegrationTests` (alias: `api_service`)
 

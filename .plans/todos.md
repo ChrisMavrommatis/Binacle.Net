@@ -32,19 +32,3 @@ Found across `lib/`, `api/`, `vipaq/`, `shared/`. Grouped by area.
 
 - `api/test/Binacle.Net.ServiceModule.IntegrationTests/BinacleApi.cs:44`
   ServiceModule integration tests should also run with all modules enabled.
-
----
-
-## Integration Tests — v4 (needs review)
-
-These test files are all marked `// TODO: Review` at the top.
-They may have gaps in coverage, incorrect assertions, or need restructuring.
-
-- `api/test/Binacle.Net.IntegrationTests/Tests/v4/FitCustomBinBehavior.cs:6`
-- `api/test/Binacle.Net.IntegrationTests/Tests/v4/FitCustomBinScenario.cs:10`
-- `api/test/Binacle.Net.IntegrationTests/Tests/v4/FitPresetBinBehavior.cs:10`
-- `api/test/Binacle.Net.IntegrationTests/Tests/v4/ListPresetsBehavior.cs:6`
-- `api/test/Binacle.Net.IntegrationTests/Tests/v4/PackCustomBinBehavior.cs:6`
-- `api/test/Binacle.Net.IntegrationTests/Tests/v4/PackCustomBinScenario.cs:10`
-- `api/test/Binacle.Net.IntegrationTests/Tests/v4/PackPresetBinBehavior.cs:10`
-- `api/test/Binacle.Net.IntegrationTests/Tests/v4/PackSmallestBinBehavior.cs:6`

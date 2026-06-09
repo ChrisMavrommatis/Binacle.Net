@@ -54,7 +54,7 @@ public class FitByCustomBehavior : BehaviourTestsBase
 		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
 	}
 
-	[Fact(DisplayName = $"POST {routePath}. With Same Id On Bins, Returns 400 BadRequest")]
+	[Fact(DisplayName = $"POST {routePath}. With Same Id On Bins, Returns 422 UnprocessableContent")]
 	public async Task Post_WithSameIdOnBins_Returns400BadRequest()
 	{
 		foreach (var bin in this.sampleRequest.Bins!)
@@ -72,6 +72,27 @@ public class FitByCustomBehavior : BehaviourTestsBase
 		{
 			bin.ID = "box_1";
 		}
+		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. Without Algorithm, Returns 422 UnprocessableContent")]
+	public async Task Post_WithoutAlgorithm_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Parameters!.Algorithm = null;
+		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. Without Items, Returns 422 UnprocessableContent")]
+	public async Task Post_WithoutItems_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Items = new();
+		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Excessive Item Dimension, Returns 422 UnprocessableContent")]
+	public async Task Post_WithExcessiveItemDimension_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Items!.First().Length = 65536;
 		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
 	}
 
@@ -99,7 +120,7 @@ public class FitByCustomBehavior : BehaviourTestsBase
 		);
 	}
 
-	[Fact(DisplayName = $"POST {routePath}. With Large Volume, Returns With Early Fail Item Dimension Exceeded")]
+	[Fact(DisplayName = $"POST {routePath}. With Large Dimension, Returns With Early Fail Item Dimension Exceeded")]
 	public async Task Post_WithLargeDimension_ReturnsWithEarlyFail_ItemDimensionExceeded()
 	{
 		var request = this.CreateSpecialRequest();

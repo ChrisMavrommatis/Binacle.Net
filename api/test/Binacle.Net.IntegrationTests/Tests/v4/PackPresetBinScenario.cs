@@ -2,43 +2,38 @@ using System.Net;
 using System.Net.Http.Json;
 using Binacle.Lib;
 using Binacle.Net.v4.Contracts;
-using Binacle.Net.v4.Contracts.Fit;
+using Binacle.Net.v4.Contracts.Pack;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Algorithms.Providers;
 
 namespace Binacle.Net.IntegrationTests.v4;
 
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
-public class FitCustomBinScenario
+public class PackPresetBinScenario
 {
-	private const string routePath = "/api/v4/fit/bin";
+	private const string routePath = "/api/v4/pack/bin/{preset}/{bin}";
 
 	private readonly BinacleApi sut;
 
-	public FitCustomBinScenario(BinacleApi sut)
+	public PackPresetBinScenario(BinacleApi sut)
 	{
 		this.sut = sut;
 	}
 
 	[Theory]
 	[MemberData(nameof(CustomProblemsScenarioProvider.ScenarioNames), MemberType = typeof(CustomProblemsScenarioProvider))]
-	public Task Custom_Problems(string scenario)
-		=> RunTest(scenario);
+	public Task Custom_Problems(string scenario) => RunTest(scenario);
 
 	private async Task RunTest(string scenarioName)
 	{
 		var scenario = AllScenariosProvider.GetScenarioByName(scenarioName);
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", scenario.Bin.ID);
 
-		var request = new FitCustomBinRequest
+		var request = new PackPresetBinRequest
 		{
 			Parameters = new() { Algorithm = Binacle.Net.v4.Contracts.Algorithm.FFD },
-			Bin = new()
-			{
-				ID = scenario.Bin.ID,
-				Length = scenario.Bin.Length,
-				Width = scenario.Bin.Width,
-				Height = scenario.Bin.Height
-			},
 			Items = scenario.Items.Select(x => new Box
 			{
 				ID = x.ID,
@@ -50,7 +45,7 @@ public class FitCustomBinScenario
 		};
 
 		var response = await this.sut.Client.PostAsJsonAsync(
-			routePath,
+			url,
 			request,
 			this.sut.JsonSerializerOptions,
 			TestContext.Current.CancellationToken
@@ -58,7 +53,7 @@ public class FitCustomBinScenario
 
 		response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-		var result = await response.Content.ReadFromJsonAsync<FitBinResponse>(
+		var result = await response.Content.ReadFromJsonAsync<PackBinResponse>(
 			this.sut.JsonSerializerOptions,
 			TestContext.Current.CancellationToken
 		);
@@ -74,6 +69,17 @@ public class FitCustomBinScenario
 
 		result.PackedBinVolumePercentage
 			.ShouldBeLessThanOrEqualTo(scenario.Metrics.Percentage, new PercentageComparer());
+
+		if (result.Status == BinPackResultStatus.FullyPacked || result.Status == BinPackResultStatus.PartiallyPacked)
+		{
+			result.PackedItems.ShouldNotBeEmpty();
+			foreach (var item in result.PackedItems!)
+			{
+				item.X.ShouldBeGreaterThanOrEqualTo(0);
+				item.Y.ShouldBeGreaterThanOrEqualTo(0);
+				item.Z.ShouldBeGreaterThanOrEqualTo(0);
+			}
+		}
 
 		scenario.Result.EvaluateResult(result);
 	}

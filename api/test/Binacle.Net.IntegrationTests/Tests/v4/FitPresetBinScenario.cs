@@ -9,36 +9,31 @@ using Binacle.TestsKernel.Algorithms.Providers;
 namespace Binacle.Net.IntegrationTests.v4;
 
 [Trait("Scenario Tests", "Actual calculation for the algorithms")]
-public class FitCustomBinScenario
+public class FitPresetBinScenario
 {
-	private const string routePath = "/api/v4/fit/bin";
+	private const string routePath = "/api/v4/fit/bin/{preset}/{bin}";
 
 	private readonly BinacleApi sut;
 
-	public FitCustomBinScenario(BinacleApi sut)
+	public FitPresetBinScenario(BinacleApi sut)
 	{
 		this.sut = sut;
 	}
 
 	[Theory]
 	[MemberData(nameof(CustomProblemsScenarioProvider.ScenarioNames), MemberType = typeof(CustomProblemsScenarioProvider))]
-	public Task Custom_Problems(string scenario)
-		=> RunTest(scenario);
+	public Task Custom_Problems(string scenario) => RunTest(scenario);
 
 	private async Task RunTest(string scenarioName)
 	{
 		var scenario = AllScenariosProvider.GetScenarioByName(scenarioName);
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", scenario.Bin.ID);
 
-		var request = new FitCustomBinRequest
+		var request = new FitPresetBinRequest
 		{
 			Parameters = new() { Algorithm = Binacle.Net.v4.Contracts.Algorithm.FFD },
-			Bin = new()
-			{
-				ID = scenario.Bin.ID,
-				Length = scenario.Bin.Length,
-				Width = scenario.Bin.Width,
-				Height = scenario.Bin.Height
-			},
 			Items = scenario.Items.Select(x => new Box
 			{
 				ID = x.ID,
@@ -50,7 +45,7 @@ public class FitCustomBinScenario
 		};
 
 		var response = await this.sut.Client.PostAsJsonAsync(
-			routePath,
+			url,
 			request,
 			this.sut.JsonSerializerOptions,
 			TestContext.Current.CancellationToken

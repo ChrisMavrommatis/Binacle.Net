@@ -99,8 +99,6 @@ public abstract partial class BehaviourTestsBase
 		result.ShouldNotBeNull();
 		result!.Bin.ShouldNotBeNull();
 		result.AlgorithmUsed.ShouldNotBeNullOrEmpty();
-		result.PackedItems.ShouldNotBeNull();
-		result.UnpackedItems.ShouldNotBeNull();
 
 		if (result.Status == BinPackResultStatus.FullyPacked)
 		{

@@ -1,20 +1,14 @@
-using Binacle.Net.Configuration;
 using Binacle.Net.IntegrationTests.v4.Abstractions;
 using Binacle.Net.v4.Contracts;
 using Binacle.Net.v4.Contracts.Pack;
-using Binacle.TestsKernel.Algorithms.Providers;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.IntegrationTests.v4;
-// TODO: Review
+
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class PackPresetBinBehavior : BehaviourTestsBase
 {
 	private const string routePath = "/api/v4/pack/bin/{preset}/{bin}";
-
-	private readonly IOptions<BinPresetOptions> presetOptions;
-	private readonly string validBinId;
+	private const string validBinId = "60x40x10";
 
 	private readonly PackPresetBinRequest sampleRequest = new()
 	{
@@ -27,11 +21,7 @@ public class PackPresetBinBehavior : BehaviourTestsBase
 		]
 	};
 
-	public PackPresetBinBehavior(BinacleApi sut) : base(sut)
-	{
-		this.presetOptions = this.Sut.Services.GetRequiredService<IOptions<BinPresetOptions>>();
-		this.validBinId = CustomProblemsScenarioProvider.GetScenarios().First().Bin.ID;
-	}
+	public PackPresetBinBehavior(BinacleApi sut) : base(sut) { }
 
 	#region Response Statuses
 
@@ -40,7 +30,7 @@ public class PackPresetBinBehavior : BehaviourTestsBase
 	{
 		var url = routePath
 			.Replace("{preset}", PresetKeys.CustomProblems)
-			.Replace("{bin}", this.validBinId);
+			.Replace("{bin}", validBinId);
 		await base.Request_Returns_200Ok(url, this.sampleRequest);
 	}
 
@@ -49,7 +39,7 @@ public class PackPresetBinBehavior : BehaviourTestsBase
 	{
 		var url = routePath
 			.Replace("{preset}", "non-existing-preset")
-			.Replace("{bin}", this.validBinId);
+			.Replace("{bin}", validBinId);
 		await base.Request_Returns_404NotFound(url, this.sampleRequest);
 	}
 
@@ -62,13 +52,54 @@ public class PackPresetBinBehavior : BehaviourTestsBase
 		await base.Request_Returns_404NotFound(url, this.sampleRequest);
 	}
 
+	[Fact(DisplayName = $"POST {routePath}. Without Algorithm, Returns 422 UnprocessableContent")]
+	public async Task Post_WithoutAlgorithm_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Parameters!.Algorithm = null;
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.Request_Returns_422UnprocessableContent(url, this.sampleRequest);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. Without Items, Returns 422 UnprocessableContent")]
+	public async Task Post_WithoutItems_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Items = [];
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.Request_Returns_422UnprocessableContent(url, this.sampleRequest);
+	}
+
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Item, Returns 422 UnprocessableContent")]
 	public async Task Post_WithZeroDimensionOnItem_Returns_422UnprocessableContent()
 	{
 		this.sampleRequest.Items!.First(x => x.ID == "box_2").Length = 0;
 		var url = routePath
 			.Replace("{preset}", PresetKeys.CustomProblems)
-			.Replace("{bin}", this.validBinId);
+			.Replace("{bin}", validBinId);
+		await base.Request_Returns_422UnprocessableContent(url, this.sampleRequest);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Excessive Item Dimension, Returns 422 UnprocessableContent")]
+	public async Task Post_WithExcessiveItemDimension_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Items!.First().Length = 65536;
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.Request_Returns_422UnprocessableContent(url, this.sampleRequest);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Duplicate Item IDs, Returns 422 UnprocessableContent")]
+	public async Task Post_WithDuplicateItemIds_Returns_422UnprocessableContent()
+	{
+		foreach (var item in this.sampleRequest.Items!)
+			item.ID = "box_1";
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
 		await base.Request_Returns_422UnprocessableContent(url, this.sampleRequest);
 	}
 
@@ -76,13 +107,89 @@ public class PackPresetBinBehavior : BehaviourTestsBase
 
 	#region Response Data
 
+	[Fact(DisplayName = $"POST {routePath}. With Algorithm FFD, Returns AlgorithmUsed FFD")]
+	public async Task Post_WithAlgorithmFFD_ReturnsAlgorithmUsedFFD()
+	{
+		var request = new PackPresetBinRequest
+		{
+			Parameters = new() { Algorithm = Algorithm.FFD },
+			Items = this.sampleRequest.Items
+		};
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.PackRequest_Validate(url, request, result => result.AlgorithmUsed.ShouldBe("FFD"));
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Algorithm WFD, Returns AlgorithmUsed WFD")]
+	public async Task Post_WithAlgorithmWFD_ReturnsAlgorithmUsedWFD()
+	{
+		var request = new PackPresetBinRequest
+		{
+			Parameters = new() { Algorithm = Algorithm.WFD },
+			Items = this.sampleRequest.Items
+		};
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.PackRequest_Validate(url, request, result => result.AlgorithmUsed.ShouldBe("WFD"));
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Algorithm BFD, Returns AlgorithmUsed BFD")]
+	public async Task Post_WithAlgorithmBFD_ReturnsAlgorithmUsedBFD()
+	{
+		var request = new PackPresetBinRequest
+		{
+			Parameters = new() { Algorithm = Algorithm.BFD },
+			Items = this.sampleRequest.Items
+		};
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.PackRequest_Validate(url, request, result => result.AlgorithmUsed.ShouldBe("BFD"));
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Algorithm Best, Returns AlgorithmUsed")]
+	public async Task Post_WithAlgorithmBest_ReturnsAlgorithmUsed()
+	{
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.PackRequest_Validate(url, this.sampleRequest,
+			result => result.AlgorithmUsed.ShouldNotBeNullOrEmpty());
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. When All Items Pack, Returns FullyPacked")]
+	public async Task Post_WhenAllItemsPack_Returns_FullyPacked()
+	{
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.PackRequest_Validate(url, this.sampleRequest,
+			result => result.Status.ShouldBe(BinPackResultStatus.FullyPacked));
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Oversized Items, Returns NotPacked")]
+	public async Task Post_WithOversizedItems_Returns_NotPacked()
+	{
+		var request = new PackPresetBinRequest
+		{
+			Parameters = new() { Algorithm = Algorithm.FFD },
+			Items = [new() { ID = "oversized_box", Quantity = 1, Length = 70, Width = 70, Height = 70 }]
+		};
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.PackRequest_Validate(url, request,
+			result => result.Status.ShouldBe(BinPackResultStatus.NotPacked));
+	}
+
 	[Fact(DisplayName = $"POST {routePath}. Packed Items Include Coordinates")]
 	public async Task Post_PackedItems_IncludeCoordinates()
 	{
 		var url = routePath
 			.Replace("{preset}", PresetKeys.CustomProblems)
-			.Replace("{bin}", this.validBinId);
-
+			.Replace("{bin}", validBinId);
 		await base.PackRequest_Validate(url, this.sampleRequest, result =>
 		{
 			foreach (var item in result.PackedItems!)
@@ -94,6 +201,16 @@ public class PackPresetBinBehavior : BehaviourTestsBase
 		});
 	}
 
+	[Fact(DisplayName = $"POST {routePath}. Without IncludeViPaqData, Returns No ViPaqData")]
+	public async Task Post_WithoutIncludeViPaqData_Returns_NoViPaqData()
+	{
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.PackRequest_Validate(url, this.sampleRequest,
+			result => result.ViPaqData.ShouldBeNull());
+	}
+
 	[Fact(DisplayName = $"POST {routePath}. With IncludeViPaqData, Returns ViPaqData When Items Packed")]
 	public async Task Post_WithIncludeViPaqData_ReturnsViPaqData()
 	{
@@ -102,16 +219,38 @@ public class PackPresetBinBehavior : BehaviourTestsBase
 			Parameters = new() { Algorithm = Algorithm.FFD, IncludeViPaqData = true },
 			Items = this.sampleRequest.Items
 		};
-
 		var url = routePath
 			.Replace("{preset}", PresetKeys.CustomProblems)
-			.Replace("{bin}", this.validBinId);
-
+			.Replace("{bin}", validBinId);
 		await base.PackRequest_Validate(url, request, result =>
 		{
 			if (result.Status == BinPackResultStatus.FullyPacked || result.Status == BinPackResultStatus.PartiallyPacked)
 				result.ViPaqData.ShouldNotBeNullOrEmpty();
 		});
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. Reports All Items Across Packed And Unpacked")]
+	public async Task Post_ReportsAllItems()
+	{
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.PackRequest_Validate(url, this.sampleRequest, result =>
+		{
+			var totalItems = (result.PackedItems?.Count ?? 0)
+			                 + (result.UnpackedItems?.Sum(x => x.Quantity) ?? 0);
+			totalItems.ShouldBeGreaterThan(0);
+		});
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. Response Bin ID Matches Route Bin")]
+	public async Task Post_ResponseBinMatchesPresetBin()
+	{
+		var url = routePath
+			.Replace("{preset}", PresetKeys.CustomProblems)
+			.Replace("{bin}", validBinId);
+		await base.PackRequest_Validate(url, this.sampleRequest,
+			result => result.Bin.ID.ShouldBe(validBinId));
 	}
 
 	#endregion

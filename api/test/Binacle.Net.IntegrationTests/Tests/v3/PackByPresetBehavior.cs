@@ -66,6 +66,30 @@ public class PackByPresetBehavior:  Abstractions.BehaviourTestsBase
 		await base.Request_Returns_422UnprocessableContent(urlPath, this.sampleRequest);
 	}
 
+	[Fact(DisplayName = $"POST {routePath}. Without Algorithm, Returns 422 UnprocessableContent")]
+	public async Task Post_WithoutAlgorithm_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Parameters!.Algorithm = null;
+		var urlPath = routePath.Replace("{preset}", PresetKeys.CustomProblems);
+		await base.Request_Returns_422UnprocessableContent(urlPath, this.sampleRequest);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. Without Items, Returns 422 UnprocessableContent")]
+	public async Task Post_WithoutItems_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Items = new();
+		var urlPath = routePath.Replace("{preset}", PresetKeys.CustomProblems);
+		await base.Request_Returns_422UnprocessableContent(urlPath, this.sampleRequest);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Excessive Item Dimension, Returns 422 UnprocessableContent")]
+	public async Task Post_WithExcessiveItemDimension_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Items!.First().Length = 65536;
+		var urlPath = routePath.Replace("{preset}", PresetKeys.CustomProblems);
+		await base.Request_Returns_422UnprocessableContent(urlPath, this.sampleRequest);
+	}
+
 	#endregion Response Statuses
 	
 	

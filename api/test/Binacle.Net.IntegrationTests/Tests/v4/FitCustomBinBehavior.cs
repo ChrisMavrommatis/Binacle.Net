@@ -3,7 +3,7 @@ using Binacle.Net.v4.Contracts;
 using Binacle.Net.v4.Contracts.Fit;
 
 namespace Binacle.Net.IntegrationTests.v4;
-// TODO: Review
+
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class FitCustomBinBehavior : BehaviourTestsBase
 {
@@ -31,6 +31,20 @@ public class FitCustomBinBehavior : BehaviourTestsBase
 	public Task Post_WithValidRequest_Returns_200Ok()
 		=> base.Request_Returns_200Ok(routePath, this.sampleRequest);
 
+	[Fact(DisplayName = $"POST {routePath}. Without Algorithm, Returns 422 UnprocessableContent")]
+	public async Task Post_WithoutAlgorithm_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Parameters!.Algorithm = null;
+		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. Without Items, Returns 422 UnprocessableContent")]
+	public async Task Post_WithoutItems_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Items = [];
+		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
+	}
+
 	[Fact(DisplayName = $"POST {routePath}. With Zero Dimension On Item, Returns 422 UnprocessableContent")]
 	public async Task Post_WithZeroDimensionOnItem_Returns_422UnprocessableContent()
 	{
@@ -42,6 +56,13 @@ public class FitCustomBinBehavior : BehaviourTestsBase
 	public async Task Post_WithZeroDimensionOnBin_Returns_422UnprocessableContent()
 	{
 		this.sampleRequest.Bin!.Length = 0;
+		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Excessive Item Dimension, Returns 422 UnprocessableContent")]
+	public async Task Post_WithExcessiveItemDimension_Returns_422UnprocessableContent()
+	{
+		this.sampleRequest.Items!.First().Length = 65536;
 		await base.Request_Returns_422UnprocessableContent(routePath, this.sampleRequest);
 	}
 
@@ -57,11 +78,55 @@ public class FitCustomBinBehavior : BehaviourTestsBase
 
 	#region Response Data
 
+	[Fact(DisplayName = $"POST {routePath}. With Algorithm FFD, Returns AlgorithmUsed FFD")]
+	public async Task Post_WithAlgorithmFFD_ReturnsAlgorithmUsedFFD()
+	{
+		var request = new FitCustomBinRequest
+		{
+			Parameters = new() { Algorithm = Algorithm.FFD },
+			Bin = this.sampleRequest.Bin,
+			Items = this.sampleRequest.Items
+		};
+		await base.FitRequest_Validate(routePath, request, result => result.AlgorithmUsed.ShouldBe("FFD"));
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Algorithm WFD, Returns AlgorithmUsed WFD")]
+	public async Task Post_WithAlgorithmWFD_ReturnsAlgorithmUsedWFD()
+	{
+		var request = new FitCustomBinRequest
+		{
+			Parameters = new() { Algorithm = Algorithm.WFD },
+			Bin = this.sampleRequest.Bin,
+			Items = this.sampleRequest.Items
+		};
+		await base.FitRequest_Validate(routePath, request, result => result.AlgorithmUsed.ShouldBe("WFD"));
+	}
+
+	[Fact(DisplayName = $"POST {routePath}. With Algorithm BFD, Returns AlgorithmUsed BFD")]
+	public async Task Post_WithAlgorithmBFD_ReturnsAlgorithmUsedBFD()
+	{
+		var request = new FitCustomBinRequest
+		{
+			Parameters = new() { Algorithm = Algorithm.BFD },
+			Bin = this.sampleRequest.Bin,
+			Items = this.sampleRequest.Items
+		};
+		await base.FitRequest_Validate(routePath, request, result => result.AlgorithmUsed.ShouldBe("BFD"));
+	}
+
 	[Fact(DisplayName = $"POST {routePath}. With Algorithm Best, Returns AlgorithmUsed")]
 	public Task Post_WithAlgorithmBest_ReturnsAlgorithmUsed()
 		=> base.FitRequest_Validate(routePath, this.sampleRequest,
 			result => result.AlgorithmUsed.ShouldNotBeNullOrEmpty()
 		);
+
+	[Fact(DisplayName = $"POST {routePath}. When All Items Fit, Returns Fits")]
+	public Task Post_WhenAllItemsFit_Returns_Fits()
+		=> base.FitRequest_Validate(routePath, this.sampleRequest, result =>
+		{
+			result.Status.ShouldBe(BinFitResultStatus.Fits);
+			result.EarlyExitReason.ShouldBe(BinFitEarlyExitReason.None);
+		});
 
 	[Fact(DisplayName = $"POST {routePath}. With Large Volume, Returns EarlyExit TotalVolumeExceeded")]
 	public async Task Post_WithLargeVolume_Returns_EarlyExit_TotalVolumeExceeded()
@@ -92,6 +157,11 @@ public class FitCustomBinBehavior : BehaviourTestsBase
 		});
 	}
 
+	[Fact(DisplayName = $"POST {routePath}. Without IncludeViPaqData, Returns No ViPaqData")]
+	public Task Post_WithoutIncludeViPaqData_Returns_NoViPaqData()
+		=> base.FitRequest_Validate(routePath, this.sampleRequest,
+			result => result.ViPaqData.ShouldBeNull());
+
 	[Fact(DisplayName = $"POST {routePath}. With IncludeViPaqData, Returns ViPaqData When Items Fit")]
 	public async Task Post_WithIncludeViPaqData_ReturnsViPaqData()
 	{
@@ -117,6 +187,16 @@ public class FitCustomBinBehavior : BehaviourTestsBase
 			}
 		});
 	}
+
+	[Fact(DisplayName = $"POST {routePath}. Response Bin Matches Request Bin")]
+	public Task Post_ResponseBinMatchesRequestBin()
+		=> base.FitRequest_Validate(routePath, this.sampleRequest, result =>
+		{
+			result.Bin.ID.ShouldBe(this.sampleRequest.Bin!.ID);
+			result.Bin.Length.ShouldBe(this.sampleRequest.Bin!.Length);
+			result.Bin.Width.ShouldBe(this.sampleRequest.Bin!.Width);
+			result.Bin.Height.ShouldBe(this.sampleRequest.Bin!.Height);
+		});
 
 	#endregion
 

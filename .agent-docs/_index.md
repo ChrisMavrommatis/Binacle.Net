@@ -36,6 +36,7 @@ Full list of every doc in `.agent-docs/`. Read the relevant file for details.
 | [packages/README.md](packages/README.md) | TypeScript packages under packages/ (npm workspaces) — UI components, cookie utilities, and theme switching. |
 | [README.md](README.md) | Repo overview and index of agent documentation |
 | [ruby/README.md](ruby/README.md) | Ruby gems under ruby/ — Jekyll plugins used by docs/ and web/ sites. |
+| [tests/integration-conventions.md](tests/integration-conventions.md) | v3/v4 HTTP integration test conventions — response shape, naming, hardcoded IDs, test data |
 | [tests/README.md](tests/README.md) | All test projects — stack, aliases, and what each covers |
 | [tests/scenarios.md](tests/scenarios.md) | Shared test infrastructure — scenario data, compact format, providers, and fixtures |
 | [vipaq/README.md](vipaq/README.md) | Binacle.ViPaq — compact binary format for encoding packing results. High-level wire layout, encoding techniques, and C# / TypeScript API surface. |
