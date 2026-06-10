@@ -1,24 +1,38 @@
 ---
 description: IBinacleService — method reference for SingleBinAsync, MultipleBinsAsync, SmallestBinAsync; return types, call pattern, and algorithm selection
-verified: 2026-05-23
-check: Method signatures match IBinacleService in lib/src/Binacle.Lib.Abstractions/
+verified: 2026-06-10
+check: Method signatures match IBinacleService in api/src/Binacle.Net/Services/BinacleService.cs
 ---
 
 # IBinacleService
 
-Defined in `api/src/Binacle.Net/Services/BinacleService.cs`.
-Endpoint handlers inject this and call the appropriate method. They do not touch processors or factories directly.
+Defined in `api/src/Binacle.Net/Services/BinacleService.cs`. The interface is `internal` — it lives in the
+`Binacle.Net` assembly, not in `Binacle.Lib.Abstractions`. Endpoint handlers inject it and call the appropriate
+method. They do not touch processors or factories directly.
 
 ## Methods
 
+Every method is **generic** and **async**. The full shape is:
+
+```csharp
+ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
+    Algorithm algorithm, TBin bin, List<TBox> items, TParams parameters)
+    where TBin : class, IWithID, IWithReadOnlyDimensions
+    where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
+    where TParams : class, IOperationParameters, ILogConvertible;
+```
+
+The same generic signature and constraints apply to every method below (the `MultipleBinsAsync` overloads
+return `ValueTask<IDictionary<string, OperationResult>>`). The table simplifies argument names for readability.
+
 | Method | Returns | What it does |
 |---|---|---|
-| `SingleBinAsync(algorithm, bin, items, params)` | `OperationResult` | Runs one specific algorithm on one bin |
-| `SingleBinAsync(bin, items, params)` | `OperationResult` | Runs all algorithms on one bin, picks `BestAlgorithm` |
-| `MultipleBinsAsync(algorithm, bins, items, params)` | `IDictionary<string, OperationResult>` | Runs one specific algorithm on each bin, returns all results keyed by bin ID |
-| `MultipleBinsAsync(bins, items, params)` | `IDictionary<string, OperationResult>` | Runs all algorithms on each bin, picks best per bin, returns all results keyed by bin ID |
-| `SmallestBinAsync(algorithm, bins, items, params)` | `OperationResult` | Runs one algorithm across all bins, picks `SmallestBin` |
-| `SmallestBinAsync(bins, items, params)` | `OperationResult` | Runs all algorithms across all bins, picks `SmallestBin` |
+| `SingleBinAsync(algorithm, bin, items, params)` | `ValueTask<OperationResult>` | Runs one specific algorithm on one bin |
+| `SingleBinAsync(bin, items, params)` | `ValueTask<OperationResult>` | Runs all algorithms on one bin, picks `BestAlgorithm` |
+| `MultipleBinsAsync(algorithm, bins, items, params)` | `ValueTask<IDictionary<string, OperationResult>>` | Runs one specific algorithm on each bin, returns all results keyed by bin ID |
+| `MultipleBinsAsync(bins, items, params)` | `ValueTask<IDictionary<string, OperationResult>>` | Runs all algorithms on each bin, picks best per bin, returns all results keyed by bin ID |
+| `SmallestBinAsync(algorithm, bins, items, params)` | `ValueTask<OperationResult>` | Runs one algorithm across all bins, picks `SmallestBin` |
+| `SmallestBinAsync(bins, items, params)` | `ValueTask<OperationResult>` | Runs all algorithms across all bins, picks `SmallestBin` |
 
 ## Choosing the right method
 

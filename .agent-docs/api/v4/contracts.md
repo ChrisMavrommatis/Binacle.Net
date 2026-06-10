@@ -1,7 +1,7 @@
 ---
 description: Request/response contract types, validators, and OpenAPI examples for v4 (v3 follows the same shape)
-verified: 2026-05-23
-check: Types and validators match api/src/Binacle.Net/v4/Contracts/
+verified: 2026-06-10
+check: Types and validators match api/src/Binacle.Net/v4/Contracts/; mappers match v4/ExtensionMethods/
 also_update:
   - api/v4/README.md
 ---
@@ -69,7 +69,7 @@ Subclasses call `From<T>(parameters, operationResult)` to populate common fields
 | `PackedItemsVolumePercentage` | `decimal` | Percentage of total item volume that was packed |
 | `PackedBinVolumePercentage` | `decimal` | Percentage of bin volume occupied by packed items |
 
-Volume percentage formulas and rounding rules are in [result-building.md](../lib/result-building.md).
+Volume percentage formulas and rounding rules are in [result-building.md](../../lib/result-building.md).
 | `ViPaqData` | `string?` | Base64 ViPaq payload — only present if `IncludeViPaqData: true` and items were packed |
 
 ### FitBinResponse
@@ -90,6 +90,32 @@ Adds:
 ### UnpackedBox
 
 `ID` + `Quantity` (how many of that item didn't fit).
+
+## Response Mapping (lib `OperationResult` → v4 contract)
+
+The mappers live in `api/src/Binacle.Net/v4/ExtensionMethods/FittingMapperExtensions.cs` and
+`PackingMapperExtensions.cs`. They are called by `FitBinResponse.From` / `PackBinResponse.From`, which the
+endpoint handlers invoke inside a `"Create Response"` activity.
+
+`BinResponseBase.From<T>(parameters, operationResult)` populates the common fields: `Bin` from `result.Bin`,
+`AlgorithmUsed` from `result.AlgorithmInfo.Algorithm`, `PackedItems` via `PackedBox.From`, `UnpackedItems` via
+`UnpackedBox.From`, the two volume percentages, and — only when `parameters.IncludeViPaqData` **and** there is at
+least one packed item — `ViPaqData = Convert.ToBase64String(ViPaqSerializer.SerializeInt32(...))`.
+
+Status mapping (`OperationResultStatus` is the lib enum):
+
+| lib `OperationResultStatus` | `BinFitResultStatus` (fit) | `BinPackResultStatus` (pack) |
+|---|---|---|
+| `Unknown` | `Unknown` | `Unknown` |
+| `FullyPacked` | `Fits` | `FullyPacked` |
+| `PartiallyPacked` | `DoesNotFit` | `PartiallyPacked` |
+| `NotPacked` | `DoesNotFit` | `NotPacked` |
+| `EarlyExit` | `EarlyExit` | *(not mapped — pack never early-exits)* |
+
+Unmapped values throw `NotSupportedException`. Fit also maps `EarlyExitReason` 1:1
+(`None`/`ContainerVolumeExceeded`/`ContainerDimensionExceeded`); pack has no early-exit reason. `PackedBox.From`
+copies ID + dimensions + coordinates (and implements ViPaq's `IWithDimensions<int>`/`IWithCoordinates<int>` so it
+can be serialized directly); `UnpackedBox.From` copies ID + quantity.
 
 ## OpenAPI Examples
 

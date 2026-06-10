@@ -1,6 +1,6 @@
 ---
 description: IAlgorithmProcessor, IBinProcessor, and IMultiAlgorithmBinProcessor — their factories and which algorithms each execution path uses
-verified: 2026-05-23
+verified: 2026-06-10
 check: Interface names and Process() signatures match lib/src/Binacle.Lib/
 also_update:
   - api/service.md
@@ -37,6 +37,10 @@ Keys in the returned dictionary are algorithm identifier names (e.g., `"FFD_v2"`
 The only active implementation. Takes an array of `Algorithm` values and runs each in order using `IAlgorithmFactory`.
 
 ## Factories
+
+> The `services.AddSingleton<...>` registrations shown below live in the **API** project
+> (`api/src/Binacle.Net/ExtensionMethods/ServiceCollectionExtensions.cs`), not in `lib/`. The factory classes
+> themselves are in `lib/src/Binacle.Lib/`.
 
 ### AlgorithmProcessorFactory
 

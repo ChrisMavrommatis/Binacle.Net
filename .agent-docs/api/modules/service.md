@@ -1,6 +1,6 @@
 ---
 description: ServiceModule — JWT auth, rate limiting, account/subscription management. Three projects using clean architecture.
-verified: 2026-05-23
+verified: 2026-06-10
 check: Routes, config file names, and connection string name match ServiceModule source
 also_update:
   - api/configuration.md
@@ -106,7 +106,12 @@ Each provider registers its own `IAccountRepository`, `ISubscriptionRepository`,
 **Startup tasks:**
 - `EnsureDefaultAdminAccountExistsStartupTask` — creates default admin on first run.
   Credentials come from `BINACLE_ADMIN_CREDENTIALS` env var.
-- `EnsureRequired*TablesExistStartupTask` — creates DB schema on startup (one per provider).
+- `EnsureRequired*TablesExistStartupTask` — creates DB schema on startup (one per provider:
+  `EnsureRequiredSqliteTablesExistStartupTask`, `…NpgsqlTablesExist…`, `…AzureTablesExist…`).
+
+> **No migration framework.** There is no EF Core and no migration files. Each backend creates its schema
+> idempotently at startup (`CREATE TABLE IF NOT EXISTS …`, or `CreateTableIfNotExistsAsync` for Azure Table
+> Storage). The InMemory backend needs no schema task. Don't look for migrations — there aren't any.
 
 ## Config files
 

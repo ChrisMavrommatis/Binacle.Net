@@ -1,9 +1,10 @@
 ---
 description: Binacle.Lib and Binacle.Lib.Abstractions — the algorithm layer
-verified: 2026-05-23
+verified: 2026-06-10
 check: Project list and test aliases match the solution
 also_update:
-  - tests/README.md
+  - lib/tests.md
+  - shared/README.md
 ---
 
 # Lib
@@ -23,6 +24,7 @@ Two projects:
 - [Processors](processors.md) — IAlgorithmProcessor, bin processors, factories, algorithm sets per path
 - [Result Building](result-building.md) — OperationResultBuilder, status rules, volume percentages
 - [Result Selection](result-selection.md) — BestAlgorithm, SmallestBin, BestBin strategies and scoring
+- [Lib Tests](tests.md) — unit/perf/benchmark projects, AlgorithmFactories, fixtures
 
 ## Related Tests
 
@@ -32,7 +34,8 @@ Two projects:
 | `lib/test/Binacle.Lib.PerformanceTests` | `performance` | Algorithm performance (console runner, not xUnit) |
 | `lib/test/Binacle.Lib.Benchmarks` | (none) | BenchmarkDotNet microbenchmarks — run via `./config/benchmarks.sh [AlgorithmRacing\|FastValidation]` |
 
-See [Tests](../tests/README.md) for stack, fixture patterns, and scenario data format.
+See [Lib Tests](tests.md) for fixtures and the test projects, and [Shared](../shared/README.md) for the
+scenario data format and providers.
 
 ## Notes
 

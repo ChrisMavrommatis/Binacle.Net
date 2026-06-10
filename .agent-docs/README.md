@@ -1,6 +1,6 @@
 ---
 description: Repo overview and index of agent documentation
-verified: 2026-06-09
+verified: 2026-06-10
 check: Repo layout table matches actual directories in the root
 ---
 
@@ -34,7 +34,8 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `docs/` | Jekyll documentation site |
 | `web/` | Jekyll marketing/web site |
 | `api/requests/` | HTTP request files for manual testing (subfolders: v2, v3, v4, Service) |
-| `samples/` | Docker and Kubernetes deployment samples |
+| `samples/` | Docker and Kubernetes deployment samples (user-facing starting points) |
+| `config/` | Maintainer local-dev tooling — run/test/build scripts, local compose, env, emulator state |
 | `shared/data/` | OR-library packing benchmark data |
 
 ## Commands
@@ -45,7 +46,7 @@ See [Commands](commands.md) — how to run the API, tests, benchmarks, and build
 
 | Task | Read these |
 |---|---|
-| Add a v4 endpoint | `api/endpoints.md`, `api/v4/add-endpoint.md`, `api/v4/contracts.md`, `api/service.md`, `api/kernel.md` |
+| Add a v4 endpoint | `api/endpoints.md`, `api/v4/add-endpoint.md`, `api/v4/contracts.md`, `api/service.md`, `api/kernel.md`, `api/openapi.md` |
 | Add or understand a contract type | `api/v4/contracts.md`, `api/v4/add-endpoint.md` |
 | Work with ServiceModule (auth, rate limiting) | `api/modules/service.md`, `api/modules/README.md` |
 | Understand startup and module wiring | `api/README.md`, `api/modules/README.md`, `api/kernel.md` |
@@ -53,21 +54,27 @@ See [Commands](commands.md) — how to run the API, tests, benchmarks, and build
 | Understand how results are selected | `lib/result-selection.md`, `lib/processors.md` |
 | Understand how OperationResult is built | `lib/result-building.md` |
 | Add or modify algorithm processing | `lib/algorithm-factory.md`, `lib/processors.md` |
-| Add or modify a test | `tests/README.md`, `tests/scenarios.md`, `tests/integration-conventions.md` |
+| Add or modify a lib test | `lib/tests.md`, `shared/README.md` (scenario data & formats) |
+| Add or modify an API integration test | `api/tests.md`, `shared/README.md` (scenario data & formats) |
 | Work with presets | `api/presets.md`, `api/v4/README.md` |
 | Understand v3 vs v4 differences | `api/v3/README.md`, `api/v4/README.md` |
 | Work with ViPaq | `vipaq/README.md` |
 | Configure modules / env vars / overrides | `api/configuration.md` |
+| Run or deploy with Docker / Kubernetes | `samples/README.md`, `commands.md`, `build-topology.md` |
+| Understand the build & workspace layout | `build-topology.md`, `commands.md` |
 
 ## Slice Docs
 
 - [Concepts](concepts.md) — fit vs pack; ideas that span slices
 - [API](api/README.md) — endpoints, contracts, service, kernel, modules (Diagnostics, ServiceModule, UIModule)
 - [Configuration](api/configuration.md) — config file layout, env-var conventions, feature flags
-- [Lib](lib/README.md) — algorithms, processors, result building and selection
-- [Tests](tests/README.md) — all test projects, fixture patterns, scenario data
+- [Lib](lib/README.md) — algorithms, processors, result building and selection; lib tests
+- [Shared](shared/README.md) — Binacle.TestsKernel scenario data & compact formats; OR-Library data
 - [ViPaq](vipaq/README.md) — `Binacle.ViPaq` binary format and TypeScript mirror
 - [Packages](packages/README.md) — TypeScript npm packages
 - [Ruby](ruby/README.md) — Ruby/Jekyll plugins
 - [Docs Site](docs/README.md) — Jekyll docs site
 - [Web Site](web/README.md) — Jekyll marketing site
+- [Samples](samples/README.md) — Docker & Kubernetes deployment starting points
+- [Config](config/README.md) — maintainer local-dev tooling: scripts, local compose, env, emulator state
+- [Build Topology](build-topology.md) — solution, npm workspaces, asset copy, Docker build chain

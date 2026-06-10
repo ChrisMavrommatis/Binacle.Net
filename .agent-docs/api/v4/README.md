@@ -1,6 +1,6 @@
 ---
 description: v4 API — active development. Endpoints (implemented and planned), algorithm selection, parameters, contracts, and response shape.
-verified: 2026-05-23
+verified: 2026-06-10
 check: Endpoint table matches files in api/src/Binacle.Net/v4/Endpoints/
 also_update:
   - api/v4/contracts.md
@@ -24,6 +24,9 @@ See [Fit vs Pack](../../concepts.md) for the underlying concept.
 | POST | `/api/v4/pack/bin/{preset}/{bin}` | Pack one specific bin from a preset |
 | POST | `/api/v4/pack/smallest-bin` | Custom bins → smallest successful pack |
 | GET | `/api/v4/presets` | List all preset names |
+
+All POST (fit/pack) endpoints are rate-limited (`.RequireRateLimiting("ApiUsage")`) and return `429`.
+`GET /api/v4/presets` is **not** rate-limited — its only responses are `200` and `500`.
 
 ## Planned Endpoints (not yet implemented)
 

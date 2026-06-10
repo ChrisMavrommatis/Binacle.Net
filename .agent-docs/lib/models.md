@@ -1,6 +1,6 @@
 ---
 description: Lib model types and IWith* interfaces — Bin, Item, packed/unpacked results, and the constraints used in generic type parameters
-verified: 2026-05-23
+verified: 2026-06-10
 check: Type and interface names match lib/src/Binacle.Lib.Abstractions/
 also_update:
   - api/v4/contracts.md
@@ -46,10 +46,16 @@ Used as type constraints on generic methods (e.g. `IAlgorithmFactory.Create<TBin
 | `IWithReadOnlyDimensions` | `Models/IWithReadOnlyDimensions.cs` | `Length`, `Width`, `Height` (read-only) |
 | `IWithQuantity` | `Models/IWithQuantity.cs` | `int Quantity { get; set; }` |
 | `IWithReadOnlyQuantity` | `Models/IWithReadOnlyQuantity.cs` | `int Quantity { get; }` |
-| `IWithCoordinates` | `Models/IWithCoordinates.cs` | `Coordinates` (settable) |
-| `IWithReadOnlyCoordinates` | `Models/IWithReadOnlyCoordinates.cs` | `Coordinates` (read-only) |
+| `IWithCoordinates` | `Models/IWithCoordinates.cs` | `X`, `Y`, `Z` (settable) |
+| `IWithReadOnlyCoordinates` | `Models/IWithReadOnlyCoordinates.cs` | `X`, `Y`, `Z` (read-only) |
 | `IWithVolume` | `Models/IWithVolume.cs` | `int Volume { get; set; }` |
 | `IWithReadOnlyVolume` | `Models/IWithReadOnlyVolume.cs` | `int Volume { get; }` |
+
+Each of these is the non-generic shorthand for a generic interface over `System.Numerics.INumber<T>` — e.g.
+`IWithCoordinates : IWithCoordinates<int>`, `IWithDimensions : IWithReadOnlyDimensions` (which is
+`IWithReadOnlyDimensions<int>`), `IWithVolume : IWithVolume<int>`. The non-generic versions bind `T = int`,
+which is what `Bin`, `Item`, and the result models use. Use the generic `<T>` form only for non-`int` coordinate
+or dimension types.
 
 ## Value types
 

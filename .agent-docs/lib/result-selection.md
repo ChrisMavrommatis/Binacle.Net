@@ -1,6 +1,6 @@
 ---
 description: IResultSelector, IResultSelectionStrategy, and the three selection strategies — scoring rules, tie-breaking, and how tests verify them
-verified: 2026-05-23
+verified: 2026-06-10
 check: Strategy class names and scoring rules match lib/src/Binacle.Lib/
 also_update:
   - api/service.md
@@ -32,7 +32,8 @@ guard against it — a result with `Unknown` status should never win.
 
 ## DI Registration
 
-Registered as a singleton with v2 for all three strategies:
+Registered as a singleton with v2 for all three strategies. This registration lives in the **API** project
+(`api/src/Binacle.Net/ExtensionMethods/ServiceCollectionExtensions.cs`), not in `lib/`:
 
 ```csharp
 services.AddSingleton<IResultSelector>(sp => new ResultSelector(
@@ -70,7 +71,7 @@ Currently **not called** by `BinacleService` — it exists on the interface but 
 ## How tests verify selection
 
 `ResultSelectionTestingFixture.RunTest(scenarioName, strategy, resultSelector)` takes:
-- a scenario name (from JSON test data under `Binacle.TestsKernel/ResultSelection/Data/`)
+- a scenario name (from JSON test data under `shared/Binacle.TestsKernel/ResultSelection/Data/`)
 - the strategy to test
 - a key extractor: `x => x.AlgorithmInfo.GetAlgorithmIdentifierName()` for BestAlgorithm,
   or `x => x.Bin.ID` for BestBin / SmallestBin

@@ -1,12 +1,13 @@
 ---
 description: How to run the API, tests, benchmarks, and build the Docker image
-verified: 2026-05-23
-check: All aliases match config/api.sh
+verified: 2026-06-10
+check: Aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
 ---
 
 # Commands
 
-All scripts live in `config/` and are run from the repo root.
+All scripts live in `config/` and are run from the repo root. For the `config/` directory anatomy (scripts, local
+compose, env, emulator state) see [config/README.md](config/README.md).
 
 ## Run the API
 
@@ -41,14 +42,37 @@ cd vipaq/test/<ProjectName> && dotnet run # vipaq tests
 # No argument = all benchmarks
 ```
 
-## Run Full Stack (Docker Compose)
+## Backing services (Docker Compose)
 
 ```bash
 docker compose -f config/docker-compose.yml up
 ```
 
-Use `docker-compose.build.yml` to also build the image locally instead of pulling.
-This is the easiest way to run the API with all its dependencies (DB, etc.) locally.
+This starts **only the backing services** — `aspire-dashboard` (OTel) and `azurite` (Azure Storage emulator).
+It does **not** run the API. Run the API itself with `./config/api.sh`. (`postgres` and `minio` are present but
+commented out in the file.)
+
+To build the API image locally and run it with all modules on, use `./config/build.sh` — it publishes, builds
+`binacle-net:local`, and brings up `config/docker-compose.build.yml` (the local image + azurite + aspire).
+
+## Regenerate the agent-docs index
+
+```bash
+./config/docs.sh
+```
+
+Rewrites `.agent-docs/_index.md` from each doc's `description:` frontmatter. Run it after adding, renaming, or
+re-describing any `.agent-docs/*.md` file.
+
+## Dev session (tmux)
+
+```bash
+./config/tmux.sh
+```
+
+Builds (or re-attaches to) a tmux session named `binacle` with windows `api`, `docs`, `web`, `tests`, `misc`, and
+`bench_1`/`bench_2`/`bench_3`. Each pane is pre-`cd`'d to the right folder but runs nothing automatically — it's a
+staging layout for the `config/*.sh` scripts. Requires `tmux`.
 
 ## Build (Docker image)
 

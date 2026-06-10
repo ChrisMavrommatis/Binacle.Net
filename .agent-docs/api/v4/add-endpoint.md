@@ -1,6 +1,6 @@
 ---
 description: Step-by-step guide for adding a new v4 endpoint
-verified: 2026-05-23
+verified: 2026-06-10
 check: Code template matches a real v4 endpoint file and compiles
 also_update:
   - api/v4/README.md
@@ -54,9 +54,9 @@ internal class MyEndpoint : IGroupedEndpoint<ApiV4EndpointGroup>
             .ResponseDescription(StatusCodes.Status422UnprocessableEntity, ResponseDescription.For400BadRequest)
             .ResponseExamples<MyValidationProblemResponseExamples>(StatusCodes.Status422UnprocessableEntity, "application/problem+json")
 
-            .RequireRateLimiting("ApiUsage")   // always include — no-op if ServiceModule is not loaded
-            .RequireCors(CorsPolicy.CoreApi);   // always include — no-op if ServiceModule is not loaded
-            // do NOT add .ProducesProblem(500) — ApiV4EndpointGroup sets it for all endpoints
+            .RequireRateLimiting("ApiUsage")   // on user-request (fit/pack) endpoints — no-op if ServiceModule is off
+            .RequireCors(CorsPolicy.CoreApi);   // include where CORS protection is needed — no-op if ServiceModule is off
+            // do NOT add .ProducesProblem(500) — ApiV4EndpointGroup sets it for all endpoints (see openapi.md)
     }
 
     internal async Task<IResult> HandleAsync(
@@ -76,6 +76,11 @@ internal class MyEndpoint : IGroupedEndpoint<ApiV4EndpointGroup>
     }
 }
 ```
+
+> **Rate limiting:** add `.RequireRateLimiting("ApiUsage")` to endpoints that handle user compute requests
+> (all `fit` and `pack` routes, including their preset variants). Read-only list endpoints do **not** get it —
+> e.g. the live `GET /api/v4/presets` is not rate-limited (no `429` in its OpenAPI responses). It's safe to
+> include unconditionally where it does belong: it's a no-op when ServiceModule is off.
 
 ### 3. Create the response type (if new)
 
@@ -118,9 +123,9 @@ See `PresetBin.cs` in the existing v4 endpoints for a working example.
 
 ## Choosing the Service Method
 
-See [service.md](service.md) for the full method reference and call pattern.
+See [service.md](../service.md) for the full method reference and call pattern.
 Quick reference: single bin → `SingleBinAsync`, multiple bins → `MultipleBinsAsync`, smallest bin → `SmallestBinAsync`.
 Each has an explicit-algorithm overload and an auto-select overload.
 
-To understand how the service runs algorithms and picks results, see [processors.md](../lib/processors.md)
-and [result-selection.md](../lib/result-selection.md).
+To understand how the service runs algorithms and picks results, see [processors.md](../../lib/processors.md)
+and [result-selection.md](../../lib/result-selection.md).

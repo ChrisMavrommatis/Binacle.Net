@@ -1,6 +1,6 @@
 ---
 description: Index for API slice docs — endpoints, contracts, service, kernel, presets, and module docs (Diagnostics, ServiceModule, UIModule)
-verified: 2026-05-23
+verified: 2026-06-10
 check: Startup sequence matches Program.cs; dep map matches actual project references
 also_update:
   - api/modules/README.md
@@ -123,8 +123,8 @@ See [lib/result-building.md](../lib/result-building.md) for how `OperationResult
 | `api/test/Binacle.Net.IntegrationTests` | `api` | HTTP behavior and scenario tests for v3 and v4 endpoints |
 | `api/test/Binacle.Net.ServiceModule.IntegrationTests` | `api_service` | Auth and rate limiting (ServiceModule only) |
 
-See [Tests](../tests/README.md) for stack, fixture patterns, and scenario data format.
-See [Commands](../commands.md) for how to run the API locally.
+See [API Tests](tests.md) for integration-test conventions, and [Shared](../shared/README.md) for the scenario
+data format. See [Commands](../commands.md) for how to run the API locally.
 
 ## Concepts
 

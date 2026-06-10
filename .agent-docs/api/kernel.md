@@ -1,6 +1,6 @@
 ---
 description: Binacle.Net.Kernel — shared patterns used by all API projects and modules
-verified: 2026-05-23
+verified: 2026-06-10
 check: IApiMarker and registration helpers match api/src/Binacle.Net.Kernel/
 also_update:
   - api/endpoints.md
@@ -48,6 +48,10 @@ What `ValidateAsync()` returns before calling your handler:
 All are discovered and registered automatically via `RegisterEndpointsFromAssemblyContaining<TMarker>()`.
 
 ## IOptionalDependency\<T\>
+
+Defined in the Kernel project at `Dependencies/Services/IOptionalDependency.cs`, but its namespace is
+**`Binacle.Net.Services`** (not `Binacle.Net.Kernel.*`) — that is the `using` you need. The interface and
+`OptionalDependency<T>` class are both `public`.
 
 Wraps a service that may not be registered (e.g., a channel from a module that might be off).
 
@@ -102,6 +106,8 @@ All three modules use this pattern: [DiagnosticsModule](modules/diagnostics.md),
 
 Each module registers its own OpenAPI document by implementing `IOpenApiDocument`.
 `Program.cs` scans for all registered documents and wires them into SwaggerUI / Scalar at startup.
+The transformers, the group-level 500 wiring, and the external `OpenApiExamples` package are covered in
+[openapi.md](openapi.md).
 
 ## IStartupTask
 
@@ -113,3 +119,38 @@ Used by Infrastructure to create database schemas before the app starts serving 
 Base interface for strongly-typed config classes loaded from JSON files.
 Provides: `FilePath`, `SectionName`, `Optional`, `ReloadOnChange`, and `GetEnvironmentFilePath(env)`.
 Config is loaded relative to `Config_Files/` (set as base path in `Program.cs`).
+
+Register a validated options class with `services.AddValidatableJsonConfigurationOptions<TOptions>()`
+(`Configuration/ExtensionsMethods/ConfigurationExtensions.cs`): it adds the JSON file + env override + env vars,
+binds the section, and runs FluentValidation at startup (`ValidateFluently().ValidateOnStart()`). Used in
+`Program.cs` for `BinPresetOptions` and `CorsOptions`, and by each module's `ModuleDefinition`.
+
+## Validation
+
+`BindingResult<T>` handles **request-body** validation (above). The same FluentValidation machinery validates
+**options** at startup and provides reusable helpers:
+
+- `FluentValidationOptions<TOptions>` — an `IValidateOptions<TOptions>` that runs the registered
+  `IValidator<TOptions>`; wired via the `ValidateFluently()` options-builder extension.
+- `RuleBuilderValidationExtensions.MustNotThrow(...)` — a custom rule that passes unless the given action throws.
+  Use it to assert "this construction/conversion succeeds" (e.g. a volume calc that could overflow).
+- `ValidationExtensions.GetValidationSummary()` — groups a `ValidationResult` into `Dictionary<string, string[]>`,
+  the shape fed to `HttpValidationProblemDetails` (the 422 body).
+
+## Logging
+
+Timed operations (in `Kernel/Logging`):
+
+- `logger.BeginTimedOperation("template", args)` → returns an `IDisposable`; on dispose it logs
+  `"{template} completed in {OperationDurationMs}ms"`. Default level Information.
+- `logger.BeginTimedActivityOperation("message")` → same, and also starts an `Activity` (tracing span) named
+  `message` on `Binacle.Net.Diagnostics.ActivitySource`. One `using` gives both a timed log and a span.
+- `logger.EnrichState(...)` — wraps a dictionary / string set into a `BeginScope` for structured-log enrichment.
+
+Packing-log channel (producer side; the consumer/`LogsProcessor` is in [modules/diagnostics.md](modules/diagnostics.md)):
+
+- `AlgorithmOperationLogChannelRequest` is the channel message — built via its static `From<TBin,TItem,TParams>(...)`
+  (`TParams : ILogConvertible`). `ILogConvertible.ConvertToLogObject()` lets parameters render themselves for logs.
+- `BinacleService` is the live producer: it injects `IOptionalDependency<Channel<AlgorithmOperationLogChannelRequest>>`
+  and writes via `WriteToChannelAsync(...)`, which **no-ops when the channel isn't registered** (i.e. when the
+  DiagnosticsModule packing-log feature is off). Register the processor with `AddLogProcessor<TChannelRequest>(...)`.

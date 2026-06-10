@@ -1,7 +1,7 @@
 ---
 description: IAlgorithmFactory — how algorithm instances are created, DI registration, and how tests construct algorithms directly
-verified: 2026-05-23
-check: Class names and DI registration match lib/src/Binacle.Lib/AlgorithmFactory.cs
+verified: 2026-06-10
+check: Class names match lib/src/Binacle.Lib/AlgorithmFactory.cs; DI registration matches api/src/Binacle.Net/ExtensionMethods/ServiceCollectionExtensions.cs
 also_update:
   - lib/algorithms.md
 ---
@@ -39,7 +39,8 @@ Class files live under `lib/src/Binacle.Lib/Algorithms/<Heuristic> v<N>/` — se
 
 ## DI Registration
 
-Registered as a singleton in `ServiceCollectionExtensions.AddBinacleServices()`:
+Registered as a singleton in `AddBinacleServices()`. Note this lives in the **API** project, not in `lib/` —
+`api/src/Binacle.Net/ExtensionMethods/ServiceCollectionExtensions.cs`. The `lib/` projects contain no DI wiring.
 
 ```csharp
 services.AddSingleton<IAlgorithmFactory, AlgorithmFactory>();
@@ -55,4 +56,5 @@ AlgorithmFactories.FFD_v2 = (bin, items) => new FirstFitDecreasing_v2<TestBin, T
 
 `CommonTestingFixture` runs all six versions (FFD/WFD/BFD × v1/v2) against every scenario.
 This keeps old versions tested without coupling them to the factory.
-See [tests/scenarios.md](../tests/scenarios.md) for how scenarios and fixtures are structured.
+See [Lib Tests](tests.md) for `AlgorithmFactories` and `CommonTestingFixture`, and [Shared](../shared/README.md)
+for how scenarios are structured.

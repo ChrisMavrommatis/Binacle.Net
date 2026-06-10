@@ -1,7 +1,7 @@
 ---
 description: Config file layout, env-var conventions, override precedence, and feature flag list
-verified: 2026-05-23
-check: Config keys and env var names match appsettings.json and module config files
+verified: 2026-06-10
+check: Config keys and env var names match appsettings.json and module config files; Cors.json present
 also_update:
   - api/modules/service.md
   - api/modules/diagnostics.md
@@ -20,6 +20,9 @@ All config files live under `/app/Config_Files` in the container.
 app
 └── Config_Files
     ├── Presets.json                             required — app fails to start without this
+    ├── Cors.json                                optional — CORS allowed origins (core API, not a module)
+    ├── Cors.{Environment}.json                  optional override
+    ├── appsettings.json                         optional — host settings (e.g. AllowedHosts)
     ├── DiagnosticsModule
     │   ├── HealthChecks.json
     │   ├── HealthChecks.{Environment}.json      optional override
@@ -40,6 +43,23 @@ app
 Each file can be overridden by a `.{EnvironmentName}.json` sibling (any ASP.NET environment name:
 Development, Production, Staging, etc.). Only include the keys you want to change.
 Bind-mount individual files in Docker with `-v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro`.
+
+> **Note:** the `ServiceModule` base files (`ConnectionStrings.json`, `JwtAuth.json`) are not committed to the
+> repo — only their `.Development.json` variants ship. The base files are supplied at deploy time. `RateLimiter.json`
+> does ship a base file.
+
+### CORS (`Cors.json`)
+
+Bound to `CorsOptions` (section `Cors`), loaded for the core API (`Program.cs`, not a module). Defines a single
+named policy `CoreApi` that endpoints opt into with `.RequireCors(CorsPolicy.CoreApi)`:
+
+```json
+{
+  "Cors": {
+    "CoreApi": { "AllowedOrigins": ["https://example.com"] }
+  }
+}
+```
 
 ## Override Conventions
 
