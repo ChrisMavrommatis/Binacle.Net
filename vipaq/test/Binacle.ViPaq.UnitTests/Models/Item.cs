@@ -1,10 +1,10 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Binacle.ViPaq.Abstractions;
 
 namespace Binacle.ViPaq.UnitTests.Models;
 
-public class Bin<T> : IWithDimensions<T>
-	where T: struct, 
+public class Item<T> : IWithDimensions<T>, IWithCoordinates<T>
+	where T : struct,
 	IBinaryInteger<T>,
 	IComparable<T>,
 	INumber<T>
@@ -12,5 +12,7 @@ public class Bin<T> : IWithDimensions<T>
 	public T Length { get; set; }
 	public T Width { get; set; }
 	public T Height { get; set; }
+	public T X { get; set; }
+	public T Y { get; set; }
+	public T Z { get; set; }
 }
-

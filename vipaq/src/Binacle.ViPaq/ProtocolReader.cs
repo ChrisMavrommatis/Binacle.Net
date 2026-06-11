@@ -26,7 +26,7 @@ public class ProtocolReader<T> : IDisposable, IAsyncDisposable
 
 	public T ReadAsByte()
 	{
-		return (T)(object)this.InternalReadByte();
+		return T.CreateChecked(this.ReadByte());
 	}
 	
 	public ushort ReadUInt16()

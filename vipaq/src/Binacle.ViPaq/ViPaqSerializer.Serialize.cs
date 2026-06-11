@@ -15,6 +15,9 @@ public static partial class ViPaqSerializer
 		where TBin : IWithDimensions<T>
 		where TItem : IWithDimensions<T>, IWithCoordinates<T>
 	{
+		ArgumentNullException.ThrowIfNull(bin);
+		ArgumentNullException.ThrowIfNull(items);
+
 		var encodingInfo = EncodingInfoHelper.CreateEncodingInfo<TBin, TItem, T>(bin, items);
 		var numberOfItems = (ushort)items.Count;
 
