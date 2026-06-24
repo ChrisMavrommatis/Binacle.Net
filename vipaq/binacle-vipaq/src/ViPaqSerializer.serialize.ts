@@ -6,7 +6,7 @@ export async function serialize(bin: Dimensions, items: (Dimensions & Coordinate
 	if (!bin) {
 		throw new Error("No Bin provided");
 	}
-	if(!items  || items.length < 1)	{
+	if (!items) {
 		throw new Error("No items provided");
 	}
 	const encodingInfo = createEncodingInfo(bin, items);
@@ -25,7 +25,8 @@ export async function serialize(bin: Dimensions, items: (Dimensions & Coordinate
 		protocolWriter.writeCoordinates(item, encodingInfo.itemCoordinatesBitSize);
 	}
 
-	const shouldCompress = bufferSize > Sizes.byteMaxSize;
+	// Match the C# library: compress when the body (everything after the 1 byte header) is over 255 bytes.
+	const shouldCompress = (bufferSize - 1) > Sizes.byteMaxSize;
 	if (!shouldCompress)
 	{
 		return writeEncodingInfoToBuffer(encodingInfo, protocolWriter.buffer);

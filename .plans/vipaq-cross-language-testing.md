@@ -1,6 +1,8 @@
 # ViPaq — Cross-Language Wire Testing
 
-**Status:** Not started — to build (you said you'll do this; this note captures the need + findings).
+**Status:** In progress — C# side. The C# library bugs are fixed and the C# unit tests are being
+rebuilt (see "C# progress" + "Handoff to the TS / common-data session" at the bottom). The shared
+cross-language vectors are still **not started**.
 **Goal:** Guarantee the C# `Binacle.ViPaq` library and its hand-maintained TypeScript mirror
 (`vipaq/binacle-vipaq`) stay **wire-compatible** — bytes written by one are readable by the other.
 
@@ -167,3 +169,151 @@ All confirmed by hand against the source. None are fixed in the tree right now (
 3. Add the **compressed cross-decode** vectors/fixtures (the gzip-interop requirement above).
 4. Add per-language gap tests the shared file can't cover: `ProtocolReader`/`ProtocolWriter` little-endian,
    empty item list, the documented throws.
+
+---
+
+## Current state snapshot (recorded 2026-06-12)
+
+A factual record of where the work actually is. No new direction here — just what exists.
+
+### C# library — bugs from the list above, now fixed in the working tree
+- **#3 fixed** — `ProtocolReader<T>.ReadAsByte()` now uses `T.CreateChecked(this.ReadByte())`.
+- **#4 fixed** — `BitSizeHelper` yardstick constants now use `T.CreateSaturating(...)` (was `CreateChecked`),
+  so narrow `T` no longer overflows. 8 occurrences across `GetCoordinatesBitSize` + `GetDimensionsBitSize`.
+- **Extra change (not in the original list):** the "value too large" fall-through in both `BitSizeHelper`
+  methods now throws **per field** (names `Length`/`Width`/`Height` and `X`/`Y`/`Z`) instead of one aggregate
+  `"obj dimensions"` exception — matching the zero/negative checks above it. **TS still throws an aggregate
+  `Error` with no field name** → logged as TS gap #7 below.
+
+### C# tests — current layout (`vipaq/test/Binacle.ViPaq.UnitTests`), 76 tests, all green
+Reviewed & kept in `Tests/`:
+- `BitSizeHelperTests` (Result, 38) — `ulong` theory: all buckets, largest-wins, boundaries.
+- `BitSizeHelperSaturationTests` (Result, 16) — every numeric type caps at its top bucket; signed types
+  double as the #4 (Bug B) regression guard. Proven: reverting to `CreateChecked` fails exactly the 8 signed cases.
+- `BitSizeHelperBehaviorTests` (Behavioral, 15) — zero/negative param-name throws + >64-bit "too large" throws.
+- `SanityTests` (1).
+
+Active but not yet restructured (lives in `oldTests/`, not commented, runs):
+- `EncodingInfoHelperBehaviorTests` (6) — `ThrowOnInvalidEncodingInfo` + item-count overflow. Repetitive;
+  candidate to fold into theory+data and move to `Tests/`.
+
+Staged, **commented out**, waiting to be revived + restructured (the C# work that remains):
+- Fixture: `SerializationTestingFixture` (root) — builders + round-trip helpers.
+- `EncodingInfoHelperTests` (Result) — per-section bit sizes + `ToByte`/`FromByte` 128-row truth table.
+- `SerializationRoundTripTests` (Result) — int/ushort/ulong widths + zero coords / no items / compressed.
+- `SerializationEncodingTests` (Result) — header written correctly.
+- `SerializationBehaviorTests` (Behavioral) — null/empty throws.
+- Providers: `oldProviders/EncodingInfoByteDataProvider` (128 rows), `oldProviders/DimensionBitSizeBoundaryProvider`.
+
+Restructure rule the user wants when reviving these: **one theory + data**, or where the generic `T` differs
+per row (so one theory can't hold them), **one helper with many thin callers** — the
+`BitSizeHelperSaturationTests` shape.
+
+C# gaps still unwritten: exact-byte / golden wire tests; reserved `Version` handling;
+`ProtocolReader`/`ProtocolWriter` little-endian byte order. Cleanup: delete the dead commented-out
+"Int generic parameter" region at the bottom of `BitSizeHelperTests` (now covered by the saturation tests).
+
+### Handoff to the TS / common-data session
+Not this session's job — left here for the next one.
+- **Port the restructured C# test shape to TS** (`vipaq/binacle-vipaq`).
+- **TS bugs still open** (C# is the reference): #1 `getByteSize` 32/64 under-allocation, #2 `getCoordinatesBitSize`
+  wrong-field + rejects `0`, #5 compression threshold off-by-one (cosmetic), #6 test import casing.
+- **TS gap #7 (new):** make the "too large" throw name the offending field, to match the C# change above.
+- **Then build the shared vectors** — the actual goal at the top of this doc: generator tool + uncompressed
+  golden set (exact-byte, both directions) + compressed cross-decode set (compare decoded result, not bytes).
+
+---
+
+## C# tests to write — build checklist (for future agents)
+
+The remaining work to **complete the C# unit-test suite** for `Binacle.ViPaq`. Names + one-line descriptions
+only — assign the structure (provider / theory / thin callers) per item when you build it. Derived from a
+full per-function coverage audit of the source vs the active tests.
+
+### Scope boundary — read first
+- This checklist is **C# only**. Do NOT port to TypeScript or build the shared vectors here. A separate clean
+  session does the TS port + common data (see "Handoff to the TS / common-data session" above).
+- TDD: write the test, watch it fail, watch it pass, keep it green. Don't touch the library unless a test
+  proves a bug — and if it does, fix the lib and note it here.
+
+### Conventions (match the existing `Tests/` files)
+- Naming: `Method_Result_When_Condition` or `Method_Throws_Exception_When_Condition`.
+- Traits: `[Trait("Result Tests", "Ensures results are as expected")]` for "returns the right value",
+  `[Trait("Behavioral Tests", "Ensures operations behave as expected")]` for "throws / guards".
+- Structure rule (what the user wants): prefer **one theory + a data provider**. When the generic `T` differs
+  per row (so one theory can't carry it), use **one helper + many thin `[Fact]` callers** — the
+  `BitSizeHelperSaturationTests` shape.
+- Layout: finished tests live in `Tests/`. `oldTests/` + `oldProviders/` are **staging** — most files are
+  fully commented out. **Restructure** them into the shape above; don't just uncomment. One active file already
+  lives there: `oldTests/EncodingInfoHelperBehaviorTests.cs` (move it to `Tests/` when you fold it into theories).
+- Reviving serialization tests needs the staged `SerializationTestingFixture.cs` (root) brought back first.
+- Magic Bogus seed used across the suite: `Randomizer.Seed = new Random(605080);`
+- Run one class: `cd vipaq/test/Binacle.ViPaq.UnitTests && dotnet run -c Debug -- --filter-class "*Name*"`.
+  Run all: same without `--filter-class`. Baseline at time of writing: 76 active tests, all green.
+
+### Checklist
+
+**BitSizeHelper** — already essentially complete; one gap.
+- [ ] `GetCoordinatesBitSize_Returns_Eight_When_All_Coordinates_Are_Zero` (Result) — coords use `< 0`, so zero
+  is legal (unlike dimensions which use `<= 0`); assert `(0,0,0)` returns `Eight` and does not throw.
+
+**EncodingInfoHelper — `ToByte` / `FromByte`** (Result) *(restructure from staged `EncodingInfoHelperTests` + `EncodingInfoByteDataProvider`)*
+- [ ] `ToByte_Returns_Correct_Byte` — every Version×Bin×Item×Coord combo packs to `Version<<6 | Bin<<4 | Item<<2 | Coord`.
+- [ ] `FromByte_Returns_Correct_EncodingInfo` — every header byte unpacks back to the right fields.
+- [ ] `ToByte_Then_FromByte_Returns_Original` — pack then unpack is identity across all combos.
+- [ ] `ToByte_Packs_Reserved_Version_Values` — `Reserved2` / `Reserved3` land in bits 7-6 correctly.
+- [ ] `FromByte_Decodes_Reserved_Version_Values` — header Version bits `10`/`11` decode to `Reserved2`/`Reserved3`.
+
+**EncodingInfoHelper — `CreateEncodingInfo`** (Result) *(restructure from staged theories; only the count-throw is active today)*
+- [ ] `CreateEncodingInfo_Sets_Correct_BinDimensionsBitSize` — bin dims set the bin size, independent of items.
+- [ ] `CreateEncodingInfo_Sets_Correct_ItemDimensionsBitSize` — largest item dims across the whole list wins.
+- [ ] `CreateEncodingInfo_Sets_Correct_ItemCoordinatesBitSize` — largest item coords across the whole list wins.
+- [ ] `CreateEncodingInfo_Uses_Largest_Item_When_Items_Differ` — mixed item sizes → the max drives it (the loop).
+- [ ] `CreateEncodingInfo_Sets_Version_Uncompressed` — version starts uncompressed (gzip flag set later in Serialize).
+- [ ] `CreateEncodingInfo_Defaults_Item_Sizes_To_Eight_When_No_Items` — empty list skips the loop, sizes fall back to `Eight`.
+
+**EncodingInfoHelper — guards** (Behavioral)
+- [ ] `CreateEncodingInfo_Does_Not_Throw_At_UShort_MaxValue_Items` — exactly 65535 items is allowed (boundary
+  just under the active over-max throw test).
+- [ ] `ThrowOnInvalidEncodingInfo_Does_Not_Throw_When_BitSize_Equals_Type_Width` — `short`+`Sixteen`,
+  `int`+`ThirtyTwo`, `long`+`SixtyFour` pass (the "equal width is OK" upper boundary; only all-Eight is smoke-tested now).
+
+**ViPaqSerializer — round trips** (Result) — **zero active coverage today** *(needs the staged fixture revived)*
+- [ ] `Int32_RoundTrips_Eight_Bit` / `_Sixteen_Bit` / `_ThirtyTwo_Bit` — serialize→deserialize unchanged per width.
+- [ ] `Int32_RoundTrips_When_Dimensions_Small_And_Coordinates_Large` — mixed widths in one payload (Bug A + Bug B path).
+- [ ] `UInt16_RoundTrips_Eight_Bit` — 8-bit section with non-`int` T (Bug A regression path).
+- [ ] `UInt16_RoundTrips_Sixteen_Bit`.
+- [ ] `UInt64_RoundTrips_SixtyFour_Bit`.
+- [ ] `RoundTrips_When_Coordinates_Are_Zero` — zero coords survive the trip.
+- [ ] `RoundTrips_When_There_Are_No_Items` — empty item list round-trips, count back as 0.
+- [ ] `RoundTrips_When_Body_Is_Compressed` — payload over 255 bytes goes through gzip and back.
+
+**ViPaqSerializer — header output** (Result) *(restructure from staged `SerializationEncodingTests` + `DimensionBitSizeBoundaryProvider`)*
+- [ ] `Serialize_Writes_Correct_BinDimensionsBitSize` — header byte reflects the bin size bucket.
+- [ ] `Serialize_Writes_Correct_ItemDimensionsBitSize` / `Serialize_Writes_Correct_ItemCoordinatesBitSize`.
+- [ ] `Serialize_Marks_Version_Uncompressed_When_Body_Small` / `Serialize_Marks_Version_CompressedGzip_When_Body_Large`.
+- [ ] `Serialize_Prepends_EncodingInfo_As_First_Byte` — byte 0 is the header, before the body.
+- [ ] `Serialize_Produces_Exact_Bytes_For_Known_Input` — one fixed input → exact `byte[]` (golden; anchors wire
+  layout + little-endian + header in one test).
+
+**ViPaqSerializer — guards** (Behavioral) *(restructure from staged `SerializationBehaviorTests`)*
+- [ ] `Serialize_Throws_When_Bin_Is_Null` / `Serialize_Throws_When_Items_Are_Null`.
+- [ ] `Deserialize_Throws_When_Data_Is_Null` / `Deserialize_Throws_When_Data_Is_Empty`.
+- [ ] `Deserialize_Throws_NotSupportedException_When_Version_Is_Reserved` — header with reserved Version 2/3 rejected on read.
+- [ ] `Deserialize_Throws_When_Section_Is_Wider_Than_Type` — header says 64-bit but `T = int` (the
+  `ThrowOnInvalidEncodingInfo` wiring, through Deserialize).
+
+**ProtocolWriter / ProtocolReader — no direct coverage at all**
+- [ ] `WriteUInt16_Writes_Little_Endian` / `WriteUInt32_...` / `WriteUInt64_...` (Result) — known value → exact little-endian bytes.
+- [ ] `ReadUInt16_Reads_Little_Endian` / `ReadUInt32_...` / `ReadUInt64_...` (Result) — fixed bytes → expected value.
+- [ ] `Writer_Then_Reader_RoundTrips_Each_Width` (Result) — write then read returns the same value, 8/16/32/64.
+- [ ] `ReadAsByte_Returns_Value_For_Every_Numeric_Type` (Result) — read an 8-bit section as `ushort`/`ulong`/`long`,
+  not just `int` (Bug A guard at the reader level).
+- [ ] `WriteAsByte_Throws_When_Value_Exceeds_Byte` (+ `AsUInt16` / `AsUInt32`) (Behavioral) — `CreateChecked`
+  overflow when a value won't fit the target width.
+- [ ] `Read_Throws_When_Disposed` / `Write_Throws_When_Disposed` (Behavioral) — the `ThrowIfDisposed` path.
+- [ ] `Dispose_Flushes_And_Allows_Double_Dispose` (+ async) (Behavioral) — flush on dispose, no error on second dispose.
+
+**Protocol extensions** (`WriteDimensions`/`WriteCoordinates`/`ReadDimensions`/`ReadCoordinates`) (Behavioral)
+- [ ] `WriteDimensions_Throws_When_BitSize_Out_Of_Range` (+ `WriteCoordinates` / `ReadDimensions` / `ReadCoordinates`)
+  — an out-of-range `BitSize` cast hits the `default:` `ArgumentOutOfRangeException`.

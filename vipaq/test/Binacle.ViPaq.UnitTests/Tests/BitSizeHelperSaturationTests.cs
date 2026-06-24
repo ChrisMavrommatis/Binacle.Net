@@ -20,31 +20,39 @@ public class BitSizeHelperSaturationTests
 	}
 	// Eight
 	[Fact] 
-	public void Dimensions_Byte_Caps_At_Eight() => AssertDimensions<byte>(byte.MaxValue, BitSize.Eight);
+	public void Dimensions_Byte_Caps_At_Eight() 
+		=> AssertDimensions<byte>(byte.MaxValue, BitSize.Eight);
 	
 	[Fact]
-	public void Dimensions_SByte_Caps_At_Eight() => AssertDimensions<sbyte>(sbyte.MaxValue, BitSize.Eight);
+	public void Dimensions_SByte_Caps_At_Eight() 
+		=> AssertDimensions<sbyte>(sbyte.MaxValue, BitSize.Eight);
 
 	// Sixteen
 	[Fact] 
-	public void Dimensions_UShort_Caps_At_Sixteen() => AssertDimensions<ushort>(ushort.MaxValue, BitSize.Sixteen);
+	public void Dimensions_UShort_Caps_At_Sixteen() 
+		=> AssertDimensions<ushort>(ushort.MaxValue, BitSize.Sixteen);
 	
 	[Fact] 
-	public void Dimensions_Short_Caps_At_Sixteen() => AssertDimensions<short>(short.MaxValue, BitSize.Sixteen);
+	public void Dimensions_Short_Caps_At_Sixteen() 
+		=> AssertDimensions<short>(short.MaxValue, BitSize.Sixteen);
 
 	// ThirtyTwo
 	[Fact] 
-	public void Dimensions_UInt_Caps_At_ThirtyTwo() => AssertDimensions<uint>(uint.MaxValue, BitSize.ThirtyTwo);
+	public void Dimensions_UInt_Caps_At_ThirtyTwo() 
+		=> AssertDimensions<uint>(uint.MaxValue, BitSize.ThirtyTwo);
 	
 	[Fact] 
-	public void Dimensions_Int_Caps_At_ThirtyTwo() => AssertDimensions<int>(int.MaxValue, BitSize.ThirtyTwo);
+	public void Dimensions_Int_Caps_At_ThirtyTwo() 
+		=> AssertDimensions<int>(int.MaxValue, BitSize.ThirtyTwo);
 
 	// SixtyFour
 	[Fact] 
-	public void Dimensions_ULong_Caps_At_SixtyFour() => AssertDimensions<ulong>(ulong.MaxValue, BitSize.SixtyFour);
+	public void Dimensions_ULong_Caps_At_SixtyFour() 
+		=> AssertDimensions<ulong>(ulong.MaxValue, BitSize.SixtyFour);
 	
 	[Fact] 
-	public void Dimensions_Long_Caps_At_SixtyFour() => AssertDimensions<long>(long.MaxValue, BitSize.SixtyFour);
+	public void Dimensions_Long_Caps_At_SixtyFour() 
+		=> AssertDimensions<long>(long.MaxValue, BitSize.SixtyFour);
 	
 	
 	private static void AssertCoordinates<T>(T value, BitSize expected)
@@ -57,29 +65,37 @@ public class BitSizeHelperSaturationTests
 	
 	// Eight
 	[Fact] 
-	public void Coordinates_Byte_Caps_At_Eight() => AssertCoordinates<byte>(byte.MaxValue, BitSize.Eight);
+	public void Coordinates_Byte_Caps_At_Eight() 
+		=> AssertCoordinates<byte>(byte.MaxValue, BitSize.Eight);
 	
 	[Fact] 
-	public void Coordinates_SByte_Caps_At_Eight() => AssertCoordinates<sbyte>(sbyte.MaxValue, BitSize.Eight);
+	public void Coordinates_SByte_Caps_At_Eight() 
+		=> AssertCoordinates<sbyte>(sbyte.MaxValue, BitSize.Eight);
 
 	// Sixteen
 	[Fact] 
-	public void Coordinates_UShort_Caps_At_Sixteen() => AssertCoordinates<ushort>(ushort.MaxValue, BitSize.Sixteen);
+	public void Coordinates_UShort_Caps_At_Sixteen() 
+		=> AssertCoordinates<ushort>(ushort.MaxValue, BitSize.Sixteen);
 	
 	[Fact] 
-	public void Coordinates_Short_Caps_At_Sixteen() => AssertCoordinates<short>(short.MaxValue, BitSize.Sixteen);
+	public void Coordinates_Short_Caps_At_Sixteen() 
+		=> AssertCoordinates<short>(short.MaxValue, BitSize.Sixteen);
 
 	// ThirtyTwo
 	[Fact] 
-	public void Coordinates_UInt_Caps_At_ThirtyTwo() => AssertCoordinates<uint>(uint.MaxValue, BitSize.ThirtyTwo);
+	public void Coordinates_UInt_Caps_At_ThirtyTwo() 
+		=> AssertCoordinates<uint>(uint.MaxValue, BitSize.ThirtyTwo);
 	
 	[Fact] 
-	public void Coordinates_Int_Caps_At_ThirtyTwo() => AssertCoordinates<int>(int.MaxValue, BitSize.ThirtyTwo);
+	public void Coordinates_Int_Caps_At_ThirtyTwo() 
+		=> AssertCoordinates<int>(int.MaxValue, BitSize.ThirtyTwo);
 
 	// SixtyFour
 	[Fact] 
-	public void Coordinates_ULong_Caps_At_SixtyFour() => AssertCoordinates<ulong>(ulong.MaxValue, BitSize.SixtyFour);
+	public void Coordinates_ULong_Caps_At_SixtyFour() 
+		=> AssertCoordinates<ulong>(ulong.MaxValue, BitSize.SixtyFour);
 	
 	[Fact] 
-	public void Coordinates_Long_Caps_At_SixtyFour() => AssertCoordinates<long>(long.MaxValue, BitSize.SixtyFour);
+	public void Coordinates_Long_Caps_At_SixtyFour() 
+		=> AssertCoordinates<long>(long.MaxValue, BitSize.SixtyFour);
 }

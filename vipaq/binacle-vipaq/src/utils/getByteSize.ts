@@ -7,9 +7,9 @@ export function getByteSize(bitSize: BitSize): number {
 		case BitSize.Sixteen:
 			return 2;
 		case BitSize.ThirtyTwo:
-			return 3;
-		case BitSize.SixtyFour:
 			return 4;
+		case BitSize.SixtyFour:
+			return 8;
 		default:
 			throw new Error(`bitSize ${bitSize} is not supported`)
 	}

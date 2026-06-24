@@ -1,5 +1,5 @@
 import EncodingInfoData from "../encodingInfoData";
-import EncodingInfo from "../../src/models/EncodingInfo";
+import EncodingInfo from "../../src/models/encodingInfo";
 import {faker} from '@faker-js/faker';
 import {encodingInfoFromByte} from "../../src/utils/encodingInfoFromByte";
 import {encodingInfoToByte} from "../../src/utils/encodingInfoToByte";

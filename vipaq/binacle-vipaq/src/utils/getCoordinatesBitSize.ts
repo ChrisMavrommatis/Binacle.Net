@@ -2,14 +2,14 @@ import {BitSize, Coordinates, Dimensions} from "../models";
 import { Sizes } from "./sizes";
 
 export function getCoordinatesBitSize(item: (Dimensions & Coordinates)): BitSize {
-	if (item.x <= 0) {
-		throw new Error(`'x' must be greater than 0`);
+	if (item.x < 0) {
+		throw new Error(`'x' must be zero or positive`);
 	}
-	if (item.y <= 0) {
-		throw new Error(`'y' must be greater than 0`);
+	if (item.y < 0) {
+		throw new Error(`'y' must be zero or positive`);
 	}
-	if (item.width <= 0) {
-		throw new Error(`'width' must be greater than 0`);
+	if (item.z < 0) {
+		throw new Error(`'z' must be zero or positive`);
 	}
 
 	if (item.x <= Sizes.byteMaxSize && item.y <= Sizes.byteMaxSize && item.z <= Sizes.byteMaxSize) {

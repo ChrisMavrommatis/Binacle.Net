@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Binacle.ViPaq.Helpers;
 using Binacle.ViPaq.UnitTests.Models;
 
