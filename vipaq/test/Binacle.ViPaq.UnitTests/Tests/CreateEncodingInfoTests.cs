@@ -22,15 +22,23 @@ public class CreateEncodingInfoTests
 		_ => throw new ArgumentOutOfRangeException(nameof(size))
 	};
 
-	private static Bin<ulong> BinOf(BitSize size) =>
-		new() { Length = ValueFor(size), Width = ValueFor(size), Height = ValueFor(size) };
+	private static Bin<ulong> BinOf(BitSize size)
+	{
+		var sizeValue = ValueFor(size);
+		return new Bin<ulong> { Length = sizeValue, Width = sizeValue, Height = sizeValue };
+	}
 
-	private static Item<ulong> ItemOf(BitSize dimensionsSize, BitSize coordinatesSize) =>
-		new()
+	private static Item<ulong> ItemOf(BitSize dimensionsSize, BitSize coordinatesSize)
+	{
+		var dimensionsSizeValue = ValueFor(dimensionsSize);
+		var coordinatesSizeValue = ValueFor(coordinatesSize);
+
+		return new Item<ulong>()
 		{
-			Length = ValueFor(dimensionsSize), Width = ValueFor(dimensionsSize), Height = ValueFor(dimensionsSize),
-			X = ValueFor(coordinatesSize), Y = ValueFor(coordinatesSize), Z = ValueFor(coordinatesSize)
+			Length = dimensionsSizeValue, Width = dimensionsSizeValue, Height = dimensionsSizeValue,
+			X = coordinatesSizeValue, Y = coordinatesSizeValue, Z = coordinatesSizeValue
 		};
+	}
 
 	private static EncodingInfo CreateFor(Bin<ulong> bin, params Item<ulong>[] items) =>
 		EncodingInfoHelper.CreateEncodingInfo<Bin<ulong>, Item<ulong>, ulong>(bin, items);
