@@ -176,6 +176,22 @@ All confirmed by hand against the source. None are fixed in the tree right now (
 
 A factual record of where the work actually is. No new direction here — just what exists.
 
+> **Update (2026-06-26): the C# unit-test build below is done.** The suite was fully revived and
+> restructured — `oldTests/`/`oldProviders/` staging is gone, everything is theory+provider or
+> thin-caller shape, now **1265 tests, all green** (was 76). Added beyond the checklist: golden wire
+> bytes both directions (`ExactBytesProvider`), little-endian read/write (`LittleEndianCases`),
+> reserved-version + wider-than-type guards, and dispose/idempotency tests. **Library fix:**
+> `ProtocolWriter.Dispose`/`DisposeAsync` made idempotent (flush moved inside the disposed guard).
+> **Test-data decision:** curated/deterministic, **no Bogus** (the magic seed noted below no longer
+> applies) — reintroduce only for don't-care inputs. Shared per-field values live in `BitSizeValues`.
+>
+> Remaining C# is **optional polish only**: round-trip type matrix 3/8→8/8; a truncated-body throw
+> test (`Deserialize` of a valid header + short body); trim three redundant tests (`ToByte_Returns_Correct_Byte`,
+> the duplicated Saturation rows, the ulong "Boundaries" block). **The TS port + shared vectors — this
+> doc's actual goal — are still not started.** That's the next step.
+>
+> The detailed snapshot below is historical (pre-restructure).
+
 ### C# library — bugs from the list above, now fixed in the working tree
 - **#3 fixed** — `ProtocolReader<T>.ReadAsByte()` now uses `T.CreateChecked(this.ReadByte())`.
 - **#4 fixed** — `BitSizeHelper` yardstick constants now use `T.CreateSaturating(...)` (was `CreateChecked`),

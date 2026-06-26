@@ -7,6 +7,9 @@ namespace Binacle.ViPaq.UnitTests;
 // The exact bytes on the wire. This is the anchor for the format: header byte, little-endian
 // item count, then bin dimensions, then each item's dimensions and coordinates. The TypeScript
 // mirror must produce the same bytes for the same input, so this is the cross-language contract.
+// Both directions are pinned against the same golden vectors: serialize -> bytes, and bytes ->
+// object. Pinning both sides catches a bug that is symmetric in serialize+deserialize, which a
+// round-trip test would miss.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class SerializationEncodingTests
 {
@@ -20,6 +23,16 @@ public class SerializationEncodingTests
 		var data = ViPaqSerializer.SerializeInt32<Bin<int>, Item<int>>(bin, items);
 
 		data.ShouldBe(expected);
+	}
+
+	// The inverse of the serialize golden: the same known bytes must decode back to the same bin and
+	// items. This pins the decode path against literal bytes, so a bug that is symmetric in
+	// serialize+deserialize (and would slip past the round-trip tests) is caught here.
+	[Theory]
+	[ClassData(typeof(ExactBytesProvider))]
+	public void Deserialize_Produces_Exact_Object(Bin<int> bin, Item<int>[] items, byte[] bytes)
+	{
+		SerializationTestingFixture.AssertDeserializesTo(bytes, bin, items);
 	}
 
 	// Each section's size in the header comes from its own input, and a small body stays Uncompressed.

@@ -12,8 +12,10 @@ namespace Binacle.ViPaq.UnitTests;
 [Trait("Result Tests", "Ensures results are as expected")]
 public class CreateEncodingInfoTests
 {
-	// A value that lands in each size bucket: the top of each, except 64-bit which is the bottom.
-	private static ulong ValueFor(BitSize size) => size switch
+	// A value whose required storage is exactly this size: the top of each bucket, except 64-bit which
+	// is the bottom (smallest value that needs 64 bits). This forces BitSizeHelper to pick this exact
+	// size. Different job from BitSizeValues.DistinctValue, which picks a comfortable interior value.
+	private static ulong BoundaryValueFor(BitSize size) => size switch
 	{
 		BitSize.Eight => byte.MaxValue,                 // 255
 		BitSize.Sixteen => ushort.MaxValue,             // 65535
@@ -24,14 +26,14 @@ public class CreateEncodingInfoTests
 
 	private static Bin<ulong> BinOf(BitSize size)
 	{
-		var sizeValue = ValueFor(size);
+		var sizeValue = BoundaryValueFor(size);
 		return new Bin<ulong> { Length = sizeValue, Width = sizeValue, Height = sizeValue };
 	}
 
 	private static Item<ulong> ItemOf(BitSize dimensionsSize, BitSize coordinatesSize)
 	{
-		var dimensionsSizeValue = ValueFor(dimensionsSize);
-		var coordinatesSizeValue = ValueFor(coordinatesSize);
+		var dimensionsSizeValue = BoundaryValueFor(dimensionsSize);
+		var coordinatesSizeValue = BoundaryValueFor(coordinatesSize);
 
 		return new Item<ulong>()
 		{

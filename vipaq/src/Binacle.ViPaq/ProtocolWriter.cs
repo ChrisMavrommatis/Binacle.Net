@@ -113,9 +113,11 @@ public class ProtocolWriter<T> : IDisposable, IAsyncDisposable
 
 	public void Dispose()
 	{
-		this.stream.Flush();
+		// Flush has to stay inside the guard. Calling it on an already-disposed stream throws on
+		// non-MemoryStream streams, so a second Dispose would blow up if Flush ran first.
 		if (!this.disposed)
 		{
+			this.stream.Flush();
 			this.stream.Dispose();
 			this.disposed = true;
 		}
@@ -123,9 +125,10 @@ public class ProtocolWriter<T> : IDisposable, IAsyncDisposable
 
 	public async ValueTask DisposeAsync()
 	{
-		await this.stream.FlushAsync();
+		// Same as Dispose: flush only while we still own a live stream, so a second call is a no-op.
 		if (!this.disposed)
 		{
+			await this.stream.FlushAsync();
 			await this.stream.DisposeAsync();
 			this.disposed = true;
 		}

@@ -52,13 +52,25 @@ public class ProtocolBehaviorTests
 		Should.Throw<ObjectDisposedException>(() => reader.ReadByte());
 	}
 
+	// BufferedStream, not MemoryStream: MemoryStream.Flush() is a no-op even after close, so it would
+	// hide a second Dispose flushing a dead stream. BufferedStream.Flush() throws once disposed, so
+	// this is the case that proves Dispose is actually idempotent.
 	[Fact]
 	public void Writer_Dispose_Is_Safe_To_Call_Twice()
 	{
-		var writer = new ProtocolWriter<int>(new MemoryStream());
+		var writer = new ProtocolWriter<int>(new BufferedStream(new MemoryStream()));
 		writer.Dispose();
 
 		Should.NotThrow(() => writer.Dispose());
+	}
+
+	[Fact]
+	public async Task Writer_DisposeAsync_Is_Safe_To_Call_Twice()
+	{
+		var writer = new ProtocolWriter<int>(new BufferedStream(new MemoryStream()));
+		await writer.DisposeAsync();
+
+		await Should.NotThrowAsync(async () => await writer.DisposeAsync());
 	}
 
 	[Fact]

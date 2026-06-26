@@ -16,9 +16,9 @@ public class ProtocolExtensionsTests
 	{
 		var source = new Dimensions<ulong>
 		{
-			Length = ValueFor(bitSize, 0),
-			Width = ValueFor(bitSize, 1),
-			Height = ValueFor(bitSize, 2),
+			Length = BitSizeValues.DistinctValue<ulong>(bitSize, 0),
+			Width = BitSizeValues.DistinctValue<ulong>(bitSize, 1),
+			Height = BitSizeValues.DistinctValue<ulong>(bitSize, 2),
 		};
 
 		using var stream = new MemoryStream();
@@ -44,9 +44,9 @@ public class ProtocolExtensionsTests
 	{
 		var source = new Coordinates<ulong>
 		{
-			X = ValueFor(bitSize, 0),
-			Y = ValueFor(bitSize, 1),
-			Z = ValueFor(bitSize, 2),
+			X = BitSizeValues.DistinctValue<ulong>(bitSize, 0),
+			Y = BitSizeValues.DistinctValue<ulong>(bitSize, 1),
+			Z = BitSizeValues.DistinctValue<ulong>(bitSize, 2),
 		};
 
 		using var stream = new MemoryStream();
@@ -62,15 +62,4 @@ public class ProtocolExtensionsTests
 		target.Y.ShouldBe(source.Y);
 		target.Z.ShouldBe(source.Z);
 	}
-
-	// A distinct value inside the size bucket. fieldIndex (0, 1, 2) shifts each of the three fields
-	// to a different value, so a writer that swaps two fields shows up here as a mismatch.
-	private static ulong ValueFor(BitSize size, int fieldIndex) => size switch
-	{
-		BitSize.Eight => 10UL + 10UL * (ulong)fieldIndex,                       // 10, 20, 30   (<= 255)
-		BitSize.Sixteen => 300UL + 100UL * (ulong)fieldIndex,                   // 300, 400, 500
-		BitSize.ThirtyTwo => 70_000UL + 1_000UL * (ulong)fieldIndex,            // 70000, 71000, 72000
-		BitSize.SixtyFour => 5_000_000_000UL + 100_000_000UL * (ulong)fieldIndex, // ~5e9, +1e8 each
-		_ => throw new ArgumentOutOfRangeException(nameof(size)),
-	};
 }
