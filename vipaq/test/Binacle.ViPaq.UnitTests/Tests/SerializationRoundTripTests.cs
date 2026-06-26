@@ -53,4 +53,39 @@ public class SerializationRoundTripTests
 
 		AssertRoundTrips(BuildBin<int>(BitSize.Eight), items);
 	}
+
+	[Fact]
+	public void RoundTrips_Multiple_Distinct_Items()
+	{
+		// Every field of every item is different, so a serializer that swaps, drops, or reorders
+		// items shows up as a mismatch. The matrix above only ever uses one item per row, and the
+		// compressed case uses 60 identical items — neither can catch an item-loop bug.
+		var bin = BuildBin<int>(BitSize.Eight);
+		var items = new List<Item<int>>
+		{
+			new() { Length = 1, Width = 2, Height = 3, X = 10, Y = 11, Z = 12 },
+			new() { Length = 4, Width = 5, Height = 6, X = 13, Y = 14, Z = 15 },
+			new() { Length = 7, Width = 8, Height = 9, X = 16, Y = 17, Z = 18 },
+		};
+
+		AssertRoundTrips(bin, items);
+	}
+
+	[Fact]
+	public void RoundTrips_When_Item_Count_Exceeds_255()
+	{
+		// The item count is a little-endian uint16. Under 256 its high byte is always 0, so a bug
+		// in that second byte would stay hidden. 300 items force a non-zero high byte (300 = 0x012C).
+		// Each item carries its index in every field, so order is checked at scale too.
+		var bin = BuildBin<int>(BitSize.Eight);
+		var items = Enumerable.Range(0, 300)
+			.Select(i => new Item<int>
+			{
+				Length = i + 1, Width = i + 1_000, Height = i + 2_000,
+				X = i, Y = i + 10_000, Z = i + 20_000,
+			})
+			.ToList();
+
+		AssertRoundTrips(bin, items);
+	}
 }

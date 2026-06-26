@@ -76,7 +76,7 @@ public class BitSizeHelperBehaviorTests
 		);
 		exception.ParamName.ShouldBe(expectedThrownParamName);
 	}
-	
+
 	public static IEnumerable<object[]> CoordinatesOver64BitsData =>
 	[
 		[ULongMax + UInt128.One, ULongMax, ULongMax, nameof(Coordinates<UInt128>.X)],
@@ -97,7 +97,7 @@ public class BitSizeHelperBehaviorTests
 		var exception = Should.Throw<ArgumentOutOfRangeException>(() =>
 			BitSizeHelper.GetCoordinatesBitSize<Coordinates<UInt128>, UInt128>(coordinates)
 		);
-		
+
 		exception.ParamName.ShouldBe(expectedThrownParamName);
 	}
 }

@@ -4,7 +4,7 @@ using Binacle.ViPaq.Abstractions;
 namespace Binacle.ViPaq.UnitTests.Models;
 
 public class Coordinates<T> : IWithCoordinates<T>
-	where T: struct, 
+	where T: struct,
 	IBinaryInteger<T>,
 	IComparable<T>,
 	INumber<T>

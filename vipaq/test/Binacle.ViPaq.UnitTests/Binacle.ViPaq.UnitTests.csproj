@@ -17,7 +17,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bogus" Version="35.6.5" />
         <PackageReference Include="coverlet.collector" Version="10.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -39,7 +38,6 @@
         <Using Include="Xunit" />
         <Using Include="Binacle.ViPaq" />
         <Using Include="Shouldly" />
-        <Using Include="Bogus" />
     </ItemGroup>
 
     <ItemGroup>

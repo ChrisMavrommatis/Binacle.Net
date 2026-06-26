@@ -12,29 +12,33 @@ public class SerializationBehaviorTests
 	[Fact]
 	public void Serialize_Throws_When_Bin_Is_Null()
 	{
-		Should.Throw<ArgumentNullException>(() =>
+		var exception = Should.Throw<ArgumentNullException>(() =>
 			ViPaqSerializer.SerializeInt32<Bin<int>, Item<int>>(null!, [AnItem]));
+		exception.ParamName.ShouldBe("bin");
 	}
 
 	[Fact]
 	public void Serialize_Throws_When_Items_Are_Null()
 	{
-		Should.Throw<ArgumentNullException>(() =>
+		var exception = Should.Throw<ArgumentNullException>(() =>
 			ViPaqSerializer.SerializeInt32<Bin<int>, Item<int>>(ABin, null!));
+		exception.ParamName.ShouldBe("items");
 	}
 
 	[Fact]
 	public void Deserialize_Throws_When_Data_Is_Null()
 	{
-		Should.Throw<ArgumentException>(() =>
+		var exception = Should.Throw<ArgumentException>(() =>
 			ViPaqSerializer.DeserializeInt32<Bin<int>, Item<int>>(null!));
+		exception.ParamName.ShouldBe("data");
 	}
 
 	[Fact]
 	public void Deserialize_Throws_When_Data_Is_Empty()
 	{
-		Should.Throw<ArgumentException>(() =>
+		var exception = Should.Throw<ArgumentException>(() =>
 			ViPaqSerializer.DeserializeInt32<Bin<int>, Item<int>>([]));
+		exception.ParamName.ShouldBe("data");
 	}
 
 	// A header with a reserved version (10 or 11) is rejected when read back.
@@ -53,7 +57,9 @@ public class SerializationBehaviorTests
 		// Header says the bin is 64-bit, but we read it back as int (32-bit).
 		const byte header = 0b00_11_00_00;
 
-		Should.Throw<ArgumentOutOfRangeException>(() =>
+		// ParamName points at the bin section that was too wide, not some later check.
+		var exception = Should.Throw<ArgumentOutOfRangeException>(() =>
 			ViPaqSerializer.DeserializeInt32<Bin<int>, Item<int>>([header]));
+		exception.ParamName.ShouldBe(nameof(EncodingInfo.BinDimensionsBitSize));
 	}
 }
