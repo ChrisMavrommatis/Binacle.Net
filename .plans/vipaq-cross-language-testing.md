@@ -1,4 +1,21 @@
-# ViPaq — Cross-Language Wire Testing
+# ViPaq — Cross-Language Wire OpenApiExample.Create(
+			"unpackedResponse",
+			"Unpacked Response",
+			"Example response when no items fit into the bin and all items are left unpacked",
+			new PackBinResponse()
+			{
+				Status = BinPackResultStatus.NotPacked,
+				Bin = Bin.From("custom_bin_1", 10, 40, 60),
+				AlgorithmUsed = "FFD",
+				PackedItems = [],
+				UnpackedItems =[
+					UnpackedBox.From("box_2", 1),
+					UnpackedBox.From("box_3", 1),
+					UnpackedBox.From("box_1", 2)
+				],
+				PackedItemsVolumePercentage = 0,
+				PackedBinVolumePercentage = 0,
+			}); Testing
 
 **Status:** C# unit tests **done** (1265 tests, green — see the 2026-06-26 update below). Next is a
 two-session TS + shared-vector build. **If you are a fresh session pointed at this file, read
@@ -77,6 +94,78 @@ shape. *Then* fill in the full case list.
 4. **Compressed cross-decode:** the 2×2 matrix — each side decodes the other's artifact back to the input;
    assert `artifact-cs != artifact-ts`; never byte-compare the artifacts.
 5. **Done when:** both suites consume the shared files and pass, and the regen command reproduces them.
+
+## Locked TS test style (Session 1 — decided 2026-06-26)
+
+This is the gate. All TS tests follow this. Two exemplar files already apply it and pass:
+`tests/ProtocolWriter.test.ts` and `tests/ViPaqSerializer.test.ts` (plus `tests/support/` and
+`tests/providers/`). Suite is green at 299 tests.
+
+**Layout — mirror the `src/` tree (layout A).** A test file sits at the same relative path as the
+source file it covers, with `.test.ts` appended:
+
+```
+src/utils/getByteSize.ts        ->  tests/utils/getByteSize.test.ts
+src/ProtocolWriter.ts           ->  tests/ProtocolWriter.test.ts
+tests/
+  providers/        shared data / vectors — NOT *.test.ts, so jest ignores them
+    littleEndianCases.ts        (value <-> exact bytes; reader & writer share the rows)
+    exactBytes.ts               (named bin+items -> golden bytes; Session 2 lifts these to inputs.json)
+  support/          builders & helpers — NOT *.test.ts
+    builders.ts                 bin(), item(), anItem(overrides)
+    bytes.ts                    toHex(), expectBytes()
+```
+Anything not ending in `.test.ts` is support and jest skips it (testMatch is `**/tests/**/*.test.ts`).
+1:1 with the source file by default; combine only true inverse pairs into one file — `encodingInfoToByte`
++ `encodingInfoFromByte` -> `tests/utils/encodingInfo.test.ts`; the `serialize`/`deserialize` split files
+-> `tests/ViPaqSerializer.test.ts`.
+
+**Naming — plain-English sentences.** `describe(<UnitName>)` per file; test names read as a sentence
+("writes a single byte unchanged", "rejects a negative coordinate"). When a test mirrors a C# one, tie
+them with a comment: `// ports C#: WriteUInt16_Writes_Little_Endian`. Group with one inner `describe`
+(e.g. "writes little-endian", "round trips", "throws") once a file grows; keep nesting to two levels.
+
+**Multi-row data — named object cases.** Rows are `{name, ...}` objects; the title uses `$name` so the
+failure line names the case. Row arrays live in `tests/providers/`, shared between reader and writer.
+
+**Test data — curated literals, no faker.** Deterministic inputs so golden-byte tests stay exact;
+matches the C# "no Bogus" decision. Keep both languages consistent: faker only for a genuinely
+don't-care input, and if one side uses it for a case the other should too.
+
+**Bytes — `expectBytes(actual, [...])` from `support/bytes.ts`.** Compares as hex so a failure reads
+"00 01 00 0a ..." and you can see which byte moved. (Chosen as the default; trivial to inline later if
+it ever feels like over-indirection.)
+
+**Scenario names are a shared vocabulary.** The names in `providers/exactBytes.ts` are the same names
+Session 2's `inputs.json` will be keyed by, and the same the C# golden providers should carry. So name
+cases deliberately. **C# named-cases retrofit:** the lib already has the pattern (`Scenario.ToString()
+=> Name`, providers parameterized by name). Worth bringing to the C# ViPaq golden providers — but do it
+in **Session 2**, when `ExactBytesProvider` is lifted into the shared named `inputs.json` anyway, not as
+a separate up-front session. Naming the micro-test providers (LittleEndianCases etc.) is optional polish.
+
+## Session 1 — deferred decisions (now resolved 2026-06-26)
+
+These came out of the TS-specific discovery. All four are decided. #1, #3 and #4 turned out to be the same
+issue and are folded into [vipaq-integer-range-spec.md](vipaq-integer-range-spec.md) — a written protocol
+spec plus enforcement in code. Resolutions:
+
+1. **64-bit precision.** → Enforce, don't just document. The interoperable integer range is `[0, 2^53 − 1]`;
+   `writeUInt64`/`readUint64` reject above it. See the spec plan.
+2. **Item-count boundary (65535 ok / 65536 throws).** → Test it. Build 65536 items the cheap way C# does
+   (`Array.from({length: 65536}, () => item(1,1,1,0,0,0))`). Tracked in the spec plan, Deliverable 3.
+3. **Documented TS divergences.** → No silent masking. All four `ProtocolWriter` write primitives range-check
+   and throw, mirroring C# `CreateChecked`. Tracked in the spec plan, Deliverable 2.
+4. **Aggregate "too large" throw.** → The line IS reachable in TS (a float like 1e19 passes the old check),
+   so the message is reworded to name the real limit. Tracked in the spec plan, Deliverable 2.
+
+**C#-only — confirmed no TS counterpart** (so the next session doesn't try to port them): generic-`T`
+dispatch, `ReadAsByte` per numeric type, `ThrowOnInvalidEncodingInfo` / "section wider than type",
+`CreateChecked` overflow throws, the saturation-by-numeric-type matrix, and dispose/double-dispose.
+
+**Consolidation done this session** (so the next session isn't surprised): `serialization.test.ts` folded
+into `ViPaqSerializer.test.ts`; `encodingInfoData.ts` → `providers/encodingInfoCases.ts`;
+`encodingUtils.test.ts` → `utils/encodingInfo.test.ts`; faker dropped (`tests/utils.ts` removed);
+`createEncodingInfo.test.ts` moved to curated literals.
 
 ## ⚠️ The gzip requirement — read this first
 
@@ -177,7 +266,14 @@ The procedure:
 
 ## Bugs found while prototyping (fix these as part of the build)
 
-All confirmed by hand against the source. None are fixed in the tree right now (the prototype was reverted).
+All confirmed by hand against the source.
+
+> **Status update (2026-06-26):** the TS bugs are now **fixed in the tree** (commit `bf8b543c`):
+> **#1** `getByteSize` returns 4/8, **#2** `getCoordinatesBitSize` checks `x`/`y`/`z` with `< 0`,
+> **#5** compression triggers on body length `(bufferSize - 1) > 255`, **#6** import casing fixed.
+> C# **#3**/**#4** fixed per the 2026-06-26 snapshot above. **#7** remains open but is effectively
+> unreachable in JS (a dimension would have to exceed ~9.2e18, far past `Number.MAX_SAFE_INTEGER`) —
+> cosmetic only; align the throw to name the field if/when the aggregate matters.
 
 1. **TS `getByteSize` under-allocates for ≥32-bit** — `src/utils/getByteSize.ts` returns `ThirtyTwo → 3` and
    `SixtyFour → 4`; must be **4** and **8**. Feeds `getBufferSize`, so ≥32-bit serialize output is corrupt.
