@@ -1,4 +1,5 @@
-import {Bin, BitSize, Coordinates, Dimensions} from "./models";
+import {BitSize, Coordinates, Dimensions} from "./models";
+import {Sizes} from "./utils";
 
 export class ProtocolReader {
 	private data: DataView<ArrayBuffer>;
@@ -32,6 +33,11 @@ export class ProtocolReader {
 		this.offset += 8;
 
 		const result = left + 2**32*right;
+		// A C#-made buffer can hold 64-bit values above what JS represents exactly. Refuse them instead
+		// of returning a silently-rounded number — see vipaq/PROTOCOL.md.
+		if (result > Sizes.maxInteger) {
+			throw new Error(`decoded value exceeds the max supported value (${Sizes.maxInteger})`);
+		}
 		return result;
 	}
 

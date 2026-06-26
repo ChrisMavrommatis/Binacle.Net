@@ -21,8 +21,11 @@ export function getCoordinatesBitSize(item: (Dimensions & Coordinates)): BitSize
 	if (item.x <= Sizes.uIntMaxValue && item.y <= Sizes.uIntMaxValue && item.z <= Sizes.uIntMaxValue) {
 		return BitSize.ThirtyTwo;
 	}
-	if (item.x <= Sizes.uLongMaxValue && item.y <= Sizes.uLongMaxValue && item.z <= Sizes.uLongMaxValue) {
+	// The 64-bit bucket caps at maxInteger (2^53 - 1), not the full 64-bit range. JS numbers cannot hold
+	// integers above that exactly, so the protocol forbids them — see vipaq/PROTOCOL.md.
+	if (item.x <= Sizes.maxInteger && item.y <= Sizes.maxInteger && item.z <= Sizes.maxInteger) {
 		return BitSize.SixtyFour;
 	}
-	throw new Error(`The 'item' coordinates are too large`);
+	// Reachable in TS: a float like 1e19 passes every check above. (In C# the type system stops this.)
+	throw new Error(`The 'item' coordinates exceed the max supported value (${Sizes.maxInteger})`);
 }

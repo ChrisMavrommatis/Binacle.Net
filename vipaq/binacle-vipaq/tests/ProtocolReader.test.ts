@@ -3,6 +3,7 @@
 // only values up to 2^53 are exact — the wide little-endian rows are C#-only (see the provider note).
 import {ProtocolReader} from "../src/ProtocolReader";
 import {ProtocolWriter} from "../src/ProtocolWriter";
+import {Sizes} from "../src/utils";
 import {uint16Cases, uint32Cases, uint64Cases} from "./providers/littleEndianCases";
 
 function readerOver(bytes: number[]): ProtocolReader {
@@ -41,6 +42,22 @@ describe("ProtocolReader", () => {
 			const reader = new ProtocolReader(new DataView(writer.buffer.buffer));
 
 			expect(read(reader)).toBe(value);
+		});
+	});
+
+	// No C# port: this guards a TS-only limit. A C#-made buffer can carry a 64-bit value above what JS
+	// holds exactly; we refuse it instead of returning a silently-rounded number. See vipaq/PROTOCOL.md.
+	describe("readUint64 guards the interoperable ceiling", () => {
+		test("reads the largest in-range value", () => {
+			// maxInteger (2^53 - 1) little-endian: low word all set, high word stops at 0x1F.
+			const maxBytes = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x1f, 0x00];
+			expect(readerOver(maxBytes).readUint64()).toBe(Sizes.maxInteger);
+		});
+
+		test("throws when the bytes decode above maxInteger", () => {
+			// 2^53, one over the ceiling: little-endian of 0x0020000000000000.
+			const overCeiling = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x00];
+			expect(() => readerOver(overCeiling).readUint64()).toThrow();
 		});
 	});
 });

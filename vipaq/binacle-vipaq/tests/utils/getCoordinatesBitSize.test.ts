@@ -2,7 +2,7 @@
 // Mirrors C# BitSizeHelper.GetCoordinatesBitSize, separate impl. Unlike dimensions, coordinate 0 is
 // legal (an item flush against the origin) — uses < 0, not <= 0. Bug #2 lived here: it checked `width`
 // instead of `z` and rejected 0.
-import {getCoordinatesBitSize} from "../../src/utils";
+import {getCoordinatesBitSize, Sizes} from "../../src/utils";
 import {BitSize} from "../../src/models";
 import {anItem} from "../support/builders";
 
@@ -30,6 +30,17 @@ describe("getCoordinatesBitSize", () => {
 			{name: "z", coords: anItem({z: -1})},
 		])("throws on negative $name", ({coords}) => {
 			expect(() => getCoordinatesBitSize(coords)).toThrow();
+		});
+	});
+
+	// The 64-bit bucket stops at maxInteger (2^53 - 1), not the full 64-bit range — see vipaq/PROTOCOL.md.
+	describe("caps the 64-bit bucket at maxInteger", () => {
+		test("the largest in-range value selects 64-bit", () => {
+			expect(getCoordinatesBitSize(anItem({x: Sizes.maxInteger}))).toBe(BitSize.SixtyFour);
+		});
+
+		test("a value above maxInteger throws", () => {
+			expect(() => getCoordinatesBitSize(anItem({x: Sizes.maxInteger + 1}))).toThrow();
 		});
 	});
 });

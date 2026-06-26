@@ -1,4 +1,5 @@
 import {BitSize, Coordinates, Dimensions} from "./models";
+import {Sizes} from "./utils";
 
 export class ProtocolWriter {
 	private offset: number;
@@ -11,22 +12,34 @@ export class ProtocolWriter {
 		this.offset = 0;
 	}
 
+	// Range-check before every write, like C#'s CreateChecked. A value that does not fit the width is a
+	// bug upstream (the bit-size picker should have chosen a wider slot), so fail loud, never truncate.
+	private ensureFits(value: number, max: number, width: string){
+		if (value < 0 || value > max) {
+			throw new Error(`value ${value} does not fit in ${width} (0..${max})`);
+		}
+	}
+
 	writeByte(value: number){
+		this.ensureFits(value, Sizes.byteMaxSize, "a byte");
 		this.data.setUint8(this.offset, value);
 		this.offset++;
 	}
 
 	writeUInt16(value: number){
+		this.ensureFits(value, Sizes.uShortMaxValue, "a uint16");
 		this.data.setUint16(this.offset, value, true);
 		this.offset += 2;
 	}
 
 	writeUInt32(value: number){
+		this.ensureFits(value, Sizes.uIntMaxValue, "a uint32");
 		this.data.setUint32(this.offset, value, true);
 		this.offset += 4;
 	}
 
 	writeUInt64(value: number){
+		this.ensureFits(value, Sizes.maxInteger, "a uint64");
 		const low = value >>> 0;
 		const high = Math.floor(value / 2 ** 32) >>> 0;
 		this.data.setUint32(this.offset, low, true);

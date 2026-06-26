@@ -1,21 +1,4 @@
-# ViPaq — Cross-Language Wire OpenApiExample.Create(
-			"unpackedResponse",
-			"Unpacked Response",
-			"Example response when no items fit into the bin and all items are left unpacked",
-			new PackBinResponse()
-			{
-				Status = BinPackResultStatus.NotPacked,
-				Bin = Bin.From("custom_bin_1", 10, 40, 60),
-				AlgorithmUsed = "FFD",
-				PackedItems = [],
-				UnpackedItems =[
-					UnpackedBox.From("box_2", 1),
-					UnpackedBox.From("box_3", 1),
-					UnpackedBox.From("box_1", 2)
-				],
-				PackedItemsVolumePercentage = 0,
-				PackedBinVolumePercentage = 0,
-			}); Testing
+# ViPaq — Cross-Language Wire Testing
 
 **Status:** C# unit tests **done** (1265 tests, green — see the 2026-06-26 update below). Next is a
 two-session TS + shared-vector build. **If you are a fresh session pointed at this file, read
