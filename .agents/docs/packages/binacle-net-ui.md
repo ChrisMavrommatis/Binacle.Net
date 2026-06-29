@@ -1,6 +1,6 @@
 ---
 description: packages/binacle-net-ui — Alpine.js components + Three.js visualizer for the packing demo. Components, plugins, model layers, and the window.binacle global.
-verified: 2026-06-10
+verified: 2026-06-29
 check: Component x-data names, plugin exports, and model layers match packages/binacle-net-ui/src/
 also_update:
   - packages/README.md
@@ -19,7 +19,7 @@ with its own webpack + ts-loader (`web/_js/packing_demo.js`, `web/_js/protocol_d
 `web/webpack.config.js`). `three` is bundled from web's `node_modules`, not a CDN.
 
 The `Binacle.Net.UIModule` does **not** use this package — it has its own legacy raw-JS visualizer in
-`wwwroot/js`. There is an open plan to converge them (`.plans/uimodule-alpine-port.md`).
+`wwwroot/js`. There is an open plan to converge them (`.agents/plans/uimodule-alpine-port.md`).
 
 ## Public entry points (`index.ts`)
 

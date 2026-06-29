@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Regenerates .agent-docs/_index.md from the description: frontmatter in each doc.
+# Regenerates .agents/docs/_index.md from the description: frontmatter in each doc.
 # Run from the repo root: ./config/docs.sh
 
 set -euo pipefail
 
-DOCS_DIR=".agent-docs"
+DOCS_DIR=".agents/docs"
 INDEX_FILE="$DOCS_DIR/_index.md"
 
 cat > "$INDEX_FILE" <<'HEADER'
@@ -14,7 +14,7 @@ description: Flat manifest of every agent doc — path and one-line description.
 
 # Agent Docs Index
 
-Full list of every doc in `.agent-docs/`. Read the relevant file for details.
+Full list of every doc in `.agents/docs/`. Read the relevant file for details.
 
 | Doc | Description |
 |---|---|

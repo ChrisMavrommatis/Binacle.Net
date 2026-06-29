@@ -4,7 +4,7 @@ description: Flat manifest of every agent doc — path and one-line description.
 
 # Agent Docs Index
 
-Full list of every doc in `.agent-docs/`. Read the relevant file for details.
+Full list of every doc in `.agents/docs/`. Read the relevant file for details.
 
 | Doc | Description |
 |---|---|
@@ -45,5 +45,5 @@ Full list of every doc in `.agent-docs/`. Read the relevant file for details.
 | [samples/README.md](samples/README.md) | Deployment samples — Docker Compose (minimal, ui, service-npgsql, service-azure) and Kubernetes (minimal); feature flags, config wiring, and the keep-in-sync rule |
 | [shared/README.md](shared/README.md) | Shared slice — Binacle.TestsKernel (scenario data, compact-string formats, providers, fixtures) and shared/data (OR-Library benchmark data) |
 | [vipaq/README.md](vipaq/README.md) | Binacle.ViPaq — compact binary format for encoding packing results. Wire layout, encoding-info header, C# API surface, and limits. |
-| [vipaq/typescript.md](vipaq/typescript.md) | Binacle.ViPaq TypeScript mirror (vipaq/binacle-vipaq) — public API, how it differs from the C# library, and the known buffer-size bug |
+| [vipaq/typescript.md](vipaq/typescript.md) | Binacle.ViPaq TypeScript mirror (vipaq/binacle-vipaq) — public API and how it differs from the C# library |
 | [web/README.md](web/README.md) | Jekyll marketing/landing site at web/ — product home, apps listing, and interactive packing demo. |

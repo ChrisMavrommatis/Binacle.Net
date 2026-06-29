@@ -1,6 +1,6 @@
 ---
 description: config/ — maintainer local-dev tooling: run/test/benchmark/build scripts, the doc-index and tmux scripts, local docker-compose, env files, and emulator state
-verified: 2026-06-10
+verified: 2026-06-29
 check: Script list, docker-compose services, and env keys match config/
 also_update:
   - commands.md
@@ -22,7 +22,7 @@ doc describes what's in the directory.
 | `tests.sh <alias>` | `dotnet run --project <path>`. Aliases `lib`, `api`, `api_service`, `vipaq`, `performance` |
 | `benchmarks.sh [FastValidation\|AlgorithmRacing]` | `dotnet run -c Release --filter <pattern>` from `lib/test/Binacle.Lib.Benchmarks/`. No arg = all |
 | `build.sh` | Publishes (`-c Release -o build/output --self-contained --runtime linux-x64`), `docker build -t binacle-net:local`, then `docker compose -f config/docker-compose.build.yml up` |
-| `docs.sh` | Regenerates `.agent-docs/_index.md` from each doc's `description:` frontmatter |
+| `docs.sh` | Regenerates `.agents/docs/_index.md` from each doc's `description:` frontmatter |
 | `tmux.sh` | Builds/re-attaches the `binacle` tmux session (windows `api`/`docs`/`web`/`tests`/`misc`/`bench_1..3`); panes are pre-`cd`'d, nothing auto-runs |
 
 The aliases live in bash associative arrays inside each script (`api.sh`, `tests.sh`, `benchmarks.sh`). `docs.sh`

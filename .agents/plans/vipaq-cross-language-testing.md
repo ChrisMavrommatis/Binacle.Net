@@ -7,7 +7,7 @@ The shared cross-language vectors are still **not started**.
 **Goal:** Guarantee the C# `Binacle.ViPaq` library and its hand-maintained TypeScript mirror
 (`vipaq/binacle-vipaq`) stay **wire-compatible** — bytes written by one are readable by the other.
 
-Reference docs: `/.agent-docs/vipaq/README.md` (canonical format), `/.agent-docs/vipaq/typescript.md` (TS mirror).
+Reference docs: `/.agents/docs/vipaq/README.md` (canonical format), `/.agents/docs/vipaq/typescript.md` (TS mirror).
 
 ## The need
 

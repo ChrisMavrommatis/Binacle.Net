@@ -5,9 +5,9 @@
 (not yet published in the docs site).
 
 The reference contract lives in the agent docs:
-- `/.agent-docs/api/v4/README.md` — endpoint tables (implemented + planned), algorithm selection, response shape
-- `/.agent-docs/api/v4/add-endpoint.md` — step-by-step guide for adding one
-- `/.agent-docs/api/v4/contracts.md` — request/response types and validators
+- `/.agents/docs/api/v4/README.md` — endpoint tables (implemented + planned), algorithm selection, response shape
+- `/.agents/docs/api/v4/add-endpoint.md` — step-by-step guide for adding one
+- `/.agents/docs/api/v4/contracts.md` — request/response types and validators
 
 Keep the planned list below in sync with the "Planned Endpoints" table in `api/v4/README.md`.
 

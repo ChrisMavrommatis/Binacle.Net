@@ -22,20 +22,23 @@ Start exploring Binacle.Net now! 🚀
 ## 📂 Repository Structure
 
 ```text
-/Binacle.Net # Root directory
-├── /assets     # Static assets copied by build
-├── /build      # Build scripts, generated files and output artifacts
-├── /config     # Configuration files for running the API, Benchmarks, Tests, Docs locally
-├── /doc        # Documentation files
-├── /docs       # Documentation Site
-├── /gems       # Ruby gems
-├── /packages   # JS Packages
-├── /res        # Resources (HTTP Requests, etc)
-├── /samples    # Example Projects for running Binacle.Net
-├── /src        # Source Code
-├── /test       # Test Projects
-├── /web        # Binacle.Net Website
+/Binacle.Net      # Root directory
+├── /api          # HTTP API — ASP.NET Core minimal APIs (v3, v4) and modules
+├── /lib          # Core 3D bin-packing engine (Binacle.Lib)
+├── /vipaq        # ViPaq — compact binary format for packing results
+├── /shared       # Shared test kernel and benchmark data
+├── /packages     # JavaScript/TypeScript packages (npm workspaces)
+├── /ruby         # Ruby gems — Jekyll plugins for the docs and web sites
+├── /docs         # Documentation site (Jekyll)
+├── /web          # Binacle.Net website (Jekyll)
+├── /samples      # Docker Compose and Kubernetes deployment samples
+├── /config       # Local-dev scripts (run, test, benchmark, build)
+├── /assets       # Shared static assets copied into the sites at build time
+├── /build        # Build output for the docs and web sites
+└── /results      # Benchmark and packing-efficiency output
 ```
+
+Each slice folder has its own `README.md` with details.
 
 ## 📄 License
 

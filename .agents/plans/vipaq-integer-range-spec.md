@@ -25,13 +25,13 @@ The constant `2^53 − 1` is `Number.MAX_SAFE_INTEGER` in JS. Call it `MaxIntege
 ## Deliverable 1 — the protocol spec
 
 Create `vipaq/PROTOCOL.md`. First normative, language-agnostic spec for the format. It sits above both
-implementations. The `.agent-docs/vipaq/` files stay as agent notes and link to it.
+implementations. The `.agents/docs/vipaq/` files stay as agent notes and link to it.
 
 Must contain at least:
 
 - **Integer range** (the rule above) — the core of this plan. MUST reject outside `[0, 2^53 − 1]`, encode and decode.
 - A short wire-format section (header byte, little-endian counts, bin then per-item dims+coords). Can be lifted
-  from `.agent-docs/vipaq/README.md`; keep it normative and terse. Fill fully later if needed — the integer-range
+  from `.agents/docs/vipaq/README.md`; keep it normative and terse. Fill fully later if needed — the integer-range
   rule is the part that must land now.
 - A "decisions log" section so future protocol calls (like this one) are recorded with date and rationale.
 

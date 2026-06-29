@@ -120,4 +120,4 @@ Both can be combined: npm script triggers webpack with the dual config, MSBuild 
 6. Delete `BinacleVisualizerService`, `MessagingService`, and code-behind files.
 7. Remove Interactive Server render mode if nothing else needs it.
 8. Add MSBuild hook so `dotnet build` keeps the bundle fresh.
-9. Update `.agent-docs/api/modules/ui.md` to reflect the new stack.
+9. Update `.agents/docs/api/modules/ui.md` to reflect the new stack.

@@ -1,7 +1,9 @@
 # ViPaq Protocol Specification
 
-> **Status: experimental.** ViPaq may change. This document is the normative, language-agnostic definition of
-> the wire format. When code and this spec disagree, this spec is the intent; file an issue.
+> **Status: experimental.** ViPaq may change. This document defines the wire format, independent of any
+> language. It is the authority on what the bytes mean. The C# library (`src/Binacle.ViPaq`) is the reference
+> implementation — it produces the golden test bytes — but it does not outrank this spec. Where C# differs from
+> this document (see the decisions log), C# has the bug to fix, not the spec.
 
 ViPaq is a compact binary format for one packing result: a single **bin** (dimensions) plus a list of **items**
 (dimensions and position coordinates). There are two implementations of this one format — the canonical C#
@@ -25,7 +27,8 @@ A ViPaq blob is one header byte followed by a body:
 [ EncodingInfo : 1 byte ][ Body ]
 ```
 
-- The header byte is **never compressed**. It is prepended **after** the body is (optionally) compressed.
+- The header byte is **never compressed**. The body is built first and compressed if it is large enough (§6);
+  the header byte is added in front afterwards.
 - So every blob is **self-describing**: a decoder reads byte 0 first, then reads or decompresses the body
   according to it. This is what makes the two implementations interoperate.
 - Base64 is **not** part of the format. Encoders return raw bytes; callers (the API) may base64 the result.
@@ -49,8 +52,8 @@ byte = (Version << 6) | (BinDimensionsBitSize << 4) | (ItemDimensionsBitSize << 
 
 The field at bits 7-6 is named `Version` in both implementations. Today it carries only the **compression**
 state: `0` = body stored raw, `1` = body is a gzip stream. There is no separate format-version field. Values
-`2` and `3` are reserved (see §6 and the decisions log). A decoder **MUST** reject a blob whose `Version` is
-`Reserved2` or `Reserved3`.
+`2` and `3` are reserved. A decoder **MUST** reject a blob whose `Version` is `Reserved2` or `Reserved3`
+(see §7 and §8).
 
 ## 3. Body layout
 
@@ -65,6 +68,8 @@ for its section in the header (§2), encoded little-endian (§4).
 
 The item count is **always** a 2-byte `uint16`, independent of the `BitSize` fields. The `BitSize` fields apply
 only to bin dimensions, item dimensions, and item coordinates.
+
+Items appear in the order the encoder received them. A decoder **MUST** return them in that same order.
 
 ## 4. Integer widths (`BitSize`)
 
@@ -90,10 +95,11 @@ Each dimension/coordinate section is stored at one of four byte-aligned widths:
 - The bin dimensions are sized on their own (`BinDimensionsBitSize`).
 - **All items share one** item-dimensions width and **one** item-coordinates width: the largest value across
   the whole item list drives each. An encoder **MUST** size by the maximum, not per item.
+- When there are **no items**, both item widths default to `Eight`.
 
 Note `SixtyFour` is a **storage width** (8 bytes), not a value ceiling. The largest value it may carry is
-`2^53 − 1` (§5), so the top ~11 bits of every 64-bit field are zero. The width is still chosen because a value
-above `4,294,967,295` does not fit 4 bytes.
+`2^53 − 1` (§5), so the top 11 bits of every 64-bit field are always zero. The width is still chosen because a
+value above `4,294,967,295` does not fit 4 bytes.
 
 ## 5. Values and limits
 
@@ -164,7 +170,9 @@ A decoder **MUST**:
 5. Read bin dimensions at `BinDimensionsBitSize`.
 6. Repeat count times: read item dimensions at `ItemDimensionsBitSize`, then coordinates at
    `ItemCoordinatesBitSize`.
-7. Reject any 64-bit value above `MaxInteger` (§5.1).
+
+While reading steps 5 and 6, reject any 64-bit value the moment it reads above `MaxInteger` (§5.1) — do not
+return it. Only a `SixtyFour` field can exceed the ceiling; narrower widths cannot.
 
 ## 8. Errors — what MUST be rejected
 
@@ -214,12 +222,13 @@ This shows both the little-endian order and a `0` coordinate being valid.
 
 Protocol decisions, newest first. Record date and rationale for anything that changes the wire or its rules.
 
-- **2026-06-27 — Canonical compression trigger is body length > 255 bytes.** The C# library is canonical, so
-  its rule defines the byte-exact golden vectors. The TS mirror currently triggers on the buffer length
-  *including* the 3 header/count bytes (an off-by-one); that is a known deviation to align. It is not an interop
-  bug — the header is self-describing, so at the boundary one side may emit raw and the other gzip and each still
-  decodes on the opposite side. Only the borderline blob bytes differ.
-- **2026-06-27 — `PROTOCOL.md` is the normative spec; `README.md` is a short index.** The `.agent-docs/vipaq/`
+- **2026-06-27 — Canonical compression trigger is body length > 255 bytes.** The C# library is the reference, so
+  its rule defines the byte-exact golden vectors (`memoryStream.Length > byte.MaxValue`, body only — the header is
+  prepended afterward). The TS mirror matches: `(bufferSize - 1) > 255`, where `getBufferSize` counts the 1-byte
+  header, so `bufferSize - 1` is the body. (TS once triggered on the full buffer length — an off-by-one — now
+  aligned, 2026-06-29.) Compressed blobs are still never byte-compared across implementations; only cross-decode
+  is guaranteed (§6).
+- **2026-06-27 — `PROTOCOL.md` is the normative spec; `README.md` is a short index.** The `.agents/docs/vipaq/`
   files stay as agent notes and link here.
 - **2026-06-27 — Bits 7-6 keep the name `Version`; it currently encodes compression only.** There is no
   dedicated format-version field. `Reserved2`/`Reserved3` are unused and decoders reject them. A future format
@@ -229,14 +238,14 @@ Protocol decisions, newest first. Record date and rationale for anything that ch
   no implementation can silently round. C# `ulong` can hold more, but that is outside ViPaq. The `SixtyFour`
   bucket stays an 8-byte storage width; only its accepted value range is capped at `MaxInteger`.
   C# currently accepts up to `2^64 − 1` and is therefore non-conformant; it is to be tightened to this ceiling
-  (tracked in `.plans/vipaq-integer-range-spec.md`, Deliverable 4).
+  (tracked in `.agents/plans/vipaq-integer-range-spec.md`, Deliverable 4).
 
 ## 11. References
 
 - C# canonical implementation — `src/Binacle.ViPaq/`
-- TypeScript mirror — `binacle-vipaq/` (see `../.agent-docs/vipaq/typescript.md` for divergences)
+- TypeScript mirror — `binacle-vipaq/` (see `../.agents/docs/vipaq/typescript.md` for divergences)
 - Shared cross-language test vectors — `test-vectors/` (and its `README.md`)
-- Agent notes — `../.agent-docs/vipaq/README.md`
-- Plans — `../.plans/vipaq-integer-range-spec.md`, `../.plans/vipaq-cross-language-testing.md`
+- Agent notes — `../.agents/docs/vipaq/README.md`
+- Plans — `../.agents/plans/vipaq-integer-range-spec.md`, `../.agents/plans/vipaq-cross-language-testing.md`
 </content>
 </invoke>

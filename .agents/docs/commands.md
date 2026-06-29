@@ -1,6 +1,6 @@
 ---
 description: How to run the API, tests, benchmarks, and build the Docker image
-verified: 2026-06-10
+verified: 2026-06-29
 check: Aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
 ---
 
@@ -61,8 +61,8 @@ To build the API image locally and run it with all modules on, use `./config/bui
 ./config/docs.sh
 ```
 
-Rewrites `.agent-docs/_index.md` from each doc's `description:` frontmatter. Run it after adding, renaming, or
-re-describing any `.agent-docs/*.md` file.
+Rewrites `.agents/docs/_index.md` from each doc's `description:` frontmatter. Run it after adding, renaming, or
+re-describing any `.agents/docs/*.md` file.
 
 ## Dev session (tmux)
 
