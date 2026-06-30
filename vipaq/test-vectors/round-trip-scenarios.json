@@ -40,5 +40,19 @@
     "Bin": "10x20x30",
     "Item": "1x2x3 (4,5,6)",
     "Count": 300
+  },
+  {
+    "Name": "just under compression threshold (stays raw)",
+    "Bin": "300x300x300",
+    "Item": "1x2x3 (4,5,6)",
+    "Count": 41,
+    "ExpectedVersion": "Uncompressed"
+  },
+  {
+    "Name": "just over compression threshold (compresses)",
+    "Bin": "10x20x30",
+    "Item": "1x2x3 (4,5,6)",
+    "Count": 42,
+    "ExpectedVersion": "CompressedGzip"
   }
 ]

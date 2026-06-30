@@ -54,7 +54,12 @@ Every value is within ViPaq's interoperable range `[0, 2^53 − 1]` (`9007199254
 - **`encoding-info-bytes.json`** is combinatorial (`Byte = Version<<6 | Bin<<4 | ItemDim<<2 | ItemCoord`),
   generated, not hand-authored. Regenerate if the enums change.
 - **`round-trip-scenarios.json`** uses either an explicit `Items` array or, for many identical items, an
-  `Item` template plus a `Count` (the loader expands `Item` × `Count`).
+  `Item` template plus a `Count` (the loader expands `Item` × `Count`). Two cases also carry an optional
+  `ExpectedVersion` (`Uncompressed` / `CompressedGzip`): the test reads byte 0 after serialize and asserts the
+  compression flag, pinning the §6 trigger. They straddle the 255-byte boundary as tightly as the format allows
+  — a real body is always `≡ 2 (mod 3)` (a 2-byte count plus three-int sections), so body `254` (raw) and `257`
+  (compressed) are the closest reachable pair; exactly `255`/`256` can never occur, so the trigger constant is
+  only observable as "raw at 254, compressed at 257".
 - **`bit-size-invalid.json`** carries `Field` for C# to assert the thrown parameter name; TS only asserts
   that it throws (no typed param name).
 
