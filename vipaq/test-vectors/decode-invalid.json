@@ -1,0 +1,43 @@
+[
+  {
+    "Name": "empty input",
+    "Blob": [],
+    "Reason": "input shorter than 1 byte (PROTOCOL.md §7.1/§8)"
+  },
+  {
+    "Name": "reserved version 2",
+    "Blob": ["0b10_00_00_00", "0x01", "0x00", "0x0A", "0x14", "0x1E", "0x01", "0x02", "0x03", "0x04", "0x05", "0x06"],
+    "Reason": "Version Reserved2 rejected before the body is read (§2/§7); the body is valid, so only the version can be the cause"
+  },
+  {
+    "Name": "reserved version 3",
+    "Blob": ["0b11_00_00_00", "0x01", "0x00", "0x0A", "0x14", "0x1E", "0x01", "0x02", "0x03", "0x04", "0x05", "0x06"],
+    "Reason": "Version Reserved3 rejected before the body is read (§2/§7)"
+  },
+  {
+    "Name": "coordinate above MaxInteger",
+    "Blob": ["0b00_00_00_11", "0x01", "0x00", "0x0A", "0x14", "0x1E", "0x01", "0x02", "0x03",
+             "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x20", "0x00",
+             "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00",
+             "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00"],
+    "Reason": "decoded 64-bit coord X = 2^53 exceeds MaxInteger; the decoder must reject, not round (§5.1/§7)"
+  },
+  {
+    "Name": "bin dimension above MaxInteger",
+    "Blob": ["0b00_11_00_00", "0x00", "0x00",
+             "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x20", "0x00",
+             "0x01", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00",
+             "0x01", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00"],
+    "Reason": "decoded 64-bit bin Length = 2^53 exceeds MaxInteger; exercises the dimensions decode guard (bin/item dims), not coordinates (§5.1/§7)"
+  },
+  {
+    "Name": "truncated body",
+    "Blob": ["0b00_00_00_00", "0x02", "0x00", "0x0A"],
+    "Reason": "header declares 2 items (all 8-bit) but the body ends after 1 byte of bin; the decoder must reject, not read past the end"
+  },
+  {
+    "Name": "invalid gzip body",
+    "Blob": ["0b01_00_00_00", "0xDE", "0xAD", "0xBE", "0xEF"],
+    "Reason": "Version CompressedGzip but the body is not a valid gzip stream (no 1F 8B magic); decompression must fail (§7 step 3)"
+  }
+]

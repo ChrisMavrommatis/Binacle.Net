@@ -21,5 +21,6 @@
   {"Name": "boundary 65535 (16-bit)",      "Values": "65535x65535x65535",                "ExpectedBitSize": "Sixteen"},
   {"Name": "boundary 65536 (32-bit)",      "Values": "65536x65536x65536",                "ExpectedBitSize": "ThirtyTwo"},
   {"Name": "boundary 4294967295 (32-bit)", "Values": "4294967295x4294967295x4294967295", "ExpectedBitSize": "ThirtyTwo"},
-  {"Name": "boundary 4294967296 (64-bit)", "Values": "4294967296x4294967296x4294967296", "ExpectedBitSize": "SixtyFour"}
+  {"Name": "boundary 4294967296 (64-bit)", "Values": "4294967296x4294967296x4294967296", "ExpectedBitSize": "SixtyFour"},
+  {"Name": "boundary maxInteger (64-bit)",  "Values": "9007199254740991x9007199254740991x9007199254740991", "ExpectedBitSize": "SixtyFour"}
 ]
