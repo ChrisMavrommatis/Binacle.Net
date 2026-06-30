@@ -237,8 +237,8 @@ Protocol decisions, newest first. Record date and rationale for anything that ch
   integer all target runtimes hold exactly (JS `number`). Values above it are rejected on encode and decode, so
   no implementation can silently round. C# `ulong` can hold more, but that is outside ViPaq. The `SixtyFour`
   bucket stays an 8-byte storage width; only its accepted value range is capped at `MaxInteger`.
-  C# currently accepts up to `2^64 − 1` and is therefore non-conformant; it is to be tightened to this ceiling
-  (tracked in `.agents/plans/vipaq-integer-range-spec.md`, Deliverable 4).
+  Both C# and TypeScript enforce this ceiling on encode and decode as of 2026-06-30
+  (`.agents/plans/vipaq-integer-range-spec.md`, Deliverable 4).
 
 ## 11. References
 

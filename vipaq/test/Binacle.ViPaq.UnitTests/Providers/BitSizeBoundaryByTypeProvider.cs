@@ -43,12 +43,14 @@ internal class BitSizeBoundaryByTypeProvider : IEnumerable<object[]>
 		yield return [typeof(ulong), 65536UL, BitSize.ThirtyTwo];
 		yield return [typeof(ulong), 4294967295UL, BitSize.ThirtyTwo];
 		yield return [typeof(ulong), 4294967296UL, BitSize.SixtyFour];
+		yield return [typeof(ulong), 9007199254740991UL, BitSize.SixtyFour]; // MaxInteger (2^53 - 1), top of the bucket
 		yield return [typeof(long), 255UL, BitSize.Eight];
 		yield return [typeof(long), 256UL, BitSize.Sixteen];
 		yield return [typeof(long), 65535UL, BitSize.Sixteen];
 		yield return [typeof(long), 65536UL, BitSize.ThirtyTwo];
 		yield return [typeof(long), 4294967295UL, BitSize.ThirtyTwo];
 		yield return [typeof(long), 4294967296UL, BitSize.SixtyFour];
+		yield return [typeof(long), 9007199254740991UL, BitSize.SixtyFour]; // MaxInteger (2^53 - 1), top of the bucket
 	}
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

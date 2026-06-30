@@ -27,7 +27,7 @@ over versioned REST endpoints.
 - **v3** (`/api/v3`) — stable. Do not modify.
 - **v4** (`/api/v4`) — active development.
 
-Each version offers **fit** (does it fit?) and **pack** (where does each item go?). See the
+Each version offers **fit** (do all items fit?) and **pack** (pack as many as you can). See the
 root [README](../README.md) for what those mean.
 
 ## Run it

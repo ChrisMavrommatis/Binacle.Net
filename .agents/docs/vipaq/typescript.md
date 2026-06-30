@@ -1,6 +1,6 @@
 ---
 description: Binacle.ViPaq TypeScript mirror (vipaq/binacle-vipaq) — public API and how it differs from the C# library
-verified: 2026-06-29
+verified: 2026-06-30
 check: TS API signatures and divergences match vipaq/binacle-vipaq/src/
 also_update:
   - vipaq/README.md
@@ -39,14 +39,14 @@ below.)
 | API shape | `SerializeInt32` / `SerializeUInt16` + generic `Serialize<TBin,TItem,T>` | single `serialize` / `deserialize`, JS `number` only — no width-typed or generic variants |
 | Sync | synchronous, returns `byte[]` | **async**, returns `Promise<Uint8Array>` |
 | Width validation | `ThrowOnInvalidEncodingInfo<T>` checks `T` can hold the stored bit sizes | range-checks every write and rejects a decoded 64-bit value above `MaxInteger` (2^53−1) |
-| 64-bit values | exact `ulong`, accepts up to 2^64−1 | float math (`left + 2**32*right`), capped at `Number.MAX_SAFE_INTEGER` (2^53−1) — C# is to be tightened to this too (PROTOCOL.md §5, Deliverable 4) |
+| 64-bit values | `ulong` storage, value capped at `MaxInteger` (2^53−1) | float math (`left + 2**32*right`), same `MaxInteger` cap (`Number.MAX_SAFE_INTEGER`) — both enforce the ceiling (PROTOCOL.md §5) |
 | Compression trigger | uncompressed **body** length > 255 | matches: `(bufferSize − 1) > 255` (body only) |
 
 ### Integer range — `[0, 2^53 − 1]`
 
-The TS mirror enforces the protocol's interoperable ceiling (`MaxInteger`, 2^53−1): every dimension/coordinate is
-range-checked on encode, and a decoded 64-bit value above it is rejected rather than silently rounded. C# still
-accepts up to 2^64−1 and is to be tightened to match — see PROTOCOL.md §5 and `.agents/plans/vipaq-integer-range-spec.md`.
+Both implementations enforce the protocol's interoperable ceiling (`MaxInteger`, 2^53−1): every dimension/coordinate
+is range-checked on encode, and a decoded 64-bit value above it is rejected rather than silently rounded. C# was
+brought to this ceiling on 2026-06-30 — see PROTOCOL.md §5 and `.agents/plans/vipaq-integer-range-spec.md`.
 
 (The old `getByteSize` under-allocation bug — `ThirtyTwo → 3`, `SixtyFour → 4` — is fixed; widths are now 4 and 8.)
 

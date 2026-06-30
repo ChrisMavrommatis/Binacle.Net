@@ -16,24 +16,24 @@ public static class ProtocolWriterExtensions
 		switch (bitSize)
 		{
 			case BitSize.Eight:
-				protocolWriter.WriteAsByte(obj.Length);
-				protocolWriter.WriteAsByte(obj.Width);
-				protocolWriter.WriteAsByte(obj.Height);
+				protocolWriter.Write8Bits(obj.Length);
+				protocolWriter.Write8Bits(obj.Width);
+				protocolWriter.Write8Bits(obj.Height);
 				break;
 			case BitSize.Sixteen:
-				protocolWriter.WriteAsUInt16(obj.Length);
-				protocolWriter.WriteAsUInt16(obj.Width);
-				protocolWriter.WriteAsUInt16(obj.Height);
+				protocolWriter.Write16Bits(obj.Length);
+				protocolWriter.Write16Bits(obj.Width);
+				protocolWriter.Write16Bits(obj.Height);
 				break;
 			case BitSize.ThirtyTwo:
-				protocolWriter.WriteAsUInt32(obj.Length);
-				protocolWriter.WriteAsUInt32(obj.Width);
-				protocolWriter.WriteAsUInt32(obj.Height);
+				protocolWriter.Write32Bits(obj.Length);
+				protocolWriter.Write32Bits(obj.Width);
+				protocolWriter.Write32Bits(obj.Height);
 				break;
 			case BitSize.SixtyFour:
-				protocolWriter.WriteAsUInt64(obj.Length);
-				protocolWriter.WriteAsUInt64(obj.Width);
-				protocolWriter.WriteAsUInt64(obj.Height);
+				protocolWriter.Write64Bits(obj.Length);
+				protocolWriter.Write64Bits(obj.Width);
+				protocolWriter.Write64Bits(obj.Height);
 				break;
 			default:
 				throw new ArgumentOutOfRangeException($"BitSize {bitSize} is not supported");
@@ -51,24 +51,24 @@ public static class ProtocolWriterExtensions
 		switch (bitSize)
 		{
 			case BitSize.Eight:
-				protocolWriter.WriteAsByte(obj.X);
-				protocolWriter.WriteAsByte(obj.Y);
-				protocolWriter.WriteAsByte(obj.Z);
+				protocolWriter.Write8Bits(obj.X);
+				protocolWriter.Write8Bits(obj.Y);
+				protocolWriter.Write8Bits(obj.Z);
 				break;
 			case BitSize.Sixteen:
-				protocolWriter.WriteAsUInt16(obj.X);
-				protocolWriter.WriteAsUInt16(obj.Y);
-				protocolWriter.WriteAsUInt16(obj.Z);
+				protocolWriter.Write16Bits(obj.X);
+				protocolWriter.Write16Bits(obj.Y);
+				protocolWriter.Write16Bits(obj.Z);
 				break;
 			case BitSize.ThirtyTwo:
-				protocolWriter.WriteAsUInt32(obj.X);
-				protocolWriter.WriteAsUInt32(obj.Y);
-				protocolWriter.WriteAsUInt32(obj.Z);
+				protocolWriter.Write32Bits(obj.X);
+				protocolWriter.Write32Bits(obj.Y);
+				protocolWriter.Write32Bits(obj.Z);
 				break;
 			case BitSize.SixtyFour:
-				protocolWriter.WriteAsUInt64(obj.X);
-				protocolWriter.WriteAsUInt64(obj.Y);
-				protocolWriter.WriteAsUInt64(obj.Z);
+				protocolWriter.Write64Bits(obj.X);
+				protocolWriter.Write64Bits(obj.Y);
+				protocolWriter.Write64Bits(obj.Z);
 				break;
 			default:
 				throw new ArgumentOutOfRangeException($"BitSize {bitSize} is not supported");

@@ -64,7 +64,7 @@ These encode language mechanics, not wire data, so they are not shared:
 
 - C# generic-`T` matrices — `SerializationRoundTripProvider`, `EncodingInfoHelperTestCaseProvider`,
   `BitSizeBoundaryByTypeProvider` (type dispatch, typed exceptions, per-type capping).
-- C#-only — saturation-by-type, dispose/double-dispose, `ReadAsByte` per numeric type.
+- C#-only — saturation-by-type, dispose/double-dispose, `Read8Bits` per numeric type.
 - TS-only — `getByteSize`, `getBufferSize`, `writeEncodingInfoToBuffer`, `compressBuffer`,
   `getDecodingDataStream` (buffer pre-sizing and Web-Streams gzip mechanics C# does not have).
 - The compression **threshold** boundary is intentionally not shared: C# switches on body `> 255`, TS on

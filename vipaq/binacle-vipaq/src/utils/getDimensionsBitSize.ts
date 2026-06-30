@@ -13,13 +13,13 @@ export function getDimensionsBitSize(item: Dimensions): BitSize {
 		throw new Error(`'height' must be greater than 0`);
 	}
 
-	if (item.length <= Sizes.byteMaxSize && item.width <= Sizes.byteMaxSize && item.height <= Sizes.byteMaxSize) {
+	if (item.length <= Sizes.eightBitsMax && item.width <= Sizes.eightBitsMax && item.height <= Sizes.eightBitsMax) {
 		return BitSize.Eight;
 	}
-	if (item.length <= Sizes.uShortMaxValue && item.width <= Sizes.uShortMaxValue && item.height <= Sizes.uShortMaxValue) {
+	if (item.length <= Sizes.sixteenBitsMax && item.width <= Sizes.sixteenBitsMax && item.height <= Sizes.sixteenBitsMax) {
 		return BitSize.Sixteen;
 	}
-	if (item.length <= Sizes.uIntMaxValue && item.width <= Sizes.uIntMaxValue && item.height <= Sizes.uIntMaxValue) {
+	if (item.length <= Sizes.thirtyTwoBitsMax && item.width <= Sizes.thirtyTwoBitsMax && item.height <= Sizes.thirtyTwoBitsMax) {
 		return BitSize.ThirtyTwo;
 	}
 	// The 64-bit bucket caps at maxInteger (2^53 - 1), not the full 64-bit range. JS numbers cannot hold

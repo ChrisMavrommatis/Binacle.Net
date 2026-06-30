@@ -4,10 +4,11 @@ using Binacle.ViPaq.UnitTests.Models;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// Each numeric width caps at its own top bucket. Using a type's MaxValue does double duty:
-// it proves saturation caps correctly, and for the SIGNED types it is the Bug B regression guard —
-// under CreateChecked the unsigned yardstick constant (e.g. ushort.MaxValue) overflows the signed
-// sibling (short), so these would throw instead of returning the expected BitSize.
+// Each numeric width caps at its own top bucket. For 8/16/32-bit types, using the type's MaxValue does
+// double duty: it proves saturation caps correctly, and for the SIGNED types it is the Bug B regression
+// guard — under CreateChecked the unsigned yardstick constant (e.g. ushort.MaxValue) overflows the signed
+// sibling (short), so these would throw instead of returning the expected BitSize. The 64-bit bucket caps
+// at MaxInteger (2^53 - 1), the protocol ceiling — below the 64-bit types' own max (PROTOCOL.md §5).
 [Trait("Result Tests", "Ensures results are as expected")]
 public class BitSizeHelperSaturationTests
 {
@@ -45,14 +46,15 @@ public class BitSizeHelperSaturationTests
 	public void Dimensions_Int_Caps_At_ThirtyTwo()
 		=> AssertDimensions<int>(int.MaxValue, BitSize.ThirtyTwo);
 
-	// SixtyFour
+	// SixtyFour — caps at MaxInteger (2^53 - 1), not the type max: ulong/long hold more, but the protocol
+	// rejects anything above MaxInteger (PROTOCOL.md §5), so that is the top of the bucket.
 	[Fact]
 	public void Dimensions_ULong_Caps_At_SixtyFour()
-		=> AssertDimensions<ulong>(ulong.MaxValue, BitSize.SixtyFour);
+		=> AssertDimensions<ulong>(ViPaqLimits.MaxInteger, BitSize.SixtyFour);
 
 	[Fact]
 	public void Dimensions_Long_Caps_At_SixtyFour()
-		=> AssertDimensions<long>(long.MaxValue, BitSize.SixtyFour);
+		=> AssertDimensions<long>((long)ViPaqLimits.MaxInteger, BitSize.SixtyFour);
 
 
 	private static void AssertCoordinates<T>(T value, BitSize expected)
@@ -90,12 +92,12 @@ public class BitSizeHelperSaturationTests
 	public void Coordinates_Int_Caps_At_ThirtyTwo()
 		=> AssertCoordinates<int>(int.MaxValue, BitSize.ThirtyTwo);
 
-	// SixtyFour
+	// SixtyFour — caps at MaxInteger (2^53 - 1), not the type max (see the dimensions note above).
 	[Fact]
 	public void Coordinates_ULong_Caps_At_SixtyFour()
-		=> AssertCoordinates<ulong>(ulong.MaxValue, BitSize.SixtyFour);
+		=> AssertCoordinates<ulong>(ViPaqLimits.MaxInteger, BitSize.SixtyFour);
 
 	[Fact]
 	public void Coordinates_Long_Caps_At_SixtyFour()
-		=> AssertCoordinates<long>(long.MaxValue, BitSize.SixtyFour);
+		=> AssertCoordinates<long>((long)ViPaqLimits.MaxInteger, BitSize.SixtyFour);
 }

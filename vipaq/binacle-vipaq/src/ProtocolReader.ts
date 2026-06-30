@@ -9,25 +9,25 @@ export class ProtocolReader {
 		this.offset = 0;
 	}
 
-	readByte(){
+	read8Bits(){
 		const read = this.data.getUint8(this.offset);
 		this.offset++;
 		return read;
 	}
 
-	readUint16() {
+	read16Bits() {
 		const read = this.data.getUint16(this.offset, true);
 		this.offset += 2;
 		return read;
 	}
 
-	readUint32(){
+	read32Bits(){
 		const read = this.data.getUint32(this.offset, true);
 		this.offset += 4;
 		return read;
 	}
 
-	readUint64(){
+	read64Bits(){
 		const left = this.data.getUint32(this.offset, true);
 		const right = this.data.getUint32(this.offset + 4, true);
 		this.offset += 8;
@@ -44,24 +44,24 @@ export class ProtocolReader {
 	readDimensions(item: Dimensions, bitSize: BitSize){
 		switch (bitSize) {
 			case BitSize.Eight:
-				item.length = this.readByte();
-				item.width = this.readByte();
-				item.height = this.readByte();
+				item.length = this.read8Bits();
+				item.width = this.read8Bits();
+				item.height = this.read8Bits();
 				break;
 			case BitSize.Sixteen:
-				item.length = this.readUint16();
-				item.width = this.readUint16();
-				item.height = this.readUint16();
+				item.length = this.read16Bits();
+				item.width = this.read16Bits();
+				item.height = this.read16Bits();
 				break;
 			case BitSize.ThirtyTwo:
-				item.length = this.readUint32();
-				item.width = this.readUint32();
-				item.height = this.readUint32();
+				item.length = this.read32Bits();
+				item.width = this.read32Bits();
+				item.height = this.read32Bits();
 				break;
 			case BitSize.SixtyFour:
-				item.length = this.readUint64();
-				item.width = this.readUint64();
-				item.height = this.readUint64();
+				item.length = this.read64Bits();
+				item.width = this.read64Bits();
+				item.height = this.read64Bits();
 				break;
 			default:
 				throw new Error(`BitSize ${bitSize} is not supported`);
@@ -71,24 +71,24 @@ export class ProtocolReader {
 	readCoordinates(item: Coordinates, bitSize: BitSize){
 		switch (bitSize) {
 			case BitSize.Eight:
-				item.x = this.readByte();
-				item.y = this.readByte();
-				item.z = this.readByte();
+				item.x = this.read8Bits();
+				item.y = this.read8Bits();
+				item.z = this.read8Bits();
 				break;
 			case BitSize.Sixteen:
-				item.x = this.readUint16();
-				item.y = this.readUint16();
-				item.z = this.readUint16();
+				item.x = this.read16Bits();
+				item.y = this.read16Bits();
+				item.z = this.read16Bits();
 				break;
 			case BitSize.ThirtyTwo:
-				item.x = this.readUint32();
-				item.y = this.readUint32();
-				item.z = this.readUint32();
+				item.x = this.read32Bits();
+				item.y = this.read32Bits();
+				item.z = this.read32Bits();
 				break;
 			case BitSize.SixtyFour:
-				item.x = this.readUint64();
-				item.y = this.readUint64();
-				item.z = this.readUint64();
+				item.x = this.read64Bits();
+				item.y = this.read64Bits();
+				item.z = this.read64Bits();
 				break;
 			default:
 				throw new Error(`BitSize ${bitSize} is not supported`);

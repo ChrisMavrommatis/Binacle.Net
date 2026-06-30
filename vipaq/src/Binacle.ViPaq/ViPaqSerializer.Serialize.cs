@@ -33,7 +33,7 @@ public static partial class ViPaqSerializer
 			protocolWriter.WriteCoordinates<TItem, T>(item, encodingInfo.ItemCoordinatesBitSize);
 		}
 
-		var shouldCompress = memoryStream.Length > byte.MaxValue;
+		var shouldCompress = memoryStream.Length > ViPaqLimits.CompressionThresholdBytes;
 		if (!shouldCompress)
 		{
 			return JoinEncodingInfoAndStream(encodingInfo, memoryStream);

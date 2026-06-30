@@ -1,9 +1,10 @@
 # ViPaq — Cross-Language Wire Testing
 
-**Status:** C# unit tests **done** (1265 tests, green — see the 2026-06-26 update below). Next is a
-two-session TS + shared-vector build. **If you are a fresh session pointed at this file, read
-"How to run this — session plan" first** — it tells you which session you are and what is in scope.
-The shared cross-language vectors are still **not started**.
+**Status:** C# unit tests **done** (1269, green). The integer-range spec + both-sides conformance are also
+**done** (2026-06-30, see [vipaq-integer-range-spec.md](vipaq-integer-range-spec.md)) — `PROTOCOL.md` exists and
+C#/TS both enforce `[0, 2^53 − 1]`. So this — the **shared cross-language vectors — is the next dedicated
+session and is now unblocked**. It is still **not started**. **If you are a fresh session pointed at this file,
+read "How to run this — session plan" first** — it tells you which session you are and what is in scope.
 **Goal:** Guarantee the C# `Binacle.ViPaq` library and its hand-maintained TypeScript mirror
 (`vipaq/binacle-vipaq`) stay **wire-compatible** — bytes written by one are readable by the other.
 
@@ -133,7 +134,7 @@ issue and are folded into [vipaq-integer-range-spec.md](vipaq-integer-range-spec
 spec plus enforcement in code. Resolutions:
 
 1. **64-bit precision.** → Enforce, don't just document. The interoperable integer range is `[0, 2^53 − 1]`;
-   `writeUInt64`/`readUint64` reject above it. See the spec plan.
+   `write64Bits`/`read64Bits` reject above it. See the spec plan.
 2. **Item-count boundary (65535 ok / 65536 throws).** → Test it. Build 65536 items the cheap way C# does
    (`Array.from({length: 65536}, () => item(1,1,1,0,0,0))`). Tracked in the spec plan, Deliverable 3.
 3. **Documented TS divergences.** → No silent masking. All four `ProtocolWriter` write primitives range-check
@@ -142,7 +143,7 @@ spec plus enforcement in code. Resolutions:
    so the message is reworded to name the real limit. Tracked in the spec plan, Deliverable 2.
 
 **C#-only — confirmed no TS counterpart** (so the next session doesn't try to port them): generic-`T`
-dispatch, `ReadAsByte` per numeric type, `ThrowOnInvalidEncodingInfo` / "section wider than type",
+dispatch, `Read8Bits` per numeric type, `ThrowOnInvalidEncodingInfo` / "section wider than type",
 `CreateChecked` overflow throws, the saturation-by-numeric-type matrix, and dispose/double-dispose.
 
 **Consolidation done this session** (so the next session isn't surprised): `serialization.test.ts` folded

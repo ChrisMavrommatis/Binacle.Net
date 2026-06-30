@@ -2,9 +2,10 @@ using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// The writer puts bytes on the wire little-endian (low byte first). The WriteAs* methods narrow T
-// down to the wire width first, then write the same bytes. These pin the exact byte order, and they
-// reuse the same vectors as the reader tests (see LittleEndianCases) so both sides agree on the bytes.
+// The writer puts bytes on the wire little-endian (low byte first). WriteByte / WriteUInt16 take a
+// fixed width and are used for the header. Write8Bits..Write64Bits narrow T down to the wire width
+// first, then write the same bytes. These pin the exact byte order, and they reuse the same vectors
+// as the reader tests (see LittleEndianCases) so both sides agree on the bytes.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class ProtocolWriterTests
 {
@@ -36,78 +37,56 @@ public class ProtocolWriterTests
 		stream.ToArray().ShouldBe(expected);
 	}
 
-	[Theory]
-	[MemberData(nameof(LittleEndianCases.UInt32), MemberType = typeof(LittleEndianCases))]
-	public void WriteUInt32_Writes_Little_Endian(uint value, byte[] expected)
-	{
-		using var stream = new MemoryStream();
-		var writer = new ProtocolWriter<int>(stream);
-
-		writer.WriteUInt32(value);
-
-		stream.ToArray().ShouldBe(expected);
-	}
-
-	[Theory]
-	[MemberData(nameof(LittleEndianCases.UInt64), MemberType = typeof(LittleEndianCases))]
-	public void WriteUInt64_Writes_Little_Endian(ulong value, byte[] expected)
-	{
-		using var stream = new MemoryStream();
-		var writer = new ProtocolWriter<ulong>(stream);
-
-		writer.WriteUInt64(value);
-
-		stream.ToArray().ShouldBe(expected);
-	}
-
 	// input byte -> same byte out, narrowed from T first.
 	[Theory]
 	[InlineData(0x00)]
 	[InlineData(0xAB)]
 	[InlineData(0xFF)]
-	public void WriteAsByte_Narrows_T_And_Writes(byte value)
+	public void Write8Bits_Narrows_T_And_Writes(byte value)
 	{
 		using var stream = new MemoryStream();
 		var writer = new ProtocolWriter<int>(stream);
 
-		writer.WriteAsByte(value);
+		writer.Write8Bits(value);
 
 		stream.ToArray().ShouldBe(new[] { value });
 	}
 
-	// The WriteAs* methods narrow T down to the wire width, then write the same little-endian bytes.
+	// Write16Bits..Write64Bits narrow T down to the wire width, then write the same little-endian
+	// bytes. These are the only place the 32- and 64-bit byte order is pinned now that the unused
+	// concrete writers are gone.
 	[Theory]
 	[MemberData(nameof(LittleEndianCases.UInt16), MemberType = typeof(LittleEndianCases))]
-	public void WriteAsUInt16_Narrows_T_And_Writes_Little_Endian(ushort value, byte[] expected)
+	public void Write16Bits_Narrows_T_And_Writes_Little_Endian(ushort value, byte[] expected)
 	{
 		using var stream = new MemoryStream();
 		var writer = new ProtocolWriter<int>(stream);
 
-		writer.WriteAsUInt16(value);
+		writer.Write16Bits(value);
 
 		stream.ToArray().ShouldBe(expected);
 	}
 
 	[Theory]
 	[MemberData(nameof(LittleEndianCases.UInt32), MemberType = typeof(LittleEndianCases))]
-	public void WriteAsUInt32_Narrows_T_And_Writes_Little_Endian(uint value, byte[] expected)
+	public void Write32Bits_Narrows_T_And_Writes_Little_Endian(uint value, byte[] expected)
 	{
 		using var stream = new MemoryStream();
 		var writer = new ProtocolWriter<long>(stream);
 
-		writer.WriteAsUInt32(value);
+		writer.Write32Bits(value);
 
 		stream.ToArray().ShouldBe(expected);
 	}
 
 	[Theory]
 	[MemberData(nameof(LittleEndianCases.UInt64), MemberType = typeof(LittleEndianCases))]
-	public void WriteAsUInt64_Narrows_T_And_Writes_Little_Endian(ulong value, byte[] expected)
+	public void Write64Bits_Narrows_T_And_Writes_Little_Endian(ulong value, byte[] expected)
 	{
 		using var stream = new MemoryStream();
 		var writer = new ProtocolWriter<ulong>(stream);
 
-		writer.WriteAsUInt64(value);
+		writer.Write64Bits(value);
 
 		stream.ToArray().ShouldBe(expected);
 	}

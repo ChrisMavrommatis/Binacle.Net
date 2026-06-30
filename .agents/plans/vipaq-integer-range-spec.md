@@ -1,7 +1,9 @@
 # ViPaq integer-range spec — enforce a common ceiling across C# and TS
 
-Status: planned (decided 2026-06-26). Sibling of [vipaq-cross-language-testing.md](vipaq-cross-language-testing.md).
-This plan turns one cross-language decision into a written spec, code that enforces it, and tests that prove it.
+Status: **Deliverables 1–4 done (2026-06-30).** Both C# and TS enforce `[0, 2^53 − 1]` on encode and decode,
+with spec-named width constants. The remaining ViPaq work — the shared cross-language vector tests — is its own
+dedicated session: see [vipaq-cross-language-testing.md](vipaq-cross-language-testing.md).
+This plan turned one cross-language decision into a written spec, code that enforces it, and tests that prove it.
 
 ## The decision
 
@@ -48,9 +50,9 @@ All values are checked against `[0, MaxInteger]`. Reject negatives too. Files:
   the line IS reachable in TS (a float like 1e19 passes the old check), so the message must be true, not
   "should never be reached".
 - `src/ProtocolWriter.ts` — range-check every write primitive and throw if out of range (mirrors C#
-  `CreateChecked`): `writeByte` 0..255, `writeUInt16` 0..65535, `writeUInt32` 0..4294967295,
-  `writeUInt64` 0..maxInteger. (Confirmed decision: all four throw.)
-- `src/ProtocolReader.ts` — `readUint64`: if the decoded value is greater than `maxInteger`, throw. Stops TS
+  `CreateChecked`): `write8Bits` 0..255, `write16Bits` 0..65535, `write32Bits` 0..4294967295,
+  `write64Bits` 0..maxInteger. (Confirmed decision: all four throw.)
+- `src/ProtocolReader.ts` — `read64Bits`: if the decoded value is greater than `maxInteger`, throw. Stops TS
   silently returning a rounded number when it decodes a C#-made buffer that used the high range.
 
 ## Deliverable 3 — TS tests
@@ -59,7 +61,7 @@ In the locked style (mirror `src/`, sentence names, named cases, `// ports C#:` 
 
 - **Write guards** — `tests/ProtocolWriter.test.ts`: each of the four widths throws just above its ceiling and
   on a negative; the largest in-range value still writes. (New — no C# port; characterizes our `CreateChecked`.)
-- **Read guard** — `tests/ProtocolReader.test.ts`: `readUint64` throws when the 8 bytes decode above `maxInteger`;
+- **Read guard** — `tests/ProtocolReader.test.ts`: `read64Bits` throws when the 8 bytes decode above `maxInteger`;
   the largest in-range value round-trips. (Covers deferred decision #1 — now an enforced throw, not silent loss.)
 - **Width-selection ceiling** — `tests/utils/getDimensionsBitSize.test.ts` / `getCoordinatesBitSize.test.ts`:
   `maxInteger` selects `SixtyFour`; one above throws with the new message.
@@ -68,21 +70,30 @@ In the locked style (mirror `src/`, sentence names, named cases, `// ports C#:` 
   `Array.from({length: 65536}, () => item(1, 1, 1, 0, 0, 0))`. Ports C#
   `EncodingInfoHelperBehaviorTests.CreateEncodingInfo_Enforces_Item_Count_Limit`.
 
-## Deliverable 4 — C# conformance (follow-up, its own task)
+## Deliverable 4 — C# conformance — DONE (2026-06-30)
 
-C# accepts up to 2^64 − 1 today, so it is non-conformant with the spec. Tighten it to reject above 2^53 − 1.
-Done as its own reviewed change, not folded into the TS session. Steps:
+C# accepted up to 2^64 − 1; now it rejects above `MaxInteger` (2^53 − 1), encode and decode. What landed:
 
-- `vipaq/src/Binacle.ViPaq/Helpers/BitSizeHelper.cs` — add a ceiling guard at `9_007_199_254_740_991` in the
-  dimension and coordinate size selection (both methods). Throw the same per-field "too large" style already used.
-- Check `EncodingInfoHelper.cs` — item-count guard is unrelated; likely no change.
-- Tests to revisit (they currently walk up to `ulong.MaxValue`, which the new ceiling forbids):
-  - `Tests/BitSizeHelperSaturationTests.cs` — rows using `ulong.MaxValue` / `long.MaxValue`.
-  - `Providers/BitSizeBoundaryByTypeProvider.cs` — the `ulong`/`long` high rows.
-  - Any exact-bytes or boundary test that encodes a value above the new ceiling.
-  Expectation: values above `2^53 − 1` now assert a throw instead of a `SixtyFour` result.
-- Add a C# test mirroring the TS read guard: decoding a buffer whose 64-bit field exceeds the ceiling throws
-  (so both sides reject the same bytes).
+- New `vipaq/src/Binacle.ViPaq/ViPaqLimits.cs` — the spec constants in one place: `EightBitsMax` (255),
+  `SixteenBitsMax` (65 535), `ThirtyTwoBitsMax` (4 294 967 295), `MaxInteger` (2^53 − 1), and
+  `CompressionThresholdBytes` (255, §6 — kept separate from `EightBitsMax` so the two 255s never conflate).
+- `Helpers/BitSizeHelper.cs` — the `SixtyFour` bucket caps at `MaxInteger`; above it the per-field throw now
+  reads "exceeds the max supported value (9007199254740991)". The width checks key off the new spec constants,
+  not `byte/ushort/uint.MaxValue`.
+- `ExtensionMethods/ProtocolReaderExtensions.cs` — decode guard. `ReadDimensions`/`ReadCoordinates` reject a
+  `SixtyFour` field above `MaxInteger` via a private `EnsureWithinRange`. Placed here, not in `ProtocolReader`,
+  because the codebase treats `ReadAs*` as raw "bytes → widen to T" primitives (their full-range little-endian
+  tests must keep passing); the semantic field decode is the right enforcement layer (spec §7).
+- `ViPaqSerializer.Serialize.cs` — compression trigger uses `ViPaqLimits.CompressionThresholdBytes`.
+- Tests: `BitSizeHelperSaturationTests` 64-bit rows now assert `MaxInteger → SixtyFour`;
+  `BitSizeBoundaryByTypeProvider` gains a `MaxInteger` top-of-bucket row; `BitSizeHelperBehaviorTests` gains
+  `_When_Value_Exceeds_MaxInteger` throw tests and drops the obsolete UInt128 "exceeds 64 bits" tests (their
+  `ulong.MaxValue` filler now trips the ceiling first); `ProtocolExtensionsBehaviorTests` gains decode-throw
+  tests for a `SixtyFour` field above the ceiling. **C# 1269 pass, TS 495 pass, `tsc` clean.**
+
+Also done this pass (TS, to match C#): `sizes.ts` renamed to the same spec-named constants
+(`eightBitsMax` / `sixteenBitsMax` / `thirtyTwoBitsMax` / `maxInteger` / `compressionThresholdBytes`), dropped the
+mislabeled `uLongMaxValue`, and all usages updated. So both libraries now key off identical spec constants.
 
 ## Order of work
 

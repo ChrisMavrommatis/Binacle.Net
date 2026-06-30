@@ -17,7 +17,7 @@ export async function deserialize(data: Uint8Array<ArrayBuffer>): Promise<Deseri
 	// Determine if the data is compressed
 	const dataStream = await getDecodingDataStream(restOfData, encodingInfo);
 	const protocolReader = new ProtocolReader(dataStream);
-	const numberOfItems = protocolReader.readUint16();
+	const numberOfItems = protocolReader.read16Bits();
 
 	const bin = new Bin();
 	protocolReader.readDimensions(bin, encodingInfo.binDimensionsBitSize);

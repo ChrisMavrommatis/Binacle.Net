@@ -6,30 +6,30 @@ namespace Binacle.ViPaq.UnitTests;
 public class ProtocolBehaviorTests
 {
 	[Fact]
-	public void WriteAsByte_Throws_When_Value_Exceeds_Byte()
+	public void Write8Bits_Throws_When_Value_Exceeds_Byte()
 	{
 		using var stream = new MemoryStream();
 		var writer = new ProtocolWriter<int>(stream);
 
-		Should.Throw<OverflowException>(() => writer.WriteAsByte(256));
+		Should.Throw<OverflowException>(() => writer.Write8Bits(256));
 	}
 
 	[Fact]
-	public void WriteAsUInt16_Throws_When_Value_Exceeds_UInt16()
+	public void Write16Bits_Throws_When_Value_Exceeds_UInt16()
 	{
 		using var stream = new MemoryStream();
 		var writer = new ProtocolWriter<int>(stream);
 
-		Should.Throw<OverflowException>(() => writer.WriteAsUInt16(70_000));
+		Should.Throw<OverflowException>(() => writer.Write16Bits(70_000));
 	}
 
 	[Fact]
-	public void WriteAsUInt32_Throws_When_Value_Exceeds_UInt32()
+	public void Write32Bits_Throws_When_Value_Exceeds_UInt32()
 	{
 		using var stream = new MemoryStream();
 		var writer = new ProtocolWriter<long>(stream);
 
-		Should.Throw<OverflowException>(() => writer.WriteAsUInt32((long)uint.MaxValue + 1));
+		Should.Throw<OverflowException>(() => writer.Write32Bits((long)uint.MaxValue + 1));
 	}
 
 	// Dispose semantics are only enforced for non-MemoryStream streams (MemoryStream skips the

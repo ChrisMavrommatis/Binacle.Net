@@ -12,13 +12,13 @@ export function getCoordinatesBitSize(item: (Dimensions & Coordinates)): BitSize
 		throw new Error(`'z' must be zero or positive`);
 	}
 
-	if (item.x <= Sizes.byteMaxSize && item.y <= Sizes.byteMaxSize && item.z <= Sizes.byteMaxSize) {
+	if (item.x <= Sizes.eightBitsMax && item.y <= Sizes.eightBitsMax && item.z <= Sizes.eightBitsMax) {
 		return BitSize.Eight;
 	}
-	if (item.x <= Sizes.uShortMaxValue && item.y <= Sizes.uShortMaxValue && item.z <= Sizes.uShortMaxValue) {
+	if (item.x <= Sizes.sixteenBitsMax && item.y <= Sizes.sixteenBitsMax && item.z <= Sizes.sixteenBitsMax) {
 		return BitSize.Sixteen;
 	}
-	if (item.x <= Sizes.uIntMaxValue && item.y <= Sizes.uIntMaxValue && item.z <= Sizes.uIntMaxValue) {
+	if (item.x <= Sizes.thirtyTwoBitsMax && item.y <= Sizes.thirtyTwoBitsMax && item.z <= Sizes.thirtyTwoBitsMax) {
 		return BitSize.ThirtyTwo;
 	}
 	// The 64-bit bucket caps at maxInteger (2^53 - 1), not the full 64-bit range. JS numbers cannot hold

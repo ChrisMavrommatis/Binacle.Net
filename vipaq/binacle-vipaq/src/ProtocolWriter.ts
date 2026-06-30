@@ -20,26 +20,26 @@ export class ProtocolWriter {
 		}
 	}
 
-	writeByte(value: number){
-		this.ensureFits(value, Sizes.byteMaxSize, "a byte");
+	write8Bits(value: number){
+		this.ensureFits(value, Sizes.eightBitsMax, "8 bits");
 		this.data.setUint8(this.offset, value);
 		this.offset++;
 	}
 
-	writeUInt16(value: number){
-		this.ensureFits(value, Sizes.uShortMaxValue, "a uint16");
+	write16Bits(value: number){
+		this.ensureFits(value, Sizes.sixteenBitsMax, "16 bits");
 		this.data.setUint16(this.offset, value, true);
 		this.offset += 2;
 	}
 
-	writeUInt32(value: number){
-		this.ensureFits(value, Sizes.uIntMaxValue, "a uint32");
+	write32Bits(value: number){
+		this.ensureFits(value, Sizes.thirtyTwoBitsMax, "32 bits");
 		this.data.setUint32(this.offset, value, true);
 		this.offset += 4;
 	}
 
-	writeUInt64(value: number){
-		this.ensureFits(value, Sizes.maxInteger, "a uint64");
+	write64Bits(value: number){
+		this.ensureFits(value, Sizes.maxInteger, "64 bits");
 		const low = value >>> 0;
 		const high = Math.floor(value / 2 ** 32) >>> 0;
 		this.data.setUint32(this.offset, low, true);
@@ -50,24 +50,24 @@ export class ProtocolWriter {
 	writeDimensions(item: Dimensions, bitSize: BitSize){
 		switch (bitSize) {
 			case BitSize.Eight:
-				this.writeByte(item.length);
-				this.writeByte(item.width);
-				this.writeByte(item.height);
+				this.write8Bits(item.length);
+				this.write8Bits(item.width);
+				this.write8Bits(item.height);
 				break;
 			case BitSize.Sixteen:
-				this.writeUInt16(item.length);
-				this.writeUInt16(item.width);
-				this.writeUInt16(item.height);
+				this.write16Bits(item.length);
+				this.write16Bits(item.width);
+				this.write16Bits(item.height);
 				break;
 			case BitSize.ThirtyTwo:
-				this.writeUInt32(item.length);
-				this.writeUInt32(item.width);
-				this.writeUInt32(item.height);
+				this.write32Bits(item.length);
+				this.write32Bits(item.width);
+				this.write32Bits(item.height);
 				break;
 			case BitSize.SixtyFour:
-				this.writeUInt64(item.length);
-				this.writeUInt64(item.width);
-				this.writeUInt64(item.height);
+				this.write64Bits(item.length);
+				this.write64Bits(item.width);
+				this.write64Bits(item.height);
 				break;
 			default:
 				throw new Error(`BitSize ${bitSize} is not supported`);
@@ -77,24 +77,24 @@ export class ProtocolWriter {
 	writeCoordinates(item: Coordinates, bitSize: BitSize){
 		switch (bitSize) {
 			case BitSize.Eight:
-				this.writeByte(item.x);
-				this.writeByte(item.y);
-				this.writeByte(item.z);
+				this.write8Bits(item.x);
+				this.write8Bits(item.y);
+				this.write8Bits(item.z);
 				break;
 			case BitSize.Sixteen:
-				this.writeUInt16(item.x);
-				this.writeUInt16(item.y);
-				this.writeUInt16(item.z);
+				this.write16Bits(item.x);
+				this.write16Bits(item.y);
+				this.write16Bits(item.z);
 				break;
 			case BitSize.ThirtyTwo:
-				this.writeUInt32(item.x);
-				this.writeUInt32(item.y);
-				this.writeUInt32(item.z);
+				this.write32Bits(item.x);
+				this.write32Bits(item.y);
+				this.write32Bits(item.z);
 				break;
 			case BitSize.SixtyFour:
-				this.writeUInt64(item.x);
-				this.writeUInt64(item.y);
-				this.writeUInt64(item.z);
+				this.write64Bits(item.x);
+				this.write64Bits(item.y);
+				this.write64Bits(item.z);
 				break;
 			default:
 				throw new Error(`BitSize ${bitSize} is not supported`);

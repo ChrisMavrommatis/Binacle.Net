@@ -30,6 +30,31 @@ public class BitSizeHelperBehaviorTests
 		exception.ParamName.ShouldBe(expectedThrownParamName);
 	}
 
+	// Above MaxInteger (2^53 - 1) the value is outside ViPaq's range and is rejected. This is now reachable
+	// with a 64-bit type (before the ceiling moved to MaxInteger, only a wider-than-64-bit T could trip it).
+	public static IEnumerable<object[]> DimensionsOverMaxIntegerData =>
+	[
+		[ViPaqLimits.MaxInteger + 1, 1UL, 1UL, nameof(Dimensions<ulong>.Length)],
+		[1UL, ViPaqLimits.MaxInteger + 1, 1UL, nameof(Dimensions<ulong>.Width)],
+		[1UL, 1UL, ViPaqLimits.MaxInteger + 1, nameof(Dimensions<ulong>.Height)],
+	];
+
+	[Theory]
+	[MemberData(nameof(DimensionsOverMaxIntegerData))]
+	public void GetDimensionsBitSize_Throws_ArgumentOutOfRangeException_When_Value_Exceeds_MaxInteger(
+		ulong length,
+		ulong width,
+		ulong height,
+		string expectedThrownParamName)
+	{
+		var dimensions = Dimensions.Create(length, width, height);
+
+		var exception = Should.Throw<ArgumentOutOfRangeException>(() =>
+			BitSizeHelper.GetDimensionsBitSize<Dimensions<ulong>, ulong>(dimensions)
+		);
+		exception.ParamName.ShouldBe(expectedThrownParamName);
+	}
+
 	[Theory]
 	[InlineData(-1, 0, 0, nameof(Coordinates<int>.X))]
 	[InlineData(0, -1, 0, nameof(Coordinates<int>.Y))]
@@ -48,56 +73,26 @@ public class BitSizeHelperBehaviorTests
 		exception.ParamName.ShouldBe(expectedThrownParamName);
 	}
 
-	// A value that needs more than 64 bits is the format's ceiling — it cannot be encoded.
-	// This is only reachable with a wider-than-64-bit T (here UInt128). For any type up to
-	// 64 bits the SixtyFour branch always catches the value first, so the throw is dead code there.
-	private static UInt128 ULongMax => ulong.MaxValue;
-
-	public static IEnumerable<object[]> DimensionsOver64BitsData =>
+	public static IEnumerable<object[]> CoordinatesOverMaxIntegerData =>
 	[
-		[ULongMax + UInt128.One, ULongMax, ULongMax, nameof(Dimensions<UInt128>.Length)],
-		[ULongMax, ULongMax + UInt128.One, ULongMax, nameof(Dimensions<UInt128>.Width)],
-		[ULongMax, ULongMax, ULongMax + UInt128.One, nameof(Dimensions<UInt128>.Height)],
+		[ViPaqLimits.MaxInteger + 1, 0UL, 0UL, nameof(Coordinates<ulong>.X)],
+		[0UL, ViPaqLimits.MaxInteger + 1, 0UL, nameof(Coordinates<ulong>.Y)],
+		[0UL, 0UL, ViPaqLimits.MaxInteger + 1, nameof(Coordinates<ulong>.Z)],
 	];
 
 	[Theory]
-	[MemberData(nameof(DimensionsOver64BitsData))]
-	public void GetDimensionsBitSize_Throws_ArgumentOutOfRangeException_When_Value_Exceeds_64_Bits(
-		UInt128 length,
-		UInt128 width,
-		UInt128 height,
-		string expectedThrownParamName
-	)
-	{
-		var dimensions = Dimensions.Create(length, width, height);
-
-		var exception = Should.Throw<ArgumentOutOfRangeException>(() =>
-			BitSizeHelper.GetDimensionsBitSize<Dimensions<UInt128>, UInt128>(dimensions)
-		);
-		exception.ParamName.ShouldBe(expectedThrownParamName);
-	}
-
-	public static IEnumerable<object[]> CoordinatesOver64BitsData =>
-	[
-		[ULongMax + UInt128.One, ULongMax, ULongMax, nameof(Coordinates<UInt128>.X)],
-		[ULongMax, ULongMax + UInt128.One, ULongMax, nameof(Coordinates<UInt128>.Y)],
-		[ULongMax, ULongMax, ULongMax + UInt128.One, nameof(Coordinates<UInt128>.Z)],
-	];
-
-	[Theory]
-	[MemberData(nameof(CoordinatesOver64BitsData))]
-	public void GetCoordinatesBitSize_Throws_ArgumentOutOfRangeException_When_Value_Exceeds_64_Bits(
-		UInt128 x,
-		UInt128 y,
-		UInt128 z,
+	[MemberData(nameof(CoordinatesOverMaxIntegerData))]
+	public void GetCoordinatesBitSize_Throws_ArgumentOutOfRangeException_When_Value_Exceeds_MaxInteger(
+		ulong x,
+		ulong y,
+		ulong z,
 		string expectedThrownParamName)
 	{
 		var coordinates = Coordinates.Create(x, y, z);
 
 		var exception = Should.Throw<ArgumentOutOfRangeException>(() =>
-			BitSizeHelper.GetCoordinatesBitSize<Coordinates<UInt128>, UInt128>(coordinates)
+			BitSizeHelper.GetCoordinatesBitSize<Coordinates<ulong>, ulong>(coordinates)
 		);
-
 		exception.ParamName.ShouldBe(expectedThrownParamName);
 	}
 }

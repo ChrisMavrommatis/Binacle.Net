@@ -16,7 +16,7 @@ export async function serialize(bin: Dimensions, items: (Dimensions & Coordinate
 
 	// encoding info to be written at the end
 	const protocolWriter = new ProtocolWriter(bufferSize - 1);
-	protocolWriter.writeUInt16(numberOfItems);
+	protocolWriter.write16Bits(numberOfItems);
 	protocolWriter.writeDimensions(bin, encodingInfo.binDimensionsBitSize);
 
 	for(let item of items)
@@ -26,7 +26,7 @@ export async function serialize(bin: Dimensions, items: (Dimensions & Coordinate
 	}
 
 	// Match the C# library: compress when the body (everything after the 1 byte header) is over 255 bytes.
-	const shouldCompress = (bufferSize - 1) > Sizes.byteMaxSize;
+	const shouldCompress = (bufferSize - 1) > Sizes.compressionThresholdBytes;
 	if (!shouldCompress)
 	{
 		return writeEncodingInfoToBuffer(encodingInfo, protocolWriter.buffer);

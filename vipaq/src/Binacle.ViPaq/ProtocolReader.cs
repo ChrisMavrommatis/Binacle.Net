@@ -18,50 +18,42 @@ public class ProtocolReader<T> : IDisposable, IAsyncDisposable
 		this.isMemoryStream = stream.GetType() == typeof(MemoryStream);
 		this.disposed = false;
 	}
-	
+
+	// ReadByte / ReadUInt16 return a fixed wire width — used for the header (first byte, item count).
+	// Read8Bits..Read64Bits read the same bytes but widen the value to T — used for dimensions and
+	// coordinates, where the value type is the caller's T. The names match the BitSize enum.
+
 	public byte ReadByte()
 	{
 		return (byte)this.InternalReadByte();
 	}
 
-	public T ReadAsByte()
-	{
-		return T.CreateChecked(this.ReadByte());
-	}
-	
 	public ushort ReadUInt16()
 	{
 		var buffer = InternalReadBuffer(stackalloc byte[sizeof(ushort)]);
 		return BinaryPrimitives.ReadUInt16LittleEndian(buffer);
 	}
 
-	public T ReadAsUInt16()
+	public T Read8Bits()
+	{
+		return T.CreateChecked(this.ReadByte());
+	}
+
+	public T Read16Bits()
 	{
 		var buffer = InternalReadBuffer(stackalloc byte[sizeof(ushort)]);
 		var ushortValue = BinaryPrimitives.ReadUInt16LittleEndian(buffer);
 		return T.CreateChecked(ushortValue);
 	}
-	
-	public uint ReadUInt32()
-	{
-		var buffer = InternalReadBuffer(stackalloc byte[sizeof(uint)]);
-		return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
-	}
 
-	public T ReadAsUInt32()
+	public T Read32Bits()
 	{
 		var buffer = InternalReadBuffer(stackalloc byte[sizeof(uint)]);
 		var uintValue = BinaryPrimitives.ReadUInt32LittleEndian(buffer);
 		return T.CreateChecked(uintValue);
 	}
-	
-	public ulong ReadUInt64()
-	{
-		var buffer = InternalReadBuffer(stackalloc byte[sizeof(ulong)]);
-		return BinaryPrimitives.ReadUInt64LittleEndian(buffer);
-	}
 
-	public T ReadAsUInt64()
+	public T Read64Bits()
 	{
 		var buffer = InternalReadBuffer(stackalloc byte[sizeof(ulong)]);
 		var ulongValue = BinaryPrimitives.ReadUInt64LittleEndian(buffer);
@@ -76,7 +68,7 @@ public class ProtocolReader<T> : IDisposable, IAsyncDisposable
 		}
 
 		ThrowIfDisposed();
-		
+
 		return this.stream.ReadByte();
 	}
 

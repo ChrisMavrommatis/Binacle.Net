@@ -35,54 +35,55 @@ public static class BitSizeHelper
 				);
 		}
 		
-		var uInt8Size = T.CreateSaturating(byte.MaxValue);
+		var eightBitsMax = T.CreateSaturating(ViPaqLimits.EightBitsMax);
 		
-		if(obj.X <= uInt8Size && obj.Y <= uInt8Size && obj.Z <= uInt8Size)
+		if(obj.X <= eightBitsMax && obj.Y <= eightBitsMax && obj.Z <= eightBitsMax)
 		{
 			return BitSize.Eight;
 		}
 		
-		var uInt16Size = T.CreateSaturating(ushort.MaxValue);
-		if(obj.X <= uInt16Size && obj.Y <= uInt16Size && obj.Z <= uInt16Size)
+		var sixteenBitsMax = T.CreateSaturating(ViPaqLimits.SixteenBitsMax);
+		if(obj.X <= sixteenBitsMax && obj.Y <= sixteenBitsMax && obj.Z <= sixteenBitsMax)
 		{
 			return BitSize.Sixteen;
 		}
 		
-		var uInt32Size = T.CreateSaturating(uint.MaxValue);
+		var thirtyTwoBitsMax = T.CreateSaturating(ViPaqLimits.ThirtyTwoBitsMax);
 		
-		if(obj.X <= uInt32Size && obj.Y <= uInt32Size && obj.Z <= uInt32Size)
+		if(obj.X <= thirtyTwoBitsMax && obj.Y <= thirtyTwoBitsMax && obj.Z <= thirtyTwoBitsMax)
 		{
 			return BitSize.ThirtyTwo;
 		}
 		
-		var uInt64Size = T.CreateSaturating(ulong.MaxValue);
-		
-		if(obj.X <= uInt64Size && obj.Y <= uInt64Size && obj.Z <= uInt64Size)
+		var maxInteger = T.CreateSaturating(ViPaqLimits.MaxInteger);
+
+		if(obj.X <= maxInteger && obj.Y <= maxInteger && obj.Z <= maxInteger)
 		{
 			return BitSize.SixtyFour;
 		}
-		
-		// At least one field is wider than 64 bits — name the offender, like the checks above.
-		if (obj.X > uInt64Size)
+
+		// At least one field is above MaxInteger (2^53 - 1) — outside ViPaq's range (PROTOCOL.md §5).
+		// Name the offender, like the checks above.
+		if (obj.X > maxInteger)
 		{
 			throw new ArgumentOutOfRangeException(
 				nameof(obj.X),
 				obj.X,
-				$"{nameof(obj.X)} is too large to encode"
+				$"{nameof(obj.X)} exceeds the max supported value ({ViPaqLimits.MaxInteger})"
 				);
 		}
-		if (obj.Y > uInt64Size)
+		if (obj.Y > maxInteger)
 		{
 			throw new ArgumentOutOfRangeException(
 				nameof(obj.Y),
 				obj.Y,
-				$"{nameof(obj.Y)} is too large to encode"
+				$"{nameof(obj.Y)} exceeds the max supported value ({ViPaqLimits.MaxInteger})"
 				);
 		}
 		throw new ArgumentOutOfRangeException(
 			nameof(obj.Z),
 			obj.Z,
-			$"{nameof(obj.Z)} is too large to encode"
+			$"{nameof(obj.Z)} exceeds the max supported value ({ViPaqLimits.MaxInteger})"
 			);
 	}
 
@@ -117,54 +118,55 @@ public static class BitSizeHelper
 				);
 		}
 		
-		var uInt8Size = T.CreateSaturating(byte.MaxValue);
+		var eightBitsMax = T.CreateSaturating(ViPaqLimits.EightBitsMax);
 		
-		if(obj.Length <= uInt8Size && obj.Width <= uInt8Size && obj.Height <= uInt8Size)
+		if(obj.Length <= eightBitsMax && obj.Width <= eightBitsMax && obj.Height <= eightBitsMax)
 		{
 			return BitSize.Eight;
 		}
 		
-		var uInt16Size = T.CreateSaturating(ushort.MaxValue);
-		if(obj.Length <= uInt16Size && obj.Width <= uInt16Size && obj.Height <= uInt16Size)
+		var sixteenBitsMax = T.CreateSaturating(ViPaqLimits.SixteenBitsMax);
+		if(obj.Length <= sixteenBitsMax && obj.Width <= sixteenBitsMax && obj.Height <= sixteenBitsMax)
 		{
 			return BitSize.Sixteen;
 		}
 		
-		var uInt32Size = T.CreateSaturating(uint.MaxValue);
+		var thirtyTwoBitsMax = T.CreateSaturating(ViPaqLimits.ThirtyTwoBitsMax);
 		
-		if(obj.Length <= uInt32Size && obj.Width <= uInt32Size && obj.Height <= uInt32Size)
+		if(obj.Length <= thirtyTwoBitsMax && obj.Width <= thirtyTwoBitsMax && obj.Height <= thirtyTwoBitsMax)
 		{
 			return BitSize.ThirtyTwo;
 		}
 		
-		var uInt64Size = T.CreateSaturating(ulong.MaxValue);
-		
-		if(obj.Length <= uInt64Size && obj.Width <= uInt64Size && obj.Height <= uInt64Size)
+		var maxInteger = T.CreateSaturating(ViPaqLimits.MaxInteger);
+
+		if(obj.Length <= maxInteger && obj.Width <= maxInteger && obj.Height <= maxInteger)
 		{
 			return BitSize.SixtyFour;
 		}
-		
-		// At least one field is wider than 64 bits — name the offender, like the checks above.
-		if (obj.Length > uInt64Size)
+
+		// At least one field is above MaxInteger (2^53 - 1) — outside ViPaq's range (PROTOCOL.md §5).
+		// Name the offender, like the checks above.
+		if (obj.Length > maxInteger)
 		{
 			throw new ArgumentOutOfRangeException(
 				nameof(obj.Length),
 				obj.Length,
-				$"{nameof(obj.Length)} is too large to encode"
+				$"{nameof(obj.Length)} exceeds the max supported value ({ViPaqLimits.MaxInteger})"
 				);
 		}
-		if (obj.Width > uInt64Size)
+		if (obj.Width > maxInteger)
 		{
 			throw new ArgumentOutOfRangeException(
 				nameof(obj.Width),
 				obj.Width,
-				$"{nameof(obj.Width)} is too large to encode"
+				$"{nameof(obj.Width)} exceeds the max supported value ({ViPaqLimits.MaxInteger})"
 				);
 		}
 		throw new ArgumentOutOfRangeException(
 			nameof(obj.Height),
 			obj.Height,
-			$"{nameof(obj.Height)} is too large to encode"
+			$"{nameof(obj.Height)} exceeds the max supported value ({ViPaqLimits.MaxInteger})"
 			);
 	}
 }

@@ -4,8 +4,8 @@ import {getDimensionsBitSize} from "./getDimensionsBitSize";
 import {getCoordinatesBitSize} from "./getCoordinatesBitSize";
 
 export function createEncodingInfo(bin: Dimensions, items: (Dimensions & Coordinates)[]): EncodingInfo {
-	if (items.length > Sizes.uShortMaxValue) {
-		throw new Error(`Items cannot be more than ${Sizes.uShortMaxValue}`);
+	if (items.length > Sizes.sixteenBitsMax) {
+		throw new Error(`Items cannot be more than ${Sizes.sixteenBitsMax}`);
 	}
 
 	const binDimensionsBitSize = getDimensionsBitSize(bin);
