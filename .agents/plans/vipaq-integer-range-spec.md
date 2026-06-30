@@ -89,7 +89,9 @@ C# accepted up to 2^64 − 1; now it rejects above `MaxInteger` (2^53 − 1), en
   `BitSizeBoundaryByTypeProvider` gains a `MaxInteger` top-of-bucket row; `BitSizeHelperBehaviorTests` gains
   `_When_Value_Exceeds_MaxInteger` throw tests and drops the obsolete UInt128 "exceeds 64 bits" tests (their
   `ulong.MaxValue` filler now trips the ceiling first); `ProtocolExtensionsBehaviorTests` gains decode-throw
-  tests for a `SixtyFour` field above the ceiling. **C# 1269 pass, TS 495 pass, `tsc` clean.**
+  tests for a `SixtyFour` field above the ceiling. **C# 1257 pass, TS 499 pass, `tsc` clean** (verified
+  2026-06-30; the earlier 1269 predates the "vipaq rethink and structure" commit that trimmed redundant tests.
+  TS rose 495→499 when the "too large" throw was aligned to name the offending field per axis, deferred #4/#7).
 
 Also done this pass (TS, to match C#): `sizes.ts` renamed to the same spec-named constants
 (`eightBitsMax` / `sixteenBitsMax` / `thirtyTwoBitsMax` / `maxInteger` / `compressionThresholdBytes`), dropped the

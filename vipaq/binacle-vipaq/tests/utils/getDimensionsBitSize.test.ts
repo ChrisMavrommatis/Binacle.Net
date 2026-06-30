@@ -34,8 +34,14 @@ describe("getDimensionsBitSize", () => {
 			expect(getDimensionsBitSize(bin(Sizes.maxInteger, 1, 1))).toBe(BitSize.SixtyFour);
 		});
 
-		test("a value above maxInteger throws", () => {
-			expect(() => getDimensionsBitSize(bin(Sizes.maxInteger + 1, 1, 1))).toThrow();
+		// A value above the ceiling throws and names the offending field (matches C#'s per-field ParamName).
+		// ports C#: GetDimensionsBitSize_Throws_ArgumentOutOfRangeException_When_Value_Exceeds_MaxInteger
+		test.each([
+			{name: "length", dims: bin(Sizes.maxInteger + 1, 1, 1)},
+			{name: "width", dims: bin(1, Sizes.maxInteger + 1, 1)},
+			{name: "height", dims: bin(1, 1, Sizes.maxInteger + 1)},
+		])("a value above maxInteger throws naming $name", ({name, dims}) => {
+			expect(() => getDimensionsBitSize(dims)).toThrow(`'${name}' exceeds the max supported value`);
 		});
 	});
 });

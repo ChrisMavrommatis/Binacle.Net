@@ -67,7 +67,9 @@ These encode language mechanics, not wire data, so they are not shared:
 - C#-only — saturation-by-type, dispose/double-dispose, `Read8Bits` per numeric type.
 - TS-only — `getByteSize`, `getBufferSize`, `writeEncodingInfoToBuffer`, `compressBuffer`,
   `getDecodingDataStream` (buffer pre-sizing and Web-Streams gzip mechanics C# does not have).
-- The compression **threshold** boundary is intentionally not shared: C# switches on body `> 255`, TS on
-  `bufferSize > 255` (a known off-by-one). They agree everywhere except that one borderline, so a shared
-  golden there would be wrong for one side. `round-trip-scenarios.json` stays comfortably over the
-  threshold instead.
+- **Compressed payloads are never byte-shared** — not because of the threshold (C# and TS now agree: both
+  compress when the body is `> 255`; the old off-by-one is fixed), but because the two gzip engines
+  (`GZipStream` vs `CompressionStream`) emit different valid bytes for the same input. So a compressed golden
+  can't be byte-compared across languages; that path is covered by decode-to-input, not exact bytes (see the
+  gzip cross-decode plan). `round-trip-scenarios.json` stays comfortably over the threshold on purpose, so it
+  exercises the compressed path via serialize → deserialize, which works regardless of engine differences.

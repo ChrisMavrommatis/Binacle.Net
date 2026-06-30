@@ -39,8 +39,14 @@ describe("getCoordinatesBitSize", () => {
 			expect(getCoordinatesBitSize(anItem({x: Sizes.maxInteger}))).toBe(BitSize.SixtyFour);
 		});
 
-		test("a value above maxInteger throws", () => {
-			expect(() => getCoordinatesBitSize(anItem({x: Sizes.maxInteger + 1}))).toThrow();
+		// A value above the ceiling throws and names the offending axis (matches C#'s per-field ParamName).
+		// ports C#: GetCoordinatesBitSize_Throws_ArgumentOutOfRangeException_When_Value_Exceeds_MaxInteger
+		test.each([
+			{name: "x", coords: anItem({x: Sizes.maxInteger + 1})},
+			{name: "y", coords: anItem({y: Sizes.maxInteger + 1})},
+			{name: "z", coords: anItem({z: Sizes.maxInteger + 1})},
+		])("a value above maxInteger throws naming $name", ({name, coords}) => {
+			expect(() => getCoordinatesBitSize(coords)).toThrow(`'${name}' exceeds the max supported value`);
 		});
 	});
 });

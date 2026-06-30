@@ -26,6 +26,14 @@ export function getCoordinatesBitSize(item: (Dimensions & Coordinates)): BitSize
 	if (item.x <= Sizes.maxInteger && item.y <= Sizes.maxInteger && item.z <= Sizes.maxInteger) {
 		return BitSize.SixtyFour;
 	}
-	// Reachable in TS: a float like 1e19 passes every check above. (In C# the type system stops this.)
-	throw new Error(`The 'item' coordinates exceed the max supported value (${Sizes.maxInteger})`);
+	// At least one axis is above maxInteger — outside ViPaq's range (PROTOCOL.md §5). Reachable in TS: a
+	// float like 1e19 passes every check above. (In C# the type system stops this.) Name the offender, like
+	// the negative checks above, so the message matches C#'s per-field ParamName.
+	if (item.x > Sizes.maxInteger) {
+		throw new Error(`'x' exceeds the max supported value (${Sizes.maxInteger})`);
+	}
+	if (item.y > Sizes.maxInteger) {
+		throw new Error(`'y' exceeds the max supported value (${Sizes.maxInteger})`);
+	}
+	throw new Error(`'z' exceeds the max supported value (${Sizes.maxInteger})`);
 }

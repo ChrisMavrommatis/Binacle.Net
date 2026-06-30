@@ -27,6 +27,14 @@ export function getDimensionsBitSize(item: Dimensions): BitSize {
 	if (item.length <= Sizes.maxInteger && item.width <= Sizes.maxInteger && item.height <= Sizes.maxInteger) {
 		return BitSize.SixtyFour;
 	}
-	// Reachable in TS: a float like 1e19 passes every check above. (In C# the type system stops this.)
-	throw new Error(`The 'item' dimensions exceed the max supported value (${Sizes.maxInteger})`);
+	// At least one field is above maxInteger — outside ViPaq's range (PROTOCOL.md §5). Reachable in TS: a
+	// float like 1e19 passes every check above. (In C# the type system stops this.) Name the offender, like
+	// the non-positive checks above, so the message matches C#'s per-field ParamName.
+	if (item.length > Sizes.maxInteger) {
+		throw new Error(`'length' exceeds the max supported value (${Sizes.maxInteger})`);
+	}
+	if (item.width > Sizes.maxInteger) {
+		throw new Error(`'width' exceeds the max supported value (${Sizes.maxInteger})`);
+	}
+	throw new Error(`'height' exceeds the max supported value (${Sizes.maxInteger})`);
 }

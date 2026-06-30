@@ -1,10 +1,14 @@
 # ViPaq — Cross-Language Wire Testing
 
-**Status:** C# unit tests **done** (1269, green). The integer-range spec + both-sides conformance are also
-**done** (2026-06-30, see [vipaq-integer-range-spec.md](vipaq-integer-range-spec.md)) — `PROTOCOL.md` exists and
-C#/TS both enforce `[0, 2^53 − 1]`. So this — the **shared cross-language vectors — is the next dedicated
-session and is now unblocked**. It is still **not started**. **If you are a fresh session pointed at this file,
-read "How to run this — session plan" first** — it tells you which session you are and what is in scope.
+**Status (2026-06-30):** C# unit tests **done** (1257, green); TS unit tests **done** (499, green, `tsc` clean).
+The integer-range spec + both-sides conformance are **done** (see
+[vipaq-integer-range-spec.md](vipaq-integer-range-spec.md)) — `PROTOCOL.md` exists and C#/TS both enforce
+`[0, 2^53 − 1]`. The **shared cross-language vectors** (this doc's real goal) are **partially started, not
+wired**: the language-neutral data files plus a conventions README are authored under `vipaq/test-vectors/`,
+but **neither suite reads them yet** (both still hold inline copies), **no generator exists**, and the **gzip
+cross-decode matrix is untouched**. See "Session 2 — progress (2026-06-30)" below for the exact state. **If you
+are a fresh session pointed at this file, read "How to run this — session plan" first** — it tells you which
+session you are and what is in scope.
 **Goal:** Guarantee the C# `Binacle.ViPaq` library and its hand-maintained TypeScript mirror
 (`vipaq/binacle-vipaq`) stay **wire-compatible** — bytes written by one are readable by the other.
 
@@ -78,6 +82,36 @@ shape. *Then* fill in the full case list.
 4. **Compressed cross-decode:** the 2×2 matrix — each side decodes the other's artifact back to the input;
    assert `artifact-cs != artifact-ts`; never byte-compare the artifacts.
 5. **Done when:** both suites consume the shared files and pass, and the regen command reproduces them.
+
+#### Session 2 — progress (2026-06-30)
+
+Recorded so the next session knows the drafting step is done. **Data drafted; wiring deliberately deferred —
+the data gets reviewed first, then both suites are wired to it.** Nothing here is wired yet, by design.
+
+**Done:**
+- `vipaq/test-vectors/` exists and is committed, with a conventions README (PascalCase keys, compact-string
+  inputs, `Name` as the cross-language join key, `0b`/`0x` byte notation, the `[0, 2^53 − 1]` range note).
+- Six language-neutral vector files authored: `exact-bytes.json`, `encoding-info-bytes.json` (all 256 header
+  combos), `little-endian.json`, `bit-size-selection.json`, `bit-size-invalid.json`,
+  `round-trip-scenarios.json`. The README's "Files" table maps each to its intended C# and TS consumer.
+
+**Design change from this plan — note it:** there is **no single `inputs.json`**. The data was split into the
+**six per-concern files** above instead. Wherever this doc says `inputs.json` (single source of truth), read it
+as "the files in `vipaq/test-vectors/`."
+
+**Next — review the data, then wire it (the remaining Session 2 work):**
+- **Review pass first:** read the six files against the README and the C#/TS source they must grade, confirm
+  the conventions and the scenario coverage are right *before* any suite depends on them. This is the
+  immediate next step, on purpose.
+- **Then wire both suites to read the JSON.** C# providers (`LittleEndianCases.cs`, `ExactBytesProvider.cs`,
+  `EncodingInfoByteDataProvider.cs`, …) still hold **inline literals**; the test csproj copies only
+  `xunit.runner.json`, not `test-vectors/`. TS still has inline providers, **no JSON import**, and
+  `resolveJsonModule` is **not set** in `tsconfig`. Until both load the shared files, the two sides can still
+  drift — the point of the exercise is unmet.
+- **The generator(s).** No `vipaq/tools/` exists. `encoding-info-bytes.json` is marked "generated" but nothing
+  regenerates it. Build the C# canonical generator for the uncompressed golden and wire the one `regen` command.
+- **gzip cross-decode — entirely untouched.** No `vipaq/test-vectors/compressed/`, no `artifact-cs` /
+  `artifact-ts`, no 2×2 decode matrix. See "The gzip requirement" and "Compressed cross-decode matrix" below.
 
 ## Locked TS test style (Session 1 — decided 2026-06-26)
 
@@ -255,9 +289,10 @@ All confirmed by hand against the source.
 > **Status update (2026-06-26):** the TS bugs are now **fixed in the tree** (commit `bf8b543c`):
 > **#1** `getByteSize` returns 4/8, **#2** `getCoordinatesBitSize` checks `x`/`y`/`z` with `< 0`,
 > **#5** compression triggers on body length `(bufferSize - 1) > 255`, **#6** import casing fixed.
-> C# **#3**/**#4** fixed per the 2026-06-26 snapshot above. **#7** remains open but is effectively
-> unreachable in JS (a dimension would have to exceed ~9.2e18, far past `Number.MAX_SAFE_INTEGER`) —
-> cosmetic only; align the throw to name the field if/when the aggregate matters.
+> C# **#3**/**#4** fixed per the 2026-06-26 snapshot above. **#7 fixed (2026-06-30):** the TS "too large"
+> throw in `getDimensionsBitSize`/`getCoordinatesBitSize` now names the offending field
+> (`'length'`/`'width'`/`'height'`, `'x'`/`'y'`/`'z'`), matching C#'s per-field `ParamName`. Per-axis tests
+> assert it on both sides.
 
 1. **TS `getByteSize` under-allocates for ≥32-bit** — `src/utils/getByteSize.ts` returns `ThirtyTwo → 3` and
    `SixtyFour → 4`; must be **4** and **8**. Feeds `getBufferSize`, so ≥32-bit serialize output is corrupt.
@@ -376,6 +411,7 @@ Not this session's job — left here for the next one.
 - **TS bugs still open** (C# is the reference): #1 `getByteSize` 32/64 under-allocation, #2 `getCoordinatesBitSize`
   wrong-field + rejects `0`, #5 compression threshold off-by-one (cosmetic), #6 test import casing.
 - **TS gap #7 (new):** make the "too large" throw name the offending field, to match the C# change above.
+  **Done (2026-06-30)** — TS now throws per axis naming the field, with per-axis tests.
 - **Then build the shared vectors** — the actual goal at the top of this doc: generator tool + uncompressed
   golden set (exact-byte, both directions) + compressed cross-decode set (compare decoded result, not bytes).
 
