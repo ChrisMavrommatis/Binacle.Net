@@ -1,75 +1,40 @@
 using Binacle.ViPaq.UnitTests.Providers;
-using Version = Binacle.ViPaq.Version;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// The header byte. ToByte packs the version and the three section sizes into one byte,
-// FromByte unpacks it back. One data table (version, three sizes, expected byte) grades
+// The header byte. ToByte packs the version and the three section sizes into one byte, FromByte unpacks
+// it back. The shared encoding-info-bytes.json (every combo, keyed by its EncodingInfo string) grades
 // both directions and the round trip between them.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class EncodingInfoByteTests
 {
 	[Theory]
-	[ClassData(typeof(EncodingInfoByteDataProvider))]
-	public void ToByte_Returns_Correct_Byte(
-		Version version,
-		BitSize binSize,
-		BitSize itemDimensionsSize,
-		BitSize itemCoordinatesSize,
-		byte expectedByte)
+	[MemberData(nameof(EncodingInfoByteProvider.Keys), MemberType = typeof(EncodingInfoByteProvider))]
+	public void ToByte_Returns_Correct_Byte(string key)
 	{
-		var encodingInfo = new EncodingInfo
-		{
-			Version = version,
-			BinDimensionsBitSize = binSize,
-			ItemDimensionsBitSize = itemDimensionsSize,
-			ItemCoordinatesBitSize = itemCoordinatesSize
-		};
+		var scenario = EncodingInfoByteProvider.Get(key);
 
-		EncodingInfoHelper.ToByte(encodingInfo).ShouldBe(expectedByte);
+		EncodingInfoHelper.ToByte(scenario.Info).ShouldBe(scenario.Byte);
 	}
 
 	[Theory]
-	[ClassData(typeof(EncodingInfoByteDataProvider))]
-	public void FromByte_Returns_Correct_EncodingInfo(
-		Version version,
-		BitSize binSize,
-		BitSize itemDimensionsSize,
-		BitSize itemCoordinatesSize,
-		byte firstByte)
+	[MemberData(nameof(EncodingInfoByteProvider.Keys), MemberType = typeof(EncodingInfoByteProvider))]
+	public void FromByte_Returns_Correct_EncodingInfo(string key)
 	{
-		var expected = new EncodingInfo
-		{
-			Version = version,
-			BinDimensionsBitSize = binSize,
-			ItemDimensionsBitSize = itemDimensionsSize,
-			ItemCoordinatesBitSize = itemCoordinatesSize
-		};
+		var scenario = EncodingInfoByteProvider.Get(key);
 
-		EncodingInfoHelper.FromByte(firstByte).ShouldBe(expected);
+		EncodingInfoHelper.FromByte(scenario.Byte).ShouldBe(scenario.Info);
 	}
 
 	[Theory]
-	[ClassData(typeof(EncodingInfoByteDataProvider))]
-	public void ToByte_Then_FromByte_Returns_Original(
-		Version version,
-		BitSize binSize,
-		BitSize itemDimensionsSize,
-		BitSize itemCoordinatesSize,
-		byte expectedByte)
+	[MemberData(nameof(EncodingInfoByteProvider.Keys), MemberType = typeof(EncodingInfoByteProvider))]
+	public void ToByte_Then_FromByte_Returns_Original(string key)
 	{
-		var original = new EncodingInfo
-		{
-			Version = version,
-			BinDimensionsBitSize = binSize,
-			ItemDimensionsBitSize = itemDimensionsSize,
-			ItemCoordinatesBitSize = itemCoordinatesSize
-		};
+		var scenario = EncodingInfoByteProvider.Get(key);
 
-		var asByte = EncodingInfoHelper.ToByte(original);
-		asByte.ShouldBe(expectedByte);
+		var asByte = EncodingInfoHelper.ToByte(scenario.Info);
+		asByte.ShouldBe(scenario.Byte);
 
-		var roundTripped = EncodingInfoHelper.FromByte(asByte);
-		roundTripped.ShouldBe(original);
+		EncodingInfoHelper.FromByte(asByte).ShouldBe(scenario.Info);
 	}
 }

@@ -25,7 +25,14 @@ public class ProtocolReader<T> : IDisposable, IAsyncDisposable
 
 	public byte ReadByte()
 	{
-		return (byte)this.InternalReadByte();
+		var read = this.InternalReadByte();
+		if (read < 0)
+		{
+			// EOF: the stream had no more bytes. Reject instead of returning a phantom value — a
+			// truncated body must fail, the same way the multi-byte ReadExactly path throws (PROTOCOL.md §7).
+			throw new EndOfStreamException("Unexpected end of stream while reading a byte.");
+		}
+		return (byte)read;
 	}
 
 	public ushort ReadUInt16()

@@ -13,26 +13,31 @@ namespace Binacle.ViPaq.UnitTests;
 [Trait("Result Tests", "Ensures results are as expected")]
 public class SerializationEncodingTests
 {
-	// Hand-derived golden vectors: known input -> the exact bytes it must produce. The provider
-	// covers a single 8-bit item, a 16-bit bin, two items, and an item at the origin (see
-	// ExactBytesProvider). Each row pins byte order, header packing, and field order at once.
+	// Golden vectors from the shared exact-bytes.json: known input -> the exact bytes it must produce.
+	// The row carries the Name; the case (bin, items, bytes) is resolved by name. Each case pins byte
+	// order, header packing, and field order at once. Values are read as `long` (the interoperable
+	// range fits long exactly), so the 64-bit cases load too.
 	[Theory]
-	[ClassData(typeof(ExactBytesProvider))]
-	public void Serialize_Produces_Exact_Bytes(Bin<int> bin, Item<int>[] items, byte[] expected)
+	[MemberData(nameof(ExactBytesProvider.Names), MemberType = typeof(ExactBytesProvider))]
+	public void Serialize_Produces_Exact_Bytes(string name)
 	{
-		var data = ViPaqSerializer.SerializeInt32<Bin<int>, Item<int>>(bin, items);
+		var scenario = ExactBytesProvider.Get(name);
 
-		data.ShouldBe(expected);
+		var data = ViPaqSerializer.Serialize<Bin<long>, Item<long>, long>(scenario.Bin, scenario.Items);
+
+		data.ShouldBe(scenario.Bytes);
 	}
 
 	// The inverse of the serialize golden: the same known bytes must decode back to the same bin and
 	// items. This pins the decode path against literal bytes, so a bug that is symmetric in
 	// serialize+deserialize (and would slip past the round-trip tests) is caught here.
 	[Theory]
-	[ClassData(typeof(ExactBytesProvider))]
-	public void Deserialize_Produces_Exact_Object(Bin<int> bin, Item<int>[] items, byte[] bytes)
+	[MemberData(nameof(ExactBytesProvider.Names), MemberType = typeof(ExactBytesProvider))]
+	public void Deserialize_Produces_Exact_Object(string name)
 	{
-		SerializationTestingFixture.AssertDeserializesTo(bytes, bin, items);
+		var scenario = ExactBytesProvider.Get(name);
+
+		SerializationTestingFixture.AssertDeserializesTo(scenario.Bytes, scenario.Bin, scenario.Items);
 	}
 
 	// Each section's size in the header comes from its own input, and a small body stays Uncompressed.
