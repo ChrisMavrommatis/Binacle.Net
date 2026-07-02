@@ -3,7 +3,7 @@
 import {ProtocolWriter} from "../src/ProtocolWriter";
 import {Sizes} from "../src/utils";
 import {expectBytes} from "./support/bytes";
-import {uint16Cases, uint32Cases, uint64Cases} from "./providers/littleEndianCases";
+import {uint16Cases, uint32Cases, uint64Cases} from "./providers/LittleEndianCases";
 
 // Each write primitive range-checks like C#'s CreateChecked. The 64-bit ceiling is maxInteger
 // (2^53 - 1), the protocol's interoperable limit — see vipaq/PROTOCOL.md. A value one over its

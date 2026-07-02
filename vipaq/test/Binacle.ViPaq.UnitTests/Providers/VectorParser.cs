@@ -88,7 +88,7 @@ internal static class VectorParser
 		foreach (var compact in compactItems)
 		{
 			var items = ParseItems(compact);
-			result.AddRange();
+			result.AddRange(items);
 		}
 			
 		return result;

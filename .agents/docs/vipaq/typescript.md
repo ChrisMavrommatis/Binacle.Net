@@ -1,6 +1,6 @@
 ---
 description: Binacle.ViPaq TypeScript mirror (vipaq/binacle-vipaq) — public API and how it differs from the C# library
-verified: 2026-06-30
+verified: 2026-07-02
 check: TS API signatures and divergences match vipaq/binacle-vipaq/src/
 also_update:
   - vipaq/README.md
@@ -52,8 +52,15 @@ brought to this ceiling on 2026-06-30 — see PROTOCOL.md §5 and `.agents/plans
 
 ## Tests
 
-`npm test` (jest, from `vipaq/binacle-vipaq`). 13 suites — unit tests on the utils (`createEncodingInfo`,
-`getDimensionsBitSize`, `getCoordinatesBitSize`, `getByteSize`, `getBufferSize`, …), the `ProtocolReader` /
-`ProtocolWriter` little-endian and range-limit guards, and a `ViPaqSerializer` round-trip. There is still **no**
-cross-language round-trip against the C# golden vectors in `vipaq/test-vectors/` — that is the remaining gap;
-verify wire compatibility by hand when changing either side.
+`npm test` (jest, from `vipaq/binacle-vipaq`; run `npm install` first — needs `@types/node`). 18 suites,
+949 tests — unit tests on the utils (`createEncodingInfo`, `getDimensionsBitSize`, `getCoordinatesBitSize`,
+`getByteSize`, `getBufferSize`, …), the `ProtocolReader` / `ProtocolWriter` little-endian and range-limit
+guards, and `ViPaqSerializer` round-trips.
+
+The suite now reads the **shared cross-language vectors** in `vipaq/test-vectors/` — the same files the C#
+suite reads — via `tests/support/vectorReader.ts` (`readVectors`, `fs`-based) and `tests/support/vectorParser.ts`
+(free functions mirroring C# `VectorParser`: `parseDimensions` splits `x`, `parseCoordinates` splits `,`,
+`parseItems` composes both, `parseEncodingInfo`, `parseBitSize`). Providers in `tests/providers/` parse each
+file into arrays consumed by `test.each`. So both implementations grade against one answer key and can't
+silently drift on the wire format. (Still out of scope: the gzip cross-decode matrix — see
+`.agents/plans/vipaq-cross-language-testing.md`.)

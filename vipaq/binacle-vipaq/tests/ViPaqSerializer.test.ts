@@ -4,7 +4,7 @@ import {Dimensions, Version} from "../src/models";
 import {encodingInfoFromByte} from "../src/utils";
 import {Item, anItem, bin, item} from "./support/builders";
 import {expectBytes} from "./support/bytes";
-import {exactBytesCases} from "./providers/exactBytes";
+import {exactBytesCases} from "./providers/ExactBytes";
 
 async function roundTrip(input: Dimensions, items: Item[]) {
 	const data = await ViPaqSerializer.serialize(input, items);

@@ -4,7 +4,7 @@
 import {ProtocolReader} from "../src/ProtocolReader";
 import {ProtocolWriter} from "../src/ProtocolWriter";
 import {Sizes} from "../src/utils";
-import {uint16Cases, uint32Cases, uint64Cases} from "./providers/littleEndianCases";
+import {uint16Cases, uint32Cases, uint64Cases} from "./providers/LittleEndianCases";
 
 function readerOver(bytes: number[]): ProtocolReader {
 	return new ProtocolReader(new DataView(new Uint8Array(bytes).buffer));

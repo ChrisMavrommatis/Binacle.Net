@@ -1,6 +1,6 @@
 # ViPaq shared vectors — TypeScript port plan
 
-## Session handoff (2026-07-02) — decisions locked, C# refactor DONE, then TS
+## Session handoff (2026-07-02) — DONE: decisions locked, C# refactor + full TS port (both green)
 
 A working session settled the open choices and **completed the C# parser refactor (suite green, 1329
 passed)**. It also left **draft** TS files on disk. **The original plan below is still useful reference,
@@ -51,7 +51,14 @@ providers/dictionaries**. The C# side is now the mirror target — match it in T
   (`"-1,0,0"`, `"9007199254740992,0,0"`, …); `bit-size-selection.json` gained `Kind` per row (its
   `Coordinates` rows are comma). README compact-string rules + both bit-size notes updated.
 
-### Then — TS (draft files already on disk in `vipaq/binacle-vipaq/tests/`, will break `npm test` until wired)
+### TS — DONE this session — green: `npx tsc --noEmit` clean, 18 suites / 949 tests
+> **Completed 2026-07-02.** Full TS port wired and passing (`@types/node` installed via `npm install`;
+> `EXAMPLES-README.md` removed). The bullets below record what was done — all mirror the C# design above.
+> vectorParser is free functions (`parseDimensions` split `x`, `parseCoordinates` split `,`, private
+> `parseThree(sep)`, `parseItems` composes both, plus `parseBitSize`); `vectorReader.readVectors` uses `fs`.
+> bit-size providers split by `Kind` into `dimensionCases`/`coordinateCases` (coord cases carry a full-item
+> probe with dims defaulted to 1); each bit-size `.test.ts` has two `test.each` blocks. Spot-checked:
+> decode-invalid "truncated body" and encode-invalid "item count over uint16 max" both reject.
 Drafts present: `support/vectorReader.ts`, `support/vectorParser.ts`,
 `providers/{roundTripCases,decodeInvalid,bitSizeInvalid}.ts`, `roundTrip.test.ts`, `decodeInvalid.test.ts`,
 `bitSizeInvalid.test.ts`, and `EXAMPLES-README.md` (index + status).
