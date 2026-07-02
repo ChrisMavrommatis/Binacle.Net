@@ -3,7 +3,7 @@
 import {ProtocolWriter} from "../src/ProtocolWriter";
 import {Sizes} from "../src/utils";
 import {expectBytes} from "./support/bytes";
-import {uint16Cases, uint32Cases, uint64Cases} from "./providers/LittleEndianCases";
+import {uint8Cases, uint16Cases, uint32Cases, uint64Cases} from "./providers/LittleEndianCases";
 
 // Each write primitive range-checks like C#'s CreateChecked. The 64-bit ceiling is maxInteger
 // (2^53 - 1), the protocol's interoperable limit — see vipaq/PROTOCOL.md. A value one over its
@@ -18,6 +18,13 @@ const widthCeilings = [
 
 describe("ProtocolWriter", () => {
 	describe("writes little-endian", () => {
+		// ports C#: Write8Bits_Narrows_T_And_Writes
+		test.each(uint8Cases)("8-bit — $name", ({value, bytes}) => {
+			const writer = new ProtocolWriter(1);
+			writer.write8Bits(value);
+			expectBytes(writer.buffer, bytes);
+		});
+
 		// ports C#: Write16Bits_Narrows_T_And_Writes_Little_Endian
 		test.each(uint16Cases)("16-bit — $name", ({value, bytes}) => {
 			const writer = new ProtocolWriter(2);
@@ -38,13 +45,6 @@ describe("ProtocolWriter", () => {
 			writer.write64Bits(value);
 			expectBytes(writer.buffer, bytes);
 		});
-	});
-
-	// ports C#: Write8Bits_Narrows_T_And_Writes
-	test("writes a single byte unchanged", () => {
-		const writer = new ProtocolWriter(1);
-		writer.write8Bits(0xab);
-		expectBytes(writer.buffer, [0xab]);
 	});
 
 	// ports C#: Write*Bits_Throws_When_Value_Exceeds_* (C# uses CreateChecked; we range-check by hand)

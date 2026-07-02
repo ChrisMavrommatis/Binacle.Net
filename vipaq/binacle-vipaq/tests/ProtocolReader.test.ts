@@ -4,7 +4,7 @@
 import {ProtocolReader} from "../src/ProtocolReader";
 import {ProtocolWriter} from "../src/ProtocolWriter";
 import {Sizes} from "../src/utils";
-import {uint16Cases, uint32Cases, uint64Cases} from "./providers/LittleEndianCases";
+import {uint8Cases, uint16Cases, uint32Cases, uint64Cases} from "./providers/LittleEndianCases";
 
 function readerOver(bytes: number[]): ProtocolReader {
 	return new ProtocolReader(new DataView(new Uint8Array(bytes).buffer));
@@ -12,6 +12,11 @@ function readerOver(bytes: number[]): ProtocolReader {
 
 describe("ProtocolReader", () => {
 	describe("reads little-endian", () => {
+		// ports C#: ReadByte_Reads_The_Byte
+		test.each(uint8Cases)("8-bit — $name", ({value, bytes}) => {
+			expect(readerOver(bytes).read8Bits()).toBe(value);
+		});
+
 		// ports C#: Read16Bits_Widens_To_T
 		test.each(uint16Cases)("16-bit — $name", ({value, bytes}) => {
 			expect(readerOver(bytes).read16Bits()).toBe(value);

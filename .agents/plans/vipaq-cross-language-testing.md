@@ -1,512 +1,127 @@
-# ViPaq — Cross-Language Wire Testing
+# ViPaq — Cross-Language Wire Testing (master plan)
 
-**Status (2026-06-30):** C# unit tests **done** (1257, green); TS unit tests **done** (499, green, `tsc` clean).
-The integer-range spec + both-sides conformance are **done** (see
-[vipaq-integer-range-spec.md](vipaq-integer-range-spec.md)) — `PROTOCOL.md` exists and C#/TS both enforce
-`[0, 2^53 − 1]`. The **shared cross-language vectors** (this doc's real goal) are **partially started, not
-wired**: the language-neutral data files plus a conventions README are authored under `vipaq/test-vectors/`,
-but **neither suite reads them yet** (both still hold inline copies), **no generator exists**, and the **gzip
-cross-decode matrix is untouched**. See "Session 2 — progress (2026-06-30)" below for the exact state. **If you
-are a fresh session pointed at this file, read "How to run this — session plan" first** — it tells you which
-session you are and what is in scope.
-**Goal:** Guarantee the C# `Binacle.ViPaq` library and its hand-maintained TypeScript mirror
-(`vipaq/binacle-vipaq`) stay **wire-compatible** — bytes written by one are readable by the other.
+**Goal:** guarantee the C# `Binacle.ViPaq` library and its hand-maintained TypeScript mirror
+(`vipaq/binacle-vipaq`) stay **wire-compatible** — bytes written by one are readable by the other. The
+mechanism is **shared reference vectors** in `vipaq/test-vectors/`: one set of JSON inputs+answers read by
+*both* test suites, so each is graded against the same answer key and the two can't silently drift.
 
-Reference docs: `/.agents/docs/vipaq/README.md` (canonical format), `/.agents/docs/vipaq/typescript.md` (TS mirror).
+**Status (2026-07-02):** unit suites and shared vectors **DONE and green** — C# **1329**, TS **954** (18
+suites), `tsc` clean. The three-pass review passed; its actionable findings (F1 uint8 symmetry, F2 stale
+README note, F3 pin `typescript`) are **fixed** — folded into "Done" below. See
+[vipaq-review-findings.md](vipaq-review-findings.md) for the one remaining note-only item. **The one remaining
+build goal is the gzip cross-decode matrix.**
 
-## The need
+Reference docs (canonical, keep these — not plans):
+- `vipaq/PROTOCOL.md` — the normative, language-agnostic spec (wire layout, `[0, 2^53−1]` integer range,
+  error table, decisions log). The thing both implementations conform to.
+- `vipaq/test-vectors/README.md` — the shared-vector conventions (PascalCase keys, compact strings, `Name`
+  join key, byte notation).
+- `.agents/docs/vipaq/README.md`, `.agents/docs/vipaq/typescript.md` — agent notes; link to PROTOCOL.md.
 
-ViPaq has two independent implementations of the same binary format:
-- **C#** (`vipaq/src/Binacle.ViPaq`) — the canonical implementation.
-- **TypeScript** (`vipaq/binacle-vipaq`) — a by-hand reimplementation, no codegen, no shared schema.
+---
 
-Today **nothing automatically checks they agree**. The TS doc literally says wire compatibility is
-"verified by hand when changing either side." That's fragile — a one-line change on either side can silently
-break interop and no test catches it.
+## Done — do not redo
 
-The fix is **shared reference test data** (same idea as `Binacle.TestsKernel`'s shared scenarios): a set of
-inputs paired with the canonical C# output, loaded by *both* test suites so each is graded against the same
-answer key. Because the file is plain JSON at a shared path (e.g. `vipaq/test-vectors/`), C# copies it to test
-output and TS imports it — same data, two consumers.
+### Integer-range spec + conformance (was `vipaq-integer-range-spec.md`)
+ViPaq's interoperable integer range is **`[0, 2^53 − 1]` (`MaxInteger`)** — the largest integer both C# and JS
+hold exactly. Both sides reject outside it, **on encode and on decode**. Landed:
+- `vipaq/PROTOCOL.md` written (§5 range, §8 error table, §10 decisions log — the durable record).
+- C#: `ViPaqLimits.cs` (spec constants incl. `CompressionThresholdBytes`, kept separate from `EightBitsMax`);
+  `BitSizeHelper` caps the 64-bit bucket at `MaxInteger` with per-field throws; `ProtocolReaderExtensions`
+  guards the decode path; serialize uses the compression-threshold constant.
+- TS: `sizes.ts` renamed to the same spec constants (`eightBitsMax`/`sixteenBitsMax`/`thirtyTwoBitsMax`/
+  `maxInteger`/`compressionThresholdBytes`); write primitives range-check; `read64Bits` guards the ceiling.
+- All prototyping bugs (#1–#7) fixed in-tree; the compression-threshold off-by-one (#5) is fixed — **both**
+  sides now compress when the **body** (excluding the header byte) is `> 255`.
 
-A small **generator tool** (e.g. `vipaq/tools/…`) is the clean way to produce it. The cases live in a
-language-neutral `inputs.json` (single source of truth); the generator reads it, serializes each with the
-canonical C#, and writes the output JSON. Editing a case = editing `inputs.json` + regenerating, not
-hand-computing bytes. (Generator architecture is in the Session 2+ plan below.)
+### C# unit suite (canonical)
+Fully restructured to theory+provider, or one-helper+thin-callers where the generic `T` differs per row. Reads
+every `test-vectors/*.json` via embedded resources (`VectorReader` + `VectorParser`). Language-local matrices
+(generic-`T` dispatch, saturation-by-type, dispose idempotency, `Read8Bits` per type) stay C#-only on purpose.
 
-## How to run this — session plan
+### TS mirror + shared-vector wiring (was `vipaq-vectors-ts-port.md`)
+TS reads the **same** JSON files from disk (`tests/support/vectorReader.ts` via `fs`, **not**
+`resolveJsonModule`) and parses them with the **same** grammar (`tests/support/vectorParser/` — free
+functions, one per file + `index.ts` barrel, mirroring the C# `VectorParser`). Providers are 1:1 with the C#
+ones. Locked design decisions (still binding):
+1. **JSON loading = file read** (`readVectors<T>(fileName)`), mirroring C# `VectorReader`.
+2. **Free functions over static-only classes**; PascalCase filename only when the file exports a PascalCase type.
+3. **One provider per set, exporting a parsed array** — jest `test.each(array)("$name", …)`; tests are pure asserts.
+4. **Two honest parsers, no generic "triple":** `parseDimensions`/`parseBin` split `x`; `parseCoordinates`
+   splits `,`; `parseItems` composes them and expands `:Q`. A coordinate is comma-separated everywhere.
+5. **Bit-size files split by `Kind`** into a dimensions set and a coordinates set; **each row runs through only
+   its own picker.** The two sets together cover every width bucket — that is what pins the pickers together.
 
-This is built across **separate sessions**, on purpose. Each session is pointed at this file fresh, does a
-bounded piece, and records its decisions here for the next one. Work **segment by segment** — don't try to do
-a whole session's list in one shot.
+### Shared vectors in `vipaq/test-vectors/` — the answer key both suites read
+| File | Consumed by |
+|---|---|
+| `exact-bytes.json` (8) | serialize golden (both) + deserialize (C#) |
+| `encoding-info-bytes.json` (256) | header pack/unpack, both directions (both) |
+| `little-endian/uint8..uint64.json` | protocol reader+writer, all four widths (both) — the two wide 64-bit rows stay C#-only |
+| `bit-size-selection.json` (20) | both width pickers, routed by `Kind` |
+| `bit-size-invalid.json` (15) | both pickers reject; assert offending field |
+| `round-trip-scenarios.json` (10) | serialize → pin byte 0 → deserialize (both) |
+| `decode-invalid.json` (7) | deserialize must throw (both) |
+| `encode-invalid.json` (7) | serialize must throw (both) |
 
-**No CI.** Vectors and artifacts are **generated once, committed, and regenerated by hand when needed** — see
-"Regeneration" below. There is no automated drift check; a maintainer runs the regen command and commits.
+**Invariant to protect:** the same shared scenarios are consumed on both sides. The two suites' *totals* differ
+(C# has more language-local tests) and that is expected — see the note in the findings file.
 
-### Session 1 — fix TS bugs, port behavior tests, lock the TS style
+---
 
-Scope: get the TS mirror correct and covered by **local** tests. **No shared vectors, no generators, no
-`inputs.json` here** — that is all Session 2. Local data only.
+## Remaining — the gzip cross-decode matrix (the one real TODO)
 
-1. **Fix the TS bugs** (#1, #2, #6 at minimum — see Bugs section). TDD each: write the failing TS test, fix the
-   source, watch it pass. The ported behavior tests are the vehicle for these fixes.
-2. **Lock the style on a few tests first — do not mass-port yet.** Pick 2-3 representative tests (e.g. a
-   little-endian write, a round-trip, a throw) and get the *shape* right: naming, file layout, data/provider
-   pattern, assertion style. The agent should **propose style options**; the user picks. Then **write the locked
-   style into this file** (add a "Locked TS test style" subsection) before going wide. This is the gate.
-3. **Port the C# behavior tests that have a TS counterpart — up to a limit.** Not every C# test maps. The
-   session must **discover that limit**: some C# tests are language-specific (generic-`T` dispatch, dispose
-   idempotency on `BufferedStream`, `CreateChecked` overflow) and have no clean TS equivalent. When one doesn't
-   map, note it and skip — don't force it.
-4. **Find the TS-unique tests** — things C# has no counterpart for: `getByteSize` 32/64 allocation,
-   `getCoordinatesBitSize` wrong-field + rejects-`0`, the casing bug (#6), gzip via `CompressionStream`
-   mechanics, and the aggregate-throw gap (#7 — make the throw name the field, to match C#).
-5. **Done when:** TS suite green, bugs #1/#2/#6 (and #7) fixed, **style locked and recorded here.** Stop — do
-   not start generators or vectors.
+The real requirement: **a payload serialized by one side deserializes on the other**, *including compressed
+payloads*. Uncompressed bytes are already covered by the exact-byte goldens (identical across languages).
+Compressed bytes are **not** byte-identical — `GZipStream` (C#) and `CompressionStream('gzip')` (Node) emit
+different valid gzip for the same input. So the compressed contract is **decode-to-input, never byte-equality.**
 
-### Session 2+ — generators, shared vectors, cross-wire tests
+**The 2×2 matrix** (same input, compressed once per language → two artifacts):
 
-Scope: build the shared answer key and the interop tests. Inherits the locked style from Session 1.
-
-Same discipline — **prove the pipeline on one or two cases end-to-end before scaling:** one `inputs.json` entry
-→ C# generator writes the golden → both suites read it and pass. That locks the vector format and the generator
-shape. *Then* fill in the full case list.
-
-1. **Lift the existing C# golden into shared form.** The `ExactBytesProvider` rows already in the C# suite are
-   the embryo of `inputs.json` + the uncompressed golden — move them out of inline C# into the shared files;
-   don't invent cases from scratch.
-2. **Build the generators** (see "Regeneration"): C# canonical generator for the uncompressed golden + both
-   runtimes for the compressed artifacts, all reading `inputs.json`, wired to one `regen` command.
-3. **Uncompressed vectors:** assert exact bytes, both directions, in both suites. **One golden per case, not
-   two** — see the uncompressed note in the gzip section.
-4. **Compressed cross-decode:** the 2×2 matrix — each side decodes the other's artifact back to the input;
-   assert `artifact-cs != artifact-ts`; never byte-compare the artifacts.
-5. **Done when:** both suites consume the shared files and pass, and the regen command reproduces them.
-
-#### Session 2 — progress (2026-06-30)
-
-Recorded so the next session knows the drafting step is done. **Data drafted; wiring deliberately deferred —
-the data gets reviewed first, then both suites are wired to it.** Nothing here is wired yet, by design.
-
-**Done:**
-- `vipaq/test-vectors/` exists and is committed, with a conventions README (PascalCase keys, compact-string
-  inputs, `Name` as the cross-language join key, `0b`/`0x` byte notation, the `[0, 2^53 − 1]` range note).
-- Six language-neutral vector files authored: `exact-bytes.json`, `encoding-info-bytes.json` (all 256 header
-  combos), `little-endian.json`, `bit-size-selection.json`, `bit-size-invalid.json`,
-  `round-trip-scenarios.json`. The README's "Files" table maps each to its intended C# and TS consumer.
-
-**Design change from this plan — note it:** there is **no single `inputs.json`**. The data was split into the
-**six per-concern files** above instead. Wherever this doc says `inputs.json` (single source of truth), read it
-as "the files in `vipaq/test-vectors/`."
-
-**Next — review the data, then wire it (the remaining Session 2 work):**
-- **Review pass first:** read the six files against the README and the C#/TS source they must grade, confirm
-  the conventions and the scenario coverage are right *before* any suite depends on them. This is the
-  immediate next step, on purpose.
-- **Then wire both suites to read the JSON.** C# providers (`LittleEndianCases.cs`, `ExactBytesProvider.cs`,
-  `EncodingInfoByteDataProvider.cs`, …) still hold **inline literals**; the test csproj copies only
-  `xunit.runner.json`, not `test-vectors/`. TS still has inline providers, **no JSON import**, and
-  `resolveJsonModule` is **not set** in `tsconfig`. Until both load the shared files, the two sides can still
-  drift — the point of the exercise is unmet.
-- **The generator(s).** No `vipaq/tools/` exists. `encoding-info-bytes.json` is marked "generated" but nothing
-  regenerates it. Build the C# canonical generator for the uncompressed golden and wire the one `regen` command.
-- **gzip cross-decode — entirely untouched.** No `vipaq/test-vectors/compressed/`, no `artifact-cs` /
-  `artifact-ts`, no 2×2 decode matrix. See "The gzip requirement" and "Compressed cross-decode matrix" below.
-
-## Locked TS test style (Session 1 — decided 2026-06-26)
-
-This is the gate. All TS tests follow this. Two exemplar files already apply it and pass:
-`tests/ProtocolWriter.test.ts` and `tests/ViPaqSerializer.test.ts` (plus `tests/support/` and
-`tests/providers/`). Suite is green at 299 tests.
-
-**Layout — mirror the `src/` tree (layout A).** A test file sits at the same relative path as the
-source file it covers, with `.test.ts` appended:
-
-```
-src/utils/getByteSize.ts        ->  tests/utils/getByteSize.test.ts
-src/ProtocolWriter.ts           ->  tests/ProtocolWriter.test.ts
-tests/
-  providers/        shared data / vectors — NOT *.test.ts, so jest ignores them
-    littleEndianCases.ts        (value <-> exact bytes; reader & writer share the rows)
-    exactBytes.ts               (named bin+items -> golden bytes; Session 2 lifts these to inputs.json)
-  support/          builders & helpers — NOT *.test.ts
-    builders.ts                 bin(), item(), anItem(overrides)
-    bytes.ts                    toHex(), expectBytes()
-```
-Anything not ending in `.test.ts` is support and jest skips it (testMatch is `**/tests/**/*.test.ts`).
-1:1 with the source file by default; combine only true inverse pairs into one file — `encodingInfoToByte`
-+ `encodingInfoFromByte` -> `tests/utils/encodingInfo.test.ts`; the `serialize`/`deserialize` split files
--> `tests/ViPaqSerializer.test.ts`.
-
-**Naming — plain-English sentences.** `describe(<UnitName>)` per file; test names read as a sentence
-("writes a single byte unchanged", "rejects a negative coordinate"). When a test mirrors a C# one, tie
-them with a comment: `// ports C#: WriteUInt16_Writes_Little_Endian`. Group with one inner `describe`
-(e.g. "writes little-endian", "round trips", "throws") once a file grows; keep nesting to two levels.
-
-**Multi-row data — named object cases.** Rows are `{name, ...}` objects; the title uses `$name` so the
-failure line names the case. Row arrays live in `tests/providers/`, shared between reader and writer.
-
-**Test data — curated literals, no faker.** Deterministic inputs so golden-byte tests stay exact;
-matches the C# "no Bogus" decision. Keep both languages consistent: faker only for a genuinely
-don't-care input, and if one side uses it for a case the other should too.
-
-**Bytes — `expectBytes(actual, [...])` from `support/bytes.ts`.** Compares as hex so a failure reads
-"00 01 00 0a ..." and you can see which byte moved. (Chosen as the default; trivial to inline later if
-it ever feels like over-indirection.)
-
-**Scenario names are a shared vocabulary.** The names in `providers/exactBytes.ts` are the same names
-Session 2's `inputs.json` will be keyed by, and the same the C# golden providers should carry. So name
-cases deliberately. **C# named-cases retrofit:** the lib already has the pattern (`Scenario.ToString()
-=> Name`, providers parameterized by name). Worth bringing to the C# ViPaq golden providers — but do it
-in **Session 2**, when `ExactBytesProvider` is lifted into the shared named `inputs.json` anyway, not as
-a separate up-front session. Naming the micro-test providers (LittleEndianCases etc.) is optional polish.
-
-## Session 1 — deferred decisions (now resolved 2026-06-26)
-
-These came out of the TS-specific discovery. All four are decided. #1, #3 and #4 turned out to be the same
-issue and are folded into [vipaq-integer-range-spec.md](vipaq-integer-range-spec.md) — a written protocol
-spec plus enforcement in code. Resolutions:
-
-1. **64-bit precision.** → Enforce, don't just document. The interoperable integer range is `[0, 2^53 − 1]`;
-   `write64Bits`/`read64Bits` reject above it. See the spec plan.
-2. **Item-count boundary (65535 ok / 65536 throws).** → Test it. Build 65536 items the cheap way C# does
-   (`Array.from({length: 65536}, () => item(1,1,1,0,0,0))`). Tracked in the spec plan, Deliverable 3.
-3. **Documented TS divergences.** → No silent masking. All four `ProtocolWriter` write primitives range-check
-   and throw, mirroring C# `CreateChecked`. Tracked in the spec plan, Deliverable 2.
-4. **Aggregate "too large" throw.** → The line IS reachable in TS (a float like 1e19 passes the old check),
-   so the message is reworded to name the real limit. Tracked in the spec plan, Deliverable 2.
-
-**C#-only — confirmed no TS counterpart** (so the next session doesn't try to port them): generic-`T`
-dispatch, `Read8Bits` per numeric type, `ThrowOnInvalidEncodingInfo` / "section wider than type",
-`CreateChecked` overflow throws, the saturation-by-numeric-type matrix, and dispose/double-dispose.
-
-**Consolidation done this session** (so the next session isn't surprised): `serialization.test.ts` folded
-into `ViPaqSerializer.test.ts`; `encodingInfoData.ts` → `providers/encodingInfoCases.ts`;
-`encodingUtils.test.ts` → `utils/encodingInfo.test.ts`; faker dropped (`tests/utils.ts` removed);
-`createEncodingInfo.test.ts` moved to curated literals.
-
-## ⚠️ The gzip requirement — read this first
-
-The real requirement: **a payload serialized by one side must deserialize on the other** (C#→TS and TS→C#),
-*including* compressed payloads.
-
-**Why interop is structurally easy here:** the first byte is the `EncodingInfo` header, and the `Version` field
-(bits 7-6, `Uncompressed`/`CompressedGzip`) lives in it. It is prepended **after** compression on both sides and
-is **never inside the gzip stream**; on decode both sides read byte 0 first, then decompress the rest only if
-`Version == CompressedGzip`. So **every blob is self-describing** — interop reduces to "emit a valid gzip member /
-accept a valid gzip member," which is standard gzip on both sides.
-
-Key nuance that shapes the test design:
-
-- **gzip output bytes are NOT identical** across C#'s `GZipStream` and the JS/Node `CompressionStream('gzip')`.
-  Same input, same algorithm, **different bytes** (different headers/OS flag/deflate choices). Both are valid gzip.
-- So for compressed payloads you **cannot assert byte-equality** between the two implementations. That only
-  works for **uncompressed** payloads (those *are* byte-identical).
-- But byte-difference does **not** mean interop fails: gzip is a standard, so each side's `Decompress` reads the
-  other side's `Compress` output fine. **Interop is achievable; byte-equality is not.**
-
-Therefore the test strategy must be split:
-- **Uncompressed vectors** → assert exact bytes (`serialize == golden`, both directions). Strongest check.
-  Store **one** golden per case (C#-canonical), not a C# copy and a TS copy: uncompressed output is identical
-  across languages, so two stored copies are redundant *and weaker* — a single reviewed golden is the thing both
-  sides are graded against, and any C#/TS divergence shows up as a failure against it.
-- **Compressed payloads** → assert **cross-decode**, not bytes:
-  - bytes produced by **C# serialize** → **TS deserialize** → equals the original input, and
-  - bytes produced by **TS serialize** → **C# deserialize** → equals the original input.
-  - This needs either a harness that runs both runtimes, or pre-captured fixtures: a C#-compressed blob checked
-    into the repo that the TS test decodes (and a TS-compressed blob the C# test decodes).
-
-This cross-decode test for compressed data is exactly the "one serializes, the other deserializes" capability
-you asked for — make it a first-class case, not an afterthought.
-
-### Compressed cross-decode matrix (the concrete test)
-
-The idea: **compress the same input twice — once in each language — and prove two things at once:**
-1. the two compressed outputs are **different bytes** (different deflate engines — assert this, don't hide it), and
-2. **either output decodes on either side back to the same original input** (the artifact you started from).
-
-So you produce two artifacts that encode the **same input**, one compressed by each language — full ViPaq blobs
-(`[header][compressed body]`, not raw gzip) — and run the 2×2 decode matrix:
-
-|                                | decode in **C#**       | decode in **TS**       |
-|--------------------------------|------------------------|------------------------|
-| artifact compressed **by C#**  | own round-trip         | C# → TS interop        |
-| artifact compressed **by TS**  | TS → C# interop        | own round-trip         |
+|                                | decode in **C#** | decode in **TS** |
+|--------------------------------|------------------|------------------|
+| artifact compressed **by C#**  | own round-trip   | C# → TS interop  |
+| artifact compressed **by TS**  | TS → C# interop  | own round-trip   |
 
 - All four cells must recover the **identical original input**.
-- Add the divergence assertion: `artifact-cs != artifact-ts` (documents that the encoders differ on the wire).
-- Never use byte-equality *between* the artifacts as a pass condition — only the decode-to-input is the contract.
-- Pick an input **comfortably over** the compression threshold so both sides definitely compress (e.g. ~60 small
-  items), avoiding the body-255 borderline.
+- Assert `artifact-cs != artifact-ts` (documents that the encoders differ on the wire); never use byte-equality
+  *between* artifacts as a pass condition.
+- Pick an input comfortably over the threshold so both definitely compress (~60 small items), off the 255 edge.
 
-**Generate once, commit, consume read-only** (the TestsKernel pattern):
+**Generate once, commit, consume read-only** (the TestsKernel pattern — no CI, no run-time serialization):
+- Suggested home: `vipaq/test-vectors/compressed/` — a shared input definition + `artifact-cs` + `artifact-ts`.
+- A C# generator writes `artifact-cs`; a TS generator writes `artifact-ts`; both read the shared input. Wire to
+  **one** `regen` command so the two producers can't drift. Commit the output.
+- Each suite's cross-decode test reads **both** artifacts (its own runtime only) and runs the matrix.
 
-- The artifacts are generated **one time** and **checked in**. The tests are pure consumers — they read the
-  committed artifacts and run the matrix; they do **not** serialize/compress at run time. So each suite runs with
-  only its own runtime; no cross-runtime orchestration is needed in CI.
-- A **C# data-generation step** serializes the shared input → writes `artifact-cs`. A **TS data-generation step**
-  does the same → `artifact-ts`. Both committed.
-- The cross-decode tests on each side read **both** artifacts (plus the shared input definition) and run the
-  matrix above.
-- Suggested home: alongside the golden vectors, e.g. `vipaq/test-vectors/compressed/` holding the shared input
-  definition + `artifact-cs` + `artifact-ts`. The input definition is the single source of truth both generators
-  serialize from.
+**Generators / `vipaq/tools/`:** none exist yet. `encoding-info-bytes.json` is marked "generated" but nothing
+regenerates it — build the canonical C# generator when you build the compressed pipeline, off the shared inputs.
 
-### Regeneration — generate once, commit, regenerate by hand
+**Regeneration discipline:** compressed artifacts must **never** be byte-compared across regenerations — deflate
+output depends on the zlib/engine version. The only stable contract is decode-to-input. Regenerating produces
+*different valid bytes*; that is expected, not a failure.
 
-**No CI. No automated drift check.** Vectors and artifacts are generated **once**, committed, and **regenerated
-by hand** only when something forces it (a library change, a new scenario). The tests are pure consumers of
-committed files; they never generate at run time.
-
-**Key constraint:** compressed artifacts must **never** be byte-compared across regenerations. Deflate output
-depends on the zlib/engine version (C# bundles its own zlib, which changes between .NET versions; Node/browser
-differ again), so regenerating on a different machine yields *different valid bytes*. The only stable contract is
-**decode-to-input** — exactly what the matrix asserts. So regeneration is "produce a fresh valid blob per scenario
-when you choose to," not "keep bytes in sync."
-
-The procedure:
-1. **Shared input = `inputs.json`** (single source of truth) at `vipaq/test-vectors/`. Holds every case: bin,
-   items, and a **type/width tag** per case (the generic `T` — int/long/ulong — changes the wire, so it is part
-   of the input, not implicit). Add/change a case by editing this one file.
-2. **Generators read `inputs.json`:**
-   - **Uncompressed golden → C# only.** C# is canonical; it writes the single golden bytes. TS does not produce a
-     second copy — it *consumes* the C# golden. (Two "identical" copies are weaker than one reviewed golden; see
-     the uncompressed note in the gzip section.)
-   - **Compressed artifacts → both runtimes.** C# writes `artifact-cs`, TS writes `artifact-ts` — you need a real
-     gzip sample from each engine because their bytes differ.
-3. **One orchestration command** (e.g. npm `regen:vipaq`) runs the C# generator then the TS one off the same
-   `inputs.json`. Running both producers from one command is what stops `artifact-cs` and `artifact-ts` drifting.
-4. **Commit the output.** That is the whole loop: edit `inputs.json` → run the one command → commit.
-5. **Manual sanity, not CI:** after regenerating, eyeball that every compressed scenario produced both an
-   `artifact-cs` and an `artifact-ts`. The uncompressed golden is deterministic, so if you want a quick check you
-   can regenerate and confirm it is unchanged; the compressed artifacts *will* differ and that is expected — do
-   not treat it as a failure.
-
-## Bugs found while prototyping (fix these as part of the build)
-
-All confirmed by hand against the source.
-
-> **Status update (2026-06-26):** the TS bugs are now **fixed in the tree** (commit `bf8b543c`):
-> **#1** `getByteSize` returns 4/8, **#2** `getCoordinatesBitSize` checks `x`/`y`/`z` with `< 0`,
-> **#5** compression triggers on body length `(bufferSize - 1) > 255`, **#6** import casing fixed.
-> C# **#3**/**#4** fixed per the 2026-06-26 snapshot above. **#7 fixed (2026-06-30):** the TS "too large"
-> throw in `getDimensionsBitSize`/`getCoordinatesBitSize` now names the offending field
-> (`'length'`/`'width'`/`'height'`, `'x'`/`'y'`/`'z'`), matching C#'s per-field `ParamName`. Per-axis tests
-> assert it on both sides.
-
-1. **TS `getByteSize` under-allocates for ≥32-bit** — `src/utils/getByteSize.ts` returns `ThirtyTwo → 3` and
-   `SixtyFour → 4`; must be **4** and **8**. Feeds `getBufferSize`, so ≥32-bit serialize output is corrupt.
-   (≤16-bit data is unaffected, which is why it's gone unnoticed.)
-
-2. **TS `getCoordinatesBitSize` validates the wrong field + rejects 0** — `src/utils/getCoordinatesBitSize.ts`
-   checks `item.width` instead of `item.z` (line 11), and uses `<= 0` so it **rejects coordinate `0`**. Canonical
-   C# (`BitSizeHelper.GetCoordinatesBitSize`) throws only for `< 0` — coordinate `0` is valid and common (any
-   item flush against the bin origin). Fix: check `x`/`y`/`z` with `< 0`. Without this, the TS mirror can't
-   serialize most real packing results.
-
-3. **C# `ProtocolReader<T>.ReadAsByte()` only works for `T == int`** — `vipaq/src/Binacle.ViPaq/ProtocolReader.cs`
-   line 29 does `return (T)(object)this.InternalReadByte();`. `InternalReadByte()` returns `int`, so the boxing
-   cast unboxes only when `T` is `int`; for `long`/`ushort`/`ulong` it throws `InvalidCastException`. Its siblings
-   `ReadAsUInt16/32/64` correctly use `T.CreateChecked(...)`. Fix: `return T.CreateChecked(this.ReadByte());`.
-   Effect: any 8-bit-width section fails to deserialize for non-`int` `T`.
-
-4. **C# `BitSizeHelper` overflows for narrow `T` → `SerializeInt32` is unusable above 65535** —
-   `GetDimensionsBitSize`/`GetCoordinatesBitSize` build the comparison constants with
-   `T.CreateChecked(uint.MaxValue)` and `T.CreateChecked(ulong.MaxValue)`. For `T = int` the first overflows, so
-   `SerializeInt32` throws `OverflowException` for **any value > 65535**. The `ThirtyTwo` regime needs `T = long`;
-   `SixtyFour` needs `T = ulong`. The agent doc currently calls `Int32` "the safe default" — it isn't.
-
-   **Combined effect of #3 + #4:** a payload that mixes an 8-bit section with a ≥32-bit section is currently
-   **un-round-trippable in C#** — serialize needs a wide `T` (#4), but a wide `T` breaks the 8-bit read (#3).
-
-5. **C# vs TS compression threshold off-by-one** — C# compresses when the **body** is `> 255`; TS compresses
-   when the body **plus the 3 header/count bytes** is `> 255` (`ViPaqSerializer.serialize.ts` uses `bufferSize`,
-   which includes the header). They disagree at a body length of exactly 255. **NOT an interop bug** — the header
-   is self-describing, so at the borderline one side may emit `[Uncompressed][raw]` and the other
-   `[CompressedGzip][gzip]`, and each still decodes correctly on the opposite side. The only effect is the two
-   produce *different blobs* for that one borderline input — a byte-equality difference, which we don't assert.
-   Worth aligning for tidiness, but not a blocker.
-
-6. **Pre-existing TS test casing bug** — `vipaq/binacle-vipaq/tests/utils/encodingUtils.test.ts` imports
-   `../../src/models/EncodingInfo` (capital E) while the file is `encodingInfo.ts`; trips
-   `forceConsistentCasingInFileNames` and fails `npm test`. One-char fix.
-
-## Suggested build order
-
-> Superseded by **"How to run this — session plan"** at the top, which splits this across sessions
-> (Session 1 = bug fixes + TS behavior tests + lock the style; Session 2+ = generators + shared vectors).
-> The coverage targets below still hold — they say *what* to cover; the session plan says *when*.
-
-- Fix the bugs (1–4 are needed before any ≥16-bit or mixed-width vector can pass; 5 affects the compression
-  boundary; 6 unblocks `npm test`) — Session 1.
-- Uncompressed golden vectors (exact-byte parity, both directions): cover every BitSize, mixed widths (large bin
-  / small items, small dims / large coords), the 255↔256 and 65535↔65536 boundaries, and coordinate `0` —
-  Session 2.
-- Compressed cross-decode vectors/fixtures (the gzip-interop requirement above) — Session 2.
-- Per-language gap tests the shared file can't cover: `ProtocolReader`/`ProtocolWriter` little-endian, empty item
-  list, the documented throws — Session 1 (local-data, no shared vectors needed).
+**Prove the pipeline on one case end-to-end before scaling** — one input → both generators → both suites decode
+it → matrix passes → *then* fill in the case list.
 
 ---
 
-## Current state snapshot (recorded 2026-06-12)
-
-A factual record of where the work actually is. No new direction here — just what exists.
-
-> **Update (2026-06-26): the C# unit-test build below is done.** The suite was fully revived and
-> restructured — `oldTests/`/`oldProviders/` staging is gone, everything is theory+provider or
-> thin-caller shape, now **1265 tests, all green** (was 76). Added beyond the checklist: golden wire
-> bytes both directions (`ExactBytesProvider`), little-endian read/write (`LittleEndianCases`),
-> reserved-version + wider-than-type guards, and dispose/idempotency tests. **Library fix:**
-> `ProtocolWriter.Dispose`/`DisposeAsync` made idempotent (flush moved inside the disposed guard).
-> **Test-data decision:** curated/deterministic, **no Bogus** (the magic seed noted below no longer
-> applies) — reintroduce only for don't-care inputs. Shared per-field values live in `BitSizeValues`.
->
-> Remaining C# is **optional polish only**: round-trip type matrix 3/8→8/8; a truncated-body throw
-> test (`Deserialize` of a valid header + short body); trim three redundant tests (`ToByte_Returns_Correct_Byte`,
-> the duplicated Saturation rows, the ulong "Boundaries" block). **The TS port + shared vectors — this
-> doc's actual goal — are still not started.** That's the next step.
->
-> The detailed snapshot below is historical (pre-restructure).
-
-### C# library — bugs from the list above, now fixed in the working tree
-- **#3 fixed** — `ProtocolReader<T>.ReadAsByte()` now uses `T.CreateChecked(this.ReadByte())`.
-- **#4 fixed** — `BitSizeHelper` yardstick constants now use `T.CreateSaturating(...)` (was `CreateChecked`),
-  so narrow `T` no longer overflows. 8 occurrences across `GetCoordinatesBitSize` + `GetDimensionsBitSize`.
-- **Extra change (not in the original list):** the "value too large" fall-through in both `BitSizeHelper`
-  methods now throws **per field** (names `Length`/`Width`/`Height` and `X`/`Y`/`Z`) instead of one aggregate
-  `"obj dimensions"` exception — matching the zero/negative checks above it. **TS still throws an aggregate
-  `Error` with no field name** → logged as TS gap #7 below.
-
-### C# tests — current layout (`vipaq/test/Binacle.ViPaq.UnitTests`), 76 tests, all green
-Reviewed & kept in `Tests/`:
-- `BitSizeHelperTests` (Result, 38) — `ulong` theory: all buckets, largest-wins, boundaries.
-- `BitSizeHelperSaturationTests` (Result, 16) — every numeric type caps at its top bucket; signed types
-  double as the #4 (Bug B) regression guard. Proven: reverting to `CreateChecked` fails exactly the 8 signed cases.
-- `BitSizeHelperBehaviorTests` (Behavioral, 15) — zero/negative param-name throws + >64-bit "too large" throws.
-- `SanityTests` (1).
-
-Active but not yet restructured (lives in `oldTests/`, not commented, runs):
-- `EncodingInfoHelperBehaviorTests` (6) — `ThrowOnInvalidEncodingInfo` + item-count overflow. Repetitive;
-  candidate to fold into theory+data and move to `Tests/`.
-
-Staged, **commented out**, waiting to be revived + restructured (the C# work that remains):
-- Fixture: `SerializationTestingFixture` (root) — builders + round-trip helpers.
-- `EncodingInfoHelperTests` (Result) — per-section bit sizes + `ToByte`/`FromByte` 128-row truth table.
-- `SerializationRoundTripTests` (Result) — int/ushort/ulong widths + zero coords / no items / compressed.
-- `SerializationEncodingTests` (Result) — header written correctly.
-- `SerializationBehaviorTests` (Behavioral) — null/empty throws.
-- Providers: `oldProviders/EncodingInfoByteDataProvider` (128 rows), `oldProviders/DimensionBitSizeBoundaryProvider`.
-
-Restructure rule the user wants when reviving these: **one theory + data**, or where the generic `T` differs
-per row (so one theory can't hold them), **one helper with many thin callers** — the
-`BitSizeHelperSaturationTests` shape.
-
-C# gaps still unwritten: exact-byte / golden wire tests; reserved `Version` handling;
-`ProtocolReader`/`ProtocolWriter` little-endian byte order. Cleanup: delete the dead commented-out
-"Int generic parameter" region at the bottom of `BitSizeHelperTests` (now covered by the saturation tests).
-
-### Handoff to the TS / common-data session
-Not this session's job — left here for the next one.
-- **Port the restructured C# test shape to TS** (`vipaq/binacle-vipaq`).
-- **TS bugs still open** (C# is the reference): #1 `getByteSize` 32/64 under-allocation, #2 `getCoordinatesBitSize`
-  wrong-field + rejects `0`, #5 compression threshold off-by-one (cosmetic), #6 test import casing.
-- **TS gap #7 (new):** make the "too large" throw name the offending field, to match the C# change above.
-  **Done (2026-06-30)** — TS now throws per axis naming the field, with per-axis tests.
-- **Then build the shared vectors** — the actual goal at the top of this doc: generator tool + uncompressed
-  golden set (exact-byte, both directions) + compressed cross-decode set (compare decoded result, not bytes).
+## Out of scope (stays language-local on purpose)
+C# generic-`T` matrices, saturation-by-type, dispose idempotency; TS buffer pre-sizing + Web-Streams gzip
+mechanics (`getByteSize`, `getBufferSize`, `compressBuffer`, `getDecodingDataStream`). These are language
+mechanics, not wire data — see `test-vectors/README.md` "What is not here."
 
 ---
 
-## C# tests to write — build checklist (for future agents)
+## Notes for the next reader (from the 2026-07-02 review)
 
-The remaining work to **complete the C# unit-test suite** for `Binacle.ViPaq`. Names + one-line descriptions
-only — assign the structure (provider / theory / thin callers) per item when you build it. Derived from a
-full per-function coverage audit of the source vs the active tests.
-
-### Scope boundary — read first
-- This checklist is **C# only**. Do NOT port to TypeScript or build the shared vectors here. A separate clean
-  session does the TS port + common data (see "Handoff to the TS / common-data session" above).
-- TDD: write the test, watch it fail, watch it pass, keep it green. Don't touch the library unless a test
-  proves a bug — and if it does, fix the lib and note it here.
-
-### Conventions (match the existing `Tests/` files)
-- Naming: `Method_Result_When_Condition` or `Method_Throws_Exception_When_Condition`.
-- Traits: `[Trait("Result Tests", "Ensures results are as expected")]` for "returns the right value",
-  `[Trait("Behavioral Tests", "Ensures operations behave as expected")]` for "throws / guards".
-- Structure rule (what the user wants): prefer **one theory + a data provider**. When the generic `T` differs
-  per row (so one theory can't carry it), use **one helper + many thin `[Fact]` callers** — the
-  `BitSizeHelperSaturationTests` shape.
-- Layout: finished tests live in `Tests/`. `oldTests/` + `oldProviders/` are **staging** — most files are
-  fully commented out. **Restructure** them into the shape above; don't just uncomment. One active file already
-  lives there: `oldTests/EncodingInfoHelperBehaviorTests.cs` (move it to `Tests/` when you fold it into theories).
-- Reviving serialization tests needs the staged `SerializationTestingFixture.cs` (root) brought back first.
-- Magic Bogus seed used across the suite: `Randomizer.Seed = new Random(605080);`
-- Run one class: `cd vipaq/test/Binacle.ViPaq.UnitTests && dotnet run -c Debug -- --filter-class "*Name*"`.
-  Run all: same without `--filter-class`. Baseline at time of writing: 76 active tests, all green.
-
-### Checklist
-
-**BitSizeHelper** — already essentially complete; one gap.
-- [ ] `GetCoordinatesBitSize_Returns_Eight_When_All_Coordinates_Are_Zero` (Result) — coords use `< 0`, so zero
-  is legal (unlike dimensions which use `<= 0`); assert `(0,0,0)` returns `Eight` and does not throw.
-
-**EncodingInfoHelper — `ToByte` / `FromByte`** (Result) *(restructure from staged `EncodingInfoHelperTests` + `EncodingInfoByteDataProvider`)*
-- [ ] `ToByte_Returns_Correct_Byte` — every Version×Bin×Item×Coord combo packs to `Version<<6 | Bin<<4 | Item<<2 | Coord`.
-- [ ] `FromByte_Returns_Correct_EncodingInfo` — every header byte unpacks back to the right fields.
-- [ ] `ToByte_Then_FromByte_Returns_Original` — pack then unpack is identity across all combos.
-- [ ] `ToByte_Packs_Reserved_Version_Values` — `Reserved2` / `Reserved3` land in bits 7-6 correctly.
-- [ ] `FromByte_Decodes_Reserved_Version_Values` — header Version bits `10`/`11` decode to `Reserved2`/`Reserved3`.
-
-**EncodingInfoHelper — `CreateEncodingInfo`** (Result) *(restructure from staged theories; only the count-throw is active today)*
-- [ ] `CreateEncodingInfo_Sets_Correct_BinDimensionsBitSize` — bin dims set the bin size, independent of items.
-- [ ] `CreateEncodingInfo_Sets_Correct_ItemDimensionsBitSize` — largest item dims across the whole list wins.
-- [ ] `CreateEncodingInfo_Sets_Correct_ItemCoordinatesBitSize` — largest item coords across the whole list wins.
-- [ ] `CreateEncodingInfo_Uses_Largest_Item_When_Items_Differ` — mixed item sizes → the max drives it (the loop).
-- [ ] `CreateEncodingInfo_Sets_Version_Uncompressed` — version starts uncompressed (gzip flag set later in Serialize).
-- [ ] `CreateEncodingInfo_Defaults_Item_Sizes_To_Eight_When_No_Items` — empty list skips the loop, sizes fall back to `Eight`.
-
-**EncodingInfoHelper — guards** (Behavioral)
-- [ ] `CreateEncodingInfo_Does_Not_Throw_At_UShort_MaxValue_Items` — exactly 65535 items is allowed (boundary
-  just under the active over-max throw test).
-- [ ] `ThrowOnInvalidEncodingInfo_Does_Not_Throw_When_BitSize_Equals_Type_Width` — `short`+`Sixteen`,
-  `int`+`ThirtyTwo`, `long`+`SixtyFour` pass (the "equal width is OK" upper boundary; only all-Eight is smoke-tested now).
-
-**ViPaqSerializer — round trips** (Result) — **zero active coverage today** *(needs the staged fixture revived)*
-- [ ] `Int32_RoundTrips_Eight_Bit` / `_Sixteen_Bit` / `_ThirtyTwo_Bit` — serialize→deserialize unchanged per width.
-- [ ] `Int32_RoundTrips_When_Dimensions_Small_And_Coordinates_Large` — mixed widths in one payload (Bug A + Bug B path).
-- [ ] `UInt16_RoundTrips_Eight_Bit` — 8-bit section with non-`int` T (Bug A regression path).
-- [ ] `UInt16_RoundTrips_Sixteen_Bit`.
-- [ ] `UInt64_RoundTrips_SixtyFour_Bit`.
-- [ ] `RoundTrips_When_Coordinates_Are_Zero` — zero coords survive the trip.
-- [ ] `RoundTrips_When_There_Are_No_Items` — empty item list round-trips, count back as 0.
-- [ ] `RoundTrips_When_Body_Is_Compressed` — payload over 255 bytes goes through gzip and back.
-
-**ViPaqSerializer — header output** (Result) *(restructure from staged `SerializationEncodingTests` + `DimensionBitSizeBoundaryProvider`)*
-- [ ] `Serialize_Writes_Correct_BinDimensionsBitSize` — header byte reflects the bin size bucket.
-- [ ] `Serialize_Writes_Correct_ItemDimensionsBitSize` / `Serialize_Writes_Correct_ItemCoordinatesBitSize`.
-- [ ] `Serialize_Marks_Version_Uncompressed_When_Body_Small` / `Serialize_Marks_Version_CompressedGzip_When_Body_Large`.
-- [ ] `Serialize_Prepends_EncodingInfo_As_First_Byte` — byte 0 is the header, before the body.
-- [ ] `Serialize_Produces_Exact_Bytes_For_Known_Input` — one fixed input → exact `byte[]` (golden; anchors wire
-  layout + little-endian + header in one test).
-
-**ViPaqSerializer — guards** (Behavioral) *(restructure from staged `SerializationBehaviorTests`)*
-- [ ] `Serialize_Throws_When_Bin_Is_Null` / `Serialize_Throws_When_Items_Are_Null`.
-- [ ] `Deserialize_Throws_When_Data_Is_Null` / `Deserialize_Throws_When_Data_Is_Empty`.
-- [ ] `Deserialize_Throws_NotSupportedException_When_Version_Is_Reserved` — header with reserved Version 2/3 rejected on read.
-- [ ] `Deserialize_Throws_When_Section_Is_Wider_Than_Type` — header says 64-bit but `T = int` (the
-  `ThrowOnInvalidEncodingInfo` wiring, through Deserialize).
-
-**ProtocolWriter / ProtocolReader — no direct coverage at all**
-- [ ] `WriteUInt16_Writes_Little_Endian` / `WriteUInt32_...` / `WriteUInt64_...` (Result) — known value → exact little-endian bytes.
-- [ ] `ReadUInt16_Reads_Little_Endian` / `ReadUInt32_...` / `ReadUInt64_...` (Result) — fixed bytes → expected value.
-- [ ] `Writer_Then_Reader_RoundTrips_Each_Width` (Result) — write then read returns the same value, 8/16/32/64.
-- [ ] `ReadAsByte_Returns_Value_For_Every_Numeric_Type` (Result) — read an 8-bit section as `ushort`/`ulong`/`long`,
-  not just `int` (Bug A guard at the reader level).
-- [ ] `WriteAsByte_Throws_When_Value_Exceeds_Byte` (+ `AsUInt16` / `AsUInt32`) (Behavioral) — `CreateChecked`
-  overflow when a value won't fit the target width.
-- [ ] `Read_Throws_When_Disposed` / `Write_Throws_When_Disposed` (Behavioral) — the `ThrowIfDisposed` path.
-- [ ] `Dispose_Flushes_And_Allows_Double_Dispose` (+ async) (Behavioral) — flush on dispose, no error on second dispose.
-
-**Protocol extensions** (`WriteDimensions`/`WriteCoordinates`/`ReadDimensions`/`ReadCoordinates`) (Behavioral)
-- [ ] `WriteDimensions_Throws_When_BitSize_Out_Of_Range` (+ `WriteCoordinates` / `ReadDimensions` / `ReadCoordinates`)
-  — an out-of-range `BitSize` cast hits the `default:` `ArgumentOutOfRangeException`.
+- **Why the two suite totals differ (C# 1329 vs TS 954) — expected, not a gap.** Only the *shared-vector*
+  coverage matches (same JSON, same `Name`s); e.g. the 256 encoding-info combos run 256×3 on **each** side. The
+  difference is all language-local: C#-only test classes multiplied by the generic `T` (saturation-by-type,
+  dispose, `Read8Bits` per type, the boundary matrices), coarser `test.each` granularity in TS, and the two
+  wide 64-bit little-endian rows that are C#-only. The invariant to protect is "same shared scenarios on both
+  sides," not "same total."
+- **A known, harmless parser tolerance difference:** C# `VectorParser.ParseThree` uses `long.Parse` (throws on
+  empty/garbage); TS `parseThree` uses `Number(...)` (`Number("")` is `0`, bad input is `NaN`, neither throws).
+  Only matters for a *malformed* vector, of which there are none. Fix only if the vectors ever carry
+  deliberately-malformed triples.

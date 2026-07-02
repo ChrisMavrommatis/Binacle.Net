@@ -32,6 +32,7 @@ function load(file: string): Scenario[] {
 	return scenarios;
 }
 
+export const uint8Cases: Scenario[] = load("little-endian/uint8.json");
 export const uint16Cases: Scenario[] = load("little-endian/uint16.json");
 export const uint32Cases: Scenario[] = load("little-endian/uint32.json");
 export const uint64Cases: Scenario[] = load("little-endian/uint64.json");

@@ -58,7 +58,7 @@ Every value is within ViPaq's interoperable range `[0, 2^53 − 1]` (`9007199254
 | `exact-bytes.json` | `{Name, Bin, Items[], Bytes{Header, Count[], Bin[], Items[{Dims[], Coords[]}]}}` | C# serialize+deserialize golden; TS serialize golden |
 | `encoding-info-bytes.json` | `{EncodingInfo, Byte}` — all 256 combos | C# `EncodingInfoByteTests`; TS `encodingInfo.test.ts` |
 | `little-endian/` | one file per width — `uint8.json` … `uint64.json`, each `[{Name, Value, Bytes[]}]` | C#/TS protocol reader + writer |
-| `bit-size-selection.json` | `{Name, Kind, Values, ExpectedBitSize}` | both pickers (dims **and** coords) — same width math, both must return `ExpectedBitSize` |
+| `bit-size-selection.json` | `{Name, Kind, Values, ExpectedBitSize}` | `Kind` routes each row to its own picker; the two sets cover every width bucket, so the pickers can't drift |
 | `bit-size-invalid.json` | `{Name, Kind, Values, Field}` — inputs that must throw | both pickers; `Kind` routes; both assert the offending `Field` (C# `ParamName`, TS lowercased message) |
 | `round-trip-scenarios.json` | `{Name, Bin, Items[], ExpectedEncodingInfo}` | both serialize → assert byte 0 == `ExpectedEncodingInfo` → deserialize → assert equal |
 | `decode-invalid.json` | `{Name, Blob[], Reason}` — blobs that must be rejected | both: feed `Blob` to deserialize, assert it throws |
@@ -81,11 +81,11 @@ item count > 65535 → `encode-invalid`; input < 1 byte / `Reserved2`/`Reserved3
   are `8 | 16 | 32 | 64`. The loader splits on `_` for the four field **inputs**; `Byte` (grouped binary) is the
   independent **expected** output (`Version<<6 | Bin<<4 | ItemDim<<2 | ItemCoord`). The composer never sees
   `Byte`, so it stays a real golden, not a round-trip.
-- **`bit-size-selection.json`** — width selection is identical for dimensions and coordinates, and every
-  `Values` triple is ≥ 1 (valid for both), so each case runs through **both** pickers and both must return
-  `ExpectedBitSize`. That proves the two pickers can't drift. `Kind` only says which format `Values` is in
-  (`Dimensions` → `LxWxH`, `Coordinates` → `X,Y,Z`); the loader parses that side and derives the other triple
-  from the same numbers, so one row still feeds both pickers.
+- **`bit-size-selection.json`** — width selection uses identical math for dimensions and coordinates. `Kind`
+  routes each row to **one** picker and says how `Values` is parsed (`Dimensions` → `LxWxH` →
+  `getDimensionsBitSize`; `Coordinates` → `X,Y,Z` → `getCoordinatesBitSize`); each picker must return
+  `ExpectedBitSize`. No row is fed to both pickers. The dimensions set and the coordinates set **together** cover
+  every width bucket, and that is what pins the two pickers so they can't drift apart.
 - **`bit-size-invalid.json`** — `Kind` (`Dimensions` / `Coordinates`) routes the case to the right picker
   (dims reject 0, coords allow 0) and says how `Values` is written (`Dimensions` → `LxWxH`, `Coordinates` →
   `X,Y,Z`). `Field` is the canonical PascalCase field name (= C#'s `ParamName`): C# asserts `ParamName ==
