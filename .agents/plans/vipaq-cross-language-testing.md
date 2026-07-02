@@ -7,9 +7,8 @@ mechanism is **shared reference vectors** in `vipaq/test-vectors/`: one set of J
 
 **Status (2026-07-02):** unit suites and shared vectors **DONE and green** — C# **1329**, TS **954** (18
 suites), `tsc` clean. The three-pass review passed; its actionable findings (F1 uint8 symmetry, F2 stale
-README note, F3 pin `typescript`) are **fixed** — folded into "Done" below. See
-[vipaq-review-findings.md](vipaq-review-findings.md) for the one remaining note-only item. **The one remaining
-build goal is the gzip cross-decode matrix.**
+README note, F3 pin `typescript`) are **fixed** — folded into "Done" below; the note-only leftovers live in
+"Notes for the next reader" at the bottom. **The one remaining build goal is the gzip cross-decode matrix.**
 
 Reference docs (canonical, keep these — not plans):
 - `vipaq/PROTOCOL.md` — the normative, language-agnostic spec (wire layout, `[0, 2^53−1]` integer range,
@@ -65,7 +64,7 @@ ones. Locked design decisions (still binding):
 | `encode-invalid.json` (7) | serialize must throw (both) |
 
 **Invariant to protect:** the same shared scenarios are consumed on both sides. The two suites' *totals* differ
-(C# has more language-local tests) and that is expected — see the note in the findings file.
+(C# has more language-local tests) and that is expected — see "Notes for the next reader" at the bottom.
 
 ---
 

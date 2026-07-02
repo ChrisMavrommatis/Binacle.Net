@@ -50,6 +50,10 @@
             <Link>Data\little-endian\%(Filename)%(Extension)</Link>
             <LogicalName>Data.little-endian.%(Filename)%(Extension)</LogicalName>
         </EmbeddedResource>
+        <EmbeddedResource Include="..\..\test-vectors\interop\*.json">
+            <Link>Data\interop\%(Filename)%(Extension)</Link>
+            <LogicalName>Data.interop.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>

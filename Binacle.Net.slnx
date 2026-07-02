@@ -75,6 +75,9 @@
   <Folder Name="/vipaq/test/">
     <Project Path="vipaq/test/Binacle.ViPaq.UnitTests/Binacle.ViPaq.UnitTests.csproj" />
   </Folder>
+  <Folder Name="/vipaq/tools/">
+    <Project Path="vipaq/tools/Binacle.ViPaq.Generators/Binacle.ViPaq.Generators.csproj" />
+  </Folder>
   <Folder Name="/shared/">
     <Project Path="shared/Binacle.TestsKernel/Binacle.TestsKernel.csproj" />
   </Folder>

@@ -1,0 +1,14 @@
+[
+	{
+		"Name": "uncompressed - forty items under the gzip threshold",
+		"Producer": "csharp",
+		"EncodingInfo": "Uncompressed_8_8_8",
+		"Base64": "ACgAZGRkCgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAACgoKAAAA"
+	},
+	{
+		"Name": "compressed - sixty items over the gzip threshold",
+		"Producer": "csharp",
+		"EncodingInfo": "Compressed_8_8_8",
+		"Base64": "QB+LCAAAAAAAAAOzYUhJSeHi4mJgYBglaU0CAASl03htAQAA"
+	}
+]

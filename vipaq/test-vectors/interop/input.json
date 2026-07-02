@@ -1,0 +1,12 @@
+[
+	{
+		"Name": "uncompressed - forty items under the gzip threshold",
+		"Bin": "100x100x100",
+		"Items": ["10x10x10 (0,0,0):40"]
+	},
+	{
+		"Name": "compressed - sixty items over the gzip threshold",
+		"Bin": "100x100x100",
+		"Items": ["10x10x10 (0,0,0):60"]
+	}
+]
