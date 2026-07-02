@@ -1,26 +1,26 @@
 [
-  {"Name": "uniform 8-bit",  "Values": "10x20x30",             "ExpectedBitSize": "Eight"},
-  {"Name": "uniform 16-bit", "Values": "300x400x500",          "ExpectedBitSize": "Sixteen"},
-  {"Name": "uniform 32-bit", "Values": "70000x80000x90000",    "ExpectedBitSize": "ThirtyTwo"},
-  {"Name": "uniform 64-bit", "Values": "5000000000x6000000000x7000000000", "ExpectedBitSize": "SixtyFour"},
+  {"Name": "uniform 8-bit",  "Kind": "Dimensions", "Values": "10x20x30",             "ExpectedBitSize": "Eight"},
+  {"Name": "uniform 16-bit", "Kind": "Dimensions", "Values": "300x400x500",          "ExpectedBitSize": "Sixteen"},
+  {"Name": "uniform 32-bit", "Kind": "Dimensions", "Values": "70000x80000x90000",    "ExpectedBitSize": "ThirtyTwo"},
+  {"Name": "uniform 64-bit", "Kind": "Dimensions", "Values": "5000000000x6000000000x7000000000", "ExpectedBitSize": "SixtyFour"},
 
-  {"Name": "largest wins on length (16-bit)", "Values": "300x10x10", "ExpectedBitSize": "Sixteen"},
-  {"Name": "largest wins on width (16-bit)",  "Values": "10x300x10", "ExpectedBitSize": "Sixteen"},
-  {"Name": "largest wins on height (16-bit)", "Values": "10x10x300", "ExpectedBitSize": "Sixteen"},
+  {"Name": "largest wins on length (16-bit)", "Kind": "Dimensions", "Values": "300x10x10", "ExpectedBitSize": "Sixteen"},
+  {"Name": "largest wins on width (16-bit)",  "Kind": "Dimensions", "Values": "10x300x10", "ExpectedBitSize": "Sixteen"},
+  {"Name": "largest wins on height (16-bit)", "Kind": "Dimensions", "Values": "10x10x300", "ExpectedBitSize": "Sixteen"},
 
-  {"Name": "largest wins on length (32-bit)", "Values": "70000x300x300", "ExpectedBitSize": "ThirtyTwo"},
-  {"Name": "largest wins on width (32-bit)",  "Values": "300x70000x300", "ExpectedBitSize": "ThirtyTwo"},
-  {"Name": "largest wins on height (32-bit)", "Values": "300x300x70000", "ExpectedBitSize": "ThirtyTwo"},
+  {"Name": "largest wins on length (32-bit)", "Kind": "Dimensions", "Values": "70000x300x300", "ExpectedBitSize": "ThirtyTwo"},
+  {"Name": "largest wins on width (32-bit)",  "Kind": "Dimensions", "Values": "300x70000x300", "ExpectedBitSize": "ThirtyTwo"},
+  {"Name": "largest wins on height (32-bit)", "Kind": "Dimensions", "Values": "300x300x70000", "ExpectedBitSize": "ThirtyTwo"},
 
-  {"Name": "largest wins on length (64-bit)", "Values": "5000000000x70000x70000", "ExpectedBitSize": "SixtyFour"},
-  {"Name": "largest wins on width (64-bit)",  "Values": "70000x5000000000x70000", "ExpectedBitSize": "SixtyFour"},
-  {"Name": "largest wins on height (64-bit)", "Values": "70000x70000x5000000000", "ExpectedBitSize": "SixtyFour"},
+  {"Name": "largest wins on length (64-bit)", "Kind": "Dimensions", "Values": "5000000000x70000x70000", "ExpectedBitSize": "SixtyFour"},
+  {"Name": "largest wins on width (64-bit)",  "Kind": "Dimensions", "Values": "70000x5000000000x70000", "ExpectedBitSize": "SixtyFour"},
+  {"Name": "largest wins on height (64-bit)", "Kind": "Dimensions", "Values": "70000x70000x5000000000", "ExpectedBitSize": "SixtyFour"},
 
-  {"Name": "boundary 255 (8-bit)",         "Values": "255x255x255",                      "ExpectedBitSize": "Eight"},
-  {"Name": "boundary 256 (16-bit)",        "Values": "256x256x256",                      "ExpectedBitSize": "Sixteen"},
-  {"Name": "boundary 65535 (16-bit)",      "Values": "65535x65535x65535",                "ExpectedBitSize": "Sixteen"},
-  {"Name": "boundary 65536 (32-bit)",      "Values": "65536x65536x65536",                "ExpectedBitSize": "ThirtyTwo"},
-  {"Name": "boundary 4294967295 (32-bit)", "Values": "4294967295x4294967295x4294967295", "ExpectedBitSize": "ThirtyTwo"},
-  {"Name": "boundary 4294967296 (64-bit)", "Values": "4294967296x4294967296x4294967296", "ExpectedBitSize": "SixtyFour"},
-  {"Name": "boundary maxInteger (64-bit)",  "Values": "9007199254740991x9007199254740991x9007199254740991", "ExpectedBitSize": "SixtyFour"}
+  {"Name": "boundary 255 (8-bit)",         "Kind": "Coordinates", "Values": "255,255,255",                      "ExpectedBitSize": "Eight"},
+  {"Name": "boundary 256 (16-bit)",        "Kind": "Coordinates", "Values": "256,256,256",                      "ExpectedBitSize": "Sixteen"},
+  {"Name": "boundary 65535 (16-bit)",      "Kind": "Coordinates", "Values": "65535,65535,65535",                "ExpectedBitSize": "Sixteen"},
+  {"Name": "boundary 65536 (32-bit)",      "Kind": "Coordinates", "Values": "65536,65536,65536",                "ExpectedBitSize": "ThirtyTwo"},
+  {"Name": "boundary 4294967295 (32-bit)", "Kind": "Coordinates", "Values": "4294967295,4294967295,4294967295", "ExpectedBitSize": "ThirtyTwo"},
+  {"Name": "boundary 4294967296 (64-bit)", "Kind": "Coordinates", "Values": "4294967296,4294967296,4294967296", "ExpectedBitSize": "SixtyFour"},
+  {"Name": "boundary maxInteger (64-bit)", "Kind": "Coordinates", "Values": "9007199254740991,9007199254740991,9007199254740991", "ExpectedBitSize": "SixtyFour"}
 ]

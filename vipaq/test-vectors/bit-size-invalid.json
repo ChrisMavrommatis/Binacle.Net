@@ -6,15 +6,15 @@
   {"Name": "dimensions negative width",  "Kind": "Dimensions",  "Values": "1x-1x1", "Field": "Width"},
   {"Name": "dimensions negative height", "Kind": "Dimensions",  "Values": "1x1x-1", "Field": "Height"},
 
-  {"Name": "coordinates negative x", "Kind": "Coordinates", "Values": "-1x0x0", "Field": "X"},
-  {"Name": "coordinates negative y", "Kind": "Coordinates", "Values": "0x-1x0", "Field": "Y"},
-  {"Name": "coordinates negative z", "Kind": "Coordinates", "Values": "0x0x-1", "Field": "Z"},
+  {"Name": "coordinates negative x", "Kind": "Coordinates", "Values": "-1,0,0", "Field": "X"},
+  {"Name": "coordinates negative y", "Kind": "Coordinates", "Values": "0,-1,0", "Field": "Y"},
+  {"Name": "coordinates negative z", "Kind": "Coordinates", "Values": "0,0,-1", "Field": "Z"},
 
   {"Name": "dimensions exceeds max length", "Kind": "Dimensions",  "Values": "9007199254740992x1x1", "Field": "Length"},
   {"Name": "dimensions exceeds max width",  "Kind": "Dimensions",  "Values": "1x9007199254740992x1", "Field": "Width"},
   {"Name": "dimensions exceeds max height", "Kind": "Dimensions",  "Values": "1x1x9007199254740992", "Field": "Height"},
 
-  {"Name": "coordinates exceeds max x", "Kind": "Coordinates", "Values": "9007199254740992x0x0", "Field": "X"},
-  {"Name": "coordinates exceeds max y", "Kind": "Coordinates", "Values": "0x9007199254740992x0", "Field": "Y"},
-  {"Name": "coordinates exceeds max z", "Kind": "Coordinates", "Values": "0x0x9007199254740992", "Field": "Z"}
+  {"Name": "coordinates exceeds max x", "Kind": "Coordinates", "Values": "9007199254740992,0,0", "Field": "X"},
+  {"Name": "coordinates exceeds max y", "Kind": "Coordinates", "Values": "0,9007199254740992,0", "Field": "Y"},
+  {"Name": "coordinates exceeds max z", "Kind": "Coordinates", "Values": "0,0,9007199254740992", "Field": "Z"}
 ]

@@ -23,49 +23,30 @@ internal static class VectorParser
 
 	public static byte[] ParseBytes(IEnumerable<string> tokens) => tokens.Select(ParseByte).ToArray();
 
-	// "AxBxC" -> three longs. A leading '-' is allowed so invalid-input vectors can carry negatives.
-	public static (long L, long W, long H) ParseTriple(string compact)
-	{
-		var parts = compact.Split('x');
-		if (parts.Length != 3)
-			throw new FormatException($"Triple '{compact}' must be 'AxBxC'.");
-
-		return (ParseLong(parts[0]), ParseLong(parts[1]), ParseLong(parts[2]));
-	}
-
+	// Dimensions and bin are "LxWxH" (split on 'x'); coordinates are "X,Y,Z" (split on ','). Each parser
+	// owns its separator so a coordinate is never read as a dimension. A leading '-' is allowed so
+	// invalid-input vectors can carry negatives.
 	public static Bin<long> ParseBin(string compact)
 	{
-		var (l, w, h) = ParseTriple(compact);
-		return new Bin<long> { Length = l, Width = w, Height = h };
+		var dimensions = ParseDimensions(compact);
+		return new Bin<long> { Length = dimensions.Length, Width = dimensions.Width, Height = dimensions.Height };
 	}
 
 	public static Dimensions<long> ParseDimensions(string compact)
 	{
-		var (l, w, h) = ParseTriple(compact);
-		return new Dimensions<long> { Length = l, Width = w, Height = h };
+		var (length, width, height) = ParseThree(compact, 'x');
+		return new Dimensions<long> { Length = length, Width = width, Height = height };
 	}
 
 	public static Coordinates<long> ParseCoordinates(string compact)
 	{
-		var (x, y, z) = ParseTriple(compact);
+		var (x, y, z) = ParseThree(compact, ',');
 		return new Coordinates<long> { X = x, Y = y, Z = z };
 	}
 
 	// "LxWxH (X,Y,Z):Q" -> Q copies of the item (Q optional, default 1). ':' is the quantity separator
 	// (not '-' as in shared/Binacle.TestsKernel) so '-' stays free for negative dims/coords.
-	public static List<Item<long>> ParseItems(IEnumerable<string> compactItems)
-	{
-		var result = new List<Item<long>>();
-		foreach (var compact in compactItems)
-		{
-			var (l, w, h, x, y, z, quantity) = ParseItemParts(compact);
-			for (var i = 0; i < quantity; i++)
-				result.Add(new Item<long> { Length = l, Width = w, Height = h, X = x, Y = y, Z = z });
-		}
-		return result;
-	}
-
-	private static (long L, long W, long H, long X, long Y, long Z, int Quantity) ParseItemParts(string compact)
+	public static List<Item<long>> ParseItems(string compact)
 	{
 		var quantity = 1;
 		var body = compact;
@@ -81,13 +62,36 @@ internal static class VectorParser
 		if (space < 0)
 			throw new FormatException($"Item '{compact}' must be 'LxWxH (X,Y,Z)'.");
 
-		var (l, w, h) = ParseTriple(body[..space]);
+		var dimensions = ParseDimensions(body[..space]);
 
-		var coords = body[(space + 1)..].Trim().TrimStart('(').TrimEnd(')').Split(',');
-		if (coords.Length != 3)
-			throw new FormatException($"Item '{compact}' coordinates must be '(X,Y,Z)'.");
+		var coordinatesText = body[(space + 1)..].Trim().TrimStart('(').TrimEnd(')');
+		var coordinates = ParseCoordinates(coordinatesText);
 
-		return (l, w, h, ParseLong(coords[0]), ParseLong(coords[1]), ParseLong(coords[2]), quantity);
+		var items = new List<Item<long>>();
+		for (var i = 0; i < quantity; i++)
+			items.Add(new Item<long>
+			{
+				Length = dimensions.Length,
+				Width = dimensions.Width,
+				Height = dimensions.Height,
+				X = coordinates.X,
+				Y = coordinates.Y,
+				Z = coordinates.Z,
+			});
+		return items;
+	}
+
+	// Flattens many compact item strings into one list; each may expand via its ':Q' suffix.
+	public static List<Item<long>> ParseItems(IEnumerable<string> compactItems)
+	{
+		var result = new List<Item<long>>();
+		foreach (var compact in compactItems)
+		{
+			var items = ParseItems(compact);
+			result.AddRange();
+		}
+			
+		return result;
 	}
 
 	private static readonly Dictionary<string, Version> VersionWords = new()
@@ -121,6 +125,16 @@ internal static class VectorParser
 			ItemDimensionsBitSize = WidthWords[parts[2]],
 			ItemCoordinatesBitSize = WidthWords[parts[3]],
 		};
+	}
+
+	// "A{separator}B{separator}C" -> three longs. Dimensions/bin split on 'x'; coordinates split on ','.
+	private static (long First, long Second, long Third) ParseThree(string compact, char separator)
+	{
+		var parts = compact.Split(separator);
+		if (parts.Length != 3)
+			throw new FormatException($"'{compact}' must be three values separated by '{separator}'.");
+
+		return (ParseLong(parts[0]), ParseLong(parts[1]), ParseLong(parts[2]));
 	}
 
 	private static long ParseLong(string value) => long.Parse(value, CultureInfo.InvariantCulture);

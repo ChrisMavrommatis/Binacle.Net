@@ -20,13 +20,17 @@ edit a case here, not in either suite.
   separate `Name`.)
 - **Compact strings for inputs** (same convention as `shared/Binacle.TestsKernel`):
   - **Dimensions / bin** — `"LxWxH"`, e.g. `"10x20x30"` (split on `x` → 3 ints).
-  - **Item** — `"LxWxH (X,Y,Z)"`, e.g. `"1x2x3 (4,5,6)"` (dims, space, then `(x,y,z)`). An optional `:Q`
+  - **Coordinates** — `"X,Y,Z"`, e.g. `"4,5,6"` (split on `,` → 3 ints). A coordinate is comma-separated
+    everywhere it appears (an item's coords, a bit-size coordinates row), so one parser reads it the same way.
+  - **Item** — `"LxWxH (X,Y,Z)"`, e.g. `"1x2x3 (4,5,6)"` (dims, space, then `(X,Y,Z)`). An optional `:Q`
     suffix repeats the item `Q` times, e.g. `"1x2x3 (4,5,6):60"` = 60 copies; no suffix means one. The
     quantity separator is `:` (not `-` as in `shared/Binacle.TestsKernel`) **on purpose**, so `-` stays free for
     negative dims/coords — e.g. `"-1x2x3 (4,5,6)"` or `"1x2x3 (-4,5,6)"` — which `encode-invalid.json` uses to
     check the serializer rejects them. Parse: split off `:Q` first, then `LxWxH (X,Y,Z)` allowing a leading `-`
     on any int.
-  - **Values triple** — `"AxBxC"` (three plain ints; negatives allowed where a case expects a throw).
+  - **Values (bit-size files)** — parsed by the row's `Kind`: `Dimensions` → `"LxWxH"`, `Coordinates` →
+    `"X,Y,Z"`. `Kind` tells you which parser reads it, so there is no ambiguous "triple"; negatives allowed
+    where a case expects a throw.
 - **Bytes are strings.** The encoding header byte is grouped **binary** so the flags are legible
   (`"0b00_00_00_00"` = `Version | Bin | ItemDim | ItemCoord`); every other byte is **hex**
   (`"0x0A"`). Parser rule: `0b` → base 2, `0x` → base 16, strip `_`; each entry is one byte.
@@ -54,7 +58,7 @@ Every value is within ViPaq's interoperable range `[0, 2^53 − 1]` (`9007199254
 | `exact-bytes.json` | `{Name, Bin, Items[], Bytes{Header, Count[], Bin[], Items[{Dims[], Coords[]}]}}` | C# serialize+deserialize golden; TS serialize golden |
 | `encoding-info-bytes.json` | `{EncodingInfo, Byte}` — all 256 combos | C# `EncodingInfoByteTests`; TS `encodingInfo.test.ts` |
 | `little-endian/` | one file per width — `uint8.json` … `uint64.json`, each `[{Name, Value, Bytes[]}]` | C#/TS protocol reader + writer |
-| `bit-size-selection.json` | `{Name, Values, ExpectedBitSize}` | both pickers (dims **and** coords) — same width math, both must return `ExpectedBitSize` |
+| `bit-size-selection.json` | `{Name, Kind, Values, ExpectedBitSize}` | both pickers (dims **and** coords) — same width math, both must return `ExpectedBitSize` |
 | `bit-size-invalid.json` | `{Name, Kind, Values, Field}` — inputs that must throw | both pickers; `Kind` routes; both assert the offending `Field` (C# `ParamName`, TS lowercased message) |
 | `round-trip-scenarios.json` | `{Name, Bin, Items[], ExpectedEncodingInfo}` | both serialize → assert byte 0 == `ExpectedEncodingInfo` → deserialize → assert equal |
 | `decode-invalid.json` | `{Name, Blob[], Reason}` — blobs that must be rejected | both: feed `Blob` to deserialize, assert it throws |
@@ -79,10 +83,13 @@ item count > 65535 → `encode-invalid`; input < 1 byte / `Reserved2`/`Reserved3
   `Byte`, so it stays a real golden, not a round-trip.
 - **`bit-size-selection.json`** — width selection is identical for dimensions and coordinates, and every
   `Values` triple is ≥ 1 (valid for both), so each case runs through **both** pickers and both must return
-  `ExpectedBitSize`. That proves the two pickers can't drift.
+  `ExpectedBitSize`. That proves the two pickers can't drift. `Kind` only says which format `Values` is in
+  (`Dimensions` → `LxWxH`, `Coordinates` → `X,Y,Z`); the loader parses that side and derives the other triple
+  from the same numbers, so one row still feeds both pickers.
 - **`bit-size-invalid.json`** — `Kind` (`Dimensions` / `Coordinates`) routes the case to the right picker
-  (dims reject 0, coords allow 0). `Field` is the canonical PascalCase field name (= C#'s `ParamName`): C#
-  asserts `ParamName == Field`; TS asserts the thrown message contains `Field` lowercased.
+  (dims reject 0, coords allow 0) and says how `Values` is written (`Dimensions` → `LxWxH`, `Coordinates` →
+  `X,Y,Z`). `Field` is the canonical PascalCase field name (= C#'s `ParamName`): C# asserts `ParamName ==
+  Field`; TS asserts the thrown message contains `Field` lowercased.
 - **`round-trip-scenarios.json`** — every scenario is a flat `Items[]`; an item may carry a `-Q` suffix to
   repeat it (see the compact-string rules). Round-trip equality alone is weak — it passes even if the serializer
   picks the wrong widths or compression — so **every** case also carries `ExpectedEncodingInfo` (the same
