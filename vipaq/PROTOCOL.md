@@ -148,14 +148,20 @@ After the body is built, an encoder decides whether to gzip it:
 - Gzip uses standard gzip (C# `GZipStream` at optimal level; JS/Web `CompressionStream('gzip')`). The header
   byte is prepended **after** compression, so it is never inside the gzip stream.
 
-**Interop vs. byte-equality.** gzip output bytes are **not** identical across engines (different headers, OS
-flag, deflate choices) — same input, same algorithm, different valid bytes. Therefore:
+**Interop vs. byte-equality.** Compressed gzip bytes are **not reproducible across engines and runtimes** — same
+input, same algorithm, potentially different valid bytes. Therefore:
 
 - For an **uncompressed** body, two conformant encoders produce **byte-identical** blobs. These can be compared
   exactly (golden vectors).
-- For a **compressed** body, the blobs **differ**. They **MUST NOT** be byte-compared across implementations.
-  The only contract is **cross-decode**: each side's compressed blob **MUST** decode on the other back to the
-  original input.
+- For a **compressed** body, the blobs **MUST NOT** be byte-compared across implementations. The only contract is
+  **cross-decode**: any conformant compressed blob **MUST** decode back to the original input, whichever engine
+  produced it.
+
+  This is measured, not assumed. On one machine, .NET 8, .NET 10 and Node 18–24 (all stock zlib, glibc *and*
+  musl) produced **byte-identical** gzip for the same body — but **.NET 9 (zlib-ng)** produced a **different,
+  equally valid** deflate stream (same gzip header, different bytes, decodes to the same body). So output built on
+  one machine/runtime may differ byte-for-byte from another; every decoder must still read it. Never rely on
+  compressed bytes being either equal *or* unequal.
 
 A decoder **MUST** accept both an `Uncompressed` and a `CompressedGzip` body regardless of its own trigger.
 

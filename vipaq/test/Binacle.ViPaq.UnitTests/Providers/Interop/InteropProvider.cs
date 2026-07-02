@@ -1,22 +1,28 @@
 using Binacle.ViPaq.UnitTests.Models;
+using Version = Binacle.ViPaq.Version;
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// Cross-language interop artifacts (vipaq/test-vectors/interop/). input.json is the shared (bin, items)
-// both language generators serialize; artifact-cs.json holds what the C# tool produced — the base64
-// blob plus the header it must decode to. Inputs and artifacts are joined by Name: the decode test looks
-// up an artifact's expected (bin, items) from input.json by the same Name. TS's artifact-ts.json joins
-// here once the TS generator exists.
+// NOTE (needs simplifying — see plan): this provider is doing too much. It loads input.json plus both
+// artifact files and serves three different checks (decode, integrity, byte-identity) off a nested
+// dictionary. Next session: either flatten it to one simple shape or split it into two providers
+// (decode vs. integrity/byte-identity). Left as-is (green) on purpose — do not refactor piecemeal.
+//
+// The interop artifacts (interop/artifact-cs.json, interop/artifact-ts.json) both serialize the shared
+// input.json; each blob must deserialize back to it.
 internal static class InteropProvider
 {
 	public sealed record Input(Bin<long> Bin, Item<long>[] Items);
 
-	public sealed record ArtifactCase(string Producer, EncodingInfo ExpectedEncodingInfo, byte[] Bytes);
+	public sealed record ArtifactCase(string Producer, string Name, EncodingInfo ExpectedEncodingInfo, byte[] Bytes, Input Input);
+
+	private const string CSharpFile = "interop.artifact-cs.json";
+	private const string TypeScriptFile = "interop.artifact-ts.json";
 
 	private static readonly Dictionary<string, Input> inputs;
-	private static readonly Dictionary<string, ArtifactCase> csharpArtifacts;
+	// file name -> (scenario Name -> case)
+	private static readonly Dictionary<string, Dictionary<string, ArtifactCase>> artifactsByFile;
 
-	// Static constructor: the vectors load once, on first access to this provider.
 	static InteropProvider()
 	{
 		inputs = new Dictionary<string, Input>();
@@ -27,11 +33,15 @@ internal static class InteropProvider
 				VectorParser.ParseItems(vector.Items).ToArray()));
 		}
 
-		csharpArtifacts = LoadArtifacts("interop.artifact-cs.json");
+		artifactsByFile = new Dictionary<string, Dictionary<string, ArtifactCase>>
+		{
+			[CSharpFile] = LoadArtifacts(CSharpFile),
+			[TypeScriptFile] = LoadArtifacts(TypeScriptFile),
+		};
 	}
 
 	// Reads an artifact file into a Name-keyed dictionary. Keying by Name rejects duplicate names in the
-	// file; whether the names line up with input.json is checked separately by InteropIntegrityTests.
+	// file; whether the names line up with input.json is checked by the integrity test.
 	private static Dictionary<string, ArtifactCase> LoadArtifacts(string fileName)
 	{
 		var artifacts = new Dictionary<string, ArtifactCase>();
@@ -39,28 +49,44 @@ internal static class InteropProvider
 		{
 			artifacts.Add(vector.Name, new ArtifactCase(
 				vector.Producer,
+				vector.Name,
 				VectorParser.ParseEncodingInfo(vector.EncodingInfo),
-				Convert.FromBase64String(vector.Base64)));
+				Convert.FromBase64String(vector.Base64),
+				inputs[vector.Name]));
 		}
 
 		return artifacts;
 	}
 
-	public static IEnumerable<object[]> CSharpNames
-		=> csharpArtifacts.Keys.Select(name => new object[] { name });
+	// --- decode: one row per (producer, scenario), across both files ---
+	public static IEnumerable<object[]> DecodeCases
+		=> artifactsByFile.Values
+			.SelectMany(byName => byName.Values)
+			.Select(artifact => new object[] { artifact.Producer, artifact.Name });
 
-	public static ArtifactCase GetCSharpArtifact(string name)
-		=> csharpArtifacts[name];
+	public static ArtifactCase Get(string producer, string name)
+		=> artifactsByFile.Values
+			.SelectMany(byName => byName.Values)
+			.Single(artifact => artifact.Producer == producer && artifact.Name == name);
 
-	public static Input GetInput(string name)
-		=> inputs[name];
+	// --- integrity: each artifact file must cover exactly the input scenarios ---
+	public static IEnumerable<object[]> ArtifactFiles
+		=> artifactsByFile.Keys.Select(fileName => new object[] { fileName });
 
-	// Name sets for the integrity check — input.json and each artifact file must cover the same scenarios.
 	public static IReadOnlyCollection<string> InputNames
 		=> inputs.Keys;
 
-	public static IReadOnlyCollection<string> CSharpArtifactNames
-		=> csharpArtifacts.Keys;
+	public static IReadOnlyCollection<string> ArtifactNames(string fileName)
+		=> artifactsByFile[fileName].Keys;
+
+	// --- byte-identity: uncompressed blobs must match byte-for-byte across producers ---
+	public static IEnumerable<object[]> UncompressedNames
+		=> artifactsByFile[CSharpFile].Values
+			.Where(artifact => artifact.ExpectedEncodingInfo.Version == Version.Uncompressed)
+			.Select(artifact => new object[] { artifact.Name });
+
+	public static byte[] CSharpBytes(string name) => artifactsByFile[CSharpFile][name].Bytes;
+	public static byte[] TypeScriptBytes(string name) => artifactsByFile[TypeScriptFile][name].Bytes;
 
 	// Raw interop/input.json row: a (bin, items) input in the shared compact-string form.
 	private sealed class InputVector

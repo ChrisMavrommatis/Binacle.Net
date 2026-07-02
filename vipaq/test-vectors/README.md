@@ -63,6 +63,9 @@ Every value is within ViPaq's interoperable range `[0, 2^53 − 1]` (`9007199254
 | `round-trip-scenarios.json` | `{Name, Bin, Items[], ExpectedEncodingInfo}` | both serialize → assert byte 0 == `ExpectedEncodingInfo` → deserialize → assert equal |
 | `decode-invalid.json` | `{Name, Blob[], Reason}` — blobs that must be rejected | both: feed `Blob` to deserialize, assert it throws |
 | `encode-invalid.json` | `{Name, Bin, Items[], Reason}` — inputs that must be rejected | both: serialize, assert it throws |
+| `interop/input.json` | `{Name, Bin, Items[]}` — the shared inputs both generators serialize | both: the answer key a decoded artifact must equal (joined by `Name`) |
+| `interop/artifact-cs.json` | `{Name, Producer, EncodingInfo, Base64}` — what the C# generator emitted | both: decode → assert equals `input.json[Name]` |
+| `interop/artifact-ts.json` | same shape — what the TS generator emitted | both: decode → assert equals `input.json[Name]` |
 
 Together with `bit-size-invalid.json`, these cover the whole `PROTOCOL.md §8` reject table: dim ≤ 0 / coord < 0 /
 value > MaxInteger on **encode** → `bit-size-invalid` (picker level) and `encode-invalid` (end-to-end serialize);
@@ -119,9 +122,8 @@ These encode language mechanics, not wire data, so they are not shared:
 - C#-only — saturation-by-type, dispose/double-dispose, `Read8Bits` per numeric type.
 - TS-only — `getByteSize`, `getBufferSize`, `writeEncodingInfoToBuffer`, `compressBuffer`,
   `getDecodingDataStream` (buffer pre-sizing and Web-Streams gzip mechanics C# does not have).
-- **Compressed payloads are never byte-shared** — not because of the threshold (C# and TS now agree: both
-  compress when the body is `> 255`; the old off-by-one is fixed), but because the two gzip engines
-  (`GZipStream` vs `CompressionStream`) emit different valid bytes for the same input. So a compressed golden
-  can't be byte-compared across languages; that path is covered by decode-to-input, not exact bytes (see the
-  gzip cross-decode plan). `round-trip-scenarios.json` stays comfortably over the threshold on purpose, so it
-  exercises the compressed path via serialize → deserialize, which works regardless of engine differences.
+- **Compressed payloads are never byte-compared** — for the interop artifacts (`interop/*.json`) the contract
+  is **decode-to-input, never byte-equality**, because compressed gzip bytes are **not reproducible across
+  engines and runtimes** (measured: .NET 8/10 and Node share stock-zlib bytes, .NET 9/zlib-ng differs; all
+  decode to the same body). The normative statement lives in `PROTOCOL.md §6`. `round-trip-scenarios.json` also
+  exercises the compressed path via serialize → deserialize, which works regardless of engine.

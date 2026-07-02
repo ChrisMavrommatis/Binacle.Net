@@ -5,10 +5,29 @@
 mechanism is **shared reference vectors** in `vipaq/test-vectors/`: one set of JSON inputs+answers read by
 *both* test suites, so each is graded against the same answer key and the two can't silently drift.
 
-**Status (2026-07-02):** unit suites and shared vectors **DONE and green** — C# **1329**, TS **954** (18
-suites), `tsc` clean. The three-pass review passed; its actionable findings (F1 uint8 symmetry, F2 stale
-README note, F3 pin `typescript`) are **fixed** — folded into "Done" below; the note-only leftovers live in
-"Notes for the next reader" at the bottom. **The one remaining build goal is the gzip cross-decode matrix.**
+**Status (2026-07-02):** unit suites, shared vectors, and the interop matrix **green** — C# **1336**, TS **960**
+(20 suites), `tsc` clean. The three-pass review's findings (F1 uint8 symmetry, F2 stale README note, F3 pin
+`typescript`) are **fixed**. The gzip interop matrix is **complete** (C# + TS generators, `interop/` vectors,
+both suites decode both artifacts, uncompressed byte-identity, integrity per file); the measured "compressed
+bytes aren't reproducible across runtimes" finding lives permanently in `PROTOCOL.md §6` + `test-vectors/README.md`.
+Cross-runtime tests were built then dropped as low-value.
+
+> **HANDOFF → new session (near session limit 2026-07-02).** Everything above is green (C# 1336, TS 960).
+> **Start here:** simplify C# `InteropProvider` per the design in "Remaining" below (abstract base reads a file
+> name; `CSharp` + `TypeScript` providers derive; decode/integrity use them separately; byte-identity compares
+> the two).
+>
+> **Git state (verify with `git status` — do not trust this blindly):** most of the session is **already
+> committed** (`git log`: `cfb757d3 review and fixes`, `f1334b22 interop tests and vipaq test reorganize`,
+> `5bd32202 ts interop generator` — the folderization, both generators, and `interop/` vectors). **Still
+> uncommitted:** the interop **matrix** expansion (both suites decode both artifacts + byte-identity + per-file
+> integrity — files `interop.test.ts`, `interopIntegrity.test.ts`, `InteropArtifacts.ts`, `InteropByteIdentity
+> Tests.cs`, and edits to `InteropProvider.cs` / `InteropDecodeTests.cs` / `InteropIntegrityTests.cs`) plus the
+> cross-runtime-finding **doc updates** (`PROTOCOL.md §6`, `test-vectors/README.md`, this plan). Commit those.
+> The dropped cross-runtime files were never committed, so they leave no trace.
+>
+> **Run checks:** C# `dotnet test` in `vipaq/test/Binacle.ViPaq.UnitTests`; TS `npx tsc --noEmit` + `npx jest` in
+> `vipaq/binacle-vipaq`.
 
 Reference docs (canonical, keep these — not plans):
 - `vipaq/PROTOCOL.md` — the normative, language-agnostic spec (wire layout, `[0, 2^53−1]` integer range,
@@ -68,40 +87,51 @@ ones. Locked design decisions (still binding):
 
 ---
 
-## Remaining — the gzip cross-decode matrix (the one real TODO)
+## Interop — the gzip cross-decode matrix
 
-The real requirement: **a payload serialized by one side deserializes on the other**, *including compressed
-payloads*. Uncompressed bytes are already covered by the exact-byte goldens (identical across languages).
-Compressed bytes are **not** byte-identical — `GZipStream` (C#) and `CompressionStream('gzip')` (Node) emit
-different valid gzip for the same input. So the compressed contract is **decode-to-input, never byte-equality.**
+The requirement: **a payload serialized by one side deserializes on the other**, *including compressed payloads*.
+Uncompressed bytes are byte-identical across languages (spec-determined, no engine). Compressed bytes are the hard
+case; the contract is **decode-to-input, never byte-equality**. The *why* — compressed gzip bytes are not
+reproducible across engines/runtimes (the measured .NET-8/10/Node-vs-.NET-9 finding) — is recorded permanently in
+`vipaq/PROTOCOL.md §6` and `test-vectors/README.md`. **Keep it there; it must outlive this plan.**
 
-**The 2×2 matrix** (same input, compressed once per language → two artifacts):
+**Built (generate once, commit, consume read-only — no CI, no run-time serialization):**
+- `vipaq/tools/Binacle.ViPaq.Generators` — C# console (`dotnet run`), reads `interop/input.json`, writes
+  `interop/artifact-cs.json`. Standalone: own concrete-`long` `Bin`/`Item` + compact-string parser.
+- `binacle-vipaq/tools/generateArtifact.ts` — TS script (`npm run generate:interop`), same input → `artifact-ts.json`.
+- `interop/input.json` — the shared answer key. Two cases: one **under** the 255-byte body threshold (stays
+  `Uncompressed_8_8_8`), one **over** (~60 items → `Compressed_8_8_8`). Both generators serialize these.
+- **The matrix** — both suites decode **both** artifacts back to input (byte 0 pinned):
+  - C# `InteropDecodeTests` — decodes `{artifact-cs, artifact-ts}` × both scenarios.
+  - TS `interop.test.ts` — decodes `{artifact-cs, artifact-ts}` × both scenarios (its own output AND C#'s).
+  - C# `InteropByteIdentityTests` — the **uncompressed** blob must be byte-identical across producers (the one
+    safe byte comparison; compressed is decode-to-input only). Language-agnostic, so it lives on one side.
+  - Integrity per file: C# `InteropIntegrityTests` + TS `interopIntegrity.test.ts` — each artifact file's `Name`
+    set must equal `input.json`'s (guards a stale/forgotten regen; proven to bite).
 
-|                                | decode in **C#** | decode in **TS** |
-|--------------------------------|------------------|------------------|
-| artifact compressed **by C#**  | own round-trip   | C# → TS interop  |
-| artifact compressed **by TS**  | TS → C# interop  | own round-trip   |
+Cross-runtime coverage was built then **dropped** (2026-07-02): a gzip decoder reads any valid gzip, so decoding a
+foreign-runtime blob is low-value belt-and-suspenders, and the .NET-8/9 rows needed hand-captured Docker bytes —
+outside the "one generator, committed output" discipline. The finding it demonstrated is preserved in the docs
+above. Revisit only if a real need appears.
 
-- All four cells must recover the **identical original input**.
-- Assert `artifact-cs != artifact-ts` (documents that the encoders differ on the wire); never use byte-equality
-  *between* artifacts as a pass condition.
-- Pick an input comfortably over the threshold so both definitely compress (~60 small items), off the 255 edge.
-
-**Generate once, commit, consume read-only** (the TestsKernel pattern — no CI, no run-time serialization):
-- Suggested home: `vipaq/test-vectors/compressed/` — a shared input definition + `artifact-cs` + `artifact-ts`.
-- A C# generator writes `artifact-cs`; a TS generator writes `artifact-ts`; both read the shared input. Wire to
-  **one** `regen` command so the two producers can't drift. Commit the output.
-- Each suite's cross-decode test reads **both** artifacts (its own runtime only) and runs the matrix.
-
-**Generators / `vipaq/tools/`:** none exist yet. `encoding-info-bytes.json` is marked "generated" but nothing
-regenerates it — build the canonical C# generator when you build the compressed pipeline, off the shared inputs.
-
-**Regeneration discipline:** compressed artifacts must **never** be byte-compared across regenerations — deflate
-output depends on the zlib/engine version. The only stable contract is decode-to-input. Regenerating produces
-*different valid bytes*; that is expected, not a failure.
-
-**Prove the pipeline on one case end-to-end before scaling** — one input → both generators → both suites decode
-it → matrix passes → *then* fill in the case list.
+**Remaining (nice-to-have, not blocking):**
+- **Simplify C# `InteropProvider`** (fresh session). It is doing too much — loads input.json + both artifact
+  files and serves three checks (decode, integrity, byte-identity) off a nested `Dictionary<file, Dictionary<
+  name, case>>`. Left green and untouched on purpose — do not refactor piecemeal; do it deliberately.
+  **Intended design:** an abstract base that reads a **given file name** (all the file-read + parse code lives
+  there, once), with a `CSharp` and a `TypeScript` provider deriving from it, each pointing the base at its own
+  artifact file. Each derived provider is then self-contained: `InteropDecodeTests` and `InteropIntegrityTests`
+  consume whichever they need, separately; `InteropByteIdentityTests` compares the two (the only place that needs
+  both). This drops the nested dictionary — each provider *is* its file. `input.json` is shared, so the base (or
+  a small shared helper) loads it once. The already-flat TS `InteropArtifacts.ts` is the reference shape.
+  - *One thing to square away:* xUnit `[MemberData]` sources must be **static**, and C# static classes can't
+    derive. So "abstract base + derived providers" likely means a base with a static `Read(fileName)` helper and
+    two thin static `CSharpArtifacts` / `TypeScriptArtifacts` providers that call it — or instance providers fed
+    to tests another way. Decide the mechanism first.
+- **One `regen` entry point** wiring the two generators (C# `dotnet run` + TS `npm run generate:interop`) so they
+  can't drift. Today they're two separate hand-run commands.
+- `encoding-info-bytes.json` is marked "generated" but still has no generator — build one in the C# tool when
+  convenient, off the shared inputs.
 
 ---
 
