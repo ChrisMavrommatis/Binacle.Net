@@ -40,7 +40,42 @@ vectors (`X,Y,Z`→`(X,Y,Z)`, `:Q`→`[Q]`), `vipaq/PROTOCOL.md`, and the TS mir
   pass, project builds.** No consumer touched yet.
   - **Resolved:** constraint is `where T : struct, INumber<T>` everywhere (interfaces, models, static methods).
     Kills the `CS8618` warnings cleanly; int+long both qualify. Build is warning-free, 42 tests pass.
-- **Phase 1 — NEXT.** vipaq (see below).
+- **Phase 0-TS — DONE (awaiting commit).** Built `packages/binacle-compact-notation` — the TS mirror of the
+  C# lib (npm workspace, covered by the `packages/*` glob). Same grammar, `number`-based (range `[0, 2^53-1]`),
+  free functions + `index.ts` barrel + `types.ts` (`Dimensions`/`Coordinates`/`Item` structural shapes).
+  `parseNumber` throws on empty/non-integer, so it now **matches** C#'s throwing parse (kills the old
+  `Number("")==0` tolerance gap). **40 tests pass, `tsc` clean.** No consumer wired yet.
+
+## Scope decision (locked this session) — Approach A, notation only
+
+We centralize **only the text parse/format**. Every consumer **keeps its own models, interfaces, and
+serializer.** We do **not** move models or unify interfaces (that was "Approach B" — rejected because it drags
+vipaq's serializer in and hits a readonly-vs-setter conflict on deserialize).
+
+- **Why B was rejected:** vipaq's `Deserialize` does `new TBin(); obj.Length = …` through the interface, which
+  needs setters; our Format interfaces are read-only by design. Making them mutable would lock immutable
+  Format consumers out. Not worth it — see below, nobody actually needs it.
+- **vipaq specifically:** only **tests + tools** adopt the shared notation; **`Binacle.ViPaq` src is
+  untouched.** The tools/tests parse via the shared lib and map the result into vipaq's own `Bin`/`Item` (C#
+  nominal types need a 6-field copy; TS is structural so the shape is assignable with no map). The
+  **encoding-info** notation (`Version_Bin_ItemDim_ItemCoord`) **stays in vipaq** — it depends on
+  `EncodingInfo`/`BitSize`/`Version`, which the leaf shared lib can't hold.
+- vipaq's tests/tools use only geometry **parse** (+ encoding-info); they never call geometry **format**.
+
+## Phase 1 — NEXT: wire vipaq tests + tools onto the shared notation
+
+Approach A. One coupled step (cross-language, because the shared vectors are read by both suites):
+1. C# `vipaq/test` `VectorParser` + `vipaq/tools` `InteropArtifactGenerator` → call `Binacle.CompactNotation`,
+   map the shared model into vipaq's `Bin<long>`/`Item<long>`. `EncodingInfoBytesGenerator` + encoding-info
+   parse stay on vipaq's own notation.
+2. TS `binacle-vipaq` tests/tools → import from `binacle-compact-notation`; delete the local
+   `src/compactNotation.ts` geometry (keep its encoding-info bits, or split them out).
+3. Migrate the shared vectors' geometry strings (`:Q`→`[Q]`, `X,Y,Z`→`(X,Y,Z)`) — geometry files only, not
+   encoding-info / little-endian; update `PROTOCOL.md`; regen interop artifacts.
+4. Green: C# vipaq suite + `tsc` + jest + full solution build.
+
+**Open (deferred):** vipaq src still ships its own `CompactNotation` (now geometry-duplicated, old punctuation).
+Left alone per "tests + tools only." Delete its dead geometry in a later, separate step.
 
 ## Phase 0 — build `shared/Binacle.CompactNotation` (DONE)
 
@@ -93,27 +128,24 @@ the solution builds — **no consumer touched yet.**
 
 ---
 
-## Phase 1..3 — replace consumers, one at a time (each independently green)
+## Later phases — one at a time, each independently green (all Approach A)
 
-**Phase 1 — vipaq.** Delete the geometry half of vipaq `CompactNotation`; move `Dimensions`/`Coordinates`/`Item`
-out of vipaq into the shared project; vipaq references shared. **Stays in vipaq:** `EncodingInfo`/`BitSize`/
-`Version` and the `Version_Bin_ItemDim_ItemCoord` encoding-info notation (wire-specific) — as a small vipaq-local
-helper. Verify the serializer only *reads* dimensions (getters) so the read-only interfaces suffice. Then: regen
-the shared vectors to the new punctuation, update `PROTOCOL.md`, and mirror the grammar in TS
-`compactNotation.ts`. Green: C# vipaq suite + `tsc` + jest + full build.
+Consumers keep their own types; they call the shared notation and map/pass values. No consumer is forced to
+implement the shared interfaces (except that immutable objects *may* implement the read-only ones for `Format`,
+which is safe — the setter conflict is only on vipaq's deserialize, which we route around by mapping).
 
-**Phase 2 — TestsKernel.** `DimensionsHelper.ParseFromCompactString` (`LxWxH-Q`) delegates to `ParseDimensions`
-+ `ParseQuantity`, still returning its `DimensionsAndQuantity`. Scenario input strings migrate `-Q`→`[Q]`.
-(Leave `ScenarioResultHelper`'s `Status-EarlyExitReason` alone — different notation.) Green: lib test suite.
-
-**Phase 3 — lib/API log.** Delete `DimensionExtensions.FormatDimensions` / `CoordinateExtensions.
-FormatCoordinates`; the log objects implement the shared interfaces; `LogProcessorHandlingExtensions` calls
-`Format`. Output shifts `-Q`→`[Q]` (the agreed break — any downstream log parser must update). Green: API
-integration suite.
+- **Phase 1 — vipaq tests + tools.** See "Phase 1 — NEXT" above.
+- **Phase 2 — TestsKernel.** `DimensionsHelper.ParseFromCompactString` (`LxWxH-Q`) calls `ParseDimensions` +
+  `ParseQuantity`, still returning its own `DimensionsAndQuantity`. Scenario input strings migrate `-Q`→`[Q]`.
+  (Leave `ScenarioResultHelper`'s `Status-EarlyExitReason` alone — different notation.) Green: lib test suite.
+- **Phase 3 — lib/API log.** Route `LogProcessorHandlingExtensions` (and the UIModule `FormatDimensions()` ID
+  sites) through the shared formatters; delete the lib `Format*` extensions. Log/UI output shifts `-Q`→`[Q]`
+  (the agreed break). Whether the log types implement the read-only interfaces or pass values is a Phase-3
+  detail. Green: API integration suite.
 
 ## Out of scope
-Unifying the lib's own `IWith*` interface families / per-algorithm `Bin`/`Item` models — that's a separate,
-larger refactor. This plan only extracts the **notation** and the geometry carriers it returns.
+Unifying the lib's own `IWith*` interface families / per-algorithm `Bin`/`Item` models, and touching any
+consumer's serializer/models. This plan extracts **only the text notation**; every library keeps its own types.
 
 ## Open, small
 - Where the Phase-0 tests live (own project vs folded into vipaq tests). Lean: own project, mirrors the leaf.
