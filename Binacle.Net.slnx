@@ -79,6 +79,8 @@
     <Project Path="vipaq/tools/Binacle.ViPaq.Generators/Binacle.ViPaq.Generators.csproj" />
   </Folder>
   <Folder Name="/shared/">
+    <Project Path="shared/Binacle.CompactNotation/Binacle.CompactNotation.csproj" />
+    <Project Path="shared/Binacle.CompactNotation.UnitTests/Binacle.CompactNotation.UnitTests.csproj" />
     <Project Path="shared/Binacle.TestsKernel/Binacle.TestsKernel.csproj" />
   </Folder>
   <Folder Name="/_root/">

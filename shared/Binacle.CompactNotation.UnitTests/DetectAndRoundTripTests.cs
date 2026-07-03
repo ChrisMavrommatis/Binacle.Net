@@ -1,0 +1,49 @@
+namespace Binacle.CompactNotation.UnitTests;
+
+public class DetectAndRoundTripTests
+{
+	[Theory]
+	[InlineData("(1,2,3)", CompactNotationKind.Coordinates)]
+	[InlineData("[5]", CompactNotationKind.Quantity)]
+	[InlineData("10x20x30", CompactNotationKind.Dimensions)]
+	[InlineData(" (1,2,3)", CompactNotationKind.Coordinates)] // leading space is fine
+	public void Detect_picks_the_block_from_the_leading_token(string compact, CompactNotationKind expected)
+	{
+		CompactNotation.Detect(compact).ShouldBe(expected);
+	}
+
+	[Fact]
+	public void Detect_rejects_an_unknown_string()
+	{
+		Should.Throw<FormatException>(() => CompactNotation.Detect("nonsense"));
+	}
+
+	[Theory]
+	[InlineData("10x20x30")]
+	[InlineData("1x1x1")]
+	public void Dimensions_round_trip(string compact)
+	{
+		var dimensions = CompactNotation.ParseDimensions<long>(compact);
+
+		CompactNotation.FormatDimensions(dimensions).ShouldBe(compact);
+	}
+
+	[Theory]
+	[InlineData("(1,2,3)")]
+	[InlineData("(0,0,0)")]
+	public void Coordinates_round_trip(string compact)
+	{
+		var coordinates = CompactNotation.ParseCoordinates<long>(compact);
+
+		CompactNotation.FormatCoordinates(coordinates).ShouldBe(compact);
+	}
+
+	[Theory]
+	[InlineData("10x20x30 (1,2,3)")]
+	public void Item_round_trip(string compact)
+	{
+		var item = CompactNotation.ParseItem<long>(compact);
+
+		CompactNotation.Format<long>(item).ShouldBe(compact);
+	}
+}
