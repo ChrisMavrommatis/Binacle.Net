@@ -6,12 +6,12 @@
 // then the decoded bin/items must equal the input. Compressed blobs are never byte-compared, only decoded.
 import ViPaqSerializer from "../src/ViPaqSerializer";
 import {encodingInfoFromByte} from "../src/utils";
-import {interopArtifactCases} from "./providers/InteropArtifacts";
+import {loadInteropArtifactCases} from "./providers/InteropArtifacts";
 
 describe("interop artifacts deserialize to their input", () => {
-	test.each(interopArtifactCases)("$label", async ({bytes, expected, bin, items}) => {
+	test.each(loadInteropArtifactCases())("$label", async ({bytes, expectedEncodingInfo, bin, items}) => {
 		// byte 0 confirms the blob claims the right compression flag + widths.
-		expect(encodingInfoFromByte(bytes[0])).toEqual(expected);
+		expect(encodingInfoFromByte(bytes[0])).toEqual(expectedEncodingInfo);
 
 		const result = await ViPaqSerializer.deserialize(new Uint8Array(bytes));
 		expect(result.bin).toEqual(bin);

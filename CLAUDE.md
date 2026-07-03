@@ -24,6 +24,8 @@ Detailed documentation for agents is in `.agents/docs/`:
 
 ## Critical Rules
 
+- **Never commit. Ever.** The human commits, as a rule. Stage nothing, run no `git commit`,
+  even when a task feels done or a change is green. Leave all changes in the working tree for the human.
 - **Do not modify v3.** All new endpoints go in v4 only.
 - **Always use `BindingResult<T>`** in endpoint handlers — never bind the request body directly.
 - **Add `.RequireRateLimiting("ApiUsage")`** to v4 endpoints that handle user requests (fit, pack, presets).

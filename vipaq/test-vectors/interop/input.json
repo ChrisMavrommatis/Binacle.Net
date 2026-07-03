@@ -8,5 +8,30 @@
 		"Name": "compressed - sixty items over the gzip threshold",
 		"Bin": "100x100x100",
 		"Items": ["10x10x10 (0,0,0):60"]
+	},
+	{
+		"Name": "uncompressed - 16-bit sections with nonzero coordinates",
+		"Bin": "300x400x500",
+		"Items": ["300x400x500 (256,300,400)", "300x400x500 (500,600,700)"]
+	},
+	{
+		"Name": "uncompressed - 32-bit sections",
+		"Bin": "70000x80000x90000",
+		"Items": ["70000x80000x90000 (66000,70000,80000)"]
+	},
+	{
+		"Name": "uncompressed - 64-bit sections within the interop range",
+		"Bin": "5000000000x6000000000x7000000000",
+		"Items": ["5000000000x6000000000x7000000000 (4300000000,5000000000,6000000000)"]
+	},
+	{
+		"Name": "uncompressed - mixed widths, 8-bit bin, 16-bit item dims, 32-bit coordinates",
+		"Bin": "100x100x100",
+		"Items": ["300x300x300 (70000,0,0)", "200x200x200 (0,66000,0)"]
+	},
+	{
+		"Name": "compressed - 16-bit sections over the gzip threshold",
+		"Bin": "300x300x300",
+		"Items": ["300x300x300 (300,300,300):60"]
 	}
 ]

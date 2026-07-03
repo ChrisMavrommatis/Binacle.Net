@@ -17,3 +17,11 @@ public sealed class Artifact
 	public required string EncodingInfo { get; init; }
 	public required string Base64 { get; init; }
 }
+
+// One row this tool writes to encoding-info-bytes.json — a header combo and the byte it must pack to.
+// A concrete class so the file's schema (field names, order) is controlled here, not in string building.
+public sealed class EncodingInfoByteVector
+{
+	public required string EncodingInfo { get; init; }
+	public required string Byte { get; init; }
+}

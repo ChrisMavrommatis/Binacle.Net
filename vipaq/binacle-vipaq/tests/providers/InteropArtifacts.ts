@@ -1,7 +1,9 @@
-// Ports C#: Providers/Interop/InteropProvider.cs. The interop artifacts (interop/artifact-cs.json,
-// interop/artifact-ts.json) both serialize the shared input.json; each blob must deserialize back to it.
-// Reads BOTH artifact files so TS decodes its own output AND the C# output — the cross-language guarantee.
-// Each row joins to input.json by Name. Not a *.test.ts file, so jest does not run it.
+// Ports C#: Providers/Interop/InteropVectors.cs + CSharpArtifacts.cs + TypeScriptArtifacts.cs. The C# side
+// splits into a shared loader plus one provider per file; TS keeps a single file-list loader here. The two
+// interop artifacts (interop/artifact-cs.json, interop/artifact-ts.json) both serialize the shared
+// input.json; each blob must deserialize back to it. Reads BOTH files so TS decodes its own output AND the
+// C# output — the cross-language guarantee. Each row joins to input.json by Name. Not a *.test.ts file, so
+// jest does not run it.
 
 import {readVectors} from "../support/vectorReader";
 import {parseBin, parseItems, parseEncodingInfo} from "../support/vectorParser";
@@ -25,7 +27,7 @@ interface ArtifactVector {
 export interface InteropArtifactCase {
 	label: string;
 	bytes: number[];
-	expected: EncodingInfo;
+	expectedEncodingInfo: EncodingInfo;
 	bin: Dimensions;
 	items: Item[];
 }
@@ -48,7 +50,7 @@ function load(files: string[]): InteropArtifactCase[] {
 			cases.push({
 				label: `${vector.Producer} — ${vector.Name}`,
 				bytes: Array.from(Buffer.from(vector.Base64, "base64")),
-				expected: parseEncodingInfo(vector.EncodingInfo),
+				expectedEncodingInfo: parseEncodingInfo(vector.EncodingInfo),
 				bin: input.bin,
 				items: input.items,
 			});
@@ -59,7 +61,13 @@ function load(files: string[]): InteropArtifactCase[] {
 
 export const artifactFiles = ["interop/artifact-cs.json", "interop/artifact-ts.json"];
 
-export const interopArtifactCases: InteropArtifactCase[] = load(artifactFiles);
+// Lazy on purpose: load() joins each artifact row to input.json and throws on an unknown Name. Calling it
+// here at module top-level would make that throw fire the moment ANYTHING imports this file — including the
+// integrity test, which must run first and report "which names differ" clearly. interop.test.ts calls this
+// in its test.each; the integrity test imports only the join-free names below and never triggers the join.
+export function loadInteropArtifactCases(): InteropArtifactCase[] {
+	return load(artifactFiles);
+}
 
 // --- integrity: each artifact file must cover exactly the input scenarios (mirrors C# InteropIntegrityTests) ---
 export const inputNames: string[] = [...loadInputs().keys()];

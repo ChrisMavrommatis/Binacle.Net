@@ -10,5 +10,35 @@
 		"Producer": "csharp",
 		"EncodingInfo": "Compressed_8_8_8",
 		"Base64": "QB+LCAAAAAAAAAOzYUhJSeHi4mJgYBglaU0CAASl03htAQAA"
+	},
+	{
+		"Name": "uncompressed - 16-bit sections with nonzero coordinates",
+		"Producer": "csharp",
+		"EncodingInfo": "Uncompressed_16_16_16",
+		"Base64": "FQIALAGQAfQBLAGQAfQBAAEsAZABLAGQAfQB9AFYArwC"
+	},
+	{
+		"Name": "uncompressed - 32-bit sections",
+		"Producer": "csharp",
+		"EncodingInfo": "Uncompressed_32_32_32",
+		"Base64": "KgEAcBEBAIA4AQCQXwEAcBEBAIA4AQCQXwEA0AEBAHARAQCAOAEA"
+	},
+	{
+		"Name": "uncompressed - 64-bit sections within the interop range",
+		"Producer": "csharp",
+		"EncodingInfo": "Uncompressed_64_64_64",
+		"Base64": "PwEAAPIFKgEAAAAAvKBlAQAAAACGO6EBAAAAAPIFKgEAAAAAvKBlAQAAAACGO6EBAAAAAMtMAAEAAAAA8gUqAQAAAAC8oGUBAAAA"
+	},
+	{
+		"Name": "uncompressed - mixed widths, 8-bit bin, 16-bit item dims, 32-bit coordinates",
+		"Producer": "csharp",
+		"EncodingInfo": "Uncompressed_8_16_32",
+		"Base64": "BgIAZGRkLAEsASwBcBEBAAAAAAAAAAAAyADIAMgAAAAAANABAQAAAAAA"
+	},
+	{
+		"Name": "compressed - 16-bit sections over the gzip threshold",
+		"Producer": "csharp",
+		"EncodingInfo": "Compressed_16_16_16",
+		"Base64": "VR+LCAAAAAAAAAOzYdBhHIWjcLhBAJsvvWDYAgAA"
 	}
 ]

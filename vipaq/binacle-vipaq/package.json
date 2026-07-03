@@ -6,7 +6,8 @@
   "license": "GPL-3.0-only",
   "scripts": {
     "test": "jest",
-    "generate:interop": "ts-node tools/generateArtifact.ts"
+    "generate:interop": "ts-node tools/generateVectors.ts",
+    "regen:interop": "dotnet run --project ../tools/Binacle.ViPaq.Generators && npm run generate:interop"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.9.0",
