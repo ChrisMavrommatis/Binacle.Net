@@ -5,27 +5,44 @@
 mechanism is **shared reference vectors** in `vipaq/test-vectors/`: one set of JSON inputs+answers read by
 *both* test suites, so each is graded against the same answer key and the two can't silently drift.
 
-**Status (2026-07-03):** unit suites, shared vectors, and the interop matrix **green** — C# **1350**, TS **970**
-(20 suites), `tsc` clean. The three-pass review's findings (F1 uint8 symmetry, F2 stale README note, F3 pin
-`typescript`) are **fixed**. The gzip interop matrix is **complete** (C# + TS generators, `interop/` vectors,
-both suites decode both artifacts, uncompressed byte-identity, integrity per file); the measured "compressed
-bytes aren't reproducible across runtimes" finding lives permanently in `PROTOCOL.md §6` + `test-vectors/README.md`.
-Cross-runtime tests were built then dropped as low-value. Both former nice-to-haves are now **done** (single
-`regen` entry point, `encoding-info-bytes.json` generator), and the interop inputs are **widened** to
-8/16/32/64-bit and mixed-width sections plus nonzero coordinates.
+**Status (2026-07-03):** all green — C# **1371**, TS **984** (20 suites), `tsc` clean, and the **full solution
+builds** (`dotnet build Binacle.Net.slnx`). The interop matrix is complete (C# + TS generators, `interop/`
+vectors, both suites decode both artifacts, uncompressed byte-identity, integrity per file); the "compressed
+bytes aren't reproducible across runtimes" finding lives permanently in `PROTOCOL.md §6` +
+`test-vectors/README.md`. Interop inputs are widened to every width bucket + boundaries + `MaxInteger`;
+`ExpectedEncodingInfo` moved onto the input (a real byte-0 oracle); generators are modular/no-arg; and the
+compact grammar + **all** model types are consolidated into the library as `CompactNotation` +
+`Bin`/`Item`/`Dimensions`/`Coordinates` — one grammar per language, not four.
 
-> **HANDOFF → new session.** Everything is green (C# 1350, TS 970). The interop matrix is complete and the C#
-> `InteropProvider` simplification is **done** (see below). No blocking work remains — the two former nice-to-haves
-> ("Remaining") are done.
+> **HANDOFF → reviewer + close-out.** The work is **done and green** (C# 1371, TS 984, `tsc` clean, full solution
+> builds). Two things remain, both for the **next person, not this session**:
 >
-> **Git state (verify with `git status` — do not trust this blindly):** the session up to the provider split is
-> committed (`git log`: `eeccd1e6 vipaq cs ts interop`, `5bd32202 ts interop generator`, `f1334b22 interop tests
-> and vipaq test reorganize`, `cfb757d3 review and fixes`). The `InteropProvider` split into `InteropVectors` +
-> `CSharpArtifacts` + `TypeScriptArtifacts` may still be uncommitted — check `git status`. **Do not commit it
-> yourself** (see the "Never commit" rule in `CLAUDE.md`); leave it in the working tree for the human.
+> **1. Review the branch.** The vipaq changes are committed through `69429ffd interop tests parsing` (only this
+> plan and `.agents/ideas/` are uncommitted). Run a review over the branch — `/code-review`, or `/code-review
+> ultra` for the deep cloud pass. Focus areas:
+> - **new public lib surface**: `CompactNotation` (`[Experimental("BINACLE_VIPAQ_COMPACT")]`) + concrete models
+>   `Bin<T>`/`Item<T>`/`Dimensions<T>`/`Coordinates<T>` — API shape, naming, generic constraints, range-lenient
+>   parse vs `Serialize` validation;
+> - **consolidation**: generator + test both delegate to the lib; test `Models` namespace deleted (25 usings
+>   stripped); TS `src/compactNotation.ts` mirror; generator still standalone (lib-only dep);
+> - **interop coverage + oracle**: the boundary / `MaxInteger` `input.json` rows and `ExpectedEncodingInfo` on the
+>   input;
+> - **vector reader**: the slash-path change (`/`→`.` for embedded resources).
+>
+> **2. Open decisions for the reviewer to close** (left open on purpose — these are the reviewer's calls):
+> - **`Bin<T>` vs `Dimensions<T>`** — identical shape, distinct roles. Collapse into one, or keep both?
+> - **Experimental marking** — `CompactNotation` is `[Experimental]` but the four models are not. Mark them too,
+>   or declare them stable?
+> - **Unused `Format*`** — `FormatDimensions`/`FormatItem`/`FormatCoordinates` have no in-repo caller. Keep as
+>   intentional API, or trim to what's used?
+> - **Optional interop coverage** (low value): coordinate-boundary mirror, empty items, many distinct items,
+>   compressed at 32/64-bit — each is just `input.json` rows + a regen.
+> - **Stale doc nit**: the vipaq README "Related Tests" line predates the theory+provider/shared-vector suite.
+>
+> **Never commit** (CLAUDE.md) — leave the working-tree changes for the human.
 >
 > **Run checks:** C# `dotnet test` in `vipaq/test/Binacle.ViPaq.UnitTests`; TS `npx tsc --noEmit` + `npx jest` in
-> `vipaq/binacle-vipaq`.
+> `vipaq/binacle-vipaq`; full build `dotnet build Binacle.Net.slnx`.
 
 Reference docs (canonical, keep these — not plans):
 - `vipaq/PROTOCOL.md` — the normative, language-agnostic spec (wire layout, `[0, 2^53−1]` integer range,
@@ -177,20 +194,29 @@ JSON, so format is free to differ per file.
 
 **Done — parser dedup via a library feature (2026-07-03).** The four compact-grammar copies (C#/TS × test/
 generator) collapsed into **one grammar per language, in the library**: `CompactNotation` (C# `[Experimental
-("BINACLE_VIPAQ_COMPACT")]`; TS `src/compactNotation.ts`) with `ParseBin` / `ParseItem` / `ParseItems` /
-`ParseEncodingInfo` and `FormatDimensions` / `FormatItem` / `FormatEncodingInfo`. The lib also gained canonical
-concrete models `Bin<T>` / `Item<T>` (it had only the interfaces before), so parse has something to return and
-the test project + generator both **dropped their private `Bin`/`Item`**. Now:
-- C# generator uses `CompactNotation` + lib `Bin<long>`/`Item<long>`; its `CompactParser`/`Models`/
-  `EncodingInfoExtensions` are deleted. Still standalone — it only depends on the lib.
-- C# test `VectorParser` delegates `ParseBin`/`ParseItems`/`ParseEncodingInfo` to `CompactNotation`, keeping only
-  the test-vector-only parsers (byte tokens, and the `Dimensions`/`Coordinates` split the bit-size vectors need).
+("BINACLE_VIPAQ_COMPACT")]`; TS `src/compactNotation.ts`) with `ParseBin` / `ParseDimensions` /
+`ParseCoordinates` / `ParseItem` / `ParseItems` / `ParseEncodingInfo` and the matching `Format*`. The lib also
+**absorbed every model type** — it had only the `IWith*` interfaces before; it now ships concrete `Bin<T>`,
+`Item<T>`, `Dimensions<T>`, `Coordinates<T>` (+ `Dimensions.Create` / `Coordinates.Create` factories), so parse
+has something to return. Result:
+- C# generator uses `CompactNotation` + lib models; its `CompactParser`/`Models`/`EncodingInfoExtensions` are
+  deleted. Still standalone — it only depends on the lib.
+- C# test `VectorParser` is now just the byte-token parsers (`ParseByte`/`ParseBytes`) plus one-line geometry
+  delegations. The whole `Binacle.ViPaq.UnitTests.Models` namespace is **deleted** (all four types moved to the
+  lib) and the dead `using` was stripped from 25 files.
 - TS mirrors both: generator and `tests/support/vectorParser` re-export from `src/compactNotation`; the TS
-  `compactParser.ts` / `encodingInfoLabel.ts` and the `parseBin`/`parseItems`/`parseEncodingInfo` support files
-  are deleted.
+  `compactParser.ts` / `encodingInfoLabel.ts` and the `parseBin`/`parseItems`/`parseEncodingInfo`/
+  `parseDimensions`/`parseCoordinates`/`parseThree` support files are deleted.
 Both generator and test projects opt into the experimental API via `<NoWarn>BINACLE_VIPAQ_COMPACT</NoWarn>`.
-Green at C# 1371 / TS 984; regen output byte-identical. There's now one grammar to change, not four — nothing
-left to guard.
+Green at C# 1371 / TS 984; regen output byte-identical. One grammar and one set of models to change, not four —
+nothing left to guard. **Open shape question:** `Bin<T>` and `Dimensions<T>` are identical in shape (distinct
+roles) — collapse into one type later if desired.
+
+**Done — vector reader tidy (2026-07-03).** C# `VectorReader.Read` now takes the on-disk **slash** path
+(`"little-endian/uint8.json"`), the same string TS `readVectors` takes — it translates `/`→`.` internally for
+the embedded-resource name. Removed the dotted call-sites (`InteropFiles`, `LittleEndianProvider`); cached the
+assembly; inlined the `Data.` prefix. Both readers now take identical arguments. (C# still reads via embedded
+resources vs TS `fs` — mechanism left as-is; only the call syntax was aligned.)
 
 ---
 
