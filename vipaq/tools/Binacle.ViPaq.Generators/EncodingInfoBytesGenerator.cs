@@ -35,7 +35,7 @@ public sealed class EncodingInfoBytesGenerator : IVectorGenerator
 
 			vectors.Add(new EncodingInfoByteVector
 			{
-				EncodingInfo = CompactNotation.FormatEncodingInfo(encodingInfo),
+				EncodingInfo = EncodingInfoNotation.FormatEncodingInfo(encodingInfo),
 				Byte = ToGroupedBinary(EncodingInfoHelper.ToByte(encodingInfo)),
 			});
 		}

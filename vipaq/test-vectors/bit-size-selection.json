@@ -16,11 +16,11 @@
   {"Name": "largest wins on width (64-bit)",  "Kind": "Dimensions", "Values": "70000x5000000000x70000", "ExpectedBitSize": "SixtyFour"},
   {"Name": "largest wins on height (64-bit)", "Kind": "Dimensions", "Values": "70000x70000x5000000000", "ExpectedBitSize": "SixtyFour"},
 
-  {"Name": "boundary 255 (8-bit)",         "Kind": "Coordinates", "Values": "255,255,255",                      "ExpectedBitSize": "Eight"},
-  {"Name": "boundary 256 (16-bit)",        "Kind": "Coordinates", "Values": "256,256,256",                      "ExpectedBitSize": "Sixteen"},
-  {"Name": "boundary 65535 (16-bit)",      "Kind": "Coordinates", "Values": "65535,65535,65535",                "ExpectedBitSize": "Sixteen"},
-  {"Name": "boundary 65536 (32-bit)",      "Kind": "Coordinates", "Values": "65536,65536,65536",                "ExpectedBitSize": "ThirtyTwo"},
-  {"Name": "boundary 4294967295 (32-bit)", "Kind": "Coordinates", "Values": "4294967295,4294967295,4294967295", "ExpectedBitSize": "ThirtyTwo"},
-  {"Name": "boundary 4294967296 (64-bit)", "Kind": "Coordinates", "Values": "4294967296,4294967296,4294967296", "ExpectedBitSize": "SixtyFour"},
-  {"Name": "boundary maxInteger (64-bit)", "Kind": "Coordinates", "Values": "9007199254740991,9007199254740991,9007199254740991", "ExpectedBitSize": "SixtyFour"}
+  {"Name": "boundary 255 (8-bit)",         "Kind": "Coordinates", "Values": "(255,255,255)",                      "ExpectedBitSize": "Eight"},
+  {"Name": "boundary 256 (16-bit)",        "Kind": "Coordinates", "Values": "(256,256,256)",                      "ExpectedBitSize": "Sixteen"},
+  {"Name": "boundary 65535 (16-bit)",      "Kind": "Coordinates", "Values": "(65535,65535,65535)",                "ExpectedBitSize": "Sixteen"},
+  {"Name": "boundary 65536 (32-bit)",      "Kind": "Coordinates", "Values": "(65536,65536,65536)",                "ExpectedBitSize": "ThirtyTwo"},
+  {"Name": "boundary 4294967295 (32-bit)", "Kind": "Coordinates", "Values": "(4294967295,4294967295,4294967295)", "ExpectedBitSize": "ThirtyTwo"},
+  {"Name": "boundary 4294967296 (64-bit)", "Kind": "Coordinates", "Values": "(4294967296,4294967296,4294967296)", "ExpectedBitSize": "SixtyFour"},
+  {"Name": "boundary maxInteger (64-bit)", "Kind": "Coordinates", "Values": "(9007199254740991,9007199254740991,9007199254740991)", "ExpectedBitSize": "SixtyFour"}
 ]

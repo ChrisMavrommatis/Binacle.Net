@@ -20,7 +20,7 @@ public class FormatTests
 	{
 		var dimensions = new Dimensions<long> { Length = 10, Width = 20, Height = 30 };
 
-		CompactNotation.FormatDimensions(dimensions).ShouldBe("10x20x30");
+		CompactNotationFormatter.FormatDimensions(dimensions).ShouldBe("10x20x30");
 	}
 
 	[Fact]
@@ -28,7 +28,7 @@ public class FormatTests
 	{
 		var coordinates = new Coordinates<long> { X = 1, Y = 2, Z = 3 };
 
-		CompactNotation.FormatCoordinates(coordinates).ShouldBe("(1,2,3)");
+		CompactNotationFormatter.FormatCoordinates(coordinates).ShouldBe("(1,2,3)");
 	}
 
 	[Fact]
@@ -36,7 +36,7 @@ public class FormatTests
 	{
 		var dimensions = new Dimensions<long> { Length = 10, Width = 20, Height = 30 };
 
-		CompactNotation.Format<long>(dimensions).ShouldBe("10x20x30");
+		CompactNotationFormatter.Format<long>(dimensions).ShouldBe("10x20x30");
 	}
 
 	[Fact]
@@ -44,7 +44,7 @@ public class FormatTests
 	{
 		var item = new Item<long> { Length = 10, Width = 20, Height = 30, X = 1, Y = 2, Z = 3 };
 
-		CompactNotation.Format<long>(item).ShouldBe("10x20x30 (1,2,3)");
+		CompactNotationFormatter.Format<long>(item).ShouldBe("10x20x30 (1,2,3)");
 	}
 
 	[Fact]
@@ -55,7 +55,7 @@ public class FormatTests
 			Length = 10, Width = 20, Height = 30, X = 1, Y = 2, Z = 3, Quantity = 5,
 		};
 
-		CompactNotation.Format<long>(placed).ShouldBe("10x20x30 (1,2,3) [5]");
+		CompactNotationFormatter.Format<long>(placed).ShouldBe("10x20x30 (1,2,3) [5]");
 	}
 
 	[Fact]
@@ -63,12 +63,12 @@ public class FormatTests
 	{
 		var dimensions = new Dimensions<int> { Length = 10, Width = 20, Height = 30 };
 
-		CompactNotation.Format<int>(dimensions).ShouldBe("10x20x30");
+		CompactNotationFormatter.Format<int>(dimensions).ShouldBe("10x20x30");
 	}
 
 	[Fact]
 	public void Format_rejects_an_object_with_no_block()
 	{
-		Should.Throw<ArgumentException>(() => CompactNotation.Format<long>(new object()));
+		Should.Throw<ArgumentException>(() => CompactNotationFormatter.Format<long>(new object()));
 	}
 }

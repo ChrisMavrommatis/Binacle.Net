@@ -9,13 +9,13 @@ public class DetectAndRoundTripTests
 	[InlineData(" (1,2,3)", CompactNotationKind.Coordinates)] // leading space is fine
 	public void Detect_picks_the_block_from_the_leading_token(string compact, CompactNotationKind expected)
 	{
-		CompactNotation.Detect(compact).ShouldBe(expected);
+		CompactNotationParser.Detect(compact).ShouldBe(expected);
 	}
 
 	[Fact]
 	public void Detect_rejects_an_unknown_string()
 	{
-		Should.Throw<FormatException>(() => CompactNotation.Detect("nonsense"));
+		Should.Throw<FormatException>(() => CompactNotationParser.Detect("nonsense"));
 	}
 
 	[Theory]
@@ -23,9 +23,9 @@ public class DetectAndRoundTripTests
 	[InlineData("1x1x1")]
 	public void Dimensions_round_trip(string compact)
 	{
-		var dimensions = CompactNotation.ParseDimensions<long>(compact);
+		var dimensions = CompactNotationParser.ParseDimensions<long>(compact);
 
-		CompactNotation.FormatDimensions(dimensions).ShouldBe(compact);
+		CompactNotationFormatter.FormatDimensions(dimensions).ShouldBe(compact);
 	}
 
 	[Theory]
@@ -33,17 +33,17 @@ public class DetectAndRoundTripTests
 	[InlineData("(0,0,0)")]
 	public void Coordinates_round_trip(string compact)
 	{
-		var coordinates = CompactNotation.ParseCoordinates<long>(compact);
+		var coordinates = CompactNotationParser.ParseCoordinates<long>(compact);
 
-		CompactNotation.FormatCoordinates(coordinates).ShouldBe(compact);
+		CompactNotationFormatter.FormatCoordinates(coordinates).ShouldBe(compact);
 	}
 
 	[Theory]
 	[InlineData("10x20x30 (1,2,3)")]
 	public void Item_round_trip(string compact)
 	{
-		var item = CompactNotation.ParseItem<long>(compact);
+		var item = CompactNotationParser.ParseItem<long>(compact);
 
-		CompactNotation.Format<long>(item).ShouldBe(compact);
+		CompactNotationFormatter.Format<long>(item).ShouldBe(compact);
 	}
 }

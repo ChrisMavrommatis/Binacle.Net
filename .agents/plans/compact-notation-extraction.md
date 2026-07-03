@@ -4,6 +4,27 @@
 data. Today the same idea is written **three times** with **three dialects**. We build the shared library
 first, prove it green in isolation, then swap each consumer over one at a time.
 
+## NEXT (not started) — trim vipaq's test/tool-only models out of the library
+
+`vipaq/src/Binacle.ViPaq/Models/` ships four concrete generic models — `Bin<T>`, `Item<T>`, `Dimensions<T>`,
+`Coordinates<T>` — as "canonical implementations" of the `IWith*<T>` interfaces. But the **library itself never
+uses them**: the serializer is fully generic over `IWithDimensions<T>`/`IWithCoordinates<T>` + the caller's own
+`TBin`/`TItem`. Evidence: `grep 'Bin<' / 'Item<'` over `vipaq/src` (excluding `Models/`) = **0** references;
+they're referenced only by `vipaq/test` (~14 files) and `vipaq/tools` (1–2). So they're test/tool fixtures that
+happen to live in the shipped library.
+
+**Task:** move `Bin<T>`/`Item<T>`/`Dimensions<T>`/`Coordinates<T>` out of `Binacle.ViPaq` into the test/tool
+side (a shared test-support file, or the test project + a tools copy), leaving the library src as just:
+serializer + `IWith*<T>` interfaces + `EncodingInfo`/`BitSize`/`Version` + `EncodingInfoNotation`. Notes:
+- **Keep the `IWith*<T>` interfaces in src** — the serializer's generic constraints need them.
+- First **verify** the concrete `Dimensions<T>`/`Coordinates<T>` models (not the `IWith*` interfaces, which the
+  grep conflates) truly have no src use — the serializer constructs `new TBin()`/`new TItem()` from caller
+  types on deserialize, so it shouldn't, but confirm.
+- The interop tool + tests already need their own concrete types; this just relocates them. No wire/behaviour
+  change, so all suites + regen stay byte-identical.
+- Consider whether these should just **be** the shared `Binacle.CompactNotation` models — but that reopens the
+  readonly-vs-setter deserialize conflict (Approach B), so likely keep vipaq's own mutable ones test-side.
+
 ## The notation (final)
 
 A number is `-?\d+` (integers for now; `-` is free for negatives, `.` is reserved for decimals later — not
@@ -40,11 +61,52 @@ vectors (`X,Y,Z`→`(X,Y,Z)`, `:Q`→`[Q]`), `vipaq/PROTOCOL.md`, and the TS mir
   pass, project builds.** No consumer touched yet.
   - **Resolved:** constraint is `where T : struct, INumber<T>` everywhere (interfaces, models, static methods).
     Kills the `CS8618` warnings cleanly; int+long both qualify. Build is warning-free, 42 tests pass.
-- **Phase 0-TS — DONE (awaiting commit).** Built `packages/binacle-compact-notation` — the TS mirror of the
+- **Phase 0-TS — DONE (committed).** Built `packages/binacle-compact-notation` — the TS mirror of the
   C# lib (npm workspace, covered by the `packages/*` glob). Same grammar, `number`-based (range `[0, 2^53-1]`),
   free functions + `index.ts` barrel + `types.ts` (`Dimensions`/`Coordinates`/`Item` structural shapes).
   `parseNumber` throws on empty/non-integer, so it now **matches** C#'s throwing parse (kills the old
-  `Number("")==0` tolerance gap). **40 tests pass, `tsc` clean.** No consumer wired yet.
+  `Number("")==0` tolerance gap). **40 tests pass, `tsc` clean.**
+- **Phase 1 — DONE (awaiting commit).** vipaq tests + tools now use both shared notations; **vipaq src
+  untouched** (its own `CompactNotation` kept, geometry now dead — same on the TS side: `src/compactNotation.ts`
+  kept for encoding-info, geometry dead). What changed:
+  - **C#**: `VectorParser` + `InteropArtifactGenerator` call the shared parser and map the shared model into
+    vipaq's `Bin<long>`/`Item<long>`. `ParseEncodingInfo` still on vipaq's own notation. Project refs added to
+    both csprojs. (Referencing style finalized in Phase 1c below.)
+  - **TS**: `binacle-vipaq` depends on `binacle-compact-notation`; the `vectorParser` barrel + interop tool
+    import geometry from it (`parseDimensions as parseBin`); `parseEncodingInfo` stays local. Workspace
+    resolution (jest/ts-node → realpath outside node_modules) works with no extra config.
+  - **Vectors**: geometry strings migrated — items `:Q`→` [Q]` (round-trip, encode-invalid, interop input);
+    standalone `Coordinates` rows wrapped in parens (bit-size-selection/-invalid). `exact-bytes` (items already
+    parenthesised, no quantity), `decode-invalid`, `little-endian`, `encoding-info-bytes` unchanged.
+  - **Docs**: `test-vectors/README.md` compact-strings section updated. `PROTOCOL.md` needed **no** change —
+    its "Notation" section is byte/binary notation, not the compact text grammar.
+  - **Regen**: `npm run regen:interop` produced **byte-identical** `artifact-cs/ts.json` + `encoding-info-bytes`
+    (the migration is purely notational; parsed values unchanged) — only `input.json` differs.
+  - **Green**: C# CompactNotation 42, C# vipaq **1371**, TS vipaq **984**, TS notation 40, `tsc` clean, full
+    `dotnet build Binacle.Net.slnx` succeeds.
+- **Phase 1b — DONE (awaiting commit).** Removed the dead geometry from vipaq's own notation and **renamed** it
+  so it can't be confused with the canonical `Binacle.CompactNotation`. It now does encoding-info only:
+  - **C#**: `Binacle.ViPaq.CompactNotation` → `Binacle.ViPaq.EncodingInfoNotation` (only `ParseEncodingInfo` /
+    `FormatEncodingInfo` + the version/width word maps). Callers updated (`VectorParser`,
+    `EncodingInfoBytesGenerator`); stale `Bin.cs` comment fixed. Still `[Experimental("BINACLE_VIPAQ_COMPACT")]`
+    (kept so the csproj `NoWarn` is untouched — the diagnostic id is opaque; rename it later if desired).
+  - **TS**: `src/compactNotation.ts` → `src/encodingInfoNotation.ts` (`parseEncodingInfo` / `formatEncodingInfo`
+    only). The `vectorParser` barrel imports from the new path.
+  - No `CompactNotation` name left in the vipaq slice except the shared alias. Regen still byte-identical
+    (`encoding-info-bytes.json` + interop artifacts unchanged). All suites green as above.
+- **Phase 1c — DONE (awaiting commit).** Split + renamed the canonical C# facade and dropped the alias:
+  - The single `Binacle.CompactNotation.CompactNotation` static class → two classes:
+    **`CompactNotationParser`** (`ParseDimensions`/`ParseCoordinates`/`ParseQuantity`/`ParseItem`/`ParseItems`/
+    `Detect`) and **`CompactNotationFormatter`** (`Format`/`FormatDimensions`/`FormatCoordinates`/
+    `FormatQuantity`). Killed the `Binacle.CompactNotation.CompactNotation` stutter. (`CompactNotationKind`
+    enum + the models are unchanged.)
+  - **Alias dropped.** vipaq consumers now use `using Binacle.CompactNotation;` + `CompactNotationParser.…`
+    directly — no alias. This works because vipaq's own `Bin`/`Dimensions`/`Coordinates`/`Item` live in the
+    enclosing `Binacle.ViPaq` namespace and **hide** the shared same-named types, so only the parser/formatter
+    types come through the using (the shared `Item` is still referenced fully-qualified in the one map site).
+  - TS is unaffected — it already exposes free functions (`parseDimensions`/`formatDimensions`/…), no class to
+    split.
+  - Green: C# CompactNotation **42**, C# vipaq **1371**, TS **984**, full build; regen byte-identical.
 
 ## Scope decision (locked this session) — Approach A, notation only
 
@@ -62,20 +124,15 @@ vipaq's serializer in and hits a readonly-vs-setter conflict on deserialize).
   `EncodingInfo`/`BitSize`/`Version`, which the leaf shared lib can't hold.
 - vipaq's tests/tools use only geometry **parse** (+ encoding-info); they never call geometry **format**.
 
-## Phase 1 — NEXT: wire vipaq tests + tools onto the shared notation
+## Phase 1 — DONE: vipaq tests + tools on the shared notation
 
-Approach A. One coupled step (cross-language, because the shared vectors are read by both suites):
-1. C# `vipaq/test` `VectorParser` + `vipaq/tools` `InteropArtifactGenerator` → call `Binacle.CompactNotation`,
-   map the shared model into vipaq's `Bin<long>`/`Item<long>`. `EncodingInfoBytesGenerator` + encoding-info
-   parse stay on vipaq's own notation.
-2. TS `binacle-vipaq` tests/tools → import from `binacle-compact-notation`; delete the local
-   `src/compactNotation.ts` geometry (keep its encoding-info bits, or split them out).
-3. Migrate the shared vectors' geometry strings (`:Q`→`[Q]`, `X,Y,Z`→`(X,Y,Z)`) — geometry files only, not
-   encoding-info / little-endian; update `PROTOCOL.md`; regen interop artifacts.
-4. Green: C# vipaq suite + `tsc` + jest + full solution build.
+See the Phase 1 entry in the progress log above for what landed. Summary: C# `VectorParser` +
+`InteropArtifactGenerator` and TS `binacle-vipaq` tests/tools now call the shared notations; vectors migrated
+(`:Q`→` [Q]`, standalone coords parenthesised); `test-vectors/README.md` updated (PROTOCOL.md needed none);
+regen byte-identical; all suites green.
 
-**Open (deferred):** vipaq src still ships its own `CompactNotation` (now geometry-duplicated, old punctuation).
-Left alone per "tests + tools only." Delete its dead geometry in a later, separate step.
+**Done in Phase 1b:** the dead geometry was removed and vipaq's notation renamed to `EncodingInfoNotation`
+(C#) / `encodingInfoNotation.ts` (TS) — see the Phase 1b progress-log entry.
 
 ## Phase 0 — build `shared/Binacle.CompactNotation` (DONE)
 
@@ -134,7 +191,7 @@ Consumers keep their own types; they call the shared notation and map/pass value
 implement the shared interfaces (except that immutable objects *may* implement the read-only ones for `Format`,
 which is safe — the setter conflict is only on vipaq's deserialize, which we route around by mapping).
 
-- **Phase 1 — vipaq tests + tools.** See "Phase 1 — NEXT" above.
+- **Phase 1 — vipaq tests + tools.** DONE — see the progress log.
 - **Phase 2 — TestsKernel.** `DimensionsHelper.ParseFromCompactString` (`LxWxH-Q`) calls `ParseDimensions` +
   `ParseQuantity`, still returning its own `DimensionsAndQuantity`. Scenario input strings migrate `-Q`→`[Q]`.
   (Leave `ScenarioResultHelper`'s `Status-EarlyExitReason` alone — different notation.) Green: lib test suite.

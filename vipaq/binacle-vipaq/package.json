@@ -4,6 +4,9 @@
   "description": "Binacle.ViPaq implementation in TS",
   "main": "index.ts",
   "license": "GPL-3.0-only",
+  "dependencies": {
+    "binacle-compact-notation": "*"
+  },
   "scripts": {
     "test": "jest",
     "generate:interop": "ts-node tools/generateVectors.ts",

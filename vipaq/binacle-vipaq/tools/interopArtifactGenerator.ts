@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import ViPaqSerializer from "../src/ViPaqSerializer";
-import {parseBin, parseItems} from "../src/compactNotation";
+import {parseDimensions as parseBin, parseItems} from "binacle-compact-notation";
 import {Artifact} from "./Artifact";
 
 // Ports C#: InteropArtifactGenerator. Serializes each shared interop input with the TS ViPaq library and

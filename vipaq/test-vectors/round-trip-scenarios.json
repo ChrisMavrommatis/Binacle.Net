@@ -38,25 +38,25 @@
   {
     "Name": "compressed body",
     "Bin": "200x200x200",
-    "Items": ["10x20x30 (1,2,3):60"],
+    "Items": ["10x20x30 (1,2,3) [60]"],
     "ExpectedEncodingInfo": "Compressed_8_8_8"
   },
   {
     "Name": "item count over 255",
     "Bin": "10x20x30",
-    "Items": ["1x2x3 (4,5,6):300"],
+    "Items": ["1x2x3 (4,5,6) [300]"],
     "ExpectedEncodingInfo": "Compressed_8_8_8"
   },
   {
     "Name": "just under compression threshold (stays raw)",
     "Bin": "300x300x300",
-    "Items": ["1x2x3 (4,5,6):41"],
+    "Items": ["1x2x3 (4,5,6) [41]"],
     "ExpectedEncodingInfo": "Uncompressed_16_8_8"
   },
   {
     "Name": "just over compression threshold (compresses)",
     "Bin": "10x20x30",
-    "Items": ["1x2x3 (4,5,6):42"],
+    "Items": ["1x2x3 (4,5,6) [42]"],
     "ExpectedEncodingInfo": "Compressed_8_8_8"
   }
 ]

@@ -18,18 +18,18 @@ edit a case here, not in either suite.
   `one 8-bit item`, not a dump of every argument); TS uses jest `test.each(...)("$Name", ...)`.
   (`encoding-info-bytes.json` is the exception: its unique `EncodingInfo` string is the label, so it carries no
   separate `Name`.)
-- **Compact strings for inputs** (same convention as `shared/Binacle.TestsKernel`):
+- **Compact strings for inputs** (the shared `Binacle.CompactNotation` / `binacle-compact-notation` grammar,
+  read by both suites — one grammar for the whole repo):
   - **Dimensions / bin** — `"LxWxH"`, e.g. `"10x20x30"` (split on `x` → 3 ints).
-  - **Coordinates** — `"X,Y,Z"`, e.g. `"4,5,6"` (split on `,` → 3 ints). A coordinate is comma-separated
-    everywhere it appears (an item's coords, a bit-size coordinates row), so one parser reads it the same way.
-  - **Item** — `"LxWxH (X,Y,Z)"`, e.g. `"1x2x3 (4,5,6)"` (dims, space, then `(X,Y,Z)`). An optional `:Q`
-    suffix repeats the item `Q` times, e.g. `"1x2x3 (4,5,6):60"` = 60 copies; no suffix means one. The
-    quantity separator is `:` (not `-` as in `shared/Binacle.TestsKernel`) **on purpose**, so `-` stays free for
-    negative dims/coords — e.g. `"-1x2x3 (4,5,6)"` or `"1x2x3 (-4,5,6)"` — which `encode-invalid.json` uses to
-    check the serializer rejects them. Parse: split off `:Q` first, then `LxWxH (X,Y,Z)` allowing a leading `-`
-    on any int.
+  - **Coordinates** — `"(X,Y,Z)"`, e.g. `"(4,5,6)"` (strip the parens, split on `,` → 3 ints). Coordinates
+    are **always parenthesised** — the same token standalone (a bit-size coordinates row) and inside an item.
+  - **Item** — `"LxWxH (X,Y,Z)"`, e.g. `"1x2x3 (4,5,6)"` (dims, space, then `(X,Y,Z)`). An optional ` [Q]`
+    suffix repeats the item `Q` times, e.g. `"1x2x3 (4,5,6) [60]"` = 60 copies; no suffix means one. The
+    quantity is **bracketed** (not `:Q`, not `-Q`) **on purpose**, so `-` stays free for negative dims/coords —
+    e.g. `"-1x2x3 (4,5,6)"` or `"1x2x3 (-4,5,6)"` — which `encode-invalid.json` uses to check the serializer
+    rejects them. Parse: split off ` [Q]` first, then `LxWxH (X,Y,Z)` allowing a leading `-` on any int.
   - **Values (bit-size files)** — parsed by the row's `Kind`: `Dimensions` → `"LxWxH"`, `Coordinates` →
-    `"X,Y,Z"`. `Kind` tells you which parser reads it, so there is no ambiguous "triple"; negatives allowed
+    `"(X,Y,Z)"`. `Kind` tells you which parser reads it, so there is no ambiguous "triple"; negatives allowed
     where a case expects a throw.
 - **Bytes are strings.** The encoding header byte is grouped **binary** so the flags are legible
   (`"0b00_00_00_00"` = `Version | Bin | ItemDim | ItemCoord`); every other byte is **hex**

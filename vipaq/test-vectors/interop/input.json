@@ -3,13 +3,13 @@
 		"Name": "uncompressed - forty items under the gzip threshold",
 		"ExpectedEncodingInfo": "Uncompressed_8_8_8",
 		"Bin": "100x100x100",
-		"Items": ["10x10x10 (0,0,0):40"]
+		"Items": ["10x10x10 (0,0,0) [40]"]
 	},
 	{
 		"Name": "compressed - sixty items over the gzip threshold",
 		"ExpectedEncodingInfo": "Compressed_8_8_8",
 		"Bin": "100x100x100",
-		"Items": ["10x10x10 (0,0,0):60"]
+		"Items": ["10x10x10 (0,0,0) [60]"]
 	},
 	{
 		"Name": "uncompressed - 16-bit sections with nonzero coordinates",
@@ -39,7 +39,7 @@
 		"Name": "compressed - 16-bit sections over the gzip threshold",
 		"ExpectedEncodingInfo": "Compressed_16_16_16",
 		"Bin": "300x300x300",
-		"Items": ["300x300x300 (300,300,300):60"]
+		"Items": ["300x300x300 (300,300,300) [60]"]
 	},
 	{
 		"Name": "boundary - item dim at 8-bit ceiling (255)",

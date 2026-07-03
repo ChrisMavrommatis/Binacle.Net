@@ -1,21 +1,19 @@
 using System.Globalization;
 using System.Numerics;
-using System.Text;
 
 namespace Binacle.CompactNotation;
 
-// One text notation for geometry, in one place. Three blocks, fixed order, space-separated:
-//   dimensions  "LxWxH"      split on 'x'
-//   coordinates "(X,Y,Z)"    comma-separated inside parens
-//   quantity    "[Q]"        one int inside brackets
+// Parses the compact text notation for geometry (CompactNotationFormatter is the inverse). Three blocks,
+// fixed order, space-separated:
+//   dimensions  "LxWxH"     split on 'x'
+//   coordinates "(X,Y,Z)"   comma-separated inside parens
+//   quantity    "[Q]"       one int inside brackets
 // Valid entries: "LxWxH" | "LxWxH [Q]" | "LxWxH (X,Y,Z)" | "LxWxH (X,Y,Z) [Q]" | "(X,Y,Z)".
-// Parsing is explicit — the caller usually knows the shape and calls the matching Parse method.
-// When the shape is unknown, Detect picks the block. Parse is lenient about range (it just reads the
-// integers); each consumer enforces its own limits.
-public static class CompactNotation
+// Parsing is explicit — the caller usually knows the shape and calls the matching method; Detect picks the
+// block when the shape is unknown. Parse is lenient about range (it just reads the integers); each consumer
+// enforces its own limits.
+public static class CompactNotationParser
 {
-	// --- parse (text -> model) ---
-
 	// "LxWxH" -> Dimensions.
 	public static Dimensions<T> ParseDimensions<T>(string compact)
 		where T : struct, INumber<T>
@@ -102,47 +100,10 @@ public static class CompactNotation
 		throw new FormatException($"'{compact}' is not a dimensions, coordinates, or quantity block.");
 	}
 
-	// --- format (model -> text) ---
-
-	// Appends every block the value carries, in order. An object that is both dimensions and
-	// coordinates formats as "LxWxH (X,Y,Z)"; add IWithQuantity and it gains " [Q]". T is the number
-	// type the value's interfaces are closed over (int for the lib/API, long for vipaq).
-	public static string Format<T>(object value)
-		where T : struct, INumber<T>
-	{
-		var builder = new StringBuilder();
-
-		if (value is IWithDimensions<T> dimensions)
-			builder.Append(FormatDimensions(dimensions));
-
-		if (value is IWithCoordinates<T> coordinates)
-			AppendBlock(builder, FormatCoordinates(coordinates));
-
-		if (value is IWithQuantity<T> quantity)
-			AppendBlock(builder, FormatQuantity(quantity));
-
-		if (builder.Length == 0)
-			throw new ArgumentException($"'{value}' carries no compact-notation block.", nameof(value));
-
-		return builder.ToString();
-	}
-
-	public static string FormatDimensions<T>(IWithDimensions<T> dimensions)
-		where T : struct, INumber<T>
-		=> $"{dimensions.Length}x{dimensions.Width}x{dimensions.Height}";
-
-	public static string FormatCoordinates<T>(IWithCoordinates<T> coordinates)
-		where T : struct, INumber<T>
-		=> $"({coordinates.X},{coordinates.Y},{coordinates.Z})";
-
-	public static string FormatQuantity<T>(IWithQuantity<T> quantity)
-		where T : struct, INumber<T>
-		=> $"[{quantity.Quantity}]";
-
 	// --- helpers ---
 
-	// "LxWxH (X,Y,Z)" -> the six numbers. Each part owns its separator ('x' vs ','), so a coordinate
-	// is never read as a dimension.
+	// "LxWxH (X,Y,Z)" -> the six numbers. Each part owns its separator ('x' vs ','), so a coordinate is never
+	// read as a dimension.
 	private static (T Length, T Width, T Height, T X, T Y, T Z) ParseItemGeometry<T>(string compact)
 		where T : struct, INumber<T>
 	{
@@ -178,12 +139,4 @@ public static class CompactNotation
 	private static T ParseNumber<T>(string value)
 		where T : struct, INumber<T>
 		=> T.Parse(value.Trim(), CultureInfo.InvariantCulture);
-
-	private static void AppendBlock(StringBuilder builder, string block)
-	{
-		if (builder.Length > 0)
-			builder.Append(' ');
-
-		builder.Append(block);
-	}
 }
