@@ -1,9 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import ViPaqSerializer from "../src/ViPaqSerializer";
-import {encodingInfoFromByte} from "../src/utils";
-import {parseBin, parseItems} from "./compactParser";
-import {toLabel} from "./encodingInfoLabel";
+import {parseBin, parseItems} from "../src/compactNotation";
 import {Artifact} from "./Artifact";
 
 // Ports C#: InteropArtifactGenerator. Serializes each shared interop input with the TS ViPaq library and
@@ -33,16 +31,15 @@ export async function generateInteropArtifact(): Promise<void> {
 		artifacts.push(new Artifact(
 			input.Name,
 			"typescript",
-			toLabel(encodingInfoFromByte(bytes[0])),
 			Buffer.from(bytes).toString("base64"),
 		));
 	}
 
-	// Tabs + no trailing newline to match the C# generator's output style.
+	// Tabs, expanded — matches the C# interop generator's WriteIndented output style.
 	fs.writeFileSync(outputPath, JSON.stringify(artifacts, null, "\t"));
 
 	console.log(`Wrote ${artifacts.length} artifact(s) to ${outputPath}`);
 	for (const artifact of artifacts) {
-		console.log(`  ${artifact.Name} -> ${artifact.EncodingInfo} (${artifact.Base64.length} base64 chars)`);
+		console.log(`  ${artifact.Name} (${artifact.Base64.length} base64 chars)`);
 	}
 }

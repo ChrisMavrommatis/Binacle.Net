@@ -19,10 +19,10 @@ internal static class LittleEndianProvider
 	// A static constructor makes it explicit that the vectors load once, on first access to this provider.
 	static LittleEndianProvider()
 	{
-		uint8 = Load("little-endian.uint8.json", value => (byte)value);
-		uint16 = Load("little-endian.uint16.json", value => (ushort)value);
-		uint32 = Load("little-endian.uint32.json", value => (uint)value);
-		uint64 = Load("little-endian.uint64.json", value => value);
+		uint8 = Load("little-endian/uint8.json", value => (byte)value);
+		uint16 = Load("little-endian/uint16.json", value => (ushort)value);
+		uint32 = Load("little-endian/uint32.json", value => (uint)value);
+		uint64 = Load("little-endian/uint64.json", value => value);
 
 		// The shared files stop at the interoperable ceiling (2^53-1) so the values stay exact in JS. These
 		// two rows are above that ceiling, so they are deliberately C#-local (not in the shared files, not

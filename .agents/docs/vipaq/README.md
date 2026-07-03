@@ -1,6 +1,6 @@
 ---
 description: Binacle.ViPaq — compact binary format for encoding packing results. Wire layout, encoding-info header, C# API surface, and limits.
-verified: 2026-06-10
+verified: 2026-07-03
 check: Wire layout, EncodingInfo bit packing, enums, and public method signatures match vipaq/src/Binacle.ViPaq/
 also_update:
   - vipaq/typescript.md
@@ -34,6 +34,27 @@ All entry points are static on `ViPaqSerializer`. The typed methods are thin wra
 Type constraints use ViPaq's **own** interfaces in `Binacle.ViPaq.Abstractions` — separate from the Lib `IWith*`
 interfaces. `TBin : IWithDimensions<T>`; `TItem : IWithDimensions<T>, IWithCoordinates<T>`. A type that gets
 serialized directly (e.g. v4 `PackedBox`) implements `IWithDimensions<int>` / `IWithCoordinates<int>`.
+
+The lib also ships canonical concrete models — `Bin<T>` (dimensions), `Item<T>` (dimensions + coordinates),
+`Dimensions<T>`, and `Coordinates<T>` (with `Dimensions.Create` / `Coordinates.Create` factories for inferred
+`T`) — so callers don't define their own. (`Bin<T>` and `Dimensions<T>` share a shape but are distinct roles.)
+
+### Compact notation (experimental)
+
+`CompactNotation` — marked `[Experimental("BINACLE_VIPAQ_COMPACT")]` — is a **text** companion to the binary
+format. It parses and formats the human-readable shorthand used by the shared test vectors and the interop
+generators, so that grammar lives in one place instead of a copy per project:
+
+| Methods | Text form |
+|---|---|
+| `ParseBin<T>` · `ParseDimensions<T>` · `FormatDimensions<T>` | `"100x100x100"` |
+| `ParseCoordinates<T>` · `FormatCoordinates<T>` | `"0,0,0"` |
+| `ParseItem<T>` · `ParseItems<T>` · `FormatItem<T,TItem>` | `"10x10x10 (0,0,0)"` (`ParseItems` also expands a `":Q"` repeat) |
+| `ParseEncodingInfo` · `FormatEncodingInfo` | `"Uncompressed_8_8_8"` (`"Compressed"` = gzip) |
+
+Parse is lenient about range (it just reads the integers); `Serialize` still enforces `[0, MaxInteger]`. Parse
+returns the concrete `Bin<T>` / `Item<T>`. Consumers opt into the experimental API with
+`<NoWarn>BINACLE_VIPAQ_COMPACT</NoWarn>`. TS mirror: `src/compactNotation.ts` (see [typescript.md](typescript.md)).
 
 ## Wire layout
 

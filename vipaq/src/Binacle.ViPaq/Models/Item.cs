@@ -1,8 +1,10 @@
 using System.Numerics;
 using Binacle.ViPaq.Abstractions;
 
-namespace Binacle.ViPaq.UnitTests.Models;
+namespace Binacle.ViPaq;
 
+// A concrete item — dimensions plus a placement coordinate. The canonical implementation of
+// IWithDimensions<T> + IWithCoordinates<T> the library ships, so callers don't each define their own.
 public class Item<T> : IWithDimensions<T>, IWithCoordinates<T>
 	where T : struct,
 	IBinaryInteger<T>,

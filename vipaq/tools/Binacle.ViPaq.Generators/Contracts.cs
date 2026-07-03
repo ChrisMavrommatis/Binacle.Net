@@ -9,12 +9,13 @@ public sealed class InputScenario
 }
 
 // One row this tool writes to artifact-cs.json (the TS tool writes the same shape to artifact-ts.json).
-// Base64 is the whole serialized blob (header byte + body); EncodingInfo pins what byte 0 must decode to.
+// Base64 is the whole serialized blob (header byte + body). The expected header lives on input.json
+// (ExpectedEncodingInfo), not here — it's producer-independent and belongs with the scenario, so the artifact
+// only carries the bytes the producer emitted.
 public sealed class Artifact
 {
 	public required string Name { get; init; }
 	public required string Producer { get; init; }
-	public required string EncodingInfo { get; init; }
 	public required string Base64 { get; init; }
 }
 

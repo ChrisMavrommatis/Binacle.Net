@@ -1,5 +1,4 @@
 using Binacle.ViPaq.Helpers;
-using Binacle.ViPaq.UnitTests.Models;
 
 namespace Binacle.ViPaq.UnitTests;
 

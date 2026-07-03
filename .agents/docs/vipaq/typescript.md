@@ -1,6 +1,6 @@
 ---
 description: Binacle.ViPaq TypeScript mirror (vipaq/binacle-vipaq) — public API and how it differs from the C# library
-verified: 2026-07-02
+verified: 2026-07-03
 check: TS API signatures and divergences match vipaq/binacle-vipaq/src/
 also_update:
   - vipaq/README.md
@@ -24,6 +24,12 @@ ViPaqSerializer.deserialize(data: Uint8Array): Promise<DeserializedResult>   // 
 
 Both return raw bytes (no base64). They are **async** because gzip uses the Web Streams `CompressionStream` /
 `DecompressionStream` API. `index.ts` also re-exports the `Dimensions` and `Coordinates` types.
+
+`src/compactNotation.ts` mirrors the C# `CompactNotation` — the experimental text notation: `parseBin` /
+`parseDimensions` / `parseCoordinates` / `parseItem` / `parseItems` / `parseEncodingInfo` (text → model) and
+`formatDimensions` / `formatCoordinates` / `formatItem` / `formatEncodingInfo` (model → text). It's the single
+source of the `"LxWxH (X,Y,Z):Q"` / `"Uncompressed_8_8_8"` grammar; both the test vector-parser and the interop
+generator import it (TS has no `[Experimental]` attribute — it's a doc-comment convention only).
 
 ## Identical to C# (by design)
 
@@ -52,15 +58,15 @@ brought to this ceiling on 2026-06-30 — see PROTOCOL.md §5 and `.agents/plans
 
 ## Tests
 
-`npm test` (jest, from `vipaq/binacle-vipaq`; run `npm install` first — needs `@types/node`). 18 suites,
-949 tests — unit tests on the utils (`createEncodingInfo`, `getDimensionsBitSize`, `getCoordinatesBitSize`,
+`npm test` (jest, from `vipaq/binacle-vipaq`; run `npm install` first — needs `@types/node`). 20 suites,
+984 tests — unit tests on the utils (`createEncodingInfo`, `getDimensionsBitSize`, `getCoordinatesBitSize`,
 `getByteSize`, `getBufferSize`, …), the `ProtocolReader` / `ProtocolWriter` little-endian and range-limit
-guards, and `ViPaqSerializer` round-trips.
+guards, `ViPaqSerializer` round-trips, and the interop cross-decode matrix.
 
-The suite now reads the **shared cross-language vectors** in `vipaq/test-vectors/` — the same files the C#
-suite reads — via `tests/support/vectorReader.ts` (`readVectors`, `fs`-based) and `tests/support/vectorParser.ts`
-(free functions mirroring C# `VectorParser`: `parseDimensions` splits `x`, `parseCoordinates` splits `,`,
-`parseItems` composes both, `parseEncodingInfo`, `parseBitSize`). Providers in `tests/providers/` parse each
-file into arrays consumed by `test.each`. So both implementations grade against one answer key and can't
-silently drift on the wire format. (Still out of scope: the gzip cross-decode matrix — see
-`.agents/plans/vipaq-cross-language-testing.md`.)
+The suite reads the **shared cross-language vectors** in `vipaq/test-vectors/` — the same files the C# suite
+reads — via `tests/support/vectorReader.ts` (`readVectors`, `fs`-based). The compact-geometry and encoding-info
+grammar now lives in the library (`src/compactNotation.ts`); `tests/support/vectorParser` re-exports it and adds
+the test-vector-only parsers (`parseByte`/`parseBytes`, and `parseDimensions`/`parseCoordinates` for the
+bit-size vectors). Providers in `tests/providers/` parse each file into arrays consumed by `test.each`. So both
+implementations grade against one answer key and can't silently drift on the wire format. The gzip cross-decode
+matrix is done — see `.agents/plans/vipaq-cross-language-testing.md`.

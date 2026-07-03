@@ -101,11 +101,14 @@ reproducible across engines/runtimes (the measured .NET-8/10/Node-vs-.NET-9 find
   `artifact-ts.json`. Mirrors the C# shape but idiomatic TS: generators are plain async functions
   (`interopArtifactGenerator.ts`), run from a no-arg list; the serialized output shape is a class
   (`Artifact.ts`) so the file schema is controlled, matching the C# concrete class.
-- `interop/input.json` — the shared answer key. Seven cases spanning the width buckets and compression: the
-  two original threshold-straddling `_8_8_8` cases (one **under** the 255-byte body threshold, one **over** →
-  `Compressed_8_8_8`), plus `Uncompressed_16_16_16` / `32_32_32` / `64_64_64` (the last within the interop
-  range), a mixed-width `Uncompressed_8_16_32`, and a `Compressed_16_16_16`. Nonzero and negative-free
-  coordinates are exercised. Both generators serialize all of them.
+- `interop/input.json` — the shared answer key. Fourteen cases spanning the width buckets, compression, and the
+  bucket edges: the two original threshold-straddling `_8_8_8` cases (one **under** the 255-byte body threshold,
+  one **over** → `Compressed_8_8_8`), `Uncompressed_16_16_16` / `32_32_32` / `64_64_64` (mid-bucket), a
+  mixed-width `Uncompressed_8_16_32`, a `Compressed_16_16_16`, six **boundary** cases isolating the flip in the
+  item-dimension section (`255`→8-bit, `256`→16-bit, `65535`→16-bit, `65536`→32-bit, `4294967295`→32-bit,
+  `4294967296`→64-bit), and a **MaxInteger** case with `2^53-1` in all three sections (`Uncompressed_64_64_64`).
+  Together they prove decode works on 8/16/32/64-bit up to the ceiling and that both languages flip width at the
+  exact same value. Both generators serialize all of them.
 - **The matrix** — both suites decode **both** artifacts back to input (byte 0 pinned):
   - C# `InteropDecodeTests` — decodes `{artifact-cs, artifact-ts}` × both scenarios.
   - TS `interop.test.ts` — decodes `{artifact-cs, artifact-ts}` × both scenarios (its own output AND C#'s).
@@ -135,10 +138,18 @@ touches both files. Matches the flat TS `InteropArtifacts.ts`. Green at 1336, no
   vector, so a regen can't half-run. Output is deterministic, so a no-change re-run is byte-identical.
 - **`encoding-info-bytes.json` generator**: part of the same C# tool. Emits all 256 header combos off the enums
   (Version outer, item-coordinates inner; `Byte` = `Version<<6 | Bin<<4 | ItemDim<<2 | ItemCoord` as grouped
-  binary). Each row is a concrete `EncodingInfoByteVector` and the whole list is serialized with
-  `JsonSerializer` (tab-indented, same options as the interop file) — no hand-built strings, schema lives in
-  the class. Moving off the old hand-authored format reflows the golden to standard pretty JSON, a one-time
-  cosmetic reformat — tests parse JSON, so they're unaffected.
+  binary). Each row is a concrete `EncodingInfoByteVector`, so the schema lives in the class.
+
+**Output format — one object per line, encoding-info only (decided 2026-07-03):** `encoding-info-bytes.json` is
+written **one JSON object per line** (not `WriteIndented`, which spreads each object across four lines, and not
+a single-line array). Rationale: a 256-row combinatorial file is only readable and greppable one-per-line. A
+serializer has no "compact but per-line" mode, so we add a tiny **compact serializer** — serialize each concrete
+row with `WriteIndented = false`, then join the rows with `,\n` inside `[\n … \n]\n`. No StringBuilder; the row
+class still owns the schema. The space after the colon (`"Byte": "…"`) is **not** reproduced — we don't care;
+one-per-line is the only requirement. Lives in C# only (`CompactJson`) because only C# writes this file.
+**The interop artifacts (`artifact-cs.json` / `artifact-ts.json`) stay expanded** (`WriteIndented`, tabs,
+`UnsafeRelaxedJsonEscaping` for base64) — they're 7 short rows, so per-line buys nothing there. Tests parse
+JSON, so format is free to differ per file.
 
 **Also done this session (2026-07-03) — review fixes + coverage:**
 - Alignment fixes from the C#/TS interop review: renamed TS `expected` → `expectedEncodingInfo`; made the
@@ -148,12 +159,38 @@ touches both files. Matches the flat TS `InteropArtifacts.ts`. Green at 1336, no
   `ArtifactCase` was **kept** by request.
 - Widened interop inputs (see the input.json note above) — the byte-identity test now proves C#/TS emit
   identical uncompressed bytes at every width bucket, not just `_8_8_8`.
+- **`ExpectedEncodingInfo` moved onto `input.json`** (was derived and stored per-artifact). It's
+  producer-independent and spec-determined, so declaring it with the scenario makes the byte-0 pin a real
+  oracle — it now catches a generator that picks a consistently-wrong width, which the old derived-from-output
+  value could not. Artifacts slimmed to `{Name, Producer, Base64}`; providers read the expected header from the
+  input join. Matches the `round-trip-scenarios.json` convention.
 
-**Still open (deferred correctness):** the compact grammar has four parser copies (test `VectorParser` +
-generator `CompactParser`, in C# and TS). A cross-project parser-agreement guard was tried and reverted — it
-coupled the test project to the generator, which must stay standalone. The right fix is to dedupe the parsers
-(one shared source per language), after which there's nothing to guard. Until then, drift is caught only by the
-interop decode tests, and only for the strings in `input.json`.
+**Next up (agreed 2026-07-03):**
+- **Compact per-line serializer** — **done.** C# `CompactJson` writes `encoding-info-bytes.json` one object per
+  line; the interop artifacts stay expanded (see the "Output format" decision above).
+- **More interop coverage** — width boundaries and `MaxInteger` are **done** (six item-dim boundary cases +
+  a `2^53-1`-in-all-sections case; see the input.json note). The byte-identity test confirms C#/TS emit
+  identical uncompressed bytes at every bucket including the `MaxInteger` 64-bit blob. Still optional, lower
+  value: (1) mirror the boundary flips in a *coordinate* (separate encoder from dims, shared picker), (2) empty
+  items list, (3) many *distinct* items (varied dims and coords, not `:Q` repeats), (4) compressed at 32/64-bit
+  widths. All are just new `input.json` rows + a regen; the matrix fans them across both suites automatically.
+
+**Done — parser dedup via a library feature (2026-07-03).** The four compact-grammar copies (C#/TS × test/
+generator) collapsed into **one grammar per language, in the library**: `CompactNotation` (C# `[Experimental
+("BINACLE_VIPAQ_COMPACT")]`; TS `src/compactNotation.ts`) with `ParseBin` / `ParseItem` / `ParseItems` /
+`ParseEncodingInfo` and `FormatDimensions` / `FormatItem` / `FormatEncodingInfo`. The lib also gained canonical
+concrete models `Bin<T>` / `Item<T>` (it had only the interfaces before), so parse has something to return and
+the test project + generator both **dropped their private `Bin`/`Item`**. Now:
+- C# generator uses `CompactNotation` + lib `Bin<long>`/`Item<long>`; its `CompactParser`/`Models`/
+  `EncodingInfoExtensions` are deleted. Still standalone — it only depends on the lib.
+- C# test `VectorParser` delegates `ParseBin`/`ParseItems`/`ParseEncodingInfo` to `CompactNotation`, keeping only
+  the test-vector-only parsers (byte tokens, and the `Dimensions`/`Coordinates` split the bit-size vectors need).
+- TS mirrors both: generator and `tests/support/vectorParser` re-export from `src/compactNotation`; the TS
+  `compactParser.ts` / `encodingInfoLabel.ts` and the `parseBin`/`parseItems`/`parseEncodingInfo` support files
+  are deleted.
+Both generator and test projects opt into the experimental API via `<NoWarn>BINACLE_VIPAQ_COMPACT</NoWarn>`.
+Green at C# 1371 / TS 984; regen output byte-identical. There's now one grammar to change, not four — nothing
+left to guard.
 
 ---
 

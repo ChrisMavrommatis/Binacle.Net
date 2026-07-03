@@ -4,12 +4,13 @@ using System.Text.Json.Serialization;
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// Reads the shared cross-language vectors in vipaq/test-vectors/. They are embedded into this
-// assembly (see the .csproj), so these tests grade against the exact same files the TypeScript suite
-// reads and neither side can drift on the wire format. Edit a case in the JSON, not here.
+// Reads the shared cross-language vectors in vipaq/test-vectors/. They are embedded into this assembly (see
+// the .csproj), so these tests grade against the exact same files the TypeScript suite reads and neither side
+// can drift on the wire format. Callers pass the on-disk path ("little-endian/uint8.json") — the same string
+// the TS readVectors takes — so the two readers line up. Edit a case in the JSON, not here.
 internal static class VectorReader
 {
-	private const string Prefix = "Data.";
+	private static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
 
 	private static readonly JsonSerializerOptions Options = new()
 	{
@@ -19,16 +20,16 @@ internal static class VectorReader
 		Converters = { new JsonStringEnumConverter() }, // BitSize etc. arrive as enum names ("Eight").
 	};
 
-	// Reads a vector file (e.g. "exact-bytes.json" or "little-endian.uint16.json") into its rows.
+	// Reads a vector file (e.g. "exact-bytes.json" or "little-endian/uint16.json") into its rows. The files are
+	// embedded under a flattened "Data.<dotted>" logical name (see the .csproj), so '/' maps to '.' here.
 	public static T[] Read<T>(string fileName)
 	{
-		var resourceName = Prefix + fileName;
-		var assembly = Assembly.GetExecutingAssembly();
+		var resourceName = "Data." + fileName.Replace('/', '.');
 
-		using var stream = assembly.GetManifestResourceStream(resourceName)
+		using var stream = Assembly.GetManifestResourceStream(resourceName)
 			?? throw new FileNotFoundException(
 				$"Embedded vector '{resourceName}' not found. Available: " +
-				string.Join(", ", assembly.GetManifestResourceNames()));
+				string.Join(", ", Assembly.GetManifestResourceNames()));
 
 		return JsonSerializer.Deserialize<T[]>(stream, Options)
 			?? throw new InvalidOperationException($"Vector '{fileName}' deserialized to null.");

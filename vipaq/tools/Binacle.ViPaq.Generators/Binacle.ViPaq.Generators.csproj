@@ -2,6 +2,8 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
+		<!-- CompactNotation is [Experimental]; this tool opts in to the experimental compact-string API. -->
+		<NoWarn>$(NoWarn);BINACLE_VIPAQ_COMPACT</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -1,4 +1,3 @@
-using Binacle.ViPaq.UnitTests.Models;
 using Binacle.ViPaq.UnitTests.Providers;
 using Version = Binacle.ViPaq.Version;
 

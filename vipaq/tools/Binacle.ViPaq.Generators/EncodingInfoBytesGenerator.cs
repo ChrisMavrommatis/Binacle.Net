@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Binacle.ViPaq;
 using EncodingInfo = Binacle.ViPaq.EncodingInfo;
 using Version = Binacle.ViPaq.Version;
@@ -10,16 +9,9 @@ namespace Binacle.ViPaq.Generators;
 // and item-coordinates the inner, matching the file's order. The Byte column is the independent expected
 // output (Version<<6 | Bin<<4 | ItemDim<<2 | ItemCoord), written as grouped binary so the golden stays
 // human-checkable. Each row is a concrete EncodingInfoByteVector, so the schema (field names) lives in that
-// class; the whole list is serialized in one go.
+// class; CompactJson writes one row per line so the 256-row file stays greppable.
 public sealed class EncodingInfoBytesGenerator : IVectorGenerator
 {
-	private static readonly JsonSerializerOptions WriteOptions = new()
-	{
-		WriteIndented = true,
-		IndentCharacter = '\t',
-		IndentSize = 1,
-	};
-
 	public void Generate()
 	{
 		var outputPath = Path.Combine(RepoLocator.FindTestVectorsDir(), "encoding-info-bytes.json");
@@ -43,12 +35,12 @@ public sealed class EncodingInfoBytesGenerator : IVectorGenerator
 
 			vectors.Add(new EncodingInfoByteVector
 			{
-				EncodingInfo = encodingInfo.ToLabel(),
+				EncodingInfo = CompactNotation.FormatEncodingInfo(encodingInfo),
 				Byte = ToGroupedBinary(EncodingInfoHelper.ToByte(encodingInfo)),
 			});
 		}
 
-		File.WriteAllText(outputPath, JsonSerializer.Serialize(vectors, WriteOptions));
+		File.WriteAllText(outputPath, CompactJson.SerializeArray(vectors));
 		Console.WriteLine($"Wrote {vectors.Count} encoding-info rows to {outputPath}");
 	}
 

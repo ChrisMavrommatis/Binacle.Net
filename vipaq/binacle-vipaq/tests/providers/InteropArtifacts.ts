@@ -13,6 +13,7 @@ type Item = Dimensions & Coordinates;
 
 interface InputVector {
 	Name: string;
+	ExpectedEncodingInfo: string;
 	Bin: string;
 	Items: string[];
 }
@@ -20,9 +21,12 @@ interface InputVector {
 interface ArtifactVector {
 	Name: string;
 	Producer: string;
-	EncodingInfo: string;
 	Base64: string;
 }
+
+// ExpectedEncodingInfo lives on the input (producer-independent, spec-determined), so the byte-0 pin checks a
+// declared value instead of one echoed back from the generator's own output.
+type Input = {expectedEncodingInfo: EncodingInfo; bin: Dimensions; items: Item[]};
 
 export interface InteropArtifactCase {
 	label: string;
@@ -32,10 +36,14 @@ export interface InteropArtifactCase {
 	items: Item[];
 }
 
-function loadInputs(): Map<string, {bin: Dimensions; items: Item[]}> {
-	const inputs = new Map<string, {bin: Dimensions; items: Item[]}>();
+function loadInputs(): Map<string, Input> {
+	const inputs = new Map<string, Input>();
 	for (const vector of readVectors<InputVector>("interop/input.json")) {
-		inputs.set(vector.Name, {bin: parseBin(vector.Bin), items: parseItems(vector.Items)});
+		inputs.set(vector.Name, {
+			expectedEncodingInfo: parseEncodingInfo(vector.ExpectedEncodingInfo),
+			bin: parseBin(vector.Bin),
+			items: parseItems(vector.Items),
+		});
 	}
 	return inputs;
 }
@@ -50,7 +58,7 @@ function load(files: string[]): InteropArtifactCase[] {
 			cases.push({
 				label: `${vector.Producer} — ${vector.Name}`,
 				bytes: Array.from(Buffer.from(vector.Base64, "base64")),
-				expectedEncodingInfo: parseEncodingInfo(vector.EncodingInfo),
+				expectedEncodingInfo: input.expectedEncodingInfo,
 				bin: input.bin,
 				items: input.items,
 			});

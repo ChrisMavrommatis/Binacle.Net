@@ -14,6 +14,8 @@
          -->
         <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
         <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+        <!-- The vectors go through CompactNotation, which is [Experimental]; opt in to it. -->
+        <NoWarn>$(NoWarn);BINACLE_VIPAQ_COMPACT</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

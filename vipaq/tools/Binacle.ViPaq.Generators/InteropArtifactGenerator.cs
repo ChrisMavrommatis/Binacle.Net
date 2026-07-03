@@ -27,19 +27,17 @@ public sealed class InteropArtifactGenerator : IVectorGenerator
 		var artifacts = new List<Artifact>();
 		foreach (var input in inputs)
 		{
-			var bin = CompactParser.ParseBin(input.Bin);
-			var items = CompactParser.ParseItems(input.Items);
+			var bin = CompactNotation.ParseBin<long>(input.Bin);
+			var items = CompactNotation.ParseItems<long>(input.Items).ToList();
 
 			// Serialize as long — long holds the whole interoperable range [0, 2^53 - 1] exactly, and the
 			// section width is chosen from the value, not the type, so small values still emit 8-bit sections.
-			var bytes = ViPaqSerializer.Serialize<Bin, Item, long>(bin, items);
-			var encodingInfo = EncodingInfoHelper.FromByte(bytes[0]).ToLabel();
+			var bytes = ViPaqSerializer.Serialize<Bin<long>, Item<long>, long>(bin, items);
 
 			artifacts.Add(new Artifact
 			{
 				Name = input.Name,
 				Producer = "csharp",
-				EncodingInfo = encodingInfo,
 				Base64 = Convert.ToBase64String(bytes),
 			});
 		}
@@ -59,7 +57,7 @@ public sealed class InteropArtifactGenerator : IVectorGenerator
 		Console.WriteLine($"Wrote {artifacts.Count} artifact(s) to {outputPath}");
 		foreach (var artifact in artifacts)
 		{
-			Console.WriteLine($"  {artifact.Name} -> {artifact.EncodingInfo} ({artifact.Base64.Length} base64 chars)");
+			Console.WriteLine($"  {artifact.Name} ({artifact.Base64.Length} base64 chars)");
 		}
 	}
 }
