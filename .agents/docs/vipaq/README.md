@@ -1,6 +1,6 @@
 ---
 description: Binacle.ViPaq — compact binary format for encoding packing results. Wire layout, encoding-info header, C# API surface, and limits.
-verified: 2026-07-03
+verified: 2026-07-05
 check: Wire layout, EncodingInfo bit packing, enums, and public method signatures match vipaq/src/Binacle.ViPaq/
 also_update:
   - vipaq/typescript.md
@@ -28,33 +28,38 @@ All entry points are static on `ViPaqSerializer`. The typed methods are thin wra
 | `SerializeUInt16` | `byte[] SerializeUInt16<TBin,TItem>(TBin bin, IList<TItem> items)` | `T = ushort` |
 | `DeserializeInt32` | `(TBin, IList<TItem>) DeserializeInt32<TBin,TItem>(byte[] data)` | `TBin`/`TItem` need `new()` |
 | `DeserializeUInt16` | `(TBin, IList<TItem>) DeserializeUInt16<TBin,TItem>(byte[] data)` | `T = ushort` |
-| `Serialize` (generic) | `byte[] Serialize<TBin,TItem,T>(TBin bin, IList<TItem> items)` | `T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>` |
+| `Serialize` (generic) | `byte[] Serialize<TBin,TItem,T>(TBin bin, IList<TItem> items)` | `T : struct, IBinaryInteger<T>` (which already implies `INumber<T>` / `IComparable<T>`) |
 | `Deserialize` (generic) | `(TBin, IList<TItem>) Deserialize<TBin,TItem,T>(byte[] data)` | plus `new()` on `TBin`/`TItem` |
 
 Type constraints use ViPaq's **own** interfaces in `Binacle.ViPaq.Abstractions` — separate from the Lib `IWith*`
 interfaces. `TBin : IWithDimensions<T>`; `TItem : IWithDimensions<T>, IWithCoordinates<T>`. A type that gets
 serialized directly (e.g. v4 `PackedBox`) implements `IWithDimensions<int>` / `IWithCoordinates<int>`.
 
-The lib also ships canonical concrete models — `Bin<T>` (dimensions), `Item<T>` (dimensions + coordinates),
-`Dimensions<T>`, and `Coordinates<T>` (with `Dimensions.Create` / `Coordinates.Create` factories for inferred
-`T`) — so callers don't define their own. (`Bin<T>` and `Dimensions<T>` share a shape but are distinct roles.)
+The lib ships two **public** concrete models — `Bin<T>` (dimensions) and `Item<T>` (dimensions + coordinates) —
+as ready-made types a caller can serialize without defining their own. (`Dimensions<T>` / `Coordinates<T>` used
+to ship here too, but nothing in the format serializes a standalone measurement or point, so they're now
+test-only fixtures in `vipaq/test/Binacle.ViPaq.UnitTests/Models/`.)
 
-### Compact notation (experimental)
+Everything else is `internal` — implementation detail, not consumer API: `BitSizeHelper`, `EncodingInfoHelper`,
+`ProtocolReader<T>` / `ProtocolWriter<T>` (+ their extension methods), and `EncodingInfoNotation`. The test and
+tools assemblies reach them via `InternalsVisibleTo`. So the whole **public surface** is: `ViPaqSerializer`, the
+two `IWith*` interfaces, `Bin<T>` / `Item<T>`, the wire types `EncodingInfo` / `BitSize` / `Version`, and
+`ViPaqLimits`.
 
-`CompactNotation` — marked `[Experimental("BINACLE_VIPAQ_COMPACT")]` — is a **text** companion to the binary
-format. It parses and formats the human-readable shorthand used by the shared test vectors and the interop
-generators, so that grammar lives in one place instead of a copy per project:
+### Encoding-info notation (internal)
+
+The geometry text notation (dimensions / coordinates / items, e.g. `"10x10x10 (0,0,0)"`) is **not** in vipaq — it
+lives in the shared `Binacle.CompactNotation` project, used by the test vectors and interop generators so the
+grammar sits in one place. vipaq keeps only `EncodingInfoNotation` — an `internal` helper that parses/formats the
+**header** string via `ParseEncodingInfo` / `FormatEncodingInfo`:
 
 | Methods | Text form |
 |---|---|
-| `ParseBin<T>` · `ParseDimensions<T>` · `FormatDimensions<T>` | `"100x100x100"` |
-| `ParseCoordinates<T>` · `FormatCoordinates<T>` | `"0,0,0"` |
-| `ParseItem<T>` · `ParseItems<T>` · `FormatItem<T,TItem>` | `"10x10x10 (0,0,0)"` (`ParseItems` also expands a `":Q"` repeat) |
 | `ParseEncodingInfo` · `FormatEncodingInfo` | `"Uncompressed_8_8_8"` (`"Compressed"` = gzip) |
 
-Parse is lenient about range (it just reads the integers); `Serialize` still enforces `[0, MaxInteger]`. Parse
-returns the concrete `Bin<T>` / `Item<T>`. Consumers opt into the experimental API with
-`<NoWarn>BINACLE_VIPAQ_COMPACT</NoWarn>`. TS mirror: `src/compactNotation.ts` (see [typescript.md](typescript.md)).
+It stays in the library because it's wire-specific — it names `EncodingInfo` / `BitSize` / `Version`, which the
+leaf `Binacle.CompactNotation` can't hold. TS mirror: `src/encodingInfoNotation.ts` (see
+[typescript.md](typescript.md)).
 
 ## Wire layout
 
@@ -108,5 +113,5 @@ adaptive bit-width + optional-gzip scheme — there is no per-value variable-len
 
 | Project | Alias | Covers |
 |---|---|---|
-| `vipaq/test/Binacle.ViPaq.UnitTests` | `vipaq` | `BitSizeHelper`, `EncodingInfoHelper` (encode/decode, throws) — uses Bogus fakers |
+| `vipaq/test/Binacle.ViPaq.UnitTests` | `vipaq` | serializer round-trips + exact-byte golden vectors; the internal `BitSizeHelper` / `EncodingInfoHelper` / protocol read-write (reached via `InternalsVisibleTo`); curated data, not Bogus |
 | `vipaq/binacle-vipaq` | — | TypeScript mirror — `npm test` (jest); see [typescript.md](typescript.md) |

@@ -6,8 +6,8 @@ using Binacle.ViPaq.Abstractions;
 
 namespace Binacle.ViPaq;
 
-public class ProtocolWriter<T> : IDisposable, IAsyncDisposable
-	where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+internal class ProtocolWriter<T> : IDisposable, IAsyncDisposable
+	where T : struct, IBinaryInteger<T>
 {
 	private readonly Stream stream;
 	private readonly bool isMemoryStream;

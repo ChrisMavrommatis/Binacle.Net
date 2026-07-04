@@ -3,14 +3,14 @@ using Binacle.ViPaq.Abstractions;
 
 namespace Binacle.ViPaq;
 
-public static class ProtocolWriterExtensions
+internal static class ProtocolWriterExtensions
 {
 	public static void WriteDimensions<TObject, T>(
 		this ProtocolWriter<T> protocolWriter,
 		TObject obj,
 		BitSize bitSize
 	)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 		where TObject : IWithDimensions<T>
 	{
 		switch (bitSize)
@@ -45,7 +45,7 @@ public static class ProtocolWriterExtensions
 		TObject obj,
 		BitSize bitSize
 	)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 		where TObject : IWithCoordinates<T>
 	{
 		switch (bitSize)

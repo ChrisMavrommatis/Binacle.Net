@@ -24,7 +24,7 @@ public class BitSizeHelperBoundaryTests
 	};
 
 	private static (BitSize, BitSize) SizesFor<T>(ulong value)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var typedValue = T.CreateChecked(value);
 		var dimensions = BitSizeHelper.GetDimensionsBitSize<Dimensions<T>, T>(

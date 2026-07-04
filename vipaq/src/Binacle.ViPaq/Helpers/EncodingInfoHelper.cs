@@ -5,7 +5,7 @@ using Version = Binacle.ViPaq.Version;
 
 namespace Binacle.ViPaq;
 
-public static class EncodingInfoHelper
+internal static class EncodingInfoHelper
 {
 	private static Dictionary<Type, BitSize> _bitSizes = new()
 	{
@@ -45,7 +45,7 @@ public static class EncodingInfoHelper
 		TBin bin, 
 		IList<TItem> items
 	) 
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 		where TBin : IWithDimensions<T>
 		where TItem: IWithDimensions<T>, IWithCoordinates<T>
 	{
@@ -86,7 +86,7 @@ public static class EncodingInfoHelper
 	}
 
 	public static void ThrowOnInvalidEncodingInfo<T>(EncodingInfo readEncodingInfo) 
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var typeOfT = typeof(T);
 		if (!_bitSizes.TryGetValue(typeOfT, out var bitSize))

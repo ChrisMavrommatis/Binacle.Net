@@ -4,26 +4,52 @@
 data. Today the same idea is written **three times** with **three dialects**. We build the shared library
 first, prove it green in isolation, then swap each consumer over one at a time.
 
-## NEXT (not started) — trim vipaq's test/tool-only models out of the library
+## NEXT — tighten vipaq's public surface (models done; internalize machinery next)
 
-`vipaq/src/Binacle.ViPaq/Models/` ships four concrete generic models — `Bin<T>`, `Item<T>`, `Dimensions<T>`,
-`Coordinates<T>` — as "canonical implementations" of the `IWith*<T>` interfaces. But the **library itself never
-uses them**: the serializer is fully generic over `IWithDimensions<T>`/`IWithCoordinates<T>` + the caller's own
-`TBin`/`TItem`. Evidence: `grep 'Bin<' / 'Item<'` over `vipaq/src` (excluding `Models/`) = **0** references;
-they're referenced only by `vipaq/test` (~14 files) and `vipaq/tools` (1–2). So they're test/tool fixtures that
-happen to live in the shipped library.
+Goal: shrink `Binacle.ViPaq`'s public API to the format's vocabulary + entry point, and push test-only types
+out of the shipped assembly. The serializer is fully generic over the `IWith*<T>` interfaces + the caller's own
+`TBin`/`TItem` — it never uses the concrete models (verified: **0** src refs to `Bin`/`Item`/`Dimensions`/
+`Coordinates` outside `Models/`).
 
-**Task:** move `Bin<T>`/`Item<T>`/`Dimensions<T>`/`Coordinates<T>` out of `Binacle.ViPaq` into the test/tool
-side (a shared test-support file, or the test project + a tools copy), leaving the library src as just:
-serializer + `IWith*<T>` interfaces + `EncodingInfo`/`BitSize`/`Version` + `EncodingInfoNotation`. Notes:
-- **Keep the `IWith*<T>` interfaces in src** — the serializer's generic constraints need them.
-- First **verify** the concrete `Dimensions<T>`/`Coordinates<T>` models (not the `IWith*` interfaces, which the
-  grep conflates) truly have no src use — the serializer constructs `new TBin()`/`new TItem()` from caller
-  types on deserialize, so it shouldn't, but confirm.
-- The interop tool + tests already need their own concrete types; this just relocates them. No wire/behaviour
-  change, so all suites + regen stay byte-identical.
-- Consider whether these should just **be** the shared `Binacle.CompactNotation` models — but that reopens the
-  readonly-vs-setter deserialize conflict (Approach B), so likely keep vipaq's own mutable ones test-side.
+**Review verdict (agreed).** The public contract is bring-your-own-type: `Serialize<TBin,TItem,T>` /
+`Deserialize` constrain on `IWithDimensions<T>` / `IWithCoordinates<T>`. So:
+- **Keep public:** `ViPaqSerializer`, `IWithDimensions<T>`, `IWithCoordinates<T>`, the ready-made DTOs
+  `Bin<T>` / `Item<T>` (the format *does* accept these), the wire vocabulary `EncodingInfo` / `BitSize` /
+  `Version`, and `ViPaqLimits`.
+- **Move to tests:** `Dimensions<T>` / `Coordinates<T>` (+ their `Create` factories) — no public format takes a
+  standalone measurement/point; they exist only to unit-test `BitSizeHelper` and the protocol writer.
+
+**DONE (awaiting commit) — model move.** `git mv` `Dimensions.cs` + `Coordinates.cs` from
+`src/Binacle.ViPaq/Models/` → `test/Binacle.ViPaq.UnitTests/Models/`, keeping `namespace Binacle.ViPaq` so the
+~10 test files (global `using Binacle.ViPaq`) + `VectorParser` need **zero edits**. Header comments updated to
+"test-only". `Bin`/`Item` stay in src (public). Green: src builds clean (0 warnings), vipaq **1371** pass, tools
+builds.
+
+**DONE (awaiting commit) — internalize the implementation machinery.** Flipped 7 types `public` → `internal`:
+`BitSizeHelper`, `EncodingInfoHelper`, `ProtocolReader<T>`, `ProtocolWriter<T>`, `ProtocolReaderExtensions`,
+`ProtocolWriterExtensions`, `EncodingInfoNotation`. The src csproj already granted `InternalsVisibleTo` to
+`$(ProjectName).UnitTests`; added `$(ProjectName).Generators` (tools drives `EncodingInfoNotation`). Wire types
+(`EncodingInfo`/`BitSize`/`Version`) + `ViPaqLimits` stay public. No other project in the repo references any
+internalized type (grep-verified). Tests/tools compiled unchanged via IVT. Green: vipaq src + tools 0 warnings,
+vipaq **1371** pass, full `dotnet build Binacle.Net.slnx` succeeds, generator regen byte-identical.
+
+**Resulting public surface of `Binacle.ViPaq`:** `ViPaqSerializer` · `IWithDimensions<T>` ·
+`IWithCoordinates<T>` · `Bin<T>` · `Item<T>` · `EncodingInfo` · `BitSize` · `Version` · `ViPaqLimits`.
+
+**DONE (awaiting commit) — follow-up cleanups.**
+- **Dropped the dead `[Experimental("BINACLE_VIPAQ_COMPACT")]`** on `EncodingInfoNotation` (it's `internal` now,
+  so the public-preview gate bought nothing) + its `using` and both `<NoWarn>BINACLE_VIPAQ_COMPACT</NoWarn>`
+  lines (test + tools csproj).
+- **Collapsed the redundant generic constraints.** `IBinaryInteger<T>` already implies `INumber<T>` /
+  `IComparable<T>`, and the two sibling interfaces disagreed (`IWithDimensions` verbose, `IWithCoordinates`
+  minimal). Swept every `where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>` (and the multi-line
+  variants) → `where T : struct, IBinaryInteger<T>` across vipaq src + test.
+- **Refreshed the stale docs** (`verified: 2026-07-05`): `.agents/docs/vipaq/README.md` (public surface, the two
+  shipped models, the internal machinery, and the rewritten "Encoding-info notation (internal)" section — the
+  old "Compact notation" section still listed geometry methods removed back in Phase 1b) and its `also_update:`
+  target `vipaq/typescript.md` (same geometry-notation staleness: `compactNotation.ts` → `encodingInfoNotation.ts`
+  + the `binacle-compact-notation` package).
+- Green: vipaq src + tools 0 warnings, vipaq **1371** pass, regen byte-identical, full `dotnet build` succeeds.
 
 ## The notation (final)
 

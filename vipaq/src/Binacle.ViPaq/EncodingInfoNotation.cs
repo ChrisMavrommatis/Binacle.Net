@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Version = Binacle.ViPaq.Version;
 
 namespace Binacle.ViPaq;
@@ -7,8 +6,7 @@ namespace Binacle.ViPaq;
 // "Uncompressed_8_8_8" ("Compressed" = gzip). Wire-specific — it names EncodingInfo/BitSize/Version — so it
 // stays in the library. The canonical geometry notation (dimensions/coordinates/items) lives in the shared
 // Binacle.CompactNotation, not here; this type only knows the header string.
-[Experimental("BINACLE_VIPAQ_COMPACT")]
-public static class EncodingInfoNotation
+internal static class EncodingInfoNotation
 {
 	// "Version_Bin_ItemDim_ItemCoord" -> EncodingInfo. Version word then three widths.
 	public static EncodingInfo ParseEncodingInfo(string compact)

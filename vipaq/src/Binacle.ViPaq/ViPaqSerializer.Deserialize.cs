@@ -12,7 +12,7 @@ public static partial class ViPaqSerializer
 	public static (TBin, IList<TItem>) Deserialize<TBin, TItem, T>(
 		byte[] data
 	)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 		where TBin : IWithDimensions<T>, new()
 		where TItem : IWithDimensions<T>, IWithCoordinates<T>, new()
 	{

@@ -10,7 +10,7 @@ namespace Binacle.ViPaq.UnitTests;
 public static class BitSizeValues
 {
 	public static T DistinctValue<T>(BitSize size, int fieldIndex)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var (baseValue, step) = size switch
 		{

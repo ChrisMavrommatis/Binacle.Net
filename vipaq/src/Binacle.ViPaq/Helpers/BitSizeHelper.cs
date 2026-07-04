@@ -3,11 +3,11 @@ using Binacle.ViPaq.Abstractions;
 
 namespace Binacle.ViPaq.Helpers;
 
-public static class BitSizeHelper
+internal static class BitSizeHelper
 {
 	public static BitSize GetCoordinatesBitSize<TObject, T>(
 		TObject obj) 
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 		where TObject : IWithCoordinates<T> 
 	{
 		if (obj.X < T.Zero)
@@ -90,7 +90,7 @@ public static class BitSizeHelper
 	public static BitSize GetDimensionsBitSize<TObject, T>(
 		TObject obj
 	) 
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 		where TObject : IWithDimensions<T> 
 	{
 		if (obj.Length <= T.Zero)

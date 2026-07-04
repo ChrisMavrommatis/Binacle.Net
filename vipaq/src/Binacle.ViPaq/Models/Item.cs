@@ -6,10 +6,7 @@ namespace Binacle.ViPaq;
 // A concrete item — dimensions plus a placement coordinate. The canonical implementation of
 // IWithDimensions<T> + IWithCoordinates<T> the library ships, so callers don't each define their own.
 public class Item<T> : IWithDimensions<T>, IWithCoordinates<T>
-	where T : struct,
-	IBinaryInteger<T>,
-	IComparable<T>,
-	INumber<T>
+	where T : struct, IBinaryInteger<T>
 {
 	public T Length { get; set; }
 	public T Width { get; set; }

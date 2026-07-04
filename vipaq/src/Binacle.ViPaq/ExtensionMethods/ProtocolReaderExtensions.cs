@@ -3,14 +3,14 @@ using Binacle.ViPaq.Abstractions;
 
 namespace Binacle.ViPaq;
 
-public static class ProtocolReaderExtensions
+internal static class ProtocolReaderExtensions
 {
 	public static void ReadDimensions<TObject, T>(
 		this ProtocolReader<T> protocolReader,
 		ref TObject obj,
 		BitSize bitSize
 	)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 		where TObject : IWithDimensions<T>
 	{
 		switch (bitSize)
@@ -45,7 +45,7 @@ public static class ProtocolReaderExtensions
 		ref TObject obj,
 		BitSize bitSize
 	)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 		where TObject : IWithCoordinates<T>
 	{
 		switch (bitSize)
@@ -78,7 +78,7 @@ public static class ProtocolReaderExtensions
 	// Decode-side ceiling (PROTOCOL.md §5/§7): a 64-bit field on the wire can carry a value above
 	// MaxInteger (2^53 - 1). Reject it instead of returning it — only SixtyFour fields can exceed it.
 	private static T EnsureWithinRange<T>(T value)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		if (value > T.CreateSaturating(ViPaqLimits.MaxInteger))
 		{

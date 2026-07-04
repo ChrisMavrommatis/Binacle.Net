@@ -12,7 +12,7 @@ namespace Binacle.ViPaq.UnitTests;
 public class BitSizeHelperSaturationTests
 {
 	private static void AssertDimensions<T>(T value, BitSize expected)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var dimensions = Dimensions.Create(value, value, value);
 		BitSizeHelper.GetDimensionsBitSize<Dimensions<T>, T>(dimensions)
@@ -57,7 +57,7 @@ public class BitSizeHelperSaturationTests
 
 
 	private static void AssertCoordinates<T>(T value, BitSize expected)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var coordinates = Coordinates.Create(value, value, value);
 		BitSizeHelper.GetCoordinatesBitSize<Coordinates<T>, T>(coordinates)

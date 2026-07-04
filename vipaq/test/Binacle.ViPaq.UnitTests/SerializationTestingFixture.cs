@@ -9,7 +9,7 @@ namespace Binacle.ViPaq.UnitTests;
 public static class SerializationTestingFixture
 {
 	public static Bin<T> BuildBin<T>(BitSize size)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T> =>
+		where T : struct, IBinaryInteger<T> =>
 		new()
 		{
 			Length = BitSizeValues.DistinctValue<T>(size, 0),
@@ -18,7 +18,7 @@ public static class SerializationTestingFixture
 		};
 
 	public static Item<T> BuildItem<T>(BitSize dimensionsSize, BitSize coordinatesSize)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T> =>
+		where T : struct, IBinaryInteger<T> =>
 		new()
 		{
 			Length = BitSizeValues.DistinctValue<T>(dimensionsSize, 0),
@@ -30,7 +30,7 @@ public static class SerializationTestingFixture
 		};
 
 	public static void AssertRoundTrips<T>(Bin<T> bin, IList<Item<T>> items)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var data = ViPaqSerializer.Serialize<Bin<T>, Item<T>, T>(bin, items);
 		var (resultBin, resultItems) = ViPaqSerializer.Deserialize<Bin<T>, Item<T>, T>(data);
@@ -41,7 +41,7 @@ public static class SerializationTestingFixture
 	// Deserialize known bytes and check the bin and items match what we expect. Pins the decode path
 	// against literal bytes, not just against the encoder.
 	public static void AssertDeserializesTo<T>(byte[] data, Bin<T> bin, IList<Item<T>> items)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var (resultBin, resultItems) = ViPaqSerializer.Deserialize<Bin<T>, Item<T>, T>(data);
 
@@ -51,7 +51,7 @@ public static class SerializationTestingFixture
 	// Field-by-field compare. Bin and Item are plain classes (no value equality), so we check each
 	// field; this also makes a wiring bug (one field read into another) show up as a clear mismatch.
 	private static void AssertSame<T>(Bin<T> expectedBin, IList<Item<T>> expectedItems, Bin<T> actualBin, IList<Item<T>> actualItems)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		actualBin.Length.ShouldBe(expectedBin.Length);
 		actualBin.Width.ShouldBe(expectedBin.Width);

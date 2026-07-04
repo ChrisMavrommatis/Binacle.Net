@@ -1,6 +1,6 @@
 ---
 description: Binacle.ViPaq TypeScript mirror (vipaq/binacle-vipaq) — public API and how it differs from the C# library
-verified: 2026-07-03
+verified: 2026-07-05
 check: TS API signatures and divergences match vipaq/binacle-vipaq/src/
 also_update:
   - vipaq/README.md
@@ -25,11 +25,10 @@ ViPaqSerializer.deserialize(data: Uint8Array): Promise<DeserializedResult>   // 
 Both return raw bytes (no base64). They are **async** because gzip uses the Web Streams `CompressionStream` /
 `DecompressionStream` API. `index.ts` also re-exports the `Dimensions` and `Coordinates` types.
 
-`src/compactNotation.ts` mirrors the C# `CompactNotation` — the experimental text notation: `parseBin` /
-`parseDimensions` / `parseCoordinates` / `parseItem` / `parseItems` / `parseEncodingInfo` (text → model) and
-`formatDimensions` / `formatCoordinates` / `formatItem` / `formatEncodingInfo` (model → text). It's the single
-source of the `"LxWxH (X,Y,Z):Q"` / `"Uncompressed_8_8_8"` grammar; both the test vector-parser and the interop
-generator import it (TS has no `[Experimental]` attribute — it's a doc-comment convention only).
+`src/encodingInfoNotation.ts` mirrors the C# `EncodingInfoNotation` — `parseEncodingInfo` / `formatEncodingInfo`
+for the header string `"Uncompressed_8_8_8"` (`"Compressed"` = gzip) only. The **geometry** text notation
+(`"LxWxH (X,Y,Z) [Q]"`) is **not** here — it lives in the shared `binacle-compact-notation` package (the TS
+mirror of C# `Binacle.CompactNotation`), which both the test vector-parser and the interop generator import.
 
 ## Identical to C# (by design)
 
@@ -64,9 +63,10 @@ brought to this ceiling on 2026-06-30 — see PROTOCOL.md §5 and `.agents/plans
 guards, `ViPaqSerializer` round-trips, and the interop cross-decode matrix.
 
 The suite reads the **shared cross-language vectors** in `vipaq/test-vectors/` — the same files the C# suite
-reads — via `tests/support/vectorReader.ts` (`readVectors`, `fs`-based). The compact-geometry and encoding-info
-grammar now lives in the library (`src/compactNotation.ts`); `tests/support/vectorParser` re-exports it and adds
-the test-vector-only parsers (`parseByte`/`parseBytes`, and `parseDimensions`/`parseCoordinates` for the
-bit-size vectors). Providers in `tests/providers/` parse each file into arrays consumed by `test.each`. So both
+reads — via `tests/support/vectorReader.ts` (`readVectors`, `fs`-based). The geometry grammar lives in the shared
+`binacle-compact-notation` package and the encoding-info grammar in `src/encodingInfoNotation.ts`;
+`tests/support/vectorParser` re-exports both (geometry `parseDimensions`/`parseCoordinates`/`parseItems`, plus
+`parseEncodingInfo`) and adds the test-vector-only byte parsers (`parseByte`/`parseBytes`). Providers in
+`tests/providers/` parse each file into arrays consumed by `test.each`. So both
 implementations grade against one answer key and can't silently drift on the wire format. The gzip cross-decode
 matrix is done — see `.agents/plans/vipaq-cross-language-testing.md`.

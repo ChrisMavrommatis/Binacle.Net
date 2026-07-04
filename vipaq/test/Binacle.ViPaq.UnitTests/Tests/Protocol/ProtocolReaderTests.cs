@@ -116,7 +116,7 @@ public class ProtocolReaderTests
 
 	// A single byte must read back as the typed value for any T, not just int.
 	private static void AssertReadsByteAs<T>()
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		const byte value = 100; // 0x64, fits every signed and unsigned type
 		var reader = new ProtocolReader<T>(new MemoryStream([value]));

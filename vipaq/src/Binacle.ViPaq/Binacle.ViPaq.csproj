@@ -2,6 +2,8 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="$(ProjectName).UnitTests" />
+		<!-- The generator tool drives the internal EncodingInfoNotation to produce golden vectors. -->
+		<InternalsVisibleTo Include="$(ProjectName).Generators" />
 	</ItemGroup>
 
 </Project>

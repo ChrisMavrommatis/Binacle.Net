@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 
 namespace Binacle.ViPaq;
 
-public class ProtocolReader<T> : IDisposable, IAsyncDisposable
-	where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+internal class ProtocolReader<T> : IDisposable, IAsyncDisposable
+	where T : struct, IBinaryInteger<T>
 {
 	private readonly Stream stream;
 	private readonly bool isMemoryStream;

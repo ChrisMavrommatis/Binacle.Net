@@ -11,7 +11,7 @@ public static partial class ViPaqSerializer
 		TBin bin,
 		IList<TItem> items
 	)
-		where T : struct, IBinaryInteger<T>, INumber<T>, IComparable<T>
+		where T : struct, IBinaryInteger<T>
 		where TBin : IWithDimensions<T>
 		where TItem : IWithDimensions<T>, IWithCoordinates<T>
 	{
