@@ -8,7 +8,7 @@ namespace Binacle.ViPaq.UnitTests;
 // future test needs don't-care inputs (the way the Lib creation tests do).
 public static class SerializationTestingFixture
 {
-	public static Bin<T> BuildBin<T>(BitSize size)
+	public static Binacle.Geometry.Dimensions<T> BuildBin<T>(BitSize size)
 		where T : struct, IBinaryInteger<T> =>
 		new()
 		{
@@ -17,7 +17,7 @@ public static class SerializationTestingFixture
 			Height = BitSizeValues.DistinctValue<T>(size, 2),
 		};
 
-	public static Item<T> BuildItem<T>(BitSize dimensionsSize, BitSize coordinatesSize)
+	public static Binacle.Geometry.Item<T> BuildItem<T>(BitSize dimensionsSize, BitSize coordinatesSize)
 		where T : struct, IBinaryInteger<T> =>
 		new()
 		{
@@ -29,28 +29,28 @@ public static class SerializationTestingFixture
 			Z = BitSizeValues.DistinctValue<T>(coordinatesSize, 5),
 		};
 
-	public static void AssertRoundTrips<T>(Bin<T> bin, IList<Item<T>> items)
+	public static void AssertRoundTrips<T>(Binacle.Geometry.Dimensions<T> bin, IList<Binacle.Geometry.Item<T>> items)
 		where T : struct, IBinaryInteger<T>
 	{
-		var data = ViPaqSerializer.Serialize<Bin<T>, Item<T>, T>(bin, items);
-		var (resultBin, resultItems) = ViPaqSerializer.Deserialize<Bin<T>, Item<T>, T>(data);
+		var data = ViPaqSerializer.Serialize<Binacle.Geometry.Dimensions<T>, Binacle.Geometry.Item<T>, T>(bin, items);
+		var (resultBin, resultItems) = ViPaqSerializer.Deserialize<Binacle.Geometry.Dimensions<T>, Binacle.Geometry.Item<T>, T>(data);
 
 		AssertSame(bin, items, resultBin, resultItems);
 	}
 
 	// Deserialize known bytes and check the bin and items match what we expect. Pins the decode path
 	// against literal bytes, not just against the encoder.
-	public static void AssertDeserializesTo<T>(byte[] data, Bin<T> bin, IList<Item<T>> items)
+	public static void AssertDeserializesTo<T>(byte[] data, Binacle.Geometry.Dimensions<T> bin, IList<Binacle.Geometry.Item<T>> items)
 		where T : struct, IBinaryInteger<T>
 	{
-		var (resultBin, resultItems) = ViPaqSerializer.Deserialize<Bin<T>, Item<T>, T>(data);
+		var (resultBin, resultItems) = ViPaqSerializer.Deserialize<Binacle.Geometry.Dimensions<T>, Binacle.Geometry.Item<T>, T>(data);
 
 		AssertSame(bin, items, resultBin, resultItems);
 	}
 
 	// Field-by-field compare. Bin and Item are plain classes (no value equality), so we check each
 	// field; this also makes a wiring bug (one field read into another) show up as a clear mismatch.
-	private static void AssertSame<T>(Bin<T> expectedBin, IList<Item<T>> expectedItems, Bin<T> actualBin, IList<Item<T>> actualItems)
+	private static void AssertSame<T>(Binacle.Geometry.Dimensions<T> expectedBin, IList<Binacle.Geometry.Item<T>> expectedItems, Binacle.Geometry.Dimensions<T> actualBin, IList<Binacle.Geometry.Item<T>> actualItems)
 		where T : struct, IBinaryInteger<T>
 	{
 		actualBin.Length.ShouldBe(expectedBin.Length);

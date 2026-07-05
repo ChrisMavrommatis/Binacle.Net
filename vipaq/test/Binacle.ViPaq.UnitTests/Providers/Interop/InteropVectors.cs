@@ -12,7 +12,7 @@ internal static class InteropVectors
 	// ExpectedEncodingInfo lives on the input (the scenario), not the artifact — it's producer-independent and
 	// spec-determined, so declaring it here makes the byte-0 pin a real oracle instead of a value echoed back
 	// from the generator's own output.
-	public sealed record Input(EncodingInfo ExpectedEncodingInfo, Bin<long> Bin, Item<long>[] Items);
+	public sealed record Input(EncodingInfo ExpectedEncodingInfo, Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items);
 
 	// Producer ("csharp"/"typescript") is kept even though the file name / provider already implies it —
 	// it may be needed later (e.g. richer test labels or per-producer assertions).

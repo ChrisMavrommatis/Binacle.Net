@@ -31,7 +31,7 @@ public class SerializationRoundTripTests
 	public void RoundTrips_When_Coordinates_Are_Zero()
 	{
 		var bin = BuildBin<int>(BitSize.Eight);
-		var item = new Item<int> { Length = 1, Width = 2, Height = 3, X = 0, Y = 0, Z = 0 };
+		var item = new Binacle.Geometry.Item<int> { Length = 1, Width = 2, Height = 3, X = 0, Y = 0, Z = 0 };
 
 		AssertRoundTrips(bin, [item]);
 	}
@@ -39,7 +39,7 @@ public class SerializationRoundTripTests
 	[Fact]
 	public void RoundTrips_When_There_Are_No_Items()
 	{
-		AssertRoundTrips(BuildBin<int>(BitSize.Eight), new List<Item<int>>());
+		AssertRoundTrips(BuildBin<int>(BitSize.Eight), new List<Binacle.Geometry.Item<int>>());
 	}
 
 	[Fact]
@@ -60,7 +60,7 @@ public class SerializationRoundTripTests
 		// items shows up as a mismatch. The matrix above only ever uses one item per row, and the
 		// compressed case uses 60 identical items — neither can catch an item-loop bug.
 		var bin = BuildBin<int>(BitSize.Eight);
-		var items = new List<Item<int>>
+		var items = new List<Binacle.Geometry.Item<int>>
 		{
 			new() { Length = 1, Width = 2, Height = 3, X = 10, Y = 11, Z = 12 },
 			new() { Length = 4, Width = 5, Height = 6, X = 13, Y = 14, Z = 15 },
@@ -78,7 +78,7 @@ public class SerializationRoundTripTests
 		// Each item carries its index in every field, so order is checked at scale too.
 		var bin = BuildBin<int>(BitSize.Eight);
 		var items = Enumerable.Range(0, 300)
-			.Select(i => new Item<int>
+			.Select(i => new Binacle.Geometry.Item<int>
 			{
 				Length = i + 1, Width = i + 1_000, Height = i + 2_000,
 				X = i, Y = i + 10_000, Z = i + 20_000,

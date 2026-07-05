@@ -3,9 +3,9 @@ using Binacle.CompactNotation;
 namespace Binacle.ViPaq.UnitTests.Providers;
 
 // Turns the shared vectors into typed values. Geometry parsing is the shared CompactNotationParser (one grammar
-// for the whole repo); this class forwards to it and maps the result into vipaq's own Bin/Item so the
-// serializer still gets its own types. (The shared Dimensions/Coordinates/Item are hidden by vipaq's own
-// same-named models in the enclosing namespace, so only the parser type comes through the using.) Encoding-info
+// for the whole repo); this class forwards to it. Bins and items are the shared Binacle.Geometry models
+// (Dimensions is dimensions-only; Item is the placed model). The standalone ParseDimensions/ParseCoordinates
+// helpers return the shared Binacle.Geometry models too (they exercise the protocol writer in isolation). Encoding-info
 // notation stays vipaq-local (it needs EncodingInfo/BitSize/Version). It also owns the test-vector byte tokens.
 // Everything numeric is parsed as `long` — it holds the whole interoperable range [0, 2^53-1] exactly and is
 // the natural pair for JS `number`.
@@ -25,35 +25,23 @@ internal static class VectorParser
 	public static byte[] ParseBytes(IEnumerable<string> tokens)
 		=> tokens.Select(ParseByte).ToArray();
 
-	// Geometry via the shared notation, mapped into vipaq's own models (a bin is dimensions-only).
-	public static Bin<long> ParseBin(string compact)
-	{
-		var dimensions = CompactNotationParser.ParseDimensions<long>(compact);
-		return new Bin<long> { Length = dimensions.Length, Width = dimensions.Width, Height = dimensions.Height };
-	}
+	// Geometry via the shared notation; a bin is dimensions-only (the shared Dimensions model).
+	public static Binacle.Geometry.Dimensions<long> ParseBin(string compact)
+		=> CompactNotationParser.ParseDimensions<long>(compact);
 
 	public static Dimensions<long> ParseDimensions(string compact)
-	{
-		var dimensions = CompactNotationParser.ParseDimensions<long>(compact);
-		return new Dimensions<long> { Length = dimensions.Length, Width = dimensions.Width, Height = dimensions.Height };
-	}
+		=> CompactNotationParser.ParseDimensions<long>(compact);
 
 	public static Coordinates<long> ParseCoordinates(string compact)
-	{
-		var coordinates = CompactNotationParser.ParseCoordinates<long>(compact);
-		return new Coordinates<long> { X = coordinates.X, Y = coordinates.Y, Z = coordinates.Z };
-	}
+		=> CompactNotationParser.ParseCoordinates<long>(compact);
 
-	public static List<Item<long>> ParseItems(string compact)
-		=> CompactNotationParser.ParseItems<long>(compact).Select(ToItem).ToList();
+	public static List<Binacle.Geometry.Item<long>> ParseItems(string compact)
+		=> CompactNotationParser.ParseItems<long>(compact).ToList();
 
-	public static List<Item<long>> ParseItems(IEnumerable<string> compactItems)
-		=> CompactNotationParser.ParseItems<long>(compactItems).Select(ToItem).ToList();
+	public static List<Binacle.Geometry.Item<long>> ParseItems(IEnumerable<string> compactItems)
+		=> CompactNotationParser.ParseItems<long>(compactItems).ToList();
 
 	// Encoding-info notation is wire-specific (EncodingInfo/BitSize/Version) — stays on vipaq's own notation.
 	public static EncodingInfo ParseEncodingInfo(string compact)
 		=> EncodingInfoNotation.ParseEncodingInfo(compact);
-
-	private static Item<long> ToItem(Binacle.CompactNotation.Item<long> item)
-		=> new() { Length = item.Length, Width = item.Width, Height = item.Height, X = item.X, Y = item.Y, Z = item.Z };
 }

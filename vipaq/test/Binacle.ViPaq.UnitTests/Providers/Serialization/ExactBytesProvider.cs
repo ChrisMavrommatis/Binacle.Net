@@ -8,7 +8,7 @@ internal static class ExactBytesProvider
 {
 	private const string FileName = "exact-bytes.json";
 
-	public sealed record Scenario(Bin<long> Bin, Item<long>[] Items, byte[] Bytes);
+	public sealed record Scenario(Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items, byte[] Bytes);
 
 	private static readonly Dictionary<string, Scenario> scenarios;
 

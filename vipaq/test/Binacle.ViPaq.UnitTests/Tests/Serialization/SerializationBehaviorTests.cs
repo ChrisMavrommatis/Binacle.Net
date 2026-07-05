@@ -5,14 +5,14 @@ namespace Binacle.ViPaq.UnitTests;
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class SerializationBehaviorTests
 {
-	private static readonly Bin<int> ABin = new() { Length = 1, Width = 1, Height = 1 };
-	private static readonly Item<int> AnItem = new() { Length = 1, Width = 1, Height = 1, X = 0, Y = 0, Z = 0 };
+	private static readonly Binacle.Geometry.Dimensions<int> ABin = new() { Length = 1, Width = 1, Height = 1 };
+	private static readonly Binacle.Geometry.Item<int> AnItem = new() { Length = 1, Width = 1, Height = 1, X = 0, Y = 0, Z = 0 };
 
 	[Fact]
 	public void Serialize_Throws_When_Bin_Is_Null()
 	{
 		var exception = Should.Throw<ArgumentNullException>(() =>
-			ViPaqSerializer.SerializeInt32<Bin<int>, Item<int>>(null!, [AnItem]));
+			ViPaqSerializer.SerializeInt32<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>>(null!, [AnItem]));
 		exception.ParamName.ShouldBe("bin");
 	}
 
@@ -20,7 +20,7 @@ public class SerializationBehaviorTests
 	public void Serialize_Throws_When_Items_Are_Null()
 	{
 		var exception = Should.Throw<ArgumentNullException>(() =>
-			ViPaqSerializer.SerializeInt32<Bin<int>, Item<int>>(ABin, null!));
+			ViPaqSerializer.SerializeInt32<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>>(ABin, null!));
 		exception.ParamName.ShouldBe("items");
 	}
 
@@ -28,7 +28,7 @@ public class SerializationBehaviorTests
 	public void Deserialize_Throws_When_Data_Is_Null()
 	{
 		var exception = Should.Throw<ArgumentException>(() =>
-			ViPaqSerializer.DeserializeInt32<Bin<int>, Item<int>>(null!));
+			ViPaqSerializer.DeserializeInt32<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>>(null!));
 		exception.ParamName.ShouldBe("data");
 	}
 
@@ -36,7 +36,7 @@ public class SerializationBehaviorTests
 	public void Deserialize_Throws_When_Data_Is_Empty()
 	{
 		var exception = Should.Throw<ArgumentException>(() =>
-			ViPaqSerializer.DeserializeInt32<Bin<int>, Item<int>>([]));
+			ViPaqSerializer.DeserializeInt32<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>>([]));
 		exception.ParamName.ShouldBe("data");
 	}
 
@@ -47,7 +47,7 @@ public class SerializationBehaviorTests
 	public void Deserialize_Throws_NotSupportedException_When_Version_Is_Reserved(byte header)
 	{
 		Should.Throw<NotSupportedException>(() =>
-			ViPaqSerializer.DeserializeInt32<Bin<int>, Item<int>>([header]));
+			ViPaqSerializer.DeserializeInt32<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>>([header]));
 	}
 
 	[Fact]
@@ -58,7 +58,7 @@ public class SerializationBehaviorTests
 
 		// ParamName points at the bin section that was too wide, not some later check.
 		var exception = Should.Throw<ArgumentOutOfRangeException>(() =>
-			ViPaqSerializer.DeserializeInt32<Bin<int>, Item<int>>([header]));
+			ViPaqSerializer.DeserializeInt32<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>>([header]));
 		exception.ParamName.ShouldBe(nameof(EncodingInfo.BinDimensionsBitSize));
 	}
 }

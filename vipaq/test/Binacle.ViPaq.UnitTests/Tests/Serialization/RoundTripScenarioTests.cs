@@ -15,7 +15,7 @@ public class RoundTripScenarioTests
 	{
 		var scenario = RoundTripProvider.Get(name);
 
-		var data = ViPaqSerializer.Serialize<Bin<long>, Item<long>, long>(scenario.Bin, scenario.Items);
+		var data = ViPaqSerializer.Serialize<Binacle.Geometry.Dimensions<long>, Binacle.Geometry.Item<long>, long>(scenario.Bin, scenario.Items);
 
 		// byte 0 pins Version and all three bit sizes at once.
 		EncodingInfoHelper.FromByte(data[0]).ShouldBe(scenario.ExpectedEncodingInfo);

@@ -23,26 +23,26 @@ public class CreateEncodingInfoTests
 		_ => throw new ArgumentOutOfRangeException(nameof(size))
 	};
 
-	private static Bin<ulong> BinOf(BitSize size)
+	private static Binacle.Geometry.Dimensions<ulong> BinOf(BitSize size)
 	{
 		var sizeValue = BoundaryValueFor(size);
-		return new Bin<ulong> { Length = sizeValue, Width = sizeValue, Height = sizeValue };
+		return new Binacle.Geometry.Dimensions<ulong> { Length = sizeValue, Width = sizeValue, Height = sizeValue };
 	}
 
-	private static Item<ulong> ItemOf(BitSize dimensionsSize, BitSize coordinatesSize)
+	private static Binacle.Geometry.Item<ulong> ItemOf(BitSize dimensionsSize, BitSize coordinatesSize)
 	{
 		var dimensionsSizeValue = BoundaryValueFor(dimensionsSize);
 		var coordinatesSizeValue = BoundaryValueFor(coordinatesSize);
 
-		return new Item<ulong>()
+		return new Binacle.Geometry.Item<ulong>()
 		{
 			Length = dimensionsSizeValue, Width = dimensionsSizeValue, Height = dimensionsSizeValue,
 			X = coordinatesSizeValue, Y = coordinatesSizeValue, Z = coordinatesSizeValue
 		};
 	}
 
-	private static EncodingInfo CreateFor(Bin<ulong> bin, params Item<ulong>[] items) =>
-		EncodingInfoHelper.CreateEncodingInfo<Bin<ulong>, Item<ulong>, ulong>(bin, items);
+	private static EncodingInfo CreateFor(Binacle.Geometry.Dimensions<ulong> bin, params Binacle.Geometry.Item<ulong>[] items) =>
+		EncodingInfoHelper.CreateEncodingInfo<Binacle.Geometry.Dimensions<ulong>, Binacle.Geometry.Item<ulong>, ulong>(bin, items);
 
 	// Wiring matrix: each of the three sizes comes from its own input, version starts Uncompressed.
 	[Theory]

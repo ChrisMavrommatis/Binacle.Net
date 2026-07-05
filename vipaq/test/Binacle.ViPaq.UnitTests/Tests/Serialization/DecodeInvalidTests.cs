@@ -18,6 +18,6 @@ public class DecodeInvalidTests
 		// ArgumentOutOfRangeException, EndOfStreamException, InvalidDataException), so the shared contract
 		// is just "throws" — matching the TypeScript side, which only asserts it rejects.
 		Should.Throw<Exception>(() =>
-			ViPaqSerializer.Deserialize<Bin<long>, Item<long>, long>(scenario.Blob));
+			ViPaqSerializer.Deserialize<Binacle.Geometry.Dimensions<long>, Binacle.Geometry.Item<long>, long>(scenario.Blob));
 	}
 }

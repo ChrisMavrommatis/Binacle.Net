@@ -59,6 +59,7 @@
     <ItemGroup>
         <Using Include="Xunit" />
         <Using Include="Binacle.ViPaq" />
+        <Using Include="Binacle.Geometry" />
         <Using Include="Shouldly" />
     </ItemGroup>
 

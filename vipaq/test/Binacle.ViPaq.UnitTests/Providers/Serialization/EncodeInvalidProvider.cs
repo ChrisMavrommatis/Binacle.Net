@@ -8,7 +8,7 @@ internal static class EncodeInvalidProvider
 {
 	private const string FileName = "encode-invalid.json";
 
-	public sealed record Scenario(Bin<long> Bin, Item<long>[] Items);
+	public sealed record Scenario(Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items);
 
 	private static readonly Dictionary<string, Scenario> scenarios;
 

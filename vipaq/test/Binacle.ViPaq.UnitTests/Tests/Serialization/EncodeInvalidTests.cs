@@ -16,6 +16,6 @@ public class EncodeInvalidTests
 		var scenario = EncodeInvalidProvider.Get(name);
 
 		Should.Throw<ArgumentOutOfRangeException>(() =>
-			ViPaqSerializer.Serialize<Bin<long>, Item<long>, long>(scenario.Bin, scenario.Items));
+			ViPaqSerializer.Serialize<Binacle.Geometry.Dimensions<long>, Binacle.Geometry.Item<long>, long>(scenario.Bin, scenario.Items));
 	}
 }

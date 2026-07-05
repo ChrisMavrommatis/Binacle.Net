@@ -8,7 +8,7 @@ internal static class RoundTripProvider
 {
 	private const string FileName = "round-trip-scenarios.json";
 
-	public sealed record Scenario(Bin<long> Bin, Item<long>[] Items, EncodingInfo ExpectedEncodingInfo);
+	public sealed record Scenario(Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items, EncodingInfo ExpectedEncodingInfo);
 
 	private static readonly Dictionary<string, Scenario> scenarios;
 

@@ -22,7 +22,7 @@ public class SerializationEncodingTests
 	{
 		var scenario = ExactBytesProvider.Get(name);
 
-		var data = ViPaqSerializer.Serialize<Bin<long>, Item<long>, long>(scenario.Bin, scenario.Items);
+		var data = ViPaqSerializer.Serialize<Binacle.Geometry.Dimensions<long>, Binacle.Geometry.Item<long>, long>(scenario.Bin, scenario.Items);
 
 		data.ShouldBe(scenario.Bytes);
 	}
@@ -50,7 +50,7 @@ public class SerializationEncodingTests
 		var bin = SerializationTestingFixture.BuildBin<ulong>(binSize);
 		var item = SerializationTestingFixture.BuildItem<ulong>(itemDimensionsSize, itemCoordinatesSize);
 
-		var data = ViPaqSerializer.Serialize<Bin<ulong>, Item<ulong>, ulong>(bin, [item]);
+		var data = ViPaqSerializer.Serialize<Binacle.Geometry.Dimensions<ulong>, Binacle.Geometry.Item<ulong>, ulong>(bin, [item]);
 		var header = EncodingInfoHelper.FromByte(data[0]);
 
 		header.BinDimensionsBitSize.ShouldBe(binSize);
@@ -78,7 +78,7 @@ public class SerializationEncodingTests
 			.Select(_ => SerializationTestingFixture.BuildItem<int>(BitSize.Eight, BitSize.Eight))
 			.ToList();
 
-		var data = ViPaqSerializer.SerializeInt32<Bin<int>, Item<int>>(bin, items);
+		var data = ViPaqSerializer.SerializeInt32<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>>(bin, items);
 
 		EncodingInfoHelper.FromByte(data[0]).Version.ShouldBe(expected);
 	}

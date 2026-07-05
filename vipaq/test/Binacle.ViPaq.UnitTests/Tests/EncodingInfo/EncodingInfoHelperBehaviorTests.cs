@@ -61,12 +61,12 @@ public class EncodingInfoHelperBehaviorTests
 	public void CreateEncodingInfo_Enforces_Item_Count_Limit(int itemCount, bool shouldThrow)
 	{
 		// The count guard only looks at how many items there are, so fixed values are enough.
-		var bin = new Bin<ulong> { Length = 1, Width = 1, Height = 1 };
+		var bin = new Binacle.Geometry.Dimensions<ulong> { Length = 1, Width = 1, Height = 1 };
 		var items = Enumerable.Range(0, itemCount)
-			.Select(_ => new Item<ulong> { Length = 1, Width = 1, Height = 1, X = 0, Y = 0, Z = 0 })
+			.Select(_ => new Binacle.Geometry.Item<ulong> { Length = 1, Width = 1, Height = 1, X = 0, Y = 0, Z = 0 })
 			.ToList();
 
-		var act = () => { EncodingInfoHelper.CreateEncodingInfo<Bin<ulong>, Item<ulong>, ulong>(bin, items); };
+		var act = () => { EncodingInfoHelper.CreateEncodingInfo<Binacle.Geometry.Dimensions<ulong>, Binacle.Geometry.Item<ulong>, ulong>(bin, items); };
 
 		if (shouldThrow)
 		{

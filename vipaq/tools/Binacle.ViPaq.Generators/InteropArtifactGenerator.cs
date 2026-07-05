@@ -1,6 +1,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using Binacle.CompactNotation;
+using Binacle.Geometry;
 
 namespace Binacle.ViPaq.Generators;
 
@@ -27,20 +28,13 @@ public sealed class InteropArtifactGenerator : IVectorGenerator
 		var artifacts = new List<Artifact>();
 		foreach (var input in inputs)
 		{
-			// Geometry via the shared notation, mapped into vipaq's own models for the serializer.
-			var dimensions = CompactNotationParser.ParseDimensions<long>(input.Bin);
-			var bin = new Bin<long> { Length = dimensions.Length, Width = dimensions.Width, Height = dimensions.Height };
-			var items = CompactNotationParser.ParseItems<long>(input.Items)
-				.Select(item => new Item<long>
-				{
-					Length = item.Length, Width = item.Width, Height = item.Height,
-					X = item.X, Y = item.Y, Z = item.Z,
-				})
-				.ToList();
+			// Geometry via the shared notation; the bin is dimensions-only, items are the shared placed model.
+			var bin = CompactNotationParser.ParseDimensions<long>(input.Bin);
+			var items = CompactNotationParser.ParseItems<long>(input.Items).ToList();
 
 			// Serialize as long — long holds the whole interoperable range [0, 2^53 - 1] exactly, and the
 			// section width is chosen from the value, not the type, so small values still emit 8-bit sections.
-			var bytes = ViPaqSerializer.Serialize<Bin<long>, Item<long>, long>(bin, items);
+			var bytes = ViPaqSerializer.Serialize<Dimensions<long>, Item<long>, long>(bin, items);
 
 			artifacts.Add(new Artifact
 			{
