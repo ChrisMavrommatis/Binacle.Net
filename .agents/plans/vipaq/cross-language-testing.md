@@ -5,8 +5,15 @@
 mechanism is **shared reference vectors** in `vipaq/test-vectors/`: one set of JSON inputs+answers read by
 *both* test suites, so each is graded against the same answer key and the two can't silently drift.
 
-**Status (2026-07-03):** all green — C# **1371**, TS **984** (20 suites), `tsc` clean, and the **full solution
-builds** (`dotnet build Binacle.Net.slnx`). The interop matrix is complete (C# + TS generators, `interop/`
+**Status (2026-07-05):** all green — C# **1371**, TS **984** (20 suites), `tsc` clean, and the **full solution
+builds** (`dotnet build Binacle.Net.slnx`). Since 07-03 the compact-notation extraction (companion plan) and the
+`41b0fcef` "vipaq cleaning" pass have landed and are **committed**: geometry notation moved to the shared
+`Binacle.CompactNotation` lib + `packages/binacle-compact-notation`, vipaq's own renamed to `EncodingInfoNotation`
+and made `internal`, `Dimensions`/`Coordinates` models moved to the test project, and the `[Experimental]` gate
+dropped. See `.agents/plans/compact-notation-extraction.md` for that work — this plan covers only the wire-testing
+matrix, which is unchanged.
+> **Note (stale below):** the handoff and "open decisions" that follow were written 07-03, before the extraction
+> landed. Most are now answered — see the inline strike-throughs. Kept, not consolidated, per request. The interop matrix is complete (C# + TS generators, `interop/`
 vectors, both suites decode both artifacts, uncompressed byte-identity, integrity per file); the "compressed
 bytes aren't reproducible across runtimes" finding lives permanently in `PROTOCOL.md §6` +
 `test-vectors/README.md`. Interop inputs are widened to every width bucket + boundaries + `MaxInteger`;
@@ -17,8 +24,9 @@ compact grammar + **all** model types are consolidated into the library as `Comp
 > **HANDOFF → reviewer + close-out.** The work is **done and green** (C# 1371, TS 984, `tsc` clean, full solution
 > builds). Two things remain, both for the **next person, not this session**:
 >
-> **1. Review the branch.** The vipaq changes are committed through `69429ffd interop tests parsing` (only this
-> plan and `.agents/ideas/` are uncommitted). Run a review over the branch — `/code-review`, or `/code-review
+> **1. Review the branch.** ⚠️ Updated 07-05: the vipaq changes are now committed through `41b0fcef "vipaq
+> cleaning"` (not `69429ffd` — four more commits landed: `905766b7`, `f2f4275d`, `319f5ec6`, `630242ee`,
+> `41b0fcef`). Working tree is otherwise clean. Run a review over the branch — `/code-review`, or `/code-review
 > ultra` for the deep cloud pass. Focus areas:
 > - **new public lib surface**: `CompactNotation` (`[Experimental("BINACLE_VIPAQ_COMPACT")]`) + concrete models
 >   `Bin<T>`/`Item<T>`/`Dimensions<T>`/`Coordinates<T>` — API shape, naming, generic constraints, range-lenient
@@ -29,15 +37,17 @@ compact grammar + **all** model types are consolidated into the library as `Comp
 >   input;
 > - **vector reader**: the slash-path change (`/`→`.` for embedded resources).
 >
-> **2. Open decisions for the reviewer to close** (left open on purpose — these are the reviewer's calls):
-> - **`Bin<T>` vs `Dimensions<T>`** — identical shape, distinct roles. Collapse into one, or keep both?
-> - **Experimental marking** — `CompactNotation` is `[Experimental]` but the four models are not. Mark them too,
->   or declare them stable?
-> - **Unused `Format*`** — `FormatDimensions`/`FormatItem`/`FormatCoordinates` have no in-repo caller. Keep as
->   intentional API, or trim to what's used?
-> - **Optional interop coverage** (low value): coordinate-boundary mirror, empty items, many distinct items,
->   compressed at 32/64-bit — each is just `input.json` rows + a regen.
-> - **Stale doc nit**: the vipaq README "Related Tests" line predates the theory+provider/shared-vector suite.
+> **2. Open decisions** — ⚠️ mostly CLOSED by the 07-05 extraction + `41b0fcef` cleaning:
+> - ~~**`Bin<T>` vs `Dimensions<T>`**~~ — CLOSED. Shared lib dropped `Bin<T>` (one geometry model); vipaq keeps
+>   `Bin<T>`/`Item<T>` public (the DTOs the serializer accepts) and moved `Dimensions<T>`/`Coordinates<T>` to the
+>   test project.
+> - ~~**Experimental marking**~~ — CLOSED. `[Experimental("BINACLE_VIPAQ_COMPACT")]` dropped entirely
+>   (`EncodingInfoNotation` is `internal` now, so the preview gate bought nothing).
+> - **Unused `Format*`** — STILL OPEN. `FormatDimensions`/`FormatItem`/`FormatCoordinates` in the shared lib have
+>   no in-repo caller yet. Phase 3 (lib/API log) is meant to be their first consumer — keep, or trim.
+> - **Optional interop coverage** (low value, STILL OPEN): coordinate-boundary mirror, empty items, many distinct
+>   items, compressed at 32/64-bit — each is just `input.json` rows + a regen.
+> - ~~**Stale doc nit**~~ — the vipaq README/`typescript.md` were refreshed in `41b0fcef` (`verified: 2026-07-05`).
 >
 > **Never commit** (CLAUDE.md) — leave the working-tree changes for the human.
 >

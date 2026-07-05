@@ -4,7 +4,7 @@
 data. Today the same idea is written **three times** with **three dialects**. We build the shared library
 first, prove it green in isolation, then swap each consumer over one at a time.
 
-## NEXT — tighten vipaq's public surface (models done; internalize machinery next)
+## DONE (committed `41b0fcef` "vipaq cleaning") — tightened vipaq's public surface
 
 Goal: shrink `Binacle.ViPaq`'s public API to the format's vocabulary + entry point, and push test-only types
 out of the shipped assembly. The serializer is fully generic over the `IWith*<T>` interfaces + the caller's own
@@ -19,13 +19,13 @@ out of the shipped assembly. The serializer is fully generic over the `IWith*<T>
 - **Move to tests:** `Dimensions<T>` / `Coordinates<T>` (+ their `Create` factories) — no public format takes a
   standalone measurement/point; they exist only to unit-test `BitSizeHelper` and the protocol writer.
 
-**DONE (awaiting commit) — model move.** `git mv` `Dimensions.cs` + `Coordinates.cs` from
+**DONE (committed `41b0fcef`) — model move.** `git mv` `Dimensions.cs` + `Coordinates.cs` from
 `src/Binacle.ViPaq/Models/` → `test/Binacle.ViPaq.UnitTests/Models/`, keeping `namespace Binacle.ViPaq` so the
 ~10 test files (global `using Binacle.ViPaq`) + `VectorParser` need **zero edits**. Header comments updated to
 "test-only". `Bin`/`Item` stay in src (public). Green: src builds clean (0 warnings), vipaq **1371** pass, tools
 builds.
 
-**DONE (awaiting commit) — internalize the implementation machinery.** Flipped 7 types `public` → `internal`:
+**DONE (committed `41b0fcef`) — internalize the implementation machinery.** Flipped 7 types `public` → `internal`:
 `BitSizeHelper`, `EncodingInfoHelper`, `ProtocolReader<T>`, `ProtocolWriter<T>`, `ProtocolReaderExtensions`,
 `ProtocolWriterExtensions`, `EncodingInfoNotation`. The src csproj already granted `InternalsVisibleTo` to
 `$(ProjectName).UnitTests`; added `$(ProjectName).Generators` (tools drives `EncodingInfoNotation`). Wire types
@@ -36,7 +36,7 @@ vipaq **1371** pass, full `dotnet build Binacle.Net.slnx` succeeds, generator re
 **Resulting public surface of `Binacle.ViPaq`:** `ViPaqSerializer` · `IWithDimensions<T>` ·
 `IWithCoordinates<T>` · `Bin<T>` · `Item<T>` · `EncodingInfo` · `BitSize` · `Version` · `ViPaqLimits`.
 
-**DONE (awaiting commit) — follow-up cleanups.**
+**DONE (committed `41b0fcef`) — follow-up cleanups.**
 - **Dropped the dead `[Experimental("BINACLE_VIPAQ_COMPACT")]`** on `EncodingInfoNotation` (it's `internal` now,
   so the public-preview gate bought nothing) + its `using` and both `<NoWarn>BINACLE_VIPAQ_COMPACT</NoWarn>`
   lines (test + tools csproj).
@@ -81,7 +81,7 @@ vectors (`X,Y,Z`→`(X,Y,Z)`, `:Q`→`[Q]`), `vipaq/PROTOCOL.md`, and the TS mir
 
 ## Progress log
 
-- **Phase 0 — DONE (awaiting commit).** Built `shared/Binacle.CompactNotation` (BCL-only) + the interfaces,
+- **Phase 0 — DONE (committed).** Built `shared/Binacle.CompactNotation` (BCL-only) + the interfaces,
   models, parser/formatter/detector, and `shared/Binacle.CompactNotation.UnitTests` (xUnit v3 / Shouldly /
   MTP, mirrors the vipaq test project). Both registered in `Binacle.Net.slnx` under `/shared/`. **42 tests
   pass, project builds.** No consumer touched yet.
@@ -92,7 +92,7 @@ vectors (`X,Y,Z`→`(X,Y,Z)`, `:Q`→`[Q]`), `vipaq/PROTOCOL.md`, and the TS mir
   free functions + `index.ts` barrel + `types.ts` (`Dimensions`/`Coordinates`/`Item` structural shapes).
   `parseNumber` throws on empty/non-integer, so it now **matches** C#'s throwing parse (kills the old
   `Number("")==0` tolerance gap). **40 tests pass, `tsc` clean.**
-- **Phase 1 — DONE (awaiting commit).** vipaq tests + tools now use both shared notations; **vipaq src
+- **Phase 1 — DONE (committed).** vipaq tests + tools now use both shared notations; **vipaq src
   untouched** (its own `CompactNotation` kept, geometry now dead — same on the TS side: `src/compactNotation.ts`
   kept for encoding-info, geometry dead). What changed:
   - **C#**: `VectorParser` + `InteropArtifactGenerator` call the shared parser and map the shared model into
@@ -110,7 +110,7 @@ vectors (`X,Y,Z`→`(X,Y,Z)`, `:Q`→`[Q]`), `vipaq/PROTOCOL.md`, and the TS mir
     (the migration is purely notational; parsed values unchanged) — only `input.json` differs.
   - **Green**: C# CompactNotation 42, C# vipaq **1371**, TS vipaq **984**, TS notation 40, `tsc` clean, full
     `dotnet build Binacle.Net.slnx` succeeds.
-- **Phase 1b — DONE (awaiting commit).** Removed the dead geometry from vipaq's own notation and **renamed** it
+- **Phase 1b — DONE (committed).** Removed the dead geometry from vipaq's own notation and **renamed** it
   so it can't be confused with the canonical `Binacle.CompactNotation`. It now does encoding-info only:
   - **C#**: `Binacle.ViPaq.CompactNotation` → `Binacle.ViPaq.EncodingInfoNotation` (only `ParseEncodingInfo` /
     `FormatEncodingInfo` + the version/width word maps). Callers updated (`VectorParser`,
@@ -120,7 +120,7 @@ vectors (`X,Y,Z`→`(X,Y,Z)`, `:Q`→`[Q]`), `vipaq/PROTOCOL.md`, and the TS mir
     only). The `vectorParser` barrel imports from the new path.
   - No `CompactNotation` name left in the vipaq slice except the shared alias. Regen still byte-identical
     (`encoding-info-bytes.json` + interop artifacts unchanged). All suites green as above.
-- **Phase 1c — DONE (awaiting commit).** Split + renamed the canonical C# facade and dropped the alias:
+- **Phase 1c — DONE (committed).** Split + renamed the canonical C# facade and dropped the alias:
   - The single `Binacle.CompactNotation.CompactNotation` static class → two classes:
     **`CompactNotationParser`** (`ParseDimensions`/`ParseCoordinates`/`ParseQuantity`/`ParseItem`/`ParseItems`/
     `Detect`) and **`CompactNotationFormatter`** (`Format`/`FormatDimensions`/`FormatCoordinates`/
@@ -133,6 +133,35 @@ vectors (`X,Y,Z`→`(X,Y,Z)`, `:Q`→`[Q]`), `vipaq/PROTOCOL.md`, and the TS mir
   - TS is unaffected — it already exposes free functions (`parseDimensions`/`formatDimensions`/…), no class to
     split.
   - Green: C# CompactNotation **42**, C# vipaq **1371**, TS **984**, full build; regen byte-identical.
+- **Phase 2 — DONE (awaiting commit).** TestsKernel now parses through the shared notation, and the whole
+  scenario/test-data corpus moved off the `-Q` dialect onto ` [Q]`:
+  - **Kernel parser deleted.** Removed `Helpers/DimensionHelper.cs` (`DimensionsHelper.ParseFromCompactString`)
+    and the kernel's own `Models/DimensionsAndQuantity.cs` (nothing else referenced it). The `[Q]`-split moved
+    **into the shared lib**, not into TestsKernel.
+  - **Shared lib gained the dims-only quantity path.** New `DimensionsAndQuantity<T>` model (`IWithDimensions<T>`
+    + an `int Quantity` + `Flatten()` → Q `Dimensions<T>`), `CompactNotationParser.ParseDimensionsAndQuantity<T>`,
+    and a private `SplitQuantity` now shared by it and `ParseItems`. +6 unit tests (CompactNotation 42→**48**).
+  - **Consumers stay thin.** `TestBin`/`TestItem` gained a ctor taking `Binacle.CompactNotation.IWithDimensions<int>`;
+    `TestBin.FromCompactString` (dims only) and `TestItem.FromCompactString` (calls `ParseDimensionsAndQuantity`,
+    keeps `Quantity`) are one-liners. `Scenario.Create` maps `items.Select(TestItem.FromCompactString)` and
+    `OperationResultHelper` / the benchmark provider call the factories — **no `[` parsing anywhere in TestsKernel**.
+    The old hand-rolled `Split('-')`/`Split('x')` is gone.
+  - **Project ref**: added `Binacle.CompactNotation` to `Binacle.TestsKernel.csproj`.
+  - **Data**: migrated **7324** quoted item literals `"LxWxH-Q"`→`"LxWxH [Q]"` across the 10 embedded JSON files
+    (`Algorithms/Data/BischoffSuite/orlib_thpack1..7.json` + `CustomProblems/{baseline,simple,complex}.json`).
+    Anchored on the surrounding quotes so `Name` fields carrying the same digit pattern
+    (e.g. `"Simple_5x5x5-100_FitIn_60x40x10"`) were **not** touched — `Name` is descriptive, never parsed. Bins
+    (no quantity) and the 5-token `OperationResult` strings in `ResultSelection/Data/**` needed no change.
+  - **Inline C#**: migrated the item literals in `lib/test/Binacle.Lib.Benchmarks/Providers/`
+    `SpecializedScalingProblemsProvider.cs` + `CubeScalingProblemsProvider.cs` (70 occurrences — the
+    `itemsByQuantity` dictionary repeats items cumulatively). Explanatory comments left as-is (their `[…]` means
+    volume, not quantity — migrating would muddy that).
+  - **Docs**: `.agents/docs/shared/README.md` compact-string table Dimensions row updated (`[Q]` + delegation to
+    `Binacle.CompactNotation`), `verified: 2026-07-05`.
+  - **Green**: full `dotnet build Binacle.Net.slnx` 0 errors, CompactNotation **48**, lib **8615**, api **269**,
+    vipaq **1371** pass, performance suite runs clean.
+  - **Not in scope (Phase 3):** the UIModule's own `sample_data.json` + `SampleDataService.ParseItem` — a
+    separate `-`-splitter, not `DimensionsHelper`.
 
 ## Scope decision (locked this session) — Approach A, notation only
 
@@ -186,9 +215,13 @@ models add setters / init;
 
 **Decisions baked in:**
 - **`Bin<T>` dropped** — it was identical to `Dimensions<T>`. One geometry model.
-- **Quantity is a block, not a model field.** Atomic parsers return atomic things; the caller composes. The
-  dims+quantity entry (`LxWxH [Q]`, no coords) is split by the caller into `ParseDimensions` + `ParseQuantity`.
-  vipaq's list case is served by `ParseItems` expanding `[Q]` into Q copies.
+- **Quantity is a block.** For a *placed* item (`LxWxH (X,Y,Z) [Q]`) `ParseItems` expands `[Q]` into Q copies —
+  the count is flattened away, so `Item<T>` has no quantity field. For the *dims-only* entry (`LxWxH [Q]`, no
+  coords) — Phase-2 addition — `ParseDimensionsAndQuantity<T>` returns a `DimensionsAndQuantity<T>` that **keeps**
+  the count as a field (so callers like `TestItem` that need a quantity get it), and its `Flatten()` expands into
+  Q standalone `Dimensions<T>` when copies are wanted. (This reverses the earlier "the caller composes
+  `ParseDimensions` + `ParseQuantity`" note — the `[Q]`-split now lives once in the lib, shared by `ParseItems`
+  and `ParseDimensionsAndQuantity` via a private `SplitQuantity`.)
 
 **Parser surface:**
 - `ParseDimensions<T>(string) : Dimensions<T>`
@@ -196,6 +229,8 @@ models add setters / init;
 - `ParseQuantity(string) : int`  — strips `[]`
 - `ParseItem<T>(string) : Item<T>`  — `LxWxH (X,Y,Z)`, coords required; rejects a `[Q]` (use `ParseItems`)
 - `ParseItems<T>(string) : IReadOnlyList<Item<T>>`  — expands `[Q]`
+- `ParseDimensionsAndQuantity<T>(string) : DimensionsAndQuantity<T>`  — `LxWxH` or `LxWxH [Q]`, no coords; keeps
+  the count as a field. `.Flatten()` expands it into Q `Dimensions<T>`. (Phase-2 addition.)
 - `ParseItems<T>(IEnumerable<string>)` — flattens
 - `Detect(string)` — the fallback dispatcher
 
@@ -218,13 +253,24 @@ implement the shared interfaces (except that immutable objects *may* implement t
 which is safe — the setter conflict is only on vipaq's deserialize, which we route around by mapping).
 
 - **Phase 1 — vipaq tests + tools.** DONE — see the progress log.
-- **Phase 2 — TestsKernel.** `DimensionsHelper.ParseFromCompactString` (`LxWxH-Q`) calls `ParseDimensions` +
-  `ParseQuantity`, still returning its own `DimensionsAndQuantity`. Scenario input strings migrate `-Q`→`[Q]`.
-  (Leave `ScenarioResultHelper`'s `Status-EarlyExitReason` alone — different notation.) Green: lib test suite.
-- **Phase 3 — lib/API log.** Route `LogProcessorHandlingExtensions` (and the UIModule `FormatDimensions()` ID
-  sites) through the shared formatters; delete the lib `Format*` extensions. Log/UI output shifts `-Q`→`[Q]`
-  (the agreed break). Whether the log types implement the read-only interfaces or pass values is a Phase-3
-  detail. Green: API integration suite.
+- **Phase 2 — TestsKernel. DONE (awaiting commit).** Removed the kernel's `DimensionsHelper.ParseFromCompactString`
+  and its own `DimensionsAndQuantity` model; the dims-only quantity path moved into the shared lib (new
+  `DimensionsAndQuantity<T>` + `ParseDimensionsAndQuantity<T>` + `Flatten()`). Consumers stay thin —
+  `TestBin`/`TestItem` gained a shared-`IWith` ctor and `FromCompactString` factories, so `Scenario.Create` /
+  `OperationResultHelper` / the benchmark provider just map, with **no `[` parsing in TestsKernel**. Scenario input
+  strings migrated `-Q`→` [Q]` (7324 in `Algorithms/Data/**` + 70 inline C# literals in the two benchmark
+  providers). (`ScenarioResultHelper`'s `Status-EarlyExitReason` left alone — different notation.)
+  See the Phase 2 progress-log entry for details. Green: CompactNotation **48**, lib **8615**, api **269**, vipaq **1371**.
+- **Phase 3 — lib/API log. DEFERRED — absorbed by the shared-geometry-leaf initiative.** The goal was to route
+  `LogProcessorHandlingExtensions` + the UIModule `FormatDimensions()` ID sites through the shared formatter and
+  delete the lib `Format*` (output shifts `-Q`→`[Q]`). Investigating it surfaced the real blocker: the lib/API
+  models implement lib's **own** non-generic `IWith*` family, which the shared generic `CompactNotationFormatter`
+  can't consume without mapping/adapters. Rather than bolt on adapters, we decided to extract **one shared
+  geometry leaf** (interfaces + `Dimensions`/`Coordinates`) used by lib, API, vipaq, and the shared notation —
+  after which Phase 3 is trivial (lib models already satisfy the formatter; delete the lib `Format*`). See
+  **[shared-geometry-extraction.md](shared-geometry-extraction.md)**. As of this session the lib `Format*` still
+  emit `-Q` (`lib/src/Binacle.Lib.Abstractions/ExtensionMethods/DimensionExtensions.cs` + `CoordinateExtensions.cs`)
+  — untouched, and no test asserts on that output (verified), so the break is safe whenever it lands.
 
 ## Out of scope
 Unifying the lib's own `IWith*` interface families / per-algorithm `Bin`/`Item` models, and touching any
