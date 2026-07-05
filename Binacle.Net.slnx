@@ -80,6 +80,7 @@
   </Folder>
   <Folder Name="/shared/src/">
     <Project Path="shared/src/Binacle.CompactNotation/Binacle.CompactNotation.csproj" />
+    <Project Path="shared/src/Binacle.Geometry/Binacle.Geometry.csproj" />
   </Folder>
   <Folder Name="/shared/test/">
     <Project Path="shared/test/Binacle.CompactNotation.UnitTests/Binacle.CompactNotation.UnitTests.csproj" />
