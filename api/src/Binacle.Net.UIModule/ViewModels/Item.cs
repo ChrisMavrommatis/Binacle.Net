@@ -22,7 +22,7 @@ internal class Item :
 		this.Quantity = quantity;
 	}
 
-	public string ID => CompactNotationFormatter.Format<int>(this);
+	public string ID => CompactNotationFormatter.FormatDimensionsAndQuantity(this);
 
 	[Required]
 	[Range(1, ushort.MaxValue)]

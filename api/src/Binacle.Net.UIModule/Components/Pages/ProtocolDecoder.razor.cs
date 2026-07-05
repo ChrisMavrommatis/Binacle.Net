@@ -104,7 +104,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 			var (bin, items) =
 				ViPaqSerializer.DeserializeInt32<Bin, PackedItem>(bytes);
 
-			bin.ID = CompactNotationFormatter.Format<int>(bin);
+			bin.ID = CompactNotationFormatter.FormatDimensions<int>(bin);
 			
 			var binVolume = bin.CalculateVolume();
 			var itemsVolume = items.Sum(i => i.CalculateVolume());

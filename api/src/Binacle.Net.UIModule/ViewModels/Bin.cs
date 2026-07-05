@@ -17,7 +17,7 @@ internal class Bin :
 
 	public string ID
 	{
-		get => CompactNotationFormatter.Format<int>(this);
+		get => CompactNotationFormatter.FormatDimensions<int>(this);
 		set => _ = value;
 	}
 

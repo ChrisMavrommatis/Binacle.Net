@@ -22,6 +22,10 @@ internal static class LogProcessorHandlingExtensions
 		return log;
 	}
 
+	// [CompactFormatterDecision] The one type-erased boundary: this handles BOTH request Bins (dims) and Items
+	// (dims + a quantity the collection type erases), so it uses the runtime-polymorphic Format<T>. Everywhere the
+	// concrete type is known we use the guaranteed composites/primitives instead. See the note on
+	// CompactNotationFormatter.Format and .agents/plans/shared-geometry-extraction.md.
 	private static Dictionary<string, object> ConvertToLogObject(
 		this IEnumerable<IWithReadOnlyDimensions> items
 	)
@@ -32,15 +36,7 @@ internal static class LogProcessorHandlingExtensions
 		);
 	}
 
-	private static string ConvertToLogObject(this PackedItem item)
-	{
-		return CompactNotationFormatter.Format<int>(item);
-	}
 
-	private static string ConvertToLogObject(this UnpackedItem item)
-	{
-		return CompactNotationFormatter.Format<int>(item);
-	}
 
 	private static Dictionary<string, object> ConvertToLogObject(
 		this IDictionary<string, OperationResult> results
@@ -61,8 +57,8 @@ internal static class LogProcessorHandlingExtensions
 				.GroupBy(x => x.ID)
 				.ToDictionary(
 					group => group.Key,
-					group => group.Select(item => 
-						item.ConvertToLogObject()
+					group => group.Select(item =>
+						CompactNotationFormatter.FormatItem(item)
 					).ToArray()
 				);
 			resultState.Add("PackedItems", packedItems);
@@ -71,7 +67,9 @@ internal static class LogProcessorHandlingExtensions
 				.GroupBy(x => x.ID)
 				.ToDictionary(
 					group => group.Key,
-					group => group.Select(item => item.ConvertToLogObject()).ToArray()
+					group => group.Select(item =>
+						CompactNotationFormatter.FormatDimensionsAndQuantity(item)
+					).ToArray()
 				);
 			resultState.Add("UnpackedItems", unpackedItems);
 

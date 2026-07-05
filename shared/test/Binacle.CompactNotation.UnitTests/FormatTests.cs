@@ -65,10 +65,4 @@ public class FormatTests
 
 		CompactNotationFormatter.Format<int>(dimensions).ShouldBe("10x20x30");
 	}
-
-	[Fact]
-	public void Format_rejects_an_object_with_no_block()
-	{
-		Should.Throw<ArgumentException>(() => CompactNotationFormatter.Format<long>(new object()));
-	}
 }

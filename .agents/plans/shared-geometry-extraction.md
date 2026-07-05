@@ -320,33 +320,60 @@ data-holder models **and** the full `IWith*` family.
   the vipaq test `Dimensions<T>`/`Coordinates<T>` clones were deleted.
 - **Interface family moved into the leaf** — the non-generic `int` shortcuts (`IWith[ReadOnly]Dimensions`/
   `Coordinates`/`Quantity`) **and** the volume interfaces now live in `Binacle.Geometry` (volume generic tightened to
-  `struct, IBinaryInteger<T>`); the `IWithDimensions` asymmetry is fixed. `IWithID`/`IWithReadOnlyID` stay in lib.
-  Consumers reach the leaf via a per-project `<Using Include="Binacle.Geometry"/>`.
+  `struct, IBinaryInteger<T>`); the `IWithDimensions` asymmetry is fixed (it reaches the mutable generic). NOTE the
+  remaining asymmetry: `IWithCoordinates`/`IWithQuantity` non-generic shortcuts do NOT extend their non-generic
+  read-only sibling — so constrain generic composites on the `<int>` read-only interfaces, not the non-generic ones.
+  `IWithID`/`IWithReadOnlyID` stay in lib. Consumers reach the leaf via a per-project `<Using Include="Binacle.Geometry"/>`.
 - **Idea 1** — v4 + UIModule contracts dropped their redundant explicit `Binacle.Geometry.IWith*<int>`.
-- Invariant held throughout: **lib ⊥ vipaq** (each references only the leaf). All C# suites green.
+- **v3 contracts** — same cleanup (human-authorized 2026-07-06, behaviour-neutral: marker-interface removal only,
+  JSON/serialization unchanged; api 269 green).
+- **Tier-2-lite — result models read via `IWith`** — `ResultItem` now implements `IWithReadOnlyDimensions` and
+  `PackedItem` implements `IWithReadOnlyCoordinates`, delegating to their PRIVATE value structs (`Length =>
+  this.dimensions.Length`, `X => this.coordinates.X`). The lib value structs `Binacle.Lib.Models.Dimensions`/
+  `Coordinates` are now **`internal`** (IVT already grants `Binacle.Lib` + `Binacle.Lib.UnitTests` + `Binacle.TestsKernel`
+  access; api reads via the interface only). Every external reader (api `From(...)` factories, log formatter) uses the
+  `IWith` members — no `.Dimensions`/`.Coordinates` struct access outside lib. See [[geometry-leaf-design]] (perf: the
+  structs MUST stay structs).
+- **`CompactNotationFormatter` redesign** — `Format<T>` no longer takes `object`; it takes `IWithReadOnlyDimensions<T>`
+  (type-safe, no runtime "no block" throw). Added compile-guaranteed composites mirroring the parser: **`FormatItem`**
+  (dims+coords) and **`FormatDimensionsAndQuantity`** (dims+quantity) — `TValue` inferred, constraints on the `<int>`
+  read-only interfaces enforce the blocks at compile time. All type-known call sites use the primitives/composites;
+  `Format<T>` (runtime-polymorphic) is now used at exactly ONE place — the type-erased log request echo.
+- Invariant held throughout: **lib ⊥ vipaq** (each references only the leaf). Green: build 0 errors, lib **8615**,
+  api **269**, CompactNotation **47**, vipaq **1371**.
 
-**What remains (all optional / deferred; PARKED — nothing in progress; grep `[Migrate-Review]`):**
-- **v3 contracts** — **DONE (2026-07-06, human-authorized).** Dropped the redundant explicit
-  `Binacle.Geometry.IWith*<int>` from `v3/Bin.cs` + `v3/PackResponse.cs` `PackedBox`. Behaviour-neutral
-  (marker-interface removal only — JSON shape/serialization unchanged); full build + api suite (269) green.
-- **Log formatter** (`DiagnosticsModule/LogProcessorHandlingExtensions`) — formats `PackedItem`/`UnpackedItem` as
-  separate sub-parts because those result models expose geometry as nested value structs, not by implementing the
-  interfaces. **Tier-2-lite fix (self-contained):** have the result-model CLASSES implement `IWithReadOnly*` by
-  delegating to their existing structs (`Length => this.Dimensions.Length` — zero extra allocation; the perf value
-  structs stay structs, see the value-struct note), then the formatter collapses to a single `Format<int>(item)`.
-  Does NOT need the full `IWithID`-move / rename.
+**What remains (optional / PARKED; grep `[Migrate-Review]` and `[CompactFormatterDecision]`):**
+- **`[CompactFormatterDecision]` — the log request echo** (`DiagnosticsModule/LogProcessorHandlingExtensions.cs` +
+  `CompactNotationFormatter.Format<T>`): the last runtime-polymorphic path, at the genuinely type-erased Kernel log
+  boundary (`AlgorithmOperationLogChannelRequest.Bins`/`Items` are `IReadOnlyCollection<IWithReadOnlyDimensions>`, and
+  the element is a generic `TBox`, so an item's quantity isn't compile-visible). OPEN: (a) add a combined dims+quantity
+  read-only interface and require it on the log item DTOs → fully guaranteed; (b) log the request echo dims-only
+  (drop `[Q]`); (c) leave it. No test asserts on log output.
 - **`TestBin`/`TestItem`** — redundant ctor overloads (`IWithReadOnlyDimensions` vs `Geometry.IWithDimensions<int>`);
   simplify, or fold into Tier 2.
 - **`DimensionsAndQuantity.Flatten()`** — no production consumer; kept + tagged (wire it or drop it).
 - **Tier 2 (the big lever, not started)** — move `IWithID` into the leaf + a shared **ID-carrying** model family
   (`Bin`=id+dims, `Item`=id+dims+quantity, `PackedItem`=id+dims+coords) to collapse UIModule Models + `TestBin`/
-  `TestItem` and let the log formatter simplify. Needs the **leaf-rename** decision (`Geometry` → `Primitives`/`Core`,
-  or a `Binacle.Models` layer) and settles **quantity-as-`int`-vs-`T`**. A shared dims+quantity model is only worth
-  it inside Tier 2.
+  `TestItem`. Needs the **leaf-rename** decision (`Geometry` → `Primitives`/`Core`, or a `Binacle.Models` layer) and
+  settles **quantity-as-`int`-vs-`T`**. A shared dims+quantity model is only worth it inside Tier 2.
 - **TS parity** — deferred: TS is structurally typed, so the duplicated shapes already interoperate; low ROI.
 - **Verification gaps** — the ServiceModule suite (needs Azurite) and a docker image build were skipped by choice;
   run them for a full green sweep.
 
 **Won't reduce (leave as-is):** lib internal result models (internal ctors, immutable), algorithm working types
-(carry behaviour), v3 DTOs (frozen), UIModule ViewModels (DataAnnotations + computed ID), lib readonly-struct
-`Dimensions`/`Coordinates` (value semantics).
+(carry behaviour), v3 DTOs (frozen), UIModule ViewModels (DataAnnotations + computed ID), lib **internal** readonly-struct
+`Dimensions`/`Coordinates` (value-type perf — must stay structs).
+
+## Handoff note (2026-07-06) — for the next session
+
+The two initiatives (compact-notation + geometry leaf) are **complete and green**; everything past the 7-step runbook
+is the optional consolidation above. Key persisted facts (also in agent memory):
+- **All work is uncommitted in the working tree** (nothing staged — the human commits). Build green, all C# suites pass;
+  ServiceModule suite + docker not run.
+- **lib ⊥ vipaq is a hard invariant** — both reference only `Binacle.Geometry`; never add a lib↔vipaq edge.
+- **lib value structs are `internal` and MUST stay `readonly struct`** (perf); read geometry via the `IWith` interfaces.
+- **Formatter API:** primitives `FormatDimensions`/`FormatCoordinates`/`FormatQuantity`; composites `FormatItem` (dims+coords)
+  and `FormatDimensionsAndQuantity` (dims+quantity, mirrors the parser); `Format<T>(IWithReadOnlyDimensions<T>)` is the
+  runtime fallback kept only for the `[CompactFormatterDecision]` log-echo boundary.
+- **Open decisions to pick up:** `[CompactFormatterDecision]` (log echo), and `[Migrate-Review]` (TestBin/TestItem ctors,
+  Flatten, Tier 2). Grep both tags.
