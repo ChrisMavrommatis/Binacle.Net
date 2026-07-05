@@ -1,6 +1,6 @@
 ---
 description: Jekyll marketing/landing site at web/ — product home, apps listing, and interactive packing demo.
-verified: 2026-05-23
+verified: 2026-07-05
 check: Collections, JS bundles, and plugin list match web/_config.yml and web/js/
 also_update:
   - packages/README.md
@@ -36,7 +36,7 @@ Webpack bundles from `web/_js/` and npm packages into `web/js/`:
 | `packing_demo.js` | Interactive packing demo — calls the Binacle.Net API |
 | `protocol_decoder.js` | ViPaq protocol decoder — decodes pack results without calling the API |
 | `binacle-net-ui.js` | Built from `packages/binacle-net-ui` — UI components and 3D visualizer |
-| `binacle-vipaq.js` | Built from `vipaq/binacle-vipaq` — TypeScript ViPaq decoder |
+| `binacle-vipaq.js` | Built from `vipaq/packages/binacle-vipaq` — TypeScript ViPaq decoder |
 
 ## Plugins
 

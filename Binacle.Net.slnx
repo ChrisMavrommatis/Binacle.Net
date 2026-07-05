@@ -78,10 +78,12 @@
   <Folder Name="/vipaq/tools/">
     <Project Path="vipaq/tools/Binacle.ViPaq.Generators/Binacle.ViPaq.Generators.csproj" />
   </Folder>
-  <Folder Name="/shared/">
-    <Project Path="shared/Binacle.CompactNotation/Binacle.CompactNotation.csproj" />
-    <Project Path="shared/Binacle.CompactNotation.UnitTests/Binacle.CompactNotation.UnitTests.csproj" />
-    <Project Path="shared/Binacle.TestsKernel/Binacle.TestsKernel.csproj" />
+  <Folder Name="/shared/src/">
+    <Project Path="shared/src/Binacle.CompactNotation/Binacle.CompactNotation.csproj" />
+  </Folder>
+  <Folder Name="/shared/test/">
+    <Project Path="shared/test/Binacle.CompactNotation.UnitTests/Binacle.CompactNotation.UnitTests.csproj" />
+    <Project Path="shared/test/Binacle.TestsKernel/Binacle.TestsKernel.csproj" />
   </Folder>
   <Folder Name="/_root/">
     <File Path=".dockerignore" />

@@ -1,6 +1,6 @@
 ---
 description: TypeScript packages under packages/ (npm workspaces) — UI components, cookie utilities, and theme switching.
-verified: 2026-06-10
+verified: 2026-07-05
 check: Package list and descriptions match packages/ directory and their package.json files
 also_update:
   - packages/binacle-net-ui.md
@@ -18,7 +18,7 @@ npm workspaces at the repo root. All packages are private (not published to npm)
 | `cookies` | Cookie read/write utility (based on js-cookie v3.0.5, MIT) |
 | `theme-switcher` | Custom web element for toggling light/dark themes |
 
-The ViPaq TypeScript mirror lives at `vipaq/binacle-vipaq/` — see [vipaq/README.md](../vipaq/README.md).
+The ViPaq TypeScript mirror lives at `vipaq/packages/binacle-vipaq/` — see [vipaq/README.md](../vipaq/README.md).
 
 ## binacle-net-ui
 
@@ -41,4 +41,4 @@ Used by both `docs/` and `web/`. No external dependencies.
 
 | Project | What it covers |
 |---|---|
-| `vipaq/binacle-vipaq` | Has its own test suite — run with `npm test` inside the package directory |
+| `vipaq/packages/binacle-vipaq` | Has its own test suite — run with `npm test` inside the package directory |

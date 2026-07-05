@@ -1,6 +1,6 @@
 ---
 description: Repo overview and index of agent documentation
-verified: 2026-06-10
+verified: 2026-07-05
 check: Repo layout table matches actual directories in the root
 ---
 
@@ -27,8 +27,8 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `lib/test/` | Lib unit tests, performance tests, benchmarks |
 | `vipaq/src/Binacle.ViPaq` | Compact binary format for encoding packing results |
 | `vipaq/test/` | ViPaq unit tests |
-| `vipaq/binacle-vipaq/` | TypeScript mirror of ViPaq |
-| `shared/Binacle.TestsKernel` | Shared test fixtures and scenario data |
+| `vipaq/packages/binacle-vipaq/` | TypeScript mirror of ViPaq |
+| `shared/test/Binacle.TestsKernel` | Shared test fixtures and scenario data |
 | `packages/` | TypeScript packages (npm workspaces) |
 | `ruby/` | Ruby gems (Jekyll plugins) |
 | `docs/` | Jekyll documentation site |

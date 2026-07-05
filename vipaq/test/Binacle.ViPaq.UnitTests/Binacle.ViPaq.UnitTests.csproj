@@ -64,7 +64,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Binacle.ViPaq\Binacle.ViPaq.csproj" />
-        <ProjectReference Include="..\..\..\shared\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
+        <ProjectReference Include="..\..\..\shared\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
     </ItemGroup>
 
 </Project>

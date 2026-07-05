@@ -1,7 +1,7 @@
 ---
 description: Shared slice — Binacle.TestsKernel (scenario data, compact-string formats, providers, fixtures) and shared/data (OR-Library benchmark data)
 verified: 2026-07-05
-check: Collection keys, compact-string parsers, and provider class names match shared/Binacle.TestsKernel; OR-Library files match shared/data
+check: Collection keys, compact-string parsers, and provider class names match shared/test/Binacle.TestsKernel; OR-Library files match shared/data
 also_update:
   - lib/tests.md
   - api/tests.md
@@ -11,7 +11,7 @@ also_update:
 
 `shared/` holds code used across more than one slice. Two parts:
 
-- `shared/Binacle.TestsKernel` — shared test scenario infrastructure (data, parsers, providers, models, helpers)
+- `shared/test/Binacle.TestsKernel` — shared test scenario infrastructure (data, parsers, providers, models, helpers)
 - `shared/data` — raw OR-Library benchmark data (the upstream source for the embedded scenarios)
 
 ## Who uses Binacle.TestsKernel

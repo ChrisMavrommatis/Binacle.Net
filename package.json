@@ -15,7 +15,7 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "vipaq/binacle-vipaq"
+    "vipaq/packages/binacle-vipaq"
   ],
   "devDependencies": {
     "gulp": "^5.0.1"

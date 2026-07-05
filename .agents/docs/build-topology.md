@@ -1,6 +1,6 @@
 ---
 description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, the Dockerfile/build.sh chain, and the NoTargets content projects
-verified: 2026-06-10
+verified: 2026-07-05
 check: Solution structure, Directory.Build.props, Dockerfile, and content .proj files match the repo root
 also_update:
   - commands.md
@@ -18,7 +18,7 @@ The repo uses the XML `.slnx` solution format. Projects are grouped by solution 
 
 - `/lib/src/`, `/lib/test/` — `Binacle.Lib(.Abstractions)` + the three lib test projects
 - `/api/src/`, `/api/test/` — `Binacle.Net`, `Binacle.Net.Kernel`, the three modules (+ ServiceModule.Domain/.Infrastructure), and the two integration-test projects
-- `/vipaq/src/`, `/vipaq/test/`, `/shared/` — ViPaq + its tests + `Binacle.TestsKernel`
+- `/vipaq/src/`, `/vipaq/test/`, `/shared/src/`, `/shared/test/` — ViPaq + its tests + `Binacle.CompactNotation` (in `shared/src`) + `Binacle.TestsKernel` and `Binacle.CompactNotation.UnitTests` (in `shared/test`)
 - `/samples/docker/` (4 `.dcproj`), `/samples/kubernetes/` (`.proj`), `/results/`, `/api/` (requests), `/build/`
 - Top-level content projects: `assets/assets.proj`, `config/config.proj`, `docs/docs.proj`, `web/web.proj`
 - `/_root/` — loose files (`.dockerignore`, `.editorconfig`, `Dockerfile`, `gulpfile.js`, `package.json`, README)
@@ -37,7 +37,7 @@ So all C# is .NET 10, nullable-enabled, implicit-usings on. (No `LangVersion` or
 
 ## JS workspaces & asset copy
 
-Root `package.json` (name `binacle-net`, `private`) declares npm workspaces `packages/*` and `vipaq/binacle-vipaq`.
+Root `package.json` (name `binacle-net`, `private`) declares npm workspaces `packages/*` and `vipaq/packages/binacle-vipaq`.
 Its only dev dependency is `gulp`, and its only scripts are the asset-copy tasks:
 
 - `npm run copy-assets-to-docs` → `gulp copy-assets-to-docs`

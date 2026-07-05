@@ -1,6 +1,6 @@
 ---
 description: How to run the API, tests, benchmarks, and build the Docker image
-verified: 2026-06-29
+verified: 2026-07-05
 check: Aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
 ---
 
@@ -91,7 +91,7 @@ npm run copy-assets-to-web
 ## ViPaq TypeScript tests
 
 ```bash
-cd vipaq/binacle-vipaq && npm test
+cd vipaq/packages/binacle-vipaq && npm test
 ```
 
 ## Docker

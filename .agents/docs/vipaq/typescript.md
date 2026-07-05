@@ -1,14 +1,14 @@
 ---
-description: Binacle.ViPaq TypeScript mirror (vipaq/binacle-vipaq) — public API and how it differs from the C# library
+description: Binacle.ViPaq TypeScript mirror (vipaq/packages/binacle-vipaq) — public API and how it differs from the C# library
 verified: 2026-07-05
-check: TS API signatures and divergences match vipaq/binacle-vipaq/src/
+check: TS API signatures and divergences match vipaq/packages/binacle-vipaq/src/
 also_update:
   - vipaq/README.md
 ---
 
 # ViPaq — TypeScript Mirror
 
-`vipaq/binacle-vipaq` is a **hand-maintained** TypeScript reimplementation of the C# ViPaq format — no codegen,
+`vipaq/packages/binacle-vipaq` is a **hand-maintained** TypeScript reimplementation of the C# ViPaq format — no codegen,
 no shared schema. It mirrors the C# file structure 1:1 by hand. Any change to the C# wire format must be
 replicated here manually, and the two must be kept byte-compatible by hand. See [README.md](README.md) for the
 canonical format.
@@ -57,7 +57,7 @@ brought to this ceiling on 2026-06-30 — see PROTOCOL.md §5 and `.agents/plans
 
 ## Tests
 
-`npm test` (jest, from `vipaq/binacle-vipaq`; run `npm install` first — needs `@types/node`). 20 suites,
+`npm test` (jest, from `vipaq/packages/binacle-vipaq`; run `npm install` first — needs `@types/node`). 20 suites,
 984 tests — unit tests on the utils (`createEncodingInfo`, `getDimensionsBitSize`, `getCoordinatesBitSize`,
 `getByteSize`, `getBufferSize`, …), the `ProtocolReader` / `ProtocolWriter` little-endian and range-limit
 guards, `ViPaqSerializer` round-trips, and the interop cross-decode matrix.

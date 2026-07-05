@@ -12,7 +12,7 @@ also_update:
 
 `Binacle.ViPaq` is a compact binary format for encoding a packing result: one `Bin` (dimensions) plus a list of
 items (dimensions + position coordinates). The C# library is the canonical implementation. A hand-maintained
-TypeScript mirror lives at `vipaq/binacle-vipaq` — see [typescript.md](typescript.md) (the two differ in real ways).
+TypeScript mirror lives at `vipaq/packages/binacle-vipaq` — see [typescript.md](typescript.md) (the two differ in real ways).
 
 Used in v3 and v4 API responses when `IncludeViPaqData: true`. The serializer returns **raw `byte[]`** — the API
 layer base64-encodes it (`v4/Contracts/BinResponseBase.cs`, `v3/Contracts/PackResponse.cs`). Base64 is **not**
@@ -114,4 +114,4 @@ adaptive bit-width + optional-gzip scheme — there is no per-value variable-len
 | Project | Alias | Covers |
 |---|---|---|
 | `vipaq/test/Binacle.ViPaq.UnitTests` | `vipaq` | serializer round-trips + exact-byte golden vectors; the internal `BitSizeHelper` / `EncodingInfoHelper` / protocol read-write (reached via `InternalsVisibleTo`); curated data, not Bogus |
-| `vipaq/binacle-vipaq` | — | TypeScript mirror — `npm test` (jest); see [typescript.md](typescript.md) |
+| `vipaq/packages/binacle-vipaq` | — | TypeScript mirror — `npm test` (jest); see [typescript.md](typescript.md) |
