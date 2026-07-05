@@ -2,7 +2,7 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Binacle.ViPaq.Abstractions;
+using Binacle.Geometry;
 
 namespace Binacle.ViPaq;
 

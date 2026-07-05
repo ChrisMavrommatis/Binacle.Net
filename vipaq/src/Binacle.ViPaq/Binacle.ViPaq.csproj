@@ -6,4 +6,8 @@
 		<InternalsVisibleTo Include="$(ProjectName).Generators" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\shared\src\Binacle.Geometry\Binacle.Geometry.csproj" />
+	</ItemGroup>
+
 </Project>

@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using Binacle.ViPaq.Abstractions;
+using Binacle.Geometry;
 
 namespace Binacle.ViPaq;
 

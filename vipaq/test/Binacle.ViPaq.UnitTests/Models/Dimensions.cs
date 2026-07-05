@@ -1,11 +1,13 @@
 using System.Numerics;
-using Binacle.ViPaq.Abstractions;
+using Binacle.Geometry;
 
 namespace Binacle.ViPaq;
 
 // A length/width/height measurement implementing IWithDimensions<T>. Test-only: the library never serializes a
 // standalone dimensions, so this exists purely to exercise BitSizeHelper.GetDimensionsBitSize and the protocol
 // writer in isolation. Lives in the test assembly so it stays off the library's public surface.
+// [Migrate-Review] duplicates Binacle.Geometry.Dimensions<T> — drop this clone, keep only the Create factory
+// (see .agents/plans/shared-geometry-extraction.md).
 public class Dimensions<T> : IWithDimensions<T>
 	where T : struct, IBinaryInteger<T>
 {

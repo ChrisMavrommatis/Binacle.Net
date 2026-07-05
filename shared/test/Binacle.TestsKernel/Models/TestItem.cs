@@ -2,6 +2,8 @@ using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.TestsKernel.Models;
 
+// [Migrate-Review] geometry migration — review the ctor overloads (IWithReadOnlyDimensions vs
+// Binacle.Geometry.IWithDimensions<int>) for redundancy (see .agents/plans/shared-geometry-extraction.md).
 public sealed class TestItem : IWithID, IWithDimensions, IWithQuantity
 {
 	public TestItem()
@@ -23,7 +25,7 @@ public sealed class TestItem : IWithID, IWithDimensions, IWithQuantity
 		this.Quantity = quantity;
 	}
 
-	public TestItem(string id, Binacle.CompactNotation.IWithDimensions<int> dimensions, int quantity)
+	public TestItem(string id, Binacle.Geometry.IWithDimensions<int> dimensions, int quantity)
 	{
 		this.ID = id;
 		this.Length = dimensions.Length;

@@ -2,11 +2,13 @@
 
 namespace Binacle.Net.UIModule.Models;
 
-internal class PackedItem : 
+// [Migrate-Review] drop the explicit Binacle.Geometry.IWithDimensions<int>/IWithCoordinates<int> below once the
+// lib IWith shims reach the mutable leaf generic (see .agents/plans/shared-geometry-extraction.md).
+internal class PackedItem :
 	IWithID,
 	IWithDimensions,
-	ViPaq.Abstractions.IWithDimensions<int>,
-	ViPaq.Abstractions.IWithCoordinates<int>
+	Binacle.Geometry.IWithDimensions<int>,
+	Binacle.Geometry.IWithCoordinates<int>
 {
 	// Json Deserialize
 	public PackedItem()

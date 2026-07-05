@@ -1,4 +1,4 @@
-﻿using Binacle.Lib.Abstractions.Models;
+using Binacle.Geometry;
 using FluentValidation;
 
 namespace Binacle.Net.Validators;

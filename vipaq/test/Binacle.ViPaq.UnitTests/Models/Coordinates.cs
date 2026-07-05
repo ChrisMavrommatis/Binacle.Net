@@ -1,11 +1,13 @@
 using System.Numerics;
-using Binacle.ViPaq.Abstractions;
+using Binacle.Geometry;
 
 namespace Binacle.ViPaq;
 
 // An X/Y/Z position implementing IWithCoordinates<T>. Test-only: no public format accepts a standalone
 // coordinate, so this exists purely to exercise BitSizeHelper.GetCoordinatesBitSize and the protocol writer in
 // isolation. Lives in the test assembly so it stays off the library's public surface.
+// [Migrate-Review] duplicates Binacle.Geometry.Coordinates<T> — drop this clone, keep only the Create factory
+// (see .agents/plans/shared-geometry-extraction.md).
 public class Coordinates<T> : IWithCoordinates<T>
 	where T : struct, IBinaryInteger<T>
 {

@@ -291,5 +291,13 @@ Each step ends green and stops for the human to verify **and commit** (you never
 6. **Finish compact-notation Phase 3** (now trivial) — models satisfy the formatter → swap the 5 `Format*` sites,
    delete lib `FormatDimensions`/`FormatCoordinates`, migrate UIModule `ParseItem` + `sample_data.json`. Output →
    `[Q]`. **Verify:** api suite.
-7. **Cleanup + review** — wire-or-drop `Flatten()`, remove dead `TestsKernel.Models.Dimensions`, optional TS parity;
-   full green gates; **`/code-review`**; update docs and close out both plans (this one + compact-notation Phase 3).
+7. **Cleanup + review** — wire-or-drop `Flatten()`, remove dead `TestsKernel.Models.Dimensions` (done in step 5),
+   optional TS parity; full green gates; **`/code-review`**; update docs and close out both plans (this one +
+   compact-notation Phase 3).
+   - **`[Migrate-Review]` tag** — grep the repo for `[Migrate-Review]` to find the deferred cleanups marked in-code
+     (the model/contract implementers touched by the migration). What to do at each: (a) drop the redundant explicit
+     `Binacle.Geometry.IWith*<int>` on the api/UIModule contracts once lib's `IWithDimensions` shim is made to reach
+     the mutable leaf generic (like `IWithCoordinates`/`IWithQuantity` already do); (b) drop the vipaq test
+     `Dimensions<T>`/`Coordinates<T>` clones in favour of the leaf's (keep only the `Create` factory helpers);
+     (c) review the `TestBin`/`TestItem` ctor overloads (`IWithReadOnlyDimensions` vs `Binacle.Geometry.IWithDimensions<int>`)
+     and the vipaq `Bin`/`Item` wiring. These are quality-only and were deferred so the migration commits stay focused.

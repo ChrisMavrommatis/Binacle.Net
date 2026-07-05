@@ -1,7 +1,6 @@
-﻿using System.Numerics;
-using Binacle.ViPaq.Abstractions;
+using Binacle.Geometry;
 using Binacle.ViPaq.Helpers;
-using Version = Binacle.ViPaq.Version;
+using System.Numerics;
 
 namespace Binacle.ViPaq;
 

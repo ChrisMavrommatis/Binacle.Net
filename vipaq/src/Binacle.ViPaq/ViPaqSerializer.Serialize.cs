@@ -1,7 +1,7 @@
 ﻿using System.IO.Compression;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Binacle.ViPaq.Abstractions;
+using Binacle.Geometry;
 
 namespace Binacle.ViPaq;
 
