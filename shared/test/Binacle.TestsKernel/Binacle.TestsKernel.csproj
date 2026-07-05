@@ -16,4 +16,8 @@
         <ProjectReference Include="..\..\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Using Include="Binacle.Geometry" />
+    </ItemGroup>
+
 </Project>

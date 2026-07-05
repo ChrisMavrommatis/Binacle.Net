@@ -32,6 +32,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Using Include="Binacle.Geometry" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Update="Config_Files\**\*.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>

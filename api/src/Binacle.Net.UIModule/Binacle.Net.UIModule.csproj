@@ -20,6 +20,10 @@
 	  <ProjectReference Include="..\..\..\shared\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Using Include="Binacle.Geometry" />
+	</ItemGroup>
+
 	<!--<ItemGroup>
 		<UIFiles Include="wwwroot\**\*.*" />
 	</ItemGroup>-->

@@ -14,7 +14,7 @@ public class BitSizeHelperSaturationTests
 	private static void AssertDimensions<T>(T value, BitSize expected)
 		where T : struct, IBinaryInteger<T>
 	{
-		var dimensions = Dimensions.Create(value, value, value);
+		var dimensions = GeometryFactory.Dimensions(value, value, value);
 		BitSizeHelper.GetDimensionsBitSize<Dimensions<T>, T>(dimensions)
 			.ShouldBe(expected);
 	}
@@ -59,7 +59,7 @@ public class BitSizeHelperSaturationTests
 	private static void AssertCoordinates<T>(T value, BitSize expected)
 		where T : struct, IBinaryInteger<T>
 	{
-		var coordinates = Coordinates.Create(value, value, value);
+		var coordinates = GeometryFactory.Coordinates(value, value, value);
 		BitSizeHelper.GetCoordinatesBitSize<Coordinates<T>, T>(coordinates)
 			.ShouldBe(expected);
 	}

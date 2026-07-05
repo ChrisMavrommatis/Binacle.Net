@@ -1,13 +1,13 @@
-﻿using System.Numerics;
+using System.Numerics;
 
-namespace Binacle.Lib.Abstractions.Models;
+namespace Binacle.Geometry;
 
 public interface IWithVolume : IWithVolume<int>
 {
 }
 
 public interface IWithVolume<T> : IWithReadOnlyVolume<T>
-	where T: INumber<T>
+	where T: struct, IBinaryInteger<T>
 {
 	new T Volume { get; set; }
 }

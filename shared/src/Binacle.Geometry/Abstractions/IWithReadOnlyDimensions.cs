@@ -10,3 +10,8 @@ public interface IWithReadOnlyDimensions<T>
 	T Width { get; }
 	T Height { get; }
 }
+
+// Non-generic int shortcut.
+public interface IWithReadOnlyDimensions : IWithReadOnlyDimensions<int>
+{
+}

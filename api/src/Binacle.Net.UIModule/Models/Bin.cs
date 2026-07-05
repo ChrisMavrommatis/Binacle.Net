@@ -2,12 +2,9 @@
 
 namespace Binacle.Net.UIModule.Models;
 
-// [Migrate-Review] drop the explicit Binacle.Geometry.IWithDimensions<int> below once lib's IWithDimensions
-// shim reaches the mutable leaf generic (see .agents/plans/shared-geometry-extraction.md).
 public class Bin :
 	IWithID,
-	IWithDimensions,
-	Binacle.Geometry.IWithDimensions<int>
+	IWithDimensions
 {
 	public Bin()
 	{

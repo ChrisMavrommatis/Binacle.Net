@@ -4,12 +4,9 @@ namespace Binacle.Net.v4.Contracts;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-// [Migrate-Review] drop the explicit Binacle.Geometry.IWithDimensions<int> below once lib's IWithDimensions
-// shim reaches the mutable leaf generic (see .agents/plans/shared-geometry-extraction.md).
 public class Bin :
 	IWithID,
-	IWithDimensions,
-	Binacle.Geometry.IWithDimensions<int>
+	IWithDimensions
 {
 	public required string ID { get; set; }
 	public required int Length { get; set; }

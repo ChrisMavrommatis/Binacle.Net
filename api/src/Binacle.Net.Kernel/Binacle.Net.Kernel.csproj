@@ -16,5 +16,9 @@
 	  <ProjectReference Include="..\..\..\lib\src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Using Include="Binacle.Geometry" />
+	</ItemGroup>
+
 
 </Project>

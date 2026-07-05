@@ -10,4 +10,8 @@
         <ProjectReference Include="..\..\..\shared\src\Binacle.Geometry\Binacle.Geometry.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Using Include="Binacle.Geometry" />
+    </ItemGroup>
+
 </Project>

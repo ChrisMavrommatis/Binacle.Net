@@ -28,9 +28,9 @@ public class BitSizeHelperBoundaryTests
 	{
 		var typedValue = T.CreateChecked(value);
 		var dimensions = BitSizeHelper.GetDimensionsBitSize<Dimensions<T>, T>(
-			Dimensions.Create(typedValue, typedValue, typedValue));
+			GeometryFactory.Dimensions(typedValue, typedValue, typedValue));
 		var coordinates = BitSizeHelper.GetCoordinatesBitSize<Coordinates<T>, T>(
-			Coordinates.Create(typedValue, typedValue, typedValue));
+			GeometryFactory.Coordinates(typedValue, typedValue, typedValue));
 		return (dimensions, coordinates);
 	}
 
@@ -48,7 +48,7 @@ public class BitSizeHelperBoundaryTests
 	[Fact]
 	public void GetCoordinatesBitSize_Returns_Eight_When_All_Coordinates_Are_Zero()
 	{
-		var coordinates = Coordinates.Create(0, 0, 0);
+		var coordinates = GeometryFactory.Coordinates(0, 0, 0);
 
 		BitSizeHelper.GetCoordinatesBitSize<Coordinates<int>, int>(coordinates).ShouldBe(BitSize.Eight);
 	}

@@ -20,7 +20,7 @@ public class BitSizeHelperBehaviorTests
 		int height,
 		string expectedThrownParamName)
 	{
-		var dimensions = Dimensions.Create(length, width, height);
+		var dimensions = GeometryFactory.Dimensions(length, width, height);
 		var exception =
 			Should.Throw<ArgumentOutOfRangeException>(() =>
 				BitSizeHelper.GetDimensionsBitSize<Dimensions<int>, int>(dimensions)
@@ -46,7 +46,7 @@ public class BitSizeHelperBehaviorTests
 		ulong height,
 		string expectedThrownParamName)
 	{
-		var dimensions = Dimensions.Create(length, width, height);
+		var dimensions = GeometryFactory.Dimensions(length, width, height);
 
 		var exception = Should.Throw<ArgumentOutOfRangeException>(() =>
 			BitSizeHelper.GetDimensionsBitSize<Dimensions<ulong>, ulong>(dimensions)
@@ -64,7 +64,7 @@ public class BitSizeHelperBehaviorTests
 		int z,
 		string expectedThrownParamName)
 	{
-		var coordinates = Coordinates.Create(x, y, z);
+		var coordinates = GeometryFactory.Coordinates(x, y, z);
 		var exception = Should.Throw<ArgumentOutOfRangeException>(() =>
 			BitSizeHelper.GetCoordinatesBitSize<Coordinates<int>, int>(coordinates)
 		);
@@ -87,7 +87,7 @@ public class BitSizeHelperBehaviorTests
 		ulong z,
 		string expectedThrownParamName)
 	{
-		var coordinates = Coordinates.Create(x, y, z);
+		var coordinates = GeometryFactory.Coordinates(x, y, z);
 
 		var exception = Should.Throw<ArgumentOutOfRangeException>(() =>
 			BitSizeHelper.GetCoordinatesBitSize<Coordinates<ulong>, ulong>(coordinates)

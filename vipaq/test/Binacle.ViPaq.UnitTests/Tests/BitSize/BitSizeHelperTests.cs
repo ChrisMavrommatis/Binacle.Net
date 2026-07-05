@@ -44,7 +44,7 @@ public class BitSizeHelperTests
 		BitSize expectedBitSize
 		)
 	{
-		var dimensions = Dimensions.Create(length, width, height);
+		var dimensions = GeometryFactory.Dimensions(length, width, height);
 		BitSizeHelper.GetDimensionsBitSize<Dimensions<ulong>, ulong>(dimensions)
 			.ShouldBe(expectedBitSize);
 	}
@@ -58,7 +58,7 @@ public class BitSizeHelperTests
 		BitSize expectedBitSize
 		)
 	{
-		var coordinates = Coordinates.Create(x, y, z);
+		var coordinates = GeometryFactory.Coordinates(x, y, z);
 		BitSizeHelper.GetCoordinatesBitSize<Coordinates<ulong>, ulong>(coordinates)
 			.ShouldBe(expectedBitSize);
 	}

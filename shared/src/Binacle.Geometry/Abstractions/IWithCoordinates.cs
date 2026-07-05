@@ -10,3 +10,8 @@ public interface IWithCoordinates<T> : IWithReadOnlyCoordinates<T>
 	new T Y { get; set; }
 	new T Z { get; set; }
 }
+
+// Non-generic int shortcut.
+public interface IWithCoordinates : IWithCoordinates<int>
+{
+}

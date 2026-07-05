@@ -10,3 +10,8 @@ public interface IWithDimensions<T> : IWithReadOnlyDimensions<T>
 	new T Width { get; set; }
 	new T Height { get; set; }
 }
+
+// Non-generic int shortcut. Reaches the mutable generic directly.
+public interface IWithDimensions : IWithReadOnlyDimensions, IWithDimensions<int>
+{
+}

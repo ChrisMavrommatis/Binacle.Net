@@ -4,14 +4,10 @@ namespace Binacle.Net.v4.Contracts;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-// [Migrate-Review] drop the explicit Binacle.Geometry.IWithDimensions<int>/IWithCoordinates<int> below once the
-// lib IWith shims reach the mutable leaf generic (see .agents/plans/shared-geometry-extraction.md).
 public class PackedBox :
 	IWithID,
 	IWithDimensions,
-	IWithCoordinates,
-	Binacle.Geometry.IWithDimensions<int>,
-	Binacle.Geometry.IWithCoordinates<int>
+	IWithCoordinates
 {
 	public required string ID { get; set; }
 	public required int Length { get; set; }

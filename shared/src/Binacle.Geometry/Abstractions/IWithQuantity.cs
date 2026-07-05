@@ -8,3 +8,8 @@ public interface IWithQuantity<T> : IWithReadOnlyQuantity<T>
 {
 	new T Quantity { get; set; }
 }
+
+// Non-generic int shortcut.
+public interface IWithQuantity : IWithQuantity<int>
+{
+}
