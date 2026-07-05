@@ -6,4 +6,8 @@
         <InternalsVisibleTo Include="Binacle.TestsKernel"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\shared\src\Binacle.Geometry\Binacle.Geometry.csproj" />
+    </ItemGroup>
+
 </Project>

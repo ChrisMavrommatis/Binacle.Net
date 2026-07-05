@@ -1,15 +1,7 @@
-﻿using System.Numerics;
-
 namespace Binacle.Lib.Abstractions.Models;
 
-public interface IWithReadOnlyDimensions : IWithReadOnlyDimensions<int>
+// Non-generic int shortcut over the shared Binacle.Geometry generic interface.
+// Base is fully qualified so it is never mistaken for this same-named non-generic interface.
+public interface IWithReadOnlyDimensions : Binacle.Geometry.IWithReadOnlyDimensions<int>
 {
-}
-
-public interface IWithReadOnlyDimensions<T>
-	where T : INumber<T>
-{
-	T Length { get; }
-	T Width { get; }
-	T Height { get; }
 }

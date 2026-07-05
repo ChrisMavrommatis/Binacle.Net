@@ -1,13 +1,7 @@
-using System.Numerics;
-
 namespace Binacle.Lib.Abstractions.Models;
 
-public interface IWithReadOnlyQuantity : IWithReadOnlyQuantity<int>
+// Non-generic int shortcut over the shared Binacle.Geometry generic interface.
+// Base is fully qualified so it is never mistaken for this same-named non-generic interface.
+public interface IWithReadOnlyQuantity : Binacle.Geometry.IWithReadOnlyQuantity<int>
 {
-}
-
-public interface IWithReadOnlyQuantity<T>
-	where T : INumber<T>
-{
-	T Quantity { get; }
 }

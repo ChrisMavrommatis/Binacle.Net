@@ -1,16 +1,7 @@
-﻿using System.Numerics;
-
 namespace Binacle.Lib.Abstractions.Models;
 
-public interface IWithReadOnlyCoordinates : IWithReadOnlyCoordinates<int>
+// Non-generic int shortcut over the shared Binacle.Geometry generic interface.
+// Base is fully qualified so it is never mistaken for this same-named non-generic interface.
+public interface IWithReadOnlyCoordinates : Binacle.Geometry.IWithReadOnlyCoordinates<int>
 {
-
-}
-
-public interface IWithReadOnlyCoordinates<T> 
-	where T: INumber<T>
-{
-	T X { get; }
-	T Y { get; }
-	T Z { get; }
 }
