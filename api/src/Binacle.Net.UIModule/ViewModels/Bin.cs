@@ -1,6 +1,6 @@
-﻿using Binacle.Lib.Abstractions.Models;
+using Binacle.Lib.Abstractions.Models;
 using System.ComponentModel.DataAnnotations;
-using Binacle.Lib;
+using Binacle.CompactNotation;
 
 namespace Binacle.Net.UIModule.ViewModels;
 
@@ -15,9 +15,9 @@ internal class Bin :
 		this.Height = height;
 	}
 
-	public string ID 
-	{ 
-		get => this.FormatDimensions();
+	public string ID
+	{
+		get => CompactNotationFormatter.Format<int>(this);
 		set => _ = value;
 	}
 

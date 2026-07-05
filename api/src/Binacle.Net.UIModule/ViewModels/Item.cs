@@ -1,17 +1,18 @@
-﻿using Binacle.Lib;
+using Binacle.Lib;
+using Binacle.CompactNotation;
 using Binacle.Lib.Abstractions.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Binacle.Net.UIModule.ViewModels;
 
-internal class Item : 
+internal class Item :
 	IWithDimensions,
 	IWithQuantity
 {
 	public Item(int length, int width, int height) :
 		this(length, width, height, 1)
 	{
-		
+
 	}
 	public Item(int length, int width, int height, int quantity)
 	{
@@ -21,12 +22,12 @@ internal class Item :
 		this.Quantity = quantity;
 	}
 
-	public string ID => this.FormatDimensions();
+	public string ID => CompactNotationFormatter.Format<int>(this);
 
 	[Required]
 	[Range(1, ushort.MaxValue)]
 	public int Length { get; set; }
-	
+
 	[Required]
 	[Range(1, ushort.MaxValue)]
 	public int Width { get; set; }
@@ -38,7 +39,7 @@ internal class Item :
 	[Required]
 	[Range(1, ushort.MaxValue)]
 	public int Quantity { get; set; }
-	
+
 	public int Volume
 	{
 		get

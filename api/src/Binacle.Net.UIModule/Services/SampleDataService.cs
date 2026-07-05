@@ -1,4 +1,5 @@
-﻿using Binacle.Net.UIModule.ViewModels;
+using Binacle.CompactNotation;
+using Binacle.Net.UIModule.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Binacle.Net.UIModule.Services;
@@ -48,11 +49,11 @@ internal class SampleDataService : ISampleDataService
 				actualItemsIndex = random.Next(this.data.ItemSets!.Count);
 			}
 		}
-		
+
 		var bins = this.data.BinSets!
 			.ElementAt(actualBinsIndex.Value)
 			.Value;
-		
+
 		var items = this.data.ItemSets!
 			.ElementAt(actualItemsIndex.Value)
 			.Value;
@@ -87,18 +88,10 @@ internal class SampleDataService : ISampleDataService
 
 	private ViewModels.Bin ParseBin(string value)
 	{
-		var dimensionParts = value.Split('x');
-		if (dimensionParts.Length != 3)
-		{
-			throw new InvalidOperationException("Invalid bin data");
-		}
-		return new ViewModels.Bin(
-			int.Parse(dimensionParts[0]),
-			int.Parse(dimensionParts[1]),
-			int.Parse(dimensionParts[2])
-		);
+		var dimensions = CompactNotationParser.ParseDimensions<int>(value);
+		return new ViewModels.Bin(dimensions.Length, dimensions.Width, dimensions.Height);
 	}
-	
+
 	private List<ViewModels.Item> ParseItems(List<string> items)
 	{
 		return items.Select(ParseItem).ToList();
@@ -106,33 +99,10 @@ internal class SampleDataService : ISampleDataService
 
 	private ViewModels.Item ParseItem(string value)
 	{
-		var dimensionsAndQuantityParts = value.Split('-');
-
-		if (dimensionsAndQuantityParts.Length > 2)
-		{
-			throw new InvalidOperationException("Invalid item data");
-		}
-		var dimensions = dimensionsAndQuantityParts[0].Split('x');
-
-		if (dimensions.Length != 3)
-		{
-			throw new InvalidOperationException("Invalid item data");
-		}
-
-		var quantity = 1;
-		if (dimensionsAndQuantityParts.Length == 2)
-		{
-			quantity = int.Parse(dimensionsAndQuantityParts[1]);
-		}
-
-		return new ViewModels.Item(
-			int.Parse(dimensions[0]),
-			int.Parse(dimensions[1]),
-			int.Parse(dimensions[2]),
-			quantity
-		);
+		var parsed = CompactNotationParser.ParseDimensionsAndQuantity<int>(value);
+		return new ViewModels.Item(parsed.Length, parsed.Width, parsed.Height, parsed.Quantity);
 	}
-	
+
 	private static SampleJsonData _defaultJsonSampleData = new SampleJsonData()
 	{
 		BinSets = new Dictionary<string, List<string>>()
@@ -141,7 +111,7 @@ internal class SampleDataService : ISampleDataService
 		},
 		ItemSets = new Dictionary<string, List<string>>()
 		{
-			{"Default Sample Item Set 1", ["2x5x10-7","12x15x10-3", "10x15x15-2" ] }
-		} 
+			{"Default Sample Item Set 1", ["2x5x10 [7]","12x15x10 [3]", "10x15x15 [2]" ] }
+		}
 	};
 }

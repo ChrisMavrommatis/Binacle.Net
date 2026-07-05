@@ -1,6 +1,7 @@
-﻿using Binacle.Net.Kernel.Logs.Models;
+using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Lib;
 using Binacle.Lib.Abstractions.Models;
+using Binacle.CompactNotation;
 
 namespace Binacle.Net.DiagnosticsModule.ExtensionMethods;
 
@@ -27,18 +28,22 @@ internal static class LogProcessorHandlingExtensions
 	{
 		return items.ToDictionary(
 			(x) => ((IWithID)x).ID,
-			x => (object)x.FormatDimensions()
+			x => (object)CompactNotationFormatter.Format<int>(x)
 		);
 	}
 
+	// [Migrate-Review] These format the sub-parts (item.Dimensions / item.Coordinates) separately instead of a
+	// single CompactNotationFormatter.Format<int>(item), because PackedItem/UnpackedItem expose geometry as nested
+	// properties rather than implementing IWithReadOnly* on themselves. Revisit if those result models gain the
+	// interfaces directly (see .agents/plans/shared-geometry-extraction.md).
 	private static string ConvertToLogObject(this PackedItem item)
 	{
-		return $"{item.Dimensions.FormatDimensions()} {item.Coordinates.FormatCoordinates()}";
+		return $"{CompactNotationFormatter.FormatDimensions<int>(item.Dimensions)} {CompactNotationFormatter.FormatCoordinates<int>(item.Coordinates)}";
 	}
 
 	private static string ConvertToLogObject(this UnpackedItem item)
 	{
-		return $"{item.Dimensions.FormatDimensions()}-{item.Quantity}";
+		return $"{CompactNotationFormatter.FormatDimensions<int>(item.Dimensions)} {CompactNotationFormatter.FormatQuantity<int>(item)}";
 	}
 
 	private static Dictionary<string, object> ConvertToLogObject(

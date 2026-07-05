@@ -2,6 +2,7 @@
 using Binacle.Net.UIModule.Services;
 using Binacle.Net.UIModule.ViewModels;
 using Binacle.Lib;
+using Binacle.CompactNotation;
 using Binacle.ViPaq;
 using Microsoft.AspNetCore.Components;
 using Bin = Binacle.Net.UIModule.Models.Bin;
@@ -103,7 +104,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 			var (bin, items) =
 				ViPaqSerializer.DeserializeInt32<Bin, PackedItem>(bytes);
 
-			bin.ID = bin.FormatDimensions();
+			bin.ID = CompactNotationFormatter.Format<int>(bin);
 			
 			var binVolume = bin.CalculateVolume();
 			var itemsVolume = items.Sum(i => i.CalculateVolume());
