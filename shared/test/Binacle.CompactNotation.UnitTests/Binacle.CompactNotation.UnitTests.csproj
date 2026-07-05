@@ -32,7 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
+        <ProjectReference Include="..\..\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
     </ItemGroup>
 
 </Project>

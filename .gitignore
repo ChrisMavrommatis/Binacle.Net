@@ -40,6 +40,10 @@ azurite/
 minio_data/
 postgres/
 data/
+# ...but TestsKernel scenario data lives in Data/ folders and must stay tracked
+# (the broad data/ rule above would otherwise silently drop it when the project moves).
+!shared/test/Binacle.TestsKernel/**/Data/
+!shared/test/Binacle.TestsKernel/**/Data/**
 *.db
 *.sqlite
 *.ndjson

@@ -15,7 +15,7 @@ interface InputScenario {
 }
 
 export async function generateInteropArtifact(): Promise<void> {
-	const interopDir = path.join(__dirname, "..", "..", "test-vectors", "interop");
+	const interopDir = path.join(__dirname, "..", "..", "..", "test-vectors", "interop");
 	const inputPath = path.join(interopDir, "input.json");
 	const outputPath = path.join(interopDir, "artifact-ts.json");
 

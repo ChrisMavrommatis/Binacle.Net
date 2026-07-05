@@ -7,7 +7,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 // Resolved against this file's location so it works regardless of the jest working directory.
-const root = path.join(__dirname, "../../../test-vectors");
+const root = path.join(__dirname, "../../../../test-vectors");
 
 // Reads a vector file (e.g. "exact-bytes.json" or "little-endian/uint16.json") into its rows.
 export function readVectors<T>(fileName: string): T[] {
