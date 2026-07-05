@@ -123,4 +123,42 @@ public class ParseTests
 
 		items.Count.ShouldBe(3);
 	}
+
+	[Theory]
+	[InlineData("10x20x30", 10, 20, 30, 1)] // no quantity -> 1
+	[InlineData("10x20x30 [4]", 10, 20, 30, 4)]
+	[InlineData(" 8x8x8 [6] ", 8, 8, 8, 6)]
+	public void ParseDimensionsAndQuantity_reads_dimensions_and_optional_quantity(
+		string compact, long l, long w, long h, int q)
+	{
+		var parsed = CompactNotationParser.ParseDimensionsAndQuantity<long>(compact);
+
+		parsed.Length.ShouldBe(l);
+		parsed.Width.ShouldBe(w);
+		parsed.Height.ShouldBe(h);
+		parsed.Quantity.ShouldBe(q);
+	}
+
+	[Fact]
+	public void ParseDimensionsAndQuantity_rejects_a_coordinate_block()
+	{
+		Should.Throw<FormatException>(() => CompactNotationParser.ParseDimensionsAndQuantity<long>("10x20x30 (1,2,3)"));
+	}
+
+	[Fact]
+	public void Flatten_expands_into_that_many_dimensions()
+	{
+		var flattened = CompactNotationParser.ParseDimensionsAndQuantity<long>("8x8x8 [3]").Flatten();
+
+		flattened.Count.ShouldBe(3);
+		flattened.ShouldAllBe(d => d.Length == 8 && d.Width == 8 && d.Height == 8);
+	}
+
+	[Fact]
+	public void Flatten_returns_distinct_instances()
+	{
+		var flattened = CompactNotationParser.ParseDimensionsAndQuantity<long>("1x1x1 [2]").Flatten();
+
+		flattened[0].ShouldNotBeSameAs(flattened[1]);
+	}
 }

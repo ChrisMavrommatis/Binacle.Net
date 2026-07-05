@@ -1,5 +1,4 @@
 using Binacle.TestsKernel.Algorithms.Helpers;
-using Binacle.TestsKernel.Helpers;
 using Binacle.TestsKernel.Models;
 
 namespace Binacle.TestsKernel.Algorithms.Models;
@@ -28,21 +27,14 @@ public class Scenario
 		string metrics,
 		string result)
 	{
-		var parsedBinDimensions = DimensionsHelper.ParseFromCompactString(bin);
-		var parsedItems = items.Select(x =>
-		{
-			var dimensions = DimensionsHelper.ParseFromCompactString(x);
-			return new TestItem(x, dimensions, dimensions.Quantity);
-		}).ToList();
-		
 		var parsedMetrics = ScenarioMetricsHelper.ParseFromCompactString(metrics);
 		var parsedResult = ScenarioResultHelper.ParseFromCompactString(result);
 		return new Scenario
 		{
 			Name = name,
-			Bin = new TestBin(bin, parsedBinDimensions),
+			Bin = TestBin.FromCompactString(bin),
 			Metrics = parsedMetrics,
-			Items = parsedItems,
+			Items = items.Select(TestItem.FromCompactString).ToList(),
 			Result = parsedResult
 		};
 	}

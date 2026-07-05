@@ -1,5 +1,4 @@
 using Binacle.TestsKernel.Algorithms.Models;
-using Binacle.TestsKernel.Helpers;
 using Binacle.TestsKernel.Models;
 
 namespace Binacle.Lib.Benchmarks.Providers;
@@ -13,18 +12,12 @@ public static class SpecializedScalingProblemsProvider
 		return Scenario.Create(
 			name: "SpecializedBaseline",
 			bin: "60x40x10",
-			items: ["2x5x10-3", "12x15x10-4", "8x8x8-6"],
+			items: ["2x5x10 [3]", "12x15x10 [4]", "8x8x8 [6]"],
 			metrics: "10572 24000 13 44.05",
 			result: "FullyPacked FullyPacked"
 		);
 	}
 	
-    public static TestBin CreateBin(string bin)
-    {
-        var dimensions = DimensionsHelper.ParseFromCompactString(bin);
-        return new TestBin(bin, dimensions);
-    }
-
     // bins 
     // 60x40x10 => [24000]
     // 60x40x15 => [36000]
@@ -50,7 +43,7 @@ public static class SpecializedScalingProblemsProvider
 		{
 			throw new ArgumentException($"Invalid bin count. Value {binCount} should be between 1 and 7.");
 		}
-		return binsByQuantity[binCount].Select(CreateBin).ToList();
+		return binsByQuantity[binCount].Select(TestBin.FromCompactString).ToList();
 	}
 
     // items 
@@ -70,24 +63,19 @@ public static class SpecializedScalingProblemsProvider
     // ----------------------------------
     //               79		      [74736]
 
-    private static TestItem CreateItem(string item)
-    {
-	    var dimensions = DimensionsHelper.ParseFromCompactString(item);
-	    return new TestItem(item, dimensions, dimensions.Quantity);
-    }
     private static Dictionary<int, string[]> itemsByQuantity = new Dictionary<int, string[]>()
     {
-	    { 3,  ["2x5x10-3"] },
-	    { 7,  ["2x5x10-3", "12x15x10-4"] },
-	    { 13, ["2x5x10-3", "12x15x10-4", "8x8x8-6"] },
-	    { 17, ["2x5x10-3", "12x15x10-4", "8x8x8-6", "5x5x15-4"] },
-	    { 23, ["2x5x10-3", "12x15x10-4", "8x8x8-6", "5x5x15-4", "10x8x8-6"] },
-	    { 29, ["2x5x10-3", "12x15x10-4", "8x8x8-6", "5x5x15-4", "10x8x8-6", "4x4x4-6"] },
-	    { 37, ["2x5x10-3", "12x15x10-4", "8x8x8-6", "5x5x15-4", "10x8x8-6", "4x4x4-6", "2x15x5-8"] },
-	    { 47, ["2x5x10-3", "12x15x10-4", "8x8x8-6", "5x5x15-4", "10x8x8-6", "4x4x4-6", "2x15x5-8", "10x9x1-10"] },
-	    { 59, ["2x5x10-3", "12x15x10-4", "8x8x8-6", "5x5x15-4", "10x8x8-6", "4x4x4-6", "2x15x5-8", "10x9x1-10", "10x10x10-12"] },
-	    { 67, ["2x5x10-3", "12x15x10-4", "8x8x8-6", "5x5x15-4", "10x8x8-6", "4x4x4-6", "2x15x5-8", "10x9x1-10", "10x10x10-12", "17x15x15-8"] },
-	    { 79, ["2x5x10-3", "12x15x10-4", "8x8x8-6", "5x5x15-4", "10x8x8-6", "4x4x4-6", "2x15x5-8", "10x9x1-10", "10x10x10-12", "17x15x15-8", "16x10x7-12"] },
+	    { 3,  ["2x5x10 [3]"] },
+	    { 7,  ["2x5x10 [3]", "12x15x10 [4]"] },
+	    { 13, ["2x5x10 [3]", "12x15x10 [4]", "8x8x8 [6]"] },
+	    { 17, ["2x5x10 [3]", "12x15x10 [4]", "8x8x8 [6]", "5x5x15 [4]"] },
+	    { 23, ["2x5x10 [3]", "12x15x10 [4]", "8x8x8 [6]", "5x5x15 [4]", "10x8x8 [6]"] },
+	    { 29, ["2x5x10 [3]", "12x15x10 [4]", "8x8x8 [6]", "5x5x15 [4]", "10x8x8 [6]", "4x4x4 [6]"] },
+	    { 37, ["2x5x10 [3]", "12x15x10 [4]", "8x8x8 [6]", "5x5x15 [4]", "10x8x8 [6]", "4x4x4 [6]", "2x15x5 [8]"] },
+	    { 47, ["2x5x10 [3]", "12x15x10 [4]", "8x8x8 [6]", "5x5x15 [4]", "10x8x8 [6]", "4x4x4 [6]", "2x15x5 [8]", "10x9x1 [10]"] },
+	    { 59, ["2x5x10 [3]", "12x15x10 [4]", "8x8x8 [6]", "5x5x15 [4]", "10x8x8 [6]", "4x4x4 [6]", "2x15x5 [8]", "10x9x1 [10]", "10x10x10 [12]"] },
+	    { 67, ["2x5x10 [3]", "12x15x10 [4]", "8x8x8 [6]", "5x5x15 [4]", "10x8x8 [6]", "4x4x4 [6]", "2x15x5 [8]", "10x9x1 [10]", "10x10x10 [12]", "17x15x15 [8]"] },
+	    { 79, ["2x5x10 [3]", "12x15x10 [4]", "8x8x8 [6]", "5x5x15 [4]", "10x8x8 [6]", "4x4x4 [6]", "2x15x5 [8]", "10x9x1 [10]", "10x10x10 [12]", "17x15x15 [8]", "16x10x7 [12]"] },
     };
     
     public static List<TestItem> GetItems(int itemCount)
@@ -96,9 +84,7 @@ public static class SpecializedScalingProblemsProvider
 	    {
 		    throw new ArgumentException($"Invalid item count. Value {itemCount} should be between 3 and 79.");
 	    }
-	    return itemsByQuantity[itemCount].Select(CreateItem).ToList();
+	    return itemsByQuantity[itemCount].Select(TestItem.FromCompactString).ToList();
 	}
-    
-    
 
 }

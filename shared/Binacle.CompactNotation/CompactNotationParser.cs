@@ -40,6 +40,22 @@ public static class CompactNotationParser
 		return int.Parse(body[1..^1], CultureInfo.InvariantCulture);
 	}
 
+	// "LxWxH" or "LxWxH [Q]" -> dimensions plus a count (default 1). Coordinates are not allowed here — a
+	// placed item is ParseItem / ParseItems. Call Flatten() on the result to expand the count into copies.
+	public static DimensionsAndQuantity<T> ParseDimensionsAndQuantity<T>(string compact)
+		where T : struct, INumber<T>
+	{
+		var (body, quantity) = SplitQuantity(compact);
+		var dimensions = ParseDimensions<T>(body);
+		return new DimensionsAndQuantity<T>
+		{
+			Length = dimensions.Length,
+			Width = dimensions.Width,
+			Height = dimensions.Height,
+			Quantity = quantity,
+		};
+	}
+
 	// "LxWxH (X,Y,Z)" -> one placed item. Coords are required; a "[Q]" repeat is a list concern
 	// (use ParseItems).
 	public static Item<T> ParseItem<T>(string compact)
@@ -56,16 +72,7 @@ public static class CompactNotationParser
 	public static IReadOnlyList<Item<T>> ParseItems<T>(string compact)
 		where T : struct, INumber<T>
 	{
-		var quantity = 1;
-		var body = compact.Trim();
-
-		var bracket = body.IndexOf('[');
-		if (bracket >= 0)
-		{
-			quantity = ParseQuantity(body[bracket..]);
-			body = body[..bracket].Trim();
-		}
-
+		var (body, quantity) = SplitQuantity(compact);
 		var (length, width, height, x, y, z) = ParseItemGeometry<T>(body);
 
 		var items = new List<Item<T>>(quantity);
@@ -101,6 +108,19 @@ public static class CompactNotationParser
 	}
 
 	// --- helpers ---
+
+	// Splits a trailing "[Q]" off a compact string. Returns the remaining body (trimmed) and the quantity,
+	// defaulting to 1 when there is no "[Q]". Shared by ParseItems and ParseDimensionsAndQuantity.
+	private static (string Body, int Quantity) SplitQuantity(string compact)
+	{
+		var body = compact.Trim();
+
+		var bracket = body.IndexOf('[');
+		if (bracket < 0)
+			return (body, 1);
+
+		return (body[..bracket].Trim(), ParseQuantity(body[bracket..]));
+	}
 
 	// "LxWxH (X,Y,Z)" -> the six numbers. Each part owns its separator ('x' vs ','), so a coordinate is never
 	// read as a dimension.

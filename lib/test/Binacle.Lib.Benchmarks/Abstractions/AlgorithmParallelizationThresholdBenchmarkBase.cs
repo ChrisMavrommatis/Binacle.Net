@@ -34,7 +34,7 @@ public abstract class AlgorithmParallelizationThresholdBenchmarkBase
         var algorithms = this.Algorithms.Split(',').Select(Enum.Parse<Algorithm>).ToArray();
         this.loopAlgorithmProcessor = new LoopAlgorithmProcessor(algorithms, this.AlgorithmFactory);
         this.parallelAlgorithmProcessor = new ParallelAlgorithmProcessor(algorithms, this.AlgorithmFactory, this.ProcessorCount);
-        this.Bin = SpecializedScalingProblemsProvider.CreateBin(SpecializedScalingProblemsProvider.MaxSizeBin);
+        this.Bin = TestBin.FromCompactString(SpecializedScalingProblemsProvider.MaxSizeBin);
         this.Items = SpecializedScalingProblemsProvider.GetItems(this.ItemCount);
     }
 	

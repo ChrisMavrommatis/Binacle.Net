@@ -10,11 +10,11 @@ Shared test library. Not a test runner — it provides types and data that multi
 
 | Folder | What it provides |
 |---|---|
-| `Models/` | `TestBin`, `TestItem`, `TestOperationParameters`, `Dimensions`, `DimensionsAndQuantity` — concrete types implementing the `IWith*` interfaces for use in tests |
+| `Models/` | `TestBin`, `TestItem`, `TestOperationParameters`, `Dimensions` — concrete types implementing the `IWith*` interfaces for use in tests |
 | `Algorithms/` | `ScenarioCollectionsProvider`, `MultipleScenarioCollectionsProvider`, `ScenarioReader`, `CollectionKeys` — load and expose the JSON scenario data as xUnit `[MemberData]` |
 | `ResultSelection/` | Same pattern as `Algorithms/` but for result selection scenarios |
 | `Files/` | `EmbeddedResourceFile`, `EmbeddedResourceFileProvider` — read embedded JSON scenario files from the assembly |
-| `Helpers/` | `AlgorithmInfoHelper`, `DimensionHelper` — small utilities for test assertions |
+| `Helpers/` | `AlgorithmInfoHelper` — small utilities for test assertions |
 | `TestAlgorithmFactory.cs` | Delegate-based factory for constructing algorithm instances directly in unit tests |
 | `PercentageComparer.cs` | Custom equality comparer for floating-point volume percentages |
 

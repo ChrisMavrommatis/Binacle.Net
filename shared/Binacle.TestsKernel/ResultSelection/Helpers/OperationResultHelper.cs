@@ -1,6 +1,7 @@
 using Binacle.Lib;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.TestsKernel.Helpers;
+using Binacle.TestsKernel.Models;
 
 namespace Binacle.TestsKernel.ResultSelection.Helpers;
 
@@ -17,7 +18,7 @@ internal static class OperationResultHelper
 		{
 			throw new FormatException($"Invalid compact string format: {compactString}");
 		}
-		var bin = DimensionsHelper.ParseFromCompactString(parts[0]);
+		var bin = TestBin.FromCompactString(parts[0]);
 		var algorithmInfo = AlgorithmInfoHelper.ParseFromCompactString(parts[1]);
 		var status = Enum.Parse<OperationResultStatus>(parts[2]);
 		var binPct = decimal.Parse(parts[3]);

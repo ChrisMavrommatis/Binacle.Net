@@ -1,6 +1,6 @@
 ---
 description: Shared slice — Binacle.TestsKernel (scenario data, compact-string formats, providers, fixtures) and shared/data (OR-Library benchmark data)
-verified: 2026-06-10
+verified: 2026-07-05
 check: Collection keys, compact-string parsers, and provider class names match shared/Binacle.TestsKernel; OR-Library files match shared/data
 also_update:
   - lib/tests.md
@@ -56,7 +56,7 @@ Scenario JSON keeps values terse. Each field has its own parser. Verify against 
 
 | Field | Parser | Rule | Real example |
 |---|---|---|---|
-| Dimensions | `Helpers/DimensionHelper.cs` (`DimensionsHelper`) | `"LxWxH"` or `"LxWxH-Q"` — split on `-` (part 2 = quantity, default 1), part 1 split on `x` → 3 ints L,W,H | `"108x76x30-40"`, `"60x40x10"` |
+| Dimensions | `TestBin.FromCompactString` / `TestItem.FromCompactString` (in `Models/`) via the shared `Binacle.CompactNotation` parser | `"LxWxH"` or `"LxWxH [Q]"` — the factory splits off the optional `[Q]` (quantity, default 1), then `CompactNotationParser.ParseDimensions<int>` → 3 ints L,W,H | `"108x76x30 [40]"`, `"60x40x10"` |
 | Metrics (4) | `Algorithms/Helpers/ScenarioMetricsHelper.cs` | exactly 4 space-separated: `ItemsVolume BinVolume ItemsCount Percentage` (first 3 int, last decimal, trailing `%` trimmed) | `"29736390 30089620 112 98.83"` |
 | Result (2) | `Algorithms/Helpers/ScenarioResultHelper.cs` | exactly 2 space-separated: **`parts[0]` = packing, `parts[1]` = fitting** | `"PartiallyPacked PartiallyPacked"` |
 | OperationResult (5) | `ResultSelection/Helpers/OperationResultHelper.cs` | exactly 5: `Bin(LxWxH) Algorithm_vN Status BinPct ItemsPct` | `"60x40x30 FFD_v2 FullyPacked 95 100"` |
@@ -82,7 +82,9 @@ Static, lazily built, keyed by scenario `Name`. Each exposes `GetScenarioNames()
 ## Models and helpers
 
 Models: `TestBin` (`IWithID, IWithDimensions`), `TestItem` (`IWithID, IWithDimensions, IWithQuantity`),
-`DimensionsAndQuantity`, `Dimensions`, `TestOperationParameters`. Algorithms `Scenario` carries bin + items +
+`Dimensions`, `TestOperationParameters`. `TestBin`/`TestItem` each expose a `FromCompactString` factory (and a
+`Binacle.CompactNotation.IWithDimensions<int>` ctor) that parse via the shared notation. Algorithms `Scenario`
+carries bin + items +
 `ScenarioMetrics` + `ScenarioResult`. ResultSelection `Scenario` carries `Name`, `ExpectedResult` (a bin-id
 string), and `Results: Dictionary<string, OperationResult>`.
 
