@@ -1,7 +1,9 @@
 # Binacle.Geometry — one home for the common models
 
-**Status (2026-07-05): NOT STARTED — next-session initiative.** Too big to fold into the current session. This
-plan is a handoff of *thinking*, not a spec: what led here, what was true when written, and a proposed path.
+**Status (2026-07-06): DONE.** All 7 runbook steps landed (layout move → leaf → CompactNotation → lib.Abstractions
+→ rest → Phase 3 `[Q]` → cleanup/review). One shared `Binacle.Geometry` leaf; `[Q]` everywhere; all C# suites + TS
+green; manual branch review clean (no Critical/Major/Minor). Deferred quality-only cleanups are tagged
+`[Migrate-Review]` in-code (grep for them). Original handoff notes below kept for history.
 
 > ## Read first — this is a hypothesis, not instructions. Trust nothing here; verify everything.
 >

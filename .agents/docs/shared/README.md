@@ -83,7 +83,7 @@ Static, lazily built, keyed by scenario `Name`. Each exposes `GetScenarioNames()
 
 Models: `TestBin` (`IWithID, IWithDimensions`), `TestItem` (`IWithID, IWithDimensions, IWithQuantity`),
 `Dimensions`, `TestOperationParameters`. `TestBin`/`TestItem` each expose a `FromCompactString` factory (and a
-`Binacle.CompactNotation.IWithDimensions<int>` ctor) that parse via the shared notation. Algorithms `Scenario`
+`Binacle.Geometry.IWithDimensions<int>` ctor) that parse via the shared notation. Algorithms `Scenario`
 carries bin + items +
 `ScenarioMetrics` + `ScenarioResult`. ResultSelection `Scenario` carries `Name`, `ExpectedResult` (a bin-id
 string), and `Results: Dictionary<string, OperationResult>`.

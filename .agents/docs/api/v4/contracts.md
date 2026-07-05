@@ -1,6 +1,6 @@
 ---
 description: Request/response contract types, validators, and OpenAPI examples for v4 (v3 follows the same shape)
-verified: 2026-06-10
+verified: 2026-07-05
 check: Types and validators match api/src/Binacle.Net/v4/Contracts/; mappers match v4/ExtensionMethods/
 also_update:
   - api/v4/README.md
@@ -114,8 +114,8 @@ Status mapping (`OperationResultStatus` is the lib enum):
 
 Unmapped values throw `NotSupportedException`. Fit also maps `EarlyExitReason` 1:1
 (`None`/`ContainerVolumeExceeded`/`ContainerDimensionExceeded`); pack has no early-exit reason. `PackedBox.From`
-copies ID + dimensions + coordinates (and implements ViPaq's `IWithDimensions<int>`/`IWithCoordinates<int>` so it
-can be serialized directly); `UnpackedBox.From` copies ID + quantity.
+copies ID + dimensions + coordinates (and implements the shared `Binacle.Geometry.IWithDimensions<int>` /
+`IWithCoordinates<int>` so it can be serialized by vipaq directly); `UnpackedBox.From` copies ID + quantity.
 
 ## OpenAPI Examples
 

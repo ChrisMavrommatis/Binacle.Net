@@ -28,7 +28,10 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `vipaq/src/Binacle.ViPaq` | Compact binary format for encoding packing results |
 | `vipaq/test/` | ViPaq unit tests |
 | `vipaq/packages/binacle-vipaq/` | TypeScript mirror of ViPaq |
+| `shared/src/Binacle.Geometry` | Shared geometry leaf — generic `IWith*` interfaces + concrete `Dimensions<T>`/`Coordinates<T>` (BCL-only, referenced by lib, ViPaq, CompactNotation) |
+| `shared/src/Binacle.CompactNotation` | Shared compact-string parser/formatter (`LxWxH (X,Y,Z) [Q]`) |
 | `shared/test/Binacle.TestsKernel` | Shared test fixtures and scenario data |
+| `shared/test/Binacle.CompactNotation.UnitTests` | Tests for the shared compact notation |
 | `packages/` | TypeScript packages (npm workspaces) |
 | `ruby/` | Ruby gems (Jekyll plugins) |
 | `docs/` | Jekyll documentation site |

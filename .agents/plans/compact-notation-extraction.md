@@ -261,16 +261,14 @@ which is safe — the setter conflict is only on vipaq's deserialize, which we r
   strings migrated `-Q`→` [Q]` (7324 in `Algorithms/Data/**` + 70 inline C# literals in the two benchmark
   providers). (`ScenarioResultHelper`'s `Status-EarlyExitReason` left alone — different notation.)
   See the Phase 2 progress-log entry for details. Green: CompactNotation **48**, lib **8615**, api **269**, vipaq **1371**.
-- **Phase 3 — lib/API log. DEFERRED — absorbed by the shared-geometry-leaf initiative.** The goal was to route
-  `LogProcessorHandlingExtensions` + the UIModule `FormatDimensions()` ID sites through the shared formatter and
-  delete the lib `Format*` (output shifts `-Q`→`[Q]`). Investigating it surfaced the real blocker: the lib/API
-  models implement lib's **own** non-generic `IWith*` family, which the shared generic `CompactNotationFormatter`
-  can't consume without mapping/adapters. Rather than bolt on adapters, we decided to extract **one shared
-  geometry leaf** (interfaces + `Dimensions`/`Coordinates`) used by lib, API, vipaq, and the shared notation —
-  after which Phase 3 is trivial (lib models already satisfy the formatter; delete the lib `Format*`). See
-  **[shared-geometry-extraction.md](shared-geometry-extraction.md)**. As of this session the lib `Format*` still
-  emit `-Q` (`lib/src/Binacle.Lib.Abstractions/ExtensionMethods/DimensionExtensions.cs` + `CoordinateExtensions.cs`)
-  — untouched, and no test asserts on that output (verified), so the break is safe whenever it lands.
+- **Phase 3 — lib/API log. DONE** (landed as Step 6 of the shared-geometry-leaf initiative). Once the geometry
+  leaf unified the interfaces, the lib/API models satisfied the shared `CompactNotationFormatter` directly. Routed
+  the 5 `Format*` sites through it (UIModule `ViewModels/Item.cs` + `Bin.cs`, `ProtocolDecoder.razor.cs`,
+  DiagnosticsModule `LogProcessorHandlingExtensions` ×3), deleted the lib `FormatDimensions` +
+  `CoordinateExtensions.cs`, and migrated the UIModule input (`SampleDataService.ParseItem`/`ParseBin` →
+  `CompactNotationParser`; `sample_data.json` + `_defaultJsonSampleData` → `[Q]`). Output shifted `-Q`→`[Q]`; no
+  test asserted on the old output. Added `Binacle.CompactNotation` refs to UIModule + DiagnosticsModule. Green:
+  full build 0 errors, api **269**. See **[shared-geometry-extraction.md](shared-geometry-extraction.md)** (Step 6).
 
 ## Out of scope
 Unifying the lib's own `IWith*` interface families / per-algorithm `Bin`/`Item` models, and touching any

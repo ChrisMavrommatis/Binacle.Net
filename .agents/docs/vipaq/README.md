@@ -31,20 +31,24 @@ All entry points are static on `ViPaqSerializer`. The typed methods are thin wra
 | `Serialize` (generic) | `byte[] Serialize<TBin,TItem,T>(TBin bin, IList<TItem> items)` | `T : struct, IBinaryInteger<T>` (which already implies `INumber<T>` / `IComparable<T>`) |
 | `Deserialize` (generic) | `(TBin, IList<TItem>) Deserialize<TBin,TItem,T>(byte[] data)` | plus `new()` on `TBin`/`TItem` |
 
-Type constraints use ViPaq's **own** interfaces in `Binacle.ViPaq.Abstractions` — separate from the Lib `IWith*`
-interfaces. `TBin : IWithDimensions<T>`; `TItem : IWithDimensions<T>, IWithCoordinates<T>`. A type that gets
-serialized directly (e.g. v4 `PackedBox`) implements `IWithDimensions<int>` / `IWithCoordinates<int>`.
+Type constraints use the shared `Binacle.Geometry` interfaces (namespace `Binacle.Geometry`,
+`shared/src/Binacle.Geometry/`) — ViPaq no longer defines its own `IWith*` family; it deleted the old
+`Binacle.ViPaq.Abstractions` copies and points at the leaf. `TBin : IWithDimensions<T>`;
+`TItem : IWithDimensions<T>, IWithCoordinates<T>` (all constrained `where T : struct, IBinaryInteger<T>`, matching the
+serializer). A type that gets serialized directly (e.g. v4 `PackedBox`) implements the leaf's `IWithDimensions<int>` /
+`IWithCoordinates<int>`.
 
-The lib ships two **public** concrete models — `Bin<T>` (dimensions) and `Item<T>` (dimensions + coordinates) —
-as ready-made types a caller can serialize without defining their own. (`Dimensions<T>` / `Coordinates<T>` used
-to ship here too, but nothing in the format serializes a standalone measurement or point, so they're now
-test-only fixtures in `vipaq/test/Binacle.ViPaq.UnitTests/Models/`.)
+The lib ships two **public** concrete models — `Bin<T>` (dimensions) and `Item<T>` (dimensions + coordinates), both
+in `Binacle.ViPaq` and implementing the leaf interfaces — as ready-made types a caller can serialize without defining
+their own. (`Dimensions<T>` / `Coordinates<T>` used to ship here too, but nothing in the format serializes a standalone
+measurement or point; the concrete generic `Dimensions<T>` / `Coordinates<T>` now live in the `Binacle.Geometry` leaf,
+and vipaq's tests keep their own copies as fixtures in `vipaq/test/Binacle.ViPaq.UnitTests/Models/`.)
 
 Everything else is `internal` — implementation detail, not consumer API: `BitSizeHelper`, `EncodingInfoHelper`,
 `ProtocolReader<T>` / `ProtocolWriter<T>` (+ their extension methods), and `EncodingInfoNotation`. The test and
-tools assemblies reach them via `InternalsVisibleTo`. So the whole **public surface** is: `ViPaqSerializer`, the
-two `IWith*` interfaces, `Bin<T>` / `Item<T>`, the wire types `EncodingInfo` / `BitSize` / `Version`, and
-`ViPaqLimits`.
+tools assemblies reach them via `InternalsVisibleTo`. So the whole **public surface** is: `ViPaqSerializer`,
+`Bin<T>` / `Item<T>`, the wire types `EncodingInfo` / `BitSize` / `Version`, and `ViPaqLimits` — the `IWith*`
+constraint interfaces come from the shared `Binacle.Geometry` leaf, not from vipaq.
 
 ### Encoding-info notation (internal)
 
