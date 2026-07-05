@@ -1,16 +1,74 @@
-# Shared geometry leaf — one home for the common models
+# Binacle.Geometry — one home for the common models
 
 **Status (2026-07-05): NOT STARTED — next-session initiative.** Too big to fold into the current session. This
-plan is the handoff: what led here, what is already done, and exactly what to do next.
+plan is a handoff of *thinking*, not a spec: what led here, what was true when written, and a proposed path.
+
+> ## Read first — this is a hypothesis, not instructions. Trust nothing here; verify everything.
+>
+> This document was written in one working session and reflects **what was true at 2026-07-05 in that tree** —
+> it may be stale, incomplete, or simply wrong. You are expected to **think for yourself**: investigate the
+> current code, validate every claim, challenge the recommendations, and form your own plan before you touch
+> anything.
+>
+> - **Re-verify every concrete fact** before relying on it — file paths, line numbers, type/member names, the
+>   counts (e.g. "7324 literals", "48/8615/269/1371"), the IVT map, and especially the claim that **no test
+>   asserts on the `-Q` output**. Grep/build/read the code as it is *now*; git state and the code will have moved.
+> - **Treat the "Decided defaults" and Runbook as a starting position, not a mandate.** If investigation says a
+>   different name, constraint, layout, or order is better, do that and explain why. The earlier session had less
+>   context than you'll have with the code in front of you.
+> - **Discover → validate → then act.** Build it, prove the current state, run the suites to establish a green
+>   baseline, and confirm the dependency graph yourself before the first `git mv`.
+> - **If reality contradicts this plan, reality wins** — follow the code and update this document to match.
+> - Independently sanity-check the *premise* too: is one shared geometry leaf actually the best fix, or has
+>   something changed that suggests otherwise? Say so if it has.
+>
+> ### Working agreement (how to run this)
+> - **Track progress with a checklist** — one item per Runbook step (use the task/todo tools); keep it current so
+>   the human can see exactly where things stand.
+> - **Stop after every step. This is a checkpoint, not a suggestion.** Each Runbook step ends with: report what
+>   changed + the green results (builds/suites), then **wait for the human to verify and say go** before starting
+>   the next step. Do **not** chain steps unattended.
+> - **The moment something is off — stop and ask.** A failing build, a surprising diff, an assumption that didn't
+>   hold, an ambiguous decision, reality contradicting this plan: surface it and ask the human. Do not guess, do
+>   not silently work around it, do not barrel ahead. A wrong turn on a core-interface refactor is expensive.
+> - **Clean up as you go** — remove the cruft the refactor obsoletes (the triplicate `Dimensions`/`Coordinates`,
+>   unused `Flatten()`, dead `TestsKernel.Models.Dimensions`, stale comments/docs). Leave the tree cleaner. Keep
+>   each cleanup tied to the step you're in and call it out at the checkpoint — don't fold in unrelated sweeps.
+> - **Suggest, don't just execute.** When you spot smells, simplifications, or further consolidation beyond the
+>   current step, note them for the human at the checkpoint and let them decide — surface the idea rather than
+>   acting on it unilaterally.
+
+## Before you start (entry point)
+- **Required reading:** this plan **and** its sibling `compact-notation-extraction.md` (the work that led here);
+  skim `.agents/docs/README.md` for the repo map. Re-read CLAUDE.md's critical rules.
+- **How to run** (verify current, don't assume): commands live in `.agents/docs/commands.md`. Today:
+  `dotnet build Binacle.Net.slnx`; `./config/tests.sh {lib,api,vipaq,performance}`; TS via
+  `cd vipaq/binacle-vipaq && npm test` (note: that path **moves to `vipaq/packages/binacle-vipaq`** in Runbook
+  step 1) and `npm install` at root. Confirm these against `commands.md` as-is.
+- **Establish a green baseline first** — build + run every suite before the first change, so any later red is
+  clearly yours.
+- **Committing is the human's job, never yours** (CLAUDE.md). Where the Runbook says "commit," it means: you stop
+  at the checkpoint, the human verifies and commits. You stage/commit nothing. You *may* create the working
+  branch, but leave all changes in the tree for the human.
+
+## Scope & definition of done
+**In scope:** unify the geometry *types* — the `IWith*` interfaces + concrete `Dimensions`/`Coordinates` — into
+`Binacle.Geometry`, rewire consumers, and finish compact-notation Phase 3 (formatters → `[Q]`).
+**Out of scope / behaviour-preserving:** do **not** change algorithm behaviour, wire formats, result-selection, or
+public API/response semantics; do **not** unify the per-algorithm `Bin`/`Item` models beyond geometry; do **not**
+modify v3. The only intended *observable* change is log/UI output `-Q`→`[Q]`.
+**Done when:** one `Dimensions`/`Coordinates` and one `IWith*` family across the repo; `CompactNotationFormatter`
+is the single formatter (lib `Format*` deleted); `[Q]` everywhere; all suites + TS + docker green; `/code-review`
+passed; docs + both plans updated/closed.
 
 **Goal.** Extract the common geometry types — the `IWith*` interfaces and the concrete `Dimensions` / `Coordinates`
-models — into **one shared leaf project**, and use it across `Binacle.Net`, `Binacle.Lib`, `Binacle.ViPaq`, the
-shared notation, and the tests. Today those types are duplicated as **two parallel interface families**, which is
-the one thing blocking the last step of the compact-notation work.
+models — into **one shared leaf project, `Binacle.Geometry`** (name decided), and use it across `Binacle.Net`,
+`Binacle.Lib`, `Binacle.ViPaq`, the shared notation, and the tests. Today those types are duplicated as **two
+parallel interface families**, which is the one thing blocking the last step of the compact-notation work.
 
 ---
 
-## Naming decision (open — pick before starting)
+## Naming decision (DECIDED — `Binacle.Geometry`)
 
 We cannot have both "Core" and "Kernel" — `Binacle.Net.Kernel` and `Binacle.TestsKernel` already own "Kernel".
 The words mean different things and should stay distinct:
@@ -25,35 +83,68 @@ The words mean different things and should stay distinct:
 | `Binacle.Geometry` | Precise; says what's inside; no clash; zero rename churn | Too narrow if it later holds non-geometry shared models. |
 | `Binacle.Primitives` | Broad enough for geometry + other shared value types; no clash | Slightly vague. |
 
-**Recommendation:** `Binacle.Geometry` if it stays dimensions/coordinates/quantity; `Binacle.Primitives` if it's
-the general shared-model home. Avoid `Binacle.Core` unless renaming both kernels; avoid `Binacle.Domain`
-(`ServiceModule.Domain` exists); "Kernel" is out for the leaf. Below the leaf is called **`Binacle.Geometry`** —
-swap once decided.
+**DECIDED: `Binacle.Geometry`.** (Kept the Kernels; `Core` rejected to avoid the kernel clash, `Domain` rejected
+because `ServiceModule.Domain` exists. Table kept above as the rationale.)
 
-## Companion cleanup — `src` / `test` / `packages` convention per slice
+## Companion cleanup — placement convention (scope first, then language)
 
-Do this **with** (or just before) the leaf extraction, so the new leaf lands under the right layout from day one.
-Target: every slice is `src/` (C#) · `test/` (C#) · `packages/` (TS/JS). Today it's inconsistent:
+Do this **with** (or just before) the leaf extraction, so `Binacle.Geometry` lands under the right layout from
+day one.
 
-- `lib/`, `api/` → `src` + `test` ✓
-- `vipaq/` → `src` + `test` + `tools`, but its TS mirror sits at `vipaq/binacle-vipaq` (not `packages`)
-- `shared/` → **flat**: `Binacle.CompactNotation`, `…UnitTests`, `Binacle.TestsKernel`, `data`, `README.md`
-- **root `packages/`** → `binacle-net-ui`, `cookies`, `theme-switcher`, `binacle-compact-notation`
+**The rule.** Decide each project/package by *scope*, then by language:
+1. **Cross-slice** (used by more than one slice): **C#** → `shared/` · **TS/JS** → root **`/packages`**.
+2. **Slice-specific** (one slice only): **C#** → `<slice>/src` (libs) + `<slice>/test` (tests) · **TS/JS** →
+   `<slice>/packages`.
+3. Within a C# home, `src/` = library code, `test/` = tests **and** test-support.
 
-Moves:
-- `shared/Binacle.CompactNotation` + `Binacle.TestsKernel` → `shared/src/…`; `…UnitTests` → `shared/test/…`;
-  new leaf → `shared/src/Binacle.Geometry`. (`shared/data` stays or → `shared/data` unchanged.)
-- `packages/binacle-compact-notation` → `shared/packages/binacle-compact-notation`.
-- `vipaq/binacle-vipaq` → `vipaq/packages/binacle-vipaq`.
-- **Open decision:** the root UI packages (`binacle-net-ui`, `cookies`, `theme-switcher`) need a slice home —
-  likely `api/packages/` or a `web/packages/`. Not mechanical; decide first.
+Applying it:
+
+| Project / package | Lang | Scope | Home | Move? |
+|---|---|---|---|---|
+| `Binacle.Geometry` (new) | C# | cross-slice lib | `shared/src/Binacle.Geometry` | new |
+| `Binacle.CompactNotation` | C# | cross-slice lib | `shared/src/Binacle.CompactNotation` | from `shared/` |
+| `Binacle.TestsKernel` | C# | cross-slice test-support | `shared/test/Binacle.TestsKernel` | from `shared/` (see flag) |
+| `Binacle.CompactNotation.UnitTests` | C# | cross-slice test | `shared/test/…` | from `shared/` |
+| `binacle-compact-notation` | TS | common (notation mirror) | **root `/packages`** | **stays** |
+| `binacle-net-ui`, `cookies`, `theme-switcher` | TS | cross-slice (UI/docs/web) | root `/packages` | **stay** |
+| `binacle-vipaq` | TS | vipaq-only | `vipaq/packages/binacle-vipaq` | **moves** |
+| `shared/data` | data | — | `shared/data` | unchanged |
+
+Net: at root `/packages` **nothing moves**; the only TS move is `binacle-vipaq` → `vipaq/packages/`. The shared C#
+projects get the `src`/`test` split. (Note the C# and TS notation mirrors deliberately live apart —
+`shared/src/Binacle.CompactNotation` vs `/packages/binacle-compact-notation` — because the rule routes by language.)
+
+**TestsKernel placement — checked, no smell; name kept.** It legitimately *is* a kernel — the shared foundational
+infra kerneling the **`Binacle.Lib` and `Binacle.Net` test suites** (just as `Binacle.Net.Kernel` kernels the API
+host). Scope is exactly those two: **vipaq** (Bogus fakers) and **CompactNotation** tests are self-contained — no
+shared kernel — so its reach is deliberately lib + .net, not repo-wide. "Kernel" = per-layer shared infra; `Binacle.Geometry` is the *cross-layer domain model*, a
+different axis — so no conflict, and `TestsKernel` keeps its name. Direction is correct too: `TestsKernel` references
+`lib.Abstractions` (test-support → lib), and `lib.Abstractions` *grants* it access via
+`<InternalsVisibleTo Include="Binacle.TestsKernel"/>` (alongside `Binacle.Lib`, `Binacle.Lib.UnitTests`). So
+`shared/test/Binacle.TestsKernel` is fine.
+
+What that IVT is actually for (mapped — it is **result-building, not geometry**): lib.Abstractions' internal
+members are all in `Algorithms/Models` — `OperationResult()` ctor + `Status`/`EarlyExitReason` internal setters,
+and internal ctors of `PackedBin` / `PackedItem` / `ResultItem` / `UnpackedItem`. `TestsKernel` uses
+`new OperationResult()` + `.Status` and `new PackedBin(...)` in `ResultSelection/Helpers/OperationResultHelper.cs`.
+**Implication for this plan:** those internal ctors stay in lib.Abstractions, so extracting geometry into
+`Binacle.Geometry` does **not** require touching the IVT — it stays put.
+
+**The real coupling the leaf must resolve:** there are **three concrete `Dimensions`** (and `Coordinates`) today —
+`Binacle.Lib.Abstractions.Models.Dimensions` (consumed by the internal `ResultItem`/`PackedItem` ctors),
+`Binacle.TestsKernel.Models.Dimensions`, and `Binacle.CompactNotation.Dimensions<T>`. `PackedBin`'s internal ctor
+takes `IWithReadOnlyDimensions`. After the move, `lib.Abstractions` references `Binacle.Geometry`, those internal
+ctors take the unified `Geometry` types, and callers (`TestBin` etc.) implement the unified interface — the
+construction calls keep working.
 
 What it ripples into (miss one → build/CI breaks — do it as its own verified commit):
-- `Binacle.Net.slnx` — solution folders (`/shared/` → `/shared/src/`, `/shared/test/`) + every `<Project Path>`.
+- `Binacle.Net.slnx` — solution folders (`/shared/` → `/shared/src/`, `/shared/test/`; add `/vipaq/packages/`) +
+  every `<Project Path>` for the moved projects.
 - Every `.csproj` `ProjectReference` relative path (shared move breaks refs from `lib/test`, `api/test`,
   `lib.Abstractions`→`TestsKernel`, and `TestsKernel`/vipaq→`CompactNotation`).
-- npm `workspaces` in root `package.json` (`packages/*`, `vipaq/binacle-vipaq`) → new globs; cross-package deps
-  (`binacle-vipaq`→`binacle-compact-notation`) still resolve after the move (re-run `npm install`).
+- npm `workspaces` in root `package.json` — `vipaq/binacle-vipaq` → `vipaq/packages/binacle-vipaq` (the `packages/*`
+  glob is unchanged since root packages stay put); `binacle-vipaq`→`binacle-compact-notation` still resolves after
+  the move (re-run `npm install`).
 - `config/*.sh` run/test scripts, `gulpfile` asset copy, `Dockerfile`/`config/build.sh`, and the agent docs
   (`.agents/docs/README.md` repo-layout table + `_index.md` + slice docs).
 
@@ -170,9 +261,35 @@ this touches the core's most-used interfaces, so it earns a dedicated review.
 - Confirm nothing depends on the exact **`Binacle.Lib.Abstractions.Models`** namespace for the moved types
   (or add `[TypeForwardedTo]` / keep thin shims if source-compat matters).
 
-## Open questions
-1. Final leaf name (`Binacle.Geometry` recommended).
-2. Quantity type in `IWithQuantity<T>` — `int` vs `T`.
-3. The `struct` constraint — standardize on `struct, INumber<T>`?
-4. Do `Item<T>` / `DimensionsAndQuantity<T>` move to the leaf, or stay notation-side?
-5. Keep lib's non-generic `int` interface aliases as shims, or sweep every call site?
+## Decided defaults (apply unless vetoed)
+1. **Leaf name** — `Binacle.Geometry`. ✅ decided.
+2. **`struct` constraint** — standardize on `where T : struct, INumber<T>` everywhere (all real `T` are `int`/`long`;
+   matches CompactNotation; kills `CS8618`).
+3. **Quantity type** — `int`, via a **non-generic `IWithQuantity { int Quantity { get; } }`** (a count is a count,
+   independent of the coordinate `T`). Reconcile with CompactNotation's current `IWithQuantity<T>` during step 3.
+4. **`Item<T>` / `DimensionsAndQuantity<T>`** — **stay in `CompactNotation`** (notation concepts). The leaf holds only
+   `IWith*` + `Dimensions` + `Coordinates`.
+5. **Lib's non-generic `int` interface aliases** — **keep as thin shims that extend the leaf's** interfaces (avoids a
+   repo-wide call-site sweep). *This is the main effort lever — shims (less churn) vs. full sweep (cleaner, bigger
+   diff). Default = shims; confirm if you'd rather sweep.*
+
+## Runbook — execution order (each step = one checkpoint, ends green)
+Each step ends green and stops for the human to verify **and commit** (you never commit — CLAUDE.md).
+0. **Prereq** — the human commits the Phase 2 work sitting in the tree; then work on a branch.
+1. **Layout convention** *(own commit)* — `git mv` shared C# projects → `shared/src` + `shared/test`,
+   `binacle-vipaq` → `vipaq/packages`; fix `.slnx` folders + project paths, every `.csproj` `ProjectReference`,
+   npm `workspaces`, `config/*.sh`, `gulpfile`, `Dockerfile`/`build.sh`, agent docs. **Verify:** full build + all C#
+   suites + `npm install` + TS suites + docker build.
+2. **Create `Binacle.Geometry`** (`shared/src`) — interfaces (read-only + mutable split, `struct` constraint,
+   non-generic `int` shims) + concrete `Dimensions`/`Coordinates`. Build the leaf alone.
+3. **Point `CompactNotation` at the leaf** — reference it; delete its duplicate `IWith*`/`Dimensions`/`Coordinates`;
+   `Item<T>`/`DimensionsAndQuantity<T>` stay. **Verify:** CompactNotation + vipaq suites.
+4. **Rewire `lib.Abstractions`** (the big sweep) — its `IWith*` extend the leaf's; concrete `Dimensions`/`Coordinates`
+   come from the leaf; watch the `IWithDimensions<T>` name collision. **Verify:** lib + all lib tests.
+5. **Rewire the rest** — `Binacle.Net` (API/UIModule/Diagnostics), `ViPaq` src, `TestsKernel`, remaining tests.
+   **Verify:** everything.
+6. **Finish compact-notation Phase 3** (now trivial) — models satisfy the formatter → swap the 5 `Format*` sites,
+   delete lib `FormatDimensions`/`FormatCoordinates`, migrate UIModule `ParseItem` + `sample_data.json`. Output →
+   `[Q]`. **Verify:** api suite.
+7. **Cleanup + review** — wire-or-drop `Flatten()`, remove dead `TestsKernel.Models.Dimensions`, optional TS parity;
+   full green gates; **`/code-review`**; update docs and close out both plans (this one + compact-notation Phase 3).
