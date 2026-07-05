@@ -1,3 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\Binacle.Geometry\Binacle.Geometry.csproj" />
+    </ItemGroup>
 
 </Project>

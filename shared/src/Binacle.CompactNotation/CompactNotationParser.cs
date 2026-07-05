@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Numerics;
+using Binacle.Geometry;
 
 namespace Binacle.CompactNotation;
 
@@ -16,7 +17,7 @@ public static class CompactNotationParser
 {
 	// "LxWxH" -> Dimensions.
 	public static Dimensions<T> ParseDimensions<T>(string compact)
-		where T : struct, INumber<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var (length, width, height) = ParseThree<T>(compact.Trim(), 'x');
 		return new Dimensions<T> { Length = length, Width = width, Height = height };
@@ -24,7 +25,7 @@ public static class CompactNotationParser
 
 	// "(X,Y,Z)" -> Coordinates. The parens are required.
 	public static Coordinates<T> ParseCoordinates<T>(string compact)
-		where T : struct, INumber<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var (x, y, z) = ParseThree<T>(StripParens(compact.Trim()), ',');
 		return new Coordinates<T> { X = x, Y = y, Z = z };
@@ -43,7 +44,7 @@ public static class CompactNotationParser
 	// "LxWxH" or "LxWxH [Q]" -> dimensions plus a count (default 1). Coordinates are not allowed here — a
 	// placed item is ParseItem / ParseItems. Call Flatten() on the result to expand the count into copies.
 	public static DimensionsAndQuantity<T> ParseDimensionsAndQuantity<T>(string compact)
-		where T : struct, INumber<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var (body, quantity) = SplitQuantity(compact);
 		var dimensions = ParseDimensions<T>(body);
@@ -59,7 +60,7 @@ public static class CompactNotationParser
 	// "LxWxH (X,Y,Z)" -> one placed item. Coords are required; a "[Q]" repeat is a list concern
 	// (use ParseItems).
 	public static Item<T> ParseItem<T>(string compact)
-		where T : struct, INumber<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		if (compact.Contains('['))
 			throw new FormatException($"Item '{compact}' carries a '[Q]' quantity — use ParseItems to expand it.");
@@ -70,7 +71,7 @@ public static class CompactNotationParser
 
 	// "LxWxH (X,Y,Z) [Q]" -> Q copies of the item (Q optional, default 1).
 	public static IReadOnlyList<Item<T>> ParseItems<T>(string compact)
-		where T : struct, INumber<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var (body, quantity) = SplitQuantity(compact);
 		var (length, width, height, x, y, z) = ParseItemGeometry<T>(body);
@@ -84,7 +85,7 @@ public static class CompactNotationParser
 
 	// Flattens many compact item strings into one list; each may expand via its "[Q]" suffix.
 	public static IReadOnlyList<Item<T>> ParseItems<T>(IEnumerable<string> compactItems)
-		where T : struct, INumber<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var result = new List<Item<T>>();
 		foreach (var compact in compactItems)
@@ -125,7 +126,7 @@ public static class CompactNotationParser
 	// "LxWxH (X,Y,Z)" -> the six numbers. Each part owns its separator ('x' vs ','), so a coordinate is never
 	// read as a dimension.
 	private static (T Length, T Width, T Height, T X, T Y, T Z) ParseItemGeometry<T>(string compact)
-		where T : struct, INumber<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var body = compact.Trim();
 		var parenOpen = body.IndexOf('(');
@@ -147,7 +148,7 @@ public static class CompactNotationParser
 	}
 
 	private static (T First, T Second, T Third) ParseThree<T>(string compact, char separator)
-		where T : struct, INumber<T>
+		where T : struct, IBinaryInteger<T>
 	{
 		var parts = compact.Split(separator);
 		if (parts.Length != 3)
@@ -157,6 +158,6 @@ public static class CompactNotationParser
 	}
 
 	private static T ParseNumber<T>(string value)
-		where T : struct, INumber<T>
+		where T : struct, IBinaryInteger<T>
 		=> T.Parse(value.Trim(), CultureInfo.InvariantCulture);
 }

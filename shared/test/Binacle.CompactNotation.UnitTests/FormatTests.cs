@@ -3,8 +3,8 @@ namespace Binacle.CompactNotation.UnitTests;
 public class FormatTests
 {
 	// A test object that carries all three blocks, to prove Format composes them in order.
-	private sealed class Placed<T> : IWithDimensions<T>, IWithCoordinates<T>, IWithQuantity<T>
-		where T : struct, System.Numerics.INumber<T>
+	private sealed class Placed<T> : IWithReadOnlyDimensions<T>, IWithReadOnlyCoordinates<T>, IWithReadOnlyQuantity<T>
+		where T : struct, System.Numerics.IBinaryInteger<T>
 	{
 		public required T Length { get; init; }
 		public required T Width { get; init; }

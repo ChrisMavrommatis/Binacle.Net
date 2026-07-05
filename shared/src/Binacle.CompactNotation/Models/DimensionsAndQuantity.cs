@@ -1,4 +1,5 @@
 using System.Numerics;
+using Binacle.Geometry;
 
 namespace Binacle.CompactNotation;
 
@@ -6,7 +7,7 @@ namespace Binacle.CompactNotation;
 // Unlike a placed Item (which ParseItems expands into copies), this keeps the count as a field. Call
 // Flatten() when you want it expanded into that many standalone Dimensions.
 public class DimensionsAndQuantity<T> : IWithDimensions<T>
-	where T : struct, INumber<T>
+	where T : struct, IBinaryInteger<T>
 {
 	public T Length { get; set; }
 	public T Width { get; set; }

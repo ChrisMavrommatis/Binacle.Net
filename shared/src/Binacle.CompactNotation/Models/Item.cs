@@ -1,11 +1,12 @@
 using System.Numerics;
+using Binacle.Geometry;
 
 namespace Binacle.CompactNotation;
 
 // A concrete "LxWxH (X,Y,Z)" — dimensions and a position. What ParseItem/ParseItems return.
 // Quantity is not a field: it is expanded into copies by ParseItems, so each Item is one placed thing.
 public class Item<T> : IWithDimensions<T>, IWithCoordinates<T>
-	where T : struct, INumber<T>
+	where T : struct, IBinaryInteger<T>
 {
 	public T Length { get; set; }
 	public T Width { get; set; }
