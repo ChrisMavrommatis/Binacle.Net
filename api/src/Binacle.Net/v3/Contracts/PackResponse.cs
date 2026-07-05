@@ -63,12 +63,12 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 					.Select(x => new PackedBox()
 					{
 						ID = x.ID,
-						Length = x.Dimensions.Length,
-						Width = x.Dimensions.Width,
-						Height = x.Dimensions.Height,
-						X = x.Coordinates.X,
-						Y = x.Coordinates.Y,
-						Z = x.Coordinates.Z
+						Length = x.Length,
+						Width = x.Width,
+						Height = x.Height,
+						X = x.X,
+						Y = x.Y,
+						Z = x.Z
 					}).ToList(),
 				UnpackedItems = operationResult.UnpackedItems?
 					.Select(x => new UnpackedBox
@@ -137,12 +137,10 @@ public enum BinPackResultStatus
 }
 
 
-// [Migrate-Review] drop the explicit Binacle.Geometry.IWithDimensions<int>/IWithCoordinates<int> below once the
-// lib IWith shims reach the mutable leaf generic (see .agents/plans/shared-geometry-extraction.md).
 public class PackedBox :
 	IWithID,
 	IWithDimensions,
-	IWithCoordinates, Binacle.Geometry.IWithDimensions<int>, Binacle.Geometry.IWithCoordinates<int>
+	IWithCoordinates
 {
 	public required string ID { get; set; }
 	public required int Length { get; set; }

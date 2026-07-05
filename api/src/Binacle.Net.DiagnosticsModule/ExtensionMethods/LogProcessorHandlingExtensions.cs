@@ -32,18 +32,14 @@ internal static class LogProcessorHandlingExtensions
 		);
 	}
 
-	// [Migrate-Review] These format the sub-parts (item.Dimensions / item.Coordinates) separately instead of a
-	// single CompactNotationFormatter.Format<int>(item), because PackedItem/UnpackedItem expose geometry as nested
-	// properties rather than implementing IWithReadOnly* on themselves. Revisit if those result models gain the
-	// interfaces directly (see .agents/plans/shared-geometry-extraction.md).
 	private static string ConvertToLogObject(this PackedItem item)
 	{
-		return $"{CompactNotationFormatter.FormatDimensions<int>(item.Dimensions)} {CompactNotationFormatter.FormatCoordinates<int>(item.Coordinates)}";
+		return CompactNotationFormatter.Format<int>(item);
 	}
 
 	private static string ConvertToLogObject(this UnpackedItem item)
 	{
-		return $"{CompactNotationFormatter.FormatDimensions<int>(item.Dimensions)} {CompactNotationFormatter.FormatQuantity<int>(item)}";
+		return CompactNotationFormatter.Format<int>(item);
 	}
 
 	private static Dictionary<string, object> ConvertToLogObject(
@@ -65,7 +61,9 @@ internal static class LogProcessorHandlingExtensions
 				.GroupBy(x => x.ID)
 				.ToDictionary(
 					group => group.Key,
-					group => group.Select(item => item.ConvertToLogObject()).ToArray()
+					group => group.Select(item => 
+						item.ConvertToLogObject()
+					).ToArray()
 				);
 			resultState.Add("PackedItems", packedItems);
 

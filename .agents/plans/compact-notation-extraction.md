@@ -1,5 +1,15 @@
 # Binacle.CompactNotation — extract one shared text notation
 
+**Status (2026-07-06): DONE — all phases complete** (0 / 0-TS / 1 / 1b / 1c / 2 / 3). One shared notation used by
+vipaq, the lib/API log, and the test scenario data; output uses `[Q]`; the lib `Format*` extensions are deleted.
+(Phase 3 landed as Step 6 of the shared-geometry-leaf initiative.)
+
+**To fully close (one hygiene loose end):** `DimensionsAndQuantity.Flatten()` has no production consumer — it is
+only exercised by 2 CompactNotation unit tests. Decide: **wire it** to a real caller, or **drop it** (+ those 2
+tests). Tagged `[Migrate-Review]` in `shared/src/Binacle.CompactNotation/Models/DimensionsAndQuantity.cs`. Once
+that's settled, the compact-notation slice is 100% clean. Everything else (grammar, parser/formatter, all C# + TS
+consumers, scenario/sample data, docs) is done.
+
 **Goal:** one text notation for geometry, in one place, used by vipaq, the lib/API log, and the test scenario
 data. Today the same idea is written **three times** with **three dialects**. We build the shared library
 first, prove it green in isolation, then swap each consumer over one at a time.

@@ -3,7 +3,9 @@
 **Status (2026-07-06): DONE.** All 7 runbook steps landed (layout move → leaf → CompactNotation → lib.Abstractions
 → rest → Phase 3 `[Q]` → cleanup/review). One shared `Binacle.Geometry` leaf; `[Q]` everywhere; all C# suites + TS
 green; manual branch review clean (no Critical/Major/Minor). Deferred quality-only cleanups are tagged
-`[Migrate-Review]` in-code (grep for them). Original handoff notes below kept for history.
+`[Migrate-Review]` in-code (grep for them). A **follow-on model-consolidation pass** landed after the runbook
+(Tier 1 shared `Item<T>`, `GeometryFactory`, and moving the int-shortcut + volume interfaces into the leaf) — see
+**Follow-on consolidation & what remains** at the end of this file. Original handoff notes below kept for history.
 
 > ## Read first — this is a hypothesis, not instructions. Trust nothing here; verify everything.
 >
@@ -303,3 +305,48 @@ Each step ends green and stops for the human to verify **and commit** (you never
      `Dimensions<T>`/`Coordinates<T>` clones in favour of the leaf's (keep only the `Create` factory helpers);
      (c) review the `TestBin`/`TestItem` ctor overloads (`IWithReadOnlyDimensions` vs `Binacle.Geometry.IWithDimensions<int>`)
      and the vipaq `Bin`/`Item` wiring. These are quality-only and were deferred so the migration commits stay focused.
+
+---
+
+## Follow-on consolidation & what remains (2026-07-06)
+
+After the 7-step runbook, a model-consolidation pass ran. The leaf is now the shared home for the concrete
+data-holder models **and** the full `IWith*` family.
+
+**Done (post-runbook):**
+- **Tier 1** — one shared `Binacle.Geometry.Item<T>` (dims+coords) replaced the duplicate `ViPaq.Item<T>` +
+  `CompactNotation.Item<T>`; vipaq's `Bin<T>` collapsed onto `Geometry.Dimensions<T>`.
+- **`GeometryFactory`** — `GeometryFactory.Dimensions(...)` / `.Coordinates(...)` type-inference helpers in the leaf;
+  the vipaq test `Dimensions<T>`/`Coordinates<T>` clones were deleted.
+- **Interface family moved into the leaf** — the non-generic `int` shortcuts (`IWith[ReadOnly]Dimensions`/
+  `Coordinates`/`Quantity`) **and** the volume interfaces now live in `Binacle.Geometry` (volume generic tightened to
+  `struct, IBinaryInteger<T>`); the `IWithDimensions` asymmetry is fixed. `IWithID`/`IWithReadOnlyID` stay in lib.
+  Consumers reach the leaf via a per-project `<Using Include="Binacle.Geometry"/>`.
+- **Idea 1** — v4 + UIModule contracts dropped their redundant explicit `Binacle.Geometry.IWith*<int>`.
+- Invariant held throughout: **lib ⊥ vipaq** (each references only the leaf). All C# suites green.
+
+**What remains (all optional / deferred; PARKED — nothing in progress; grep `[Migrate-Review]`):**
+- **v3 contracts** — **DONE (2026-07-06, human-authorized).** Dropped the redundant explicit
+  `Binacle.Geometry.IWith*<int>` from `v3/Bin.cs` + `v3/PackResponse.cs` `PackedBox`. Behaviour-neutral
+  (marker-interface removal only — JSON shape/serialization unchanged); full build + api suite (269) green.
+- **Log formatter** (`DiagnosticsModule/LogProcessorHandlingExtensions`) — formats `PackedItem`/`UnpackedItem` as
+  separate sub-parts because those result models expose geometry as nested value structs, not by implementing the
+  interfaces. **Tier-2-lite fix (self-contained):** have the result-model CLASSES implement `IWithReadOnly*` by
+  delegating to their existing structs (`Length => this.Dimensions.Length` — zero extra allocation; the perf value
+  structs stay structs, see the value-struct note), then the formatter collapses to a single `Format<int>(item)`.
+  Does NOT need the full `IWithID`-move / rename.
+- **`TestBin`/`TestItem`** — redundant ctor overloads (`IWithReadOnlyDimensions` vs `Geometry.IWithDimensions<int>`);
+  simplify, or fold into Tier 2.
+- **`DimensionsAndQuantity.Flatten()`** — no production consumer; kept + tagged (wire it or drop it).
+- **Tier 2 (the big lever, not started)** — move `IWithID` into the leaf + a shared **ID-carrying** model family
+  (`Bin`=id+dims, `Item`=id+dims+quantity, `PackedItem`=id+dims+coords) to collapse UIModule Models + `TestBin`/
+  `TestItem` and let the log formatter simplify. Needs the **leaf-rename** decision (`Geometry` → `Primitives`/`Core`,
+  or a `Binacle.Models` layer) and settles **quantity-as-`int`-vs-`T`**. A shared dims+quantity model is only worth
+  it inside Tier 2.
+- **TS parity** — deferred: TS is structurally typed, so the duplicated shapes already interoperate; low ROI.
+- **Verification gaps** — the ServiceModule suite (needs Azurite) and a docker image build were skipped by choice;
+  run them for a full green sweep.
+
+**Won't reduce (leave as-is):** lib internal result models (internal ctors, immutable), algorithm working types
+(carry behaviour), v3 DTOs (frozen), UIModule ViewModels (DataAnnotations + computed ID), lib readonly-struct
+`Dimensions`/`Coordinates` (value semantics).

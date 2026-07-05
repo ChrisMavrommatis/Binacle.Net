@@ -1,8 +1,6 @@
-﻿using Binacle.Lib.Abstractions.Models;
-
 namespace Binacle.Lib.Models;
 
-public readonly struct Dimensions : IWithReadOnlyDimensions
+internal readonly struct Dimensions : IWithReadOnlyDimensions
 {
 	public int Length { get; }
 	public int Width { get; }

@@ -35,12 +35,12 @@ public class PackedBox :
 		return new PackedBox()
 		{
 			ID = packedItem.ID,
-			Length = packedItem.Dimensions.Length,
-			Width = packedItem.Dimensions.Width,
-			Height = packedItem.Dimensions.Height,
-			X = packedItem.Coordinates.X,
-			Y = packedItem.Coordinates.Y,
-			Z = packedItem.Coordinates.Z
+			Length = packedItem.Length,
+			Width = packedItem.Width,
+			Height = packedItem.Height,
+			X = packedItem.X,
+			Y = packedItem.Y,
+			Z = packedItem.Z
 		};
 	}
 }

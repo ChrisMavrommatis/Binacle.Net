@@ -29,9 +29,9 @@ public class Bin :
 		return new Bin()
 		{
 			ID = bin.ID,
-			Height = bin.Dimensions.Height,
-			Length = bin.Dimensions.Length,
-			Width = bin.Dimensions.Width
+			Height = bin.Height,
+			Length = bin.Length,
+			Width = bin.Width
 		};
 	}
 }

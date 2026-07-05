@@ -2,7 +2,7 @@ using Binacle.Lib.Models;
 
 namespace Binacle.Lib.Abstractions.Models;
 
-public sealed class PackedItem : ResultItem
+public sealed class PackedItem : ResultItem, IWithReadOnlyCoordinates
 {
 	internal PackedItem(string id, IWithReadOnlyDimensions dimensions, IWithReadOnlyCoordinates coordinates)
 		: this(id, dimensions, new Coordinates(coordinates))
@@ -12,8 +12,12 @@ public sealed class PackedItem : ResultItem
 	internal PackedItem(string id, IWithReadOnlyDimensions dimensions, Coordinates coordinates)
 		: base(id, dimensions)
 	{
-		this.Coordinates = coordinates;
+		this.coordinates = coordinates;
 	}
-	
-	public Coordinates Coordinates { get; }
+
+	private Coordinates coordinates;
+
+	public int X => this.coordinates.X;
+	public int Y => this.coordinates.Y;
+	public int Z => this.coordinates.Z;
 }

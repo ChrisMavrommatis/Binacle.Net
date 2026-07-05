@@ -1,8 +1,6 @@
-﻿using Binacle.Lib.Abstractions.Models;
-
 namespace Binacle.Lib.Models;
 
-public readonly struct Coordinates : IWithReadOnlyCoordinates
+internal readonly struct Coordinates : IWithReadOnlyCoordinates
 {
 
 	public static Coordinates Zero = new Coordinates(0, 0, 0);

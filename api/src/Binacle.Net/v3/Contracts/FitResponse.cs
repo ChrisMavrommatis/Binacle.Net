@@ -61,9 +61,9 @@ public class FitResponse : ResponseBase<List<BinFitResult>>
 					.Select(x => new FittedBox()
 					{
 						ID = x.ID,
-						Length = x.Dimensions.Length,
-						Width = x.Dimensions.Width,
-						Height = x.Dimensions.Height,
+						Length = x.Length,
+						Width = x.Width,
+						Height = x.Height,
 					}).ToList(),
 				UnfittedItems = operationResult.UnpackedItems?				
 					.Select(x => new UnfittedBox{

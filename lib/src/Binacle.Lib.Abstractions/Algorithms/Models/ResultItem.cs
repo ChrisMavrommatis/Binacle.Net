@@ -2,7 +2,7 @@ using Binacle.Lib.Models;
 
 namespace Binacle.Lib.Abstractions.Models;
 
-public abstract class ResultItem : IWithReadOnlyID, IWithReadOnlyVolume
+public abstract class ResultItem : IWithReadOnlyID, IWithReadOnlyVolume, IWithReadOnlyDimensions
 {
 	internal ResultItem(string id, IWithReadOnlyDimensions dimensions)
 		: this(id, new Dimensions(dimensions))
@@ -12,11 +12,15 @@ public abstract class ResultItem : IWithReadOnlyID, IWithReadOnlyVolume
 	internal ResultItem(string id, Dimensions dimensions)
 	{
 		this.ID = id;
-		this.Dimensions = dimensions;
+		this.dimensions = dimensions;
 		this.Volume = dimensions.CalculateVolume();
 	}
 
 	public string ID { get; }
-	public Dimensions Dimensions { get; }
+	private Dimensions dimensions;
 	public int Volume { get; }
+
+	public int Length => this.dimensions.Length;
+	public int Width => this.dimensions.Width;
+	public int Height => this.dimensions.Height;
 }
