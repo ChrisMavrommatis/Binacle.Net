@@ -5,6 +5,11 @@ Status: **deferred — decisions needed before any work starts**
 `results/` (renamed from `doc/`) holds benchmark reports and packing efficiency analysis.
 Currently raw markdown sitting in the repo. Goal is to surface this content somewhere useful.
 
+> **Dependent (2026-07-07):** the ViPaq Session-1 benchmark will record its size-report + BDN summary under
+> `results/` and diff each rerun against the committed baseline (protobuf as the in-run anchor). That workflow
+> assumes **Option C — stay in `results/`**. If Decision 1 picks A or B, reconcile with the "Baselining without a
+> v1/v2 pair" section in [vipaq/README.md](vipaq/README.md).
+
 ---
 
 ## Current Contents
