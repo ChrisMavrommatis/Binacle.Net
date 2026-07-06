@@ -1,6 +1,6 @@
 ---
 description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, the Dockerfile/build.sh chain, and the NoTargets content projects
-verified: 2026-07-05
+verified: 2026-07-06
 check: Solution structure, Directory.Build.props, Dockerfile, and content .proj files match the repo root
 also_update:
   - commands.md
@@ -69,6 +69,6 @@ samples use `Microsoft.Docker.Sdk` `.dcproj` files instead. None of these affect
 ## `config/` vs `samples/`
 
 `config/` is the **maintainer's local-dev tooling** — the run scripts (`api.sh`, `tests.sh`, `benchmarks.sh`,
-`build.sh`, `docs.sh`, `tmux.sh`), local compose files, `.env`/`.env.build`, and emulator state. `samples/` are
+`build.sh`, `agents-index.sh`, `tmux.sh`), local compose files, `.env`/`.env.build`, and emulator state. `samples/` are
 **user-facing deployment starting points** to copy and run the published image. See [commands.md](commands.md) for
 the scripts and [samples](samples/README.md) for the deployment examples.

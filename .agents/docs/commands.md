@@ -1,6 +1,6 @@
 ---
 description: How to run the API, tests, benchmarks, and build the Docker image
-verified: 2026-07-05
+verified: 2026-07-06
 check: Aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
 ---
 
@@ -55,14 +55,15 @@ commented out in the file.)
 To build the API image locally and run it with all modules on, use `./config/build.sh` — it publishes, builds
 `binacle-net:local`, and brings up `config/docker-compose.build.yml` (the local image + azurite + aspire).
 
-## Regenerate the agent-docs index
+## Regenerate the agent indexes
 
 ```bash
-./config/docs.sh
+./config/agents-index.sh
 ```
 
-Rewrites `.agents/docs/_index.md` from each doc's `description:` frontmatter. Run it after adding, renaming, or
-re-describing any `.agents/docs/*.md` file.
+Rewrites the `_index.md` manifest for `.agents/docs`, `.agents/plans`, and `.agents/memory` (grouped by area).
+Each entry's description comes from the file's `description:` frontmatter, falling back to its first heading. Run it
+after adding, renaming, or re-describing any `.agents/{docs,plans,memory}/*.md` file.
 
 ## Dev session (tmux)
 

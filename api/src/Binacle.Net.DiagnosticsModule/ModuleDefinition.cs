@@ -138,7 +138,7 @@ public static class ModuleDefinition
 		if (packingLogsOptionsIsEnabled)
 		{
 			builder.Services
-				.AddOptionsBasedPackingLogProcessor(optionsSelector: options => options.Packing!);
+				.AddOptionsBasedPackingLogProcessor();
 		}
 
 		// Health Checks

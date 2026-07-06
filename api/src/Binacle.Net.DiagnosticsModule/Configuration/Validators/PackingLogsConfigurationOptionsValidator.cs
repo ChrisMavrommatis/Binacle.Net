@@ -1,4 +1,4 @@
-﻿using Binacle.Net.DiagnosticsModule.Configuration.Models;
+using Binacle.Net.DiagnosticsModule.Configuration.Models;
 using FluentValidation;
 
 namespace Binacle.Net.DiagnosticsModule.Configuration.Validators;
@@ -9,29 +9,12 @@ internal class PackingLogsConfigurationOptionsValidator : AbstractValidator<Pack
 	{
 		When(x => x.Enabled, () =>
 		{
-			RuleFor(x => x.Fitting)
-				.NotNull()
-				.ChildRules(x => x.Include(new PackingLogOptionsValidator()));
-
-			RuleFor(x => x.Packing)
-				.NotNull()
-				.ChildRules(x => x.Include(new PackingLogOptionsValidator()));
-		});
-	}
-}
-
-internal class PackingLogOptionsValidator : AbstractValidator<PackingLogOptions?>
-{
-	public PackingLogOptionsValidator()
-	{
-		When(x => x is not null, () =>
-		{
-			RuleFor(x => x!.Path).NotNull().NotEmpty();
-			RuleFor(x => x!.FileName)
+			RuleFor(x => x.Path).NotNull().NotEmpty();
+			RuleFor(x => x.FileName)
 				.NotNull()
 				.NotEmpty()
 				.Must(x => x!.Contains("{0}"));
-			RuleFor(x => x!.DateFormat)
+			RuleFor(x => x.DateFormat)
 				.NotNull()
 				.NotEmpty()
 				.Must(x => BeValidDateFormat(x!));

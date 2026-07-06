@@ -177,15 +177,13 @@ Registration: `AddOptionsBasedPackingLogProcessor(optionsSelector)` (Diagnostics
 
 ### Config
 
-The JSON defines two blocks, `Fitting` and `Packing`, but only **`Packing`** is currently wired — fit and pack
-both flow through that one channel and land in `data/pack-logs/packing/`. `Fitting` is presently unused.
+Flat — `PackingLogs` has `Enabled`, `Path` (default `data/pack-logs/`), `FileName` (default `{0}.ndjson`),
+`DateFormat` (default `yyyyMMdd`), `ChannelLimit`. Both fit and pack flow through the one channel and land there.
+`{0}` is replaced by the date.
 
-| Block | Default path | Default filename |
-|---|---|---|
-| `Packing` (wired) | `data/pack-logs/packing/` | `{0}.ndjson` |
-| `Fitting` (unused) | `data/pack-logs/fitting/` | `{0}.ndjson` |
-
-`{0}` is replaced by the date according to `DateFormat` (default `yyyyMMdd`).
+(Historic note: the config once had nested `Fitting` + `Packing` blocks; `Fitting` was dropped in the Jan 2026
+algorithm unification, then the config was flattened to a single set and the path moved from `pack-logs/packing/`
+to `pack-logs/`. If per-operation log files are wanted again, split by the request's operation type.)
 
 `ChannelLimit`:
 - `0` or absent — unbounded; limited only by available memory.

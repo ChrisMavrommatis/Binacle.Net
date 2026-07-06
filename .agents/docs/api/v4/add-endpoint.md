@@ -1,6 +1,6 @@
 ---
 description: Step-by-step guide for adding a new v4 endpoint
-verified: 2026-06-10
+verified: 2026-07-06
 check: Code template matches a real v4 endpoint file and compiles
 also_update:
   - api/v4/README.md
@@ -81,6 +81,9 @@ internal class MyEndpoint : IGroupedEndpoint<ApiV4EndpointGroup>
 > (all `fit` and `pack` routes, including their preset variants). Read-only list endpoints do **not** get it —
 > e.g. the live `GET /api/v4/presets` is not rate-limited (no `429` in its OpenAPI responses). It's safe to
 > include unconditionally where it does belong: it's a no-op when ServiceModule is off.
+
+> **CORS:** add `.RequireCors(CorsPolicy.CoreApi)` where CORS protection is needed. Check existing endpoints in the
+> same group for the expected pattern before deciding.
 
 ### 3. Create the response type (if new)
 

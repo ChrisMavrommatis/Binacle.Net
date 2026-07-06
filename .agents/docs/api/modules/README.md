@@ -1,6 +1,6 @@
 ---
 description: Optional module system — feature flags, structure, available modules
-verified: 2026-05-23
+verified: 2026-07-06
 check: Module list and feature flags match Feature.Manager source
 also_update:
   - api/README.md
@@ -36,6 +36,9 @@ public static void UseXModule(this WebApplication app) { ... }
 
 `AddXModule` handles: config, DI, validators, OpenAPI docs.
 `UseXModule` wires up middleware and endpoints.
+
+If you add a new module, create its own `IModuleMarker` in that module's assembly — it's the marker used for
+endpoint registration.
 
 ## Available Modules
 

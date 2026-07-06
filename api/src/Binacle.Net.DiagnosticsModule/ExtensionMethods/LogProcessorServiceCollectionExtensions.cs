@@ -10,34 +10,29 @@ namespace Binacle.Net.DiagnosticsModule.ExtensionMethods;
 
 internal static class LogProcessorServiceCollectionExtensions
 {
-	// Reads the packing-logs config and registers the generic processor for the packing request/entry. Fit and pack
-	// both flow through the one channel; which log file they land in is chosen by optionsSelector.
-	public static void AddOptionsBasedPackingLogProcessor(
-		this IServiceCollection services,
-		Func<PackingLogsConfigurationOptions, PackingLogOptions> optionsSelector
-	)
+	// Reads the (flat) packing-logs config and registers the generic processor for the packing request/entry.
+	// Fit and pack both flow through the one channel.
+	public static void AddOptionsBasedPackingLogProcessor(this IServiceCollection services)
 	{
 		services.AddLogProcessor<AlgorithmOperationLogChannelRequest, PackingLogEntry>(
 			optionsFactory: sp =>
 			{
-				var options = sp.GetRequiredService<IOptions<PackingLogsConfigurationOptions>>();
-				var logOptions = optionsSelector(options.Value);
+				var options = sp.GetRequiredService<IOptions<PackingLogsConfigurationOptions>>().Value;
 
 				return new LogsProcessorOptions<AlgorithmOperationLogChannelRequest>
 				{
-					Path = logOptions.Path!,
-					FileNameFormat = logOptions.FileName!,
-					DateFormat = logOptions.DateFormat!,
+					Path = options.Path!,
+					FileNameFormat = options.FileName!,
+					DateFormat = options.DateFormat!,
 				};
 			},
 			channelFactory: sp =>
 			{
-				var options = sp.GetRequiredService<IOptions<PackingLogsConfigurationOptions>>();
-				var logOptions = optionsSelector(options.Value);
-				if (logOptions.ChannelLimit is > 0)
+				var options = sp.GetRequiredService<IOptions<PackingLogsConfigurationOptions>>().Value;
+				if (options.ChannelLimit is > 0)
 				{
 					return Channel.CreateBounded<AlgorithmOperationLogChannelRequest>(
-						new BoundedChannelOptions(logOptions.ChannelLimit.Value)
+						new BoundedChannelOptions(options.ChannelLimit.Value)
 						{
 							FullMode = BoundedChannelFullMode.DropWrite,
 							SingleReader = true,

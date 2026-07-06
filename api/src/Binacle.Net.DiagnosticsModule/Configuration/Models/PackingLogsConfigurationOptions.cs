@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Kernel.Configuration.Models;
+using Binacle.Net.Kernel.Configuration.Models;
 
 namespace Binacle.Net.DiagnosticsModule.Configuration.Models;
 
@@ -9,15 +9,8 @@ internal class PackingLogsConfigurationOptions : IConfigurationOptions
 	public static bool Optional => false;
 	public static bool ReloadOnChange => true;
 	public static string GetEnvironmentFilePath(string environment) => $"DiagnosticsModule/PackingLogs.{environment}.json";
-	
+
 	public bool Enabled { get; set; }
-	public PackingLogOptions? Fitting { get; set; }
-	public PackingLogOptions? Packing { get; set; }
-
-}
-
-internal class PackingLogOptions
-{
 	public string? Path { get; set; }
 	public string? FileName { get; set; }
 	public string? DateFormat { get; set; }
