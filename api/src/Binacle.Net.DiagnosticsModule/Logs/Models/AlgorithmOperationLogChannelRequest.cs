@@ -14,10 +14,6 @@ public class AlgorithmOperationLogChannelRequest : ILogEntryConvertible<PackingL
 	public ILogParametersProvider? Parameters { get; init; }
 	public required IDictionary<string, OperationResult> Results { get; init; }
 
-	// Future attribution hook. The operation timestamp is stamped by the processor (its TimeProvider), not here —
-	// the request thread captures no clock.
-	public string? UserId { get; init; }
-
 	internal AlgorithmOperationLogChannelRequest()
 	{
 	}
@@ -52,7 +48,6 @@ public class AlgorithmOperationLogChannelRequest : ILogEntryConvertible<PackingL
 		return new PackingLogEntry
 		{
 			Timestamp = timestamp,
-			UserId = this.UserId,
 			Parameters = this.Parameters?.ToLogParameters(),
 			Bins = MapCompact(this.Bins, bin => CompactNotationFormatter.FormatDimensions(bin)),
 			Items = MapCompact(this.Items, item => CompactNotationFormatter.FormatDimensionsAndQuantity(item)),
@@ -102,9 +97,6 @@ public class AlgorithmOperationLogChannelRequest : ILogEntryConvertible<PackingL
 public sealed record PackingLogEntry
 {
 	public required DateTimeOffset Timestamp { get; init; }
-
-	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-	public string? UserId { get; init; }
 
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public IReadOnlyList<string>? Parameters { get; init; }

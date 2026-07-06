@@ -2,21 +2,11 @@ using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.TestsKernel.Models;
 
-// [Migrate-Review] geometry migration — review the ctor overloads (IWithReadOnlyDimensions vs
-// Binacle.Geometry.IWithDimensions<int>) for redundancy (see .agents/plans/shared-geometry-extraction.md).
 public sealed class TestBin : IWithID, IWithDimensions
 {
 	public TestBin()
 	{
 		this.ID = string.Empty;
-	}
-
-	public TestBin(string id, IWithReadOnlyDimensions item)
-	{
-		this.ID = id;
-		this.Length = item.Length;
-		this.Width = item.Width;
-		this.Height = item.Height;
 	}
 
 	public TestBin(string id, Binacle.Geometry.IWithDimensions<int> dimensions)

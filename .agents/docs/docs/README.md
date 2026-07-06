@@ -1,6 +1,6 @@
 ---
 description: Jekyll documentation site at docs/ — versioned API docs with Swagger UI embed.
-verified: 2026-05-23
+verified: 2026-07-06
 check: Collections, versions, and plugin list match docs/_config.yml and docs/_plugins/
 ---
 
@@ -43,7 +43,9 @@ so links stay correct across versions.
 
 Webpack bundles `docs/_js/main.js` → `docs/js/main.js`.
 
-Vendor libs bundled in `docs/lib/`:
-- Alpine.js — reactive UI
-- BeerCSS + material-dynamic-colors — theming
-- Swagger UI — embedded OpenAPI explorer in the docs
+Vendor libs the docs site loads:
+- BeerCSS — theming (`/lib/beercss/`, via `docs/_data/includes.yml`)
+- Swagger UI — embedded OpenAPI explorer, loaded in the `versions/swagger.html` layout
+
+Note: docs does **not** use Alpine.js or material-dynamic-colors (neither is referenced anywhere under
+`docs/`). Don't assume they're available here.

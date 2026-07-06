@@ -14,10 +14,10 @@ public class DimensionsAndQuantity<T> : IWithDimensions<T>
 	public T Height { get; set; }
 	public int Quantity { get; set; }
 
-	// [Migrate-Review] No production consumer — only exercised by CompactNotation unit tests. Wire it to a real
-	// caller or drop it (with its 2 tests). See .agents/plans/shared-geometry-extraction.md.
-	// Expands into Quantity standalone dimensions (mirrors how ParseItems expands a placed item's "[Q]").
-	public IReadOnlyList<Dimensions<T>> Flatten()
+	// Test-only (no production consumer), so internal rather than public — visible to the CompactNotation unit
+	// tests, which exercise the expand behavior. Expands into Quantity standalone dimensions (mirrors how
+	// ParseItems expands a placed item's "[Q]").
+	internal IReadOnlyList<Dimensions<T>> Flatten()
 	{
 		var result = new List<Dimensions<T>>(this.Quantity);
 		for (var index = 0; index < this.Quantity; index++)

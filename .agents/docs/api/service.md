@@ -1,6 +1,6 @@
 ---
 description: IBinacleService — method reference for SingleBinAsync, MultipleBinsAsync, SmallestBinAsync; return types, call pattern, and algorithm selection
-verified: 2026-06-10
+verified: 2026-07-06
 check: Method signatures match IBinacleService in api/src/Binacle.Net/Services/BinacleService.cs
 ---
 
@@ -17,13 +17,17 @@ Every method is **generic** and **async**. The full shape is:
 ```csharp
 ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
     Algorithm algorithm, TBin bin, List<TBox> items, TParams parameters)
-    where TBin : class, IWithID, IWithReadOnlyDimensions
-    where TBox : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
-    where TParams : class, IOperationParameters, ILogConvertible;
+    where TBin : class, IWithID, IIdentifiableBin
+    where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
+    where TParams : class, IOperationParameters, ILogParametersProvider;
 ```
 
 The same generic signature and constraints apply to every method below (the `MultipleBinsAsync` overloads
 return `ValueTask<IDictionary<string, OperationResult>>`). The table simplifies argument names for readability.
+
+`IIdentifiableBin` / `IIdentifiableItem` (in `Binacle.Lib.Abstractions.Models`) are the read-only markers the
+packing log reads through — see [Models](../lib/models.md). `ILogParametersProvider` lets the params render
+themselves into the log. All three exist so the service output can flow into the log channel with no copy.
 
 | Method | Returns | What it does |
 |---|---|---|

@@ -1,6 +1,6 @@
 ---
 description: Lib model types and IWith* interfaces — Bin, Item, packed/unpacked results, and the constraints used in generic type parameters
-verified: 2026-07-05
+verified: 2026-07-06
 check: Type and interface names match lib/src/Binacle.Lib.Abstractions/; generic geometry interfaces match shared/src/Binacle.Geometry/
 also_update:
   - api/v4/contracts.md
@@ -86,6 +86,20 @@ they never moved. Volume is still generic over `System.Numerics.INumber<T>`.
 | `IWithReadOnlyID` | `Models/IWithReadOnlyID.cs` | `string ID { get; }` |
 | `IWithVolume` | `Models/IWithVolume.cs` | `int Volume { get; set; }` (non-generic over `IWithVolume<T> : INumber<T>`) |
 | `IWithReadOnlyVolume` | `Models/IWithReadOnlyVolume.cs` | `int Volume { get; }` |
+
+### Identifiable markers — read-only composites
+
+`Binacle.Lib.Abstractions.Models` also defines two read-only composite markers, used where a consumer reads only
+id + geometry (chiefly the packing log — a `List<concrete>` hands off with no copy):
+
+| Interface | File | Composes |
+|---|---|---|
+| `IIdentifiableBin` | `Models/IIdentifiableBin.cs` | `IWithReadOnlyID`, `IWithReadOnlyDimensions` |
+| `IIdentifiableItem` | `Models/IIdentifiableItem.cs` | `IWithReadOnlyID`, `IWithReadOnlyDimensions`, `IWithReadOnlyQuantity` |
+
+The v3/v4 `Bin`/`Box` contracts and the preset `BinOption` implement these (on top of `IWithID` /
+`IWithDimensions` / `IWithQuantity`), and `IBinacleService`'s generic constraints require them — see
+[service.md](../api/service.md).
 
 ## Value types
 

@@ -1,6 +1,6 @@
 ---
 description: Binacle.Net.Kernel — shared patterns used by all API projects and modules
-verified: 2026-06-10
+verified: 2026-07-06
 check: IApiMarker and registration helpers match api/src/Binacle.Net.Kernel/
 also_update:
   - api/endpoints.md
@@ -147,10 +147,26 @@ Timed operations (in `Kernel/Logging`):
   `message` on `Binacle.Net.Diagnostics.ActivitySource`. One `using` gives both a timed log and a span.
 - `logger.EnrichState(...)` — wraps a dictionary / string set into a `BeginScope` for structured-log enrichment.
 
-Packing-log channel (producer side; the consumer/`LogsProcessor` is in [modules/diagnostics.md](modules/diagnostics.md)):
+## Logs (generic pipeline)
 
-- `AlgorithmOperationLogChannelRequest` is the channel message — built via its static `From<TBin,TItem,TParams>(...)`
-  (`TParams : ILogConvertible`). `ILogConvertible.ConvertToLogObject()` lets parameters render themselves for logs.
-- `BinacleService` is the live producer: it injects `IOptionalDependency<Channel<AlgorithmOperationLogChannelRequest>>`
-  and writes via `WriteToChannelAsync(...)`, which **no-ops when the channel isn't registered** (i.e. when the
-  DiagnosticsModule packing-log feature is off). Register the processor with `AddLogProcessor<TChannelRequest>(...)`.
+`Binacle.Net.Kernel/Logs/` holds a **generic, feature-agnostic** log pipeline. It has no packing types and no
+reference to `Binacle.CompactNotation` — a feature plugs in its own request and entry types.
+
+- `ILogEntryConvertible<TLogEntry>` (`Logs/Models`) — a channel request implements it:
+  `TLogEntry ToLogEntry(DateTimeOffset timestamp)`.
+- `LogsProcessor<TRequest, TLog>` (`Logs/Services`, `where TRequest : ILogEntryConvertible<TLog>`) — a generic
+  `BackgroundService`. Drains a `Channel<TRequest>`, calls `request.ToLogEntry(timeProvider.GetUtcNow())`,
+  JSON-serialises the entry, and appends one line to a dated file. Knows nothing about any feature's types.
+- `LogsProcessorOptions<TChannelRequest>` (`Logs/Models`) — `Path` / `FileNameFormat` / `DateFormat` +
+  `MaxConsecutiveAllowedExceptions` (default 10). The type param only keys the DI registration.
+- `ILogParametersProvider` (`Logs/Models`) — `IReadOnlyList<string> ToLogParameters()`. A request's parameter type
+  implements it so the background converter can project loose parameter strings without seeing the API's enums.
+- `AddLogProcessor<TChannelRequest, TLog>(optionsFactory, channelFactory)` (`Logs/ExtensionMethods`, namespace
+  `Binacle.Net`) — registers the channel, options, and hosted processor. The owning feature supplies the types + factories.
+
+The concrete packing feature (the request/entry types and their registration) lives in DiagnosticsModule — see
+[modules/diagnostics.md](modules/diagnostics.md).
+
+`BinacleService` is the live producer: it injects `IOptionalDependency<Channel<AlgorithmOperationLogChannelRequest>>`
+and writes via `WriteToChannelAsync(...)`, which **no-ops when the channel isn't registered** (i.e. when the
+DiagnosticsModule packing-log feature is off).

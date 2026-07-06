@@ -28,7 +28,6 @@ internal static class LogProcessorServiceCollectionExtensions
 					Path = logOptions.Path!,
 					FileNameFormat = logOptions.FileName!,
 					DateFormat = logOptions.DateFormat!,
-					MaxConsecutiveAllowedExceptions = 10
 				};
 			},
 			channelFactory: sp =>

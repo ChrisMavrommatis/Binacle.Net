@@ -44,6 +44,7 @@ public class DetectAndRoundTripTests
 	{
 		var item = CompactNotationParser.ParseItem<long>(compact);
 
-		CompactNotationFormatter.Format<long>(item).ShouldBe(compact);
+		$"{CompactNotationFormatter.FormatDimensions(item)} {CompactNotationFormatter.FormatCoordinates(item)}"
+			.ShouldBe(compact);
 	}
 }

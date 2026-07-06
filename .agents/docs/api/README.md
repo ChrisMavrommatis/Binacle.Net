@@ -1,6 +1,6 @@
 ---
 description: Index for API slice docs — endpoints, contracts, service, kernel, presets, and module docs (Diagnostics, ServiceModule, UIModule)
-verified: 2026-06-10
+verified: 2026-07-06
 check: Startup sequence matches Program.cs; dep map matches actual project references
 also_update:
   - api/modules/README.md
@@ -35,14 +35,20 @@ if UI_MODULE      → AddUIModule()
 if SWAGGER_UI     → register Swagger OpenAPI docs
 if SCALAR_UI      → register Scalar OpenAPI docs
 ---
+UseHttpsRedirection() / UseExceptionHandler() / UseCors()
+if SWAGGER_UI or SCALAR_UI → MapOpenApi()          // maps /openapi/{documentName}.json
+    if SWAGGER_UI → UseSwaggerUI()                 // these run BEFORE the module Use* calls
+    if SCALAR_UI  → MapScalarApiReference()
 UseDiagnosticsModule()
 if SERVICE_MODULE → UseServiceModule()   // auth, authz, rate limiter, v0 endpoints
 if UI_MODULE      → UseUIModule()
-if SWAGGER_UI     → UseSwaggerUI()
-if SCALAR_UI      → UseScalarApiReference()
 RegisterEndpointsFromAssemblyContaining<IApiMarker>()   // v3, v4 endpoints
 RunStartupTasksAsync()
 ```
+
+Note: Scalar is wired with `app.MapScalarApiReference(...)` (not a `Use*` method), and the
+Swagger/Scalar UI block is registered **before** `UseDiagnosticsModule()` and the optional-module
+`Use*` calls — not after them.
 
 ## Project Dependency Map
 

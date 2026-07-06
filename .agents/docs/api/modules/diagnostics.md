@@ -1,6 +1,6 @@
 ---
 description: DiagnosticsModule — always-on logging, OpenTelemetry, health checks, and packing logs
-verified: 2026-05-23
+verified: 2026-07-06
 check: Env var names match DiagnosticsModule config handling
 also_update:
   - api/configuration.md
@@ -42,7 +42,9 @@ Exporters: OTLP and/or Azure Monitor — each enabled independently via config.
 When enabled: registers a channel-based log processor for algorithm operation logs.
 `BinacleService` writes to this channel via `IOptionalDependency<Channel<...>>` — it's a no-op when disabled.
 
-**Health checks** — always registered. Includes `SystemHealthCheck` tagged `"Core"`.
+**Health checks** — always registered. Includes the `SystemHealthCheck` class, registered under the
+name `"System"` with tag `"Core"` (failure status `Unhealthy`). Use the name `"System"` — not the class
+name — in config such as `RestrictedChecks`.
 Path and enabled state are configured via `HealthCheckConfigurationOptions`.
 
 ## What UseDiagnosticsModule wires
@@ -109,9 +111,13 @@ Default: **disabled**. Default path: `/_health`.
 ]
 ```
 
-`RestrictedChecks` lists check names to skip. Example: `["Database"]`.
+`RestrictedChecks` is an **allow-list**, not a skip-list. When empty (the default), all checks run.
+When non-empty, ONLY the checks whose name is in the list run — everything else is filtered out.
+Example: `["Database"]` means "run only the Database check", not "skip Database".
+Match on the registered name (e.g. `"System"`, `"Database"`), not the class name.
 
-Built-in checks:
+Built-in checks (by registered name):
+- `System` — always present (the `SystemHealthCheck` class, tag `"Core"`).
 - `Database` — available only when `ServiceModule` is active.
 
 ## OpenTelemetry
@@ -144,20 +150,44 @@ of additional meters/sources to include.
 
 ## Packing logs
 
-<!-- sourced from docs site; verify against current code if behaviour changes -->
-
 Default: **disabled**. Format: NDJSON. Config file: `Config_Files/DiagnosticsModule/PackingLogs.json`.
 
-Two channels, one per operation type:
+### How it's wired
 
-| Channel | Default path | Default filename |
+The **generic** log pipeline lives in the Kernel — `ILogEntryConvertible<TLog>`, `LogsProcessor<TRequest, TLog>`,
+`LogsProcessorOptions`, and `AddLogProcessor<TChannelRequest, TLog>` (see
+[kernel.md](../kernel.md#logs-generic-pipeline)). The **concrete** packing feature lives here, in one file,
+`DiagnosticsModule/Logs/Models/AlgorithmOperationLogChannelRequest.cs`:
+
+- `AlgorithmOperationLogChannelRequest : ILogEntryConvertible<PackingLogEntry>` — the channel message. Carries
+  `Bins` (`IReadOnlyCollection<IIdentifiableBin>`), `Items` (`IReadOnlyCollection<IIdentifiableItem>`),
+  `Parameters` (`ILogParametersProvider?`), and `Results` (`IDictionary<string, OperationResult>`). Its static
+  `From<TBin, TItem, TParams>(...)` builds it with **no copy** (covariant read-only collections); `ToLogEntry(timestamp)`
+  maps it to a `PackingLogEntry` in the background — the request thread only enqueues references. No `UserId`
+  (per-user logging is a ServiceModule concern).
+- `PackingLogEntry` (record) — the JSON line: `Timestamp`, `Parameters` (`IReadOnlyList<string>?`, omitted when
+  null), `Bins`/`Items` (compact strings keyed by id, e.g. `"small-box" -> "10x10x10"`), and `Results`
+  (`IReadOnlyDictionary<string, LogResult>`). Compact strings come from `CompactNotationFormatter`.
+- `LogResult` (record) — one algorithm's result: `Status`, `PackedBinVolumePercentage`,
+  `PackedItemsVolumePercentage`, and `PackedItems`/`UnpackedItems` (compact strings grouped by id).
+
+Registration: `AddOptionsBasedPackingLogProcessor(optionsSelector)` (DiagnosticsModule
+`ExtensionMethods/LogProcessorServiceCollectionExtensions.cs`) reads the config and calls the Kernel's
+`AddLogProcessor<AlgorithmOperationLogChannelRequest, PackingLogEntry>`. Gated by `PackingLogs.Enabled`.
+
+### Config
+
+The JSON defines two blocks, `Fitting` and `Packing`, but only **`Packing`** is currently wired — fit and pack
+both flow through that one channel and land in `data/pack-logs/packing/`. `Fitting` is presently unused.
+
+| Block | Default path | Default filename |
 |---|---|---|
-| `Fitting` | `data/pack-logs/fitting/` | `{0}.ndjson` |
-| `Packing` | `data/pack-logs/packing/` | `{0}.ndjson` |
+| `Packing` (wired) | `data/pack-logs/packing/` | `{0}.ndjson` |
+| `Fitting` (unused) | `data/pack-logs/fitting/` | `{0}.ndjson` |
 
 `{0}` is replaced by the date according to `DateFormat` (default `yyyyMMdd`).
 
 `ChannelLimit`:
-- `0` — unbounded; limited only by available memory.
-- `> 0` — queue cap. If the writer falls behind, newest log entries are dropped to prevent overload.
-  Default is `100`.
+- `0` or absent — unbounded; limited only by available memory.
+- `> 0` — bounded queue with drop-newest (`DropWrite`). If the writer falls behind, newest entries are dropped
+  to prevent overload. Default is `100`.

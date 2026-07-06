@@ -1,6 +1,6 @@
 ---
 description: Jekyll marketing/landing site at web/ — product home, apps listing, and interactive packing demo.
-verified: 2026-07-05
+verified: 2026-07-06
 check: Collections, JS bundles, and plugin list match web/_config.yml and web/js/
 also_update:
   - packages/README.md
@@ -44,5 +44,7 @@ Same as the docs site: `jekyll-gtm`, `jekyll-filters`, `jekyll-tidy` (no `VLink`
 
 ## Vendor Libs
 
-`web/lib/`: Alpine.js, BeerCSS, material-dynamic-colors, Swagger UI.
-Three.js is bundled via npm into the webpack output.
+`web/lib/` ships only **BeerCSS** (`/lib/beercss/`). material-dynamic-colors is available but commented
+out in `web/_data/includes.yml` (only load it when the app needs runtime theme switching).
+The web site does **not** use Swagger UI.
+Alpine.js and Three.js are npm dependencies bundled by webpack (into `vendors.js`), not `web/lib/` vendors.
