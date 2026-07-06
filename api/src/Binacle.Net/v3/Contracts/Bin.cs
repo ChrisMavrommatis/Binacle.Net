@@ -6,7 +6,8 @@ namespace Binacle.Net.v3.Contracts;
 
 public class Bin :
 	IWithID,
-	IWithDimensions
+	IWithDimensions,
+	IIdentifiableBin
 {
 	public required string ID { get; set; }
 	public required int Length { get; set; }

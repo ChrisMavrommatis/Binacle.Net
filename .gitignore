@@ -23,8 +23,8 @@ obj/
 node_modules
 
 # Project Specific
-logs/
-pack-logs/
+data/logs/
+data/pack-logs/
 packing-logs/
 BenchmarkDotNet.Artifacts
 PerformanceTestsArtifacts

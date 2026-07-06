@@ -17,27 +17,17 @@ public interface IWithPackingParameters
 }
 
 public class PackRequestParameters : 
-	IWithAlgorithm, 
-	IOperationParameters, 
-	ILogConvertible
+	IWithAlgorithm,
+	IOperationParameters,
+	ILogParametersProvider
 {
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
 	public required Algorithm? Algorithm { get; set; }
 
 	public bool IncludeViPaqData { get; set; } = false;
-	
-	public object ConvertToLogObject()
-	{
-		// Algorithm Is Always added
-		var paramsCount = 2;
 
-		var parameters = new string[paramsCount];
-
-		parameters[--paramsCount] = this.Algorithm.ToFastString();
-		parameters[--paramsCount] = this.Operation.ToFastString();
-		
-		return parameters;
-	}
+	public IReadOnlyList<string> ToLogParameters()
+		=> [this.Operation.ToFastString(), this.Algorithm.ToFastString()];
 
 	[JsonIgnore]
 	public AlgorithmOperation Operation => AlgorithmOperation.Packing;

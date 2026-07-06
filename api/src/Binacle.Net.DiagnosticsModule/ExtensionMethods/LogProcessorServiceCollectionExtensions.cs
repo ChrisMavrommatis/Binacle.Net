@@ -1,6 +1,8 @@
-﻿using System.Threading.Channels;
+using System.Threading.Channels;
+using Binacle.Net;
 using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.DiagnosticsModule.Configuration.Models;
+using Binacle.Net.DiagnosticsModule.Logs.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -8,49 +10,50 @@ namespace Binacle.Net.DiagnosticsModule.ExtensionMethods;
 
 internal static class LogProcessorServiceCollectionExtensions
 {
-	public static void AddOptionsBasedLogProcessor<TChannelRequest>(
+	// Reads the packing-logs config and registers the generic processor for the packing request/entry. Fit and pack
+	// both flow through the one channel; which log file they land in is chosen by optionsSelector.
+	public static void AddOptionsBasedPackingLogProcessor(
 		this IServiceCollection services,
-		Func<PackingLogsConfigurationOptions, PackingLogOptions> optionsSelector,
-		Func<TChannelRequest, Dictionary<string, object>> logFormatter
+		Func<PackingLogsConfigurationOptions, PackingLogOptions> optionsSelector
 	)
 	{
-		services
-			.AddLogProcessor<TChannelRequest>(
-				optionsFactory: sp =>
-				{
-					var options = sp.GetRequiredService<IOptions<PackingLogsConfigurationOptions>>();
-					var logOptions = optionsSelector(options.Value);
+		services.AddLogProcessor<AlgorithmOperationLogChannelRequest, PackingLogEntry>(
+			optionsFactory: sp =>
+			{
+				var options = sp.GetRequiredService<IOptions<PackingLogsConfigurationOptions>>();
+				var logOptions = optionsSelector(options.Value);
 
-					return new LogsProcessorOptions<TChannelRequest>()
-					{
-						Path = logOptions.Path!,
-						FileNameFormat = logOptions.FileName!,
-						DateFormat = logOptions.DateFormat!,
-						LogFormatter = logFormatter,
-						MaxConsecutiveAllowedExceptions = 10
-					};
-				},
-				channelFactory: sp =>
+				return new LogsProcessorOptions<AlgorithmOperationLogChannelRequest>
 				{
-					var options = sp.GetRequiredService<IOptions<PackingLogsConfigurationOptions>>();
-					var logOptions = optionsSelector(options.Value);
-					if (logOptions.ChannelLimit is > 0)
-					{
-						return Channel.CreateBounded<TChannelRequest>(new BoundedChannelOptions(logOptions.ChannelLimit.Value)
+					Path = logOptions.Path!,
+					FileNameFormat = logOptions.FileName!,
+					DateFormat = logOptions.DateFormat!,
+					MaxConsecutiveAllowedExceptions = 10
+				};
+			},
+			channelFactory: sp =>
+			{
+				var options = sp.GetRequiredService<IOptions<PackingLogsConfigurationOptions>>();
+				var logOptions = optionsSelector(options.Value);
+				if (logOptions.ChannelLimit is > 0)
+				{
+					return Channel.CreateBounded<AlgorithmOperationLogChannelRequest>(
+						new BoundedChannelOptions(logOptions.ChannelLimit.Value)
 						{
 							FullMode = BoundedChannelFullMode.DropWrite,
 							SingleReader = true,
 							SingleWriter = false,
 							AllowSynchronousContinuations = false
 						});
-					}
+				}
 
-					return Channel.CreateUnbounded<TChannelRequest>(new UnboundedChannelOptions
+				return Channel.CreateUnbounded<AlgorithmOperationLogChannelRequest>(
+					new UnboundedChannelOptions
 					{
 						SingleReader = true,
 						SingleWriter = false,
 						AllowSynchronousContinuations = false
 					});
-				});
+			});
 	}
 }

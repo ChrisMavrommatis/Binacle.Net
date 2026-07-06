@@ -59,7 +59,7 @@ public class BinPresetOption
 }
 
 
-public class BinOption : IWithID, IWithDimensions
+public class BinOption : IWithID, IWithDimensions, IIdentifiableBin
 {
 	public string ID { get; set; } = string.Empty;
 	public int Length { get; set; }

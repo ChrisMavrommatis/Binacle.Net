@@ -1,4 +1,4 @@
-﻿using Binacle.Net.DiagnosticsModule.ExtensionMethods;
+using Binacle.Net.DiagnosticsModule.ExtensionMethods;
 using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.DiagnosticsModule.Configuration.Models;
 using Binacle.Net.DiagnosticsModule.Middleware;
@@ -138,9 +138,7 @@ public static class ModuleDefinition
 		if (packingLogsOptionsIsEnabled)
 		{
 			builder.Services
-				.AddOptionsBasedLogProcessor<AlgorithmOperationLogChannelRequest>(
-					optionsSelector: options => options.Packing!,
-					logFormatter: request => request.ConvertToLogObject());
+				.AddOptionsBasedPackingLogProcessor(optionsSelector: options => options.Packing!);
 		}
 
 		// Health Checks

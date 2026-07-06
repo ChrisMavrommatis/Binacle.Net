@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Threading.Channels;
 using Binacle.Net.Kernel.Logs.Models;
 using Microsoft.Extensions.Hosting;
@@ -6,20 +6,24 @@ using Microsoft.Extensions.Logging;
 
 namespace Binacle.Net.Kernel.Logs.Services;
 
-internal class LogsProcessor<TRequest> : BackgroundService
+// Generic log processor: drains a channel of requests and appends one JSON line per request to a dated file.
+// Each request maps itself to its log entry (ILogEntryConvertible) in the background — the request thread only
+// enqueued raw references. Knows nothing about any specific feature's request or entry types.
+internal class LogsProcessor<TRequest, TLog> : BackgroundService
+	where TRequest : ILogEntryConvertible<TLog>
 {
 	private readonly Channel<TRequest> channel;
 	private readonly IHostEnvironment environment;
 	private readonly TimeProvider timeProvider;
 	private readonly LogsProcessorOptions<TRequest> options;
-	private readonly ILogger<LogsProcessor<TRequest>> logger;
+	private readonly ILogger<LogsProcessor<TRequest, TLog>> logger;
 
 	public LogsProcessor(
 		Channel<TRequest> channel,
 		IHostEnvironment environment,
 		TimeProvider timeProvider,
 		LogsProcessorOptions<TRequest> options,
-		ILogger<LogsProcessor<TRequest>> logger)
+		ILogger<LogsProcessor<TRequest, TLog>> logger)
 	{
 		this.channel = channel;
 		this.environment = environment;
@@ -41,7 +45,7 @@ internal class LogsProcessor<TRequest> : BackgroundService
 			try
 			{
 				var request = await this.channel.Reader.ReadAsync(stoppingToken).ConfigureAwait(false);
-				var log = this.options.LogFormatter(request);
+				var log = request.ToLogEntry(this.timeProvider.GetUtcNow());
 
 				var date = this.timeProvider.GetLocalNow();
 				var fileName = string.Format(

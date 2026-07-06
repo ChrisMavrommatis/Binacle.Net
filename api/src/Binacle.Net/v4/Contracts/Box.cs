@@ -4,7 +4,7 @@ namespace Binacle.Net.v4.Contracts;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-public class Box : IWithID, IWithDimensions, IWithQuantity
+public class Box : IWithID, IWithDimensions, IWithQuantity, IIdentifiableItem
 {
 	public required string ID { get; set; } 
 	

@@ -17,7 +17,7 @@ public interface IWithOperationParameters
 
 public class OperationParameters :
     IWithAlgorithm,
-    ILogConvertible,
+    ILogParametersProvider,
     IOperationParameters
 {
     [JsonConverter(typeof(JsonStringNullableEnumConverter))]
@@ -41,18 +41,8 @@ public class OperationParameters :
         };
     }
 
-    public object ConvertToLogObject()
-    {
-        // Algorithm Is Always added
-        var paramsCount = 2;
-
-        var parameters = new string[paramsCount];
-
-        parameters[--paramsCount] = this.AlgorithmFastString();
-        parameters[--paramsCount] = this.Operation.ToFastString();
-
-        return parameters;
-    }
+    public IReadOnlyList<string> ToLogParameters()
+        => [this.Operation.ToFastString(), this.AlgorithmFastString()];
 
     private string AlgorithmFastString()
     {
