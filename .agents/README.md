@@ -9,13 +9,20 @@ reviewable. Read this first to know where things are.
 |---|---|---|
 | `docs/` | Stable reference docs for the codebase — slices, endpoints, modules, build. | Find the topic in `docs/_index.md` (or a task in `docs/README.md`), then read that file. |
 | `plans/` | Work not yet done — designs, TODOs, migrations, deferred decisions. | Find the plan in `plans/_index.md`. Trim/delete an item once it lands. |
+| `ideas/` | Rough, unvetted ideas — no commitment, no timeline. | Find the idea in `ideas/_index.md`. Move it to `plans/` once it's picked up (`ideas/README.md` says how). |
 | `memory/` | Durable "why" with no home in a doc or plan — gotchas, settled decisions, conventions. | Scan `memory/_index.md` at session start. Add a fact only if no doc/plan fits (`memory/README.md` says how). |
 | `release-notes.md` | The ongoing "Unreleased" changelog, in the maintainer's GitHub-release format. | Append an entry whenever a change would matter to a release or an upgrading operator. |
 | `pending-actions.md` | External/manual steps that can't be done from the repo (CI vars, dashboard settings). | Add a step when a change needs action outside the code. |
 
 Nothing here is loaded into the session up front — `CLAUDE.md` only points at this file, and you open
-what you need on demand. Each of `docs/`, `plans/`, and `memory/` has a generated `_index.md` (a
-grouped manifest); regenerate all three with `config/agents-index.sh` after adding or renaming a file.
+what you need on demand. `docs/`, `plans/`, `ideas/`, and `memory/` each have a generated `_index.md` (a
+grouped manifest); regenerate them all with `config/agents-index.sh` after adding or renaming a file.
+
+**Everything is grouped by slice, mirroring the repo layout.** A slice is a top-level area of the
+codebase (`api`, `lib`, `vipaq`, `shared`, …); files that don't map to one live at the root under
+`General`. The docs, plans, and ideas for a slice sit in a folder of the same name, so an agent can open
+just the slice it's working on and skip everything else — the point is to find the relevant guidance fast,
+not to eagerly load unrelated context. Keep a new doc/plan/idea in its slice folder for the same reason.
 
 ## How the pieces differ
 

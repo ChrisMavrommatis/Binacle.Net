@@ -11,12 +11,22 @@ you need, and trim or delete it once the work lands.
 
 | File | Description |
 |---|---|
-| [packing-log-userid.md](packing-log-userid.md) | Plan: per-user packing logs (a ServiceModule concern) |
 | [results-migration.md](results-migration.md) | Results Migration Plan |
-| [shared-geometry-extraction.md](shared-geometry-extraction.md) | Binacle.Geometry — one home for the common models |
 | [todos.md](todos.md) | TODOs |
-| [uimodule-alpine-port.md](uimodule-alpine-port.md) | UIModule — Port from Blazor Reactivity to Alpine.js |
-| [v4-endpoints.md](v4-endpoints.md) | v4 API — Endpoint Buildout |
+
+## API
+
+| File | Description |
+|---|---|
+| [api/packing-log-userid.md](api/packing-log-userid.md) | Plan: per-user packing logs (a ServiceModule concern) |
+| [api/uimodule-alpine-port.md](api/uimodule-alpine-port.md) | UIModule — Port from Blazor Reactivity to Alpine.js |
+| [api/v4-endpoints.md](api/v4-endpoints.md) | v4 API — Endpoint Buildout |
+
+## Shared
+
+| File | Description |
+|---|---|
+| [shared/shared-geometry-extraction.md](shared/shared-geometry-extraction.md) | Binacle.Geometry — one home for the common models |
 
 ## ViPaq
 

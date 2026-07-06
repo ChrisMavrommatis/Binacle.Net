@@ -91,3 +91,7 @@ you need, and trim or delete it once the work lands."
 generate_index ".agents/memory" "Agent Memory Index" \
 "Every memory in \`.agents/memory/\`, grouped by area. Durable facts with no home in a doc or plan —
 conventions, decisions, gotchas. See [README.md](README.md) for when and how to add one."
+
+generate_index ".agents/ideas" "Agent Ideas Index" \
+"Every idea in \`.agents/ideas/\`, grouped by area. Ideas are rough and unvetted — read the one you need,
+and move it to \`.agents/plans/\` once it's picked up. See [README.md](README.md) for the conventions."

@@ -19,7 +19,7 @@ with its own webpack + ts-loader (`web/_js/packing_demo.js`, `web/_js/protocol_d
 `web/webpack.config.js`). `three` is bundled from web's `node_modules`, not a CDN.
 
 The `Binacle.Net.UIModule` does **not** use this package — it has its own legacy raw-JS visualizer in
-`wwwroot/js`. There is an open plan to converge them (`.agents/plans/uimodule-alpine-port.md`).
+`wwwroot/js`. There is an open plan to converge them (`.agents/plans/api/uimodule-alpine-port.md`).
 
 ## Public entry points (`index.ts`)
 

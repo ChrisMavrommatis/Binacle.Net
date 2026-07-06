@@ -5,7 +5,7 @@ reproduced and **corrected**. Every session doc points here. These came from a t
 been **removed** — the numbers and approach are recorded below, reproducible once the benchmark is rebuilt
 (session 1). Ranges are illustrative of the effects, not guarantees.
 
-## Context (owner-confirmed)
+## Context (confirmed)
 - ViPaq = **storage-first** base64 text token for a packing result (bin dims + per-item dims + coords + count).
 - Unit **mm** at finest, **cm** typical; **no fractions** (unsigned integers); values **≤ ~16M** ("millions"),
   billions never. **Coordinates ≤ the bin** (a position inside it). Base64 is the *stored* form (applied today

@@ -8,13 +8,13 @@ measured evidence (with the numbers the adversarial validator confirmed) that ev
 
 ## The decision (CONFIRMED 2026-07-05)
 Do **v2 for simplicity**. **Varint is deferred (session 7) and may never happen** — v2.0 is intentionally just
-`8/16 + reserved codes`. Owner accepts the trade with eyes open:
+`8/16 + reserved codes`. The trade is accepted with eyes open:
 - **Honest size effect of v2.0: ~0% vs today** on ≤16-bit data (8/16 = v1 there). The payoff is **a simpler format**
   (2 tiers, not 4; no `2^53` ceiling to reason about) and a **clean base** if varint is ever wanted. **Not a size
   play. Do not sell "20% smaller."**
 - The real, separate win is the **decode-via-span fix (~10× faster reads, non-breaking)** — session 2, no format
   change. That's the standout regardless of v2.
-- Owner has been told: v2.0-without-varint is change chosen for simplicity, not measured size. Proceeding anyway.
+- Note: v2.0-without-varint is a change chosen for simplicity, not measured size. Proceeding anyway.
 
 ## The worth-it gate (governs every decision from here)
 Every decision in every session — a header bit, a codec, a layout, an extra feature — must be answered with
@@ -49,7 +49,7 @@ C#/TS interop apparatus and its rules.
   session can reason, not just follow. Where a doc says "DECIDE," that's a live choice, not a settled fact.
 - **Never commit** (CLAUDE.md) — leave working-tree changes for the human. **Do not modify v3.**
 
-## Decisions to confirm (owner)
+## Decisions to confirm
 1. **16-bit cap in v2.0.** 8/16 fixed caps at 65,535; v2.0 throws above it, varint (session 7) lifts the cap later.
    Confirm nothing in production exceeds 65,535 in the chosen unit (mm → 65 m; fine for physical bins).
 2. **Compression trigger.** Recommend *try-both-keep-smaller* (smallest token, no threshold guesswork); fixed
