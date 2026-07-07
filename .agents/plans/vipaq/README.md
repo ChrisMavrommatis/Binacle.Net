@@ -11,7 +11,7 @@ self-contained: it carries the context it needs so you can reason, not just foll
 
 | # | Session | Scope | Breaking | Status |
 |---|---------|-------|----------|--------|
-| 1 | [01-benchmark-permanent.md](01-benchmark-permanent.md) | Permanent benchmark (ruler + regression guard), 8/16 only | no | ⬜ not started — **design ready** |
+| 1 | [01-benchmark-permanent.md](01-benchmark-permanent.md) | Permanent benchmark (ruler + regression guard), 8/16 only | no | 🟡 **Part 1 built** + real data via API precursor — standalone Part 2 tool deferred |
 | 2 | [02-decode-fix.md](02-decode-fix.md) | Decode-via-span fix on v1 (~10× read) | no | ⬜ not started |
 | 3 | [03-spec-v2.md](03-spec-v2.md) | Write the v2 wire spec in `PROTOCOL.md` | spec | ⬜ not started |
 | 4 | [04-implement-csharp.md](04-implement-csharp.md) | Implement v2 in C# → re-measure | yes | ⬜ not started |

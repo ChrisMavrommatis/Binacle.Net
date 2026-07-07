@@ -74,6 +74,9 @@
   </Folder>
   <Folder Name="/vipaq/test/">
     <Project Path="vipaq/test/Binacle.ViPaq.UnitTests/Binacle.ViPaq.UnitTests.csproj" />
+    <Project Path="vipaq/test/Binacle.ViPaq.TestsKernel/Binacle.ViPaq.TestsKernel.csproj" />
+    <Project Path="vipaq/test/Binacle.ViPaq.Benchmarks/Binacle.ViPaq.Benchmarks.csproj" />
+    <Project Path="vipaq/test/Binacle.ViPaq.PerformanceTests/Binacle.ViPaq.PerformanceTests.csproj" />
   </Folder>
   <Folder Name="/vipaq/tools/">
     <Project Path="vipaq/tools/Binacle.ViPaq.Generators/Binacle.ViPaq.Generators.csproj" />
@@ -84,7 +87,11 @@
   </Folder>
   <Folder Name="/shared/test/">
     <Project Path="shared/test/Binacle.CompactNotation.UnitTests/Binacle.CompactNotation.UnitTests.csproj" />
+    <Project Path="shared/test/Binacle.TestReporting/Binacle.TestReporting.csproj" />
     <Project Path="shared/test/Binacle.TestsKernel/Binacle.TestsKernel.csproj" />
+  </Folder>
+  <Folder Name="/shared/tools/">
+    <Project Path="shared/tools/Binacle.OrLibrary.Converter/Binacle.OrLibrary.Converter.csproj" />
   </Folder>
   <Folder Name="/_root/">
     <File Path=".dockerignore" />

@@ -1,5 +1,4 @@
 using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Results;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
@@ -15,12 +14,12 @@ internal class RegressionTests : ITest
 	private readonly ILogger<RegressionTests> logger;
 	private readonly TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest;
 
-	public Models.ResultFile File { get; private set; }
+	public ResultFile File { get; private set; }
 	
 	public RegressionTests(
 		string title,
 		string description,
-		Models.ResultFile file,
+		ResultFile file,
 		TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest,
 		ILogger<RegressionTests> logger
 	)

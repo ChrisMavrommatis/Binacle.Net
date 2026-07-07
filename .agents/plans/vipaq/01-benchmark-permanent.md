@@ -1,6 +1,6 @@
 # Session 1 — Build the permanent benchmark (vs protobuf, 8/16 only)
 
-**Status:** ⬜ not started — design ready
+**Status:** 🟡 Part 1 built + first real data in (API precursor) — full standalone Part 2 tool still deferred
 **Depends on:** [findings.md](findings.md), [decisions.md](decisions.md) (D3, D4, D5, D6, O1, O2)
 
 ## Goal
@@ -101,20 +101,163 @@ confirms from the output. (See Open below — this expectation must be checked, 
 
 ## Tracking
 
-- [ ] Build `Binacle.ViPaq.TestsKernel`: seeded generator (the matrix) + `.proto` + protobuf serializer; reuse the
-      `Binacle.Geometry` payload types.
-- [ ] Register the three projects in `Binacle.Net.slnx` (near the other vipaq test projects).
-- [ ] `Binacle.ViPaq.Benchmarks`: BDN encode/decode with `MemoryDiagnoser`; protobuf as `[Benchmark(Baseline=true)]`.
-- [ ] `Binacle.ViPaq.PerformanceTests`: size table + protobuf compare + round-trip gate (copy lib's runner pattern).
-- [ ] Add the compression-crossover report: sweep item count, find where compressed base64 first beats raw.
-- [ ] Make each report runnable on its own (BDN `--filter`; the runner's DI list).
-- [ ] Answer O1 (compression trigger) from the crossover data; record in [findings.md](findings.md) + [decisions.md](decisions.md).
-- [ ] Save a first baseline (size report + BDN summary) under `results/`.
+- [x] Build `Binacle.ViPaq.TestsKernel`: seeded generator (the matrix) + `.proto` + protobuf serializer; reuse the
+      `Binacle.Geometry` payload types. Also holds `ViPaqHeader` (reads byte 0 with the public `Version`/`BitSize`
+      enums, no internals) and `ViPaqCodec` (the public `Serialize`/`Deserialize` door + round-trip check).
+- [x] Register the three projects in `Binacle.Net.slnx` (under `/vipaq/test/`).
+- [x] `Binacle.ViPaq.Benchmarks`: BDN encode/decode with `MemoryDiagnoser`; protobuf as `[Benchmark(Baseline=true)]`;
+      `ParamsSource` over `SampleProvider.BenchmarkNames`. Confirmed it discovers and executes (Dry job).
+- [x] `Binacle.ViPaq.PerformanceTests`: size table + protobuf compare (compression-parity rule) + round-trip gate
+      (copied lib's runner pattern). Writes `results/vipaq/SizeComparison.md`.
+- [~] Add the compression-crossover report: sweep item count, compare the token ViPaq emits against the exact
+      uncompressed size. Writes `results/vipaq/CompressionCrossover.md`. **Now fed the real samples** (was
+      synthetic — which showed compression "never pays", the opposite of the truth). Real data: 8-bit crosses
+      between 16 and 100 items (saves 64%), 16-bit already compressing at ≤57 (saves 45–68%). **Marked
+      PROVISIONAL / may be phased out** — the size report already shows where compression starts to pay, and
+      the real data has gaps so the crossover point is coarse. Keep for now; revisit when v2 lands.
+- [x] Report selection: BDN benchmarks take `--filter`. The PerformanceTests runner runs **all** reports on a
+      plain `dotnet run` (the old report-name arg was dropped — everything runs every time).
+- [~] Answer O1 (compression trigger) — **both sides now measured; ready to lock as try-both-keep-smaller.**
+      Synthetic *random* payloads: gzip only ever inflated (−8% to −0% "saved"). Real packed data (the API
+      precursor): gzip saved 45–68%. So compression's value depends entirely on the data, and the fixed
+      255-byte threshold is wrong in both directions — it inflates random data and would miss small
+      compressible data. The evidence points cleanly at **try-both-keep-smaller** (compress, keep whichever
+      is shorter, never inflate). Lock in `decisions.md` when v2 is written (Session 3/4).
+- [x] Save a first baseline (size report) under `results/vipaq/`. BDN summary is produced on demand (a full run
+      is minutes); the size + crossover markdown is the committed baseline.
+
+## Real-data precursor (API, not yet the standalone tool)
+
+Before building the full offline tool, we took a shortcut to get *real placed data* in front of the harness:
+packed 20 problems (custom + Bischoff `thpack1..7`, two each) through the running API (`v4 pack/bin`, FFD,
+`includeViPaqData`), archived the responses under `results/packed-responses/`, and froze them as a hardcoded
+`RealDataProvider` in the kernel (bin + placed items, L/W/H and X/Y/Z). No files read at run time, no lib
+dependency in the harness. The API's own token is stored per sample and used **only** to validate our
+re-encode. `SizeComparison.md` now has two tables: synthetic and real.
+
+What it showed:
+- **Round-trip OK on every real sample, and `vs API` = MATCH on all 20** — our UInt16 re-encode is
+  byte-identical to the token the API emitted (the API serialises from Int32, but width is chosen per
+  section from the values, so the bytes are the same). Strong evidence the kernel path is correct.
+- **Compression pays on real data — the opposite of synthetic.** Structured results (repeated item sizes,
+  items on a coordinate grid) gzip well: the Bischoff tokens are 45–68% smaller than their uncompressed
+  size, and the 100-item custom pack 64% smaller. On synthetic *random* data gzip only ever inflated.
+- **ViPaq still wins on real data, but by less.** ViPaq/Proto is ~67–76% (vs 32–68% on synthetic). Real
+  protobuf gains from omitted zero coordinates and gzip on its own structured output, so the gap narrows —
+  but ViPaq is smaller on every row.
+- **Width split confirmed on real data:** Bischoff packs to `16/8/16` — bin and coordinates need 16-bit
+  (positions run to ~587), item dimensions stay 8-bit (largest box side ~113).
+
+This is a precursor, not the deferred Part 2. The standalone offline tool (freeze many problems, pin the
+algorithm, emit a manifest) is still the plan; this just proved the pipeline and answered the "does real
+data compress?" question early.
+
+## Next step: offline data tooling (replaces the API capture)
+
+Two **separate** tracks — do not conflate them. The tests-kernel data (Track A) is problem *definitions* used
+by the lib's algorithm tests; ViPaq's data (Track B) is *placed* results with coordinates. Different formats,
+different homes, different consumers.
+
+### Track A — tests-kernel data under `shared/data` (converter done)
+
+Home for the lib's algorithm-test datasets. Each folder has a README. Raw is never edited.
+
+- `shared/data/or-library/` — **raw** OR-Library text, as published. **Provenance (verified):**
+  the **Bischoff suite = `thpack1`–`thpack7` only** = Bischoff & Ratcliff (1995, OMEGA) "BR instances"
+  (BR1–BR7), a well-known benchmark. **`thpack8` (Loh & Nee, 1992) and `thpack9` (Ivancic et al., 1989,
+  multi-container) are NOT Bischoff** — different authors, and thpack9 is a different problem class. Sweep
+  only 1–7 for the suite; never fold 8/9 in.
+- `shared/data/bischoff-suite/` — converted BR instances (1–7), tests-kernel scenario format.
+- `shared/data/custom-problems/` — hand-authored problems, same format.
+
+The tests-kernel **scenario format** is `Name` / `Bin` (`"LxWxH"`) / `Metrics` / `Result` / `Items`
+(`["LxWxH [Q]"]`) — item *types* with a count, **no coordinates**.
+
+**Converter built: `shared/tools/Binacle.OrLibrary.Converter`** (mirrors the ViPaq generator's style —
+`IConverter` + a per-suite class, `Program` iterates, `RepoLocator`, no-arg deterministic run). It reads the
+raw thpack1–7 text and writes the bischoff-suite JSON. Key facts settled while building it:
+- `Metrics` is **pure arithmetic** over `Bin` + `Items` (items volume / bin volume / count / %) — not a
+  pack-run output, so no packer needed.
+- `Result` is a **fixed expected baseline**: every Bischoff instance is always `PartiallyPacked` (fills ~98%,
+  never tessellates perfectly), so the converter writes `"PartiallyPacked PartiallyPacked"` directly. The
+  tests kernel runs the real packer and **asserts** against it — a `FullyPacked`/`NotPacked` would fail the
+  test (packed unusually well, or nothing fit). So the tool depends on **`Binacle.CompactNotation` only** — no
+  `Binacle.Lib`, no packer.
+- Output goes to **`shared/data/bischoff-suite/` only** — the converter does **not** touch the kernel's embedded
+  copies. It reproduces them byte-for-byte for **thpack1–4**. For **thpack5–7** it differs by one chosen
+  normalization: those files' `Metrics` % were historically 1-decimal; chose **2 decimals everywhere**
+  (option B) — test-safe (0.1% tolerance). The kernel copies are deliberately left at HEAD.
+
+Open mechanics (unchanged): the kernel loads this data as *embedded resources* from inside its own project.
+The converter writes to `shared/data/bischoff-suite`; the kernel still reads its own committed copies. Deciding
+**keep-in-place vs relocate** (rewire the kernel to source from `shared/data`) is what reconciles the two — and
+is when the thpack5–7 2-decimal normalization would actually reach the tests. Do that before wiring further.
+
+### Track B — ViPaq placed data (next, separate)
+
+ViPaq serializes *placed* results, so it needs items with **L/W/H and X/Y/Z**, which Track A's format does
+not carry. This is its own thing, likely living in the **ViPaq slice** (not `shared/data`). A standalone tool
+(mirroring `vipaq/tools/Binacle.ViPaq.Generators`: RepoLocator, CompactNotation output, run once, output
+committed) takes the problems, runs them through the packer offline to place every item, and emits placed
+results in **compact notation** for the ViPaq tests kernel to read — replacing the hardcoded, API-captured
+`RealDataProvider`. Design this after Track A lands.
+
+Why offline over the API capture: deterministic, repo-contained, and produces **any item count** — giving the
+clean crossover ladder the captured set cannot (pack prefixes of one family: first 5, 13, 50, 200 items, same
+shapes, only the count changing). The API-captured `RealDataProvider` stays only as a small validation anchor
+(its `vs API` = MATCH check proved our re-encode is byte-identical to the API's token).
+
+### Speed and memory (first benchmark pass, Short job, this machine)
+
+- **Memory: ViPaq allocates less everywhere** — encode 0.37–0.97×, decode 0.75–0.83× of protobuf.
+- **Encode:** faster than protobuf on small uncompressed payloads (~0.45–0.53×); slower once gzip triggers
+  (4–8× on real packs) — the compression is the cost, not the layout. Worst real case ~14µs.
+- **Decode:** slower on anything non-trivial (4–7× on real packs) — the known decode-via-span weakness that
+  Session 2 fixes (~10× read). Worst ~20µs.
+- All times are microseconds; irrelevant for a storage token that is written once and read rarely.
+
+### Steers to surface later (recorded now, lock in decisions.md when v2 is written)
+
+- **Encode speed is the priority; decode is second.** ViPaq's job is to produce a token *fast and store it*;
+  reads are rarer. Optimise encode first. Take decode wins only when they are cheap — Session 2's span fix
+  is exactly that, so it still belongs. This changes how we read the benchmark: encode is the number that
+  matters, decode is a watch-not-block figure.
+- **Scope synthetic to speed/memory; use real for size.** (Refined — earlier this said "stop benchmarking
+  synthetic"; that was too broad.) The two things we measure depend on different properties of the data:
+  - **CPU and memory** (BDN encode/decode) depend on **item count and byte-width**, not on whether values
+    repeat — encode/decode do the same work either way. So **synthetic random is fine, and preferred, for
+    the speed/memory benchmarks**: it is deterministic, scales freely to counts we have no real packs for
+    (2000, 5000), and it deliberately exercises the expensive path — compression runs but does not help, so
+    the encoder pays the gzip cost and (under try-both-keep-smaller) discards it. That "wasted gzip" cost is
+    real and worth measuring. Caveat: ViPaq's *absolute* allocation on random data runs a little high
+    (compression does not shrink the buffer), but ViPaq and protobuf see the same sample so the
+    ViPaq-vs-proto comparison stays valid.
+  - **Size and compression** are the one place random lies (gzip has nothing to grip, so it reports the
+    opposite of real behaviour). So **size and crossover use real data only.** The *contrast itself*
+    (synthetic inflates −8→0%, real saves 45–68%) stays a keep-it finding.
+  - **Done:** the crossover report now sweeps the real samples (was synthetic). Its one limit is that real
+    data is gappy, so the crossover point is coarse (8-bit between 16 and 100 items; 16-bit ≤57) — marked
+    PROVISIONAL, may be phased out once the size report is judged to cover it. The offline tool below is what
+    gives real data at any count, which would make crossover exact again if we keep it.
+  - **Follow-up:** drop the synthetic table from the size runner (keep synthetic only in the BDN benchmarks).
+
+## Results so far (first run, this machine)
+
+- **Round-trip: OK on every sample.** The gate passes across the whole matrix, both boundary samples included.
+- **ViPaq is smaller than protobuf everywhere: ~32–68% of protobuf's base64**, comparing like against like
+  (protobuf compressed only when ViPaq compressed). ViPaq wins most at small 8-bit payloads (~32–40%).
+- **The boundary pair behaves:** `boundary-255-stays-8bit` → widths `8/8/8`; `boundary-256-flips-16bit` →
+  `16/8/8` (only the bin section flips, items/coords stay 8-bit).
+- **Baked-in compression hurts on random data.** ViPaq compresses once the body passes 255 bytes even when that
+  makes the token bigger. On these random payloads it always did. Real packing data has structure and should
+  compress — that is exactly why Part 2 matters before O1 is locked.
+- Numbers are a snapshot of one machine; the protobuf baseline ratio is the stable figure to track over time.
 
 ## Open / unknowns — do not assume
 
-- **Protobuf message shape.** Row or columnar? findings says only *columnar* protobuf competes on size. Start with
-  a plain row message; add a columnar one only if we want the harder baseline. Decide while building.
+- **Protobuf message shape.** Decided: **plain row message** (`PackedResult` with repeated `PlacedItem`). It is the
+  honest, unoptimised baseline and ViPaq already beats it 2–3×. A columnar variant is only worth adding if we want
+  the harder, smaller baseline — still open, not needed yet.
 - **Do we lift the vector readers from UnitTests?** `VectorReader` / `VectorParser` live in UnitTests and read the
   hand-authored correctness vectors. The benchmark *generates* data, so it does not need them now. Lift them into
   the kernel only if a second consumer appears.

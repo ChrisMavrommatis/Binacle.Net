@@ -29,4 +29,4 @@ Shared test library. Not a test runner — it provides types and data that multi
 
 ## `data/`
 
-Test datasets used by benchmarks and performance tests. See `data/or-library-packing-data/README.md`.
+Test datasets used by benchmarks and performance tests. See `data/or-library/README.md`.

@@ -98,7 +98,7 @@ It provides:
 
 ## shared/data — OR-Library
 
-`shared/data/or-library-packing-data/` holds the raw OR-Library container-loading text files
+`shared/data/or-library/` holds the raw OR-Library container-loading text files
 (`thpack1.txt` … `thpack9.txt`, plus `thpack9-fixed.txt` and a `README.md`). Source: OR-Library (J.E. Beasley);
 `thpack1–7` are Bischoff & Ratcliff (1995). These raw files are the upstream origin that was converted into the
 embedded `BischoffSuite/orlib_thpack1..7.json`. Only `thpack1–7` map to `BischoffSuite`; `thpack8/9` are not in

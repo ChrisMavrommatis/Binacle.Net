@@ -6,8 +6,26 @@
   </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Algorithms\Data\**\*.json" />
+        <!-- Result-selection fixtures still live in the kernel. -->
         <EmbeddedResource Include="ResultSelection\Data\**\*.json" />
+    </ItemGroup>
+
+    <!--
+        The algorithm fixtures are sourced from shared/data (one place they're generated/edited, one place they live),
+        not kernel copies. LogicalName reproduces the manifest name the kernel already expects
+        (Binacle.TestsKernel.Algorithms.Data.<Set>.<file>) so no reader changes. Link keeps these out-of-project files
+        under a virtual Algorithms/Data/<Set>/ folder in the IDE instead of scattering them at the project root.
+        Bischoff suite is the OR-Library converter's output; custom-problems are hand-authored.
+    -->
+    <ItemGroup>
+        <EmbeddedResource Include="..\..\data\bischoff-suite\*.json">
+            <Link>Algorithms\Data\BischoffSuite\%(Filename)%(Extension)</Link>
+            <LogicalName>Binacle.TestsKernel.Algorithms.Data.BischoffSuite.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\..\data\custom-problems\*.json">
+            <Link>Algorithms\Data\CustomProblems\%(Filename)%(Extension)</Link>
+            <LogicalName>Binacle.TestsKernel.Algorithms.Data.CustomProblems.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
     </ItemGroup>
 
 

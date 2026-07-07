@@ -1,5 +1,4 @@
 using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Results;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
@@ -13,10 +12,10 @@ internal class PackingEfficiencyTests : ITest
 	private readonly ILogger<PackingEfficiencyTests> logger;
 	private readonly TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest;
 
-	public Models.ResultFile File { get; private set; }
+	public ResultFile File { get; private set; }
 	
 	public PackingEfficiencyTests(
-		Models.ResultFile file,
+		ResultFile file,
 		ILogger<PackingEfficiencyTests> logger
 	)
 	{

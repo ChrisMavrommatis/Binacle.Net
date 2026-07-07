@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option csharp_namespace = "Binacle.ViPaq.TestsKernel.Protobuf";
+
+package binacle.vipaq.benchmarks;
+
+// The outside baseline. Same logical data ViPaq stores: a count, a bin, and placed items — no ids, no
+// extra fields, so the comparison is fair. This is a plain "row" message (each item carries its own
+// dimensions and coordinates). A columnar variant is only worth adding if we later want the harder,
+// smaller protobuf baseline (see the plan's open questions).
+
+message Vec3 {
+  uint32 length = 1;
+  uint32 width = 2;
+  uint32 height = 3;
+}
+
+message PlacedItem {
+  uint32 length = 1;
+  uint32 width = 2;
+  uint32 height = 3;
+  uint32 x = 4;
+  uint32 y = 5;
+  uint32 z = 6;
+}
+
+message PackedResult {
+  uint32 count = 1;
+  Vec3 bin = 2;
+  repeated PlacedItem items = 3;
+}

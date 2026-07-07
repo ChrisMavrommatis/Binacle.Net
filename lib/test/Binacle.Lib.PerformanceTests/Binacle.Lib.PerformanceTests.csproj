@@ -19,10 +19,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Binacle.Lib\Binacle.Lib.csproj" />
     <ProjectReference Include="..\..\..\shared\test\Binacle.TestsKernel\Binacle.TestsKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\test\Binacle.TestReporting\Binacle.TestReporting.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Binacle.Geometry" />
+    <Using Include="Binacle.TestReporting" />
   </ItemGroup>
 
 </Project>

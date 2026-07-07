@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.28.3" />
+    <PackageReference Include="Grpc.Tools" Version="2.68.1" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Binacle.ViPaq\Binacle.ViPaq.csproj" />
+    <ProjectReference Include="..\..\..\shared\src\Binacle.Geometry\Binacle.Geometry.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protobuf\packing.proto" GrpcServices="None" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Binacle.Geometry" />
+  </ItemGroup>
+
+</Project>

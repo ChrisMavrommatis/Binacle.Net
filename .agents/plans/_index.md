@@ -27,6 +27,7 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [shared/shared-geometry-extraction.md](shared/shared-geometry-extraction.md) | Binacle.Geometry — one home for the common models |
+| [shared/testskernel-data-extraction.md](shared/testskernel-data-extraction.md) | TestsKernel — pull all fixture data out to shared/data |
 
 ## ViPaq
 

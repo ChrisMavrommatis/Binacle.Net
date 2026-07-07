@@ -1,5 +1,4 @@
 using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.PerformanceTests.Models;
 using Binacle.Lib.PerformanceTests.Results;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
@@ -16,11 +15,11 @@ internal class BaselineComparisonTests : ITest
 	private readonly TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest;
 	private readonly ILogger<BaselineComparisonTests> logger;
 
-	public Models.ResultFile File { get; private set; }
+	public ResultFile File { get; private set; }
 	public BaselineComparisonTests(
 		string title,
 		string description,
-		Models.ResultFile file,
+		ResultFile file,
 		TestAlgorithmFactory<IPackingAlgorithm> baselineAlgorithm,
 		TestAlgorithmFactory<IPackingAlgorithm>[] algorithmsUnderTest,
 		ILogger<BaselineComparisonTests> logger

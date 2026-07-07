@@ -1,7 +1,4 @@
-﻿using Binacle.Lib.PerformanceTests.Models;
-using Binacle.Lib.PerformanceTests.Services;
-using Binacle.Lib.PerformanceTests.Tests;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -28,11 +25,14 @@ internal class Program
 	    builder.Logging.ClearProviders();
 	    builder.Logging.AddSerilog();
 	    
-	    builder.Services.AddSingleton<IFileWriter, MarkdownFileWriter>();
+	    // Preserve lib's original output location: PerformanceTests.Artifacts next to the project.
+	    var artifactsDirectory = Path.Combine(
+		    AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "PerformanceTests.Artifacts");
+	    builder.Services.AddSingleton<IFileWriter>(new MarkdownFileWriter(artifactsDirectory));
 	    builder.Services.AddTransient<TestRunner>();
 	    
 	    builder.Services.AddTransient<ITest, Tests.BischoffSuite.PackingEfficiencyTests>(sp => new Tests.BischoffSuite.PackingEfficiencyTests(
-		    file: new Models.ResultFile
+		    file: new ResultFile
 		    {
 			    Filename = "PackingEfficiency",
 			    Title = "Packing Efficiency Tests",
@@ -42,7 +42,7 @@ internal class Program
 		));
 
 	    
-	    var regressionTestsFile = new Models.ResultFile
+	    var regressionTestsFile = new ResultFile
 	    {
 		    Filename = "RegressionTests",
 		    Title = "Regression Tests",
@@ -70,7 +70,7 @@ internal class Program
 		    sp.GetRequiredService<ILogger<Tests.BischoffSuite.RegressionTests>>()
 	    ));
 	    
-	    var statisticsFile = new Models.ResultFile
+	    var statisticsFile = new ResultFile
 	    {
 		    Filename = "EfficiencyStatistics",
 		    Title = "Efficiency Statistics",
