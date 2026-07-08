@@ -36,7 +36,7 @@ output
 src/Binacle.Net/wwwroot/ 
 
 ## data
-config/azurite/
+azurite/
 config/minio_data/
 config/postgres/
 config/data/

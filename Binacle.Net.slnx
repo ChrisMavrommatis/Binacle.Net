@@ -79,7 +79,8 @@
     <Project Path="vipaq/test/Binacle.ViPaq.PerformanceTests/Binacle.ViPaq.PerformanceTests.csproj" />
   </Folder>
   <Folder Name="/vipaq/tools/">
-    <Project Path="vipaq/tools/Binacle.ViPaq.Generators/Binacle.ViPaq.Generators.csproj" />
+    <Project Path="vipaq/tools/Binacle.ViPaq.VectorGenerators/Binacle.ViPaq.VectorGenerators.csproj" />
+    <Project Path="vipaq/tools/Binacle.ViPaq.PackedDataGenerator/Binacle.ViPaq.PackedDataGenerator.csproj" />
   </Folder>
   <Folder Name="/shared/src/">
     <Project Path="shared/src/Binacle.CompactNotation/Binacle.CompactNotation.csproj" />

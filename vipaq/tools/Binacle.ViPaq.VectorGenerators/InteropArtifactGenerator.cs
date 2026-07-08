@@ -2,8 +2,9 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using Binacle.CompactNotation;
 using Binacle.Geometry;
+using Binacle.TestReporting;
 
-namespace Binacle.ViPaq.Generators;
+namespace Binacle.ViPaq.VectorGenerators;
 
 // Serializes each shared interop input with the C# ViPaq library and writes the bytes (base64) to
 // artifact-cs.json. The TS tool mirrors this, writing the same shape to artifact-ts.json off the same input.
@@ -11,7 +12,7 @@ public sealed class InteropArtifactGenerator : IVectorGenerator
 {
 	public void Generate()
 	{
-		var interopDir = RepoLocator.FindInteropDir();
+		var interopDir = RepositoryRoot.Bind().Find("vipaq", "test-vectors", "interop");
 		var inputPath = Path.Combine(interopDir, "input.json");
 		var outputPath = Path.Combine(interopDir, "artifact-cs.json");
 

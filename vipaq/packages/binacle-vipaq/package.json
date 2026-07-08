@@ -10,7 +10,7 @@
   "scripts": {
     "test": "jest",
     "generate:interop": "ts-node tools/generateVectors.ts",
-    "regen:interop": "dotnet run --project ../../tools/Binacle.ViPaq.Generators && npm run generate:interop"
+    "regen:interop": "dotnet run --project ../../tools/Binacle.ViPaq.VectorGenerators && npm run generate:interop"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.9.0",

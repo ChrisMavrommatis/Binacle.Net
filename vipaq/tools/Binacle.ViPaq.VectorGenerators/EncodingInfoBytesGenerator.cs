@@ -1,8 +1,9 @@
+using Binacle.TestReporting;
 using Binacle.ViPaq;
 using EncodingInfo = Binacle.ViPaq.EncodingInfo;
 using Version = Binacle.ViPaq.Version;
 
-namespace Binacle.ViPaq.Generators;
+namespace Binacle.ViPaq.VectorGenerators;
 
 // Emits all 256 header combos (4 versions x 4 bin widths x 4 item-dim widths x 4 item-coord widths) to
 // encoding-info-bytes.json — the golden both suites read for header pack/unpack. Version is the outer loop
@@ -14,7 +15,7 @@ public sealed class EncodingInfoBytesGenerator : IVectorGenerator
 {
 	public void Generate()
 	{
-		var outputPath = Path.Combine(RepoLocator.FindTestVectorsDir(), "encoding-info-bytes.json");
+		var outputPath = RepositoryRoot.Bind().Find("vipaq", "test-vectors", "encoding-info-bytes.json");
 
 		var versions = new[] { Version.Uncompressed, Version.CompressedGzip, Version.Reserved2, Version.Reserved3 };
 		var widths = new[] { BitSize.Eight, BitSize.Sixteen, BitSize.ThirtyTwo, BitSize.SixtyFour };

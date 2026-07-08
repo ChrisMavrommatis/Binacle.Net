@@ -1,4 +1,4 @@
-namespace Binacle.ViPaq.Generators;
+namespace Binacle.ViPaq.VectorGenerators;
 
 // One committed shared vector file. Each implementation reads its inputs, writes its file, and logs what it
 // wrote. Program runs every generator with no arguments; add one here to have it regenerated too.

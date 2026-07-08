@@ -29,7 +29,7 @@ internal class Program
 		builder.Logging.AddSerilog();
 
 		// Reports land in the repo's results/vipaq folder, next to the committed baselines.
-		var resultsDirectory = Path.Combine(RepositoryRoot.Find(), "results", "vipaq");
+		var resultsDirectory = RepositoryRoot.Bind().Find("results", "vipaq");
 		builder.Services.AddSingleton<IFileWriter>(new MarkdownFileWriter(resultsDirectory));
 		builder.Services.AddTransient<TestRunner>();
 
@@ -39,26 +39,26 @@ internal class Program
 			Filename = "SizeComparison",
 			Title = "ViPaq vs Protobuf — stored size",
 			Description = "Raw byte counts and base64 character counts, ViPaq vs protobuf (with proto gzip), "
-				+ "with the round-trip gate. Two sample sets: synthetic (generated) and real (packed via the API)."
+				+ "with the round-trip gate. Real placed data (offline FFD), split into custom and Bischoff tables. "
+				+ "Synthetic random data is not size-measured here — gzip has nothing to grip, so it misreads "
+				+ "compression; it is kept only for the BDN speed/memory benchmarks."
 		};
 
-		// Synthetic set: the generated matrix.
+		// Real sets: placed results from Binacle.ViPaq.PackedDataGenerator (FFD). Custom and Bischoff are shown as
+		// two separate tables in the same file — they are different problem shapes and read more clearly apart.
 		builder.Services.AddTransient<ITest, SizeComparisonTest>(serviceProvider =>
 			new SizeComparisonTest(
-				SampleProvider.All,
-				"Synthetic samples — generated matrix",
-				"Lower ViPaq/Proto is better. Protobuf is compressed only when ViPaq is, so the ratio "
-					+ "compares like against like. Generated random values, so gzip has little to grip.",
+				RealDataProvider.Custom,
+				"Real samples — custom packs (offline FFD)",
+				"Same rules, on real placed data — small hand-authored packs.",
 				sizeFile,
 				serviceProvider.GetRequiredService<ILogger<SizeComparisonTest>>()));
 
-		// Real set: results packed via the API (custom + Bischoff). 'vs API' cross-checks our re-encode.
 		builder.Services.AddTransient<ITest, SizeComparisonTest>(serviceProvider =>
 			new SizeComparisonTest(
-				RealDataProvider.All,
-				"Real samples — packed via the API (custom + Bischoff)",
-				"Same rules, on real placed data. Structured results, so compression actually pays. "
-					+ "'vs API' compares our re-encode to the token the API emitted (validation only).",
+				RealDataProvider.Bischoff,
+				"Real samples — Bischoff suite (offline FFD)",
+				"Same rules, on real placed data. Structured results, so compression actually pays.",
 				sizeFile,
 				serviceProvider.GetRequiredService<ILogger<SizeComparisonTest>>()));
 

@@ -20,9 +20,8 @@ namespace Binacle.ViPaq.PerformanceTests.Tests;
 //
 // A row that fails to round-trip is not a size win; it is flagged FAIL and logged as an error.
 //
-// The same test runs over more than one sample set (synthetic, and real data captured from the API), so
-// the set, title and description are passed in. For real samples the SourceToken is the API's own token:
-// we re-encode here and compare, as a cross-check that we produce the same bytes — never as the size.
+// The same test runs over more than one sample set (synthetic and real placed data), so the set, title and
+// description are passed in.
 internal class SizeComparisonTest : ITest
 {
 	private readonly IReadOnlyCollection<PackingSample> samples;
@@ -53,7 +52,7 @@ internal class SizeComparisonTest : ITest
 			"Sample", "Items", "Widths b/i/c", "ViPaq comp",
 			"ViPaq bytes", "Proto bytes", "Proto gz bytes",
 			"ViPaq b64", "Proto b64", "Proto gz b64",
-			"ViPaq/Proto", "Round-trip", "vs API");
+			"ViPaq/Proto", "Round-trip");
 
 		var orderedSamples = this.samples
 			.OrderBy(sample => sample.WidthBits)
@@ -95,8 +94,7 @@ internal class SizeComparisonTest : ITest
 				protobufBase64.Length.ToString(),
 				protobufGzipBase64.Length.ToString(),
 				$"{ratio * 100:F0}%",
-				roundTrips ? "OK" : "FAIL",
-				ValidateAgainstSource(sample, vipaqBase64));
+				roundTrips ? "OK" : "FAIL");
 		}
 
 		return new TestResult
@@ -106,25 +104,6 @@ internal class SizeComparisonTest : ITest
 			Description = this.description,
 			Result = table
 		};
-	}
-
-	// Cross-check against the source token, when there is one. MATCH means our re-encode is byte-identical
-	// to what the API emitted; a Δ shows the base64-length difference (e.g. the API serialises from Int32,
-	// so its count field can differ) — informational, not a pass/fail.
-	private static string ValidateAgainstSource(PackingSample sample, string vipaqBase64)
-	{
-		if (string.IsNullOrEmpty(sample.SourceToken))
-		{
-			return "-";
-		}
-
-		if (string.Equals(sample.SourceToken, vipaqBase64, StringComparison.Ordinal))
-		{
-			return "MATCH";
-		}
-
-		var delta = vipaqBase64.Length - sample.SourceToken.Length;
-		return $"Δ{delta:+0;-0}";
 	}
 
 	private static string Widths(ViPaqHeader header)

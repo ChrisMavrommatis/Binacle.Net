@@ -1,4 +1,4 @@
-namespace Binacle.ViPaq.Generators;
+namespace Binacle.ViPaq.VectorGenerators;
 
 // One row of test-vectors/interop/input.json — the shared input both generators read.
 public sealed class InputScenario

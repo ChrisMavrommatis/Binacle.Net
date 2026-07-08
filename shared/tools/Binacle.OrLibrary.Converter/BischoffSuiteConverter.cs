@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using Binacle.CompactNotation;
 using Binacle.Geometry;
+using Binacle.TestReporting;
 
 namespace Binacle.OrLibrary.Converter;
 
@@ -26,7 +27,7 @@ public sealed class BischoffSuiteConverter : IConverter
 
 	public void Convert()
 	{
-		var outputDir = RepoLocator.FindOutputDir();
+		var outputDir = RepositoryRoot.Bind().Find("shared", "data", "bischoff-suite");
 
 		var writeOptions = new JsonSerializerOptions
 		{

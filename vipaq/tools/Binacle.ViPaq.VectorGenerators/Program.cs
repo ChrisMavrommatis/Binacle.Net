@@ -1,4 +1,4 @@
-using Binacle.ViPaq.Generators;
+using Binacle.ViPaq.VectorGenerators;
 
 // Regenerates every committed C# ViPaq test vector — files that BOTH test suites read. Takes no arguments on
 // purpose: a regen always runs every generator, so it can't half-run and leave the vectors inconsistent.

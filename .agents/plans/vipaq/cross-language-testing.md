@@ -13,11 +13,12 @@ this file is the durable inventory. The optional coverage at the bottom is the o
 ## Inventory
 
 ### Generators (regenerate the committed vectors)
-- **C#** — `vipaq/tools/Binacle.ViPaq.Generators/`: `Program.cs` (no-arg runner over a list of `IVectorGenerator`),
+- **C#** — `vipaq/tools/Binacle.ViPaq.VectorGenerators/`: `Program.cs` (no-arg runner over a list of `IVectorGenerator`),
   `InteropArtifactGenerator.cs` (serializes each `input.json` case → `artifact-cs.json`),
   `EncodingInfoBytesGenerator.cs` (all 256 header combos → `encoding-info-bytes.json`), `CompactJson.cs` (one-object-
-  per-line writer for the 256-row file), plus `IVectorGenerator.cs`, `Contracts.cs`, `RepoLocator.cs`. Geometry comes
-  from the shared `Binacle.CompactNotation` + `Binacle.Geometry`; the tool only depends on the lib (+ those shared libs).
+  per-line writer for the 256-row file), plus `IVectorGenerator.cs`, `Contracts.cs`. The repo root comes from the
+  shared `Binacle.TestReporting.RepositoryRoot` (`Bind().Find(...)`), not a bespoke locator. Geometry comes from the
+  shared `Binacle.CompactNotation` + `Binacle.Geometry`; the tool only depends on the lib (+ those shared libs).
 - **TS** — `vipaq/packages/binacle-vipaq/tools/`: `generateVectors.ts` (no-arg runner, mirrors `Program.cs`),
   `interopArtifactGenerator.ts` (same input → `artifact-ts.json`), `Artifact.ts` (output shape as a class). TS does
   **not** generate `encoding-info-bytes.json` — that is C#-only.

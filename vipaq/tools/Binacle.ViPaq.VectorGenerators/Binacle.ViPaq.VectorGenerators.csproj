@@ -7,6 +7,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Binacle.ViPaq\Binacle.ViPaq.csproj" />
 		<ProjectReference Include="..\..\..\shared\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
+		<!-- Shared RepositoryRoot (Bind().Find) — no bespoke per-tool locator. -->
+		<ProjectReference Include="..\..\..\shared\test\Binacle.TestReporting\Binacle.TestReporting.csproj" />
 	</ItemGroup>
 
 </Project>

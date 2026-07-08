@@ -7,7 +7,7 @@ key and can't drift. This is the safety net that proves C#↔TS wire compatibili
 
 ## Context you need
 - Shared vectors live in `vipaq/test-vectors/` (byte-golden, header oracle, round-trip scenarios, invalid cases).
-- Interop artifacts + generators: C# `vipaq/tools/Binacle.ViPaq.Generators`, TS `binacle-vipaq/tools`. Single entry
+- Interop artifacts + generators: C# `vipaq/tools/Binacle.ViPaq.VectorGenerators`, TS `binacle-vipaq/tools`. Single entry
   point: `npm run regen:interop` (runs the C# generator then the TS one; deterministic, no-arg).
 - Contract: **uncompressed bytes are byte-identical** across languages; **compressed payloads decode-to-input only**
   (not byte-equal — cross-runtime gzip/brotli differ). Keep both invariants.

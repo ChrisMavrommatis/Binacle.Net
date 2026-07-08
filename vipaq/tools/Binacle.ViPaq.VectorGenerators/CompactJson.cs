@@ -1,7 +1,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
-namespace Binacle.ViPaq.Generators;
+namespace Binacle.ViPaq.VectorGenerators;
 
 // Serializes a list of rows as JSON with one object per line. Used for encoding-info-bytes.json — a 256-row
 // combinatorial file that's only readable and greppable one-per-line; the interop artifacts stay expanded

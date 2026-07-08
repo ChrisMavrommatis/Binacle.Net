@@ -19,9 +19,5 @@ public sealed record PackingSample
 	// How item values are spread: "low" near 0, "high" near the width max, "mixed" across the range.
 	public required string Spread { get; init; }
 
-	// For real samples only: the ViPaq token the source (the API) emitted for this exact data. Kept as a
-	// cross-check — we re-encode here and compare — never as the measured size. Null for synthetic samples.
-	public string? SourceToken { get; init; }
-
 	public int ItemCount => this.Items.Length;
 }

@@ -1,6 +1,9 @@
 # Session 1 — Build the permanent benchmark (vs protobuf, 8/16 only)
 
-**Status:** 🟡 Part 1 built + first real data in (API precursor) — full standalone Part 2 tool still deferred
+**Status:** 🟢 Part 1 built + Track B / Part 2 built — offline `Binacle.ViPaq.PackedDataGenerator` (FFD) freezes
+placed data under `vipaq/data/packed/{bischoff-suite,custom-problems}/*.ffd.json`; `RealDataProvider` now reads
+those embedded files (was API-captured hardcode). Count-ladders and a curated fast-subset provider deferred until
+we see results.
 **Depends on:** [findings.md](findings.md), [decisions.md](decisions.md) (D3, D4, D5, D6, O1, O2)
 
 ## Goal
@@ -63,7 +66,7 @@ coordinates only exist after packing.
 with `Binacle.Lib` **once** and writes the packed payloads (bin + items + coords) to frozen data files. The
 benchmark then reads those static files. This keeps the lib dependency in the tool, out of the benchmark, and
 freezes the data so results are reproducible.
-- Fits the existing `vipaq/tools/Binacle.ViPaq.Generators` pattern. Keep the tool **standalone** — the benchmark
+- Fits the existing `vipaq/tools/Binacle.ViPaq.VectorGenerators` pattern. Keep the tool **standalone** — the benchmark
   reads the emitted files, it does not reference the tool (see memory `vipaq-generator-standalone`).
 - Reading the Bischoff JSON: the format is trivial (`Bin` string + `Items` strings), parsed by the shared
   `Binacle.CompactNotation`. Do **not** reuse `Binacle.TestsKernel`'s reader — it is lib/api-coupled.
@@ -106,7 +109,7 @@ confirms from the output. (See Open below — this expectation must be checked, 
       enums, no internals) and `ViPaqCodec` (the public `Serialize`/`Deserialize` door + round-trip check).
 - [x] Register the three projects in `Binacle.Net.slnx` (under `/vipaq/test/`).
 - [x] `Binacle.ViPaq.Benchmarks`: BDN encode/decode with `MemoryDiagnoser`; protobuf as `[Benchmark(Baseline=true)]`;
-      `ParamsSource` over `SampleProvider.BenchmarkNames`. Confirmed it discovers and executes (Dry job).
+      `ParamsSource` over `BenchmarkCatalog.Names`. Confirmed it discovers and executes (Dry job).
 - [x] `Binacle.ViPaq.PerformanceTests`: size table + protobuf compare (compression-parity rule) + round-trip gate
       (copied lib's runner pattern). Writes `results/vipaq/SizeComparison.md`.
 - [~] Add the compression-crossover report: sweep item count, compare the token ViPaq emits against the exact
@@ -126,7 +129,13 @@ confirms from the output. (See Open below — this expectation must be checked, 
 - [x] Save a first baseline (size report) under `results/vipaq/`. BDN summary is produced on demand (a full run
       is minutes); the size + crossover markdown is the committed baseline.
 
-## Real-data precursor (API, not yet the standalone tool)
+## Real-data precursor (API) — SUPERSEDED by the offline tool
+
+**History.** This was the shortcut before the standalone tool existed. It is now replaced by
+`Binacle.ViPaq.PackedDataGenerator` (see "Track B — built" below): the same placed data is produced offline
+and committed, so `RealDataProvider` no longer carries an API-captured hardcode. Kept here for the findings it
+established (all still hold). The old `vs API`/MATCH cross-check is retired — the committed data no longer stores
+a token (it was derivable and its compressed bytes drifted by runtime); the kernel computes tokens itself.
 
 Before building the full offline tool, we took a shortcut to get *real placed data* in front of the harness:
 packed 20 problems (custom + Bischoff `thpack1..7`, two each) through the running API (`v4 pack/bin`, FFD,
@@ -174,7 +183,8 @@ The tests-kernel **scenario format** is `Name` / `Bin` (`"LxWxH"`) / `Metrics` /
 (`["LxWxH [Q]"]`) — item *types* with a count, **no coordinates**.
 
 **Converter built: `shared/tools/Binacle.OrLibrary.Converter`** (mirrors the ViPaq generator's style —
-`IConverter` + a per-suite class, `Program` iterates, `RepoLocator`, no-arg deterministic run). It reads the
+`IConverter` + a per-suite class, `Program` iterates, shared `RepositoryRoot.Bind().Find(...)`, no-arg
+deterministic run). It reads the
 raw thpack1–7 text and writes the bischoff-suite JSON. Key facts settled while building it:
 - `Metrics` is **pure arithmetic** over `Bin` + `Items` (items volume / bin volume / count / %) — not a
   pack-run output, so no packer needed.
@@ -193,19 +203,38 @@ The converter writes to `shared/data/bischoff-suite`; the kernel still reads its
 **keep-in-place vs relocate** (rewire the kernel to source from `shared/data`) is what reconciles the two — and
 is when the thpack5–7 2-decimal normalization would actually reach the tests. Do that before wiring further.
 
-### Track B — ViPaq placed data (next, separate)
+### Track B — ViPaq placed data (BUILT)
 
 ViPaq serializes *placed* results, so it needs items with **L/W/H and X/Y/Z**, which Track A's format does
-not carry. This is its own thing, likely living in the **ViPaq slice** (not `shared/data`). A standalone tool
-(mirroring `vipaq/tools/Binacle.ViPaq.Generators`: RepoLocator, CompactNotation output, run once, output
-committed) takes the problems, runs them through the packer offline to place every item, and emits placed
-results in **compact notation** for the ViPaq tests kernel to read — replacing the hardcoded, API-captured
-`RealDataProvider`. Design this after Track A lands.
+not carry. This is its own thing, living in the **ViPaq slice** (not `shared/data`).
 
-Why offline over the API capture: deterministic, repo-contained, and produces **any item count** — giving the
-clean crossover ladder the captured set cannot (pack prefixes of one family: first 5, 13, 50, 200 items, same
-shapes, only the count changing). The API-captured `RealDataProvider` stays only as a small validation anchor
-(its `vs API` = MATCH check proved our re-encode is byte-identical to the API's token).
+**Built: `vipaq/tools/Binacle.ViPaq.PackedDataGenerator`** (mirrors `Binacle.ViPaq.VectorGenerators`: no-arg `Exe`,
+CompactNotation output, run once, output committed, deterministic byte-identical re-run; uses the shared
+`Binacle.TestReporting.RepositoryRoot` to find the repo root, no bespoke per-tool locator). It reads the
+Bischoff suite (`thpack1..7`) + custom problems, packs each in full with **FFD** via the lib's
+`AlgorithmFactory` + `Execute(Packing)` (the API's exact call path), and emits the placed results in compact
+notation for the ViPaq tests kernel to read — replacing the hardcoded, API-captured `RealDataProvider`.
+
+- **Output:** `vipaq/data/packed/`, split by source family — `bischoff-suite/orlib_thpack1..7.ffd.json` and
+  `custom-problems/{baseline,complex,simple}.ffd.json` — plus a `README.md`. The algorithm rides on the file name
+  as a `.<algo>` suffix, not a folder. Each sample is **placed geometry only**: `Name`, `WidthBits` (8 if every
+  value ≤255 else 16, a grouping label), `Bin` (`"LxWxH"`), `Items` (`"LxWxH (X,Y,Z)"`). Per-file/total counts
+  print to the console on each run (no committed index file).
+- **First run:** 716 samples, 58,834 placed items. All Bischoff instances are `PartiallyPacked` by design
+  (fill ~98%, leftovers flagged in the log); two custom `DoesNotFit` scenarios place 0 items (emitted, flagged).
+- **Round-trip gate:** every sample encodes → decodes back to its placed input or the tool exits non-zero. All
+  716 passed.
+- **No token stored.** The frozen data is pure geometry — deterministic, no gzip drift. The token is derivable
+  and its compressed bytes vary by runtime, so the kernel computes it when it benchmarks (the old committed
+  `SourceToken` and the `vs API`/MATCH column are gone).
+- **Consumer rewired:** `RealDataProvider` reads the embedded `PackedData.*` (`*.ffd.json` from both family
+  folders) at static init (kept `All`/`Names`/`GetByName`/`BenchmarkNames`); `BenchmarkNames` unchanged.
+
+**FFD is pinned.** The tool is structured to add WFD/BFD later (one entry in a list; each algorithm lands as
+`.wfd.json` / `.bfd.json` files beside the FFD ones, so the sets never mix). Why offline over the API capture:
+deterministic, repo-contained, and can produce **any item count** — so the clean crossover ladder (pack
+prefixes of one family: first 5, 13, 50, 200 items, only the count changing) is now possible. **Count-ladders
+and a curated fast-subset provider are deferred** until we see results from the full frozen set.
 
 ### Speed and memory (first benchmark pass, Short job, this machine)
 
@@ -239,7 +268,11 @@ shapes, only the count changing). The API-captured `RealDataProvider` stays only
     data is gappy, so the crossover point is coarse (8-bit between 16 and 100 items; 16-bit ≤57) — marked
     PROVISIONAL, may be phased out once the size report is judged to cover it. The offline tool below is what
     gives real data at any count, which would make crossover exact again if we keep it.
-  - **Follow-up:** drop the synthetic table from the size runner (keep synthetic only in the BDN benchmarks).
+  - **Done:** dropped the synthetic table from the size runner — the size report is now real placed data only,
+    split into custom and Bischoff tables. The synthetic generator + matrix were removed too; `SampleProvider`/
+    `SampleGenerator` are replaced by a stubbed `SyntheticDataProvider` (returns nothing) so `BenchmarkCatalog`
+    still compiles and BDN runs real-only. Rebuild `SyntheticDataProvider` when synthetic speed/memory coverage
+    (large item counts) is wanted again.
 
 ## Results so far (first run, this machine)
 

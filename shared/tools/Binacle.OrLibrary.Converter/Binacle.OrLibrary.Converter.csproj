@@ -5,9 +5,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<!-- Only the shared notation. Bin/Items are formatted through it; Metrics is arithmetic; Result is a fixed
-		     baseline (see BischoffSuiteConverter). No algorithm dependency — the tool never runs the packer. -->
+		<!-- The shared notation formats Bin/Items; Metrics is arithmetic; Result is a fixed baseline (see
+		     BischoffSuiteConverter). No algorithm dependency — the tool never runs the packer. TestReporting has the
+		     shared RepositoryRoot (Bind().Find) used to locate the output dir — no bespoke per-tool locator. -->
 		<ProjectReference Include="..\..\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
+		<ProjectReference Include="..\..\test\Binacle.TestReporting\Binacle.TestReporting.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
