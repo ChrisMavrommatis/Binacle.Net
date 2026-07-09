@@ -31,14 +31,14 @@ you need, and trim or delete it once the work lands.
 
 | File | Description |
 |---|---|
-| [vipaq/01-benchmark-permanent.md](vipaq/01-benchmark-permanent.md) | Session 1 — The permanent benchmark (vs protobuf, 8/16 only) |
-| [vipaq/03-spec-v2.md](vipaq/03-spec-v2.md) | Session 3 — Write the v2 spec |
-| [vipaq/04-implement-csharp.md](vipaq/04-implement-csharp.md) | Session 4 — Implement v2 in C# → update benchmarks |
-| [vipaq/05-ts-mirror-tests.md](vipaq/05-ts-mirror-tests.md) | Session 5 — TypeScript mirror + tests |
-| [vipaq/06-regenerate-vectors.md](vipaq/06-regenerate-vectors.md) | Session 6 — Regenerate interop vectors |
-| [vipaq/07-additional-features.md](vipaq/07-additional-features.md) | Session 7 — Decide additional features |
-| [vipaq/architecture-v2.md](vipaq/architecture-v2.md) | ViPaq v2 — architecture (policy vs mechanism) |
-| [vipaq/decisions.md](vipaq/decisions.md) | ViPaq — decisions ledger |
-| [vipaq/findings.md](vipaq/findings.md) | ViPaq — findings (the measured evidence) |
-| [vipaq/README.md](vipaq/README.md) | ViPaq — plan index & tracker |
-| [vipaq/testskernel-restructure.md](vipaq/testskernel-restructure.md) | Binacle.ViPaq.TestsKernel — remaining alignment work. Core alignment is done (2026-07-09, see D10); this tracks what is left. |
+| [vipaq/prompt.md](vipaq/prompt.md) | Persistent ViPaq session prompt. Read first, work, then update it before you finish. |
+| [vipaq/README.md](vipaq/README.md) | ViPaq — build plan |
+| [vipaq/reference/01-benchmark-permanent.md](vipaq/reference/01-benchmark-permanent.md) | Session 1 — The permanent benchmark (vs protobuf, 8/16 only) |
+| [vipaq/reference/04-implement-csharp.md](vipaq/reference/04-implement-csharp.md) | Session 4 — Implement v2 in C# → update benchmarks |
+| [vipaq/reference/05-ts-mirror-tests.md](vipaq/reference/05-ts-mirror-tests.md) | Session 5 — TypeScript mirror + tests |
+| [vipaq/reference/06-regenerate-vectors.md](vipaq/reference/06-regenerate-vectors.md) | Session 6 — Regenerate interop vectors |
+| [vipaq/reference/07-additional-features.md](vipaq/reference/07-additional-features.md) | Session 7 — Decide additional features |
+| [vipaq/reference/architecture-v2.md](vipaq/reference/architecture-v2.md) | ViPaq v2 — architecture (policy vs mechanism) |
+| [vipaq/reference/decisions.md](vipaq/reference/decisions.md) | ViPaq — decisions ledger |
+| [vipaq/reference/findings.md](vipaq/reference/findings.md) | ViPaq — findings (the measured evidence) |
+| [vipaq/reference/testskernel-restructure.md](vipaq/reference/testskernel-restructure.md) | Binacle.ViPaq.TestsKernel — remaining alignment work. Core alignment is done (2026-07-09, see D10); this tracks what is left. |

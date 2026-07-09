@@ -1,8 +1,7 @@
 # ViPaq v2 — architecture (policy vs mechanism)
 
-Design captured 2026-07-07. **Guides Sessions 3 (spec) and 4 (implement); not needed for Session 1.** Some of this
-is direction, not final — the **Open / unknowns** section at the bottom lists what we can't answer yet. Don't treat
-those as settled.
+Design captured 2026-07-07, aligned to `vipaq/PROTOCOL.md` 2026-07-09. **Guides Session 4.** The spec confirmed
+this split — it is why widths, `Layout` and `Compressed` are all encoder policy recorded in the header (D14).
 
 ## The core split
 
@@ -24,15 +23,15 @@ internally by `CreateEncodingInfo`. v2 **inverts control** so it can also be *su
 
 - `Serialize` (smart) computes an `EncodingInfo` and calls the dumb layer.
 - The dumb layer (`SerializeWithDirective`-style) takes a caller-supplied `EncodingInfo` and obeys it.
-- Extend `EncodingInfo` with what it doesn't carry yet: **layout** (row/columnar) and, if the knob lands,
-  **compression codec/level**.
+- Extend `EncodingInfo` with what it doesn't carry yet: **`Layout`** and **`Compressed`** (both are header fields
+  now — `PROTOCOL.md` §2.1). Codec/level never reach the wire: the codec is pinned by `Version`, level is invisible.
 
 ## Header-driven decode
 
-For a dumb *decode* to work with no out-of-band hint, the header must be self-describing: the deserializer reads
-width/layout/compressed off **byte 0** (+ the reserved bit-0 that Session 3 earmarks for layout). Forced-16-bit-on-
-small-data only round-trips because the header stores the *chosen* width, not a re-derived one. So "dumb decode" is
-really **header-driven decode** — a Session 3 spec requirement.
+For a dumb *decode* to work with no out-of-band hint, the header must be self-describing. It is: `Version`,
+`Compressed` and `Layout` are byte 0; the three widths are byte 1 (`PROTOCOL.md` §2). Forced-16-bit-on-small-data
+only round-trips because the header stores the *chosen* width and the decoder is forbidden from re-deriving it
+(§4). So "dumb decode" is really **header-driven decode**, and the spec now requires it.
 
 ## Keep the public surface minimal; expose internals to tests
 
@@ -64,13 +63,12 @@ language-neutral in the spec.
 
 ## Open / unknowns — do NOT assume these
 
-- **Directive type shape.** Extend `EncodingInfo` in place, or introduce a separate `EncodingDirective`? Unknown
-  until Session 3 designs the header. `EncodingInfoNotation.cs` (compact notation) may also need to move with it.
-- **How layout is encoded in the header.** Session 3 earmarks reserved bit-0, but the exact bit(s) and codes are
-  undesigned. Columnar may need more than one flag.
-- **Whether the compression knob is exposed at all in v2.0.** Maybe try-both-keep-smaller is fully internal and no
-  codec/level ever reaches the directive. Decide in Session 4 once O1/O2 (decisions.md) are answered with data.
+- **Directive type shape.** Extend `EncodingInfo` in place, or introduce a separate `EncodingDirective`?
+  `EncodingInfoNotation.cs` (compact notation) may need to move with it.
 - **Does forcing columnar actually pay?** The whole point of the experiment — unknown until measured in Session 4.
-  Row may win; findings suggest Brotli already exploits columnar-like structure. Treat columnar as unproven.
+  Row may win; findings suggest a good codec already exploits columnar-like structure. Treat columnar as unproven.
 - **`InternalsVisibleTo` vs a small `public` low-level API.** Leaning internal, but if the generators/tools need
   the dumb layer too, that could force it public. Revisit in Session 4.
+
+Answered since: layout is byte 0 bit 4 (`PROTOCOL.md` §2.1); the compression override **is** exposed for phase-1
+measurement (D13).

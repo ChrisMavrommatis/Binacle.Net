@@ -26,11 +26,11 @@ D10; git holds the move itself. What is left:
   in `CustomProblemsCuratedProvider.UncompressedNames` plus compressed packs). Still worth picking the two Bischoff
   names from the size report with a written reason each (cf. lib's `BischoffCuratedProblemsProvider`). Growing the
   underlying problem set is tracked in
-  [../shared/testskernel-data-extraction.md](../shared/testskernel-data-extraction.md).
+  [../shared/testskernel-data-extraction.md](../../shared/testskernel-data-extraction.md).
 
 Delete this file once the above land.
 
 ## References
 
-[README.md](README.md) · [decisions.md](decisions.md) (D9 synthetic scope, D10 no shared TestFiles) ·
+[../README.md](../README.md) · [decisions.md](decisions.md) (D9 synthetic scope, D10 no shared TestFiles) ·
 [01-benchmark-permanent.md](01-benchmark-permanent.md).

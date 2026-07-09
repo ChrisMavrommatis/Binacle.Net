@@ -16,6 +16,14 @@ entries there).
 
 ---
 
+## Announcements
+
+- [ ] **Announce the ViPaq token break.** The rebuilt format rejects every token an earlier version produced, and
+  there is no reader for the old wire. Nothing in the repo says the old format existed — the break is announced
+  in [`release-notes.md`](release-notes.md) only. Call it out in the GitHub release body.
+
+---
+
 ## Verification gaps
 
 - [ ] **Run a docker image build.** The `Binacle.Geometry` extraction was verified against every C# suite

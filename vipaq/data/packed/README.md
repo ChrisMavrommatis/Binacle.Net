@@ -1,6 +1,7 @@
 # Packed placed-result data
 
-Frozen, packed results used by the ViPaq benchmark's `RealDataProvider`. Each sample is a bin plus the
+Frozen, packed results read by the ViPaq test kernel's `BischoffDataProvider` and `CustomProblemsDataProvider`
+(merged for curated runs by `CuratedScenarioProvider`). Each sample is a bin plus the
 **placed** items a packing run produced — dimensions **and** coordinates (`L x W x H (X,Y,Z)`) — which is what
 ViPaq serializes. The source problems carry only item *types* with a quantity and no coordinates, so the
 coordinates only exist after packing.

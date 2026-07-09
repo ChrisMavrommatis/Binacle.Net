@@ -1,9 +1,14 @@
 # ViPaq shared test vectors
 
+> ⚠️ **Describes the vectors that exist today, not the format.** `../PROTOCOL.md` has been rebuilt: 2-byte header,
+> 8/16-bit widths only, values capped at 65,535. Everything below about `ThirtyTwo`/`SixtyFour`, `2^53 − 1`,
+> `MaxInteger`, and "byte 0" is the wire these vectors were generated against. Both the vectors and this file get
+> regenerated when the implementations land the new wire.
+
 Language-neutral test data read by **both** ViPaq implementations:
 
 - C# — `vipaq/test/Binacle.ViPaq.UnitTests`
-- TS — `vipaq/binacle-vipaq`
+- TS — `vipaq/packages/binacle-vipaq`
 
 One file, two consumers. The same inputs are graded against the same answers, so the two
 implementations can't silently drift on the wire format. These files are the single source of truth;

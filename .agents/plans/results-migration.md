@@ -7,7 +7,7 @@ Currently raw markdown sitting in the repo. Goal is to surface this content some
 
 > **A consumer already shipped against Option C (2026-07-08).** The ViPaq permanent benchmark **now writes**
 > `results/vipaq/SizeComparison.md` and `results/vipaq/CompressionCrossover.md`, and diffs each rerun against those
-> committed files (protobuf is the in-run anchor). That is `.agents/plans/vipaq/decisions.md` **D3**, and it assumes
+> committed files (protobuf is the in-run anchor). That is `.agents/plans/vipaq/reference/decisions.md` **D3**, and it assumes
 > **Option C — stay in `results/`**.
 >
 > So Decision 1 is no longer a free choice. Picking **A or B means migrating a live baseline** and reconciling D3.

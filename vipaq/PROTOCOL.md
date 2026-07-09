@@ -1,14 +1,14 @@
 # ViPaq Protocol Specification
 
-> **Status: experimental.** ViPaq may change. This document defines the wire format, independent of any
-> language. It is the authority on what the bytes mean. The C# library (`src/Binacle.ViPaq`) is the reference
-> implementation — it produces the golden test bytes — but it does not outrank this spec. Where C# differs from
-> this document (see the decisions log), C# has the bug to fix, not the spec.
+> **Status: experimental.** ViPaq may change. This document defines the wire format and is the authority on what
+> the bytes mean. Where an implementation differs from this document, the implementation has the bug, not the
+> spec. See [README.md](README.md) for the index.
 
 ViPaq is a compact binary format for one packing result: a single **bin** (dimensions) plus a list of **items**
-(dimensions and position coordinates). There are two implementations of this one format — the canonical C#
-library (`src/Binacle.ViPaq`) and a hand-maintained TypeScript mirror (`binacle-vipaq`). This spec is what keeps
-them on the same wire. See [README.md](README.md) for the index.
+(dimensions and position coordinates). It is designed to be stored and moved as a short base64 text token (§9).
+
+An **implementation** is any encoder/decoder pair conforming to this document. Nothing here depends on a
+programming language, a runtime, or a compression library.
 
 ## Notation and conformance
 
@@ -16,242 +16,288 @@ The words **MUST**, **MUST NOT**, **SHOULD**, and **MAY** are used as in RFC 211
 
 - A **byte** is 8 bits. Bit 7 is the most significant, bit 0 the least.
 - All multi-byte integers are **unsigned** and **little-endian** (least significant byte first).
-- Hex bytes are written `0x0A`. Header bit fields are written `0bAA_BB_CC_DD` (one 2-bit group per field).
+- Hex bytes are written `0x0A`. Header bit fields are written `0bAA_B_C_DDDD` (one group per field).
 - An **encoder** produces a blob from a bin + items. A **decoder** reads a blob back into a bin + items.
 
 ## 1. Top-level structure
 
-A ViPaq blob is one header byte followed by a body:
+A ViPaq blob is a two-byte header followed by a body:
 
 ```
-[ EncodingInfo : 1 byte ][ Body ]
+[ Header : 2 bytes ][ Body ]
 ```
 
-- The header byte is **never compressed**. The body is built first and compressed if it is large enough (§6);
-  the header byte is added in front afterwards.
-- So every blob is **self-describing**: a decoder reads byte 0 first, then reads or decompresses the body
-  according to it. This is what makes the two implementations interoperate.
-- Base64 is **not** part of the format. Encoders return raw bytes; callers (the API) may base64 the result.
+- The header is **never compressed**. The body is built first and compressed if that makes it smaller (§6); the
+  header is added in front afterwards.
+- So every blob is **self-describing**: a decoder reads the two header bytes first, then reads or decompresses
+  the body according to them.
+- Base64 is **not** part of the binary format, but it is the stored form (§9). Encoders return raw bytes.
 
-## 2. EncodingInfo byte (header)
+## 2. Header (2 bytes)
 
-Four 2-bit fields, most significant first:
+Each byte has one job. Byte 0 says **how to read** the body; byte 1 says **how wide** its integers are.
+
+### 2.1 Byte 0 — form
 
 | Bits | Field | Values |
 |---|---|---|
-| 7-6 | `Version` | `0` Uncompressed, `1` CompressedGzip, `2` Reserved2, `3` Reserved3 |
-| 5-4 | `BinDimensionsBitSize` | `BitSize` (see §4) |
-| 3-2 | `ItemDimensionsBitSize` | `BitSize` (see §4) |
-| 1-0 | `ItemCoordinatesBitSize` | `BitSize` (see §4) |
-
-The byte is composed as:
+| 7-6 | `Version` | `0` = this spec. `1`-`3` reserved. |
+| 5 | `Compressed` | `0` body is raw, `1` body is a compressed stream (§6) |
+| 4 | `Layout` | `0` row-major, `1` columnar (§3) |
+| 3-0 | reserved | **MUST** be written `0`; a decoder **MUST** reject a non-zero value |
 
 ```
-byte = (Version << 6) | (BinDimensionsBitSize << 4) | (ItemDimensionsBitSize << 2) | ItemCoordinatesBitSize
+byte0 = (Version << 6) | (Compressed << 5) | (Layout << 4)
 ```
 
-The field at bits 7-6 is named `Version` in both implementations. Today it carries only the **compression**
-state: `0` = body stored raw, `1` = body is a gzip stream. There is no separate format-version field. Values
-`2` and `3` are reserved. A decoder **MUST** reject a blob whose `Version` is `Reserved2` or `Reserved3`
-(see §7 and §8).
+### 2.2 Byte 1 — widths
+
+| Bits | Field | Values |
+|---|---|---|
+| 7-6 | `BinDimensionsWidth` | `Width` (§4) |
+| 5-4 | `ItemDimensionsWidth` | `Width` (§4) |
+| 3-2 | `ItemCoordinatesWidth` | `Width` (§4) |
+| 1-0 | reserved | **MUST** be written `0`; a decoder **MUST** reject a non-zero value |
+
+```
+byte1 = (BinDimensionsWidth << 6) | (ItemDimensionsWidth << 4) | (ItemCoordinatesWidth << 2)
+```
+
+### 2.3 Room to grow
+
+- `Version` claims code `0`; three codes remain. A change the flags and width codes cannot express — a different
+  compression codec, a new body shape — takes the next `Version`.
+- `Compressed` and `Layout` describe *this* blob, not the format. An encoder chooses them per blob; a decoder
+  obeys them. Both may vary between two blobs of the same `Version`.
+- Each width field has **two spare codes**, leaving room for a variable-length encoding (§4) with one code still
+  in hand.
 
 ## 3. Body layout
 
-The body, before any compression, is written in this exact order. Each integer's width is the `BitSize` named
-for its section in the header (§2), encoded little-endian (§4).
+The body carries, in order: the item count, the bin dimensions, then the items. `Layout` (§2.1) decides only how
+the **items** are arranged. Count and bin dimensions are the same in both layouts.
 
-| # | Field | Width | Notes |
+```
+[ Item count : uint16 ][ Bin L, W, H ][ Items ]
+```
+
+- **Item count** is **always** a 2-byte `uint16`, independent of every `Width` field. It **MUST** be ≤ 65,535.
+- **Bin dimensions** are Length, Width, Height, in that order, each at `BinDimensionsWidth`.
+- Items appear in the order the encoder received them. A decoder **MUST** return them in that same order.
+
+### 3.1 Row-major (`Layout = 0`)
+
+Each item is written whole: its three dimensions, then its three coordinates. Then the next item.
+
+```
+L W H X Y Z | L W H X Y Z | L W H X Y Z | ...
+```
+
+### 3.2 Columnar (`Layout = 1`)
+
+Each field is written for every item before moving to the next field. Six runs, each `count` values long.
+
+```
+L L L ... | W W W ... | H H H ... | X X X ... | Y Y Y ... | Z Z Z ...
+```
+
+Dimensions are at `ItemDimensionsWidth`, coordinates at `ItemCoordinatesWidth`, in both layouts. Columnar puts
+like magnitudes next to each other, which usually compresses better; row-major is easier to read in a hex dump.
+Neither is normative — the bit says which was used.
+
+## 4. Integer widths (`Width`)
+
+Each of the three sections is stored at one width, chosen independently:
+
+| `Width` | Value | Bytes per integer | Largest value |
 |---|---|---|---|
-| 1 | Item count | `uint16` (always 2 bytes) | `(ushort)items.Count`; **MUST** be ≤ 65535 |
-| 2 | Bin dimensions | `BinDimensionsBitSize` | Length, Width, Height — in that order |
-| 3 | Per item (× count) | `ItemDimensionsBitSize`, then `ItemCoordinatesBitSize` | dims L, W, H, then coords X, Y, Z |
+| `Eight` | `0` | 1 | 255 |
+| `Sixteen` | `1` | 2 | 65,535 |
+| reserved | `2` | — | — |
+| reserved | `3` | — | — |
 
-The item count is **always** a 2-byte `uint16`, independent of the `BitSize` fields. The `BitSize` fields apply
-only to bin dimensions, item dimensions, and item coordinates.
+A decoder **MUST** reject width codes `2` and `3`.
 
-Items appear in the order the encoder received them. A decoder **MUST** return them in that same order.
+**Structure (normative).**
 
-## 4. Integer widths (`BitSize`)
+- Each section has **exactly one** width. All items share one item-dimensions width and one item-coordinates
+  width. An encoder **MUST NOT** vary width per item.
+- A chosen width **MUST** hold every value in its section. Writing `Eight` for a section containing `300` is an
+  error.
+- When there are **no items**, both item widths **MUST** be written `Eight`.
+- A decoder **MUST** read each section at the width the header declares. It **MUST NOT** re-derive widths from
+  the values it reads.
 
-Each dimension/coordinate section is stored at one of four byte-aligned widths:
+**Selection (policy).** An encoder **SHOULD** pick the **smallest** width that holds the section's largest value:
+`Eight` if that value is ≤ 255, otherwise `Sixteen`. It **MAY** pick a wider one — a blob whose sections are
+wider than they need to be is larger, but conformant, and decodes to the same input. This is what makes every
+width combination forceable for testing.
 
-| `BitSize` | Value | Bytes per integer |
-|---|---|---|
-| `Eight` | `0` | 1 |
-| `Sixteen` | `1` | 2 |
-| `ThirtyTwo` | `2` | 4 |
-| `SixtyFour` | `3` | 8 |
-
-**Width selection.** For a section, the width is the **smallest** that holds the section's **largest** value:
-
-| Largest value in section | Width |
-|---|---|
-| ≤ 255 | `Eight` |
-| ≤ 65,535 | `Sixteen` |
-| ≤ 4,294,967,295 | `ThirtyTwo` |
-| ≤ 9,007,199,254,740,991 (`2^53 − 1`) | `SixtyFour` |
-| above that | rejected — see §5 |
-
-- The bin dimensions are sized on their own (`BinDimensionsBitSize`).
-- **All items share one** item-dimensions width and **one** item-coordinates width: the largest value across
-  the whole item list drives each. An encoder **MUST** size by the maximum, not per item.
-- When there are **no items**, both item widths default to `Eight`.
-
-Note `SixtyFour` is a **storage width** (8 bytes), not a value ceiling. The largest value it may carry is
-`2^53 − 1` (§5), so the top 11 bits of every 64-bit field are always zero. The width is still chosen because a
-value above `4,294,967,295` does not fit 4 bytes.
+The three sections are sized separately because real data needs them to be. A bin of `5000x2000x2000` holding
+items no larger than `200` packs to a 16-bit bin, 8-bit item dimensions, and 16-bit coordinates.
 
 ## 5. Values and limits
 
-This section is the heart of cross-language compatibility.
-
-### 5.1 Interoperable integer range — `[0, 2^53 − 1]`
-
-The two runtimes do not agree on how large an integer they hold exactly:
-
-| Runtime | Largest exact integer |
-|---|---|
-| C# `ulong` | `18,446,744,073,709,551,615` (`2^64 − 1`) |
-| JavaScript `number` | `9,007,199,254,740,991` (`2^53 − 1`) |
-
-JavaScript is the limiting side: a value between `2^53` and `2^64` is fine in C# but JS rounds it silently. So
-the format pins one ceiling both sides hold exactly.
-
-> **Every dimension and coordinate MUST be in `[0, 2^53 − 1]`.** Call this constant `MaxInteger`
-> (`9,007,199,254,740,991`, equal to JavaScript's `Number.MAX_SAFE_INTEGER`).
-
-This is enforced in **both directions**:
-
-- On **encode**, a value above `MaxInteger` **MUST** be rejected (it is not assigned a width — §4 stops at it).
-- On **decode**, a 64-bit field whose stored value exceeds `MaxInteger` **MUST** be rejected, not returned. This
-  stops a decoder from silently rounding a value some other encoder wrote above the ceiling.
-
-C# `ulong` can physically hold more, but anything above `MaxInteger` is **outside ViPaq**.
-
-### 5.2 Per-field rules
+Every dimension and coordinate is an unsigned integer in **`[0, 65,535]`**.
 
 | Field | Rule |
 |---|---|
-| Bin dimensions L, W, H | **MUST** be ≥ 1. Zero or negative is rejected. |
-| Item dimensions L, W, H | **MUST** be ≥ 1. Zero or negative is rejected. |
-| Item coordinates X, Y, Z | **MUST** be ≥ 0. Negative is rejected; **zero is valid** (an item flush to the bin origin). |
-| Item count | **MUST** be ≤ 65,535 (fits the `uint16` count field). |
-| All of the above | **MUST** be ≤ `MaxInteger` (§5.1). |
+| Bin dimensions L, W, H | **MUST** be ≥ 1 |
+| Item dimensions L, W, H | **MUST** be ≥ 1 |
+| Item coordinates X, Y, Z | **MUST** be ≥ 0. **Zero is valid** — an item flush to the bin origin. |
+| All of the above | **MUST** be ≤ 65,535 |
+| Item count | **MUST** be ≤ 65,535 |
+
+Encoding a value above 65,535 **MUST** be an error. There is no saturation and no widening.
+
+A decoder has **nothing to range-check**: a value read from an 8- or 16-bit field is in range by construction.
 
 ## 6. Compression
 
-After the body is built, an encoder decides whether to gzip it:
+`Compressed` (§2.1) records what the encoder did. It does not tell a decoder to guess.
 
-- **Canonical trigger:** if the **uncompressed body length is greater than 255 bytes**, the body **MUST** be
-  gzipped and `Version` set to `CompressedGzip`; otherwise the body stays raw and `Version` is `Uncompressed`.
-- The body length measured is the body **only** — it excludes the 1-byte header (which is not written yet).
-- Gzip uses standard gzip (C# `GZipStream` at optimal level; JS/Web `CompressionStream('gzip')`). The header
-  byte is prepended **after** compression, so it is never inside the gzip stream.
+- `Compressed = 0` — the bytes after the header are the body.
+- `Compressed = 1` — the bytes after the header are a **compressed stream** whose contents are the body.
 
-**Interop vs. byte-equality.** Compressed gzip bytes are **not reproducible across engines and runtimes** — same
-input, same algorithm, potentially different valid bytes. Therefore:
+The codec is fixed by `Version`. There is no codec field, so changing the codec takes the next `Version`.
 
-- For an **uncompressed** body, two conformant encoders produce **byte-identical** blobs. These can be compared
-  exactly (golden vectors).
-- For a **compressed** body, the blobs **MUST NOT** be byte-compared across implementations. The only contract is
-  **cross-decode**: any conformant compressed blob **MUST** decode back to the original input, whichever engine
-  produced it.
+> **Open: the codec for `Version = 0` is not yet chosen.** This spec is not final until it names one.
 
-  This is measured, not assumed. On one machine, .NET 8, .NET 10 and Node 18–24 (all stock zlib, glibc *and*
-  musl) produced **byte-identical** gzip for the same body — but **.NET 9 (zlib-ng)** produced a **different,
-  equally valid** deflate stream (same gzip header, different bytes, decodes to the same body). So output built on
-  one machine/runtime may differ byte-for-byte from another; every decoder must still read it. Never rely on
-  compressed bytes being either equal *or* unequal.
+**Choosing.** An encoder **SHOULD** compress the body, keep whichever of the two is shorter, and set `Compressed`
+to say which it kept. This never inflates a blob and has no threshold to get wrong. An encoder **MAY** compress
+unconditionally or never — for measurement, or because it knows its data. Any such blob is still conformant: the
+bit is normative, the policy is not.
 
-A decoder **MUST** accept both an `Uncompressed` and a `CompressedGzip` body regardless of its own trigger.
+A decoder **MUST** accept both values regardless of what it would have chosen itself.
+
+### 6.1 Determinism — when bytes may be compared
+
+Three things are the encoder's choice: the widths (§4), `Layout`, and `Compressed`. All three are recorded in the
+header, so a decoder never has to guess — but it means **two conformant encoders given the same input may emit
+different blobs**, and both are right. Byte-comparison is only meaningful once the header is pinned.
+
+- **Same header, uncompressed** → the body is **byte-identical**, always, in every implementation. This is the
+  only exact-comparison contract, and it is what golden test vectors rest on. A vector that expects exact bytes
+  **MUST** state the full header it expects them under.
+- **Compressed** → bytes **MUST NOT** be compared at all. The same body, the same codec, and two different
+  compressor builds can each emit different, equally valid streams. Never rely on compressed bytes being equal
+  *or* unequal.
+- **Any blob, either way** → the contract is **decode-to-input**: any conformant blob **MUST** decode back to the
+  original bin and items, in the original order, in every implementation.
 
 ## 7. Decoding order
 
 A decoder **MUST**:
 
-1. Reject input shorter than 1 byte.
-2. Read byte 0 as the `EncodingInfo` (§2). Reject `Reserved2` / `Reserved3` `Version`.
-3. If `Version == CompressedGzip`, wrap the rest of the input in a gzip decompressor; otherwise read it raw.
-4. Read the `uint16` item count.
-5. Read bin dimensions at `BinDimensionsBitSize`.
-6. Repeat count times: read item dimensions at `ItemDimensionsBitSize`, then coordinates at
-   `ItemCoordinatesBitSize`.
+1. Reject input shorter than 2 bytes.
+2. Read byte 0. Reject a `Version` other than `0`. Reject non-zero reserved bits.
+3. Read byte 1. Reject width code `2` or `3` in any section. Reject non-zero reserved bits.
+4. If `Compressed = 1`, decompress the rest of the input; otherwise read it raw.
+5. Read the `uint16` item count.
+6. Read bin dimensions at `BinDimensionsWidth`.
+7. Read the items according to `Layout` (§3), dimensions at `ItemDimensionsWidth`, coordinates at
+   `ItemCoordinatesWidth`.
+8. Reject the blob if any body bytes remain unread.
 
-While reading steps 5 and 6, reject any 64-bit value the moment it reads above `MaxInteger` (§5.1) — do not
-return it. Only a `SixtyFour` field can exceed the ceiling; narrower widths cannot.
+No value check is needed while reading. An 8- or 16-bit field cannot hold an out-of-range value.
 
 ## 8. Errors — what MUST be rejected
 
 | Condition | Side |
 |---|---|
-| Bin or item dimension ≤ 0 | encode |
+| Bin or item dimension < 1 | encode |
 | Coordinate < 0 | encode |
-| Any value > `MaxInteger` (`2^53 − 1`) | encode **and** decode |
+| Any value > 65,535 | encode |
 | Item count > 65,535 | encode |
-| Input shorter than 1 byte | decode |
-| `Version` is `Reserved2` or `Reserved3` | decode |
+| A section's declared width cannot hold one of its values | encode |
+| Input shorter than 2 bytes | decode |
+| `Version` is not `0` | decode |
+| Width code is `2` or `3` | decode |
+| Any reserved bit is non-zero | decode |
+| Body ends before the declared item count is read | decode |
+| Body has bytes left over after the last item is read | decode |
 
-(Each implementation maps these to its own exception type. The condition is normative; the exception type is not.)
+(Each implementation signals these in whatever way suits its language. The condition is normative; how it is
+raised is not.)
 
-## 9. Worked examples
+## 9. Text form
 
-### 9.1 Single 8-bit item (uncompressed)
+The stored artifact is **base64**, and it is what the format is optimised for. Encoders return bytes; the caller
+encodes them.
+
+- Standard base64 (RFC 4648 §4), alphabet `A-Z a-z 0-9 + /`, padded with `=`. Not the URL-safe alphabet.
+- No line wrapping, no whitespace.
+- Three bytes become four characters. Blob length therefore matters in **steps of three**: growing a blob from 13
+  to 15 bytes costs no extra characters.
+
+## 10. Worked examples
+
+### 10.1 Single 8-bit item, row-major, uncompressed
 
 Input: bin `10x20x30`, one item `1x2x3` at `(4,5,6)`.
 
-- Bin max `30`, item-dim max `3`, item-coord max `6` — all ≤ 255 → every section is `Eight`.
-- Header: `Version 0`, all sizes `Eight 0` → `0b00_00_00_00` = `0x00`.
-- Body (11 bytes): count `01 00`, bin `0A 14 1E`, item dims `01 02 03`, item coords `04 05 06`.
-- Body length 11 ≤ 255 → uncompressed.
+- Every value ≤ 255 → all three sections are `Eight` (`0`).
+- Byte 0: `Version 0`, `Compressed 0`, `Layout 0` → `0b00_0_0_0000` = `0x00`.
+- Byte 1: all widths `0` → `0x00`.
 
 ```
-00  01 00  0A 14 1E  01 02 03  04 05 06
-^header ^count ^bin    ^dims    ^coords
+00 00  01 00  0A 14 1E  01 02 03  04 05 06
+^byte0 ^count ^bin      ^dims     ^coords
+   ^byte1
 ```
 
-### 9.2 Mixed widths (16-bit bin, 8-bit items)
+### 10.2 Mixed widths (16-bit bin, 8-bit items)
 
 Input: bin `1000x2x3`, one item `1x1x1` at `(0,0,0)`.
 
-- Bin max `1000` → `Sixteen`. Item dims max `1` → `Eight`. Item coords max `0` → `Eight`.
-- Header: `Version 0`, Bin `Sixteen 1`, ItemDim `Eight 0`, ItemCoord `Eight 0` → `0b00_01_00_00` = `0x10`.
+- Bin max `1000` → `Sixteen` (`1`). Item dims max `1` → `Eight`. Item coords max `0` → `Eight`.
+- Byte 0: `0x00`. Byte 1: `0b01_00_00_00` = `0x40`.
 - Bin dims as little-endian `uint16`: `1000` = `E8 03`, `2` = `02 00`, `3` = `03 00`.
 
 ```
-10  01 00  E8 03 02 00 03 00  01 01 01  00 00 00
-^header ^count ^bin (16-bit LE) ^dims    ^coords
+00 40  01 00  E8 03 02 00 03 00  01 01 01  00 00 00
+                ^bin (16-bit LE)  ^dims     ^coords
 ```
 
 This shows both the little-endian order and a `0` coordinate being valid.
 
-## 10. Decisions log
+### 10.3 Columnar, two items
 
-Protocol decisions, newest first. Record date and rationale for anything that changes the wire or its rules.
+Input: bin `10x20x30`; items `1x2x3` at `(0,0,0)` and `4x5x6` at `(1,2,3)`.
 
-- **2026-06-27 — Canonical compression trigger is body length > 255 bytes.** The C# library is the reference, so
-  its rule defines the byte-exact golden vectors (`memoryStream.Length > byte.MaxValue`, body only — the header is
-  prepended afterward). The TS mirror matches: `(bufferSize - 1) > 255`, where `getBufferSize` counts the 1-byte
-  header, so `bufferSize - 1` is the body. (TS once triggered on the full buffer length — an off-by-one — now
-  aligned, 2026-06-29.) Compressed blobs are still never byte-compared across implementations; only cross-decode
-  is guaranteed (§6).
-- **2026-06-27 — `PROTOCOL.md` is the normative spec; `README.md` is a short index.** The `.agents/docs/vipaq/`
-  files stay as agent notes and link here.
-- **2026-06-27 — Bits 7-6 keep the name `Version`; it currently encodes compression only.** There is no
-  dedicated format-version field. `Reserved2`/`Reserved3` are unused and decoders reject them. A future format
-  revision has no reserved version slot yet — that is a known limitation to revisit if the wire ever changes.
-- **2026-06-26 — Interoperable integer range is `[0, 2^53 − 1]` (`MaxInteger`).** `2^53 − 1` is the largest
-  integer all target runtimes hold exactly (JS `number`). Values above it are rejected on encode and decode, so
-  no implementation can silently round. C# `ulong` can hold more, but that is outside ViPaq. The `SixtyFour`
-  bucket stays an 8-byte storage width; only its accepted value range is capped at `MaxInteger`.
-  Both C# and TypeScript enforce this ceiling on encode and decode as of 2026-06-30
-  (`.agents/plans/vipaq-integer-range-spec.md`, Deliverable 4).
+- All sections `Eight`. Byte 0: `Layout 1` → `0b00_0_1_0000` = `0x10`. Byte 1: `0x00`.
 
-## 11. References
+```
+10 00  02 00  0A 14 1E  01 04  02 05  03 06  00 01  00 02  00 03
+              ^bin      ^L     ^W     ^H     ^X     ^Y     ^Z
+```
 
-- C# canonical implementation — `src/Binacle.ViPaq/`
-- TypeScript mirror — `binacle-vipaq/` (see `../.agents/docs/vipaq/typescript.md` for divergences)
-- Shared cross-language test vectors — `test-vectors/` (and its `README.md`)
-- Agent notes — `../.agents/docs/vipaq/README.md`
-- Plans — `../.agents/plans/vipaq-integer-range-spec.md`, `../.agents/plans/vipaq-cross-language-testing.md`
-</content>
-</invoke>
+The same items row-major would be `01 02 03 00 00 00  04 05 06 01 02 03`.
+
+## 11. Conformance
+
+An implementation conforms if it:
+
+1. Encodes and decodes every structure in §1–§6 exactly as written.
+2. Rejects every condition in §8.
+3. Round-trips: decoding an encoded blob returns the original bin and items, in the original order.
+4. Reproduces the worked examples in §10 byte for byte (they pin their full header).
+5. **Decodes** any blob produced by any other conforming encoder, compressed or not.
+6. Given the same input **and the same header**, emits the same uncompressed bytes as any other conforming
+   encoder (§6.1).
+
+Points 5 and 6 are what make the format portable. Note what is **not** required: two encoders need not choose the
+same header for the same input, so they need not emit the same blob. An implementation may be written in any
+language.
+
+## 12. Open questions
+
+This spec is **not final** until these are answered.
+
+- **The compression codec for `Version = 0`** (§6).
+
+## 13. References
+
+- Reference test vectors — `test-vectors/` (and its `README.md`)
+- Why the format is shaped this way — `../.agents/plans/vipaq/decisions.md`
+- Implementations and repo layout — [README.md](README.md)

@@ -11,6 +11,13 @@ also_update:
 
 > **Warning: ViPaq is experimental and may change.**
 
+> ⚠️ **The spec has moved ahead of the code.** `vipaq/PROTOCOL.md` now describes a **rebuilt, breaking** wire
+> format: a 2-byte header, `Compressed` and `Layout` as per-blob flags, 8/16-bit widths only, and values capped
+> at 65,535. **This document still describes the shipped library, which has not been rebuilt yet.** It is accurate
+> to the code and wrong about the format. It gets rewritten when the C# library lands the new wire — see
+> `.agents/plans/vipaq/README.md`. The same is true of [typescript.md](typescript.md) and
+> [cross-language-testing.md](cross-language-testing.md).
+
 `Binacle.ViPaq` is a compact binary format for encoding a packing result: one `Bin` (dimensions) plus a list of
 items (dimensions + position coordinates). The C# library is the canonical implementation. A hand-maintained
 TypeScript mirror lives at `vipaq/packages/binacle-vipaq` — see [typescript.md](typescript.md) (the two differ in real ways).

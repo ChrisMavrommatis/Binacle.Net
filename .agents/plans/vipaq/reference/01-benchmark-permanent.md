@@ -15,8 +15,9 @@ first), and D9 (synthetic = CPU/memory, real = size).
 Three projects under `vipaq/test/`, mirroring lib's layout:
 
 - **`Binacle.ViPaq.TestsKernel`** — shared data + the protobuf schema/serializer, so the benchmark and the size
-  runner measure the *same* bytes. Also `ViPaqHeader` (reads byte 0 through the public enums) and `ViPaqCodec`
-  (the public `Serialize`/`Deserialize` door + round-trip check).
+  runner measure the *same* bytes. Also `ViPaqHeader` and `ViPaqCodec` (the public `Serialize`/`Deserialize` door
+  + round-trip check). `ViPaqHeader` reads byte 0 today; the new wire has a **2-byte** header and moves compression
+  to its own bit (`vipaq/PROTOCOL.md` §2) — it changes in Session 4.
 - **`Binacle.ViPaq.Benchmarks`** — BDN encode/decode + `MemoryDiagnoser`, protobuf as `[Benchmark(Baseline=true)]`.
 - **`Binacle.ViPaq.PerformanceTests`** — the base64 size table, protobuf comparison (compression-parity rule),
   round-trip gate, and the crossover report. Plain `dotnet run` runs everything. Writes
@@ -50,7 +51,7 @@ synthetic generator was removed; `SyntheticDataProvider` is a stub that returns 
   fast-subset provider**: both are steps in [testskernel-restructure.md](testskernel-restructure.md).
 - **The count ladder** — one problem family at ~5/13/50/200 items, only the count changing. The packed data is
   regenerated from `shared/data/`, so the problems must be authored there first. Tracked in
-  [../shared/testskernel-data-extraction.md](../shared/testskernel-data-extraction.md).
+  [../shared/testskernel-data-extraction.md](../../shared/testskernel-data-extraction.md).
 
 ## Open — not needed yet, don't build speculatively
 

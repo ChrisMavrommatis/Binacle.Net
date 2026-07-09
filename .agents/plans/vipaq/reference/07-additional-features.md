@@ -1,9 +1,9 @@
 # Session 7 — Decide additional features
 
-**Goal:** with v2.0 (8/16 + compression) shipped and measured, decide which extras to add — each behind a reserved
-code or new version, each justified by its measured gain. Nothing here is committed; it's the menu.
+**Goal:** with the format shipped and measured, decide which extras to add — each behind a reserved code or a new
+version, each justified by its measured gain. Nothing here is committed; it's the menu.
 
-**Prereq reading:** [findings.md](findings.md).
+**Prereq reading:** [findings.md](findings.md), `vipaq/PROTOCOL.md` (reserved codes: §2.3, §4).
 
 ## Do NOT (this session) — on top of the README standing fence
 - Nothing here is committed. Do not build any candidate without a measured gain in base64 + encode/decode ms.
@@ -24,13 +24,15 @@ code or new version, each justified by its measured gain. Nothing here is commit
   Not worth it for large compressed tokens alone.
 
 ### 2. Optional q11 "archival" compression mode
-- **What:** an opt-in flag/codec value meaning "max compression" (Brotli SmallestSize).
+- **What:** an opt-in "max compression" mode (Brotli SmallestSize).
 - **Measured:** ~16% smaller than fast codecs, but **~98–106 ms encode** (260× slower). Decode is fine.
 - **Verdict:** only for **write-once / store-forever** tokens where encode time is amortized. Never a default.
-  Header/version must distinguish it so decoders know.
+- **Costs more than it looks:** there is no codec field — the codec is pinned by `Version` (§6). A second codec
+  burns one of the three remaining version codes.
 
-### 3. Columnar layout (if v2.0 shipped row)
-- If v2.0 used row-major, columnar adds a few % after compression. If v2.0 already columnar, skip.
+### 3. Columnar layout — already shipped
+Both layouts are in the format, chosen per blob via the `Layout` bit (§3); Session 4 races them. Nothing to add.
+If columnar always wins, the *chooser* stops offering row — the bit stays.
 
 ### 4. Fixed-point decimals (future, if fractions ever appear)
 - **What:** a numeric-domain version carrying a scale factor (store value × 10^k). Today: no fractions.
@@ -46,4 +48,4 @@ Prototype in the (now permanent) benchmark first, measure in base64 + encode/dec
 vectors (same pipeline as sessions 3–6). Each rides a reserved width-code or a new `Version`.
 
 ## References
-[findings.md](findings.md) · [03-spec-v2.md](03-spec-v2.md) (reserved codes) · harness (prototype + measure).
+[findings.md](findings.md) · `vipaq/PROTOCOL.md` (reserved codes) · harness (prototype + measure).

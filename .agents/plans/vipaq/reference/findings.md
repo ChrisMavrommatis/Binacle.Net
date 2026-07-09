@@ -181,7 +181,7 @@ except the 1-item token (520 B vs 368 B — noise at that size).
 **Coverage gap:** the uncompressed set is **all 8-bit** — every 16-bit problem (Bischoff) is large enough to
 compress, so the uncompressed *16-bit* path is measured nowhere. Closing it needs a small 16-bit problem authored
 in `shared/data`; tracked in
-[../shared/testskernel-data-extraction.md](../shared/testskernel-data-extraction.md).
+[../shared/testskernel-data-extraction.md](../../shared/testskernel-data-extraction.md).
 
 ## What the harness did *not* answer
 

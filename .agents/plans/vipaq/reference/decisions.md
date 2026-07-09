@@ -29,9 +29,9 @@ Every decision — a header bit, a codec, a layout, a feature — must answer **
 ## Locked
 
 ### D1 — v2 is `8/16 + reserved codes`, for simplicity (CONFIRMED 2026-07-05)
-Varint deferred to Session 7, may never happen. **Not a size play** — 8/16 = v1 on ≤16-bit data, so ~0% smaller.
-The payoff is a **simpler format** (2 tiers not 4; no 2⁵³ ceiling to reason about) and a clean base if varint is
-ever wanted. Do not sell "20% smaller" — that was a Brotli-q11 artifact (see findings).
+Varint deferred to Session 7, may never happen. **Not a size play** — two tiers cost the same as four on ≤16-bit
+data, so ~0% smaller. The payoff is a **simpler format** (2 tiers not 4; no 2⁵³ ceiling to reason about) and a
+clean base if varint is ever wanted. Do not sell "20% smaller" — that was a Brotli-q11 artifact (see findings).
 
 ### D2 — 16-bit cap in v2.0; throw above 65,535
 Fixed 8/16 caps at 65,535. v2.0 throws above it; varint (Session 7) lifts the cap later. mm → 65 m, fine for
@@ -44,7 +44,7 @@ ViPaq has one implementation, so there's no in-code baseline like lib's v1-vs-v2
 - **Committed result files are the recorded baseline** — size-report + BDN summary under `results/`. A *win* = a
   diff showing smaller base64 / lower ns / lower allocs **while the protobuf anchor is unchanged**. Small
   increments; keep only measured wins.
-- Depends on the still-open results-storage decision in [../results-migration.md](../results-migration.md); this
+- Depends on the still-open results-storage decision in [../results-migration.md](../../results-migration.md); this
   workflow assumes **Option C — stay in `results/`**.
 
 ### D4 — The permanent harness uses only the minimal public API (CONFIRMED 2026-07-07)
@@ -52,18 +52,21 @@ The permanent benchmark calls **only** `ViPaqSerializer.Serialize`/`Deserialize`
 header bits, or layout. Two consequences:
 - **Layout-agnostic for free** — when v2 swaps row→columnar internally, the bytes change but the harness call
   sites don't. This is automatic from living at the public boundary, not something the harness engineers.
-- **It measures real behavior only** — compression is baked into `Serialize` (fixed 255-byte threshold, hard-wired
-  gzip-Optimal; no caller control). So the harness can't set a compression/codec knob. It *detects* whether ViPaq
-  compressed by reading byte 0's `Version` bit, then mirrors that on protobuf for a fair comparison.
+- **It measures real behavior only** — the public `Serialize` chooses compression itself (D7), so the harness
+  measures what callers get, not a tuned mode. It *detects* whether ViPaq compressed by reading the header's
+  `Compressed` bit (byte 0, bit 5 — **not** the `Version` field; the spec separated them), then mirrors that on
+  protobuf for a fair comparison.
+- **Phase 1 adds a compression override** (D13) that the harness may use to measure raw vs compressed. That is a
+  measurement entry point, not a caller knob, and it does not change what the public default does.
 - **Why minimal:** a permanent ruler must not churn when the lib evolves. Coupling it to an evolving API would
-  defeat the point. Controlled codec/threshold experiments are a **separate one-off** (see D5), not the ruler.
+  defeat the point. The controlled codec experiment is a **separate one-off** (see D5), not the ruler.
 
 ### D5 — Two tiers: permanent ruler vs one-off experiment (CONFIRMED 2026-07-07)
 - **Permanent harness** (Session 1): minimal public API, never changes, measures real-mode size + CPU/mem +
   protobuf ratio, and *observes* the shipped compression crossover by sweeping item count.
-- **One-off experiment:** tunes the threshold / chooses the codec — the only questions needing a compression knob.
-  Asked once, answer recorded in findings.md and baked into the lib. Not part of the permanent ruler. In v2 this
-  experiment stops being throwaway because it drives the stable directive seam (see architecture-v2.md D-arch).
+- **One-off experiment:** chooses the codec (O2). The threshold question is dead — D7 killed it. Asked once,
+  answer recorded in findings.md, locked here, and **written into the spec** (`vipaq/PROTOCOL.md` §6 names the
+  codec, because `Version` pins it). Not part of the permanent ruler.
 
 ### D6 — Scope: 8/16 only, no 32/64 in the permanent tool
 32/64 is pointless to keep measuring — v2 drops it. Craft payloads whose values force ViPaq into 8- or 16-bit
@@ -77,7 +80,10 @@ answer depends on the data, not its size. Try-both has no knob to get wrong and 
 
 Cost: one extra compress pass on the encode path. Session 4 must measure it (encode is the priority — D8). If the
 cost is unacceptable, the fallback is a threshold, and we are back to picking the wrong one. Evidence:
-[findings.md](findings.md) Round 2.
+[findings.md](findings.md).
+
+The spec states this as a **SHOULD**, not a MUST: the `Compressed` bit is normative, the choosing policy is not.
+That is what lets phase 1 force compression on or off to measure it — see D13.
 
 ### D8 — Encode speed is the priority; decode is second (CONFIRMED 2026-07-08)
 ViPaq's job is to produce a token fast and store it; reads are rarer. **Optimise encode first.** Take decode wins
@@ -108,12 +114,46 @@ where `GetExecutingAssembly` correctly resolves to the assembly that embeds the 
 principle already recorded for the reader (memory `vipaq-generator-standalone`). **Revisit sharing only if a third
 consumer appears** — and even then, share the enumeration, not the parse.
 
+### D11 — Breaking rebuild; the old format is ignored (CONFIRMED 2026-07-09)
+No compatibility, no migration, no fallback. No decoder reads the old wire and no code path detects it; stored
+tokens must be re-encoded. Nothing in the repo says the old format existed — the break is announced in
+`.agents/release-notes.md` only.
+
+What settled it: reading old blobs means keeping four integer widths, a 64-bit tier, and the whole `2^53 − 1`
+range apparatus alive in every decoder, in both languages, forever. That apparatus is the biggest thing we delete.
+
+### D12 — Two-byte header, split by purpose (CONFIRMED 2026-07-09)
+`Version`(2) + `Compressed`(1) + `Layout`(1) + three 2-bit widths is 10 bits. Byte 0 is **how to read** the body,
+byte 1 is **how wide** its integers are. The second byte is nearly free — base64 encodes 3 bytes to 4 characters.
+Widths keep 2 bits, so each section has two spare codes: one for varint, one in hand. `vipaq/PROTOCOL.md` §2.
+
+### D13 — `Compressed` and `Layout` are per-blob flags, not versions (CONFIRMED 2026-07-09)
+Both describe what the encoder did to *this* blob, so one decoder reads all four combinations. That makes them
+measurable — row/columnar × raw/compressed, raced on real packs instead of guessed at spec time. It is also the
+phase-1 switch. It does **not** re-open the threshold question (D7): try-both stays the default, and the spec
+makes the *bit* normative while the *policy* is not.
+
+### D14 — Widths are policy too; only the header is normative (CONFIRMED 2026-07-09)
+Found by reviewing the spec against these plans. Widths, `Layout` and `Compressed` are all the encoder's choice,
+all recorded in the header, and a decoder obeys the header rather than re-deriving anything. Two consequences:
+
+- **Every combination is forceable** and still conformant — force 16-bit on sub-255 data, force columnar, force
+  raw. That is what the forced-combo matrix needs (`vipaq/PROTOCOL.md` §4 "Selection").
+- **"Uncompressed bytes are byte-identical across languages" only holds with the header pinned** (§6.1). Two
+  conformant encoders may choose differently for the same input and both are right. Golden vectors must state the
+  header they expect bytes under. The old blanket claim was wrong; sessions 5 and 6 are corrected.
+
 ## Open — decide with data
 
-### O2 — Codec + level (deferred; Session 4 owns it)
-Build the harness codec-agnostic. Findings: gzip-Optimal ≈ brotli-Optimal on size, both fast; **never q11 as
-default** (~98 ms encode — archival opt-in only). The real-data harness could not touch this — it has no codec
-knob by design (D4/D5). Run the one-off codec-tradeoff experiment, then lock.
+### O2 — Codec + level (still open; blocks finalising the spec)
+The spec leaves the codec **unchosen** (`vipaq/PROTOCOL.md` §6). It is fixed by `Version`, not by a header field,
+so it must be named before v2 ships — and switching it later costs a `Version` bump, not a knob.
+
+Compression *level* never reaches the wire: it is an encoder-side choice, free to change, invisible to a decoder.
+So only the **codec** is a real decision.
+
+Standing findings that constrain it: gzip-Optimal ≈ brotli-Optimal on size, both fast; **never q11 as a default**
+(~98 ms encode — archival opt-in only). Whatever is picked must exist in C# and in the browser/Node.
 
 ## Ruled out — do not rebuild
 24-bit ladder (8/16/24/32) + coords-ride-bin · Brotli q11 as default · byte-plane/transpose layout · raw Deflate
