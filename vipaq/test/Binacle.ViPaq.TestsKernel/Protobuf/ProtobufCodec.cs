@@ -4,22 +4,22 @@ using Google.Protobuf;
 
 namespace Binacle.ViPaq.TestsKernel.Protobuf;
 
-// Turns a sample into protobuf bytes — the baseline ViPaq is measured against. It offers both a raw and a
+// Turns a scenario into protobuf bytes — the baseline ViPaq is measured against. It offers both a raw and a
 // gzip'd form so the harness can obey the fairness rule: compare against the raw form when ViPaq did not
 // compress, and against both forms when it did. The gzip settings match ViPaq's own (System.IO gzip,
 // CompressionLevel.Optimal), so the only thing that differs is the format, not the codec.
 public static class ProtobufCodec
 {
-	public static byte[] Encode(PackingSample sample) 
-		=> ToMessage(sample)
+	public static byte[] Encode(Scenario scenario)
+		=> ToMessage(scenario)
 			.ToByteArray();
 
-	public static string ToBase64(byte[] bytes) 
+	public static string ToBase64(byte[] bytes)
 		=> Convert.ToBase64String(bytes);
 
-	public static byte[] EncodeGzip(PackingSample sample)
+	public static byte[] EncodeGzip(Scenario scenario)
 	{
-		var raw = Encode(sample);
+		var raw = Encode(scenario);
 
 		using var output = new MemoryStream();
 		using (var gzip = new GZipStream(output, CompressionLevel.Optimal, leaveOpen: true))
@@ -30,20 +30,20 @@ public static class ProtobufCodec
 		return output.ToArray();
 	}
 
-	private static PackedResult ToMessage(PackingSample sample)
+	private static PackedResult ToMessage(Scenario scenario)
 	{
 		var message = new PackedResult
 		{
-			Count = (uint)sample.Items.Length,
+			Count = (uint)scenario.Items.Length,
 			Bin = new Vec3
 			{
-				Length = sample.Bin.Length,
-				Width = sample.Bin.Width,
-				Height = sample.Bin.Height
+				Length = scenario.Bin.Length,
+				Width = scenario.Bin.Width,
+				Height = scenario.Bin.Height
 			}
 		};
 
-		foreach (var item in sample.Items)
+		foreach (var item in scenario.Items)
 		{
 			message.Items.Add(new PlacedItem
 			{

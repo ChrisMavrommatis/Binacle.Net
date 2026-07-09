@@ -1,20 +1,19 @@
-using System.Diagnostics.CodeAnalysis;
 using Binacle.ViPaq.TestsKernel.Models;
 
 namespace Binacle.ViPaq.TestsKernel.ViPaq;
 
 // The harness's only door into ViPaq: the public Serialize / Deserialize, nothing internal (decisions.md
-// D4). Every sample uses ushort, so it always goes through the UInt16 path; ViPaq itself decides 8- vs
+// D4). Every scenario uses ushort, so it always goes through the UInt16 path; ViPaq itself decides 8- vs
 // 16-bit per section from the values.
 //
 // Base64 is the real stored form and the headline number, so Encode hands back both the raw bytes (what
 // BenchmarkDotNet measures) and the base64 text (what the size report measures).
 public static class ViPaqCodec
 {
-	public static byte[] Encode(PackingSample sample)
-		=> ViPaqSerializer.Serialize<Dimensions<ushort>, Item<ushort>, ushort>(sample.Bin, sample.Items);
+	public static byte[] Encode(Scenario scenario)
+		=> ViPaqSerializer.Serialize<Dimensions<ushort>, Item<ushort>, ushort>(scenario.Bin, scenario.Items);
 
-	public static string ToBase64(byte[] token) 
+	public static string ToBase64(byte[] token)
 		=> Convert.ToBase64String(token);
 
 	public static (Dimensions<ushort> Bin, IList<Item<ushort>> Items) Decode(byte[] token)
@@ -22,23 +21,23 @@ public static class ViPaqCodec
 
 	// True only when decode gives back exactly what we serialized. A smaller token that does not round-trip
 	// is not a win — the size report rejects it.
-	public static bool RoundTrips(PackingSample sample, byte[] token)
+	public static bool RoundTrips(Scenario scenario, byte[] token)
 	{
 		var (bin, items) = Decode(token);
 
-		if (!SameDimensions(sample.Bin, bin))
+		if (!SameDimensions(scenario.Bin, bin))
 		{
 			return false;
 		}
 
-		if (items.Count != sample.Items.Length)
+		if (items.Count != scenario.Items.Length)
 		{
 			return false;
 		}
 
 		for (var index = 0; index < items.Count; index++)
 		{
-			var expected = sample.Items[index];
+			var expected = scenario.Items[index];
 			var actual = items[index];
 			var hasSameDimensions = SameDimensions(expected, actual);
 			var hasSameCoordinates = SameCoordinates(expected, actual);

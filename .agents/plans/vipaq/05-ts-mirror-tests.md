@@ -1,14 +1,19 @@
 # Session 5 — TypeScript mirror + tests
 
-**Goal:** update the hand-maintained TypeScript mirror (`vipaq/binacle-vipaq`) to the v2 spec so it stays
+**Goal:** update the hand-maintained TypeScript mirror (`vipaq/packages/binacle-vipaq`) to the v2 spec so it stays
 **wire-identical** to the C# lib, and update its tests. This is bound by the existing interop apparatus.
 
-**Prereq reading:** [03-spec-v2.md](03-spec-v2.md), [cross-language-testing.md](cross-language-testing.md).
+**Prereq reading:** [03-spec-v2.md](03-spec-v2.md), `.agents/docs/vipaq/cross-language-testing.md`.
+
+## Do NOT (this session) — on top of the README standing fence
+- Do not diverge from `PROTOCOL.md` — the spec is the C#↔TS contract.
+- Do not invent a second grammar/model; mirror the C# lib's consolidated notation + models.
+- Do not assert byte-equality on compressed payloads — decode-to-input only (uncompressed bytes stay byte-identical).
 
 ## Context you need
 - The C#↔TS contract is the spec (`PROTOCOL.md`). Bytes written by one must be readable by the other. The shared
   reference vectors in `vipaq/test-vectors/` grade both suites against one answer key so they can't silently drift.
-- TS mirror lives in `vipaq/binacle-vipaq` (`src/`, `tests/`). It reads the same JSON vectors from disk.
+- TS mirror lives in `vipaq/packages/binacle-vipaq` (`src/`, `tests/`). It reads the same JSON vectors from disk.
 - **Compression note (already documented, keep it true):** compressed *bytes* are NOT reproducible across runtimes
   — the interop contract for compressed payloads is **decode-to-input, never byte-equality** (see PROTOCOL.md §6 +
   test-vectors/README). Uncompressed bytes ARE byte-identical across languages. This matters for v2's codec too
@@ -28,5 +33,5 @@
 - Don't invent a second grammar/model — the lib already consolidated `CompactNotation` + models; mirror that.
 
 ## References
-[cross-language-testing.md](cross-language-testing.md) (binding) · [03-spec-v2.md](03-spec-v2.md) ·
-`vipaq/binacle-vipaq/*`, `vipaq/test-vectors/`.
+`.agents/docs/vipaq/cross-language-testing.md` (binding) · [03-spec-v2.md](03-spec-v2.md) ·
+`vipaq/packages/binacle-vipaq/*`, `vipaq/test-vectors/`.

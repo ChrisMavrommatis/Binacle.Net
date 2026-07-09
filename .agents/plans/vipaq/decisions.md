@@ -69,16 +69,51 @@ header bits, or layout. Two consequences:
 32/64 is pointless to keep measuring — v2 drops it. Craft payloads whose values force ViPaq into 8- or 16-bit
 selection; don't try to benchmark widths v2 won't have.
 
+### D7 — Compression trigger is **try-both-keep-smaller** (was O1; CONFIRMED 2026-07-08)
+Compress, keep whichever is shorter, never inflate. Session 1 measured both sides and the fixed 255-byte threshold
+the lib ships today is **wrong in both directions**: it inflates random data (gzip saved −8% to −0%) and would miss
+small compressible data (real packed data saves 45–68%). A threshold cannot be tuned to fit both, because the right
+answer depends on the data, not its size. Try-both has no knob to get wrong and can never inflate.
+
+Cost: one extra compress pass on the encode path. Session 4 must measure it (encode is the priority — D8). If the
+cost is unacceptable, the fallback is a threshold, and we are back to picking the wrong one. Evidence:
+[findings.md](findings.md) Round 2.
+
+### D8 — Encode speed is the priority; decode is second (CONFIRMED 2026-07-08)
+ViPaq's job is to produce a token fast and store it; reads are rarer. **Optimise encode first.** Take decode wins
+only when they are cheap — Session 2's span fix is exactly that, so it still belongs. Read the benchmark this way:
+encode is the number that gates a change, decode is watch-not-block.
+
+### D9 — Synthetic data measures CPU/memory; real data measures size (CONFIRMED 2026-07-08)
+The two things we measure depend on different properties of the data.
+- **CPU and memory** depend on item count and byte width, not on whether values repeat — encode/decode do the same
+  work either way. So **synthetic random is fine, and preferred**: deterministic, scales freely to counts no real
+  pack reaches (2000, 5000), and it deliberately exercises the expensive path — compression runs but does not help,
+  so the encoder pays the cost and discards it. That wasted-gzip cost is real and worth measuring.
+- **Size and compression** are the one place random lies: gzip has nothing to grip, so it reports the *opposite* of
+  real behaviour. **Size and crossover use real data only.**
+
+The contrast itself (synthetic inflates, real saves 45–68%) is a keep-it finding, not a bug.
+
+### D10 — ViPaq test kernel owns its file plumbing; no shared TestFiles (CONFIRMED 2026-07-09)
+An earlier session extracted the embedded-file plumbing into a shared `shared/test/Binacle.TestFiles` so both the
+shared kernel and the ViPaq kernel could use it. **Reverted.** The only genuinely shared part is ~15 lines of
+"enumerate manifest resources by prefix"; the *parse* differs — ViPaq's name is `<family>.<name>.<algorithm>`, the
+shared kernel's is `<folder>.<name>` — so sharing needed a generic factory seam plus loosened visibility, for
+little gain. Worse, a shared copy is silently broken: `Assembly.GetExecutingAssembly()` inside a shared library
+resolves to *that* library, which embeds nothing, so lookups return empty and tests quietly vanish.
+
+The ViPaq kernel now has its own `Files/` trio (`IFile`, `EmbeddedResourceFile`, `EmbeddedResourceFileProvider`),
+where `GetExecutingAssembly` correctly resolves to the assembly that embeds the data. This matches the standalone
+principle already recorded for the reader (memory `vipaq-generator-standalone`). **Revisit sharing only if a third
+consumer appears** — and even then, share the enumeration, not the parse.
+
 ## Open — decide with data
 
-### O1 — Compression trigger (Session 1 owns it)
-Recommend **try-both-keep-smaller** (smallest token, no threshold to tune, never inflates tiny tokens). Simpler
-fallback: a fixed byte threshold (currently 255 B in the lib; findings say brotli pays from ~150 B, gzip from
-~400 B). Lock from the crossover data in Session 1.
-
-### O2 — Codec + level (deferred; decide later with data)
+### O2 — Codec + level (deferred; Session 4 owns it)
 Build the harness codec-agnostic. Findings: gzip-Optimal ≈ brotli-Optimal on size, both fast; **never q11 as
-default** (~98 ms encode — archival opt-in only). Run the codec-tradeoff experiment, then lock.
+default** (~98 ms encode — archival opt-in only). The real-data harness could not touch this — it has no codec
+knob by design (D4/D5). Run the one-off codec-tradeoff experiment, then lock.
 
 ## Ruled out — do not rebuild
 24-bit ladder (8/16/24/32) + coords-ride-bin · Brotli q11 as default · byte-plane/transpose layout · raw Deflate

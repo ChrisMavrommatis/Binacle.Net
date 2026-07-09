@@ -5,6 +5,10 @@ code or new version, each justified by its measured gain. Nothing here is commit
 
 **Prereq reading:** [findings.md](findings.md).
 
+## Do NOT (this session) — on top of the README standing fence
+- Nothing here is committed. Do not build any candidate without a measured gain in base64 + encode/decode ms.
+- Each feature rides a reserved code or a new `Version`, through the full spec → C# → TS → vectors pipeline. No shortcuts.
+
 ## Candidates, ranked by measured value
 
 ### 1. Varint (width-code 2) — the deferred size lever

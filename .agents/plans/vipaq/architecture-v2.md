@@ -38,8 +38,14 @@ really **header-driven decode** — a Session 3 spec requirement.
 
 - Public API stays minimal (`Serialize`/`Deserialize`) so the **permanent harness never churns** (see
   [decisions.md](decisions.md) D4).
-- The dumb directive entry stays **`internal` + `InternalsVisibleTo`** the test and benchmark projects.
+- The dumb directive entry stays **`internal` + `InternalsVisibleTo`** the projects that need it.
 - Result: public contract doesn't grow, yet experiments and unit tests can force any combo.
+
+**Check before relying on this.** `Binacle.ViPaq.csproj` grants `InternalsVisibleTo` to **only** `.UnitTests` and
+`.VectorGenerators` today — **not** `.Benchmarks`, `.PerformanceTests`, or `.TestsKernel`. That is deliberate and
+consistent with D4 (the permanent harness lives on the public API and computes widths itself). So "the benchmark
+projects can reach the directive" is **not** true today; granting it would need a new entry and would weaken D4.
+Decide in Session 4 whether the one-off codec experiment gets access, or stays a throwaway that does.
 
 ## What becomes testable (Session 4 + UnitTests)
 

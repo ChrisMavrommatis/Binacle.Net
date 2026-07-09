@@ -33,8 +33,11 @@ No change to `EmbeddedResourceFileProvider`, `ScenarioCollectionsProvider`, `Col
 
 - **Bischoff suite.** Kernel's `Algorithms/Data/BischoffSuite/*.json` deleted; embedded from
   `shared/data/bischoff-suite/*.json` via the `Link`/`LogicalName` recipe above. Manifest names byte-identical, all
-  8615 Bischoff unit tests green. This carried the converter's thpack5–7 2-decimal normalization into the tests. See
-  `plans/vipaq/01-benchmark-permanent.md` (Track A) for the converter.
+  8615 Bischoff unit tests green. This carried the converter's thpack5–7 2-decimal normalization into the tests.
+  The converter is `shared/tools/Binacle.OrLibrary.Converter`; what it does and why it needs no packer is documented
+  in `shared/data/bischoff-suite/README.md`, and the "Bischoff = thpack1–7 only" provenance in
+  `shared/data/or-library/README.md`. **Read those before touching the data** — thpack8/9 are different authors and,
+  for thpack9, a different problem class.
 - **Custom problems.** Kernel's `Algorithms/Data/CustomProblems/{baseline,complex,simple}.json` moved to
   `shared/data/custom-problems/` and embedded the same way (prefix
   `Binacle.TestsKernel.Algorithms.Data.CustomProblems.`). Hand-authored, so no generator — relocate + embed only.
@@ -57,8 +60,46 @@ SmallestBin) and thin coverage:
   where the smallest wins; algorithms that tie on fit but differ on efficiency; a bin that only one algorithm can
   fill). Name cases so the intent is obvious.
 - Cross-check against the selectors in `ResultSelection/Providers/` so every branch has at least one scenario.
-- Consider whether custom-problems needs more than baseline/complex/simple, or whether the Bischoff suite already
-  covers the algorithm cases well enough that custom-problems can stay small and targeted.
+## Pending — add more problems to `custom-problems`
+
+Three separate consumers now want problems the set does not have. Bischoff cannot supply any of them: it is seven
+fixed instances, all 16-bit, all `PartiallyPacked`. `custom-problems` is the only hand-authored set, so this is
+where they land. Adding a problem here reaches lib's algorithm tests **and** ViPaq's packed data (which is
+regenerated from these definitions), so one addition serves both.
+
+- **8-bit coverage.** Every Bischoff pack is 16-bit — the coordinates run to ~587. The only 8-bit scenario in the
+  repo is a custom pack. ViPaq's fast benchmark needs at least one 8-bit problem it can call its own, and its
+  curated Bischoff slice cannot provide it. See
+  [../vipaq/testskernel-restructure.md](../vipaq/testskernel-restructure.md) (Open).
+- **Uncompressed 16-bit coverage (gap, 2026-07-09).** ViPaq's two paths — uncompressed (body ≤ ~255 B) and gzip'd —
+  are measured for both size and speed, but the *uncompressed* set is **all 8-bit**: every 16-bit problem (Bischoff)
+  is large enough that ViPaq compresses it, so there is no uncompressed-16-bit scenario to benchmark or size. Author
+  a small 16-bit problem — a bin whose coordinates exceed 255 but with few enough items to stay under the
+  compression threshold (16-bit body: `2 + 6 + items*(3*2 + 3*2)` bytes ≤ 255 → ~20 items) — so the raw path is
+  covered at 16-bit too. See [../vipaq/findings.md](findings.md) ("Uncompressed vs compressed").
+- **A count ladder.** One problem family at ~5, ~13, ~50, ~200 items, with **only the item count changing**. This is
+  what makes ViPaq's compression-crossover report exact. Today it is marked PROVISIONAL because the real data is
+  gappy — it can only say "8-bit crosses somewhere between 16 and 100 items". A ladder pins it. See
+  [../vipaq/01-benchmark-permanent.md](../vipaq/01-benchmark-permanent.md).
+- **Selector tie-breaks** — the result-selection work above, which is its own set (`shared/data/result-selection/`)
+  but the same "grow the cases" job.
+- **Shape variety.** `simple`/`complex`/`baseline` are small and same-ish. Consider varied bin sizes, a single-item
+  bin, and a near-perfect tessellation, so the algorithm tests exercise more than one regime.
+
+**The cost, before you start.** Each scenario carries `Metrics` and `Result`, and both are *asserted*:
+
+```json
+{ "Name": "...", "Bin": "60x40x10", "Metrics": "125 24000 1 0.5",
+  "Result": "FullyPacked FullyPacked", "Items": ["5x5x5 [1]"] }
+```
+
+`Metrics` is pure arithmetic (items volume, bin volume, item count, fill %) — computable, no packer needed.
+`Result` is the **expected** outcome, and the tests run the real packer and check against it. So you must know what
+the packer will do before you write the file. Get it wrong and the test fails, which is the point — but it means a
+new problem is a small piece of reasoning, not a paste. Bischoff sidesteps this by always being `PartiallyPacked`.
+
+Consider whether the Bischoff suite already covers the algorithm cases well enough that `custom-problems` can stay
+small and targeted, growing only for the four reasons above.
 
 ## Watch out
 

@@ -7,31 +7,31 @@ namespace Binacle.ViPaq.PerformanceTests.Tests;
 
 // Answers the open question O1: at what item count does compressing the token first pay off?
 //
-// It sweeps the real samples (the same ones the size report uses) ordered by item count, one width family
-// at a time so it stays like-for-like. At each sample it sets the token ViPaq actually produced (compressed
+// It sweeps the real scenarios (the same ones the size report uses) ordered by item count, one width family
+// at a time so it stays like-for-like. At each scenario it sets the token ViPaq actually produced (compressed
 // on its own once the body passes a fixed threshold) against the uncompressed size the same data would take.
 // The uncompressed size is exact arithmetic from the format — fixed-width fields, so it is header bytes +
-// count + bin + items, no guessing. The crossover is the first sample where compression both kicks in and
+// count + bin + items, no guessing. The crossover is the first scenario where compression both kicks in and
 // the token actually gets smaller.
 //
 // Caveat: real data is not a clean ladder. It has gaps (custom packs jump from 16 to 100 items; Bischoff
 // packs all land at 57+), so the crossover point is as fine as the data allows, not to the single item.
 internal class CompressionCrossoverTest : ITest
 {
-	private readonly IReadOnlyCollection<PackingSample> samples;
+	private readonly IReadOnlyCollection<Scenario> scenarios;
 	private readonly string label;
 	private readonly ILogger<CompressionCrossoverTest> logger;
 
 	public ResultFile File { get; }
 
 	public CompressionCrossoverTest(
-		IReadOnlyCollection<PackingSample> samples,
+		IReadOnlyCollection<Scenario> scenarios,
 		string label,
 		ResultFile file,
 		ILogger<CompressionCrossoverTest> logger
 	)
 	{
-		this.samples = samples;
+		this.scenarios = scenarios;
 		this.label = label;
 		this.File = file;
 		this.logger = logger;
@@ -39,32 +39,32 @@ internal class CompressionCrossoverTest : ITest
 
 	public TestResult Run()
 	{
-		var table = new TableResult("Sample", "Items", "Widths b/i/c", "Raw b64", "Actual b64", "Comp", "Saved %");
-		PackingSample? crossoverSample = null;
+		var table = new TableResult("Scenario", "Items", "Widths b/i/c", "Raw b64", "Actual b64", "Comp", "Saved %");
+		Scenario? crossoverScenario = null;
 
-		var orderedSamples = this.samples
-			.OrderBy(sample => sample.ItemCount)
-			.ThenBy(sample => sample.Name);
+		var orderedScenarios = this.scenarios
+			.OrderBy(scenario => scenario.ItemCount)
+			.ThenBy(scenario => scenario.Name);
 
-		foreach (var sample in orderedSamples)
+		foreach (var scenario in orderedScenarios)
 		{
-			var token = ViPaqCodec.Encode(sample);
+			var token = ViPaqCodec.Encode(scenario);
 			var header = ViPaqHeader.Read(token);
 
 			var actualBase64 = ViPaqCodec.ToBase64(token).Length;
-			var rawBase64 = Base64Length(UncompressedBytes(header, sample.ItemCount));
+			var rawBase64 = Base64Length(UncompressedBytes(header, scenario.ItemCount));
 
 			var compressed = header.IsCompressed;
 			var savedPercent = compressed ? (rawBase64 - actualBase64) / (double)rawBase64 * 100 : (double?)null;
 
-			if (crossoverSample is null && compressed && actualBase64 < rawBase64)
+			if (crossoverScenario is null && compressed && actualBase64 < rawBase64)
 			{
-				crossoverSample = sample;
+				crossoverScenario = scenario;
 			}
 
 			table.AddRow(
-				sample.Name,
-				sample.ItemCount.ToString(),
+				scenario.Name,
+				scenario.ItemCount.ToString(),
 				Widths(header),
 				rawBase64.ToString(),
 				actualBase64.ToString(),
@@ -75,17 +75,17 @@ internal class CompressionCrossoverTest : ITest
 		this.logger.LogInformation(
 			"{Label}: compression first pays off at {Where}.",
 			this.label,
-			crossoverSample is null
+			crossoverScenario is null
 				? "(never in this set)"
-				: $"{crossoverSample.ItemCount} items ({crossoverSample.Name})");
+				: $"{crossoverScenario.ItemCount} items ({crossoverScenario.Name})");
 
 		return new TestResult
 		{
 			Title = $"Compression crossover — {this.label}",
 			File = this.File,
-			Description = crossoverSample is null
+			Description = crossoverScenario is null
 				? "Compression never beat the raw token in this set."
-				: $"Compressed base64 first beats raw at {crossoverSample.ItemCount} items ({crossoverSample.Name}).",
+				: $"Compressed base64 first beats raw at {crossoverScenario.ItemCount} items ({crossoverScenario.Name}).",
 			Result = table
 		};
 	}

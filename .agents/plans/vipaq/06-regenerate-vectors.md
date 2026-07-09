@@ -3,11 +3,18 @@
 **Goal:** regenerate the shared reference vectors so the C# and TS v2 implementations are graded against one answer
 key and can't drift. This is the safety net that proves C#↔TS wire compatibility.
 
-**Prereq reading:** [cross-language-testing.md](cross-language-testing.md) (the whole apparatus).
+**Prereq reading:** `.agents/docs/vipaq/cross-language-testing.md` (the whole apparatus).
+
+**Before adding vector rows,** read `.agents/ideas/vipaq/interop-vector-coverage.md` — it records four candidate
+rows we skipped, and one experiment (cross-runtime gzip blobs) that was built and deliberately dropped.
+
+## Do NOT (this session) — on top of the README standing fence
+- Do not change the interop apparatus — this session changes what the vectors contain, never how the harness works.
+- Do not assert byte-equality on compressed artifacts — it flakes across runtimes; decode-to-input only.
 
 ## Context you need
 - Shared vectors live in `vipaq/test-vectors/` (byte-golden, header oracle, round-trip scenarios, invalid cases).
-- Interop artifacts + generators: C# `vipaq/tools/Binacle.ViPaq.VectorGenerators`, TS `binacle-vipaq/tools`. Single entry
+- Interop artifacts + generators: C# `vipaq/tools/Binacle.ViPaq.VectorGenerators`, TS `vipaq/packages/binacle-vipaq/tools`. Single entry
   point: `npm run regen:interop` (runs the C# generator then the TS one; deterministic, no-arg).
 - Contract: **uncompressed bytes are byte-identical** across languages; **compressed payloads decode-to-input only**
   (not byte-equal — cross-runtime gzip/brotli differ). Keep both invariants.
@@ -26,5 +33,5 @@ key and can't drift. This is the safety net that proves C#↔TS wire compatibili
 - Add a boundary row for the **65,535 → throw** so both languages reject at the same value.
 
 ## References
-[cross-language-testing.md](cross-language-testing.md) (binding, has the full vector inventory + rules) ·
-[03-spec-v2.md](03-spec-v2.md) · `vipaq/test-vectors/`, `vipaq/tools/`, `binacle-vipaq/tools/`.
+`.agents/docs/vipaq/cross-language-testing.md` (binding — the full vector inventory + rules) ·
+[03-spec-v2.md](03-spec-v2.md) · `vipaq/test-vectors/`, `vipaq/tools/`, `vipaq/packages/binacle-vipaq/tools/`.

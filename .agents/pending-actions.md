@@ -13,3 +13,11 @@ entries there).
   to   `api/src/Binacle.Net/Binacle.Net.csproj`
   Affects: `release-docker-image.yml` workflow (publish step)
   Also tracked in [`release-notes.md`](release-notes.md) so it isn't missed at release time.
+
+---
+
+## Verification gaps
+
+- [ ] **Run a docker image build.** The `Binacle.Geometry` extraction was verified against every C# suite
+  (including ServiceModule) and the TS suites, all green — but the docker image build was skipped by choice.
+  Run it once for a fully green sweep.

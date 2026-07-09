@@ -18,9 +18,17 @@ and move it to `.agents/plans/` once it's picked up. See [README.md](README.md) 
 | File | Description |
 |---|---|
 | [api/admin-user-management-site.md](api/admin-user-management-site.md) | Idea: Admin site for user management |
+| [api/per-user-packing-logs.md](api/per-user-packing-logs.md) | Idea: per-user packing logs |
+
+## Shared
+
+| File | Description |
+|---|---|
+| [shared/extend-shared-models.md](shared/extend-shared-models.md) | Idea: take the shared model leaf further |
 
 ## ViPaq
 
 | File | Description |
 |---|---|
-| [vipaq/vipaq-vs-protobuf.md](vipaq/vipaq-vs-protobuf.md) | Idea: Compare ViPaq to Protobuf |
+| [vipaq/interop-vector-coverage.md](vipaq/interop-vector-coverage.md) | Idea: more interop vector coverage |
+| [vipaq/vipaq-vs-protobuf.md](vipaq/vipaq-vs-protobuf.md) | Idea: compare ViPaq to other formats |

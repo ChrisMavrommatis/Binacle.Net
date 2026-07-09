@@ -1,6 +1,6 @@
 using Binacle.TestReporting;
 using Binacle.ViPaq.PerformanceTests.Tests;
-using Binacle.ViPaq.TestsKernel.Samples;
+using Binacle.ViPaq.TestsKernel.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -23,6 +23,9 @@ internal class Program
 				theme: AnsiConsoleTheme.Code
 			)
 			.CreateBootstrapLogger();
+
+		// Fail fast if the curated benchmark picks are stale or wrongly labelled, before running the reports.
+		CuratedScenarioCheck.Run();
 
 		var builder = Host.CreateApplicationBuilder();
 		builder.Logging.ClearProviders();
@@ -48,16 +51,16 @@ internal class Program
 		// two separate tables in the same file — they are different problem shapes and read more clearly apart.
 		builder.Services.AddTransient<ITest, SizeComparisonTest>(serviceProvider =>
 			new SizeComparisonTest(
-				RealDataProvider.Custom,
-				"Real samples — custom packs (offline FFD)",
+				CustomProblemsDataProvider.All,
+				"Real scenarios — custom packs (offline FFD)",
 				"Same rules, on real placed data — small hand-authored packs.",
 				sizeFile,
 				serviceProvider.GetRequiredService<ILogger<SizeComparisonTest>>()));
 
 		builder.Services.AddTransient<ITest, SizeComparisonTest>(serviceProvider =>
 			new SizeComparisonTest(
-				RealDataProvider.Bischoff,
-				"Real samples — Bischoff suite (offline FFD)",
+				BischoffDataProvider.All,
+				"Real scenarios — Bischoff suite (offline FFD)",
 				"Same rules, on real placed data. Structured results, so compression actually pays.",
 				sizeFile,
 				serviceProvider.GetRequiredService<ILogger<SizeComparisonTest>>()));
@@ -67,7 +70,7 @@ internal class Program
 			Filename = "CompressionCrossover",
 			Title = "Compression crossover",
 			Description = "PROVISIONAL — may be phased out. Where compressing the token starts to beat the raw "
-				+ "token, by item count. Swept over the real samples (packed via the API), one width family at "
+				+ "token, by item count. Swept over the real scenarios (packed via the API), one width family at "
 				+ "a time. Kept for now; the size report already shows where compression starts to pay, and the "
 				+ "real data has gaps so the crossover point is coarse."
 		};
@@ -82,8 +85,9 @@ internal class Program
 
 		foreach (var (bits, label) in realFamilies)
 		{
-			var family = RealDataProvider.All
-				.Where(sample => sample.WidthBits == bits)
+			var family = BischoffDataProvider.All
+				.Concat(CustomProblemsDataProvider.All)
+				.Where(scenario => scenario.WidthBits == bits)
 				.ToList();
 
 			if (family.Count == 0)

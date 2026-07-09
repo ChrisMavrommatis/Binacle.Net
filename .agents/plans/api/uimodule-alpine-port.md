@@ -1,6 +1,7 @@
 # UIModule — Port from Blazor Reactivity to Alpine.js
 
-**Status:** Not started  
+**Status:** Not started. **The "Current State" below was written 2026-05-26 and its build section was wrong —
+re-verified against the code 2026-07-08 and corrected. Re-check before trusting any path here.**
 **Goal:** Replace Blazor Interactive Server reactivity with Alpine.js so `packages/binacle-net-ui`
 is the single source for the packing demo UI — shared between `web/` and `UIModule`.
 
@@ -18,22 +19,29 @@ UIModule uses:
 - `MessagingService` — scoped pub/sub bus coordinating components
 - `PackingDemo.razor.cs` / `ProtocolDecoder.razor.cs` — full C# logic in code-behind
 
-`packages/binacle-net-ui` has:
-- `packingDemo.ts` — Alpine component, takes `base_url: string`, calls `/api/v3/pack/by-custom`
-- `protocolDecoder.ts` — Alpine component, decodes ViPaq locally
-- `packingVisualizer.ts` — Alpine component, wraps `window.binacle.*` calls
-- `packingDemoPlugin.ts` / `protocolDecoderPlugin.ts` — Alpine plugin registrations
+`packages/binacle-net-ui` has (verified paths):
+- `src/core/packingDemo.ts` — Alpine component `packing_demo_app`, takes `base_url: string`,
+  calls `` `${base_url}/api/v3/pack/by-custom` `` (line 127)
+- `src/core/protocolDecoder.ts` — Alpine component, decodes ViPaq locally
+- `src/core/packingVisualizer.ts` — Alpine component, wraps `window.binacle.*` calls
+- `src/packingDemoPlugin.ts` / `src/protocolDecoderPlugin.ts` — Alpine plugin registrations, and the real
+  entry points. **There is no `src/index.ts`.**
 
 The `base_url` for `packingDemoApp` is already a parameter — not hardcoded.
 In the web site it comes from `site.api_url` (Jekyll config). In UIModule it will be `""` (relative).
 
+**Note:** the demo calls **v3**, on a branch whose point is v4. Porting as-is carries v3 into UIModule. Fine if
+deliberate; decide it rather than inherit it.
+
 ## What Changes
 
 ### Delete
-- `BinacleVisualizerService.cs` — JS interop bridge, no longer needed
-- `MessagingService.cs` — pub/sub coordination, no longer needed
-- `PackingDemo.razor.cs` — all C# logic moves to Alpine
-- `ProtocolDecoder.razor.cs` — all C# logic moves to Alpine
+- `Services/BinacleVisualizerService.cs` — JS interop bridge, no longer needed
+- `Services/MessagingService.cs` — pub/sub coordination, no longer needed
+- `Components/Pages/PackingDemo.razor.cs` — all C# logic moves to Alpine
+- `Components/Pages/ProtocolDecoder.razor.cs` — all C# logic moves to Alpine
+- `Components/Features/PackingVisualizer.razor.cs` — **exists, and the original plan forgot it.** If
+  `PackingVisualizer.razor` becomes a plain container, its code-behind goes too. Check what it holds first.
 - Interactive Server render mode registration (if no other components need it)
 
 ### Add / Modify
@@ -63,38 +71,40 @@ In the web site it comes from `site.api_url` (Jekyll config). In UIModule it wil
 
 The key decision: **how does the UIModule bundle get built and land in `wwwroot/js/`?**
 
-Recommended approach — **dual webpack output target**:
+> **The original plan for this section was wrong on four counts.** Corrected 2026-07-08 against the code. Read this
+> before writing any webpack.
+>
+> 1. **There is no `packages/binacle-net-ui/webpack.config.js`.** The only webpack configs in the repo are
+>    `web/webpack.config.js` and `docs/webpack.config.js`. The package is source-only.
+> 2. **`web/js/binacle-net-ui.js` is not a webpack output target.** It is a **`splitChunks` cache group** in
+>    `web/webpack.config.js` (`test: /[\\/]packages[\\/]binacle-net-ui[\\/]/`, priority 20). The real entries are
+>    `web/_js/{main,packing_demo,protocol_decoder}.js`. It has no `libraryTarget`, so it is a code-split chunk,
+>    not a consumable library — you cannot "add a second output" beside it.
+> 3. **The package has no `scripts` and no build deps.** `package.json` lists only `alpinejs` + `three` as
+>    dependencies and the two `@types` as devDependencies. No webpack, no ts-loader. So `npm run build:uimodule`
+>    has nothing to run and the MSBuild `<Exec>` below has no target.
+> 4. **There is no `src/index.ts`.** The entry points are `src/packingDemoPlugin.ts` and
+>    `src/protocolDecoderPlugin.ts`.
 
-In `packages/binacle-net-ui/webpack.config.js` (or the root webpack config), add a second entry/output:
+**So the real work is: create a build for the package that does not exist today.** Two viable shapes:
 
-```js
-// Target 1 — existing web/ bundle (CommonJS, for webpack consumption in web/)
-{
-  entry: './src/index.ts',
-  output: { path: '../../web/js', filename: 'binacle-net-ui.js', libraryTarget: 'commonjs2' }
-}
+- **A new `packages/binacle-net-ui/webpack.config.js`** with its own `webpack` + `ts-loader` devDependencies and a
+  `build:uimodule` script, emitting one IIFE bundle straight into
+  `api/src/Binacle.Net.UIModule/wwwroot/js/`. Entry is the two plugin files (or a new `src/index.ts` that
+  re-exports them). `web/` keeps consuming the package by source, unchanged.
+- **A second config inside `web/`** that reuses its already-installed webpack toolchain and emits the IIFE to
+  UIModule's `wwwroot`. Cheaper to stand up, but makes UIModule's assets a by-product of the website build —
+  a coupling worth avoiding.
 
-// Target 2 — UIModule IIFE bundle
-{
-  entry: './src/index.ts',
-  output: {
-    path: '../../api/src/Binacle.Net.UIModule/wwwroot/js',
-    filename: 'binacle-net-ui.js',
-    library: 'BinacleNetUI',
-    libraryTarget: 'umd'   // or 'iife' — check webpack version support
-  }
-}
-```
+Prefer the first. The IIFE format is required because UIModule loads scripts with `<script src>`, not ES imports.
 
-Alternative — MSBuild `<Exec>` target in `UIModule.csproj`:
+Then, optionally, the MSBuild hook in `UIModule.csproj` — which only works **after** the npm script exists:
 
 ```xml
 <Target Name="BuildAlpineBundle" BeforeTargets="Build">
   <Exec Command="npm run build:uimodule" WorkingDirectory="$(RepoRoot)packages/binacle-net-ui" />
 </Target>
 ```
-
-Both can be combined: npm script triggers webpack with the dual config, MSBuild calls the npm script.
 
 ## Open Questions Before Starting
 
@@ -107,8 +117,16 @@ Both can be combined: npm script triggers webpack with the dual config, MSBuild 
 3. **Does anything else in UIModule use Interactive Server rendering?**
    If yes, keep `AddInteractiveServerComponents()` but limit it to those components only.
 
-4. **Alpine version** — confirm `docs/lib/alpine.js` and `web/lib/alpine.js` are the same version.
-   UIModule should load from `wwwroot/vendor/` — copy from one of those.
+4. ~~**Alpine version** — confirm `docs/lib/alpine.js` and `web/lib/alpine.js` are the same version.~~
+   **Malformed — neither file exists.** Alpine is an npm dependency (`alpinejs ^3.15.2`) that `web/_js/*.js`
+   pulls in with `import Alpine from 'alpinejs'`, and webpack bundles it. There is nothing to copy to
+   `wwwroot/vendor/`. The real question: does UIModule's IIFE bundle **include** Alpine, or load it from a CDN /
+   vendored copy and only register plugins against `window.Alpine`? Pick one — it decides script order in
+   `App.razor`.
+
+5. **Three.js version skew.** `App.razor`'s importmap pins `three@0.176.0` from jsDelivr; the package depends on
+   `three@^0.182.0`. The plan says the importmap is unchanged, which keeps two versions in play once the bundle
+   lands. Confirm `wwwroot/js/PackingVisualizer.js` still works, or align them.
 
 ## Execution Order
 

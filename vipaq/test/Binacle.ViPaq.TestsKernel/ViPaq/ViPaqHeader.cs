@@ -7,7 +7,7 @@ namespace Binacle.ViPaq.TestsKernel.ViPaq;
 // for version, bin-dimension width, item-dimension width, item-coordinate width, high bits first.
 //
 // This is how the harness answers two questions without touching internals: "did ViPaq compress?" (so it
-// can mirror that on protobuf) and "which width did ViPaq pick?" (so a report can confirm the sample
+// can mirror that on protobuf) and "which width did ViPaq pick?" (so a report can confirm the scenario
 // landed where we expected).
 public readonly record struct ViPaqHeader(
 	Binacle.ViPaq.Version Version,

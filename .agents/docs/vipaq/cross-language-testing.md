@@ -1,12 +1,21 @@
-# ViPaq — Cross-Language Wire Testing (record)
+---
+description: ViPaq cross-language wire testing — the C#/TS shared-vector apparatus, its inventory, and the decode-to-input contract
+verified: 2026-07-08
+check: Vector file list and case counts match vipaq/test-vectors/; generator paths still exist
+also_update:
+  - vipaq/typescript.md
+---
+
+# ViPaq — Cross-Language Wire Testing
 
 **What it guarantees:** the C# `Binacle.ViPaq` library and its hand-maintained TypeScript mirror
 (`vipaq/packages/binacle-vipaq`) stay **wire-compatible** — bytes written by one are readable by the other.
 The mechanism is **shared reference vectors** in `vipaq/test-vectors/`: one set of JSON inputs+answers read by
 *both* test suites, so each is graded against the same answer key and the two can't silently drift.
 
-**Status: DONE and committed.** Both suites green, `tsc` clean, full solution builds. No active work left —
-this file is the durable inventory. The optional coverage at the bottom is the only open item.
+Both suites green, `tsc` clean, full solution builds. This is the durable inventory of the apparatus — it is a
+doc, not a plan. Sessions 5 and 6 of the v2 work (`.agents/plans/vipaq/`) are bound by it: they change what the
+vectors contain, never how the apparatus works.
 
 ---
 
@@ -67,23 +76,17 @@ more language-local tests) and that is expected — see "Out of scope" below.
 
 ---
 
-## Reference docs (canonical — keep, not plans)
+## Reference docs (canonical)
 - `vipaq/PROTOCOL.md` — the normative spec (wire layout, `[0, 2^53−1]` range, error table, decisions log).
 - `vipaq/test-vectors/README.md` — shared-vector conventions (PascalCase keys, compact strings, `Name` join key).
-- `.agents/docs/vipaq/README.md`, `.agents/docs/vipaq/typescript.md` — agent notes; link to PROTOCOL.md.
+- [README.md](README.md), [typescript.md](typescript.md) — agent notes; link to PROTOCOL.md.
 
 ---
 
-## Optional coverage (not built — low value, add only if a real need appears)
-Each is just new `input.json` rows + a regen; the matrix fans them across both suites automatically.
-- Mirror the width-boundary flips in a *coordinate* (separate encoder from dims, shared picker).
-- Empty items list.
-- Many *distinct* items (varied dims and coords, not `:Q` repeats).
-- Compressed payloads at 32/64-bit widths.
-
-Cross-runtime coverage (foreign-runtime gzip blobs, .NET-8/9 rows) was built then dropped: a gzip decoder reads any
-valid gzip, so it was low-value belt-and-suspenders and needed hand-captured Docker bytes outside the "one generator,
-committed output" discipline. The finding it demonstrated is preserved in `PROTOCOL.md §6`.
+## Coverage we chose not to add
+Four candidate vector rows, and the cross-runtime gzip experiment that was built then dropped, are recorded in
+`.agents/ideas/vipaq/interop-vector-coverage.md`. Low value; read it before adding rows so you don't rebuild the
+dropped one.
 
 ## Out of scope (stays language-local on purpose)
 C# generic-`T` matrices, saturation-by-type, dispose idempotency; TS buffer pre-sizing + Web-Streams gzip mechanics

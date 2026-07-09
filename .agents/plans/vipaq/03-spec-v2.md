@@ -4,7 +4,13 @@
 experimental → no back-compat burden, but version-tag everything. Scope v2.0 to **8/16 + reserved codes** (varint
 deferred to session 7). Spec-first is mandatory because C# and TS must conform to the same contract.
 
-**Prereq reading:** [findings.md](findings.md), and the session-1 compression decision.
+**Prereq reading:** [findings.md](findings.md), [decisions.md](decisions.md) (D7 settles compression; D2 settles the
+cap), [architecture-v2.md](architecture-v2.md) (header-driven decode is a spec requirement).
+
+## Do NOT (this session) — on top of the README standing fence
+- Write **only** `PROTOCOL.md`. No C#/TS implementation, no code changes.
+- Do not spec 24-bit, coords-ride-bin, or a varint *body* — ruled out or deferred; reserve the code only.
+- Do not re-open the fixed-threshold compression question — D7 settled try-both-keep-smaller.
 
 ## The v2.0 design to spec
 - **Purpose statement:** storage-first; **base64 is the token** — formalize the text form in-spec (alphabet,
@@ -18,19 +24,22 @@ deferred to session 7). Spec-first is mandatory because C# and TS must conform t
   bit 0   : reserved-zero     (write 0, reject non-zero; future layout/flag hook)
   ```
   Width codes (2 bits): **0 = 8-bit, 1 = 16-bit, 2 = reserved (varint, session 7), 3 = reserved.**
-  DECIDE whether item-**coordinates** get their own width field or ride bin-dims width. Note: coords-ride-bin was
-  measured to **regress** (findings) and its only benefit (a freed bit) doesn't shrink base64 — so **keep an
-  independent coordinate width** (a separate 2-bit field) unless you deliberately want the header smaller. If you
-  keep 3 width fields + version(2) + compressed(1) that's 9 bits → then compression stays folded into version, or
-  the header is 2 bytes. Resolve this explicitly in the spec.
+  DECIDE whether item-**coordinates** get their own width field or ride bin-dims width. Three inputs, all pointing
+  the same way: coords-ride-bin was measured to **regress** (findings, ruled out); its only benefit (a freed bit)
+  doesn't shrink base64; and real Bischoff data packs to **`16/8/16`** — bin and coords need 16-bit while item dims
+  stay 8-bit (findings, real data), so the sections genuinely disagree. **Keep an independent coordinate width.** That
+  makes 3 width fields + version(2) + compressed(1) = 9 bits, so either compression folds into version, or the
+  header is 2 bytes. Resolve this explicitly in the spec.
 - **Value range:** unsigned; **v2.0 caps at 65,535** (8/16 only). Encoding a value > 65,535 **throws** (documented
   limit). Varint (session 7) lifts this via width-code 2.
 - **Body layout:** columnar (all lengths, then widths, …, then X, Y, Z) — small compression benefit, and it's the
   layout the decode-span path likes. (DECIDE: columnar now, or row now + columnar as a versioned option. Columnar
   now is simplest since it's greenfield.)
-- **Compression:** the session-1 decision — **try-both-keep-smaller** (recommended) or fixed ~150-byte threshold;
-  default codec **gzip-Optimal or brotli-Optimal**; the `Compressed` bit records it. q11 is **not** in v2.0 (it's a
-  session-7 opt-in archival mode, which would be a distinct codec value/version).
+- **Compression:** **try-both-keep-smaller** — settled, see [decisions.md](decisions.md) D7. Compress, keep whichever
+  is shorter, never inflate. Do **not** re-open the fixed-threshold option: Session 1 measured that a threshold is
+  wrong in both directions (it inflates random data and misses small compressible data). Default codec
+  **gzip-Optimal or brotli-Optimal** (O2 still open — Session 4 picks). The `Compressed` bit records the outcome.
+  q11 is **not** in v2.0 (a session-7 opt-in archival mode; it would be a distinct codec value/version).
 - **Evolution mechanism (change-first):** the **`Version` field is the one forward-door**; a future version may
   mean "extended header follows." Reserve width-code 2/3 and the version codes in prose. **Reserve no structural
   bits speculatively** — future formats ride new version numbers.
@@ -48,10 +57,11 @@ deferred to session 7). Spec-first is mandatory because C# and TS must conform t
 - Keep the spec language-agnostic (it's the contract for C# **and** TS).
 
 ## Deviation note
-The header field split (independent coord width vs ride-bin; compression bit vs folded-into-version) is the main
-open call — decide it here with the base64 rule in mind (header bits are ~free for size, so favor clarity/keeping
-an independent coord width).
+The coord-width call is settled (independent — see above). What is still genuinely open is **how the 9th bit is
+paid for**: a 2-byte header, or fold `Compressed` into `Version`. Decide it here with the base64 rule in mind —
+header bits are ~free for size, so favour clarity over cramming.
 
 ## References
-[findings.md](findings.md) · `vipaq/PROTOCOL.md` (change here first) · [cross-language-testing.md](cross-language-testing.md)
-(the spec is what both implementations conform to).
+[findings.md](findings.md) · [decisions.md](decisions.md) (D7 compression, D2 cap) ·
+[architecture-v2.md](architecture-v2.md) (header-driven decode) · `vipaq/PROTOCOL.md` (change here first) ·
+`.agents/docs/vipaq/cross-language-testing.md` (the spec is what both implementations conform to).

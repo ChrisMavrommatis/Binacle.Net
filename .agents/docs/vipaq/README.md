@@ -4,6 +4,7 @@ verified: 2026-07-05
 check: Wire layout, EncodingInfo bit packing, enums, and public method signatures match vipaq/src/Binacle.ViPaq/
 also_update:
   - vipaq/typescript.md
+  - vipaq/cross-language-testing.md
 ---
 
 # ViPaq
@@ -119,3 +120,7 @@ adaptive bit-width + optional-gzip scheme — there is no per-value variable-len
 |---|---|---|
 | `vipaq/test/Binacle.ViPaq.UnitTests` | `vipaq` | serializer round-trips + exact-byte golden vectors; the internal `BitSizeHelper` / `EncodingInfoHelper` / protocol read-write (reached via `InternalsVisibleTo`); curated data, not Bogus |
 | `vipaq/packages/binacle-vipaq` | — | TypeScript mirror — `npm test` (jest); see [typescript.md](typescript.md) |
+
+How the two languages are held to one wire format — the shared vectors, the generators, and the
+decode-to-input contract for compressed payloads — is in
+[cross-language-testing.md](cross-language-testing.md).

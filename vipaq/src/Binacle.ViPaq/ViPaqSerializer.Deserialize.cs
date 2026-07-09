@@ -1,6 +1,5 @@
 ﻿using System.IO.Compression;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using Binacle.Geometry;
 using Binacle.ViPaq.Helpers;
 using Version = Binacle.ViPaq.Version;
@@ -50,7 +49,6 @@ public static partial class ViPaqSerializer
 		return (bin, items);
 	}
 
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Stream GetDecodingDataStream(MemoryStream stream, EncodingInfo encodingInfo)
 	{
 		if (encodingInfo.Version == Version.Uncompressed)
@@ -60,7 +58,14 @@ public static partial class ViPaqSerializer
 
 		if (encodingInfo.Version == Version.CompressedGzip)
 		{
-			return new GZipStream(stream, CompressionMode.Decompress);
+			// Decompress the whole body once into a MemoryStream, so ProtocolReader hits its MemoryStream fast
+			// path instead of reading each value one or two bytes at a time off a live GZipStream (~10× slower
+			// on 8/16-bit data). See .agents/plans/vipaq/02-decode-fix.md.
+			using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
+			var decompressed = new MemoryStream();
+			gzipStream.CopyTo(decompressed);
+			decompressed.Position = 0;
+			return decompressed;
 		}
 
 		throw new NotSupportedException($"Version {encodingInfo.Version} is not supported");
