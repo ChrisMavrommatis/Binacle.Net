@@ -10,7 +10,7 @@ using Binacle.ViPaq.VectorGenerators;
 IVectorGenerator[] generators =
 [
 	new InteropArtifactGenerator(),
-	new EncodingInfoBytesGenerator(),
+	new HeaderBytesGenerator(),
 ];
 
 foreach (var generator in generators)
