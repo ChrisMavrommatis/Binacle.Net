@@ -31,6 +31,7 @@ Every dimension and coordinate must be in `[0, 65,535]`. Encoding a value above 
 
 ## More
 
-- Why the format is shaped this way — `../.agents/plans/vipaq/decisions.md`
-- Agent notes (non-normative) — `../.agents/docs/vipaq/README.md`, `../.agents/docs/vipaq/typescript.md`
-- How the two implementations are tested against each other — `../.agents/docs/vipaq/cross-language-testing.md`
+- The format, in full — [PROTOCOL.md](PROTOCOL.md)
+- How the two implementations are held to it — `test-vectors/README.md`
+
+Design rationale and maintainer notes live under `../.agents/`. None of it is normative; `PROTOCOL.md` is.

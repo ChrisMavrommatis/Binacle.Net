@@ -33,9 +33,9 @@ public class BitSizeHelperBehaviorTests
 	// with a 64-bit type (before the ceiling moved to MaxInteger, only a wider-than-64-bit T could trip it).
 	public static IEnumerable<object[]> DimensionsOverMaxIntegerData =>
 	[
-		[ViPaqLimits.MaxInteger + 1, 1UL, 1UL, nameof(Dimensions<ulong>.Length)],
-		[1UL, ViPaqLimits.MaxInteger + 1, 1UL, nameof(Dimensions<ulong>.Width)],
-		[1UL, 1UL, ViPaqLimits.MaxInteger + 1, nameof(Dimensions<ulong>.Height)],
+		[Limits.MaxInteger + 1, 1UL, 1UL, nameof(Dimensions<ulong>.Length)],
+		[1UL, Limits.MaxInteger + 1, 1UL, nameof(Dimensions<ulong>.Width)],
+		[1UL, 1UL, Limits.MaxInteger + 1, nameof(Dimensions<ulong>.Height)],
 	];
 
 	[Theory]
@@ -74,9 +74,9 @@ public class BitSizeHelperBehaviorTests
 
 	public static IEnumerable<object[]> CoordinatesOverMaxIntegerData =>
 	[
-		[ViPaqLimits.MaxInteger + 1, 0UL, 0UL, nameof(Coordinates<ulong>.X)],
-		[0UL, ViPaqLimits.MaxInteger + 1, 0UL, nameof(Coordinates<ulong>.Y)],
-		[0UL, 0UL, ViPaqLimits.MaxInteger + 1, nameof(Coordinates<ulong>.Z)],
+		[Limits.MaxInteger + 1, 0UL, 0UL, nameof(Coordinates<ulong>.X)],
+		[0UL, Limits.MaxInteger + 1, 0UL, nameof(Coordinates<ulong>.Y)],
+		[0UL, 0UL, Limits.MaxInteger + 1, nameof(Coordinates<ulong>.Z)],
 	];
 
 	[Theory]

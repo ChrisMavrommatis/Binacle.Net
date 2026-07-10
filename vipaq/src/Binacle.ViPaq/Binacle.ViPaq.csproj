@@ -1,9 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
+		<!-- The whole new wire is internal: Header, Width, Layout, the encoder/decoder, and the codecs. -->
 		<InternalsVisibleTo Include="$(ProjectName).UnitTests" />
-		<!-- The vector-generator tool drives the internal EncodingInfoNotation to produce golden vectors. -->
+		<!-- The vector-generator tool drives the internal encoder to produce golden vectors. -->
 		<InternalsVisibleTo Include="$(ProjectName).VectorGenerators" />
+		<!-- The benchmark harness reads the internal Header off a token, rather than re-parsing the spec. -->
+		<InternalsVisibleTo Include="$(ProjectName).TestsKernel" />
+		<!-- The performance and benchmark harnesses build the codecs directly to force each race mode. -->
+		<InternalsVisibleTo Include="$(ProjectName).PerformanceTests" />
+		<InternalsVisibleTo Include="$(ProjectName).Benchmarks" />
 	</ItemGroup>
 
 	<ItemGroup>

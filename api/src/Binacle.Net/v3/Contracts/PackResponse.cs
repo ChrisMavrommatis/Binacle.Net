@@ -82,8 +82,9 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 			{
 				if (result.PackedItems is not null && result.PackedItems.Count > 0)
 				{
-					var serializedResult = ViPaqSerializer.SerializeInt32(result.Bin, result.PackedItems!);
-					result.ViPaqData = Convert.ToBase64String(serializedResult);
+					result.ViPaqData = ViPaqSerializer
+						.Serialize<Bin, PackedBox, int>(result.Bin, result.PackedItems!)
+						.ToBase64();
 				}				
 			}
 			

@@ -1,4 +1,5 @@
 using Binacle.Lib;
+using Binacle.TestReporting;
 
 namespace Binacle.ViPaq.PackedDataGenerator;
 
@@ -10,34 +11,52 @@ namespace Binacle.ViPaq.PackedDataGenerator;
 // byte-identical (no git noise).
 //
 // FFD is the pinned algorithm today. Adding WFD/BFD later is one entry in the list; the algorithm rides on the
-// file name as a ".<algo>" suffix (orlib_thpack1.ffd.json), so the sets sit side by side without mixing. Every
-// emitted sample must round-trip (encode then decode == input) or the run exits non-zero — data that doesn't
-// decode is not valid.
+// file name as a ".<algo>" suffix (orlib_thpack1.ffd.json), so the sets sit side by side without mixing.
 internal class Program
 {
-	static int Main(string[] args)
+	// The source families: where to read the problems, the subfolder to write placed results into, and the files.
+	private static readonly SourceFamily[] Families =
+	[
+		new(
+			InputDir: ["shared", "data", "custom-problems"],
+			DestinationFolder: "custom-problems",
+			Files: ["baseline.json", "complex.json", "simple.json"]),
+		new(
+			InputDir: ["shared", "data", "bischoff-suite"],
+			DestinationFolder: "bischoff-suite",
+			Files:
+			[
+				"orlib_thpack1.json", "orlib_thpack2.json", "orlib_thpack3.json", "orlib_thpack4.json",
+				"orlib_thpack5.json", "orlib_thpack6.json", "orlib_thpack7.json",
+			]),
+	];
+
+	// One generator per algorithm.
+	private static readonly IReadOnlyList<PackedDataGenerator> Generators =
+	[
+		new PackedDataGenerator(Algorithm.FFD),
+	];
+
+	static async Task Main(string[] args)
 	{
-		Algorithm[] algorithms =
-		[
-			Algorithm.FFD,
-		];
+		var locator = RepositoryRoot.Bind();
 
-		var generator = new PackedDataGenerator();
-		var allRoundTripped = true;
-		foreach (var algorithm in algorithms)
+		foreach (var generator in Generators)
 		{
-			if (!generator.Generate(algorithm))
+			var algorithm = generator.Algorithm;
+			var suffix = algorithm.ToString().ToLowerInvariant();
+			Console.WriteLine($"[{algorithm}] packing (.{suffix}.json)");
+
+			var totalSamples = 0;
+			var totalItems = 0;
+			foreach (var family in Families)
 			{
-				allRoundTripped = false;
+				var result = await generator.GenerateAsync(family, locator);
+				totalSamples += result.Samples;
+				totalItems += result.Items;
 			}
-		}
 
-		if (!allRoundTripped)
-		{
-			Console.Error.WriteLine("One or more samples failed to round-trip. The data is not valid; see the log above.");
-			return 1;
+			Console.WriteLine($"[{algorithm}] {totalSamples} samples, {totalItems} placed items.");
 		}
-
-		return 0;
 	}
 }

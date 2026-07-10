@@ -3,12 +3,12 @@
 **Goal:** implement `vipaq/PROTOCOL.md` in the C# library `Binacle.ViPaq`, then rerun the permanent benchmark and
 re-measure against protobuf. Confirm the gains the spec implies.
 
-**Prereq reading:** `vipaq/PROTOCOL.md` (the spec — normative), [decisions.md](decisions.md) (D11–D14).
+**Prereq reading:** `vipaq/PROTOCOL.md` (the spec — normative), [decisions.md](../decisions.md) (D11–D14).
 
 ## Answer the codec first
 The spec is **not final**: §6 leaves the codec for `Version = 0` unchosen, and `Version` pins it, so it cannot be
 deferred past this session. Answer O2, write the codec into `PROTOCOL.md` §6, delete it from §12, lock it in
-[decisions.md](decisions.md). Session 5 cannot mirror a codec that has no name.
+[decisions.md](../decisions.md). Session 5 cannot mirror a codec that has no name.
 
 ## Do NOT (this session) — on top of the README standing fence
 - Do not change the permanent harness — it stays on the public `Serialize`/`Deserialize` (D4).
@@ -61,4 +61,4 @@ deferred past this session. Answer O2, write the codec into `PROTOCOL.md` §6, d
   pinned (§6.1, D14).
 
 ## References
-`vipaq/PROTOCOL.md` · [findings.md](findings.md) (the decode-via-span technique) · `vipaq/src/Binacle.ViPaq/*`.
+`vipaq/PROTOCOL.md` · [findings.md](../findings.md) (the decode-via-span technique) · `vipaq/src/Binacle.ViPaq/*`.

@@ -4,10 +4,10 @@
 
 The benchmark is the ruler we rerun after every change, to see if a change made the token smaller or the code
 faster. It compares ViPaq against protobuf on the same data, and it must never churn as the library evolves
-([decisions.md](decisions.md) D4).
+([decisions.md](../decisions.md) D4).
 
-**All measurements from this session live in [findings.md](findings.md) (Round 2).** Don't copy numbers back here.
-The decisions it produced are locked in [decisions.md](decisions.md) as D7 (try-both-keep-smaller), D8 (encode
+**All measurements from this session live in [findings.md](../findings.md) (Round 2).** Don't copy numbers back here.
+The decisions it produced are locked in [decisions.md](../decisions.md) as D7 (try-both-keep-smaller), D8 (encode
 first), and D9 (synthetic = CPU/memory, real = size).
 
 ## What exists
@@ -37,7 +37,7 @@ synthetic generator was removed; `SyntheticDataProvider` is a stub that returns 
       or rename the rows to say plainly "ViPaq including gzip vs raw protobuf". Also:
       `CuratedEncodeBenchmarks`/`CuratedDecodeBenchmarks` return different shapes (a protobuf message vs a tuple with
       an `IList`), so some measured allocation is the return value, not the decode. Revisit alongside
-      the decode fix (done — see [findings.md](findings.md)), which moved these numbers anyway.
+      the decode fix (done — see [findings.md](../findings.md)), which moved these numbers anyway.
       *(Markers: `Benchmarks/CuratedEncodeBenchmarks.cs:9`, `Benchmarks/CuratedDecodeBenchmarks.cs:9`.)*
 
 - [ ] **Decide the fate of `CompressionCrossover.md`.** It is marked PROVISIONAL. The real data is gappy, so it can
@@ -48,7 +48,7 @@ synthetic generator was removed; `SyntheticDataProvider` is a stub that returns 
 ## Remaining — owned elsewhere
 
 - **Rebuild `SyntheticDataProvider`** (CPU/memory only, scaling to 2000/5000 items — D9) and **add a curated
-  fast-subset provider**: both are steps in [testskernel-restructure.md](testskernel-restructure.md).
+  fast-subset provider**: both are steps in [testskernel-restructure.md](../testskernel-restructure.md).
 - **The count ladder** — one problem family at ~5/13/50/200 items, only the count changing. The packed data is
   regenerated from `shared/data/`, so the problems must be authored there first. Tracked in
   [../shared/testskernel-data-extraction.md](../../shared/testskernel-data-extraction.md).
@@ -62,7 +62,7 @@ synthetic generator was removed; `SyntheticDataProvider` is a stub that returns 
   `vipaq-generator-standalone`). Lift only if a third consumer appears.
 - **WFD/BFD packed data.** The generator pins FFD; adding an algorithm is one list entry, and the files land as
   `.wfd.json`/`.bfd.json` siblings. But a second algorithm **crashes the current reader** — fix
-  [testskernel-restructure.md](testskernel-restructure.md) first.
+  [testskernel-restructure.md](../testskernel-restructure.md) first.
 
 ## Watch-outs
 
@@ -73,5 +73,5 @@ synthetic generator was removed; `SyntheticDataProvider` is a stub that returns 
 
 ## References
 
-[findings.md](findings.md) (Round 2 = this session's numbers) · [decisions.md](decisions.md) (D3–D9, O2) ·
+[findings.md](../findings.md) (Round 2 = this session's numbers) · [decisions.md](../decisions.md) (D3–D9, O2) ·
 `vipaq/data/packed/README.md` · `lib/test/Binacle.Lib.Benchmarks`, `lib/test/Binacle.Lib.PerformanceTests`.

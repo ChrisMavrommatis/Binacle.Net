@@ -33,7 +33,12 @@ Verified, and not in the spec.
 - The test kernel keys scenarios by name and globs `*.ffd.json`. A second algorithm's `.bfd.json` would collide and
   would not be embedded. No such data exists today — fix it when it does.
 
-## Where the numbers are
+## The files next to this one
 
-`reference/findings.md` holds real measurements on real data. It is the one part of `reference/` that is evidence
-rather than opinion — but it measured the old implementation, so read it for magnitudes, not for facts.
+- [architecture.md](architecture.md) — the policy/mechanism split the rebuild must keep. A constraint, not a suggestion.
+- [decisions.md](decisions.md) — what was settled and why (D1–D14), plus the one open question. Do not re-litigate these.
+- [findings.md](findings.md) — real measurements on real data. It measured the old implementation, so read it for
+  magnitudes, not for facts.
+- [testskernel-restructure.md](testskernel-restructure.md) — the test-kernel work still outstanding.
+
+`reference/` holds five dead session logs, kept only as a paper trail. See [prompt.md](prompt.md).

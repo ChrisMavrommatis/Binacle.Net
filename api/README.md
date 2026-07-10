@@ -50,4 +50,4 @@ Once running, the API serves under `/api/v3` and `/api/v4`. With the UIs enabled
 
 ## Other
 
-- `requests/` — `.http` files for manual testing, grouped by version (`v2`, `v3`, `v4`, `Service`).
+- `requests/` — `.http` files for manual testing, grouped by version (`v3`, `v4`, `Service`).

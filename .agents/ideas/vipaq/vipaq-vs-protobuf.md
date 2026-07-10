@@ -6,7 +6,7 @@
 
 "How does ViPaq stack up against Protobuf?" was the original question. It is now measured continuously: protobuf is
 the `[Benchmark(Baseline = true)]` row in `Binacle.ViPaq.Benchmarks` and a column in
-`results/vipaq/SizeComparison.md`. Numbers live in `.agents/plans/vipaq/reference/findings.md`.
+`results/vipaq/SizeComparison.md`. Numbers live in `.agents/plans/vipaq/findings.md`.
 
 The short answer: **ViPaq is smaller than protobuf on every row** — ~67–76% of protobuf's base64 on real packed
 data, ~32–68% on synthetic. It allocates less on both encode and decode. It is slower to encode once gzip triggers
@@ -26,5 +26,5 @@ So ViPaq justifies its existence on size, which is what a storage-first format i
 
 ## Related
 
-- `.agents/plans/vipaq/reference/findings.md` (the numbers), `.agents/plans/vipaq/reference/01-benchmark-permanent.md` (the harness)
+- `.agents/plans/vipaq/findings.md` (the numbers), `.agents/plans/vipaq/reference/01-benchmark-permanent.md` (the harness)
 - `.agents/docs/vipaq/README.md`, `vipaq/PROTOCOL.md`

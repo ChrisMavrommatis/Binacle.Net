@@ -1,10 +1,14 @@
-﻿using System.Buffers.Binary;
+using System.Buffers.Binary;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace Binacle.ViPaq;
 
+// Reads one value at a time, little-endian. It does not know what a dimension or a coordinate is: which values
+// come back in what order is the caller's business — the layout codecs for the items, ProtocolDecoder for the bin.
+//
+// Nothing is range-checked on the way in. An 8- or 16-bit field cannot hold a value outside ViPaq's range, which
+// is what PROTOCOL.md §5 means by "a decoder has nothing to range-check".
 internal class ProtocolReader<T> : IDisposable, IAsyncDisposable
 	where T : struct, IBinaryInteger<T>
 {
@@ -19,64 +23,56 @@ internal class ProtocolReader<T> : IDisposable, IAsyncDisposable
 		this.disposed = false;
 	}
 
-	// ReadByte / ReadUInt16 return a fixed wire width — used for the header (first byte, item count).
-	// Read8Bits..Read64Bits read the same bytes but widen the value to T — used for dimensions and
-	// coordinates, where the value type is the caller's T. The names match the BitSize enum.
-
-	public byte ReadByte()
-	{
-		var read = this.InternalReadByte();
-		if (read < 0)
-		{
-			// EOF: the stream had no more bytes. Reject instead of returning a phantom value — a
-			// truncated body must fail, the same way the multi-byte ReadExactly path throws (PROTOCOL.md §7).
-			throw new EndOfStreamException("Unexpected end of stream while reading a byte.");
-		}
-		return (byte)read;
-	}
-
+	// The item count is always a uint16, whatever the widths say (PROTOCOL.md §3).
 	public ushort ReadUInt16()
 	{
-		var buffer = InternalReadBuffer(stackalloc byte[sizeof(ushort)]);
+		var buffer = this.InternalReadBuffer(stackalloc byte[sizeof(ushort)]);
 		return BinaryPrimitives.ReadUInt16LittleEndian(buffer);
+	}
+
+	// Picks the read for a Width. Read8Bits / Read16Bits are the two it can pick — the names match the Width
+	// enum, and each reads the wire width then widens the value to the caller's T.
+	public T ReadValue(Width width)
+	{
+		return width switch
+		{
+			Width.Eight => this.Read8Bits(),
+			Width.Sixteen => this.Read16Bits(),
+			_ => throw new ArgumentOutOfRangeException(nameof(width), width, $"Width {width} is not supported")
+		};
 	}
 
 	public T Read8Bits()
 	{
-		return T.CreateChecked(this.ReadByte());
+		return T.CreateChecked(this.InternalReadByte());
 	}
 
 	public T Read16Bits()
 	{
-		var buffer = InternalReadBuffer(stackalloc byte[sizeof(ushort)]);
-		var ushortValue = BinaryPrimitives.ReadUInt16LittleEndian(buffer);
-		return T.CreateChecked(ushortValue);
+		var buffer = this.InternalReadBuffer(stackalloc byte[sizeof(ushort)]);
+		return T.CreateChecked(BinaryPrimitives.ReadUInt16LittleEndian(buffer));
 	}
 
-	public T Read32Bits()
+	private byte InternalReadByte()
 	{
-		var buffer = InternalReadBuffer(stackalloc byte[sizeof(uint)]);
-		var uintValue = BinaryPrimitives.ReadUInt32LittleEndian(buffer);
-		return T.CreateChecked(uintValue);
-	}
+		var read = this.isMemoryStream
+			? Unsafe.As<MemoryStream>(this.stream).ReadByte()
+			: ReadByteChecked();
 
-	public T Read64Bits()
-	{
-		var buffer = InternalReadBuffer(stackalloc byte[sizeof(ulong)]);
-		var ulongValue = BinaryPrimitives.ReadUInt64LittleEndian(buffer);
-		return T.CreateChecked(ulongValue);
-	}
-
-	private int InternalReadByte()
-	{
-		if (this.isMemoryStream)
+		if (read < 0)
 		{
-			return Unsafe.As<MemoryStream>(this.stream).ReadByte();
+			// EOF. Reject instead of returning a phantom value — a truncated body must fail, the same way the
+			// multi-byte ReadExactly path throws (PROTOCOL.md §7).
+			throw new EndOfStreamException("Unexpected end of stream while reading a byte.");
 		}
 
-		ThrowIfDisposed();
+		return (byte)read;
 
-		return this.stream.ReadByte();
+		int ReadByteChecked()
+		{
+			this.ThrowIfDisposed();
+			return this.stream.ReadByte();
+		}
 	}
 
 	private ReadOnlySpan<byte> InternalReadBuffer(Span<byte> buffer)
@@ -87,7 +83,7 @@ internal class ProtocolReader<T> : IDisposable, IAsyncDisposable
 		}
 		else
 		{
-			ThrowIfDisposed();
+			this.ThrowIfDisposed();
 			this.stream.ReadExactly(buffer);
 		}
 

@@ -49,11 +49,11 @@ public class BitSizeHelperSaturationTests
 	// rejects anything above MaxInteger (PROTOCOL.md §5), so that is the top of the bucket.
 	[Fact]
 	public void Dimensions_ULong_Caps_At_SixtyFour()
-		=> AssertDimensions<ulong>(ViPaqLimits.MaxInteger, BitSize.SixtyFour);
+		=> AssertDimensions<ulong>(Limits.MaxInteger, BitSize.SixtyFour);
 
 	[Fact]
 	public void Dimensions_Long_Caps_At_SixtyFour()
-		=> AssertDimensions<long>((long)ViPaqLimits.MaxInteger, BitSize.SixtyFour);
+		=> AssertDimensions<long>((long)Limits.MaxInteger, BitSize.SixtyFour);
 
 
 	private static void AssertCoordinates<T>(T value, BitSize expected)
@@ -94,9 +94,9 @@ public class BitSizeHelperSaturationTests
 	// SixtyFour — caps at MaxInteger (2^53 - 1), not the type max (see the dimensions note above).
 	[Fact]
 	public void Coordinates_ULong_Caps_At_SixtyFour()
-		=> AssertCoordinates<ulong>(ViPaqLimits.MaxInteger, BitSize.SixtyFour);
+		=> AssertCoordinates<ulong>(Limits.MaxInteger, BitSize.SixtyFour);
 
 	[Fact]
 	public void Coordinates_Long_Caps_At_SixtyFour()
-		=> AssertCoordinates<long>((long)ViPaqLimits.MaxInteger, BitSize.SixtyFour);
+		=> AssertCoordinates<long>((long)Limits.MaxInteger, BitSize.SixtyFour);
 }

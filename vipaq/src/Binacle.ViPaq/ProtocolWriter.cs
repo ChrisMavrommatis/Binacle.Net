@@ -1,11 +1,12 @@
-﻿using System.Buffers.Binary;
+using System.Buffers.Binary;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using Binacle.Geometry;
 
 namespace Binacle.ViPaq;
 
+// Writes one value at a time, little-endian (PROTOCOL.md §0). It does not know what a dimension or a
+// coordinate is: grouping values into triples, and the order they go in, is the caller's business — the layout
+// codecs for the items, ProtocolEncoder for the bin.
 internal class ProtocolWriter<T> : IDisposable, IAsyncDisposable
 	where T : struct, IBinaryInteger<T>
 {
@@ -20,50 +21,43 @@ internal class ProtocolWriter<T> : IDisposable, IAsyncDisposable
 		this.disposed = false;
 	}
 
-	// WriteByte / WriteUInt16 take a fixed wire width — used for the header (first byte, item count).
-	// Write8Bits..Write64Bits narrow the caller's T down to the wire width, then write the same bytes —
-	// used for dimensions and coordinates. The names match the BitSize enum.
-
-	public void WriteByte(byte value)
-	{
-		this.InternalWriteByte(value);
-	}
-
+	// The item count is always a uint16, whatever the widths say (PROTOCOL.md §3).
 	public void WriteUInt16(ushort value)
 	{
 		Span<byte> buffer = stackalloc byte[sizeof(ushort)];
 		BinaryPrimitives.WriteUInt16LittleEndian(buffer, value);
-		InternalWrite(buffer);
+		this.InternalWrite(buffer);
+	}
+
+	// Picks the write for a Width. Write8Bits / Write16Bits are the two it can pick — the names match the
+	// Width enum, and each narrows the caller's T down to the wire width before writing those bytes.
+	public void WriteValue(T value, Width width)
+	{
+		switch (width)
+		{
+			case Width.Eight:
+				this.Write8Bits(value);
+				break;
+
+			case Width.Sixteen:
+				this.Write16Bits(value);
+				break;
+
+			default:
+				throw new ArgumentOutOfRangeException(nameof(width), width, $"Width {width} is not supported");
+		}
 	}
 
 	public void Write8Bits(T value)
 	{
-		var byteValue = byte.CreateChecked(value);
-		this.InternalWriteByte(byteValue);
+		this.InternalWriteByte(byte.CreateChecked(value));
 	}
 
 	public void Write16Bits(T value)
 	{
 		Span<byte> buffer = stackalloc byte[sizeof(ushort)];
-		var ushortValue = ushort.CreateChecked(value);
-		BinaryPrimitives.WriteUInt16LittleEndian(buffer, ushortValue);
-		InternalWrite(buffer);
-	}
-
-	public void Write32Bits(T value)
-	{
-		Span<byte> buffer = stackalloc byte[sizeof(uint)];
-		var uintValue = uint.CreateChecked(value);
-		BinaryPrimitives.WriteUInt32LittleEndian(buffer, uintValue);
-		InternalWrite(buffer);
-	}
-
-	public void Write64Bits(T value)
-	{
-		Span<byte> buffer = stackalloc byte[sizeof(ulong)];
-		var ulongValue = ulong.CreateChecked(value);
-		BinaryPrimitives.WriteUInt64LittleEndian(buffer, ulongValue);
-		InternalWrite(buffer);
+		BinaryPrimitives.WriteUInt16LittleEndian(buffer, ushort.CreateChecked(value));
+		this.InternalWrite(buffer);
 	}
 
 	private void InternalWriteByte(byte value)
@@ -74,11 +68,10 @@ internal class ProtocolWriter<T> : IDisposable, IAsyncDisposable
 			return;
 		}
 
-		ThrowIfDisposed();
-
+		this.ThrowIfDisposed();
 		this.stream.WriteByte(value);
-		return;
 	}
+
 	private void InternalWrite(Span<byte> buffer)
 	{
 		if (this.isMemoryStream)
@@ -87,7 +80,7 @@ internal class ProtocolWriter<T> : IDisposable, IAsyncDisposable
 		}
 		else
 		{
-			ThrowIfDisposed();
+			this.ThrowIfDisposed();
 			this.stream.Write(buffer);
 		}
 	}

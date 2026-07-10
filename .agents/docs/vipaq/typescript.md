@@ -1,6 +1,6 @@
 ---
 description: Binacle.ViPaq TypeScript mirror (vipaq/packages/binacle-vipaq) — public API and how it differs from the C# library
-verified: 2026-07-05
+verified: 2026-07-10
 check: TS API signatures and divergences match vipaq/packages/binacle-vipaq/src/
 also_update:
   - vipaq/README.md
@@ -49,9 +49,13 @@ below.)
 
 ### Integer range — `[0, 2^53 − 1]`
 
-Both implementations enforce the protocol's interoperable ceiling (`MaxInteger`, 2^53−1): every dimension/coordinate
-is range-checked on encode, and a decoded 64-bit value above it is rejected rather than silently rounded. C# was
-brought to this ceiling on 2026-06-30 — see PROTOCOL.md §5 and `.agents/plans/vipaq-integer-range-spec.md`.
+Both implementations enforce the shipped library's interoperable ceiling (`MaxInteger`, 2^53−1): every
+dimension/coordinate is range-checked on encode, and a decoded 64-bit value above it is rejected rather than
+silently rounded. C# was brought to this ceiling on 2026-06-30.
+
+**This ceiling is superseded.** `PROTOCOL.md` §5 caps every value at 65,535 and the whole 64-bit tier is deleted —
+see `.agents/plans/vipaq/decisions.md` D2 and D11. The paragraph above describes the code as it stands today, not
+the format being built.
 
 (The old `getByteSize` under-allocation bug — `ThirtyTwo → 3`, `SixtyFour → 4` — is fixed; widths are now 4 and 8.)
 
@@ -69,4 +73,4 @@ reads — via `tests/support/vectorReader.ts` (`readVectors`, `fs`-based). The g
 `parseEncodingInfo`) and adds the test-vector-only byte parsers (`parseByte`/`parseBytes`). Providers in
 `tests/providers/` parse each file into arrays consumed by `test.each`. So both
 implementations grade against one answer key and can't silently drift on the wire format. The gzip cross-decode
-matrix is done — see `.agents/plans/vipaq-cross-language-testing.md`.
+matrix is done — see [cross-language-testing.md](cross-language-testing.md).

@@ -3,7 +3,7 @@
 **Goal:** with the format shipped and measured, decide which extras to add — each behind a reserved code or a new
 version, each justified by its measured gain. Nothing here is committed; it's the menu.
 
-**Prereq reading:** [findings.md](findings.md), `vipaq/PROTOCOL.md` (reserved codes: §2.3, §4).
+**Prereq reading:** [findings.md](../findings.md), `vipaq/PROTOCOL.md` (reserved codes: §2.3, §4).
 
 ## Do NOT (this session) — on top of the README standing fence
 - Nothing here is committed. Do not build any candidate without a measured gain in base64 + encode/decode ms.
@@ -48,4 +48,4 @@ Prototype in the (now permanent) benchmark first, measure in base64 + encode/dec
 vectors (same pipeline as sessions 3–6). Each rides a reserved width-code or a new `Version`.
 
 ## References
-[findings.md](findings.md) · `vipaq/PROTOCOL.md` (reserved codes) · harness (prototype + measure).
+[findings.md](../findings.md) · `vipaq/PROTOCOL.md` (reserved codes) · harness (prototype + measure).

@@ -100,9 +100,8 @@ public partial class ProtocolDecoder : AppletComponentBase
 	{
 		try
 		{
-			var bytes = Convert.FromBase64String(resultString);
 			var (bin, items) =
-				ViPaqSerializer.DeserializeInt32<Bin, PackedItem>(bytes);
+				ViPaqSerializer.Deserialize<Bin, PackedItem, int>(resultString.FromBase64());
 
 			bin.ID = CompactNotationFormatter.FormatDimensions<int>(bin);
 			

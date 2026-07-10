@@ -30,7 +30,7 @@ rows we skipped, and one experiment (cross-runtime compressed blobs) that was bu
 4. `npm run regen:interop`; then run both suites: C# `dotnet test` in `Binacle.ViPaq.UnitTests`, TS `tsc --noEmit`
    + `jest`. The decode-to-input matrix + header-pinned byte-identity + per-file integrity must be green.
 5. Update `test-vectors/README.md` if any convention changed. (`PROTOCOL.md` has no decisions log — the *why*
-   lives in [decisions.md](decisions.md).)
+   lives in [decisions.md](../decisions.md).)
 
 ## Watch-outs
 - Don't assert byte-equality on compressed artifacts (it will flake across runtimes) — decode-to-input only.

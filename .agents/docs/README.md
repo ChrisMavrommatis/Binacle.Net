@@ -1,6 +1,6 @@
 ---
 description: Repo overview and index of agent documentation
-verified: 2026-07-05
+verified: 2026-07-10
 check: Repo layout table matches actual directories in the root
 ---
 
@@ -36,7 +36,7 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `ruby/` | Ruby gems (Jekyll plugins) |
 | `docs/` | Jekyll documentation site |
 | `web/` | Jekyll marketing/web site |
-| `api/requests/` | HTTP request files for manual testing (subfolders: v2, v3, v4, Service) |
+| `api/requests/` | HTTP request files for manual testing (subfolders: v3, v4, Service) |
 | `samples/` | Docker and Kubernetes deployment samples (user-facing starting points) |
 | `config/` | Maintainer local-dev tooling — run/test/build scripts, local compose, env, emulator state |
 | `shared/data/` | OR-library packing benchmark data |
