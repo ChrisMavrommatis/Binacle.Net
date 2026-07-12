@@ -30,15 +30,15 @@
     "Reason": "item coordinate X < 0 must be rejected on encode (§5.2/§8)"
   },
   {
-    "Name": "item dimension above MaxInteger",
+    "Name": "item dimension above max",
     "Bin": "10x20x30",
-    "Items": ["9007199254740992x2x3 (4,5,6)"],
-    "Reason": "item dimension Length = 2^53 exceeds MaxInteger; must be rejected on encode (§5.1/§8)"
+    "Items": ["65536x2x3 (4,5,6)"],
+    "Reason": "item dimension Length = 65536 exceeds the max value 65535; must be rejected on encode (§5.1/§8)"
   },
   {
-    "Name": "item coordinate above MaxInteger",
+    "Name": "item coordinate above max",
     "Bin": "10x20x30",
-    "Items": ["1x2x3 (9007199254740992,5,6)"],
-    "Reason": "item coordinate X = 2^53 exceeds MaxInteger; must be rejected on encode (§5.1/§8)"
+    "Items": ["1x2x3 (65536,5,6)"],
+    "Reason": "item coordinate X = 65536 exceeds the max value 65535; must be rejected on encode (§5.1/§8)"
   }
 ]

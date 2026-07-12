@@ -1,23 +1,23 @@
 // ports C#: RoundTripScenarioTests
 //
-// Serialize, pin byte 0 to the expected header (Version + all 3 bit sizes), then deserialize and assert
-// the bin and items come back unchanged. The header check is what makes this stronger than plain
-// round-trip equality — wrong widths or a wrong compression flag would still round-trip.
+// Encode a (bin, items) input under the scenario's header, pin the two header bytes, then decode and assert the
+// bin and items come back unchanged. These drive ProtocolEncoder, not ViPaqSerializer, so the scenario's header
+// is an input: that is what lets a scenario be columnar or wider than narrowest. ViPaqSerializer always writes
+// raw, row-major, narrowest, so those scenarios are unreachable through it. Every scenario is uncompressed for
+// now (compression is deferred, PROTOCOL.md §6).
 
 import ViPaqSerializer from "../src/ViPaqSerializer";
-import {encodingInfoFromByte} from "../src/utils";
+import {ProtocolEncoder} from "../src/ProtocolEncoder";
+import {headerFromBytes} from "../src/utils";
 import {roundTripCases} from "./providers/RoundTripCases";
 
 describe("round-trip scenarios", () => {
 	test.each(roundTripCases)("$name", async ({bin, items, expected}) => {
-		const data = await ViPaqSerializer.serialize(bin, items);
+		const data = await new ProtocolEncoder().encode(expected, bin, items);
 
-		// byte 0 pins Version and all three bit sizes at once.
-		const header = encodingInfoFromByte(data[0]);
-		expect(header.version).toBe(expected.version);
-		expect(header.binDimensionsBitSize).toBe(expected.binDimensionsBitSize);
-		expect(header.itemDimensionsBitSize).toBe(expected.itemDimensionsBitSize);
-		expect(header.itemCoordinatesBitSize).toBe(expected.itemCoordinatesBitSize);
+		// The two header bytes pin version, compression, layout and all three widths at once. A cheap guard that
+		// the encoder wrote the header it was handed — the real coverage is the decode below.
+		expect(headerFromBytes(data[0], data[1])).toEqual(expected);
 
 		const result = await ViPaqSerializer.deserialize(data);
 		expect(result.bin).toEqual(bin);

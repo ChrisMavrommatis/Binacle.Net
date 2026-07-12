@@ -6,14 +6,14 @@
 // jest does not run it.
 
 import {readVectors} from "../support/vectorReader";
-import {parseBin, parseItems, parseEncodingInfo} from "../support/vectorParser";
-import {Coordinates, Dimensions, EncodingInfo} from "../../src/models";
+import {parseBin, parseItems, parseHeader} from "../support/vectorParser";
+import {Coordinates, Dimensions, Header} from "../../src/models";
 
 type Item = Dimensions & Coordinates;
 
 interface InputVector {
 	Name: string;
-	ExpectedEncodingInfo: string;
+	ExpectedHeader: string;
 	Bin: string;
 	Items: string[];
 }
@@ -24,14 +24,14 @@ interface ArtifactVector {
 	Base64: string;
 }
 
-// ExpectedEncodingInfo lives on the input (producer-independent, spec-determined), so the byte-0 pin checks a
-// declared value instead of one echoed back from the generator's own output.
-type Input = {expectedEncodingInfo: EncodingInfo; bin: Dimensions; items: Item[]};
+// ExpectedHeader lives on the input (producer-independent, spec-determined), so the header pin checks a declared
+// value instead of one echoed back from the generator's own output.
+type Input = {expectedHeader: Header; bin: Dimensions; items: Item[]};
 
 export interface InteropArtifactCase {
 	label: string;
 	bytes: number[];
-	expectedEncodingInfo: EncodingInfo;
+	expectedHeader: Header;
 	bin: Dimensions;
 	items: Item[];
 }
@@ -40,7 +40,7 @@ function loadInputs(): Map<string, Input> {
 	const inputs = new Map<string, Input>();
 	for (const vector of readVectors<InputVector>("interop/input.json")) {
 		inputs.set(vector.Name, {
-			expectedEncodingInfo: parseEncodingInfo(vector.ExpectedEncodingInfo),
+			expectedHeader: parseHeader(vector.ExpectedHeader),
 			bin: parseBin(vector.Bin),
 			items: parseItems(vector.Items),
 		});
@@ -58,7 +58,7 @@ function load(files: string[]): InteropArtifactCase[] {
 			cases.push({
 				label: `${vector.Producer} — ${vector.Name}`,
 				bytes: Array.from(Buffer.from(vector.Base64, "base64")),
-				expectedEncodingInfo: input.expectedEncodingInfo,
+				expectedHeader: input.expectedHeader,
 				bin: input.bin,
 				items: input.items,
 			});

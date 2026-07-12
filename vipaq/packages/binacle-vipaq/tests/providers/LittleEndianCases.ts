@@ -1,6 +1,6 @@
-// Ports C#: Providers/LittleEndianProvider.cs. A value paired with its little-endian bytes (low byte
-// first). Reader and writer tests run the same rows. One export per width; the value is a JS number (all
-// shared rows are within 2^53). The two wide 64-bit rows above 2^53 stay C#-only.
+// Ports C#: Providers/Protocol/LittleEndianProvider.cs. A value paired with its little-endian bytes (low byte
+// first). Reader and writer tests run the same rows. One export per width; only the 8- and 16-bit widths exist
+// now (the 32/64-bit vectors are gone with those tiers).
 // Not a *.test.ts file, so jest does not run it.
 
 import {readVectors} from "../support/vectorReader";
@@ -34,5 +34,3 @@ function load(file: string): Scenario[] {
 
 export const uint8Cases: Scenario[] = load("little-endian/uint8.json");
 export const uint16Cases: Scenario[] = load("little-endian/uint16.json");
-export const uint32Cases: Scenario[] = load("little-endian/uint32.json");
-export const uint64Cases: Scenario[] = load("little-endian/uint64.json");

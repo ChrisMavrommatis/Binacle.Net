@@ -4,18 +4,19 @@
 // Not a *.test.ts file, so jest does not run it.
 
 import {readVectors} from "../support/vectorReader";
-import {parseBin, parseItems, parseByte, parseBytes} from "../support/vectorParser";
+import {parseBin, parseItems, parseBytes} from "../support/vectorParser";
 import {Coordinates, Dimensions} from "../../src/models";
 
 type Item = Dimensions & Coordinates;
 
-// Raw exact-bytes.json row: the (bin, items) input and the exact wire bytes laid out by segment.
+// Raw exact-bytes.json row: the (bin, items) input and the exact wire bytes laid out by segment. Header is the
+// two form/width bytes now (PROTOCOL.md §2), so it is an array like the other segments.
 interface Vector {
 	Name: string;
 	Bin: string;
 	Items: string[];
 	Bytes: {
-		Header: string;
+		Header: string[];
 		Count: string[];
 		Bin: string[];
 		Items: {Dims: string[]; Coords: string[]}[];
@@ -30,9 +31,9 @@ export interface Scenario {
 	bytes: number[];
 }
 
-// Flattens the by-segment golden into one wire blob.
+// Flattens the by-segment golden into one wire blob: Header (2 bytes) :: Count :: Bin :: (Dims :: Coords per item).
 function flatten(bytes: Vector["Bytes"]): number[] {
-	const result = [parseByte(bytes.Header), ...parseBytes(bytes.Count), ...parseBytes(bytes.Bin)];
+	const result = [...parseBytes(bytes.Header), ...parseBytes(bytes.Count), ...parseBytes(bytes.Bin)];
 	for (const item of bytes.Items) {
 		result.push(...parseBytes(item.Dims), ...parseBytes(item.Coords));
 	}

@@ -1,7 +1,7 @@
-// Ports C#: Providers/BitSizeInvalidProvider.cs. Kind splits the rows into two sets, each a value its picker
-// must reject: dimensions ("LxWxH") and coordinates ("X,Y,Z"). field is the offending field's PascalCase
-// name. A row is one kind, never both. getCoordinatesBitSize needs a full item, so coordinate cases carry a
-// probe with dims defaulted to 1 (the picker reads only x/y/z).
+// Ports C#: Providers/Width/WidthInvalidProvider.cs. Kind splits the rows into two sets, each a value its picker
+// must reject: dimensions ("LxWxH") and coordinates ("X,Y,Z"). field is the offending field's PascalCase name. A
+// row is one kind, never both. getCoordinatesWidth needs a full item, so coordinate cases carry a probe with
+// dims defaulted to 1 (the picker reads only x/y/z).
 // Not a *.test.ts file, so jest does not run it.
 
 import {readVectors} from "../support/vectorReader";
@@ -10,7 +10,7 @@ import {Coordinates, Dimensions} from "../../src/models";
 
 type Item = Dimensions & Coordinates;
 
-// Raw bit-size-invalid.json row. Kind splits the rows and says how Values is parsed.
+// Raw width-invalid.json row. Kind splits the rows and says how Values is parsed.
 interface Vector {
 	Name: string;
 	Kind: "Dimensions" | "Coordinates";
@@ -18,8 +18,7 @@ interface Vector {
 	Field: string;
 }
 
-// A resolved scenario (mirrors the C# generic Scenario<TValue> record): the parsed value the picker must
-// reject, and the offending field's name.
+// A resolved scenario: the parsed value the picker must reject, and the offending field's name.
 export interface Scenario<TValue> {
 	name: string;
 	value: TValue;
@@ -44,4 +43,4 @@ function load(file: string): {dimensions: Scenario<Dimensions>[]; coordinates: S
 	return {dimensions, coordinates};
 }
 
-export const {dimensions: dimensionCases, coordinates: coordinateCases} = load("bit-size-invalid.json");
+export const {dimensions: dimensionCases, coordinates: coordinateCases} = load("width-invalid.json");
