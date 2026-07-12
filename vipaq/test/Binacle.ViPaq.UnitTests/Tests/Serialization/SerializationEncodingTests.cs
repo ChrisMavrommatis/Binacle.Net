@@ -1,28 +1,33 @@
 using Binacle.ViPaq.UnitTests.Providers;
-using Version = Binacle.ViPaq.Version;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// The exact bytes on the wire. This is the anchor for the format: header byte, little-endian
+// The exact bytes on the wire. This is the anchor for the format: the two header bytes, little-endian
 // item count, then bin dimensions, then each item's dimensions and coordinates. The TypeScript
 // mirror must produce the same bytes for the same input, so this is the cross-language contract.
-// Both directions are pinned against the same golden vectors: serialize -> bytes, and bytes ->
-// object. Pinning both sides catches a bug that is symmetric in serialize+deserialize, which a
+// Both directions are pinned against the same golden vectors: encode -> bytes, and bytes ->
+// object. Pinning both sides catches a bug that is symmetric in encode+decode, which a
 // round-trip test would miss.
+//
+// Encode goes through ProtocolEncoder, not ViPaqSerializer: the header is derived from the golden bytes and
+// handed in, so the test pins the exact bytes a given header produces rather than whatever widths ViPaqSerializer
+// happens to pick. All exact-bytes vectors are raw (compressed bytes are not reproducible, so they can never be
+// pinned here), so the encoder gets the NoOp codec and the body stays byte-for-byte readable.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class SerializationEncodingTests
 {
 	// Golden vectors from the shared exact-bytes.json: known input -> the exact bytes it must produce.
 	// The row carries the Name; the case (bin, items, bytes) is resolved by name. Each case pins byte
 	// order, header packing, and field order at once. Values are read as `long` (the interoperable
-	// range fits long exactly), so the 64-bit cases load too.
+	// range fits long exactly).
 	[Theory]
 	[MemberData(nameof(ExactBytesProvider.Names), MemberType = typeof(ExactBytesProvider))]
-	public void Serialize_Produces_Exact_Bytes(string name)
+	public void Encode_Produces_Exact_Bytes(string name)
 	{
 		var scenario = ExactBytesProvider.Get(name);
+		var header = Header.FromBytes(scenario.Bytes[0], scenario.Bytes[1]);
 
-		var data = ViPaqSerializer.Serialize<Binacle.Geometry.Dimensions<long>, Binacle.Geometry.Item<long>, long>(scenario.Bin, scenario.Items);
+		var data = SerializationTestingFixture.Encode(header, scenario.Bin, scenario.Items);
 
 		data.ShouldBe(scenario.Bytes);
 	}
@@ -32,54 +37,37 @@ public class SerializationEncodingTests
 	// serialize+deserialize (and would slip past the round-trip tests) is caught here.
 	[Theory]
 	[MemberData(nameof(ExactBytesProvider.Names), MemberType = typeof(ExactBytesProvider))]
-	public void Deserialize_Produces_Exact_Object(string name)
+	public void Decode_Produces_Exact_Object(string name)
 	{
 		var scenario = ExactBytesProvider.Get(name);
 
 		SerializationTestingFixture.AssertDeserializesTo(scenario.Bytes, scenario.Bin, scenario.Items);
 	}
 
-	// Each section's size in the header comes from its own input, and a small body stays Uncompressed.
+	// This one stays on ViPaqSerializer on purpose: picking the narrowest width that holds each section, and
+	// leaving the blob uncompressed, is ViPaqSerializer's own job (the choosing layer, PROTOCOL.md §4/§6) — the
+	// exact thing ProtocolEncoder does NOT do, since it is handed a header. So this is the right place to pin
+	// that choice. Width is internal, so the boxed widths ride the theory data as object and are cast back here.
 	[Theory]
-	[ClassData(typeof(CreateEncodingInfoSizeProvider))]
-	public void Serialize_Writes_Correct_Sizes_In_Header(
-		BitSize binSize,
-		BitSize itemDimensionsSize,
-		BitSize itemCoordinatesSize)
+	[ClassData(typeof(HeaderWidthComboProvider))]
+	public void ViPaqSerializer_Chooses_Correct_Widths_In_Header(
+		object binWidthValue,
+		object itemDimensionsWidthValue,
+		object itemCoordinatesWidthValue)
 	{
-		var bin = SerializationTestingFixture.BuildBin<ulong>(binSize);
-		var item = SerializationTestingFixture.BuildItem<ulong>(itemDimensionsSize, itemCoordinatesSize);
+		var binWidth = (Width)binWidthValue;
+		var itemDimensionsWidth = (Width)itemDimensionsWidthValue;
+		var itemCoordinatesWidth = (Width)itemCoordinatesWidthValue;
+
+		var bin = SerializationTestingFixture.BuildBin<ulong>(binWidth);
+		var item = SerializationTestingFixture.BuildItem<ulong>(itemDimensionsWidth, itemCoordinatesWidth);
 
 		var data = ViPaqSerializer.Serialize<Binacle.Geometry.Dimensions<ulong>, Binacle.Geometry.Item<ulong>, ulong>(bin, [item]);
-		var header = EncodingInfoHelper.FromByte(data[0]);
+		var header = Header.FromBytes(data[0], data[1]);
 
-		header.BinDimensionsBitSize.ShouldBe(binSize);
-		header.ItemDimensionsBitSize.ShouldBe(itemDimensionsSize);
-		header.ItemCoordinatesBitSize.ShouldBe(itemCoordinatesSize);
-		header.Version.ShouldBe(Version.Uncompressed);
-	}
-
-	// Version records whether the body was gzip-compressed, and that switch is only about body
-	// length: > 255 bytes compresses, <= 255 stays raw (ViPaqSerializer.Serialize.cs,
-	// `memoryStream.Length > byte.MaxValue`). Body = 2 (item count) + 3*binBytes + N*(3*dimBytes +
-	// 3*coordBytes). Everything but the 2-byte count is a multiple of 3, so every reachable body
-	// length is `2 mod 3` — no input can land exactly 255 or 256. The real neighbours of the
-	// threshold are 254 (largest body that stays raw) and 257 (smallest that compresses); the last
-	// two rows pin the switch to that gap.
-	[Theory]
-	[InlineData(BitSize.Eight,   1,  Version.Uncompressed)]   // tiny body
-	[InlineData(BitSize.Eight,   60, Version.CompressedGzip)] // well over the threshold
-	[InlineData(BitSize.Sixteen, 41, Version.Uncompressed)]   // 254 = 2 + 6 + 246, largest raw body
-	[InlineData(BitSize.Eight,   42, Version.CompressedGzip)] // 257 = 2 + 3 + 252, just over
-	public void Serialize_Sets_Version_From_Body_Size(BitSize binSize, int itemCount, Version expected)
-	{
-		var bin = SerializationTestingFixture.BuildBin<int>(binSize);
-		var items = Enumerable.Range(0, itemCount)
-			.Select(_ => SerializationTestingFixture.BuildItem<int>(BitSize.Eight, BitSize.Eight))
-			.ToList();
-
-		var data = ViPaqSerializer.SerializeInt32<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>>(bin, items);
-
-		EncodingInfoHelper.FromByte(data[0]).Version.ShouldBe(expected);
+		header.BinDimensionsWidth.ShouldBe(binWidth);
+		header.ItemDimensionsWidth.ShouldBe(itemDimensionsWidth);
+		header.ItemCoordinatesWidth.ShouldBe(itemCoordinatesWidth);
+		header.Compressed.ShouldBeFalse();
 	}
 }

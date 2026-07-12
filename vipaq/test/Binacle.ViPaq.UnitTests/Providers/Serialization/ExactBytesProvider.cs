@@ -48,15 +48,17 @@ internal static class ExactBytesProvider
 
 	private sealed class Blob
 	{
-		public string Header { get; set; } = "";
+		public string[] Header { get; set; } = [];
 		public string[] Count { get; set; } = [];
 		public string[] Bin { get; set; } = [];
 		public Item[] Items { get; set; } = [];
 
 		// Flattens the by-segment golden into one wire blob: Header :: Count :: Bin :: (Dims :: Coords per item).
+		// Header is the two form/width bytes (PROTOCOL.md §2).
 		public byte[] ToByteArray()
 		{
-			var result = new List<byte> { VectorParser.ParseByte(this.Header) };
+			var result = new List<byte>();
+			result.AddRange(VectorParser.ParseBytes(this.Header));
 			result.AddRange(VectorParser.ParseBytes(this.Count));
 			result.AddRange(VectorParser.ParseBytes(this.Bin));
 			foreach (var item in this.Items)

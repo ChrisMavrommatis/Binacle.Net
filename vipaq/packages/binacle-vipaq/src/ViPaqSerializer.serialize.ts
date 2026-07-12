@@ -1,7 +1,11 @@
-import {Coordinates, Dimensions, Version} from "./models";
-import {compressBuffer, createEncodingInfo, getBufferSize, Sizes, writeEncodingInfoToBuffer} from "./utils";
-import {ProtocolWriter} from "./ProtocolWriter";
+import {Coordinates, Dimensions} from "./models";
+import {createHeader} from "./utils";
+import {ProtocolEncoder} from "./ProtocolEncoder";
 
+// Ports C#: ViPaqSerializer.Serialize. The choosing layer, and the only entry point a caller needs. It picks the
+// header — the narrowest widths that hold each section, row-major, and (for now) always uncompressed — then
+// hands ProtocolEncoder that header to obey. Compression is deferred (PROTOCOL.md §6), so nothing here ever sets
+// the compressed bit; that is honest — the codec is not chosen at all yet.
 export async function serialize(bin: Dimensions, items: (Dimensions & Coordinates)[]): Promise<Uint8Array<ArrayBuffer>> {
 	if (!bin) {
 		throw new Error("No Bin provided");
@@ -9,30 +13,8 @@ export async function serialize(bin: Dimensions, items: (Dimensions & Coordinate
 	if (!items) {
 		throw new Error("No items provided");
 	}
-	const encodingInfo = createEncodingInfo(bin, items);
-	const numberOfItems = items.length;
 
-	const bufferSize = getBufferSize(encodingInfo, numberOfItems);
-
-	// encoding info to be written at the end
-	const protocolWriter = new ProtocolWriter(bufferSize - 1);
-	protocolWriter.write16Bits(numberOfItems);
-	protocolWriter.writeDimensions(bin, encodingInfo.binDimensionsBitSize);
-
-	for(let item of items)
-	{
-		protocolWriter.writeDimensions(item, encodingInfo.itemDimensionsBitSize);
-		protocolWriter.writeCoordinates(item, encodingInfo.itemCoordinatesBitSize);
-	}
-
-	// Match the C# library: compress when the body (everything after the 1 byte header) is over 255 bytes.
-	const shouldCompress = (bufferSize - 1) > Sizes.compressionThresholdBytes;
-	if (!shouldCompress)
-	{
-		return writeEncodingInfoToBuffer(encodingInfo, protocolWriter.buffer);
-	}
-	encodingInfo.version = Version.CompressedGzip;
-	const compressedBuffer = await compressBuffer(protocolWriter.buffer);
-	return writeEncodingInfoToBuffer(encodingInfo, compressedBuffer);
+	const header = createHeader(bin, items);
+	const encoder = new ProtocolEncoder();
+	return encoder.encode(header, bin, items);
 }
-

@@ -2,28 +2,26 @@ using System.Collections;
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// Round-trip matrix: a numeric type crossed with every (bin, item-dim, item-coord) size combo it
-// can hold. ushort reaches 16-bit, int reaches 32-bit, ulong reaches 64-bit. Each row is one
-// serialize -> deserialize check. Covers mixed widths too (e.g. small dimensions, large coordinates).
-// Row: numeric type, bin size, item dimensions size, item coordinates size.
+// Round-trip matrix: a numeric type crossed with every (bin, item-dim, item-coord) width combo. There are
+// only two widths now (Eight/Sixteen), and every supported type reaches both, so each type runs the whole
+// 2x2x2 set. Each row is one serialize -> deserialize check. Covers mixed widths too (e.g. small dimensions,
+// large coordinates). Row: numeric type, bin width, item dimensions width, item coordinates width.
 internal class SerializationRoundTripProvider : IEnumerable<object[]>
 {
-	private static readonly BitSize[] upTo16 = [BitSize.Eight, BitSize.Sixteen];
-	private static readonly BitSize[] upTo32 = [BitSize.Eight, BitSize.Sixteen, BitSize.ThirtyTwo];
-	private static readonly BitSize[] upTo64 = [BitSize.Eight, BitSize.Sixteen, BitSize.ThirtyTwo, BitSize.SixtyFour];
+	private static readonly Width[] widths = [Width.Eight, Width.Sixteen];
 
 	public IEnumerator<object[]> GetEnumerator()
 	{
 		IEnumerable<object[]> rows =
 		[
-			.. Combos(typeof(ushort), upTo16),
-			.. Combos(typeof(int), upTo32),
-			.. Combos(typeof(ulong), upTo64),
+			.. Combos(typeof(ushort), widths),
+			.. Combos(typeof(int), widths),
+			.. Combos(typeof(ulong), widths),
 		];
 		return rows.GetEnumerator();
 	}
 
-	private static IEnumerable<object[]> Combos(Type numericType, BitSize[] sizes)
+	private static IEnumerable<object[]> Combos(Type numericType, Width[] sizes)
 	{
 		foreach (var binSize in sizes)
 		foreach (var itemDimensionsSize in sizes)

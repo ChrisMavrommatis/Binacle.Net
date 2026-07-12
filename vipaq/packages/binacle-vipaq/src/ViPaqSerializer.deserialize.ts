@@ -1,36 +1,26 @@
-import {encodingInfoFromByte, getDecodingDataStream} from "./utils";
-import {Bin, DeserializedResult, Item} from "./models";
-import {ProtocolReader} from "./ProtocolReader";
+import {DeserializedResult, Header} from "./models";
+import {headerFromBytes, ViPaqFormatError} from "./utils";
+import {ProtocolEncoder} from "./ProtocolEncoder";
 
-
+// Ports C#: ViPaqSerializer.Deserialize. Splits off the two header bytes — which are never compressed — reads the
+// header, then hands ProtocolEncoder the header plus everything after it. A conformant blob whose header says
+// compressed is still one this cannot read: the codec is deferred (PROTOCOL.md §6), so it says so plainly rather
+// than guess.
 export async function deserialize(data: Uint8Array<ArrayBuffer>): Promise<DeserializedResult> {
-	if (!data || data.length < 1) {
-		throw new Error("Data is invalid or empty.");
+	if (!data || data.length < Header.byteCount) {
+		throw new ViPaqFormatError("A blob is at least the two header bytes.");
 	}
 
-	// Read the first byte (encoding info) before any decompression
-	const firstByte = data[0];
-	const restOfData = data.slice(1);
+	const header = headerFromBytes(data[0], data[1]);
 
-	const encodingInfo = encodingInfoFromByte(firstByte);
-
-	// Determine if the data is compressed
-	const dataStream = await getDecodingDataStream(restOfData, encodingInfo);
-	const protocolReader = new ProtocolReader(dataStream);
-	const numberOfItems = protocolReader.read16Bits();
-
-	const bin = new Bin();
-	protocolReader.readDimensions(bin, encodingInfo.binDimensionsBitSize);
-
-	const items: Item[] = [];
-	for (let i = 0; i < numberOfItems; i++) {
-		const item = new Item();
-		protocolReader.readDimensions(item, encodingInfo.itemDimensionsBitSize);
-		protocolReader.readCoordinates(item, encodingInfo.itemCoordinatesBitSize);
-		items.push(item);
+	if (header.compressed) {
+		throw new Error(
+			"This blob is compressed. The ViPaq compression codec is not chosen yet (PROTOCOL.md §6).",
+		);
 	}
+
+	const encoder = new ProtocolEncoder();
+	const {bin, items} = await encoder.decode(header, data.slice(Header.byteCount));
 
 	return new DeserializedResult(bin, items);
 }
-
-

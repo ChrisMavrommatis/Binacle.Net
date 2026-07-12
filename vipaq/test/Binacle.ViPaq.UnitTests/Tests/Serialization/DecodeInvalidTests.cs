@@ -14,9 +14,11 @@ public class DecodeInvalidTests
 	{
 		var scenario = DecodeInvalidProvider.Get(name);
 
-		// Deliberately broad: these blobs reject for four different reasons (ArgumentException,
-		// ArgumentOutOfRangeException, EndOfStreamException, InvalidDataException), so the shared contract
-		// is just "throws" — matching the TypeScript side, which only asserts it rejects.
+		// Deliberately broad. Each blob rejects at a specific stage (short-of-header, reserved version, reserved
+		// bit, reserved width code, missing item count, truncated body, trailing bytes — see each Reason), but
+		// the exception type differs per stage and per language. The shared cross-language contract is just
+		// "rejected", so this asserts only that it throws; the C#-specific stages are pinned by type in
+		// SerializationBehaviorTests.
 		Should.Throw<Exception>(() =>
 			ViPaqSerializer.Deserialize<Binacle.Geometry.Dimensions<long>, Binacle.Geometry.Item<long>, long>(scenario.Blob));
 	}

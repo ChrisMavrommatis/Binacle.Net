@@ -1,86 +1,44 @@
 [
 	{
-		"Name": "uncompressed - forty items under the gzip threshold",
-		"ExpectedEncodingInfo": "Uncompressed_8_8_8",
+		"Name": "forty 8-bit items",
+		"ExpectedHeader": "v1_raw_row_8_8_8",
 		"Bin": "100x100x100",
 		"Items": ["10x10x10 (0,0,0) [40]"]
 	},
 	{
-		"Name": "compressed - sixty items over the gzip threshold",
-		"ExpectedEncodingInfo": "Compressed_8_8_8",
-		"Bin": "100x100x100",
-		"Items": ["10x10x10 (0,0,0) [60]"]
-	},
-	{
-		"Name": "uncompressed - 16-bit sections with nonzero coordinates",
-		"ExpectedEncodingInfo": "Uncompressed_16_16_16",
+		"Name": "16-bit sections with nonzero coordinates",
+		"ExpectedHeader": "v1_raw_row_16_16_16",
 		"Bin": "300x400x500",
 		"Items": ["300x400x500 (256,300,400)", "300x400x500 (500,600,700)"]
 	},
 	{
-		"Name": "uncompressed - 32-bit sections",
-		"ExpectedEncodingInfo": "Uncompressed_32_32_32",
-		"Bin": "70000x80000x90000",
-		"Items": ["70000x80000x90000 (66000,70000,80000)"]
-	},
-	{
-		"Name": "uncompressed - 64-bit sections within the interop range",
-		"ExpectedEncodingInfo": "Uncompressed_64_64_64",
-		"Bin": "5000000000x6000000000x7000000000",
-		"Items": ["5000000000x6000000000x7000000000 (4300000000,5000000000,6000000000)"]
-	},
-	{
-		"Name": "uncompressed - mixed widths, 8-bit bin, 16-bit item dims, 32-bit coordinates",
-		"ExpectedEncodingInfo": "Uncompressed_8_16_32",
+		"Name": "mixed widths, 8-bit bin, 16-bit item dims and coordinates",
+		"ExpectedHeader": "v1_raw_row_8_16_16",
 		"Bin": "100x100x100",
-		"Items": ["300x300x300 (70000,0,0)", "200x200x200 (0,66000,0)"]
+		"Items": ["300x300x300 (256,300,400)", "200x200x200 (500,600,700)"]
 	},
 	{
-		"Name": "compressed - 16-bit sections over the gzip threshold",
-		"ExpectedEncodingInfo": "Compressed_16_16_16",
-		"Bin": "300x300x300",
-		"Items": ["300x300x300 (300,300,300) [60]"]
+		"Name": "columnar layout, 16-bit sections",
+		"ExpectedHeader": "v1_raw_col_16_16_16",
+		"Bin": "300x400x500",
+		"Items": ["300x400x500 (256,300,400)", "310x410x510 (500,600,700)"]
 	},
 	{
 		"Name": "boundary - item dim at 8-bit ceiling (255)",
-		"ExpectedEncodingInfo": "Uncompressed_8_8_8",
+		"ExpectedHeader": "v1_raw_row_8_8_8",
 		"Bin": "100x100x100",
 		"Items": ["255x255x255 (0,0,0)"]
 	},
 	{
 		"Name": "boundary - item dim into 16-bit (256)",
-		"ExpectedEncodingInfo": "Uncompressed_8_16_8",
+		"ExpectedHeader": "v1_raw_row_8_16_8",
 		"Bin": "100x100x100",
 		"Items": ["256x256x256 (0,0,0)"]
 	},
 	{
 		"Name": "boundary - item dim at 16-bit ceiling (65535)",
-		"ExpectedEncodingInfo": "Uncompressed_8_16_8",
+		"ExpectedHeader": "v1_raw_row_8_16_8",
 		"Bin": "100x100x100",
 		"Items": ["65535x65535x65535 (0,0,0)"]
-	},
-	{
-		"Name": "boundary - item dim into 32-bit (65536)",
-		"ExpectedEncodingInfo": "Uncompressed_8_32_8",
-		"Bin": "100x100x100",
-		"Items": ["65536x65536x65536 (0,0,0)"]
-	},
-	{
-		"Name": "boundary - item dim at 32-bit ceiling (4294967295)",
-		"ExpectedEncodingInfo": "Uncompressed_8_32_8",
-		"Bin": "100x100x100",
-		"Items": ["4294967295x4294967295x4294967295 (0,0,0)"]
-	},
-	{
-		"Name": "boundary - item dim into 64-bit (4294967296)",
-		"ExpectedEncodingInfo": "Uncompressed_8_64_8",
-		"Bin": "100x100x100",
-		"Items": ["4294967296x4294967296x4294967296 (0,0,0)"]
-	},
-	{
-		"Name": "boundary - all sections at MaxInteger (2^53-1)",
-		"ExpectedEncodingInfo": "Uncompressed_64_64_64",
-		"Bin": "9007199254740991x9007199254740991x9007199254740991",
-		"Items": ["9007199254740991x9007199254740991x9007199254740991 (9007199254740991,9007199254740991,9007199254740991)"]
 	}
 ]

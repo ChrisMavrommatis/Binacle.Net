@@ -23,15 +23,6 @@ public class ProtocolBehaviorTests
 		Should.Throw<OverflowException>(() => writer.Write16Bits(70_000));
 	}
 
-	[Fact]
-	public void Write32Bits_Throws_When_Value_Exceeds_UInt32()
-	{
-		using var stream = new MemoryStream();
-		var writer = new ProtocolWriter<long>(stream);
-
-		Should.Throw<OverflowException>(() => writer.Write32Bits((long)uint.MaxValue + 1));
-	}
-
 	// Dispose semantics are only enforced for non-MemoryStream streams (MemoryStream skips the
 	// disposed check), so these wrap a MemoryStream in a BufferedStream to exercise that path.
 	[Fact]
@@ -40,7 +31,7 @@ public class ProtocolBehaviorTests
 		var writer = new ProtocolWriter<int>(new BufferedStream(new MemoryStream()));
 		writer.Dispose();
 
-		Should.Throw<ObjectDisposedException>(() => writer.WriteByte(0x01));
+		Should.Throw<ObjectDisposedException>(() => writer.Write8Bits(0x01));
 	}
 
 	[Fact]
@@ -49,7 +40,7 @@ public class ProtocolBehaviorTests
 		var reader = new ProtocolReader<int>(new BufferedStream(new MemoryStream([1, 2, 3, 4])));
 		reader.Dispose();
 
-		Should.Throw<ObjectDisposedException>(() => reader.ReadByte());
+		Should.Throw<ObjectDisposedException>(() => reader.Read8Bits());
 	}
 
 	// BufferedStream, not MemoryStream: MemoryStream.Flush() is a no-op even after close, so it would

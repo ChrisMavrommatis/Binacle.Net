@@ -9,14 +9,14 @@ namespace Binacle.ViPaq.UnitTests.Providers;
 // input.json holds the shared scenarios; every artifact blob must deserialize back to the input it names.
 internal static class InteropVectors
 {
-	// ExpectedEncodingInfo lives on the input (the scenario), not the artifact — it's producer-independent and
-	// spec-determined, so declaring it here makes the byte-0 pin a real oracle instead of a value echoed back
+	// ExpectedHeader lives on the input (the scenario), not the artifact — it's producer-independent and
+	// spec-determined, so declaring it here makes the header pin a real oracle instead of a value echoed back
 	// from the generator's own output.
-	public sealed record Input(EncodingInfo ExpectedEncodingInfo, Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items);
+	public sealed record Input(Header ExpectedHeader, Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items);
 
 	// Producer ("csharp"/"typescript") is kept even though the file name / provider already implies it —
 	// it may be needed later (e.g. richer test labels or per-producer assertions).
-	public sealed record ArtifactCase(string Producer, string Name, EncodingInfo ExpectedEncodingInfo, byte[] Bytes, Input Input);
+	public sealed record ArtifactCase(string Producer, string Name, Header ExpectedHeader, byte[] Bytes, Input Input);
 
 	// input.json, loaded once and shared by both providers.
 	private static readonly Dictionary<string, Input> inputs;
@@ -26,7 +26,7 @@ internal static class InteropVectors
 		foreach (var vector in VectorReader.Read<InputVector>(InteropFiles.Input))
 		{
 			var input = new Input(
-				VectorParser.ParseEncodingInfo(vector.ExpectedEncodingInfo),
+				VectorParser.ParseHeader(vector.ExpectedHeader),
 				VectorParser.ParseBin(vector.Bin),
 				VectorParser.ParseItems(vector.Items).ToArray());
 			inputs.Add(vector.Name, input);
@@ -60,7 +60,7 @@ internal static class InteropVectors
 			var artifact = new ArtifactCase(
 				vector.Producer,
 				vector.Name,
-				input.ExpectedEncodingInfo,
+				input.ExpectedHeader,
 				Convert.FromBase64String(vector.Base64),
 				input);
 			artifacts.Add(vector.Name, artifact);
@@ -73,7 +73,7 @@ internal static class InteropVectors
 	private sealed class InputVector
 	{
 		public string Name { get; set; } = "";
-		public string ExpectedEncodingInfo { get; set; } = "";
+		public string ExpectedHeader { get; set; } = "";
 		public string Bin { get; set; } = "";
 		public string[] Items { get; set; } = [];
 	}

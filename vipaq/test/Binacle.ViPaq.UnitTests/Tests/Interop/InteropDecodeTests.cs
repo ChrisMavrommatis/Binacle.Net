@@ -25,8 +25,8 @@ public class InteropDecodeTests
 
 	private static void AssertDecodes(InteropVectors.ArtifactCase artifact)
 	{
-		// byte 0 confirms the blob really is what it claims — compression flag plus all three widths.
-		EncodingInfoHelper.FromByte(artifact.Bytes[0]).ShouldBe(artifact.ExpectedEncodingInfo);
+		// The two header bytes confirm the blob really is what it claims — compression flag, layout, all widths.
+		Header.FromBytes(artifact.Bytes[0], artifact.Bytes[1]).ShouldBe(artifact.ExpectedHeader);
 
 		SerializationTestingFixture.AssertDeserializesTo(artifact.Bytes, artifact.Input.Bin, artifact.Input.Items);
 	}

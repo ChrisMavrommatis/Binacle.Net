@@ -5,10 +5,10 @@ namespace Binacle.ViPaq.UnitTests.Providers;
 // Turns the shared vectors into typed values. Geometry parsing is the shared CompactNotationParser (one grammar
 // for the whole repo); this class forwards to it. Bins and items are the shared Binacle.Geometry models
 // (Dimensions is dimensions-only; Item is the placed model). The standalone ParseDimensions/ParseCoordinates
-// helpers return the shared Binacle.Geometry models too (they exercise the protocol writer in isolation). Encoding-info
-// notation stays vipaq-local (it needs EncodingInfo/BitSize/Version). It also owns the test-vector byte tokens.
-// Everything numeric is parsed as `long` — it holds the whole interoperable range [0, 2^53-1] exactly and is
-// the natural pair for JS `number`.
+// helpers return the shared Binacle.Geometry models too (they exercise the protocol writer in isolation). Header
+// notation stays vipaq-local (it needs Header/Width/Layout/Version). It also owns the test-vector byte tokens.
+// Everything numeric is parsed as `long` — it holds the whole interoperable range [0, 65_535] and is the natural
+// pair for JS `number`.
 internal static class VectorParser
 {
 	// "0x0A" (hex) or "0b00_01_00_00" (grouped binary) -> one byte. Underscores are separators.
@@ -41,7 +41,7 @@ internal static class VectorParser
 	public static List<Binacle.Geometry.Item<long>> ParseItems(IEnumerable<string> compactItems)
 		=> CompactNotationParser.ParseItems<long>(compactItems).ToList();
 
-	// Encoding-info notation is wire-specific (EncodingInfo/BitSize/Version) — stays on vipaq's own notation.
-	public static EncodingInfo ParseEncodingInfo(string compact)
-		=> EncodingInfoNotation.ParseEncodingInfo(compact);
+	// Header notation is wire-specific (Header/Width/Layout/Version) — stays on vipaq's own notation.
+	public static Header ParseHeader(string notation)
+		=> HeaderNotation.Parse(notation);
 }

@@ -1,15 +1,21 @@
 import * as fs from "fs";
 import * as path from "path";
-import ViPaqSerializer from "../src/ViPaqSerializer";
 import {parseDimensions as parseBin, parseItems} from "binacle-compact-notation";
+import {ProtocolEncoder} from "../src/ProtocolEncoder";
+import {parseHeader} from "../src/headerNotation";
 import {Artifact} from "./Artifact";
 
-// Ports C#: InteropArtifactGenerator. Serializes each shared interop input with the TS ViPaq library and
-// writes the bytes (base64) to artifact-ts.json. Mirrors the C# generator off the same input; only the
-// compressed bytes differ, because Node's CompressionStream and C#'s GZipStream emit different valid gzip.
+// Ports C#: InteropArtifactGenerator. Encodes each shared interop input with the TS ViPaq library and writes the
+// bytes (base64) to artifact-ts.json. Mirrors the C# generator off the same input.
+//
+// It drives ProtocolEncoder, not ViPaqSerializer, so it obeys each scenario's ExpectedHeader — that is what lets
+// it emit the columnar and wider scenarios ViPaqSerializer's narrowest-raw choice would not. Every scenario is
+// uncompressed for now (compression is deferred, PROTOCOL.md §6), so an uncompressed blob is byte-identical to
+// the C# producer's, which the byte-identity test checks.
 
 interface InputScenario {
 	Name: string;
+	ExpectedHeader: string;
 	Bin: string;
 	Items: string[];
 }
@@ -21,12 +27,14 @@ export async function generateInteropArtifact(): Promise<void> {
 
 	const inputs: InputScenario[] = JSON.parse(fs.readFileSync(inputPath, "utf8"));
 
+	const encoder = new ProtocolEncoder();
 	const artifacts: Artifact[] = [];
 	for (const input of inputs) {
 		const bin = parseBin(input.Bin);
 		const items = parseItems(input.Items);
+		const header = parseHeader(input.ExpectedHeader);
 
-		const bytes = await ViPaqSerializer.serialize(bin, items);
+		const bytes = await encoder.encode(header, bin, items);
 
 		artifacts.push(new Artifact(
 			input.Name,

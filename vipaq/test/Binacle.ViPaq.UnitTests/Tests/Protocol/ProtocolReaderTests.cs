@@ -3,35 +3,35 @@ using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// The reader pulls bytes off the wire little-endian (low byte first). ReadByte / ReadUInt16 return a
-// fixed width and are used for the header, so T does not matter there; the rows below use
-// ProtocolReader<int> for those. Read8Bits..Read64Bits read the same bytes but widen the value to T.
-// The byte vectors are the shared little-endian/<width>.json files, also used by the writer tests, so
-// read and write are checked against the same known bytes.
+// The reader pulls bytes off the wire little-endian (low byte first). ReadUInt16 returns a fixed width and
+// is used for the header, so T does not matter there; the rows below use ProtocolReader<int> for it.
+// Read8Bits / Read16Bits read the same bytes but widen the value to T. The byte vectors are the shared
+// little-endian/<width>.json files, also used by the writer tests, so read and write are checked against
+// the same known bytes.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class ProtocolReaderTests
 {
-	// input byte -> same byte out. No endianness to worry about for a single byte.
+	// input byte -> same byte out, widened to T. No endianness to worry about for a single byte.
 	[Theory]
 	[MemberData(nameof(LittleEndianProvider.UInt8Names), MemberType = typeof(LittleEndianProvider))]
-	public void ReadByte_Reads_The_Byte(string name)
+	public void Read8Bits_Reads_The_Byte(string name)
 	{
 		var (expected, bytes) = LittleEndianProvider.UInt8(name);
 		var reader = new ProtocolReader<int>(new MemoryStream(bytes));
 
-		var result = reader.ReadByte();
+		var result = reader.Read8Bits();
 
-		result.ShouldBe(expected);
+		result.ShouldBe((int)expected);
 	}
 
 	// At end of stream a single-byte read must throw, not hand back a phantom byte. This is the lib-level
 	// pin for the fix that lets a truncated 8-bit body be rejected (see the shared decode-invalid vector).
 	[Fact]
-	public void ReadByte_Throws_At_End_Of_Stream()
+	public void Read8Bits_Throws_At_End_Of_Stream()
 	{
 		var reader = new ProtocolReader<int>(new MemoryStream([]));
 
-		Should.Throw<EndOfStreamException>(() => reader.ReadByte());
+		Should.Throw<EndOfStreamException>(() => reader.Read8Bits());
 	}
 
 	// bytes in (low byte first) -> the uint16 they spell out.
@@ -47,9 +47,9 @@ public class ProtocolReaderTests
 		result.ShouldBe(expected);
 	}
 
-	// Read8Bits..Read64Bits read the same little-endian bytes, then widen the value to T. They reuse
-	// the same vectors: bytes in, the wider T value out. These are the only place the 32- and 64-bit
-	// little-endian order is pinned now that the unused concrete readers are gone.
+	// Read16Bits reads the same little-endian bytes, then widens the value to T. It reuses the same vectors:
+	// bytes in, the wider T value out. This is the only place the 16-bit little-endian order is pinned now
+	// that the unused concrete readers are gone.
 	[Theory]
 	[MemberData(nameof(LittleEndianProvider.UInt16Names), MemberType = typeof(LittleEndianProvider))]
 	public void Read16Bits_Widens_To_T(string name)
@@ -60,30 +60,6 @@ public class ProtocolReaderTests
 		var result = reader.Read16Bits();
 
 		result.ShouldBe((int)wireValue);
-	}
-
-	[Theory]
-	[MemberData(nameof(LittleEndianProvider.UInt32Names), MemberType = typeof(LittleEndianProvider))]
-	public void Read32Bits_Widens_To_T(string name)
-	{
-		var (wireValue, bytes) = LittleEndianProvider.UInt32(name);
-		var reader = new ProtocolReader<long>(new MemoryStream(bytes));
-
-		var result = reader.Read32Bits();
-
-		result.ShouldBe((long)wireValue);
-	}
-
-	[Theory]
-	[MemberData(nameof(LittleEndianProvider.UInt64Names), MemberType = typeof(LittleEndianProvider))]
-	public void Read64Bits_Widens_To_T(string name)
-	{
-		var (wireValue, bytes) = LittleEndianProvider.UInt64(name);
-		var reader = new ProtocolReader<ulong>(new MemoryStream(bytes));
-
-		var result = reader.Read64Bits();
-
-		result.ShouldBe(wireValue);
 	}
 
 	// A type cannot live inside a data row, so the row carries the Type and this dictionary maps it

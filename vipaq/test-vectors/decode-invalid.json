@@ -2,42 +2,51 @@
   {
     "Name": "empty input",
     "Blob": [],
-    "Reason": "input shorter than 1 byte (PROTOCOL.md §7.1/§8)"
+    "Reason": "input shorter than the two-byte header (PROTOCOL.md §2/§7.1)"
+  },
+  {
+    "Name": "single byte, header incomplete",
+    "Blob": ["0x00"],
+    "Reason": "the header is two bytes; one byte is not a whole blob (PROTOCOL.md §2/§7.1)"
   },
   {
     "Name": "reserved version 2",
-    "Blob": ["0b10_00_00_00", "0x01", "0x00", "0x0A", "0x14", "0x1E", "0x01", "0x02", "0x03", "0x04", "0x05", "0x06"],
-    "Reason": "Version Reserved2 rejected before the body is read (§2/§7); the body is valid, so only the version can be the cause"
+    "Blob": ["0b10_00_00_00", "0b00_00_00_00"],
+    "Reason": "byte 0 version bits = 10 (Reserved2); rejected before the body is read (PROTOCOL.md §2.3/§7.2)"
   },
   {
     "Name": "reserved version 3",
-    "Blob": ["0b11_00_00_00", "0x01", "0x00", "0x0A", "0x14", "0x1E", "0x01", "0x02", "0x03", "0x04", "0x05", "0x06"],
-    "Reason": "Version Reserved3 rejected before the body is read (§2/§7)"
+    "Blob": ["0b11_00_00_00", "0b00_00_00_00"],
+    "Reason": "byte 0 version bits = 11 (Reserved3); rejected before the body is read (PROTOCOL.md §2.3/§7.2)"
   },
   {
-    "Name": "coordinate above MaxInteger",
-    "Blob": ["0b00_00_00_11", "0x01", "0x00", "0x0A", "0x14", "0x1E", "0x01", "0x02", "0x03",
-             "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x20", "0x00",
-             "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00",
-             "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00"],
-    "Reason": "decoded 64-bit coord X = 2^53 exceeds MaxInteger; the decoder must reject, not round (§5.1/§7)"
+    "Name": "reserved bit set in header byte 0",
+    "Blob": ["0b00_00_00_01", "0b00_00_00_00"],
+    "Reason": "byte 0 reserved bits 3-0 must be zero (PROTOCOL.md §2.1/§7.2)"
   },
   {
-    "Name": "bin dimension above MaxInteger",
-    "Blob": ["0b00_11_00_00", "0x00", "0x00",
-             "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x20", "0x00",
-             "0x01", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00",
-             "0x01", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00", "0x00"],
-    "Reason": "decoded 64-bit bin Length = 2^53 exceeds MaxInteger; exercises the dimensions decode guard (bin/item dims), not coordinates (§5.1/§7)"
+    "Name": "reserved bit set in header byte 1",
+    "Blob": ["0b00_00_00_00", "0b00_00_00_01"],
+    "Reason": "byte 1 reserved bits 1-0 must be zero (PROTOCOL.md §2.2/§7.3)"
   },
   {
-    "Name": "truncated body",
-    "Blob": ["0b00_00_00_00", "0x02", "0x00", "0x0A"],
-    "Reason": "header declares 2 items (all 8-bit) but the body ends after 1 byte of bin; the decoder must reject, not read past the end"
+    "Name": "reserved width code",
+    "Blob": ["0b00_00_00_00", "0b10_00_00_00"],
+    "Reason": "byte 1 bin-dimensions width = 10 (reserved); only codes 0 (8-bit) and 1 (16-bit) reach the wire (PROTOCOL.md §4/§7.3)"
   },
   {
-    "Name": "invalid gzip body",
-    "Blob": ["0b01_00_00_00", "0xDE", "0xAD", "0xBE", "0xEF"],
-    "Reason": "Version CompressedGzip but the body is not a valid gzip stream (no 1F 8B magic); decompression must fail (§7 step 3)"
+    "Name": "body missing item count",
+    "Blob": ["0x00", "0x00", "0x0A"],
+    "Reason": "header is valid but the body has no room for the uint16 item count (PROTOCOL.md §3/§7)"
+  },
+  {
+    "Name": "truncated body ends mid-bin",
+    "Blob": ["0x00", "0x00", "0x01", "0x00", "0x0A"],
+    "Reason": "header declares 1 item (all 8-bit) but the body ends after 1 of 3 bin bytes; the decoder must reject, not read past the end (PROTOCOL.md §7.1/§7.8)"
+  },
+  {
+    "Name": "trailing bytes after body",
+    "Blob": ["0x00", "0x00", "0x00", "0x00", "0x0A", "0x14", "0x1E", "0xFF"],
+    "Reason": "header declares 0 items and a 3-byte bin, but the body carries an extra byte; a body longer than declared is rejected (PROTOCOL.md §7.8)"
   }
 ]

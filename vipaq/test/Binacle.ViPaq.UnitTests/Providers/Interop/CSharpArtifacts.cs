@@ -1,5 +1,3 @@
-using Version = Binacle.ViPaq.Version;
-
 namespace Binacle.ViPaq.UnitTests.Providers;
 
 // The C# producer's artifact file. Each provider IS its file — CSharpArtifacts reads artifact-cs.json,
@@ -16,10 +14,10 @@ internal static class CSharpArtifacts
 	public static IEnumerable<object[]> Names
 		=> artifacts.Keys.Select(name => new object[] { name });
 
-	// Row source for the byte-identity test: only the blobs the spec fully determines (no gzip engine).
+	// Row source for the byte-identity test: only the blobs the spec fully determines (no compression engine).
 	public static IEnumerable<object[]> UncompressedNames
 		=> artifacts.Values
-			.Where(artifact => artifact.ExpectedEncodingInfo.Version == Version.Uncompressed)
+			.Where(artifact => !artifact.ExpectedHeader.Compressed)
 			.Select(artifact => new object[] { artifact.Name });
 
 	public static InteropVectors.ArtifactCase Get(string name)

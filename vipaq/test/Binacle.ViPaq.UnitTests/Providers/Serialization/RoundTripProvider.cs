@@ -2,13 +2,13 @@
 namespace Binacle.ViPaq.UnitTests.Providers;
 
 // round-trip-scenarios.json as xUnit theory rows. Each scenario is a (bin, items) input plus the header
-// the serializer must produce (ExpectedEncodingInfo). The test serializes, checks byte 0 == that
-// header, then deserializes and asserts the items come back unchanged.
+// the serializer must produce (ExpectedHeader, in HeaderNotation text form). The test serializes, checks the
+// two header bytes match that header, then deserializes and asserts the items come back unchanged.
 internal static class RoundTripProvider
 {
 	private const string FileName = "round-trip-scenarios.json";
 
-	public sealed record Scenario(Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items, EncodingInfo ExpectedEncodingInfo);
+	public sealed record Scenario(Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items, Header ExpectedHeader);
 
 	private static readonly Dictionary<string, Scenario> scenarios;
 
@@ -21,7 +21,7 @@ internal static class RoundTripProvider
 			var scenario = new Scenario(
 				VectorParser.ParseBin(vector.Bin),
 				VectorParser.ParseItems(vector.Items).ToArray(),
-				VectorParser.ParseEncodingInfo(vector.ExpectedEncodingInfo)
+				VectorParser.ParseHeader(vector.ExpectedHeader)
 			);
 
 			scenarios.Add(vector.Name, scenario);
@@ -40,6 +40,6 @@ internal static class RoundTripProvider
 		public string Name { get; set; } = "";
 		public string Bin { get; set; } = "";
 		public string[] Items { get; set; } = [];
-		public string ExpectedEncodingInfo { get; set; } = "";
+		public string ExpectedHeader { get; set; } = "";
 	}
 }
