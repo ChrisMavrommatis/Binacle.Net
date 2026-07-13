@@ -1,11 +1,12 @@
 import {DeserializedResult, Header} from "./models";
 import {headerFromBytes, ViPaqFormatError} from "./utils";
+import {noOpCodec} from "./compression";
 import {ProtocolEncoder} from "./ProtocolEncoder";
 
 // Ports C#: ViPaqSerializer.Deserialize. Splits off the two header bytes — which are never compressed — reads the
-// header, then hands ProtocolEncoder the header plus everything after it. A conformant blob whose header says
-// compressed is still one this cannot read: the codec is deferred (PROTOCOL.md §6), so it says so plainly rather
-// than guess.
+// header, then hands ProtocolEncoder the header plus everything after it. It refuses a compressed blob on
+// purpose: the codec exists (deflate) and ProtocolEncoder could inflate it, but the serializer's compression
+// policy is not baked in yet, so it stays symmetric with C# and reads raw blobs only.
 export async function deserialize(data: Uint8Array<ArrayBuffer>): Promise<DeserializedResult> {
 	if (!data || data.length < Header.byteCount) {
 		throw new ViPaqFormatError("A blob is at least the two header bytes.");
@@ -15,11 +16,12 @@ export async function deserialize(data: Uint8Array<ArrayBuffer>): Promise<Deseri
 
 	if (header.compressed) {
 		throw new Error(
-			"This blob is compressed. The ViPaq compression codec is not chosen yet (PROTOCOL.md §6).",
+			"This blob is compressed. The serializer does not read compressed blobs yet (PROTOCOL.md §6).",
 		);
 	}
 
-	const encoder = new ProtocolEncoder();
+	// Only ever reads raw blobs (compressed ones are refused above), so the codec is a NoOp — same as C#.
+	const encoder = new ProtocolEncoder(noOpCodec);
 	const {bin, items} = await encoder.decode(header, data.slice(Header.byteCount));
 
 	return new DeserializedResult(bin, items);

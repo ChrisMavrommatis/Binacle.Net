@@ -6,7 +6,7 @@ namespace Binacle.ViPaq.UnitTests.Providers;
 // use identical width math, and the two sets together cover every width bucket, so they can't drift apart.
 internal static class WidthSelectionProvider
 {
-	private const string FileName = "width-selection.json";
+	private const string FileName = "width/width-selection.json";
 
 	public sealed record Scenario<TValue>(TValue Value, Width Expected);
 

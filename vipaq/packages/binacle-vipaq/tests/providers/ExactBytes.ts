@@ -53,4 +53,4 @@ function load(file: string): Scenario[] {
 	return scenarios;
 }
 
-export const exactBytesCases: Scenario[] = load("exact-bytes.json");
+export const exactBytesCases: Scenario[] = load("serialization/exact-bytes.json");

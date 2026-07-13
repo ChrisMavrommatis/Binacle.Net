@@ -16,8 +16,8 @@ internal static class LittleEndianProvider
 	// A static constructor makes it explicit that the vectors load once, on first access to this provider.
 	static LittleEndianProvider()
 	{
-		uint8 = Load("little-endian/uint8.json", value => (byte)value);
-		uint16 = Load("little-endian/uint16.json", value => (ushort)value);
+		uint8 = Load("protocol/little-endian/uint8.json", value => (byte)value);
+		uint16 = Load("protocol/little-endian/uint16.json", value => (ushort)value);
 	}
 
 	public static IEnumerable<object[]> UInt8Names => Names(uint8);

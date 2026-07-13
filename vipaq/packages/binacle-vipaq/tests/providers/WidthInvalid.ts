@@ -43,4 +43,4 @@ function load(file: string): {dimensions: Scenario<Dimensions>[]; coordinates: S
 	return {dimensions, coordinates};
 }
 
-export const {dimensions: dimensionCases, coordinates: coordinateCases} = load("width-invalid.json");
+export const {dimensions: dimensionCases, coordinates: coordinateCases} = load("width/width-invalid.json");

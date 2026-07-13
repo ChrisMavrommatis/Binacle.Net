@@ -25,4 +25,4 @@ function load(file: string): Scenario[] {
 	return scenarios;
 }
 
-export const decodeInvalidCases: Scenario[] = load("decode-invalid.json");
+export const decodeInvalidCases: Scenario[] = load("serialization/decode-invalid.json");

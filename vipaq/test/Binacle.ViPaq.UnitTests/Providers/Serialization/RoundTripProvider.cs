@@ -6,7 +6,7 @@ namespace Binacle.ViPaq.UnitTests.Providers;
 // two header bytes match that header, then deserializes and asserts the items come back unchanged.
 internal static class RoundTripProvider
 {
-	private const string FileName = "round-trip-scenarios.json";
+	private const string FileName = "serialization/round-trip-scenarios.json";
 
 	public sealed record Scenario(Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items, Header ExpectedHeader);
 

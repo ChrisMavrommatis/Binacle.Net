@@ -4,6 +4,7 @@
 // item). These drive both codecs through ProtocolEncoder and prove: each layout round-trips, the two layouts
 // differ on the wire but agree on length, and an unknown layout code is rejected. Everything is uncompressed.
 import {ProtocolEncoder} from "../src/ProtocolEncoder";
+import {noOpCodec} from "../src/compression";
 import {getLayoutDecoder, getLayoutEncoder} from "../src/layouts";
 import {Header, Layout, Version, Width} from "../src/models";
 import {bin, item} from "./support/builders";
@@ -21,7 +22,7 @@ describe("layout codecs", () => {
 		{name: "row-major", layout: Layout.RowMajor},
 		{name: "columnar", layout: Layout.Columnar},
 	])("$name round-trips", async ({layout}) => {
-		const encoder = new ProtocolEncoder();
+		const encoder = new ProtocolEncoder(noOpCodec);
 		const data = await encoder.encode(header(layout), theBin, items);
 		const decoded = await encoder.decode(header(layout), data.slice(Header.byteCount));
 
@@ -31,7 +32,7 @@ describe("layout codecs", () => {
 
 	// The layout bit really reorders the body: same values, same length, different bytes.
 	test("the two layouts differ on the wire but agree on length", async () => {
-		const encoder = new ProtocolEncoder();
+		const encoder = new ProtocolEncoder(noOpCodec);
 		const rowMajor = await encoder.encode(header(Layout.RowMajor), theBin, items);
 		const columnar = await encoder.encode(header(Layout.Columnar), theBin, items);
 

@@ -6,7 +6,7 @@ namespace Binacle.ViPaq.UnitTests.Providers;
 // PascalCase name, which equals the thrown ArgumentException ParamName. A row is one kind, never both.
 internal static class WidthInvalidProvider
 {
-	private const string FileName = "width-invalid.json";
+	private const string FileName = "width/width-invalid.json";
 
 	public sealed record Scenario<TValue>(TValue Value, string Field);
 

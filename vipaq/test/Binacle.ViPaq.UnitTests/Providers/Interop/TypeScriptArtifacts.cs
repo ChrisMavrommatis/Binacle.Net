@@ -1,17 +1,20 @@
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// The TypeScript producer's artifact file. Mirror of CSharpArtifacts — same shared loader, its own file.
+// The TypeScript producer's artifacts — the interop/ts folder, mirror of CSharpArtifacts. Same shared loader, same
+// "<codec>/<name>" keying.
 internal static class TypeScriptArtifacts
 {
-	private static readonly Dictionary<string, InteropVectors.ArtifactCase> artifacts;
+	private static readonly Dictionary<string, InteropVectors.ArtifactCase> byKey = new();
 	static TypeScriptArtifacts()
 	{
-		artifacts = InteropVectors.Load(InteropFiles.TypeScriptArtifact);
+		foreach (var codec in InteropFiles.Codecs)
+		foreach (var (name, artifact) in InteropVectors.Load(InteropFiles.Artifact(InteropFiles.TypeScript, codec), codec))
+			byKey[$"{codec}/{name}"] = artifact;
 	}
 
-	public static IEnumerable<object[]> Names
-		=> artifacts.Keys.Select(name => new object[] { name });
+	public static IEnumerable<object[]> Keys
+		=> byKey.Keys.Select(key => new object[] { key });
 
-	public static InteropVectors.ArtifactCase Get(string name)
-		=> artifacts[name];
+	public static InteropVectors.ArtifactCase Get(string key)
+		=> byKey[key];
 }

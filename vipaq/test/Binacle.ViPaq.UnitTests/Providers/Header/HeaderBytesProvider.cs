@@ -6,7 +6,7 @@ namespace Binacle.ViPaq.UnitTests.Providers;
 // sees it, so this is a real check, not a round-trip.
 internal static class HeaderBytesProvider
 {
-	private const string FileName = "header-bytes.json";
+	private const string FileName = "header/header-bytes.json";
 
 	public sealed record Scenario(Header Header, byte[] Bytes);
 

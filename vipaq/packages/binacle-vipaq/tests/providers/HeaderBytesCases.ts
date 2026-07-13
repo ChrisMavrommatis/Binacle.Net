@@ -32,4 +32,4 @@ function load(file: string): Scenario[] {
 	return scenarios;
 }
 
-export const headerBytesCases: Scenario[] = load("header-bytes.json");
+export const headerBytesCases: Scenario[] = load("header/header-bytes.json");

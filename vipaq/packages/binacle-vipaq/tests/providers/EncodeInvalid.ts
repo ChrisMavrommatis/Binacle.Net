@@ -31,4 +31,4 @@ function load(file: string): Scenario[] {
 	return scenarios;
 }
 
-export const encodeInvalidCases: Scenario[] = load("encode-invalid.json");
+export const encodeInvalidCases: Scenario[] = load("serialization/encode-invalid.json");

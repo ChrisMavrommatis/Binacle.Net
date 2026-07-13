@@ -6,7 +6,7 @@ namespace Binacle.ViPaq.UnitTests.Providers;
 // `Bytes` object is flattened by the blob itself (Blob.ToByteArray).
 internal static class ExactBytesProvider
 {
-	private const string FileName = "exact-bytes.json";
+	private const string FileName = "serialization/exact-bytes.json";
 
 	public sealed record Scenario(Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items, byte[] Bytes);
 

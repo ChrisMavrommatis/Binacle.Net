@@ -1,11 +1,30 @@
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// The interop vector file names in one place, as VectorReader takes them (the on-disk slash path, same as
-// the TS readVectors). C# names the same three files from several spots — the shared loader, each provider,
-// the integrity test — so they live here instead of being retyped. Mirrors the TS artifactFiles list.
+// Which compression a producer applied to an interop artifact. Raw = uncompressed (NoOp). The wire has no codec
+// field, so Deflate and Gzip share the same 'comp' header — the codec is known here from the file name, not from
+// the bytes (PROTOCOL.md §6). The whole point of the matrix is that each language can deserialize the other's
+// output in every one of these modes.
+internal enum ArtifactCodec { Raw, Deflate, Gzip }
+
+// The interop vector file names in one place, as VectorReader takes them (the on-disk slash path, same as the TS
+// readVectors). input.json is shared; each producer has its own folder (interop/cs, interop/ts) holding one file
+// per codec — interop/<lang>/<codec>.json. Mirrors the TS artifactFiles list.
 internal static class InteropFiles
 {
 	public const string Input = "interop/input.json";
-	public const string CSharpArtifact = "interop/artifact-cs.json";
-	public const string TypeScriptArtifact = "interop/artifact-ts.json";
+
+	public const string CSharp = "cs";
+	public const string TypeScript = "ts";
+
+	public static readonly ArtifactCodec[] Codecs = [ArtifactCodec.Raw, ArtifactCodec.Deflate, ArtifactCodec.Gzip];
+
+	// lang is "cs" or "ts" (a folder); the file is the lower-cased codec name (raw/deflate/gzip).
+	public static string Artifact(string lang, ArtifactCodec codec)
+		=> $"interop/{lang}/{codec.ToString().ToLowerInvariant()}.json";
+
+	// Every artifact file: both producers × all three codecs.
+	public static IEnumerable<string> All()
+		=> from lang in new[] { CSharp, TypeScript }
+			from codec in Codecs
+			select Artifact(lang, codec);
 }

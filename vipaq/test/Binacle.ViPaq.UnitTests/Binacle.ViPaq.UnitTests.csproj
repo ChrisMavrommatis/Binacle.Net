@@ -36,23 +36,40 @@
 
     <!--
         Shared cross-language vectors (vipaq/test-vectors). Embedded so the tests read the exact same
-        files the TypeScript suite reads. LogicalName flattens each file to "Data.<file>" (and
-        "Data.little-endian.<file>" for the sub-folder); VectorReader reads them by that name.
-        Link keeps these out-of-project files under a virtual Data/ folder in the IDE instead of
-        scattering them at the project root.
+        files the TypeScript suite reads. The vectors are foldered to mirror the Providers/ folders
+        (header, interop, protocol, serialization, width); LogicalName flattens each file's path to
+        "Data.<folder>.<file>" (e.g. "Data.serialization.exact-bytes.json"), and VectorReader reads
+        them by that name — mapping the '/' in the path a caller passes to '.'. Link keeps these
+        out-of-project files under a virtual Data/ folder in the IDE instead of the project root.
     -->
     <ItemGroup>
-        <EmbeddedResource Include="..\..\test-vectors\*.json">
-            <Link>Data\%(Filename)%(Extension)</Link>
-            <LogicalName>Data.%(Filename)%(Extension)</LogicalName>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\..\test-vectors\little-endian\*.json">
-            <Link>Data\little-endian\%(Filename)%(Extension)</Link>
-            <LogicalName>Data.little-endian.%(Filename)%(Extension)</LogicalName>
+        <EmbeddedResource Include="..\..\test-vectors\header\*.json">
+            <Link>Data\header\%(Filename)%(Extension)</Link>
+            <LogicalName>Data.header.%(Filename)%(Extension)</LogicalName>
         </EmbeddedResource>
         <EmbeddedResource Include="..\..\test-vectors\interop\*.json">
             <Link>Data\interop\%(Filename)%(Extension)</Link>
             <LogicalName>Data.interop.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\..\test-vectors\interop\cs\*.json">
+            <Link>Data\interop\cs\%(Filename)%(Extension)</Link>
+            <LogicalName>Data.interop.cs.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\..\test-vectors\interop\ts\*.json">
+            <Link>Data\interop\ts\%(Filename)%(Extension)</Link>
+            <LogicalName>Data.interop.ts.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\..\test-vectors\protocol\little-endian\*.json">
+            <Link>Data\protocol\little-endian\%(Filename)%(Extension)</Link>
+            <LogicalName>Data.protocol.little-endian.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\..\test-vectors\serialization\*.json">
+            <Link>Data\serialization\%(Filename)%(Extension)</Link>
+            <LogicalName>Data.serialization.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\..\test-vectors\width\*.json">
+            <Link>Data\width\%(Filename)%(Extension)</Link>
+            <LogicalName>Data.width.%(Filename)%(Extension)</LogicalName>
         </EmbeddedResource>
     </ItemGroup>
 

@@ -8,12 +8,13 @@
 
 import ViPaqSerializer from "../src/ViPaqSerializer";
 import {ProtocolEncoder} from "../src/ProtocolEncoder";
+import {noOpCodec} from "../src/compression";
 import {headerFromBytes} from "../src/utils";
 import {roundTripCases} from "./providers/RoundTripCases";
 
 describe("round-trip scenarios", () => {
 	test.each(roundTripCases)("$name", async ({bin, items, expected}) => {
-		const data = await new ProtocolEncoder().encode(expected, bin, items);
+		const data = await new ProtocolEncoder(noOpCodec).encode(expected, bin, items);
 
 		// The two header bytes pin version, compression, layout and all three widths at once. A cheap guard that
 		// the encoder wrote the header it was handed — the real coverage is the decode below.

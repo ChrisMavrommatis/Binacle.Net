@@ -37,4 +37,4 @@ function load(file: string): Scenario[] {
 	return scenarios;
 }
 
-export const roundTripCases: Scenario[] = load("round-trip-scenarios.json");
+export const roundTripCases: Scenario[] = load("serialization/round-trip-scenarios.json");

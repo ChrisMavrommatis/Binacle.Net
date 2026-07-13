@@ -6,7 +6,7 @@ namespace Binacle.ViPaq.UnitTests.Providers;
 // item-count scenario to 65536 items without listing them.
 internal static class EncodeInvalidProvider
 {
-	private const string FileName = "encode-invalid.json";
+	private const string FileName = "serialization/encode-invalid.json";
 
 	public sealed record Scenario(Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items);
 

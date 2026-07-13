@@ -14,9 +14,9 @@ internal static class InteropVectors
 	// from the generator's own output.
 	public sealed record Input(Header ExpectedHeader, Binacle.Geometry.Dimensions<long> Bin, Binacle.Geometry.Item<long>[] Items);
 
-	// Producer ("csharp"/"typescript") is kept even though the file name / provider already implies it —
-	// it may be needed later (e.g. richer test labels or per-producer assertions).
-	public sealed record ArtifactCase(string Producer, string Name, Header ExpectedHeader, byte[] Bytes, Input Input);
+	// Producer ("csharp"/"typescript") and Codec ride along so the decode test can pick its path — raw goes
+	// through the full ViPaqSerializer, deflate/gzip through ProtocolEncoder + the matching codec.
+	public sealed record ArtifactCase(string Producer, string Name, ArtifactCodec Codec, Header ExpectedHeader, byte[] Bytes, Input Input);
 
 	// input.json, loaded once and shared by both providers.
 	private static readonly Dictionary<string, Input> inputs;
@@ -47,7 +47,7 @@ internal static class InteropVectors
 	// by Name rejects duplicate names in the file. Whether the names line up with input.json is the
 	// integrity test's job — it runs first (via ReadNames) and fails clearly; if a name still slips
 	// through to here the throw names it plainly instead of surfacing a raw KeyNotFoundException.
-	public static Dictionary<string, ArtifactCase> Load(string fileName)
+	public static Dictionary<string, ArtifactCase> Load(string fileName, ArtifactCodec codec)
 	{
 		var artifacts = new Dictionary<string, ArtifactCase>();
 		foreach (var vector in VectorReader.Read<ArtifactVector>(fileName))
@@ -57,10 +57,17 @@ internal static class InteropVectors
 					$"Artifact '{vector.Name}' in '{fileName}' has no matching input in input.json — " +
 					"rerun the generator (the integrity test names the mismatch).");
 
+			// Raw keeps the input's header; a compressed artifact carries the same header with the compressed
+			// bit set (deflate and gzip are indistinguishable on the wire — §6).
+			var header = codec == ArtifactCodec.Raw
+				? input.ExpectedHeader
+				: input.ExpectedHeader with { Compressed = true };
+
 			var artifact = new ArtifactCase(
 				vector.Producer,
 				vector.Name,
-				input.ExpectedHeader,
+				codec,
+				header,
 				Convert.FromBase64String(vector.Base64),
 				input);
 			artifacts.Add(vector.Name, artifact);

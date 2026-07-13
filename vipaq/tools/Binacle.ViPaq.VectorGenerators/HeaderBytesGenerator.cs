@@ -14,7 +14,7 @@ public sealed class HeaderBytesGenerator : IVectorGenerator
 {
 	public void Generate()
 	{
-		var outputPath = RepositoryRoot.Bind().Find("vipaq", "test-vectors", "header-bytes.json");
+		var outputPath = RepositoryRoot.Bind().Find("vipaq", "test-vectors", "header", "header-bytes.json");
 
 		var compressedFlags = new[] { false, true };
 		var layouts = new[] { Layout.RowMajor, Layout.Columnar };

@@ -13,9 +13,10 @@ namespace Binacle.ViPaq.UnitTests;
 // ViPaqSerializer chooses nothing yet, it always writes raw, row-major, narrowest, so a test driven through it
 // can never reach the layout or width variants.
 //
-// Everything here is uncompressed: the encoder always gets the NoOp codec, so the body stays byte-for-byte
-// readable (exact-byte pins depend on that). Compression is deferred (PROTOCOL.md §6) — no unit test writes or
-// reads a compressed blob; ViPaqSerializer's refusal to read one is pinned separately in SerializationBehaviorTests.
+// The encode/build helpers are uncompressed: the encoder gets the NoOp codec, so the body stays byte-for-byte
+// readable (exact-byte pins depend on that). The exception is AssertCodecDecodesTo at the bottom, which takes a
+// codec so the cross-language decode test can read deflate/gzip blobs (raw passes a NoOp). ViPaqSerializer's own
+// refusal to read a compressed blob is pinned separately in SerializationBehaviorTests.
 internal static class SerializationTestingFixture
 {
 	// Builds a whole blob under a caller-chosen header. The header decides widths and layout; ProtocolEncoder
@@ -66,6 +67,18 @@ internal static class SerializationTestingFixture
 	{
 		var header = Header.FromBytes(data[0], data[1]);
 		var (resultBin, resultItems) = new ProtocolEncoder(new NoOpCodec())
+			.Decode<Binacle.Geometry.Dimensions<T>, Binacle.Geometry.Item<T>, T>(header, data[Header.ByteCount..]);
+
+		AssertSame(bin, items, resultBin, resultItems);
+	}
+
+	// Decodes a blob through ProtocolEncoder + the given codec — the cross-language decode test passes the codec
+	// named by the artifact file (raw = NoOp, deflate/gzip = the real codec), so one call decodes every mode.
+	public static void AssertCodecDecodesTo<T>(byte[] data, ICompressionCodec codec, Binacle.Geometry.Dimensions<T> bin, IReadOnlyList<Binacle.Geometry.Item<T>> items)
+		where T : struct, IBinaryInteger<T>
+	{
+		var header = Header.FromBytes(data[0], data[1]);
+		var (resultBin, resultItems) = new ProtocolEncoder(codec)
 			.Decode<Binacle.Geometry.Dimensions<T>, Binacle.Geometry.Item<T>, T>(header, data[Header.ByteCount..]);
 
 		AssertSame(bin, items, resultBin, resultItems);

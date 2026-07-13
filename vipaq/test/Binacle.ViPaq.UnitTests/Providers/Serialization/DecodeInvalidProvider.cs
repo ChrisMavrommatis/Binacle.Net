@@ -4,7 +4,7 @@ namespace Binacle.ViPaq.UnitTests.Providers;
 // test only asserts that deserialize throws (the exception type/message differ per language).
 internal static class DecodeInvalidProvider
 {
-	private const string FileName = "decode-invalid.json";
+	private const string FileName = "serialization/decode-invalid.json";
 
 	public sealed record Scenario(byte[] Blob);
 
