@@ -92,7 +92,10 @@ table of [README.md](README.md).
 
 | File | Description |
 |---|---|
+| [vipaq/architecture.md](vipaq/architecture.md) | ViPaq architecture — the blind encode/decode layer, the layout codecs, and the serializer that chooses. The policy/mechanism split the rebuild keeps. |
 | [vipaq/cross-language-testing.md](vipaq/cross-language-testing.md) | ViPaq cross-language wire testing — the C#/TS shared-vector apparatus, its inventory, and the decode-to-input contract |
+| [vipaq/decisions.md](vipaq/decisions.md) | ViPaq decisions ledger — the locked decisions (D1–D16) and their reasons, plus the open questions. |
+| [vipaq/findings.md](vipaq/findings.md) | ViPaq findings — the measured evidence (base64 size, encode/decode time) behind the decisions. |
 | [vipaq/README.md](vipaq/README.md) | Binacle.ViPaq — compact binary format for encoding packing results. Wire layout, encoding-info header, C# API surface, and limits. |
 | [vipaq/typescript.md](vipaq/typescript.md) | Binacle.ViPaq TypeScript mirror (vipaq/packages/binacle-vipaq) — public API and how it differs from the C# library |
 

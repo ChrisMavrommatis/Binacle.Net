@@ -1,3 +1,12 @@
+---
+description: ViPaq decisions ledger — the locked decisions (D1–D16) and their reasons, plus the open questions.
+verified: 2026-07-13
+check: Locked decisions D1–D16 are not contradicted by vipaq/PROTOCOL.md or vipaq/src/Binacle.ViPaq
+also_update:
+  - vipaq/architecture.md
+  - vipaq/findings.md
+---
+
 # ViPaq — decisions ledger
 
 Locked decisions and open questions, with the *why*. Evidence lives in [findings.md](findings.md); design detail in
@@ -44,12 +53,23 @@ ViPaq has one implementation, so there's no in-code baseline like lib's v1-vs-v2
 - **Committed result files are the recorded baseline** — size-report + BDN summary under `results/`. A *win* = a
   diff showing smaller base64 / lower ns / lower allocs **while the protobuf anchor is unchanged**. Small
   increments; keep only measured wins.
-- Depends on the still-open results-storage decision in [../results-migration.md](../results-migration.md); this
+- Depends on the still-open results-storage decision in [results-migration.md](../../plans/results-migration.md); this
   workflow assumes **Option C — stay in `results/`**.
 
-### D4 — The permanent harness uses only the minimal public API (CONFIRMED 2026-07-07)
-The permanent benchmark calls **only** `ViPaqSerializer.Serialize`/`Deserialize`. It never touches internals,
-header bits, or layout. Two consequences:
+### D4 — The permanent harness uses only the minimal public API (CONFIRMED 2026-07-07, AMENDED 2026-07-10)
+The permanent benchmark **encodes and decodes** through `ViPaqSerializer.Serialize`/`Deserialize` only. That part
+stands unchanged, and it is what makes the harness layout-agnostic.
+
+**Amendment (2026-07-10): it reads the header through the library's internal `Header`, not by re-parsing bytes.**
+`Binacle.ViPaq` grants `InternalsVisibleTo` to `Binacle.ViPaq.TestsKernel`, and `ViPaqHeader` wraps `Header`
+behind a private field, exposing only `bool`/`int`/`string`. The original rule made the harness re-implement
+PROTOCOL §2's bit layout and §3's size arithmetic — a second copy of the spec that had already gone stale by the
+rewrite (it still read a one-byte header and treated compression as a `Version`). **One copy of the spec beats a
+clean boundary here.** The reasons the boundary existed are unharmed: the harness still calls nothing but
+`Serialize`/`Deserialize` to move bytes, and `Header` is a frozen wire description, not an evolving API — if it
+churns, the format churned, and the harness *should* break.
+
+Two consequences of the public-API rule, both still true:
 - **Layout-agnostic for free** — when v2 swaps row→columnar internally, the bytes change but the harness call
   sites don't. This is automatic from living at the public boundary, not something the harness engineers.
 - **It measures real behavior only** — the public `Serialize` chooses compression itself (D7), so the harness
@@ -59,14 +79,29 @@ header bits, or layout. Two consequences:
 - **Phase 1 adds a compression override** (D13) that the harness may use to measure raw vs compressed. That is a
   measurement entry point, not a caller knob, and it does not change what the public default does.
 - **Why minimal:** a permanent ruler must not churn when the lib evolves. Coupling it to an evolving API would
-  defeat the point. The controlled codec experiment is a **separate one-off** (see D5), not the ruler.
+  defeat the point. The codec race is part of the ruler, not a separate experiment (see D5, reversed).
 
-### D5 — Two tiers: permanent ruler vs one-off experiment (CONFIRMED 2026-07-07)
-- **Permanent harness** (Session 1): minimal public API, never changes, measures real-mode size + CPU/mem +
-  protobuf ratio, and *observes* the shipped compression crossover by sweeping item count.
-- **One-off experiment:** chooses the codec (O2). The threshold question is dead — D7 killed it. Asked once,
-  answer recorded in findings.md, locked here, and **written into the spec** (`vipaq/PROTOCOL.md` §6 names the
-  codec, because `Version` pins it). Not part of the permanent ruler.
+### D5 — The codec race lives in the harness (CONFIRMED 2026-07-07, REVERSED 2026-07-10)
+- **Permanent harness**: measures real-mode size + CPU/mem + protobuf ratio, and *observes* the shipped
+  compression crossover by sweeping item count.
+- **The codec race is part of it, permanently.** The harness encodes every scenario in each mode — `Raw`, `NoOp`,
+  and deflate/gzip across both layouts — and mirrors each codec onto protobuf. See [codec-race.md](../../plans/vipaq/codec-race.md).
+
+**Reversed 2026-07-10.** This decision used to say the codec race was a **one-off experiment**: run it in a
+throwaway, record the answer, keep it out of the permanent ruler. The worry was that bolting an experiment onto
+the ruler stops the ruler being comparable over time.
+
+That was wrong, for a reason it did not anticipate: **the race is not only about the codec.**
+
+- It also settles **row-major vs columnar**, which is unmeasured and is a permanent harness concern.
+- It fixes a real bug in the existing report. The harness compares a **compressed** ViPaq token against **raw**
+  protobuf, so the gap it prints is mostly the compression, not the format. Mirroring each codec onto protobuf
+  is the fix, and it is not an experiment — it is the ruler being honest.
+- "Is deflate still the right pick on this data?" is worth re-asking as the data changes, not answering once.
+
+Consequences: `ICompressionCodec`, `DeflateCodec`, `GzipCodec` and `NoOpCodec` are **permanent**. Nothing
+collapses when the codec is pinned. The wire still pins exactly one codec — `Version` fixes it and there is no
+codec field in the header — so pinning changes one line in `ViPaqSerializer` and nothing else.
 
 ### D6 — Scope: 8/16 only, no 32/64 in the permanent tool
 32/64 is pointless to keep measuring — v2 drops it. Craft payloads whose values force ViPaq into 8- or 16-bit
@@ -143,17 +178,44 @@ all recorded in the header, and a decoder obeys the header rather than re-derivi
   conformant encoders may choose differently for the same input and both are right. Golden vectors must state the
   header they expect bytes under. The old blanket claim was wrong; sessions 5 and 6 are corrected.
 
+### D15 — Generators are for combinatorial and derived vectors only (CONFIRMED 2026-07-13)
+The vector generator (`Binacle.ViPaq.VectorGenerators`) earns its keep on two files: `header-bytes.json` (32
+combinatorial rows, tedious and error-prone by hand) and the interop artifact (`artifact-cs.json` — the actual
+bytes C#'s encoder emits, which TS must match, so it *has* to be derived). Everything else stays **hand-authored**
+JSON: `exact-bytes.json`, `little-endian/*.json`, `width-selection.json`, `width-invalid.json`,
+`decode-invalid.json`, `encode-invalid.json`, `round-trip-scenarios.json`.
+
+What settled it: those are small, curated sets. Writing a C# scenario record plus a bespoke formatter to emit JSON
+a human writes directly is more machinery than the payoff. The cross-language value comes from *both suites reading
+one shared file* — not from generating that file. And for the oracle/spec files (width-*, invalid, round-trip),
+recomputing the oracle from the library under test would make the tests tautological — the library grading its own
+homework. So task #9 ("generate ALL vectors") is closed as effectively done: the two files that justify a generator
+are generated; the rest stay hand-authored.
+
+### D16 — One codec (raw DEFLATE); compression is a user toggle, not a pinned policy (CONFIRMED 2026-07-13)
+Resolves O2. The wire has a `Compressed` bit but **no codec field**, so multiple codecs was never really on the
+table — a decoder could not tell them apart. So there is exactly **one** compression codec, and it is **raw
+DEFLATE** (RFC 1951, no wrapper). Gzip is the same DEFLATE stream plus ~18 bytes of framing that buys nothing
+here — measured on a small pack, gzip `56` vs deflate `32` vs raw `48`, so gzip can be *bigger* than raw — so gzip
+stays only for the race. Deflate is portable and proven end to end: C# `DeflateStream` ↔ browser
+`CompressionStream('deflate-raw')` ↔ Node `zlib.deflateRaw`. It **must** be the `-raw` variant; plain `deflate`
+adds a zlib header C# does not write. Compressed bytes are not byte-identical across engines, so the guarantee is
+decode-to-input — the interop matrix (`interop/{cs,ts}/{raw,deflate,gzip}.json`) proves each language decodes the
+other's deflate and gzip.
+
+**It is not a ship blocker.** Layout and compression are the encoder's choice, recorded in the header, exposed as
+options with defaults **RowMajor** and **uncompressed**. The default is off, so v2 can ship with the toggle
+present and unused; `ViPaqSerializer` still writes raw and refuses to read compressed until "baking in" is decided
+(D7's try-both becomes the default when compression is turned on). `ProtocolEncoder` takes the codec as a
+**required** argument in both languages, so a caller always says which one; `NoOpCodec` keeps the compressed path
+testable with the body readable.
+
 ## Open — decide with data
 
-### O2 — Codec + level (still open; blocks finalising the spec)
-The spec leaves the codec **unchosen** (`vipaq/PROTOCOL.md` §6). It is fixed by `Version`, not by a header field,
-so it must be named before v2 ships — and switching it later costs a `Version` bump, not a knob.
-
-Compression *level* never reaches the wire: it is an encoder-side choice, free to change, invisible to a decoder.
-So only the **codec** is a real decision.
-
-Standing findings that constrain it: gzip-Optimal ≈ brotli-Optimal on size, both fast; **never q11 as a default**
-(~98 ms encode — archival opt-in only). Whatever is picked must exist in C# and in the browser/Node.
+### O2 — Codec + level (RESOLVED 2026-07-13 → D16)
+Resolved by **D16**: one codec, raw DEFLATE, exposed as a user toggle (default off). Compression *level* never
+reaches the wire, so it stays a free encoder-side choice. The old worry — "name the codec before v2 ships" — is
+moot now the default is uncompressed; nothing blocks shipping.
 
 ## Ruled out — do not rebuild
 24-bit ladder (8/16/24/32) + coords-ride-bin · Brotli q11 as default · byte-plane/transpose layout · raw Deflate

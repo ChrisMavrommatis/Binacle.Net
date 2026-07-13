@@ -1,3 +1,11 @@
+---
+description: ViPaq findings — the measured evidence (base64 size, encode/decode time) behind the decisions.
+verified: 2026-07-11
+check: Numbers match the latest results/vipaq/ size reports and the permanent-harness benchmark output
+also_update:
+  - vipaq/decisions.md
+---
+
 # ViPaq — findings (the measured evidence)
 
 The honest record of what we measured. Every session links here; **no session file keeps its own numbers.**
@@ -181,7 +189,7 @@ except the 1-item token (520 B vs 368 B — noise at that size).
 **Coverage gap:** the uncompressed set is **all 8-bit** — every 16-bit problem (Bischoff) is large enough to
 compress, so the uncompressed *16-bit* path is measured nowhere. Closing it needs a small 16-bit problem authored
 in `shared/data`; tracked in
-[../shared/testskernel-data-extraction.md](../shared/testskernel-data-extraction.md).
+[testskernel-data-extraction.md](../../plans/shared/testskernel-data-extraction.md).
 
 ## What the harness did *not* answer
 

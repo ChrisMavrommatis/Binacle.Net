@@ -1,5 +1,10 @@
 ---
-description: ViPaq architecture — the blind encode/decode layer, the layout codecs, and the serializer that chooses. Phase 1 is the base structure.
+description: ViPaq architecture — the blind encode/decode layer, the layout codecs, and the serializer that chooses. The policy/mechanism split the rebuild keeps.
+verified: 2026-07-13
+check: Policy/mechanism split matches vipaq/src/Binacle.ViPaq — ProtocolEncoder obeys the header, ViPaqSerializer chooses widths/layout/compression, Layouts/ hold the codecs
+also_update:
+  - vipaq/decisions.md
+  - vipaq/findings.md
 ---
 
 # ViPaq — architecture
@@ -41,11 +46,11 @@ Only the blind layer. No choosing. In `vipaq/src/Binacle.ViPaq/`:
 | Piece | What it does |
 |---|---|
 | `ProtocolWriter<T>` / `ProtocolReader<T>` | Read and write **one** value at a given `Width`, little-endian |
-| `Layouts/ILayoutCodec` + `RowMajorCodec` + `ColumnarCodec` | Write and read the *items*, in the order `Layout` names |
-| `Layouts/LayoutCodecFactory` | Hands back the codec for a `Layout` |
+| `Layouts/ILayoutEncoder` + `ILayoutDecoder`, both on `RowMajorCodec` and `ColumnarCodec` | Write and read the *items*, in the order `Layout` names |
+| `Layouts/LayoutCodecFactory` | Hands back the encoding or decoding half of the codec for a `Layout` |
 | `Compression/ICompressionCodec` + `DeflateCodec` + `GzipCodec` + `NoOpCodec` | Squeeze the body, and unsqueeze it |
 | `ProtocolEncoder` | `Encode` and `Decode`. Handed a header, obeys it — widths, layout, and whether to compress. |
-| `ViPaqSerializer` | **Stub.** The chooser: works the header out from the bin and items, then calls the encoder. |
+| `ViPaqSerializer` | The chooser: works the header out from the bin and items, then calls the encoder. |
 | `HeaderNotation` | **Stub.** The header's text form, for the test vectors. |
 
 **One `ProtocolEncoder`, with `Encode` and `Decode` on it.** They are one agreement read in two directions:
@@ -66,17 +71,22 @@ and decodes.
 `Header` carries a `Version` enum. `Version1` is `0`, so it is not `required` and the default is the only version
 this implementation writes; a decoder rejects codes 1-3 (§2.3).
 
-**Two codecs, on purpose, for now.** `PROTOCOL.md` §6 still does not name one, so both are built and the encoder
-is handed the one to use. The next step is to race them on real packs and pick. `ICompressionCodec` dies with
-that choice: the spec fixes one codec per `Version` and puts no codec field on the wire, so nothing may be built
-on the idea that the codec is pluggable. Once picked, name it in §6, strike it from §12, and collapse the
-interface.
+**Three codecs, and they all stay.** `PROTOCOL.md` §6 still does not name one, so the encoder is handed the one
+to use. Picking it (see [codec-race.md](../../plans/vipaq/codec-race.md)) changes one line in `ViPaqSerializer` and **nothing else**:
+
+- **The wire is not pluggable.** The spec fixes one codec per `Version` and puts no codec field in the header, so
+  a shipped blob is inflatable by exactly one thing. Never build on the idea that a reader can choose.
+- **`ICompressionCodec` is.** It is what makes `ProtocolEncoder` testable — a `NoOpCodec` forces the compressed
+  path with the body still readable, which §6.1 forbids through a real codec. And the permanent harness measures
+  deflate against gzip on every run, mirroring both onto protobuf, so both implementations must survive the choice.
+
+Do not delete the losing codec. Do not collapse the interface.
 
 **Reader and writer move one value, and nothing more.** `WriteValue(value, width)` and `ReadValue(width)` are the
 whole new surface. They do not know what a dimension or a coordinate is, and there is no `WriteDimensions` or
 `ReadCoordinates` — grouping three values into a triple is the caller's business. The layout codecs do it for the
-items, because the order of those three *is* the layout. `ProtocolEncoder` and `ProtocolDecoder` do it for the
-bin, because the bin is written the same way in both layouts (§3).
+items, because the order of those three *is* the layout. `ProtocolEncoder` does it for the bin, because the bin
+is written the same way in both layouts (§3).
 
 The new path does not range-check on the way in: an 8- or 16-bit field cannot hold an out-of-range value, which
 is what §5 means by "a decoder has nothing to range-check". The old `EnsureWithinRange` guard exists only for the
@@ -87,55 +97,71 @@ extension methods, `ExtensionMethods/`, and `ViPaqLimits.MaxInteger` / `.Sixteen
 `.CompressionThresholdBytes` were all deleted with the shim. `ViPaqLimits` keeps only `EightBitsMax`, `MaxValue`
 and `MaxItemCount`.
 
-**The layout codecs are a sanctioned abstraction.** One interface, two implementations, one factory. The pair
-that writes the items and the pair that reads them have to agree, so they live behind one type. Only the items
-are laid out — the item count and the bin dimensions are the same in both layouts (§3), so the encoder and
-decoder handle those and hand over at the items.
+**The layout codecs are a sanctioned abstraction.** Two implementations, one factory, and **two interfaces**:
+`ILayoutEncoder` and `ILayoutDecoder`. Both are implemented by the same class, because the thing that knows how
+to write the item fields is the thing that knows how to read them back. The split is not about independence —
+it is that `TItem` means different things in the two directions. Encoding only ever *reads* an item, so it asks
+for `IWithReadOnlyDimensions` / `IWithReadOnlyCoordinates` and a caller can encode a type it cannot mutate.
+Decoding fills items in place, so it needs the settable pair. `TItem` is a method type parameter for that reason.
+
+Only the items are laid out — the item count and the bin dimensions are the same in both layouts (§3), so
+`ProtocolEncoder` handles those and hands over at the items.
 
 **Encoder and decoder obey the header.** They validate that the header can hold the data (§8) and then write or
 read exactly what it declares. No width is re-derived on decode (§4). No compression decision is made here.
 
-## The chooser — `ViPaqSerializer` — **STUB, not written**
+## The chooser — `ViPaqSerializer` — **written 2026-07-10**
 
-`Serialize` and `Deserialize` throw. The type exists to hold the shape and the open questions; the file lists
-them. `ProtocolEncoder` is blind, so *something* has to decide the header, and this is where that goes:
+A `public static class`. `ProtocolEncoder` is blind, so *something* has to decide the header, and this is where
+that goes. `CreateHeader` decides five of the six fields by looking at the input; `Serialize` decides the sixth:
 
 - **Widths** — the narrowest that holds each section, sized independently (§4). A big bin can hold small items
   at large coordinates, so the three sections genuinely disagree (`findings.md`: Bischoff packs to `16/8/16`).
-- **Layout** — unmeasured. `findings.md` suggests a good codec already exploits the structure columnar exposes,
-  so it may buy nothing. Both ship and the header bit records which was used, so it can change without a version
-  bump.
-- **Compressed** — encode both ways, keep the shorter blob (§6, D7). Never inflates, no threshold to tune wrong.
+  With no items both item widths stay `Eight`, which is what §4 requires.
+- **Layout** — `RowMajor`, always. Unmeasured. `findings.md` suggests a good codec already exploits the structure
+  columnar exposes, so it may buy nothing. Both codecs ship and the header bit records which was used, so this
+  can change later without a version bump.
+- **Compressed** — **always false, for now.** D7 says to encode both ways and keep the shorter blob, which costs
+  a whole second compression on every call. Nobody has measured that cost.
 
-`Deserialize` is the easy half: split off the two header bytes, hand the encoder the header plus the rest.
+`Deserialize` is the easy half: `Header.FromBytes` on the first two bytes — which already rejects a bad version,
+a set reserved bit and a reserved width code (§7, steps 2-3) — then hand the encoder the header plus the rest.
 
 That layer, and only that layer, is what the public API and the permanent benchmark harness call, so the harness
 must not churn when the internals move (`decisions.md` D4).
 
-**Open.** The codec must be pinned before this can be `public` with a parameterless constructor. And the shape of
-this type is itself unsettled — a working chooser was written and pulled back out, because whether the choosing
-belongs here, on `Header`, or somewhere else is not decided.
+**Nothing is compressed, and the codec is not chosen.** Two open questions, not one. §6 names no codec, so there
+is nothing to pin one to; and the cost of D7's try-both is unmeasured. So the serializer hands `ProtocolEncoder`
+a `NoOpCodec` and never sets `Compressed`. It also **refuses to read a compressed blob** — `NotSupportedException`,
+not a garbled decode. Picking a codec by default would have been a decision made by accident.
+
+Both questions want the same benchmark: raw DEFLATE against gzip, on real packs, for stored base64 size **and**
+encode time. Then §6 gets a codec, D7 gets a cost, and one field in `ViPaqSerializer` changes.
+
+The old typed wrappers (`SerializeInt32`, `DeserializeInt32`, `SerializeUInt16`, `DeserializeUInt16`) are **not
+back yet**. Four call sites want them (`api/` twice, the UIModule decoder, `PackedDataGenerator`). They are a
+one-line forward each; add them when the first of those is migrated, not before.
 
 > **Sequencing — settled: no shim.** The old `ViPaqSerializer`, `EncodingInfo`, `BitSize`, `EncodingInfoHelper`,
 > `BitSizeHelper`, `EncodingInfoNotation` and the `ExtensionMethods/` folder are **deleted**. `Binacle.ViPaq`
-> itself builds clean, but five projects that used the old API do not, and stay red until phase 2 lands
-> `ViPaqSerializer` on the new wire: `Binacle.ViPaq.UnitTests`, `Binacle.ViPaq.TestsKernel`,
-> `Binacle.ViPaq.VectorGenerators`, `Binacle.ViPaq.PackedDataGenerator`, and `Binacle.Net.UIModule`.
+> itself builds clean, but five projects that used the old API do not, and stay red until each is migrated to
+> the new wire: `Binacle.ViPaq.UnitTests`, `Binacle.ViPaq.TestsKernel`, `Binacle.ViPaq.VectorGenerators`,
+> `Binacle.ViPaq.PackedDataGenerator`, and `Binacle.Net.UIModule`. See `migration.md`.
 >
 > This is a deliberate, temporary red. It is the cost of not carrying two formats at once (`decisions.md` D11:
-> breaking rebuild, no compatibility, no migration). Phase 2 closes it.
+> breaking rebuild, no compatibility, no migration).
 
 ## Public surface, and what tests can reach
 
-- **Public:** `ViPaqSerializer` (phase 2), `Bin<T>` / `Item<T>`, `ViPaqLimits`. The constraint interfaces come
-  from the `Binacle.Geometry` leaf.
-- **Internal:** everything in phase 1 — reader, writer, layout codecs, encoder, decoder, and `ViPaqHeader`.
-- `Binacle.ViPaq.csproj` grants `InternalsVisibleTo` to **only** `.UnitTests` and `.VectorGenerators` — not
-  `.Benchmarks`, `.PerformanceTests`, or `.TestsKernel`. That is deliberate: the permanent harness lives on the
-  public API (D4). Granting more would weaken it.
-- **Racing the two codecs needs internals**, and the benchmark projects cannot reach them today. Per D5 that
-  race is a *one-off experiment*, not the permanent ruler — so run it as a throwaway rather than adding an
-  `InternalsVisibleTo` entry for `.Benchmarks`. Record the answer in `findings.md` and lock it in `decisions.md`.
+- **Public:** `ViPaqSerializer`, `Dimensions<T>` / `Item<T>` (from `Binacle.Geometry`), `Limits`,
+  `ViPaqFormatException`.
+- **Internal:** everything else — reader, writer, layout codecs, `ProtocolEncoder`, the codecs, and `Header`.
+- `Binacle.ViPaq.csproj` grants `InternalsVisibleTo` to `.UnitTests`, `.VectorGenerators` and `.TestsKernel`
+  (D4, amended). Not `.Benchmarks` and not `.PerformanceTests` — both reference `TestsKernel`, so the internal
+  driving lives there and they stay on public types.
+- **Racing the codecs needs internals**, and `TestsKernel` has them. The race is part of the permanent harness
+  (D5, reversed), so it belongs there rather than in a throwaway. No new grant is needed. See
+  [codec-race.md](../../plans/vipaq/codec-race.md).
 
 The public contract does not grow, yet tests can force any combination.
 

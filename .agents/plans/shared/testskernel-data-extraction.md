@@ -76,11 +76,10 @@ regenerated from these definitions), so one addition serves both.
   is large enough that ViPaq compresses it, so there is no uncompressed-16-bit scenario to benchmark or size. Author
   a small 16-bit problem — a bin whose coordinates exceed 255 but with few enough items to stay under the
   compression threshold (16-bit body: `2 + 6 + items*(3*2 + 3*2)` bytes ≤ 255 → ~20 items) — so the raw path is
-  covered at 16-bit too. See [../vipaq/findings.md](../vipaq/findings.md) ("Uncompressed vs compressed").
+  covered at 16-bit too. See [findings.md](../../docs/vipaq/findings.md) ("Uncompressed vs compressed").
 - **A count ladder.** One problem family at ~5, ~13, ~50, ~200 items, with **only the item count changing**. This is
   what makes ViPaq's compression-crossover report exact. Today it is marked PROVISIONAL because the real data is
-  gappy — it can only say "8-bit crosses somewhere between 16 and 100 items". A ladder pins it. See
-  [../vipaq/01-benchmark-permanent.md](../vipaq/reference/01-benchmark-permanent.md).
+  gappy — it can only say "8-bit crosses somewhere between 16 and 100 items". A ladder pins it.
 - **Selector tie-breaks** — the result-selection work above, which is its own set (`shared/data/result-selection/`)
   but the same "grow the cases" job.
 - **Shape variety.** `simple`/`complex`/`baseline` are small and same-ish. Consider varied bin sizes, a single-item

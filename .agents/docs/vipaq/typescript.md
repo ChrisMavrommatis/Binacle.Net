@@ -54,7 +54,7 @@ dimension/coordinate is range-checked on encode, and a decoded 64-bit value abov
 silently rounded. C# was brought to this ceiling on 2026-06-30.
 
 **This ceiling is superseded.** `PROTOCOL.md` §5 caps every value at 65,535 and the whole 64-bit tier is deleted —
-see `.agents/plans/vipaq/decisions.md` D2 and D11. The paragraph above describes the code as it stands today, not
+see `.agents/docs/vipaq/decisions.md` D2 and D11. The paragraph above describes the code as it stands today, not
 the format being built.
 
 (The old `getByteSize` under-allocation bug — `ThirtyTwo → 3`, `SixtyFour → 4` — is fixed; widths are now 4 and 8.)
