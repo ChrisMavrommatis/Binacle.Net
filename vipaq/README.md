@@ -5,9 +5,10 @@
 ViPaq is a compact binary format for one packing result: a single bin plus a list of placed items. It is designed
 to be stored and moved as a short base64 text token.
 
-**The format is defined in [PROTOCOL.md](PROTOCOL.md).** That is the normative spec, and it is language-neutral —
-anyone can read it and write an implementation in the language they prefer. Read it before changing any
-implementation here.
+**The format is defined in [PROTOCOL.md](PROTOCOL.md).** That is the normative spec, and it **stands alone** —
+everything needed to encode or decode a ViPaq blob is in that one file, with no dependency on any other document.
+It is language-neutral: anyone can read it and write an implementation in the language they prefer. Read it before
+changing any implementation here.
 
 ## Implementations
 

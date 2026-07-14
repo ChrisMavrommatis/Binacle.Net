@@ -2,7 +2,8 @@
 
 > **Status: experimental.** ViPaq may change. This document defines the wire format and is the authority on what
 > the bytes mean. Where an implementation differs from this document, the implementation has the bug, not the
-> spec. See [README.md](README.md) for the index.
+> spec. This document stands alone: everything needed to encode or decode a ViPaq blob is here, with no
+> dependency on any other file.
 
 ViPaq is a compact binary format for one packing result: a single **bin** (dimensions) plus a list of **items**
 (dimensions and position coordinates). It is designed to be stored and moved as a short base64 text token (§9).
@@ -161,7 +162,11 @@ A decoder has **nothing to range-check**: a value read from an 8- or 16-bit fiel
 
 The codec is fixed by `Version`. There is no codec field, so changing the codec takes the next `Version`.
 
-> **Open: the codec for `Version = 0` is not yet chosen.** This spec is not final until it names one.
+For `Version = 0` the codec is **raw DEFLATE** (RFC 1951), with **no** zlib (RFC 1950) or gzip (RFC 1952)
+wrapper. The compressed stream is exactly the DEFLATE bit stream and nothing else: the header already says the
+body is compressed and the body already carries its own length, so a wrapper's framing and checksum would be dead
+weight. A decoder inflates the bytes after the header as a raw DEFLATE stream; bytes that are not a valid DEFLATE
+stream are a malformed blob.
 
 **Choosing.** An encoder **SHOULD** compress the body, keep whichever of the two is shorter, and set `Compressed`
 to say which it kept. This never inflates a blob and has no threshold to get wrong. An encoder **MAY** compress
@@ -292,12 +297,4 @@ language.
 
 ## 12. Open questions
 
-This spec is **not final** until these are answered.
-
-- **The compression codec for `Version = 0`** (§6).
-
-## 13. References
-
-- Reference test vectors — `test-vectors/` (and its `README.md`)
-- Why the format is shaped this way — `../.agents/plans/vipaq/decisions.md`
-- Implementations and repo layout — [README.md](README.md)
+None. The one that stood here — the compression codec for `Version = 0` — is settled: raw DEFLATE (§6).

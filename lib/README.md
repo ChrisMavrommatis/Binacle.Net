@@ -41,6 +41,6 @@ then picks the best outcome across algorithms or across bins.
 
 | Project | Run with | Covers |
 |---|---|---|
-| `test/Binacle.Lib.UnitTests` | `./config/tests.sh lib` | All algorithm versions × scenarios; result selection |
-| `test/Binacle.Lib.PerformanceTests` | `./config/tests.sh performance` | Algorithm performance (console runner) |
-| `test/Binacle.Lib.Benchmarks` | `./config/benchmarks.sh` | BenchmarkDotNet microbenchmarks |
+| `test/Binacle.Lib.UnitTests` | `./config/tests.lib.sh` | All algorithm versions × scenarios; result selection |
+| `test/Binacle.Lib.PerformanceTests` | `./config/performance.lib.sh` | Algorithm performance (console runner) |
+| `test/Binacle.Lib.Benchmarks` | `./config/benchmarks.lib.sh` | BenchmarkDotNet microbenchmarks |

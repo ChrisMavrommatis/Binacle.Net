@@ -6,7 +6,7 @@ namespace Binacle.TestReporting;
 // build puts the executable.
 //
 //   var repo = RepositoryRoot.Bind();
-//   var dir = repo.Find("results", "vipaq");
+//   var dir = repo.Find("vipaq", "test-vectors", "interop");
 public static class RepositoryRoot
 {
 	public static RepositoryRootLocator Bind(string markerFileName = "Binacle.Net.slnx") => new(markerFileName);

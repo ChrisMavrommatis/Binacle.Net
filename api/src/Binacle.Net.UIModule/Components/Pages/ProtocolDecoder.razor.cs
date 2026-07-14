@@ -1,4 +1,5 @@
-﻿using Binacle.Net.UIModule.Models;
+﻿using System.Text.Json;
+using Binacle.Net.UIModule.Models;
 using Binacle.Net.UIModule.Services;
 using Binacle.Net.UIModule.ViewModels;
 using Binacle.Lib;
@@ -26,12 +27,22 @@ public partial class ProtocolDecoder : AppletComponentBase
 	private Dictionary<string, DecodedPackingResult> results = new();
 	private DecodedPackingResult? selectedResult;
 
+	private const string SavedResultsKey = "ProtocolDecoderSavedResults";
+
+	// Bump when the ViPaq wire changes. "2" is the rebuilt wire (PROTOCOL.md). The stored value carries its own
+	// version; anything without a matching version — including the old bare array of tokens — is from a previous
+	// format and cannot be decoded, so it is discarded on load.
+	private const int CurrentSchemaVersion = 2;
+
+	// The stored shape: the saved tokens plus the schema version that wrote them.
+	private sealed record SavedResults(int Version, string[] Results);
+
 	protected override async Task OnAfterRenderAsync(bool isFirstRender)
 	{
 		if (isFirstRender)
 		{
-			var savedResults = await this.LocalStorage!.GetItemAsync<string[]>("ProtocolDecoderSavedResults");
-			if (savedResults is not null && savedResults!.Length > 0)
+			var savedResults = await this.LoadSavedResultsAsync();
+			if (savedResults.Length > 0)
 			{
 				foreach (var savedResult in savedResults)
 				{
@@ -49,6 +60,43 @@ public partial class ProtocolDecoder : AppletComponentBase
 		await base.OnAfterRenderAsync(isFirstRender);
 	}
 
+	// Reads the stored tokens, but only if they carry the current schema version. Anything else — the old bare
+	// array, an older version, or corrupt JSON — is from a previous ViPaq wire and cannot be decoded, so it is
+	// discarded and the user is told once.
+	private async Task<string[]> LoadSavedResultsAsync()
+	{
+		try
+		{
+			var saved = await this.LocalStorage!.GetItemAsync<SavedResults>(SavedResultsKey);
+			if (saved is null)
+			{
+				return [];
+			}
+
+			if (saved.Version == CurrentSchemaVersion && saved.Results is not null)
+			{
+				return saved.Results;
+			}
+		}
+		catch (JsonException)
+		{
+			// Old bare-array format (or corrupt): fall through and treat as stale.
+		}
+
+		this.errors.Add(
+			"Your saved results were cleared: the packing token format changed and the old saved tokens can no longer be decoded.");
+		await this.SaveResultsAsync();
+		return [];
+	}
+
+	// Persists the current tokens under the current schema version.
+	private async Task SaveResultsAsync()
+	{
+		await this.LocalStorage!.SetItemAsync(
+			SavedResultsKey,
+			new SavedResults(CurrentSchemaVersion, this.results.Keys.ToArray()));
+	}
+
 	private bool IsSelected(DecodedPackingResult result)
 	{
 		return this.selectedResult == result;
@@ -57,7 +105,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 	private async Task DeleteResult(DecodedPackingResult result)
 	{
 		this.results.Remove(result.EncodedResult);
-		await this.LocalStorage!.SetItemAsync("ProtocolDecoderSavedResults", this.results.Keys.ToArray());
+		await this.SaveResultsAsync();
 	}
 
 	private async Task AddResult()
@@ -93,7 +141,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 			await this.SelectResult(this.results.Values.FirstOrDefault()!);
 		}
 
-		await this.LocalStorage!.SetItemAsync("ProtocolDecoderSavedResults", this.results.Keys.ToArray());
+		await this.SaveResultsAsync();
 	}
 
 	private static DecodedPackingResult? DecodeResult(string resultString)

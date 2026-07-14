@@ -17,6 +17,8 @@ public static class CustomProblemsDataProvider
 	{
 		foreach (var scenario in PackedDataReader.Read(Family))
 		{
+			// See BischoffDataProvider: keyed by Name alone, so a second algorithm's `.bfd.json` in this folder
+			// would collide on Add. Deferred until such data exists.
 			scenarios.Add(scenario.Name, scenario);
 		}
 	}

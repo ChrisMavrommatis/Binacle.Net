@@ -11,8 +11,8 @@ import {Width} from "./width";
 //
 // Data only. Behaviour lives in the utils that build it (createHeader), pack it (headerToBytes), read it back
 // (headerFromBytes) and name it (headerNotation) — the same data-class-plus-free-functions split the old
-// EncodingInfo used. `compressed` is a field, but no unit test sets it yet: compression is deferred
-// (PROTOCOL.md §6), so ViPaqSerializer always writes it false and refuses to read a blob that has it set.
+// EncodingInfo used. `compressed` and `layout` are the caller's options through ViPaqSerializationOptions
+// (defaults off / row-major, D16); the encoder obeys whatever they are set to.
 export default class Header {
 	// The header is always two bytes, and it is never compressed.
 	public static readonly byteCount = 2;

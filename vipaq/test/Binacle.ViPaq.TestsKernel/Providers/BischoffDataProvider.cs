@@ -16,6 +16,10 @@ public static class BischoffDataProvider
 	{
 		foreach (var scenario in PackedDataReader.Read(Family))
 		{
+			// Keyed by Name alone, and Read filters only by family (folder). Today every file is one algorithm
+			// (`.ffd`), so names are unique. A second algorithm's `.bfd.json` in the same folder would carry the
+			// same names and this Add would throw a duplicate key. Deferred until such data exists: filter Read by
+			// (family, algorithm) or fold the algorithm into the key, and widen the `.csproj` glob past `*.ffd.json`.
 			scenarios.Add(scenario.Name, scenario);
 		}
 	}

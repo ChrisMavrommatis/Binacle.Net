@@ -29,26 +29,14 @@ the same pattern `Binacle.ViPaq.UnitTests` uses for its shared test-vectors:
 
 No change to `EmbeddedResourceFileProvider`, `ScenarioCollectionsProvider`, `CollectionKeys`, or the readers.
 
-## Done
+## Done — the data move (2026-07-08)
 
-- **Bischoff suite.** Kernel's `Algorithms/Data/BischoffSuite/*.json` deleted; embedded from
-  `shared/data/bischoff-suite/*.json` via the `Link`/`LogicalName` recipe above. Manifest names byte-identical, all
-  8615 Bischoff unit tests green. This carried the converter's thpack5–7 2-decimal normalization into the tests.
-  The converter is `shared/tools/Binacle.OrLibrary.Converter`; what it does and why it needs no packer is documented
-  in `shared/data/bischoff-suite/README.md`, and the "Bischoff = thpack1–7 only" provenance in
-  `shared/data/or-library/README.md`. **Read those before touching the data** — thpack8/9 are different authors and,
-  for thpack9, a different problem class.
-- **Custom problems.** Kernel's `Algorithms/Data/CustomProblems/{baseline,complex,simple}.json` moved to
-  `shared/data/custom-problems/` and embedded the same way (prefix
-  `Binacle.TestsKernel.Algorithms.Data.CustomProblems.`). Hand-authored, so no generator — relocate + embed only.
-  The kernel's `Algorithms/Data/` tree is now empty (both algorithm sets sourced from shared/data).
-- **Result selection.** Kernel's `ResultSelection/Data/{BestAlgorithm,BestBin,SmallestBin}/baseline.json` moved to
-  `shared/data/result-selection/<Case>/` and embedded the same way — three flat per-case `Link`/`LogicalName` entries
-  (no `**` wildcard, which would inject a backslash into the manifest name). Manifest names byte-identical
-  (prefix `Binacle.TestsKernel.ResultSelection.Data.`), all 18 `ResultSelectionTests` green. This set keeps its
-  **own** provider/reader/model (`ResultSelection/ScenarioCollectionsProvider.cs`, its own `Scenario` and
-  `CollectionKeys`) — a different shape from the algorithm fixtures, deliberately not merged. The kernel's
-  `ResultSelection/Data/` tree is now deleted; the providers/models/readers next to it are untouched.
+All three fixture sets are out of the kernel and embedded from `shared/data` by the recipe above, manifest names
+byte-identical, tests green: **Bischoff suite** (from `shared/data/bischoff-suite/`, 8615 tests),
+**custom problems** (from `shared/data/custom-problems/`, kernel's `Algorithms/Data/` tree now empty), and
+**result selection** (from `shared/data/result-selection/<Case>/`, 18 tests; keeps its own provider/reader/model,
+deliberately not merged). Provenance and the thpack1–7 vs thpack8/9 caveat live in the `shared/data/*/README.md`
+files — read those before touching the data. Only the "review and grow the cases" work below remains.
 
 ## Pending — review and grow the cases
 
@@ -68,9 +56,9 @@ where they land. Adding a problem here reaches lib's algorithm tests **and** ViP
 regenerated from these definitions), so one addition serves both.
 
 - **8-bit coverage.** Every Bischoff pack is 16-bit — the coordinates run to ~587. The only 8-bit scenario in the
-  repo is a custom pack. ViPaq's fast benchmark needs at least one 8-bit problem it can call its own, and its
-  curated Bischoff slice cannot provide it. See
-  [../vipaq/testskernel-restructure.md](../vipaq/testskernel-restructure.md) (Open).
+  repo is a custom pack, and ViPaq's curated Bischoff slice is all 16-bit, so a real, size-measured 8-bit problem
+  still has to come from `custom-problems`. (The CPU/memory benchmarks already get 8-bit from
+  `SyntheticDataProvider`; this item is about real data, where size is measured.)
 - **Uncompressed 16-bit coverage (gap, 2026-07-09).** ViPaq's two paths — uncompressed (body ≤ ~255 B) and gzip'd —
   are measured for both size and speed, but the *uncompressed* set is **all 8-bit**: every 16-bit problem (Bischoff)
   is large enough that ViPaq compresses it, so there is no uncompressed-16-bit scenario to benchmark or size. Author

@@ -1,2 +1,3 @@
 export { default as ViPaqSerializer } from './src/ViPaqSerializer';
-export { Dimensions, Coordinates} from './src/models';
+export { Dimensions, Coordinates, Layout} from './src/models';
+export type { ViPaqSerializationOptions } from './src/ViPaqSerializationOptions';

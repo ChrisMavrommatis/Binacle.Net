@@ -3,5 +3,10 @@
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <!-- Xunit.Analyzers' MemberDataShouldReferenceValidMember crashes (raises AD0001, "Sequence contains
+             no elements") on valid member data in xunit.v3 3.2.2 — the latest, so there is nothing to upgrade
+             to. It is an analyzer bug, not our code. AD0001 is raised by the analyzer driver and ignores
+             editorconfig severity, so suppress it with NoWarn to stop it flooding every test build. -->
+        <NoWarn>$(NoWarn);AD0001</NoWarn>
     </PropertyGroup>
 </Project>

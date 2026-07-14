@@ -72,17 +72,4 @@ public class SerializationBehaviorTests
 			ViPaqSerializer.Deserialize<Binacle.Geometry.Dimensions<byte>, Binacle.Geometry.Item<byte>, byte>(blob));
 		exception.ParamName.ShouldBe(nameof(Header.BinDimensionsWidth));
 	}
-
-	// A conformant blob whose header says compressed is still a blob ViPaqSerializer cannot read: no codec is
-	// chosen yet (PROTOCOL.md §6), so it says so plainly rather than guess. This is ViPaqSerializer's own guard
-	// (the compressed bit is set in byte 0), not a malformed-blob rejection — hence NotSupportedException, not
-	// ViPaqFormatException. The two header bytes on their own are a whole, well-formed blob.
-	[Fact]
-	public void Deserialize_Throws_NotSupported_When_Blob_Is_Compressed()
-	{
-		byte[] blob = [0b00_10_00_00, 0b00_00_00_00];
-
-		Should.Throw<NotSupportedException>(() =>
-			ViPaqSerializer.Deserialize<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>, int>(blob));
-	}
 }

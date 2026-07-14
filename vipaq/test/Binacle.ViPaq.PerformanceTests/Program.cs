@@ -35,10 +35,11 @@ internal class Program
 		builder.Logging.ClearProviders();
 		builder.Logging.AddSerilog();
 
-		// Reports land in the repo's results/vipaq folder, next to the committed baselines.
-		var repositoryRootLocator = RepositoryRoot.Bind();
-		var resultsDirectory = repositoryRootLocator.Find("results", "vipaq");
-		builder.Services.AddSingleton<IFileWriter>(new MarkdownFileWriter(resultsDirectory));
+		// Reports land in the build-local PerformanceTests.Artifacts folder (scratch, gitignored). Copy the
+		// keepers into results/vipaq/compression by hand — that committed vault is curated, not auto-written.
+		var artifactsDirectory = Path.Combine(
+			AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "PerformanceTests.Artifacts");
+		builder.Services.AddSingleton<IFileWriter>(new MarkdownFileWriter(artifactsDirectory));
 		builder.Services.AddTransient<TestRunner>();
 		builder.Services.AddVipaqProtobufSizeComparisonTests();
 		builder.Services.AddCodecCompressionCrossoverTests();

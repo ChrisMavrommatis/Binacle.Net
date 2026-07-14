@@ -32,7 +32,7 @@ Two projects:
 |---|---|---|
 | `lib/test/Binacle.Lib.UnitTests` | `lib` | All algorithm versions × all scenarios; result selection strategies |
 | `lib/test/Binacle.Lib.PerformanceTests` | `performance` | Algorithm performance (console runner, not xUnit) |
-| `lib/test/Binacle.Lib.Benchmarks` | (none) | BenchmarkDotNet microbenchmarks — run via `./config/benchmarks.sh [AlgorithmRacing\|FastValidation]` |
+| `lib/test/Binacle.Lib.Benchmarks` | (none) | BenchmarkDotNet microbenchmarks — run via `./config/benchmarks.lib.sh [AlgorithmRacing\|FastValidation]` |
 
 See [Lib Tests](tests.md) for fixtures and the test projects, and [Shared](../shared/README.md) for the
 scenario data format and providers.

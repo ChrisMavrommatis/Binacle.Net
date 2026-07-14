@@ -11,7 +11,6 @@ you need, and trim or delete it once the work lands.
 
 | File | Description |
 |---|---|
-| [results-migration.md](results-migration.md) | Results Migration Plan |
 | [todos.md](todos.md) | TODOs |
 
 ## API
@@ -31,8 +30,5 @@ you need, and trim or delete it once the work lands.
 
 | File | Description |
 |---|---|
-| [vipaq/codec-race.md](vipaq/codec-race.md) | The report the codec race must produce — modes, tables and columns — so PROTOCOL.md §6 can name a codec. |
-| [vipaq/migration-api-followups.md](vipaq/migration-api-followups.md) | What the API and UIModule migration left behind — stale OpenAPI examples, saved browser tokens, and the v3 payload break. |
 | [vipaq/prompt.md](vipaq/prompt.md) | Persistent ViPaq session prompt. Read first, work, then update it before you finish. |
 | [vipaq/README.md](vipaq/README.md) | ViPaq — build plan |
-| [vipaq/testskernel-restructure.md](vipaq/testskernel-restructure.md) | Binacle.ViPaq.TestsKernel — remaining alignment work. Core alignment is done (2026-07-09, see D10); this tracks what is left. |

@@ -21,6 +21,8 @@ entries there).
 - [ ] **Announce the ViPaq token break.** The rebuilt format rejects every token an earlier version produced, and
   there is no reader for the old wire. Nothing in the repo says the old format existed — the break is announced
   in [`release-notes.md`](release-notes.md) only. Call it out in the GitHub release body.
+  The hard payload break inside the frozen v3 contract is **maintainer-accepted (2026-07-14)**; the saved-token
+  stores now clear old tokens on a schema-version marker, so only this announcement remains.
 
 ---
 

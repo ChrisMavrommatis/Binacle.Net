@@ -15,9 +15,9 @@ Each needs the one before.
 
 Not answers — just where you will have to stop and choose.
 
-- **The compression codec.** `PROTOCOL.md` §6 leaves it unnamed and `Version` pins it, so the spec is not final
-  until you pick one. It must exist wherever the format gets implemented.
-- **Row vs columnar.** Both ship (the `Layout` bit). Which one the encoder *chooses* is measured, not decided here.
+- **The compression codec — decided.** [decisions.md](../../docs/vipaq/decisions.md) D16 pins **raw DEFLATE**,
+  named in `PROTOCOL.md` §6, compression exposed as a user toggle (default off).
+- **Row vs columnar.** Both ship (the `Layout` bit). D16 keeps it an encoder choice (default RowMajor), not pinned.
 - **How the encoder is told what to do.** Widths, layout and compression are all encoder policy, and the header
   records them. Every combination has to be forceable, or the round-trip tests can't cover them.
 
@@ -25,15 +25,11 @@ Not answers — just where you will have to stop and choose.
 
 Verified, and not in the spec.
 
-- `ViPaqHeader` in the test kernel reads **one** header byte. The wire has two.
-- The benchmark is not like-for-like: ViPaq compresses, protobuf does not, so the reported gap is mostly the
-  compression. Either mirror it on protobuf, add a `ProtobufGzip` row, or rename the rows to say so.
-- `results/vipaq/CompressionCrossover.md` is marked PROVISIONAL and has been for a while. Make it exact, or delete it.
-- `SyntheticDataProvider` returns nothing. It is a stub.
-- The test kernel keys scenarios by name and globs `*.ffd.json`. A second algorithm's `.bfd.json` would collide and
-  would not be embedded. No such data exists today — fix it when it does.
 - **Nothing checks that `vipaq/data/packed/` survives a ViPaq encode → decode.** See below. Not urgent: the data is
   pure geometry, holds no ViPaq bytes, and cannot rot as the format changes.
+
+The `.ffd`/`.bfd` second-algorithm collision moved to a code comment at the site (`BischoffDataProvider`, the
+`.csproj` glob) — it is deferred until such data exists, not tracked here.
 
 ## Conformance checks looking for a home
 
@@ -75,11 +71,6 @@ The reference — the settled "why" — lives in `.agents/docs/vipaq/` (this fol
 - [findings.md](../../docs/vipaq/findings.md) — real measurements on real data. It measured the old implementation, so read it for
   magnitudes, not for facts.
 
-The open work, here in `plans/vipaq/`:
-
-- [codec-race.md](codec-race.md) — the report that picks the compression codec and settles the layout question.
-  Build to it; it names the modes, tables and columns.
-- [testskernel-restructure.md](testskernel-restructure.md) — the test-kernel work still outstanding.
-- [migration-api-followups.md](migration-api-followups.md) — the consumer migration is **done** (all six projects
-  green, C# and TS suites pass); this tracks the three things it left behind that don't break a build — stale
-  OpenAPI examples, undecodable saved browser tokens, and the v3 payload break awaiting a maintainer's word.
+No standalone plan files remain open in `plans/vipaq/` — the codec race and the test-kernel and migration
+follow-ups all landed. What is left is the "Known open work" above (a synthetic-data note and the packed-data
+conformance suite), tracked here and in the code.

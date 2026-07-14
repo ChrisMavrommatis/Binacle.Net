@@ -30,8 +30,8 @@ internal sealed class ProtocolEncoder
 		this.compressionCodec = compressionCodec;
 	}
 
-	// Produces a whole blob. Refuses the impossible: a header whose widths cannot hold the data is an argument
-	// error, not a silent truncation (§8, encode side).
+	// Produces a whole blob, obeying the header's Compressed bit. Refuses the impossible: a header whose widths
+	// cannot hold the data is an argument error, not a silent truncation (§8, encode side).
 	public byte[] Encode<TBin, TItem, T>(Header header, TBin bin, IReadOnlyList<TItem> items)
 		where T : struct, IBinaryInteger<T>
 		where TBin : IWithReadOnlyDimensions<T>
@@ -59,12 +59,8 @@ internal sealed class ProtocolEncoder
 		var contents = memoryStream.ToArray();
 		var body = PrependItemCount(contents, (ushort)items.Count);
 
-		if (header.Compressed)
-		{
-			body = this.compressionCodec.Compress(body);
-		}
-
-		return PrependHeader(body, header);
+		var compressedBody = this.compressionCodec.Compress(body);
+		return PrependHeader(compressedBody, header);
 	}
 
 	// `rest` is everything after the two header bytes: the body, still compressed if the header says so. The
@@ -79,9 +75,10 @@ internal sealed class ProtocolEncoder
 		// The generic argument has to be able to hold what the header declares.
 		HeaderHelper.ThrowOnInvalidHeader<T>(header);
 
-		var body = header.Compressed
-			? this.compressionCodec.Decompress(rest)
-			: rest;
+		// Run the body through the codec, which was resolved from the header: a NoOp passes a raw body through,
+		// the real codec inflates a compressed one (§7, step 4). The item count lives inside it (§3), so it
+		// cannot be read until now.
+		var body = this.compressionCodec.Decompress(rest);
 
 		ValidationHelper.ThrowIfBodyHasNoItemCount(body);
 

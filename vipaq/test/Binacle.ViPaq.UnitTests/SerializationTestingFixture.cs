@@ -16,7 +16,8 @@ namespace Binacle.ViPaq.UnitTests;
 // The encode/build helpers are uncompressed: the encoder gets the NoOp codec, so the body stays byte-for-byte
 // readable (exact-byte pins depend on that). The exception is AssertCodecDecodesTo at the bottom, which takes a
 // codec so the cross-language decode test can read deflate/gzip blobs (raw passes a NoOp). ViPaqSerializer's own
-// refusal to read a compressed blob is pinned separately in SerializationBehaviorTests.
+// compress and columnar options — the paths that go through DeflateCodec and set the header bits — are pinned in
+// SerializationOptionsTests.
 internal static class SerializationTestingFixture
 {
 	// Builds a whole blob under a caller-chosen header. The header decides widths and layout; ProtocolEncoder

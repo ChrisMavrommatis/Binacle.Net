@@ -17,8 +17,8 @@ import {ProtocolWriter} from "./ProtocolWriter";
 export class ProtocolEncoder {
 	constructor(private readonly codec: CompressionCodec) {}
 
-	// Produces a whole blob: the two header bytes, then the body (uint16 count, bin dimensions, then the items
-	// in the header's layout).
+	// Produces a whole blob, obeying the header's compressed bit: the two header bytes, then the body (uint16
+	// count, bin dimensions, then the items in the header's layout).
 	async encode(header: Header, bin: Dimensions, items: (Dimensions & Coordinates)[]): Promise<Uint8Array<ArrayBuffer>> {
 		if (items.length > Sizes.maxItemCount) {
 			throw new Error(`Items cannot be more than ${Sizes.maxItemCount}`);
@@ -38,8 +38,10 @@ export class ProtocolEncoder {
 
 		getLayoutEncoder(header.layout)(writer, items, header);
 
-		// The item count is inside the body (§3), so the whole body — count and contents — is compressed as one.
-		const body = header.compressed ? await this.codec.compress(writer.buffer) : writer.buffer;
+		// Run the whole body — count and contents (§3) — through the codec. The codec was resolved from the
+		// header, so it is a NoOp when the blob is raw (passes the body through) and the real codec when it is
+		// compressed. The encoder just runs it.
+		const body = await this.codec.compress(writer.buffer);
 
 		const blob = new Uint8Array(Header.byteCount + body.length);
 		blob.set(headerToBytes(header), 0);
@@ -50,9 +52,10 @@ export class ProtocolEncoder {
 	// Reads a body (everything after the two header bytes) back under the given header. One length check covers
 	// both truncation and trailing bytes (PROTOCOL.md §7, steps 1 and 8), so every read below is in bounds.
 	async decode(header: Header, rest: Uint8Array<ArrayBuffer>): Promise<{bin: Bin; items: Item[]}> {
-		// The item count lives inside the compressed body (§3), so it cannot be read until the body is inflated
-		// (§7, step 4). When not compressed the body is `rest` unchanged.
-		const body = header.compressed ? await this.codec.decompress(rest) : rest;
+		// Run the body through the codec, which was resolved from the header: a NoOp passes a raw body through,
+		// the real codec inflates a compressed one (§7, step 4). The item count lives inside it (§3), so it
+		// cannot be read until now.
+		const body = await this.codec.decompress(rest);
 
 		if (body.length < 2) {
 			throw new ViPaqFormatError(`A body is at least 2 bytes (the item count), got ${body.length}`);

@@ -22,24 +22,33 @@ compose, env, emulator state) see [config/README.md](config/README.md).
 
 ## Run Tests
 
+Unit + integration tests, one script per slice (`tests.<slice>.sh`):
+
 ```bash
-./config/tests.sh <alias>
+./config/tests.lib.sh                  # lib C# unit
+./config/tests.vipaq.sh [cs|ts]        # vipaq C# unit and/or TS (no arg runs both)
+./config/tests.api.sh [core|service]   # api integration (no arg runs both)
+./config/tests.shared.sh [cs|ts]       # compact-notation C# and/or TS
 ```
 
-Aliases: `lib`, `api`, `api_service`, `vipaq`, `performance`
+## Performance tests
 
-To run a single test project directly:
+Per slice; write reports to a gitignored scratch folder — see [results/README.md](../../results/README.md) for the
+scratch-vs-curated convention:
+
 ```bash
-cd lib/test/<ProjectName> && dotnet run   # lib tests
-cd api/test/<ProjectName> && dotnet run   # api tests
-cd vipaq/test/<ProjectName> && dotnet run # vipaq tests
+./config/performance.lib.sh
+./config/performance.vipaq.sh
 ```
 
 ## Benchmarks
 
+Per slice; BenchmarkDotNet, markdown-only, output pinned next to the project:
+
 ```bash
-./config/benchmarks.sh [FastValidation|AlgorithmRacing]
-# No argument = all benchmarks
+./config/benchmarks.lib.sh [FastValidation|AlgorithmRacing|BischoffSuite|Parallelization|ResultSelection]
+./config/benchmarks.vipaq.sh [Encode|Decode]
+# No argument = all
 ```
 
 ## Backing services (Docker Compose)

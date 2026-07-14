@@ -1,7 +1,7 @@
 ---
 description: ViPaq findings — the measured evidence (base64 size, encode/decode time) behind the decisions.
-verified: 2026-07-11
-check: Numbers match the latest results/vipaq/ size reports and the permanent-harness benchmark output
+verified: 2026-07-14
+check: Numbers match the latest results/vipaq/compression/ size reports and results/vipaq/benchmarks/ output
 also_update:
   - vipaq/decisions.md
 ---
@@ -191,9 +191,28 @@ compress, so the uncompressed *16-bit* path is measured nowhere. Closing it need
 in `shared/data`; tracked in
 [testskernel-data-extraction.md](../../plans/shared/testskernel-data-extraction.md).
 
+### Compression cost, isolated (2026-07-14)
+
+The encode/decode gaps above fold the compression in with the format. `CompressionCostBenchmarks` prices the
+squeezing on its own: NoOp (body passed straight through) against Deflate and Gzip, row-major, over the two curated
+Bischoff packs. BDN Short job. `Deflate − NoOp` is what compression actually costs; `Gzip − Deflate` is the extra
+framing.
+
+| Scenario | Items | Encode NoOp | Encode Deflate | Encode Gzip | Decode NoOp | Decode Deflate | Decode Gzip |
+|---|--:|--:|--:|--:|--:|--:|--:|
+| OrLibrary_thpack4_1 |  70 | 3.2 µs | 8.7 µs (2.75×) | 8.7 µs (2.76×) | 2.5 µs | 4.4 µs (1.39×) | 4.5 µs (1.41×) |
+| OrLibrary_thpack1_2 | 108 | 4.8 µs | 13.1 µs (2.74×) | 13.5 µs (2.83×) | 3.7 µs | 5.5 µs (1.16×) | 5.7 µs (1.20×) |
+
+- **Deflate encode ≈ 2.75× the format-only encode** — compressing adds ~5–8 µs per pack (the `Deflate − NoOp`
+  delta). This is also **D7's try-both price**: try-both is one `Compress` more than never compressing, i.e. exactly
+  this delta.
+- **Deflate decode adds only ~1.2–1.4×** (inflate ~1.8–1.9 µs) — cheap.
+- **Gzip never beats deflate on time** — ~2–3% slower on encode (its framing), on par on decode. Gzip is already
+  larger on size, so nothing rescues it: deflate is the pick on both axes (**D16**).
+- All sub-15 µs, encoded once server-side and read rarely — noise in practice.
+
 ## What the harness did *not* answer
 
-- **O2 (codec + level)** — the harness deliberately has no codec knob (D4). Still open.
-- **Fast-codec v2 encode cost** — still never directly measured. Session 4 owns it.
+- **O2 (codec + level)** — **resolved (D16):** one codec, raw DEFLATE. The compression cost is measured just above.
 - Absolute allocation on synthetic data runs a little high (compression can't shrink a random buffer), but ViPaq
   and protobuf see the same sample, so the *ratio* stays valid.

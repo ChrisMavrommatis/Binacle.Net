@@ -1,6 +1,6 @@
 ---
 description: Binacle.ViPaq TypeScript mirror (vipaq/packages/binacle-vipaq) — public API and how it differs from the C# library
-verified: 2026-07-10
+verified: 2026-07-14
 check: TS API signatures and divergences match vipaq/packages/binacle-vipaq/src/
 also_update:
   - vipaq/README.md
@@ -8,69 +8,62 @@ also_update:
 
 # ViPaq — TypeScript Mirror
 
-`vipaq/packages/binacle-vipaq` is a **hand-maintained** TypeScript reimplementation of the C# ViPaq format — no codegen,
-no shared schema. It mirrors the C# file structure 1:1 by hand. Any change to the C# wire format must be
-replicated here manually, and the two must be kept byte-compatible by hand. See [README.md](README.md) for the
-canonical format.
+`vipaq/packages/binacle-vipaq` is a **hand-maintained** TypeScript reimplementation of the ViPaq format — no
+codegen, no shared schema. It mirrors the C# file structure by hand, and the two are kept byte-compatible by hand.
+Any change to the C# wire must be replicated here. The normative format is `vipaq/PROTOCOL.md`; see
+[README.md](README.md) for the C# side.
 
 ## Public API
 
 `ViPaqSerializer` (default export) exposes two **async** static methods:
 
 ```ts
-ViPaqSerializer.serialize(bin: Dimensions, items: (Dimensions & Coordinates)[]): Promise<Uint8Array>
+ViPaqSerializer.serialize(
+  bin: Dimensions,
+  items: (Dimensions & Coordinates)[],
+  options?: ViPaqSerializationOptions,   // { compress?: boolean; layout?: Layout }
+): Promise<Uint8Array>
+
 ViPaqSerializer.deserialize(data: Uint8Array): Promise<DeserializedResult>   // { bin, items }
 ```
 
-Both return raw bytes (no base64). They are **async** because gzip uses the Web Streams `CompressionStream` /
-`DecompressionStream` API. `index.ts` also re-exports the `Dimensions` and `Coordinates` types.
+Both work in raw bytes (no base64). They are **async** because the codec uses the Web Streams
+`CompressionStream('deflate-raw')` / `DecompressionStream`. `options` mirrors C# `ViPaqSerializationOptions`:
+`compress` (default `false`) and `layout` (default `RowMajor`). `index.ts` re-exports `Dimensions`, `Coordinates`,
+`Layout`, and the `ViPaqSerializationOptions` type.
 
-`src/encodingInfoNotation.ts` mirrors the C# `EncodingInfoNotation` — `parseEncodingInfo` / `formatEncodingInfo`
-for the header string `"Uncompressed_8_8_8"` (`"Compressed"` = gzip) only. The **geometry** text notation
-(`"LxWxH (X,Y,Z) [Q]"`) is **not** here — it lives in the shared `binacle-compact-notation` package (the TS
-mirror of C# `Binacle.CompactNotation`), which both the test vector-parser and the interop generator import.
+`src/headerNotation.ts` mirrors C# `HeaderNotation` — the header's text form for the test vectors,
+`v{N}_{raw|comp}_{row|col}_{binW}_{itemDimW}_{itemCoordW}` (e.g. `v1_comp_col_16_8_16`). The **geometry** text
+notation (`"LxWxH (X,Y,Z) [Q]"`) is **not** here — it lives in the shared `binacle-compact-notation` package (the
+TS mirror of C# `Binacle.CompactNotation`), which both the vector parser and the interop generator import.
 
 ## Identical to C# (by design)
 
-Header bit packing, `BitSize` (0–3) and `Version` (0–3, gzip = 1) enum values, the 8/16/32-bit selection
-thresholds (255 / 65535 / 4.29e9), little-endian byte order, the field order (header, `ushort` count, bin L/W/H,
-per-item dims then coords), the 65535 item-count cap, and the gzip algorithm. (The 64-bit bucket diverges — see
-below.)
+The two header bytes and their bit packing, `Width` (`Eight = 0`, `Sixteen = 1`; codes 2–3 reserved), `Layout`
+(`RowMajor = 0`, `Columnar = 1`), `Version`, the per-section width choice (narrowest that fits, both item widths
+`Eight` when there are no items), little-endian order, the field order (2-byte header, then the body: `uint16`
+count, bin L/W/H, per-item dims then coords in the layout's order), the `[0, 65535]` value cap, the 65,535
+item-count cap, and the codec (**raw DEFLATE**, decisions.md D16). The codec is resolved from the header: DEFLATE
+when the compressed bit is set, a pass-through NoOp when not.
 
 ## How it differs from C# — read before assuming parity
 
 | Aspect | C# | TypeScript |
 |---|---|---|
-| API shape | `SerializeInt32` / `SerializeUInt16` + generic `Serialize<TBin,TItem,T>` | single `serialize` / `deserialize`, JS `number` only — no width-typed or generic variants |
-| Sync | synchronous, returns `byte[]` | **async**, returns `Promise<Uint8Array>` |
-| Width validation | `ThrowOnInvalidEncodingInfo<T>` checks `T` can hold the stored bit sizes | range-checks every write and rejects a decoded 64-bit value above `MaxInteger` (2^53−1) |
-| 64-bit values | `ulong` storage, value capped at `MaxInteger` (2^53−1) | float math (`left + 2**32*right`), same `MaxInteger` cap (`Number.MAX_SAFE_INTEGER`) — both enforce the ceiling (PROTOCOL.md §5) |
-| Compression trigger | uncompressed **body** length > 255 | matches: `(bufferSize − 1) > 255` (body only) |
+| API shape | generic `Serialize<TBin,TItem,T>` + `Action<ViPaqSerializationOptions>` | single `serialize` / `deserialize`, JS `number` only; options is an optional object |
+| Sync | synchronous, returns `byte[]` | **async**, returns `Promise<Uint8Array>` (the browser codec is stream-based) |
+| Codec impl | `DeflateStream` (raw DEFLATE) | `CompressionStream('deflate-raw')` — the `-raw` variant, so no zlib header |
 
-### Integer range — `[0, 2^53 − 1]`
-
-Both implementations enforce the shipped library's interoperable ceiling (`MaxInteger`, 2^53−1): every
-dimension/coordinate is range-checked on encode, and a decoded 64-bit value above it is rejected rather than
-silently rounded. C# was brought to this ceiling on 2026-06-30.
-
-**This ceiling is superseded.** `PROTOCOL.md` §5 caps every value at 65,535 and the whole 64-bit tier is deleted —
-see `.agents/docs/vipaq/decisions.md` D2 and D11. The paragraph above describes the code as it stands today, not
-the format being built.
-
-(The old `getByteSize` under-allocation bug — `ThirtyTwo → 3`, `SixtyFour → 4` — is fixed; widths are now 4 and 8.)
+Compressed bytes are **not** byte-identical across the two engines; the guarantee is decode-to-input (PROTOCOL.md
+§6.1), which the interop matrix proves.
 
 ## Tests
 
-`npm test` (jest, from `vipaq/packages/binacle-vipaq`; run `npm install` first — needs `@types/node`). 20 suites,
-984 tests — unit tests on the utils (`createEncodingInfo`, `getDimensionsBitSize`, `getCoordinatesBitSize`,
-`getByteSize`, `getBufferSize`, …), the `ProtocolReader` / `ProtocolWriter` little-endian and range-limit
-guards, `ViPaqSerializer` round-trips, and the interop cross-decode matrix.
+`npm test` (jest, from `vipaq/packages/binacle-vipaq`; run `npm install` first). 20 suites, 334 tests — unit tests
+on the utils (`createHeader`, `getDimensionsWidth`, `getCoordinatesWidth`, `getBodyLength`, header pack/parse),
+the `ProtocolReader` / `ProtocolWriter` little-endian and range guards, `ViPaqSerializer` round-trips and the
+`compress` / `layout` options, and the interop cross-decode matrix.
 
-The suite reads the **shared cross-language vectors** in `vipaq/test-vectors/` — the same files the C# suite
-reads — via `tests/support/vectorReader.ts` (`readVectors`, `fs`-based). The geometry grammar lives in the shared
-`binacle-compact-notation` package and the encoding-info grammar in `src/encodingInfoNotation.ts`;
-`tests/support/vectorParser` re-exports both (geometry `parseDimensions`/`parseCoordinates`/`parseItems`, plus
-`parseEncodingInfo`) and adds the test-vector-only byte parsers (`parseByte`/`parseBytes`). Providers in
-`tests/providers/` parse each file into arrays consumed by `test.each`. So both
-implementations grade against one answer key and can't silently drift on the wire format. The gzip cross-decode
-matrix is done — see [cross-language-testing.md](cross-language-testing.md).
+The suite reads the **shared cross-language vectors** in `vipaq/test-vectors/` — the same files the C# suite reads
+— so both implementations grade against one answer key and can't silently drift. The `{raw, deflate, gzip}`
+cross-decode matrix is done; see [cross-language-testing.md](cross-language-testing.md).

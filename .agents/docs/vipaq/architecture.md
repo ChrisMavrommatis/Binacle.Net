@@ -71,8 +71,8 @@ and decodes.
 `Header` carries a `Version` enum. `Version1` is `0`, so it is not `required` and the default is the only version
 this implementation writes; a decoder rejects codes 1-3 (§2.3).
 
-**Three codecs, and they all stay.** `PROTOCOL.md` §6 still does not name one, so the encoder is handed the one
-to use. Picking it (see [codec-race.md](../../plans/vipaq/codec-race.md)) changes one line in `ViPaqSerializer` and **nothing else**:
+**Three codecs, and they all stay.** `PROTOCOL.md` §6 now names one — raw DEFLATE (D16) — and the encoder is
+handed that codec. Pinning it changed one line in `ViPaqSerializer` and **nothing else**:
 
 - **The wire is not pluggable.** The spec fixes one codec per `Version` and puts no codec field in the header, so
   a shipped blob is inflatable by exactly one thing. Never build on the idea that a reader can choose.
@@ -160,8 +160,8 @@ one-line forward each; add them when the first of those is migrated, not before.
   (D4, amended). Not `.Benchmarks` and not `.PerformanceTests` — both reference `TestsKernel`, so the internal
   driving lives there and they stay on public types.
 - **Racing the codecs needs internals**, and `TestsKernel` has them. The race is part of the permanent harness
-  (D5, reversed), so it belongs there rather than in a throwaway. No new grant is needed. See
-  [codec-race.md](../../plans/vipaq/codec-race.md).
+  (D5, reversed), so it belongs there rather than in a throwaway. No new grant is needed. The reports are in
+  `results/vipaq/compression/`.
 
 The public contract does not grow, yet tests can force any combination.
 

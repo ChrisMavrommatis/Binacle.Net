@@ -1,6 +1,6 @@
 ---
 description: ViPaq decisions ledger — the locked decisions (D1–D16) and their reasons, plus the open questions.
-verified: 2026-07-13
+verified: 2026-07-14
 check: Locked decisions D1–D16 are not contradicted by vipaq/PROTOCOL.md or vipaq/src/Binacle.ViPaq
 also_update:
   - vipaq/architecture.md
@@ -50,11 +50,15 @@ physical bins. Retire/repoint `ViPaqLimits.MaxInteger` (2⁵³−1) to the new c
 ViPaq has one implementation, so there's no in-code baseline like lib's v1-vs-v2 racing. Two mechanisms replace it:
 - **Protobuf is the in-run anchor** — `[Benchmark(Baseline = true)]`. ViPaq is reported as a *ratio* to protobuf,
   so a rerun on another machine/day stays comparable; the anchor absorbs environment drift.
-- **Committed result files are the recorded baseline** — size-report + BDN summary under `results/`. A *win* = a
+- **Committed result files are the recorded baseline** — the size reports under `results/vipaq/compression/`. A *win* = a
   diff showing smaller base64 / lower ns / lower allocs **while the protobuf anchor is unchanged**. Small
   increments; keep only measured wins.
-- Depends on the still-open results-storage decision in [results-migration.md](../../plans/results-migration.md); this
-  workflow assumes **Option C — stay in `results/`**.
+- **The perf test writes to build-local scratch, not to the committed vault** (2026-07-14). It emits into its
+  `PerformanceTests.Artifacts/` folder (gitignored); to check for a win, diff that against
+  `results/vipaq/compression/`, and copy the report in by hand only when it's a keeper. The committed baseline is
+  hand-curated, never auto-overwritten — same model as `results/lib/`.
+- Results stay in the repo under `results/`, organized by slice — see [results/README.md](../../../results/README.md)
+  for the layout and the scratch-vs-curated convention. (Settled 2026-07-14; the old results-migration plan is closed.)
 
 ### D4 — The permanent harness uses only the minimal public API (CONFIRMED 2026-07-07, AMENDED 2026-07-10)
 The permanent benchmark **encodes and decodes** through `ViPaqSerializer.Serialize`/`Deserialize` only. That part
@@ -85,7 +89,8 @@ Two consequences of the public-API rule, both still true:
 - **Permanent harness**: measures real-mode size + CPU/mem + protobuf ratio, and *observes* the shipped
   compression crossover by sweeping item count.
 - **The codec race is part of it, permanently.** The harness encodes every scenario in each mode — `Raw`, `NoOp`,
-  and deflate/gzip across both layouts — and mirrors each codec onto protobuf. See [codec-race.md](../../plans/vipaq/codec-race.md).
+  and deflate/gzip across both layouts — and mirrors each codec onto protobuf. The reports are in
+  `results/vipaq/compression/`.
 
 **Reversed 2026-07-10.** This decision used to say the codec race was a **one-off experiment**: run it in a
 throwaway, record the answer, keep it out of the permanent ruler. The worry was that bolting an experiment onto
@@ -205,10 +210,15 @@ other's deflate and gzip.
 
 **It is not a ship blocker.** Layout and compression are the encoder's choice, recorded in the header, exposed as
 options with defaults **RowMajor** and **uncompressed**. The default is off, so v2 can ship with the toggle
-present and unused; `ViPaqSerializer` still writes raw and refuses to read compressed until "baking in" is decided
-(D7's try-both becomes the default when compression is turned on). `ProtocolEncoder` takes the codec as a
-**required** argument in both languages, so a caller always says which one; `NoOpCodec` keeps the compressed path
-testable with the body readable.
+present and unused. **Baked in 2026-07-14:** `ViPaqSerializer.Serialize` now takes a `ViPaqSerializationOptions`
+(C#: `Action<ViPaqSerializationOptions>`; TS: an optional options object) with `Compress` and `Layout`, both
+defaulting off / RowMajor. They set the header's `Compressed` and `Layout` bits; a single `ResolveCodec(header)`
+maps the bit to the codec (raw DEFLATE when set, a pass-through `NoOpCodec` when not), and the encoder just runs
+that codec — the same three lines for encode and decode. `Compress` is a straight on/off: it does not check
+whether compression paid, so a small pack can come out larger, which §6 allows (D7's try-both is **not** wired —
+it stays available in the harness for measurement, not in the serializer). `Deserialize` reads compressed blobs
+again; the old refusal is gone. `ProtocolEncoder` takes the codec as a **required** argument in both languages;
+`NoOpCodec` keeps the compressed path testable with the body readable.
 
 ## Open — decide with data
 

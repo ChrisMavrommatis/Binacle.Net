@@ -23,7 +23,6 @@ work-to-be-done only); the last tracks outstanding work here:
 - [architecture.md](../../docs/vipaq/architecture.md) — the policy/mechanism split. The rebuild keeps it.
 - [decisions.md](../../docs/vipaq/decisions.md) — D1–D16, settled with reasons. Do not re-open one without new measurements.
 - [findings.md](../../docs/vipaq/findings.md) — real numbers. It measured the old implementation, so read it for magnitudes, not facts.
-- [testskernel-restructure.md](testskernel-restructure.md) — test-kernel work still outstanding.
 
 **Some `.agents/docs/vipaq/` files still describe the old wire.** `README.md`, `typescript.md` and
 `cross-language-testing.md` are stale on the *format* and need rewriting when you get to it; their account of the
@@ -70,24 +69,41 @@ Not "the code is written." All four, every time:
 1. `dotnet build` passes on `vipaq/src/Binacle.ViPaq`. **Five downstream projects are knowingly red** until each
    is migrated (see "Where you are now") — that is the only accepted red. Do not add a sixth, and do not leave
    the library itself broken.
-2. The ViPaq tests pass — `./config/tests.sh vipaq`. They cannot until `.UnitTests` is migrated. When they can,
+2. The ViPaq tests pass — `./config/tests.vipaq.sh`. They cannot until `.UnitTests` is migrated. When they can,
    they must.
 3. Anything you settled that changes the wire is in `PROTOCOL.md`, not only in a comment.
 4. Nothing you added is unreachable. If no code calls it, delete it.
 
 ## Where you are now
 
-**Current state (2026-07-13): the rebuild is done end to end and both suites are green — C# 370/370, TS 328/328.**
+**Current state (2026-07-14): the rebuild is done end to end and both suites are green — C# 375/375, TS 334/334.**
 The C# library, the TypeScript mirror, the `UnitTests` migration, the TS test suite, and the test vectors have all
-landed. **Compression is now built and cross-language** (decision **D16**): one codec, **raw DEFLATE**, with
-`NoOp`/`Deflate`/`Gzip` in both languages and `ProtocolEncoder` taking a **required** codec. The interop matrix
-(`interop/{cs,ts}/{raw,deflate,gzip}.json` — foldered by language) proves each language decodes the other's raw,
-deflate and gzip (decode-to-input; compressed bytes are never compared). **`ViPaqSerializer` still writes raw and refuses to read
-compressed** — turning the toggle *on* in the serializer ("baking in") is the one deferred piece. The vector
-generator owns only `header-bytes.json` and the interop artifacts (decision **D15**); every other vector is
-hand-authored on purpose. Remaining work: consumer follow-ups in [migration-api-followups.md](migration-api-followups.md),
-test-kernel work in [testskernel-restructure.md](testskernel-restructure.md), and `.agents/docs/vipaq/*` +
-`test-vectors/README.md` still describe the old wire and need rewriting.
+landed. **Compression is built, cross-language, and now baked into the serializer** (decision **D16**): one codec,
+**raw DEFLATE**, with `NoOp`/`Deflate`/`Gzip` in both languages and `ProtocolEncoder` taking a **required** codec.
+The interop matrix (`interop/{cs,ts}/{raw,deflate,gzip}.json` — foldered by language) proves each language decodes
+the other's raw, deflate and gzip (decode-to-input; compressed bytes are never compared).
+
+**The serializer toggle is now wired (2026-07-14).** `ViPaqSerializer.Serialize` takes a `ViPaqSerializationOptions`
+(C#: `Action<ViPaqSerializationOptions>`; TS: an optional options object) with `Compress` and `Layout`, both
+defaulting off / RowMajor. They set the header bits; a single `ResolveCodec(header)` maps the `Compressed` bit to
+the codec (raw DEFLATE or a pass-through `NoOpCodec`), and `ProtocolEncoder` just runs that codec — the same shape
+for encode and decode, no branch in the serializer. `Compress` is a straight on/off (it does **not** keep-the-shorter;
+D7's try-both is not wired into the serializer — it lives only in the harness). `Deserialize` reads compressed blobs
+again (the old `NotSupportedException` is gone). `PROTOCOL.md` §6 now names raw DEFLATE and §12 is empty. New tests:
+C# `SerializationOptionsTests`, TS `ViPaqSerializer.test.ts` "options". **Layout is now a public enum** (a caller
+picks it through the options).
+
+The vector generator owns only `header-bytes.json` and the interop artifacts (decision **D15**); every other vector
+is hand-authored on purpose. **No ViPaq plan work remains open.** The compression-time number is now in
+`findings.md` ("Compression cost, isolated"), the `.agents/docs/vipaq/*` reference docs and `test-vectors/README.md`
+were rewritten to the new wire, and the test-kernel work is done — `SyntheticDataProvider` is rebuilt (with
+`SyntheticBenchmarkBase` + synthetic encode/decode benchmarks), the curated Bischoff picks are documented, and the
+`.bfd` second-algorithm limitation is a code comment at the site (all 2026-07-14).
+
+The consumer migration follow-ups are **done** (2026-07-14): OpenAPI `ViPaqData` examples now derive from their own
+geometry (`v{3,4}/Contracts/ViPaqExampleExtensions.cs`), the ProtocolDecoder saved-token stores carry a schema
+version and clear old tokens once (both the UIModule page and the `binacle-net-ui` web component), and the v3
+payload break is maintainer-accepted (announcement tracked in `.agents/pending-actions.md`).
 
 The rest of this section is the historical detail from when phase 1 first landed — read it for how the pieces fit,
 not for current status.
@@ -146,8 +162,8 @@ UIModule migrations named the generic arguments directly, and nothing else wants
 
 The standing read is **deflate + columnar.** Deflate beats gzip on size at every real pack; columnar wins on size
 once a codec runs — contradicting `findings.md`'s bet — and costs only ~10% encode / ~3–5% decode. ViPaq stays
-smaller than protobuf under matched codecs. **The decision is deliberately not locked:** more scenarios and codecs
-are coming, so re-run before pinning. See [codec-race.md](codec-race.md) for the read in full.
+smaller than protobuf under matched codecs. **Now locked (D16): raw DEFLATE.** The size reports are in
+`results/vipaq/compression/` and the time read is in `findings.md`.
 
 **One cell is still empty: compression time.** The benchmarks measured the NoOp path only, so deflate's own
 encode/decode cost — and D7's try-both price — is unmeasured. It cannot flip the pick (gzip is deflate plus a

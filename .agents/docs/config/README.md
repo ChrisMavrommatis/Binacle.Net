@@ -19,14 +19,18 @@ doc describes what's in the directory.
 | Script | What it does |
 |---|---|
 | `api.sh [N\|S\|U\|All]` | Runs the API via `dotnet run -lp <profile>` from `api/src/Binacle.Net/`. Profiles `Normal`/`WithServiceModuleOnly`/`WithUiModuleOnly`/`WithAllModules` (aliases `N/S/U/All`); default `Normal` |
-| `tests.sh <alias>` | `dotnet run --project <path>`. Aliases `lib`, `api`, `api_service`, `vipaq`, `performance` |
-| `benchmarks.sh [FastValidation\|AlgorithmRacing]` | `dotnet run -c Release --filter <pattern>` from `lib/test/Binacle.Lib.Benchmarks/`. No arg = all |
+| `tests.<slice>.sh [kind]` | Unit + integration via `dotnet run --project` (or `npm test` for TS). Slices: `lib`, `vipaq` (`cs`/`ts`), `api` (`core`/`service`), `shared` (`cs`/`ts`); no arg runs all kinds |
+| `performance.<slice>.sh` | `dotnet run -c Release` for the slice's `PerformanceTests`. Slices `lib`, `vipaq`. Writes to gitignored `PerformanceTests.Artifacts` |
+| `benchmarks.<slice>.sh [alias]` | `dotnet run -c Release --filter <pattern>` from the slice's `Benchmarks` project. Slices `lib`, `vipaq`. No arg = all |
 | `build.sh` | Publishes (`-c Release -o build/output --self-contained --runtime linux-x64`), `docker build -t binacle-net:local`, then `docker compose -f config/docker-compose.build.yml up` |
 | `agents-index.sh` | Regenerates the `_index.md` manifest for `.agents/docs`, `.agents/plans`, and `.agents/memory` (grouped by area) |
 | `tmux.sh` | Builds/re-attaches the `binacle` tmux session (windows `api`/`docs`/`web`/`tests`/`misc`/`bench_1..3`); panes are pre-`cd`'d, nothing auto-runs |
 
-The aliases live in bash associative arrays inside each script (`api.sh`, `tests.sh`, `benchmarks.sh`).
+The aliases/kinds live inside each script (`api.sh` and the per-slice `tests.*`, `performance.*`, `benchmarks.*`).
 `agents-index.sh` and `tmux.sh` are standalone — they have no aliases.
+
+The `ts` kind (`tests.vipaq.sh ts`, `tests.shared.sh ts`) runs `npm test` in the package. Run `npm install` at the
+repo root first — the packages are npm workspaces, so one install at the root covers them all.
 
 ## Local Docker Compose
 

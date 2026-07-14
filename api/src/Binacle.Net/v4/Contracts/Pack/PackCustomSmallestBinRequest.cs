@@ -68,8 +68,7 @@ internal class PackCustomSmallestBinResponseExamples : IMultipleOpenApiExamplesP
 				UnpackedItems = [],
 				PackedItemsVolumePercentage = 100,
 				PackedBinVolumePercentage = 15.83m,
-				ViPaqData = "AAQACig8CgwPAAAACgwPAAwAAgUKAAAPAgUKABgA"
-			});
+			}.WithViPaqData());
 
 		yield return OpenApiExample.Create(
 			"partiallyPackedResponse",
@@ -91,8 +90,7 @@ internal class PackCustomSmallestBinResponseExamples : IMultipleOpenApiExamplesP
 				],
 				PackedItemsVolumePercentage = 79.37m,
 				PackedBinVolumePercentage = 12.58m,
-				ViPaqData = "AAQACig8CgwPAAAACgwPAAwAAgUKAAAPAgUKABgA"
-			});
+			}.WithViPaqData());
 
 		yield return OpenApiExample.Create(
 			"unpackedResponse",

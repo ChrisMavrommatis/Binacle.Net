@@ -1,7 +1,7 @@
 ---
 description: ViPaq cross-language wire testing — the C#/TS shared-vector apparatus, its inventory, and the decode-to-input contract
-verified: 2026-07-08
-check: Vector file list and case counts match vipaq/test-vectors/; generator paths still exist
+verified: 2026-07-14
+check: Vector file list, generator paths, and interop test names match vipaq/test-vectors/ and the two suites
 also_update:
   - vipaq/typescript.md
 ---
@@ -9,86 +9,63 @@ also_update:
 # ViPaq — Cross-Language Wire Testing
 
 **What it guarantees:** the C# `Binacle.ViPaq` library and its hand-maintained TypeScript mirror
-(`vipaq/packages/binacle-vipaq`) stay **wire-compatible** — bytes written by one are readable by the other.
-The mechanism is **shared reference vectors** in `vipaq/test-vectors/`: one set of JSON inputs+answers read by
-*both* test suites, so each is graded against the same answer key and the two can't silently drift.
+(`vipaq/packages/binacle-vipaq`) stay **wire-compatible** — bytes written by one are readable by the other. The
+mechanism is **shared reference vectors** in `vipaq/test-vectors/`: one set of JSON inputs+answers read by *both*
+test suites, so each is graded against the same answer key and the two can't silently drift.
 
-Both suites green, `tsc` clean, full solution builds. This is the durable inventory of the apparatus — it is a
-doc, not a plan. Sessions 5 and 6 of the v2 work (`.agents/plans/vipaq/`) are bound by it: they change what the
-vectors contain, never how the apparatus works.
+This is the durable inventory of the apparatus — a doc, not a plan. The full per-file shapes and conventions live
+in [`vipaq/test-vectors/README.md`](../../../vipaq/test-vectors/README.md); this summarizes the moving parts.
 
----
+## Vectors
 
-## Inventory
+`vipaq/test-vectors/`, grouped by area (see that folder's README for each shape):
 
-### Generators (regenerate the committed vectors)
-- **C#** — `vipaq/tools/Binacle.ViPaq.VectorGenerators/`: `Program.cs` (no-arg runner over a list of `IVectorGenerator`),
-  `InteropArtifactGenerator.cs` (serializes each `input.json` case → `artifact-cs.json`),
-  `EncodingInfoBytesGenerator.cs` (all 256 header combos → `encoding-info-bytes.json`), `CompactJson.cs` (one-object-
-  per-line writer for the 256-row file), plus `IVectorGenerator.cs`, `Contracts.cs`. The repo root comes from the
-  shared `Binacle.TestReporting.RepositoryRoot` (`Bind().Find(...)`), not a bespoke locator. Geometry comes from the
-  shared `Binacle.CompactNotation` + `Binacle.Geometry`; the tool only depends on the lib (+ those shared libs).
-- **TS** — `vipaq/packages/binacle-vipaq/tools/`: `generateVectors.ts` (no-arg runner, mirrors `Program.cs`),
-  `interopArtifactGenerator.ts` (same input → `artifact-ts.json`), `Artifact.ts` (output shape as a class). TS does
-  **not** generate `encoding-info-bytes.json` — that is C#-only.
+- `serialization/` — `exact-bytes`, `round-trip-scenarios`, `decode-invalid`, `encode-invalid`.
+- `header/header-bytes.json` — the 32 valid header combos as `{Header notation, two bytes}`.
+- `width/` — `width-selection`, `width-invalid` (the two width pickers, `Eight`/`Sixteen` only).
+- `protocol/little-endian/` — `uint8`, `uint16` (the reader/writer, the only two widths).
+- `interop/` — `input.json` plus `{cs,ts}/{raw,deflate,gzip}.json`.
 
-**Regenerate:** `npm run regen:interop` in `binacle-vipaq` runs the C# generator then the TS one, so the interop
-halves can't drift. Output is deterministic — a no-change re-run is byte-identical (no git noise).
+Everything names a full header with the **HeaderNotation** string `v{N}_{raw|comp}_{row|col}_{binW}_{itemDimW}_{itemCoordW}`
+(e.g. `v1_comp_col_16_8_16`), so a round-trip vector pins the layout and all three widths, not just the geometry.
 
-### Interop tests (the gzip cross-decode matrix)
-Contract is **decode-to-input, never byte-equality** for compressed blobs: gzip bytes are not reproducible across
-engines/runtimes. The *why* is recorded permanently in `PROTOCOL.md §6` + `test-vectors/README.md` — keep it there.
+## Generators (regenerate the derived vectors)
+
+Only two kinds of vector are generated — `header/header-bytes.json` and the interop artifacts (decisions.md
+**D15**); every other file is hand-authored.
+
+- **C#** — `vipaq/tools/Binacle.ViPaq.VectorGenerators/`: `Program.cs` (no-arg runner over `IVectorGenerator`),
+  `HeaderBytesGenerator.cs` (the 32 header combos), `InteropArtifactGenerator.cs` (serializes each `input.json`
+  case under each codec → `interop/cs/{raw,deflate,gzip}.json`), `CompactJson.cs` (one-object-per-line writer),
+  plus `IVectorGenerator.cs` / `Contracts.cs`. Geometry comes from the shared `Binacle.CompactNotation` +
+  `Binacle.Geometry`.
+- **TS** — `vipaq/packages/binacle-vipaq/tools/`: `generateVectors.ts` (mirrors `Program.cs`),
+  `interopArtifactGenerator.ts` (same inputs → `interop/ts/{raw,deflate,gzip}.json`), `Artifact.ts`.
+
+Run the C# generator then the TS one so the two interop halves can't drift. Output is deterministic — a no-change
+re-run is byte-identical (no git noise).
+
+## Interop tests — the cross-decode matrix
+
+The contract is **decode-to-input, never byte-equality** for compressed blobs: the same body, the same codec, and
+two different compressor engines (`DeflateStream` vs `CompressionStream('deflate-raw')`) can each emit a different
+valid DEFLATE stream. Raw artifacts are byte-identical and can be compared directly. The *why* is normative in
+`PROTOCOL.md §6.1` — keep it there.
+
 - **C#** `vipaq/test/Binacle.ViPaq.UnitTests/Tests/Interop/`:
-  - `InteropDecodeTests` — decodes both `artifact-cs` and `artifact-ts` back to input; pins byte 0 first.
-  - `InteropByteIdentityTests` — the **uncompressed** blob must be byte-identical across producers (the one safe byte
-    comparison; language-agnostic, so it lives on one side only).
-  - `InteropIntegrityTests` — each artifact file's `Name` set must equal `input.json`'s (catches a stale/forgotten regen).
-- **TS** `vipaq/packages/binacle-vipaq/tests/`: `interop.test.ts` (decodes both artifacts) and
-  `interopIntegrity.test.ts` (the same Name-set guard).
-
-### Shared vectors in `vipaq/test-vectors/` — the answer key both suites read
-| File | Cases | Consumed by |
-|---|---|---|
-| `exact-bytes.json` | 8 | serialize golden (both) + deserialize (C#) |
-| `encoding-info-bytes.json` | 256 | header pack/unpack, both directions (both) |
-| `little-endian/uint8..uint64.json` | 4 files | protocol reader+writer, all four widths (both) — two wide 64-bit rows are C#-only |
-| `bit-size-selection.json` | 20 | both width pickers, routed by `Kind` |
-| `bit-size-invalid.json` | 15 | both pickers reject; assert offending field |
-| `round-trip-scenarios.json` | 10 | serialize → pin byte 0 → deserialize (both) |
-| `decode-invalid.json` | 7 | deserialize must throw (both) |
-| `encode-invalid.json` | 7 | serialize must throw (both) |
-| `interop/input.json` | 14 | interop matrix — the shared answer key for the two artifact files |
-
-`interop/input.json` (14 cases): the two threshold-straddling `_8_8_8` cases (one under / one over the 255-byte body
-threshold), mid-bucket `16/32/64` uncompressed, a mixed-width `8_16_32`, a `Compressed_16_16_16`, six item-dim boundary
-cases (255, 256, 65535, 65536, 4294967295, 4294967296) proving both languages flip width at the exact same value, and a
-`MaxInteger` (`2^53-1`) case in all three sections. Each case carries `ExpectedEncodingInfo` — a spec-determined byte-0
-oracle. Artifacts are `{Name, Producer, Base64}`, joined to input by `Name`.
-
-**Invariant to protect:** the same shared scenarios are consumed on both sides. The two suites' *totals* differ (C# has
-more language-local tests) and that is expected — see "Out of scope" below.
-
-### EncodingInfoNotation
-`vipaq/src/Binacle.ViPaq/EncodingInfoNotation.cs` — `internal static`. It parses/formats only the header string
-(`"Version_Bin_ItemDim_ItemCoord"`, e.g. `"Uncompressed_8_8_8"`); the geometry grammar lives in the shared
-`Binacle.CompactNotation`. Both members are in use via `InternalsVisibleTo`: `FormatEncodingInfo` by the C# generator,
-`ParseEncodingInfo` by the test `VectorParser`.
-
----
+  - `InteropDecodeTests` — decodes each language's `{raw,deflate,gzip}` artifacts back to the `input.json` case.
+  - `InteropIntegrityTests` — each artifact file's `Name` set must equal `input.json`'s (catches a stale regen).
+- **TS** `vipaq/packages/binacle-vipaq/tests/`: `interop.test.ts` (decodes the artifacts) and
+  `interopIntegrity.test.ts` (the same `Name`-set guard).
 
 ## Reference docs (canonical)
-- `vipaq/PROTOCOL.md` — the normative spec (wire layout, `[0, 2^53−1]` range, error table, decisions log).
-- `vipaq/test-vectors/README.md` — shared-vector conventions (PascalCase keys, compact strings, `Name` join key).
-- [README.md](README.md), [typescript.md](typescript.md) — agent notes; link to PROTOCOL.md.
 
----
-
-## Coverage we chose not to add
-Four candidate vector rows, and the cross-runtime gzip experiment that was built then dropped, are recorded in
-`.agents/ideas/vipaq/interop-vector-coverage.md`. Low value; read it before adding rows so you don't rebuild the
-dropped one.
+- `vipaq/PROTOCOL.md` — the normative, standalone spec.
+- [`vipaq/test-vectors/README.md`](../../../vipaq/test-vectors/README.md) — shared-vector conventions and per-file shapes.
+- [README.md](README.md), [typescript.md](typescript.md) — the C# and TS sides.
 
 ## Out of scope (stays language-local on purpose)
-C# generic-`T` matrices, saturation-by-type, dispose idempotency; TS buffer pre-sizing + Web-Streams gzip mechanics
-(`getByteSize`, `getBufferSize`, `compressBuffer`, `getDecodingDataStream`). These are language mechanics, not wire
-data. Only *shared-vector* coverage matches across suites (same JSON, same `Name`s) — totals differ by design.
+
+C# generic-`T` matrices and typed exceptions; TS buffer pre-sizing and Web-Streams codec mechanics. These are
+language mechanics, not wire data. Only shared-vector coverage matches across suites (same JSON, same `Name`s) —
+totals differ by design.

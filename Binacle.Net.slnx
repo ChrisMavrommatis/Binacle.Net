@@ -6,14 +6,6 @@
   <Folder Name="/build/">
     <File Path="build/README.md" />
   </Folder>
-  <Folder Name="/results/">
-    <Project Path="results/benchmark-results/benchmark-results.proj" Type="Shared">
-      <Platform Project="AnyCPU" />
-    </Project>
-    <Project Path="results/packing-efficiency-results/packing-efficiency-results.proj" Type="Shared">
-      <Platform Project="AnyCPU" />
-    </Project>
-  </Folder>
   <Folder Name="/api/">
     <Project Path="api/requests/requests.proj" Type="Shared">
       <Platform Project="AnyCPU" />

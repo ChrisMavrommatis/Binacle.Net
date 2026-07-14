@@ -88,8 +88,7 @@ internal class PackByPresetResponseExamples : IMultipleOpenApiExamplesProvider<P
 						UnpackedItems = [],
 						PackedItemsVolumePercentage = 100.00m,
 						PackedBinVolumePercentage = 7.92m,
-						ViPaqData = "AAQACig8CgwPAAAACgwPAAwAAgUKAAAPAgUKABgA"
-					},
+					}.WithViPaqData(),
 					new BinPackResult()
 					{
 						Bin = new Bin { ID = "preset_bin_1", Length = 20, Width = 40, Height = 60 },
@@ -120,8 +119,7 @@ internal class PackByPresetResponseExamples : IMultipleOpenApiExamplesProvider<P
 						UnpackedItems = [],
 						PackedItemsVolumePercentage = 100.00m,
 						PackedBinVolumePercentage = 3.96m,
-						ViPaqData = "AAQAFCg8DA8KAAAADAoPAA8AAgUKDAAAAgUKAAAK"
-					}
+					}.WithViPaqData()
 				]
 			)
 		);

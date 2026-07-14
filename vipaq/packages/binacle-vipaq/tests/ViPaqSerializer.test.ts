@@ -1,16 +1,12 @@
 // mirrors src/ViPaqSerializer.ts (serialize + deserialize tested together — they are inverses)
 // ports C#: ViPaqSerializerTests + SerializationEncodingTests + SerializationBehaviorTests
 //
-// ViPaqSerializer is the choosing layer: it always writes raw, row-major, narrowest, and refuses to read a
-// compressed blob. So these cover its own job — exact bytes for known input, the width it chooses, a real
-// end-to-end round trip through the public API, and the guards. The columnar/wider variants live in
-// roundTrip.test.ts (they go through ProtocolEncoder, which ViPaqSerializer never can).
-//
-// Folded away from the old suite: the "compression flag" section is gone — ViPaqSerializer never compresses now
-// (compression is deferred, PROTOCOL.md §6). Its inverse, that a compressed blob is refused on decode, is pinned
-// by "rejects a compressed blob" below. The old 32/64-bit round-trip rows are gone with those tiers.
+// ViPaqSerializer is the choosing layer: by default it writes raw, row-major, narrowest. Compression and layout
+// are opt-in options (defaults off / row-major, D16). So these cover its own job — exact bytes for the default,
+// the width it chooses, a real end-to-end round trip, the opt-in options, and the guards. The forced wider/mode
+// variants live in roundTrip.test.ts (they go through ProtocolEncoder directly).
 import ViPaqSerializer from "../src/ViPaqSerializer";
-import {Dimensions, Version, Width} from "../src/models";
+import {Dimensions, Layout, Version, Width} from "../src/models";
 import {headerFromBytes} from "../src/utils";
 import {Item, anItem, bin, item} from "./support/builders";
 import {expectBytes} from "./support/bytes";
@@ -107,12 +103,49 @@ describe("ViPaqSerializer", () => {
 			await expect(ViPaqSerializer.deserialize(data)).rejects.toThrow();
 		});
 
-		// ports C#: Deserialize_Throws_NotSupported_When_Blob_Is_Compressed. The compressed bit is byte 0 bit 5;
-		// the body is otherwise a valid raw blob, so only the compressed flag can be the cause.
-		test("rejects a compressed blob", async () => {
+		// A blob whose compressed bit is set but whose body is not a valid DEFLATE stream is malformed: decode
+		// runs the body through the codec and the codec rejects it. (Here the body is a valid *raw* blob, which is
+		// not valid deflate.)
+		test("rejects a compressed blob with a body that is not a deflate stream", async () => {
 			const data = new Uint8Array(exactBytesCases[0].bytes);
 			data[0] = data[0] | 0b0010_0000;
 			await expect(ViPaqSerializer.deserialize(data)).rejects.toThrow();
+		});
+	});
+
+	// ports C#: SerializationOptionsTests. The opt-in paths — compression and columnar layout.
+	describe("options", () => {
+		const compressibleBin = bin(1000, 1000, 1000);
+		const repetitiveItems = (count: number) =>
+			Array.from({length: count}, () => item(300, 300, 300, 0, 0, 0));
+
+		// every combination decodes back to the input — decode-to-input is the oracle (§6.1)
+		test.each([
+			{compress: false, layout: Layout.RowMajor},
+			{compress: false, layout: Layout.Columnar},
+			{compress: true, layout: Layout.RowMajor},
+			{compress: true, layout: Layout.Columnar},
+		])("round-trips with compress=$compress layout=$layout", async ({compress, layout}) => {
+			const items = repetitiveItems(50);
+			const data = await ViPaqSerializer.serialize(compressibleBin, items, {compress, layout});
+			const result = await ViPaqSerializer.deserialize(data);
+
+			expect(result.bin).toEqual(compressibleBin);
+			expect(result.items).toEqual(items);
+		});
+
+		test("columnar sets the layout bit", async () => {
+			const data = await ViPaqSerializer.serialize(compressibleBin, repetitiveItems(4), {layout: Layout.Columnar});
+			expect(headerFromBytes(data[0], data[1]).layout).toBe(Layout.Columnar);
+		});
+
+		test("compresses a large repetitive pack", async () => {
+			const items = repetitiveItems(50);
+			const raw = await ViPaqSerializer.serialize(compressibleBin, items);
+			const compressed = await ViPaqSerializer.serialize(compressibleBin, items, {compress: true});
+
+			expect(compressed.length).toBeLessThan(raw.length);
+			expect(headerFromBytes(compressed[0], compressed[1]).compressed).toBe(true);
 		});
 	});
 });

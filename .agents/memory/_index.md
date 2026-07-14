@@ -11,4 +11,5 @@ conventions, decisions, gotchas. See [README.md](README.md) for when and how to 
 
 | File | Description |
 |---|---|
+| [results-curated.md](results-curated.md) | results/ is a hand-curated vault — harnesses write to gitignored scratch, never straight into results/ |
 | [v3-frozen.md](v3-frozen.md) | v3 API is frozen — never modify it; all new endpoints and contract work go in v4 only |

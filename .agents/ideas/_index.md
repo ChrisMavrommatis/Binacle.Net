@@ -31,4 +31,3 @@ and move it to `.agents/plans/` once it's picked up. See [README.md](README.md) 
 | File | Description |
 |---|---|
 | [vipaq/interop-vector-coverage.md](vipaq/interop-vector-coverage.md) | Idea: more interop vector coverage |
-| [vipaq/vipaq-vs-protobuf.md](vipaq/vipaq-vs-protobuf.md) | Idea: compare ViPaq to other formats |

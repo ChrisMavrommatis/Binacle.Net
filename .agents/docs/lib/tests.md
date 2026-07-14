@@ -1,7 +1,7 @@
 ---
 description: lib/test projects — unit tests, performance tests, benchmarks; AlgorithmFactories, CommonTestingFixture, ResultSelectionTestingFixture, and run aliases
 verified: 2026-06-10
-check: Project list, AlgorithmFactories/CommonTestingFixture/ResultSelectionTestingFixture, and aliases match lib/test/ and config/tests.sh + config/benchmarks.sh
+check: Project list, AlgorithmFactories/CommonTestingFixture/ResultSelectionTestingFixture, and aliases match lib/test/ and config/tests.lib.sh + config/performance.lib.sh + config/benchmarks.lib.sh
 also_update:
   - shared/README.md
   - lib/algorithm-factory.md
@@ -15,9 +15,9 @@ kernel — see [shared](../shared/README.md).
 
 | Project | Kind | Run |
 |---|---|---|
-| `Binacle.Lib.UnitTests` | xUnit | `./config/tests.sh lib` |
-| `Binacle.Lib.PerformanceTests` | console host (writes markdown reports) | `./config/tests.sh performance` |
-| `Binacle.Lib.Benchmarks` | BenchmarkDotNet | `./config/benchmarks.sh [FastValidation\|AlgorithmRacing]` |
+| `Binacle.Lib.UnitTests` | xUnit | `./config/tests.lib.sh` |
+| `Binacle.Lib.PerformanceTests` | console host (writes markdown reports) | `./config/performance.lib.sh` |
+| `Binacle.Lib.Benchmarks` | BenchmarkDotNet | `./config/benchmarks.lib.sh [FastValidation\|AlgorithmRacing\|BischoffSuite\|Parallelization\|ResultSelection]` |
 
 ## Binacle.Lib.UnitTests
 
@@ -66,5 +66,5 @@ BenchmarkDotNet. Two factory paths:
 
 Families: Fitting + Packing × {BischoffSuite, FastValidation}, Packing × {AlgorithmProcessing (AlgorithmRacing,
 AlgorithmParallelizationThreshold), BinProcessing (BinParallelizationThreshold)}, and ResultSelection. Ordering
-via `Order/AttributeOrderer` + `[BenchmarkOrder]`. Filter with `./config/benchmarks.sh FastValidation` or
+via `Order/AttributeOrderer` + `[BenchmarkOrder]`. Filter with `./config/benchmarks.lib.sh FastValidation` or
 `AlgorithmRacing`; no argument runs all.
