@@ -11,6 +11,7 @@
   "private": true,
   "dependencies": {
     "alpinejs": "^3.15.2",
+    "binacle-vipaq": "*",
     "three": "^0.182.0"
   },
   "devDependencies": {

@@ -35,10 +35,15 @@ No dependencies.
 ## theme-switcher
 
 Custom HTML element (`<theme-switcher>`) for switching light/dark themes on the Binacle.Net websites.
-Used by both `docs/` and `web/`. No external dependencies.
+Used by both `docs/` and `web/`. Depends on the `cookies` workspace package; no external dependencies.
 
 ## Related Tests
 
 | Project | What it covers |
 |---|---|
 | `vipaq/packages/binacle-vipaq` | Has its own test suite — run with `npm test` inside the package directory |
+
+## Dependencies
+
+Which package imports which — and two undeclared workspace deps that resolve only by hoisting — is in
+[dependencies.md](dependencies.md).

@@ -103,3 +103,8 @@ It provides:
 `thpack1–7` are Bischoff & Ratcliff (1995). These raw files are the upstream origin that was converted into the
 embedded `BischoffSuite/orlib_thpack1..7.json`. Only `thpack1–7` map to `BischoffSuite`; `thpack8/9` are not in
 the embedded suite. `thpack9-fixed.txt` patches a missing indicator in thpack9 problems 18–20.
+
+## Dependencies
+
+How the shared projects reference each other and who sees internals — `Geometry` the leaf, `TestsKernel` the test
+hub that reaches into `Lib.Abstractions` — is in [dependencies.md](dependencies.md).

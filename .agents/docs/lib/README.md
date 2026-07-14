@@ -42,6 +42,11 @@ scenario data format and providers.
 - One custom exception: `DimensionException` in `lib/src/Binacle.Lib/Exceptions/` — use it rather than inventing new types.
 - Guard clauses live in `lib/src/Binacle.Lib/GuardClauses/` (Null, NullOrEmpty, Dimensions, Volume, Quantity).
 
+## Dependencies
+
+The Abstractions/Lib split and the composition-root rule (only `Binacle.Net` references the concrete lib) are in
+[dependencies.md](dependencies.md).
+
 ## Concepts
 
 This slice implements [Fit vs Pack](../concepts.md).

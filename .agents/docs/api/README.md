@@ -132,6 +132,11 @@ See [lib/result-building.md](../lib/result-building.md) for how `OperationResult
 See [API Tests](tests.md) for integration-test conventions, and [Shared](../shared/README.md) for the scenario
 data format. See [Commands](../commands.md) for how to run the API locally.
 
+## Dependencies
+
+How the API projects reference each other — the composition root, the Kernel floor, and the module walls — is in
+[dependencies.md](dependencies.md).
+
 ## Concepts
 
 This slice implements [Fit vs Pack](../concepts.md).

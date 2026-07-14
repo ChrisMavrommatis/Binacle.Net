@@ -70,3 +70,6 @@ notation (`"10x10x10 (0,0,0)"`) is not here; it lives in the shared `Binacle.Com
 
 How the two languages are held to one wire — the shared vectors, the generators, and the decode-to-input contract
 for compressed payloads — is in [cross-language-testing.md](cross-language-testing.md).
+
+How the projects reference each other, who can see internals, and the walls between them (UnitTests never touches
+the real-data kernel) are in [dependencies.md](dependencies.md).

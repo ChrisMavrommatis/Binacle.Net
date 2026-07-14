@@ -41,8 +41,9 @@ The checks were sound and were **all passing** when the gate came out, so any la
 unknown. Where they should live is undecided — unit tests, the test kernel, or a dedicated conformance project. The
 data is one file read away: `vipaq/data/packed/**.ffd.json`, 716 samples, 58,834 placed items.
 
-Whoever takes them: drive `ProtocolEncoder` directly, not `ViPaqSerializer`. The public serializer only ever writes
-one shape (RowMajor, uncompressed, narrowest widths), so it cannot reach most of these.
+Whoever takes them: drive `ProtocolEncoder` directly, not `ViPaqSerializer`. The serializer's options reach layout
+and compression now, but it always picks the narrowest widths that hold the data, so a forced-16-bit blob is only
+reachable through `ProtocolEncoder`.
 
 1. **Decode-to-input over the forceable matrix.** D14 makes widths, `Layout` and `Compressed` encoder policy,
    recorded in the header, every combination conformant. Walk `{RowMajor, Columnar} × {natural widths, forced
