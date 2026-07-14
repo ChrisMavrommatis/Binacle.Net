@@ -82,8 +82,13 @@ Binacle.Geometry                    leaf — geometry types + IWith[ReadOnly]Dim
 
 ## The real-data round-trip gate
 
-The decode-to-input conformance check over all 716 real packs already exists: `RoundTripCheck.Run()` in
-`PerformanceTests`. It encodes every pack in every codec and both layouts and decodes it straight back, throwing
-on the first mismatch, before any size report runs. It uses natural widths and does not assert the header bytes —
-so forced-16-bit widths and a `Header.FromBytes` round-trip are the parts the plan's "conformance suite" would
-still add, and they belong on this side of wall 1 (the kernel/harness), not in UnitTests.
+The packed-data conformance suite is `RoundTripCheck.Run()` in `PerformanceTests`, which runs before any size
+report. It sweeps all 716 real packs in two passes, each codec × both layouts:
+
+- the **report path** — natural widths through the kernel's `ViPaqEncoder`, the exact encoder the reports use;
+- the **conformance path** — the same packs forced to 16-bit widths through `ProtocolEncoder` directly, which the
+  wrapper cannot reach (it always picks the narrowest widths), so the 16-bit read path is exercised on real data.
+
+Both passes assert the two header bytes round-trip (`Header.FromBytes` equals the header written) and that the pack
+decodes back to the input, throwing on the first mismatch. It lives on the harness side of wall 1, not in
+UnitTests, because it drives the internal `ProtocolEncoder` over the real-data kernel.

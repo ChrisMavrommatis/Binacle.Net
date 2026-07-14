@@ -1,9 +1,5 @@
 using Binacle.TestReporting;
-using Binacle.ViPaq.Compression;
 using Binacle.ViPaq.PerformanceTests.ExtensionMethods;
-using Binacle.ViPaq.PerformanceTests.Tests;
-using Binacle.ViPaq.TestsKernel.Models;
-using Binacle.ViPaq.TestsKernel.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -27,10 +23,6 @@ internal class Program
 			)
 			.CreateBootstrapLogger();
 
-		// Fail fast before the reports: every real scenario must round-trip in every mode, and the curated
-		// benchmark picks must still resolve.
-		RoundTripCheck.Run();
-
 		var builder = Host.CreateApplicationBuilder();
 		builder.Logging.ClearProviders();
 		builder.Logging.AddSerilog();
@@ -41,12 +33,17 @@ internal class Program
 			AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "PerformanceTests.Artifacts");
 		builder.Services.AddSingleton<IFileWriter>(new MarkdownFileWriter(artifactsDirectory));
 		builder.Services.AddTransient<TestRunner>();
+		builder.Services.AddPreReportChecks();
 		builder.Services.AddVipaqProtobufSizeComparisonTests();
 		builder.Services.AddCodecCompressionCrossoverTests();
-		
+
 		IHost host = builder.Build();
 
 		using var scope = host.Services.CreateScope();
+
+		// Fail fast before the reports: run every registered gate (round-trip conformance, curated-pick resolution).
+		scope.ServiceProvider.RunPreReportChecks();
+
 		var testRunner = scope.ServiceProvider.GetRequiredService<TestRunner>();
 		await testRunner.RunAsync();
 	}

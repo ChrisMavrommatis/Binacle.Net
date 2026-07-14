@@ -25,10 +25,3 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [shared/testskernel-data-extraction.md](shared/testskernel-data-extraction.md) | TestsKernel — pull all fixture data out to shared/data |
-
-## ViPaq
-
-| File | Description |
-|---|---|
-| [vipaq/prompt.md](vipaq/prompt.md) | Persistent ViPaq session prompt. Read first, work, then update it before you finish. |
-| [vipaq/README.md](vipaq/README.md) | ViPaq — build plan |

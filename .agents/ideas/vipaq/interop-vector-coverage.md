@@ -20,8 +20,8 @@ preserved in `vipaq/PROTOCOL.md §6`.
 
 ## Note on scope
 
-If v2 lands (plans/vipaq sessions 3–6), the vectors get regenerated anyway and the boundary rows change to the
-v2 flips. Adding rows before then means doing it twice.
+If a future ViPaq wire version lands, the vectors get regenerated anyway and the boundary rows change with it.
+Adding rows before then means doing it twice.
 
 ## Related
 
