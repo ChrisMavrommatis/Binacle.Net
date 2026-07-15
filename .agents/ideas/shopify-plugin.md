@@ -23,10 +23,9 @@ don't build it yet.
 - What does "validate Shopify API calls" mean exactly — verify webhook signatures (HMAC), gate/inspect calls
   to Shopify, or act as a proxy that checks requests before they hit Shopify. Pin this down before designing.
 - Where does the plugin run and how does it authenticate to Binacle — ties into ServiceModule
-  (see [admin-user-management-site.md](api/admin-user-management-site.md)).
+  (auth, subscriptions; see `$api/modules/service`).
 - Data ownership and privacy for the analytics extension — we'd be holding a store's box/item data.
 
 ## Related
 
-- `.agents/docs/api/modules/service.md` (auth, subscriptions)
-- [admin-user-management-site.md](api/admin-user-management-site.md)
+- `$api/modules/service` (auth, subscriptions)

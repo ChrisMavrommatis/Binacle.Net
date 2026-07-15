@@ -20,4 +20,4 @@ would dirty the tree on every run and bake machine-specific timings into the com
 `PerformanceTests.Artifacts` (resolve via `AppContext.BaseDirectory`), or pin BenchmarkDotNet's `ArtifactsPath` the
 same way; both names are already gitignored. For BDN, export markdown only (`MarkdownExporter.GitHub` from
 `ManualConfig.CreateEmpty()` plus the copied-back defaults) so there's one clean `.md` to curate. ViPaq's
-diff-against-baseline rule is `.agents/docs/vipaq/decisions.md` D3.
+diff-against-baseline rule is `$vipaq#D3`.

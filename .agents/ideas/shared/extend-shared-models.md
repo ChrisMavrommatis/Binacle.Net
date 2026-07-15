@@ -32,4 +32,4 @@ v3 DTOs (frozen) · UIModule ViewModels (DataAnnotations + computed ID) · lib *
 
 ## Related
 
-- `.agents/docs/shared/README.md`
+- `$shared`

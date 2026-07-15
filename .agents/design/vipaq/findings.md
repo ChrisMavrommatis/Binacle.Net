@@ -1,20 +1,17 @@
 ---
+id: vipaq/findings
 description: ViPaq findings — the measured evidence (base64 size, encode/decode time) behind the decisions.
-verified: 2026-07-14
+verified: 2026-07-15
 check: Numbers match the latest results/vipaq/compression/ size reports and results/vipaq/benchmarks/ output
 also_update:
-  - vipaq/decisions.md
+  - vipaq/decisions
 ---
 
 # ViPaq — findings (the measured evidence)
 
-The honest record of what we measured. Every session links here; **no session file keeps its own numbers.**
-Ranges show the effect, not a guarantee.
-
-**Current truth is the permanent harness on real data** ("Permanent harness" below). An earlier throwaway harness
-(2026-07-05) measured a v2 prototype; the sections above the divider keep only the prototype evidence that **still
-governs an open decision** (codec tradeoff, raw encoding gains, ruled-out schemes). Its performance tables and the
-validator's detail were dropped 2026-07-09 — superseded by the real-lib numbers below, and in git history if needed.
+The current measured truth, on real data from the permanent harness. Every session links here; **no session file
+keeps its own numbers.** Ranges show the effect, not a guarantee. The earlier throwaway-prototype numbers
+(2026-07-05) that informed the locked decisions are superseded and live in `$vipaq/history`.
 
 ## Context (confirmed)
 - ViPaq = **storage-first** base64 text token for a packing result (bin dims + per-item dims + coords + count).
@@ -29,41 +26,6 @@ Stored size = `base64 = ceil(N/3)*4`. **Shaving header *bits* changes stored siz
 bytes across many values* matters. So value-width and compression are the only real size levers; header micro-design
 is noise. Measure everything in **base64 chars**.
 
-## Size — v1 vs v2-schemes vs protobuf
-- ViPaq (any scheme) beats *idiomatic row* protobuf everywhere; only *columnar* protobuf competes.
-- **8/16 + varint per-section, pick-smallest** was the best value encoding — beat "fixed-unless-overflow" and
-  "varint-everywhere" in every scenario. But its win is mostly **uncompressed / small tokens**.
-- **RAW encoding gain of 8/16+varint vs v1** (isolates encoding, 2000 items): ≤255 = 0%; ≤65k mixed = **−6.6%**;
-  100k–1M = **−25 to −32%** (varint 3B vs fixed 4B); 2–16M = **−3 to −13%**; >268M = **+9% (worse)** (irrelevant to
-  our range). So dropping 32/64 is safe up to ~268M.
-- **After a matched fast codec, the compressed win shrinks to ~3%** (validator-corrected) — compression already
-  crushes v1's wasted high bytes (usually zero). The earlier "~20%" was **Brotli q11 only** (see below).
-
-## Compression — codec tradeoff (16-bit real, 5000 items, on the v2 payload)
-| codec | stored b64 | vs raw | encode | decode |
-|---|--:|--:|--:|--:|
-| raw (base64-alone) | 74,032 | 1.00× | — | — |
-| gzip Optimal | 57,824 | 0.78× | 0.94 ms | 0.13 ms |
-| brotli Fastest | 58,408 | 0.79× | 0.19 ms | 0.20 ms |
-| brotli Optimal | 57,512 | 0.78× | 0.36 ms | 0.18 ms |
-| **brotli SmallestSize (q11)** | 48,416 | 0.65× | **98.5 ms** 🛑 | 0.30 ms |
-- Fast codecs all land ~0.78× (≈22% off raw). **q11's extra ~16% costs ~260× the encode time** — non-starter per
-  request; only for write-once **archival**. gzip-Opt ≈ brotli-Opt on size, so switching codecs buys ~nothing at
-  usable speed. (.NET quirk: gzip Optimal < gzip SmallestSize on this data.)
-
-## Compress-or-not crossover (16-bit, growing item count, base64)
-- **≤ ~8–10 items (~150 B): base64-alone wins** (compression inflates via framing).
-- **≥ ~13 items: brotli-Optimal wins**; gzip only pays from ~34 items (~18 B header). So if compressing, brotli
-  pays earliest. Decision options: **try-both-keep-smaller** (recommended) or a **fixed ~150-byte threshold**.
-
-## Performance — surviving conclusions (prototype numbers archived)
-The prototype's headline "decode ~10× faster" came from decompress-once-then-read-from-span. **That fix back-ports
-to v1 with no format change** — it was ported and re-measured on the real lib (see "Decode fix" below; the real win
-was ~4–5×, not 10×). Two conclusions still stand and are unmeasured on the real lib:
-- **Fast-codec v2 encode was never directly benchmarked** (the throwaway codec was hardwired to q11). **Session 4
-  owns this number.**
-- **v2 allocates ~1.4–3.4× v1** on the prototype, so "encode ≈ v1" is optimistic — confirm in Session 4.
-
 ## Ruled OUT — do not rebuild
 - **24-bit ladder (8/16/24/32) + coords-ride-bin:** byte-identical to v1 on real data; raw win evaporates after
   gzip; coords-ride-bin **regressed up to +19%** and its only benefit (a freed header bit) doesn't shrink base64.
@@ -73,15 +35,9 @@ was ~4–5×, not 10×). Two conclusions still stand and are unmeasured on the r
 - **Raw Deflate:** ~24 B better than gzip framing, but Brotli beats it — not worth a third codec.
 - **Selling "20% smaller":** it was a q11 artifact.
 
-**Validator's bottom line (archived).** An independent 24-check pass on the prototype landed on: *fast-codec stored
-win ~3%, decode win falls to ~1.3× at million-scale, v2 allocates more, and q11 is a 98 ms non-starter.* Its
-optimistic claims (decode ~10×, "ties protobuf") are superseded by the real-lib numbers below.
+## The harness — real data, shipped v1 library
 
----
-
-# Permanent harness (2026-07-08 on) — real data, shipped v1 library
-
-This is the current, authoritative record. Source: `Binacle.ViPaq.PerformanceTests` (size + crossover) and
+Source: `Binacle.ViPaq.PerformanceTests` (size + crossover) and
 `Binacle.ViPaq.Benchmarks` (BDN). Data: 716 placed scenarios, 58,834 items, FFD-packed offline by
 `Binacle.ViPaq.PackedDataGenerator` from the Bischoff suite (thpack1–7) + custom problems. Round-trip green on
 every scenario, both in the generator and the harness.
@@ -97,7 +53,7 @@ This is the single most important thing the real-data harness established, and i
 
 Real packing results have structure — repeated item sizes, items on a coordinate grid. Random data gives gzip
 nothing to grip. So the shipped fixed **255-byte threshold is wrong in both directions**: it inflates random data
-and would miss small compressible data. This drives D7.
+and would miss small compressible data. This drives `$vipaq#D7`.
 
 ## Size vs protobuf (like-for-like: protobuf compressed only when ViPaq compressed)
 
@@ -106,19 +62,23 @@ and would miss small compressible data. This drives D7.
   coordinates and gzips its own structured output.
 - **Synthetic: ≈ 32–68%.** ViPaq wins most at small 8-bit payloads (~32–40%).
 
-## Width selection, confirmed on real data
+## Width selection, confirmed on real data {#width-selection}
 
 - **Bischoff packs to `16/8/16`** — bin and coordinates need 16-bit (positions run to ~587); item dimensions stay
   8-bit (largest box side ~113). So the three sections genuinely disagree; an independent coordinate width earns
   its keep (relevant to the Session 3 header call).
 - **Boundary pair behaves:** `255` → `8/8/8`; `256` → `16/8/8` (only the bin section flips).
-- **Every Bischoff pack is 16-bit.** The only 8-bit data in the repo is a custom pack. This is a coverage hole —
-  see `../shared/testskernel-data-extraction.md`.
+- **Every Bischoff pack is 16-bit**, so 8-bit coverage comes from the custom packs — the `Simple_5x5x5-N` count
+  ladder and the small baseline/simple cases; a custom `Simple_16bit-4` pack adds a small all-16-bit case too.
 
-## Compression crossover (PROVISIONAL — real data is gappy)
+## Compression crossover
 
-8-bit crosses somewhere **between 16 and 100 items**; 16-bit is **already compressing at ≤57**. The exact point
-is unpinnable until a count ladder exists (one problem family at ~5/13/50/200 items, only the count changing).
+A controlled count ladder pins it: `Simple_5x5x5-N` (N = 5/13/50/200) in a fixed 50³ bin, only the count changing
+(`results/vipaq/compression/CodecCompressionCrossover.*`). For this uniform, maximally-repetitive family deflate
+already wins at the smallest rung — 5 items: raw 52 → deflate 36 b64 (31% saved) — and the saving climbs with count
+(45% / 64% / 66% at 13 / 50 / 200). Uniform data is gzip's best case; mixed real packs (Bischoff) are less
+repetitive and cross later, in the tens of items. **So the crossover tracks how repetitive the data is, not the
+item count alone.**
 
 ## Speed and memory (first BDN pass, Short job, one machine)
 
@@ -149,7 +109,7 @@ The before column is the pre-fix v1; after is the shipped fix. 1371 unit tests p
 Round-1 prototype showed — that was v2 varint+columnar with a different codec; this is what shipped v1's layout
 yields. Cost: **+0.7–1.1 KB allocation** (the decompressed buffer), but ViPaq still allocates less than protobuf
 (ratio 0.91–0.97). The pooled-buffer variant (A′) would reclaim that KB; deferred — a rarely-read token doesn't
-justify it (D8). No wire change.
+justify it (`$vipaq#D8`). No wire change.
 
 ### Uncompressed vs compressed — the two paths, size and speed (2026-07-09)
 
@@ -183,13 +143,13 @@ Session-2 decode fix):**
 **Takeaway:** on the **uncompressed path ViPaq matches or beats protobuf on both axes** — ~40% smaller, encode at
 parity, decode faster. On the **compressed path** it trades encode CPU (the gzip pass, 4–8×) for a large size win
 (down to ~29% of raw proto), and decode is near parity after Session 2. Encode is the only place protobuf leads,
-and only while ViPaq is paying for compression — exactly the D8 priority. Allocations: ViPaq ≤ protobuf everywhere
+and only while ViPaq is paying for compression — exactly the `$vipaq#D8` priority. Allocations: ViPaq ≤ protobuf everywhere
 except the 1-item token (520 B vs 368 B — noise at that size).
 
-**Coverage gap:** the uncompressed set is **all 8-bit** — every 16-bit problem (Bischoff) is large enough to
-compress, so the uncompressed *16-bit* path is measured nowhere. Closing it needs a small 16-bit problem authored
-in `shared/data`; tracked in
-[testskernel-data-extraction.md](../../plans/shared/testskernel-data-extraction.md).
+**Coverage:** the uncompressed 16-bit path is now measured by `Simple_16bit-4_FitIn_600x400x300` — 4 items whose
+bin and item dimensions force 16/16/16 widths, small enough to skip compression (raw b64 80, ~0.95× protobuf). It
+sits in the curated uncompressed set so the encode/decode benchmarks cover it; the other uncompressed picks stay
+8-bit.
 
 ### Compression cost, isolated (2026-07-14)
 
@@ -204,15 +164,15 @@ framing.
 | OrLibrary_thpack1_2 | 108 | 4.8 µs | 13.1 µs (2.74×) | 13.5 µs (2.83×) | 3.7 µs | 5.5 µs (1.16×) | 5.7 µs (1.20×) |
 
 - **Deflate encode ≈ 2.75× the format-only encode** — compressing adds ~5–8 µs per pack (the `Deflate − NoOp`
-  delta). This is also **D7's try-both price**: try-both is one `Compress` more than never compressing, i.e. exactly
-  this delta.
+  delta). This is also **`$vipaq#D7`'s try-both price**: try-both is one `Compress` more than never compressing,
+  i.e. exactly this delta.
 - **Deflate decode adds only ~1.2–1.4×** (inflate ~1.8–1.9 µs) — cheap.
 - **Gzip never beats deflate on time** — ~2–3% slower on encode (its framing), on par on decode. Gzip is already
-  larger on size, so nothing rescues it: deflate is the pick on both axes (**D16**).
+  larger on size, so nothing rescues it: deflate is the pick on both axes (**`$vipaq#D16`**).
 - All sub-15 µs, encoded once server-side and read rarely — noise in practice.
 
 ## What the harness did *not* answer
 
-- **O2 (codec + level)** — **resolved (D16):** one codec, raw DEFLATE. The compression cost is measured just above.
+- **`$vipaq#O2` (codec + level)** — **resolved (`$vipaq#D16`):** one codec, raw DEFLATE. The compression cost is measured just above.
 - Absolute allocation on synthetic data runs a little high (compression can't shrink a random buffer), but ViPaq
   and protobuf see the same sample, so the *ratio* stays valid.

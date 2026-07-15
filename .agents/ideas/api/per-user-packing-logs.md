@@ -8,7 +8,7 @@ only the build is an idea.
 Per-user attribution belongs in the **ServiceModule**, not the always-on DiagnosticsModule. "Which user made
 this request" is an auth concept, and auth lives entirely in the ServiceModule. The premature `UserId` hook was
 removed from `AlgorithmOperationLogChannelRequest` and `PackingLogEntry`; diagnostics logs what it computed and
-nothing about identity. Recorded in `.agents/docs/api/modules/diagnostics.md`.
+nothing about identity. Recorded in `$api/modules/diagnostics`.
 
 **Never reintroduce a `UserId` field into the diagnostics log** just so the ServiceModule can fill it — that
 couples the always-on module to an optional one.
@@ -38,5 +38,4 @@ Reading one claim off `HttpContext.User` is cheap (a field read, not morphing), 
 
 ## Related
 
-- `.agents/docs/api/modules/diagnostics.md` (the settled rule), `.agents/docs/api/modules/service.md`
-- [admin-user-management-site.md](admin-user-management-site.md) — the same auth/account surface
+- `$api/modules/diagnostics` (the settled rule), `$api/modules/service`

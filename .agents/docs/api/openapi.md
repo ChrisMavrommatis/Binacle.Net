@@ -1,10 +1,11 @@
 ---
+id: api/openapi
 description: OpenAPI wiring — IOpenApiDocument, the Kernel transformers (JWT, 429, response descriptions, enum-as-string), what endpoint groups auto-wire, and the external OpenApiExamples package
-verified: 2026-06-10
+verified: 2026-07-15
 check: IOpenApiDocument, transformers, and OpenApiOptions extensions match api/src/Binacle.Net.Kernel/OpenApi/; group 500 wiring matches v4/ApiV4EndpointGroup.cs
 also_update:
-  - api/v4/add-endpoint.md
-  - api/kernel.md
+  - api/v4/add-endpoint
+  - api/kernel
 ---
 
 # OpenAPI

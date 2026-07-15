@@ -1,10 +1,11 @@
 ---
+id: shared
 description: Shared slice — Binacle.TestsKernel (scenario data, compact-string formats, providers, fixtures) and shared/data (OR-Library benchmark data)
 verified: 2026-07-05
 check: Collection keys, compact-string parsers, and provider class names match shared/test/Binacle.TestsKernel; OR-Library files match shared/data
 also_update:
-  - lib/tests.md
-  - api/tests.md
+  - lib/tests
+  - api/tests
 ---
 
 # Shared
@@ -88,7 +89,7 @@ carries bin + items +
 `ScenarioMetrics` + `ScenarioResult`. ResultSelection `Scenario` carries `Name`, `ExpectedResult` (a bin-id
 string), and `Results: Dictionary<string, OperationResult>`.
 
-The kernel defines **no xUnit fixtures** — those live in the test projects (see [lib tests](../lib/tests.md)).
+The kernel defines **no xUnit fixtures** — those live in the test projects (see lib tests (`$lib/tests`)).
 It provides:
 
 - `TestAlgorithmFactory<TAlgorithm>` — `delegate TAlgorithm (TestBin bin, List<TestItem> items)`
@@ -107,4 +108,4 @@ the embedded suite. `thpack9-fixed.txt` patches a missing indicator in thpack9 p
 ## Dependencies
 
 How the shared projects reference each other and who sees internals — `Geometry` the leaf, `TestsKernel` the test
-hub that reaches into `Lib.Abstractions` — is in [dependencies.md](dependencies.md).
+hub that reaches into `Lib.Abstractions` — is in `$shared/dependencies`.

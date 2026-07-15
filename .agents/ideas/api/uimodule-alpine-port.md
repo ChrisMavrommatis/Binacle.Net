@@ -1,7 +1,8 @@
-# UIModule — Port from Blazor Reactivity to Alpine.js
+# Idea: UIModule — port from Blazor reactivity to Alpine.js
 
-**Status:** Not started. **The "Current State" below was written 2026-05-26 and its build section was wrong —
-re-verified against the code 2026-07-08 and corrected. Re-check before trusting any path here.**
+**Status:** Unvetted idea — no committed timeline or priority. Detailed below because the ground was already
+scouted, not because it's scheduled. **The "Current State" section was written 2026-05-26 and its build part was
+wrong — re-verified against the code 2026-07-08 and corrected. Re-check before trusting any path here.**
 **Goal:** Replace Blazor Interactive Server reactivity with Alpine.js so `packages/binacle-net-ui`
 is the single source for the packing demo UI — shared between `web/` and `UIModule`.
 
@@ -138,4 +139,4 @@ Then, optionally, the MSBuild hook in `UIModule.csproj` — which only works **a
 6. Delete `BinacleVisualizerService`, `MessagingService`, and code-behind files.
 7. Remove Interactive Server render mode if nothing else needs it.
 8. Add MSBuild hook so `dotnet build` keeps the bundle fresh.
-9. Update `.agents/docs/api/modules/ui.md` to reflect the new stack.
+9. Update `$api/modules/ui` to reflect the new stack.

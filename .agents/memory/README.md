@@ -24,7 +24,8 @@ type: decision | gotcha | convention
 ---
 
 <the fact. For a convention or decision, add **Why:** and **How to apply:** lines.
-Link related memories with [[their-name]] and repo files by path.>
+Cite docs/design with `$` references (see the root README) and code by path. Don't link to another memory —
+nothing references a memory.>
 ```
 
 Delete a memory when it turns out wrong or its fact moves into a doc/plan.

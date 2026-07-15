@@ -5,11 +5,11 @@
 (not yet published in the docs site).
 
 The reference contract lives in the agent docs:
-- `/.agents/docs/api/v4/README.md` — endpoint tables (implemented + planned), algorithm selection, response shape
-- `/.agents/docs/api/v4/add-endpoint.md` — step-by-step guide for adding one
-- `/.agents/docs/api/v4/contracts.md` — request/response types and validators
+- `$api/v4` — endpoint tables (implemented + planned), algorithm selection, response shape
+- `$api/v4/add-endpoint` — step-by-step guide for adding one
+- `$api/v4/contracts` — request/response types and validators
 
-Keep the planned list below in sync with the "Planned Endpoints" table in `api/v4/README.md`.
+Keep the planned list below in sync with the "Planned Endpoints" table in `$api/v4`.
 
 ## Conventions (apply to every new endpoint)
 
@@ -33,7 +33,7 @@ Keep the planned list below in sync with the "Planned Endpoints" table in `api/v
 ## Planned (not yet implemented)
 
 Base request types exist (`CustomBinsRequestBase`, `PresetBinsRequestBase`); no concrete request or endpoint
-classes yet. Start from step 1 of `add-endpoint.md`.
+classes yet. Start from step 1 of `$api/v4/add-endpoint`.
 
 - [ ] `POST /api/v4/pack/compare` — pack all custom bins, return all results
 - [ ] `POST /api/v4/pack/compare/{preset}` — pack all preset bins, return all results
@@ -51,8 +51,8 @@ classes yet. Start from step 1 of `add-endpoint.md`.
 ## When endpoints land
 
 After each batch of new endpoints:
-1. Tick the box above and move the row from "Planned" to "Implemented" in `api/v4/README.md`.
-2. Update `api/v4/contracts.md` if new contract types were added; bump each edited doc's `verified:` date.
+1. Tick the box above and move the row from "Planned" to "Implemented" in `$api/v4`.
+2. Update `$api/v4/contracts` if new contract types were added; bump each edited doc's `verified:` date.
 3. Regenerate the docs-site swagger spec for the version (see below) so the interactive Swagger UI is current.
 
 ## Docs-site Swagger spec

@@ -1,9 +1,10 @@
 ---
+id: api/tests
 description: api/test integration tests — v3/v4 HTTP conventions, validBinId, preset keys, special bins, base-class asserts, and test host config
-verified: 2026-06-10
+verified: 2026-07-15
 check: validBinId, PresetKeys, special bins, and base-class asserts match api/test/ source
 also_update:
-  - shared/README.md
+  - shared
 ---
 
 # API Tests
@@ -59,7 +60,7 @@ emptiness split.
 
 - `BinacleApi.cs` — `ConfigureTestServices` clears `BinPresetOptions.Presets`, then registers `custom-problems`
   (bins from `CustomProblemsScenarioProvider`), `biscoff-suite` (from `BischoffSuiteScenarioProvider`), and
-  `special` (the three special bins). Presets come from the shared kernel — see [shared](../shared/README.md).
+  `special` (the three special bins). Presets come from the shared kernel — see shared (`$shared`).
   Runs with default modules (ServiceModule off). `// TODO: Run the tests with all modules enabled` (line 34).
 - `BinacleApiWithoutPresets.cs` — same shape but only clears presets (no registration); tests the no-presets path.
 - `Binacle.Net.ServiceModule.IntegrationTests/BinacleApi.cs` — `IAsyncLifetime`; enables ServiceModule via

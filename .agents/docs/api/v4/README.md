@@ -1,18 +1,19 @@
 ---
+id: api/v4
 description: v4 API — active development. Endpoints (implemented and planned), algorithm selection, parameters, contracts, and response shape.
-verified: 2026-06-10
+verified: 2026-07-15
 check: Endpoint table matches files in api/src/Binacle.Net/v4/Endpoints/
 also_update:
-  - api/v4/contracts.md
+  - api/v4/contracts
 ---
 
 # v4 API
 
 Route prefix: `/api/v4`
 
-Active development version. See [add-endpoint.md](add-endpoint.md) to add a new endpoint.
-See [contracts.md](contracts.md) for the full request/response shape.
-See [Fit vs Pack](../../concepts.md) for the underlying concept.
+Active development version. See `$api/v4/add-endpoint` to add a new endpoint.
+See `$api/v4/contracts` for the full request/response shape.
+See Fit vs Pack (`$concepts`) for the underlying concept.
 
 ## Implemented Endpoints
 
@@ -32,7 +33,7 @@ All POST (fit/pack) endpoints are rate-limited (`.RequireRateLimiting("ApiUsage"
 
 Base request types exist: `CustomBinsRequestBase` (custom multi-bin) and `PresetBinsRequestBase` (preset multi-bin)
 in `api/src/Binacle.Net/v4/Contracts/`. No concrete request types or endpoint classes exist yet.
-To add one, follow [add-endpoint.md](add-endpoint.md) — start from step 1.
+To add one, follow `$api/v4/add-endpoint` — start from step 1.
 
 | Method | Route | Description |
 |---|---|---|
@@ -70,4 +71,4 @@ Set the mode with `.ForFittingOperation()` or `.ForPackingOperation()` before ca
 
 Both fit and pack return item coordinates (X, Y, Z). ViPaqData is included when `IncludeViPaqData: true`.
 
-See [v3/README.md](../v3/README.md) for the stable v3 version.
+See `$api/v3` for the stable v3 version.

@@ -1,9 +1,10 @@
 ---
+id: api/v3
 description: v3 API — stable, do not modify. Endpoints, algorithm selection, response shape, field names, and enum values.
-verified: 2026-05-23
+verified: 2026-07-15
 check: Endpoint list, field names, and enum values match api/src/Binacle.Net/v3/
 also_update:
-  - api/v3/contracts.md
+  - api/v3/contracts
 ---
 
 # v3 API
@@ -92,7 +93,7 @@ EarlyFail_ContainerDimensionExceeded ← dead code; pack never triggers early ex
 The two `EarlyFail_*` values on pack are never set at runtime — pack always runs to completion.
 They exist in the enum but are unreachable.
 
-See [v4/README.md](../v4/README.md) for how v4 differs.
+See `$api/v4` for how v4 differs.
 
 ## Request Example
 

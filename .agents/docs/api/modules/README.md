@@ -1,10 +1,11 @@
 ---
+id: api/modules
 description: Optional module system — feature flags, structure, available modules
 verified: 2026-07-06
 check: Module list and feature flags match Feature.Manager source
 also_update:
-  - api/README.md
-  - api/configuration.md
+  - api
+  - api/configuration
 ---
 
 # Modules
@@ -23,7 +24,7 @@ if (Feature.IsEnabled("UI_MODULE"))      builder.AddUIModule();
 
 UI flags (`SWAGGER_UI`, `SCALAR_UI`) work the same way.
 
-See [configuration.md](../configuration.md) for the full feature-flag list, env-var conventions, and config file layout.
+See `$api/configuration` for the full feature-flag list, env-var conventions, and config file layout.
 
 ## Module Structure
 
@@ -52,7 +53,7 @@ endpoint registration.
 | Swagger UI | `SWAGGER_UI=True` | disabled | Swagger UI at `/swagger` |
 | Scalar UI | `SCALAR_UI=True` | disabled | Scalar UI at `/scalar` (alternative OpenAPI interface) |
 
-See [configuration.md](../configuration.md) for full details on env-var conventions and config file layout.
+See `$api/configuration` for full details on env-var conventions and config file layout.
 
 ## Launch Profiles
 

@@ -1,10 +1,11 @@
 ---
+id: samples
 description: Deployment samples — Docker Compose (minimal, ui, service-npgsql, service-azure) and Kubernetes (minimal); feature flags, config wiring, and the keep-in-sync rule
-verified: 2026-06-10
+verified: 2026-07-15
 check: Sample folders, compose env vars, and bind-mounted config paths match samples/
 also_update:
-  - api/configuration.md
-  - api/modules/README.md
+  - api/configuration
+  - api/modules
 ---
 
 # Samples
@@ -21,8 +22,8 @@ belongs in `samples/`.
 > config-file paths — they are not illustrative pseudo-config. When you add or change a feature flag, env var,
 > default, or config path (e.g. adding `SCALAR_UI`, renaming a connection string, moving a `Config_Files` path),
 > the affected samples must be updated to match, or they become wrong. The tables below show which knobs each
-> sample sets, so you can find what to touch. Cross-check against [configuration.md](../api/configuration.md) and
-> [modules/README.md](../api/modules/README.md) (the feature-flag list).
+> sample sets, so you can find what to touch. Cross-check against `$api/configuration` and
+> `$api/modules` (the feature-flag list).
 
 ## Docker samples (`samples/docker/`)
 
@@ -57,4 +58,4 @@ Fixed container config paths: `Presets.json` → `/app/Config_Files/Presets.json
   `OpenTelemetry.Production.json` + `aspire-dashboard-config.json` only when shipping OTel/Aspire.
 - Published samples bind config files read-only and use `binacle/binacle-net:latest`. The local build pipeline
   (`config/docker-compose.build.yml`, used by `build.sh`) instead uses `binacle-net:local` and injects config via
-  compose `configs:` — see [build-topology.md](../build-topology.md).
+  compose `configs:` — see `$build-topology`.

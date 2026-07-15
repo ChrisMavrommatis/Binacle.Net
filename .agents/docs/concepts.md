@@ -1,6 +1,7 @@
 ---
+id: concepts
 description: Fit exits early on first failure; pack continues and returns positions. Both return the same result shape — packed items and unpacked items. Used by both Lib algorithms and API endpoints.
-verified: 2026-05-23
+verified: 2026-07-15
 check: Fit/pack behavior matches AlgorithmOperation usage in lib/src/Binacle.Lib/
 ---
 
@@ -32,6 +33,6 @@ Both fit and pack return the same result: packed items and unpacked items.
 Fit exits early, so the result reflects where it stopped — not a full run.
 If you send 10 items and fit stops on item 4, items 5–10 are all "unpacked" even though they were never tried.
 
-See [api/v4/README.md](api/v4/README.md) for how this distinction maps to API endpoints and response shapes.
+See `$api/v4` for how this distinction maps to API endpoints and response shapes.
 
 Both fit and pack share the algorithm guarantee — a positive result is reliable; a negative result may be a heuristic miss.

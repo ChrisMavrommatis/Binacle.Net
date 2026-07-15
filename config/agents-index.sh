@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Regenerates the _index.md manifest for each .agents/ content dir: docs, plans, memory.
+# Regenerates the _index.md manifest for each .agents/ content dir: docs, design, plans, ideas, memory.
 # Each index lists every .md (recursively), grouped by area (the first path segment under the dir;
 # root-level files go under "General"), with a one-line description.
 # Description source, in order: `description:` frontmatter -> first `# ` heading -> filename.
@@ -83,6 +83,10 @@ generate_index ".agents/docs" "Agent Docs Index" \
 "Every doc in \`.agents/docs/\`, grouped by area. Scan for your topic, then read that file — do not work
 from this summary. Task-based entry points (\"I want to add a v4 endpoint\") are in the \"Common Tasks\"
 table of [README.md](README.md)."
+
+generate_index ".agents/design" "Agent Design Index" \
+"Every design record in \`.agents/design/\`, grouped by area. The settled design behind the docs — the
+decisions (why) and the findings (measured evidence). Permanent and citable; read the one you need."
 
 generate_index ".agents/plans" "Agent Plans Index" \
 "Every plan in \`.agents/plans/\` (recursive), grouped by area. Plans are work not yet done — read the one

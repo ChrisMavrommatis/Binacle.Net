@@ -1,4 +1,5 @@
 ---
+id: packages/dependencies
 description: TypeScript packages dependency tree — the npm workspaces and which package imports (and declares) which.
 verified: 2026-07-14
 check: package.json deps plus actual `from "<pkg>"` imports across packages/*/src and vipaq/packages/binacle-vipaq/src match the graph; every workspace import is declared
@@ -40,13 +41,12 @@ theme-switcher ───────────────┘
 
 ## Notes
 
-1. **Every workspace import is declared.** `binacle-net-ui` → `binacle-vipaq` and `theme-switcher` → `cookies`
-   were once imported in source without a `package.json` entry (they resolved only because the root workspace
-   hoists every package). Both are now declared as `"*"`, the way `binacle-vipaq` declares
-   `binacle-compact-notation`, so a package no longer depends on hoisting to build.
+1. **Every workspace import is declared** as `"*"` in the importer's `package.json` (`binacle-net-ui` →
+   `binacle-vipaq`, `theme-switcher` → `cookies`, `binacle-vipaq` → `binacle-compact-notation`), so resolution
+   never relies on workspace hoisting.
 
 2. **`binacle-vipaq` touches `binacle-compact-notation` only in `tools/` and `tests/`**, not in runtime `src/`.
    The vipaq mirror parses the shared compact-geometry notation when generating interop artifacts and reading
-   vectors; the format itself pulls in nothing. See [../vipaq/typescript.md](../vipaq/typescript.md).
+   vectors; the format itself pulls in nothing. See `$vipaq/typescript`.
 
 3. **`binacle-compact-notation` and `cookies` are leaves** — no workspace or runtime deps.

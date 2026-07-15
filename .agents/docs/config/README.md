@@ -1,17 +1,18 @@
 ---
+id: config
 description: config/ — maintainer local-dev tooling: run/test/benchmark/build scripts, the doc-index and tmux scripts, local docker-compose, env files, and emulator state
-verified: 2026-07-06
+verified: 2026-07-15
 check: Script list, docker-compose services, and env keys match config/
 also_update:
-  - commands.md
-  - samples/README.md
+  - commands
+  - samples
 ---
 
 # Config
 
 `config/` is the **maintainer's local-dev tooling** — run/test/build scripts, local Docker Compose, env files, and
 emulator state. It is **not** a deployment template; user-facing deployment starting points live in
-[samples](../samples/README.md). For the quick "how do I run X" reference see [commands.md](../commands.md); this
+samples (`$samples`). For the quick "how do I run X" reference see `$commands`; this
 doc describes what's in the directory.
 
 ## Scripts (run from the repo root)
@@ -23,7 +24,7 @@ doc describes what's in the directory.
 | `performance.<slice>.sh` | `dotnet run -c Release` for the slice's `PerformanceTests`. Slices `lib`, `vipaq`. Writes to gitignored `PerformanceTests.Artifacts` |
 | `benchmarks.<slice>.sh [alias]` | `dotnet run -c Release --filter <pattern>` from the slice's `Benchmarks` project. Slices `lib`, `vipaq`. No arg = all |
 | `build.sh` | Publishes (`-c Release -o build/output --self-contained --runtime linux-x64`), `docker build -t binacle-net:local`, then `docker compose -f config/docker-compose.build.yml up` |
-| `agents-index.sh` | Regenerates the `_index.md` manifest for `.agents/docs`, `.agents/plans`, and `.agents/memory` (grouped by area) |
+| `agents-index.sh` | Regenerates the `_index.md` manifest for `.agents/docs`, `.agents/design`, `.agents/plans`, `.agents/ideas`, and `.agents/memory` (grouped by area) |
 | `tmux.sh` | Builds/re-attaches the `binacle` tmux session (windows `api`/`docs`/`web`/`tests`/`misc`/`bench_1..3`); panes are pre-`cd`'d, nothing auto-runs |
 
 The aliases/kinds live inside each script (`api.sh` and the per-slice `tests.*`, `performance.*`, `benchmarks.*`).
@@ -45,4 +46,4 @@ repo root first — the packages are npm workspaces, so one install at the root 
   Both set only the compose project name (no secrets — JWT/OTel/storage values are inlined in the compose files).
 - `config/azurite/` and `config/services/azurite/` hold Azurite emulator state (`__azurite_db_*__.json`).
 - `config/config.proj` is a `Microsoft.Build.NoTargets` content project (no compile) that includes the config
-  files in the solution — see [build-topology.md](../build-topology.md).
+  files in the solution — see `$build-topology`.

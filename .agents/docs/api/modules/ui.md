@@ -1,9 +1,10 @@
 ---
+id: api/modules/ui
 description: UIModule — optional Blazor Web App interactive packing demo. Pages, JS stack, API connection, config, and services.
-verified: 2026-05-26
+verified: 2026-07-15
 check: Pages, JS imports, services, and window.binacle API match api/src/Binacle.Net.UIModule/
 also_update:
-  - packages/README.md
+  - packages
 ---
 
 # UIModule

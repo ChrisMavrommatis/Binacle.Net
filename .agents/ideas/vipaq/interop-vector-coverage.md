@@ -2,7 +2,7 @@
 
 **Status:** Unvetted idea. Low value — add only if a real need appears.
 
-The C#/TS interop apparatus is built and green (see `.agents/docs/vipaq/cross-language-testing.md`). These are
+The C#/TS interop apparatus is built and green (see `$vipaq/cross-language-testing`). These are
 the rows we chose not to add. Each is just new `interop/input.json` rows plus a regen — the matrix fans them
 across both suites automatically, so the cost is small. The value is what's unproven.
 
@@ -25,4 +25,4 @@ Adding rows before then means doing it twice.
 
 ## Related
 
-- `.agents/docs/vipaq/cross-language-testing.md` — the apparatus and the full vector inventory
+- `$vipaq/cross-language-testing` — the apparatus and the full vector inventory

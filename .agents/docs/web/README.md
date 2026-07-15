@@ -1,9 +1,10 @@
 ---
+id: web
 description: Jekyll marketing/landing site at web/ — product home, apps listing, and interactive packing demo.
 verified: 2026-07-06
 check: Collections, JS bundles, and plugin list match web/_config.yml and web/js/
 also_update:
-  - packages/README.md
+  - packages
 ---
 
 # Web Site

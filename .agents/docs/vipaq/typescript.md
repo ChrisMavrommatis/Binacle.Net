@@ -1,9 +1,10 @@
 ---
+id: vipaq/typescript
 description: Binacle.ViPaq TypeScript mirror (vipaq/packages/binacle-vipaq) — public API and how it differs from the C# library
 verified: 2026-07-14
 check: TS API signatures and divergences match vipaq/packages/binacle-vipaq/src/
 also_update:
-  - vipaq/README.md
+  - vipaq
 ---
 
 # ViPaq — TypeScript Mirror
@@ -11,7 +12,7 @@ also_update:
 `vipaq/packages/binacle-vipaq` is a **hand-maintained** TypeScript reimplementation of the ViPaq format — no
 codegen, no shared schema. It mirrors the C# file structure by hand, and the two are kept byte-compatible by hand.
 Any change to the C# wire must be replicated here. The normative format is `vipaq/PROTOCOL.md`; see
-[README.md](README.md) for the C# side.
+`$vipaq` for the C# side.
 
 ## Public API
 
@@ -43,7 +44,7 @@ The two header bytes and their bit packing, `Width` (`Eight = 0`, `Sixteen = 1`;
 (`RowMajor = 0`, `Columnar = 1`), `Version`, the per-section width choice (narrowest that fits, both item widths
 `Eight` when there are no items), little-endian order, the field order (2-byte header, then the body: `uint16`
 count, bin L/W/H, per-item dims then coords in the layout's order), the `[0, 65535]` value cap, the 65,535
-item-count cap, and the codec (**raw DEFLATE**, decisions.md D16). The codec is resolved from the header: DEFLATE
+item-count cap, and the codec (**raw DEFLATE**, `$vipaq#D16`). The codec is resolved from the header: DEFLATE
 when the compressed bit is set, a pass-through NoOp when not.
 
 ## How it differs from C# — read before assuming parity
@@ -66,4 +67,4 @@ the `ProtocolReader` / `ProtocolWriter` little-endian and range guards, `ViPaqSe
 
 The suite reads the **shared cross-language vectors** in `vipaq/test-vectors/` — the same files the C# suite reads
 — so both implementations grade against one answer key and can't silently drift. The `{raw, deflate, gzip}`
-cross-decode matrix is done; see [cross-language-testing.md](cross-language-testing.md).
+cross-decode matrix is done; see `$vipaq/cross-language-testing`.

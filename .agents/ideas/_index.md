@@ -19,6 +19,7 @@ and move it to `.agents/plans/` once it's picked up. See [README.md](README.md) 
 |---|---|
 | [api/admin-user-management-site.md](api/admin-user-management-site.md) | Idea: Admin site for user management |
 | [api/per-user-packing-logs.md](api/per-user-packing-logs.md) | Idea: per-user packing logs |
+| [api/uimodule-alpine-port.md](api/uimodule-alpine-port.md) | Idea: UIModule — port from Blazor reactivity to Alpine.js |
 
 ## Shared
 

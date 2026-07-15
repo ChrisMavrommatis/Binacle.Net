@@ -1,17 +1,18 @@
 ---
-description: ViPaq decisions ledger — the locked decisions (D1–D16) and their reasons, plus the open questions.
+id: vipaq/decisions
+description: ViPaq decisions ledger — the locked decisions and their reasons, plus the open questions.
 verified: 2026-07-14
-check: Locked decisions D1–D16 are not contradicted by vipaq/PROTOCOL.md or vipaq/src/Binacle.ViPaq
+check: Locked decisions are not contradicted by vipaq/PROTOCOL.md or vipaq/src/Binacle.ViPaq
 also_update:
-  - vipaq/architecture.md
-  - vipaq/findings.md
+  - vipaq/architecture
+  - vipaq/findings
 ---
 
 # ViPaq — decisions ledger
 
-Locked decisions and open questions, with the *why*. Evidence lives in [findings.md](findings.md); design detail in
-[architecture.md](architecture.md). This file is the "what we settled and why" so a fresh session doesn't
-re-litigate it.
+Locked decisions and open questions, with the *why*. Evidence lives in `$vipaq/findings` (superseded prototype
+numbers in `$vipaq/history`); design detail in `$vipaq/architecture`. This file is the "what we settled and why"
+so a fresh session doesn't re-litigate it.
 
 ## What we must reach (must-have)
 
@@ -40,7 +41,7 @@ Every decision — a header bit, a codec, a layout, a feature — must answer **
 ### D1 — v2 is `8/16 + reserved codes`, for simplicity (CONFIRMED 2026-07-05)
 Varint deferred to Session 7, may never happen. **Not a size play** — two tiers cost the same as four on ≤16-bit
 data, so ~0% smaller. The payoff is a **simpler format** (2 tiers not 4; no 2⁵³ ceiling to reason about) and a
-clean base if varint is ever wanted. Do not sell "20% smaller" — that was a Brotli-q11 artifact (see findings).
+clean base if varint is ever wanted. Do not sell "20% smaller" — that was a Brotli-q11 artifact (see `$vipaq/findings`).
 
 ### D2 — 16-bit cap in v2.0; throw above 65,535
 Fixed 8/16 caps at 65,535. v2.0 throws above it; varint (Session 7) lifts the cap later. mm → 65 m, fine for
@@ -60,18 +61,14 @@ ViPaq has one implementation, so there's no in-code baseline like lib's v1-vs-v2
 - Results stay in the repo under `results/`, organized by slice — see [results/README.md](../../../results/README.md)
   for the layout and the scratch-vs-curated convention. (Settled 2026-07-14; the old results-migration plan is closed.)
 
-### D4 — The permanent harness uses only the minimal public API (CONFIRMED 2026-07-07, AMENDED 2026-07-10)
-The permanent benchmark **encodes and decodes** through `ViPaqSerializer.Serialize`/`Deserialize` only. That part
-stands unchanged, and it is what makes the harness layout-agnostic.
-
-**Amendment (2026-07-10): it reads the header through the library's internal `Header`, not by re-parsing bytes.**
-`Binacle.ViPaq` grants `InternalsVisibleTo` to `Binacle.ViPaq.TestsKernel`, and `ViPaqHeader` wraps `Header`
-behind a private field, exposing only `bool`/`int`/`string`. The original rule made the harness re-implement
-PROTOCOL §2's bit layout and §3's size arithmetic — a second copy of the spec that had already gone stale by the
-rewrite (it still read a one-byte header and treated compression as a `Version`). **One copy of the spec beats a
-clean boundary here.** The reasons the boundary existed are unharmed: the harness still calls nothing but
-`Serialize`/`Deserialize` to move bytes, and `Header` is a frozen wire description, not an evolving API — if it
-churns, the format churned, and the harness *should* break.
+### D4 — The permanent harness uses only the minimal public API (CONFIRMED 2026-07-07)
+The permanent benchmark **encodes and decodes** through `ViPaqSerializer.Serialize`/`Deserialize` only — that is
+what makes the harness layout-agnostic. It reads the header through the library's internal `Header`, not by
+re-parsing bytes: `Binacle.ViPaq` grants `InternalsVisibleTo` to `Binacle.ViPaq.TestsKernel`, and `ViPaqHeader`
+wraps `Header` behind a private field, exposing only `bool`/`int`/`string`. **One copy of the spec beats a clean
+boundary here** — `Header` is a frozen wire description, not an evolving API, so if it churns the format churned and
+the harness *should* break. (This reading-via-internals rule replaced an earlier re-parse-the-bytes rule; the
+superseded version is in `$vipaq/history`.)
 
 Two consequences of the public-API rule, both still true:
 - **Layout-agnostic for free** — when v2 swaps row→columnar internally, the bytes change but the harness call
@@ -83,26 +80,24 @@ Two consequences of the public-API rule, both still true:
 - **Phase 1 adds a compression override** (D13) that the harness may use to measure raw vs compressed. That is a
   measurement entry point, not a caller knob, and it does not change what the public default does.
 - **Why minimal:** a permanent ruler must not churn when the lib evolves. Coupling it to an evolving API would
-  defeat the point. The codec race is part of the ruler, not a separate experiment (see D5, reversed).
+  defeat the point. The codec race is part of the ruler, not a separate experiment (D5).
 
-### D5 — The codec race lives in the harness (CONFIRMED 2026-07-07, REVERSED 2026-07-10)
+### D5 — The codec race lives in the harness, permanently (CONFIRMED 2026-07-07)
 - **Permanent harness**: measures real-mode size + CPU/mem + protobuf ratio, and *observes* the shipped
   compression crossover by sweeping item count.
 - **The codec race is part of it, permanently.** The harness encodes every scenario in each mode — `Raw`, `NoOp`,
   and deflate/gzip across both layouts — and mirrors each codec onto protobuf. The reports are in
   `results/vipaq/compression/`.
 
-**Reversed 2026-07-10.** This decision used to say the codec race was a **one-off experiment**: run it in a
-throwaway, record the answer, keep it out of the permanent ruler. The worry was that bolting an experiment onto
-the ruler stops the ruler being comparable over time.
-
-That was wrong, for a reason it did not anticipate: **the race is not only about the codec.**
-
+Why it belongs in the permanent ruler, not a throwaway — **the race is not only about the codec:**
 - It also settles **row-major vs columnar**, which is unmeasured and is a permanent harness concern.
-- It fixes a real bug in the existing report. The harness compares a **compressed** ViPaq token against **raw**
-  protobuf, so the gap it prints is mostly the compression, not the format. Mirroring each codec onto protobuf
-  is the fix, and it is not an experiment — it is the ruler being honest.
+- It fixes a real bug. The harness would otherwise compare a **compressed** ViPaq token against **raw** protobuf,
+  so the gap it prints is mostly the compression, not the format. Mirroring each codec onto protobuf is the fix —
+  the ruler being honest, not an experiment.
 - "Is deflate still the right pick on this data?" is worth re-asking as the data changes, not answering once.
+
+(This reverses an earlier decision that scoped the race as a one-off experiment; the superseded version is in
+`$vipaq/history`.)
 
 Consequences: `ICompressionCodec`, `DeflateCodec`, `GzipCodec` and `NoOpCodec` are **permanent**. Nothing
 collapses when the codec is pinned. The wire still pins exactly one codec — `Version` fixes it and there is no
@@ -120,7 +115,7 @@ answer depends on the data, not its size. Try-both has no knob to get wrong and 
 
 Cost: one extra compress pass on the encode path. Session 4 must measure it (encode is the priority — D8). If the
 cost is unacceptable, the fallback is a threshold, and we are back to picking the wrong one. Evidence:
-[findings.md](findings.md).
+`$vipaq/findings`.
 
 The spec states this as a **SHOULD**, not a MUST: the `Compressed` bit is normative, the choosing policy is not.
 That is what lets phase 1 force compression on or off to measure it — see D13.
@@ -151,7 +146,7 @@ resolves to *that* library, which embeds nothing, so lookups return empty and te
 
 The ViPaq kernel now has its own `Files/` trio (`IFile`, `EmbeddedResourceFile`, `EmbeddedResourceFileProvider`),
 where `GetExecutingAssembly` correctly resolves to the assembly that embeds the data. This matches the standalone
-principle already recorded for the reader (memory `vipaq-generator-standalone`). **Revisit sharing only if a third
+principle already recorded for the reader. **Revisit sharing only if a third
 consumer appears** — and even then, share the enumeration, not the parse.
 
 ### D11 — Breaking rebuild; the old format is ignored (CONFIRMED 2026-07-09)
@@ -229,4 +224,4 @@ moot now the default is uncompressed; nothing blocks shipping.
 
 ## Ruled out — do not rebuild
 24-bit ladder (8/16/24/32) + coords-ride-bin · Brotli q11 as default · byte-plane/transpose layout · raw Deflate
-as a third codec · selling "20% smaller". See [findings.md](findings.md) for the numbers behind each.
+as a third codec · selling "20% smaller". See `$vipaq/findings` for the numbers behind each.

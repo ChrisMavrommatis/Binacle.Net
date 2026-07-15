@@ -1,9 +1,10 @@
 ---
+id: api/presets
 description: What presets are, where they're configured, how route params map to bins, and how to add one for tests
-verified: 2026-05-23
+verified: 2026-07-15
 check: Route patterns match endpoint files; Presets.json optional:false confirmed in config
 also_update:
-  - api/configuration.md
+  - api/configuration
 ---
 
 # Presets
@@ -11,7 +12,7 @@ also_update:
 A preset is a named collection of bins defined in config.
 Preset endpoints let callers pick a bin by name instead of sending dimensions in the request body.
 
-See [configuration.md](configuration.md) for where config files live and how to override them.
+See `$api/configuration` for where config files live and how to override them.
 
 ## Config
 

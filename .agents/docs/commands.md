@@ -1,13 +1,14 @@
 ---
+id: commands
 description: How to run the API, tests, benchmarks, and build the Docker image
-verified: 2026-07-06
+verified: 2026-07-15
 check: Aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
 ---
 
 # Commands
 
 All scripts live in `config/` and are run from the repo root. For the `config/` directory anatomy (scripts, local
-compose, env, emulator state) see [config/README.md](config/README.md).
+compose, env, emulator state) see `$config`.
 
 ## Run the API
 
@@ -70,9 +71,10 @@ To build the API image locally and run it with all modules on, use `./config/bui
 ./config/agents-index.sh
 ```
 
-Rewrites the `_index.md` manifest for `.agents/docs`, `.agents/plans`, and `.agents/memory` (grouped by area).
-Each entry's description comes from the file's `description:` frontmatter, falling back to its first heading. Run it
-after adding, renaming, or re-describing any `.agents/{docs,plans,memory}/*.md` file.
+Rewrites the `_index.md` manifest for `.agents/docs`, `.agents/design`, `.agents/plans`, `.agents/ideas`, and
+`.agents/memory` (grouped by area). Each entry's description comes from the file's `description:` frontmatter,
+falling back to its first heading. Run it after adding, renaming, or re-describing any
+`.agents/{docs,design,plans,ideas,memory}/*.md` file.
 
 ## Dev session (tmux)
 

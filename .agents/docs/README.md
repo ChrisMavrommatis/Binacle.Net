@@ -43,41 +43,41 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 
 ## Commands
 
-See [Commands](commands.md) — how to run the API, tests, benchmarks, and build the Docker image.
+See Commands (`$commands`) — how to run the API, tests, benchmarks, and build the Docker image.
 
 ## Common Tasks
 
 | Task | Read these |
 |---|---|
-| Add a v4 endpoint | `api/endpoints.md`, `api/v4/add-endpoint.md`, `api/v4/contracts.md`, `api/service.md`, `api/kernel.md`, `api/openapi.md` |
-| Add or understand a contract type | `api/v4/contracts.md`, `api/v4/add-endpoint.md` |
-| Work with ServiceModule (auth, rate limiting) | `api/modules/service.md`, `api/modules/README.md` |
-| Understand startup and module wiring | `api/README.md`, `api/modules/README.md`, `api/kernel.md` |
-| Understand fit vs pack | `concepts.md` |
-| Understand how results are selected | `lib/result-selection.md`, `lib/processors.md` |
-| Understand how OperationResult is built | `lib/result-building.md` |
-| Add or modify algorithm processing | `lib/algorithm-factory.md`, `lib/processors.md` |
-| Add or modify a lib test | `lib/tests.md`, `shared/README.md` (scenario data & formats) |
-| Add or modify an API integration test | `api/tests.md`, `shared/README.md` (scenario data & formats) |
-| Work with presets | `api/presets.md`, `api/v4/README.md` |
-| Understand v3 vs v4 differences | `api/v3/README.md`, `api/v4/README.md` |
-| Work with ViPaq | `vipaq/README.md` |
-| Configure modules / env vars / overrides | `api/configuration.md` |
-| Run or deploy with Docker / Kubernetes | `samples/README.md`, `commands.md`, `build-topology.md` |
-| Understand the build & workspace layout | `build-topology.md`, `commands.md` |
+| Add a v4 endpoint | `$api/endpoints`, `$api/v4/add-endpoint`, `$api/v4/contracts`, `$api/service`, `$api/kernel`, `$api/openapi` |
+| Add or understand a contract type | `$api/v4/contracts`, `$api/v4/add-endpoint` |
+| Work with ServiceModule (auth, rate limiting) | `$api/modules/service`, `$api/modules` |
+| Understand startup and module wiring | `$api`, `$api/modules`, `$api/kernel` |
+| Understand fit vs pack | `$concepts` |
+| Understand how results are selected | `$lib/result-selection`, `$lib/processors` |
+| Understand how OperationResult is built | `$lib/result-building` |
+| Add or modify algorithm processing | `$lib/algorithm-factory`, `$lib/processors` |
+| Add or modify a lib test | `$lib/tests`, `$shared` (scenario data & formats) |
+| Add or modify an API integration test | `$api/tests`, `$shared` (scenario data & formats) |
+| Work with presets | `$api/presets`, `$api/v4` |
+| Understand v3 vs v4 differences | `$api/v3`, `$api/v4` |
+| Work with ViPaq | `$vipaq` |
+| Configure modules / env vars / overrides | `$api/configuration` |
+| Run or deploy with Docker / Kubernetes | `$samples`, `$commands`, `$build-topology` |
+| Understand the build & workspace layout | `$build-topology`, `$commands` |
 
 ## Slice Docs
 
-- [Concepts](concepts.md) — fit vs pack; ideas that span slices
-- [API](api/README.md) — endpoints, contracts, service, kernel, modules (Diagnostics, ServiceModule, UIModule)
-- [Configuration](api/configuration.md) — config file layout, env-var conventions, feature flags
-- [Lib](lib/README.md) — algorithms, processors, result building and selection; lib tests
-- [Shared](shared/README.md) — Binacle.TestsKernel scenario data & compact formats; OR-Library data
-- [ViPaq](vipaq/README.md) — `Binacle.ViPaq` binary format and TypeScript mirror
-- [Packages](packages/README.md) — TypeScript npm packages
-- [Ruby](ruby/README.md) — Ruby/Jekyll plugins
-- [Docs Site](docs/README.md) — Jekyll docs site
-- [Web Site](web/README.md) — Jekyll marketing site
-- [Samples](samples/README.md) — Docker & Kubernetes deployment starting points
-- [Config](config/README.md) — maintainer local-dev tooling: scripts, local compose, env, emulator state
-- [Build Topology](build-topology.md) — solution, npm workspaces, asset copy, Docker build chain
+- Concepts (`$concepts`) — fit vs pack; ideas that span slices
+- API (`$api`) — endpoints, contracts, service, kernel, modules (Diagnostics, ServiceModule, UIModule)
+- Configuration (`$api/configuration`) — config file layout, env-var conventions, feature flags
+- Lib (`$lib`) — algorithms, processors, result building and selection; lib tests
+- Shared (`$shared`) — Binacle.TestsKernel scenario data & compact formats; OR-Library data
+- ViPaq (`$vipaq`) — `Binacle.ViPaq` binary format and TypeScript mirror
+- Packages (`$packages`) — TypeScript npm packages
+- Ruby (`$ruby`) — Ruby/Jekyll plugins
+- Docs Site (`$docs`) — Jekyll docs site
+- Web Site (`$web`) — Jekyll marketing site
+- Samples (`$samples`) — Docker & Kubernetes deployment starting points
+- Config (`$config`) — maintainer local-dev tooling: scripts, local compose, env, emulator state
+- Build Topology (`$build-topology`) — solution, npm workspaces, asset copy, Docker build chain

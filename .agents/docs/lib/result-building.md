@@ -1,6 +1,7 @@
 ---
+id: lib/result-building
 description: OperationResultBuilder — how OperationResult is constructed, status rules, volume percentages, and integrity checks
-verified: 2026-05-23
+verified: 2026-07-15
 check: OperationResultBuilder API matches source in lib/src/Binacle.Lib/
 ---
 
@@ -13,7 +14,7 @@ It's the only way an `OperationResult` is created — `OperationResult` (`lib/sr
 has an internal constructor and cannot be instantiated directly.
 
 Each algorithm creates a builder during initialisation and calls it at the end of `Execute()`.
-See [algorithms.md](algorithms.md) for where the algorithm implementations live.
+See `$lib/algorithms` for where the algorithm implementations live.
 
 ## Usage pattern
 

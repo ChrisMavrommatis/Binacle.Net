@@ -30,7 +30,7 @@
 		"Items": []
 	},
 	{
-		"Name": "Baseline_5x5x80-1_TooLong_DoesNotFitIn_60x40x30",
+		"Name": "Baseline_5x5x80_TooLong_60x40x30",
 		"WidthBits": 8,
 		"Bin": "60x40x30",
 		"Items": []

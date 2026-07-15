@@ -1,15 +1,16 @@
 ---
+id: lib
 description: Binacle.Lib and Binacle.Lib.Abstractions — the algorithm layer
-verified: 2026-06-10
+verified: 2026-07-15
 check: Project list and test aliases match the solution
 also_update:
-  - lib/tests.md
-  - shared/README.md
+  - lib/tests
+  - shared
 ---
 
 # Lib
 
-If you don't know where to start, read [processors.md](processors.md) first.
+If you don't know where to start, read `$lib/processors` first.
 
 Two projects:
 
@@ -18,13 +19,13 @@ Two projects:
 
 ## Docs
 
-- [Models](models.md) — Bin, Item, IWith* interfaces, packed/unpacked result types
-- [Algorithms](algorithms.md) — heuristics, versions, operation types
-- [Algorithm Factory](algorithm-factory.md) — IAlgorithmFactory, DI registration, how tests construct algorithms
-- [Processors](processors.md) — IAlgorithmProcessor, bin processors, factories, algorithm sets per path
-- [Result Building](result-building.md) — OperationResultBuilder, status rules, volume percentages
-- [Result Selection](result-selection.md) — BestAlgorithm, SmallestBin, BestBin strategies and scoring
-- [Lib Tests](tests.md) — unit/perf/benchmark projects, AlgorithmFactories, fixtures
+- Models (`$lib/models`) — Bin, Item, IWith* interfaces, packed/unpacked result types
+- Algorithms (`$lib/algorithms`) — heuristics, versions, operation types
+- Algorithm Factory (`$lib/algorithm-factory`) — IAlgorithmFactory, DI registration, how tests construct algorithms
+- Processors (`$lib/processors`) — IAlgorithmProcessor, bin processors, factories, algorithm sets per path
+- Result Building (`$lib/result-building`) — OperationResultBuilder, status rules, volume percentages
+- Result Selection (`$lib/result-selection`) — BestAlgorithm, SmallestBin, BestBin strategies and scoring
+- Lib Tests (`$lib/tests`) — unit/perf/benchmark projects, AlgorithmFactories, fixtures
 
 ## Related Tests
 
@@ -34,7 +35,7 @@ Two projects:
 | `lib/test/Binacle.Lib.PerformanceTests` | `performance` | Algorithm performance (console runner, not xUnit) |
 | `lib/test/Binacle.Lib.Benchmarks` | (none) | BenchmarkDotNet microbenchmarks — run via `./config/benchmarks.lib.sh [AlgorithmRacing\|FastValidation]` |
 
-See [Lib Tests](tests.md) for fixtures and the test projects, and [Shared](../shared/README.md) for the
+See Lib Tests (`$lib/tests`) for fixtures and the test projects, and Shared (`$shared`) for the
 scenario data format and providers.
 
 ## Notes
@@ -45,8 +46,8 @@ scenario data format and providers.
 ## Dependencies
 
 The Abstractions/Lib split and the composition-root rule (only `Binacle.Net` references the concrete lib) are in
-[dependencies.md](dependencies.md).
+`$lib/dependencies`.
 
 ## Concepts
 
-This slice implements [Fit vs Pack](../concepts.md).
+This slice implements Fit vs Pack (`$concepts`).

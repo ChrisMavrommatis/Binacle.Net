@@ -1,9 +1,10 @@
 ---
+id: lib/processors
 description: IAlgorithmProcessor, IBinProcessor, and IMultiAlgorithmBinProcessor — their factories and which algorithms each execution path uses
-verified: 2026-06-10
+verified: 2026-07-15
 check: Interface names and Process() signatures match lib/src/Binacle.Lib/
 also_update:
-  - api/service.md
+  - api/service
 ---
 
 # Processors
@@ -96,9 +97,9 @@ After processors produce results, `IResultSelector` picks one. Quick reference:
 |---|---|
 | `BestAlgorithm` | `SingleBinAsync` auto-select; `LoopMultiAlgorithmBinProcessor` per bin |
 | `SmallestBin` | `SmallestBinAsync` — picks smallest successful bin |
-| `BestBin` | On the interface; not currently called by the service — see [result-selection.md](result-selection.md) |
+| `BestBin` | On the interface; not currently called by the service — see `$lib/result-selection` |
 
-See [result-selection.md](result-selection.md) for scoring rules and how tests verify each strategy.
+See `$lib/result-selection` for scoring rules and how tests verify each strategy.
 
 ## Parallel variants
 

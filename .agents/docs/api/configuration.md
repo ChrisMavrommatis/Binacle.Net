@@ -1,11 +1,12 @@
 ---
+id: api/configuration
 description: Config file layout, env-var conventions, override precedence, and feature flag list
-verified: 2026-06-10
+verified: 2026-07-15
 check: Config keys and env var names match appsettings.json and module config files; Cors.json present
 also_update:
-  - api/modules/service.md
-  - api/modules/diagnostics.md
-  - api/modules/README.md
+  - api/modules/service
+  - api/modules/diagnostics
+  - api/modules
 ---
 
 # Configuration
@@ -44,9 +45,9 @@ Each file can be overridden by a `.{EnvironmentName}.json` sibling (any ASP.NET 
 Development, Production, Staging, etc.). Only include the keys you want to change.
 Bind-mount individual files in Docker with `-v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro`.
 
-> **Note:** the `ServiceModule` base files (`ConnectionStrings.json`, `JwtAuth.json`) are not committed to the
-> repo — only their `.Development.json` variants ship. The base files are supplied at deploy time. `RateLimiter.json`
-> does ship a base file.
+> **Note:** the `Cors.json` and `ServiceModule` base files (`ConnectionStrings.json`, `JwtAuth.json`) are not
+> committed to the repo — only their `.Development.json` variants ship. The base files are supplied at deploy time.
+> `RateLimiter.json` does ship a base file.
 
 ### CORS (`Cors.json`)
 
@@ -118,10 +119,10 @@ All flags are boolean env vars. All default to `False` (disabled).
 
 `BINACLE_ADMIN_CREDENTIALS` — sets the default admin account credentials on first run (ServiceModule only).
 Not a feature flag and not in any config file — set it as an environment variable.
-Format is defined by ServiceModule; see [modules/service.md](modules/service.md) for details.
+Format is defined by ServiceModule; see `$api/modules/service` for details.
 
 ```bash
 ASPNETCORE_HTTP_PORTS=80
 ```
 
-See [modules/README.md](modules/README.md) for how modules are wired at startup.
+See `$api/modules` for how modules are wired at startup.

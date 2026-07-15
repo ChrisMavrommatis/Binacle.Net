@@ -53,7 +53,12 @@ internal class CodecCompressionCrossoverTest : ITest
 
 		Scenario? crossover = null;
 
-		foreach (var scenario in this.scenarios)
+		// Order by item count (then name) so the ladder reads cleanly and the crossover below is the *smallest*
+		// count where compression first pays. Unordered, the row order is embedded-resource enumeration order,
+		// which is not stable across rebuilds.
+		foreach (var scenario in this.scenarios
+			.OrderBy(scenario => scenario.ItemCount)
+			.ThenBy(scenario => scenario.Name, StringComparer.Ordinal))
 		{
 			var widths = ViPaqHeader.Create(scenario, this.encoderInfo).ToWidthsLabel();
 

@@ -1,9 +1,10 @@
 ---
+id: lib/algorithm-factory
 description: IAlgorithmFactory — how algorithm instances are created, DI registration, and how tests construct algorithms directly
-verified: 2026-06-10
+verified: 2026-07-15
 check: Class names match lib/src/Binacle.Lib/AlgorithmFactory.cs; DI registration matches api/src/Binacle.Net/ExtensionMethods/ServiceCollectionExtensions.cs
 also_update:
-  - lib/algorithms.md
+  - lib/algorithms
 ---
 
 # Algorithm Factory
@@ -32,7 +33,7 @@ The returned `IPackingAlgorithm` exposes `Algorithm`, `Version`, and `Execute(pa
 | `Algorithm.BFD` | `BestFitDecreasing_v2` |
 
 Throws `NotSupportedException` for any other value.
-Class files live under `lib/src/Binacle.Lib/Algorithms/<Heuristic> v<N>/` — see [algorithms.md](algorithms.md).
+Class files live under `lib/src/Binacle.Lib/Algorithms/<Heuristic> v<N>/` — see `$lib/algorithms`.
 
 `AlgorithmFactory_v1` and `AlgorithmFactory_v2` are `internal` — used for benchmarks only
 (`lib/test/Binacle.Lib.Benchmarks`, BenchmarkDotNet runner).
@@ -56,5 +57,5 @@ AlgorithmFactories.FFD_v2 = (bin, items) => new FirstFitDecreasing_v2<TestBin, T
 
 `CommonTestingFixture` runs all six versions (FFD/WFD/BFD × v1/v2) against every scenario.
 This keeps old versions tested without coupling them to the factory.
-See [Lib Tests](tests.md) for `AlgorithmFactories` and `CommonTestingFixture`, and [Shared](../shared/README.md)
+See Lib Tests (`$lib/tests`) for `AlgorithmFactories` and `CommonTestingFixture`, and Shared (`$shared`)
 for how scenarios are structured.

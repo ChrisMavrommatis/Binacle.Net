@@ -1,4 +1,5 @@
 ---
+id: shared/dependencies
 description: Shared slice dependency tree — Geometry (the BCL-only leaf everything geometric bottoms out on), CompactNotation, TestReporting, and the TestsKernel test hub; who references them and who sees internals.
 verified: 2026-07-14
 check: ProjectReference and InternalsVisibleTo entries in shared/**/*.csproj match the graph and notes below
@@ -54,6 +55,6 @@ shared/tools/Binacle.OrLibrary.Converter   exe tool
    inward edge from the shared slice into `lib` — deliberate, because the shared scenarios are typed against the
    lib's abstraction interfaces so lib and api tests can share them. It is a *test* library; nothing shipped
    references it. (Not to be confused with `Binacle.ViPaq.TestsKernel`, a separate ViPaq-only hub —
-   see [../vipaq/dependencies.md](../vipaq/dependencies.md).)
+   see `$vipaq/dependencies`.)
 
 3. **`Binacle.TestReporting` has no Binacle deps** — a plain writer, safe for any harness to reference.

@@ -1,17 +1,18 @@
 ---
+id: lib/tests
 description: lib/test projects — unit tests, performance tests, benchmarks; AlgorithmFactories, CommonTestingFixture, ResultSelectionTestingFixture, and run aliases
-verified: 2026-06-10
+verified: 2026-07-15
 check: Project list, AlgorithmFactories/CommonTestingFixture/ResultSelectionTestingFixture, and aliases match lib/test/ and config/tests.lib.sh + config/performance.lib.sh + config/benchmarks.lib.sh
 also_update:
-  - shared/README.md
-  - lib/algorithm-factory.md
-  - lib/result-selection.md
+  - shared
+  - lib/algorithm-factory
+  - lib/result-selection
 ---
 
 # Lib Tests
 
 Three projects under `lib/test/`. Scenario data and the `TestAlgorithmFactory<>` delegate come from the shared
-kernel — see [shared](../shared/README.md).
+kernel — see shared (`$shared`).
 
 | Project | Kind | Run |
 |---|---|---|
@@ -47,7 +48,7 @@ RunTest(string scenarioName, IResultSelectionStrategy strategy, Func<OperationRe
 Pulls the scenario from the kernel's `ResultSelection` `AllScenariosProvider`, calls `strategy.Select(results)`,
 applies `resultSelector`, and asserts it equals `scenario.ExpectedResult`. `ResultSelectionTests` runs both
 strategy versions: `BestAlgorithm_v1/v2` (selector `x => x.AlgorithmInfo.GetAlgorithmIdentifierName()`),
-`BestBin_v1/v2` and `SmallestBin_v1/v2` (selector `x => x.Bin.ID`). See [result-selection.md](result-selection.md).
+`BestBin_v1/v2` and `SmallestBin_v1/v2` (selector `x => x.Bin.ID`). See `$lib/result-selection`.
 
 ## Binacle.Lib.PerformanceTests
 

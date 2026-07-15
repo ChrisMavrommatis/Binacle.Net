@@ -6,50 +6,58 @@ Bodies compressed with gzip, both sides. Real placed data (offline FFD), each se
 ## Real scenarios — custom packs — Row
 Real placed data, Gzip codec, Row layout.
 
-| Scenario                                        | Items | Widths b/i/c | ViPaq bytes | ViPaq b64 | Proto bytes | Proto b64 | ViPaq/Proto |
-|-------------------------------------------------|-------|--------------|-------------|-----------|-------------|-----------|-------------|
-| Baseline_5x5x5-1_FitsIn_60x40x10                | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
-| Baseline_15x15x15-1_FitsIn_60x40x20             | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
-| Baseline_25x25x25-1_FitsIn_60x40x30             | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
-| Baseline_40x40x40-1_DoesNotFit_60x40x30         | 0     | 8/8/8        | 27          | 36        | 28          | 40        | 0.90        |
-| Baseline_5x5x80-1_TooLong_DoesNotFitIn_6        | 0     | 8/8/8        | 27          | 36        | 28          | 40        | 0.90        |
-| 0x40x30                                         |       |              |             |           |             |           |             |
-| Complex_FitsInSmall_1                           | 5     | 8/8/8        | 53          | 72        | 68          | 92        | 0.78        |
-| Complex_FitsInMedium_1                          | 16    | 8/8/8        | 78          | 104       | 106         | 144       | 0.72        |
-| Simple_2Same_FitIn_60x40x10                     | 2     | 8/8/8        | 37          | 52        | 42          | 56        | 0.93        |
-| Simple_2Same_FitIn_60x40x20                     | 2     | 8/8/8        | 36          | 48        | 43          | 60        | 0.80        |
-| Simple_2Same_1Rotated_FitIn_60x40x10            | 2     | 8/8/8        | 37          | 52        | 42          | 56        | 0.93        |
-| Simple_2Same_1Rotated_FitIn_60x40x20            | 2     | 8/8/8        | 36          | 48        | 43          | 60        | 0.80        |
-| Simple_5x5x5-100_FitIn_60x40x10                 | 100   | 8/8/8        | 219         | 292       | 286         | 384       | 0.76        |
-| Simple_15x15x15-8_FitIn_60x40x20                | 8     | 8/8/8        | 52          | 72        | 64          | 88        | 0.82        |
-| Simple_30x30x30-2_FitIn_60x40x30                | 2     | 8/8/8        | 33          | 44        | 42          | 56        | 0.79        |
-| Simple_30x30x30-3_DoesNotFitIn_60x40x30         | 2     | 8/8/8        | 33          | 44        | 42          | 56        | 0.79        |
-| Simple_15x15x15-16_FitIn_60x40x30               | 16    | 8/8/8        | 67          | 92        | 93          | 124       | 0.74        |
+| Scenario                                | Items | Widths b/i/c | ViPaq bytes | ViPaq b64 | Proto bytes | Proto b64 | ViPaq/Proto |
+|-----------------------------------------|-------|--------------|-------------|-----------|-------------|-----------|-------------|
+| Baseline_5x5x5-1_FitsIn_60x40x10        | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
+| Baseline_15x15x15-1_FitsIn_60x40x20     | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
+| Baseline_25x25x25-1_FitsIn_60x40x30     | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
+| Baseline_40x40x40-1_DoesNotFit_60x40x30 | 0     | 8/8/8        | 27          | 36        | 28          | 40        | 0.90        |
+| Baseline_5x5x80_TooLong_60x40x30        | 0     | 8/8/8        | 27          | 36        | 28          | 40        | 0.90        |
+| Complex_FitsInSmall_1                   | 5     | 8/8/8        | 53          | 72        | 68          | 92        | 0.78        |
+| Complex_FitsInMedium_1                  | 16    | 8/8/8        | 78          | 104       | 106         | 144       | 0.72        |
+| Simple_2Same_FitIn_60x40x10             | 2     | 8/8/8        | 37          | 52        | 42          | 56        | 0.93        |
+| Simple_2Same_FitIn_60x40x20             | 2     | 8/8/8        | 36          | 48        | 43          | 60        | 0.80        |
+| Simple_2Same_1Rotated_FitIn_60x40x10    | 2     | 8/8/8        | 37          | 52        | 42          | 56        | 0.93        |
+| Simple_2Same_1Rotated_FitIn_60x40x20    | 2     | 8/8/8        | 36          | 48        | 43          | 60        | 0.80        |
+| Simple_5x5x5-100_FitIn_60x40x10         | 100   | 8/8/8        | 219         | 292       | 286         | 384       | 0.76        |
+| Simple_15x15x15-8_FitIn_60x40x20        | 8     | 8/8/8        | 52          | 72        | 64          | 88        | 0.82        |
+| Simple_30x30x30-2_FitIn_60x40x30        | 2     | 8/8/8        | 33          | 44        | 42          | 56        | 0.79        |
+| Simple_30x30x30-3_DoesNotFitIn_60x40x30 | 2     | 8/8/8        | 33          | 44        | 42          | 56        | 0.79        |
+| Simple_15x15x15-16_FitIn_60x40x30       | 16    | 8/8/8        | 67          | 92        | 93          | 124       | 0.74        |
+| Simple_5x5x5-5_FitIn_50x50x50           | 5     | 8/8/8        | 45          | 60        | 51          | 68        | 0.88        |
+| Simple_5x5x5-13_FitIn_50x50x50          | 13    | 8/8/8        | 64          | 88        | 80          | 108       | 0.81        |
+| Simple_5x5x5-50_FitIn_50x50x50          | 50    | 8/8/8        | 127         | 172       | 169         | 228       | 0.75        |
+| Simple_5x5x5-200_FitIn_50x50x50         | 200   | 8/8/8        | 427         | 572       | 526         | 704       | 0.81        |
+| Simple_16bit-4_FitIn_600x400x300        | 4     | 16/16/16     | 49          | 68        | 61          | 84        | 0.81        |
 
 
 
 ## Real scenarios — custom packs — Columnar
 Real placed data, Gzip codec, Columnar layout.
 
-| Scenario                                        | Items | Widths b/i/c | ViPaq bytes | ViPaq b64 | Proto bytes | Proto b64 | ViPaq/Proto |
-|-------------------------------------------------|-------|--------------|-------------|-----------|-------------|-----------|-------------|
-| Baseline_5x5x5-1_FitsIn_60x40x10                | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
-| Baseline_15x15x15-1_FitsIn_60x40x20             | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
-| Baseline_25x25x25-1_FitsIn_60x40x30             | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
-| Baseline_40x40x40-1_DoesNotFit_60x40x30         | 0     | 8/8/8        | 27          | 36        | 28          | 40        | 0.90        |
-| Baseline_5x5x80-1_TooLong_DoesNotFitIn_6        | 0     | 8/8/8        | 27          | 36        | 28          | 40        | 0.90        |
-| 0x40x30                                         |       |              |             |           |             |           |             |
-| Complex_FitsInSmall_1                           | 5     | 8/8/8        | 49          | 68        | 68          | 92        | 0.74        |
-| Complex_FitsInMedium_1                          | 16    | 8/8/8        | 71          | 96        | 106         | 144       | 0.67        |
-| Simple_2Same_FitIn_60x40x10                     | 2     | 8/8/8        | 36          | 48        | 42          | 56        | 0.86        |
-| Simple_2Same_FitIn_60x40x20                     | 2     | 8/8/8        | 37          | 52        | 43          | 60        | 0.87        |
-| Simple_2Same_1Rotated_FitIn_60x40x10            | 2     | 8/8/8        | 36          | 48        | 42          | 56        | 0.86        |
-| Simple_2Same_1Rotated_FitIn_60x40x20            | 2     | 8/8/8        | 37          | 52        | 43          | 60        | 0.87        |
-| Simple_5x5x5-100_FitIn_60x40x10                 | 100   | 8/8/8        | 116         | 156       | 286         | 384       | 0.41        |
-| Simple_15x15x15-8_FitIn_60x40x20                | 8     | 8/8/8        | 44          | 60        | 64          | 88        | 0.68        |
-| Simple_30x30x30-2_FitIn_60x40x30                | 2     | 8/8/8        | 33          | 44        | 42          | 56        | 0.79        |
-| Simple_30x30x30-3_DoesNotFitIn_60x40x30         | 2     | 8/8/8        | 33          | 44        | 42          | 56        | 0.79        |
-| Simple_15x15x15-16_FitIn_60x40x30               | 16    | 8/8/8        | 57          | 76        | 93          | 124       | 0.61        |
+| Scenario                                | Items | Widths b/i/c | ViPaq bytes | ViPaq b64 | Proto bytes | Proto b64 | ViPaq/Proto |
+|-----------------------------------------|-------|--------------|-------------|-----------|-------------|-----------|-------------|
+| Baseline_5x5x5-1_FitsIn_60x40x10        | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
+| Baseline_15x15x15-1_FitsIn_60x40x20     | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
+| Baseline_25x25x25-1_FitsIn_60x40x30     | 1     | 8/8/8        | 33          | 44        | 38          | 52        | 0.85        |
+| Baseline_40x40x40-1_DoesNotFit_60x40x30 | 0     | 8/8/8        | 27          | 36        | 28          | 40        | 0.90        |
+| Baseline_5x5x80_TooLong_60x40x30        | 0     | 8/8/8        | 27          | 36        | 28          | 40        | 0.90        |
+| Complex_FitsInSmall_1                   | 5     | 8/8/8        | 49          | 68        | 68          | 92        | 0.74        |
+| Complex_FitsInMedium_1                  | 16    | 8/8/8        | 71          | 96        | 106         | 144       | 0.67        |
+| Simple_2Same_FitIn_60x40x10             | 2     | 8/8/8        | 36          | 48        | 42          | 56        | 0.86        |
+| Simple_2Same_FitIn_60x40x20             | 2     | 8/8/8        | 37          | 52        | 43          | 60        | 0.87        |
+| Simple_2Same_1Rotated_FitIn_60x40x10    | 2     | 8/8/8        | 36          | 48        | 42          | 56        | 0.86        |
+| Simple_2Same_1Rotated_FitIn_60x40x20    | 2     | 8/8/8        | 37          | 52        | 43          | 60        | 0.87        |
+| Simple_5x5x5-100_FitIn_60x40x10         | 100   | 8/8/8        | 116         | 156       | 286         | 384       | 0.41        |
+| Simple_15x15x15-8_FitIn_60x40x20        | 8     | 8/8/8        | 44          | 60        | 64          | 88        | 0.68        |
+| Simple_30x30x30-2_FitIn_60x40x30        | 2     | 8/8/8        | 33          | 44        | 42          | 56        | 0.79        |
+| Simple_30x30x30-3_DoesNotFitIn_60x40x30 | 2     | 8/8/8        | 33          | 44        | 42          | 56        | 0.79        |
+| Simple_15x15x15-16_FitIn_60x40x30       | 16    | 8/8/8        | 57          | 76        | 93          | 124       | 0.61        |
+| Simple_5x5x5-5_FitIn_50x50x50           | 5     | 8/8/8        | 40          | 56        | 51          | 68        | 0.82        |
+| Simple_5x5x5-13_FitIn_50x50x50          | 13    | 8/8/8        | 53          | 72        | 80          | 108       | 0.67        |
+| Simple_5x5x5-50_FitIn_50x50x50          | 50    | 8/8/8        | 86          | 116       | 169         | 228       | 0.51        |
+| Simple_5x5x5-200_FitIn_50x50x50         | 200   | 8/8/8        | 169         | 228       | 526         | 704       | 0.32        |
+| Simple_16bit-4_FitIn_600x400x300        | 4     | 16/16/16     | 48          | 64        | 61          | 84        | 0.76        |
 
 
 

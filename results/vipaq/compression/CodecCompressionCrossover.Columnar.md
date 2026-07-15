@@ -6,25 +6,29 @@ ViPaq stored size under each codec — raw (NoOp) next to deflate and gzip — s
 ## Real scenarios — custom packs — Columnar
 Real placed data, Columnar layout, all three codecs.
 
-| Scenario                                        | Items | Widths b/i/c | Raw b64 | Deflate b64 | Gzip b64 | Best    | Saved % |
-|-------------------------------------------------|-------|--------------|---------|-------------|----------|---------|---------|
-| Baseline_40x40x40-1_DoesNotFit_60x40x30         | 0     | 8/8/8        | 12      | 12          | 36       | Raw     | 0%      |
-| Baseline_5x5x80-1_TooLong_DoesNotFitIn_6        | 0     | 8/8/8        | 12      | 12          | 36       | Raw     | 0%      |
-| 0x40x30                                         |       |              |         |             |          |         |         |
-| Baseline_15x15x15-1_FitsIn_60x40x20             | 1     | 8/8/8        | 20      | 20          | 44       | Raw     | 0%      |
-| Baseline_25x25x25-1_FitsIn_60x40x30             | 1     | 8/8/8        | 20      | 20          | 44       | Raw     | 0%      |
-| Baseline_5x5x5-1_FitsIn_60x40x10                | 1     | 8/8/8        | 20      | 20          | 44       | Raw     | 0%      |
-| Simple_2Same_1Rotated_FitIn_60x40x10            | 2     | 8/8/8        | 28      | 24          | 48       | Deflate | 14%     |
-| Simple_2Same_1Rotated_FitIn_60x40x20            | 2     | 8/8/8        | 28      | 28          | 52       | Raw     | 0%      |
-| Simple_2Same_FitIn_60x40x10                     | 2     | 8/8/8        | 28      | 24          | 48       | Deflate | 14%     |
-| Simple_2Same_FitIn_60x40x20                     | 2     | 8/8/8        | 28      | 28          | 52       | Raw     | 0%      |
-| Simple_30x30x30-2_FitIn_60x40x30                | 2     | 8/8/8        | 28      | 20          | 44       | Deflate | 29%     |
-| Simple_30x30x30-3_DoesNotFitIn_60x40x30         | 2     | 8/8/8        | 28      | 20          | 44       | Deflate | 29%     |
-| Complex_FitsInSmall_1                           | 5     | 8/8/8        | 52      | 44          | 68       | Deflate | 15%     |
-| Simple_15x15x15-8_FitIn_60x40x20                | 8     | 8/8/8        | 76      | 36          | 60       | Deflate | 53%     |
-| Complex_FitsInMedium_1                          | 16    | 8/8/8        | 140     | 72          | 96       | Deflate | 49%     |
-| Simple_15x15x15-16_FitIn_60x40x30               | 16    | 8/8/8        | 140     | 52          | 76       | Deflate | 63%     |
-| Simple_5x5x5-100_FitIn_60x40x10                 | 100   | 8/8/8        | 812     | 132         | 156      | Deflate | 84%     |
+| Scenario                                | Items | Widths b/i/c | Raw b64 | Deflate b64 | Gzip b64 | Best    | Saved % |
+|-----------------------------------------|-------|--------------|---------|-------------|----------|---------|---------|
+| Baseline_40x40x40-1_DoesNotFit_60x40x30 | 0     | 8/8/8        | 12      | 12          | 36       | Raw     | 0%      |
+| Baseline_5x5x80_TooLong_60x40x30        | 0     | 8/8/8        | 12      | 12          | 36       | Raw     | 0%      |
+| Baseline_15x15x15-1_FitsIn_60x40x20     | 1     | 8/8/8        | 20      | 20          | 44       | Raw     | 0%      |
+| Baseline_25x25x25-1_FitsIn_60x40x30     | 1     | 8/8/8        | 20      | 20          | 44       | Raw     | 0%      |
+| Baseline_5x5x5-1_FitsIn_60x40x10        | 1     | 8/8/8        | 20      | 20          | 44       | Raw     | 0%      |
+| Simple_2Same_1Rotated_FitIn_60x40x10    | 2     | 8/8/8        | 28      | 24          | 48       | Deflate | 14%     |
+| Simple_2Same_1Rotated_FitIn_60x40x20    | 2     | 8/8/8        | 28      | 28          | 52       | Raw     | 0%      |
+| Simple_2Same_FitIn_60x40x10             | 2     | 8/8/8        | 28      | 24          | 48       | Deflate | 14%     |
+| Simple_2Same_FitIn_60x40x20             | 2     | 8/8/8        | 28      | 28          | 52       | Raw     | 0%      |
+| Simple_30x30x30-2_FitIn_60x40x30        | 2     | 8/8/8        | 28      | 20          | 44       | Deflate | 29%     |
+| Simple_30x30x30-3_DoesNotFitIn_60x40x30 | 2     | 8/8/8        | 28      | 20          | 44       | Deflate | 29%     |
+| Simple_16bit-4_FitIn_600x400x300        | 4     | 16/16/16     | 80      | 40          | 64       | Deflate | 50%     |
+| Complex_FitsInSmall_1                   | 5     | 8/8/8        | 52      | 44          | 68       | Deflate | 15%     |
+| Simple_5x5x5-5_FitIn_50x50x50           | 5     | 8/8/8        | 52      | 32          | 56       | Deflate | 38%     |
+| Simple_15x15x15-8_FitIn_60x40x20        | 8     | 8/8/8        | 76      | 36          | 60       | Deflate | 53%     |
+| Simple_5x5x5-13_FitIn_50x50x50          | 13    | 8/8/8        | 116     | 48          | 72       | Deflate | 59%     |
+| Complex_FitsInMedium_1                  | 16    | 8/8/8        | 140     | 72          | 96       | Deflate | 49%     |
+| Simple_15x15x15-16_FitIn_60x40x30       | 16    | 8/8/8        | 140     | 52          | 76       | Deflate | 63%     |
+| Simple_5x5x5-50_FitIn_50x50x50          | 50    | 8/8/8        | 412     | 92          | 116      | Deflate | 78%     |
+| Simple_5x5x5-100_FitIn_60x40x10         | 100   | 8/8/8        | 812     | 132         | 156      | Deflate | 84%     |
+| Simple_5x5x5-200_FitIn_50x50x50         | 200   | 8/8/8        | 1612    | 204         | 228      | Deflate | 87%     |
 
 
 

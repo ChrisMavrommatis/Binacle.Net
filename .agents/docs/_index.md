@@ -21,7 +21,7 @@ table of [README.md](README.md).
 | File | Description |
 |---|---|
 | [api/configuration.md](api/configuration.md) | Config file layout, env-var conventions, override precedence, and feature flag list |
-| [api/dependencies.md](api/dependencies.md) | API project dependency tree — Binacle.Net composition root, the Kernel floor, always-compiled modules, the ServiceModule clean-arch split, and IVT grants. |
+| [api/dependencies.md](api/dependencies.md) | API slice dependency tree — Binacle.Net as composition root, the Kernel floor, the always-compiled modules (Diagnostics, Service, UI), the ServiceModule clean-architecture split, and who sees internals. |
 | [api/endpoints.md](api/endpoints.md) | Endpoint pattern, registration, request validation flow, and route groups for v3 and v4 |
 | [api/kernel.md](api/kernel.md) | Binacle.Net.Kernel — shared patterns used by all API projects and modules |
 | [api/modules/diagnostics.md](api/modules/diagnostics.md) | DiagnosticsModule — always-on logging, OpenTelemetry, health checks, and packing logs |
@@ -57,7 +57,7 @@ table of [README.md](README.md).
 |---|---|
 | [lib/algorithm-factory.md](lib/algorithm-factory.md) | IAlgorithmFactory — how algorithm instances are created, DI registration, and how tests construct algorithms directly |
 | [lib/algorithms.md](lib/algorithms.md) | Packing heuristics (FFD/WFD/BFD) — versions, operation types, trade-offs, and the fit/pack guarantee |
-| [lib/dependencies.md](lib/dependencies.md) | Lib project dependency tree — the Abstractions/Lib split, IVT grants, and the composition-root rule (only Binacle.Net references the concrete lib). |
+| [lib/dependencies.md](lib/dependencies.md) | Lib slice dependency tree — the Abstractions/Lib split, who sees internals (IVT), and the composition-root rule (only Binacle.Net references the concrete Binacle.Lib; everyone else uses Abstractions). |
 | [lib/models.md](lib/models.md) | Lib model types and IWith* interfaces — Bin, Item, packed/unpacked results, and the constraints used in generic type parameters |
 | [lib/processors.md](lib/processors.md) | IAlgorithmProcessor, IBinProcessor, and IMultiAlgorithmBinProcessor — their factories and which algorithms each execution path uses |
 | [lib/README.md](lib/README.md) | Binacle.Lib and Binacle.Lib.Abstractions — the algorithm layer |
@@ -70,8 +70,8 @@ table of [README.md](README.md).
 | File | Description |
 |---|---|
 | [packages/binacle-net-ui.md](packages/binacle-net-ui.md) | packages/binacle-net-ui — Alpine.js components + Three.js visualizer for the packing demo. Components, plugins, model layers, and the window.binacle global. |
-| [packages/dependencies.md](packages/dependencies.md) | TypeScript packages dependency tree — the npm workspaces, which package imports which, and two undeclared workspace deps (resolve only by hoisting). |
-| [packages/README.md](packages/README.md) | TypeScript packages under packages/ (npm workspaces) — UI components, cookie utilities, and theme switching. |
+| [packages/dependencies.md](packages/dependencies.md) | TypeScript packages dependency tree — the npm workspaces and which package imports (and declares) which. |
+| [packages/README.md](packages/README.md) | TypeScript packages under packages/ (npm workspaces) — UI components, compact-notation mirror, cookie utilities, and theme switching. |
 
 ## Ruby
 
@@ -89,7 +89,7 @@ table of [README.md](README.md).
 
 | File | Description |
 |---|---|
-| [shared/dependencies.md](shared/dependencies.md) | Shared slice dependency tree — Geometry the BCL-only leaf, CompactNotation, TestReporting, and the TestsKernel test hub; references and IVT grants. |
+| [shared/dependencies.md](shared/dependencies.md) | Shared slice dependency tree — Geometry (the BCL-only leaf everything geometric bottoms out on), CompactNotation, TestReporting, and the TestsKernel test hub; who references them and who sees internals. |
 | [shared/README.md](shared/README.md) | Shared slice — Binacle.TestsKernel (scenario data, compact-string formats, providers, fixtures) and shared/data (OR-Library benchmark data) |
 
 ## ViPaq
@@ -98,10 +98,8 @@ table of [README.md](README.md).
 |---|---|
 | [vipaq/architecture.md](vipaq/architecture.md) | ViPaq architecture — the blind encode/decode layer, the layout codecs, and the serializer that chooses. The policy/mechanism split the rebuild keeps. |
 | [vipaq/cross-language-testing.md](vipaq/cross-language-testing.md) | ViPaq cross-language wire testing — the C#/TS shared-vector apparatus, its inventory, and the decode-to-input contract |
-| [vipaq/decisions.md](vipaq/decisions.md) | ViPaq decisions ledger — the locked decisions (D1–D16) and their reasons, plus the open questions. |
-| [vipaq/dependencies.md](vipaq/dependencies.md) | ViPaq project dependency tree — references, internals (IVT) grants, and the walls (UnitTests never references TestsKernel; only the harnesses do). |
-| [vipaq/findings.md](vipaq/findings.md) | ViPaq findings — the measured evidence (base64 size, encode/decode time) behind the decisions. |
-| [vipaq/README.md](vipaq/README.md) | Binacle.ViPaq — compact binary format for encoding packing results. Wire layout, encoding-info header, C# API surface, and limits. |
+| [vipaq/dependencies.md](vipaq/dependencies.md) | ViPaq project dependency tree — who references whom, who can see internals, and the two deliberate walls (UnitTests never references TestsKernel; only the measurement harnesses do). |
+| [vipaq/README.md](vipaq/README.md) | Binacle.ViPaq — compact binary format for packing results. The wire is defined in PROTOCOL.md; this covers the C# API surface, repo layout, and tests. |
 | [vipaq/typescript.md](vipaq/typescript.md) | Binacle.ViPaq TypeScript mirror (vipaq/packages/binacle-vipaq) — public API and how it differs from the C# library |
 
 ## Web

@@ -1,9 +1,10 @@
 ---
+id: api/kernel
 description: Binacle.Net.Kernel — shared patterns used by all API projects and modules
 verified: 2026-07-06
 check: IApiMarker and registration helpers match api/src/Binacle.Net.Kernel/
 also_update:
-  - api/endpoints.md
+  - api/endpoints
 ---
 
 # Kernel
@@ -85,7 +86,7 @@ After this point, `Feature.IsEnabled("FLAG_NAME")` is available anywhere.
 Used in `Program.cs` to conditionally call `AddServiceModule()` and `AddUIModule()`.
 
 Flags checked in `Program.cs`: `SERVICE_MODULE`, `UI_MODULE`, `SWAGGER_UI`, `SCALAR_UI`.
-See [modules/README.md](modules/README.md) for what each flag enables and how modules use them.
+See `$api/modules` for what each flag enables and how modules use them.
 
 ## IModuleMarker / IApiMarker
 
@@ -100,19 +101,19 @@ app.RegisterEndpointsFromAssemblyContaining<IModuleMarker>();
 ```
 
 This keeps each module's validators, OpenAPI docs, and endpoints isolated to its own assembly.
-All three modules use this pattern: [DiagnosticsModule](modules/diagnostics.md), [ServiceModule](modules/service.md), [UIModule](modules/ui.md).
+All three modules use this pattern: DiagnosticsModule (`$api/modules/diagnostics`), ServiceModule (`$api/modules/service`), UIModule (`$api/modules/ui`).
 
 ## IOpenApiDocument
 
 Each module registers its own OpenAPI document by implementing `IOpenApiDocument`.
 `Program.cs` scans for all registered documents and wires them into SwaggerUI / Scalar at startup.
 The transformers, the group-level 500 wiring, and the external `OpenApiExamples` package are covered in
-[openapi.md](openapi.md).
+`$api/openapi`.
 
 ## IStartupTask
 
 Post-build async initialization. Registered via `services.AddStartupTask<T>()`, run via `app.RunStartupTasksAsync()`.
-Used by Infrastructure to create database schemas before the app starts serving requests — see [ServiceModule](modules/service.md).
+Used by Infrastructure to create database schemas before the app starts serving requests — see ServiceModule (`$api/modules/service`).
 
 ## IConfigurationOptions
 
@@ -165,7 +166,7 @@ reference to `Binacle.CompactNotation` — a feature plugs in its own request an
   `Binacle.Net`) — registers the channel, options, and hosted processor. The owning feature supplies the types + factories.
 
 The concrete packing feature (the request/entry types and their registration) lives in DiagnosticsModule — see
-[modules/diagnostics.md](modules/diagnostics.md).
+`$api/modules/diagnostics`.
 
 `BinacleService` is the live producer: it injects `IOptionalDependency<Channel<AlgorithmOperationLogChannelRequest>>`
 and writes via `WriteToChannelAsync(...)`, which **no-ops when the channel isn't registered** (i.e. when the

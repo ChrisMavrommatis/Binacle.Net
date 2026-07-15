@@ -1,10 +1,11 @@
 ---
+id: api/v4/add-endpoint
 description: Step-by-step guide for adding a new v4 endpoint
 verified: 2026-07-06
 check: Code template matches a real v4 endpoint file and compiles
 also_update:
-  - api/v4/README.md
-  - api/v4/contracts.md
+  - api/v4
+  - api/v4/contracts
 ---
 
 # How to Add an Endpoint
@@ -20,9 +21,9 @@ New endpoints go in **v4 only**. v3 is stable and must not be modified.
 Add request/response types under `api/src/Binacle.Net/v4/Contracts/`.
 
 Request types should use the relevant `IWith*` interfaces (`IWithBin`, `IWithBins`, `IWithItems`, `IWithOperationParameters`).
-See [contracts.md](contracts.md) for the full interface table and a concrete example request class.
+See `$api/v4/contracts` for the full interface table and a concrete example request class.
 Add a FluentValidation validator in the same file.
-Add OpenAPI examples next to the contract types — see [contracts.md](contracts.md) for the pattern.
+Add OpenAPI examples next to the contract types — see `$api/v4/contracts` for the pattern.
 Example classes use `RequestExample<T>`, `ResponseExamples<T>` from `OpenApiExamples.ExtensionMethods`.
 
 ### 2. Create the endpoint class
@@ -106,7 +107,7 @@ public class MyResponse : BinResponseBase
 `BinResponseBase.From<T>()` populates the common fields (Bin, AlgorithmUsed, PackedItems, UnpackedItems,
 volume percentages, ViPaqData). Your subclass only needs to set what's specific to the operation.
 
-Response types live in `api/src/Binacle.Net/v4/Contracts/`. See [contracts.md](contracts.md) for existing types.
+Response types live in `api/src/Binacle.Net/v4/Contracts/`. See `$api/v4/contracts` for existing types.
 
 ### 4. Done
 
@@ -126,9 +127,9 @@ See `PresetBin.cs` in the existing v4 endpoints for a working example.
 
 ## Choosing the Service Method
 
-See [service.md](../service.md) for the full method reference and call pattern.
+See `$api/service` for the full method reference and call pattern.
 Quick reference: single bin → `SingleBinAsync`, multiple bins → `MultipleBinsAsync`, smallest bin → `SmallestBinAsync`.
 Each has an explicit-algorithm overload and an auto-select overload.
 
-To understand how the service runs algorithms and picks results, see [processors.md](../../lib/processors.md)
-and [result-selection.md](../../lib/result-selection.md).
+To understand how the service runs algorithms and picks results, see `$lib/processors`
+and `$lib/result-selection`.

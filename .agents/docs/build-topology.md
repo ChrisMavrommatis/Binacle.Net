@@ -1,16 +1,17 @@
 ---
+id: build-topology
 description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, the Dockerfile/build.sh chain, and the NoTargets content projects
 verified: 2026-07-06
 check: Solution structure, Directory.Build.props, Dockerfile, and content .proj files match the repo root
 also_update:
-  - commands.md
-  - samples/README.md
+  - commands
+  - samples
 ---
 
 # Build Topology
 
 How the pieces fit together — the solution, the JS workspaces, the asset copy, the shared MSBuild props, and the
-Docker build. For the commands themselves see [commands.md](commands.md).
+Docker build. For the commands themselves see `$commands`.
 
 ## Solution — `Binacle.Net.slnx`
 
@@ -44,7 +45,7 @@ Its only dev dependency is `gulp`, and its only scripts are the asset-copy tasks
 - `npm run copy-assets-to-web` → `gulp copy-assets-to-web`
 
 `gulpfile.js` copies shared `assets/` (images, js, css, fonts) into the `docs/` and `web/` Jekyll sites. The sites
-do their own webpack bundling separately (see [docs](docs/README.md) / [web](web/README.md)).
+do their own webpack bundling separately (see docs (`$docs`) / web (`$web`)).
 
 ## Docker build chain
 
@@ -71,5 +72,5 @@ samples use `Microsoft.Docker.Sdk` `.dcproj` files instead. None of these affect
 `config/` is the **maintainer's local-dev tooling** — the run scripts (`api.sh`, the per-slice `tests.*`,
 `performance.*`, `benchmarks.*`, `build.sh`, `agents-index.sh`, `tmux.sh`), local compose files, `.env`/`.env.build`,
 and emulator state. `samples/` are
-**user-facing deployment starting points** to copy and run the published image. See [commands.md](commands.md) for
-the scripts and [samples](samples/README.md) for the deployment examples.
+**user-facing deployment starting points** to copy and run the published image. See `$commands` for
+the scripts and samples (`$samples`) for the deployment examples.

@@ -1,14 +1,15 @@
 ---
+id: api
 description: Index for API slice docs — endpoints, contracts, service, kernel, presets, and module docs (Diagnostics, ServiceModule, UIModule)
 verified: 2026-07-06
 check: Startup sequence matches Program.cs; dep map matches actual project references
 also_update:
-  - api/modules/README.md
+  - api/modules
 ---
 
 # API
 
-If you don't know where to start, read [add-endpoint.md](v4/add-endpoint.md) first.
+If you don't know where to start, read `$api/v4/add-endpoint` first.
 
 ## Projects
 
@@ -94,9 +95,9 @@ HTTP POST /api/v4/...
   → Results.Ok(response)
 ```
 
-See [service.md](service.md) for the `IBinacleService` method signatures.
-See [lib/processors.md](../lib/processors.md) for how the processor and factory layers work.
-See [lib/result-building.md](../lib/result-building.md) for how `OperationResultBuilder` computes status and percentages.
+See `$api/service` for the `IBinacleService` method signatures.
+See `$lib/processors` for how the processor and factory layers work.
+See `$lib/result-building` for how `OperationResultBuilder` computes status and percentages.
 
 ## Active Development
 
@@ -105,22 +106,22 @@ See [lib/result-building.md](../lib/result-building.md) for how `OperationResult
 
 ## Core Docs
 
-- [Kernel](kernel.md) — BindingResult\<T\>, IOptionalDependency, Feature.Manager, IModuleMarker
-- [Endpoints](endpoints.md) — endpoint pattern, registration, request flow
-- [Contracts](v4/contracts.md) — v4 request/response types, validators
-- [Service](service.md) — IBinacleService methods and how to call them from an endpoint
-- [Presets](presets.md) — what presets are, config format, route params, adding test presets
-- [Configuration](configuration.md) — config file layout, env-var conventions, override precedence, feature flags
-- [v3](v3/README.md) — stable API, endpoints, response shape (do not modify)
-- [v4](v4/README.md) — active development, implemented and planned endpoints
-- [How to Add an Endpoint](v4/add-endpoint.md)
+- Kernel (`$api/kernel`) — BindingResult\<T\>, IOptionalDependency, Feature.Manager, IModuleMarker
+- Endpoints (`$api/endpoints`) — endpoint pattern, registration, request flow
+- Contracts (`$api/v4/contracts`) — v4 request/response types, validators
+- Service (`$api/service`) — IBinacleService methods and how to call them from an endpoint
+- Presets (`$api/presets`) — what presets are, config format, route params, adding test presets
+- Configuration (`$api/configuration`) — config file layout, env-var conventions, override precedence, feature flags
+- v3 (`$api/v3`) — stable API, endpoints, response shape (do not modify)
+- v4 (`$api/v4`) — active development, implemented and planned endpoints
+- How to Add an Endpoint (`$api/v4/add-endpoint`)
 
 ## Module Docs
 
-- [Modules](modules/README.md) — how the module system works (feature flags, Add/Use pattern)
-- [DiagnosticsModule](modules/diagnostics.md) — logging, OpenTelemetry, health checks, packing logs
-- [ServiceModule](modules/service.md) — auth, rate limiting, accounts, subscriptions, clean arch layers
-- [UIModule](modules/ui.md) — Blazor demo (not relevant to core API work)
+- Modules (`$api/modules`) — how the module system works (feature flags, Add/Use pattern)
+- DiagnosticsModule (`$api/modules/diagnostics`) — logging, OpenTelemetry, health checks, packing logs
+- ServiceModule (`$api/modules/service`) — auth, rate limiting, accounts, subscriptions, clean arch layers
+- UIModule (`$api/modules/ui`) — Blazor demo (not relevant to core API work)
 
 ## Related Tests
 
@@ -129,14 +130,14 @@ See [lib/result-building.md](../lib/result-building.md) for how `OperationResult
 | `api/test/Binacle.Net.IntegrationTests` | `api` | HTTP behavior and scenario tests for v3 and v4 endpoints |
 | `api/test/Binacle.Net.ServiceModule.IntegrationTests` | `api_service` | Auth and rate limiting (ServiceModule only) |
 
-See [API Tests](tests.md) for integration-test conventions, and [Shared](../shared/README.md) for the scenario
-data format. See [Commands](../commands.md) for how to run the API locally.
+See API Tests (`$api/tests`) for integration-test conventions, and Shared (`$shared`) for the scenario
+data format. See Commands (`$commands`) for how to run the API locally.
 
 ## Dependencies
 
 How the API projects reference each other — the composition root, the Kernel floor, and the module walls — is in
-[dependencies.md](dependencies.md).
+`$api/dependencies`.
 
 ## Concepts
 
-This slice implements [Fit vs Pack](../concepts.md).
+This slice implements Fit vs Pack (`$concepts`).

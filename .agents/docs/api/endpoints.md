@@ -1,9 +1,10 @@
 ---
+id: api/endpoints
 description: Endpoint pattern, registration, request validation flow, and route groups for v3 and v4
 verified: 2026-07-06
 check: IGroupedEndpoint hierarchy matches api/src/Binacle.Net.Kernel/Endpoints/
 also_update:
-  - api/kernel.md
+  - api/kernel
 ---
 
 # Endpoints
@@ -107,4 +108,4 @@ ServiceModule is not loaded — safe to include but only active when the module 
 - `api/src/Binacle.Net/v4/Contracts/` — request/response types, validators, OpenAPI examples
 - `api/src/Binacle.Net/v3/Contracts/` — same structure for v3
 
-See [contracts.md](v4/contracts.md) for the full contract shape and [add-endpoint.md](v4/add-endpoint.md) for a step-by-step guide.
+See `$api/v4/contracts` for the full contract shape and `$api/v4/add-endpoint` for a step-by-step guide.

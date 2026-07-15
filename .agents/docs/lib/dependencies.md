@@ -1,4 +1,5 @@
 ---
+id: lib/dependencies
 description: Lib slice dependency tree — the Abstractions/Lib split, who sees internals (IVT), and the composition-root rule (only Binacle.Net references the concrete Binacle.Lib; everyone else uses Abstractions).
 verified: 2026-07-14
 check: ProjectReference and InternalsVisibleTo entries in lib/**/*.csproj match the graph below
@@ -47,4 +48,4 @@ Binacle.Lib ──────────────────────�
    the interfaces. Keep it that way: a new consumer should take `Abstractions`, not `Lib`.
 
 2. **`TestsKernel` supplies the test data**, and it references `Lib.Abstractions` (see
-   [../shared/dependencies.md](../shared/dependencies.md)), so lib and api tests share one scenario set.
+   `$shared/dependencies`), so lib and api tests share one scenario set.

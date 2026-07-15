@@ -1,9 +1,10 @@
 ---
+id: api/modules/service
 description: ServiceModule — JWT auth, rate limiting, account/subscription management. Three projects using clean architecture.
-verified: 2026-06-10
+verified: 2026-07-15
 check: Routes, config file names, and connection string name match ServiceModule source
 also_update:
-  - api/configuration.md
+  - api/configuration
 ---
 
 # ServiceModule
@@ -126,7 +127,7 @@ In Development, `dotnet user-secrets` is also loaded for the `IModuleMarker` ass
 ## Adding an Admin Endpoint
 
 Admin and v0 endpoints follow the same `IGroupedEndpoint` pattern as v4.
-See [add-endpoint.md](../v4/add-endpoint.md) for the template — use `ApiV0EndpointGroup` as the group type instead of `ApiV4EndpointGroup`.
+See `$api/v4/add-endpoint` for the template — use `ApiV0EndpointGroup` as the group type instead of `ApiV4EndpointGroup`.
 
 ## Related Tests
 

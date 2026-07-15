@@ -1,9 +1,10 @@
 ---
+id: lib/algorithms
 description: Packing heuristics (FFD/WFD/BFD) — versions, operation types, trade-offs, and the fit/pack guarantee
-verified: 2026-05-23
+verified: 2026-07-15
 check: Heuristic directory names match lib/src/Binacle.Lib/Algorithms/; v2 default confirmed in AlgorithmFactory.cs
 also_update:
-  - lib/algorithm-factory.md
+  - lib/algorithm-factory
 ---
 
 # Algorithms
@@ -19,7 +20,7 @@ Three heuristics, each with two versions:
 | Worst Fit Decreasing (WFD) | v1, v2 |
 
 Each lives under `lib/src/Binacle.Lib/Algorithms/<Heuristic> v<N>/`.
-See [Algorithm Factory](algorithm-factory.md) for the concrete class names (`FirstFitDecreasing_v2`, etc.).
+See Algorithm Factory (`$lib/algorithm-factory`) for the concrete class names (`FirstFitDecreasing_v2`, etc.).
 
 All versions of a heuristic produce the same results. Newer versions are faster and use less memory.
 The API currently uses **v2 for all three heuristics** — this is set in `lib/src/Binacle.Lib/AlgorithmFactory.cs`.
@@ -49,4 +50,4 @@ Set `AlgorithmOperation` on the parameters before calling the algorithm.
 - `Fitting` — exits early as soon as an item doesn't fit
 - `Packing` — keeps going and packs as many items as it can
 
-See [Fit vs Pack](../concepts.md).
+See Fit vs Pack (`$concepts`).

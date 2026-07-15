@@ -1,4 +1,5 @@
 ---
+id: vipaq/dependencies
 description: ViPaq project dependency tree — who references whom, who can see internals, and the two deliberate walls (UnitTests never references TestsKernel; only the measurement harnesses do).
 verified: 2026-07-14
 check: ProjectReference and InternalsVisibleTo entries in vipaq/**/*.csproj match the graph and the boundary rules below
@@ -7,7 +8,7 @@ check: ProjectReference and InternalsVisibleTo entries in vipaq/**/*.csproj matc
 # ViPaq — project dependencies
 
 One picture of how the ViPaq projects fit together, plus the boundaries that are easy to break by accident.
-The *why* of the format is in [architecture.md](architecture.md) and [decisions.md](decisions.md); this file is
+The *why* of the format is in `$vipaq/architecture` and `$vipaq/decisions`; this file is
 just the wiring.
 
 ## The graph

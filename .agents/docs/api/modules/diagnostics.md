@@ -1,9 +1,10 @@
 ---
+id: api/modules/diagnostics
 description: DiagnosticsModule — always-on logging, OpenTelemetry, health checks, and packing logs
 verified: 2026-07-06
 check: Env var names match DiagnosticsModule config handling
 also_update:
-  - api/configuration.md
+  - api/configuration
 ---
 
 # DiagnosticsModule
@@ -180,10 +181,6 @@ Registration: `AddOptionsBasedPackingLogProcessor(optionsSelector)` (Diagnostics
 Flat — `PackingLogs` has `Enabled`, `Path` (default `data/pack-logs/`), `FileName` (default `{0}.ndjson`),
 `DateFormat` (default `yyyyMMdd`), `ChannelLimit`. Both fit and pack flow through the one channel and land there.
 `{0}` is replaced by the date.
-
-(Historic note: the config once had nested `Fitting` + `Packing` blocks; `Fitting` was dropped in the Jan 2026
-algorithm unification, then the config was flattened to a single set and the path moved from `pack-logs/packing/`
-to `pack-logs/`. If per-operation log files are wanted again, split by the request's operation type.)
 
 `ChannelLimit`:
 - `0` or absent — unbounded; limited only by available memory.

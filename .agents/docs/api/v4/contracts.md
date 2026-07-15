@@ -1,9 +1,10 @@
 ---
+id: api/v4/contracts
 description: Request/response contract types, validators, and OpenAPI examples for v4 (v3 follows the same shape)
 verified: 2026-07-05
 check: Types and validators match api/src/Binacle.Net/v4/Contracts/; mappers match v4/ExtensionMethods/
 also_update:
-  - api/v4/README.md
+  - api/v4
 ---
 
 # Contracts
@@ -58,7 +59,7 @@ Sent in every request as `Parameters`.
 ## Response Types
 
 Both fit and pack share a common base (`BinResponseBase` in `api/src/Binacle.Net/v4/Contracts/BinResponseBase.cs`).
-Subclasses call `From<T>(parameters, operationResult)` to populate common fields — see step 3 in [add-endpoint.md](add-endpoint.md).
+Subclasses call `From<T>(parameters, operationResult)` to populate common fields — see step 3 in `$api/v4/add-endpoint`.
 
 | Field | Type | Notes |
 |---|---|---|
@@ -69,7 +70,7 @@ Subclasses call `From<T>(parameters, operationResult)` to populate common fields
 | `PackedItemsVolumePercentage` | `decimal` | Percentage of total item volume that was packed |
 | `PackedBinVolumePercentage` | `decimal` | Percentage of bin volume occupied by packed items |
 
-Volume percentage formulas and rounding rules are in [result-building.md](../../lib/result-building.md).
+Volume percentage formulas and rounding rules are in `$lib/result-building`.
 | `ViPaqData` | `string?` | Base64 ViPaq payload — only present if `IncludeViPaqData: true` and items were packed |
 
 ### FitBinResponse

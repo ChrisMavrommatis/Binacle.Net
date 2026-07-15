@@ -1,10 +1,11 @@
 ---
+id: vipaq
 description: Binacle.ViPaq — compact binary format for packing results. The wire is defined in PROTOCOL.md; this covers the C# API surface, repo layout, and tests.
 verified: 2026-07-14
 check: Public API surface (ViPaqSerializer, ViPaqSerializationOptions, Layout, Limits) and repo layout match vipaq/src/Binacle.ViPaq/
 also_update:
-  - vipaq/typescript.md
-  - vipaq/cross-language-testing.md
+  - vipaq/typescript
+  - vipaq/cross-language-testing
 ---
 
 # ViPaq
@@ -17,7 +18,7 @@ stored and moved as a short base64 token. Used in v3 and v4 API responses when `
 **The wire format is defined in `vipaq/PROTOCOL.md`, which stands alone** — everything about the bytes is there,
 with no dependency on any other file. Do not restate the byte layout here; read it there. This document covers the
 C# side: the public API, the repo layout, and the tests. The *why* behind the format is in
-[architecture.md](architecture.md), [decisions.md](decisions.md) (D1–D16) and [findings.md](findings.md).
+`$vipaq/architecture`, `$vipaq/decisions` and `$vipaq/findings`.
 
 ## C# public surface
 
@@ -42,7 +43,7 @@ v4 `PackedBox` — can be serialized directly.
 
 **Compression** is off by default and is a straight on/off (no "keep the shorter" try-both in the serializer). The
 codec is **resolved from the header** — raw DEFLATE when `Compress` is set, a pass-through `NoOpCodec` when not
-(decisions.md **D16**).
+(`$vipaq#D16`).
 
 ### Header notation (internal)
 
@@ -57,7 +58,7 @@ notation (`"10x10x10 (0,0,0)"`) is not here; it lives in the shared `Binacle.Com
 |---|---|
 | `vipaq/PROTOCOL.md` | Normative, standalone wire spec |
 | `vipaq/src/Binacle.ViPaq/` | C# reference implementation |
-| `vipaq/packages/binacle-vipaq/` | TypeScript mirror ([typescript.md](typescript.md)) |
+| `vipaq/packages/binacle-vipaq/` | TypeScript mirror (`$vipaq/typescript`) |
 | `vipaq/test-vectors/` | Language-neutral vectors read by both suites |
 | `vipaq/test/` | C# unit tests, benchmarks, performance tests |
 
@@ -70,7 +71,7 @@ notation (`"10x10x10 (0,0,0)"`) is not here; it lives in the shared `Binacle.Com
 | `vipaq/packages/binacle-vipaq` | TypeScript mirror — `npm test` (jest) |
 
 How the two languages are held to one wire — the shared vectors, the generators, and the decode-to-input contract
-for compressed payloads — is in [cross-language-testing.md](cross-language-testing.md).
+for compressed payloads — is in `$vipaq/cross-language-testing`.
 
 How the projects reference each other, who can see internals, and the walls between them (UnitTests never touches
-the real-data kernel) are in [dependencies.md](dependencies.md).
+the real-data kernel) are in `$vipaq/dependencies`.

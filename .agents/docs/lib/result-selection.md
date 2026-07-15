@@ -1,9 +1,10 @@
 ---
+id: lib/result-selection
 description: IResultSelector, IResultSelectionStrategy, and the three selection strategies — scoring rules, tie-breaking, and how tests verify them
 verified: 2026-07-05
 check: Strategy class names and scoring rules match lib/src/Binacle.Lib/
 also_update:
-  - api/service.md
+  - api/service
 ---
 
 # Result Selection
@@ -25,7 +26,7 @@ IResultSelectionStrategy.Select(IDictionary<string, OperationResult> results) �
 ```
 
 All strategies: throw `ArgumentException` if the dictionary is empty; return immediately if it has one entry.
-Called by `LoopMultiAlgorithmBinProcessor` (per bin) and by `BinacleService` — see [processors.md](processors.md).
+Called by `LoopMultiAlgorithmBinProcessor` (per bin) and by `BinacleService` — see `$lib/processors`.
 
 `OperationResultStatus` includes `Unknown = -1` as a sentinel default. If you implement a new strategy,
 guard against it — a result with `Unknown` status should never win.

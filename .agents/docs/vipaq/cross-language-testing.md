@@ -1,9 +1,10 @@
 ---
+id: vipaq/cross-language-testing
 description: ViPaq cross-language wire testing — the C#/TS shared-vector apparatus, its inventory, and the decode-to-input contract
 verified: 2026-07-14
 check: Vector file list, generator paths, and interop test names match vipaq/test-vectors/ and the two suites
 also_update:
-  - vipaq/typescript.md
+  - vipaq/typescript
 ---
 
 # ViPaq — Cross-Language Wire Testing
@@ -31,8 +32,8 @@ Everything names a full header with the **HeaderNotation** string `v{N}_{raw|com
 
 ## Generators (regenerate the derived vectors)
 
-Only two kinds of vector are generated — `header/header-bytes.json` and the interop artifacts (decisions.md
-**D15**); every other file is hand-authored.
+Only two kinds of vector are generated — `header/header-bytes.json` and the interop artifacts
+(`$vipaq#D15`); every other file is hand-authored.
 
 - **C#** — `vipaq/tools/Binacle.ViPaq.VectorGenerators/`: `Program.cs` (no-arg runner over `IVectorGenerator`),
   `HeaderBytesGenerator.cs` (the 32 header combos), `InteropArtifactGenerator.cs` (serializes each `input.json`
@@ -62,7 +63,7 @@ valid DEFLATE stream. Raw artifacts are byte-identical and can be compared direc
 
 - `vipaq/PROTOCOL.md` — the normative, standalone spec.
 - [`vipaq/test-vectors/README.md`](../../../vipaq/test-vectors/README.md) — shared-vector conventions and per-file shapes.
-- [README.md](README.md), [typescript.md](typescript.md) — the C# and TS sides.
+- `$vipaq`, `$vipaq/typescript` — the C# and TS sides.
 
 ## Out of scope (stays language-local on purpose)
 

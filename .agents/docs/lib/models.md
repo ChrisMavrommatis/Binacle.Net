@@ -1,9 +1,10 @@
 ---
+id: lib/models
 description: Lib model types and IWith* interfaces — Bin, Item, packed/unpacked results, and the constraints used in generic type parameters
 verified: 2026-07-06
 check: Type and interface names match lib/src/Binacle.Lib.Abstractions/; generic geometry interfaces match shared/src/Binacle.Geometry/
 also_update:
-  - api/v4/contracts.md
+  - api/v4/contracts
 ---
 
 # Models
@@ -57,7 +58,7 @@ The generic dimensions/coordinates/quantity interfaces live in the shared `Binac
 
 The read-only vs mutable split is deliberate: formatting reads through the read-only interface, vipaq deserialize
 writes through the mutable one. This leaf is the single home — `Binacle.Lib.Abstractions`, `Binacle.CompactNotation`,
-and `Binacle.ViPaq` all point at it (they used to each define their own copies).
+and `Binacle.ViPaq` all point at it.
 
 ### Lib's non-generic `int` shortcuts
 
@@ -99,7 +100,7 @@ id + geometry (chiefly the packing log — a `List<concrete>` hands off with no 
 
 The v3/v4 `Bin`/`Box` contracts and the preset `BinOption` implement these (on top of `IWithID` /
 `IWithDimensions` / `IWithQuantity`), and `IBinacleService`'s generic constraints require them — see
-[service.md](../api/service.md).
+`$api/service`.
 
 ## Value types
 
@@ -114,4 +115,4 @@ Lib keeps these non-generic `int` `readonly struct`s (in `Binacle.Lib.Models`) �
 in the `Binacle.Geometry` leaf instead, for the non-`int` consumers (vipaq, compact notation).
 
 The `IWith*` interfaces in `Binacle.Net.v4.Contracts` (e.g. `IWithBin`, `IWithItems`) are separate — those
-are API-level request composition interfaces. See [contracts.md](../api/v4/contracts.md).
+are API-level request composition interfaces. See `$api/v4/contracts`.

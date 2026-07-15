@@ -1,4 +1,5 @@
 ---
+id: api/service
 description: IBinacleService — method reference for SingleBinAsync, MultipleBinsAsync, SmallestBinAsync; return types, call pattern, and algorithm selection
 verified: 2026-07-06
 check: Method signatures match IBinacleService in api/src/Binacle.Net/Services/BinacleService.cs
@@ -26,7 +27,7 @@ The same generic signature and constraints apply to every method below (the `Mul
 return `ValueTask<IDictionary<string, OperationResult>>`). The table simplifies argument names for readability.
 
 `IIdentifiableBin` / `IIdentifiableItem` (in `Binacle.Lib.Abstractions.Models`) are the read-only markers the
-packing log reads through — see [Models](../lib/models.md). `ILogParametersProvider` lets the params render
+packing log reads through — see Models (`$lib/models`). `ILogParametersProvider` lets the params render
 themselves into the log. All three exist so the service output can flow into the log channel with no copy.
 
 | Method | Returns | What it does |
@@ -78,5 +79,5 @@ This sets the `AlgorithmOperation` that the algorithm uses — it is not in the 
 > **Warning:** these methods mutate the `OperationParameters` instance. Do not call both on the same object —
 > the second call will overwrite the first. Each endpoint should call exactly one.
 
-See [Processors](../lib/processors.md) for how the service uses factories internally.
-See [Result Selection](../lib/result-selection.md) for how `BestAlgorithm`, `SmallestBin`, and `BestBin` strategies are scored.
+See Processors (`$lib/processors`) for how the service uses factories internally.
+See Result Selection (`$lib/result-selection`) for how `BestAlgorithm`, `SmallestBin`, and `BestBin` strategies are scored.

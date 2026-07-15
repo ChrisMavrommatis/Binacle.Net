@@ -17,8 +17,8 @@ hand.
 
 - This should build on the ServiceModule, which already does JWT auth and account/subscription management.
   Check what's there before adding new storage.
-- Likely ties into the Shopify plugin, where installed stores become registered users
-  (see [shopify-plugin.md](../shopify-plugin.md)).
+- May tie into a Shopify-plugin idea, where installed stores become registered users. Both build on the same
+  ServiceModule auth/account surface — see `$api/modules/service`.
 
 ## Open questions
 
@@ -28,4 +28,4 @@ hand.
 
 ## Related
 
-- `.agents/docs/api/modules/service.md`, `.agents/docs/api/modules/ui.md`
+- `$api/modules/service`, `$api/modules/ui`

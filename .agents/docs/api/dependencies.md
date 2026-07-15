@@ -1,4 +1,5 @@
 ---
+id: api/dependencies
 description: API slice dependency tree — Binacle.Net as composition root, the Kernel floor, the always-compiled modules (Diagnostics, Service, UI), the ServiceModule clean-architecture split, and who sees internals.
 verified: 2026-07-14
 check: ProjectReference and InternalsVisibleTo entries in api/**/*.csproj match the graph and the walls below
@@ -7,7 +8,7 @@ check: ProjectReference and InternalsVisibleTo entries in api/**/*.csproj match 
 # API — project dependencies
 
 The web layer. One entry point (`Binacle.Net`) composes a shared `Kernel` and three modules; the modules are
-always compiled and switched on or off at runtime by feature flags (see [modules/README.md](modules/README.md)).
+always compiled and switched on or off at runtime by feature flags (see `$api/modules`).
 
 ## The graph
 

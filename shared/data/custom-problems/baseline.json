@@ -36,7 +36,7 @@
     ]
   },
   {
-    "Name": "Baseline_5x5x80-1_TooLong_DoesNotFitIn_60x40x30",
+    "Name": "Baseline_5x5x80_TooLong_60x40x30",
     "Bin": "60x40x30",
     "Metrics": "2000 72000 1 2.8",
     "Result": "NotPacked EarlyExit-ContainerDimensionExceeded",

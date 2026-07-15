@@ -1,4 +1,5 @@
 ---
+id: docs
 description: Jekyll documentation site at docs/ — versioned API docs with Swagger UI embed.
 verified: 2026-07-06
 check: Collections, versions, and plugin list match docs/_config.yml and docs/_plugins/
