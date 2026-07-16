@@ -1,0 +1,80 @@
+# Runs the tests and sends coverage to SonarCloud. Manual — trigger it from the Actions tab.
+#
+# SonarCloud's Automatic Analysis cannot import coverage: it never runs your tests, it only reads source.
+# Getting coverage means analysing from CI, so Automatic Analysis must be OFF for this project or the two
+# fight over the same results.
+#
+# Everything the tests need lives in config/coverage.sonar.sh — it runs between begin and end because the
+# scanner only sees projects built inside that pair.
+
+name: Sonar Analysis
+
+on:
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    # The ServiceModule suite talks to Azurite. Without it all 106 of its tests fail — the code is fine,
+    # the dependency is missing. The image's default command already binds 0.0.0.0, so no override needed.
+    services:
+      azurite:
+        image: mcr.microsoft.com/azure-storage/azurite:latest
+        ports:
+          - 10000:10000
+          - 10001:10001
+          - 10002:10002
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Sonar needs full history to tell new code from old. A shallow clone makes everything look new.
+          fetch-depth: 0
+
+      # The Sonar scanner is a Java program, whatever language it analyses.
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ vars.DONET_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: Install npm packages
+        run: npm ci
+
+      - name: Sonar begin
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet dotnet-sonarscanner begin \
+            /k:"${{ vars.SONAR_PROJECT_KEY }}" \
+            /o:"${{ vars.SONAR_ORGANIZATION }}" \
+            /d:sonar.token="$SONAR_TOKEN" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.vscoveragexml.reportsPaths="CoverageArtifacts/sonar/*.coverage.xml" \
+            /d:sonar.javascript.lcov.reportPaths="CoverageArtifacts/sonar/ts/lcov.info"
+
+      - name: Build and test with coverage
+        run: ./config/coverage.sonar.sh
+
+      # Skipped if anything above fails, so Sonar never records coverage from a failed run — code that never
+      # ran and code that is untested look identical in a report.
+      - name: Sonar end
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"
