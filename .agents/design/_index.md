@@ -7,6 +7,13 @@ description: Manifest of every file under .agents/design, grouped by area. Regen
 Every design record in `.agents/design/`, grouped by area. The settled design behind the docs — the
 decisions (why) and the findings (measured evidence). Permanent and citable; read the one you need.
 
+## Lib
+
+| File | Description |
+|---|---|
+| [lib/decisions.md](lib/decisions.md) | Lib decisions ledger — why Algorithm.Best races a different set per path, and the open parallelization question. |
+| [lib/findings.md](lib/findings.md) | Lib findings — the measured evidence (algorithm racing cost, parallel racing gain) behind the decisions. |
+
 ## ViPaq
 
 | File | Description |

@@ -28,9 +28,10 @@ endpoint:
 | `GET /api/v3/presets` | `GET /api/v4/presets` | Yes |
 
 v4 ships with **16 endpoints**, still marked experimental. Ten landed on 2026-07-16: the compare four, the
-preset variants of smallest, both best-fit routes, fit/smallest, and `GET /api/v4/presets/{preset}`.
-`pack/first-bin` (custom + preset, formerly `first-fit`) was cut from v4 — it needs a design call and may target v3.1 instead.
-It is parked in `.agents/ideas/api/pack-first-bin-endpoint.md`. **The v4 endpoint work is complete.**
+preset variants of smallest, both `pack/best-bin` routes, fit/smallest, and `GET /api/v4/presets/{preset}`.
+`pack/first-bin` (custom + preset, formerly `first-fit`) was cut from v4 — it needs a design call and may
+target v3.1 instead. It is parked in `.agents/ideas/api/pack-first-bin-endpoint.md`.
+**The v4 endpoint work is complete.**
 
 Still marked experimental at release, carrying the same banner v3 used while it was in development. Feature
 coverage is not the same as a frozen contract, and the UI clients have not moved across yet.
@@ -76,10 +77,25 @@ coverage is not the same as a frozen contract, and the UI clients have not moved
       and there is no reader for the old wire. Nothing in the repo says the old format existed, so the
       GitHub release body is the only place users will learn this. Tracked in `pending-actions.md`;
       the banner and migration text are already drafted in `release-notes.md`.
-- [ ] **Fix the OpenAPI enum transformer TODO before generating the v4 spec.**
-      `api/src/Binacle.Net.Kernel/OpenApi/EnumStringsSchemaTransformer.cs:35` — a required enum property
-      still gets `JsonStringNullableEnumConverter` and keeps its `?`. This bakes into the published
-      `v4.json`, so it is worth fixing while the spec is being cut rather than after.
+- [x] **Fix the OpenAPI enum transformer TODO before generating the v4 spec.** Done 2026-07-16. A required
+      nullable enum rendered as `oneOf: [null, $ref]` — the schema said null was allowed, the validator
+      returned 422. A client generated from that spec would send null and be rejected.
+      Fixed by `RequiredNullableSchemaDocumentTransformer`, at document level: a schema transformer cannot
+      do it, because for a nullable enum it is handed the enum's own component schema, never the property,
+      and the `oneOf` wrapper is added after transformers run. Applies to v3, v4, and the ServiceModule spec.
+      Verified surgical — the only change in the whole v4 spec is `algorithm` losing its `oneOf`.
+- [ ] **Fix the docs on what `Algorithm.Best` races — the code is right, both paths are deliberate.**
+      `Best` races a different set depending on the route, **on purpose**: FFD+WFD+BFD on the single-bin
+      routes (`fit/bin`, `pack/bin`), FFD+BFD everywhere else. The decision and its reasoning are settled in
+      `$lib/decisions#D1`; the measurements are in `$lib/findings#F1`. **Neither path is a bug — do not
+      "align" them.**
+
+      The docs are what is wrong. `$api/v4` (README:92) promises "all algorithms (FFD, WFD, BFD)" with no
+      mention that this holds only for the single-bin routes, and `$api/service` (line 42) says "Runs all
+      algorithms". Both overpromise on the multi-bin routes. Correct them **before the v4 docs and `v4.json`
+      are written**, or the published contract repeats the claim — and say which set each route uses, since
+      the same parameter value means two things. Cite `$lib/decisions#D1` for *why* WFD is dropped, so the
+      next reader does not file it as a bug.
 - [x] **Write the v4 release-notes entries.** Done 2026-07-16 — `🔎 Overview` and `⚙️ Core Changes` cover v4,
       the three request shapes, and the experimental status; v2 removal has its own migration entry.
 
@@ -92,6 +108,25 @@ coverage is not the same as a frozen contract, and the UI clients have not moved
 - [ ] **`pack/first-bin` is out of v4** — cut rather than deferred, and may target v3.1. The open calls (what
       "first success" means, and the name colliding with the FFD algorithm) are captured in
       `.agents/ideas/api/pack-first-bin-endpoint.md`. Nothing to do for this release.
+- [ ] **The `Parallel*` processors are dead code.** `BinProcessorFactory.Create` and `CreateMultiAlgorithm`
+      take `binCount` and `itemCount` and **ignore both** — they always return the `Loop` variants. Nothing in
+      `lib/src` or `api/src` constructs `ParallelBinProcessor`, `ParallelAlgorithmProcessor`, or
+      `ParallelMultiAlgorithmBinProcessor`; only the benchmarks do. Also `ParallelBinProcessor.concurrencyLevel`
+      only sizes the `ConcurrentDictionary` — it never reaches `MaxDegreeOfParallelism`.
+      The measurements now lean towards **delete**: parallel *algorithm* racing is 0.93×–1.48× on the set
+      production uses — slower on the cheapest scenario (`$lib/findings#F2`). Kept open as `$lib/decisions#O1`
+      because the untested axis is `ParallelBinProcessor` (many bins at once), which scales with bin count.
+      Not a blocker either way; shipping three unreachable processors invites someone to "fix" a path that
+      never runs.
+- [ ] **The curated benchmark ledger is stale, not just old.** `results/lib/benchmarks/` stops at 2025-02-10
+      while `lib/src` has moved on — including the geometry migration, which moved `Dimensions`/`Coordinates`
+      across an assembly boundary. Those numbers describe code that no longer exists; re-run before quoting
+      any of them. (`BestBin_v2` measured 5–9× faster than v1, 24B vs 208–336B allocated — unconfirmed.)
+      **Algorithm racing is now re-measured** (2026-07-17) and lives in `$lib/findings`; the scratch reports
+      are in `BenchmarkDotNet.Artifacts/` and a keeper should be curated into `results/lib/benchmarks/`.
+- [ ] **CI, Sonar, and coverage** — parked as an idea in `.agents/ideas/ci.md`; nothing is decided and
+      nothing there blocks the release. Worth knowing while shipping: no workflow runs a test, and the two
+      Sonar workflows in the tree will overwrite each other's results if both ever run.
 - [ ] **Remaining code TODOs** — none block the release:
       - `ServiceModule/Services/ApiUsageRateLimitingPolicy.cs:34` — review rate-limit policy JSON config
       - `ServiceModule/v0/Endpoints/AccountBindingResult.cs:57` — "no request body" returns raw `ProblemDetails`

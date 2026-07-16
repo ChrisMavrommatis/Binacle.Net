@@ -11,7 +11,10 @@ and move it to `.agents/plans/` once it's picked up. See [README.md](README.md) 
 
 | File | Description |
 |---|---|
+| [ci.md](ci.md) | Idea: run the tests in CI, and wire up Sonar |
+| [mutation-testing.md](mutation-testing.md) | Idea: mutation testing with Stryker.NET |
 | [shopify-plugin.md](shopify-plugin.md) | Idea: Shopify plugin |
+| [testing-techniques.md](testing-techniques.md) | Idea: testing techniques not in use |
 
 ## API
 
