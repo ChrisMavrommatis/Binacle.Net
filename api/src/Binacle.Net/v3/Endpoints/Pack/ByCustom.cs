@@ -55,7 +55,8 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 				request.Parameters!.Algorithm.ToLibAlgorithm(),
 				request.Bins!,
 				request.Items!,
-				request.Parameters!
+				request.Parameters!,
+				cancellationToken
 			);
 
 			using (var responseActivity = Diagnostics.ActivitySource.StartActivity("Create Response"))

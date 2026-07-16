@@ -15,7 +15,8 @@ internal interface IBinacleService
 		Algorithm algorithm,
 		TBin bin,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -24,7 +25,8 @@ internal interface IBinacleService
 	ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
 		TBin bin,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -35,7 +37,8 @@ internal interface IBinacleService
 		Algorithm algorithm,
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -44,7 +47,8 @@ internal interface IBinacleService
 	ValueTask<IDictionary<string, OperationResult>> MultipleBinsAsync<TBin, TBox, TParams>(
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -54,7 +58,8 @@ internal interface IBinacleService
 		Algorithm algorithm,
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -63,7 +68,8 @@ internal interface IBinacleService
 	ValueTask<OperationResult> SmallestBinAsync<TBin, TBox, TParams>(
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -73,7 +79,8 @@ internal interface IBinacleService
 		Algorithm algorithm,
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -82,7 +89,8 @@ internal interface IBinacleService
 	ValueTask<OperationResult> BestBinAsync<TBin, TBox, TParams>(
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -119,7 +127,8 @@ internal class BinacleService : IBinacleService
 		Algorithm algorithm,
 		TBin bin,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -142,7 +151,8 @@ internal class BinacleService : IBinacleService
 	public async ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
 		TBin bin,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -153,7 +163,8 @@ internal class BinacleService : IBinacleService
 		var results = algorithmProcessor.Process(
 			bin,
 			items,
-			parameters
+			parameters,
+			cancellationToken
 		);
 		
 		var result = this.resultSelector.BestAlgorithm(results);
@@ -173,7 +184,8 @@ internal class BinacleService : IBinacleService
 		Algorithm algorithm,
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -186,7 +198,8 @@ internal class BinacleService : IBinacleService
 			algorithm,
 			bins,
 			items,
-			parameters
+			parameters,
+			cancellationToken
 		);
 
 		await this.logChannel.WriteToChannelAsync(bins, items, parameters, results, this.logger);
@@ -196,7 +209,8 @@ internal class BinacleService : IBinacleService
 	public async ValueTask<IDictionary<string, OperationResult>> MultipleBinsAsync<TBin, TBox, TParams>(
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -208,7 +222,8 @@ internal class BinacleService : IBinacleService
 		var results = binProcessor.Process(
 			bins,
 			items,
-			parameters
+			parameters,
+			cancellationToken
 		);
 
 		await this.logChannel.WriteToChannelAsync(bins, items, parameters, results, this.logger);
@@ -219,7 +234,8 @@ internal class BinacleService : IBinacleService
 		Algorithm algorithm,
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -232,7 +248,8 @@ internal class BinacleService : IBinacleService
 			algorithm,
 			bins,
 			items,
-			parameters
+			parameters,
+			cancellationToken
 		);
 		var result = this.resultSelector.SmallestBin(results);
 
@@ -249,7 +266,8 @@ internal class BinacleService : IBinacleService
 	public async ValueTask<OperationResult> SmallestBinAsync<TBin, TBox, TParams>(
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -261,7 +279,8 @@ internal class BinacleService : IBinacleService
 		var results = binProcessor.Process(
 			bins,
 			items,
-			parameters
+			parameters,
+			cancellationToken
 		);
 		var result = this.resultSelector.SmallestBin(results);
 
@@ -279,7 +298,8 @@ internal class BinacleService : IBinacleService
 		Algorithm algorithm,
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -292,7 +312,8 @@ internal class BinacleService : IBinacleService
 			algorithm,
 			bins,
 			items,
-			parameters
+			parameters,
+			cancellationToken
 		);
 		var result = this.resultSelector.BestBin(results);
 
@@ -309,7 +330,8 @@ internal class BinacleService : IBinacleService
 	public async ValueTask<OperationResult> BestBinAsync<TBin, TBox, TParams>(
 		List<TBin> bins,
 		List<TBox> items,
-		TParams parameters
+		TParams parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IIdentifiableBin
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
@@ -321,7 +343,8 @@ internal class BinacleService : IBinacleService
 		var results = binProcessor.Process(
 			bins,
 			items,
-			parameters
+			parameters,
+			cancellationToken
 		);
 		var result = this.resultSelector.BestBin(results);
 

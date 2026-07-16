@@ -74,7 +74,8 @@ internal class PresetBestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 					algorithm.Value,
 					presetOption.Bins,
 					request.Items!,
-					request.Parameters.ForPackingOperation()
+					request.Parameters.ForPackingOperation(),
+					cancellationToken
 				);
 			}
 			else
@@ -82,7 +83,8 @@ internal class PresetBestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 				result = await binacleService.BestBinAsync(
 					presetOption.Bins,
 					request.Items!,
-					request.Parameters.ForPackingOperation()
+					request.Parameters.ForPackingOperation(),
+					cancellationToken
 				);
 			}
 

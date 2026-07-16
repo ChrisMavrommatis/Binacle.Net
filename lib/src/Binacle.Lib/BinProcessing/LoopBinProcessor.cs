@@ -19,7 +19,8 @@ public class LoopBinProcessor : IBinProcessor
 		Algorithm algorithm,
 		IList<TBin> bins,
 		IList<TItem> items,
-		IOperationParameters parameters
+		IOperationParameters parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
@@ -31,6 +32,8 @@ public class LoopBinProcessor : IBinProcessor
 
 		for (var i = 0; i < bins.Count; i++)
 		{
+			cancellationToken.ThrowIfCancellationRequested();
+
 			var bin = bins[i];
 			var algorithmInstance = this.algorithmFactory.Create(algorithm, bin, items);
 			var result = algorithmInstance.Execute(parameters);

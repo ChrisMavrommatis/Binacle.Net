@@ -62,7 +62,8 @@ internal class CustomCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 					algorithm.Value,
 					request.Bins!,
 					request.Items!,
-					request.Parameters.ForFittingOperation()
+					request.Parameters.ForFittingOperation(),
+					cancellationToken
 				);
 			}
 			else
@@ -70,7 +71,8 @@ internal class CustomCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 				results = await binacleService.MultipleBinsAsync(
 					request.Bins!,
 					request.Items!,
-					request.Parameters.ForFittingOperation()
+					request.Parameters.ForFittingOperation(),
+					cancellationToken
 				);
 			}
 

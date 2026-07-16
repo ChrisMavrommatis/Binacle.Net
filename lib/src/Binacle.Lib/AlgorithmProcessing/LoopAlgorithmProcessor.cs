@@ -21,7 +21,8 @@ public class LoopAlgorithmProcessor: IAlgorithmProcessor
     public IDictionary<string, OperationResult> Process<TBin, TItem>(
         TBin bin, 
         IList<TItem> items, 
-        IOperationParameters parameters
+        IOperationParameters parameters,
+        CancellationToken cancellationToken = default
         ) 
         where TBin : class, IWithID, IWithReadOnlyDimensions 
         where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
@@ -33,6 +34,8 @@ public class LoopAlgorithmProcessor: IAlgorithmProcessor
 
         for (var i = 0; i < this.supportedAlgorithms.Length; i++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var algorithm = this.supportedAlgorithms[i];
             var algorithmInstance = this.algorithmFactory.Create(algorithm, bin, items);
             var result = algorithmInstance.Execute(parameters);

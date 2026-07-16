@@ -21,7 +21,8 @@ public class LoopMultiAlgorithmBinProcessor : IMultiAlgorithmBinProcessor
 	public IDictionary<string, OperationResult> Process<TBin, TItem>(
 		IList<TBin> bins,
 		IList<TItem> items,
-		IOperationParameters parameters
+		IOperationParameters parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
@@ -33,8 +34,10 @@ public class LoopMultiAlgorithmBinProcessor : IMultiAlgorithmBinProcessor
 
 		for (var i = 0; i < bins.Count; i++)
 		{
+			cancellationToken.ThrowIfCancellationRequested();
+
 			var bin = bins[i];
-			var algorithmResults = this.algorithmProcessor.Process(bin, items, parameters);
+			var algorithmResults = this.algorithmProcessor.Process(bin, items, parameters, cancellationToken);
 			var selectedAlgorithmResult = this.resultSelector.BestAlgorithm(algorithmResults);
 			results[bin.ID] = selectedAlgorithmResult;
 		}

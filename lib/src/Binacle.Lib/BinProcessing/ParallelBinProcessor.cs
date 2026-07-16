@@ -21,9 +21,10 @@ public class ParallelBinProcessor : IBinProcessor
 	
 	public IDictionary<string, OperationResult> Process<TBin, TItem>(
 		Algorithm algorithm,
-		IList<TBin> bins, 
-		IList<TItem> items, 
-		IOperationParameters parameters
+		IList<TBin> bins,
+		IList<TItem> items,
+		IOperationParameters parameters,
+		CancellationToken cancellationToken = default
 	)
 		where TBin : class, IWithID, IWithReadOnlyDimensions
 		where TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity
@@ -31,10 +32,11 @@ public class ParallelBinProcessor : IBinProcessor
 		using var activity = Diagnostics.ActivitySource
 			.StartActivity($"Process Bins: Parallel");
 		activity?.SetTag("Operation", parameters.Operation);
-		
+
 		var results =  new ConcurrentDictionary<string, OperationResult>(this.concurrencyLevel, bins.Count);
 
-		Parallel.For(0, bins.Count, i =>
+		var parallelOptions = new ParallelOptions { CancellationToken = cancellationToken };
+		Parallel.For(0, bins.Count, parallelOptions, i =>
 		{
 			var bin = bins[i];
 			var algorithmInstance = this.algorithmFactory.Create(algorithm, bin, items);
