@@ -32,6 +32,15 @@ Unit + integration tests, one script per slice (`tests.<slice>.sh`):
 ./config/tests.shared.sh [cs|ts]       # compact-notation C# and/or TS
 ```
 
+## Coverage
+
+Runs every C# suite and both TS packages, then merges them into one report. Needs Azurite up — without it the
+service suite fails and the script writes no report.
+
+```bash
+./config/coverage.sh                   # -> CoverageArtifacts/html/index.html
+```
+
 ## Performance tests
 
 Per slice; write reports to a gitignored scratch folder — see [results/README.md](../../results/README.md) for the

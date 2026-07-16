@@ -31,8 +31,7 @@ internal class EnumStringsSchemaTransformer : IOpenApiSchemaTransformer
 			return Task.CompletedTask;
 		}
 
-			
-		// TODO: if property required then remove nullable and from name
+
 		if ((converterType?.IsGenericType ?? false) && converterType?.GetGenericTypeDefinition() == typeof(JsonStringNullableEnumConverter<>))
 		{
 			schema.Type = JsonSchemaType.String;

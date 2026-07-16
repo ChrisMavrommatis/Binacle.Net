@@ -28,6 +28,7 @@ public static class OpenApiOptionsExtensions
 	public static OpenApiOptions AddEnumStringsSchema(this OpenApiOptions options)
 	{
 		options.AddSchemaTransformer<EnumStringsSchemaTransformer>();
+		options.AddDocumentTransformer<RequiredNullableSchemaDocumentTransformer>();
 		return options;
 	}
 }
