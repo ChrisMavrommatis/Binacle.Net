@@ -1,4 +1,3 @@
-using FluentValidation;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 
@@ -15,7 +14,7 @@ internal class FitCustomBinRequestExample : ISingleOpenApiExamplesProvider<FitCu
 	public IOpenApiExample<FitCustomBinRequest> GetExample()
 	{
 		return OpenApiExample.Create(
-			"FitCustomBinRequest",
+			"fitCustomBinRequest",
 			"Fit Custom Bin Request",
 			new FitCustomBinRequest()
 			{
@@ -24,13 +23,8 @@ internal class FitCustomBinRequestExample : ISingleOpenApiExamplesProvider<FitCu
 					Algorithm = Algorithm.Best,
 					IncludeViPaqData = true,
 				},
-				Bin = Bin.From("custom_bin", 10, 40, 60),
-				Items =
-				[
-					Box.From("box_1", 2, 5, 10, 2),
-					Box.From("box_2", 12, 15, 10, 1),
-					Box.From("box_3", 12, 10, 15, 1),
-				]
+				Bin = ExampleData.SingleBin("custom_bin"),
+				Items = ExampleData.Items()
 			}
 		);
 	}
@@ -44,63 +38,18 @@ internal class FitCustomBinResponseExamples : IMultipleOpenApiExamplesProvider<F
 			"fitResponse",
 			"Fit Response",
 			"Example response when all items fit into the bin and no items are left unpacked.",
-			new FitBinResponse
-			{
-				Status = BinFitResultStatus.Fits,
-				EarlyExitReason = BinFitEarlyExitReason.None,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
-				AlgorithmUsed = "FFD",
-				PackedItems =
-				[
-					PackedBox.From("box_2", 10, 12, 15, 0, 0, 0),
-					PackedBox.From("box_3", 10, 12, 15, 0, 12, 0),
-					PackedBox.From("box_1", 2, 5, 10, 0, 0, 15),
-					PackedBox.From("box_1", 2, 5, 10, 0, 24, 0),
-				],
-				UnpackedItems = [],
-				PackedItemsVolumePercentage = 100,
-				PackedBinVolumePercentage = 15.83m,
-			}.WithViPaqData());
+			FitExampleResponses.Fits("custom_bin"));
 
 		yield return OpenApiExample.Create(
 			"doesNotFitResponse",
 			"Does Not Fit Response",
 			"Example response when some items don't fit into the bin.",
-			new FitBinResponse()
-			{
-				Status = BinFitResultStatus.DoesNotFit,
-				EarlyExitReason = BinFitEarlyExitReason.None,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
-				AlgorithmUsed = "FFD",
-				PackedItems =
-				[
-					PackedBox.From("box_2", 10, 12, 15, 0, 0, 0),
-					PackedBox.From("box_3", 10, 12, 15, 0, 12, 0),
-				],
-				UnpackedItems =
-				[
-					UnpackedBox.From("box_1", 2)
-				],
-				PackedItemsVolumePercentage = 79.37m,
-				PackedBinVolumePercentage = 12.58m,
-			}.WithViPaqData());
+			FitExampleResponses.DoesNotFit("custom_bin"));
 
 		yield return OpenApiExample.Create(
 			"earlyExitResponse",
 			"Early Exit Response",
 			"Example response when the early exit condition is met and the algorithm exits before starting.",
-			new FitBinResponse()
-			{
-				Status = BinFitResultStatus.EarlyExit,
-				EarlyExitReason = BinFitEarlyExitReason.ContainerDimensionExceeded,
-				Bin = Bin.From("custom_bin", 10, 40, 60),
-				AlgorithmUsed = "FFD",
-				PackedItems = [],
-				UnpackedItems =[
-					UnpackedBox.From("large_box", 1),
-				],
-				PackedItemsVolumePercentage = 0,
-				PackedBinVolumePercentage = 0,
-			});
+			FitExampleResponses.EarlyExit("custom_bin"));
 	}
 }

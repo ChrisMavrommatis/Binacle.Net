@@ -31,13 +31,13 @@ table of [README.md](README.md).
 | [api/openapi.md](api/openapi.md) | OpenAPI wiring — IOpenApiDocument, the Kernel transformers (JWT, 429, response descriptions, enum-as-string), what endpoint groups auto-wire, and the external OpenApiExamples package |
 | [api/presets.md](api/presets.md) | What presets are, where they're configured, how route params map to bins, and how to add one for tests |
 | [api/README.md](api/README.md) | Index for API slice docs — endpoints, contracts, service, kernel, presets, and module docs (Diagnostics, ServiceModule, UIModule) |
-| [api/service.md](api/service.md) | IBinacleService — method reference for SingleBinAsync, MultipleBinsAsync, SmallestBinAsync; return types, call pattern, and algorithm selection |
-| [api/tests.md](api/tests.md) | api/test integration tests — v3/v4 HTTP conventions, validBinId, preset keys, special bins, base-class asserts, and test host config |
+| [api/service.md](api/service.md) | IBinacleService — method reference for SingleBinAsync, MultipleBinsAsync, SmallestBinAsync, BestBinAsync; return types, call pattern, and algorithm selection |
+| [api/tests.md](api/tests.md) | api/test integration tests — layout, v3/v4 HTTP conventions, validBinId, preset keys, special bins, base-class asserts, and test host config |
 | [api/v3/contracts.md](api/v3/contracts.md) | v3 request and response contracts — field names, outer response wrapper, and enum values for fit and pack. |
 | [api/v3/README.md](api/v3/README.md) | v3 API — stable, do not modify. Endpoints, algorithm selection, response shape, field names, and enum values. |
 | [api/v4/add-endpoint.md](api/v4/add-endpoint.md) | Step-by-step guide for adding a new v4 endpoint |
 | [api/v4/contracts.md](api/v4/contracts.md) | Request/response contract types, validators, and OpenAPI examples for v4 (v3 follows the same shape) |
-| [api/v4/README.md](api/v4/README.md) | v4 API — active development. Endpoints (implemented and planned), algorithm selection, parameters, contracts, and response shape. |
+| [api/v4/README.md](api/v4/README.md) | v4 API — active development. Endpoints, algorithm selection, parameters, contracts, and response shape. |
 
 ## Config
 

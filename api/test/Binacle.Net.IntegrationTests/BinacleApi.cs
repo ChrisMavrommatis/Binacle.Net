@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Binacle.Net.Configuration;
 using Binacle.Net.IntegrationTests;
 using Binacle.TestsKernel.Algorithms.Providers;
+using Binacle.TestsKernel.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -63,38 +64,14 @@ public class BinacleApi : WebApplicationFactory<IApiMarker>
 
 				options.Presets.Clear();
 				
-				var customProblemBins = CustomProblemsScenarioProvider
-					.GetScenarios()
-					.Select(x => x.Bin)
-					.DistinctBy(x => x.ID)
-					.Select(x => new BinOption
-					{
-						ID = x.ID,
-						Length = x.Length,
-						Width = x.Width,
-						Height = x.Height
-					}).ToList();
-				
 				options.Presets.Add(PresetKeys.CustomProblems, new BinPresetOption()
 				{
-					Bins = customProblemBins
+					Bins = ToBinOptions(CustomProblemsScenarioProvider.GetDistinctBins())
 				});
-				
-				var bischoffSuiteBins = BischoffSuiteScenarioProvider
-					.GetScenarios()
-					.Select(x => x.Bin)
-					.DistinctBy(x => x.ID)
-					.Select(x => new BinOption
-					{
-						ID = x.ID,
-						Length = x.Length,
-						Width = x.Width,
-						Height = x.Height
-					}).ToList();
-				
+
 				options.Presets.Add(PresetKeys.BiscoffSuite, new BinPresetOption()
 				{
-					Bins = bischoffSuiteBins
+					Bins = ToBinOptions(BischoffSuiteScenarioProvider.GetDistinctBins())
 				});
 
 				options.Presets.Add(PresetKeys.SpecialSet, new BinPresetOption()
@@ -126,6 +103,15 @@ public class BinacleApi : WebApplicationFactory<IApiMarker>
 			});
 		});
 	}
+
+	private static List<BinOption> ToBinOptions(IReadOnlyList<TestBin> bins)
+		=> bins.Select(bin => new BinOption
+		{
+			ID = bin.ID,
+			Length = bin.Length,
+			Width = bin.Width,
+			Height = bin.Height
+		}).ToList();
 
 	public HttpClient Client { get; init; }
 	public JsonSerializerOptions JsonSerializerOptions { get; init; }

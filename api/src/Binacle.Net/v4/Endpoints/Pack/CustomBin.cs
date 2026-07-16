@@ -14,7 +14,7 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 	{
 		group.MapPost("pack/bin", HandleAsync)
 			.WithTags("Pack")
-			.WithSummary("Pack a Custom Bin")
+			.WithSummary("Pack a custom bin")
 			.WithDescription("Pack items into a custom bin.")
 			
 			.Accepts<PackCustomBinRequest>("application/json")

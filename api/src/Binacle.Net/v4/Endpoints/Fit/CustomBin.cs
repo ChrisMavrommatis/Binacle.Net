@@ -14,7 +14,7 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 	{
 		group.MapPost("fit/bin", HandleAsync)
 			.WithTags("Fit")
-			.WithSummary("Fit a Custom Bin")
+			.WithSummary("Fit a custom bin")
 			.WithDescription("Attempt to find if all items fit into a custom bin.")
 			
 			.Accepts<FitCustomBinRequest>("application/json")

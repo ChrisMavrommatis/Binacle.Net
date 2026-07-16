@@ -4,19 +4,41 @@
 
 | Folder | What it covers |
 |---|---|
-| `v3/` | v3 endpoints |
-| `v4/` | v4 endpoints — fit and pack, by custom bin, by preset bin, and smallest bin |
-| `Service/` | ServiceModule — `Token.http`, plus admin endpoints under `Admin/Accounts` and `Admin/Subscriptions` |
+| `v3/` | v3 endpoints — fit, pack, and presets |
+| `v4/` | v4 endpoints — fit, pack, and presets |
+| `Service/` | ServiceModule — `Auth/Token.http`, plus the admin endpoints under `Admin/Account` and `Admin/Subscription` |
 | `Health Check.http` | The `_health` endpoint |
 
+## Layout — one file per endpoint
+
+A request file mirrors its endpoint's source path and takes the endpoint class's name:
+
+```
+api/src/Binacle.Net/v4/Endpoints/Fit/CustomBin.cs          -> v4/Fit/CustomBin.http
+api/src/Binacle.Net/v3/Endpoints/Pack/ByPreset.cs          -> v3/Pack/ByPreset.http
+api/src/Binacle.Net.ServiceModule/v0/Endpoints/Auth/Token.cs -> Service/Auth/Token.http
+```
+
+So every endpoint has exactly one request, and a new one is easy to place — find the endpoint, match the path.
+`requests.proj` globs `**\*.http`, so nothing needs registering.
+
 Preset routes name the preset inline (`.../rectangular-cuboids/Small`). Change it to any key from
-`Presets.json`.
+`Presets.json` — `rectangular-cuboids`, `perfect-cubes`, or `sample`.
+
+Note that v3 **fit** takes only `algorithm` — `includeViPaqData` is a v3 **pack** parameter and a v4 parameter,
+but not part of the v3 fit contract.
+
+## The admin requests need an account that exists
+
+`Service/Admin/**` files carry a hard-coded `@ID` from whoever wrote them, so they answer `404` against a store
+that has never seen it. Run `Admin/Account/Create.http` first and copy the id out of the response's `Location`
+header into `@ID`. `Create.http` itself answers `409` once that username exists.
 
 ## Variables
 
 `http-client.env.json` defines the `local` environment. Pick it in your IDE before sending a request.
 
 - `HOST` — defaults to `localhost:7194`
-- `BEARERTOKEN` — empty. Fill it from the response of `Service/Token.http` to call anything behind auth.
+- `BEARERTOKEN` — empty. Fill it from the response of `Service/Auth/Token.http` to call anything behind auth.
 
 Start the API with `./config/api.sh` first. Use `S` if you need the ServiceModule endpoints.

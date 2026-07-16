@@ -112,4 +112,70 @@ public abstract partial class BehaviourTestsBase
 
 		additionalValidation?.Invoke(result);
 	}
+
+	protected async Task FitCompareRequest_Validate<TRequest>(
+		string url,
+		TRequest request,
+		Action<FitCompareResponse>? additionalValidation = null
+	)
+	{
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
+
+		response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+		var result = await response.Content.ReadFromJsonAsync<FitCompareResponse>(
+			this.Sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
+
+		result.ShouldNotBeNull();
+		result!.Results.ShouldNotBeEmpty();
+
+		foreach (var binResult in result.Results)
+		{
+			binResult.Bin.ShouldNotBeNull();
+			binResult.AlgorithmUsed.ShouldNotBeNullOrEmpty();
+			binResult.PackedItems.ShouldNotBeNull();
+			binResult.UnpackedItems.ShouldNotBeNull();
+		}
+
+		additionalValidation?.Invoke(result);
+	}
+
+	protected async Task PackCompareRequest_Validate<TRequest>(
+		string url,
+		TRequest request,
+		Action<PackCompareResponse>? additionalValidation = null
+	)
+	{
+		var response = await this.Sut.Client.PostAsJsonAsync(
+			url,
+			request,
+			this.Sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
+
+		response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+		var result = await response.Content.ReadFromJsonAsync<PackCompareResponse>(
+			this.Sut.JsonSerializerOptions,
+			TestContext.Current.CancellationToken
+		);
+
+		result.ShouldNotBeNull();
+		result!.Results.ShouldNotBeEmpty();
+
+		foreach (var binResult in result.Results)
+		{
+			binResult.Bin.ShouldNotBeNull();
+			binResult.AlgorithmUsed.ShouldNotBeNullOrEmpty();
+		}
+
+		additionalValidation?.Invoke(result);
+	}
 }

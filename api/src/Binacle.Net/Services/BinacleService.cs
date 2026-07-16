@@ -69,6 +69,24 @@ internal interface IBinacleService
 		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
 		where TParams : class, IOperationParameters, ILogParametersProvider;
 
+	ValueTask<OperationResult> BestBinAsync<TBin, TBox, TParams>(
+		Algorithm algorithm,
+		List<TBin> bins,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IIdentifiableBin
+		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
+		where TParams : class, IOperationParameters, ILogParametersProvider;
+
+	ValueTask<OperationResult> BestBinAsync<TBin, TBox, TParams>(
+		List<TBin> bins,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IIdentifiableBin
+		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
+		where TParams : class, IOperationParameters, ILogParametersProvider;
 }
 
 internal class BinacleService : IBinacleService
@@ -248,7 +266,7 @@ internal class BinacleService : IBinacleService
 		var result = this.resultSelector.SmallestBin(results);
 
 		await this.logChannel.WriteToChannelAsync(
-			bins, 
+			bins,
 			items,
 			parameters,
 			(result.Bin.ID, result),
@@ -257,4 +275,63 @@ internal class BinacleService : IBinacleService
 		return result;
 	}
 
+	public async ValueTask<OperationResult> BestBinAsync<TBin, TBox, TParams>(
+		Algorithm algorithm,
+		List<TBin> bins,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IIdentifiableBin
+		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
+		where TParams : class, IOperationParameters, ILogParametersProvider
+	{
+		using var timedOperation = this.logger.BeginTimedActivityOperation("Best Bin Operation");
+
+		var binProcessor = this.binProcessorFactory.Create(bins.Count, items.Count);
+		var results = binProcessor.Process(
+			algorithm,
+			bins,
+			items,
+			parameters
+		);
+		var result = this.resultSelector.BestBin(results);
+
+		await this.logChannel.WriteToChannelAsync(
+			bins,
+			items,
+			parameters,
+			(result.Bin.ID, result),
+			this.logger
+		);
+		return result;
+	}
+
+	public async ValueTask<OperationResult> BestBinAsync<TBin, TBox, TParams>(
+		List<TBin> bins,
+		List<TBox> items,
+		TParams parameters
+	)
+		where TBin : class, IWithID, IIdentifiableBin
+		where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
+		where TParams : class, IOperationParameters, ILogParametersProvider
+	{
+		using var timedOperation = this.logger.BeginTimedActivityOperation("Best Bin Operation");
+
+		var binProcessor = this.binProcessorFactory.CreateMultiAlgorithm(bins.Count, items.Count);
+		var results = binProcessor.Process(
+			bins,
+			items,
+			parameters
+		);
+		var result = this.resultSelector.BestBin(results);
+
+		await this.logChannel.WriteToChannelAsync(
+			bins,
+			items,
+			parameters,
+			(result.Bin.ID, result),
+			this.logger
+		);
+		return result;
+	}
 }

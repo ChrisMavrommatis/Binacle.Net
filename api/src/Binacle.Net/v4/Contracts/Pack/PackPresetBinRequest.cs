@@ -1,6 +1,3 @@
-using Binacle.Net.Kernel.OpenApi.Helpers;
-using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 
@@ -26,12 +23,7 @@ internal class PackPresetBinRequestExample : ISingleOpenApiExamplesProvider<Pack
 					Algorithm = Algorithm.Best,
 					IncludeViPaqData = true,
 				},
-				Items =
-				[
-					Box.From("box_1", 2, 5, 10, 2),
-					Box.From("box_2", 12, 15, 10, 1),
-					Box.From("box_3", 12, 10, 15, 1),
-				]
+				Items = ExampleData.Items()
 			});
 	}
 }
@@ -45,62 +37,18 @@ internal class PackPresetBinResponseExamples : IMultipleOpenApiExamplesProvider<
 			"fullyPackedResponse",
 			"Fully Packed Response",
 			"Example response when all items fit into the bin and no items are left unpacked.",
-			new PackBinResponse
-			{
-				Status = BinPackResultStatus.FullyPacked,
-				Bin = Bin.From("preset_bin_1", 10, 40, 60),
-				AlgorithmUsed = "FFD",
-				PackedItems =
-				[
-					PackedBox.From("box_2", 10, 12, 15, 0, 0, 0),
-					PackedBox.From("box_3", 10, 12, 15, 0, 12, 0),
-					PackedBox.From("box_1", 2, 5, 10, 0, 0, 15),
-					PackedBox.From("box_1", 2, 5, 10, 0, 24, 0),
-				],
-				UnpackedItems = [],
-				PackedItemsVolumePercentage = 100,
-				PackedBinVolumePercentage = 15.83m,
-			}.WithViPaqData());
+			PackExampleResponses.FullyPacked("preset_bin_1"));
 
 		yield return OpenApiExample.Create(
 			"partiallyPackedResponse",
 			"Partially Packed Response",
 			"Example response when some items fit into the bin but some items are left unpacked",
-			new PackBinResponse()
-			{
-				Status = BinPackResultStatus.PartiallyPacked,
-				Bin = Bin.From("preset_bin_1", 10, 40, 60),
-				AlgorithmUsed = "FFD",
-				PackedItems =
-				[
-					PackedBox.From("box_2", 10, 12, 15, 0, 0, 0),
-					PackedBox.From("box_3", 10, 12, 15, 0, 12, 0),
-				],
-				UnpackedItems =
-				[
-					UnpackedBox.From("box_1", 2)
-				],
-				PackedItemsVolumePercentage = 79.37m,
-				PackedBinVolumePercentage = 12.58m,
-			}.WithViPaqData());
+			PackExampleResponses.PartiallyPacked("preset_bin_1"));
 
 		yield return OpenApiExample.Create(
 			"unpackedResponse",
 			"Unpacked Response",
 			"Example response when no items fit into the bin and all items are left unpacked",
-			new PackBinResponse()
-			{
-				Status = BinPackResultStatus.NotPacked,
-				Bin = Bin.From("preset_bin_1", 10, 40, 60),
-				AlgorithmUsed = "FFD",
-				PackedItems = [],
-				UnpackedItems =[
-					UnpackedBox.From("box_2", 1),
-					UnpackedBox.From("box_3", 1),
-					UnpackedBox.From("box_1", 2)
-				],
-				PackedItemsVolumePercentage = 0,
-				PackedBinVolumePercentage = 0,
-			});
+			PackExampleResponses.NotPacked("preset_bin_1"));
 	}
 }

@@ -130,12 +130,12 @@
                     "description": "Example response when you provide invalid algorithm",
                     "value": "{\"type\":\"https://tools.ietf.org/html/rfc4918#section-11.2\",\"title\":\"One or more validation errors occurred.\",\"status\":422,\"errors\":{\"Parameters.Algorithm\":[\"\\u0027Algorithm\\u0027 is required and must be one of the following values: FFD, WFD, BFD\"]}}"
                   },
-                  "ivalidBinData": {
+                  "invalidBinData": {
                     "summary": "Invalid Bin Data",
                     "description": "Example response when you provide invalid Bin data",
                     "value": "{\"type\":\"https://tools.ietf.org/html/rfc4918#section-11.2\",\"title\":\"One or more validation errors occurred.\",\"status\":422,\"errors\":{\"Bins\":[\"IDs in \\u0060Bins\\u0060 must be unique\"],\"Bins[0].Length\":[\"\\u0027Length\\u0027 must be greater than \\u00270\\u0027.\"]}}"
                   },
-                  "ivalidItemData": {
+                  "invalidItemData": {
                     "summary": "Invalid Item Data",
                     "description": "Example response when you provide invalid Item data",
                     "value": "{\"type\":\"https://tools.ietf.org/html/rfc4918#section-11.2\",\"title\":\"One or more validation errors occurred.\",\"status\":422,\"errors\":{\"Items[1].Length\":[\"\\u0027Length\\u0027 must be less than or equal to \\u002765535\\u0027.\"]}}"
@@ -247,7 +247,7 @@
                     "description": "Example response when you provide invalid algorithm",
                     "value": "{\"type\":\"https://tools.ietf.org/html/rfc4918#section-11.2\",\"title\":\"One or more validation errors occurred.\",\"status\":422,\"errors\":{\"Parameters.Algorithm\":[\"\\u0027Algorithm\\u0027 is required and must be one of the following values: FFD, WFD, BFD\"]}}"
                   },
-                  "ivalidItemData": {
+                  "invalidItemData": {
                     "summary": "Invalid Item Data",
                     "description": "Example response when you provide invalid Item data",
                     "value": "{\"type\":\"https://tools.ietf.org/html/rfc4918#section-11.2\",\"title\":\"One or more validation errors occurred.\",\"status\":422,\"errors\":{\"Items\":[\"IDs in \\u0060Items\\u0060 must be unique\"],\"Items[1].Length\":[\"\\u0027Length\\u0027 must be less than or equal to \\u002765535\\u0027.\"]}}"
@@ -351,12 +351,12 @@
                     "description": "Example response when you provide invalid algorithm",
                     "value": "{\"type\":\"https://tools.ietf.org/html/rfc4918#section-11.2\",\"title\":\"One or more validation errors occurred.\",\"status\":422,\"errors\":{\"Parameters.Algorithm\":[\"\\u0027Algorithm\\u0027 is required and must be one of the following values: FFD, WFD, BFD\"]}}"
                   },
-                  "ivalidBinData": {
+                  "invalidBinData": {
                     "summary": "Invalid Bin Data",
                     "description": "Example response when you provide invalid Bin data",
                     "value": "{\"type\":\"https://tools.ietf.org/html/rfc4918#section-11.2\",\"title\":\"One or more validation errors occurred.\",\"status\":422,\"errors\":{\"Bins\":[\"IDs in \\u0060Bins\\u0060 must be unique\"],\"Bins[0].Length\":[\"\\u0027Length\\u0027 must be greater than \\u00270\\u0027.\"]}}"
                   },
-                  "ivalidItemData": {
+                  "invalidItemData": {
                     "summary": "Invalid Item Data",
                     "description": "Example response when you provide invalid Item data",
                     "value": "{\"type\":\"https://tools.ietf.org/html/rfc4918#section-11.2\",\"title\":\"One or more validation errors occurred.\",\"status\":422,\"errors\":{\"Items[1].Length\":[\"\\u0027Length\\u0027 must be less than or equal to \\u002765535\\u0027.\"]}}"
@@ -473,7 +473,7 @@
                     "description": "Example response when you provide invalid algorithm",
                     "value": "{\"type\":\"https://tools.ietf.org/html/rfc4918#section-11.2\",\"title\":\"One or more validation errors occurred.\",\"status\":422,\"errors\":{\"Parameters.Algorithm\":[\"\\u0027Algorithm\\u0027 is required and must be one of the following values: FFD, WFD, BFD\"]}}"
                   },
-                  "ivalidItemData": {
+                  "invalidItemData": {
                     "summary": "Invalid Item Data",
                     "description": "Example response when you provide invalid Item data",
                     "value": "{\"type\":\"https://tools.ietf.org/html/rfc4918#section-11.2\",\"title\":\"One or more validation errors occurred.\",\"status\":422,\"errors\":{\"Items\":[\"IDs in \\u0060Items\\u0060 must be unique\"],\"Items[1].Length\":[\"\\u0027Length\\u0027 must be less than or equal to \\u002765535\\u0027.\"]}}"

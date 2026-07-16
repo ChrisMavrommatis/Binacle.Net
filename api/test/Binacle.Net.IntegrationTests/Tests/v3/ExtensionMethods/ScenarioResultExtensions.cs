@@ -1,6 +1,6 @@
 using Binacle.TestsKernel.Algorithms.Models;
 
-namespace Binacle.Net.IntegrationTests.v3;
+namespace Binacle.Net.IntegrationTests.v3.ExtensionMethods;
 
 internal static class ScenarioResultExtensions
 {

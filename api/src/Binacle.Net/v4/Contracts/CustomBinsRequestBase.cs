@@ -41,7 +41,7 @@ internal class CustomBinsValidationProblemResponseExamples : IMultipleOpenApiExa
 		);
 		
 		yield return OpenApiValidationProblemExample.Create(
-			"ivalidBinData",
+			"invalidBinData",
 			"Invalid Bin Data",
 			"Example response when you provide invalid Bin data",
 			new Dictionary<string, string[]>()

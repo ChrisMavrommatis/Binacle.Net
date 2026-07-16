@@ -15,12 +15,6 @@ you need, and trim or delete it once the work lands.
 | [release-v4.md](release-v4.md) | Release Plan — the v4 version |
 | [todos.md](todos.md) | TODOs |
 
-## API
-
-| File | Description |
-|---|---|
-| [api/v4-endpoints.md](api/v4-endpoints.md) | v4 API — Endpoint Buildout |
-
 ## Shared
 
 | File | Description |

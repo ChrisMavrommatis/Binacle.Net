@@ -206,7 +206,7 @@ internal class FitByCustomValidationProblemExamples : IMultipleOpenApiExamplesPr
 		);
 
 		yield return OpenApiValidationProblemExample.Create(
-			"ivalidBinData",
+			"invalidBinData",
 			"Invalid Bin Data",
 			"Example response when you provide invalid Bin data",
 			new Dictionary<string, string[]>()
@@ -217,7 +217,7 @@ internal class FitByCustomValidationProblemExamples : IMultipleOpenApiExamplesPr
 		);
 		
 		yield return OpenApiValidationProblemExample.Create(
-			"ivalidItemData",
+			"invalidItemData",
 			"Invalid Item Data",
 			"Example response when you provide invalid Item data",
 			new Dictionary<string, string[]>()

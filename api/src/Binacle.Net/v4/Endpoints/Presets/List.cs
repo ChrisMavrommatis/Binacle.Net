@@ -14,12 +14,12 @@ internal class List : IGroupedEndpoint<ApiV4EndpointGroup>
 	{
 		group.MapGet("presets", HandleAsync)
 			.WithTags("Presets")
-			.WithSummary("List Presets")
+			.WithSummary("List presets")
 			.WithDescription("Lists the presets present in configuration.")
 			.Produces<PresetListResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, "application/json")
 			.ResponseDescription(StatusCodes.Status200OK,
-				"Returns all of the configured presets wth the associated bins."
+				"Returns all of the configured presets with the associated bins."
 			).RequireCors(CorsPolicy.CoreApi);
 	}
 	

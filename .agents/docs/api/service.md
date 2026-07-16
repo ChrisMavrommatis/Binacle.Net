@@ -1,7 +1,7 @@
 ---
 id: api/service
-description: IBinacleService — method reference for SingleBinAsync, MultipleBinsAsync, SmallestBinAsync; return types, call pattern, and algorithm selection
-verified: 2026-07-06
+description: IBinacleService — method reference for SingleBinAsync, MultipleBinsAsync, SmallestBinAsync, BestBinAsync; return types, call pattern, and algorithm selection
+verified: 2026-07-16
 check: Method signatures match IBinacleService in api/src/Binacle.Net/Services/BinacleService.cs
 ---
 
@@ -38,6 +38,11 @@ themselves into the log. All three exist so the service output can flow into the
 | `MultipleBinsAsync(bins, items, params)` | `ValueTask<IDictionary<string, OperationResult>>` | Runs all algorithms on each bin, picks best per bin, returns all results keyed by bin ID |
 | `SmallestBinAsync(algorithm, bins, items, params)` | `ValueTask<OperationResult>` | Runs one algorithm across all bins, picks `SmallestBin` |
 | `SmallestBinAsync(bins, items, params)` | `ValueTask<OperationResult>` | Runs all algorithms across all bins, picks `SmallestBin` |
+| `BestBinAsync(algorithm, bins, items, params)` | `ValueTask<OperationResult>` | Runs one algorithm across all bins, picks `BestBin` |
+| `BestBinAsync(bins, items, params)` | `ValueTask<OperationResult>` | Runs all algorithms across all bins, picks `BestBin` |
+
+`SmallestBinAsync` and `BestBinAsync` are the same method with a different selector — every bin is run either
+way, and only the winner differs (`$lib/result-selection`).
 
 ## Choosing the right method
 
@@ -48,6 +53,7 @@ themselves into the log. All three exist so the service output can flow into the
 | All bins, return all results, user picked algorithm | `MultipleBinsAsync(algorithm, bins, items, params)` |
 | All bins, return all results, auto-select best | `MultipleBinsAsync(bins, items, params)` |
 | Many bins, return smallest that fits | `SmallestBinAsync(algorithm/bins, items, params)` |
+| Many bins, return the one the items fill most | `BestBinAsync(algorithm/bins, items, params)` |
 
 ## Calling it
 

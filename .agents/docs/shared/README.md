@@ -1,8 +1,8 @@
 ---
 id: shared
 description: Shared slice — Binacle.TestsKernel (scenario data, compact-string formats, providers, fixtures) and shared/data (OR-Library benchmark data)
-verified: 2026-07-05
-check: Collection keys, compact-string parsers, and provider class names match shared/test/Binacle.TestsKernel; OR-Library files match shared/data
+verified: 2026-07-16
+check: Collection keys, compact-string parsers, and provider class names and methods match shared/test/Binacle.TestsKernel; OR-Library files match shared/data
 also_update:
   - lib/tests
   - api/tests
@@ -79,6 +79,21 @@ Static, lazily built, keyed by scenario `Name`. Each exposes `GetScenarioNames()
 
 - Algorithms: `AllScenariosProvider` (Bischoff + Custom), `BischoffSuiteScenarioProvider`, `CustomProblemsScenarioProvider`
 - ResultSelection: `AllScenariosProvider` (all three), `BestAlgorithmScenarioProvider`, `BestBinScenarioProvider`, `SmallestBinScenarioProvider`
+
+### The bins a suite runs against
+
+The two algorithm suite providers also answer for their **bins**, because the API tests register exactly those
+as a preset and must not restate the list (see `$api/tests`):
+
+- `BischoffSuiteScenarioProvider.GetDistinctBins()` and `CustomProblemsScenarioProvider.GetDistinctBins()` —
+  one `TestBin` per ID, in the order the scenarios introduce them.
+- `CustomProblemsScenarioProvider` adds `GetDistinctBinIds()` and `GetSmallestBin()` (least volume).
+
+Add a scenario with a new bin and the set grows on its own — nothing else needs editing.
+
+**The two providers do not match, on purpose.** Each carries only what something calls: both presets are
+registered from `GetDistinctBins()`, but only `custom-problems` tests ask for the ids or the smallest bin. Add
+the missing pair to Bischoff when a caller needs it, not to even the two up.
 
 ## Models and helpers
 

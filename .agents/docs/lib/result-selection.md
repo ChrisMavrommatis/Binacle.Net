@@ -1,7 +1,7 @@
 ---
 id: lib/result-selection
 description: IResultSelector, IResultSelectionStrategy, and the three selection strategies — scoring rules, tie-breaking, and how tests verify them
-verified: 2026-07-05
+verified: 2026-07-16
 check: Strategy class names and scoring rules match lib/src/Binacle.Lib/
 also_update:
   - api/service
@@ -67,7 +67,11 @@ Priority order:
 
 Same scoring as `BestAlgorithm_v2` but uses `PackedBinVolumePercentage` instead of `PackedItemsVolumePercentage`.
 
-Currently **not called** by `BinacleService` — it exists on the interface but no endpoint uses it yet.
+Used by: `BinacleService.BestBinAsync`, behind `pack/best-bin` and `pack/best-bin/{preset}` (`$api/v4`).
+
+It agrees with `SmallestBin_v2` whenever some bin packs fully: the +1000 bonus puts fully-packed results first
+in both, and among those the least roomy bin is also the most filled. They diverge only when nothing packs
+fully — this one then takes the highest utilization, `SmallestBin_v2` the least volume.
 
 ## How tests verify selection
 

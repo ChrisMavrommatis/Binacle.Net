@@ -2,7 +2,7 @@ using Binacle.Net.v4.Contracts.Fit;
 using Binacle.Net.v4.Contracts.Pack;
 using Binacle.TestsKernel.Algorithms.Models;
 
-namespace Binacle.Net.IntegrationTests.v4;
+namespace Binacle.Net.IntegrationTests.v4.ExtensionMethods;
 
 internal static class ScenarioResultExtensions
 {

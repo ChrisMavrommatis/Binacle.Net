@@ -17,7 +17,7 @@ internal class PresetBin : IGroupedEndpoint<ApiV4EndpointGroup>
 		group.MapPost("fit/bin/{preset}/{bin}", HandleAsync)
 			.WithTags("Fit")
 			.WithSummary("Fit a bin from a preset")
-			.WithDescription("Attempt to Fit items into a bin from a preset. The preset and bin must be specified in the URL path.")
+			.WithDescription("Attempt to fit items into a bin from a preset. The preset and bin must be specified in the URL path.")
 			
 			.Accepts<FitPresetBinRequest>("application/json")
 			.RequestExample<FitPresetBinRequestExample>("application/json")

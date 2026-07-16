@@ -44,8 +44,12 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 
 ## ⚙️ Core Changes
 - Removal of all V2 endpoints.  
-- Added experimental V4 endpoints: `presets`, `fit/bin`, `fit/bin/{preset}/{bin}`, `pack/bin`, `pack/bin/{preset}/{bin}`, and `pack/smallest-bin`.  
-- V4 splits a request into three shapes — one bin, many bins returning the smallest, and many bins returning every result. The last shape is not yet available and is planned for a later 3.x release.  
+- Added **16 experimental V4 endpoints**, covering everything V3 does.  
+- V4 splits a request into three shapes. **One bin, one answer** — `fit/bin`, `pack/bin`, and their `{preset}/{bin}` variants.  
+- **Many bins, one answer** — `pack/smallest-bin`, `pack/smallest-bin/{preset}`, `fit/smallest-bin`, and `fit/smallest-bin/{preset}` return the smallest bin that works; `pack/best-bin` and `pack/best-bin/{preset}` return the bin the items fill the most.  
+- **Many bins, every answer** — `fit/compare-bins`, `pack/compare-bins`, and their `{preset}` variants return one result per bin, in the order the bins were sent.  
+- Presets can be **listed** with `presets` or **fetched one at a time** with `presets/{preset}`.  
+- V4 is **experimental and can change at any time**. V3 remains stable and is the recommended version.  
 - V3 endpoints are unchanged and remain stable, apart from the ViPaq payload.  
 - Configuration files, environment variables, and the `Dockerfile` are unchanged.  
 

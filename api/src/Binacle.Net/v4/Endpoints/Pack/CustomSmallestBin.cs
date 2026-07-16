@@ -14,15 +14,15 @@ internal class CustomSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 	{
 		group.MapPost("pack/smallest-bin", HandleAsync)
 			.WithTags("Pack")
-			.WithSummary("Pack the smallest bin")
-			.WithDescription("Pack all bins and return the result for the smallest bin that can fit the items.")
+			.WithSummary("Pack the smallest custom bin")
+			.WithDescription("Pack every custom bin and return the result for the smallest bin that can fit the items.")
 			
 			.Accepts<PackCustomSmallestBinRequest>("application/json")
 			.RequestExample<PackCustomSmallestBinRequestExample>("application/json")
 			
 			.Produces<PackBinResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseDescription(StatusCodes.Status200OK, 
-				"Returns the result of the packing operation for the smallest custom bin and items.")
+				"Returns the result of the packing operation for the smallest custom bin that can fit the items.")
 			.ResponseExamples<PackCustomSmallestBinResponseExamples>(StatusCodes.Status200OK, "application/json")
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
@@ -34,9 +34,9 @@ internal class CustomSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				ResponseDescription.For400BadRequest
 			)
-			.ResponseExamples<CustomBinValidationProblemResponseExamples>(
+			.ResponseExamples<CustomBinsValidationProblemResponseExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-			 "application/problem+json"
+				"application/problem+json"
 			)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
@@ -45,7 +45,7 @@ internal class CustomSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 	internal async Task<IResult> HandleAsync(
 		BindingResult<PackCustomSmallestBinRequest> bindingResult,
 		IBinacleService binacleService,
-		ILogger<CustomBin> logger,
+		ILogger<CustomSmallestBin> logger,
 		CancellationToken cancellationToken = default
 	)
 	{

@@ -7,54 +7,33 @@ The release is built around the v4 endpoints, but v4 alone is not enough to ship
 everything that has to happen, in order, and points at the plan that owns each piece.
 
 Related plans and trackers:
-- `.agents/plans/api/v4-endpoints.md` — the endpoint buildout (owns the detail)
 - `.agents/plans/docs-versioning.md` — the docs-site version history (owns the detail)
 - `.agents/release-notes.md` — the changelog to publish
 - `.agents/pending-actions.md` — the manual steps outside the repo
 
 ---
 
-## Open decision: do the compare endpoints ship in this release?
+## Settled: compare ships, and v4 now covers v3
 
-**Read this before planning the endpoint work — it sets the size of the release.**
-
-v4 splits what v3 did into three request shapes. Two are built:
-
-| Shape | Request base | v4 endpoints | Built? |
-|---|---|---|---|
-| one bin → one answer | `CustomBinRequestBase` / `PresetBinRequestBase` | `fit/bin`, `pack/bin`, + `{preset}/{bin}` variants | Yes |
-| **many bins → one answer** | `CustomBinsRequestBase` | `pack/smallest-bin` | **Yes** |
-| **many bins → all answers** | `CustomBinsRequestBase` / `PresetBinsRequestBase` | `fit/compare`, `pack/compare`, + `{preset}` variants | **No** |
-
-v3 only ever had the last shape: all four of its fit/pack endpoints call `MultipleBinsAsync`, taking many
-bins and returning a result per bin.
-
-So the gap is **compare specifically**, not "many bins" in general — `pack/smallest-bin` already takes a bin
-list. A v3 caller asking "which bin should I use" is already served by `smallest-bin`. Only a caller that
-wants *every* bin's result needs compare.
+**Decided 2026-07-16 (maintainer): build the v4 endpoints.** The four compare endpoints are built, so the
+question this section used to pose — ship v4 without compare? — is moot. v4 now has a successor for every v3
+endpoint:
 
 | v3 endpoint | v4 successor | Exists? |
 |---|---|---|
-| `POST /api/v3/fit/by-custom` | `POST /api/v4/fit/compare` | No |
-| `POST /api/v3/fit/by-preset/{preset}` | `POST /api/v4/fit/compare/{preset}` | No |
-| `POST /api/v3/pack/by-custom` | `POST /api/v4/pack/compare` | No |
-| `POST /api/v3/pack/by-preset/{preset}` | `POST /api/v4/pack/compare/{preset}` | No |
+| `POST /api/v3/fit/by-custom` | `POST /api/v4/fit/compare-bins` | Yes |
+| `POST /api/v3/fit/by-preset/{preset}` | `POST /api/v4/fit/compare-bins/{preset}` | Yes |
+| `POST /api/v3/pack/by-custom` | `POST /api/v4/pack/compare-bins` | Yes |
+| `POST /api/v3/pack/by-preset/{preset}` | `POST /api/v4/pack/compare-bins/{preset}` | Yes |
 | `GET /api/v3/presets` | `GET /api/v4/presets` | Yes |
 
-**Recommendation: ship v4 without compare, marked experimental. Compare lands in a later 3.x minor.**
+v4 ships with **16 endpoints**, still marked experimental. Ten landed on 2026-07-16: the compare four, the
+preset variants of smallest, both best-fit routes, fit/smallest, and `GET /api/v4/presets/{preset}`.
+`pack/first-bin` (custom + preset, formerly `first-fit`) was cut from v4 — it needs a design call and may target v3.1 instead.
+It is parked in `.agents/ideas/api/pack-first-bin-endpoint.md`. **The v4 endpoint work is complete.**
 
-- **Precedent.** v1.2.0 shipped API v3 with exactly **one** endpoint, marked experimental, and grew it over
-  the line. v4 at six endpoints is further along than v3 ever was at introduction.
-- **Nothing is stranded.** v3 is frozen and complete (`$memory/v3-frozen`), so it keeps serving every caller,
-  including the API v2 users this release forces to move.
-- **The release is already heavy** — API v2 dropped, ViPaq tokens rebuilt, packing-log config flattened.
-- **Migrating the UI clients is post-release** (maintainer, 2026-07-16), so nothing waits on compare.
-- **It costs no docs churn later.** Adding endpoints to v4 does not change the API version *set* the image
-  serves (still v3 + v4), so it needs no new docs folder — just an edit to the current `v3.0.x` folder.
-  See `.agents/plans/docs-versioning.md`.
-
-**Not yet decided by the maintainer.** If the answer is instead "v4 must fully cover v3 at release", then the
-four compare endpoints become the largest work item in the release and move into Blockers below.
+Still marked experimental at release, carrying the same banner v3 used while it was in development. Feature
+coverage is not the same as a frozen contract, and the UI clients have not moved across yet.
 
 ---
 
@@ -101,21 +80,18 @@ four compare endpoints become the largest work item in the release and move into
       `api/src/Binacle.Net.Kernel/OpenApi/EnumStringsSchemaTransformer.cs:35` — a required enum property
       still gets `JsonStringNullableEnumConverter` and keeps its `?`. This bakes into the published
       `v4.json`, so it is worth fixing while the spec is being cut rather than after.
-- [ ] **Write the v4 release-notes entries.** `release-notes.md` currently covers the ViPaq break and the
-      packing-log config change but says **nothing about v4** — the headline feature of the release is
-      missing from its own changelog. Add an overview line, the endpoint list, and the v2-removal note.
-      v2 removal is a breaking change and needs its own migration entry.
+- [x] **Write the v4 release-notes entries.** Done 2026-07-16 — `🔎 Overview` and `⚙️ Core Changes` cover v4,
+      the three request shapes, and the experimental status; v2 removal has its own migration entry.
 
 ## 3. Follow-ups — fine to ship without, but decide consciously
 
-- [ ] **Build the four compare endpoints** — assuming the open decision above lands on "ship without them".
-      Follow `$api/v4/add-endpoint`. `CustomBinsRequestBase` and `PresetBinsRequestBase` already exist; no
-      concrete request or endpoint classes do. Detail: `.agents/plans/api/v4-endpoints.md`.
+- [x] **Build the four compare endpoints.** Done 2026-07-16, along with six more. See `$api/v4`.
 - [ ] **Move the clients off v3** (see below). Post-release per the maintainer (2026-07-16). The web demo may
       not even need compare — check whether it uses every bin's result or just the winner, since
       `pack/smallest-bin` already covers the winner case.
-- [ ] **The rest of the planned v4 endpoints** — eight more beyond the compare four (`smallest/{preset}`,
-      `best-fit`, `first-fit`, `fit/smallest`, `presets/{preset}`). Pick a cut line.
+- [ ] **`pack/first-bin` is out of v4** — cut rather than deferred, and may target v3.1. The open calls (what
+      "first success" means, and the name colliding with the FFD algorithm) are captured in
+      `.agents/ideas/api/pack-first-bin-endpoint.md`. Nothing to do for this release.
 - [ ] **Remaining code TODOs** — none block the release:
       - `ServiceModule/Services/ApiUsageRateLimitingPolicy.cs:34` — review rate-limit policy JSON config
       - `ServiceModule/v0/Endpoints/AccountBindingResult.cs:57` — "no request body" returns raw `ProblemDetails`
@@ -136,7 +112,7 @@ They keep working, because v3 stays and is frozen (`$memory/v3-frozen`). **Migra
 (maintainer, 2026-07-16), so nothing in this release waits on them.
 
 When they are migrated, check what each one actually uses the response for before assuming it needs
-`pack/compare`. Both call a compare-shaped endpoint, but if a client only shows the winning bin then
+`pack/compare-bins`. Both call a compare-shaped endpoint, but if a client only shows the winning bin then
 `pack/smallest-bin` already covers it and exists today.
 
 ---
@@ -144,11 +120,11 @@ When they are migrated, check what each one actually uses the response for befor
 ## Suggested order
 
 1. ~~Rework the docs site to version-only.~~ **Done 2026-07-16.**
-2. Settle the compare-endpoint decision at the top — it sets the size of the release. If it lands on "ship
-   without them", there is no API code work left in this release at all.
+2. ~~Settle the compare-endpoint decision.~~ **Done 2026-07-16** — compare ships; the v4 endpoint work is
+   complete.
 3. Bump the vulnerable packages (before any spec generation).
 4. Fix the enum transformer TODO.
-5. Generate `v4.json` on the `Normal` profile.
+5. Generate `v4.json` on the `Normal` profile. **All 16 endpoints are in place**, so the spec can be cut once.
 6. Write the `v3.0.x` docs — every page, plus the v4 pages marked experimental.
 7. Write the v4 release-notes entries (both `.agents/release-notes.md` and `v3.0.x/release-notes.md`, which
    still holds the old v2.0.0 notes).

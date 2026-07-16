@@ -1,0 +1,2 @@
+GET https://{{HOST}}/api/v4/presets/rectangular-cuboids
+Accept: application/json
