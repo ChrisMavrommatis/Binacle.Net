@@ -9,15 +9,18 @@
                     <h5>{{ site.title }}</h5>
                 </a>
             </div>
-            {% assign uniq_versions = site.versions | map: 'version' | uniq %}
-            {% if uniq_versions.size != 0 %}
+            {% if site.data.versions.list.size != 0 %}
             <div class="field suffix small">
                 <select id="version-select" data-versionselect="{{ '/version/' | relative_url }}">
-                    {% for uniq_version in uniq_versions %}
-                    {% if uniq_version == page.version %}
-                    <option value="{{ uniq_version }}" selected>{{ uniq_version | capitalize }}</option>
+                    {% for version in site.data.versions.list %}
+                    {% assign label = version.id %}
+                    {% if version.id == site.data.versions.current %}
+                    {% assign label = label | append: ' (current)' %}
+                    {% endif %}
+                    {% if version.id == page.version %}
+                    <option value="{{ version.id }}" selected>{{ label }}</option>
                     {% else %}
-                    <option value="{{ uniq_version }}">{{ uniq_version | capitalize }}</option>
+                    <option value="{{ version.id }}">{{ label }}</option>
                     {% endif %}
                     {% endfor %}
                 </select>

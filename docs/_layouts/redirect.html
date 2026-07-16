@@ -7,7 +7,7 @@
     {% if page.title %}
     {% assign page_title = page.title | append: ' | ' | append: site.title %}
     {% endif %}
-    {% assign redirect_to = "/version/latest/" | absolute_url %}
+    {% assign redirect_to = "/version/" | append: site.data.versions.current | append: "/" | absolute_url %}
     
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>

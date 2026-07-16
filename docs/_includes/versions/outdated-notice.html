@@ -1,0 +1,14 @@
+{% comment %}
+Shown on every page of a version that is not the current one. The docs site exists so someone running an
+older image can read that image's docs — without this, an old page is indistinguishable from a current one.
+Reuses the .block-warning style from _sass/_blockquote.scss (it supplies the label and the dark mode).
+{% endcomment %}
+{% if page.version and page.version != site.data.versions.current %}
+<div class="block-warning">
+    <p>
+        You are reading the documentation for <strong>{{ page.version }}</strong>, which is not the current
+        version. It describes that release and is kept for reference — it is not updated.
+        <a href="{{ '/version/' | append: site.data.versions.current | append: '/' | relative_url }}">Go to {{ site.data.versions.current }} →</a>
+    </p>
+</div>
+{% endif %}

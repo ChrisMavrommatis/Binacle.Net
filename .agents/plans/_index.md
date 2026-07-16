@@ -11,6 +11,8 @@ you need, and trim or delete it once the work lands.
 
 | File | Description |
 |---|---|
+| [docs-versioning.md](docs-versioning.md) | Docs Site — go version-only, drop `latest` |
+| [release-v4.md](release-v4.md) | Release Plan — the v4 version |
 | [todos.md](todos.md) | TODOs |
 
 ## API
