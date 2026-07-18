@@ -15,7 +15,7 @@ Related plans and trackers:
 
 ## Settled: compare ships, and v4 now covers v3
 
-**Decided 2026-07-16 (maintainer): build the v4 endpoints.** The four compare endpoints are built, so the
+**Decided 2026-07-16: build the v4 endpoints.** The four compare endpoints are built, so the
 question this section used to pose — ship v4 without compare? — is moot. v4 now has a successor for every v3
 endpoint:
 
@@ -66,13 +66,17 @@ coverage is not the same as a frozen contract, and the UI clients have not moved
 
 ## 2. Should do — the release is worse without these
 
-- [ ] **Patch the two high-severity package vulnerabilities.** The build is green (0 errors) but reports
-      `NU1903` on every project:
-      - `Microsoft.OpenApi` 2.0.0 — https://github.com/advisories/GHSA-v5pm-xwqc-g5wc
-      - `SQLitePCLRaw.lib.e_sqlite3` 2.1.11 — https://github.com/advisories/GHSA-2m69-gcr7-jv3q
-      Shipping a docker image with known high-severity advisories is a bad look for a release. Check
-      whether the `Microsoft.OpenApi` bump moves the generated swagger — if it does, bump **before**
-      generating the v4 spec so the spec is generated once.
+- [x] **Patch the two high-severity package vulnerabilities.** Done 2026-07-17. Both were **transitive**, so
+      both are fixed by a direct `PackageReference` that raises the resolved version — the standard NuGet
+      security override, and both are commented as such so nobody deletes an apparently unused package.
+      - `Microsoft.OpenApi` 2.0.0 → **2.11.0**, in `Binacle.Net.Kernel`. `Microsoft.AspNetCore.OpenApi`
+        10.0.10 asks for `[2.0.0, )` — an open floor, so naming the package lifts the whole graph.
+      - `SQLitePCLRaw.lib.e_sqlite3` 2.1.11 → **2.1.12**, in `ServiceModule.Infrastructure`. 2.1.11 bundles
+        SQLite 3.49.1; the advisory needs 3.50.2+. 2.1.12 bundles 3.53.3.
+      `dotnet list package --vulnerable --include-transitive` is now clean and the solution builds with
+      **0 warnings** (it previously raised `NU1903` on all eight projects).
+      **Still to check:** whether the `Microsoft.OpenApi` bump moves the generated swagger. Diff `v3.json`
+      before writing the v4 spec — if it moves, that is a v3 contract change and matters on its own.
 - [ ] **Announce the ViPaq token break.** The rebuilt format rejects every token an earlier version made,
       and there is no reader for the old wire. Nothing in the repo says the old format existed, so the
       GitHub release body is the only place users will learn this. Tracked in `pending-actions.md`;
@@ -102,7 +106,7 @@ coverage is not the same as a frozen contract, and the UI clients have not moved
 ## 3. Follow-ups — fine to ship without, but decide consciously
 
 - [x] **Build the four compare endpoints.** Done 2026-07-16, along with six more. See `$api/v4`.
-- [ ] **Move the clients off v3** (see below). Post-release per the maintainer (2026-07-16). The web demo may
+- [ ] **Move the clients off v3** (see below). Post-release (decided 2026-07-16). The web demo may
       not even need compare — check whether it uses every bin's result or just the winner, since
       `pack/smallest-bin` already covers the winner case.
 - [ ] **`pack/first-bin` is out of v4** — cut rather than deferred, and may target v3.1. The open calls (what
@@ -124,9 +128,8 @@ coverage is not the same as a frozen contract, and the UI clients have not moved
       any of them. (`BestBin_v2` measured 5–9× faster than v1, 24B vs 208–336B allocated — unconfirmed.)
       **Algorithm racing is now re-measured** (2026-07-17) and lives in `$lib/findings`; the scratch reports
       are in `BenchmarkDotNet.Artifacts/` and a keeper should be curated into `results/lib/benchmarks/`.
-- [ ] **CI, Sonar, and coverage** — parked as an idea in `.agents/ideas/ci.md`; nothing is decided and
-      nothing there blocks the release. Worth knowing while shipping: no workflow runs a test, and the two
-      Sonar workflows in the tree will overwrite each other's results if both ever run.
+- [ ] **CI, Sonar, and coverage** — the switch-on is deferred; nothing here blocks the release. Worth knowing
+      while shipping: **no workflow runs a test**, so every green suite is green on a laptop only.
 - [ ] **Remaining code TODOs** — none block the release:
       - `ServiceModule/Services/ApiUsageRateLimitingPolicy.cs:34` — review rate-limit policy JSON config
       - `ServiceModule/v0/Endpoints/AccountBindingResult.cs:57` — "no request body" returns raw `ProblemDetails`
@@ -144,7 +147,7 @@ Both shipped UI clients call `POST /api/v3/pack/by-custom`, which is a compare-s
 - `api/src/Binacle.Net.UIModule/Components/Pages/PackingDemo.razor.cs:135` — the Blazor UI module
 
 They keep working, because v3 stays and is frozen (`$memory/v3-frozen`). **Migrating them is post-release**
-(maintainer, 2026-07-16), so nothing in this release waits on them.
+(decided 2026-07-16), so nothing in this release waits on them.
 
 When they are migrated, check what each one actually uses the response for before assuming it needs
 `pack/compare-bins`. Both call a compare-shaped endpoint, but if a client only shows the winning bin then
@@ -157,8 +160,8 @@ When they are migrated, check what each one actually uses the response for befor
 1. ~~Rework the docs site to version-only.~~ **Done 2026-07-16.**
 2. ~~Settle the compare-endpoint decision.~~ **Done 2026-07-16** — compare ships; the v4 endpoint work is
    complete.
-3. Bump the vulnerable packages (before any spec generation).
-4. Fix the enum transformer TODO.
+3. ~~Bump the vulnerable packages (before any spec generation).~~ **Done 2026-07-17.**
+4. ~~Fix the enum transformer TODO.~~ **Done 2026-07-16.**
 5. Generate `v4.json` on the `Normal` profile. **All 16 endpoints are in place**, so the spec can be cut once.
 6. Write the `v3.0.x` docs — every page, plus the v4 pages marked experimental.
 7. Write the v4 release-notes entries (both `.agents/release-notes.md` and `v3.0.x/release-notes.md`, which

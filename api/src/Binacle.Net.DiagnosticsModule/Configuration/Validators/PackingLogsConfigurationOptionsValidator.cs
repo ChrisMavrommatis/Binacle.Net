@@ -18,6 +18,10 @@ internal class PackingLogsConfigurationOptionsValidator : AbstractValidator<Pack
 				.NotNull()
 				.NotEmpty()
 				.Must(x => BeValidDateFormat(x!));
+			// Null is valid (no retention); any set value must be a positive number of days.
+			RuleFor(x => x.RetentionDays)
+				.Must(days => days is null or > 0)
+				.WithMessage("RetentionDays must be greater than 0 when set.");
 		});
 	}
 

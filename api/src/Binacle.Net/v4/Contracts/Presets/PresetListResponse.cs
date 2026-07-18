@@ -1,11 +1,16 @@
+using Binacle.Net.Kernel.OpenApi.Attributes;
 using Binacle.Net.Configuration;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts.Presets;
 
 #pragma warning disable CS1591
 
+[Description("The presets configured on the server.")]
+[OpenApiRequireNonNullable]
 public class PresetListResponse
 {
+	[Description(SchemaDescriptions.Presets)]
 	public required IDictionary<string, List<Bin>> Presets { get; init; }
 
 	public static PresetListResponse From(IDictionary<string, List<Bin>> presets)

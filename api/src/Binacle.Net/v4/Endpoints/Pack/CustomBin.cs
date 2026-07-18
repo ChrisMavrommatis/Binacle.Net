@@ -13,6 +13,7 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("pack/bin", HandleAsync)
+			.WithOperationId("pack.customBin")
 			.WithTags("Pack")
 			.WithSummary("Pack a custom bin")
 			.WithDescription("Pack items into a custom bin.")

@@ -2,6 +2,7 @@ using Binacle.Net.Kernel.OpenApi.Helpers;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples.Abstractions;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts;
 
@@ -9,7 +10,10 @@ namespace Binacle.Net.v4.Contracts;
 
 public abstract class PresetBinRequestBase : IWithOperationParameters, IWithItems
 {
+	[Description(SchemaDescriptions.Parameters)]
 	public required OperationParameters Parameters { get; set; }
+	
+	[Description(SchemaDescriptions.Items)]
 	public required List<Box> Items { get; set; }
 }
 

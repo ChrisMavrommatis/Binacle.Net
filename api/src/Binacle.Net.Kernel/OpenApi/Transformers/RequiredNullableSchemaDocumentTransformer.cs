@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
-namespace Binacle.Net.Kernel.OpenApi;
+namespace Binacle.Net.Kernel.OpenApi.Transformers;
 
 // A property typed `SomeEnum?` but marked required renders as `oneOf: [null, $ref]` — the generator
 // describes the C# type, which allows null, while the validator rejects it. A client generated from

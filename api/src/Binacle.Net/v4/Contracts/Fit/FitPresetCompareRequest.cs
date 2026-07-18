@@ -1,10 +1,12 @@
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts.Fit;
 
 #pragma warning disable CS1591
 
+[Description("A request to check whether items fit into each bin of a preset.")]
 public class FitPresetCompareRequest : PresetBinsRequestBase;
 
 internal class FitPresetCompareRequestValidator : PresetBinsRequestBaseValidator<FitPresetCompareRequest>;

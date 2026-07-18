@@ -1,9 +1,12 @@
 ﻿using OpenApiExamples;
 using OpenApiExamples.Abstractions;
+using System.ComponentModel;
 
 namespace Binacle.Net.v3.Contracts;
 
 #pragma warning disable CS1591
+
+[Description("The presets configured on the server.")]
 public class PresetListResponse : ResponseBase<IDictionary<string, List<v3.Contracts.Bin>>>
 {
 	public static PresetListResponse Create(IDictionary<string, List<v3.Contracts.Bin>> presets)

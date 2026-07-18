@@ -5,6 +5,7 @@ using Binacle.Net.ExtensionMethods;
 using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.Kernel.Serialization;
 using FluentValidation;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts;
 
@@ -15,14 +16,17 @@ public interface IWithOperationParameters
     OperationParameters Parameters { get; set; }
 }
 
+[Description("Options that control how the operation runs.")]
 public class OperationParameters :
     IWithAlgorithm,
     ILogParametersProvider,
     IOperationParameters
 {
     [JsonConverter(typeof(JsonStringNullableEnumConverter))]
+    [Description(SchemaDescriptions.Algorithm)]
     public required Algorithm? Algorithm { get; set; }
 
+    [Description(SchemaDescriptions.IncludeViPaqData)]
     public bool IncludeViPaqData { get; set; } = false;
 
     public Lib.Algorithm? GetAlgorithm()

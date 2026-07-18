@@ -1,6 +1,9 @@
+using System.ComponentModel;
 namespace Binacle.Net.v4.Contracts.Pack;
 
 #pragma warning disable CS1591
+
+[Description("Outcome of a packing operation.")]
 public enum BinPackResultStatus
 {
     Unknown = -1,

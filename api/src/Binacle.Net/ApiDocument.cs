@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text;
 using Binacle.Net.Kernel.OpenApi;
 using Microsoft.OpenApi;
@@ -7,19 +8,51 @@ namespace Binacle.Net;
 
 internal static class ApiDocument
 {
-	internal static void Transform(IOpenApiDocument apiDocument, OpenApiInfo documentInfo)
+	internal static void Transform(IOpenApiDocument apiDocument, OpenApiDocument document)
 	{
-		documentInfo.Title = $"Binacle.Net API";
-		documentInfo.Version = apiDocument.Version;
-		documentInfo.Description = __description__
+		document.Info.Title = $"Binacle.Net API {apiDocument.Name}";
+		document.Info.Version = apiDocument.Version;
+		document.Info.Description = __description__
 			.Replace("{{status}}", apiDocument.IsExperimental ? __experimentalMessage__: string.Empty)
 			.Replace("{{deprecated}}", apiDocument.IsDeprecated ? __deprecatedMessage__: string.Empty);
-		documentInfo.License = new OpenApiLicense
+		document.Info.License = new OpenApiLicense
 		{
 			Name = "GNU General Public License v3.0",
 			Url = new Uri("https://www.gnu.org/licenses/gpl-3.0.html")
 		};
+		document.Info.Contact = new OpenApiContact
+		{
+			Name = "Binacle.Net",
+			Url = new Uri(Binacle.Net.Metadata.GitHub)
+		};
+		
+		// document.Servers =
+		// [
+		// 	new OpenApiServer
+		// 	{
+		// 		Url = "http://localhost:8080",
+		// 		Description = "Local instance (Docker quickstart)"
+		// 	}
+		// ];
+		
+		if (document.Tags is not null)
+		{
+			foreach (var tag in document.Tags)
+			{
+				if (tag.Name is not null && __tagDescriptions__.TryGetValue(tag.Name, out var description))
+				{
+					tag.Description = description;
+				}
+			}
+		}
 	}
+
+	private static readonly Dictionary<string, string> __tagDescriptions__ = new(StringComparer.Ordinal)
+	{
+		["Pack"] = "Pack items into bins and report how they fit.",
+		["Fit"] = "Check whether items fit into bins, without computing a full packing.",
+		["Presets"] = "Predefined bin sets configured on the server.",
+	};
 	
 	private static string __description__ = new StringBuilder()
 		.AppendLine(Binacle.Net.Metadata.Description)

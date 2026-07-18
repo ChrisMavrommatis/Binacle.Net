@@ -1,11 +1,11 @@
-# Runs the tests and sends coverage to SonarCloud. Manual — trigger it from the Actions tab.
+# Builds, tests, and sends coverage to SonarCloud. Manual — trigger it from the Actions tab.
 #
 # SonarCloud's Automatic Analysis cannot import coverage: it never runs your tests, it only reads source.
-# Getting coverage means analysing from CI, so Automatic Analysis must be OFF for this project or the two
-# fight over the same results.
+# Coverage means analysing from CI, so Automatic Analysis must be OFF for this project or the two fight
+# over the same results.
 #
-# Everything the tests need lives in config/coverage.sonar.sh — it runs between begin and end because the
-# scanner only sees projects built inside that pair.
+# The work lives in .github/scripts/sonar-coverage.sh so this file stays readable. It runs between begin
+# and end because the scanner only sees projects compiled inside that pair.
 
 name: Sonar Analysis
 
@@ -50,6 +50,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+
+      # The scanner pulls its analyzers from the server on first run; NuGet re-downloads the tool manifest
+      # and every package. Both are stable between runs, so cache them.
+      - name: Cache Sonar analyzers
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '.config/dotnet-tools.json') }}
+          restore-keys: ${{ runner.os }}-nuget-
 
       - name: Restore tools
         run: dotnet tool restore
@@ -70,7 +87,7 @@ jobs:
             /d:sonar.javascript.lcov.reportPaths="CoverageArtifacts/sonar/ts/lcov.info"
 
       - name: Build and test with coverage
-        run: ./config/coverage.sonar.sh
+        run: ./.github/scripts/sonar-coverage.sh
 
       # Skipped if anything above fails, so Sonar never records coverage from a failed run — code that never
       # ran and code that is untested look identical in a report.

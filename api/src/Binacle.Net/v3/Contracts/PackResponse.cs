@@ -1,11 +1,14 @@
 ﻿using System.Text.Json.Serialization;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.ViPaq;
+using System.ComponentModel;
+using Binacle.Net.Kernel.OpenApi.Attributes;
 
 namespace Binacle.Net.v3.Contracts;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+[Description("The packing results.")]
 public class PackResponse : ResponseBase<List<BinPackResult>>
 {
 	internal static BinPackResultStatus MapResultStatus(OperationResultStatus resultStatus, EarlyExitReason earlyExitReason)
@@ -111,22 +114,33 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 
 
 
+[Description("The packing result for one bin.")]
 public class BinPackResult
 {
 	[JsonPropertyOrder(0)]
 	[JsonConverter(typeof(JsonStringEnumConverter))]
+	[Description(SchemaDescriptions.Result)]
 	public required BinPackResultStatus Result { get; set; }
+	[Description(SchemaDescriptions.Bin)]
 	public required Bin Bin { get; set; }
 
+	[Description(SchemaDescriptions.PackedItems)]
 	public List<PackedBox>? PackedItems { get; set; }
+	[Description(SchemaDescriptions.UnpackedItems)]
 	public List<UnpackedBox>? UnpackedItems { get; set; }
 
+	[Description(SchemaDescriptions.PackedItemsVolumePercentage)]
+	[OpenApiSchemaRange(Minimum = 0, Maximum = 100)]
 	public required decimal PackedItemsVolumePercentage { get; set; }
+	[Description(SchemaDescriptions.PackedBinVolumePercentage)]
+	[OpenApiSchemaRange(Minimum = 0, Maximum = 100)]
 	public required decimal PackedBinVolumePercentage { get; set; }
 	
+	[Description(SchemaDescriptions.ViPaqData)]
 	public string? ViPaqData { get; set; }
 }
 
+[Description("Outcome of a packing operation.")]
 public enum BinPackResultStatus
 {
 	Unknown,
@@ -138,22 +152,40 @@ public enum BinPackResultStatus
 }
 
 
+[Description("An item placed inside the bin, with its position.")]
 public class PackedBox :
 	IWithID,
 	IWithDimensions,
 	IWithCoordinates
 {
+	[Description(SchemaDescriptions.Id)]
 	public required string ID { get; set; }
+	[Description(SchemaDescriptions.Length)]
+	[OpenApiSchemaRange(Minimum = 1)]
 	public required int Length { get; set; }
+	[Description(SchemaDescriptions.Width)]
+	[OpenApiSchemaRange(Minimum = 1)]
 	public required int Width { get; set; }
+	[Description(SchemaDescriptions.Height)]
+	[OpenApiSchemaRange(Minimum = 1)]
 	public required int Height { get; set; }
+	[Description(SchemaDescriptions.CoordinateX)]
+	[OpenApiSchemaRange(Minimum = 0)]
 	public required int X { get; set; }
+	[Description(SchemaDescriptions.CoordinateY)]
+	[OpenApiSchemaRange(Minimum = 0)]
 	public required int Y { get; set; }
+	[Description(SchemaDescriptions.CoordinateZ)]
+	[OpenApiSchemaRange(Minimum = 0)]
 	public required int Z { get; set; }
 }
 
+[Description("An item that could not be placed in the bin.")]
 public class UnpackedBox : IWithID
 {
+	[Description(SchemaDescriptions.Id)]
 	public required string ID { get; set; }
+	[Description(SchemaDescriptions.Quantity)]
+	[OpenApiSchemaRange(Minimum = 1)]
 	public required int Quantity { get; set; }
 }

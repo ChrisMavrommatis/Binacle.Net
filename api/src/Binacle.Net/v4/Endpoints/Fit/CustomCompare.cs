@@ -13,6 +13,7 @@ internal class CustomCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("fit/compare-bins", HandleAsync)
+			.WithOperationId("fit.customCompareBins")
 			.WithTags("Fit")
 			.WithSummary("Compare custom bins")
 			.WithDescription("Fit-check every custom bin and return the result for each one.")

@@ -37,7 +37,7 @@ across every operator.
   they cap the achievable score — a reason never to treat the score as a target.
 - **Global tool or manifest?** `.config/dotnet-tools.json` already pins ReportGenerator and the Sonar
   scanner, so a local pin would match. Only worth it if it is run more than once.
-- **CI?** Almost certainly not — too slow for every run. A manual or scheduled job at most. See `$ideas/ci`.
+- **CI?** Almost certainly not — too slow for every run. A manual or scheduled job at most.
 
 ## Related
 

@@ -13,6 +13,7 @@ internal class CustomBestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("pack/best-bin", HandleAsync)
+			.WithOperationId("pack.customBestBin")
 			.WithTags("Pack")
 			.WithSummary("Pack the best custom bin")
 			.WithDescription("Pack every custom bin and return the result for the bin the items fill the most.")

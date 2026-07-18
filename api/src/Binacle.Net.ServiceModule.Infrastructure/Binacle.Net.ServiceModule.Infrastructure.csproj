@@ -8,6 +8,10 @@
  	  <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
 	  <PackageReference Include="Dapper" Version="2.1.79" />
 	  <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.10" />
+	  <!-- Not used directly. Microsoft.Data.Sqlite 10.0.10 pulls the 2.1.11 native build, which bundles SQLite
+	       3.49.1 and carries a high-severity advisory (GHSA-2m69-gcr7-jv3q, memory corruption; needs 3.50.2+).
+	       2.1.12 bundles SQLite 3.53.3 and clears it. Drop this once Microsoft.Data.Sqlite ships the bump. -->
+	  <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.12" />
 	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.14.0" />
 	  <PackageReference Include="Npgsql" Version="10.0.3" />
 	</ItemGroup>

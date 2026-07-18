@@ -10,6 +10,11 @@
 		<PackageReference Include="OpenApiExamples" Version="1.0.1" />
 		<PackageReference Include="Serilog" Version="4.4.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+		<!-- Not used directly. Microsoft.AspNetCore.OpenApi 10.0.10 asks for Microsoft.OpenApi [2.0.0, ) and
+		     NuGet settles on 2.0.0, which has a high-severity advisory (GHSA-v5pm-xwqc-g5wc, stack overflow on
+		     circular $refs). The floor is open, so naming it here lifts the whole graph. Drop this once
+		     Microsoft.AspNetCore.OpenApi raises its own floor past 2.7.5. -->
+		<PackageReference Include="Microsoft.OpenApi" Version="2.11.0" />
 	</ItemGroup>
 
 	<ItemGroup>

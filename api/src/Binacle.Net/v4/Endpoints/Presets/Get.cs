@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v4.Contracts.Presets;
@@ -12,6 +13,7 @@ internal class Get : IGroupedEndpoint<ApiV4EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapGet("presets/{preset}", HandleAsync)
+			.WithOperationId("presets.get")
 			.WithTags("Presets")
 			.WithSummary("Get a preset")
 			.WithDescription("Gets the bins configured for a single preset.")
@@ -28,7 +30,7 @@ internal class Get : IGroupedEndpoint<ApiV4EndpointGroup>
 
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 	internal async Task<IResult> HandleAsync(
-		[FromRoute] string preset,
+		[FromRoute][Description(SchemaDescriptions.PresetParam)] string preset,
 		IOptions<BinPresetOptions> presetOptions,
 		ILogger<Get> logger,
 		CancellationToken cancellationToken = default

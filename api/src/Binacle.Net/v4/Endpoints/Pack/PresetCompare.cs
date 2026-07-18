@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
@@ -15,6 +16,7 @@ internal class PresetCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("pack/compare-bins/{preset}", HandleAsync)
+			.WithOperationId("pack.presetCompareBins")
 			.WithTags("Pack")
 			.WithSummary("Compare the bins in a preset")
 			.WithDescription("Pack every bin in a preset and return the result for each one.")
@@ -48,7 +50,7 @@ internal class PresetCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		[FromRoute] string preset,
+		[FromRoute][Description(SchemaDescriptions.PresetParam)] string preset,
 		BindingResult<PackPresetCompareRequest> bindingResult,
 		IOptions<BinPresetOptions> presetOptions,
 		IBinacleService binacleService,

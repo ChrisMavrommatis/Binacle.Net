@@ -3,7 +3,7 @@ using Binacle.Net.Kernel.OpenApi.Models;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
-namespace Binacle.Net.Kernel.OpenApi;
+namespace Binacle.Net.Kernel.OpenApi.Transformers;
 
 internal class ResponseDescriptionOperationTransformer : IOpenApiOperationTransformer
 {

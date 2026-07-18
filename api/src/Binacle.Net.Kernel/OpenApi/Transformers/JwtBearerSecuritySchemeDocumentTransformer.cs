@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
-namespace Binacle.Net.Kernel.OpenApi;
+namespace Binacle.Net.Kernel.OpenApi.Transformers;
 
 internal class JwtBearerSecuritySchemeDocumentTransformer : IOpenApiDocumentTransformer
 {

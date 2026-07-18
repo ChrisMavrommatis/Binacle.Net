@@ -17,14 +17,17 @@ internal class ApiV4Document : IOpenApiDocument
 	{
 		options.AddDocumentTransformer((document, context, cancellationToken) =>
 		{
-			ApiDocument.Transform(this, document.Info);
-			document.Servers?.Clear();
+			ApiDocument.Transform(this, document);
 			return Task.CompletedTask;
 		});
 		options.AddResponseDescription();
+		options.AddOperationIds();
 		options.AddExamples();
 		options.AddJwtAuthentication();
 		options.AddRateLimiterResponse();
 		options.AddEnumStringsSchema();
+		options.AddNumericSchemas();
+		options.AddProblemDetailsDescriptions();
+		options.AddRequiredNonNullableProperties();
 	}
 }

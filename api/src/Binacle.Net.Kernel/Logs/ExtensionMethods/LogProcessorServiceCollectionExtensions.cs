@@ -19,6 +19,8 @@ public static class LogProcessorServiceCollectionExtensions
 		services.AddSingleton<Channel<TChannelRequest>>(channelFactory);
 		services.AddSingleton<LogsProcessorOptions<TChannelRequest>>(optionsFactory);
 		services.AddHostedService<LogsProcessor<TChannelRequest, TLog>>();
+		// Retention runs as a separate hosted service so pruning never shares the processor's drain loop.
+		services.AddHostedService<LogsRetentionProcessor<TChannelRequest>>();
 		return services;
 	}
 }

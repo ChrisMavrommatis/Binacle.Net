@@ -17,12 +17,9 @@ hand.
 
 - This should build on the ServiceModule, which already does JWT auth and account/subscription management.
   Check what's there before adding new storage.
-- May tie into a Shopify-plugin idea, where installed stores become registered users. Both build on the same
-  ServiceModule auth/account surface — see `$api/modules/service`.
 
 ## Open questions
 
-- Who is this admin site for — us (maintainers) or customers managing their own team.
 - Reuse the UIModule (Blazor) or a separate site.
 - What subscription actions are in scope — create, upgrade/downgrade, cancel.
 

@@ -3,6 +3,9 @@
 # Builds, runs every suite, and writes coverage in the formats SonarCloud reads. Run between the scanner's
 # begin and end steps — the build has to happen inside that pair or the scanner never sees the projects.
 #
+# Lives here rather than in config/ because config/ is for local setup and this only ever runs on GitHub:
+# it is useless without the begin/end pair wrapped around it.
+#
 # Sonar does NOT read cobertura, which is what config/coverage.sh produces for the local HTML report. Same
 # collectors, different output:
 #   C# -> Visual Studio coverage xml -> sonar.cs.vscoveragexml.reportsPaths
@@ -14,7 +17,8 @@
 
 FILE_PATH=$( realpath "$0" )
 FILE_DIR=$( dirname "$FILE_PATH" )
-ROOT_DIR=$( dirname "$FILE_DIR" )
+# Up out of .github/scripts — two levels, unlike the config/ scripts which sit one below the root.
+ROOT_DIR=$( dirname "$( dirname "$FILE_DIR" )" )
 ARTIFACTS_DIR="$ROOT_DIR/CoverageArtifacts/sonar"
 
 declare -A cs_projects=(

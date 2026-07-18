@@ -13,6 +13,7 @@ internal class CustomSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("fit/smallest-bin", HandleAsync)
+			.WithOperationId("fit.customSmallestBin")
 			.WithTags("Fit")
 			.WithSummary("Fit the smallest custom bin")
 			.WithDescription("Fit-check every custom bin and return the result for the smallest bin the items fit into.")

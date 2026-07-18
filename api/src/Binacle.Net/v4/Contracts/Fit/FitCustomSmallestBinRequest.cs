@@ -1,11 +1,13 @@
 using FluentValidation;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts.Fit;
 
 #pragma warning disable CS1591
 
+[Description("A request to check the smallest fitting custom bin.")]
 public class FitCustomSmallestBinRequest : CustomBinsRequestBase;
 
 internal class FitCustomSmallestBinRequestValidator : AbstractValidator<FitCustomSmallestBinRequest>

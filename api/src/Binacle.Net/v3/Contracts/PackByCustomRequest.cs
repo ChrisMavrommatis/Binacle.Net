@@ -3,15 +3,22 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
+using System.ComponentModel;
 
 namespace Binacle.Net.v3.Contracts;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+[Description("A request to pack items using custom bins.")]
 public class PackByCustomRequest : IWithPackingParameters, IWithBins, IWithItems
 {
+	[Description(SchemaDescriptions.Parameters)]
 	public required PackRequestParameters Parameters { get; set; } 
+	
+	[Description(SchemaDescriptions.Bins)]
 	public required List<Bin> Bins { get; set; } 
+	
+	[Description(SchemaDescriptions.Items)]
 	public required List<Box> Items { get; set; } 
 }
 
@@ -40,17 +47,8 @@ internal class PackByCustomRequestExample : ISingleOpenApiExamplesProvider<PackB
 					Algorithm = Algorithm.FFD,
 					IncludeViPaqData = true,
 				},
-				Bins = new List<Bin>
-				{
-					new() { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
-					new() { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
-				},
-				Items = new List<Box>
-				{
-					new() { ID = "box_1", Quantity = 2, Length = 2, Width = 5, Height = 10 },
-					new() { ID = "box_2", Quantity = 1, Length = 12, Width = 15, Height = 10 },
-					new() { ID = "box_3", Quantity = 1, Length = 12, Width = 10, Height = 15 },
-				}
+				Bins = ExampleData.Bins("custom_bin"),
+				Items = ExampleData.Items()
 			});
 	}
 }
@@ -59,77 +57,28 @@ internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<P
 {
 	public IEnumerable<IOpenApiExample<PackResponse>> GetExamples()
 	{
+		var bins = ExampleData.Bins("custom_bin");
+
 		yield return OpenApiExample.Create(
 			"fullypackedresponse",
 			"Fully Packed Response",
 			"Fully Packed Response example.",
 			PackResponse.Create(
 				[
-					new BinPackResult()
-					{
-						Bin = new Bin { ID = "custom_bin_1", Length = 10, Width = 40, Height = 60 },
-						Result = BinPackResultStatus.FullyPacked,
-						PackedItems =
-						[
-							new PackedBox()
-							{
-								ID = "box_2",
-								Length = 10,
-								Width = 12,
-								Height = 15,
-								X = 0,
-								Y = 0,
-								Z = 0
-							},
-							new PackedBox
-							{
-								ID = "box_1",
-								Length = 2,
-								Width = 5,
-								Height = 10,
-								X = 0,
-								Y = 12,
-								Z = 0
-							},
-						],
-						UnpackedItems = [],
-						PackedItemsVolumePercentage = 100.00m,
-						PackedBinVolumePercentage = 7.92m,
-					}.WithViPaqData(),
-					new BinPackResult()
-					{
-						Bin = new Bin { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
-						Result = BinPackResultStatus.FullyPacked,
-						PackedItems =
-						[
-							new PackedBox()
-							{
-								ID = "box_2",
-								Length = 12,
-								Width = 15,
-								Height = 10,
-								X = 0,
-								Y = 0,
-								Z = 0
-							},
-							new PackedBox()
-							{
-								ID = "box_1",
-								Length = 2,
-								Width = 5,
-								Height = 10,
-								X = 12,
-								Y = 0,
-								Z = 0
-							}
-						],
-						UnpackedItems = [],
-						PackedItemsVolumePercentage = 100.00m,
-						PackedBinVolumePercentage = 3.96m,
-					}.WithViPaqData()
+					ExampleData.PackedResult(
+						bins[0], 
+						BinPackResultStatus.FullyPacked,
+						ExampleData.AllItemsPacked(), 
+						[]
+					).WithViPaqData(),
+					ExampleData.PackedResult(
+						bins[1], 
+						BinPackResultStatus.FullyPacked,
+						ExampleData.AllItemsPacked(), 
+						[]
+					).WithViPaqData()
 				]
 			));
-
 
 		yield return OpenApiExample.Create(
 			"partiallypackedresponse",
@@ -137,34 +86,12 @@ internal class PackByCustomResponseExamples : IMultipleOpenApiExamplesProvider<P
 			"Partially Packed Response example.",
 			PackResponse.Create(
 				[
-					new BinPackResult()
-					{
-						Bin = new Bin { ID = "custom_bin_2", Length = 20, Width = 40, Height = 60 },
-						Result = BinPackResultStatus.PartiallyPacked,
-						PackedItems =
-						[
-							new PackedBox()
-							{
-								ID = "box_1",
-								Length = 2,
-								Width = 5,
-								Height = 10,
-								X = 0,
-								Y = 0,
-								Z = 0
-							}
-						],
-						UnpackedItems =
-						[
-							new UnpackedBox()
-							{
-								ID = "box_2",
-								Quantity = 1
-							}
-						],
-						PackedItemsVolumePercentage = 2.70m,
-						PackedBinVolumePercentage = 0.42m,
-					}
+					ExampleData.PackedResult(
+						bins[1], 
+						BinPackResultStatus.PartiallyPacked,
+						ExampleData.SomeItemsPacked(), 
+						ExampleData.SomeItemsUnpacked()
+					).WithViPaqData()
 				]
 			));
 	}

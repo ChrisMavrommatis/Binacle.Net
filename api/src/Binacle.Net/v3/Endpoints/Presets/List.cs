@@ -12,8 +12,9 @@ internal class List : IGroupedEndpoint<ApiV3EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapGet("presets", HandleAsync)
+			.WithOperationId("listPresets")
 			.WithTags("Presets")
-			.WithSummary("List Presets")
+			.WithSummary("List presets")
 			.WithDescription("Lists the presets present in configuration.")
 			.Produces<PresetListResponse>(StatusCodes.Status200OK, "application/json")
 			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, "application/json")

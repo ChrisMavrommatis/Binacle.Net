@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+using System.ComponentModel;
+using FluentValidation;
 
 namespace Binacle.Net.v3.Contracts;
 
@@ -9,6 +10,7 @@ public interface IWithAlgorithm
 	Algorithm? Algorithm { get; }
 }
 
+[Description("The packing heuristic to use.")]
 public enum Algorithm
 {
 	FFD,

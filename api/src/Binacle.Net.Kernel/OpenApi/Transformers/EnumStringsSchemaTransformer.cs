@@ -4,7 +4,7 @@ using Binacle.Net.Kernel.Serialization;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
-namespace Binacle.Net.Kernel.OpenApi;
+namespace Binacle.Net.Kernel.OpenApi.Transformers;
 
 internal class EnumStringsSchemaTransformer : IOpenApiSchemaTransformer
 {

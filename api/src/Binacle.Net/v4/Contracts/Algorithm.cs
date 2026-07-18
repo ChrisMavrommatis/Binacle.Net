@@ -1,4 +1,5 @@
 using FluentValidation;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts;
 
@@ -10,6 +11,7 @@ public interface IWithAlgorithm
 }
 
 
+[Description("The packing heuristic. FFD, WFD and BFD are the individual heuristics; Best runs them all and keeps the best result.")]
 public enum Algorithm
 {
 	FFD,

@@ -12,8 +12,9 @@ internal class ByCustom: IGroupedEndpoint<ApiV3EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("fit/by-custom", HandleAsync)
+			.WithOperationId("fitByCustom")
 			.WithTags("Fit")
-			.WithSummary("Fit by Custom")
+			.WithSummary("Fit by custom")
 			.WithDescription("Perform a bin fitting function using custom bins.")
 			
 			.Accepts<FitByCustomRequest>("application/json")

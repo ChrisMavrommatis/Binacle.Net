@@ -1,11 +1,13 @@
 using FluentValidation;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts.Pack;
 
 #pragma warning disable CS1591
 
+[Description("A request to pack items into each of several custom bins.")]
 public class PackCustomCompareRequest : CustomBinsRequestBase;
 
 internal class PackCustomCompareRequestValidator : AbstractValidator<PackCustomCompareRequest>

@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Configuration;
+using System.ComponentModel;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Services;
 using Binacle.Net.v3.Contracts;
@@ -14,8 +15,9 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("pack/by-preset/{preset}", HandleAsync)
+			.WithOperationId("packByPreset")
 			.WithTags("Pack")
-			.WithSummary("Pack by Preset")
+			.WithSummary("Pack by preset")
 			.WithDescription("Pack items using a specified bin preset.")
 			
 			.Accepts<PackByPresetRequest>("application/json")
@@ -46,7 +48,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		[FromRoute] string preset,
+		[FromRoute][Description(SchemaDescriptions.PresetParam)] string preset,
 		BindingResult<PackByPresetRequest> bindingResult,
 		IOptions<BinPresetOptions> presetOptions,
 		IBinacleService binacleService,

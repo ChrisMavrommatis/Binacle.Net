@@ -13,6 +13,7 @@ internal class List : IGroupedEndpoint<ApiV4EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapGet("presets", HandleAsync)
+			.WithOperationId("presets.list")
 			.WithTags("Presets")
 			.WithSummary("List presets")
 			.WithDescription("Lists the presets present in configuration.")

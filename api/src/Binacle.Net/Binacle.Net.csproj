@@ -6,6 +6,14 @@
 		<RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>
 	</PropertyGroup>
 
+	<!-- Emit the OpenAPI documents (v3, v4) at build time, so SDK generation never needs a running server.
+	     Off by default because it runs the app host on every build; opt in with -p:GenerateOpenApi=true. -->
+	<PropertyGroup>
+		<GenerateOpenApi Condition="'$(GenerateOpenApi)' == ''">false</GenerateOpenApi>
+		<OpenApiGenerateDocumentsOnBuild>$(GenerateOpenApi)</OpenApiGenerateDocumentsOnBuild>
+		<OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)/../../../build/openapi</OpenApiDocumentsDirectory>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<InternalsVisibleTo Include="$(ProjectName).IntegrationTests" />
 		<InternalsVisibleTo Include="$(ProjectName).ServiceModule.IntegrationTests" />
@@ -13,6 +21,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+		<PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.10">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="OpenApiExamples" Version="1.0.1" />
 		<PackageReference Include="Scalar.AspNetCore" Version="2.16.13" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />

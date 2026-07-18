@@ -24,6 +24,7 @@ internal static class LogProcessorServiceCollectionExtensions
 					Path = options.Path!,
 					FileNameFormat = options.FileName!,
 					DateFormat = options.DateFormat!,
+					RetentionDays = options.RetentionDays,
 				};
 			},
 			channelFactory: sp =>

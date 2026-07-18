@@ -1,10 +1,12 @@
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts.Pack;
 
 #pragma warning disable CS1591
 
+[Description("A request to pack items into a bin from a preset.")]
 public class PackPresetBinRequest : PresetBinRequestBase;
 
 internal class PackPresetBinRequestValidator : PresetBinRequestBaseValidator<PackPresetBinRequest>;

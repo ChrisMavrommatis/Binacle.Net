@@ -1,10 +1,12 @@
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts.Pack;
 
 #pragma warning disable CS1591
 
+[Description("A request to pack items into a custom bin.")]
 public class PackCustomBinRequest : CustomBinRequestBase;
 
 internal class PackCustomBinRequestValidator : CustomBinRequestBaseValidator<PackCustomBinRequest>;

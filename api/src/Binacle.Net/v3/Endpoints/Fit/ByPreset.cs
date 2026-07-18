@@ -1,4 +1,5 @@
 ﻿using Binacle.Net.Configuration;
+using System.ComponentModel;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v3.Contracts;
 using Binacle.Net.Services;
@@ -14,8 +15,9 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("fit/by-preset/{preset}", HandleAsync)
+			.WithOperationId("fitByPreset")
 			.WithTags("Fit")
-			.WithSummary("Fit by Preset")
+			.WithSummary("Fit by preset")
 			.WithDescription("Perform a bin fit function using a specified bin preset.")
 			
 			.Accepts<FitByPresetRequest>("application/json")
@@ -46,7 +48,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		[FromRoute] string preset,
+		[FromRoute][Description(SchemaDescriptions.PresetParam)] string preset,
 		BindingResult<FitByPresetRequest> bindingResult,
 		IOptions<BinPresetOptions> presetOptions,
 		IBinacleService binacleService,

@@ -74,6 +74,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - Reworked the packing log pipeline, moving the generic parts into the Kernel.  
 - Added benchmark suites for algorithms, bin processing, result selection, and ViPaq.  
 - Added cross-language ViPaq interop tests between C# and TypeScript.  
+- Patched two **high-severity advisories** in transitive dependencies — `Microsoft.OpenApi` and the bundled **SQLite** native library.  
 
 ## 📚 Versioned Docs
 - Documentation is now versioned per minor line — `v1.3.x`, `v2.0.x`, `v2.1.x`, `v3.0.x` — so any image can be matched to its docs.  

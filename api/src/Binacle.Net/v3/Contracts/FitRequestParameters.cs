@@ -6,6 +6,7 @@ using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.Kernel.Serialization;
 using Binacle.Net.v3.ExtensionMethods;
 using FluentValidation;
+using System.ComponentModel;
 
 namespace Binacle.Net.v3.Contracts;
 
@@ -16,12 +17,14 @@ public interface IWithFittingParameters
 	FitRequestParameters Parameters { get; set; }
 }
 
+[Description("Options that control how the fit check runs.")]
 public class FitRequestParameters : 
 	IWithAlgorithm,
 	IOperationParameters,
 	ILogParametersProvider
 {
 	[JsonConverter(typeof(JsonStringNullableEnumConverter))]
+	[Description(SchemaDescriptions.Algorithm)]
 	public required Algorithm? Algorithm { get; set; }
 
 	public IReadOnlyList<string> ToLogParameters()

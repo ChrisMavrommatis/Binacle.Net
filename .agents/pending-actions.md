@@ -1,7 +1,7 @@
 # Pending Actions
 
 Things that can't be done from the repo — require external systems or manual steps. **Lives in `.agents/` root
-alongside [`release-notes.md`](release-notes.md); maintain both as work lands** (release/CI actions here, changelog
+alongside [`release-notes.md`](release-notes.md); maintain both as work lands** (release actions here, changelog
 entries there).
 
 ---
@@ -21,7 +21,7 @@ entries there).
 - [ ] **Announce the ViPaq token break.** The rebuilt format rejects every token an earlier version produced, and
   there is no reader for the old wire. Nothing in the repo says the old format existed — the break is announced
   in [`release-notes.md`](release-notes.md) only. Call it out in the GitHub release body.
-  The hard payload break inside the frozen v3 contract is **maintainer-accepted (2026-07-14)**; the saved-token
+  The hard payload break inside the frozen v3 contract is **accepted (2026-07-14)**; the saved-token
   stores now clear old tokens on a schema-version marker, so only this announcement remains.
   Note the older docker images (`v2.1.1` and back) keep producing the old format — they are unaffected and need
   no change, but a user running both old and new images side by side will find their tokens do not cross. That

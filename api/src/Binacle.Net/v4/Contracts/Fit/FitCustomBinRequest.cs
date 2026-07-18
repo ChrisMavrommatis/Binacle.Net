@@ -1,10 +1,12 @@
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts.Fit;
 
 #pragma warning disable CS1591
 
+[Description("A request to check whether items fit into a custom bin.")]
 public class FitCustomBinRequest : CustomBinRequestBase;
 
 internal class FitCustomBinRequestValidator : CustomBinRequestBaseValidator<FitCustomBinRequest>;

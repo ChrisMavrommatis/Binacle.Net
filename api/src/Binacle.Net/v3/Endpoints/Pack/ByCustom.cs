@@ -12,9 +12,10 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("pack/by-custom", HandleAsync)
+			.WithOperationId("packByCustom")
 			.WithTags("Pack")
-			.WithSummary("Pack by Custom")
-			.WithDescription("Pack items using custom bins")
+			.WithSummary("Pack by custom")
+			.WithDescription("Pack items using custom bins.")
 			
 			.Accepts<PackByCustomRequest>("application/json")
 			.RequestExample<PackByCustomRequestExample>("application/json")

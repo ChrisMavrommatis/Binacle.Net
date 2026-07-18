@@ -1,11 +1,16 @@
+using Binacle.Net.Kernel.OpenApi.Attributes;
 using Binacle.Lib.Abstractions.Models;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts.Pack;
 
 #pragma warning disable CS1591
 
+[Description("The packing result for each bin considered.")]
+[OpenApiRequireNonNullable]
 public class PackCompareResponse
 {
+	[Description(SchemaDescriptions.Results)]
 	public required List<PackBinResponse> Results { get; set; }
 
 	// Walks the requested bins rather than the result dictionary so the response keeps the order

@@ -4,6 +4,7 @@
 		"Path" : "data/pack-logs/",
 		"FileName" : "{0}.ndjson",
 		"DateFormat" : "yyyyMMdd",
-		"ChannelLimit" : 100
+		"ChannelLimit" : 100,
+		"RetentionDays": null
 	}
 }

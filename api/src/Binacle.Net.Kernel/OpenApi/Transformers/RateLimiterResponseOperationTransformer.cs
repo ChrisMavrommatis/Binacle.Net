@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Binacle.Net.Kernel.OpenApi;
+namespace Binacle.Net.Kernel.OpenApi.Transformers;
 
 internal class RateLimiterResponseOperationTransformer : IOpenApiOperationTransformer
 {
@@ -28,15 +28,9 @@ internal class RateLimiterResponseOperationTransformer : IOpenApiOperationTransf
 		CancellationToken cancellationToken
 	)
 	{
-		// if rate limiting is enabled
-		var options = context.ApplicationServices.GetService<IOptions<FeatureOptions>>();
-		
-		if (!(options?.Value.IsFeatureEnabled("RateLimiter") ?? false))
-		{
-			return Task.CompletedTask;
-		}
-		
-		
+		// 429 is documented whenever an endpoint opts into rate limiting, regardless of whether the RateLimiter
+		// feature is toggled on right now. It is part of the endpoint's contract, and the published spec (built
+		// with the feature off) must still tell a generated client that 429 can happen.
 		if (context.Description.ActionDescriptor.EndpointMetadata
 		    .OfType<EnableRateLimitingAttribute>()
 		    .Any())

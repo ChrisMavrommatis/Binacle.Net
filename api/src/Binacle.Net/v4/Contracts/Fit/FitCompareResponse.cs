@@ -1,11 +1,16 @@
+using Binacle.Net.Kernel.OpenApi.Attributes;
 using Binacle.Lib.Abstractions.Models;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts.Fit;
 
 #pragma warning disable CS1591
 
+[Description("The fit result for each bin considered.")]
+[OpenApiRequireNonNullable]
 public class FitCompareResponse
 {
+	[Description(SchemaDescriptions.Results)]
 	public required List<FitBinResponse> Results { get; set; }
 
 	// Walks the requested bins rather than the result dictionary so the response keeps the order

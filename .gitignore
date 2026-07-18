@@ -23,6 +23,9 @@ obj/
 node_modules
 
 # Project Specific
+# Build-time OpenAPI documents (emitted by OpenApiGenerateDocumentsOnBuild); the frozen per-version specs
+# under docs/collections/_versions/**/swagger/ stay the committed source of truth.
+build/openapi/
 data/logs/
 data/pack-logs/
 packing-logs/

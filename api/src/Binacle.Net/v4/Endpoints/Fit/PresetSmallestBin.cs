@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
@@ -15,6 +16,7 @@ internal class PresetSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("fit/smallest-bin/{preset}", HandleAsync)
+			.WithOperationId("fit.presetSmallestBin")
 			.WithTags("Fit")
 			.WithSummary("Fit the smallest bin in a preset")
 			.WithDescription("Fit-check every bin in a preset and return the result for the smallest bin the items fit into.")
@@ -48,7 +50,7 @@ internal class PresetSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 	}
 
 	internal async Task<IResult> HandleAsync(
-		[FromRoute] string preset,
+		[FromRoute][Description(SchemaDescriptions.PresetParam)] string preset,
 		BindingResult<FitPresetSmallestBinRequest> bindingResult,
 		IOptions<BinPresetOptions> presetOptions,
 		IBinacleService binacleService,

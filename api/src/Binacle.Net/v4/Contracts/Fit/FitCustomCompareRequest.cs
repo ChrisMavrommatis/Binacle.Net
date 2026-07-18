@@ -1,11 +1,13 @@
 using FluentValidation;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
+using System.ComponentModel;
 
 namespace Binacle.Net.v4.Contracts.Fit;
 
 #pragma warning disable CS1591
 
+[Description("A request to check whether items fit into each of several custom bins.")]
 public class FitCustomCompareRequest : CustomBinsRequestBase;
 
 internal class FitCustomCompareRequestValidator : AbstractValidator<FitCustomCompareRequest>

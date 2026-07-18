@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
@@ -15,6 +16,7 @@ internal class PresetBin : IGroupedEndpoint<ApiV4EndpointGroup>
 	public void DefineEndpoint(RouteGroupBuilder group)
 	{
 		group.MapPost("fit/bin/{preset}/{bin}", HandleAsync)
+			.WithOperationId("fit.presetBin")
 			.WithTags("Fit")
 			.WithSummary("Fit a bin from a preset")
 			.WithDescription("Attempt to fit items into a bin from a preset. The preset and bin must be specified in the URL path.")
@@ -51,8 +53,8 @@ internal class PresetBin : IGroupedEndpoint<ApiV4EndpointGroup>
 	}
 	
 	internal async Task<IResult> HandleAsync(
-		[FromRoute] string preset,
-		[FromRoute] string bin,
+		[FromRoute][Description(SchemaDescriptions.PresetParam)] string preset,
+		[FromRoute][Description(SchemaDescriptions.BinParam)] string bin,
 		BindingResult<FitPresetBinRequest> bindingResult,
 		IOptions<BinPresetOptions> presetOptions,
 		IBinacleService binacleService,
