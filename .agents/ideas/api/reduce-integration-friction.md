@@ -65,14 +65,12 @@ used (shipping-rate step, fulfillment box pick)? The plugin is thin once that is
 
 - When is demand "enough" to publish an official SDK, and for which language first (TS is the likeliest)?
 - Plugins that call a hosted Binacle need auth and per-tenant identity — leans on the ServiceModule rework and auth
-  story. Ties into `$api/refresh-token-endpoint` and `$api/servicemodule-simplification`.
-- A packing-only image (`$api/packing-only-image`) is the natural thing a self-hosting plugin user would run.
+  story.
+- A packing-only image is the natural thing a self-hosting plugin user would run.
 
 ## Related
 
 - `$api/openapi` — the spec that makes generate-on-demand work.
-- `$api/servicemodule-simplification`, `$api/refresh-token-endpoint` — the auth/identity a hosted plugin needs.
-- `$api/packing-only-image` — what a self-hoster behind a plugin would run.
 
 ## Do not
 

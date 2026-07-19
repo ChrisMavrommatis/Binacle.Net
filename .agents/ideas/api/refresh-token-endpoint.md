@@ -29,7 +29,7 @@ can't steal it); access token in memory or localStorage. Blazor UIModule is out 
 
 ## Timing / dependency
 
-Pairs with the **ServiceModule rework** (`ideas/api/servicemodule-simplification.md`) — collapse the three
+Pairs with the planned **ServiceModule rework** — collapse the three
 ServiceModule projects and the DDD ceremony while **keeping the provider seam** (the repository interfaces +
 per-provider implementations that make the DB swappable). A new `IRefreshTokenRepository` drops cleanly into
 whatever shape that rework settles on, so it is cheaper to add during the rework than before it.
@@ -44,5 +44,3 @@ whatever shape that rework settles on, so it is cheaper to add during the rework
 ## Related
 
 - `$api/modules/service` (auth, token endpoint, rate-limiting tiers)
-- `ideas/api/servicemodule-simplification.md` — the rework this should land inside.
-- `ideas/api/uimodule-alpine-port.md` — if UIModule moves to the Alpine client, it inherits the client side.

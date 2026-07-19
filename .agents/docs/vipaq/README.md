@@ -18,7 +18,7 @@ stored and moved as a short base64 token. Used in v3 and v4 API responses when `
 **The wire format is defined in `vipaq/PROTOCOL.md`, which stands alone** — everything about the bytes is there,
 with no dependency on any other file. Do not restate the byte layout here; read it there. This document covers the
 C# side: the public API, the repo layout, and the tests. The *why* behind the format is in
-`$vipaq/architecture`, `$vipaq/decisions` and `$vipaq/findings`.
+`$vipaq/architecture` and the ViPaq design records.
 
 ## C# public surface
 
@@ -42,8 +42,7 @@ own. `Serialize` takes read-only items (it only reads them); `Deserialize` needs
 v4 `PackedBox` — can be serialized directly.
 
 **Compression** is off by default and is a straight on/off (no "keep the shorter" try-both in the serializer). The
-codec is **resolved from the header** — raw DEFLATE when `Compress` is set, a pass-through `NoOpCodec` when not
-(`$vipaq#D16`).
+codec is **resolved from the header** — raw DEFLATE when `Compress` is set, a pass-through `NoOpCodec` when not.
 
 ### Header notation (internal)
 

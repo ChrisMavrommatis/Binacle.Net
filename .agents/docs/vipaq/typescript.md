@@ -44,7 +44,7 @@ The two header bytes and their bit packing, `Width` (`Eight = 0`, `Sixteen = 1`;
 (`RowMajor = 0`, `Columnar = 1`), `Version`, the per-section width choice (narrowest that fits, both item widths
 `Eight` when there are no items), little-endian order, the field order (2-byte header, then the body: `uint16`
 count, bin L/W/H, per-item dims then coords in the layout's order), the `[0, 65535]` value cap, the 65,535
-item-count cap, and the codec (**raw DEFLATE**, `$vipaq#D16`). The codec is resolved from the header: DEFLATE
+item-count cap, and the codec (**raw DEFLATE**). The codec is resolved from the header: DEFLATE
 when the compressed bit is set, a pass-through NoOp when not.
 
 ## How it differs from C# — read before assuming parity

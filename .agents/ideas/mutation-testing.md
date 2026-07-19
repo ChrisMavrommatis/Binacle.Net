@@ -39,10 +39,6 @@ across every operator.
   scanner, so a local pin would match. Only worth it if it is run more than once.
 - **CI?** Almost certainly not — too slow for every run. A manual or scheduled job at most.
 
-## Related
-
-- `$ideas/testing-techniques` — the wider survey; mutation is one row in its table.
-
 ## Do not
 
 - **Do not chase a mutation score.** Microsoft's own guidance: focus on high-risk, business-critical code

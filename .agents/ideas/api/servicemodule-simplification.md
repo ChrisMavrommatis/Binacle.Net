@@ -46,10 +46,9 @@ the auth layer. There is no external forcing function, so it waits.
 - How much of the `Entity`/`AggregateRoot`/`AuditableEntity` chain carries real behaviour vs. exists for the
   pattern — decides how far the flattening goes.
 - Does merging the projects break any test-project references or DI registration that assumed three assemblies.
-- Sequence with `refresh-token-endpoint` — the new `IRefreshTokenRepository` should land in the reworked shape,
-  so design the two together.
+- If refresh-token support is added later, its `IRefreshTokenRepository` should land in this reworked shape —
+  keep the repository seam so it drops in cleanly.
 
 ## Related
 
 - `$api/modules/service` (current three-project structure and patterns)
-- `ideas/api/refresh-token-endpoint.md` — adds a repository that should land in the reworked shape.

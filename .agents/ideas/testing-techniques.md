@@ -50,7 +50,6 @@ assertions are added. *Trade:* cheap to run, narrow in what it catches.
 
 **Mutation** — break the code, see if a test notices.
 *Good:* the only one that measures *assertions*. *Bad:* slow; equivalent mutants cap the score.
-See `$ideas/mutation-testing`.
 
 ## Candidates
 
@@ -104,7 +103,3 @@ The pitch says "real time"; that claim is untested under concurrency. A 400-bin 
   cycle. Both clients are in this repo; the integration tests already cover the contract.
 - **Snapshot testing (Verify).** The same idea as golden vectors, aimed at objects. The vectors already do
   this where it matters, and better.
-
-## Related
-
-- `$ideas/mutation-testing` — whether the covered code is actually checked.

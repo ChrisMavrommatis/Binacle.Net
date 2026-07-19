@@ -59,7 +59,7 @@ ViPaq has one implementation, so there's no in-code baseline like lib's v1-vs-v2
   `results/vipaq/compression/`, and copy the report in by hand only when it's a keeper. The committed baseline is
   hand-curated, never auto-overwritten — same model as `results/lib/`.
 - Results stay in the repo under `results/`, organized by slice — see [results/README.md](../../../results/README.md)
-  for the layout and the scratch-vs-curated convention. (Settled 2026-07-14; the old results-migration plan is closed.)
+  for the layout and the scratch-vs-curated convention. (Settled 2026-07-14; the old results migration is closed.)
 
 ### D4 — The permanent harness uses only the minimal public API (CONFIRMED 2026-07-07)
 The permanent benchmark **encodes and decodes** through `ViPaqSerializer.Serialize`/`Deserialize` only — that is
@@ -151,8 +151,8 @@ consumer appears** — and even then, share the enumeration, not the parse.
 
 ### D11 — Breaking rebuild; the old format is ignored (CONFIRMED 2026-07-09)
 No compatibility, no migration, no fallback. No decoder reads the old wire and no code path detects it; stored
-tokens must be re-encoded. Nothing in the repo says the old format existed — the break is announced in
-`.agents/release-notes.md` only.
+tokens must be re-encoded. Nothing in the repo says the old format existed — the break is announced in the
+release notes only.
 
 What settled it: reading old blobs means keeping four integer widths, a 64-bit tier, and the whole `2^53 − 1`
 range apparatus alive in every decoder, in both languages, forever. That apparatus is the biggest thing we delete.

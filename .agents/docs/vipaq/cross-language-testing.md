@@ -32,8 +32,8 @@ Everything names a full header with the **HeaderNotation** string `v{N}_{raw|com
 
 ## Generators (regenerate the derived vectors)
 
-Only two kinds of vector are generated — `header/header-bytes.json` and the interop artifacts
-(`$vipaq#D15`); every other file is hand-authored.
+Only two kinds of vector are generated — `header/header-bytes.json` and the interop artifacts;
+every other file is hand-authored.
 
 - **C#** — `vipaq/tools/Binacle.ViPaq.VectorGenerators/`: `Program.cs` (no-arg runner over `IVectorGenerator`),
   `HeaderBytesGenerator.cs` (the 32 header combos), `InteropArtifactGenerator.cs` (serializes each `input.json`

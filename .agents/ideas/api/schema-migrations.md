@@ -38,4 +38,3 @@ and it does nothing for the Azure Table backend (schemaless). Two right-sized sh
 ## Related
 
 - `$api/modules/service` (current create-if-not-exists startup tasks, provider selection)
-- `ideas/api/servicemodule-simplification.md` — the rework that would reshape the Infrastructure layer this sits in.

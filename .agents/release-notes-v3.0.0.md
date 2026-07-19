@@ -1,10 +1,9 @@
-# Release Notes — Unreleased (v3.0.0)
+# Release Notes — Binacle.Net v3.0.0
 
-Ongoing changelog for the next GitHub release. **Lives in `.agents/` root; maintain it (and `pending-actions.md`)
-as work lands** — append an entry whenever a change would matter to a release.
+The GitHub release body for v3.0.0, ready to paste. Everything below the line is the body; the notes above it
+are for whoever cuts the release.
 
-**Everything below the line is the release body, written to paste straight into GitHub.** It follows the
-maintainer's house style, taken from the published releases:
+Style is taken from the maintainer's published releases (https://github.com/ChrisMavrommatis/Binacle.Net/releases):
 
 - Opens with one line: `Binacle.Net vX.Y.Z is a major update from vA.B.C.`
 - A breaking release uses a GitHub alert — `> [!Warning]` — then `---`.
@@ -21,7 +20,8 @@ maintainer's house style, taken from the published releases:
 **Scope:** `v2.1.1` (2026-01-13, the last shipped image) → now; 149 commits. `main` is 2 commits past `v2.1.1`;
 both are included.
 
-**Open items before publishing:** see the checklist at the bottom.
+**Before pasting:** confirm the version number / compare link. Fitting was verified unchanged (2026-07-19), so
+the `📈 Algorithms` section needs no caveat. The manual steps are the release actions.
 
 ---
 
@@ -110,19 +110,3 @@ To upgrade to **v3.0.0**, follow these steps:
 ---
 
 **Full Changelog**: https://github.com/ChrisMavrommatis/Binacle.Net/compare/v2.1.1...v3.0.0
-
----
-
-## Checklist before publishing (not part of the release body)
-
-- [ ] **Update the `API_PROJECT_PATH` Actions variable** — Settings → Secrets and variables → Actions →
-  Variables: `src/Binacle.Net/Binacle.Net.csproj` → `api/src/Binacle.Net/Binacle.Net.csproj`. The
-  `src/` → `api/src/` move breaks the `release-docker-image.yml` publish step until this changes.
-- [ ] **Confirm fitting results are unchanged.** The `📈 Algorithms` section claims packing is unchanged — that
-  is provable, the shared algorithm is the old packing code moved verbatim. **Fitting is not**: it previously
-  ran a dedicated fitting algorithm (version 3) and now runs the packing one with early exit. No equivalence
-  analysis is recorded. Either confirm it, or add a bullet describing the behaviour change. See
-  `pending-actions.md`.
-- [ ] **Fix the shared ViPaq protocol page** before publishing — it describes the old format for *every*
-  version of the docs site. See `pending-actions.md`.
-- [ ] Confirm the version number is `v3.0.0` and the compare link matches.

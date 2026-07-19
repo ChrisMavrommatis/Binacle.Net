@@ -3,9 +3,6 @@ id: vipaq/architecture
 description: ViPaq architecture — the blind encode/decode layer, the layout codecs, and the serializer that chooses. The policy/mechanism split the rebuild keeps.
 verified: 2026-07-13
 check: Policy/mechanism split matches vipaq/src/Binacle.ViPaq — ProtocolEncoder obeys the header, ViPaqSerializer chooses widths/layout/compression, Layouts/ hold the codecs
-also_update:
-  - vipaq/decisions
-  - vipaq/findings
 ---
 
 # ViPaq — architecture
@@ -36,7 +33,7 @@ No separate directive type. The spec already forces the header to describe the b
 it and never re-derives anything (§4) — so a second type would carry the same fields under a different name.
 
 **`Compressed` is the odd one.** The other five are decided by looking at the input. `Compressed` cannot be:
-you only know whether compressing paid after you compress and compare lengths (§6, `$vipaq#D7`). So the
+you only know whether compressing paid after you compress and compare lengths (§6). So the
 blind encoder takes it as an instruction and obeys it — "compress this" or "don't" — and the *choosing* layer is
 what runs both and keeps the shorter one. The blind layer never decides; it just does what the bit says.
 
@@ -72,7 +69,7 @@ and decodes.
 `Header` carries a `Version` enum. `Version1` is `0`, so it is not `required` and the default is the only version
 this implementation writes; a decoder rejects codes 1-3 (§2.3).
 
-**Three codecs, and they all stay.** `PROTOCOL.md` §6 now names one — raw DEFLATE (D16) — and the encoder is
+**Three codecs, and they all stay.** `PROTOCOL.md` §6 now names one — raw DEFLATE — and the encoder is
 handed that codec. Pinning it changed one line in `ViPaqSerializer` and **nothing else**:
 
 - **The wire is not pluggable.** The spec fixes one codec per `Version` and puts no codec field in the header, so
@@ -117,27 +114,27 @@ A `public static class`. `ProtocolEncoder` is blind, so *something* has to decid
 that goes. `CreateHeader` decides five of the six fields by looking at the input; `Serialize` decides the sixth:
 
 - **Widths** — the narrowest that holds each section, sized independently (§4). A big bin can hold small items
-  at large coordinates, so the three sections genuinely disagree (`$vipaq#width-selection`: Bischoff packs to `16/8/16`).
+  at large coordinates, so the three sections genuinely disagree (Bischoff packs to `16/8/16`).
   With no items both item widths stay `Eight`, which is what §4 requires.
-- **Layout** — `RowMajor`, always. Unmeasured. `$vipaq/findings` suggests a good codec already exploits the structure
+- **Layout** — `RowMajor`, always. Unmeasured. A good codec probably already exploits the structure
   columnar exposes, so it may buy nothing. Both codecs ship and the header bit records which was used, so this
   can change later without a version bump.
-- **Compressed** — **always false, for now.** D7 says to encode both ways and keep the shorter blob, which costs
+- **Compressed** — **always false, for now.** The rule will be to encode both ways and keep the shorter blob, which costs
   a whole second compression on every call. Nobody has measured that cost.
 
 `Deserialize` is the easy half: `Header.FromBytes` on the first two bytes — which already rejects a bad version,
 a set reserved bit and a reserved width code (§7, steps 2-3) — then hand the encoder the header plus the rest.
 
 That layer, and only that layer, is what the public API and the permanent benchmark harness call, so the harness
-must not churn when the internals move (`$vipaq#D4`).
+must not churn when the internals move.
 
 **Nothing is compressed, and the codec is not chosen.** Two open questions, not one. §6 names no codec, so there
-is nothing to pin one to; and the cost of D7's try-both is unmeasured. So the serializer hands `ProtocolEncoder`
+is nothing to pin one to; and the cost of the try-both is unmeasured. So the serializer hands `ProtocolEncoder`
 a `NoOpCodec` and never sets `Compressed`. It also **refuses to read a compressed blob** — `NotSupportedException`,
 not a garbled decode. Picking a codec by default would have been a decision made by accident.
 
 Both questions want the same benchmark: raw DEFLATE against gzip, on real packs, for stored base64 size **and**
-encode time. Then §6 gets a codec, D7 gets a cost, and one field in `ViPaqSerializer` changes.
+encode time. Then §6 gets a codec, the try-both gets a cost, and one field in `ViPaqSerializer` changes.
 
 The old typed wrappers (`SerializeInt32`, `DeserializeInt32`, `SerializeUInt16`, `DeserializeUInt16`) are **not
 back yet**. Four call sites want them (`api/` twice, the UIModule decoder, `PackedDataGenerator`). They are a
@@ -149,19 +146,19 @@ one-line forward each; add them when the first of those is migrated, not before.
 > the new wire: `Binacle.ViPaq.UnitTests`, `Binacle.ViPaq.TestsKernel`, `Binacle.ViPaq.VectorGenerators`,
 > `Binacle.ViPaq.PackedDataGenerator`, and `Binacle.Net.UIModule`. See `migration.md`.
 >
-> This is a deliberate, temporary red. It is the cost of not carrying two formats at once (`$vipaq#D11`:
-> breaking rebuild, no compatibility, no migration).
+> This is a deliberate, temporary red. It is the cost of not carrying two formats at once — breaking
+> rebuild, no compatibility, no migration.
 
 ## Public surface, and what tests can reach
 
 - **Public:** `ViPaqSerializer`, `Dimensions<T>` / `Item<T>` (from `Binacle.Geometry`), `Limits`,
   `ViPaqFormatException`.
 - **Internal:** everything else — reader, writer, layout codecs, `ProtocolEncoder`, the codecs, and `Header`.
-- `Binacle.ViPaq.csproj` grants `InternalsVisibleTo` to `.UnitTests`, `.VectorGenerators` and `.TestsKernel`
-  (`$vipaq#D4`). Not `.Benchmarks` and not `.PerformanceTests` — both reference `TestsKernel`, so the internal
+- `Binacle.ViPaq.csproj` grants `InternalsVisibleTo` to `.UnitTests`, `.VectorGenerators` and `.TestsKernel`.
+  Not `.Benchmarks` and not `.PerformanceTests` — both reference `TestsKernel`, so the internal
   driving lives there and they stay on public types.
-- **Racing the codecs needs internals**, and `TestsKernel` has them. The race is part of the permanent harness
-  (`$vipaq#D5`), so it belongs there rather than in a throwaway. No new grant is needed. The reports are in
+- **Racing the codecs needs internals**, and `TestsKernel` has them. The race is part of the permanent harness,
+  so it belongs there rather than in a throwaway. No new grant is needed. The reports are in
   `results/vipaq/compression/`.
 
 The public contract does not grow, yet tests can force any combination.
@@ -185,9 +182,9 @@ the two could silently disagree in a mode neither would choose on its own.
 
 ## Open — do not assume
 
-- **Does columnar actually pay?** Unmeasured. `$vipaq/findings` suggests a good codec already exploits the structure
+- **Does columnar actually pay?** Unmeasured. A good codec probably already exploits the structure
   columnar exposes. Treat it as unproven until raced on real packs.
-- **The codec for `Version = 0`.** Still unnamed in `PROTOCOL.md` §6 and §12. See `$vipaq#O2`.
+- **The codec for `Version = 0`.** Still unnamed in `PROTOCOL.md` §6 and §12.
 - **The header's text notation.** `HeaderNotation` is a **stub** — `Parse` and `Format` throw. The old grammar
   (`Uncompressed_8_8_8`) does not survive: its `Version` word conflated the version with the compression flag,
   which are now separate header fields, and it has no place for `Layout`. A new grammar must carry `Compressed`,

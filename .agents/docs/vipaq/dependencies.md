@@ -8,7 +8,7 @@ check: ProjectReference and InternalsVisibleTo entries in vipaq/**/*.csproj matc
 # ViPaq — project dependencies
 
 One picture of how the ViPaq projects fit together, plus the boundaries that are easy to break by accident.
-The *why* of the format is in `$vipaq/architecture` and `$vipaq/decisions`; this file is
+The *why* of the format is in `$vipaq/architecture` and the design decisions behind it; this file is
 just the wiring.
 
 ## The graph
