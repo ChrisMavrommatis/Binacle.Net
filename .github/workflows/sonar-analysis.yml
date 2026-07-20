@@ -1,11 +1,6 @@
-# Builds, tests, and sends coverage to SonarCloud. Manual — trigger it from the Actions tab.
-#
-# SonarCloud's Automatic Analysis cannot import coverage: it never runs your tests, it only reads source.
-# Coverage means analysing from CI, so Automatic Analysis must be OFF for this project or the two fight
-# over the same results.
-#
-# The work lives in .github/scripts/sonar-coverage.sh so this file stays readable. It runs between begin
-# and end because the scanner only sees projects compiled inside that pair.
+# Sends coverage to SonarCloud. Manual, because coverage needs a CI run: Automatic Analysis only reads
+# source, so it must be OFF or the two fight. Build + coverage sit between begin/end — the scanner only
+# sees projects compiled in that pair. A failing suite skips "Sonar end", so a failed run publishes nothing.
 
 name: Sonar Analysis
 
@@ -18,23 +13,13 @@ jobs:
     permissions:
       contents: read
 
-    # The ServiceModule suite talks to Azurite. Without it all 106 of its tests fail — the code is fine,
-    # the dependency is missing. The image's default command already binds 0.0.0.0, so no override needed.
-    services:
-      azurite:
-        image: mcr.microsoft.com/azure-storage/azurite:latest
-        ports:
-          - 10000:10000
-          - 10001:10001
-          - 10002:10002
-
     steps:
       - uses: actions/checkout@v4
         with:
           # Sonar needs full history to tell new code from old. A shallow clone makes everything look new.
           fetch-depth: 0
 
-      # The Sonar scanner is a Java program, whatever language it analyses.
+      # The scanner is a Java program, whatever language it analyses.
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -52,8 +37,7 @@ jobs:
           node-version: 22
           cache: npm
 
-      # The scanner pulls its analyzers from the server on first run; NuGet re-downloads the tool manifest
-      # and every package. Both are stable between runs, so cache them.
+      # Analyzers and NuGet packages are stable between runs — cache to skip the re-download.
       - name: Cache Sonar analyzers
         uses: actions/cache@v4
         with:
@@ -86,11 +70,55 @@ jobs:
             /d:sonar.cs.vscoveragexml.reportsPaths="CoverageArtifacts/sonar/*.coverage.xml" \
             /d:sonar.javascript.lcov.reportPaths="CoverageArtifacts/sonar/ts/lcov.info"
 
-      - name: Build and test with coverage
-        run: ./.github/scripts/sonar-coverage.sh
+      # Build once here so every coverage step below can --no-build.
+      - name: Build
+        run: |
+          dotnet build Binacle.Net.slnx --configuration Release
+          mkdir -p CoverageArtifacts/sonar
 
-      # Skipped if anything above fails, so Sonar never records coverage from a failed run — code that never
-      # ran and code that is untested look identical in a report.
+      # dotnet run -- --coverage is the MTP-native way to emit coverage; xml = Visual Studio coverage, the C# format
+      # Sonar imports. Files land where sonar.cs.vscoveragexml.reportsPaths expects them.
+      - name: Coverage — lib
+        run: >
+          dotnet run --project lib/test/Binacle.Lib.UnitTests --configuration Release --no-build --
+          --coverage --coverage-output-format xml
+          --coverage-output CoverageArtifacts/sonar/lib.coverage.xml
+
+      - name: Coverage — api (core)
+        run: >
+          dotnet run --project api/test/Binacle.Net.IntegrationTests --configuration Release --no-build --
+          --coverage --coverage-output-format xml
+          --coverage-output CoverageArtifacts/sonar/api.coverage.xml
+
+      # SQLite: the infra shipping first, and it needs no external service.
+      - name: Coverage — servicemodule (sqlite)
+        env:
+          BINACLE_TEST_INFRA: Sqlite
+        run: >
+          dotnet run --project api/test/Binacle.Net.ServiceModule.IntegrationTests --configuration Release --no-build --
+          --coverage --coverage-output-format xml
+          --coverage-output CoverageArtifacts/sonar/service.coverage.xml
+
+      - name: Coverage — vipaq
+        run: >
+          dotnet run --project vipaq/test/Binacle.ViPaq.UnitTests --configuration Release --no-build --
+          --coverage --coverage-output-format xml
+          --coverage-output CoverageArtifacts/sonar/vipaq.coverage.xml
+
+      - name: Coverage — shared (compact-notation)
+        run: >
+          dotnet run --project shared/test/Binacle.CompactNotation.UnitTests --configuration Release --no-build --
+          --coverage --coverage-output-format xml
+          --coverage-output CoverageArtifacts/sonar/compact-notation.coverage.xml
+
+      # Run jest from the root so recorded paths carry the workspace folder; per-workspace they read as bare
+      # "src/foo.ts" and Sonar resolves nothing → 0%.
+      - name: Coverage — typescript
+        run: >
+          npx jest --coverage --coverageReporters=lcovonly
+          --coverageDirectory=CoverageArtifacts/sonar/ts
+
+      # Publishes the run. Skipped on any failure above, so coverage from a broken run is never recorded.
       - name: Sonar end
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

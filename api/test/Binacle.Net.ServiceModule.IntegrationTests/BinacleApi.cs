@@ -43,13 +43,14 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 	{
 		// TODO: Run the tests with all modules enabled
 
+		var infra = ResolveTestInfrastructure();
+
 		var preBuildConfigurationValues = new Dictionary<string, string?>
 		{
 			{ "Features:SERVICE_MODULE", bool.TrueString },
 			{ "RateLimiter:AuthToken", "NoLimiter::0" },
-			{ "ConnectionStrings:AzureStorage", "UseDevelopmentStorage=true"},
-			// { "ConnectionStrings:Postgres", "Host=localhost;Port=5432;Database=binacle_net;Username=appuser;Password=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3" },
-			// { "ConnectionStrings:Sqlite", "DataSource=binacle-net-service.test.db;" },
+			// Only the selected backend's connection string is set, so Setup.AddInfrastructure registers exactly it.
+			{ infra.ConfigKey, infra.ConnectionString },
 			{ "JwtAuth:Issuer", "ForTestsOnly"},
 			{ "JwtAuth:Audience", "ForTestsOnly" },	
 			{ "JwtAuth:TokenSecret", "SecretKeyForTestsOnly_paddedTo70Plus_paddedTo70Plus_paddedTo70Plus_paddedTo70Plus"},
@@ -87,16 +88,58 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 		});
 	}
 
+	// Infra is chosen the way production chooses it — by which connection string is set (prod env names).
+	// The only addition is an explicit SQLite fallback so a bare `dotnet test` runs with no external service;
+	// CI sets one env var per matrix leg. The choice is logged by the caller so it is never silent.
+	private static (string ConfigKey, string ConnectionString) ResolveTestInfrastructure()
+	{
+		var testInfra = Environment.GetEnvironmentVariable("BINACLE_TEST_INFRA");
+		if (testInfra == "AzureStorage")
+		{
+			var azureConnectionStringOverride = Environment.GetEnvironmentVariable("AZURESTORAGE_CONNECTION_STRING");
+			var defaultAzureStorageConnectionString = "UseDevelopmentStorage=true";
+			LogChoiceToConsole("Azure Storage", azureConnectionStringOverride is not null);
+			return ("ConnectionStrings:AzureStorage",
+				azureConnectionStringOverride ?? defaultAzureStorageConnectionString);
+		}
+
+		if (testInfra == "Postgres")
+		{
+			var postgresConnectionStringOverride = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING");
+			var defaultPostgresConnectionString = "Host=localhost;Port=5432;Database=binacle_net;Username=appuser;Password=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3";
+			LogChoiceToConsole("Postgres", postgresConnectionStringOverride is not null);
+			return ("ConnectionStrings:Postgres", postgresConnectionStringOverride ??  defaultPostgresConnectionString);
+		}
+
+		if (testInfra == "Sqlite")
+		{
+			var sqliteConnectionStringOverride = Environment.GetEnvironmentVariable("SQLITE_CONNECTION_STRING");
+			var defaultSqliteConnectionString = "DataSource=binacle-net-service.test.db;";
+			LogChoiceToConsole("SQLite", sqliteConnectionStringOverride is not null);
+			return ("ConnectionStrings:Sqlite", sqliteConnectionStringOverride ?? defaultSqliteConnectionString);
+		}
+		LogChoiceToConsole("SQLite (Fallback)", false);
+		return ("ConnectionStrings:Sqlite", "DataSource=binacle-net-service.test.db;");
+	}
+	
+	private static void LogChoiceToConsole(string name, bool isOverride)
+	{
+		Console.WriteLine($"[ServiceModule.IntegrationTests] infra backend: {name} {(isOverride ? "(override)" : "(default)")}");
+	}
+
 	public HttpClient Client { get; init; }
 	public JsonSerializerOptions JsonSerializerOptions { get; init; }
 
 	public async ValueTask InitializeAsync()
 	{
-		var passwordService = this.Services.GetRequiredService<IPasswordService>();
-		var options = this.Services.GetRequiredService<IOptions<ServiceModuleOptions>>();
+		// A fresh DI scope per helper call: the DB repositories are scoped and a SQLite connection is not
+		// thread-safe, so resolving from the root provider shares one connection across parallel tests.
+		using var scope = this.Services.CreateScope();
+		var passwordService = scope.ServiceProvider.GetRequiredService<IPasswordService>();
+		var options = scope.ServiceProvider.GetRequiredService<IOptions<ServiceModuleOptions>>();
 		var defaultAdmin = ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);
 
-		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
+		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
 		var adminResult = await accountRepository.GetByUsernameAsync(defaultAdmin.Username);
 		this.Admin = adminResult.Unwrap<Domain.Accounts.Entities.Account>();
 
@@ -123,7 +166,8 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 
 	public override async ValueTask DisposeAsync()
 	{
-		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
+		using var scope = this.Services.CreateScope();
+		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
 		await accountRepository.DeleteAsync(this.Admin);
 		await accountRepository.DeleteAsync(this.User);
 		await base.DisposeAsync();
@@ -131,8 +175,9 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 
 	public async ValueTask EnsureAccountExists(AccountCredentials credentials)
 	{
-		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
-		var passwordService = this.Services.GetRequiredService<IPasswordService>();
+		using var scope = this.Services.CreateScope();
+		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
+		var passwordService = scope.ServiceProvider.GetRequiredService<IPasswordService>();
 
 		var account = new Domain.Accounts.Entities.Account(
 			credentials.Username,
@@ -150,7 +195,8 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 
 	public async ValueTask EnsureAccountWithUsernameDoesNotExist(string username)
 	{
-		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
+		using var scope = this.Services.CreateScope();
+		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
 		var getResult = await accountRepository.GetByUsernameAsync(username);
 		if (!getResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 		{
@@ -159,7 +205,7 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 
 		if (account.HasSubscription())
 		{
-			var subscriptionRepository = this.Services.GetRequiredService<ISubscriptionRepository>();
+			var subscriptionRepository = scope.ServiceProvider.GetRequiredService<ISubscriptionRepository>();
 			var subscriptionResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value, allowDeleted: true);
 			if (subscriptionResult.TryGetValue<Domain.Subscriptions.Entities.Subscription>(out var subscription) &&
 			    subscription is not null)
@@ -172,7 +218,8 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 
 	public async ValueTask EnsureAccountDoesNotExist(AccountCredentials credentials)
 	{
-		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
+		using var scope = this.Services.CreateScope();
+		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
 		var getResult = await accountRepository.GetByIdAsync(credentials.Id, allowDeleted: true);
 		if (!getResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 		{
@@ -181,7 +228,7 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 
 		if (account.HasSubscription())
 		{
-			var subscriptionRepository = this.Services.GetRequiredService<ISubscriptionRepository>();
+			var subscriptionRepository = scope.ServiceProvider.GetRequiredService<ISubscriptionRepository>();
 			var subscriptionResult = await subscriptionRepository.GetByIdAsync(account.SubscriptionId!.Value, allowDeleted: true);
 			if (subscriptionResult.TryGetValue<Domain.Subscriptions.Entities.Subscription>(out var subscription) &&
 			    subscription is not null)
@@ -197,9 +244,10 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 
 	public async ValueTask EnsureAccountExistsWithSubscription(AccountCredentialsWithSubscription credentials)
 	{
-		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
-		var passwordService = this.Services.GetRequiredService<IPasswordService>();
-		var subscriptionRepository = this.Services.GetRequiredService<ISubscriptionRepository>();
+		using var scope = this.Services.CreateScope();
+		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
+		var passwordService = scope.ServiceProvider.GetRequiredService<IPasswordService>();
+		var subscriptionRepository = scope.ServiceProvider.GetRequiredService<ISubscriptionRepository>();
 
 		var account = new Domain.Accounts.Entities.Account(
 			credentials.Username,
@@ -228,8 +276,9 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 
 	public async ValueTask EnsureAccountWithSubscriptionDoesNotExist(AccountCredentialsWithSubscription credentials)
 	{
-		var accountRepository = this.Services.GetRequiredService<IAccountRepository>();
-		var subscriptionRepository = this.Services.GetRequiredService<ISubscriptionRepository>();
+		using var scope = this.Services.CreateScope();
+		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
+		var subscriptionRepository = scope.ServiceProvider.GetRequiredService<ISubscriptionRepository>();
 		var getResult = await accountRepository.GetByIdAsync(credentials.Id, allowDeleted: true);
 		if (!getResult.TryGetValue<Domain.Accounts.Entities.Account>(out var account) || account is null)
 		{

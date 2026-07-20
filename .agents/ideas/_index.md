@@ -12,6 +12,7 @@ and move it to `.agents/plans/` once it's picked up. See [README.md](README.md) 
 | File | Description |
 |---|---|
 | [mutation-testing.md](mutation-testing.md) | Idea: mutation testing with Stryker.NET |
+| [task-runner-for-config-scripts.md](task-runner-for-config-scripts.md) | Idea: a task runner for the config scripts (with shell completion) |
 | [testing-techniques.md](testing-techniques.md) | Idea: testing techniques not in use |
 
 ## API

@@ -1,18 +1,21 @@
 # CI, Sonar, and coverage — switch them on
 
-**Status:** Deferred, not started. Nothing here blocks a release — but until it lands, **no workflow runs a
-test**, so every green suite is green on a laptop only.
+**Status:** Partly done (2026-07-20). `.github/workflows/run-tests.yml` now runs the C# + TS suites and the
+ServiceModule integration tests once per DB backend (sqlite/postgres) on every PR. What remains is
+Sonar/coverage gating, the docker image build in CI, and making the integration harness run all modules.
 
 ## Why
-There is no CI test gate. A regression only surfaces if someone runs the suites by hand. Sonar and coverage are
-configured but not enforced on a PR.
+Sonar and coverage are configured but still not enforced on a PR, and the image build never runs in CI.
 
 ## What
-- A CI workflow that runs the C# and TS suites on every PR, ideally with the docker image build too.
-- Wire Sonar analysis and coverage reporting into that workflow.
+- ~~A CI workflow that runs the C# and TS suites on every PR.~~ Done — `run-tests.yml`.
+- Add the **docker image build** to CI (still only ever built locally).
+- Wire Sonar analysis and coverage reporting into the PR gate (today `sonar-analysis.yml` is manual only).
 - Decide the gate: which suites are required to pass, and the coverage floor.
 
 ## Notes
 - The integration-test harnesses currently run **core modules only**, not all modules. Enabling every module in
   CI is part of making the gate meaningful, not just green.
-- No CI today is why a release depends on one careful local green sweep, including the image build.
+- `sonar-analysis.yml` now inlines every coverage command (no wrapper script) and pins the service suite to
+  SQLite, so its coverage does not exercise the Azure/Postgres providers. Add extra `.coverage.xml` steps for
+  those backends if their provider code needs covering.

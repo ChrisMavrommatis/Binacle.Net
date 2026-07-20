@@ -1,0 +1,96 @@
+# Runs every test slice on push and PR. One job so setup + build happen once; each slice is its own step.
+# ServiceModule runs once per backend as duplicated steps (Sqlite, Postgres) — cheaper than a matrix job at
+# this count, and each backend is an obvious line. The two TS packages run as their own steps too.
+
+name: Run Tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    # Postgres is up for the whole job so the ServiceModule (Postgres) step can reach it. It sits idle during
+    # the other steps — a trivial cost, and simpler than starting it inline.
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_USER: appuser
+          POSTGRES_PASSWORD: Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3
+          POSTGRES_DB: binacle_net
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U appuser -d binacle_net"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ vars.DONET_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '.config/dotnet-tools.json') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Install npm packages
+        run: npm ci
+
+      - name: Build
+        run: dotnet build Binacle.Net.slnx --configuration Release
+
+      # if: !cancelled() so every slice still runs after one fails — you see all red slices, not just the first.
+      - name: Test — lib
+        if: ${{ !cancelled() }}
+        run: dotnet test lib/test/Binacle.Lib.UnitTests --configuration Release --no-build
+
+      - name: Test — shared
+        if: ${{ !cancelled() }}
+        run: dotnet test shared/test/Binacle.CompactNotation.UnitTests --configuration Release --no-build
+
+      - name: Test — vipaq
+        if: ${{ !cancelled() }}
+        run: dotnet test vipaq/test/Binacle.ViPaq.UnitTests --configuration Release --no-build
+
+      - name: Test — api (core)
+        if: ${{ !cancelled() }}
+        run: dotnet test api/test/Binacle.Net.IntegrationTests --configuration Release --no-build
+
+      - name: Test — servicemodule (sqlite)
+        if: ${{ !cancelled() }}
+        env:
+          BINACLE_TEST_INFRA: Sqlite
+        run: dotnet test api/test/Binacle.Net.ServiceModule.IntegrationTests --configuration Release --no-build
+
+      - name: Test — servicemodule (postgres)
+        if: ${{ !cancelled() }}
+        env:
+          BINACLE_TEST_INFRA: Postgres
+        run: dotnet test api/test/Binacle.Net.ServiceModule.IntegrationTests --configuration Release --no-build
+
+      - name: Test — ts (compact-notation)
+        if: ${{ !cancelled() }}
+        run: npx jest --projects packages/binacle-compact-notation
+
+      - name: Test — ts (vipaq)
+        if: ${{ !cancelled() }}
+        run: npx jest --projects vipaq/packages/binacle-vipaq

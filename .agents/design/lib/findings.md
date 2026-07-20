@@ -77,3 +77,16 @@ every scenario the same way. This is run-to-run variance, not a regression.
 **Caveat:** these are two separate runs on different days, not a controlled A/B, and the machine was in use
 during the second. Within-run error is ~1%, so the ±2% moves are between-run variance. If a definitive answer
 is ever needed, stash the guard and run both back to back.
+
+## F3 — v3 fitting on the packing lineage matches the old fitting family
+
+The v3.0.0 release unified fitting and packing onto one algorithm: fitting stopped running its own family
+(`Binacle.Lib/Fitting/Algorithms/*/`, version 3) and now runs the packing lineage (version 2) with early exit.
+Fitting answers a yes/no question with a heuristic, so a different heuristic could disagree on edge cases —
+worth confirming because it sits inside the **frozen v3 contract**.
+
+Differential-tested 2026-07-19 against the real `binacle/binacle-net:2.1.1` image: **~5,400 fit requests** (random
+bins/items, all three algorithms, weighted to the near-full boundary where heuristics diverge) ran old vs new
+side by side — **identical answers every time, zero disagreements**. No behaviour change; no release-notes caveat
+needed. (Old ViPaq tokens rejecting loudly is the other v3 verification — that one lives in `vipaq/PROTOCOL.md`
+plus the committed regression vectors, not here.)

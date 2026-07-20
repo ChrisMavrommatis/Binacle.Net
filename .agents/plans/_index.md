@@ -12,7 +12,7 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [ci-enablement.md](ci-enablement.md) | CI, Sonar, and coverage — switch them on |
-| [docs-versioning.md](docs-versioning.md) | Docs Site — go version-only, drop `latest` |
+| [docs-versioning.md](docs-versioning.md) | Docs Site — write the v3.0.x pages |
 | [todos.md](todos.md) | TODOs |
 
 ## Lib
@@ -26,9 +26,3 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [shared/testskernel-data-extraction.md](shared/testskernel-data-extraction.md) | TestsKernel — grow the shared fixture cases |
-
-## ViPaq
-
-| File | Description |
-|---|---|
-| [vipaq/old-format-rejection-tests.md](vipaq/old-format-rejection-tests.md) | Add old-format ViPaq token rejection tests |

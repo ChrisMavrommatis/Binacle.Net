@@ -6,8 +6,8 @@ ROOT_DIR=$( dirname "$FILE_DIR" )
 CS_PROJECT='vipaq/test/Binacle.ViPaq.UnitTests'
 TS_PACKAGE='vipaq/packages/binacle-vipaq'
 
-run_cs() { echo "Running C# unit tests: $CS_PROJECT"; dotnet run --project "$ROOT_DIR/$CS_PROJECT"; }
-run_ts() { echo "Running TS tests: $TS_PACKAGE"; ( cd "$ROOT_DIR/$TS_PACKAGE" && npm test ); }
+run_cs() { echo "Running C# unit tests: $CS_PROJECT"; dotnet test "$ROOT_DIR/$CS_PROJECT"; }
+run_ts() { echo "Running TS tests: $TS_PACKAGE"; ( cd "$ROOT_DIR" && npx jest --projects "$TS_PACKAGE" ); }
 
 echo "Running from $ROOT_DIR"
 

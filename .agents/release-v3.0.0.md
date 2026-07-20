@@ -24,14 +24,11 @@ The two correctness questions are **now verified** (2026-07-19, differential-tes
    extraction, and **no CI runs tests**, so one local green sweep — all C#/TS suites plus the image build — is
    the only gate there is. (The API compiles clean — `dotnet build` 0 warnings, 2026-07-19 — but the image
    build and full suite still need one run.)
-3. **Fitting results are unchanged — VERIFIED 2026-07-19.** ~5,400 fit requests (random bins/items, all three
-   algorithms, weighted to the near-full boundary where heuristics diverge) ran against old (v2.1.1) and new
-   side by side: identical answers every time, zero disagreements. No behaviour change in the frozen v3
-   contract, and no release-notes caveat needed.
-4. **Old ViPaq tokens fail loudly — VERIFIED 2026-07-19.** 250 real old tokens plus targeted adversarial cases
-   (the ones whose count byte forms a *valid* new header, so they reach body parsing) all threw
-   `ViPaqFormatException`; zero silent misparses — the body-length check is the backstop. Worth locking in as
-   regression vectors: `plans/vipaq/old-format-rejection-tests.md`.
+3. **Fitting results are unchanged — VERIFIED 2026-07-19.** Differential-tested against the v2.1.1 image, zero
+   disagreements. No release-notes caveat needed. Evidence folded into `$lib/findings#F3`.
+4. **Old ViPaq tokens fail loudly — VERIFIED 2026-07-19, locked 2026-07-20.** Zero silent misparses; four
+   regression vectors committed in `vipaq/test-vectors/serialization/decode-invalid.json` (C# + TS green).
+   Format detail in `vipaq/PROTOCOL.md`. Still **announce the token break** in the release body (below).
 
 ## Cut the release
 

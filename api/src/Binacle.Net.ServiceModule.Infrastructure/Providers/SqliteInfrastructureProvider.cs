@@ -20,8 +20,8 @@ internal class SqliteInfrastructureProvider : IInfrastructureProvider
 	
 	public void Register(IHostApplicationBuilder builder, ConnectionString connectionString)
 	{
-		
-		builder.Services.AddTransient<SqliteConnection>(sp => new SqliteConnection(connectionString));
+
+		builder.Services.AddTransient<SqliteConnection>(sp => CreateConnection(connectionString));
 		builder.Services.AddTransient<IDbConnection>(sp => sp.GetRequiredService<SqliteConnection>());
 		builder.Services
 			.AddScoped<IAccountRepository, SqliteAccountRepository>()
@@ -34,5 +34,20 @@ internal class SqliteInfrastructureProvider : IInfrastructureProvider
 		);
 		
 		builder.Services.AddStartupTask<EnsureRequiredSqliteTablesExistStartupTask>();
+	}
+
+	internal static SqliteConnection CreateConnection(string connectionString)
+	{
+		var connection = new SqliteConnection(connectionString);
+		connection.Open();
+
+		// SQLite has one file-level write lock and no async I/O, so concurrent writers collide. WAL lets reads
+		// and writes run together; busy_timeout waits on a contended lock instead of throwing "database is
+		// locked". Neither is a connection-string keyword, so they are set by PRAGMA on open.
+		using var command = connection.CreateCommand();
+		command.CommandText = "PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;";
+		command.ExecuteNonQuery();
+
+		return connection;
 	}
 }
