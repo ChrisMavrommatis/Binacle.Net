@@ -18,6 +18,7 @@
     "vipaq/packages/binacle-vipaq"
   ],
   "devDependencies": {
+    "concurrently": "^10.0.3",
     "gulp": "^5.0.1"
   }
 }
