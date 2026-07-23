@@ -18,4 +18,6 @@ public class FeatureOptions
 	{
 		return this.enabledFeatures.Contains(feature);
 	}
+
+	public IReadOnlyCollection<string> EnabledFeatures => this.enabledFeatures;
 }

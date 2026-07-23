@@ -1,1 +1,10 @@
+# The image copies one thing: build/output. Everything else in the repo is context the daemon never uses.
+
+# Build leftovers and dependencies. These are most of the context by size.
+.git
+**/node_modules
+**/bin
+**/obj
+
+# Development overrides must never land in the image.
 **/*.Development.json

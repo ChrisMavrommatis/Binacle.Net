@@ -1,8 +1,8 @@
 ---
 id: config
-description: config/ — maintainer local-dev tooling: run/test/benchmark/build scripts, the doc-index and tmux scripts, local docker-compose, env files, and emulator state
-verified: 2026-07-15
-check: Script list, docker-compose services, and env keys match config/
+description: config/ — maintainer local-dev tooling: run/test/benchmark/build scripts, the doc-index and tmux scripts, local docker-compose, and emulator state
+verified: 2026-07-23
+check: Script list and the docker-compose file/service table match config/
 also_update:
   - commands
   - samples
@@ -37,13 +37,14 @@ repo root first — the packages are npm workspaces, so one install at the root 
 
 | File | Project name | Runs |
 |---|---|---|
-| `docker-compose.yml` | `binacle-net-services` | **Backing services only** — `aspire-dashboard` + `azurite`. No API. (`postgres`/`minio` present but commented out) |
-| `docker-compose.build.yml` | `binacle-net-local` | Local image `binacle-net:local` + `azurite` + `aspire-dashboard`, all modules on; injects `JwtAuth.json` and `OpenTelemetry.Production.json` via compose `configs:`. Used by `build.sh` |
+| `docker-compose.yml` | `binacle-net-services` | **Backing services only** — `aspire-dashboard`, `azurite`, `postgres`. No API. (`minio` present but commented out) |
+| `docker-compose.build.yml` | `binacle-net-build` | **Full** — local image `binacle-net:local` + `azurite` + `postgres` + `aspire-dashboard`, all modules on; injects `JwtAuth.json` and `OpenTelemetry.Production.json` via compose `configs:`. All three storage backends run; pick one by moving the comment on the connection strings |
+| `docker-compose.volume.yml` | `binacle-net-volume` | **Simple** — the local image alone, ServiceModule on SQLite, data in a named volume |
+| `docker-compose.bind.yml` | `binacle-net-bind` | **Simple** — same, but data bind-mounted to a folder; `BINACLE_DATA_DIR` overrides where |
 
-## Env files & emulator state
+Each file carries its own `name:`, so no `--env-file` is needed to set the project name.
 
-- `.env` → `COMPOSE_PROJECT_NAME=binacle-net-services`; `.env.build` → `COMPOSE_PROJECT_NAME=binacle-net-local`.
-  Both set only the compose project name (no secrets — JWT/OTel/storage values are inlined in the compose files).
+## Emulator state
 - `config/azurite/` and `config/services/azurite/` hold Azurite emulator state (`__azurite_db_*__.json`).
 - `config/config.proj` is a `Microsoft.Build.NoTargets` content project (no compile) that includes the config
   files in the solution — see `$build-topology`.

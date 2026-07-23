@@ -23,7 +23,10 @@ public static class ModuleDefinition
 			optional: true,
 			reloadOnChange: true
 		);
-		
+		builder.Services.Configure<FeatureOptions>(options =>
+		{
+			options.AddFeature("UIModule");
+		});
 		builder.Services
 			.AddHttpContextAccessor()
 			.AddRazorComponents(options =>

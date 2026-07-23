@@ -1,4 +1,5 @@
-﻿configs:
+﻿name: binacle-net-services
+configs:
   asprice_dashboard_config:
     content: |
       {
@@ -42,25 +43,15 @@ services:
     image: postgres:17.6
     ports:
       - '5432:5432'
+    # A named volume, never a bind. Postgres chowns its data dir to its own user and locks it to 0700, which
+    # leaves an unreadable folder in the repo — and `docker build` walks the whole context, so the next build
+    # fails on it. Use `docker compose down -v` to wipe the database.
     volumes:
-      - type: bind
-        source: ./postgres
-        target: /var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=appuser
       - POSTGRES_PASSWORD=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3
       - POSTGRES_DB=binacle_net
-#  minio:
-#    image: minio/minio:latest
-#    command: server /data --console-address ":9001"
-#    ports:
-#      - '9000:9000' # S3 API
-#      - '9001:9001' # MinIO Console
-#    environment:
-#      - MINIO_ROOT_USER=minioadmin
-#      - MINIO_ROOT_PASSWORD=minioadmin123
-#    volumes:
-#      - type: bind
-#        source: ./minio_data
-#        target: /data
-    
+
+volumes:
+  postgres_data:

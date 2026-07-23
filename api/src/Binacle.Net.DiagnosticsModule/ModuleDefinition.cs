@@ -3,6 +3,7 @@ using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.DiagnosticsModule.Configuration.Models;
 using Binacle.Net.DiagnosticsModule.Middleware;
 using Binacle.Net.DiagnosticsModule.Services;
+using Binacle.Net.Kernel.Features;
 using FluentValidation;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
@@ -154,11 +155,26 @@ public static class ModuleDefinition
 			new[] { "Core" }
 		);
 
+		// Registered as a feature so the health check reports whether it is live. It echoes headers back to the
+		// caller, so leaving it on is not something you want to discover months later.
+		if (Feature.IsEnabled("DEBUG_ENDPOINT"))
+		{
+			builder.Services.Configure<FeatureOptions>(options => options.AddFeature("DebugEndpoint"));
+		}
+
 		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initialized");
 	}
 
 	public static void UseDiagnosticsModule(this WebApplication app)
 	{
+		// First in this module's pipeline on purpose: it reports what the server received, so it should answer
+		// even when routing, CORS or auth downstream are the thing that is broken.
+		if (Feature.IsEnabled("DEBUG_ENDPOINT"))
+		{
+			app.UseMiddleware<RequestDebugMiddleware>();
+			Log.Information("Debug endpoint. Status {status}. Path {path}", "Enabled", RequestDebugMiddleware.Path);
+		}
+
 		var healthChecksOptions = app.Services.GetRequiredService<IOptions<HealthCheckConfigurationOptions>>();
 
 		if (healthChecksOptions.Value.Enabled)

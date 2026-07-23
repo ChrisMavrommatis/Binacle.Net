@@ -13,8 +13,7 @@ REQUIRED_DIRS=(
   "$BUILD_FILE_DIR/data/"
   "$BUILD_FILE_DIR/data/logs/"
   "$BUILD_FILE_DIR/data/pack-logs/"
-  "$BUILD_FILE_DIR/data/pack-logs/fitting/"
-  "$BUILD_FILE_DIR/data/pack-logs/packing/"
+  "$BUILD_FILE_DIR/azurite/"
 )
   
 for dir in "${REQUIRED_DIRS[@]}"; do
@@ -26,12 +25,17 @@ done
 
 echo "Building from $ROOT_DIR"
 
+# The containers write as their own users, not as you, and docker never chowns a bind mount — without this
+# the app cannot write its logs.
+chmod -R 777 "$BUILD_FILE_DIR/data/"
+sudo chmod -R 777 "$BUILD_FILE_DIR/azurite/"
 
+# Stop on the first failure. Without this, a failed build still runs compose, which then tries to pull
+# binacle-net from Docker Hub and reports "pull access denied" — hiding the error that actually mattered.
+set -e
 
 dotnet restore $API_PROJECT_PATH --runtime linux-x64
 
 dotnet publish $API_PROJECT_PATH -c Release -o build/output --no-restore --self-contained --runtime linux-x64
 
 docker build --build-arg VERSION=$VER -t binacle-net:$VER .
-
-docker compose -f ./config/docker-compose.build.yml --env-file ./config/.env.build up
