@@ -30,10 +30,10 @@ internal static class SchemaDescriptions
 	public const string FittedItems = "Items that fit in the bin.";
 	public const string UnfittedItems = "Items that do not fit in the bin.";
 
-	public const string PackedItemsVolumePercentage = "Percentage of the items' volume that was packed (0–100).";
-	public const string PackedBinVolumePercentage = "Percentage of the bin's volume filled by the packed items (0–100).";
-	public const string FittedItemsVolumePercentage = "Percentage of the items' volume that fits (0–100).";
-	public const string FittedBinVolumePercentage = "Percentage of the bin's volume the fitting items occupy (0–100).";
+	public const string PackedItemsVolumePercentage = "Percentage of the items' volume that was packed (0-100).";
+	public const string PackedBinVolumePercentage = "Percentage of the bin's volume filled by the packed items (0-100).";
+	public const string FittedItemsVolumePercentage = "Percentage of the items' volume that fits (0-100).";
+	public const string FittedBinVolumePercentage = "Percentage of the bin's volume the fitting items occupy (0-100).";
 
 	public const string Result = "The result of the operation.";
 	public const string Data = "The response payload.";
