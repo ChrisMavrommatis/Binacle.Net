@@ -28,7 +28,17 @@ internal class HealthChecksProtectionMiddleware
 			this.restrictedIPAddressRanges = options.Value.RestrictedIPs!
 				.Select(restrictedIp =>
 				{
-					RestrictedIPNetwork.TryParse(restrictedIp, out var network);
+					// Startup validation rejects a malformed entry, so reaching this is a bug. Throwing beats keeping
+					// the default network: that one has no base address, so it would turn every health request into an
+					// error, and a silently dropped entry would quietly widen or narrow the allow-list instead.
+					if (!RestrictedIPNetwork.TryParse(restrictedIp, out var network))
+					{
+						throw new InvalidOperationException(
+							$"Invalid health check RestrictedIPs entry: '{restrictedIp}'. Use a single address such as " +
+							"192.168.1.1, or CIDR notation such as 192.168.1.0/24"
+						);
+					}
+
 					return network;
 				})
 				.ToArray();

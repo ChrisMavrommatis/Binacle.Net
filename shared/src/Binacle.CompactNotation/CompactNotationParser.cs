@@ -63,7 +63,7 @@ public static class CompactNotationParser
 		where T : struct, IBinaryInteger<T>
 	{
 		if (compact.Contains('['))
-			throw new FormatException($"Item '{compact}' carries a '[Q]' quantity — use ParseItems to expand it.");
+			throw new FormatException($"Item '{compact}' carries a '[Q]' quantity. Use ParseItems to expand it.");
 
 		var (length, width, height, x, y, z) = ParseItemGeometry<T>(compact);
 		return new Item<T> { Length = length, Width = width, Height = height, X = x, Y = y, Z = z };

@@ -71,17 +71,37 @@ internal class BinPresetOptionsOptionsValidator : AbstractValidator<BinPresetOpt
 {
 	public BinPresetOptionsOptionsValidator()
 	{
+		// Every message names the preset and the bin it came from. The property path carries indexes
+		// (Presets[0].Value.Bins[2].Length), which does not tell an operator which preset in their file that is.
 		RuleForEach(x => x.Presets).ChildRules(presetValidator =>
 		{
 			presetValidator.RuleFor(x => x.Value.Bins)
-				.NotNull()
-				.NotEmpty();
+				.NotEmpty()
+				.WithMessage(preset => $"Preset '{preset.Key}' has no bins. Remove the preset or give it at least one.");
+
+			// A preset is addressed as {preset}/{bin}, so two bins sharing an ID make one of them unreachable —
+			// the lookup returns the first match and the second is silently dead.
+			presetValidator.RuleFor(x => x.Value.Bins)
+				.Must(bins => bins is null || bins.Select(bin => bin.ID).Distinct().Count() == bins.Count)
+				.WithMessage(preset =>
+					$"Preset '{preset.Key}' has more than one bin with the same ID: "
+					+ $"{string.Join(", ", preset.Value.Bins.GroupBy(bin => bin.ID).Where(group => group.Count() > 1).Select(group => $"'{group.Key}'"))}."
+				);
 
 			presetValidator.RuleForEach(x => x.Value.Bins).ChildRules(binValidator =>
 			{
-				binValidator.RuleFor(x => x.Height).GreaterThan(0).WithMessage($"Height in Bin must be greater than 0");
-				binValidator.RuleFor(x => x.Width).GreaterThan(0).WithMessage($"Width in Bin must be greater than 0");
-				binValidator.RuleFor(x => x.Length).GreaterThan(0).WithMessage($"Length in Bin must be greater than 0");
+				binValidator.RuleFor(x => x.ID)
+					.NotEmpty()
+					.WithMessage("A bin has no ID. Every bin needs one - it is how the bin is addressed in a route.");
+				binValidator.RuleFor(x => x.Length)
+					.GreaterThan(0)
+					.WithMessage(bin => $"Length of bin '{bin.ID}' must be greater than 0. You entered {bin.Length}.");
+				binValidator.RuleFor(x => x.Width)
+					.GreaterThan(0)
+					.WithMessage(bin => $"Width of bin '{bin.ID}' must be greater than 0. You entered {bin.Width}.");
+				binValidator.RuleFor(x => x.Height)
+					.GreaterThan(0)
+					.WithMessage(bin => $"Height of bin '{bin.ID}' must be greater than 0. You entered {bin.Height}.");
 			});
 		});
 	}

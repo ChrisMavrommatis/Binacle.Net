@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Kernel.Configuration.Models;
+﻿using System.Linq.Expressions;
+using Binacle.Net.Kernel.Configuration.Models;
 using Binacle.Net.ServiceModule.Models;
 using FluentValidation;
 
@@ -25,22 +26,27 @@ internal class RateLimiterConfigurationOptionsValidator : AbstractValidator<Rate
 {
 	public RateLimiterConfigurationOptionsValidator()
 	{
-		RuleFor(x => x.ApiUsageAnonymous).NotNull().NotEmpty();
+		// One chain per setting, stopping at the first failure. Split across two RuleFor blocks the operator got
+		// the same "must not be empty" twice plus a third line for the parse — three errors describing one
+		// missing setting.
+		RuleForLimiter(x => x.ApiUsageAnonymous);
+		RuleForLimiter(x => x.AuthToken);
+		RuleForLimiter(x => x.ApiUsageDemoSubscription);
+	}
 
-		RuleFor(x => x.ApiUsageAnonymous)
-			.Must((value) => RateLimiterConfiguration.TryParse(value, out var _))
-			.WithMessage($"Invalid configuration for '{nameof(RateLimiterConfigurationOptions.ApiUsageAnonymous)}' rate limiter. Please check the configuration."); 
-		
-		RuleFor(x => x.AuthToken).NotNull().NotEmpty();
-
-		RuleFor(x => x.AuthToken)
-			.Must((value) => RateLimiterConfiguration.TryParse(value, out var _))
-			.WithMessage($"Invalid configuration for '{nameof(RateLimiterConfigurationOptions.AuthToken)}' rate limiter. Please check the configuration."); 
-		
-		RuleFor(x => x.ApiUsageDemoSubscription).NotNull().NotEmpty();
-
-		RuleFor(x => x.ApiUsageDemoSubscription)
-			.Must((value) => RateLimiterConfiguration.TryParse(value, out var _))
-			.WithMessage($"Invalid configuration for '{nameof(RateLimiterConfigurationOptions.ApiUsageDemoSubscription)}' rate limiter. Please check the configuration."); 
+	// The limiters are configured as strings, so the message has to carry the format — "check the configuration"
+	// leaves an operator with a rejected file and nowhere to look.
+	private void RuleForLimiter(Expression<Func<RateLimiterConfigurationOptions, string?>> setting)
+	{
+		RuleFor(setting)
+			.Cascade(CascadeMode.Stop)
+			.NotEmpty()
+			.Must(value => RateLimiterConfiguration.TryParse(value, out _))
+			.WithMessage(
+				"'{PropertyName}' is not a valid rate limiter. Use 'NoLimiter::0', "
+				+ "'FixedWindow::PermitLimit/WindowInSeconds' (for example 'FixedWindow::5/60'), or "
+				+ "'SlidingWindow::PermitLimit/WindowInSeconds-Segments' (for example 'SlidingWindow::5/60-4'). "
+				+ "You entered '{PropertyValue}'."
+			);
 	}
 }

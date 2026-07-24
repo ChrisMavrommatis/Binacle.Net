@@ -31,8 +31,8 @@ internal static class SchemaDescriptions
 	public const string PackedItems = "Items placed in the bin, each with its placement.";
 	public const string UnpackedItems = "Items that could not be placed in the bin.";
 
-	public const string PackedItemsVolumePercentage = "Percentage of the items' volume that was packed (0–100).";
-	public const string PackedBinVolumePercentage = "Percentage of the bin's volume filled by the packed items (0–100).";
+	public const string PackedItemsVolumePercentage = "Percentage of the items' volume that was packed (0-100).";
+	public const string PackedBinVolumePercentage = "Percentage of the bin's volume filled by the packed items (0-100).";
 
 	public const string Status = "The outcome of the operation.";
 	public const string EarlyExitReason = "Why a fit check stopped early, or None if it ran to completion.";

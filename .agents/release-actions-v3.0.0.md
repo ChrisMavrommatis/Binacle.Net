@@ -16,6 +16,11 @@ to verify. Work these until all are checked, then cut the release.
   suites) — but it runs only on `pull_request` / `workflow_dispatch`, and it does **not** build the image.
   Build the image once before tagging, and make sure the PR that lands the release went green.
 
+- [ ] **Run the ServiceModule suite once against Azure Storage.** CI covers SQLite and Postgres only, so the
+  Azure provider ships on trust even though `samples/docker/service-azure` points users at it. It stays in this
+  release (removal comes later), so the cheap cover is one deliberate run before tagging: bring up Azurite with
+  `docker compose -f config/docker-compose.yml up -d`, then `config/tests.api.sh service AzureStorage`.
+
 ## Correctness — verify before shipping a frozen contract
 
 - [x] **Confirm fitting results did not change — VERIFIED 2026-07-19.** Differential-tested old (`v2.1.1` image)

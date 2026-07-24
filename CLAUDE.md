@@ -24,6 +24,12 @@ chars; break at a full stop when a line runs long.
 
 This applies to every agent working in this repo, not just the main session.
 
+**Text that reaches a user stays plain ASCII.** Validation and exception messages, log lines, OpenAPI
+descriptions, UI strings: no em or en dashes, no curly quotes, no ellipsis character, no arrows or symbols.
+Write `-` and `...`, and say "0-100", not "0–100". These land in consoles, log files, JSON and terminals where the
+encoding is not ours to control, and a mangled character in a startup error is one more thing to debug. Prose in
+`.agents/` and code comments are read by us, so they are free.
+
 ## Critical rules
 
 - **Never commit, stage, or push.** The human commits, always — even when a task is done and green.

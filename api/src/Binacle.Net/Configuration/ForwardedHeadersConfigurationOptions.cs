@@ -55,8 +55,11 @@ internal class ForwardedHeadersConfigurationOptionsValidator : AbstractValidator
 		{
 			// With nothing trusted the middleware stops checking altogether rather than matching nothing, and every
 			// caller's header is believed. Refuse to start instead of serving traffic on a forgeable address.
+			// Named, because a whole-object rule reports with an empty property name — the operator would get a
+			// message with nothing saying which section it came from.
 			RuleFor(x => x)
 				.Must(options => !options.HasNoTrustedSource())
+				.WithName(ForwardedHeadersConfigurationOptions.SectionName)
 				.WithMessage(
 					"Nothing is trusted to forward the caller's address. Set TrustLoopback or TrustPrivateNetworks, "
 					+ "or add an entry to TrustedProxies."
@@ -65,12 +68,13 @@ internal class ForwardedHeadersConfigurationOptionsValidator : AbstractValidator
 			RuleForEach(x => x.TrustedProxies)
 				.Must(proxy => IPNetwork.TryParse(proxy, out _) || IPAddress.TryParse(proxy, out _))
 				.WithMessage(
-					"Invalid entry. Use a CIDR range such as 172.16.0.0/12, or a single address such as 172.17.0.1"
+					"'{PropertyValue}' is not a valid entry. Use a CIDR range such as 172.16.0.0/12, or a single "
+					+ "address such as 172.17.0.1. Address ranges (1.2.3.4-1.2.3.9) are not supported."
 				);
 
 			RuleFor(x => x.ForwardLimit)
 				.GreaterThan(0)
-				.WithMessage("ForwardLimit must be at least 1");
+				.WithMessage("'{PropertyName}' must be at least 1. It is how many proxies stand in front of the app.");
 		});
 	}
 }

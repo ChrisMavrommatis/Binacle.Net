@@ -1,8 +1,8 @@
 ---
 id: api/v4
 description: v4 API — active development. Endpoints, algorithm selection, parameters, contracts, and response shape.
-verified: 2026-07-16
-check: Endpoint table matches files in api/src/Binacle.Net/v4/Endpoints/
+verified: 2026-07-25
+check: Endpoint table matches files in api/src/Binacle.Net/v4/Endpoints/; IsExperimental in ApiV4Document.cs matches what this says
 also_update:
   - api/v4/contracts
 ---
@@ -11,7 +11,10 @@ also_update:
 
 Route prefix: `/api/v4`
 
-Active development version. See `$api/v4/add-endpoint` to add a new endpoint.
+Active development version, and **marked experimental**: `ApiV4Document.IsExperimental` is `true`, so the
+published OpenAPI description carries a warning that v4 may change at any time. v3 is not marked — it is frozen.
+
+See `$api/v4/add-endpoint` to add a new endpoint.
 See `$api/v4/contracts` for the full request/response shape.
 See Fit vs Pack (`$concepts`) for the underlying concept.
 

@@ -15,6 +15,12 @@ you need, and trim or delete it once the work lands.
 | [docs-versioning.md](docs-versioning.md) | Docs Site — write the v3.0.x pages |
 | [todos.md](todos.md) | TODOs |
 
+## API
+
+| File | Description |
+|---|---|
+| [api/v4-stable-in-3.1.0.md](api/v4-stable-in-3.1.0.md) | v4 — flip from experimental to stable in 3.1.0 |
+
 ## Lib
 
 | File | Description |

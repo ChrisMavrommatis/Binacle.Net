@@ -15,6 +15,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="$(ProjectName).UnitTests" />
 		<InternalsVisibleTo Include="$(ProjectName).IntegrationTests" />
 		<InternalsVisibleTo Include="$(ProjectName).ServiceModule.IntegrationTests" />
 	</ItemGroup>

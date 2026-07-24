@@ -31,6 +31,16 @@ The two correctness questions are **now verified** (2026-07-19, differential-tes
    regression vectors committed in `vipaq/test-vectors/serialization/decode-invalid.json` (C# + TS green).
    Format detail in `vipaq/PROTOCOL.md`. Still **announce the token break** in the release body (below).
 
+## v4 ships experimental
+
+`ApiV4Document.IsExperimental` is **true** (set 2026-07-25), so the published OpenAPI document carries the
+warning that v4 may change at any time. Everything else in this release set already said "experimental"; the
+code was the one place that said otherwise, and it is what users actually see.
+
+Keep it that way for 3.0.0. The flip to stable is 3.1.0 work — `plans/api/v4-stable-in-3.1.0.md` holds the
+criteria. Check the flag is still `true` before tagging: shipping v4 as stable would lock contracts that are
+meant to keep moving.
+
 ## Breaking changes to announce
 
 Both are already written into `release-notes-v3.0.0.md`; this is the checklist that they are covered.

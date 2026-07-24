@@ -71,6 +71,18 @@ jobs:
         if: ${{ !cancelled() }}
         run: dotnet test vipaq/test/Binacle.ViPaq.UnitTests --configuration Release --no-build
 
+      - name: Test — api (unit)
+        if: ${{ !cancelled() }}
+        run: dotnet test api/test/Binacle.Net.UnitTests --configuration Release --no-build
+
+      - name: Test — api (diagnostics unit)
+        if: ${{ !cancelled() }}
+        run: dotnet test api/test/Binacle.Net.DiagnosticsModule.UnitTests --configuration Release --no-build
+
+      - name: Test — api (servicemodule unit)
+        if: ${{ !cancelled() }}
+        run: dotnet test api/test/Binacle.Net.ServiceModule.UnitTests --configuration Release --no-build
+
       - name: Test — api (core)
         if: ${{ !cancelled() }}
         run: dotnet test api/test/Binacle.Net.IntegrationTests --configuration Release --no-build

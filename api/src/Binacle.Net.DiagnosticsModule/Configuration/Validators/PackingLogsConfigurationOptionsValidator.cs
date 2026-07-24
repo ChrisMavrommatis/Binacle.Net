@@ -9,19 +9,27 @@ internal class PackingLogsConfigurationOptionsValidator : AbstractValidator<Pack
 	{
 		When(x => x.Enabled, () =>
 		{
-			RuleFor(x => x.Path).NotNull().NotEmpty();
+			// Cascade(Stop) is load-bearing, not tidying. Without it every rule in a chain runs even after one
+			// fails, so a null reported three times (NotNull and NotEmpty share a message) and the predicate ran
+			// on the null and crashed the start it exists to explain. Stopping at the first failure gives one
+			// message per setting and lets each predicate assume a value.
+			RuleFor(x => x.Path)
+				.Cascade(CascadeMode.Stop)
+				.NotEmpty();
 			RuleFor(x => x.FileName)
-				.NotNull()
+				.Cascade(CascadeMode.Stop)
 				.NotEmpty()
-				.Must(x => x!.Contains("{0}"));
+				.Must(fileName => fileName!.Contains("{0}"))
+				.WithMessage("'{PropertyName}' must contain the date placeholder, for example 'packing-logs-{0}.log'.");
 			RuleFor(x => x.DateFormat)
-				.NotNull()
+				.Cascade(CascadeMode.Stop)
 				.NotEmpty()
-				.Must(x => BeValidDateFormat(x!));
+				.Must(x => BeValidDateFormat(x!))
+				.WithMessage("'{PropertyName}' is not a usable date format, for example 'yyyy-MM-dd'.");
 			// Null is valid (no retention); any set value must be a positive number of days.
 			RuleFor(x => x.RetentionDays)
 				.Must(days => days is null or > 0)
-				.WithMessage("RetentionDays must be greater than 0 when set.");
+				.WithMessage("'{PropertyName}' must be greater than 0 when set. Leave it unset to keep every file.");
 		});
 	}
 
