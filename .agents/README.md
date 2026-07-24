@@ -49,9 +49,11 @@ not to eagerly load unrelated context. Keep a new doc/plan/idea in its slice fol
 ## `docs/` and `web/` are off limits
 
 Neither is part of `.agents/`, but the rule belongs here because it decides where the work goes instead. `docs/`
-(the versioned documentation site) and `web/` (the marketing site) **publish to the internet** and are written in
-their own dedicated session. Do not edit them from a coding session. When a change needs a page written or
-corrected, record **what the page must say** in the plan or release file that owns the work, and leave the writing
+(the versioned documentation site, described in `` `$docs-site` ``) and `web/` (the marketing site, described in
+`` `$web-site` ``) **publish to the internet** and are written in their own dedicated session. Note the trap:
+repo-root `docs/` is the published site, while `.agents/docs/` is this system's reference layer — the two are
+unrelated, and only the first is off limits. Do not edit them from a coding session. When a change needs a page
+written or corrected, record **what the page must say** in the plan or release file that owns the work, and leave the writing
 to that session. `CLAUDE.md` carries this as a critical rule.
 
 ## Who may reference whom — keep the layers from bleeding

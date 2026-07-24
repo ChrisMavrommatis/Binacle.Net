@@ -1,11 +1,14 @@
 ---
-id: docs
-description: Jekyll documentation site at docs/ — versioned API docs with Swagger UI embed.
+id: docs-site
+description: The published Jekyll documentation site at repo-root docs/ — versioned API docs with Swagger UI embed. `$docs-site` always means repo-root docs/, never .agents/docs/.
 verified: 2026-07-21
 check: Collections, versions, plugin list, and version folders match docs/_config.yml and docs/collections/_versions/
 ---
 
 # Docs Site
+
+**`$docs-site` is the repo-root `docs/` folder** — the published site, not `.agents/docs/` (the agent docs you
+are reading). It is off limits from a coding session; see `.agents/README.md`.
 
 Jekyll site at `docs/`. The public API documentation for Binacle.Net users.
 Built with Jekyll + webpack + TypeScript. Output goes to `../build/docs`.

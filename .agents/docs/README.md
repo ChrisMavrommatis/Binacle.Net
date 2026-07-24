@@ -1,4 +1,5 @@
 ---
+id: docs
 description: Repo overview and index of agent documentation
 verified: 2026-07-10
 check: Repo layout table matches actual directories in the root
@@ -34,8 +35,8 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `shared/test/Binacle.CompactNotation.UnitTests` | Tests for the shared compact notation |
 | `packages/` | TypeScript packages (npm workspaces) |
 | `ruby/` | Ruby gems (Jekyll plugins) |
-| `docs/` | Jekyll documentation site |
-| `web/` | Jekyll marketing/web site |
+| `docs/` | Jekyll documentation site — the published one (`$docs-site`), not `.agents/docs/` |
+| `web/` | Jekyll marketing/web site (`$web-site`) |
 | `api/requests/` | HTTP request files for manual testing (subfolders: v3, v4, Service) |
 | `samples/` | Docker and Kubernetes deployment samples (user-facing starting points) |
 | `config/` | Maintainer local-dev tooling — run/test/build scripts, local compose, env, emulator state |
@@ -77,8 +78,8 @@ See Commands (`$commands`) — how to run the API, tests, benchmarks, and build 
 - ViPaq (`$vipaq`) — `Binacle.ViPaq` binary format and TypeScript mirror
 - Packages (`$packages`) — TypeScript npm packages
 - Ruby (`$ruby`) — Ruby/Jekyll plugins
-- Docs Site (`$docs`) — Jekyll docs site
-- Web Site (`$web`) — Jekyll marketing site
+- Docs Site (`$docs-site`) — the published Jekyll site at repo-root `docs/`
+- Web Site (`$web-site`) — the published Jekyll site at repo-root `web/`
 - Samples (`$samples`) — Docker & Kubernetes deployment starting points
 - Config (`$config`) — maintainer local-dev tooling: scripts, local compose, env, emulator state
 - Build Topology (`$build-topology`) — solution, npm workspaces, asset copy, Docker build chain

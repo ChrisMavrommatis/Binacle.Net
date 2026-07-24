@@ -2,7 +2,7 @@
 
 **Status (2026-07-21):** The version-only restructure is **DONE** — folders are `v1.3.x`, `v2.0.x`, `v2.1.x`,
 `v3.0.x`; `latest` is a redirect only; the site builds clean. The model, the standing rule for opening a new
-line, and the history/rationale now live in the canonical doc: **`.agents/docs/docs/README.md` → "Versioning
+line, and the history/rationale now live in the canonical doc: **`.agents/docs/docs-site/README.md` → "Versioning
 model"**. What remains is writing the `v3.0.x` docs.
 
 ## What is left

@@ -24,6 +24,13 @@ and a null logger factory.
 > `AzureStorage`, `Postgres`, or `Sqlite`. Unset, it **falls back to SQLite**, so a bare `dotnet test` runs with
 > no external service. Only the first two need something up (Azurite on `127.0.0.1:10002`, Postgres on `5432`);
 > pick one with `config/tests.api.sh service [Sqlite|Postgres|AzureStorage]`.
+>
+> Each backend has a localhost default connection string, overridden by the production env name
+> `AZURESTORAGE_` / `POSTGRES_` / `SQLITE_CONNECTION_STRING` — the same keys the app reads, no test-only
+> mechanism. The backend and whether it came from an override are printed to the console on every run, so a
+> green run never hides which one it used. CI runs the suite twice, `Sqlite` and `Postgres`, one env var per
+> step (`.github/workflows/run-tests.yml`); Sonar coverage runs SQLite only. The defaults match the CI service
+> containers, so CI sets no connection string.
 
 ## Layout — one folder per endpoint
 
@@ -123,11 +130,11 @@ not empty, then the same per-entry asserts across every result.
 - `BinacleApi.cs` — `ConfigureTestServices` clears `BinPresetOptions.Presets`, then registers `custom-problems`
   (bins from `CustomProblemsScenarioProvider`), `biscoff-suite` (from `BischoffSuiteScenarioProvider`), and
   `special` (the three special bins). Presets come from the shared kernel — see shared (`$shared`).
-  Runs with default modules (ServiceModule off). `// TODO: Run the tests with all modules enabled` (line 34).
+  Runs with default modules (ServiceModule off), carrying a `// TODO: Run the tests with all modules enabled`.
 - `BinacleApiWithoutPresets.cs` — same shape but only clears presets (no registration); tests the no-presets path.
 - `Binacle.Net.ServiceModule.IntegrationTests/BinacleApi.cs` — `IAsyncLifetime`; enables ServiceModule via
   in-memory config (`SERVICE_MODULE=true`, an `AuthToken=NoLimiter::0` rate-limit rule, a connection string
   chosen by `ResolveTestInfrastructure()` from `BINACLE_TEST_INFRA`, JWT issuer and audience `"ForTestsOnly"`
   with a separate 70-plus-character `TokenSecret`). `InitializeAsync` seeds an admin
   (`DefaultAdminAccount`) and a known user; `NonExistentId = EF81C267-A003-44B8-AD89-4B48661C4AA5` is hard-coded.
-  Same all-modules TODO (line 44).
+  Carries the same all-modules TODO.

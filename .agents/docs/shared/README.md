@@ -1,7 +1,7 @@
 ---
 id: shared
 description: Shared slice — Binacle.TestsKernel (scenario data, compact-string formats, providers, fixtures) and shared/data (OR-Library benchmark data)
-verified: 2026-07-16
+verified: 2026-07-24
 check: Collection keys, compact-string parsers, and provider class names and methods match shared/test/Binacle.TestsKernel; OR-Library files match shared/data
 also_update:
   - lib/tests
@@ -13,7 +13,7 @@ also_update:
 `shared/` holds code used across more than one slice. Two parts:
 
 - `shared/test/Binacle.TestsKernel` — shared test scenario infrastructure (data, parsers, providers, models, helpers)
-- `shared/data` — raw OR-Library benchmark data (the upstream source for the embedded scenarios)
+- `shared/data` — every scenario JSON on disk, plus the raw OR-Library benchmark data
 
 ## Who uses Binacle.TestsKernel
 
@@ -50,6 +50,13 @@ ResultSelection (`ResultSelection/CollectionKeys.cs`) — one key each:
 
 Data is embedded JSON under `Algorithms/Data/<suite>/` and `ResultSelection/Data/<suite>/`, loaded by resource
 prefix. The collection key is `{folder}/{name}` lowercased.
+
+**Those `Data/` folders are not on disk.** Every scenario JSON lives under `shared/data/` and is pulled in as an
+`EmbeddedResource` with a `<Link>`, so it only *looks* like `…/Data/…` in the IDE. To edit a scenario, open
+`shared/data/bischoff-suite/`, `shared/data/custom-problems/`, or
+`shared/data/result-selection/{BestAlgorithm,BestBin,SmallestBin}/`. The csproj sets `LogicalName` so the
+manifest name stays what the readers expect — `result-selection` needs one flat entry per folder, because a `**`
+wildcard corrupts that name.
 
 ## Compact-string formats
 

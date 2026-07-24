@@ -5,7 +5,7 @@ verified: 2026-07-15
 check: Package list and descriptions match packages/ directory and their package.json files
 also_update:
   - packages/binacle-net-ui
-  - web
+  - web-site
   - api/modules/ui
 ---
 

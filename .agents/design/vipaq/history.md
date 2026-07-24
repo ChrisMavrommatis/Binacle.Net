@@ -56,6 +56,11 @@ which had already gone stale by the rewrite — it still read a one-byte header 
 `Version`. Amended so the harness reads the header through the internal `Header` instead: one copy of the spec beats
 the boundary. The encode/decode-through-public-API part was unaffected.
 
+### O2 original — "name the codec and level before v2 ships" (2026-07-08, resolved 2026-07-13 → D16)
+The open question was which compression codec and which level to pin, treated as a blocker for shipping v2. It
+stopped being a blocker once compression became a user toggle that defaults to off: there is one codec (raw
+DEFLATE), and the level never reaches the wire, so it is a free encoder-side choice.
+
 ### D5 original — the codec race was a one-off experiment (2026-07-07, reversed 2026-07-10)
 The original decision scoped the codec race as a throwaway: run it once, record the answer, keep it out of the
 permanent ruler — the worry being that bolting an experiment onto the ruler stops it being comparable over time.

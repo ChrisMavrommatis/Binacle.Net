@@ -1,7 +1,7 @@
 ---
 id: vipaq/findings
 description: ViPaq findings — the measured evidence (base64 size, encode/decode time) behind the decisions.
-verified: 2026-07-15
+verified: 2026-07-24
 check: Numbers match the latest results/vipaq/compression/ size reports and results/vipaq/benchmarks/ output
 also_update:
   - vipaq/decisions
@@ -66,7 +66,7 @@ and would miss small compressible data. This drives `$vipaq#D7`.
 
 - **Bischoff packs to `16/8/16`** — bin and coordinates need 16-bit (positions run to ~587); item dimensions stay
   8-bit (largest box side ~113). So the three sections genuinely disagree; an independent coordinate width earns
-  its keep (relevant to the Session 3 header call).
+  its keep (relevant to the two-byte header call, D12).
 - **Boundary pair behaves:** `255` → `8/8/8`; `256` → `16/8/8` (only the bin section flips).
 - **Every Bischoff pack is 16-bit**, so 8-bit coverage comes from the custom packs — the `Simple_5x5x5-N` count
   ladder and the small baseline/simple cases; a custom `Simple_16bit-4` pack adds a small all-16-bit case too.
@@ -89,8 +89,8 @@ layout**.
 - **Memory: ViPaq allocates less everywhere** — encode 0.37–0.97×, decode 0.75–0.83× of protobuf.
 - **Encode:** faster than protobuf on small uncompressed payloads (~0.45–0.53×); slower once gzip triggers (4–8×
   on real packs). Worst real case ~14 µs.
-- **Decode:** slower on anything non-trivial (4–7× on real packs) — the known decode-via-span weakness that
-  Session 2 fixes. Worst ~20 µs.
+- **Decode:** slower on anything non-trivial (4–7× on real packs) — the known decode-via-span weakness that the
+  decode span fix addresses. Worst ~20 µs.
 - All times are microseconds. For a token written once and read rarely, this is noise.
 
 ### Decode fix — decode-via-span, option A (2026-07-09)
@@ -129,7 +129,7 @@ shows two ratio columns (ViPaq vs raw proto, ViPaq vs gz proto).
 | Compressed (n=701) | 17–39% (median 29%) | 64–71–76% (min–median–max) |
 
 **Speed (BDN full run via `CuratedEncodeBenchmarks` / `CuratedDecodeBenchmarks`, ratio = ViPaq / protobuf, post
-Session-2 decode fix):**
+decode span fix):**
 
 | Scenario | Items | Regime | Encode | Decode |
 |---|--:|---|--:|--:|
@@ -142,7 +142,7 @@ Session-2 decode fix):**
 
 **Takeaway:** on the **uncompressed path ViPaq matches or beats protobuf on both axes** — ~40% smaller, encode at
 parity, decode faster. On the **compressed path** it trades encode CPU (the gzip pass, 4–8×) for a large size win
-(down to ~29% of raw proto), and decode is near parity after Session 2. Encode is the only place protobuf leads,
+(down to ~29% of raw proto), and decode is near parity after the span fix. Encode is the only place protobuf leads,
 and only while ViPaq is paying for compression — exactly the `$vipaq#D8` priority. Allocations: ViPaq ≤ protobuf everywhere
 except the 1-item token (520 B vs 368 B — noise at that size).
 

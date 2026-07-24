@@ -25,6 +25,8 @@ title() {
     api) echo "API" ;;
     lib) echo "Lib" ;;
     vipaq) echo "ViPaq" ;;
+    docs-site) echo "Docs Site" ;;
+    web-site) echo "Web Site" ;;
     *) printf '%s' "$(tr '[:lower:]' '[:upper:]' <<< "${1:0:1}")${1:1}" ;;
   esac
 }

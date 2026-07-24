@@ -45,11 +45,11 @@ table of [README.md](README.md).
 |---|---|
 | [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: run/test/benchmark/build scripts, the doc-index and tmux scripts, local docker-compose, and emulator state |
 
-## Docs
+## Docs Site
 
 | File | Description |
 |---|---|
-| [docs/README.md](docs/README.md) | Jekyll documentation site at docs/ — versioned API docs with Swagger UI embed. |
+| [docs-site/README.md](docs-site/README.md) | The published Jekyll documentation site at repo-root docs/ — versioned API docs with Swagger UI embed. `$docs-site` always means repo-root docs/, never .agents/docs/. |
 
 ## Lib
 
@@ -98,12 +98,12 @@ table of [README.md](README.md).
 |---|---|
 | [vipaq/architecture.md](vipaq/architecture.md) | ViPaq architecture — the blind encode/decode layer, the layout codecs, and the serializer that chooses. The policy/mechanism split the rebuild keeps. |
 | [vipaq/cross-language-testing.md](vipaq/cross-language-testing.md) | ViPaq cross-language wire testing — the C#/TS shared-vector apparatus, its inventory, and the decode-to-input contract |
-| [vipaq/dependencies.md](vipaq/dependencies.md) | ViPaq project dependency tree — who references whom, who can see internals, and the two deliberate walls (UnitTests never references TestsKernel; only the measurement harnesses do). |
+| [vipaq/dependencies.md](vipaq/dependencies.md) | ViPaq project dependency tree — who references whom, who can see internals, and the deliberate walls (UnitTests never references TestsKernel; no test project references a generator). |
 | [vipaq/README.md](vipaq/README.md) | Binacle.ViPaq — compact binary format for packing results. The wire is defined in PROTOCOL.md; this covers the C# API surface, repo layout, and tests. |
 | [vipaq/typescript.md](vipaq/typescript.md) | Binacle.ViPaq TypeScript mirror (vipaq/packages/binacle-vipaq) — public API and how it differs from the C# library |
 
-## Web
+## Web Site
 
 | File | Description |
 |---|---|
-| [web/README.md](web/README.md) | Jekyll marketing/landing site at web/ — product home, apps listing, and interactive packing demo. |
+| [web-site/README.md](web-site/README.md) | The published Jekyll marketing site at repo-root web/ — product home, apps listing, and interactive packing demo. `$web-site` always means repo-root web/. |

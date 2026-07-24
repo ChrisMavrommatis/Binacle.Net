@@ -51,7 +51,7 @@ Its only dev dependency is `gulp`, and its only scripts are the asset-copy tasks
 - `npm run copy-assets-to-web` → `gulp copy-assets-to-web`
 
 `gulpfile.js` copies shared `assets/` (images, js, css, fonts) into the `docs/` and `web/` Jekyll sites. The sites
-do their own webpack bundling separately (see docs (`$docs`) / web (`$web`)).
+do their own webpack bundling separately (see docs site (`$docs-site`) / web site (`$web-site`)).
 
 ## Docker build chain
 

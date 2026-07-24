@@ -23,7 +23,7 @@ The target for v2. A change only ships if it keeps all of these true:
 - **Simpler than v1.** Two width tiers (8/16), not four. No huge value ceiling to reason about.
 - **Round-trips exactly, in both C# and TypeScript.** Decode must give back the input. When not compressed, the
   bytes must be identical across the two languages.
-- **Reads at least as fast as v1**, ideally faster (that is the point of the Session 2 decode fix). Never slower.
+- **Reads at least as fast as v1**, ideally faster (that is the point of the decode span fix). Never slower.
 - **Keeps the public API small.** Do not grow the public surface. Anything needed only for tests stays internal.
 - **Only ships if measured.** Smaller base64, or faster / less memory, or a clear simplicity win. No measured gain,
   no ship — the worth-it gate below.
@@ -39,13 +39,14 @@ Every decision — a header bit, a codec, a layout, a feature — must answer **
 ## Locked
 
 ### D1 — v2 is `8/16 + reserved codes`, for simplicity (CONFIRMED 2026-07-05)
-Varint deferred to Session 7, may never happen. **Not a size play** — two tiers cost the same as four on ≤16-bit
+Varint is deferred and may never happen. **Not a size play** — two tiers cost the same as four on ≤16-bit
 data, so ~0% smaller. The payoff is a **simpler format** (2 tiers not 4; no 2⁵³ ceiling to reason about) and a
 clean base if varint is ever wanted. Do not sell "20% smaller" — that was a Brotli-q11 artifact (see `$vipaq/findings`).
 
 ### D2 — 16-bit cap in v2.0; throw above 65,535
-Fixed 8/16 caps at 65,535. v2.0 throws above it; varint (Session 7) lifts the cap later. mm → 65 m, fine for
-physical bins. Retire/repoint `ViPaqLimits.MaxInteger` (2⁵³−1) to the new ceiling in Session 4.
+Fixed 8/16 caps at 65,535. v2.0 throws above it; varint would lift the cap later. mm → 65 m, fine for
+physical bins. **Done:** the old `ViPaqLimits.MaxInteger` (2⁵³−1) is gone — `Limits` now carries
+`EightBitsMax = 255`, `MaxValue = 65_535`, `MaxItemCount = 65_535`, and encoding above `MaxValue` throws.
 
 ### D3 — Baselining without a v1/v2 pair (CONFIRMED 2026-07-07)
 ViPaq has one implementation, so there's no in-code baseline like lib's v1-vs-v2 racing. Two mechanisms replace it:
@@ -108,21 +109,22 @@ codec field in the header — so pinning changes one line in `ViPaqSerializer` a
 selection; don't try to benchmark widths v2 won't have.
 
 ### D7 — Compression trigger is **try-both-keep-smaller** (was O1; CONFIRMED 2026-07-08)
-Compress, keep whichever is shorter, never inflate. Session 1 measured both sides and the fixed 255-byte threshold
+Compress, keep whichever is shorter, never inflate. Both sides were measured, and the fixed 255-byte threshold
 the lib ships today is **wrong in both directions**: it inflates random data (gzip saved −8% to −0%) and would miss
 small compressible data (real packed data saves 45–68%). A threshold cannot be tuned to fit both, because the right
 answer depends on the data, not its size. Try-both has no knob to get wrong and can never inflate.
 
-Cost: one extra compress pass on the encode path. Session 4 must measure it (encode is the priority — D8). If the
-cost is unacceptable, the fallback is a threshold, and we are back to picking the wrong one. Evidence:
-`$vipaq/findings`.
+Cost: one extra compress pass on the encode path — **measured**, and it is the `Deflate − NoOp` delta of ~5–8 µs
+per pack (`$vipaq/findings`). Encode is the priority (D8), and that price is acceptable: everything stays under
+15 µs, encoded once server-side. The fallback if it ever stops being acceptable is a threshold, which puts us
+back to picking the wrong one.
 
 The spec states this as a **SHOULD**, not a MUST: the `Compressed` bit is normative, the choosing policy is not.
 That is what lets phase 1 force compression on or off to measure it — see D13.
 
 ### D8 — Encode speed is the priority; decode is second (CONFIRMED 2026-07-08)
 ViPaq's job is to produce a token fast and store it; reads are rarer. **Optimise encode first.** Take decode wins
-only when they are cheap — Session 2's span fix is exactly that, so it still belongs. Read the benchmark this way:
+only when they are cheap — the decode span fix is exactly that, so it still belongs. Read the benchmark this way:
 encode is the number that gates a change, decode is watch-not-block.
 
 ### D9 — Synthetic data measures CPU/memory; real data measures size (CONFIRMED 2026-07-08)
@@ -217,10 +219,8 @@ again; the old refusal is gone. `ProtocolEncoder` takes the codec as a **require
 
 ## Open — decide with data
 
-### O2 — Codec + level (RESOLVED 2026-07-13 → D16)
-Resolved by **D16**: one codec, raw DEFLATE, exposed as a user toggle (default off). Compression *level* never
-reaches the wire, so it stays a free encoder-side choice. The old worry — "name the codec before v2 ships" — is
-moot now the default is uncompressed; nothing blocks shipping.
+**Nothing is open.** Both questions closed: O1 (compression trigger) → **D7**, O2 (codec + level) → **D16**.
+Their original framings are in `$vipaq/history`.
 
 ## Ruled out — do not rebuild
 24-bit ladder (8/16/24/32) + coords-ride-bin · Brotli q11 as default · byte-plane/transpose layout · raw Deflate

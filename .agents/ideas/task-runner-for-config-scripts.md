@@ -8,9 +8,10 @@
 `benchmarks.*.sh`, …). Two rough edges:
 
 - **Discovery.** You have to remember the script names and their args. There is no single "what can I run" list.
-- **Completion drifts.** The only way to tab-complete today is a hand-written bash file
-  (`config/completions/tests.api.bash`) that **duplicates the arg list** (`core|service`, `Sqlite|Postgres|
-  AzureStorage`). Change a script's args and the completion silently lies. It is also per-script — one file each.
+- **No completion at all.** Nothing in `config/` completes anything today. The obvious fix — a hand-written
+  bash completion file per script — is the trap: it **duplicates the arg list** (`core|service`,
+  `Sqlite|Postgres|AzureStorage`), so changing a script's args makes the completion silently lie, and it is one
+  file per script.
 
 The general rule others follow: **completion should be a byproduct of the command definition, not a second
 file kept in sync by hand.**

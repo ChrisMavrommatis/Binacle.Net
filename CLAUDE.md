@@ -29,8 +29,9 @@ This applies to every agent working in this repo, not just the main session.
 - **Never commit, stage, or push.** The human commits, always — even when a task is done and green.
   Leave all changes in the working tree.
 
-- **Never edit `docs/` or `web/`.** Both publish to the internet — `docs/` is the versioned documentation site,
-  `web/` is the marketing site. They are written in their own dedicated session, by an agent whose whole job is
-  that content, so a change made in passing gets published without anyone reviewing it as public writing. Read
+- **Never edit repo-root `docs/` or `web/`.** Both publish to the internet — `docs/` is the versioned
+  documentation site, `web/` is the marketing site. (`.agents/docs/` is a different thing entirely — the agent
+  reference layer, and editing it is fine.) They are written in their own dedicated session, by an agent whose
+  whole job is that content, so a change made in passing gets published without anyone reviewing it as public writing. Read
   them freely. If work needs a page written or corrected, **write down what the page must say** in the relevant
   plan or release file and leave it for that session.

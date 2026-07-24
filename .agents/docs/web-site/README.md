@@ -1,6 +1,6 @@
 ---
-id: web
-description: Jekyll marketing/landing site at web/ — product home, apps listing, and interactive packing demo.
+id: web-site
+description: The published Jekyll marketing site at repo-root web/ — product home, apps listing, and interactive packing demo. `$web-site` always means repo-root web/.
 verified: 2026-07-06
 check: Collections, JS bundles, and plugin list match web/_config.yml and web/js/
 also_update:
@@ -8,6 +8,9 @@ also_update:
 ---
 
 # Web Site
+
+**`$web-site` is the repo-root `web/` folder** — the published marketing site. It is off limits from a coding
+session; see `.agents/README.md`.
 
 Jekyll site at `web/`. The public marketing and landing site for Binacle.Net.
 Built with Jekyll + webpack + TypeScript. Output goes to `../build/web`.

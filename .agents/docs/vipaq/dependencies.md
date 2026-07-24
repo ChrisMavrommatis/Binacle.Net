@@ -1,7 +1,7 @@
 ---
 id: vipaq/dependencies
-description: ViPaq project dependency tree — who references whom, who can see internals, and the two deliberate walls (UnitTests never references TestsKernel; only the measurement harnesses do).
-verified: 2026-07-14
+description: ViPaq project dependency tree — who references whom, who can see internals, and the deliberate walls (UnitTests never references TestsKernel; no test project references a generator).
+verified: 2026-07-24
 check: ProjectReference and InternalsVisibleTo entries in vipaq/**/*.csproj match the graph and the boundary rules below
 ---
 
@@ -80,6 +80,12 @@ Binacle.Geometry                    leaf — geometry types + IWith[ReadOnly]Dim
 
 4. **Two doors into the internal `ProtocolEncoder`** — and they stay apart: the UnitTests fixture
    (`SerializationTestingFixture`, curated/vector inputs) and the kernel's `ViPaqEncoder` (real-pack inputs).
+
+5. **No test project references a generator.** The generators are standalone tools: they write `test-vectors/`
+   and `data/packed/`, and the suites read those files. A `ProjectReference` from a test project to a tool —
+   or a TS test importing the generator's parser — drags a CLI tool into the test build and lets a broken tool
+   fail the suite for a non-product reason. Shared grammar goes in the library both sides already reference
+   (`Binacle.CompactNotation`), never across this line.
 
 ## The real-data round-trip gate
 

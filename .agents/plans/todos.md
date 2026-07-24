@@ -1,6 +1,31 @@
 # TODOs
 
-Found across `lib/`, `api/`, `vipaq/`, `shared/`. Grouped by area.
+Mostly `// TODO` comments found across `lib/`, `api/`, `vipaq/`, `shared/`, grouped by area. A few entries have
+no comment behind them — an open decision that needs a call. Those say so.
+
+---
+
+## Lib
+
+- **Decide what to do with the three `Parallel*` processors** — no code comment; this comes from the open
+  question in the lib design decisions ledger.
+
+  `BinProcessorFactory.Create` and `CreateMultiAlgorithm` take `binCount` and `itemCount` and ignore both, always
+  returning the `Loop` variants. Nothing in `lib/src` or `api/src` constructs
+  `lib/src/Binacle.Lib/BinProcessing/ParallelBinProcessor.cs`,
+  `lib/src/Binacle.Lib/BinProcessing/ParallelMultiAlgorithmBinProcessor.cs`, or
+  `lib/src/Binacle.Lib/AlgorithmProcessing/ParallelAlgorithmProcessor.cs` — only the benchmarks do. The
+  signatures promise a decision that is never made.
+
+  The measurement argues against wiring it up: on the algorithm set production uses (FFD+BFD), parallel
+  *algorithm* racing runs 0.93× to 1.48× — slower than `Loop` on the cheapest scenario, and only clearly ahead
+  when the two algorithms take very unequal time. Two algorithms cap the win at 2× before overhead.
+
+  So: wire the threshold up, or delete the classes. Leaving three unreachable processors in place invites
+  someone to "fix" a path that never runs. Two loose ends if they stay — `ParallelBinProcessor` (many *bins* at
+  once, which scales with bin count rather than algorithm count) has never been measured and is the one that
+  could still pay; and `concurrencyLevel` only sizes the `ConcurrentDictionary`, never reaching
+  `MaxDegreeOfParallelism`, so the name overpromises.
 
 ---
 

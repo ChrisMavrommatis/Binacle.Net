@@ -5,11 +5,13 @@ ServiceModule integration tests once per DB backend (sqlite/postgres) on every P
 Sonar/coverage gating, the docker image build in CI, and making the integration harness run all modules.
 
 ## Why
-Sonar and coverage are configured but still not enforced on a PR, and the image build never runs in CI.
+Sonar and coverage are configured but still not enforced on a PR, and the image build only runs at release
+time — too late to catch a break.
 
 ## What
 - ~~A CI workflow that runs the C# and TS suites on every PR.~~ Done — `run-tests.yml`.
-- Add the **docker image build** to CI (still only ever built locally).
+- Add the **docker image build** to the PR gate. It runs in CI today only on a published release
+  (`release-docker-image.yml`), so a PR never proves the image still builds.
 - Wire Sonar analysis and coverage reporting into the PR gate (today `sonar-analysis.yml` is manual only).
 - Decide the gate: which suites are required to pass, and the coverage floor.
 
