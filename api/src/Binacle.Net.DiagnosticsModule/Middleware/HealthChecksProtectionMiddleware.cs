@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Net.Sockets;
+using System.Net;
 using Binacle.Net.DiagnosticsModule.Configuration.Models;
 using Binacle.Net.DiagnosticsModule.Models;
 
@@ -12,7 +12,7 @@ internal class HealthChecksProtectionMiddleware
 	private readonly RequestDelegate next;
 	private readonly ILogger<HealthChecksProtectionMiddleware> logger;
 	private readonly IOptions<HealthCheckConfigurationOptions> options;
-	private readonly IPAddressRange[] restrictedIPAddressRanges;
+	private readonly IPNetwork[] restrictedIPAddressRanges;
 
 	public HealthChecksProtectionMiddleware(
 		RequestDelegate next,
@@ -25,11 +25,17 @@ internal class HealthChecksProtectionMiddleware
 		this.options = options;
 		if (this.options.Value.RestrictedIPs is not null && this.options.Value.RestrictedIPs.Length > 0)
 		{
-			this.restrictedIPAddressRanges = options.Value.RestrictedIPs!.Select(IPAddressRange.ParseRange).ToArray();
+			this.restrictedIPAddressRanges = options.Value.RestrictedIPs!
+				.Select(restrictedIp =>
+				{
+					RestrictedIPNetwork.TryParse(restrictedIp, out var network);
+					return network;
+				})
+				.ToArray();
 		}
 		else
 		{
-			this.restrictedIPAddressRanges = Array.Empty<IPAddressRange>();
+			this.restrictedIPAddressRanges = Array.Empty<IPNetwork>();
 		}
 	}
 
@@ -60,7 +66,11 @@ internal class HealthChecksProtectionMiddleware
 			return;
 		}
 
-		if (!this.restrictedIPAddressRanges.Any(range => range.IsInRange(remoteIp)))
+		// Behind a proxy this is the caller only once the forwarded headers middleware has resolved it; without that
+		// it is the proxy, and no operator address will ever match.
+		var callerAddress = RestrictedIPNetwork.Normalize(remoteIp);
+
+		if (!this.restrictedIPAddressRanges.Any(range => range.Contains(callerAddress)))
 		{
 			logger.LogWarning("Health check request from {remoteIp} is not allowed", remoteIp);
 			context.Response.StatusCode = StatusCodes.Status403Forbidden;

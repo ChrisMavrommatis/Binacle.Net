@@ -49,6 +49,7 @@ public class Program
 
 		builder.AddValidatableJsonConfigurationOptions<BinPresetOptions>();
 		builder.AddValidatableJsonConfigurationOptions<CorsOptions>();
+		builder.AddValidatableJsonConfigurationOptions<ForwardedHeadersConfigurationOptions>();
 
 		// Feature Management
 		Feature.Manager = new FeatureManagerConfiguration()
@@ -122,6 +123,8 @@ public class Program
 		});
 
 
+		builder.ConfigureForwardedHeaders();
+
 		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
 
 		builder.AddDiagnosticsModule();
@@ -156,6 +159,11 @@ public class Program
 		});
 
 		var app = builder.Build();
+
+		// Rewrites Connection.RemoteIpAddress and Request.Scheme from the proxy's values to the caller's, so it has
+		// to run before anything reads either one. Takes its options from DI; the overload that accepts an instance
+		// would bypass them.
+		app.UseForwardedHeaders();
 
 		// Slim builder
 		app.UseHttpsRedirection();
