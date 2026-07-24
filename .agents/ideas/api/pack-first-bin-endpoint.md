@@ -13,7 +13,7 @@ The caller supplies bins in the order they care about, and gets back the first o
 
 **Do not call this `first-fit`.** That name collides with First Fit Decreasing, an algorithm already selectable
 through `Parameters.Algorithm`. v4 shipped the same mistake once as `pack/best-fit` and had to rename it to
-`pack/best-bin` — see the naming rule in `$api/v4`. A route names the bin it returns; the algorithm is a
+`pack/best-bin` — see the naming rule in the v4 API doc. A route names the bin it returns; the algorithm is a
 parameter. `first-bin` follows `smallest-bin` / `best-bin`, and a `FirstBin` strategy class would match.
 
 ## Why
@@ -37,7 +37,7 @@ The second is the interesting one and the expensive one. Pick before writing cod
 ## Open questions
 
 - Which version does this land in? It was cut from v4. If it goes to v3.1, that reopens a frozen surface —
-  worth checking that against how v3 is treated in `$api/v3`.
+  worth checking that against how v3 is treated in the v3 API doc.
 - Does short-circuit change the response shape? Every other selecting endpoint has results for all bins
   available; this one wouldn't.
 - "First" is caller-supplied order, so the answer depends on request order in a way no other selecting endpoint
@@ -45,6 +45,6 @@ The second is the interesting one and the expensive one. Pick before writing cod
 
 ## Related
 
-- `$lib/result-selection` — where a selection-only strategy would live
-- `$api/v4` — the selecting endpoints it would sit beside
-- `$api/v4/add-endpoint` — the build steps, once decided
+- the result-selection doc — where a selection-only strategy would live
+- the v4 API doc — the selecting endpoints it would sit beside
+- the v4 add-endpoint guide — the build steps, once decided

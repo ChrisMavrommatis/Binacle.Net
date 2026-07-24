@@ -24,7 +24,7 @@ signal yet, for an audience (developers) that is perfectly happy to run a genera
 The spec has to be SDK-grade or people generate junk and give up. That work is done: stable **operationIds**
 (v3 flat, v4 resource-grouped), **plain-prose descriptions** (no Swagger markdown leaking into generated code),
 request/response **examples**, one **frozen document per version**, and **build-time emission** so specs never
-require a running server (`OpenApiGenerateDocumentsOnBuild`). See `$api/openapi`.
+require a running server (`OpenApiGenerateDocumentsOnBuild`). See the OpenAPI doc.
 
 The cheap, high-value next step is a **"generate a client" doc page** — copy-paste commands pointing at the
 published per-version spec, e.g. `npx @hey-api/openapi-ts -i …/openapi/v4.json -o ./binacle` (TS) and
@@ -70,7 +70,7 @@ used (shipping-rate step, fulfillment box pick)? The plugin is thin once that is
 
 ## Related
 
-- `$api/openapi` — the spec that makes generate-on-demand work.
+- the OpenAPI doc — the spec that makes generate-on-demand work.
 
 ## Do not
 

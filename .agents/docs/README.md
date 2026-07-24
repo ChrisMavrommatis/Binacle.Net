@@ -63,6 +63,7 @@ See Commands (`$commands`) — how to run the API, tests, benchmarks, and build 
 | Understand v3 vs v4 differences | `$api/v3`, `$api/v4` |
 | Work with ViPaq | `$vipaq` |
 | Configure modules / env vars / overrides | `$api/configuration` |
+| Run behind a proxy / resolve the real client IP | `$api/configuration`, `$api/modules/diagnostics` |
 | Run or deploy with Docker / Kubernetes | `$samples`, `$commands`, `$build-topology` |
 | Understand the build & workspace layout | `$build-topology`, `$commands` |
 

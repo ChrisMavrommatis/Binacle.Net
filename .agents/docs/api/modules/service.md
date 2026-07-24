@@ -1,7 +1,7 @@
 ---
 id: api/modules/service
 description: ServiceModule — JWT auth, rate limiting, account/subscription management. Three projects using clean architecture.
-verified: 2026-07-15
+verified: 2026-07-24
 check: Routes, config file names, and connection string name match ServiceModule source
 also_update:
   - api/configuration
@@ -112,7 +112,10 @@ Each provider registers its own `IAccountRepository`, `ISubscriptionRepository`,
 
 > **No migration framework.** There is no EF Core and no migration files. Each backend creates its schema
 > idempotently at startup (`CREATE TABLE IF NOT EXISTS …`, or `CreateTableIfNotExistsAsync` for Azure Table
-> Storage). The InMemory backend needs no schema task. Don't look for migrations — there aren't any.
+> Storage). Don't look for migrations — there aren't any.
+
+> `InMemoryAccountRepository` / `InMemorySubscriptionRepository` exist, but there is **no InMemory provider** in
+> `Setup._infrastructureProviders` (Azure Storage, Npgsql, SQLite only), so it cannot be selected by config.
 
 ## Config files
 
@@ -127,9 +130,11 @@ In Development, `dotnet user-secrets` is also loaded for the `IModuleMarker` ass
 ## Adding an Admin Endpoint
 
 Admin and v0 endpoints follow the same `IGroupedEndpoint` pattern as v4.
-See `$api/v4/add-endpoint` for the template — use `ApiV0EndpointGroup` as the group type instead of `ApiV4EndpointGroup`.
+See `$api/v4/add-endpoint` for the template — ServiceModule endpoints use `IGroupedEndpoint<AdminGroup>`
+(`v0/Endpoints/Admin/AdminGroup.cs`) instead of `ApiV4EndpointGroup`.
 
 ## Related Tests
 
-`api/test/Binacle.Net.ServiceModule.IntegrationTests` (alias: `api_service`) — covers auth token endpoint
-and all Admin account/subscription CRUD endpoints.
+`api/test/Binacle.Net.ServiceModule.IntegrationTests` (run with `config/tests.api.sh service
+[Sqlite|Postgres|AzureStorage]`) — covers the auth token endpoint and the Admin account and subscription
+endpoints. Subscription has Create/Update/Patch/Delete only — there is no Get.

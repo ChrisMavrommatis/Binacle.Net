@@ -5,7 +5,7 @@
 ## Why
 
 ServiceModule has no migration framework: each backend creates its schema idempotently at startup
-(`CREATE TABLE IF NOT EXISTS`, or the Azure-table equivalent) — `$api/modules/service`. That works exactly once,
+(`CREATE TABLE IF NOT EXISTS`, or the Azure-table equivalent) — the ServiceModule doc. That works exactly once,
 on a fresh database. The first time a column is added or changed on a store that already has rows, the
 create-if-not-exists step sees the table exists, skips, and the new column never appears — silently. So it is fine
 today (the schema is new) and becomes a real gap the moment the schema evolves in production.
@@ -37,4 +37,4 @@ and it does nothing for the Azure Table backend (schemaless). Two right-sized sh
 
 ## Related
 
-- `$api/modules/service` (current create-if-not-exists startup tasks, provider selection)
+- the ServiceModule doc (current create-if-not-exists startup tasks, provider selection)

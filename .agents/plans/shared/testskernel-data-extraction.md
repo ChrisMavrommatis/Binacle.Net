@@ -30,7 +30,7 @@ is the only hand-authored set, and adding a problem here reaches lib's algorithm
 - **Uncompressed 16-bit coverage.** ViPaq's uncompressed set is all 8-bit — every 16-bit problem (Bischoff) is big
   enough that ViPaq compresses it, so there is no uncompressed-16-bit scenario to size or benchmark. Author a small
   16-bit problem — coordinates over 255 but few enough items to stay under the compression threshold (16-bit body:
-  `2 + 6 + items*(3*2 + 3*2)` bytes ≤ 255 → ~20 items). See `$vipaq/findings`.
+  `2 + 6 + items*(3*2 + 3*2)` bytes ≤ 255 → ~20 items). See the ViPaq design findings.
 - **A count ladder.** One problem family at ~5, ~13, ~50, ~200 items, with **only the item count changing**. This
   pins ViPaq's compression-crossover report, which is otherwise provisional ("8-bit crosses somewhere between 16
   and 100 items").

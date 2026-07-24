@@ -1,7 +1,7 @@
 ---
 id: api
 description: Index for API slice docs — endpoints, contracts, service, kernel, presets, and module docs (Diagnostics, ServiceModule, UIModule)
-verified: 2026-07-06
+verified: 2026-07-24
 check: Startup sequence matches Program.cs; dep map matches actual project references
 also_update:
   - api/modules
@@ -27,15 +27,17 @@ If you don't know where to start, read `$api/v4/add-endpoint` first.
 ## Startup Order
 
 ```
-Feature.Manager.Initialize()             // reads config + env vars, before DI container
-                                         // controls all feature flags (SERVICE_MODULE, UI_MODULE, SWAGGER_UI, SCALAR_UI, ...)
+Feature.Manager = ...CreateManager()     // reads config + env vars, before DI container
+                                         // controls all feature flags (SERVICE_MODULE, UI_MODULE, SWAGGER_UI, SCALAR_UI, DEBUG_ENDPOINT, ...)
 AddBinacleServices()                     // lib factories, IBinacleService
+ConfigureForwardedHeaders()              // proxy trust; writes ForwardedHeaders.None when disabled
 AddDiagnosticsModule()
 if SERVICE_MODULE → AddServiceModule()   // calls AddInfrastructure() internally
 if UI_MODULE      → AddUIModule()
 if SWAGGER_UI     → register Swagger OpenAPI docs
 if SCALAR_UI      → register Scalar OpenAPI docs
 ---
+UseForwardedHeaders()                    // FIRST — rewrites RemoteIpAddress and Scheme before anything reads them
 UseHttpsRedirection() / UseExceptionHandler() / UseCors()
 if SWAGGER_UI or SCALAR_UI → MapOpenApi()          // maps /openapi/{documentName}.json
     if SWAGGER_UI → UseSwaggerUI()                 // these run BEFORE the module Use* calls
@@ -51,23 +53,30 @@ Note: Scalar is wired with `app.MapScalarApiReference(...)` (not a `Use*` method
 Swagger/Scalar UI block is registered **before** `UseDiagnosticsModule()` and the optional-module
 `Use*` calls — not after them.
 
+`UseForwardedHeaders()` must stay first. It rewrites `Connection.RemoteIpAddress` and `Request.Scheme`, and
+everything downstream — HTTPS redirection, the health check IP allow-list, rate limiting — reads those. See
+`$api/configuration` for the trust settings.
+
 ## Project Dependency Map
 
 Projects live in three top-level directories: `lib/src/`, `api/src/`, `vipaq/src/`.
 
 ```
-lib/src/Binacle.Lib.Abstractions          (no dependencies)
+lib/src/Binacle.Lib.Abstractions          → Binacle.Geometry
 lib/src/Binacle.Lib                       → Binacle.Lib.Abstractions
-vipaq/src/Binacle.ViPaq                   (no dependencies)
+vipaq/src/Binacle.ViPaq                   → Binacle.Geometry
 
-api/src/Binacle.Net.Kernel                → Binacle.Lib.Abstractions
+api/src/Binacle.Net.Kernel                → Binacle.Lib.Abstractions, Binacle.CompactNotation
 api/src/Binacle.Net.DiagnosticsModule     → Binacle.Net.Kernel
 api/src/Binacle.Net.ServiceModule.Domain  (no dependencies)
 api/src/Binacle.Net.ServiceModule.Infrastructure → Binacle.Net.Kernel, ServiceModule.Domain
 api/src/Binacle.Net.ServiceModule         → Binacle.Net.Kernel, ServiceModule.Domain, ServiceModule.Infrastructure
-api/src/Binacle.Net.UIModule              → Binacle.Net.Kernel, Binacle.Lib.Abstractions, Binacle.ViPaq
+api/src/Binacle.Net.UIModule              → Binacle.Net.Kernel, Binacle.Lib.Abstractions, Binacle.ViPaq, Binacle.CompactNotation
 api/src/Binacle.Net                       → Binacle.Lib, all modules, Binacle.ViPaq
 ```
+
+This is the API slice's view. The full graph across every slice — including who sees internals — is
+`$api/dependencies`; keep the two in step.
 
 Key rules:
 - Kernel has no dependency on `Binacle.Net` or any module — safe to use from anywhere
@@ -91,7 +100,7 @@ HTTP POST /api/v4/...
                       → OperationResultBuilder   builds OperationResult (status, packed/unpacked items, percentages)
   ← OperationResult returned to handler
   → BinResponseBase.From<TResponse>()   maps OperationResult to the API response type
-  → ViPaqSerializer.SerializeInt32()    (only if IncludeViPaqData: true and items were packed)
+  → ViPaqSerializer.Serialize<...>()    (only if IncludeViPaqData: true and items were packed)
   → Results.Ok(response)
 ```
 
@@ -127,8 +136,10 @@ See `$lib/result-building` for how `OperationResultBuilder` computes status and 
 
 | Project | Alias | What it covers |
 |---|---|---|
-| `api/test/Binacle.Net.IntegrationTests` | `api` | HTTP behavior and scenario tests for v3 and v4 endpoints |
-| `api/test/Binacle.Net.ServiceModule.IntegrationTests` | `api_service` | Auth and rate limiting (ServiceModule only) |
+| `api/test/Binacle.Net.IntegrationTests` | `config/tests.api.sh core` | HTTP behavior and scenario tests for v3 and v4 endpoints |
+| `api/test/Binacle.Net.ServiceModule.IntegrationTests` | `config/tests.api.sh service [Sqlite\|Postgres\|AzureStorage]` | Auth and rate limiting (ServiceModule only) |
+
+`config/tests.api.sh` with no argument runs both.
 
 See API Tests (`$api/tests`) for integration-test conventions, and Shared (`$shared`) for the scenario
 data format. See Commands (`$commands`) for how to run the API locally.

@@ -1,7 +1,7 @@
 ---
 id: api/kernel
 description: Binacle.Net.Kernel — shared patterns used by all API projects and modules
-verified: 2026-07-06
+verified: 2026-07-24
 check: IApiMarker and registration helpers match api/src/Binacle.Net.Kernel/
 also_update:
   - api/endpoints
@@ -124,7 +124,8 @@ Config is loaded relative to `Config_Files/` (set as base path in `Program.cs`).
 Register a validated options class with `services.AddValidatableJsonConfigurationOptions<TOptions>()`
 (`Configuration/ExtensionsMethods/ConfigurationExtensions.cs`): it adds the JSON file + env override + env vars,
 binds the section, and runs FluentValidation at startup (`ValidateFluently().ValidateOnStart()`). Used in
-`Program.cs` for `BinPresetOptions` and `CorsOptions`, and by each module's `ModuleDefinition`.
+`Program.cs` for `BinPresetOptions`, `CorsOptions`, and `ForwardedHeadersConfigurationOptions`, and by each
+module's `ModuleDefinition`.
 
 ## Validation
 

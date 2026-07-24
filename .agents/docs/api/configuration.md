@@ -1,8 +1,8 @@
 ---
 id: api/configuration
 description: Config file layout, env-var conventions, override precedence, and feature flag list
-verified: 2026-07-15
-check: Config keys and env var names match appsettings.json and module config files; Cors.json present
+verified: 2026-07-24
+check: Config keys and env var names match appsettings.json and module config files; Cors.json and ForwardedHeaders.json present
 also_update:
   - api/modules/service
   - api/modules/diagnostics
@@ -23,6 +23,8 @@ app
     ├── Presets.json                             required — app fails to start without this
     ├── Cors.json                                optional — CORS allowed origins (core API, not a module)
     ├── Cors.{Environment}.json                  optional override
+    ├── ForwardedHeaders.json                    optional — proxy trust for resolving the caller's address
+    ├── ForwardedHeaders.{Environment}.json      optional override
     ├── appsettings.json                         optional — host settings (e.g. AllowedHosts)
     ├── DiagnosticsModule
     │   ├── HealthChecks.json
@@ -61,6 +63,57 @@ named policy `CoreApi` that endpoints opt into with `.RequireCors(CorsPolicy.Cor
   }
 }
 ```
+
+### Forwarded headers (`ForwardedHeaders.json`)
+
+Bound to `ForwardedHeadersConfigurationOptions` (section `ForwardedHeaders`), loaded for the core API in
+`Program.cs` via `builder.ConfigureForwardedHeaders()` (`ExtensionMethods/ForwardedHeadersExtensions.cs`).
+Ships **disabled**.
+
+```json
+{
+  "ForwardedHeaders": {
+    "Enabled": false,
+    "TrustLoopback": true,
+    "TrustPrivateNetworks": true,
+    "TrustedProxies": [],
+    "ForwardLimit": 1,
+    "ForwardedForHeaderName": null
+  }
+}
+```
+
+When enabled, `UseForwardedHeaders()` rewrites `Connection.RemoteIpAddress` and `Request.Scheme` from
+`X-Forwarded-For` / `X-Forwarded-Proto` before anything reads them. It runs first in the pipeline, ahead of
+`UseHttpsRedirection()`. Two consumers depend on it: the health check `RestrictedIPs` allow-list
+(`$api/modules/diagnostics`) and the ServiceModule auth rate limiter.
+
+The trust settings widen in order — loopback, then private networks, then named entries:
+
+| Key | Default | Effect |
+|---|---|---|
+| `TrustLoopback` | `true` | Keeps the framework's loopback defaults (`127.0.0.0/8`, `::1`). `false` clears both framework lists. |
+| `TrustPrivateNetworks` | `true` | Adds `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `fc00::/7`. Covers container and tunnel setups without naming a gateway address. |
+| `TrustedProxies` | `[]` | Additive. CIDR entries go to `KnownIPNetworks`, single addresses to `KnownProxies`. |
+| `ForwardLimit` | `1` | Header entries processed, right to left. |
+| `ForwardedForHeaderName` | `null` | Read a vendor header instead — `CF-Connecting-IP`, `X-Real-IP`, `X-Azure-ClientIP`. |
+
+**Both flags off with an empty `TrustedProxies` fails startup validation.** Two empty trust lists make the
+middleware skip the check entirely rather than match nothing (`checkKnownIps` is false), so every caller's header
+would be believed. That is the one unsafe state and it is refused at boot.
+
+Three framework behaviours worth knowing, all measured against `Microsoft.AspNetCore.HttpOverrides` 10.0:
+
+- `ForwardedHeadersOptions.ForwardedHeaders` defaults to `None`, so a bare `UseForwardedHeaders()` is a silent
+  no-op. The flags must be set.
+- `KnownProxies` and `KnownIPNetworks` **cannot be bound from configuration** — they are get-only and neither
+  `IPAddress` nor `IPNetwork` has a type converter. Binding a section onto `ForwardedHeadersOptions` silently
+  drops them with no error. Hence the separate options class and the hand-written translation.
+- `ASPNETCORE_FORWARDEDHEADERS_ENABLED=true` enables the middleware from the environment **and empties both trust
+  lists**. Our `Configure` delegate runs after the framework's and writes `ForwardedHeaders.None` when the feature
+  is disabled, so the variable has no effect. Do not document it as a supported option.
+
+The startup log prints the expanded trust list, so the flags are never opaque.
 
 ## Override Conventions
 
@@ -114,6 +167,7 @@ All flags are boolean env vars. All default to `False` (disabled).
 | `UI_MODULE=True` | Blazor/Razor interactive packing demo | False |
 | `SWAGGER_UI=True` | Swagger UI at `/swagger` | False |
 | `SCALAR_UI=True` | Scalar UI at `/scalar` (alternative OpenAPI UI) | False |
+| `DEBUG_ENDPOINT=True` | `/_debug` — echoes the caller's own request: connection address, every header, and server info. Unauthenticated; use it to read the proxy address when configuring forwarded headers, then turn it off. | False |
 
 `ASPNETCORE_HTTP_PORTS` controls the internal listen port. Default is `8080`.
 

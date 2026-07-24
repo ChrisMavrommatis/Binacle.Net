@@ -6,7 +6,7 @@ default.
 ## What
 
 Today one image ships everything and gates the ServiceModule behind the `SERVICE_MODULE` runtime flag, which is
-already off by default (`$api/modules/service`). The flag stops the code running, but the ServiceModule DLLs are
+already off by default (the ServiceModule doc). The flag stops the code running, but the ServiceModule DLLs are
 still in the image.
 
 Ship a **second tag/image that does not contain the ServiceModule assemblies at all** — packing/fitting only. Two
@@ -53,4 +53,4 @@ the code compilable with ServiceModule removed.
 
 ## Related
 
-- `$api/modules/service` (the flag, what it gates, the current compile-time reference)
+- the ServiceModule doc (the flag, what it gates, the current compile-time reference)

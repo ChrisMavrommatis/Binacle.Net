@@ -46,6 +46,14 @@ not to eagerly load unrelated context. Keep a new doc/plan/idea in its slice fol
   and the post-release list. The plan is the **one exception** to the reference rules — it may point at any file
   to coordinate the release, and nothing points back at it. Deleted once the version ships.
 
+## `docs/` and `web/` are off limits
+
+Neither is part of `.agents/`, but the rule belongs here because it decides where the work goes instead. `docs/`
+(the versioned documentation site) and `web/` (the marketing site) **publish to the internet** and are written in
+their own dedicated session. Do not edit them from a coding session. When a change needs a page written or
+corrected, record **what the page must say** in the plan or release file that owns the work, and leave the writing
+to that session. `CLAUDE.md` carries this as a critical rule.
+
 ## Who may reference whom — keep the layers from bleeding
 
 Two **permanent** layers describe the code as it is now (`docs`, `design`); three **ephemeral** ones capture work
@@ -61,8 +69,8 @@ and notes that come and go (`plans`, `ideas`, `memory`). Two rules keep the laye
 |---|---|---|---|
 | **docs** (permanent) | code, READMEs, **docs** | design, plans, ideas, memory | The "what is now". Kept current. |
 | **design** (permanent, can change) | code, READMEs, **docs, design** | plans, ideas, memory | The "why" behind the docs. Points at docs; docs never point back. |
-| **plans** (ephemeral) | code, READMEs, docs, design *(only when it helps)* | plans, ideas, memory | Work being built now-ish. Deleted when it lands. |
-| **ideas** (ephemeral) | code, READMEs, docs, design *(only when it helps)* | plans, ideas, memory | Future maybes. Become a plan when picked up. |
+| **plans** (ephemeral) | code, READMEs — **nothing under `.agents/`** | docs, design, plans, ideas, memory | Work being built now-ish. Deleted when it lands. |
+| **ideas** (ephemeral) | code, READMEs — **nothing under `.agents/`** | docs, design, plans, ideas, memory | Future maybes. Become a plan when picked up. |
 | **memory** (ephemeral) | ideally nothing — a doc or design only if it truly must | plans, ideas, memory | Rules/conventions that can stop being true. |
 | **`.agents/README.md`** (the map) | any file, as navigation | — | The one global map. The only exempt README. |
 | **slice READMEs** (per layer) | its own layer's rules — a `docs/` README references only docs | same as its layer | Describe, rule, and index their own folder. |
@@ -71,8 +79,10 @@ What falls out of these rules:
 
 - **Nothing points at a plan, idea, or memory** — not even a README section that lists them survives as a live
   `$` link; navigation names them, it does not cite them. They vanish; incoming links dangle.
-- **Ideas and plans are self-contained by default.** They may cite a doc or design when it genuinely helps, but
-  never each other, and never a memory.
+- **Ideas and plans are self-contained.** They cite **no `$` reference at all** — not a doc, not a design, not
+  each other. Name the area in plain words ("the ServiceModule doc") and inline any fact you need. A plan or idea
+  is a scratchpad that gets deleted; a `$` reference out of one is a maintenance debt for a file that will not
+  outlive the work.
 - **Memory stays as self-contained as it can.** Ideally it references nothing; if it truly must, only a doc or
   design — never another memory, plan, or idea.
 - **Only the top-level `.agents/README.md` (and `CLAUDE.md`) is exempt** — it is the global map, so it may *name*
@@ -81,6 +91,8 @@ What falls out of these rules:
 - **The release set is the second exception.** `release-v<version>.md` and its `post-release` / actions / notes
   companions coordinate a release, so the plan may point at any file — but, like the map, **nothing points at
   it**. It is version-scoped and deleted once shipped.
+- **A layer's own `_index.md` is navigation, not citation.** It lists its folder's files by name so they can be
+  found; that is what an index is for, and it is regenerated, not maintained by hand.
 
 ## How to reference — the `$` symbol scheme
 

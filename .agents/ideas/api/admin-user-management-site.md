@@ -25,4 +25,4 @@ hand.
 
 ## Related
 
-- `$api/modules/service`, `$api/modules/ui`
+- the ServiceModule doc, the UIModule doc

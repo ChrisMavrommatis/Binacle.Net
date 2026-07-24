@@ -13,7 +13,7 @@ More than it looks like from the outside:
 | Integration | `api/test` 622 + 106 · `WebApplicationFactory`, real Azurite |
 | Golden / vector | `vipaq/test-vectors/` — byte-exact, committed |
 | Cross-language interop | the same vectors replayed in C# **and** TS — genuinely rare |
-| Benchmarks | BenchmarkDotNet (`$lib/findings`) |
+| Benchmarks | BenchmarkDotNet (the lib design findings) |
 | Performance harness | `Binacle.ViPaq.PerformanceTests` — custom, Serilog-reported |
 | Fake data generation | Bogus (C#) · faker-js (TS) |
 
@@ -72,7 +72,7 @@ Why it beats writing more examples: an overlap bug is **silent**. The API return
 packing, and it surfaces months later as a customer complaint. Example tests check the answers someone
 predicted; a property checks the ones nobody did.
 
-**Open:** which invariants are actually true for *fit* vs *pack* (fit exits early — `$concepts`)? Is
+**Open:** which invariants are actually true for *fit* vs *pack* (fit exits early — the concepts doc)? Is
 generating a valid random bin+items set cheap enough to be worth it? Do failures shrink to something
 readable, or to noise?
 

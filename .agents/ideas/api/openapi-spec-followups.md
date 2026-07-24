@@ -37,7 +37,7 @@ consumers generate their own.
 
 ## Related
 
-- `$api/openapi` — how the documents are defined and transformed.
+- the OpenAPI doc — how the documents are defined and transformed.
 
 ## Do not
 

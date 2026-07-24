@@ -6,7 +6,7 @@
 
 ServiceModule is three projects (`ServiceModule` / `ServiceModule.Domain` / `ServiceModule.Infrastructure`) with a
 full DDD layering — aggregate roots, value objects, an auditable-entity hierarchy — for a domain that is **two
-entities**: `Account` and `Subscription` (`$api/modules/service`). Collapse that ceremony while keeping the one
+entities**: `Account` and `Subscription` (the ServiceModule doc). Collapse that ceremony while keeping the one
 abstraction that earns its keep.
 
 ## The distinction that matters
@@ -51,4 +51,4 @@ the auth layer. There is no external forcing function, so it waits.
 
 ## Related
 
-- `$api/modules/service` (current three-project structure and patterns)
+- the ServiceModule doc (current three-project structure and patterns)

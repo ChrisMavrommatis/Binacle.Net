@@ -1,7 +1,7 @@
 ---
 id: api/modules
 description: Optional module system — feature flags, structure, available modules
-verified: 2026-07-06
+verified: 2026-07-24
 check: Module list and feature flags match Feature.Manager source
 also_update:
   - api
@@ -43,8 +43,6 @@ endpoint registration.
 
 ## Available Modules
 
-<!-- sourced from docs site; verify against current code if behaviour changes -->
-
 | Module | Env var to enable | Default | Adds |
 |---|---|---|---|
 | `DiagnosticsModule` | always on | always on | Logging, health checks, OpenTelemetry, packing logs |
@@ -52,6 +50,7 @@ endpoint registration.
 | `UIModule` | `UI_MODULE=True` | disabled | Razor/Blazor interactive packing demo |
 | Swagger UI | `SWAGGER_UI=True` | disabled | Swagger UI at `/swagger` |
 | Scalar UI | `SCALAR_UI=True` | disabled | Scalar UI at `/scalar` (alternative OpenAPI interface) |
+| Debug endpoint | `DEBUG_ENDPOINT=True` | disabled | `/_debug` — echoes the caller's own request (connection address, headers, server info). Unauthenticated |
 
 See `$api/configuration` for full details on env-var conventions and config file layout.
 

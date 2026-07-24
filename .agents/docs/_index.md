@@ -43,7 +43,7 @@ table of [README.md](README.md).
 
 | File | Description |
 |---|---|
-| [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: run/test/benchmark/build scripts, the doc-index and tmux scripts, local docker-compose, env files, and emulator state |
+| [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: run/test/benchmark/build scripts, the doc-index and tmux scripts, local docker-compose, and emulator state |
 
 ## Docs
 

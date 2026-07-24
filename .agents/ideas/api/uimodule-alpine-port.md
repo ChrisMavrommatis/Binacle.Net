@@ -139,4 +139,4 @@ Then, optionally, the MSBuild hook in `UIModule.csproj` — which only works **a
 6. Delete `BinacleVisualizerService`, `MessagingService`, and code-behind files.
 7. Remove Interactive Server render mode if nothing else needs it.
 8. Add MSBuild hook so `dotnet build` keeps the bundle fresh.
-9. Update `$api/modules/ui` to reflect the new stack.
+9. Update the UIModule doc to reflect the new stack.

@@ -1,7 +1,7 @@
 ---
 id: api/modules/diagnostics
 description: DiagnosticsModule — always-on logging, OpenTelemetry, health checks, and packing logs
-verified: 2026-07-06
+verified: 2026-07-24
 check: Env var names match DiagnosticsModule config handling
 also_update:
   - api/configuration
@@ -50,7 +50,7 @@ Path and enabled state are configured via `HealthCheckConfigurationOptions`.
 
 ## What UseDiagnosticsModule wires
 
-- `HealthChecksProtectionMiddleware` — restricts health endpoint access (IP allow-list or similar)
+- `HealthChecksProtectionMiddleware` — restricts health endpoint access by caller address (`RestrictedIPs`)
 - Maps `/_health` (configurable path) with full JSON response via `UIResponseWriter`
 - Health status codes: `Healthy/Degraded → 200`, `Unhealthy → 503`
 
@@ -87,8 +87,6 @@ Override logging by creating `Serilog.Production.json` at `/app/Config_Files/Dia
 
 ## Health checks
 
-<!-- sourced from docs site; verify against current code if behaviour changes -->
-
 Default: **disabled**. Default path: `/_health`.
 
 ```json
@@ -102,15 +100,24 @@ Default: **disabled**. Default path: `/_health`.
 }
 ```
 
-`RestrictedIPs` accepts single IPs, ranges, and CIDR notation:
+`RestrictedIPs` accepts a single address or a CIDR range. Empty means no restriction:
 
 ```json
 "RestrictedIPs": [
   "192.168.1.1",
-  "192.168.1.0-192.168.1.255",
   "192.168.1.0/24"
 ]
 ```
+
+Entries are parsed by `RestrictedIPNetwork.TryParse` into `System.Net.IPNetwork`; a single address becomes a
+`/32` or `/128` so the middleware matches one kind of entry. An invalid entry fails startup validation.
+
+The caller's address is normalised with `RestrictedIPNetwork.Normalize` before matching, which unmaps IPv4-mapped
+IPv6 addresses. The server listens on a dual-mode socket, so an IPv4 caller arrives as `::ffff:x.x.x.x` and no
+IPv4 entry would match without it.
+
+**Behind a proxy this list matches the proxy, not the caller** — it compares `Connection.RemoteIpAddress`, which
+is the proxy's address until forwarded headers resolve it. See [Forwarded headers](../configuration.md#forwarded-headers-forwardedheadersjson).
 
 `RestrictedChecks` is an **allow-list**, not a skip-list. When empty (the default), all checks run.
 When non-empty, ONLY the checks whose name is in the list run — everything else is filtered out.

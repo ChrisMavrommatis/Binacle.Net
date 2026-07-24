@@ -28,7 +28,7 @@ the `📈 Algorithms` section needs no caveat. The manual steps are the release 
 Binacle.Net v3.0.0 is a major update from v2.1.1.
 
 > [!Warning]
-> **v3.0.0 introduces breaking changes. Existing integrations must be reviewed and updated. V2 endpoints are removed, and ViPaq tokens from earlier versions no longer decode.**
+> **v3.0.0 introduces breaking changes. Existing integrations must be reviewed and updated. V2 endpoints are removed, ViPaq tokens from earlier versions no longer decode, and health check IP restrictions are matched differently.**
 
 ---
 
@@ -39,6 +39,8 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - **ViPaq** was rebuilt with a smaller, simpler format. Tokens from earlier versions no longer decode.  
 - **Algorithms** were unified — fitting and packing now share one implementation.  
 - **Packing Logs** configuration was flattened, with breaking changes for existing integrations.  
+- **Forwarded headers** are now supported, so the real caller is resolved when running behind a proxy or CDN.  
+- **Health check IP restrictions** are matched differently, with breaking changes for existing allow-lists.  
 - The project was **restructured**, separating the API, library, and ViPaq into their own roots.  
 - **Versioned documentation** now covers every minor line, so older images keep their docs.  
 
@@ -51,7 +53,13 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - Presets can be **listed** with `presets` or **fetched one at a time** with `presets/{preset}`.  
 - V4 is **experimental and can change at any time**. V3 remains stable and is the recommended version.  
 - V3 endpoints are unchanged and remain stable, apart from the ViPaq payload.  
-- Configuration files, environment variables, and the `Dockerfile` are unchanged.  
+- Added **forwarded headers** support, configured in `Config_Files/ForwardedHeaders.json`. **Disabled by default.**  
+- When enabled, the caller's address and scheme are resolved from `X-Forwarded-For` and `X-Forwarded-Proto` before anything reads them, so rate limiting and health check IP restrictions see the real caller rather than the proxy.  
+- Trust is explicit — a proxy on loopback or a private network is trusted by default, anything else must be named. The app **refuses to start** if nothing is trusted, because that would make every caller's header believable.  
+- A different header can be read instead, for CDNs that send one — `CF-Connecting-IP`, `X-Real-IP`, `X-Azure-ClientIP`.  
+- `ASPNETCORE_FORWARDEDHEADERS_ENABLED` is **ignored**. It switches the underlying middleware on with no proxy verification, which lets any caller choose their own address.  
+- Added a **`/_debug` endpoint**, off by default, enabled with `DEBUG_ENDPOINT=True`. It echoes the caller's own request — connection address and headers — for working out what a proxy is sending.  
+- The `Dockerfile` and existing environment variables are unchanged.  
 
 ## 🧪 Diagnostics Module
 - Packing Logs configuration was **flattened** — `Path`, `FileName`, `DateFormat`, and `ChannelLimit` now sit directly under `PackingLogs`.  
@@ -59,6 +67,9 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - Implementations depending on the old nested shape must be updated, or startup validation will fail.  
 - The default log path changed from `data/pack-logs/packing/` to `data/pack-logs/`.  
 - Packing log entries now include a `Timestamp` field.  
+- Health check **`RestrictedIPs` now uses CIDR notation correctly**. The value after `/` was previously read as an address mask, so `192.168.1.0/24` covered nearly the whole IPv4 range instead of 256 addresses. Existing CIDR entries are now **much narrower** than they were.  
+- Health check `RestrictedIPs` now matches **IPv4 callers in containers**. Addresses arriving in IPv4-mapped IPv6 form are unmapped before comparison, which they previously were not — no IPv4 entry could match.  
+- Removed the **`start-end` range form** from `RestrictedIPs`. Entries such as `192.168.1.0-192.168.1.255` now fail startup validation. Use CIDR instead.  
 
 ## 🎨 UI Module
 - The Protocol Decoder reads the **new ViPaq format only**. Tokens from earlier versions are rejected.  
@@ -106,6 +117,12 @@ To upgrade to **v3.0.0**, follow these steps:
    - Move `Path`, `FileName`, `DateFormat`, and `ChannelLimit` out of the nested `Packing` block, directly under `PackingLogs`, and delete the `Fitting` block.  
    - Left in the old shape with `Enabled: true`, startup validation now fails.  
    - Repoint log collection from `data/pack-logs/packing/` to `data/pack-logs/`. The old `packing/` and `fitting/` directories are safe to remove.
+
+6. **Review health check `RestrictedIPs`**  
+   - Replace any `start-end` entries with CIDR — `192.168.1.0-192.168.1.255` becomes `192.168.1.0/24`. Left as they are, startup validation now fails.  
+   - Re-check any CIDR entry. It now covers what it says, which is far less than before — confirm the addresses you expect are still inside it, or you will lock yourself out.  
+   - A range that does not line up with a CIDR boundary must be split into several entries, or widened to the enclosing subnet.  
+   - If Binacle.Net runs behind a proxy, load balancer or CDN, enable **forwarded headers** as well. Without it the list is compared against the proxy's address and can never match your monitoring system.
 
 ---
 

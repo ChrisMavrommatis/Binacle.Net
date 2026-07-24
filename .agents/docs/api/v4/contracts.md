@@ -1,7 +1,7 @@
 ---
 id: api/v4/contracts
 description: Request/response contract types, validators, and OpenAPI examples for v4 (v3 follows the same shape)
-verified: 2026-07-16
+verified: 2026-07-24
 check: Types and validators match api/src/Binacle.Net/v4/Contracts/; mappers match v4/ExtensionMethods/
 also_update:
   - api/v4
@@ -30,8 +30,8 @@ Concrete request types extend these. They compose the `IWith*` interfaces and ch
 |---|---|---|
 | `CustomBinRequestBase` | `IWithOperationParameters`, `IWithBin`, `IWithItems` | `FitCustomBinRequest`, `PackCustomBinRequest` |
 | `PresetBinRequestBase` | `IWithOperationParameters`, `IWithItems` | `FitPresetBinRequest`, `PackPresetBinRequest` |
-| `CustomBinsRequestBase` | `IWithOperationParameters`, `IWithBins`, `IWithItems` | `PackCustomSmallestBinRequest`, `PackCustomCompareRequest`, `PackCustomBestFitRequest`, `FitCustomCompareRequest`, `FitCustomSmallestBinRequest` |
-| `PresetBinsRequestBase` | `IWithOperationParameters`, `IWithItems` | `PackPresetCompareRequest`, `PackPresetSmallestBinRequest`, `PackPresetBestFitRequest`, `FitPresetCompareRequest`, `FitPresetSmallestBinRequest` |
+| `CustomBinsRequestBase` | `IWithOperationParameters`, `IWithBins`, `IWithItems` | `PackCustomSmallestBinRequest`, `PackCustomCompareRequest`, `PackCustomBestBinRequest`, `FitCustomCompareRequest`, `FitCustomSmallestBinRequest` |
+| `PresetBinsRequestBase` | `IWithOperationParameters`, `IWithItems` | `PackPresetCompareRequest`, `PackPresetSmallestBinRequest`, `PackPresetBestBinRequest`, `FitPresetCompareRequest`, `FitPresetSmallestBinRequest` |
 
 `PresetBinRequestBase` and `PresetBinsRequestBase` carry identical members — the bins come from the route
 either way. They stay separate because the singular one names one bin and the plural one names the whole

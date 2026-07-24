@@ -1,7 +1,7 @@
 ---
 id: commands
 description: How to run the API, tests, benchmarks, and build the Docker image
-verified: 2026-07-15
+verified: 2026-07-24
 check: Aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
 ---
 
@@ -67,12 +67,12 @@ Per slice; BenchmarkDotNet, markdown-only, output pinned next to the project:
 docker compose -f config/docker-compose.yml up
 ```
 
-This starts **only the backing services** — `aspire-dashboard` (OTel) and `azurite` (Azure Storage emulator).
-It does **not** run the API. Run the API itself with `./config/api.sh`. (`postgres` and `minio` are present but
-commented out in the file.)
+This starts **only the backing services** — `aspire-dashboard` (OTel), `azurite` (Azure Storage emulator), and
+`postgres`. It does **not** run the API. Run the API itself with `./config/api.sh`.
 
 To build the API image locally and run it with all modules on, use `./config/build.sh` — it publishes, builds
-`binacle-net:local`, and brings up `config/docker-compose.build.yml` (the local image + azurite + aspire).
+`binacle-net:local`, and brings up `config/docker-compose.build.yml` (the local image + azurite + postgres +
+aspire).
 
 ## Regenerate the agent indexes
 

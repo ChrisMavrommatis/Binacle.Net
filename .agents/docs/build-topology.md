@@ -1,7 +1,7 @@
 ---
 id: build-topology
 description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, the Dockerfile/build.sh chain, and the NoTargets content projects
-verified: 2026-07-06
+verified: 2026-07-24
 check: Solution structure, Directory.Build.props, Dockerfile, and content .proj files match the repo root
 also_update:
   - commands
@@ -19,22 +19,28 @@ The repo uses the XML `.slnx` solution format. Projects are grouped by solution 
 
 - `/lib/src/`, `/lib/test/` — `Binacle.Lib(.Abstractions)` + the three lib test projects
 - `/api/src/`, `/api/test/` — `Binacle.Net`, `Binacle.Net.Kernel`, the three modules (+ ServiceModule.Domain/.Infrastructure), and the two integration-test projects
-- `/vipaq/src/`, `/vipaq/test/`, `/shared/src/`, `/shared/test/` — ViPaq + its tests + `Binacle.Geometry` and `Binacle.CompactNotation` (in `shared/src`) + `Binacle.TestsKernel` and `Binacle.CompactNotation.UnitTests` (in `shared/test`)
+- `/vipaq/src/`, `/vipaq/test/`, `/shared/src/`, `/shared/test/` — ViPaq + its tests + `Binacle.Geometry` and `Binacle.CompactNotation` (in `shared/src`) + `Binacle.TestsKernel`, `Binacle.TestReporting` and `Binacle.CompactNotation.UnitTests` (in `shared/test`)
+- `/vipaq/tools/` (`Binacle.ViPaq.VectorGenerators`, `Binacle.ViPaq.PackedDataGenerator`), `/shared/tools/` (`Binacle.OrLibrary.Converter`) — standalone generators, not referenced by the shipped projects
 - `/samples/docker/` (4 `.dcproj`), `/samples/kubernetes/` (`.proj`), `/results/`, `/api/` (requests), `/build/`
 - Top-level content projects: `assets/assets.proj`, `config/config.proj`, `docs/docs.proj`, `web/web.proj`
 - `/_root/` — loose files (`.dockerignore`, `.editorconfig`, `Dockerfile`, `gulpfile.js`, `package.json`, README)
 
 ## Shared C# props — `Directory.Build.props`
 
-Applies to **every** C# project in the repo. Only three properties:
+Applies to **every** C# project in the repo. Only four properties:
 
 ```xml
 <TargetFramework>net10.0</TargetFramework>
 <Nullable>enable</Nullable>
 <ImplicitUsings>enable</ImplicitUsings>
+<NoWarn>$(NoWarn);AD0001</NoWarn>
 ```
 
 So all C# is .NET 10, nullable-enabled, implicit-usings on. (No `LangVersion` or version props are set here.)
+
+`AD0001` is suppressed because `Xunit.Analyzers`' `MemberDataShouldReferenceValidMember` crashes on valid member
+data in xunit.v3 3.2.2 — an analyzer bug, and AD0001 is raised by the analyzer driver so editorconfig severity
+cannot reach it. The file carries the full reasoning.
 
 ## JS workspaces & asset copy
 

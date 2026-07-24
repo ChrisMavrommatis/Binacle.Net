@@ -1,7 +1,7 @@
 ---
 id: api/tests
 description: api/test integration tests — layout, v3/v4 HTTP conventions, validBinId, preset keys, special bins, base-class asserts, and test host config
-verified: 2026-07-16
+verified: 2026-07-24
 check: Test folders mirror api/src/Binacle.Net/v{3,4}/Endpoints/; validBinId, PresetKeys, special bins, and base-class asserts match api/test/ source
 also_update:
   - shared
@@ -20,9 +20,10 @@ Both are xUnit over `WebApplicationFactory<IApiMarker>`, registered with `[assem
 The core fixture uses `UseEnvironment("Test")`, a camelCase `JsonSerializerOptions` with `JsonStringEnumConverter`,
 and a null logger factory.
 
-> `Binacle.Net.ServiceModule.IntegrationTests` needs **Azurite** on `127.0.0.1:10002`. Without it every test in
-> that project fails in the fixture constructor with `Connection refused` — the code is fine, the dependency is
-> missing.
+> `Binacle.Net.ServiceModule.IntegrationTests` picks its database backend from **`BINACLE_TEST_INFRA`** —
+> `AzureStorage`, `Postgres`, or `Sqlite`. Unset, it **falls back to SQLite**, so a bare `dotnet test` runs with
+> no external service. Only the first two need something up (Azurite on `127.0.0.1:10002`, Postgres on `5432`);
+> pick one with `config/tests.api.sh service [Sqlite|Postgres|AzureStorage]`.
 
 ## Layout — one folder per endpoint
 
@@ -125,7 +126,8 @@ not empty, then the same per-entry asserts across every result.
   Runs with default modules (ServiceModule off). `// TODO: Run the tests with all modules enabled` (line 34).
 - `BinacleApiWithoutPresets.cs` — same shape but only clears presets (no registration); tests the no-presets path.
 - `Binacle.Net.ServiceModule.IntegrationTests/BinacleApi.cs` — `IAsyncLifetime`; enables ServiceModule via
-  in-memory config (`SERVICE_MODULE=true`, an `AuthToken=NoLimiter::0` rate-limit rule, an Azurite
-  `AzureStorage` connection string, JWT issuer/audience/secret "ForTestsOnly"). `InitializeAsync` seeds an admin
+  in-memory config (`SERVICE_MODULE=true`, an `AuthToken=NoLimiter::0` rate-limit rule, a connection string
+  chosen by `ResolveTestInfrastructure()` from `BINACLE_TEST_INFRA`, JWT issuer and audience `"ForTestsOnly"`
+  with a separate 70-plus-character `TokenSecret`). `InitializeAsync` seeds an admin
   (`DefaultAdminAccount`) and a known user; `NonExistentId = EF81C267-A003-44B8-AD89-4B48661C4AA5` is hard-coded.
   Same all-modules TODO (line 44).

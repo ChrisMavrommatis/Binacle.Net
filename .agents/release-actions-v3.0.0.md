@@ -11,9 +11,10 @@ to verify. Work these until all are checked, then cut the release.
   Variables: `src/Binacle.Net/Binacle.Net.csproj` → `api/src/Binacle.Net/Binacle.Net.csproj`.
   The `src/` → `api/src/` move breaks the `release-docker-image.yml` publish step until this changes.
 
-- [ ] **Run a docker image build.** Never run since the `Binacle.Geometry` extraction — every C# suite
-  (including ServiceModule) and the TS suites are green, but the image build was skipped by choice. No CI runs
-  tests, so run the image build **and** the full suite once for a genuinely green sweep before tagging.
+- [ ] **Run a docker image build.** Never run since the `Binacle.Geometry` extraction. The suites themselves
+  are covered by `run-tests.yml` (every C# suite including ServiceModule on SQLite and Postgres, plus the TS
+  suites) — but it runs only on `pull_request` / `workflow_dispatch`, and it does **not** build the image.
+  Build the image once before tagging, and make sure the PR that lands the release went green.
 
 ## Correctness — verify before shipping a frozen contract
 
@@ -26,6 +27,25 @@ to verify. Work these until all are checked, then cut the release.
   body-length check is the backstop). Vectors in `vipaq/test-vectors/serialization/decode-invalid.json` (C# + TS
   green); format detail in `vipaq/PROTOCOL.md`. Only the release-body announcement remains — below.
 
+## Code loose ends from the forwarded-headers work
+
+- [x] **`AuthTokenRateLimitingPolicy` now partitions on `Connection.RemoteIpAddress` — DONE 2026-07-24.**
+  `ServiceModule/ExtensionMethods/HttpContextExtensions.GetClientIp()` is deleted (it returned the raw
+  `X-Forwarded-For` value, falling back to `X-Real-IP`, so the login throttle partitioned on a string the caller
+  wrote — varying it reset the limit). Verified: with the feature off, a forged `X-Forwarded-For` and a forged
+  `X-Real-IP` both leave the resolved caller unchanged. Suites green (ServiceModule 107, API core 622).
+
+- [ ] **Add the two warn-once diagnostics.** Both wrong states are silent: a mismatched trust list only logs
+  `Unknown proxy` at Debug. Neither check trusts a header for anything — each reads one only to decide whether to
+  warn. (1) Feature disabled but a request carries a forwarding header → the client IP is the proxy's. (2) Feature
+  enabled and a forwarding header present but `X-Original-For` absent → the trust list does not match. Open
+  question: whether these sit beside the extension in the API project or in `DiagnosticsModule` next to `/_debug`.
+
+- [ ] **Tests for both pieces.** None exist yet: trusted hop resolves the caller; untrusted hop leaves the socket
+  address; an entry beyond `ForwardLimit` is ignored; a vendor header name resolves; startup fails when both trust
+  flags are off and `TrustedProxies` is empty. For the health check: CIDR matches, single address matches, an
+  IPv4-mapped caller matches, and the `start-end` form fails validation.
+
 ## At release time
 
 - [ ] **Announce the ViPaq token break** in the GitHub release body. The rebuilt format rejects every token an
@@ -37,6 +57,16 @@ to verify. Work these until all are checked, then cut the release.
   is step 4 of the migration guide.
 
 ## Docs site — fix before publicising (see also `post-release-v3.0.0.md`)
+
+- [ ] **Write the two new configuration pages.** Neither exists in any earlier version, so there is nothing to
+  copy forward:
+  - **Forwarded headers** — running behind a proxy or CDN. The trust settings, the container and tunnel cases,
+    using `/_debug` to read the proxy's address, the vendor headers, and why `ASPNETCORE_FORWARDEDHEADERS_ENABLED`
+    is ignored.
+  - **Health checks** — carry the page forward, then document the three breaking `RestrictedIPs` changes: CIDR now
+    means a prefix length (which **narrows** existing entries), IPv4-mapped callers now match so the list works in
+    a container at all, and the `start-end` range form is removed and now fails startup validation. Also that the
+    list needs forwarded headers to match anything behind a proxy.
 
 - [ ] **Fix the shared ViPaq protocol page.** `docs/collections/_common_pages/vipaq-protocol.md` is a
   `_common_pages` page shared by **every** version folder, not versioned — it renders once at

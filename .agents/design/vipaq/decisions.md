@@ -1,7 +1,7 @@
 ---
 id: vipaq/decisions
 description: ViPaq decisions ledger — the locked decisions and their reasons, plus the open questions.
-verified: 2026-07-14
+verified: 2026-07-24
 check: Locked decisions are not contradicted by vipaq/PROTOCOL.md or vipaq/src/Binacle.ViPaq
 also_update:
   - vipaq/architecture
@@ -180,8 +180,8 @@ all recorded in the header, and a decoder obeys the header rather than re-derivi
 
 ### D15 — Generators are for combinatorial and derived vectors only (CONFIRMED 2026-07-13)
 The vector generator (`Binacle.ViPaq.VectorGenerators`) earns its keep on two files: `header-bytes.json` (32
-combinatorial rows, tedious and error-prone by hand) and the interop artifact (`artifact-cs.json` — the actual
-bytes C#'s encoder emits, which TS must match, so it *has* to be derived). Everything else stays **hand-authored**
+combinatorial rows, tedious and error-prone by hand) and the interop artifacts (`interop/cs/{raw,deflate,gzip}.json`
+— the actual bytes C#'s encoder emits, which TS must match, so they *have* to be derived). Everything else stays **hand-authored**
 JSON: `exact-bytes.json`, `little-endian/*.json`, `width-selection.json`, `width-invalid.json`,
 `decode-invalid.json`, `encode-invalid.json`, `round-trip-scenarios.json`.
 

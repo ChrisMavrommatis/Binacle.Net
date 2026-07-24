@@ -5,7 +5,7 @@
 ## Why
 
 The web (Alpine) client calls the packing API with no token, so with ServiceModule on every call is anonymous and
-bound by `ApiUsageAnonymous` — the site gets 429s under normal use (`$api/modules/service`). Authenticating fixes
+bound by `ApiUsageAnonymous` — the site gets 429s under normal use (the ServiceModule doc). Authenticating fixes
 that, but a bare access token expires (`JwtAuth.ExpirationInSeconds`, 3600) and there is **no way to renew it
 without re-sending credentials** — there is no refresh grant today. Refresh tokens let a client authenticate once
 and stay authenticated silently until the refresh token itself expires.
@@ -43,4 +43,4 @@ whatever shape that rework settles on, so it is cheaper to add during the rework
 
 ## Related
 
-- `$api/modules/service` (auth, token endpoint, rate-limiting tiers)
+- the ServiceModule doc (auth, token endpoint, rate-limiting tiers)

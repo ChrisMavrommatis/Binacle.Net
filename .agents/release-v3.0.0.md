@@ -20,22 +20,50 @@ The two correctness questions are **now verified** (2026-07-19, differential-tes
 
 1. **`API_PROJECT_PATH` Actions variable** *(external — see actions)*. The `src/` → `api/src/` move breaks the
    `release-docker-image.yml` publish step until this is set. The release cannot publish otherwise.
-2. **Docker image build + full green sweep** *(external — see actions)*. Never run since the `Binacle.Geometry`
-   extraction, and **no CI runs tests**, so one local green sweep — all C#/TS suites plus the image build — is
-   the only gate there is. (The API compiles clean — `dotnet build` 0 warnings, 2026-07-19 — but the image
-   build and full suite still need one run.)
+2. **Docker image build** *(external — see actions)*. The test suites are covered — `run-tests.yml` (landed
+   2026-07-20) builds the solution and runs every C# suite plus the TS suites on each PR, including
+   ServiceModule against both SQLite and Postgres. It does **not** build the docker image, and it only triggers
+   on `pull_request` / `workflow_dispatch` — never on a tag. So the remaining gate is one image build, which has
+   not run since the `Binacle.Geometry` extraction, plus a green CI run on the PR that lands the release.
 3. **Fitting results are unchanged — VERIFIED 2026-07-19.** Differential-tested against the v2.1.1 image, zero
    disagreements. No release-notes caveat needed. Evidence folded into `$lib/findings#F3`.
 4. **Old ViPaq tokens fail loudly — VERIFIED 2026-07-19, locked 2026-07-20.** Zero silent misparses; four
    regression vectors committed in `vipaq/test-vectors/serialization/decode-invalid.json` (C# + TS green).
    Format detail in `vipaq/PROTOCOL.md`. Still **announce the token break** in the release body (below).
 
-## Cut the release
+## Breaking changes to announce
+
+Both are already written into `release-notes-v3.0.0.md`; this is the checklist that they are covered.
+
+1. **ViPaq tokens** — old tokens no longer decode, no fallback reader. Verified to fail loudly (2026-07-20).
+2. **Health check `RestrictedIPs`** — three changes, one of which **narrows existing allow-lists**:
+   - CIDR now means a prefix length. The value after `/` was read as an address mask, so `192.168.1.0/24`
+     matched nearly the whole IPv4 range. Anyone relying on a CIDR entry must re-check who is inside it or risk
+     locking themselves out.
+   - IPv4 callers arriving in IPv4-mapped IPv6 form are now unmapped before matching, so the list works in a
+     container at all. It previously could not match any IPv4 entry.
+   - The `start-end` range form is removed and now fails startup validation.
+
+   `IPAddressRange` was deleted; matching is `System.Net.IPNetwork` via `RestrictedIPNetwork`.
+
+Also new in this release, not breaking: **forwarded headers** (`Config_Files/ForwardedHeaders.json`, disabled by
+default) and the **`/_debug` endpoint** (`DEBUG_ENDPOINT`, disabled by default). `ASPNETCORE_FORWARDEDHEADERS_ENABLED`
+is deliberately ignored — see `$api/configuration`.
+
+## Cut the release — beta image first
+
+The release goes out in stages. A **beta image ships first** and gets deployed; the `v3.0.x` docs are written
+while it is running, and released after. Docs are therefore **not a blocker** for the beta.
 
 1. All four blockers green.
-2. Tag `v3.0.0`; the `release-docker-image.yml` workflow publishes the image.
-3. Paste `release-notes-v3.0.0.md` into the GitHub release body, and **announce the ViPaq token break** there.
-4. Once it is out, work `post-release-v3.0.0.md`.
+2. **Publish a beta image** and deploy it. This is the first time the image runs anywhere, so it is also the
+   real test of the new forwarded-headers and health-check behaviour.
+3. **Write the `v3.0.x` docs** while the beta is deployed — owned by `plans/docs-versioning.md`, including the
+   two pages that are new in this version (forwarded headers, health checks).
+4. **Release the docs**, then tag `v3.0.0`; the `release-docker-image.yml` workflow publishes the final image.
+5. Paste `release-notes-v3.0.0.md` into the GitHub release body. Announce **both** breaking changes there — the
+   **ViPaq token break** and the **health check `RestrictedIPs` change** (see above).
+6. Once it is out, work `post-release-v3.0.0.md`.
 
 ## Not in this release — tracked elsewhere, do not pull these in
 

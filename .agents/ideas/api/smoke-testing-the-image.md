@@ -121,6 +121,6 @@ Found the hard way while sketching this; they'd each cost an hour otherwise.
 
 ## Related
 
-- `$api/configuration` — the config file layout and env-var conventions these checks are really testing
-- `$api/modules` — the module flags
-- `$build-topology` — the publish → `docker build` → compose chain
+- the API configuration doc — the config file layout and env-var conventions these checks are really testing
+- the modules doc — the module flags
+- the build-topology doc — the publish → `docker build` → compose chain

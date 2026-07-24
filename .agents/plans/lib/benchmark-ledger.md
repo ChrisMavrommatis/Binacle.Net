@@ -13,5 +13,5 @@ exists; do not quote them until they are re-run. (`BestBin_v2` once measured 5â€
 - Curate a keeper into `results/lib/benchmarks/`. The vault is hand-curated â€” harnesses write to gitignored
   scratch, never straight into `results/`; diff the scratch against the committed files and copy the keeper in
   by hand.
-- Algorithm racing was re-measured 2026-07-17 and the evidence lives in `$lib/findings`; its scratch reports are
+- Algorithm racing was re-measured 2026-07-17 and the evidence lives in the lib design findings; its scratch reports are
   in `BenchmarkDotNet.Artifacts/` and a keeper should be curated in.
