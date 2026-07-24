@@ -1,6 +1,5 @@
 ﻿using System.Threading.RateLimiting;
 using Binacle.Net.ServiceModule.Configuration;
-using Binacle.Net.ServiceModule.ExtensionMethods;
 using Binacle.Net.ServiceModule.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
@@ -31,7 +30,10 @@ internal class AuthTokenRateLimitingPolicy : IRateLimiterPolicy<string>
 	
 	public RateLimitPartition<string> GetPartition(HttpContext httpContext)
 	{
-		var partitionKey = httpContext?.GetClientIp() ?? "unknown";
+		// The forwarded-headers middleware has already resolved this to the real caller wherever the app runs
+		// behind a proxy it trusts. Reading a header here instead would partition on a value the caller writes,
+		// which lets anyone reset their own limit by varying it.
+		var partitionKey = httpContext?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 		return RateLimiterConfiguration.Get(partitionKey, this.options.Value.AuthTokenConfiguration);
 	}
 	
