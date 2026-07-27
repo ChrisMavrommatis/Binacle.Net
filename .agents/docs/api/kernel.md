@@ -1,7 +1,7 @@
 ---
 id: api/kernel
 description: Binacle.Net.Kernel — shared patterns used by all API projects and modules
-verified: 2026-07-24
+verified: 2026-07-27
 check: IApiMarker and registration helpers match api/src/Binacle.Net.Kernel/
 also_update:
   - api/endpoints
@@ -138,6 +138,37 @@ module's `ModuleDefinition`.
   Use it to assert "this construction/conversion succeeds" (e.g. a volume calc that could overflow).
 - `ValidationExtensions.GetValidationSummary()` — groups a `ValidationResult` into `Dictionary<string, string[]>`,
   the shape fed to `HttpValidationProblemDetails` (the 422 body).
+
+## Network
+
+`Kernel/Network/IPEntry` reads an IP entry as an operator writes it in configuration: **a single address, or
+CIDR notation**. Anywhere a module takes a list of addresses from a config file, it parses them through here, so
+one spelling means one thing across the app.
+
+```csharp
+if (!IPEntry.TryParse(entry, out var network)) { /* refuse it */ }
+var caller = IPEntry.Normalize(context.Connection.RemoteIpAddress);
+```
+
+The slash picks the form; nothing else is attempted. Two behaviours are worth knowing before you use it:
+
+- **An entry must read as the host it admits.** `IPAddress.TryParse` still accepts the inet_aton forms -
+  `010.10.10.10` is octal and lands on `8.10.10.10`, `0x0A.10.10.10` is hex, `10.1` and `167772161` both become
+  `10.0.0.1` - and it drops an IPv6 scope id. `IPEntry` refuses anything that does not survive a round trip
+  through `IPAddress.ToString()`, which is one rule instead of a table. IPv6 is held to the same rule, so
+  `2001:0db8::1` must be written `2001:db8::1`.
+- **Host bits are masked off**, as they are everywhere else in .NET: `192.168.1.1/24` is the whole
+  `192.168.1.0/24`. The BCL does this silently and the docs claim it throws - it does not. Callers that show a
+  list to an operator should say what an entry resolved to.
+
+`Normalize` unmaps an IPv4-mapped IPv6 address, which a dual-mode socket produces for every IPv4 caller. The
+entry side is normalised during parse, so an IPv4-mapped CIDR entry (`::ffff:192.168.1.0/120`) is refused rather
+than parsed into something that matches no caller. That refusal exists because `IPNetwork.Contains` is not
+symmetric: an unmapped network contains a mapped caller, but a mapped network does not contain an unmapped one,
+so such an entry would match a container's caller and not a real IPv4 one. Carrying the prefix over instead
+(taking 96 off it, so `/120` becomes `/24`) works and was measured, if a reason to accept the form ever appears.
+
+Tested in `api/test/Binacle.Net.Kernel.UnitTests/Network/`.
 
 ## Logging
 

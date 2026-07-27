@@ -1,7 +1,7 @@
 ---
 id: api/configuration
 description: Config file layout, env-var conventions, override precedence, and feature flag list
-verified: 2026-07-24
+verified: 2026-07-27
 check: Config keys and env var names match appsettings.json and module config files; Cors.json and ForwardedHeaders.json present
 also_update:
   - api/modules/service
@@ -94,9 +94,13 @@ The trust settings widen in order — loopback, then private networks, then name
 |---|---|---|
 | `TrustLoopback` | `true` | Keeps the framework's loopback defaults (`127.0.0.0/8`, `::1`). `false` clears both framework lists. |
 | `TrustPrivateNetworks` | `true` | Adds `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `fc00::/7`. Covers container and tunnel setups without naming a gateway address. |
-| `TrustedProxies` | `[]` | Additive. CIDR entries go to `KnownIPNetworks`, single addresses to `KnownProxies`. |
+| `TrustedProxies` | `[]` | Additive. Every entry is parsed by `IPEntry` (`$api/kernel`, Network) and added to `KnownIPNetworks` — a single address is a network of one, and the middleware checks both lists alike. |
 | `ForwardLimit` | `1` | Header entries processed, right to left. |
 | `ForwardedForHeaderName` | `null` | Read a vendor header instead — `CF-Connecting-IP`, `X-Real-IP`, `X-Azure-ClientIP`. |
+
+**An entry must read as the host it trusts.** `IPEntry` refuses the spellings the BCL would quietly rewrite —
+`010.10.10.10` is octal for `8.10.10.10`, `172.17.1` is shorthand for `172.17.0.1` — because this list decides
+whose forwarded header is believed. See `$api/kernel` (Network) for the full rule.
 
 **Both flags off with an empty `TrustedProxies` fails startup validation.** Two empty trust lists make the
 middleware skip the check entirely rather than match nothing (`checkKnownIps` is false), so every caller's header

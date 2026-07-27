@@ -1,6 +1,15 @@
 # Idea: a task runner for the config scripts (with shell completion)
 
-**Status:** Unvetted idea. Nothing adopted. Prompted by wanting tab-completion for `config/tests.api.sh`.
+**Status (2026-07-26):** Partly overtaken. `just` was picked and a `justfile` exists at the repo root, but it
+covers only the docs and web dev loops and says so: "The rest stays in `config/*.sh` until we know what we
+actually want out of `just`." So the tool question below is **settled**; what remains open is whether the test,
+coverage, benchmark and build scripts get recipes too.
+
+Read this alongside the CI plan for one shared set of scripts - that plan needs one entry point per job callable
+from both a laptop and a runner, which is the same front door this idea describes. Decide them together or they
+will produce two competing ways to run a build.
+
+Originally prompted by wanting tab-completion for `config/tests.api.sh`.
 
 ## The problem
 
@@ -22,14 +31,14 @@ One entry point that wraps the existing scripts, so `<TAB>` completes every task
 list lives in exactly one spot. The scripts keep doing the work — the runner is a thin front door, not a
 rewrite.
 
-Two candidates:
+Two candidates were weighed, **`just` won** and is in use:
 
 | Tool | Completion | Install | Feel |
 |---|---|---|---|
 | **make** | `bash-completion` completes `make <TAB>` targets out of the box | none — already on every dev box | terse targets, crufty syntax |
 | **just** | `just --completions bash\|zsh\|fish`, plus recipe-name completion | one small binary | clean, built for exactly this |
 
-Both give non-drifting completion and a nicer front door (`just test-service Sqlite` or `make test-service`
+Either gives non-drifting completion and a nicer front door (`just test-service Sqlite`
 vs `config/tests.api.sh service Sqlite`).
 
 ## Shape (sketch, not decided)
@@ -44,11 +53,12 @@ CI could later call the same recipes, so local and CI share one list of commands
 
 ## Open questions
 
-- **make or just** — zero-install vs cleaner UX. `make` wins if "no new tooling" matters most.
+- ~~**make or just**~~ — settled, `just` is in use for the docs and web loops.
+- **Does the rest move in at all?** The justfile deliberately stopped at the dev loops. The CI work wants one
+  entry point per job anyway, so the real question is whether those entry points are recipes or stay as
+  `config/*.sh` that a recipe calls.
 - **Wrap or absorb** — keep `config/*.sh` as the implementation and have recipes call them (lean, no rewrite),
   or fold simple scripts into the runner over time. Start by wrapping.
-- **Retire the hand-written completion** — `config/completions/tests.api.bash` becomes redundant once the
-  runner completes its own tasks; delete it then.
 - **Naming** — recipe names (`test-service` vs `test:service`), and whether the infra is a positional arg or a
   named one (`just test-service Sqlite` vs `just test-service infra=Sqlite`).
 

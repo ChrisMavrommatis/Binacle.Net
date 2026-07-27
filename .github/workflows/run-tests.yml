@@ -75,6 +75,10 @@ jobs:
         if: ${{ !cancelled() }}
         run: dotnet test api/test/Binacle.Net.UnitTests --configuration Release --no-build
 
+      - name: Test — api (kernel unit)
+        if: ${{ !cancelled() }}
+        run: dotnet test api/test/Binacle.Net.Kernel.UnitTests --configuration Release --no-build
+
       - name: Test — api (diagnostics unit)
         if: ${{ !cancelled() }}
         run: dotnet test api/test/Binacle.Net.DiagnosticsModule.UnitTests --configuration Release --no-build

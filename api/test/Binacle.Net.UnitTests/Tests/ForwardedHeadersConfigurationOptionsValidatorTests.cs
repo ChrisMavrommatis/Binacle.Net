@@ -10,17 +10,19 @@ public class ForwardedHeadersConfigurationOptionsValidatorTests
 {
 	private readonly ForwardedHeadersConfigurationOptionsValidator validator = new();
 
+	// The element is nullable because a null entry is one of the cases under test - binding gives TrustedProxies a
+	// null element, which is what a stray comma in the JSON file produces.
 	private static ForwardedHeadersConfigurationOptions OptionsWith(
 		bool trustLoopback = true,
 		bool trustPrivateNetworks = true,
-		string[]? trustedProxies = null,
+		string?[]? trustedProxies = null,
 		int forwardLimit = 1
 	) => new()
 	{
 		Enabled = true,
 		TrustLoopback = trustLoopback,
 		TrustPrivateNetworks = trustPrivateNetworks,
-		TrustedProxies = trustedProxies,
+		TrustedProxies = trustedProxies!,
 		ForwardLimit = forwardLimit
 	};
 
@@ -90,11 +92,19 @@ public class ForwardedHeadersConfigurationOptionsValidatorTests
 		this.validator.Validate(options).IsValid.ShouldBeTrue();
 	}
 
+	// Entries are read through IPEntry, so a spelling that parses to a different host than it reads as is refused
+	// here rather than trusted. The exhaustive table lives with the parser in Binacle.Net.Kernel.UnitTests; these
+	// rows prove this list is held to it.
 	[Theory]
 	[InlineData("not-an-address")]
 	[InlineData("172.16.0.1-172.16.0.9")]
 	[InlineData("")]
-	public void An_Unusable_Trusted_Proxy_Fails_Validation(string trustedProxy)
+	[InlineData(null)]
+	[InlineData("010.10.10.10")] // octal, trusts 8.10.10.10
+	[InlineData("172.17.1")] // shorthand, trusts 172.17.0.1
+	[InlineData("2886729729")] // the whole address as one number
+	[InlineData("2001:0db8::1")] // written out, must be 2001:db8::1
+	public void An_Unusable_Trusted_Proxy_Fails_Validation(string? trustedProxy)
 	{
 		var options = OptionsWith(trustedProxies: [trustedProxy]);
 

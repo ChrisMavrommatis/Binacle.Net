@@ -58,7 +58,9 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - Trust is explicit — a proxy on loopback or a private network is trusted by default, anything else must be named. The app **refuses to start** if nothing is trusted, because that would make every caller's header believable.  
 - A different header can be read instead, for CDNs that send one — `CF-Connecting-IP`, `X-Real-IP`, `X-Azure-ClientIP`.  
 - `ASPNETCORE_FORWARDEDHEADERS_ENABLED` is **ignored**. It switches the underlying middleware on with no proxy verification, which lets any caller choose their own address.  
+- `TrustedProxies` entries are **read exactly as written**, the same rule as health check `RestrictedIPs`. `010.10.10.10` used to be read as octal and trust `8.10.10.10`, and `172.17.1` used to mean `172.17.0.1`; both now fail startup validation rather than trusting a host you did not name.  
 - Added a **`/_debug` endpoint**, off by default, enabled with `DEBUG_ENDPOINT=True`. It echoes the caller's own request — connection address and headers — for working out what a proxy is sending.  
+- A **startup warning** when a forwarding header arrives and does not take effect, either because the feature is off or because the trust list does not name your proxy. Logged once. Without it both states are silent and the app quietly reads the proxy as the caller.  
 - The `Dockerfile` and existing environment variables are unchanged.  
 
 ## 🧪 Diagnostics Module
@@ -70,6 +72,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - Health check **`RestrictedIPs` now uses CIDR notation correctly**. The value after `/` was previously read as an address mask, so `192.168.1.0/24` covered nearly the whole IPv4 range instead of 256 addresses. Existing CIDR entries are now **much narrower** than they were.  
 - Health check `RestrictedIPs` now matches **IPv4 callers in containers**. Addresses arriving in IPv4-mapped IPv6 form are unmapped before comparison, which they previously were not — no IPv4 entry could match.  
 - Removed the **`start-end` range form** from `RestrictedIPs`. Entries such as `192.168.1.0-192.168.1.255` now fail startup validation. Use CIDR instead.  
+- `RestrictedIPs` entries are now **read exactly as written**. An IPv4 address must be four plain decimal parts with no leading zeros, and an IPv6 address must be in its short, lowercase form. `010.10.10.10` used to be read as octal and admit `8.10.10.10`; `10.1` used to mean `10.0.0.1`; `167772161` meant the same. All of these now fail startup validation instead of quietly admitting a host you did not name. `192.168.1.1/24` still means the whole `192.168.1.0/24` — that is what CIDR notation means — but the startup log now says so.  
 
 ## 🎨 UI Module
 - The Protocol Decoder reads the **new ViPaq format only**. Tokens from earlier versions are rejected.  
@@ -122,6 +125,7 @@ To upgrade to **v3.0.0**, follow these steps:
    - Replace any `start-end` entries with CIDR — `192.168.1.0-192.168.1.255` becomes `192.168.1.0/24`. Left as they are, startup validation now fails.  
    - Re-check any CIDR entry. It now covers what it says, which is far less than before — confirm the addresses you expect are still inside it, or you will lock yourself out.  
    - A range that does not line up with a CIDR boundary must be split into several entries, or widened to the enclosing subnet.  
+   - Drop any leading zeros — `010.10.10.10` becomes `10.10.10.10`, and note it used to admit `8.10.10.10`, so check that host was not the one you meant. Write IPv6 entries in the short lowercase form: `2001:0DB8::1` becomes `2001:db8::1`.  
    - If Binacle.Net runs behind a proxy, load balancer or CDN, enable **forwarded headers** as well. Without it the list is compared against the proxy's address and can never match your monitoring system.
 
 ---

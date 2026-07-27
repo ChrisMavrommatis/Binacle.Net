@@ -1,5 +1,5 @@
-using System.Net;
 using Binacle.Net.Kernel.Configuration.Models;
+using Binacle.Net.Kernel.Network;
 using FluentValidation;
 
 namespace Binacle.Net.Configuration;
@@ -65,11 +65,15 @@ internal class ForwardedHeadersConfigurationOptionsValidator : AbstractValidator
 					+ "or add an entry to TrustedProxies."
 				);
 
+			// Read through IPEntry, the same as the health check allow-list. This list decides whose forwarded
+			// header is believed, so an entry that parses to a host other than the one it reads as - "010.10.10.10"
+			// is octal for 8.10.10.10 - trusts someone nobody named.
 			RuleForEach(x => x.TrustedProxies)
-				.Must(proxy => IPNetwork.TryParse(proxy, out _) || IPAddress.TryParse(proxy, out _))
+				.Must(proxy => IPEntry.TryParse(proxy, out _))
 				.WithMessage(
 					"'{PropertyValue}' is not a valid entry. Use a CIDR range such as 172.16.0.0/12, or a single "
-					+ "address such as 172.17.0.1. Address ranges (1.2.3.4-1.2.3.9) are not supported."
+					+ "address such as 172.17.0.1. Write each part in plain decimal with no leading zeros. Address "
+					+ "ranges (1.2.3.4-1.2.3.9) are not supported."
 				);
 
 			RuleFor(x => x.ForwardLimit)

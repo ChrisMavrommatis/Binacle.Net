@@ -12,7 +12,7 @@ reviewable. Read this first to know where things are.
 | `plans/` | Work not yet done — designs, TODOs, migrations, deferred decisions. | Find the plan in `plans/_index.md`. Trim/delete an item once it lands. |
 | `ideas/` | Rough, unvetted ideas — no commitment, no timeline. | Find the idea in `ideas/_index.md`. Move it to `plans/` once it's picked up (`ideas/README.md` says how). |
 | `memory/` | Durable "why" with no home in a doc or plan — gotchas, settled decisions, conventions. | Scan `memory/_index.md` at session start. Add a fact only if no doc/plan fits (`memory/README.md` says how). |
-| `release-v<version>.md` (+ companions) | The per-version release set, at root: the plan, plus `release-actions-v<version>.md` (manual/external steps), `release-notes-v<version>.md` (the GitHub release body), and `post-release-v<version>.md` (right-after-release work). | When cutting a release. Deleted once the version is out. |
+| `release-v<version>.md` (+ companions) | The per-version release set, at root: the release plan, plus `release-notes-v<version>.md` (the GitHub release body) and `post-release-v<version>.md` (right-after-release work). | When cutting a release. Deleted once the version is out. |
 
 Nothing here is loaded into the session up front — `CLAUDE.md` only points at this file, and you open
 what you need on demand. `docs/`, `design/`, `plans/`, `ideas/`, and `memory/` each have a generated `_index.md`
@@ -42,9 +42,16 @@ not to eagerly load unrelated context. Keep a new doc/plan/idea in its slice fol
 - **memory = the leftover why.** Not product behaviour (that's docs) and not future work (that's plans).
   Durable but mutable — it can change. One fact per file. If a memory's fact moves into a doc/plan,
   delete the memory.
-- **the `release-v<version>` set = shipping.** At root, one set per version: the plan, its actions, its notes,
-  and the post-release list. The plan is the **one exception** to the reference rules — it may point at any file
-  to coordinate the release, and nothing points back at it. Deleted once the version ships.
+- **the `release-v<version>` set = shipping.** At root, one set per version: the plan, its notes, and the
+  post-release list. The plan is the **one exception** to the reference rules — it may point at any file to
+  coordinate the release, and nothing points back at it. Deleted once the version ships.
+
+  **The release plan is an orchestrator, not a container.** It carries gated checklists — what must be green
+  before a beta image, and before the tag — where each row either links to a plan that holds the whole item, or
+  is a checkbox for a one-line action with a known answer. One item per plan file, so a session opens only the
+  item it is working on. When a plan lands its file is deleted, so ticking the row and dropping the link happen
+  in the same change; otherwise the checklist rots into dead links. `post-release-v<version>.md` follows the same
+  shape and is the **only** file that may link into `ideas/`, capped at work with an immediate benefit.
 
 ## `docs/` and `web/` are off limits
 
@@ -90,7 +97,7 @@ What falls out of these rules:
 - **Only the top-level `.agents/README.md` (and `CLAUDE.md`) is exempt** — it is the global map, so it may *name*
   any file. A slice README follows its own layer's rules: it describes, rules, and indexes its folder, but a
   `docs/` README still references only docs.
-- **The release set is the second exception.** `release-v<version>.md` and its `post-release` / actions / notes
+- **The release set is the second exception.** `release-v<version>.md` and its `post-release` / notes
   companions coordinate a release, so the plan may point at any file — but, like the map, **nothing points at
   it**. It is version-scoped and deleted once shipped.
 - **A layer's own `_index.md` is navigation, not citation.** It lists its folder's files by name so they can be

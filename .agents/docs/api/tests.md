@@ -1,7 +1,7 @@
 ---
 id: api/tests
 description: api/test integration tests — layout, v3/v4 HTTP conventions, validBinId, preset keys, special bins, base-class asserts, and test host config
-verified: 2026-07-24
+verified: 2026-07-27
 check: Test folders mirror api/src/Binacle.Net/v{3,4}/Endpoints/; validBinId, PresetKeys, special bins, and base-class asserts match api/test/ source
 also_update:
   - shared
@@ -9,12 +9,30 @@ also_update:
 
 # API Tests
 
-Two projects under `api/test/`:
+Six projects under `api/test/` — two integration suites, which this doc is about, and four unit suites:
 
 | Project | Covers | Run |
 |---|---|---|
 | `Binacle.Net.IntegrationTests` | v3 + v4 HTTP endpoints (fit, pack, presets) | `./config/tests.api.sh core` |
 | `Binacle.Net.ServiceModule.IntegrationTests` | auth token, admin account/subscription (ServiceModule on) | `./config/tests.api.sh service` |
+| `Binacle.Net.UnitTests` | `Binacle.Net`'s own options validators, and the forwarded-headers middleware over the options they produce | `./config/tests.api.sh unit` |
+| `Binacle.Net.Kernel.UnitTests` | Kernel features, one folder each (`Network/`) | `./config/tests.api.sh unit` |
+| `Binacle.Net.DiagnosticsModule.UnitTests` | health check allow-list, middleware, config validators | `./config/tests.api.sh unit` |
+| `Binacle.Net.ServiceModule.UnitTests` | ServiceModule config validators and policies | `./config/tests.api.sh unit` |
+
+The unit suites need no host and nothing brought up. `Binacle.Net.Kernel.UnitTests` is split by Kernel feature,
+each folder holding its own `Tests/` and `Providers/`.
+
+`ForwardedHeadersPipelineTests` needs framework code to run: `ConfigureForwardedHeaders` only writes options,
+and whether a caller actually gets resolved is `ForwardedHeadersMiddleware` acting on them. It calls
+`ForwardedHeadersExtensions.Apply(configured, options)` — the mapping split out of the extension for exactly
+this — then constructs the framework middleware over a `DefaultHttpContext`, the same `MiddlewareWith` /
+`ContextWith` shape the other middleware suites use. No host, no test server, no HTTP client.
+`Connection.RemoteIpAddress` is set by hand, where Kestrel would have set it.
+
+`CapturingLogger<T>` in `Binacle.Net.DiagnosticsModule.UnitTests` plays the equivalent role for middleware whose
+whole job is to log something: `NullLogger` cannot answer "what did it say", and a mocking library would be a
+dependency for one interface.
 
 Both are xUnit over `WebApplicationFactory<IApiMarker>`, registered with `[assembly: AssemblyFixture(...)]`.
 The core fixture uses `UseEnvironment("Test")`, a camelCase `JsonSerializerOptions` with `JsonStringEnumConverter`,

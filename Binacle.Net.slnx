@@ -60,6 +60,7 @@
   <Folder Name="/api/test/">
     <Project Path="api/test/Binacle.Net.DiagnosticsModule.UnitTests/Binacle.Net.DiagnosticsModule.UnitTests.csproj" />
     <Project Path="api/test/Binacle.Net.UnitTests/Binacle.Net.UnitTests.csproj" />
+    <Project Path="api/test/Binacle.Net.Kernel.UnitTests/Binacle.Net.Kernel.UnitTests.csproj" />
     <Project Path="api/test/Binacle.Net.ServiceModule.UnitTests/Binacle.Net.ServiceModule.UnitTests.csproj" />
     <Project Path="api/test/Binacle.Net.IntegrationTests/Binacle.Net.IntegrationTests.csproj" />
     <Project Path="api/test/Binacle.Net.ServiceModule.IntegrationTests/Binacle.Net.ServiceModule.IntegrationTests.csproj" />

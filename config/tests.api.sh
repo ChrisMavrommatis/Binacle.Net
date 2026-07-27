@@ -7,6 +7,7 @@ CORE='api/test/Binacle.Net.IntegrationTests'
 SERVICE='api/test/Binacle.Net.ServiceModule.IntegrationTests'
 DIAGNOSTICS='api/test/Binacle.Net.DiagnosticsModule.UnitTests'
 UNIT='api/test/Binacle.Net.UnitTests'
+KERNEL_UNIT='api/test/Binacle.Net.Kernel.UnitTests'
 SERVICE_UNIT='api/test/Binacle.Net.ServiceModule.UnitTests'
 
 run_core()        { echo "Running core integration tests: $CORE"; dotnet test "$ROOT_DIR/$CORE"; }
@@ -14,6 +15,7 @@ run_core()        { echo "Running core integration tests: $CORE"; dotnet test "$
 # Plain unit tests — no host, no external service, so they need nothing brought up first.
 run_unit() {
     echo "Running API unit tests: $UNIT"; dotnet test "$ROOT_DIR/$UNIT" &&
+    echo "Running Kernel unit tests: $KERNEL_UNIT"; dotnet test "$ROOT_DIR/$KERNEL_UNIT" &&
     echo "Running DiagnosticsModule unit tests: $DIAGNOSTICS"; dotnet test "$ROOT_DIR/$DIAGNOSTICS" &&
     echo "Running ServiceModule unit tests: $SERVICE_UNIT"; dotnet test "$ROOT_DIR/$SERVICE_UNIT"
 }

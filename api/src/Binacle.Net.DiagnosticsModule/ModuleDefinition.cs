@@ -175,6 +175,11 @@ public static class ModuleDefinition
 			Log.Information("Debug endpoint. Status {status}. Path {path}", "Enabled", RequestDebugMiddleware.Path);
 		}
 
+		// After UseForwardedHeaders in the outer pipeline, which is the only place it can see whether the header
+		// was applied. Always registered: both states it reports are silent otherwise, and the check costs one
+		// header lookup that misses until it has warned.
+		app.UseMiddleware<ForwardedHeadersDiagnosticsMiddleware>();
+
 		var healthChecksOptions = app.Services.GetRequiredService<IOptions<HealthCheckConfigurationOptions>>();
 
 		if (healthChecksOptions.Value.Enabled)

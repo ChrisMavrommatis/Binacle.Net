@@ -23,6 +23,7 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `api/src/Binacle.Net.UIModule` | Optional: Blazor/Razor interactive packing demo |
 | `api/test/Binacle.Net.IntegrationTests` | HTTP tests for v3 and v4 endpoints |
 | `api/test/Binacle.Net.ServiceModule.IntegrationTests` | Tests for auth and rate limiting (ServiceModule only) |
+| `api/test/*.UnitTests` | One unit suite per source project — `Binacle.Net`, `Kernel`, `DiagnosticsModule`, `ServiceModule`. `Kernel.UnitTests` is split by feature folder |
 | `lib/src/Binacle.Lib` | Core bin-packing algorithms and processors |
 | `lib/src/Binacle.Lib.Abstractions` | Interfaces shared between `Binacle.Lib` and the API layer |
 | `lib/test/` | Lib unit tests, performance tests, benchmarks |

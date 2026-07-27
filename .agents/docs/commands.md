@@ -28,7 +28,7 @@ Unit + integration tests, one script per slice (`tests.<slice>.sh`):
 ```bash
 ./config/tests.lib.sh                  # lib C# unit
 ./config/tests.vipaq.sh [cs|ts]        # vipaq C# unit and/or TS (no arg runs both)
-./config/tests.api.sh [core|service]   # api integration (no arg runs both)
+./config/tests.api.sh [unit|core|service]  # api unit + integration (no arg runs all)
 ./config/tests.shared.sh [cs|ts]       # compact-notation C# and/or TS
 ```
 

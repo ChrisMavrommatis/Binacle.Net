@@ -1,7 +1,7 @@
 ---
 id: api/modules/diagnostics
 description: DiagnosticsModule — always-on logging, OpenTelemetry, health checks, and packing logs
-verified: 2026-07-24
+verified: 2026-07-27
 check: Env var names match DiagnosticsModule config handling
 also_update:
   - api/configuration
@@ -50,9 +50,38 @@ Path and enabled state are configured via `HealthCheckConfigurationOptions`.
 
 ## What UseDiagnosticsModule wires
 
+- `ForwardedHeadersDiagnosticsMiddleware` — always registered; warns once when a forwarding header arrived and
+  did not take effect (see below)
 - `HealthChecksProtectionMiddleware` — restricts health endpoint access by caller address (`RestrictedIPs`)
 - Maps `/_health` (configurable path) with full JSON response via `UIResponseWriter`
 - Health status codes: `Healthy/Degraded → 200`, `Unhealthy → 503`
+
+## Forwarded headers diagnostic
+
+`ForwardedHeadersDiagnosticsMiddleware` exists because the two ways forwarded headers fail are both silent, and
+both leave every component downstream — the health check allow-list, the login throttle, the logs — reading the
+proxy as the caller:
+
+| State | What it warns |
+|---|---|
+| Feature off, request carries the header | Something in front is rewriting the caller and the app ignores it |
+| Feature on, header not applied | The trust list does not name the proxy (the framework says only `Unknown proxy`, at Debug) |
+
+It reads `IOptions<ForwardedHeadersOptions>` — the framework type, not `Binacle.Net`'s config class, which the
+module cannot see. `ConfigureForwardedHeaders` writes `ForwardedHeaders.None` when the feature is off, on
+purpose, so `None` is the app's own answer to whether the feature is live. The same options give the configured
+`ForwardedForHeaderName` (so a vendor header such as `CF-Connecting-IP` is watched instead of `X-Forwarded-For`)
+and `OriginalForHeaderName`.
+
+**`X-Original-For` is the signal that the header was applied**, not the presence of `X-Forwarded-For`: the
+framework rewrites the forwarded header as it consumes entries and removes it once empty, so what is left says
+nothing. Original-for is written only when an address was actually replaced.
+
+Warns **once per process** — a misconfigured proxy sends the header on every request, and a warning per request
+buries the log it is drawing attention to. Both states are fixed at startup, so one flag covers both. It runs
+after `UseForwardedHeaders()` (`Program.cs`), which is the only place the outcome is visible.
+
+Nothing here trusts a header; they are read only to decide whether to warn.
 
 ## Config files
 
@@ -109,12 +138,18 @@ Default: **disabled**. Default path: `/_health`.
 ]
 ```
 
-Entries are parsed by `RestrictedIPNetwork.TryParse` into `System.Net.IPNetwork`; a single address becomes a
-`/32` or `/128` so the middleware matches one kind of entry. An invalid entry fails startup validation.
+Entries are parsed by `IPEntry.TryParse` (`$api/kernel`, Network) into `System.Net.IPNetwork`; a single address
+becomes a `/32` or `/128` so the middleware matches one kind of entry. An invalid entry fails startup validation
+— which spellings are invalid, and why, is the Kernel's business and is documented there.
 
-The caller's address is normalised with `RestrictedIPNetwork.Normalize` before matching, which unmaps IPv4-mapped
-IPv6 addresses. The server listens on a dual-mode socket, so an IPv4 caller arrives as `::ffff:x.x.x.x` and no
-IPv4 entry would match without it.
+`HealthCheckAllowList` holds the parsed list and answers `RestrictsNobody` and `Allows(caller)`. It is nested in
+`HealthChecksProtectionMiddleware`, whose `BuildAllowList` is the only thing that constructs it — so moving to
+`IOptionsMonitor` is a second call to that method and nothing else. `BuildAllowList` also logs a warning for an
+entry whose host bits were masked off: `192.168.1.1/24` covers 256 addresses and does not look like it.
+
+The caller's address is normalised with `IPEntry.Normalize` before matching, which unmaps IPv4-mapped IPv6
+addresses. The server listens on a dual-mode socket, so an IPv4 caller arrives as `::ffff:x.x.x.x` and no IPv4
+entry would match without it.
 
 **Behind a proxy this list matches the proxy, not the caller** — it compares `Connection.RemoteIpAddress`, which
 is the proxy's address until forwarded headers resolve it. See [Forwarded headers](../configuration.md#forwarded-headers-forwardedheadersjson).

@@ -1,5 +1,5 @@
 ﻿using Binacle.Net.DiagnosticsModule.Configuration.Models;
-using Binacle.Net.DiagnosticsModule.Models;
+using Binacle.Net.Kernel.Network;
 using FluentValidation;
 
 namespace Binacle.Net.DiagnosticsModule.Configuration.Validators;
@@ -16,16 +16,16 @@ internal class HealthCheckConfigurationOptionsValidator : AbstractValidator<Heal
 			.NotEmpty()
 			.Must(path => path!.StartsWith("/"))
 			.WithMessage("'{PropertyName}' must start with '/', for example '/_health'.");
+		// The rule sits straight on RuleForEach, not inside ChildRules: FluentValidation does not run a child
+		// validator on a null element, so a null entry passed startup and then threw out of the middleware on the
+		// first health request — the crash this validator exists to replace with a message.
 		RuleForEach(x => x.RestrictedIPs)
-			.ChildRules(childRule =>
-			{
-				childRule.RuleFor(x => x)
-					.Must(x => RestrictedIPNetwork.TryParse(x, out _))
-					.WithMessage(
-						"'{PropertyValue}' is not a valid entry. Use a single address such as 192.168.1.1, or CIDR " +
-						"notation such as 192.168.1.0/24, where the number is a prefix length. Address ranges " +
-						"(1.2.3.4-1.2.3.9) are no longer supported."
-					);
-			});
+			.Must(entry => IPEntry.TryParse(entry, out _))
+			.WithMessage(
+				"'{PropertyValue}' is not a valid entry. Use a single address such as 192.168.1.1, or CIDR " +
+				"notation such as 192.168.1.0/24, where the number is a prefix length and the address is the start " +
+				"of the block. Write each part in plain decimal with no leading zeros. Address ranges " +
+				"(1.2.3.4-1.2.3.9) are no longer supported."
+			);
 	}
 }

@@ -101,9 +101,36 @@ public class HealthChecksProtectionMiddlewareTests
 		reachedHealthCheck().ShouldBeTrue();
 	}
 
+	// CIDR notation masks host bits off in every .NET parser, so "192.168.1.1/24" quietly admits 256 addresses.
+	// The entry is accepted, because that is what the notation means everywhere, but it cannot pass in silence.
+	[Fact]
+	public void An_Entry_Whose_Host_Bits_Were_Masked_Off_Is_Reported()
+	{
+		var logger = new CapturingLogger<HealthChecksProtectionMiddleware>();
+		var options = Options.Create(new HealthCheckConfigurationOptions
+		{
+			Enabled = true,
+			Path = healthPath,
+			RestrictedIPs = ["192.168.1.1/24", "10.0.0.1", "172.16.0.0/12"]
+		});
+
+		_ = new HealthChecksProtectionMiddleware(_ => Task.CompletedTask, logger, options);
+
+		var warning = logger.Warnings.ShouldHaveSingleItem();
+		warning.ShouldContain("192.168.1.1/24");
+		warning.ShouldContain("192.168.1.0/24");
+	}
+
+	// The message has to name the position: the entry itself can be null or blank, and a list of ten with one bad
+	// line is unreadable without it.
 	[Fact]
 	public void A_Malformed_Entry_That_Slipped_Past_Validation_Fails_On_Construction()
 	{
-		Should.Throw<InvalidOperationException>(() => MiddlewareWith("192.168.1.0/24", "not-an-address"));
+		var exception = Should.Throw<InvalidOperationException>(
+			() => MiddlewareWith("192.168.1.0/24", "not-an-address")
+		);
+
+		exception.Message.ShouldContain("position 1");
+		exception.Message.ShouldContain("not-an-address");
 	}
 }
