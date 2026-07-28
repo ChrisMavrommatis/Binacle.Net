@@ -16,7 +16,7 @@ reviewable. Read this first to know where things are.
 
 Nothing here is loaded into the session up front — `CLAUDE.md` only points at this file, and you open
 what you need on demand. `docs/`, `design/`, `plans/`, `ideas/`, and `memory/` each have a generated `_index.md`
-(a grouped manifest); regenerate them all with `config/agents-index.sh` after adding or renaming a file.
+(a grouped manifest); regenerate them all with `just agents all` after adding or renaming a file.
 
 **Everything is grouped by slice, mirroring the repo layout.** A slice is a top-level area of the
 codebase (`api`, `lib`, `vipaq`, `shared`, …); files that don't map to one live at the root under

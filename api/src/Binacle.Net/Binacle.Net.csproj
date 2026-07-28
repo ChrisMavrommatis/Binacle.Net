@@ -7,12 +7,37 @@
 	</PropertyGroup>
 
 	<!-- Emit the OpenAPI documents (v3, v4) at build time, so SDK generation never needs a running server.
-	     Off by default because it runs the app host on every build; opt in with -p:GenerateOpenApi=true. -->
+	     Two knobs, both overridable with -p: on the command line:
+
+	       GenerateOpenApi  false          opt in with -p:GenerateOpenApi=true
+	       OpenApiDir       build/openapi  destination; prefer absolute, a relative path resolves
+	                                       against this project's directory
+
+	     GenerateOpenApi defaulting to false is load-bearing rather than a convenience: ApiDescription.Server
+	     defaults OpenApiGenerateDocumentsOnBuild to true, so dropping this would start the app host on every
+	     build - and the cache drop below means every build, not just the first (measured: an incremental build
+	     goes 1.5s -> 2.1s).
+
+	     The two feed the package's properties unconditionally below. That matters for the directory: the
+	     package's .props already defaults OpenApiDocumentsDirectory to $(BaseIntermediateOutputPath), so a
+	     Condition on it would never fire and documents would land in obj/. Setting -p:OpenApiDocumentsDirectory
+	     directly also still works - a command-line property outranks an assignment here. -->
 	<PropertyGroup>
 		<GenerateOpenApi Condition="'$(GenerateOpenApi)' == ''">false</GenerateOpenApi>
+		<OpenApiDir Condition="'$(OpenApiDir)' == ''">$(MSBuildProjectDirectory)/../../../build/openapi</OpenApiDir>
+
 		<OpenApiGenerateDocumentsOnBuild>$(GenerateOpenApi)</OpenApiGenerateDocumentsOnBuild>
-		<OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)/../../../build/openapi</OpenApiDocumentsDirectory>
+		<OpenApiDocumentsDirectory>$(OpenApiDir)</OpenApiDocumentsDirectory>
 	</PropertyGroup>
+
+	<!-- GenerateOpenApiDocuments is considered up to date whenever its file-list cache is newer than the
+	     assembly, and that check ignores $(OpenApiDocumentsDirectory) - so asking an already-built project
+	     for a different destination silently writes nothing. Dropping the cache forces the generator to run.
+	     No Condition needed: BeforeTargets only fires when GenerateOpenApiDocuments actually runs, which is
+	     either OnBuild=true or an explicit -t:GenerateOpenApiDocuments. -->
+	<Target Name="InvalidateOpenApiDocumentsCache" BeforeTargets="GenerateOpenApiDocuments">
+		<Delete Files="$(_OpenApiDocumentsCache)" />
+	</Target>
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="$(ProjectName).UnitTests" />

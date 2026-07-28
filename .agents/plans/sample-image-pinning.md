@@ -1,14 +1,20 @@
-# Decide how the samples pin the docker image
+# Pin the samples to the released docker image
 
-**Status:** Not started. Decide before the v3.0.0 tag - the day `latest` moves is the day this bites.
+**Status: decided 2026-07-28, not applied.** The call is **option 1 - pin the five repo samples to the exact
+released version** (`binacle/binacle-net:3.0.0`), and add a line to each sample saying which version it is written
+for. What is left is applying it, which is deliberately not done yet - see the ordering below.
+
+**Do not apply this early.** Pinning to `3.0.0` commits a reference to an image that does not exist until the
+release publishes. Pin, then tag, then publish - and do not pin in a commit that sits on `main` for days. That is
+why the decision is recorded here instead of being made and applied in one sitting.
 
 **The deadline is not fixed yet.** It depends on whether a prerelease tag moves `latest`, which has never been
 tested. If it does, sample users get v3.0.0 the moment the **beta** publishes, and this becomes a beta blocker
 rather than a pre-tag one.
 
-## Why
+## Apply it like this
 
-Every sample in the repo pulls `binacle/binacle-net:latest`:
+Five files, `latest` -> `3.0.0`, plus a one-line comment in each saying which version the sample targets:
 
 - `samples/docker/minimal-setup/docker-compose.yml:3`
 - `samples/docker/ui-setup/docker-compose.yml:3`
@@ -16,26 +22,24 @@ Every sample in the repo pulls `binacle/binacle-net:latest`:
 - `samples/docker/service-azure/docker-compose.yml:3`
 - `samples/kubernetes/minimal-setup/binacle-deployment.yaml:17`
 
-v3.0.0 removes the V2 endpoints, rejects every ViPaq token an earlier version produced, changes the packing-logs
+## Why
+
+All five pull `binacle/binacle-net:latest` today. v3.0.0 removes the V2 endpoints, rejects every ViPaq token an earlier version produced, changes the packing-logs
 config shape so the old one fails startup validation, and narrows CIDR entries in the health check allow-list.
 A user who copied a sample and left it on `latest` gets all of that on their next pull, with no version in their
 config that says what happened.
 
-## The call
+## Why the exact version, and not the other two
 
-Options:
+A sample is copied once and lives for years; `latest` turns that into a time bomb. The cost of option 1 is real -
+the samples go stale between releases and someone bumps them each time - and it was accepted.
 
-1. **Pin to the exact released version** (`binacle/binacle-net:3.0.0`). Honest and reproducible; the sample goes
-   stale between releases and someone has to bump it each time.
-2. **Pin to the major line** (`binacle/binacle-net:3`) - if the release workflow publishes a major tag, which it
-   does not today (`type=semver,pattern={{version}}` only). Would need a second tag rule.
-3. **Leave `latest`** and say in each sample that it tracks the newest release across breaking changes.
+Rejected:
 
-Recommendation: pin the repo samples to the released version, and add a line to each sample saying which version
-it is written for. A sample is copied once and lives for years; `latest` turns that into a time bomb.
-
-Option 1 has an ordering to respect: pinning to `3.0.0` commits a reference to an image that does not exist until
-the release publishes. Pin, then tag, then publish - and do not pin in a commit that sits on `main` for days.
+- **Pin to the major line** (`binacle/binacle-net:3`). Would keep the samples current within v3, but the release
+  workflow publishes no major tag today (`type=semver,pattern={{version}}` only), so it needs a second tag rule
+  first. Worth revisiting if the bumping becomes a chore.
+- **Leave `latest`** with a warning line. Rejected: the warning does not help the reader who already copied it.
 
 ## Also affected - the docs site, which is off limits to edit
 

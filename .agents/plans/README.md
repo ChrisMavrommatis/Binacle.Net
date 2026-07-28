@@ -36,4 +36,4 @@ folder (e.g. `plans/lib/`, `plans/shared/`); anything that maps to no slice stay
 ## Index
 
 The manifest is generated — see [`_index.md`](_index.md). Regenerate it after adding or renaming a plan
-with `config/agents-index.sh` (it also rebuilds the docs, design, ideas, and memory indexes).
+with `just agents all` (it also rebuilds the docs, design, ideas, and memory indexes).

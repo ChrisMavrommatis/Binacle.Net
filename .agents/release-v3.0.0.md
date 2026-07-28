@@ -63,7 +63,7 @@ the deployed image is on the beta verification list.
 | B1 | Work the beta verification list on the deployed image | [beta-verification](plans/beta-verification.md) |
 | B2 | Write the `v3.0.x` docs pages, including the two new configuration pages | [docs-v3-pages](plans/docs-v3-pages.md) |
 | B3 | Decide how the shared ViPaq protocol page is versioned, then fix it - it still says gzip | [docs-vipaq-protocol-page](plans/docs-vipaq-protocol-page.md) |
-| B4 | Correct the v4 "all algorithms" claim, then generate `swagger/v3.json` and `swagger/v4.json` | [api/v4-algorithm-claim](plans/api/v4-algorithm-claim.md), [docs-swagger-documents](plans/docs-swagger-documents.md) |
+| B4 | Generate `swagger/v3.json` and `swagger/v4.json` - the v4 "all algorithms" claim is corrected (2026-07-28) | [docs-swagger-documents](plans/docs-swagger-documents.md) |
 | B5 | Decide how the samples pin the docker image | [sample-image-pinning](plans/sample-image-pinning.md) |
 | B6 | Run the ServiceModule suite once against Azure Storage - **no plan** | see below |
 | B7 | Confirm v4 still ships experimental, then announce all four breaking changes - **no plan** | see below |

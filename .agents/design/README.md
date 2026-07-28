@@ -19,4 +19,4 @@ Design never references a plan, idea, or memory — it is permanent and may only
 ## Index
 
 The manifest is generated — see [`_index.md`](_index.md). Regenerate it after adding or renaming a file with
-`config/agents-index.sh` (it also rebuilds the docs, plans, ideas, and memory indexes).
+`just agents all` (it also rebuilds the docs, plans, ideas, and memory indexes).

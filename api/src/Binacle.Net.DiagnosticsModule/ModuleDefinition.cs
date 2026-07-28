@@ -79,7 +79,7 @@ public static class ModuleDefinition
 				{
 					resourceBuilder.AddService(
 						serviceName: "Binacle.Net",
-						serviceVersion: Environment.GetEnvironmentVariable("BINACLE_VERSION") ?? "Unknown",
+						serviceVersion: Metadata.Version,
 						serviceNamespace: openTelemetryOptions.ServiceNamespace,
 						serviceInstanceId: openTelemetryOptions.ServiceInstanceId
 					)

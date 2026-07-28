@@ -29,6 +29,10 @@ is written fresh - nothing is carried over from `v2.1.x` by choice.
 - [ ] Remove the notice block at the bottom of `v3.0.x/index.md` once the pages exist, and restore its section
       links (copy the shape from `v2.1.x/index.md`, minus V2).
 - [ ] Mark API v4 **experimental** - reuse the banner v3 carried in `v1.3.x/api/v3.md`.
+- [ ] **The v4 `Best` algorithm claim.** Wherever the v4 pages describe the `algorithm` parameter, they must match
+      the corrected spec wording: `Best` runs all three heuristics on `fit/bin` and `pack/bin`, and FFD plus BFD on
+      every other route. It does **not** run all three everywhere. The code and the generated documents were
+      corrected on 2026-07-28; the pages are the last place the old claim can survive.
 
 **`vlink` raises and fails the build on a missing target** - that is why the stub has no section links yet. Add a
 link only when its target lands.

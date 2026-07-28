@@ -77,8 +77,8 @@ samples use `Microsoft.Docker.Sdk` `.dcproj` files instead. None of these affect
 
 ## `config/` vs `samples/`
 
-`config/` is the **maintainer's local-dev tooling** — the `tests.just` and `coverage.just` modules for `just`,
-the run scripts (`api.sh`, the per-slice `performance.*`, `benchmarks.*`, `build.sh`, `agents-index.sh`,
-`tmux.sh`), local compose files, and emulator state. `samples/` are
+`config/` is the **maintainer's local-dev tooling** — the `tests.just`, `coverage.just`, `openapi.just` and
+`agents.just` modules for `just`, the run scripts (`api.sh`, the per-slice `performance.*`, `benchmarks.*`,
+`build.sh`, `tmux.sh`), local compose files, and emulator state. `samples/` are
 **user-facing deployment starting points** to copy and run the published image. See `$commands` for
 the scripts and samples (`$samples`) for the deployment examples.

@@ -1,5 +1,5 @@
 ---
-description: Manifest of every file under .agents/design, grouped by area. Regenerate with config/agents-index.sh.
+description: Manifest of every file under .agents/design, grouped by area. Regenerate with just agents all.
 ---
 
 # Agent Design Index

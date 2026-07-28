@@ -1,5 +1,5 @@
 ---
-description: Manifest of every file under .agents/docs, grouped by area. Regenerate with config/agents-index.sh.
+description: Manifest of every file under .agents/docs, grouped by area. Regenerate with just agents all.
 ---
 
 # Agent Docs Index
@@ -43,7 +43,7 @@ table of [README.md](README.md).
 
 | File | Description |
 |---|---|
-| [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: the test and coverage modules for just, run/benchmark/build scripts, the doc-index and tmux scripts, local docker-compose, and emulator state |
+| [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: the test, coverage, openapi and agents modules for just, run/benchmark/build scripts, the tmux script, local docker-compose, and emulator state |
 
 ## Docs Site
 

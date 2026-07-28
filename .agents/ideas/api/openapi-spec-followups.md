@@ -1,6 +1,6 @@
 # Idea: OpenAPI spec follow-ups
 
-**Status:** Parked. The spec audit is done and the Spectral lint (`.spectral.yaml`, `config/lint.openapi.sh`)
+**Status:** Parked. The spec audit is done and the Spectral lint (`.spectral.yaml`, `just openapi lint`)
 guards it. These are the loose ends left deliberately for later — none block anything today.
 
 ## Example double-encoding (re-enable the Spectral rule)
@@ -29,11 +29,10 @@ consumers generate their own.
 
 ## Wire the spec into the docs freeze, and lint in CI
 
-- The `v3.0.x` docs version folder has only `index.md` — no swagger dump. `build/openapi/` (built with
-  `-p:GenerateOpenApi=true`, or `config/api.sh openapi`) is now the source for that, and for v4's folder when it
-  freezes.
-- Run `config/lint.openapi.sh` in CI so the spec standards can't regress on a PR. Natural to gate the same job on
-  `GenerateOpenApi=true` and, later, the SDK generation.
+- The `v3.0.x` docs version folder has only `index.md` — no swagger dump. `build/openapi/` (written by
+  `just openapi generate`) is now the source for that, and for v4's folder when it freezes.
+- Run `just openapi lint` in CI so the spec standards can't regress on a PR. One call, and it generates the
+  documents itself — natural to hang the SDK generation off the same job later.
 
 ## Related
 

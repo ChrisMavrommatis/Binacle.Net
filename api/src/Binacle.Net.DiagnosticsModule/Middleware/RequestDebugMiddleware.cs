@@ -97,7 +97,7 @@ internal class RequestDebugMiddleware
 		output.AppendLine();
 
 		output.AppendLine("[server]");
-		output.AppendLine($"Version:     {Environment.GetEnvironmentVariable("BINACLE_VERSION") ?? "Unknown"}");
+		output.AppendLine($"Version:     {Metadata.Version}");
 		output.AppendLine($"Environment: {this.hostEnvironment.EnvironmentName}");
 		output.AppendLine($"Machine:     {Environment.MachineName}");
 		output.AppendLine($"ProcessId:   {Environment.ProcessId}");

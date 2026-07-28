@@ -4,6 +4,7 @@
   "description": "Binacle.ViPaq implementation in TS",
   "main": "index.ts",
   "license": "GPL-3.0-only",
+  "private": true,
   "dependencies": {
     "binacle-compact-notation": "*"
   },

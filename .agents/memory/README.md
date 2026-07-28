@@ -33,4 +33,4 @@ Delete a memory when it turns out wrong or its fact moves into a doc/plan.
 ## Index
 
 The manifest is generated — see [`_index.md`](_index.md). Regenerate it after adding or renaming a
-memory with `config/agents-index.sh` (it also rebuilds the docs and plans indexes).
+memory with `just agents all` (it also rebuilds the docs and plans indexes).

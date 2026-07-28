@@ -23,8 +23,11 @@ internal static class SchemaDescriptions
 	public const string Bins = "The custom bins to consider.";
 	public const string Bin = "The bin these results are for.";
 	public const string Parameters = "Options controlling the operation, such as the algorithm to use.";
+	// Best does not run the same set everywhere: the single-bin routes run all three heuristics, the multi-bin
+	// routes run FFD and BFD only. Spell that out - an integrator sizing a request budget reads this line.
 	public const string Algorithm =
-		"The heuristic algorithm to use: FFD, WFD, BFD, or Best to run them all and keep the best result.";
+		"The heuristic algorithm to use: FFD, WFD, BFD, or Best to run more than one and keep the best result. "
+		+ "Best runs all three on fit/bin and pack/bin, and FFD plus BFD on every other route.";
 	public const string AlgorithmUsed =
 		"The algorithm actually used for this result. When Best is requested, this is the heuristic that won.";
 

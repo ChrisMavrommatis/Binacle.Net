@@ -10,4 +10,4 @@ Group ideas by slice, mirroring the repo — an idea that clearly extends one ar
 ## Index
 
 The manifest is generated — see [`_index.md`](_index.md). Regenerate it after adding or renaming an idea
-with `config/agents-index.sh` (it also rebuilds the docs, plans, and memory indexes).
+with `just agents all` (it also rebuilds the docs, plans, and memory indexes).

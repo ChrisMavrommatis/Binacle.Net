@@ -33,7 +33,7 @@ internal class SystemHealthCheck : IHealthCheck
 
 			var data = new Dictionary<string, object>()
 			{
-				{"Version", Environment.GetEnvironmentVariable("BINACLE_VERSION") ?? "Unknown"},
+				{"Version", Metadata.Version},
 				{"Environment", this.hostEnvironment.EnvironmentName},
 				{"StartedAt", startedAt.ToString("O")},
 				{"Uptime", (this.timeProvider.GetUtcNow() - startedAt).ToString(@"d\.hh\:mm\:ss")},

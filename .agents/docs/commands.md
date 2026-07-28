@@ -2,13 +2,14 @@
 id: commands
 description: How to run the API, tests, benchmarks, and build the Docker image
 verified: 2026-07-28
-check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
+check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; openapi recipes match config/openapi.just; agents recipes match config/agents.just; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
 ---
 
 # Commands
 
-Tests and coverage are `just` recipes; the rest are scripts in `config/`. All are run from the repo root. For
-the `config/` directory anatomy (scripts, local compose, env, emulator state) see `$config`.
+Tests, coverage, the OpenAPI documents and the agent indexes are `just` recipes; the rest are scripts in
+`config/`. All are run from the repo root. For the `config/` directory anatomy (scripts, local compose, env,
+emulator state) see `$config`.
 
 ## Run the API
 
@@ -70,6 +71,26 @@ or package:
 
 The table prints a row per suite (`Passed`/`Failed`/`Skipped`/`Coverage`) and its exit code is the run's verdict.
 
+## OpenAPI documents
+
+```bash
+just openapi generate                  # build/openapi/Binacle.Net_v3.json + _v4.json
+just openapi generate <dir>            # write them somewhere else (pass an absolute path)
+just openapi lint [<dir>]              # generate, then lint with Spectral against .spectral.yaml
+```
+
+Nothing needs to be brought up — the documents come out of the build, not out of a running server:
+`Microsoft.Extensions.ApiDescription.Server` starts the app host itself and dumps every registered
+`IOpenApiDocument` (`$api/openapi`). The host it starts has no launch profile, so **ServiceModule is off** and
+the documents carry no `/api/auth/token` path — the shape the committed specs assume.
+
+Generation is off by default (`-p:GenerateOpenApi=true`, set by the recipe) so an ordinary build doesn't start
+the app host. The destination is `-p:OpenApiDir`; MSBuild resolves a relative one against the **project**
+directory, which is why the recipe passes an absolute path.
+
+`just openapi lint` currently reports two `oas3-api-servers` warnings and no errors — that's the parked
+`servers` decision, not a regression.
+
 ## Performance tests
 
 Per slice; write reports to a gitignored scratch folder — see [results/README.md](../../results/README.md) for the
@@ -106,13 +127,15 @@ aspire).
 ## Regenerate the agent indexes
 
 ```bash
-./config/agents-index.sh
+just agents all                        # all five
+just agents generate-index plans       # one [docs|design|plans|memory|ideas]
 ```
 
-Rewrites the `_index.md` manifest for `.agents/docs`, `.agents/design`, `.agents/plans`, `.agents/ideas`, and
-`.agents/memory` (grouped by area). Each entry's description comes from the file's `description:` frontmatter,
+Rewrites the `_index.md` manifest for `.agents/docs`, `.agents/design`, `.agents/plans`, `.agents/memory` and
+`.agents/ideas` (grouped by area). Each entry's description comes from the file's `description:` frontmatter,
 falling back to its first heading. Run it after adding, renaming, or re-describing any
-`.agents/{docs,design,plans,ideas,memory}/*.md` file.
+`.agents/{docs,design,plans,ideas,memory}/*.md` file. A name that isn't one of the five is rejected, so a typo
+can't leave an index untouched and look like it worked.
 
 ## Dev session (tmux)
 

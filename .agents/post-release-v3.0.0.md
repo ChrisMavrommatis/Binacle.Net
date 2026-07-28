@@ -17,22 +17,18 @@ in the same change, leaving the text.
 | # | Item | Plan | Why now |
 |---|---|---|---|
 | 1 | One set of scripts, run by both CI and a human | [ci-shared-scripts](plans/ci-shared-scripts.md) | Everything else on the CI list gets easier once this lands. Do it first. |
-| 2 | Build the docker image on every PR | [ci-docker-image-gate](plans/ci-docker-image-gate.md) | This release shipped with an image nobody had built since the restructure. Do not repeat it. |
-| 3 | Run the integration tests with all modules enabled | [ci-all-modules-integration-tests](plans/ci-all-modules-integration-tests.md) | Core-only means the gate is green without being meaningful. |
-| 4 | Put Sonar and coverage on the PR gate | [ci-sonar-coverage-gate](plans/ci-sonar-coverage-gate.md) | Configured, never enforced. |
-| 5 | Give the build a version of its own | [version-stamp](plans/version-stamp.md) | Nothing but the docker tag knows which build it is - the first support question exposes it. |
-| 6 | Decide whether the TS packages get published | [npm-package-publishing](plans/npm-package-publishing.md) | The release breaks every old token and `binacle-vipaq` is the reference decoder. A JS user has no supported way to get it. |
-| 7 | Migrate the shipped UI clients off v3 | [api/ui-clients-off-v3](plans/api/ui-clients-off-v3.md) | Not urgent - v3 is frozen and they keep working. It is also the v4 adoption that 3.1.0 needs. |
-| 8 | The small TODOs and the stale lockfile entry | [todos](plans/todos.md) | Cheap, and the lockfile one has already cost a session once. |
+| 2 | Make the PR gate mean something - image build, all-modules integration tests, Sonar and coverage | [ci-gates](plans/ci-gates.md) | Three gates folded into one plan on 2026-07-28. The image is never built on a PR, the suites run core modules only, and Sonar runs by hand. |
+| 3 | Migrate the shipped UI clients off v3 | [api/ui-clients-off-v3](plans/api/ui-clients-off-v3.md) | Not urgent - v3 is frozen and they keep working. It is also the v4 adoption that 3.1.0 needs. |
+| 4 | Two small ServiceModule TODOs | [todos](plans/todos.md) | Cheap. The stale lockfile entry that used to sit here was cleared on 2026-07-28. |
 
 ## Toward 3.1.0
 
 | # | Item | Plan | Why now |
 |---|---|---|---|
-| 9 | Flip v4 from experimental to stable | [api/v4-stable-in-3.1.0](plans/api/v4-stable-in-3.1.0.md) | Needs the beta to have run and one endpoint added without reshaping an existing contract. |
-| 10 | Decide what happens to the three `Parallel*` processors | [lib/parallel-processors-decision](plans/lib/parallel-processors-decision.md) | Three unreachable classes and two factory parameters that do nothing. |
-| 11 | Refresh the curated lib benchmark ledger | [lib/benchmark-ledger](plans/lib/benchmark-ledger.md) | The committed numbers describe code that no longer exists after the geometry migration. Do not quote them until then. |
-| 12 | Grow the shared TestsKernel fixture cases | [shared/testskernel-data-extraction](plans/shared/testskernel-data-extraction.md) | Result selection has one baseline per case, and ViPaq's compression crossover is still provisional. |
+| 5 | Flip v4 from experimental to stable | [api/v4-stable-in-3.1.0](plans/api/v4-stable-in-3.1.0.md) | Needs the beta to have run and one endpoint added without reshaping an existing contract. |
+| 6 | Decide what happens to the three `Parallel*` processors | [lib/parallel-processors-decision](plans/lib/parallel-processors-decision.md) | Three unreachable classes and two factory parameters that do nothing. |
+| 7 | Refresh the curated lib benchmark ledger | [lib/benchmark-ledger](plans/lib/benchmark-ledger.md) | The committed numbers describe code that no longer exists after the geometry migration. Do not quote them until then. |
+| 8 | Grow the shared TestsKernel fixture cases | [shared/testskernel-data-extraction](plans/shared/testskernel-data-extraction.md) | Result selection has one baseline per case, and ViPaq's compression crossover is still provisional. |
 
 ## Ideas worth a look once this is out
 

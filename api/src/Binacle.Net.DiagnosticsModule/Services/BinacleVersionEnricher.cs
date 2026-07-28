@@ -8,6 +8,6 @@ internal class BinacleVersionEnricher : ILogEventEnricher
 	public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
 	{
 		logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty(
-			"Version", Environment.GetEnvironmentVariable("BINACLE_VERSION") ?? "Unknown"));
+			"Version", Metadata.Version));
 	}
 }

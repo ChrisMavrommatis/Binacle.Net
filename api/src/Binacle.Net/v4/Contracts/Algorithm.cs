@@ -11,7 +11,8 @@ public interface IWithAlgorithm
 }
 
 
-[Description("The packing heuristic. FFD, WFD and BFD are the individual heuristics; Best runs them all and keeps the best result.")]
+[Description("The packing heuristic. FFD, WFD and BFD are the individual heuristics; Best runs more than one and "
+            + "keeps the best result - all three on fit/bin and pack/bin, FFD plus BFD on every other route.")]
 public enum Algorithm
 {
 	FFD,

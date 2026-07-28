@@ -1,6 +1,6 @@
 # Binacle.Net task runner.
-# The docs/web dev loops, the test module and the coverage module live here. Benchmarks, performance and
-# build are still config/*.sh.
+# The docs/web dev loops and the test, coverage, openapi and agents modules live here. Running the API,
+# benchmarks, performance and build are still config/*.sh.
 # `just` with no args lists every task. Install: sudo apt install just
 
 # List all tasks
@@ -12,6 +12,12 @@ mod test 'config/tests.just'
 
 # Coverage on top of those leaves: `just coverage all [cobertura|sonar]`, `just coverage report` for the HTML.
 mod coverage 'config/coverage.just'
+
+# OpenAPI documents: `just openapi generate [dir]`, `just openapi lint [dir]` to Spectral them too.
+mod openapi 'config/openapi.just'
+
+# The .agents/ manifests: `just agents all` after adding, renaming or re-describing a file there.
+mod agents 'config/agents.just'
 
 # Docs dev: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
 [group('dev')]

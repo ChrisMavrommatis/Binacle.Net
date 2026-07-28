@@ -1,5 +1,5 @@
 ---
-description: Manifest of every file under .agents/ideas, grouped by area. Regenerate with config/agents-index.sh.
+description: Manifest of every file under .agents/ideas, grouped by area. Regenerate with just agents all.
 ---
 
 # Agent Ideas Index
@@ -12,7 +12,6 @@ and move it to `.agents/plans/` once it's picked up. See [README.md](README.md) 
 | File | Description |
 |---|---|
 | [mutation-testing.md](mutation-testing.md) | Idea: mutation testing with Stryker.NET |
-| [task-runner-for-config-scripts.md](task-runner-for-config-scripts.md) | Idea: move the remaining config scripts into `just` |
 | [testing-techniques.md](testing-techniques.md) | Idea: testing techniques not in use |
 
 ## API

@@ -8,13 +8,7 @@ PROJECT_PATH='api/src/Binacle.Net/'
 # set working directory to the root of the project
 cd "$ROOT_DIR/$PROJECT_PATH" || exit 1
 
-# OpenAPI option: build with the spec-generation flag and emit the documents, instead of running the app.
-if [ "$1" == "openapi" ] || [ "$1" == "oa" ]; then
-    echo "Generating OpenAPI documents (v3, v4)..."
-    dotnet build -p:GenerateOpenApi=true || exit 1
-    echo "OpenAPI documents written to build/openapi/"
-    exit 0
-fi
+# The OpenAPI documents moved to `just openapi generate` - this script only runs the app.
 
 # Create a dictionary to hold aliases for the launch profiles
 #WithUiModuleOnly WithAllModules WithServiceModuleOnly Normal
