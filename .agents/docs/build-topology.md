@@ -1,8 +1,8 @@
 ---
 id: build-topology
-description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, the Dockerfile/build.sh chain, and the NoTargets content projects
+description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, the global.json test-runner opt-in, the Dockerfile/build.sh chain, and the NoTargets content projects
 verified: 2026-07-28
-check: Solution structure, Directory.Build.props, Dockerfile, and content .proj files match the repo root
+check: Solution structure, Directory.Build.props, global.json, Dockerfile, and content .proj files match the repo root
 also_update:
   - commands
   - samples
@@ -23,7 +23,7 @@ The repo uses the XML `.slnx` solution format. Projects are grouped by solution 
 - `/vipaq/tools/` (`Binacle.ViPaq.VectorGenerators`, `Binacle.ViPaq.PackedDataGenerator`), `/shared/tools/` (`Binacle.OrLibrary.Converter`) — standalone generators, not referenced by the shipped projects
 - `/samples/docker/` (4 `.dcproj`), `/samples/kubernetes/` (`.proj`), `/results/`, `/api/` (requests), `/build/`
 - Top-level content projects: `assets/assets.proj`, `config/config.proj`, `docs/docs.proj`, `web/web.proj`
-- `/_root/` — loose files (`.dockerignore`, `.editorconfig`, `Dockerfile`, `gulpfile.js`, `package.json`, README)
+- `/_root/` — loose files (`.dockerignore`, `.editorconfig`, `Dockerfile`, `global.json`, `gulpfile.js`, `package.json`, README)
 
 ## Shared C# props — `Directory.Build.props`
 
@@ -41,6 +41,30 @@ So all C# is .NET 10, nullable-enabled, implicit-usings on. (No `LangVersion` or
 `AD0001` is suppressed because `Xunit.Analyzers`' `MemberDataShouldReferenceValidMember` crashes on valid member
 data in xunit.v3 3.2.2 — an analyzer bug, and AD0001 is raised by the analyzer driver so editorconfig severity
 cannot reach it. The file carries the full reasoning.
+
+## Test runner — `global.json`
+
+Root `global.json` holds one key and no SDK pin:
+
+```json
+{ "test": { "runner": "Microsoft.Testing.Platform" } }
+```
+
+That is the .NET 10 opt-in to the Microsoft.Testing.Platform (MTP) `dotnet test`. It is not optional here: the
+test projects run on **MTP v2**, and the .NET 10 SDK dropped the VSTest bridge those used to fall back to, so
+without this file every C# leaf fails with "Testing with VSTest target is no longer supported". The opt-in is
+repo-wide - once set, every test project must be an MTP one.
+
+Two consequences for anything that shells out to `dotnet test`:
+
+- The project comes from `--project`, never a bare path. A bare directory is now an error.
+- Runner options go straight on the command line, **not** after a `--`. See `_dotnet_test` in
+  `config/tests.just`.
+
+The xunit reference is `xunit.v3.mtp-v2`, not plain `xunit.v3`. Same xunit version, different platform adapter:
+`xunit.v3` pins `xunit.v3.mtp-v1`, which is MTP 1.x. `Microsoft.Testing.Extensions.CodeCoverage` moved to MTP 2.x
+in 18.1.0, so the two cannot both be current - mixing them loads MTP 2.x under a v1 adapter and throws
+`TypeLoadException` on `IDataConsumer` before a single test runs.
 
 ## JS workspaces & asset copy
 

@@ -95,6 +95,7 @@
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path="Dockerfile" />
+    <File Path="global.json" />
     <File Path="gulpfile.js" />
     <File Path="package.json" />
     <File Path="README.md" />

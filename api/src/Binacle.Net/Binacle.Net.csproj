@@ -51,8 +51,8 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="OpenApiExamples" Version="1.0.1" />
-		<PackageReference Include="Scalar.AspNetCore" Version="2.16.13" />
+		<PackageReference Include="OpenApiExamples" Version="1.0.2" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.16.16" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
 	</ItemGroup>
 

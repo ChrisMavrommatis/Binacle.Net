@@ -19,7 +19,7 @@
 		<PackageReference Include="FluentValidation" Version="12.1.1" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
 		<PackageReference Include="FluxResults" Version="1.0.0" />
-		<PackageReference Include="OpenApiExamples" Version="1.0.1" />
+		<PackageReference Include="OpenApiExamples" Version="1.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>

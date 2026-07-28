@@ -12,7 +12,7 @@ table of [README.md](README.md).
 
 | File | Description |
 |---|---|
-| [build-topology.md](build-topology.md) | Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, the Dockerfile/build.sh chain, and the NoTargets content projects |
+| [build-topology.md](build-topology.md) | Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, the global.json test-runner opt-in, the Dockerfile/build.sh chain, and the NoTargets content projects |
 | [commands.md](commands.md) | How to run the API, tests, benchmarks, and build the Docker image |
 | [concepts.md](concepts.md) | Fit exits early on first failure; pack continues and returns positions. Both return the same result shape — packed items and unpacked items. Used by both Lib algorithms and API endpoints. |
 

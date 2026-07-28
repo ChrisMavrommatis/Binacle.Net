@@ -146,7 +146,7 @@ _dotnet_test project:
     set -euo pipefail
 
     if [ -z "${COVERAGE_FORMAT:-}" ]; then
-        dotnet test {{ project }} {{ dotnet_test_args }}
+        dotnet test --project {{ project }} {{ dotnet_test_args }}
         exit 0
     fi
 
@@ -162,7 +162,9 @@ _dotnet_test project:
     coverage="$(pwd)/build/coverage/$COVERAGE_FORMAT"
     mkdir -p "$results" "$coverage"
 
-    dotnet test {{ project }} {{ dotnet_test_args }} -- \
+    # No `--` before the runner options: the Microsoft.Testing.Platform `dotnet test` hands unrecognized
+    # options to the test app itself, and a `--` makes it read the project path as a stray argument.
+    dotnet test --project {{ project }} {{ dotnet_test_args }} \
         --results-directory "$results" \
         --report-ctrf --report-ctrf-filename "$name.ctrf.json" \
         --coverage --coverage-output-format "$output_format" \

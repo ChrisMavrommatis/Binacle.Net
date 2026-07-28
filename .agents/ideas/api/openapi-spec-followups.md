@@ -3,17 +3,6 @@
 **Status:** Parked. The spec audit is done and the Spectral lint (`.spectral.yaml`, `just openapi lint`)
 guards it. These are the loose ends left deliberately for later — none block anything today.
 
-## Example double-encoding (re-enable the Spectral rule)
-
-Every OpenAPI example `value`/`example` is emitted as a **JSON string** (double encoded), e.g.
-`"example": "{\"parameters\":…}"` instead of `"example": { "parameters": … }`. This comes from the
-`OpenApiExamples` integration, not the contracts. Effects: Swagger UI / Scalar and generated-SDK examples show an
-escaped string blob instead of a real object.
-
-Spectral's built-in `oas3-valid-media-example` flags all of them (~165), so it is turned **off** in `.spectral.yaml`
-for now. The fix is to emit examples as inline objects — likely a small document transformer that parses each
-string example back into a `JsonNode` — after which `oas3-valid-media-example` should be re-enabled.
-
 ## Servers block (base-URL story)
 
 The document currently has **no `servers`** — the setter was removed. Spectral's `oas3-api-servers` warns about
@@ -30,7 +19,8 @@ consumers generate their own.
 ## Wire the spec into the docs freeze, and lint in CI
 
 - The `v3.0.x` docs version folder has only `index.md` — no swagger dump. `build/openapi/` (written by
-  `just openapi generate`) is now the source for that, and for v4's folder when it freezes.
+  `just openapi generate`) is now the source for that, and for v4's folder when it freezes. Regenerate before
+  handing them over so the published spec carries the real example objects.
 - Run `just openapi lint` in CI so the spec standards can't regress on a PR. One call, and it generates the
   documents itself — natural to hang the SDK generation off the same job later.
 
@@ -40,6 +30,5 @@ consumers generate their own.
 
 ## Do not
 
-- **Do not re-enable `oas3-valid-media-example` before the examples are fixed** — it will just flag all ~165 again.
 - **Do not publish SDKs to close the codegen item** — the decision is a spec plus a codegen guide, not shipped
   packages.

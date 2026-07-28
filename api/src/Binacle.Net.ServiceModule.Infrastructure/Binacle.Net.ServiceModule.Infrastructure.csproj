@@ -10,8 +10,11 @@
 	  <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.10" />
 	  <!-- Not used directly. Microsoft.Data.Sqlite 10.0.10 pulls the 2.1.11 native build, which bundles SQLite
 	       3.49.1 and carries a high-severity advisory (GHSA-2m69-gcr7-jv3q, memory corruption; needs 3.50.2+).
-	       2.1.12 bundles SQLite 3.53.3 and clears it. Drop this once Microsoft.Data.Sqlite ships the bump. -->
-	  <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.12" />
+	       2.1.12 bundles SQLite 3.53.3 and clears it. Drop this once Microsoft.Data.Sqlite ships the bump.
+	       Ignore the 3.53.3 package: that is the same native binary re-cut under a new scheme where the
+	       version *is* the SQLite version. Byte-identical .so, twice the download, plus android and ios RIDs
+	       we never load. -->
+	  <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="[2.1.12,3.0.0)" />
 	  <PackageReference Include="Microsoft.Extensions.Azure" Version="1.14.0" />
 	  <PackageReference Include="Npgsql" Version="10.0.3" />
 	</ItemGroup>

@@ -7,10 +7,9 @@
 extends: ["spectral:oas"]
 
 rules:
-  # Disabled for now: the OpenApiExamples integration emits every example value as a JSON *string* (double
-  # encoded) rather than an inline object, so this rule flags all ~165 of them. That is a real, separate issue
-  # from the schema standards this ruleset guards — re-enable once examples are emitted as inline objects.
-  oas3-valid-media-example: off
+  # Every example must validate against its schema. Raised to an error because a wrong example is a wrong
+  # generated-SDK sample - it ships straight into someone's code.
+  oas3-valid-media-example: error
 
   # Built-in rules raised to errors — these back the SDK-grade guarantees a generated client relies on.
   operation-operationId: error
