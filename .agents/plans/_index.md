@@ -25,6 +25,7 @@ you need, and trim or delete it once the work lands.
 
 | File | Description |
 |---|---|
+| [api/integration-test-additions.md](api/integration-test-additions.md) | Integration tests: cover what the harness cannot see today |
 | [api/smoke-testing-the-image.md](api/smoke-testing-the-image.md) | Smoke test the built docker image over HTTP |
 | [api/ui-clients-off-v3.md](api/ui-clients-off-v3.md) | Migrate the shipped UI clients off the v3 API |
 | [api/v4-stable-in-3.1.0.md](api/v4-stable-in-3.1.0.md) | v4 — flip from experimental to stable in 3.1.0 |

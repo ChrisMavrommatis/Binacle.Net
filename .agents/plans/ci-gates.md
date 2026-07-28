@@ -36,20 +36,14 @@ That wiring is in `ci-shared-scripts`.
 
 ## Gate 2 - run the integration tests with all modules enabled
 
-The integration harnesses run **core modules only**. Every module combination the image actually ships is
-untested end to end. Three `// TODO` comments say so:
+The integration harnesses run **core modules only**, so every module combination the image ships is untested
+end to end. Writing those tests is its own plan - the one on integration test additions - and it owns the
+decisions there: one run with everything on or a matrix, where the rate-limit tests live, and what breaks when
+the modules go on.
 
-- `api/test/Binacle.Net.IntegrationTests/BinacleApi.cs:35`
-- `api/test/Binacle.Net.IntegrationTests/BinacleApiWithoutPresets.cs:33`
-- `api/test/Binacle.Net.ServiceModule.IntegrationTests/BinacleApi.cs:44`
-
-- Turn the modules on in the harnesses - Diagnostics, Service, UI.
-- Decide whether that is one run with everything on, or a small matrix over the combinations that actually ship.
-  Everything-on is cheaper and catches registration conflicts; a matrix catches "module A only works because
-  module B registered something".
-
-**Watch out:** test-host configuration goes through an env var the harness reads, never a `.runsettings` file -
-the MTP runner ignores VSTest runsettings. `BINACLE_TEST_INFRA` already works this way.
+What belongs to **this** plan is only the gate: once those tests exist, the leaves they add run on every PR
+like the rest. If the answer turns out to be a matrix, the runtime budget below is what decides how wide it can
+be.
 
 ## Gate 3 - put Sonar and coverage on the PR gate
 
