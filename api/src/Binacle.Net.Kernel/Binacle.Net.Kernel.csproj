@@ -5,20 +5,14 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="FluentValidation" Version="12.1.1" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-		<PackageReference Include="OpenApiExamples" Version="1.0.2" />
-		<PackageReference Include="Serilog" Version="4.4.0" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
-		<!-- Not used directly. Microsoft.AspNetCore.OpenApi 10.0.10 asks for Microsoft.OpenApi [2.0.0, ) and
-		     NuGet settles on 2.0.0, which has a high-severity advisory (GHSA-v5pm-xwqc-g5wc, stack overflow on
-		     circular $refs). The floor is open, so naming it here lifts the whole graph. Drop this once
-		     Microsoft.AspNetCore.OpenApi raises its own floor past 2.7.5.
-		     Pin the major: the open range means NuGet will happily take 3.x, but 3.x is for ASP.NET Core 11
-		     (11.0.0-preview.6 pins Microsoft.OpenApi 3.6.0). On 10.0.10 it does not even compile - the
-		     XmlComment source generator assigns IOpenApiMediaType.Example, which 3.x made read only.
-		     Move to 3.x with the .NET 11 upgrade, not before. -->
-		<PackageReference Include="Microsoft.OpenApi" Version="[2.11.0,3.0.0)" />
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+		<PackageReference Include="OpenApiExamples" />
+		<PackageReference Include="Serilog" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<!-- Not used directly - named to lift the graph off a vulnerable floor and hold it under 3.x.
+		     Both halves are explained in Directory.Packages.props. -->
+		<PackageReference Include="Microsoft.OpenApi" />
 	</ItemGroup>
 
 	<ItemGroup>

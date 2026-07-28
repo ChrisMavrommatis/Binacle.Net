@@ -1,8 +1,8 @@
 ---
 id: build-topology
-description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, the global.json test-runner opt-in, the Dockerfile/build.sh chain, and the NoTargets content projects
+description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, central package management, the global.json test-runner opt-in, the Dockerfile/build.sh chain, and the NoTargets content projects
 verified: 2026-07-28
-check: Solution structure, Directory.Build.props, global.json, Dockerfile, and content .proj files match the repo root
+check: Solution structure, Directory.Build.props, Directory.Packages.props, global.json, Dockerfile, and content .proj files match the repo root
 also_update:
   - commands
   - samples
@@ -23,7 +23,7 @@ The repo uses the XML `.slnx` solution format. Projects are grouped by solution 
 - `/vipaq/tools/` (`Binacle.ViPaq.VectorGenerators`, `Binacle.ViPaq.PackedDataGenerator`), `/shared/tools/` (`Binacle.OrLibrary.Converter`) — standalone generators, not referenced by the shipped projects
 - `/samples/docker/` (4 `.dcproj`), `/samples/kubernetes/` (`.proj`), `/results/`, `/api/` (requests), `/build/`
 - Top-level content projects: `assets/assets.proj`, `config/config.proj`, `docs/docs.proj`, `web/web.proj`
-- `/_root/` — loose files (`.dockerignore`, `.editorconfig`, `Dockerfile`, `global.json`, `gulpfile.js`, `package.json`, README)
+- `/_root/` — loose files (`.dockerignore`, `.editorconfig`, `Directory.Build.props`, `Directory.Packages.props`, `Dockerfile`, `global.json`, `gulpfile.js`, `package.json`, README)
 
 ## Shared C# props — `Directory.Build.props`
 
@@ -39,8 +39,24 @@ Applies to **every** C# project in the repo. Only four properties:
 So all C# is .NET 10, nullable-enabled, implicit-usings on. (No `LangVersion` or version props are set here.)
 
 `AD0001` is suppressed because `Xunit.Analyzers`' `MemberDataShouldReferenceValidMember` crashes on valid member
-data in xunit.v3 3.2.2 — an analyzer bug, and AD0001 is raised by the analyzer driver so editorconfig severity
-cannot reach it. The file carries the full reasoning.
+data in xunit 3.2.2 (referenced as `xunit.v3.mtp-v2`, see below) — an analyzer bug, and AD0001 is raised by the
+analyzer driver so editorconfig severity cannot reach it. The file carries the full reasoning.
+
+## Package versions — `Directory.Packages.props`
+
+The repo uses **Central Package Management**. Every NuGet version lives in this one file as a `PackageVersion`;
+a csproj writes `<PackageReference Include="Serilog" />` with **no** `Version`. NuGet fails the restore with
+**NU1008** if a project names a version anyway, so the file cannot be bypassed by accident.
+
+That guard is the point. Several packages are referenced by 9 projects, and before this the version was written
+out 9 times - a bump that missed one file is exactly how the xunit/CodeCoverage platform mismatch got in.
+
+Two entries are referenced by nobody and exist only to constrain the graph: `Microsoft.OpenApi` and
+`SQLitePCLRaw.lib.e_sqlite3`. Both carry a floor (a transitive dependency would otherwise resolve to a version
+with a known advisory) and a ceiling (the next major breaks). The reasoning sits next to each version, and the
+csproj that names the package points here rather than repeating it.
+
+Adding a package is two edits: the `PackageVersion` here, the `PackageReference` in the project.
 
 ## Test runner — `global.json`
 
@@ -65,6 +81,12 @@ The xunit reference is `xunit.v3.mtp-v2`, not plain `xunit.v3`. Same xunit versi
 `xunit.v3` pins `xunit.v3.mtp-v1`, which is MTP 1.x. `Microsoft.Testing.Extensions.CodeCoverage` moved to MTP 2.x
 in 18.1.0, so the two cannot both be current - mixing them loads MTP 2.x under a v1 adapter and throws
 `TypeLoadException` on `IDataConsumer` before a single test runs.
+
+There is no `xunit.runner.visualstudio` and no `TestingPlatformDotnetTestSupport` property. Both belong to the
+VSTest path this repo no longer has: the adapter bridged xunit to VSTest, and the property was the MTP **v1**
+opt-in that `global.json` replaced. The xunit project template still emits both, so a new test project needs them
+stripped. The one property that stays is `UseMicrosoftTestingPlatformRunner`, which makes the project a
+standalone runner executable.
 
 ## JS workspaces & asset copy
 

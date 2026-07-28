@@ -5,7 +5,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluxResults" Version="1.0.0" />
+      <PackageReference Include="FluxResults" />
     </ItemGroup>
 
     <ItemGroup>

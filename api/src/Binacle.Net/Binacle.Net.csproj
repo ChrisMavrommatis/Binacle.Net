@@ -46,19 +46,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
-		<PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.10">
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Microsoft.Extensions.ApiDescription.Server">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="OpenApiExamples" Version="1.0.2" />
-		<PackageReference Include="Scalar.AspNetCore" Version="2.16.16" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
+		<PackageReference Include="OpenApiExamples" />
+		<PackageReference Include="Scalar.AspNetCore" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentValidation" Version="12.1.1" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
 	</ItemGroup>
 
 	<ItemGroup>
