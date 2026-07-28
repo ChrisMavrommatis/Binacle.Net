@@ -1,4 +1,17 @@
 ﻿name: binacle-net-services
+
+# Backing services only - no binacle-net. This is what `just serve api` talks to, and what the Postgres and
+# AzureStorage test leaves need, so it belongs to the `serve` module rather than to `image`.
+#
+#   up     just serve services [-d]
+#   down   just serve services-down          # keeps the database
+#   wipe   just serve services-down -v       # drops the postgres volume too
+#
+# `up` creates ./azurite and opens it first: docker would otherwise create that bind source itself, as root,
+# leaving emulator state in the repo you cannot open.
+#
+# Dashboard on http://localhost:18888, azurite on 10000-10002, postgres on 5432.
+
 configs:
   asprice_dashboard_config:
     content: |

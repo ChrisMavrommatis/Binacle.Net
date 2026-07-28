@@ -80,8 +80,8 @@ Scope creep is the way this turns into a slow second integration suite.
 
 **Scripts**
 
-- [ ] Split the publish + `docker build` out of `config/build.sh` into its own script. `build.sh` starts compose
-      in the foreground and can't hand the terminal back, so it can't build-then-test.
+- [x] Split the publish + `docker build` out. Done - `just build image` (`config/build.just`) builds and stops,
+      so a smoke run can build-then-test.
 - [ ] `config/smoke.sh` — build, start detached, run the suite, stop. Flags to keep the container up afterwards
       and to skip the build and test whatever is already running. No `sleep`; the suite does its own waiting.
 

@@ -22,13 +22,18 @@ just assets                            # only the asset copy - after changing an
 `assets` copies `assets/**` into `docs/` and `web/` via gulp. Both sites serve their copy, so a changed logo
 does not show up until this runs.
 
-## Run something locally
+## Run from source
 
 ```bash
 just serve api [N|S|U|All]             # the API
 just serve docs                        # docs site: jekyll serve + webpack watch, one terminal
 just serve web                         # marketing site: same
+just serve services [-d]               # what the API talks to: aspire-dashboard, azurite, postgres
+just serve services-down [-v]          # only needed after -d; Ctrl-C is enough otherwise
 ```
+
+`services` runs **no** binacle-net — it is what `just serve api` talks to, and what the Postgres and
+AzureStorage test leaves need. Running the *built image* is a different job; see "Run the image" below.
 
 The API launch profiles:
 
@@ -129,17 +134,26 @@ Per slice; BenchmarkDotNet, markdown-only, output pinned next to the project:
 # No argument = all
 ```
 
-## Backing services (Docker Compose)
+## Run the image
+
+Build it first with `just build image`, then:
 
 ```bash
-docker compose -f config/docker-compose.yml up
+just image up                          # same as `up full`
+just image up full                     # all modules, all three backends + dashboard
+just image up volume                   # the image alone, SQLite, data in a named volume
+just image up bind                     # the image alone, SQLite, data in a folder you can open
+just image down [name] [-v]            # -v drops the named volumes, postgres included
 ```
 
-This starts **only the backing services** — `aspire-dashboard` (OTel), `azurite` (Azure Storage emulator), and
-`postgres`. It does **not** run the API. Run the API itself with `just serve api`.
+Extra arguments go straight through to `docker compose`. The name is positional, so pass it whenever you pass
+a flag — `just image up -d` reads `-d` as the stack name and is rejected.
 
-To run the API image locally with all modules on, build it with `./config/build.sh` first, then bring up
-`config/docker-compose.build.yml` yourself (the local image + azurite + postgres + aspire).
+All three check for `binacle-net:local` and tell you to build it if it is missing. `up` also creates the
+bind-mounted folders and opens their permissions, which docker will not do for you. See `$config` for which
+stack needs which folder.
+
+The backing services for an API run from source are a different thing — that is `just serve services`.
 
 ## Regenerate the agent indexes
 
@@ -167,13 +181,15 @@ staging layout for the `just` recipes and the remaining `config/*.sh` scripts. R
 ## Build (Docker image)
 
 ```bash
-./config/build.sh                                            # publish + docker build -t binacle-net:local
-docker compose -f config/docker-compose.build.yml up         # then run it
+just build publish                     # dotnet publish -> build/binacle-net
+just build image [version]             # publish, then docker build -t binacle-net:<version> (default local)
 ```
 
-`build.sh` also creates `config/data/**` and `config/azurite/` and opens their permissions, because the
-containers bind-mount them and write as their own users. The azurite `chmod` needs `sudo`, so the script
-prompts. It does not start compose — that is the line above.
+`image` always re-publishes first — `docker build` copies whatever is in `build/binacle-net`, so skipping the
+publish is how a stale image gets tagged. The version becomes both the image tag and `BINACLE_VERSION` inside
+the container, which is what the running app reports.
+
+Then run it with `just image up`, which prepares the bind-mounted folders first.
 
 ## JS Packages (npm workspaces at root)
 

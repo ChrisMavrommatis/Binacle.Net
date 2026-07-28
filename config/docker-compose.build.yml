@@ -7,11 +7,14 @@
 # anything starts — docker never chowns a bind mount, and the containers write as their own users rather than
 # as you. Postgres is the exception: it keeps its data in a named volume, out of the repo.
 #
-#   setup  ./config/build.sh    # creates ./config/data/**, opens it up, and builds the image
-#   up     docker compose -f ./config/docker-compose.build.yml up
-#   down   docker compose -f ./config/docker-compose.build.yml down          # keeps the data
-#   wipe   docker compose -f ./config/docker-compose.build.yml down -v       # drops the postgres volume too
-#          sudo rm -rf ./config/data ./config/azurite                        # sudo: they write as root
+# This file is the `full` stack of the `image` module. `just image up` creates and opens the bind-mounted
+# folders for you.
+#
+#   build  just build image                    # publishes, then tags binacle-net:local
+#   up     just image up full
+#   down   just image down full                # keeps the data
+#   wipe   just image down full -v             # drops the postgres volume too
+#          sudo rm -rf ./config/data ./config/azurite     # sudo: they write as root
 #
 # Log in as admin@binacle.net / B1n4cl3Adm!n — seeded on first start by a startup task.
 # API on http://localhost:8080, dashboard on http://localhost:18888.

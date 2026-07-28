@@ -1,6 +1,6 @@
 # Binacle.Net task runner.
-# Setup, the dev loops and the test, coverage, openapi and agents modules live here. Benchmarks, performance
-# and the docker build are still config/*.sh.
+# Setup, the dev loops and the test, coverage, openapi, agents and build modules live here. Benchmarks,
+# performance and the tmux session are still config/*.sh.
 # `just` with no args lists every task. Install: sudo apt install just
 
 # List all tasks
@@ -19,8 +19,14 @@ mod openapi 'config/openapi.just'
 # The .agents/ manifests: `just agents all` after adding, renaming or re-describing a file there.
 mod agents 'config/agents.just'
 
-# Run one thing locally: `just serve api [profile]`, `just serve docs`, `just serve web`.
+# Run from source: `just serve api [profile]`, `just serve docs`, `just serve web`, `just serve services`.
 mod serve 'config/serve.just'
+
+# Make the API image: `just build publish` for the app, `just build image [version]` for the container.
+mod build 'config/build.just'
+
+# Run that image: `just image up [full|volume|bind]`, `just image down [name]`.
+mod image 'config/image.just'
 
 # Two recipes rather than an `install` module: you want all of it on a fresh clone, and the only part worth
 # running on its own is the asset copy. It becomes a module when there is a third thing to install separately.

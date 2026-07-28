@@ -1,6 +1,6 @@
 ---
 id: build-topology
-description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, central package management, the global.json test-runner opt-in, the Dockerfile/build.sh chain, and the NoTargets content projects
+description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, central package management, the global.json test-runner opt-in, the publish/Dockerfile chain, and the NoTargets content projects
 verified: 2026-07-28
 check: Solution structure, Directory.Build.props, Directory.Packages.props, global.json, Dockerfile, and content .proj files match the repo root
 also_update:
@@ -103,14 +103,18 @@ do their own webpack bundling separately (see docs site (`$docs-site`) / web sit
 
 ## Docker build chain
 
-The Dockerfile is **single-stage** — the publish happens outside it, in `config/build.sh`:
+The Dockerfile is **single-stage** — the publish happens outside it, in the `build` just module
+(`config/build.just`):
 
-1. `build.sh` runs `dotnet publish -c Release -o build/binacle-net --self-contained --runtime linux-x64` of
-   `api/src/Binacle.Net/Binacle.Net.csproj`.
+1. `just build publish` runs `dotnet publish -c Release -o build/binacle-net --self-contained --runtime
+   linux-x64` of `api/src/Binacle.Net/Binacle.Net.csproj`.
 2. `Dockerfile` (`mcr.microsoft.com/dotnet/aspnet:10.0`) does `COPY ["build/binacle-net", "."]`, sets
    `ARG VERSION → ENV BINACLE_VERSION`, `USER $APP_UID`, `ENTRYPOINT ["dotnet", "Binacle.Net.dll"]`.
-3. `build.sh` then `docker build -t binacle-net:local .`. It stops there — bring the stack up yourself with
-   `docker compose -f config/docker-compose.build.yml up`.
+3. `just build image [version]` does step 1 then `docker build --build-arg VERSION=<version>
+   -t binacle-net:<version> .` (default `local`). It stops there — run it with `just image up full`.
+
+`build/binacle-net` is not configurable: the Dockerfile hardcodes it in its `COPY` and `.dockerignore`
+allowlists that one path, so the publish has to land exactly there.
 
 There is no `EXPOSE`/`ASPNETCORE_HTTP_PORTS` in the Dockerfile — the aspnet:10.0 base defaults to port 8080;
 compose/k8s map it. `build/` is **output only** (generated `binacle-net/`, `docs/`, `web/`, `openapi/`, plus
@@ -127,7 +131,7 @@ samples use `Microsoft.Docker.Sdk` `.dcproj` files instead. None of these affect
 ## `config/` vs `samples/`
 
 `config/` is the **maintainer's local-dev tooling** — the `tests.just`, `coverage.just`, `openapi.just`,
-`agents.just` and `serve.just` modules for `just`, the scripts that have not moved yet (the per-slice
-`performance.*`, `benchmarks.*`, `build.sh`, `tmux.sh`), local compose files, and emulator state. `samples/` are
+`agents.just`, `serve.just` and `build.just` modules for `just`, the scripts that have not moved yet (the
+per-slice `performance.*`, `benchmarks.*`, `tmux.sh`), local compose files, and emulator state. `samples/` are
 **user-facing deployment starting points** to copy and run the published image. See `$commands` for
 the scripts and samples (`$samples`) for the deployment examples.

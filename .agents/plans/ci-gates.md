@@ -29,9 +29,10 @@ builds the solution and runs every suite on each PR; it does not build the image
 - Add an image build step to the PR gate. Build only - no push, no login, no Docker Hub credentials on a PR.
 - Use the same Dockerfile and the same publish arguments the release workflow uses, or the gate proves nothing.
 
-**Blocked on the build/image split.** `config/build.sh` also creates the local bind-mount folders and `chmod`s
-them, one of those with `sudo` - local setup CI must not run. Publish + `docker build` have to come out as their
-own entry point before CI can call them. That split lives in `ci-shared-scripts`, and it is the first step there.
+**Unblocked.** The split landed: the gate step is `just build image` (`config/build.just`), which publishes and
+builds with no push, no `sudo` and nothing interactive. The release workflow still inlines its own publish, so
+until it calls `just build publish` too, the gate proves the recipe builds - not that the release path does.
+That wiring is in `ci-shared-scripts`.
 
 ## Gate 2 - run the integration tests with all modules enabled
 

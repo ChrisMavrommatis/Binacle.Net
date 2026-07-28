@@ -82,7 +82,7 @@ they are produced here and handed to the docs session, which writes only the pag
 - [ ] **B6 - Azure Storage.** CI covers SQLite and Postgres only, so the Azure provider ships on trust even
   though `samples/docker/service-azure` points users at it. It stays in this release; removal is a later idea.
   The cheap cover is one deliberate run before tagging: bring up Azurite with
-  `docker compose -f config/docker-compose.yml up -d`, then `just test api-service-integration AzureStorage`.
+  `just serve services -d`, then `just test api-service-integration AzureStorage`.
 
 - [ ] **B7a - v4 is still experimental.** `ApiV4Document.IsExperimental` was set `true` on 2026-07-25, so the
   published OpenAPI document carries the warning that v4 may change at any time. Check it is still `true` before

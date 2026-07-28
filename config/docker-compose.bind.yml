@@ -3,12 +3,12 @@ name: binacle-net-bind
 # Simple — same as docker-compose.volume.yml, but data goes to a folder on disk so you can open the logs
 # in an editor.
 #
-# Create the folder first. The app runs as APP_UID inside the container, not as you, and docker never chowns
-# a bind mount — so a folder you own is read-only to the container and logging silently fails.
+# The folder has to exist and be writable first. The app runs as APP_UID inside the container, not as you, and
+# docker never chowns a bind mount — so a folder you own is read-only to the container and logging silently
+# fails. This file is the `bind` stack of the `image` module, and `just image up bind` does that setup.
 #
-#   setup  mkdir -p ./config/data && chmod -R 777 ./config/data
-#   up     docker compose -f ./config/docker-compose.bind.yml up
-#   down   docker compose -f ./config/docker-compose.bind.yml down       # the folder stays
+#   up     just image up bind
+#   down   just image down bind       # the folder stays
 #   wipe   rm -rf ./config/data
 #
 # Point somewhere else with BINACLE_DATA_DIR. Whatever you choose, it must stay readable by you: a

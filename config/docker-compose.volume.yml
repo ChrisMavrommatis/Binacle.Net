@@ -4,9 +4,11 @@ name: binacle-net-volume
 # containers. Data and the database live in a named volume, so docker owns them and nothing container-owned
 # lands in the repo. Nothing to set up: an empty volume is seeded from the image, ownership included.
 #
-#   up    docker compose -f ./config/docker-compose.volume.yml up
-#   down  docker compose -f ./config/docker-compose.volume.yml down       # keeps the data
-#   wipe  docker compose -f ./config/docker-compose.volume.yml down -v    # deletes the volume and the db
+# This file is the `volume` stack.
+#
+#   up    just image up volume
+#   down  just image down volume                                          # keeps the data
+#   wipe  just image down volume -v                                       # deletes the volume and the db
 #   read  docker compose -f ./config/docker-compose.volume.yml cp binacle-net:/app/data ./out
 #
 # Log in as admin@binacle.net / B1n4cl3Adm!n — seeded on first start by a startup task.

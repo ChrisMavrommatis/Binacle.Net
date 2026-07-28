@@ -1,10 +1,19 @@
 # CI - one set of commands, run by both CI and a human
 
-**Status (2026-07-28):** Everything except the build has moved. Tests, coverage, the OpenAPI documents, the
-agent indexes and running things locally are `just` modules under `config/`; setup is `just install` /
-`just assets` in the root justfile. `run-tests.yml` and `sonar-analysis.yml` call the recipes.
+**Status (2026-07-28):** Every script CI cares about has moved. Tests, coverage, the OpenAPI documents, the
+agent indexes, running things locally, the build and the compose stacks are `just` modules under `config/`;
+setup is `just install` / `just assets` in the root justfile. `run-tests.yml` and `sonar-analysis.yml` call the
+recipes.
 
-Left: the build and the docker image, and `performance.{lib,vipaq}.sh`, `benchmarks.{lib,vipaq}.sh`, `tmux.sh`.
+Left, in order:
+
+1. **Wire `release-docker-image.yml`.** `config/build.just` exists and `config/build.sh` is deleted, but the
+   workflow still inlines its own restore + publish, so the drift is still there - it is just now one edit away
+   from gone. Its `Restore` and `Publish` steps become `just build publish`. `vars.API_PROJECT_PATH` and
+   `vars.BUILD_OUTPUT` stop being referenced (`BUILD_OUTPUT` had to equal the path the Dockerfile hardcodes, so
+   it was a repo setting that could silently break the image). `vars.BUILD_DOCKERFILE` stays -
+   `docker/build-push-action` needs `file:`, and the push, the semver metadata and `latest=auto` stay CI's.
+2. `performance.{lib,vipaq}.sh`, `benchmarks.{lib,vipaq}.sh`, `tmux.sh`.
 
 **For the docs/web session.** `docs/README.md` and `web/README.md` both open with a setup block that says
 `npm run copy-assets-to-<site>` "from the repo root", then `bundle exec jekyll serve`. Those still work, but
@@ -14,9 +23,10 @@ limits from a coding session, so the correction is left here.
 
 ## Why
 
-`release-docker-image.yml` inlines its own `dotnet publish`, and `config/build.sh` does that same publish plus a
-`docker build`. So the image CI ships and the image a maintainer builds locally come from two separate recipes
-that drift: a flag added to one is not added to the other, and "works on my machine" stays a real answer.
+`release-docker-image.yml` inlines its own `dotnet publish` and `config/build.just` has another. So the image CI
+ships and the image a maintainer builds locally still come from two recipes that drift: a flag added to one is
+not added to the other, and "works on my machine" stays a real answer. The recipe exists now, so closing this
+is one edit to the workflow.
 
 The same argument covers the scripts CI never calls. `just --list` is one place that answers "what can I run",
 and recipe names complete out of the box; nothing in `config/` completes anything. The obvious fix - a
@@ -28,14 +38,6 @@ changing a script makes its completion silently lie.
 One entry point per job, called by both CI and a maintainer. CI keeps only what is genuinely CI's - checkout,
 SDK setup, service containers, caching, the matrix. Anything that decides *what runs* belongs in the entry
 point, not the workflow.
-
-**The build and the image.** `release-docker-image.yml` and `config/build.sh` collapse into one recipe both call.
-This is the one that blocks other work: the PR image gate needs it too.
-
-Three things are tangled in `build.sh` today and want separating: the publish (all CI needs), the
-`docker build` on top of it, and the mkdir + `chmod 777` of the bind-mounted `config/data` and `config/azurite`,
-which belongs to running the compose stack rather than to building anything. The azurite one needs `sudo`, so
-it cannot sit in a recipe CI calls.
 
 **`just openapi lint` on a PR.** One call, it generates the documents itself, nothing to bring up - so the spec
 standards stop depending on someone remembering to run it.
@@ -55,7 +57,17 @@ of them, so they are the tail of the same move and gate nothing. Open: `tmux.sh`
   through to the default and reports a green run for something nobody asked for.
 - **One module per job, not per script.** `serve` holds the API and both site dev loops because to a
   maintainer they are one job - bring a thing up and hold the terminal. Recipes that answer different
-  questions do not share a module just because their scripts sat in the same folder.
+  questions do not share a module just because their scripts sat in the same folder. The compose files split
+  on the same line: `docker-compose.yml` supports an API run from source, so it is `just serve services`,
+  while the three that run the built image are the `image` module. `build` stays separate again because what
+  CI can call must have no `sudo` and no local paths in it.
+- **Copy the few lines, do not reach across modules.** `serve` and `image` both create and open bind-mounted
+  folders. Having one call the other's private recipe would restore exactly the coupling that splitting them
+  removed, and it is about six lines of `mkdir` and `chmod`.
+- **The recipe is the place to answer the confusing failure.** `just image up` checks for
+  `binacle-net:local` first, because without it compose falls back to pulling from Docker Hub and reports
+  "pull access denied" - a credentials error for a missing local build. The check costs one line and removes
+  a question that has been asked twice.
 - **An env var carries CI's flags into the shared recipe.** `DOTNET_TEST_ARGS="--configuration Release
   --no-build"` is how CI runs every leaf against one Release build without a CI-only recipe.
 - **Module recipes need `set working-directory := '..'`**, and a tool that resolves paths itself (MSBuild

@@ -57,5 +57,5 @@ Fixed container config paths: `Presets.json` → `/app/Config_Files/Presets.json
   `.dcproj` (SDK `Microsoft.Docker.Sdk`). `JwtAuth.json` is required only with `SERVICE_MODULE=True`;
   `OpenTelemetry.Production.json` + `aspire-dashboard-config.json` only when shipping OTel/Aspire.
 - Published samples bind config files read-only and use `binacle/binacle-net:latest`. The local build pipeline
-  (`config/docker-compose.build.yml`, used by `build.sh`) instead uses `binacle-net:local` and injects config via
+  (`config/docker-compose.build.yml`, fed by `just build image`) instead uses `binacle-net:local` and injects config via
   compose `configs:` — see `$build-topology`.

@@ -13,7 +13,7 @@ So the image build has not run since the repo was restructured and `Binacle.Geom
 once by hand before the beta tag:
 
 ```
-config/build.sh          # note: currently starts compose in the foreground and does not hand the terminal back
+just build image         # publishes, then tags binacle-net:local
 ```
 
 Also make sure the PR that lands the release went green - nothing gates that the tagged commit is the tested

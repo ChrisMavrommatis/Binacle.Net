@@ -1,11 +1,18 @@
-# Run something locally, loaded by the root justfile as the `serve` module.
+# Run something locally from source, loaded by the root justfile as the `serve` module.
 #
-#   just serve api [profile]   the API, via its launch profiles
-#   just serve docs            the documentation site
-#   just serve web             the marketing site
+#   just serve api [profile]     the API, via its launch profiles
+#   just serve docs              the documentation site
+#   just serve web               the marketing site
+#   just serve services [-d]     what the API talks to: aspire dashboard, azurite, postgres
+#   just serve services-down     stop them (only needed after -d; Ctrl-C is enough otherwise)
 #
-# One module because all three are the same job to a maintainer: bring a thing up on this machine and leave
-# it in the foreground until Ctrl-C. Nothing here is called by CI.
+# One module because it is all the same job: work on the code on this machine. `services` is here rather than
+# with the image stacks for that reason - it runs no binacle-net at all, it brings up what `just serve api`
+# talks to, and the Postgres and AzureStorage test leaves want the same thing.
+#
+# Running the *built image* is the other job and lives in the `image` module. The two do not call each other:
+# the few lines of folder setup below are copied there rather than shared, because a module that reaches into
+# another one puts the coupling back that splitting them removed. Nothing here is called by CI.
 
 # Module recipes run where the module file lives (config/), which would break every path below.
 set working-directory := '..'
@@ -41,6 +48,34 @@ api profile="Normal":
     esac
     echo "Running Binacle.Net with launch profile: $launch_profile"
     dotnet run --project api/src/Binacle.Net -lp "$launch_profile"
+
+# Backing services only - no binacle-net. Extra arguments go straight to `docker compose`, so `-d` detaches.
+# In the foreground Ctrl-C stops them, which is why this is one recipe and its `down` is a second one rather
+# than an `up`/`down` pair like the image stacks.
+
+# What the API talks to: aspire dashboard, azurite, postgres [-d]
+services *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Azurite bind-mounts config/azurite for its state. Left to itself docker creates a missing bind source as
+    # root, which leaves emulator state in the repo you cannot open - so make it first, and make sure the
+    # container can write into it.
+    #
+    # The directory only, never `-R`: azurite writes its files as root and they stay root's, so a recursive
+    # chmod would fail on exactly those while making nothing more writable - a password prompt on every run
+    # for no gain.
+    mkdir -p config/azurite
+    if [ "$(stat -c '%a' config/azurite)" != "777" ]; then
+        # A plain chmod covers a directory we just made. Only one docker made for us needs sudo.
+        chmod 777 config/azurite 2>/dev/null || sudo chmod 777 config/azurite
+    fi
+
+    docker compose -f config/docker-compose.yml up {{ args }}
+
+# Stop the backing services [-v drops the postgres volume]
+services-down *args:
+    docker compose -f config/docker-compose.yml down {{ args }}
 
 # Docs site: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
 docs: (_serve-n-watch 'docs')

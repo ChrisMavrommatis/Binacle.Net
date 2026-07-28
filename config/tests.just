@@ -112,7 +112,7 @@ api-core-integration: (_dotnet_test 'api/test/Binacle.Net.IntegrationTests')
 # line, and `just infra=Postgres test api-service-integration` would be ignored in silence - a green run for
 # a backend nobody exercised. Empty lets the harness pick (SQLite), so a bare run needs nothing brought up.
 # Postgres and AzureStorage need theirs up:
-#   docker compose -f config/docker-compose.yml up -d
+#   just serve services -d
 
 # ServiceModule integration [Sqlite|Postgres|AzureStorage]
 [group('api')]
