@@ -22,9 +22,12 @@ the problem.
   that pair. A failing suite skips `Sonar end`, so a failed run publishes nothing - that is deliberate.
 - Sonar needs full git history (`fetch-depth: 0`) to tell new code from old. A shallow clone makes everything
   look new.
-- `sonar-analysis.yml` inlines every coverage command with no wrapper, and pins the service suite to SQLite - so
-  its coverage never exercises the Azure or Postgres provider code. Add `.coverage.xml` steps for those backends
-  if that code needs covering.
+- `sonar-analysis.yml` pins the service suite to SQLite - so its coverage never exercises the Azure or Postgres
+  provider code. Covering those means running that leaf again per backend, which the coverage recipes do not do
+  today: `just coverage all` runs the infra-free set once.
+- Coverage now runs all 9 C# suites; the old script ran 5, and the four API unit suites contributed nothing. The
+  first analysis after that change will show a step up in the number. It is a correction, not an improvement
+  anyone made to the code - do not set the ratchet from the old figure.
 
 ## Done when
 

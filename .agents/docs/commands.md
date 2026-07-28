@@ -1,14 +1,14 @@
 ---
 id: commands
 description: How to run the API, tests, benchmarks, and build the Docker image
-verified: 2026-07-24
-check: Aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
+verified: 2026-07-28
+check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
 ---
 
 # Commands
 
-All scripts live in `config/` and are run from the repo root. For the `config/` directory anatomy (scripts, local
-compose, env, emulator state) see `$config`.
+Tests and coverage are `just` recipes; the rest are scripts in `config/`. All are run from the repo root. For
+the `config/` directory anatomy (scripts, local compose, env, emulator state) see `$config`.
 
 ## Run the API
 
@@ -23,23 +23,52 @@ compose, env, emulator state) see `$config`.
 
 ## Run Tests
 
-Unit + integration tests, one script per slice (`tests.<slice>.sh`):
+Tests are `just` recipes, not scripts — one recipe per suite ("leaf"), defined in `config/tests.just` and
+loaded as the `test` module. `just --list test` lists them; the same recipes are what CI calls, so a red step
+is the line to paste here.
 
 ```bash
-./config/tests.lib.sh                  # lib C# unit
-./config/tests.vipaq.sh [cs|ts]        # vipaq C# unit and/or TS (no arg runs both)
-./config/tests.api.sh [unit|core|service]  # api unit + integration (no arg runs all)
-./config/tests.shared.sh [cs|ts]       # compact-notation C# and/or TS
+just test all                          # every leaf that needs nothing brought up
+just test lib-unit                     # lib C# unit
+just test shared-cs-unit               # compact-notation C#
+just test shared-ts-unit               # compact-notation TS
+just test vipaq-cs-unit                # vipaq C#
+just test vipaq-ts-unit                # vipaq TS
+just test api-core-unit                # Binacle.Net options validators, forwarded headers
+just test api-kernel-unit              # Kernel features
+just test api-diagnostics-unit         # DiagnosticsModule
+just test api-service-unit             # ServiceModule config validators and policies
+just test api-core-integration         # v3 + v4 HTTP endpoints
+just test api-service-integration [Sqlite|Postgres|AzureStorage]   # no arg falls back to SQLite
 ```
+
+`DOTNET_TEST_ARGS` is appended to every `dotnet test` leaf, which is how CI runs them all against one Release
+build: `DOTNET_TEST_ARGS="--configuration Release --no-build" just test all`.
 
 ## Coverage
 
-Runs every C# suite and both TS packages, then merges them into one report. Needs Azurite up — without it the
-service suite fails and the script writes no report.
+Coverage is not a second run — the collector rides along inside the test run, so these are the same leaves
+`just test all` runs, asked for extra output. Needs nothing brought up: the ServiceModule leaf uses SQLite.
 
 ```bash
-./config/coverage.sh                   # -> CoverageArtifacts/html/index.html
+just coverage all                      # every suite + the table (cobertura)
+just coverage all sonar                # the formats Sonar imports
+just coverage report                   # merge the last run into build/coverage/html-report/index.html
+just coverage table                    # re-print the table without re-running
 ```
+
+The format names the consumer, not the file format — `cobertura` is what the table and the HTML report read,
+`sonar` is Visual Studio xml for C# plus lcov for TS. Output is one flat file per suite, named after the project
+or package:
+
+| Path | Holds |
+|---|---|
+| `build/tests/<suite>.ctrf.json` | test results (jest packages write `<package>.jest.json`) |
+| `build/coverage/cobertura/<suite>.xml` | coverage for the table and the HTML report |
+| `build/coverage/sonar/<suite>.xml` | C# coverage for Sonar; TS is `<package>.info` (lcov) |
+| `build/coverage/html-report/` | the merged report, written by `just coverage report` |
+
+The table prints a row per suite (`Passed`/`Failed`/`Skipped`/`Coverage`) and its exit code is the run's verdict.
 
 ## Performance tests
 
@@ -109,11 +138,12 @@ npm run copy-assets-to-docs
 npm run copy-assets-to-web
 ```
 
-## ViPaq TypeScript tests
+## TypeScript packages
 
-```bash
-cd vipaq/packages/binacle-vipaq && npm test
-```
+Both are test leaves — `just test shared-ts-unit` and `just test vipaq-ts-unit`. They run jest from the repo
+root through the root `jest.config.js`, which is what keeps the workspace folder in coverage paths and applies
+its `collectCoverageFrom`. Running `npm test` inside a package works but uses that package's own config, so its
+numbers are not the ones CI or coverage report.
 
 ## Docker
 

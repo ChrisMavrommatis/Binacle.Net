@@ -1,7 +1,7 @@
 ---
 id: vipaq
 description: Binacle.ViPaq — compact binary format for packing results. The wire is defined in PROTOCOL.md; this covers the C# API surface, repo layout, and tests.
-verified: 2026-07-14
+verified: 2026-07-28
 check: Public API surface (ViPaqSerializer, ViPaqSerializationOptions, Layout, Limits) and repo layout match vipaq/src/Binacle.ViPaq/
 also_update:
   - vipaq/typescript
@@ -67,7 +67,7 @@ notation (`"10x10x10 (0,0,0)"`) is not here; it lives in the shared `Binacle.Com
 |---|---|
 | `vipaq/test/Binacle.ViPaq.UnitTests` | serializer round-trips, exact-byte golden vectors, the forced width/layout/compression matrix, every rejection; internal `Header` / `ProtocolEncoder` / codecs via `InternalsVisibleTo` |
 | `vipaq/test/Binacle.ViPaq.PerformanceTests` | packed-data conformance gate (`RoundTripCheck`) — all 716 real packs × every codec × both layouts × natural/forced-16-bit widths, header + decode-to-input, run before the size reports |
-| `vipaq/packages/binacle-vipaq` | TypeScript mirror — `npm test` (jest) |
+| `vipaq/packages/binacle-vipaq` | TypeScript mirror — `just test vipaq-ts-unit` (jest) |
 
 How the two languages are held to one wire — the shared vectors, the generators, and the decode-to-input contract
 for compressed payloads — is in `$vipaq/cross-language-testing`.

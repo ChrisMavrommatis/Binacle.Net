@@ -1,8 +1,8 @@
 ---
 id: lib/tests
 description: lib/test projects — unit tests, performance tests, benchmarks; AlgorithmFactories, CommonTestingFixture, ResultSelectionTestingFixture, and run aliases
-verified: 2026-07-15
-check: Project list, AlgorithmFactories/CommonTestingFixture/ResultSelectionTestingFixture, and aliases match lib/test/ and config/tests.lib.sh + config/performance.lib.sh + config/benchmarks.lib.sh
+verified: 2026-07-28
+check: Project list, AlgorithmFactories/CommonTestingFixture/ResultSelectionTestingFixture, and aliases match lib/test/ and config/tests.just + config/performance.lib.sh + config/benchmarks.lib.sh
 also_update:
   - shared
   - lib/algorithm-factory
@@ -16,7 +16,7 @@ kernel — see shared (`$shared`).
 
 | Project | Kind | Run |
 |---|---|---|
-| `Binacle.Lib.UnitTests` | xUnit | `./config/tests.lib.sh` |
+| `Binacle.Lib.UnitTests` | xUnit | `just test lib-unit` |
 | `Binacle.Lib.PerformanceTests` | console host (writes markdown reports) | `./config/performance.lib.sh` |
 | `Binacle.Lib.Benchmarks` | BenchmarkDotNet | `./config/benchmarks.lib.sh [FastValidation\|AlgorithmRacing\|BischoffSuite\|Parallelization\|ResultSelection]` |
 

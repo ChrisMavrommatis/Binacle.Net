@@ -32,10 +32,15 @@ packing-logs/
 BenchmarkDotNet.Artifacts
 PerformanceTestsArtifacts
 PerformanceTests.Artifacts
-CoverageArtifacts
 coverage/
 Output
 output
+# Published app, copied into the image by the Dockerfile. The generic "output" rule above no longer
+# covers it now that it is named after what it holds.
+build/binacle-net/
+# Per-suite test results and coverage, written by `just test` / `just coverage`.
+build/tests/
+build/coverage/
 
 ## Copied from UI Module
 src/Binacle.Net/wwwroot/ 

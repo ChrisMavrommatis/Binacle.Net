@@ -45,8 +45,8 @@ Once running, the API serves under `/api/v3` and `/api/v4`. With the UIs enabled
 
 | Project | Run with | Covers |
 |---|---|---|
-| `test/Binacle.Net.IntegrationTests` | `./config/tests.api.sh core` | HTTP tests for v3 and v4 endpoints |
-| `test/Binacle.Net.ServiceModule.IntegrationTests` | `./config/tests.api.sh service` | Auth and rate limiting |
+| `test/Binacle.Net.IntegrationTests` | `just test api-core-integration` | HTTP tests for v3 and v4 endpoints |
+| `test/Binacle.Net.ServiceModule.IntegrationTests` | `just test api-service-integration` | Auth and rate limiting |
 
 ## Other
 

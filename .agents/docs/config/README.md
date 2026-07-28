@@ -1,8 +1,8 @@
 ---
 id: config
-description: config/ — maintainer local-dev tooling: run/test/benchmark/build scripts, the doc-index and tmux scripts, local docker-compose, and emulator state
-verified: 2026-07-24
-check: Script list and the docker-compose file/service table match config/
+description: config/ — maintainer local-dev tooling: the test and coverage modules for just, run/benchmark/build scripts, the doc-index and tmux scripts, local docker-compose, and emulator state
+verified: 2026-07-28
+check: Script list, tests.just leaves, coverage.just recipes, and the docker-compose file/service table match config/
 also_update:
   - commands
   - samples
@@ -10,30 +10,31 @@ also_update:
 
 # Config
 
-`config/` is the **maintainer's local-dev tooling** — run/test/build scripts, local Docker Compose, and
+`config/` is the **maintainer's local-dev tooling** — the just modules for tests and coverage, run/build
+scripts, local Docker Compose, and
 emulator state. It is **not** a deployment template; user-facing deployment starting points live in
 samples (`$samples`). For the quick "how do I run X" reference see `$commands`; this
 doc describes what's in the directory.
 
-## Scripts (run from the repo root)
+## Scripts and `just` modules (run from the repo root)
 
 | Script | What it does |
 |---|---|
 | `api.sh [N\|S\|U\|All]` | Runs the API via `dotnet run -lp <profile>` from `api/src/Binacle.Net/`. Profiles `Normal`/`WithServiceModuleOnly`/`WithUiModuleOnly`/`WithAllModules` (aliases `N/S/U/All`); default `Normal` |
-| `tests.<slice>.sh [kind]` | Unit + integration via `dotnet run --project` (or `npm test` for TS). Slices: `lib`, `vipaq` (`cs`/`ts`), `api` (`core`/`service`), `shared` (`cs`/`ts`); no arg runs all kinds |
+| `tests.just` | **Not a script** — the `test` module for the root `justfile`. One recipe per suite, run with `just test <leaf>`; see `$commands` for the list |
 | `performance.<slice>.sh` | `dotnet run -c Release` for the slice's `PerformanceTests`. Slices `lib`, `vipaq`. Writes to gitignored `PerformanceTests.Artifacts` |
 | `benchmarks.<slice>.sh [alias]` | `dotnet run -c Release --filter <pattern>` from the slice's `Benchmarks` project. Slices `lib`, `vipaq`. No arg = all |
-| `build.sh` | Publishes (`-c Release -o build/output --self-contained --runtime linux-x64`), `docker build -t binacle-net:local`, then `docker compose -f config/docker-compose.build.yml up` |
-| `coverage.sh` | Runs the C# and TS suites with coverage collection, writing to gitignored `CoverageArtifacts/` |
+| `build.sh` | Publishes (`-c Release -o build/binacle-net --self-contained --runtime linux-x64`), `docker build -t binacle-net:local`, then `docker compose -f config/docker-compose.build.yml up` |
+| `coverage.just` | **Not a script** — the `coverage` module for the root `justfile`. Runs the test leaves with the collector attached and writes to gitignored `build/tests/` + `build/coverage/`; see `$commands` |
 | `lint.openapi.sh` | Generates the OpenAPI documents (`config/api.sh openapi`), then lints `build/openapi/*` with Spectral against `.spectral.yaml` |
 | `agents-index.sh` | Regenerates the `_index.md` manifest for `.agents/docs`, `.agents/design`, `.agents/plans`, `.agents/ideas`, and `.agents/memory` (grouped by area) |
 | `tmux.sh` | Builds/re-attaches the `binacle` tmux session (windows `api`/`docs`/`web`/`tests`/`misc`/`bench_1..3`); panes are pre-`cd`'d, nothing auto-runs |
 
-The aliases/kinds live inside each script (`api.sh` and the per-slice `tests.*`, `performance.*`, `benchmarks.*`).
-`agents-index.sh`, `tmux.sh`, `coverage.sh` and `lint.openapi.sh` are standalone — they have no aliases.
+The aliases/kinds live inside each script (`api.sh` and the per-slice `performance.*`, `benchmarks.*`).
+`agents-index.sh`, `tmux.sh` and `lint.openapi.sh` are standalone — they have no aliases.
 
-The `ts` kind (`tests.vipaq.sh ts`, `tests.shared.sh ts`) runs `npm test` in the package. Run `npm install` at the
-repo root first — the packages are npm workspaces, so one install at the root covers them all.
+The TS leaves (`just test shared-ts-unit`, `just test vipaq-ts-unit`) run jest from the repo root. Run
+`npm install` at the root first — the packages are npm workspaces, so one install covers them all.
 
 ## Local Docker Compose
 

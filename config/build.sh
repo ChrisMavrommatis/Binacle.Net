@@ -36,6 +36,6 @@ set -e
 
 dotnet restore $API_PROJECT_PATH --runtime linux-x64
 
-dotnet publish $API_PROJECT_PATH -c Release -o build/output --no-restore --self-contained --runtime linux-x64
+dotnet publish $API_PROJECT_PATH -c Release -o build/binacle-net --no-restore --self-contained --runtime linux-x64
 
 docker build --build-arg VERSION=$VER -t binacle-net:$VER .

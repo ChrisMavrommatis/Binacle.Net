@@ -1,7 +1,7 @@
 ---
 id: api
 description: Index for API slice docs — endpoints, contracts, service, kernel, presets, and module docs (Diagnostics, ServiceModule, UIModule)
-verified: 2026-07-24
+verified: 2026-07-28
 check: Startup sequence matches Program.cs; dep map matches actual project references
 also_update:
   - api/modules
@@ -136,10 +136,10 @@ See `$lib/result-building` for how `OperationResultBuilder` computes status and 
 
 | Project | Alias | What it covers |
 |---|---|---|
-| `api/test/Binacle.Net.IntegrationTests` | `config/tests.api.sh core` | HTTP behavior and scenario tests for v3 and v4 endpoints |
-| `api/test/Binacle.Net.ServiceModule.IntegrationTests` | `config/tests.api.sh service [Sqlite\|Postgres\|AzureStorage]` | Auth and rate limiting (ServiceModule only) |
+| `api/test/Binacle.Net.IntegrationTests` | `just test api-core-integration` | HTTP behavior and scenario tests for v3 and v4 endpoints |
+| `api/test/Binacle.Net.ServiceModule.IntegrationTests` | `just test api-service-integration [Sqlite\|Postgres\|AzureStorage]` | Auth and rate limiting (ServiceModule only) |
 
-`config/tests.api.sh` with no argument runs both.
+`just test all` runs both, along with every other suite.
 
 See API Tests (`$api/tests`) for integration-test conventions, and Shared (`$shared`) for the scenario
 data format. See Commands (`$commands`) for how to run the API locally.

@@ -1,7 +1,7 @@
 ---
 id: api/modules/service
 description: ServiceModule — JWT auth, rate limiting, account/subscription management. Three projects using clean architecture.
-verified: 2026-07-24
+verified: 2026-07-28
 check: Routes, config file names, and connection string name match ServiceModule source
 also_update:
   - api/configuration
@@ -135,6 +135,6 @@ See `$api/v4/add-endpoint` for the template — ServiceModule endpoints use `IGr
 
 ## Related Tests
 
-`api/test/Binacle.Net.ServiceModule.IntegrationTests` (run with `config/tests.api.sh service
+`api/test/Binacle.Net.ServiceModule.IntegrationTests` (run with `just test api-service-integration
 [Sqlite|Postgres|AzureStorage]`) — covers the auth token endpoint and the Admin account and subscription
 endpoints. Subscription has Create/Update/Patch/Delete only — there is no Get.

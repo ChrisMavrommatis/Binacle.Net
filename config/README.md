@@ -30,13 +30,35 @@ Arguments:
 ---
 
 ## Tests
-Script for running the tests for Binacle.Net
+`tests.just`, loaded by the root `justfile` as the `test` module. One recipe per suite, so tab completion
+finds them and CI calls the same recipes a maintainer does.
 
-Arguments
-- `lib` (`Binacle.Lib.UnitTests`)
-- `api` (`Binacle.Net.IntegrationTests`)
-- `api_service` (`Binacle.Net.ServiceModule.IntegrationTests`)
-- `vipaq` (`Binacle.ViPaq.UnitTests`)
+```bash
+just --list test                 # every leaf
+just test all                    # everything that needs nothing brought up
+just test lib-unit               # one leaf
+just test api-service-integration Postgres
+```
+
+Postgres and AzureStorage need their service up first
+(`docker compose -f config/docker-compose.yml up -d`); with no argument the harness falls back to SQLite.
+
+---
+
+## Coverage
+`coverage.just`, loaded as the `coverage` module. It runs the same leaves with the collector attached - coverage
+is the same run with extra output, not a second one.
+
+```bash
+just coverage all                # every suite + the table (cobertura)
+just coverage all sonar          # the formats Sonar imports
+just coverage report             # merge the last cobertura run -> build/coverage/html-report/index.html
+just coverage table              # re-print the table without re-running
+```
+
+The format names the consumer: `cobertura` is what the table and the HTML report read, `sonar` is Visual Studio
+xml for C# plus lcov for TS. Output is one flat file per suite under `build/tests/` and
+`build/coverage/<format>/`, named after the project or package.
 
 ---
 

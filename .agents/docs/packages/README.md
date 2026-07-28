@@ -1,7 +1,7 @@
 ---
 id: packages
 description: TypeScript packages under packages/ (npm workspaces) — UI components, compact-notation mirror, cookie utilities, and theme switching.
-verified: 2026-07-15
+verified: 2026-07-28
 check: Package list and descriptions match packages/ directory and their package.json files
 also_update:
   - packages/binacle-net-ui
@@ -49,7 +49,7 @@ Used by both `docs/` and `web/`. Depends on the `cookies` workspace package; no 
 
 | Project | What it covers |
 |---|---|
-| `vipaq/packages/binacle-vipaq` | Has its own test suite — run with `npm test` inside the package directory |
+| `vipaq/packages/binacle-vipaq` | Has its own test suite — run with `just test vipaq-ts-unit` |
 
 ## Dependencies
 

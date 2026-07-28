@@ -1,68 +1,26 @@
-# Idea: a task runner for the config scripts (with shell completion)
+# Idea: move the remaining config scripts into `just`
 
-**Status (2026-07-26):** Partly overtaken. `just` was picked and a `justfile` exists at the repo root, but it
-covers only the docs and web dev loops and says so: "The rest stays in `config/*.sh` until we know what we
-actually want out of `just`." So the tool question below is **settled**; what remains open is whether the test,
-coverage, benchmark and build scripts get recipes too.
+**Status (2026-07-28):** The tool question is settled and the pattern is proven. `just` was picked;
+`config/tests.just` and `config/coverage.just` are the `test` and `coverage` modules, both workflows call them,
+and `config/tests.*.sh` + `config/coverage.sh` are deleted.
 
-Read this alongside the CI plan for one shared set of scripts - that plan needs one entry point per job callable
-from both a laptop and a runner, which is the same front door this idea describes. Decide them together or they
-will produce two competing ways to run a build.
+What is left is only this: whether `api.sh`, `performance.*.sh`, `benchmarks.*.sh`, `lint.openapi.sh`,
+`tmux.sh` and `agents-index.sh` follow. `build.sh` is **not** part of this - the CI plan owns it.
 
-Originally prompted by wanting tab-completion for `config/tests.api.sh`.
+## For
 
-## The problem
+Discovery and completion. `just --list` is one place that answers "what can I run", and recipe names complete
+out of the box. Nothing in `config/` completes anything today, and the obvious fix - a hand-written bash
+completion file per script - is the trap: it duplicates each script's argument list (`N|S|U|All`,
+`Encode|Decode`), so changing a script makes its completion silently lie.
 
-`config/` holds ~10 dev scripts (`tests.api.sh`, `tests.lib.sh`, `tests.vipaq.sh`, `coverage.sh`,
-`benchmarks.*.sh`, …). Two rough edges:
+Completion should be a byproduct of the command definition, not a second file kept in sync by hand.
 
-- **Discovery.** You have to remember the script names and their args. There is no single "what can I run" list.
-- **No completion at all.** Nothing in `config/` completes anything today. The obvious fix — a hand-written
-  bash completion file per script — is the trap: it **duplicates the arg list** (`core|service`,
-  `Sqlite|Postgres|AzureStorage`), so changing a script's args makes the completion silently lie, and it is one
-  file per script.
+## Against
 
-The general rule others follow: **completion should be a byproduct of the command definition, not a second
-file kept in sync by hand.**
+The scripts left are single-purpose and rarely typed. Their aliases would have to become recipe parameters,
+which is real work for commands run a few times a week.
 
-## The idea
-
-One entry point that wraps the existing scripts, so `<TAB>` completes every task from one place and the arg
-list lives in exactly one spot. The scripts keep doing the work — the runner is a thin front door, not a
-rewrite.
-
-Two candidates were weighed, **`just` won** and is in use:
-
-| Tool | Completion | Install | Feel |
-|---|---|---|---|
-| **make** | `bash-completion` completes `make <TAB>` targets out of the box | none — already on every dev box | terse targets, crufty syntax |
-| **just** | `just --completions bash\|zsh\|fish`, plus recipe-name completion | one small binary | clean, built for exactly this |
-
-Either gives non-drifting completion and a nicer front door (`just test-service Sqlite`
-vs `config/tests.api.sh service Sqlite`).
-
-## Shape (sketch, not decided)
-
-Recipes wrap the scripts one-to-one, so no logic moves:
-
-- `test-api` → `config/tests.api.sh`
-- `test-service <infra>` → `config/tests.api.sh service <infra>`
-- `test-lib`, `test-vipaq`, `test-shared`, `coverage`, `bench-lib`, `bench-vipaq` → their scripts
-
-CI could later call the same recipes, so local and CI share one list of commands.
-
-## Open questions
-
-- ~~**make or just**~~ — settled, `just` is in use for the docs and web loops.
-- **Does the rest move in at all?** The justfile deliberately stopped at the dev loops. The CI work wants one
-  entry point per job anyway, so the real question is whether those entry points are recipes or stay as
-  `config/*.sh` that a recipe calls.
-- **Wrap or absorb** — keep `config/*.sh` as the implementation and have recipes call them (lean, no rewrite),
-  or fold simple scripts into the runner over time. Start by wrapping.
-- **Naming** — recipe names (`test-service` vs `test:service`), and whether the infra is a positional arg or a
-  named one (`just test-service Sqlite` vs `just test-service infra=Sqlite`).
-
-## Don't
-
-- Don't rewrite script logic into the runner. Keep the runner thin; the scripts stay the source of truth for
-  how each task runs.
+Note what actually made the tests worth moving: they were **absorbed, not wrapped** - the recipes run the tools
+directly and the scripts were deleted. A recipe that only calls a script is two files where there was one, and
+keeps the drift it was meant to remove. If a script moves, it moves properly or not at all.

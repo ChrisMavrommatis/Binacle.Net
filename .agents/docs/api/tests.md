@@ -1,7 +1,7 @@
 ---
 id: api/tests
 description: api/test integration tests — layout, v3/v4 HTTP conventions, validBinId, preset keys, special bins, base-class asserts, and test host config
-verified: 2026-07-27
+verified: 2026-07-28
 check: Test folders mirror api/src/Binacle.Net/v{3,4}/Endpoints/; validBinId, PresetKeys, special bins, and base-class asserts match api/test/ source
 also_update:
   - shared
@@ -13,12 +13,12 @@ Six projects under `api/test/` — two integration suites, which this doc is abo
 
 | Project | Covers | Run |
 |---|---|---|
-| `Binacle.Net.IntegrationTests` | v3 + v4 HTTP endpoints (fit, pack, presets) | `./config/tests.api.sh core` |
-| `Binacle.Net.ServiceModule.IntegrationTests` | auth token, admin account/subscription (ServiceModule on) | `./config/tests.api.sh service` |
-| `Binacle.Net.UnitTests` | `Binacle.Net`'s own options validators, and the forwarded-headers middleware over the options they produce | `./config/tests.api.sh unit` |
-| `Binacle.Net.Kernel.UnitTests` | Kernel features, one folder each (`Network/`) | `./config/tests.api.sh unit` |
-| `Binacle.Net.DiagnosticsModule.UnitTests` | health check allow-list, middleware, config validators | `./config/tests.api.sh unit` |
-| `Binacle.Net.ServiceModule.UnitTests` | ServiceModule config validators and policies | `./config/tests.api.sh unit` |
+| `Binacle.Net.IntegrationTests` | v3 + v4 HTTP endpoints (fit, pack, presets) | `just test api-core-integration` |
+| `Binacle.Net.ServiceModule.IntegrationTests` | auth token, admin account/subscription (ServiceModule on) | `just test api-service-integration` |
+| `Binacle.Net.UnitTests` | `Binacle.Net`'s own options validators, and the forwarded-headers middleware over the options they produce | `just test api-core-unit` |
+| `Binacle.Net.Kernel.UnitTests` | Kernel features, one folder each (`Network/`) | `just test api-kernel-unit` |
+| `Binacle.Net.DiagnosticsModule.UnitTests` | health check allow-list, middleware, config validators | `just test api-diagnostics-unit` |
+| `Binacle.Net.ServiceModule.UnitTests` | ServiceModule config validators and policies | `just test api-service-unit` |
 
 The unit suites need no host and nothing brought up. `Binacle.Net.Kernel.UnitTests` is split by Kernel feature,
 each folder holding its own `Tests/` and `Providers/`.
@@ -41,7 +41,8 @@ and a null logger factory.
 > `Binacle.Net.ServiceModule.IntegrationTests` picks its database backend from **`BINACLE_TEST_INFRA`** —
 > `AzureStorage`, `Postgres`, or `Sqlite`. Unset, it **falls back to SQLite**, so a bare `dotnet test` runs with
 > no external service. Only the first two need something up (Azurite on `127.0.0.1:10002`, Postgres on `5432`);
-> pick one with `config/tests.api.sh service [Sqlite|Postgres|AzureStorage]`.
+> pick one with `just test api-service-integration [Sqlite|Postgres|AzureStorage]`, which rejects a
+> misspelled backend instead of silently falling back.
 >
 > Each backend has a localhost default connection string, overridden by the production env name
 > `AZURESTORAGE_` / `POSTGRES_` / `SQLITE_CONNECTION_STRING` — the same keys the app reads, no test-only

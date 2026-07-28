@@ -1,7 +1,7 @@
 ---
 id: build-topology
 description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, the Dockerfile/build.sh chain, and the NoTargets content projects
-verified: 2026-07-24
+verified: 2026-07-28
 check: Solution structure, Directory.Build.props, Dockerfile, and content .proj files match the repo root
 also_update:
   - commands
@@ -57,14 +57,16 @@ do their own webpack bundling separately (see docs site (`$docs-site`) / web sit
 
 The Dockerfile is **single-stage** — the publish happens outside it, in `config/build.sh`:
 
-1. `build.sh` runs `dotnet publish -c Release -o build/output --self-contained --runtime linux-x64` of
+1. `build.sh` runs `dotnet publish -c Release -o build/binacle-net --self-contained --runtime linux-x64` of
    `api/src/Binacle.Net/Binacle.Net.csproj`.
-2. `Dockerfile` (`mcr.microsoft.com/dotnet/aspnet:10.0`) does `COPY ["build/output", "."]`, sets
+2. `Dockerfile` (`mcr.microsoft.com/dotnet/aspnet:10.0`) does `COPY ["build/binacle-net", "."]`, sets
    `ARG VERSION → ENV BINACLE_VERSION`, `USER $APP_UID`, `ENTRYPOINT ["dotnet", "Binacle.Net.dll"]`.
 3. `build.sh` then `docker build -t binacle-net:local .` and brings up `config/docker-compose.build.yml`.
 
 There is no `EXPOSE`/`ASPNETCORE_HTTP_PORTS` in the Dockerfile — the aspnet:10.0 base defaults to port 8080;
-compose/k8s map it. `build/` is **output only** (generated `output/`, `obj/`, `bin/`) — never edit it.
+compose/k8s map it. `build/` is **output only** (generated `binacle-net/`, `docs/`, `web/`, `openapi/`, plus
+`tests/` and `coverage/` from a test run) — never edit it. Each folder is named after what produced it, so a
+look at `build/` says which artifact is which.
 
 ## Content projects (`Microsoft.Build.NoTargets`)
 
@@ -75,8 +77,8 @@ samples use `Microsoft.Docker.Sdk` `.dcproj` files instead. None of these affect
 
 ## `config/` vs `samples/`
 
-`config/` is the **maintainer's local-dev tooling** — the run scripts (`api.sh`, the per-slice `tests.*`,
-`performance.*`, `benchmarks.*`, `build.sh`, `agents-index.sh`, `tmux.sh`), local compose files,
-and emulator state. `samples/` are
+`config/` is the **maintainer's local-dev tooling** — the `tests.just` and `coverage.just` modules for `just`,
+the run scripts (`api.sh`, the per-slice `performance.*`, `benchmarks.*`, `build.sh`, `agents-index.sh`,
+`tmux.sh`), local compose files, and emulator state. `samples/` are
 **user-facing deployment starting points** to copy and run the published image. See `$commands` for
 the scripts and samples (`$samples`) for the deployment examples.

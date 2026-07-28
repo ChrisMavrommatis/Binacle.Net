@@ -5,6 +5,7 @@
 
     <ItemGroup>
         <Content Include="*.json" />
+        <Content Include="*.just"/>
         <Content Include="*.md"/>
         <Content Include="*.sh"/>
         <Content Include="*.yml"/>
