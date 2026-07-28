@@ -75,8 +75,19 @@ the problem.
   first analysis after that change will show a step up in the number. It is a correction, not an improvement
   anyone made to the code - **do not set the ratchet from the old figure.**
 
+## Gate 4 - lint the OpenAPI documents on every PR
+
+The spec standards are enforced by whoever remembers to run Spectral. `just openapi lint` is one call that
+generates the documents itself and needs nothing brought up, so this is the cheapest gate of the four - moved
+here from `ci-shared-scripts`, which owns moving commands into recipes, not deciding what CI runs.
+
+- One step: `just openapi lint`.
+- It currently reports two `oas3-api-servers` warnings and no errors. Decide whether the gate fails on
+  warnings before turning it on, or it goes green with known noise and stops being read.
+
 ## Done when
 
 - A PR that breaks the image build fails before it merges.
 - The integration suites run against the module set the image ships, and the three TODOs are gone.
 - A PR gets a coverage number and a Sonar verdict without anyone pressing a button.
+- A PR that breaks the OpenAPI documents fails on the spec standards, not in review.

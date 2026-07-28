@@ -27,7 +27,6 @@ and move it to `.agents/plans/` once it's picked up. See [README.md](README.md) 
 | [api/refresh-token-endpoint.md](api/refresh-token-endpoint.md) | Idea: add refresh-token support to ServiceModule |
 | [api/schema-migrations.md](api/schema-migrations.md) | Idea: a schema-migration path for the ServiceModule store |
 | [api/servicemodule-simplification.md](api/servicemodule-simplification.md) | Idea: simplify ServiceModule — collapse the ceremony, keep the provider seam |
-| [api/smoke-testing-the-image.md](api/smoke-testing-the-image.md) | Idea: smoke test the built docker image over HTTP |
 | [api/uimodule-alpine-port.md](api/uimodule-alpine-port.md) | Idea: UIModule — port from Blazor reactivity to Alpine.js |
 
 ## Shared

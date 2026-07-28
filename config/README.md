@@ -1,12 +1,23 @@
 # Config
 
-Configuration files related to local setup
+The maintainer's local-dev tooling: the `just` modules, the scripts that have not moved into one, the local
+compose files, and emulator state. Everything here is run from the repo root. `just` with no arguments lists
+every task.
 
-## Tmux
-Tmux setup for Binacle.Net
-`tmux.sh`
+This is **not** a deployment template - `samples/` holds the user-facing starting points.
 
 ---
+
+## Setup
+Root `justfile`, not a module. Run once on a fresh clone.
+
+```bash
+just install                     # npm workspaces, both jekyll sites' gems, then the asset copy
+just assets                      # only the asset copy - after changing anything under assets/
+```
+
+---
+
 ## Serve
 `serve.just`, loaded as the `serve` module. Everything you run **from source** while working on the code.
 
@@ -18,27 +29,15 @@ just serve services [-d]         # what the API talks to: aspire dashboard, azur
 just serve services-down [-v]    # only needed after -d; Ctrl-C is enough otherwise
 ```
 
-Run `just install` once first - it does the npm workspaces, both jekyll sites' gems, and the asset copy.
-
 `services` is here rather than with the image stacks because it runs no binacle-net at all: it is what
 `just serve api` talks to, and what the Postgres and AzureStorage test leaves need. Running the **built
 image** is the other job, and that is the `image` module below.
 
 ---
 
-## Benchmarks
-Script  for all benchmarks
-
-Arguments:
-- `AlgorithmVersion`
-- `MultipleBins`
-- `MultipleItems`
-
----
-
 ## Tests
-`tests.just`, loaded by the root `justfile` as the `test` module. One recipe per suite, so tab completion
-finds them and CI calls the same recipes a maintainer does.
+`tests.just`, loaded as the `test` module. One recipe per suite, so tab completion finds them and CI calls the
+same recipes a maintainer does.
 
 ```bash
 just --list test                 # every leaf
@@ -47,8 +46,8 @@ just test lib-unit               # one leaf
 just test api-service-integration Postgres
 ```
 
-Postgres and AzureStorage need their service up first
-(`just serve services -d`); with no argument the harness falls back to SQLite.
+Postgres and AzureStorage need their service up first (`just serve services -d`); with no argument the harness
+falls back to SQLite.
 
 ---
 
@@ -69,12 +68,25 @@ xml for C# plus lcov for TS. Output is one flat file per suite under `build/test
 
 ---
 
+## OpenAPI and the agent indexes
+Two small modules, `openapi.just` and `agents.just`.
+
+```bash
+just openapi generate [dir]      # write build/openapi/Binacle.Net_v3.json and _v4.json
+just openapi lint [dir]          # generate, then Spectral them against .spectral.yaml
+just agents all                  # rewrite every .agents/**/_index.md
+```
+
+The documents come out of the build, not out of a running server, so nothing has to be brought up first.
+
+---
+
 ## Build
 `build.just`, loaded as the `build` module. The publish and the image, nothing else.
 
 ```bash
-just build publish            # dotnet publish -> build/binacle-net
-just build image [version]    # publish, then docker build -t binacle-net:<version>, default local
+just build publish               # dotnet publish -> build/binacle-net
+just build image [version]       # publish, then docker build -t binacle-net:<version>, default local
 ```
 
 `image` re-publishes every time - `docker build` copies whatever sits in `build/binacle-net`, so skipping it is
@@ -85,13 +97,13 @@ Neither recipe touches the container data folders, and neither needs `sudo`, so 
 ---
 
 ## Image stacks
-`image.just`, loaded as the `image` module. Runs the image `just build image` produced, three ways. One name
-per compose file, and `up` prepares the bind-mounted folders before it starts anything.
+`image.just`, loaded as the `image` module. Runs the image `just build image` produced, three ways - all
+`binacle-net:local`, differing in what runs beside it and where `/app/data` goes.
 
 ```bash
 just image up                    # same as `up full`
 just image up full               # everything on: all modules, all three backends, the dashboard
-just image up volume             # the image alone, SQLite, data in a named volume
+just image up volume             # the image alone, SQLite, data in a named volume - nothing lands in the repo
 just image up bind               # the image alone, SQLite, data in a folder you can open
 just image down [name] [-v]      # -v drops the named volumes, postgres included
 ```
@@ -112,21 +124,21 @@ and `chmod`.
 
 ## Container data
 **Postgres always uses a named volume**, never a folder here. It chowns its data dir to its own user and locks
-it to 0700, which leaves a directory in the repo you cannot read — and that fails the next `docker build`,
+it to 0700, which leaves a directory in the repo you cannot read - and that fails the next `docker build`,
 because the CLI walks the whole context before it builds. Wipe it with `just image down full -v`.
 
 App logs and Azurite state are bind-mounted into `config/` so you can open them, which means the folders have
-to exist and be writable by the container before anything starts — docker never chowns a bind mount, and the
+to exist and be writable by the container before anything starts - docker never chowns a bind mount, and the
 containers write as their own users. The `up` recipes do that, per stack: `just serve services` needs
 `config/azurite`; `image up full` needs it plus `config/data/{logs,pack-logs}`; `image up bind` needs
 `BINACLE_DATA_DIR` (default `config/data`); `image up volume` needs none.
 
-They open the **directory** and nothing inside it. The files belong to whoever wrote them — the app as
-`APP_UID`, azurite as root — and stay writable to that same writer, so a recursive `chmod` would fail on
+They open the **directory** and nothing inside it. The files belong to whoever wrote them - the app as
+`APP_UID`, azurite as root - and stay writable to that same writer, so a recursive `chmod` would fail on
 exactly those files while making nothing more writable. `sudo` is used only for a directory docker created
 itself, which the daemon makes as root.
 
-`docker-compose.volume.yml` puts the app's data in a volume instead. To read it:
+The `volume` stack keeps its data where you cannot open it directly. To read it:
 
 ```bash
 docker compose -f ./config/docker-compose.volume.yml cp binacle-net:/app/data ./out
@@ -134,11 +146,22 @@ docker compose -f ./config/docker-compose.volume.yml cp binacle-net:/app/data ./
 
 ---
 
-## Running the built image on its own
-Two minimal stacks for `binacle-net:local` — one container, ServiceModule on SQLite, no telemetry. They differ
-only in where `/app/data` goes.
+## Benchmarks and performance
+Still scripts, one per slice. Both take `-c Release` and write into gitignored folders.
 
-| Stack | File | Data |
-|---|---|---|
-| `volume` | `docker-compose.volume.yml` | named volume — nothing lands in the repo |
-| `bind` | `docker-compose.bind.yml` | a folder on disk, so you can open the logs; `BINACLE_DATA_DIR` overrides it |
+```bash
+./config/benchmarks.lib.sh [FastValidation|AlgorithmRacing|BischoffSuite|Parallelization|ResultSelection]
+./config/benchmarks.vipaq.sh [Encode|Decode]      # no argument = every benchmark
+./config/performance.lib.sh                       # console runner, writes markdown reports
+./config/performance.vipaq.sh
+```
+
+The alias tables live at the top of each `benchmarks.*` script - that is the list to change when a benchmark
+class is added or renamed.
+
+---
+
+## Tmux
+`tmux.sh` builds (or re-attaches to) a session named `binacle` with windows `api`, `docs`, `web`, `tests`,
+`misc` and `bench_1..3`. Panes are pre-`cd`'d but nothing runs automatically - it is a staging layout, not a
+launcher.

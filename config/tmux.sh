@@ -11,10 +11,8 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the 1st window horizontally
 	tmux split-window -h -t $SESSION_NAME:0 
 
-	tmux send-keys -t $SESSION_NAME:0.0 'cd ./config' C-m
+	# Panes stay at the repo root: what these windows run is `just`, not a script in config/
 	
-	# Set the cd to ../_data
-	tmux send-keys -t $SESSION_NAME:0.1 'cd ./config' C-m
 	
 	# Select the first pane
 	tmux select-pane -t $SESSION_NAME:0.0
@@ -45,10 +43,8 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the window horizontally
  	tmux split-window -h -t $SESSION_NAME:2
 
-  # set the cd to /web
   tmux send-keys -t $SESSION_NAME:2.0 'cd ./web' C-m
 
-  # Set the cd to /web
   tmux send-keys -t $SESSION_NAME:2.1 'cd ./web' C-m
 
   # Select the first pane
@@ -62,11 +58,8 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the window horizontally
  	tmux split-window -h -t $SESSION_NAME:3
 
-  # set the cd to /web
-  tmux send-keys -t $SESSION_NAME:3.0 'cd ./config' C-m
+  # Panes stay at the repo root: what these windows run is `just`, not a script in config/
 
-  # Set the cd to /web
-  tmux send-keys -t $SESSION_NAME:3.1 'cd ./config' C-m
   ###-------------------------WINDOW 3----------------------------###
 
   ###-------------------------WINDOW 4----------------------------###
@@ -76,11 +69,8 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the window horizontally
  	tmux split-window -h -t $SESSION_NAME:4
 
-  # set the cd to /web
-  tmux send-keys -t $SESSION_NAME:4.0 'cd ./config' C-m
+  # Panes stay at the repo root: what these windows run is `just`, not a script in config/
 
-  # Set the cd to /web
-  tmux send-keys -t $SESSION_NAME:4.1 'cd ./config' C-m
   ###-------------------------WINDOW 4----------------------------###	
 	
 	
