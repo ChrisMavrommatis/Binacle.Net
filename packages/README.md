@@ -12,4 +12,4 @@ from the repo root with `npm install`.
 | `theme-switcher` | Light/dark theme toggle |
 
 The sites in [`docs/`](../docs) and [`web/`](../web) consume the built assets, copied in by the gulp
-tasks (`npm run copy-assets-to-docs`, `npm run copy-assets-to-web`).
+tasks (`just assets` from the repo root).

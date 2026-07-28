@@ -1,0 +1,59 @@
+# Run something locally, loaded by the root justfile as the `serve` module.
+#
+#   just serve api [profile]   the API, via its launch profiles
+#   just serve docs            the documentation site
+#   just serve web             the marketing site
+#
+# One module because all three are the same job to a maintainer: bring a thing up on this machine and leave
+# it in the foreground until Ctrl-C. Nothing here is called by CI.
+
+# Module recipes run where the module file lives (config/), which would break every path below.
+set working-directory := '..'
+
+# dotnet, jekyll and webpack all print why they failed, so just's own "Recipe failed" line adds nothing.
+set no-exit-message := true
+
+# List the recipes
+default:
+    @just --list serve
+
+# The launch profiles are a positional argument rather than four recipes: they are one run with the modules
+# switched on and off, not four different things to run. The short aliases are what gets typed daily, and the
+# `case` rejects anything else - a misspelled profile would otherwise reach `dotnet run` and start the app on
+# its default profile, which looks like a working run of something nobody asked for.
+#
+# The profiles themselves live in api/src/Binacle.Net/Properties/launchSettings.json.
+
+# The API [Normal|WithServiceModuleOnly|WithUiModuleOnly|WithAllModules] (N|S|U|All)
+api profile="Normal":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    case "{{ profile }}" in
+        Normal | N)                launch_profile=Normal ;;
+        WithServiceModuleOnly | S) launch_profile=WithServiceModuleOnly ;;
+        WithUiModuleOnly | U)      launch_profile=WithUiModuleOnly ;;
+        WithAllModules | All | A)  launch_profile=WithAllModules ;;
+        *)
+            echo "Unknown profile '{{ profile }}'." >&2
+            echo "Use Normal (N), WithServiceModuleOnly (S), WithUiModuleOnly (U) or WithAllModules (All)." >&2
+            exit 1
+            ;;
+    esac
+    echo "Running Binacle.Net with launch profile: $launch_profile"
+    dotnet run --project api/src/Binacle.Net -lp "$launch_profile"
+
+# Docs site: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
+docs: (_serve-n-watch 'docs')
+
+# Web site: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
+web: (_serve-n-watch 'web')
+
+# Serve and watch together, each line prefixed with its source.
+# --kill-others makes one Ctrl-C stop both.
+[private]
+_serve-n-watch dir:
+    cd "{{ dir }}" && npx concurrently \
+        --kill-others \
+        --names 'serve,watch' \
+        --prefix-colors 'magenta,cyan' \
+        'npm run serve' 'npm run watch'

@@ -13,7 +13,7 @@ table of [README.md](README.md).
 | File | Description |
 |---|---|
 | [build-topology.md](build-topology.md) | Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, central package management, the global.json test-runner opt-in, the Dockerfile/build.sh chain, and the NoTargets content projects |
-| [commands.md](commands.md) | How to run the API, tests, benchmarks, and build the Docker image |
+| [commands.md](commands.md) | How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image |
 | [concepts.md](concepts.md) | Fit exits early on first failure; pack continues and returns positions. Both return the same result shape — packed items and unpacked items. Used by both Lib algorithms and API endpoints. |
 
 ## API
@@ -43,7 +43,7 @@ table of [README.md](README.md).
 
 | File | Description |
 |---|---|
-| [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: the test, coverage, openapi and agents modules for just, run/benchmark/build scripts, the tmux script, local docker-compose, and emulator state |
+| [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: the test, coverage, openapi, agents and serve modules for just, the benchmark/performance/build scripts, the tmux script, local docker-compose, and emulator state |
 
 ## Docs Site
 

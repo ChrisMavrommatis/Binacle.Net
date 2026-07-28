@@ -33,7 +33,7 @@ root [README](../README.md) for what those mean.
 ## Run it
 
 ```bash
-./config/api.sh [N|S|U|All]
+just serve api [N|S|U|All]
 ```
 
 `N` core only · `S` with ServiceModule · `U` with UIModule · `All` everything.

@@ -1,8 +1,8 @@
 ---
 id: config
-description: config/ — maintainer local-dev tooling: the test, coverage, openapi and agents modules for just, run/benchmark/build scripts, the tmux script, local docker-compose, and emulator state
+description: config/ — maintainer local-dev tooling: the test, coverage, openapi, agents and serve modules for just, the benchmark/performance/build scripts, the tmux script, local docker-compose, and emulator state
 verified: 2026-07-28
-check: Script list, tests.just leaves, coverage.just recipes, openapi.just and agents.just recipes, and the docker-compose file/service table match config/
+check: Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just and serve.just recipes, and the docker-compose file/service table match config/
 also_update:
   - commands
   - samples
@@ -20,21 +20,22 @@ doc describes what's in the directory.
 
 | Script | What it does |
 |---|---|
-| `api.sh [N\|S\|U\|All]` | Runs the API via `dotnet run -lp <profile>` from `api/src/Binacle.Net/`. Profiles `Normal`/`WithServiceModuleOnly`/`WithUiModuleOnly`/`WithAllModules` (aliases `N/S/U/All`); default `Normal` |
+| `serve.just` | **Not a script** — the `serve` module for the root `justfile`. `just serve api [profile]` runs the API via `dotnet run -lp <profile>` (`Normal`/`WithServiceModuleOnly`/`WithUiModuleOnly`/`WithAllModules`, aliases `N/S/U/All`, default `Normal`); `just serve docs` and `just serve web` run jekyll + webpack watch together |
 | `tests.just` | **Not a script** — the `test` module for the root `justfile`. One recipe per suite, run with `just test <leaf>`; see `$commands` for the list |
 | `performance.<slice>.sh` | `dotnet run -c Release` for the slice's `PerformanceTests`. Slices `lib`, `vipaq`. Writes to gitignored `PerformanceTests.Artifacts` |
 | `benchmarks.<slice>.sh [alias]` | `dotnet run -c Release --filter <pattern>` from the slice's `Benchmarks` project. Slices `lib`, `vipaq`. No arg = all |
-| `build.sh` | Publishes (`-c Release -o build/binacle-net --self-contained --runtime linux-x64`), `docker build -t binacle-net:local`, then `docker compose -f config/docker-compose.build.yml up` |
+| `build.sh` | Creates and opens up the bind-mounted `config/data/**` and `config/azurite/` (needs `sudo` for the second), publishes (`-c Release -o build/binacle-net --self-contained --runtime linux-x64`), then `docker build -t binacle-net:local`. It does **not** start compose - bring the stack up yourself with `docker compose -f config/docker-compose.build.yml up` |
 | `coverage.just` | **Not a script** — the `coverage` module for the root `justfile`. Runs the test leaves with the collector attached and writes to gitignored `build/tests/` + `build/coverage/`; see `$commands` |
 | `openapi.just` | **Not a script** — the `openapi` module for the root `justfile`. `just openapi generate [dir]` builds the v3/v4 documents into gitignored `build/openapi/`, `just openapi lint [dir]` generates then Spectral-lints them against `.spectral.yaml` |
 | `agents.just` | **Not a script** — the `agents` module for the root `justfile`. `just agents all` regenerates the `_index.md` manifest for `.agents/docs`, `.agents/design`, `.agents/plans`, `.agents/memory` and `.agents/ideas` (grouped by area); `just agents generate-index <name>` does one |
 | `tmux.sh` | Builds/re-attaches the `binacle` tmux session (windows `api`/`docs`/`web`/`tests`/`misc`/`bench_1..3`); panes are pre-`cd`'d, nothing auto-runs |
 
-The aliases/kinds live inside each script (`api.sh` and the per-slice `performance.*`, `benchmarks.*`).
-`tmux.sh` is standalone — it has no aliases.
+The launch profiles live in `serve.just`; the benchmark filters live inside the per-slice `benchmarks.*`
+scripts. `tmux.sh` is standalone — it has no aliases.
 
 The TS leaves (`just test shared-ts-unit`, `just test vipaq-ts-unit`) run jest from the repo root. Run
-`npm install` at the root first — the packages are npm workspaces, so one install covers them all.
+`just install` first — it does the root `npm install` (the packages are npm workspaces, so one install covers
+them all), `bundle install` for both jekyll sites, and copies `assets/` into `docs/` and `web/`.
 
 ## Local Docker Compose
 

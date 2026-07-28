@@ -1,6 +1,6 @@
 # Binacle.Net task runner.
-# The docs/web dev loops and the test, coverage, openapi and agents modules live here. Running the API,
-# benchmarks, performance and build are still config/*.sh.
+# Setup, the dev loops and the test, coverage, openapi and agents modules live here. Benchmarks, performance
+# and the docker build are still config/*.sh.
 # `just` with no args lists every task. Install: sudo apt install just
 
 # List all tasks
@@ -19,22 +19,22 @@ mod openapi 'config/openapi.just'
 # The .agents/ manifests: `just agents all` after adding, renaming or re-describing a file there.
 mod agents 'config/agents.just'
 
-# Docs dev: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
-[group('dev')]
-docs:
-    @just _serve-n-watch docs
+# Run one thing locally: `just serve api [profile]`, `just serve docs`, `just serve web`.
+mod serve 'config/serve.just'
 
-# Web dev: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
-[group('dev')]
-web:
-    @just _serve-n-watch web
+# Two recipes rather than an `install` module: you want all of it on a fresh clone, and the only part worth
+# running on its own is the asset copy. It becomes a module when there is a third thing to install separately.
 
-# Serve and watch together, each line prefixed with its source.
-# --kill-others makes one Ctrl-C stop both.
-[private]
-_serve-n-watch dir:
-    cd "{{justfile_directory()}}/{{dir}}" && npx concurrently \
-        --kill-others \
-        --names 'serve,watch' \
-        --prefix-colors 'magenta,cyan' \
-        'npm run serve' 'npm run watch'
+# Everything a fresh clone needs before `just serve` works
+[group('dev')]
+install:
+    npm install
+    cd docs && bundle install
+    cd web && bundle install
+    @just assets
+
+# Copy assets/ into the docs and web sites - run it after changing anything under assets/
+[group('dev')]
+assets:
+    npm run copy-assets-to-docs
+    npm run copy-assets-to-web

@@ -1,26 +1,44 @@
 ---
 id: commands
-description: How to run the API, tests, benchmarks, and build the Docker image
+description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
 verified: 2026-07-28
-check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; openapi recipes match config/openapi.just; agents recipes match config/agents.just; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
+check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; openapi recipes match config/openapi.just; agents recipes match config/agents.just; serve recipes match config/serve.just; install/assets match the root justfile; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
 ---
 
 # Commands
 
-Tests, coverage, the OpenAPI documents and the agent indexes are `just` recipes; the rest are scripts in
-`config/`. All are run from the repo root. For the `config/` directory anatomy (scripts, local compose, env,
-emulator state) see `$config`.
+Setup, running things, tests, coverage, the OpenAPI documents and the agent indexes are `just` recipes; the
+benchmarks, performance runs, the image build and the tmux session are still scripts in `config/`. All are run
+from the repo root. `just` with no arguments lists everything. For the `config/` directory anatomy (scripts,
+local compose, env, emulator state) see `$config`.
 
-## Run the API
+## Set up a fresh clone
 
 ```bash
-./config/api.sh [N|S|U|All]
+just install                           # npm workspaces, both jekyll sites' gems, then the asset copy
+just assets                            # only the asset copy - after changing anything under assets/
 ```
+
+`assets` copies `assets/**` into `docs/` and `web/` via gulp. Both sites serve their copy, so a changed logo
+does not show up until this runs.
+
+## Run something locally
+
+```bash
+just serve api [N|S|U|All]             # the API
+just serve docs                        # docs site: jekyll serve + webpack watch, one terminal
+just serve web                         # marketing site: same
+```
+
+The API launch profiles:
 
 - `N` / `Normal` — core API only (default)
 - `S` / `WithServiceModuleOnly` — with ServiceModule (auth, rate limiting)
 - `U` / `WithUiModuleOnly` — with UIModule
 - `All` / `WithAllModules` — everything
+
+`docs` and `web` run both halves under `concurrently --kill-others`, so one Ctrl-C stops the pair. They need
+`just install` to have run first.
 
 ## Run Tests
 
@@ -118,11 +136,10 @@ docker compose -f config/docker-compose.yml up
 ```
 
 This starts **only the backing services** — `aspire-dashboard` (OTel), `azurite` (Azure Storage emulator), and
-`postgres`. It does **not** run the API. Run the API itself with `./config/api.sh`.
+`postgres`. It does **not** run the API. Run the API itself with `just serve api`.
 
-To build the API image locally and run it with all modules on, use `./config/build.sh` — it publishes, builds
-`binacle-net:local`, and brings up `config/docker-compose.build.yml` (the local image + azurite + postgres +
-aspire).
+To run the API image locally with all modules on, build it with `./config/build.sh` first, then bring up
+`config/docker-compose.build.yml` yourself (the local image + azurite + postgres + aspire).
 
 ## Regenerate the agent indexes
 
@@ -145,21 +162,22 @@ can't leave an index untouched and look like it worked.
 
 Builds (or re-attaches to) a tmux session named `binacle` with windows `api`, `docs`, `web`, `tests`, `misc`, and
 `bench_1`/`bench_2`/`bench_3`. Each pane is pre-`cd`'d to the right folder but runs nothing automatically — it's a
-staging layout for the `config/*.sh` scripts. Requires `tmux`.
+staging layout for the `just` recipes and the remaining `config/*.sh` scripts. Requires `tmux`.
 
 ## Build (Docker image)
 
 ```bash
-./config/build.sh
+./config/build.sh                                            # publish + docker build -t binacle-net:local
+docker compose -f config/docker-compose.build.yml up         # then run it
 ```
+
+`build.sh` also creates `config/data/**` and `config/azurite/` and opens their permissions, because the
+containers bind-mount them and write as their own users. The azurite `chmod` needs `sudo`, so the script
+prompts. It does not start compose — that is the line above.
 
 ## JS Packages (npm workspaces at root)
 
-```bash
-npm install
-npm run copy-assets-to-docs
-npm run copy-assets-to-web
-```
+`just install` covers them — it is the root `npm install`, so one install covers every workspace package.
 
 ## TypeScript packages
 

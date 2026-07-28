@@ -96,6 +96,8 @@ Its only dev dependency is `gulp`, and its only scripts are the asset-copy tasks
 - `npm run copy-assets-to-docs` → `gulp copy-assets-to-docs`
 - `npm run copy-assets-to-web` → `gulp copy-assets-to-web`
 
+`just assets` runs both, and `just install` runs it after the npm and bundler installs.
+
 `gulpfile.js` copies shared `assets/` (images, js, css, fonts) into the `docs/` and `web/` Jekyll sites. The sites
 do their own webpack bundling separately (see docs site (`$docs-site`) / web site (`$web-site`)).
 
@@ -107,7 +109,8 @@ The Dockerfile is **single-stage** — the publish happens outside it, in `confi
    `api/src/Binacle.Net/Binacle.Net.csproj`.
 2. `Dockerfile` (`mcr.microsoft.com/dotnet/aspnet:10.0`) does `COPY ["build/binacle-net", "."]`, sets
    `ARG VERSION → ENV BINACLE_VERSION`, `USER $APP_UID`, `ENTRYPOINT ["dotnet", "Binacle.Net.dll"]`.
-3. `build.sh` then `docker build -t binacle-net:local .` and brings up `config/docker-compose.build.yml`.
+3. `build.sh` then `docker build -t binacle-net:local .`. It stops there — bring the stack up yourself with
+   `docker compose -f config/docker-compose.build.yml up`.
 
 There is no `EXPOSE`/`ASPNETCORE_HTTP_PORTS` in the Dockerfile — the aspnet:10.0 base defaults to port 8080;
 compose/k8s map it. `build/` is **output only** (generated `binacle-net/`, `docs/`, `web/`, `openapi/`, plus
@@ -123,8 +126,8 @@ samples use `Microsoft.Docker.Sdk` `.dcproj` files instead. None of these affect
 
 ## `config/` vs `samples/`
 
-`config/` is the **maintainer's local-dev tooling** — the `tests.just`, `coverage.just`, `openapi.just` and
-`agents.just` modules for `just`, the run scripts (`api.sh`, the per-slice `performance.*`, `benchmarks.*`,
-`build.sh`, `tmux.sh`), local compose files, and emulator state. `samples/` are
+`config/` is the **maintainer's local-dev tooling** — the `tests.just`, `coverage.just`, `openapi.just`,
+`agents.just` and `serve.just` modules for `just`, the scripts that have not moved yet (the per-slice
+`performance.*`, `benchmarks.*`, `build.sh`, `tmux.sh`), local compose files, and emulator state. `samples/` are
 **user-facing deployment starting points** to copy and run the published image. See `$commands` for
 the scripts and samples (`$samples`) for the deployment examples.

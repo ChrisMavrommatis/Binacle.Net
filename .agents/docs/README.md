@@ -40,12 +40,13 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `web/` | Jekyll marketing/web site (`$web-site`) |
 | `api/requests/` | HTTP request files for manual testing (subfolders: v3, v4, Service) |
 | `samples/` | Docker and Kubernetes deployment samples (user-facing starting points) |
-| `config/` | Maintainer local-dev tooling — the test and coverage `just` modules, run/benchmark/build scripts, local compose, env, emulator state |
+| `config/` | Maintainer local-dev tooling — the `just` modules (test, coverage, openapi, agents, serve), the benchmark/performance/build scripts, local compose, env, emulator state |
 | `shared/data/` | OR-library packing benchmark data |
 
 ## Commands
 
-See Commands (`$commands`) — how to run the API, tests, benchmarks, and build the Docker image.
+See Commands (`$commands`) — how to set up a clone, run the API and the two sites, run tests and benchmarks,
+and build the Docker image.
 
 ## Common Tasks
 

@@ -56,7 +56,7 @@ See `$api/configuration` for full details on env-var conventions and config file
 
 ## Launch Profiles
 
-The `config/api.sh` script picks a launch profile:
+`just serve api [N|S|U|All]` picks a launch profile:
 
 - `Normal` — core API only
 - `WithServiceModuleOnly`

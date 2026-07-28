@@ -16,7 +16,7 @@ Built with Jekyll + webpack + TypeScript. Output goes to `../build/docs`.
 Run locally:
 
 ```bash
-cd docs && bundle exec jekyll serve   # port 7195
+just serve docs   # jekyll serve (port 7195) + webpack watch, one Ctrl-C stops both
 ```
 
 ## Content Structure

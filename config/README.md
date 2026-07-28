@@ -7,15 +7,16 @@ Tmux setup for Binacle.Net
 `tmux.sh`
 
 ---
-## Api
-Script for running Binacle.Net
-`api.sh`
+## Serve
+`serve.just`, loaded as the `serve` module. Brings one thing up in the foreground.
 
-Arguments:
-- `Normal` (`N`)
-- `WithServiceModuleOnly` (`S`)
-- `WithUiModuleOnly` (`U`)
-- `WithAllModules` (`A`)
+```bash
+just serve api [N|S|U|All]       # Normal, WithServiceModuleOnly, WithUiModuleOnly, WithAllModules
+just serve docs                  # jekyll serve + webpack watch, one Ctrl-C stops both
+just serve web
+```
+
+Run `just install` once first - it does the npm workspaces, both jekyll sites' gems, and the asset copy.
 
 ---
 

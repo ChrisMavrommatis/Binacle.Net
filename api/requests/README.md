@@ -41,4 +41,4 @@ header into `@ID`. `Create.http` itself answers `409` once that username exists.
 - `HOST` — defaults to `localhost:7194`
 - `BEARERTOKEN` — empty. Fill it from the response of `Service/Auth/Token.http` to call anything behind auth.
 
-Start the API with `./config/api.sh` first. Use `S` if you need the ServiceModule endpoints.
+Start the API with `just serve api` first. Use `S` if you need the ServiceModule endpoints.
