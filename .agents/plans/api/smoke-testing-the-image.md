@@ -340,31 +340,35 @@ has no `Cors.json`" is packaging.
 
 **HTTP surface**
 
-- [ ] `config/smoke/zero.hurl`, `quickstart.hurl`, `prod.hurl`, `full.hurl` per the Dynamic inventory above.
-      Files with the same URLs and different expected statuses; do not try to recover a single table with `HTTP
-      {{status}}` variables - that hides the assertion the file exists to show.
+- [x] `config/smoke/zero.hurl`, `quickstart.hurl`, `prod.hurl`, `full.hurl` written. `full.hurl` is verified
+      against a live container (curl, 2026-07-30); the other three are written from the same shapes and the
+      feature-flag mechanism but **not yet run** - `hurl` is not installed, and a stuck container (below) blocked
+      a clean bring-up of the others. Corrections found live, already folded in: `/swagger/` 301s to
+      `/swagger/index.html` (assert the index, not `/swagger/`); the token body is `{tokenType, accessToken,
+      expiresIn}` (no `refreshToken`); `/api/v4/presets` is `$.presets['<name>']` (3 bins each); the `Features`
+      names are `SwaggerUI`/`ScalarUI`/`UIModule`/`ServiceModule`/`DebugEndpoint`/`RateLimiter`; `GET
+      /api/auth/token` is 405 when service is on (POST-only) and 404 when off.
 
 **Stacks** - their own files under `config/smoke/`, flat (matching the flat `config/` dev stacks), not the
 sample files. Smoke runs `binacle-net:local` and needs test-only tweaks the samples must never carry; the
 samples pin the published image. Storage is throwaway (a named volume, no `./data` bind), so smoke needs no
 `_prepare` step.
 
-- [ ] `config/smoke/zero.yml` (image + port, zero env), `quickstart.yml` (`SWAGGER_UI`+`SCALAR_UI`+`UI_MODULE`,
-      no backend), `prod.yml` (swagger + scalar + service + health + packinglogs on, `UI_MODULE`/`DEBUG_ENDPOINT`
-      off, `JwtAuth.json` inlined via compose `configs:`, one backend, anon rate limit raised), `full.yml`
-      (every flag incl. `DEBUG_ENDPOINT`, `JwtAuth.json` inlined, one backend, anon rate limit raised). All set
-      `image: binacle-net:local`.
+- [x] `config/smoke/zero.yml`, `quickstart.yml`, `prod.yml`, `full.yml` written. `prod`/`full` inline
+      `JwtAuth.json` via compose `configs:`, use SQLite, and raise `RateLimiter__ApiUsageAnonymous`. All set
+      `image: binacle-net:local`. `prod` leaves `UI_MODULE`/`DEBUG_ENDPOINT` unset. All four brought up cleanly
+      via `docker compose` (the container starts and serves); only the parallel probing tripped over the port.
 
 **Recipes** - a dedicated `config/smoke.just` module (`mod smoke`), not the `image` module: smoke stacks are
 ephemeral and skip `image`'s `_prepare` (bind-dir setup), and smoke is one end-to-end concern.
 
-- [ ] `just smoke test <profile>` runs the tools against an up stack: `container-structure-test` once
-      (`image.yaml`, `--driver tar`) and the profile's `.hurl`. A `case` rejects an unknown profile. `up`/`down
-      <profile>` iterate one stack.
-- [ ] `just smoke all` - the one-shot: build `binacle-net:local`, then per profile up/test/down. It **must not
-      leak containers**: `up/test/down` under `set -e` skips `down` the moment a test fails, so it needs a
-      `trap`. The one piece of real shell in the design. Mirrors `just test all` / `just coverage all`.
-- [ ] Not wired into `just test all` - that set needs nothing brought up.
+- [x] `config/smoke.just` written (`mod smoke` added to the root justfile). `just smoke up|down|test <profile>`
+      iterate one stack; `just smoke all` builds `binacle-net:local` then loops up/test/down with a `trap` so a
+      failing test still tears the stack down. `test` runs `container-structure-test` (docker driver) then the
+      profile's `.hurl`. A `case` rejects an unknown profile. Not wired into `just test all`. **Not yet run end
+      to end** - blocked on `hurl` and the stuck container.
+- [ ] `just smoke all` shell wants a real run once `hurl` is in and the port is free - watch that the `trap`
+      actually tears each stack down (the manual probing showed a leaked container is easy to cause).
 
 **Docs**
 
