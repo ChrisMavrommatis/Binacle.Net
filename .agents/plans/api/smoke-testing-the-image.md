@@ -105,10 +105,13 @@ How each runs (syntax verified against current docs):
   `excludedContents` - both lists of regexes), and `metadataTest` (`labels` with optional regex, `envVars`,
   `entrypoint`, `user`, `workdir`). Invoke:
   `container-structure-test test --image binacle-net:local --config config/smoke/image.yaml --output junit
-  --test-report report.xml`. **The whole static half runs on `--driver tar`, no daemon**: the tar driver
-  supports every test type except `commandTests`, and we have none. So `docker save binacle-net:local -o
-  img.tar` then `--driver tar --image img.tar` needs nothing running - which is exactly what "content checks
-  should not need a container" means in practice. Non-zero exit on any failure; JUnit for CI.
+  --test-report report.xml`. **Use `--driver docker`.** The `--driver tar` path (`docker save ... | test
+  --driver tar --image img.tar`) is daemon-free and passes almost everything, but - measured 2026-07-30 - it
+  **cannot read directory ownership**, so the `/app/data` uid-1654 check fails under tar and needs the docker
+  driver. Since CI loads the image into the daemon anyway (for the hurl profiles), the docker driver is free
+  there; tar is only the fallback when no daemon exists, and it drops that one check. `commandTests` (none
+  here) also need docker. Non-zero exit on any failure; JUnit for CI. Verified: 31/31 on the docker driver
+  against a fresh `binacle-net:local`, and the same file fails the licenses check on the old `2.1.1` image.
 - **`hurl` needs binacle running.** Build, `docker compose up` the profile stack, then `hurl --test
   --retry <n> --retry-interval <ms> --report-junit report.xml file.hurl`, then `docker compose down`. Retry can
   also live per-file in an `[Options]` section, so readiness is expressed in the file that needs it rather than
@@ -121,7 +124,8 @@ How each runs (syntax verified against current docs):
 
 The static side is a complete declaration on purpose: it asserts every shipped file even where a dynamic test
 would also catch a regression. It says "this is how the image is supposed to be shipped." All of it maps to
-`fileExistenceTests`, `fileContentTests` and `metadataTest`, so it runs on the daemon-free `tar` driver.
+`fileExistenceTests`, `fileContentTests` and `metadataTest`. Built: `config/smoke/image.yaml`, 31 assertions,
+green on `--driver docker`.
 
 **1. Files present** - the nine shipped config files, plus the app and data dir. Most already throw at startup
 if missing (`Optional=false`), so a dynamic test also catches them; the silent ones (no startup signal) are
@@ -326,9 +330,11 @@ has no `Cors.json`" is packaging.
 
 **Image content**
 
-- [ ] `config/smoke/image.yaml` - one `container-structure-test` file covering the Static inventory above:
+- [x] `config/smoke/image.yaml` - one `container-structure-test` file covering the Static inventory above:
       the nine config files; no `*.Development.json`; no `Cors.json`; no `JwtAuth.json`; `/app/data` owned by
-      1654; `BINACLE_VERSION` set; the content defaults; the label assertions.
+      1654; `BINACLE_VERSION` set; the content defaults; the label assertions. 31 assertions, green on
+      `--driver docker` against `binacle-net:local` (2026-07-30). Run manually until the recipe lands:
+      `container-structure-test test --image binacle-net:local --config config/smoke/image.yaml`.
 - [x] OCI labels stamped on every build - Dockerfile block, `build.just` `--label`s, workflow `licenses`/`url`
       pins. (The suite still has to assert them.)
 

@@ -14,7 +14,7 @@ you need, and trim or delete it once the work lands.
 | [beta-verification.md](beta-verification.md) | Beta verification - what to check while the v3.0.0 beta is deployed |
 | [ci-gates.md](ci-gates.md) | CI - make the PR gate mean something |
 | [ci-shared-scripts.md](ci-shared-scripts.md) | CI - one set of commands, run by both CI and a human |
-| [docker-release-tagging.md](docker-release-tagging.md) | Docker release - build the image once, and prove a prerelease tag is safe |
+| [docker-release-tagging.md](docker-release-tagging.md) | Docker release - prove a prerelease tag is safe |
 | [docs-swagger-documents.md](docs-swagger-documents.md) | Docs site - generate the v3 and v4 OpenAPI documents |
 | [docs-v3-pages.md](docs-v3-pages.md) | Docs site - write the v3.0.x pages |
 | [docs-vipaq-protocol-page.md](docs-vipaq-protocol-page.md) | Docs site - the shared ViPaq protocol page describes the old format |

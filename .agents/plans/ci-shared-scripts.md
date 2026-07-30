@@ -7,13 +7,14 @@ recipes.
 
 Left, in order:
 
-1. **Wire `release-docker-image.yml`.** `config/build.just` exists and `config/build.sh` is deleted, but the
-   workflow still inlines its own restore + publish. So the image CI ships and the image a maintainer builds
-   still come from two recipes that can drift - one edit away from gone. Its `Restore` and `Publish` steps
-   become `just build publish`. `vars.API_PROJECT_PATH` and `vars.BUILD_OUTPUT` stop being referenced
-   (`BUILD_OUTPUT` had to equal the path the Dockerfile hardcodes, so it was a repo setting that could silently
-   break the image). `vars.BUILD_DOCKERFILE` stays - `docker/build-push-action` needs `file:`, and the push,
-   the semver metadata and `latest=auto` stay CI's.
+1. **Wire `release-docker-image.yml` to `just build publish`.** The workflow still inlines its own restore +
+   publish, so the image CI ships and the image a maintainer builds come from two command lines that can drift -
+   one edit away from gone. `vars.API_PROJECT_PATH` and `vars.BUILD_OUTPUT` are already gone: hardcoded in the
+   workflow on 2026-07-30 to unblock the beta (`BUILD_OUTPUT` had to equal the path the Dockerfile hardcodes, so
+   it was a repo setting that could silently break the image). That removed the repo-setting risk but not the
+   duplication - the `Restore` and `Publish` steps still need to become `just build publish`.
+   `vars.BUILD_DOCKERFILE` stays - `docker/build-push-action` needs `file:`, and the push, the semver metadata
+   and `latest=auto` stay CI's.
 2. **`performance.{lib,vipaq}.sh`, `benchmarks.{lib,vipaq}.sh`, `tmux.sh`.** CI runs none of them, so they
    gate nothing. What they cost is discoverability: `just --list` answers "what can I run" and recipe names
    complete, while nothing in `config/` completes anything. Open: `tmux.sh` builds a session and attaches -

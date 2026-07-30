@@ -25,7 +25,11 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore --runtime linux-x64
     - name: Publish
-      run: dotnet publish ${{ vars.API_PROJECT_PATH }} -c Release -o ${{ vars.BUILD_OUTPUT }} --no-restore --self-contained --runtime linux-x64
+      # Paths hardcoded, not Actions variables. The Dockerfile's COPY and the .dockerignore allowlist fix the
+      # output to build/binacle-net, and build.just publishes the same project to the same place. A variable can
+      # only drift from those two hardcoded facts and silently build an image without the app in it. Keep this
+      # line in step with build.just's `publish` recipe.
+      run: dotnet publish api/src/Binacle.Net/Binacle.Net.csproj -c Release -o build/binacle-net --no-restore --self-contained --runtime linux-x64
     - name: Extract Docker metadata
       id: meta
       uses: docker/metadata-action@v5

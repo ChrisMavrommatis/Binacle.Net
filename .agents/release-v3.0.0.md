@@ -28,14 +28,18 @@ publishing, or is a new behaviour that only fails in a real deployment - which i
 
 | # | Item | Plan |
 |---|---|---|
-| A1 | Set the `API_PROJECT_PATH` Actions variable - **external, no plan** | see below |
+| A1 | Publish paths hardcoded in the workflow, no Actions variable needed | **done (working tree)** |
 | A2 | Build the image once, and prove a prerelease tag does not move `latest` | [docker-release-tagging](plans/docker-release-tagging.md) |
 | A3 | Health check IP restrictions - four defects and the missing tests | **done 2026-07-27** |
 | A4 | Forwarded headers - warn-once diagnostics and the missing tests | **done 2026-07-27** |
 
-- [ ] **A1 - `API_PROJECT_PATH`.** Repo Settings -> Secrets and variables -> Actions -> Variables:
-  `src/Binacle.Net/Binacle.Net.csproj` becomes `api/src/Binacle.Net/Binacle.Net.csproj`. The `src/` -> `api/src/`
-  move breaks the publish step in `release-docker-image.yml` until this changes. Nothing publishes without it.
+- [x] **A1 - publish paths hardcoded.** The publish step read `${{ vars.API_PROJECT_PATH }}` /
+  `${{ vars.BUILD_OUTPUT }}`, and the former still pointed at the pre-move `src/Binacle.Net/Binacle.Net.csproj`,
+  so it failed after the `src/` -> `api/src/` move. Instead of depending on a repo-settings variable, the
+  workflow now hardcodes `api/src/Binacle.Net/Binacle.Net.csproj` and `-o build/binacle-net` - matching the
+  Dockerfile's fixed `COPY` source and `build.just`, which cannot drift. No Actions variable needed. Change is
+  in the working tree; the human commits. (`BUILD_DOCKERFILE`, `DONET_VERSION`, `DOCKERHUB_*` are still
+  variables and were unaffected by the move.)
 
 **A3 and A4 gated the beta rather than the final tag** because the beta is deployed behind a proxy with a health
 check allow-list: A3 was the allow-list, A4 is what makes its failure modes visible instead of silent. Landing
