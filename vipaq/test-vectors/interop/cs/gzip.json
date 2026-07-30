@@ -1,0 +1,37 @@
+[
+	{
+		"Name": "forty 8-bit items",
+		"Producer": "csharp",
+		"Base64": "IAAfiwgAAAAAAAAD02BISUnh4uJiYGAYOSQAIraRW/UAAAA="
+	},
+	{
+		"Name": "16-bit sections with nonzero coordinates",
+		"Producer": "csharp",
+		"Base64": "IFQfiwgAAAAAAAADY2LQYZzA+IURQjKAaQj7C2ME0x4mANlUGRogAAAA"
+	},
+	{
+		"Name": "mixed widths, 8-bit bin, 16-bit item dims and coordinates",
+		"Producer": "csharp",
+		"Base64": "IBQfiwgAAAAAAAADY2JISUnRYQRBBiCewHiCAQS/MEYw7WECAITP4CsdAAAA"
+	},
+	{
+		"Name": "columnar layout, 16-bit sections",
+		"Producer": "csharp",
+		"Base64": "MFQfiwgAAAAAAAADY2LQYZzA+IVRh9EMSM8Csv4xMoD5EUwTGPcwAQBeVcF0IAAAAA=="
+	},
+	{
+		"Name": "boundary - item dim at 8-bit ceiling (255)",
+		"Producer": "csharp",
+		"Base64": "IAAfiwgAAAAAAAADY2RISUn5//8/AwMDAIISe3ALAAAA"
+	},
+	{
+		"Name": "boundary - item dim into 16-bit (256)",
+		"Producer": "csharp",
+		"Base64": "IBAfiwgAAAAAAAADY2RISUlhYARDBgYAKDqr4A4AAAA="
+	},
+	{
+		"Name": "boundary - item dim at 16-bit ceiling (65535)",
+		"Producer": "csharp",
+		"Base64": "IBAfiwgAAAAAAAADY2RISUn5DwYMDAwAWqR2Ug4AAAA="
+	}
+]

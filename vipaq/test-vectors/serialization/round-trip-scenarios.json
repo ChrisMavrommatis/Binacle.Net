@@ -1,0 +1,56 @@
+[
+  {
+    "Name": "8-bit values",
+    "Bin": "100x110x120",
+    "Items": ["10x20x30 (1,2,3)", "40x50x60 (10,20,30)"],
+    "ExpectedHeader": "v1_raw_row_8_8_8"
+  },
+  {
+    "Name": "16-bit values",
+    "Bin": "1000x2000x3000",
+    "Items": ["300x400x500 (600,700,800)"],
+    "ExpectedHeader": "v1_raw_row_16_16_16"
+  },
+  {
+    "Name": "mixed widths (16-bit bin, 8-bit items)",
+    "Bin": "300x300x300",
+    "Items": ["1x2x3 (4,5,6)"],
+    "ExpectedHeader": "v1_raw_row_16_8_8"
+  },
+  {
+    "Name": "zero coordinates",
+    "Bin": "100x110x120",
+    "Items": ["10x20x30 (0,0,0)"],
+    "ExpectedHeader": "v1_raw_row_8_8_8"
+  },
+  {
+    "Name": "no items",
+    "Bin": "100x110x120",
+    "Items": [],
+    "ExpectedHeader": "v1_raw_row_8_8_8"
+  },
+  {
+    "Name": "multiple distinct items",
+    "Bin": "10x20x30",
+    "Items": ["1x2x3 (10,11,12)", "4x5x6 (13,14,15)", "7x8x9 (16,17,18)"],
+    "ExpectedHeader": "v1_raw_row_8_8_8"
+  },
+  {
+    "Name": "columnar layout",
+    "Bin": "10x20x30",
+    "Items": ["1x2x3 (10,11,12)", "4x5x6 (13,14,15)"],
+    "ExpectedHeader": "v1_raw_col_8_8_8"
+  },
+  {
+    "Name": "columnar 16-bit",
+    "Bin": "1000x2000x3000",
+    "Items": ["300x400x500 (600,700,800)", "310x410x510 (610,710,810)"],
+    "ExpectedHeader": "v1_raw_col_16_16_16"
+  },
+  {
+    "Name": "many items (uint16 count)",
+    "Bin": "10x20x30",
+    "Items": ["1x2x3 (4,5,6) [300]"],
+    "ExpectedHeader": "v1_raw_row_8_8_8"
+  }
+]

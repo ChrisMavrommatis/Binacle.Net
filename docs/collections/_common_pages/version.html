@@ -19,16 +19,18 @@ excerpt: |
     If you are unsure which version to use, it is generally recommended to start with the latest stable release.
 </p>
 
-{% assign uniq_versions = site.versions | map: 'version' | uniq %}
-{% if uniq_versions.size != 0 %}
+{% if site.data.versions.list.size != 0 %}
 
 <article class="responsive border no-padding">
     <ul class="list border">
-        {% for uniq_version in uniq_versions %}
+        {% for version in site.data.versions.list %}
         <li>
-            <a href="{{ '/version/' | append: uniq_version | append: '/' | relative_url }}">
-                {{ uniq_version | capitalize }}
+            <a href="{{ '/version/' | append: version.id | append: '/' | relative_url }}">
+                {{ version.id }}
             </a>
+            {% if version.id == site.data.versions.current %}
+            <span class="chip small">current</span>
+            {% endif %}
         </li>
         {% endfor %}
     </ul>

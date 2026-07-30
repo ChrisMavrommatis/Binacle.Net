@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Binacle.Net.ServiceModule.IntegrationTests"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FluxResults" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="FluxResults"/>
+    </ItemGroup>
+</Project>

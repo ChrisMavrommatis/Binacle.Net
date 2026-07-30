@@ -23,23 +23,34 @@ obj/
 node_modules
 
 # Project Specific
-logs/
-pack-logs/
+# Build-time OpenAPI documents (emitted by OpenApiGenerateDocumentsOnBuild); the frozen per-version specs
+# under docs/collections/_versions/**/swagger/ stay the committed source of truth.
+build/openapi/
+data/logs/
+data/pack-logs/
 packing-logs/
 BenchmarkDotNet.Artifacts
 PerformanceTestsArtifacts
 PerformanceTests.Artifacts
+coverage/
 Output
 output
+# Published app, copied into the image by the Dockerfile. The generic "output" rule above no longer
+# covers it now that it is named after what it holds.
+build/binacle-net/
+# Per-suite test results and coverage, written by `just test` / `just coverage`.
+build/tests/
+build/coverage/
 
 ## Copied from UI Module
 src/Binacle.Net/wwwroot/ 
 
 ## data
 azurite/
-minio_data/
-postgres/
-data/
+config/minio_data/
+config/postgres/
+config/data/
+
 *.db
 *.sqlite
 *.ndjson

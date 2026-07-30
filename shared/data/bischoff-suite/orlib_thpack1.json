@@ -1,0 +1,1102 @@
+[
+  {
+    "Name": "OrLibrary_thpack1_1",
+    "Bin": "587x233x220",
+    "Metrics": "29736390 30089620 112 98.83",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "108x76x30 [40]",
+      "110x43x25 [33]",
+      "92x81x55 [39]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_2",
+    "Bin": "587x233x220",
+    "Metrics": "29747753 30089620 138 98.86",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "49x25x21 [41]",
+      "60x51x41 [53]",
+      "103x76x64 [44]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_3",
+    "Bin": "587x233x220",
+    "Metrics": "29963259 30089620 127 99.58",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "97x81x27 [41]",
+      "102x78x39 [42]",
+      "113x46x36 [44]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_4",
+    "Bin": "587x233x220",
+    "Metrics": "30036306 30089620 197 99.82",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "113x92x33 [67]",
+      "52x37x28 [60]",
+      "57x33x29 [70]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_5",
+    "Bin": "587x233x220",
+    "Metrics": "29934375 30089620 136 99.48",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "88x54x39 [51]",
+      "94x54x36 [38]",
+      "87x77x43 [47]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_6",
+    "Bin": "587x233x220",
+    "Metrics": "30039660 30089620 147 99.83",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "86x84x45 [56]",
+      "81x45x34 [56]",
+      "70x54x37 [35]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_7",
+    "Bin": "587x233x220",
+    "Metrics": "30030422 30089620 126 99.8",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "118x79x51 [37]",
+      "86x32x31 [44]",
+      "64x58x52 [45]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_8",
+    "Bin": "587x233x220",
+    "Metrics": "30015080 30089620 180 99.75",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "75x58x57 [58]",
+      "57x37x30 [66]",
+      "79x74x35 [56]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_9",
+    "Bin": "587x233x220",
+    "Metrics": "29845092 30089620 101 99.19",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "90x70x63 [29]",
+      "84x78x28 [32]",
+      "94x85x39 [40]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_10",
+    "Bin": "587x233x220",
+    "Metrics": "29964912 30089620 130 99.59",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "68x66x31 [44]",
+      "120x34x26 [41]",
+      "95x76x60 [45]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_11",
+    "Bin": "587x233x220",
+    "Metrics": "29729166 30089620 102 98.8",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "74x63x61 [33]",
+      "71x60x25 [36]",
+      "106x80x59 [33]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_12",
+    "Bin": "587x233x220",
+    "Metrics": "29999728 30089620 104 99.7",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "95x80x57 [38]",
+      "112x87x23 [29]",
+      "116x41x40 [37]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_13",
+    "Bin": "587x233x220",
+    "Metrics": "30043476 30089620 284 99.85",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "52x36x25 [112]",
+      "63x37x21 [76]",
+      "100x61x36 [96]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_14",
+    "Bin": "587x233x220",
+    "Metrics": "29687592 30089620 132 98.66",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "68x48x31 [45]",
+      "104x80x63 [41]",
+      "82x46x21 [46]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_15",
+    "Bin": "587x233x220",
+    "Metrics": "30041680 30089620 119 99.84",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "100x44x37 [32]",
+      "90x78x55 [49]",
+      "65x57x42 [38]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_16",
+    "Bin": "587x233x220",
+    "Metrics": "30030633 30089620 159 99.8",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "43x40x39 [49]",
+      "97x76x40 [51]",
+      "67x63x47 [59]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_17",
+    "Bin": "587x233x220",
+    "Metrics": "29918160 30089620 213 99.43",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "72x49x35 [72]",
+      "75x66x47 [76]",
+      "78x30x22 [65]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_18",
+    "Bin": "587x233x220",
+    "Metrics": "29624112 30089620 82 98.45",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "104x55x30 [25]",
+      "92x89x73 [24]",
+      "88x88x43 [33]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_19",
+    "Bin": "587x233x220",
+    "Metrics": "30063480 30089620 130 99.91",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "60x45x26 [40]",
+      "71x43x39 [40]",
+      "99x71x64 [50]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_20",
+    "Bin": "587x233x220",
+    "Metrics": "30025368 30089620 88 99.79",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "97x77x66 [28]",
+      "81x69x69 [32]",
+      "109x53x24 [28]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_21",
+    "Bin": "587x233x220",
+    "Metrics": "30014288 30089620 79 99.75",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "109x93x72 [27]",
+      "95x67x32 [26]",
+      "119x45x36 [26]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_22",
+    "Bin": "587x233x220",
+    "Metrics": "29908086 30089620 116 99.4",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "89x78x50 [29]",
+      "73x65x46 [51]",
+      "94x66x39 [36]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_23",
+    "Bin": "587x233x220",
+    "Metrics": "29992180 30089620 128 99.68",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "84x81x23 [50]",
+      "115x72x64 [34]",
+      "77x49x25 [44]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_24",
+    "Bin": "587x233x220",
+    "Metrics": "29931360 30089620 114 99.47",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "113x80x29 [35]",
+      "98x65x62 [34]",
+      "60x59x46 [45]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_25",
+    "Bin": "587x233x220",
+    "Metrics": "30076410 30089620 139 99.96",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "75x54x35 [47]",
+      "107x60x49 [45]",
+      "70x67x42 [47]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_26",
+    "Bin": "587x233x220",
+    "Metrics": "29952116 30089620 124 99.54",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "86x71x41 [46]",
+      "75x58x58 [41]",
+      "100x81x27 [37]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_27",
+    "Bin": "587x233x220",
+    "Metrics": "29864124 30089620 103 99.25",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "118x66x47 [39]",
+      "99x56x25 [34]",
+      "91x83x48 [30]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_28",
+    "Bin": "587x233x220",
+    "Metrics": "29861312 30089620 111 99.24",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "62x59x52 [32]",
+      "54x52x50 [39]",
+      "102x69x65 [40]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_29",
+    "Bin": "587x233x220",
+    "Metrics": "30003672 30089620 109 99.71",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "91x58x57 [40]",
+      "92x78x53 [33]",
+      "112x48x28 [36]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_30",
+    "Bin": "587x233x220",
+    "Metrics": "30036328 30089620 405 99.82",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "64x53x32 [154]",
+      "51x42x28 [117]",
+      "49x32x30 [134]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_31",
+    "Bin": "587x233x220",
+    "Metrics": "30048858 30089620 129 99.86",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "70x63x49 [45]",
+      "84x54x49 [42]",
+      "89x70x42 [42]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_32",
+    "Bin": "587x233x220",
+    "Metrics": "30045564 30089620 155 99.85",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "95x76x44 [57]",
+      "81x47x34 [58]",
+      "71x52x30 [40]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_33",
+    "Bin": "587x233x220",
+    "Metrics": "29942910 30089620 282 99.51",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "40x36x21 [84]",
+      "76x45x31 [103]",
+      "63x54x51 [95]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_34",
+    "Bin": "587x233x220",
+    "Metrics": "29801736 30089620 160 99.04",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "68x35x27 [47]",
+      "118x57x43 [54]",
+      "73x72x36 [59]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_35",
+    "Bin": "587x233x220",
+    "Metrics": "29999712 30089620 150 99.7",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "100x33x31 [46]",
+      "84x68x42 [58]",
+      "95x84x31 [46]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_36",
+    "Bin": "587x233x220",
+    "Metrics": "29778638 30089620 172 98.97",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "41x39x26 [57]",
+      "110x40x34 [70]",
+      "94x77x52 [45]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_37",
+    "Bin": "587x233x220",
+    "Metrics": "29947300 30089620 99 99.53",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "98x73x44 [25]",
+      "60x60x38 [37]",
+      "105x73x60 [37]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_38",
+    "Bin": "587x233x220",
+    "Metrics": "30025060 30089620 93 99.79",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "104x94x50 [34]",
+      "102x87x36 [25]",
+      "115x42x33 [34]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_39",
+    "Bin": "587x233x220",
+    "Metrics": "29993916 30089620 243 99.68",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "89x56x45 [97]",
+      "53x37x34 [69]",
+      "54x35x25 [77]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_40",
+    "Bin": "587x233x220",
+    "Metrics": "29957776 30089620 107 99.56",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "85x77x62 [28]",
+      "94x63x32 [39]",
+      "83x75x45 [40]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_41",
+    "Bin": "587x233x220",
+    "Metrics": "30048518 30089620 109 99.86",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "109x80x68 [35]",
+      "90x45x31 [37]",
+      "66x56x34 [37]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_42",
+    "Bin": "587x233x220",
+    "Metrics": "30077040 30089620 168 99.96",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "76x74x50 [50]",
+      "86x40x29 [61]",
+      "66x55x48 [57]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_43",
+    "Bin": "587x233x220",
+    "Metrics": "29872850 30089620 141 99.28",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "82x80x71 [35]",
+      "66x37x27 [49]",
+      "77x76x31 [57]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_44",
+    "Bin": "587x233x220",
+    "Metrics": "29956426 30089620 142 99.56",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "114x67x25 [61]",
+      "92x79x25 [44]",
+      "89x87x36 [37]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_45",
+    "Bin": "587x233x220",
+    "Metrics": "30011085 30089620 140 99.74",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "63x55x31 [51]",
+      "120x43x23 [39]",
+      "97x72x57 [50]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_46",
+    "Bin": "587x233x220",
+    "Metrics": "29737434 30089620 116 98.83",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "86x58x36 [37]",
+      "71x69x22 [37]",
+      "108x78x54 [42]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_47",
+    "Bin": "587x233x220",
+    "Metrics": "29839484 30089620 137 99.17",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "118x54x42 [51]",
+      "112x95x20 [41]",
+      "118x38x37 [45]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_48",
+    "Bin": "587x233x220",
+    "Metrics": "30055172 30089620 153 99.89",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "59x49x48 [43]",
+      "79x63x46 [54]",
+      "95x58x38 [56]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_49",
+    "Bin": "587x233x220",
+    "Metrics": "29920320 30089620 86 99.44",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "91x54x45 [32]",
+      "105x77x72 [24]",
+      "79x78x48 [30]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_50",
+    "Bin": "587x233x220",
+    "Metrics": "29921040 30089620 168 99.44",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "60x40x32 [64]",
+      "98x75x55 [40]",
+      "60x59x39 [64]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_51",
+    "Bin": "587x233x220",
+    "Metrics": "30023149 30089620 129 99.78",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "66x64x36 [47]",
+      "97x73x49 [49]",
+      "69x60x43 [33]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_52",
+    "Bin": "587x233x220",
+    "Metrics": "30083392 30089620 187 99.98",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "96x72x31 [61]",
+      "75x72x47 [56]",
+      "80x25x20 [70]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_53",
+    "Bin": "587x233x220",
+    "Metrics": "30055886 30089620 170 99.89",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "78x37x27 [63]",
+      "89x70x25 [52]",
+      "90x84x41 [55]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_54",
+    "Bin": "587x233x220",
+    "Metrics": "30089374 30089620 142 100.0",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "99x68x23 [54]",
+      "68x52x40 [53]",
+      "101x66x61 [35]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_55",
+    "Bin": "587x233x220",
+    "Metrics": "29879890 30089620 114 99.3",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "100x94x28 [40]",
+      "81x78x66 [36]",
+      "111x49x21 [38]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_56",
+    "Bin": "587x233x220",
+    "Metrics": "30010372 30089620 408 99.74",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "90x41x34 [133]",
+      "64x32x28 [131]",
+      "42x31x31 [144]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_57",
+    "Bin": "587x233x220",
+    "Metrics": "29940978 30089620 124 99.51",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "85x73x40 [39]",
+      "73x62x54 [42]",
+      "90x63x41 [43]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_58",
+    "Bin": "587x233x220",
+    "Metrics": "30070062 30089620 92 99.94",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "105x81x46 [38]",
+      "115x81x61 [22]",
+      "72x51x23 [32]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_59",
+    "Bin": "587x233x220",
+    "Metrics": "30082496 30089620 195 99.98",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "76x52x46 [74]",
+      "66x59x31 [52]",
+      "62x55x44 [69]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_60",
+    "Bin": "587x233x220",
+    "Metrics": "30044871 30089620 105 99.85",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "78x72x58 [36]",
+      "107x57x57 [37]",
+      "72x64x37 [32]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_61",
+    "Bin": "587x233x220",
+    "Metrics": "29620808 30089620 101 98.44",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "109x68x64 [28]",
+      "84x58x55 [31]",
+      "96x83x24 [42]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_62",
+    "Bin": "587x233x220",
+    "Metrics": "29972940 30089620 120 99.61",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "70x63x50 [33]",
+      "100x53x34 [39]",
+      "93x78x45 [48]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_63",
+    "Bin": "587x233x220",
+    "Metrics": "30020248 30089620 94 99.77",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "82x76x59 [32]",
+      "60x51x50 [29]",
+      "104x66x61 [33]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_64",
+    "Bin": "587x233x220",
+    "Metrics": "30080292 30089620 139 99.97",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "114x54x20 [42]",
+      "92x87x50 [46]",
+      "114x43x26 [51]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_65",
+    "Bin": "587x233x220",
+    "Metrics": "30087516 30089620 476 99.99",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "55x50x26 [160]",
+      "48x42x37 [167]",
+      "47x34x26 [149]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_66",
+    "Bin": "587x233x220",
+    "Metrics": "29937696 30089620 145 99.5",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "87x45x32 [47]",
+      "84x63x46 [52]",
+      "84x67x44 [46]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_67",
+    "Bin": "587x233x220",
+    "Metrics": "29974389 30089620 221 99.62",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "119x41x38 [57]",
+      "90x44x35 [79]",
+      "67x55x27 [85]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_68",
+    "Bin": "587x233x220",
+    "Metrics": "30064080 30089620 238 99.92",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "60x44x36 [74]",
+      "76x42x40 [81]",
+      "65x49x48 [83]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_69",
+    "Bin": "587x233x220",
+    "Metrics": "29810560 30089620 144 99.07",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "91x50x32 [52]",
+      "118x66x40 [48]",
+      "75x69x32 [44]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_70",
+    "Bin": "587x233x220",
+    "Metrics": "29917072 30089620 163 99.43",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "56x32x28 [46]",
+      "92x68x39 [69]",
+      "90x86x29 [48]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_71",
+    "Bin": "587x233x220",
+    "Metrics": "29989116 30089620 96 99.67",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "99x64x62 [38]",
+      "110x43x37 [30]",
+      "96x73x50 [28]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_72",
+    "Bin": "587x233x220",
+    "Metrics": "29962940 30089620 74 99.58",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "96x95x68 [28]",
+      "69x61x35 [24]",
+      "107x70x55 [22]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_73",
+    "Bin": "587x233x220",
+    "Metrics": "29967660 30089620 127 99.59",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "90x73x37 [44]",
+      "102x95x33 [44]",
+      "117x38x30 [39]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_74",
+    "Bin": "587x233x220",
+    "Metrics": "29880178 30089620 132 99.3",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "86x79x69 [38]",
+      "53x46x31 [47]",
+      "96x51x37 [47]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_75",
+    "Bin": "587x233x220",
+    "Metrics": "30019680 30089620 137 99.77",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "101x81x24 [50]",
+      "94x72x29 [43]",
+      "79x72x47 [44]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_76",
+    "Bin": "587x233x220",
+    "Metrics": "29988740 30089620 269 99.66",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "77x42x30 [89]",
+      "98x45x28 [95]",
+      "61x58x32 [85]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_77",
+    "Bin": "587x233x220",
+    "Metrics": "30027130 30089620 194 99.79",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "73x73x36 [74]",
+      "87x49x26 [67]",
+      "68x53x44 [53]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_78",
+    "Bin": "587x233x220",
+    "Metrics": "30069290 30089620 169 99.93",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "105x68x42 [61]",
+      "75x37x24 [53]",
+      "79x73x26 [55]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_79",
+    "Bin": "587x233x220",
+    "Metrics": "30029968 30089620 200 99.8",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "64x48x46 [79]",
+      "79x25x22 [55]",
+      "89x85x33 [66]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_80",
+    "Bin": "587x233x220",
+    "Metrics": "30078720 30089620 133 99.96",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "78x59x54 [40]",
+      "120x52x20 [57]",
+      "100x67x54 [36]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_81",
+    "Bin": "587x233x220",
+    "Metrics": "29829120 30089620 73 99.13",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "110x60x55 [23]",
+      "80x78x71 [28]",
+      "110x75x50 [22]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_82",
+    "Bin": "587x233x220",
+    "Metrics": "29934402 30089620 164 99.48",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "65x51x50 [51]",
+      "113x78x28 [56]",
+      "120x35x32 [57]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_83",
+    "Bin": "587x233x220",
+    "Metrics": "29868786 30089620 120 99.27",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "83x71x46 [43]",
+      "76x63x54 [46]",
+      "91x56x40 [31]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_84",
+    "Bin": "587x233x220",
+    "Metrics": "30065466 30089620 69 99.92",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "114x77x42 [31]",
+      "105x81x74 [23]",
+      "76x73x50 [15]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_85",
+    "Bin": "587x233x220",
+    "Metrics": "30056994 30089620 319 99.89",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "55x37x22 [117]",
+      "72x55x31 [103]",
+      "61x56x36 [99]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_86",
+    "Bin": "587x233x220",
+    "Metrics": "29849472 30089620 156 99.2",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "87x33x28 [60]",
+      "97x70x57 [44]",
+      "71x57x38 [52]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_87",
+    "Bin": "587x233x220",
+    "Metrics": "30072012 30089620 98 99.94",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "119x34x28 [39]",
+      "84x69x48 [32]",
+      "97x82x78 [27]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_88",
+    "Bin": "587x233x220",
+    "Metrics": "30068808 30089620 126 99.93",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "100x60x40 [45]",
+      "89x67x34 [44]",
+      "92x80x38 [37]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_89",
+    "Bin": "587x233x220",
+    "Metrics": "29914048 30089620 96 99.42",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "95x92x46 [32]",
+      "65x60x40 [32]",
+      "103x62x59 [32]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_90",
+    "Bin": "587x233x220",
+    "Metrics": "29885976 30089620 90 99.32",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "91x52x33 [30]",
+      "87x81x63 [26]",
+      "113x79x45 [34]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_91",
+    "Bin": "587x233x220",
+    "Metrics": "30004408 30089620 238 99.72",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "86x65x57 [66]",
+      "61x37x32 [80]",
+      "39x33x27 [92]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_92",
+    "Bin": "587x233x220",
+    "Metrics": "30050106 30089620 88 99.87",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "96x82x63 [32]",
+      "74x63x59 [33]",
+      "86x60x43 [23]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_93",
+    "Bin": "587x233x220",
+    "Metrics": "30055544 30089620 100 99.89",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "78x69x37 [26]",
+      "115x90x58 [37]",
+      "68x53x20 [37]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_94",
+    "Bin": "587x233x220",
+    "Metrics": "29791218 30089620 133 99.01",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "75x73x69 [46]",
+      "66x56x40 [55]",
+      "64x51x41 [32]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_95",
+    "Bin": "587x233x220",
+    "Metrics": "29784276 30089620 139 98.99",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "101x69x20 [50]",
+      "108x66x54 [40]",
+      "74x62x33 [49]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_96",
+    "Bin": "587x233x220",
+    "Metrics": "30041812 30089620 182 99.84",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "64x42x26 [62]",
+      "92x58x52 [53]",
+      "92x85x21 [67]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_97",
+    "Bin": "587x233x220",
+    "Metrics": "29970760 30089620 140 99.6",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "74x60x32 [48]",
+      "100x50x43 [50]",
+      "95x74x42 [42]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_98",
+    "Bin": "587x233x220",
+    "Metrics": "30088004 30089620 122 99.99",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "106x55x38 [46]",
+      "69x50x48 [42]",
+      "106x63x57 [34]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_99",
+    "Bin": "587x233x220",
+    "Metrics": "30080504 30089620 154 99.97",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "51x46x44 [64]",
+      "95x92x47 [46]",
+      "116x39x23 [44]"
+    ]
+  },
+  {
+    "Name": "OrLibrary_thpack1_100",
+    "Bin": "587x233x220",
+    "Metrics": "29961138 30089620 214 99.57",
+    "Result": "PartiallyPacked PartiallyPacked",
+    "Items": [
+      "78x49x47 [70]",
+      "46x45x43 [75]",
+      "98x44x36 [69]"
+    ]
+  }
+]

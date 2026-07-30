@@ -1,0 +1,12 @@
+[
+  {"Name": "uniform 8-bit",  "Kind": "Dimensions", "Values": "10x20x30",    "ExpectedWidth": "Eight"},
+  {"Name": "uniform 16-bit", "Kind": "Dimensions", "Values": "300x400x500", "ExpectedWidth": "Sixteen"},
+
+  {"Name": "largest wins on length (16-bit)", "Kind": "Dimensions", "Values": "300x10x10", "ExpectedWidth": "Sixteen"},
+  {"Name": "largest wins on width (16-bit)",  "Kind": "Dimensions", "Values": "10x300x10", "ExpectedWidth": "Sixteen"},
+  {"Name": "largest wins on height (16-bit)", "Kind": "Dimensions", "Values": "10x10x300", "ExpectedWidth": "Sixteen"},
+
+  {"Name": "boundary 255 (8-bit)",    "Kind": "Coordinates", "Values": "(255,255,255)",       "ExpectedWidth": "Eight"},
+  {"Name": "boundary 256 (16-bit)",   "Kind": "Coordinates", "Values": "(256,256,256)",       "ExpectedWidth": "Sixteen"},
+  {"Name": "boundary 65535 (16-bit)", "Kind": "Coordinates", "Values": "(65535,65535,65535)", "ExpectedWidth": "Sixteen"}
+]

@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+		<PackageReference Include="OpenApiExamples" />
+		<PackageReference Include="Serilog" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<!-- Not used directly - named to lift the graph off a vulnerable floor and hold it under 3.x.
+		     Both halves are explained in Directory.Packages.props. -->
+		<PackageReference Include="Microsoft.OpenApi" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\lib\src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+	  <ProjectReference Include="..\..\..\shared\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Using Include="Binacle.Geometry" />
+	</ItemGroup>
+
+
+</Project>

@@ -1,0 +1,20 @@
+[
+  {"Name": "dimensions zero length",     "Kind": "Dimensions",  "Values": "0x1x1",  "Field": "Length"},
+  {"Name": "dimensions zero width",      "Kind": "Dimensions",  "Values": "1x0x1",  "Field": "Width"},
+  {"Name": "dimensions zero height",     "Kind": "Dimensions",  "Values": "1x1x0",  "Field": "Height"},
+  {"Name": "dimensions negative length", "Kind": "Dimensions",  "Values": "-1x1x1", "Field": "Length"},
+  {"Name": "dimensions negative width",  "Kind": "Dimensions",  "Values": "1x-1x1", "Field": "Width"},
+  {"Name": "dimensions negative height", "Kind": "Dimensions",  "Values": "1x1x-1", "Field": "Height"},
+
+  {"Name": "coordinates negative x", "Kind": "Coordinates", "Values": "(-1,0,0)", "Field": "X"},
+  {"Name": "coordinates negative y", "Kind": "Coordinates", "Values": "(0,-1,0)", "Field": "Y"},
+  {"Name": "coordinates negative z", "Kind": "Coordinates", "Values": "(0,0,-1)", "Field": "Z"},
+
+  {"Name": "dimensions exceeds max length (65536)", "Kind": "Dimensions",  "Values": "65536x1x1", "Field": "Length"},
+  {"Name": "dimensions exceeds max width (65536)",  "Kind": "Dimensions",  "Values": "1x65536x1", "Field": "Width"},
+  {"Name": "dimensions exceeds max height (65536)", "Kind": "Dimensions",  "Values": "1x1x65536", "Field": "Height"},
+
+  {"Name": "coordinates exceeds max x (65536)", "Kind": "Coordinates", "Values": "(65536,0,0)", "Field": "X"},
+  {"Name": "coordinates exceeds max y (65536)", "Kind": "Coordinates", "Values": "(0,65536,0)", "Field": "Y"},
+  {"Name": "coordinates exceeds max z (65536)", "Kind": "Coordinates", "Values": "(0,0,65536)", "Field": "Z"}
+]

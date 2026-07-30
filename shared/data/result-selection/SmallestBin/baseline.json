@@ -1,0 +1,29 @@
+[
+  {
+    "Name": "Smallest Bin - One Fully Packed winner",
+    "ExpectedResult": "60x40x30",
+    "Results": {
+      "60x40x10": "60x40x10 FFD_v2 PartiallyPacked 40 60",
+      "60x40x20": "60x40x20 FFD_v2 PartiallyPacked 80 70",
+      "60x40x30": "60x40x30 FFD_v2 FullyPacked 95 100"
+    }
+  },
+  {
+    "Name": "Smallest Bin - Multiple Fully Packed",
+    "ExpectedResult": "60x40x20",
+    "Results": {
+      "60x40x10": "60x40x10 FFD_v2 PartiallyPacked 90 99",
+      "60x40x20": "60x40x20 FFD_v2 FullyPacked 80 100",
+      "60x40x30": "60x40x30 FFD_v2 FullyPacked 70 100"
+    }
+  },
+  {
+    "Name": "Smallest Bin - All Partially Packed",
+    "ExpectedResult": "60x40x10",
+    "Results": {
+      "60x40x10": "60x40x10 FFD_v2 PartiallyPacked 80 70",
+      "60x40x20": "60x40x20 FFD_v2 PartiallyPacked 70 75",
+      "60x40x30": "60x40x30 FFD_v2 PartiallyPacked 60 80"
+    }
+  }
+]

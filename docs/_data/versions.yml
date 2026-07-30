@@ -1,0 +1,18 @@
+# The docs versions, and which one is current.
+#
+# This file is the single source of truth for the version list: the order below is the order rendered,
+# so keep it newest first. Do not rely on Jekyll's own ordering — it sorts by path, which would put
+# v3.10.x before v3.2.x.
+#
+# When a new minor line opens:
+#   1. add it to the top of `list`
+#   2. point `current` at it
+#   3. add its `defaults` scope block in _config.yml (a version without one is invisible)
+
+current: v3.0.x
+
+list:
+  - id: v3.0.x
+  - id: v2.1.x
+  - id: v2.0.x
+  - id: v1.3.x

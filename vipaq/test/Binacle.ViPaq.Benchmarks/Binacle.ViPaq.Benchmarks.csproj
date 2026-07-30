@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Binacle.ViPaq.TestsKernel\Binacle.ViPaq.TestsKernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Binacle.Geometry" />
+  </ItemGroup>
+
+</Project>

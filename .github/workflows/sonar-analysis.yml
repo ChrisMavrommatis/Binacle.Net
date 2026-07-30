@@ -1,0 +1,101 @@
+# Sends coverage to SonarCloud. Manual, because coverage needs a CI run: Automatic Analysis only reads
+# source, so it must be OFF or the two fight. Build + coverage sit between begin/end — the scanner only
+# sees projects compiled in that pair. A failing suite skips "Sonar end", so a failed run publishes nothing.
+#
+# Coverage is one call to `just coverage all sonar`, which runs the same test leaves a maintainer runs and writes
+# one flat file per suite into build/coverage/sonar/. config/tests.just is the only place that knows which
+# suites exist — adding one needs no edit here.
+#
+# The format is named after the consumer: `sonar` selects Visual Studio coverage xml for C#, the only C# format
+# Sonar imports, and lcov for TS. Both reportsPaths below are therefore a glob over that one folder, split by
+# extension (.xml vs .info).
+
+name: Sonar Analysis
+
+on:
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Sonar needs full history to tell new code from old. A shallow clone makes everything look new.
+          fetch-depth: 0
+
+      # The scanner is a Java program, whatever language it analyses.
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ vars.DONET_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Analyzers and NuGet packages are stable between runs — cache to skip the re-download.
+      - name: Cache Sonar analyzers
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '.config/dotnet-tools.json') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      # Pinned to a 1.x range: modules and `set working-directory` need a recent just, and ubuntu-latest's apt
+      # ships one too old to parse config/tests.just.
+      - name: Setup just
+        uses: extractions/setup-just@v4
+        with:
+          just-version: '^1.45'
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: Install npm packages
+        run: npm ci
+
+      - name: Sonar begin
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet dotnet-sonarscanner begin \
+            /k:"${{ vars.SONAR_PROJECT_KEY }}" \
+            /o:"${{ vars.SONAR_ORGANIZATION }}" \
+            /d:sonar.token="$SONAR_TOKEN" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.vscoveragexml.reportsPaths="build/coverage/sonar/*.xml" \
+            /d:sonar.javascript.lcov.reportPaths="build/coverage/sonar/*.info"
+
+      # Build once here so the coverage run below can --no-build.
+      - name: Build
+        run: dotnet build Binacle.Net.slnx --configuration Release
+
+      - name: Coverage
+        env:
+          DOTNET_TEST_ARGS: --configuration Release --no-build
+        run: just coverage all sonar
+
+      # Publishes the run. Skipped on any failure above, so coverage from a broken run is never recorded.
+      - name: Sonar end
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"

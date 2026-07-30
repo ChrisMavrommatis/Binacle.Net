@@ -1,0 +1,37 @@
+[
+	{
+		"Name": "forty 8-bit items",
+		"Producer": "typescript",
+		"Base64": "IADTYEhJSeHi4mJgYBg5JAA="
+	},
+	{
+		"Name": "16-bit sections with nonzero coordinates",
+		"Producer": "typescript",
+		"Base64": "IFRjYtBhnMD4hRFCMoBpCPsLYwTTHiYA"
+	},
+	{
+		"Name": "mixed widths, 8-bit bin, 16-bit item dims and coordinates",
+		"Producer": "typescript",
+		"Base64": "IBRjYkhJSdFhBEEGRh3GCYwnGEDwC2ME0x4mAA=="
+	},
+	{
+		"Name": "columnar layout, 16-bit sections",
+		"Producer": "typescript",
+		"Base64": "MFRjYtBhnMD4hVGH0YxxAuMsxi+M/xgZwPwIpgmMe5gA"
+	},
+	{
+		"Name": "boundary - item dim at 8-bit ceiling (255)",
+		"Producer": "typescript",
+		"Base64": "IABjZEhJSfn//z8DAwMA"
+	},
+	{
+		"Name": "boundary - item dim into 16-bit (256)",
+		"Producer": "typescript",
+		"Base64": "IBBjZEhJSWFgBEMGBgA="
+	},
+	{
+		"Name": "boundary - item dim at 16-bit ceiling (65535)",
+		"Producer": "typescript",
+		"Base64": "IBBjZEhJSfkPBgwMDAA="
+	}
+]

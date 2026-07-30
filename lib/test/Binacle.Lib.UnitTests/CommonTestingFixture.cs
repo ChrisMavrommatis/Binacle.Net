@@ -1,0 +1,47 @@
+﻿using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.TestsKernel;
+using Binacle.TestsKernel.Algorithms.ExtensionMethods;
+using Binacle.TestsKernel.Models;
+using Binacle.TestsKernel.Algorithms.Providers;
+
+namespace Binacle.Lib.UnitTests;
+
+public sealed class CommonTestingFixture : IDisposable
+{
+	public TestAlgorithmFactory<IPackingAlgorithm>[] AlgorithmsUnderTest { get; }
+
+	public CommonTestingFixture()
+	{
+		this.AlgorithmsUnderTest = new TestAlgorithmFactory<IPackingAlgorithm>[]
+		{
+			AlgorithmFactories.FFD_v1,
+			AlgorithmFactories.FFD_v2,
+			AlgorithmFactories.WFD_v1,
+			AlgorithmFactories.WFD_v2,
+			AlgorithmFactories.BFD_v1,
+			AlgorithmFactories.BFD_v2
+		};
+	}
+
+
+	public void Dispose()
+	{
+	}
+
+	public void RunTest(
+		TestAlgorithmFactory<IPackingAlgorithm> algorithmFactory,
+		string scenarioName,
+		AlgorithmOperation operation
+	)
+	{
+		var scenario = AllScenariosProvider.GetScenarioByName(scenarioName);
+		var algorithmInstance = algorithmFactory(scenario.Bin, scenario.Items);
+
+		var result = algorithmInstance.Execute(new TestOperationParameters
+		{
+			Operation = operation
+		});
+		scenario.Metrics.EvaluateResult(result);
+		scenario.Result.EvaluateResult(result);
+	}
+}

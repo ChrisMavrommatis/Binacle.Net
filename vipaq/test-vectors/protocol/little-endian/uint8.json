@@ -1,0 +1,5 @@
+[
+  {"Name": "zero",                  "Value": "0x00", "Bytes": ["0x00"]},
+  {"Name": "mid value (0x2A)",      "Value": "0x2A", "Bytes": ["0x2A"]},
+  {"Name": "all bits set (0xFF)",   "Value": "0xFF", "Bytes": ["0xFF"]}
+]

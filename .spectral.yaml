@@ -1,0 +1,70 @@
+# Spectral ruleset for the Binacle.Net OpenAPI documents (build/openapi/*.json).
+# Encodes the standards set in the spec audit so they cannot silently regress: stable operationIds,
+# descriptions on every schema/property/tag, and no numeric-as-string unions.
+#
+# Generate the specs then lint with: just openapi lint
+
+extends: ["spectral:oas"]
+
+rules:
+  # Every example must validate against its schema. Raised to an error because a wrong example is a wrong
+  # generated-SDK sample - it ships straight into someone's code.
+  oas3-valid-media-example: error
+
+  # Built-in rules raised to errors — these back the SDK-grade guarantees a generated client relies on.
+  operation-operationId: error
+  operation-operationId-unique: error
+  operation-tag-defined: error
+
+  # Every component schema must be documented.
+  binacle-schema-description:
+    description: Every component schema must have a description.
+    message: "Schema '{{property}}' is missing a description."
+    given: "$.components.schemas[*]"
+    severity: error
+    then:
+      field: description
+      function: truthy
+
+  # Every schema property must be documented (concrete and $ref properties both carry one in these docs).
+  binacle-schema-property-description:
+    description: Every schema property must have a description.
+    message: "Property '{{property}}' is missing a description."
+    given: "$.components.schemas[*].properties[*]"
+    severity: error
+    then:
+      field: description
+      function: truthy
+
+  # Every tag must be documented.
+  binacle-tag-description:
+    description: Every tag must have a description.
+    message: "Tag '{{value}}' is missing a description."
+    given: "$.tags[*]"
+    severity: error
+    then:
+      field: description
+      function: truthy
+
+  # Numeric fields must not be documented as an [integer, string] / [number, string] union — that makes a
+  # generated SDK type every dimension as `int | string`. Collapse to the numeric type instead.
+  binacle-no-numeric-string-union:
+    description: "Numeric fields must not be typed as a string union."
+    message: "{{property}}: numeric field typed as a string union; collapse to the numeric type."
+    given: "$..properties[*]"
+    severity: error
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          not:
+            type: object
+            required: [type]
+            properties:
+              type:
+                type: array
+                allOf:
+                  - contains:
+                      const: string
+                  - contains:
+                      enum: [integer, number]

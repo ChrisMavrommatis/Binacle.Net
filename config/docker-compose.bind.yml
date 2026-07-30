@@ -1,0 +1,55 @@
+name: binacle-net-bind
+
+# Simple — same as docker-compose.volume.yml, but data goes to a folder on disk so you can open the logs
+# in an editor.
+#
+# The folder has to exist and be writable first. The app runs as APP_UID inside the container, not as you, and
+# docker never chowns a bind mount — so a folder you own is read-only to the container and logging silently
+# fails. This file is the `bind` stack of the `image` module, and `just image up bind` does that setup.
+#
+#   up     just image up bind
+#   down   just image down bind       # the folder stays
+#   wipe   rm -rf ./config/data
+#
+# Point somewhere else with BINACLE_DATA_DIR. Whatever you choose, it must stay readable by you: a
+# container-owned directory anywhere in the repo fails `docker build`, which walks the whole context.
+#
+# Log in as admin@binacle.net / B1n4cl3Adm!n — seeded on first start by a startup task.
+
+configs:
+  # The ServiceModule validates these options at startup, so it will not boot without them.
+  jwt_auth:
+    content: |
+      {
+        "JwtAuth": {
+          "Issuer": "https://localhost:8080",
+          "Audience": "https://localhost:8080",
+          "TokenSecret": "ThisIsAVerySecretKeyMeantToBeStoredSecurelyAndNotLikeThisSoPleaseChangeIt",
+          "ExpirationInSeconds": 3600
+        }
+      }
+
+services:
+  binacle-net:
+    image: binacle-net:local
+    ports:
+      - "8080:8080"
+    configs:
+      - source: jwt_auth
+        target: /app/Config_Files/ServiceModule/JwtAuth.json
+    volumes:
+      - type: bind
+        source: ${BINACLE_DATA_DIR:-./data}
+        target: /app/data/
+    environment:
+      - SWAGGER_UI=True
+      - SCALAR_UI=True
+      - UI_MODULE=True
+      - SERVICE_MODULE=True
+      - HealthChecks__Enabled=True
+      - PackingLogs__Enabled=True
+      # Storage providers are tried in order — AzureStorage, Postgres, Sqlite — and the first one with a
+      # connection string wins. This is the only one set, so SQLite it is.
+      # The db file lands in the bound folder, so you can open it from the host.
+      - SQLITE_CONNECTION_STRING=Data Source=/app/data/binacle-net-service.db;
+      - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/

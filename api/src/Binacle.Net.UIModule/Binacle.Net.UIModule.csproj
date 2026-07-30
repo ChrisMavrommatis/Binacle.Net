@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<UserSecretsId>Binacle_Net_Secrets</UserSecretsId>
+		<DisableScopedCssBundling>true</DisableScopedCssBundling>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Serilog" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\vipaq\src\Binacle.ViPaq\Binacle.ViPaq.csproj" />
+	  <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
+	  <ProjectReference Include="..\..\..\lib\src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+	  <ProjectReference Include="..\..\..\shared\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Using Include="Binacle.Geometry" />
+	</ItemGroup>
+
+
+</Project>

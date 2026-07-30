@@ -1,2 +1,0 @@
-GET https://{{HOST}}/api/v2/presets
-Accept: application/json

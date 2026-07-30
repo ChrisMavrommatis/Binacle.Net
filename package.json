@@ -14,9 +14,11 @@
   "license": "GPL-3.0 AND CC-BY-SA-4.0",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "vipaq/packages/binacle-vipaq"
   ],
   "devDependencies": {
+    "concurrently": "^10.0.3",
     "gulp": "^5.0.1"
   }
 }

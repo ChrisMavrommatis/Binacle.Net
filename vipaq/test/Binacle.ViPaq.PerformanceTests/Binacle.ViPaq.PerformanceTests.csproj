@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ConsoleTables" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Enrichers.Environment" />
+    <PackageReference Include="Serilog.Enrichers.Thread" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.File" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Binacle.ViPaq.TestsKernel\Binacle.ViPaq.TestsKernel.csproj" />
+    <ProjectReference Include="..\..\..\shared\test\Binacle.TestReporting\Binacle.TestReporting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Binacle.Geometry" />
+  </ItemGroup>
+
+</Project>

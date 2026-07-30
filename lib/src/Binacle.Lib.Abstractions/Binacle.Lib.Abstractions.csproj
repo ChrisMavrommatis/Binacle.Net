@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Binacle.Lib"/>
+        <InternalsVisibleTo Include="Binacle.Lib.UnitTests"/>
+        <InternalsVisibleTo Include="Binacle.TestsKernel"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\shared\src\Binacle.Geometry\Binacle.Geometry.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Binacle.Geometry" />
+    </ItemGroup>
+
+</Project>

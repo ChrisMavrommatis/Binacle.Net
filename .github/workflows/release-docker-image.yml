@@ -25,15 +25,38 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore --runtime linux-x64
     - name: Publish
-      run: dotnet publish ${{ vars.API_PROJECT_PATH }} -c Release -o ${{ vars.BUILD_OUTPUT }} --no-restore --self-contained --runtime linux-x64
+      # Paths hardcoded, not Actions variables. The Dockerfile's COPY and the .dockerignore allowlist fix the
+      # output to build/binacle-net, and build.just publishes the same project to the same place. A variable can
+      # only drift from those two hardcoded facts and silently build an image without the app in it. Keep this
+      # line in step with build.just's `publish` recipe.
+      run: dotnet publish api/src/Binacle.Net/Binacle.Net.csproj -c Release -o build/binacle-net --no-restore --self-contained --runtime linux-x64
     - name: Extract Docker metadata
       id: meta
       uses: docker/metadata-action@v5
       with:
         images: |
           ${{ vars.DOCKERHUB_ORGNAME }}/${{ vars.DOCKERHUB_REPO }}
+        # {{version}} is the immutable pin (3.0.0). {{major}}.{{minor}} is the moving one (3.0 -> newest 3.0.x),
+        # which is what the samples pin: a copied sample then inherits bug fixes and never a breaking change.
+        # A prerelease gets neither: metadata-action skips {{major}}.{{minor}} for a prerelease tag, the same
+        # guard as latest=auto below, so v3.0.0-beta.1 publishes only 3.0.0-beta.1. Verify on the first beta.
+        # No {{major}} tag on purpose: "3" would cross minor lines, and nothing here should pin it.
         tags: |
           type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+        # Corrects the two labels metadata-action gets wrong on its own, both of which override the Dockerfile
+        # at build time. licenses: auto-detection returns NOASSERTION because the repo is dual-licensed. url:
+        # auto-fills the repo, but the image should point at the landing site. Every other label (title,
+        # description, source, revision, created, version) is left to metadata-action, and documentation/vendor
+        # /base.name come from the Dockerfile.
+        labels: |
+          org.opencontainers.image.licenses=GPL-3.0-only AND CC-BY-SA-4.0
+          org.opencontainers.image.url=https://www.binacle.net
+        # latest=auto is the default; it is written out because the beta depends on it. Under auto, "latest" is
+        # applied only when the semver tag is not a prerelease, so publishing v3.0.0-beta.1 must not move
+        # "latest" onto the beta and drag sample users onto it. Verify this on the first beta tag.
+        flavor: |
+          latest=auto
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
@@ -49,6 +72,8 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        # Was github.ref_name, which put "v3.0.0" in BINACLE_VERSION while the image tag said "3.0.0". Both now
+        # come from the same stripped value, so the version the container reports matches the tag you pulled.
         build-args: |
-          VERSION=${{ github.ref_name }}
+          VERSION=${{ steps.meta.outputs.version }}
       

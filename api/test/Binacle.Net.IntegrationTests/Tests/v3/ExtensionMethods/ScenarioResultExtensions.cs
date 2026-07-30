@@ -1,0 +1,19 @@
+using Binacle.TestsKernel.Algorithms.Models;
+
+namespace Binacle.Net.IntegrationTests.v3.ExtensionMethods;
+
+internal static class ScenarioResultExtensions
+{
+	public static void EvaluateResult(this ScenarioResult expected, Binacle.Net.v3.Contracts.BinFitResult actual)
+	{
+		var expectedStatus = Binacle.Net.v3.Contracts.FitResponse.MapResultStatus(expected.FittingStatus, expected.FittingEarlyExitReason);
+		actual.Result.ShouldBe(expectedStatus);
+	}
+	
+	public static void EvaluateResult(this ScenarioResult expected, Binacle.Net.v3.Contracts.BinPackResult actual)
+	{
+		var expectedStatus = Binacle.Net.v3.Contracts.PackResponse.MapResultStatus(expected.PackingStatus, expected.PackingEarlyExitReason);
+		
+		actual.Result.ShouldBe(expectedStatus);
+	}
+}

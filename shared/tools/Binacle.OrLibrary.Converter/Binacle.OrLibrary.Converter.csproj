@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- The shared notation formats Bin/Items; Metrics is arithmetic; Result is a fixed baseline (see
+		     BischoffSuiteConverter). No algorithm dependency — the tool never runs the packer. TestReporting has the
+		     shared RepositoryRoot (Bind().Find) used to locate the output dir — no bespoke per-tool locator. -->
+		<ProjectReference Include="..\..\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
+		<ProjectReference Include="..\..\test\Binacle.TestReporting\Binacle.TestReporting.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- The raw OR-Library input travels with the tool as embedded resources — thpack1..7 only (the Bischoff
+		     suite; thpack8/9 are excluded). LogicalName flattens each to the manifest name "thpackN.txt" that the tool
+		     reads at runtime; Link keeps these out-of-project files under a virtual Data/ folder in the IDE instead of
+		     scattering them at the project root. Rebuild after editing the raw data. This is why the tool only needs to
+		     locate one path at runtime: the output. -->
+		<EmbeddedResource Include="..\..\data\or-library\thpack1.txt;..\..\data\or-library\thpack2.txt;..\..\data\or-library\thpack3.txt;..\..\data\or-library\thpack4.txt;..\..\data\or-library\thpack5.txt;..\..\data\or-library\thpack6.txt;..\..\data\or-library\thpack7.txt">
+			<Link>Data\%(Filename)%(Extension)</Link>
+			<LogicalName>%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
+	</ItemGroup>
+
+</Project>

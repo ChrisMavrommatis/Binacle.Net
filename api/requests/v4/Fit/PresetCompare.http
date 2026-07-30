@@ -1,0 +1,26 @@
+POST https://{{HOST}}/api/v4/fit/compare-bins/rectangular-cuboids
+Accept: application/json
+Content-Type: application/json
+
+{
+  "parameters": {
+    "algorithm": "FFD",
+    "includeViPaqData": false
+  },
+  "items": [
+    {
+      "id": "box_1",
+      "quantity": 2,
+      "length": 2,
+      "width": 5,
+      "height": 10
+    },
+    {
+      "id": "box_2",
+      "quantity": 1,
+      "length": 12,
+      "width": 15,
+      "height": 10
+    }
+  ]
+}

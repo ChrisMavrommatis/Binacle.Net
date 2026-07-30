@@ -21,10 +21,6 @@
         {% if crumb_title contains '.' %}
         {% continue %}
         {% endif %}
-    
-        {% if crumb_title contains 'latest' %}
-        {% continue %}
-        {% endif %}
         <span>/</span>
         {% if forloop.last %}
             <span>

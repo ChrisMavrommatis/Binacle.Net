@@ -1,45 +1,167 @@
 # Config
 
-Configuration files related to local setup
+The maintainer's local-dev tooling: the `just` modules, the scripts that have not moved into one, the local
+compose files, and emulator state. Everything here is run from the repo root. `just` with no arguments lists
+every task.
 
-## Tmux
-Tmux setup for Binacle.Net
-`tmux.sh`
-
----
-## Api
-Script for running Binacle.Net
-`api.sh`
-
-Arguments:
-- `Normal` (`N`)
-- `WithServiceModuleOnly` (`S`)
-- `WithUiModuleOnly` (`U`)
-- `WithAllModules` (`A`)
+This is **not** a deployment template - `samples/` holds the user-facing starting points.
 
 ---
 
-## Benchmarks
-Script  for all benchmarks
+## Setup
+Root `justfile`, not a module. Run once on a fresh clone.
 
-Arguments:
-- `AlgorithmVersion`
-- `MultipleBins`
-- `MultipleItems`
+```bash
+just install                     # npm workspaces, both jekyll sites' gems, then the asset copy
+just assets                      # only the asset copy - after changing anything under assets/
+```
+
+---
+
+## Serve
+`serve.just`, loaded as the `serve` module. Everything you run **from source** while working on the code.
+
+```bash
+just serve api [N|S|U|All]       # Normal, WithServiceModuleOnly, WithUiModuleOnly, WithAllModules
+just serve docs                  # jekyll serve + webpack watch, one Ctrl-C stops both
+just serve web
+just serve services [-d]         # what the API talks to: aspire dashboard, azurite, postgres. No binacle-net
+just serve services-down [-v]    # only needed after -d; Ctrl-C is enough otherwise
+```
+
+`services` is here rather than with the image stacks because it runs no binacle-net at all: it is what
+`just serve api` talks to, and what the Postgres and AzureStorage test leaves need. Running the **built
+image** is the other job, and that is the `image` module below.
 
 ---
 
 ## Tests
-Script for running the tests for Binacle.Net
+`tests.just`, loaded as the `test` module. One recipe per suite, so tab completion finds them and CI calls the
+same recipes a maintainer does.
 
-Arguments
-- `lib` (`Binacle.Lib.UnitTests`)
-- `api` (`Binacle.Net.IntegrationTests`)
-- `api_service` (`Binacle.Net.ServiceModule.IntegrationTests`)
-- `vipaq` (`Binacle.ViPaq.UnitTests`)
+```bash
+just --list test                 # every leaf
+just test all                    # everything that needs nothing brought up
+just test lib-unit               # one leaf
+just test api-service-integration Postgres
+```
+
+Postgres and AzureStorage need their service up first (`just serve services -d`); with no argument the harness
+falls back to SQLite.
+
+---
+
+## Coverage
+`coverage.just`, loaded as the `coverage` module. It runs the same leaves with the collector attached - coverage
+is the same run with extra output, not a second one.
+
+```bash
+just coverage all                # every suite + the table (cobertura)
+just coverage all sonar          # the formats Sonar imports
+just coverage report             # merge the last cobertura run -> build/coverage/html-report/index.html
+just coverage table              # re-print the table without re-running
+```
+
+The format names the consumer: `cobertura` is what the table and the HTML report read, `sonar` is Visual Studio
+xml for C# plus lcov for TS. Output is one flat file per suite under `build/tests/` and
+`build/coverage/<format>/`, named after the project or package.
+
+---
+
+## OpenAPI and the agent indexes
+Two small modules, `openapi.just` and `agents.just`.
+
+```bash
+just openapi generate [dir]      # write build/openapi/Binacle.Net_v3.json and _v4.json
+just openapi lint [dir]          # generate, then Spectral them against .spectral.yaml
+just agents all                  # rewrite every .agents/**/_index.md
+```
+
+The documents come out of the build, not out of a running server, so nothing has to be brought up first.
 
 ---
 
 ## Build
-Script for building Binacle.Net and testing it
-`build.sh`
+`build.just`, loaded as the `build` module. The publish and the image, nothing else.
+
+```bash
+just build publish               # dotnet publish -> build/binacle-net
+just build image [version]       # publish, then docker build -t binacle-net:<version>, default local
+```
+
+`image` re-publishes every time - `docker build` copies whatever sits in `build/binacle-net`, so skipping it is
+how a stale image gets tagged. The output path is fixed because the Dockerfile hardcodes it.
+
+Neither recipe touches the container data folders, and neither needs `sudo`, so CI can call them as they stand.
+
+---
+
+## Image stacks
+`image.just`, loaded as the `image` module. Runs the image `just build image` produced, three ways - all
+`binacle-net:local`, differing in what runs beside it and where `/app/data` goes.
+
+```bash
+just image up                    # same as `up full`
+just image up full               # everything on: all modules, all three backends, the dashboard
+just image up volume             # the image alone, SQLite, data in a named volume - nothing lands in the repo
+just image up bind               # the image alone, SQLite, data in a folder you can open
+just image down [name] [-v]      # -v drops the named volumes, postgres included
+```
+
+Extra arguments go straight through to `docker compose`. The name is positional, so pass it whenever you pass
+a flag - `just image up -d` reads `-d` as the stack name and is rejected.
+
+All three check `binacle-net:local` exists first and point you at `just build image` if it does not. Without
+that check compose falls back to pulling from Docker Hub and reports "pull access denied", which reads like a
+credentials problem rather than the missing local build it is. `serve services` needs no such check - it runs
+no binacle-net.
+
+The folder setup is written out in both `serve.just` and `image.just` rather than shared. A module that
+reaches into another one puts back the coupling that splitting them removed, and it is a few lines of `mkdir`
+and `chmod`.
+
+---
+
+## Container data
+**Postgres always uses a named volume**, never a folder here. It chowns its data dir to its own user and locks
+it to 0700, which leaves a directory in the repo you cannot read - and that fails the next `docker build`,
+because the CLI walks the whole context before it builds. Wipe it with `just image down full -v`.
+
+App logs and Azurite state are bind-mounted into `config/` so you can open them, which means the folders have
+to exist and be writable by the container before anything starts - docker never chowns a bind mount, and the
+containers write as their own users. The `up` recipes do that, per stack: `just serve services` needs
+`config/azurite`; `image up full` needs it plus `config/data/{logs,pack-logs}`; `image up bind` needs
+`BINACLE_DATA_DIR` (default `config/data`); `image up volume` needs none.
+
+They open the **directory** and nothing inside it. The files belong to whoever wrote them - the app as
+`APP_UID`, azurite as root - and stay writable to that same writer, so a recursive `chmod` would fail on
+exactly those files while making nothing more writable. `sudo` is used only for a directory docker created
+itself, which the daemon makes as root.
+
+The `volume` stack keeps its data where you cannot open it directly. To read it:
+
+```bash
+docker compose -f ./config/docker-compose.volume.yml cp binacle-net:/app/data ./out
+```
+
+---
+
+## Benchmarks and performance
+Still scripts, one per slice. Both take `-c Release` and write into gitignored folders.
+
+```bash
+./config/benchmarks.lib.sh [FastValidation|AlgorithmRacing|BischoffSuite|Parallelization|ResultSelection]
+./config/benchmarks.vipaq.sh [Encode|Decode]      # no argument = every benchmark
+./config/performance.lib.sh                       # console runner, writes markdown reports
+./config/performance.vipaq.sh
+```
+
+The alias tables live at the top of each `benchmarks.*` script - that is the list to change when a benchmark
+class is added or renamed.
+
+---
+
+## Tmux
+`tmux.sh` builds (or re-attaches to) a session named `binacle` with windows `api`, `docs`, `web`, `tests`,
+`misc` and `bench_1..3`. Panes are pre-`cd`'d but nothing runs automatically - it is a staging layout, not a
+launcher.

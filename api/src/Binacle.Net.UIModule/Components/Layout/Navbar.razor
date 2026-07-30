@@ -1,0 +1,48 @@
+﻿<nav class="m l left secondary">
+	<header>
+		<Logo class="large" />
+	</header>
+	@if (MenuItems is not null)
+	{
+		@foreach (var menuItem in MenuItems)
+		{
+			<NavLink href="@menuItem.Url" ActiveClass="active">
+				@menuItem.Content.Render()
+				<span>@menuItem.Title</span>
+			</NavLink>
+		}
+	}
+	
+</nav>
+
+<nav class="s bottom secondary">
+	@if (MenuItems is not null)
+	{
+		@foreach (var menuItem in MenuItems)
+		{
+			<NavLink href="@menuItem.Url" ActiveClass="active">
+				@menuItem.Content.Render()
+				<span>@menuItem.Title</span>
+			</NavLink>
+		}
+	}
+</nav>
+
+@code {
+
+	[Inject]
+	private Services.AppletsService? AppletsService { get; set; }
+
+	// MaterialSymbol is built here as a content model (IRendableContentComponent), not rendered as a
+	// component, so setting its Name parameter directly is intended. BL0005 does not apply.
+#pragma warning disable BL0005
+	private List<Models.LinkWithContent>? MenuItems =>
+		this.AppletsService?.Applets
+			.Select(applet => new Models.LinkWithContent(applet.Title, applet.Ref, new MaterialSymbol()
+			{
+				Name = applet.Icon
+			}))
+			.ToList();
+#pragma warning restore BL0005
+
+}

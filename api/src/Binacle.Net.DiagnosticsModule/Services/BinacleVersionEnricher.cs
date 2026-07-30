@@ -1,0 +1,13 @@
+﻿using Serilog.Core;
+using Serilog.Events;
+
+namespace Binacle.Net.DiagnosticsModule.Services;
+
+internal class BinacleVersionEnricher : ILogEventEnricher
+{
+	public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+	{
+		logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty(
+			"Version", Metadata.Version));
+	}
+}

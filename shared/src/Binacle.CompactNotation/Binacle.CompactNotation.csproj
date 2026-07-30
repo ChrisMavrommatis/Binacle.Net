@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\Binacle.Geometry\Binacle.Geometry.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Binacle.CompactNotation.UnitTests" />
+    </ItemGroup>
+
+</Project>

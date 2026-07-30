@@ -1,0 +1,25 @@
+{
+  "name": "binacle-vipaq",
+  "version": "1.0.0",
+  "description": "Binacle.ViPaq implementation in TS",
+  "main": "index.ts",
+  "license": "GPL-3.0-only",
+  "private": true,
+  "dependencies": {
+    "binacle-compact-notation": "*"
+  },
+  "scripts": {
+    "test": "jest",
+    "generate:interop": "ts-node tools/generateVectors.ts",
+    "regen:interop": "dotnet run --project ../../tools/Binacle.ViPaq.VectorGenerators && npm run generate:interop"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.9.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.0"
+  }
+}

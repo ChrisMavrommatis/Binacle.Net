@@ -10,7 +10,7 @@
                 </a>
             </div>
             <nav class="center-align">
-                <a class="button small fill" href="{% link _versions/latest/index.md %}">
+                <a class="button small fill" href="{{ '/version/' | append: site.data.versions.current | append: '/' | relative_url }}">
                     <i>menu_book</i>
                     {{ site.data.sidebar.latest_version_link_text }}
                 </a>    

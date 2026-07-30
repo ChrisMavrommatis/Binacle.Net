@@ -1,0 +1,106 @@
+<Project>
+
+	<!-- Central Package Management: every NuGet version in the repo lives here, and a csproj may not name one.
+	     `PackageReference` in a project carries the Include only. NuGet fails the restore (NU1008) if a project
+	     sets a Version anyway, so a bump cannot land in eight projects and miss the ninth - which is how the
+	     xunit/CodeCoverage platform mismatch got in. Pins and ceilings are explained next to the version they
+	     guard, so the reason travels with the number. -->
+
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+
+	<!-- ASP.NET Core and the Microsoft.Extensions stack. These track the pinned SDK, so they move together
+	     with the .NET version, not on their own. -->
+	<ItemGroup>
+		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
+		<PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.10" />
+		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+		<PackageVersion Include="Microsoft.Extensions.Azure" Version="1.14.0" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.10" />
+		<PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.8.0" />
+	</ItemGroup>
+
+	<!-- OpenAPI: document generation, the examples library, and the two UIs. -->
+	<ItemGroup>
+		<PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.10" />
+		<PackageVersion Include="OpenApiExamples" Version="1.0.2" />
+		<PackageVersion Include="Scalar.AspNetCore" Version="2.16.16" />
+		<PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
+
+		<!-- Nobody references this directly. Microsoft.AspNetCore.OpenApi 10.0.10 asks for [2.0.0, ) and NuGet
+		     settles on 2.0.0, which has a high-severity advisory (GHSA-v5pm-xwqc-g5wc, stack overflow on
+		     circular $refs) - naming it here lifts the whole graph off the floor.
+		     The ceiling is the load-bearing half: 3.x is the ASP.NET Core 11 line (11.0.0-preview.6 pins
+		     3.6.0), and on 10.0.10 it does not even compile - the XmlComment source generator assigns
+		     IOpenApiMediaType.Example, which 3.x made read only. Both halves go away with the .NET 11
+		     upgrade. -->
+		<PackageVersion Include="Microsoft.OpenApi" Version="[2.11.0,3.0.0)" />
+	</ItemGroup>
+
+	<!-- Logging, health and telemetry. -->
+	<ItemGroup>
+		<PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+		<PackageVersion Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.6.0" />
+		<PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.17.0" />
+		<PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.17.0" />
+		<PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.17.0" />
+		<PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.17.0" />
+		<PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.17.0" />
+		<PackageVersion Include="Serilog" Version="4.4.0" />
+		<PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+		<PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+		<PackageVersion Include="Serilog.Enrichers.Process" Version="3.0.0" />
+		<PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+		<PackageVersion Include="Serilog.Extensions.Hosting" Version="10.0.0" />
+		<PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.1" />
+		<PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
+		<PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+	</ItemGroup>
+
+	<!-- Storage: the three ServiceModule backends. -->
+	<ItemGroup>
+		<PackageVersion Include="Azure.Data.Tables" Version="12.11.0" />
+		<PackageVersion Include="Dapper" Version="2.1.79" />
+		<PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.10" />
+		<PackageVersion Include="Npgsql" Version="10.0.3" />
+
+		<!-- Nobody references this directly. Microsoft.Data.Sqlite 10.0.10 pulls the 2.1.11 native build, which
+		     bundles SQLite 3.49.1 and carries a high-severity advisory (GHSA-2m69-gcr7-jv3q, memory
+		     corruption; needs 3.50.2+). 2.1.12 bundles SQLite 3.53.3 and clears it. Drop this once
+		     Microsoft.Data.Sqlite ships the bump.
+		     The ceiling keeps the 3.53.3 package out: that is this same native binary re-cut under a new scheme
+		     where the version *is* the SQLite version. Byte-identical .so, twice the download, plus android and
+		     ios RIDs we never load. -->
+		<PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="[2.1.12,3.0.0)" />
+	</ItemGroup>
+
+	<!-- Application libraries. -->
+	<ItemGroup>
+		<PackageVersion Include="FluentValidation" Version="12.1.1" />
+		<PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+		<PackageVersion Include="FluxResults" Version="1.0.0" />
+	</ItemGroup>
+
+	<!-- Testing. The runner half is a matched set - see the global.json section of $build-topology before
+	     touching any of it. xunit.v3.mtp-v2 is the Microsoft.Testing.Platform v2 adapter; plain xunit.v3 is the
+	     v1 one, and CodeCoverage has been v2-only since 18.1.0. Mixing the two throws TypeLoadException on
+	     IDataConsumer before a single test runs. -->
+	<ItemGroup>
+		<PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.9.0" />
+		<PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2" />
+		<PackageVersion Include="Shouldly" Version="4.3.0" />
+		<PackageVersion Include="Bogus" Version="35.6.5" />
+	</ItemGroup>
+
+	<!-- Benchmarks, performance runs and the generator tools. Not referenced by anything shipped. -->
+	<ItemGroup>
+		<PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
+		<PackageVersion Include="ConsoleTables" Version="2.7.0" />
+		<PackageVersion Include="Google.Protobuf" Version="3.35.1" />
+		<PackageVersion Include="Grpc.Tools" Version="2.83.0" />
+	</ItemGroup>
+
+</Project>

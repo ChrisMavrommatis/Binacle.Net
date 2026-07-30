@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "PerformanceTests": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+      }
+    }
+  }
+}

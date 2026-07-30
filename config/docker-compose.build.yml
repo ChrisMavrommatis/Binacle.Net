@@ -1,5 +1,26 @@
-﻿configs:
-  asprice_dashboard_config:
+﻿name: binacle-net-build
+
+# Full — everything switched on, for testing the whole image: ServiceModule on Postgres, plus Azurite and
+# SQLite ready to switch to, and the Aspire dashboard for telemetry. All three backends run; pick which one
+# the app talks to by moving the comment on the connection strings below, then recreate binacle-net.
+# App logs and Azurite state are bind-mounted into config/, so those folders must exist and be writable before
+# anything starts — docker never chowns a bind mount, and the containers write as their own users rather than
+# as you. Postgres is the exception: it keeps its data in a named volume, out of the repo.
+#
+# This file is the `full` stack of the `image` module. `just image up` creates and opens the bind-mounted
+# folders for you.
+#
+#   build  just build image                    # publishes, then tags binacle-net:local
+#   up     just image up full
+#   down   just image down full                # keeps the data
+#   wipe   just image down full -v             # drops the postgres volume too
+#          sudo rm -rf ./config/data ./config/azurite     # sudo: they write as root
+#
+# Log in as admin@binacle.net / B1n4cl3Adm!n — seeded on first start by a startup task.
+# API on http://localhost:8080, dashboard on http://localhost:18888.
+
+configs:
+  aspire_dashboard_config:
     content: |
       {
         "Dashboard": {
@@ -45,6 +66,8 @@ services:
     depends_on:
       azurite:
         condition: service_started
+      postgres:
+        condition: service_healthy
       aspire-dashboard:
         condition: service_started
     ports:
@@ -65,7 +88,14 @@ services:
       - SERVICE_MODULE=True
       - HealthChecks__Enabled=True
       - PackingLogs__Enabled=True
-      - AZURESTORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1
+      # Storage provider — Postgres by default. All three services are up; swap which one the app uses by
+      # moving the comment. They are tried in order — AzureStorage, Postgres, Sqlite — and the first one with
+      # a connection string wins, so exactly one of these may be uncommented.
+      # Hostnames are compose service names, not localhost. The SQLite file, if you switch to it, lands in
+      # the bind-mounted ./data where you can open it directly.
+      - POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=binacle_net;Username=appuser;Password=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3
+      # - SQLITE_CONNECTION_STRING=Data Source=/app/data/binacle-net-service.db;
+      # - AZURESTORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1
       - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/
       - OTEL_EXPORTER_OTLP_HEADERS=x-otlp-api-key=9EFB07A6-E9F9-4AC1-A0DE-DBE829B7236B
   azurite:
@@ -78,13 +108,35 @@ services:
       - '10000:10000'
       - '10001:10001'
       - '10002:10002'
+  postgres:
+    image: postgres:17.6
+    # A named volume, never a bind. Postgres chowns its data dir to its own user and locks it to 0700, which
+    # leaves an unreadable folder in the repo — and `docker build` walks the whole context, so the next build
+    # fails on it.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=appuser
+      - POSTGRES_PASSWORD=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3
+      - POSTGRES_DB=binacle_net
+    # The app creates its tables in a startup task, so it has to wait for a database that accepts
+    # connections — service_started would let it race the first boot and crash.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d binacle_net"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
   aspire-dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
     ports:
       - '18888:18888'
     configs:
-      - source: asprice_dashboard_config
+      - source: aspire_dashboard_config
         target: /app/config_files/aspire-dashboard-config.json
     environment:
       - DOTNET_DASHBOARD_CONFIG_FILE_PATH=config_files/aspire-dashboard-config.json
-  
+
+volumes:
+  postgres_data:

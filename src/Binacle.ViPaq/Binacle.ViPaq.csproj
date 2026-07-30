@@ -1,7 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<ItemGroup>
-		<InternalsVisibleTo Include="$(ProjectName).UnitTests" />
-	</ItemGroup>
-
-</Project>

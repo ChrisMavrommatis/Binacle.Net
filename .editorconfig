@@ -32,4 +32,13 @@ insert_final_newline = true
 csharp_style_prefer_primary_constructors = false
 
 
+# ViPaq unit tests are organised by purpose (Providers, Models, root namespace for tests),
+# not by folder path, so the folder-matches-namespace hint is noise for this project.
+[vipaq/test/Binacle.ViPaq.UnitTests/Tests/**.cs]
+# IDE0130: Namespace does not match folder structure (Roslyn / VS / dotnet build)
+dotnet_diagnostic.IDE0130.severity = none
+# "Namespace does not correspond to file location" (ReSharper / Rider)
+resharper_check_namespace_highlighting = none
+
+
 

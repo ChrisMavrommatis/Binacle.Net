@@ -4,6 +4,18 @@ import {defineComponent} from "../utils";
 import {ViPaqSerializer} from "binacle-vipaq";
 import {DecodedPackingResult} from "../viewModels";
 
+const SAVED_RESULTS_KEY = 'ProtocolDecoderSavedResults';
+
+// Bump when the ViPaq wire changes. "2" is the rebuilt wire (PROTOCOL.md). The stored value carries its own
+// version; anything without a matching version — including the old bare array of tokens — is from a previous
+// format and cannot be decoded, so it is discarded on load.
+const CURRENT_SCHEMA_VERSION = 2;
+
+interface SavedResults {
+	version: number;
+	results: string[];
+}
+
 export function protocolDecoderAppPlugin(Alpine: AlpineType) {
 	Alpine.data('protocol_decoder_app', protocolDecoderApp);
 }
@@ -15,24 +27,50 @@ export const protocolDecoderApp = defineComponent(() => ({
 	results: [] as DecodedPackingResult[],
 	selectedResult: null as DecodedPackingResult | null,
 	init(){
-		const savedResults = localStorage.getItem('ProtocolDecoderSavedResults');
-		if(savedResults) {
-			const encodedResults = JSON.parse(savedResults) as string[];
-			encodedResults.forEach(encodedResult => {
-				const data = Uint8Array.from(atob(encodedResult), x => x.charCodeAt(0));
-				ViPaqSerializer.deserialize(data)
-					.then(result => {
-						const decodedResult = new DecodedPackingResult(encodedResult, result.bin, result.items);
-						this.results.push(decodedResult);
-						if (this.results.length === 1) {
-							this.selectResult(decodedResult);
-						}
-					})
-					.catch(error => {
-						this.$dispatch('error-occurred', ['Error deserializing saved ViPaq data', error]);
-					});
-			});
+		this.loadSavedResults().forEach(encodedResult => {
+			const data = Uint8Array.from(atob(encodedResult), x => x.charCodeAt(0));
+			ViPaqSerializer.deserialize(data)
+				.then(result => {
+					const decodedResult = new DecodedPackingResult(encodedResult, result.bin, result.items);
+					this.results.push(decodedResult);
+					if (this.results.length === 1) {
+						this.selectResult(decodedResult);
+					}
+				})
+				.catch(error => {
+					this.$dispatch('error-occurred', ['Error deserializing saved ViPaq data', error]);
+				});
+		});
+	},
+	// Reads the stored tokens, but only if they carry the current schema version. Anything else — the old bare
+	// array, an older version, or corrupt JSON — is from a previous ViPaq wire and cannot be decoded, so it is
+	// discarded and the user is told once.
+	loadSavedResults(): string[] {
+		const raw = localStorage.getItem(SAVED_RESULTS_KEY);
+		if (!raw) {
+			return [];
 		}
+
+		try {
+			const parsed = JSON.parse(raw) as Partial<SavedResults>;
+			if (parsed?.version === CURRENT_SCHEMA_VERSION && Array.isArray(parsed.results)) {
+				return parsed.results;
+			}
+		} catch {
+			// not valid JSON — fall through and treat as stale
+		}
+
+		this.$dispatch('error-occurred', ['Your saved results were cleared: the packing token format changed and the old saved tokens can no longer be decoded.']);
+		localStorage.removeItem(SAVED_RESULTS_KEY);
+		return [];
+	},
+	// Persists the current tokens under the current schema version.
+	saveResults(){
+		const payload: SavedResults = {
+			version: CURRENT_SCHEMA_VERSION,
+			results: this.results.map(r => r.encodedResult)
+		};
+		localStorage.setItem(SAVED_RESULTS_KEY, JSON.stringify(payload));
 	},
 	addResult(){
 		if (!this.model.result) {
@@ -60,7 +98,7 @@ export const protocolDecoderApp = defineComponent(() => ({
 						this.selectResult(decodedResult);
 					}
 					this.model.result = null;
-					localStorage.setItem('ProtocolDecoderSavedResults', JSON.stringify(this.results.map(r => r.encodedResult)));
+					this.saveResults();
 				})
 				.catch(error => {
 					this.$dispatch('error-occurred', ['Error deserializing ViPaq data', error]);
@@ -84,7 +122,7 @@ export const protocolDecoderApp = defineComponent(() => ({
 		const index = this.results.indexOf(result);
 		if(index !== -1){
 			this.results.splice(index, 1);
-			localStorage.setItem('ProtocolDecoderSavedResults', JSON.stringify(this.results.map(r => r.encodedResult)));
+			this.saveResults();
 			if(isSelected) {
 				this.selectResult(this.results.length > 0 ? this.results[0] : null);
 			}

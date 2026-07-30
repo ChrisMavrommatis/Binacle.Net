@@ -6,16 +6,8 @@
   <Folder Name="/build/">
     <File Path="build/README.md" />
   </Folder>
-  <Folder Name="/doc/">
-    <Project Path="doc/benchmark-results/benchmark-results.proj" Type="Shared">
-      <Platform Project="AnyCPU" />
-    </Project>
-    <Project Path="doc/packing-efficiency-results/packing-efficiency-results.proj" Type="Shared">
-      <Platform Project="AnyCPU" />
-    </Project>
-  </Folder>
-  <Folder Name="/res/">
-    <Project Path="res/http/http.proj" Type="Shared">
+  <Folder Name="/api/">
+    <Project Path="api/requests/requests.proj" Type="Shared">
       <Platform Project="AnyCPU" />
     </Project>
   </Folder>
@@ -47,32 +39,65 @@
       <Platform Project="AnyCPU" />
     </Project>
   </Folder>
-  <Folder Name="/src/">
-    <Project Path="src/Binacle.Lib.Abstractions/Binacle.Lib.Abstractions.csproj" />
-    <Project Path="src/Binacle.Lib/Binacle.Lib.csproj" />
-    <Project Path="src/Binacle.Net.DiagnosticsModule/Binacle.Net.DiagnosticsModule.csproj" />
-    <Project Path="src/Binacle.Net.Kernel/Binacle.Net.Kernel.csproj" />
-    <Project Path="src/Binacle.Net.ServiceModule.Domain/Binacle.Net.ServiceModule.Domain.csproj" />
-    <Project Path="src/Binacle.Net.ServiceModule.Infrastructure/Binacle.Net.ServiceModule.Infrastructure.csproj" />
-    <Project Path="src/Binacle.Net.ServiceModule/Binacle.Net.ServiceModule.csproj" />
-    <Project Path="src/Binacle.Net.UIModule/Binacle.Net.UIModule.csproj" />
-    <Project Path="src/Binacle.Net/Binacle.Net.csproj" />
-    <Project Path="src/Binacle.ViPaq/Binacle.ViPaq.csproj" />
+  <Folder Name="/lib/src/">
+    <Project Path="lib/src/Binacle.Lib.Abstractions/Binacle.Lib.Abstractions.csproj" />
+    <Project Path="lib/src/Binacle.Lib/Binacle.Lib.csproj" />
   </Folder>
-  <Folder Name="/test/">
-    <Project Path="test/Binacle.Lib.Benchmarks/Binacle.Lib.Benchmarks.csproj" />
-    <Project Path="test/Binacle.Lib.PerformanceTests/Binacle.Lib.PerformanceTests.csproj" />
-    <Project Path="test/Binacle.Lib.UnitTests/Binacle.Lib.UnitTests.csproj" />
-    <Project Path="test/Binacle.Net.IntegrationTests/Binacle.Net.IntegrationTests.csproj" />
-    <Project Path="test/Binacle.Net.ServiceModule.IntegrationTests/Binacle.Net.ServiceModule.IntegrationTests.csproj" />
-    <Project Path="test/Binacle.Net.TestsKernel/Binacle.Net.TestsKernel.csproj" />
-    <Project Path="test/Binacle.ViPaq.UnitTests/Binacle.ViPaq.UnitTests.csproj" />
+  <Folder Name="/lib/test/">
+    <Project Path="lib/test/Binacle.Lib.UnitTests/Binacle.Lib.UnitTests.csproj" />
+    <Project Path="lib/test/Binacle.Lib.Benchmarks/Binacle.Lib.Benchmarks.csproj" />
+    <Project Path="lib/test/Binacle.Lib.PerformanceTests/Binacle.Lib.PerformanceTests.csproj" />
+  </Folder>
+  <Folder Name="/api/src/">
+    <Project Path="api/src/Binacle.Net/Binacle.Net.csproj" />
+    <Project Path="api/src/Binacle.Net.Kernel/Binacle.Net.Kernel.csproj" />
+    <Project Path="api/src/Binacle.Net.DiagnosticsModule/Binacle.Net.DiagnosticsModule.csproj" />
+    <Project Path="api/src/Binacle.Net.ServiceModule/Binacle.Net.ServiceModule.csproj" />
+    <Project Path="api/src/Binacle.Net.ServiceModule.Domain/Binacle.Net.ServiceModule.Domain.csproj" />
+    <Project Path="api/src/Binacle.Net.ServiceModule.Infrastructure/Binacle.Net.ServiceModule.Infrastructure.csproj" />
+    <Project Path="api/src/Binacle.Net.UIModule/Binacle.Net.UIModule.csproj" />
+  </Folder>
+  <Folder Name="/api/test/">
+    <Project Path="api/test/Binacle.Net.DiagnosticsModule.UnitTests/Binacle.Net.DiagnosticsModule.UnitTests.csproj" />
+    <Project Path="api/test/Binacle.Net.UnitTests/Binacle.Net.UnitTests.csproj" />
+    <Project Path="api/test/Binacle.Net.Kernel.UnitTests/Binacle.Net.Kernel.UnitTests.csproj" />
+    <Project Path="api/test/Binacle.Net.ServiceModule.UnitTests/Binacle.Net.ServiceModule.UnitTests.csproj" />
+    <Project Path="api/test/Binacle.Net.IntegrationTests/Binacle.Net.IntegrationTests.csproj" />
+    <Project Path="api/test/Binacle.Net.ServiceModule.IntegrationTests/Binacle.Net.ServiceModule.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/vipaq/src/">
+    <Project Path="vipaq/src/Binacle.ViPaq/Binacle.ViPaq.csproj" />
+  </Folder>
+  <Folder Name="/vipaq/test/">
+    <Project Path="vipaq/test/Binacle.ViPaq.UnitTests/Binacle.ViPaq.UnitTests.csproj" />
+    <Project Path="vipaq/test/Binacle.ViPaq.TestsKernel/Binacle.ViPaq.TestsKernel.csproj" />
+    <Project Path="vipaq/test/Binacle.ViPaq.Benchmarks/Binacle.ViPaq.Benchmarks.csproj" />
+    <Project Path="vipaq/test/Binacle.ViPaq.PerformanceTests/Binacle.ViPaq.PerformanceTests.csproj" />
+  </Folder>
+  <Folder Name="/vipaq/tools/">
+    <Project Path="vipaq/tools/Binacle.ViPaq.VectorGenerators/Binacle.ViPaq.VectorGenerators.csproj" />
+    <Project Path="vipaq/tools/Binacle.ViPaq.PackedDataGenerator/Binacle.ViPaq.PackedDataGenerator.csproj" />
+  </Folder>
+  <Folder Name="/shared/src/">
+    <Project Path="shared/src/Binacle.CompactNotation/Binacle.CompactNotation.csproj" />
+    <Project Path="shared/src/Binacle.Geometry/Binacle.Geometry.csproj" />
+  </Folder>
+  <Folder Name="/shared/test/">
+    <Project Path="shared/test/Binacle.CompactNotation.UnitTests/Binacle.CompactNotation.UnitTests.csproj" />
+    <Project Path="shared/test/Binacle.TestReporting/Binacle.TestReporting.csproj" />
+    <Project Path="shared/test/Binacle.TestsKernel/Binacle.TestsKernel.csproj" />
+  </Folder>
+  <Folder Name="/shared/tools/">
+    <Project Path="shared/tools/Binacle.OrLibrary.Converter/Binacle.OrLibrary.Converter.csproj" />
   </Folder>
   <Folder Name="/_root/">
     <File Path=".dockerignore" />
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
     <File Path="Dockerfile" />
+    <File Path="global.json" />
     <File Path="gulpfile.js" />
     <File Path="package.json" />
     <File Path="README.md" />

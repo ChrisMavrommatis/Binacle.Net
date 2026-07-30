@@ -1,0 +1,44 @@
+[
+	{
+		"Name": "forty 8-bit items",
+		"ExpectedHeader": "v1_raw_row_8_8_8",
+		"Bin": "100x100x100",
+		"Items": ["10x10x10 (0,0,0) [40]"]
+	},
+	{
+		"Name": "16-bit sections with nonzero coordinates",
+		"ExpectedHeader": "v1_raw_row_16_16_16",
+		"Bin": "300x400x500",
+		"Items": ["300x400x500 (256,300,400)", "300x400x500 (500,600,700)"]
+	},
+	{
+		"Name": "mixed widths, 8-bit bin, 16-bit item dims and coordinates",
+		"ExpectedHeader": "v1_raw_row_8_16_16",
+		"Bin": "100x100x100",
+		"Items": ["300x300x300 (256,300,400)", "200x200x200 (500,600,700)"]
+	},
+	{
+		"Name": "columnar layout, 16-bit sections",
+		"ExpectedHeader": "v1_raw_col_16_16_16",
+		"Bin": "300x400x500",
+		"Items": ["300x400x500 (256,300,400)", "310x410x510 (500,600,700)"]
+	},
+	{
+		"Name": "boundary - item dim at 8-bit ceiling (255)",
+		"ExpectedHeader": "v1_raw_row_8_8_8",
+		"Bin": "100x100x100",
+		"Items": ["255x255x255 (0,0,0)"]
+	},
+	{
+		"Name": "boundary - item dim into 16-bit (256)",
+		"ExpectedHeader": "v1_raw_row_8_16_8",
+		"Bin": "100x100x100",
+		"Items": ["256x256x256 (0,0,0)"]
+	},
+	{
+		"Name": "boundary - item dim at 16-bit ceiling (65535)",
+		"ExpectedHeader": "v1_raw_row_8_16_8",
+		"Bin": "100x100x100",
+		"Items": ["65535x65535x65535 (0,0,0)"]
+	}
+]

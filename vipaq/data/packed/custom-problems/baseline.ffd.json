@@ -1,0 +1,38 @@
+[
+	{
+		"Name": "Baseline_5x5x5-1_FitsIn_60x40x10",
+		"WidthBits": 8,
+		"Bin": "60x40x10",
+		"Items": [
+			"5x5x5 (0,0,0)"
+		]
+	},
+	{
+		"Name": "Baseline_15x15x15-1_FitsIn_60x40x20",
+		"WidthBits": 8,
+		"Bin": "60x40x20",
+		"Items": [
+			"15x15x15 (0,0,0)"
+		]
+	},
+	{
+		"Name": "Baseline_25x25x25-1_FitsIn_60x40x30",
+		"WidthBits": 8,
+		"Bin": "60x40x30",
+		"Items": [
+			"25x25x25 (0,0,0)"
+		]
+	},
+	{
+		"Name": "Baseline_40x40x40-1_DoesNotFit_60x40x30",
+		"WidthBits": 8,
+		"Bin": "60x40x30",
+		"Items": []
+	},
+	{
+		"Name": "Baseline_5x5x80_TooLong_60x40x30",
+		"WidthBits": 8,
+		"Bin": "60x40x30",
+		"Items": []
+	}
+]
