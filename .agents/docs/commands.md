@@ -206,7 +206,8 @@ numbers are not the ones CI or coverage report.
 
 <!-- sourced from docs site; verify against current code if behaviour changes -->
 
-Image: `binacle/binacle-net:latest`. Default internal port: `8080`.
+Image: `binacle/binacle-net:latest`. Default internal port: `8080`. `latest` is right for an ad-hoc run of the
+newest image; a **sample** never uses it (`$samples#image-pin` has the pinning rule).
 
 Basic run:
 

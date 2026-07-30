@@ -1,6 +1,7 @@
 services:
   binacle-net:
-    image: binacle/binacle-net:latest
+    # Pinned on purpose - a copied sample must not jump to a new major on the next pull.
+    image: binacle/binacle-net:2.1.1
     ports:
       - "8080:8080"
     volumes:

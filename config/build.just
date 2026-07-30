@@ -40,6 +40,20 @@ publish:
 # the running container reports. They come from the same value here for the same reason the release workflow
 # feeds both from the metadata step: an image whose reported version disagrees with its tag is unreportable.
 
+# The per-build OCI labels live here, not in the Dockerfile: revision and created change every build, so as
+# Dockerfile LABELs fed by ARG they would invalidate the layer cache from that point down. Applied with
+# --label they set image-config metadata with no layer and no cache cost. This is the local counterpart to
+# metadata-action, so a locally built image carries the same version/revision/created a pushed one does.
+
 # Publish, then build the image [version]
 image version="local": publish
-    docker build --build-arg VERSION={{ version }} -t binacle-net:{{ version }} .
+    #!/usr/bin/env bash
+    set -euo pipefail
+    revision="$(git rev-parse HEAD)"
+    created="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    docker build \
+      --build-arg VERSION="{{ version }}" \
+      --label "org.opencontainers.image.version={{ version }}" \
+      --label "org.opencontainers.image.revision=${revision}" \
+      --label "org.opencontainers.image.created=${created}" \
+      -t "binacle-net:{{ version }}" .

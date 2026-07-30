@@ -18,7 +18,6 @@ you need, and trim or delete it once the work lands.
 | [docs-swagger-documents.md](docs-swagger-documents.md) | Docs site - generate the v3 and v4 OpenAPI documents |
 | [docs-v3-pages.md](docs-v3-pages.md) | Docs site - write the v3.0.x pages |
 | [docs-vipaq-protocol-page.md](docs-vipaq-protocol-page.md) | Docs site - the shared ViPaq protocol page describes the old format |
-| [sample-image-pinning.md](sample-image-pinning.md) | Pin the samples to the released docker image |
 | [todos.md](todos.md) | TODOs |
 
 ## API
@@ -26,6 +25,7 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [api/integration-test-additions.md](api/integration-test-additions.md) | Integration tests: cover what the harness cannot see today |
+| [api/real-use-case-samples.md](api/real-use-case-samples.md) | Align the deployment samples with the real profiles |
 | [api/smoke-testing-the-image.md](api/smoke-testing-the-image.md) | Smoke test the built docker image over HTTP |
 | [api/ui-clients-off-v3.md](api/ui-clients-off-v3.md) | Migrate the shipped UI clients off the v3 API |
 | [api/v4-stable-in-3.1.0.md](api/v4-stable-in-3.1.0.md) | v4 — flip from experimental to stable in 3.1.0 |

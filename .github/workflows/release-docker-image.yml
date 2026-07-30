@@ -32,8 +32,22 @@ jobs:
       with:
         images: |
           ${{ vars.DOCKERHUB_ORGNAME }}/${{ vars.DOCKERHUB_REPO }}
+        # {{version}} is the immutable pin (3.0.0). {{major}}.{{minor}} is the moving one (3.0 -> newest 3.0.x),
+        # which is what the samples pin: a copied sample then inherits bug fixes and never a breaking change.
+        # A prerelease gets neither: metadata-action skips {{major}}.{{minor}} for a prerelease tag, the same
+        # guard as latest=auto below, so v3.0.0-beta.1 publishes only 3.0.0-beta.1. Verify on the first beta.
+        # No {{major}} tag on purpose: "3" would cross minor lines, and nothing here should pin it.
         tags: |
           type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+        # Corrects the two labels metadata-action gets wrong on its own, both of which override the Dockerfile
+        # at build time. licenses: auto-detection returns NOASSERTION because the repo is dual-licensed. url:
+        # auto-fills the repo, but the image should point at the landing site. Every other label (title,
+        # description, source, revision, created, version) is left to metadata-action, and documentation/vendor
+        # /base.name come from the Dockerfile.
+        labels: |
+          org.opencontainers.image.licenses=GPL-3.0-only AND CC-BY-SA-4.0
+          org.opencontainers.image.url=https://www.binacle.net
         # latest=auto is the default; it is written out because the beta depends on it. Under auto, "latest" is
         # applied only when the semver tag is not a prerelease, so publishing v3.0.0-beta.1 must not move
         # "latest" onto the beta and drag sample users onto it. Verify this on the first beta tag.

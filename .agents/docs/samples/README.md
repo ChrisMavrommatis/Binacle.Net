@@ -1,8 +1,8 @@
 ---
 id: samples
 description: Deployment samples — Docker Compose (minimal, ui, service-npgsql, service-azure) and Kubernetes (minimal); feature flags, config wiring, and the keep-in-sync rule
-verified: 2026-07-15
-check: Sample folders, compose env vars, and bind-mounted config paths match samples/
+verified: 2026-07-30
+check: Sample folders, compose env vars, bind-mounted config paths, and the pinned image tag match samples/
 also_update:
   - api/configuration
   - api/modules
@@ -10,7 +10,7 @@ also_update:
 
 # Samples
 
-Deployment examples under `samples/`. They run the published image `binacle/binacle-net:latest` and demonstrate
+Deployment examples under `samples/`. They run the published image at an **exact pinned version** and demonstrate
 real module configurations. Index: `samples/README.md` (the in-tree one).
 
 **`samples/` vs `config/`** — `samples/` are **starting points a user copies** to stand up their own deployment.
@@ -56,6 +56,22 @@ Fixed container config paths: `Presets.json` → `/app/Config_Files/Presets.json
 - **Baseline files**: `docker-compose.yml`, `.env` (project name only), `Presets.json`, `README.md`, and a
   `.dcproj` (SDK `Microsoft.Docker.Sdk`). `JwtAuth.json` is required only with `SERVICE_MODULE=True`;
   `OpenTelemetry.Production.json` + `aspire-dashboard-config.json` only when shipping OTel/Aspire.
-- Published samples bind config files read-only and use `binacle/binacle-net:latest`. The local build pipeline
+- Published samples bind config files read-only and use the pinned image tag (see below). The local build pipeline
   (`config/docker-compose.build.yml`, fed by `just build image`) instead uses `binacle-net:local` and injects config via
   compose `configs:` — see `$build-topology`.
+
+## The image tag is pinned {#image-pin}
+
+All five samples pin `binacle/binacle-net:2.1.1` — `samples/docker/*/docker-compose.yml` and
+`samples/kubernetes/minimal-setup/binacle-deployment.yaml`. Never `latest`: a sample is copied once and lives for
+years, so `latest` hands the reader the next major release on their next pull, with nothing in their config saying
+what changed.
+
+**Pin the minor line where one exists.** `release-docker-image.yml` publishes `{{major}}.{{minor}}` beside
+`{{version}}`, so from v3.0.0 the pin is `binacle/binacle-net:3.0` and the sample inherits every later patch —
+bug fixes flow, breaking changes never do, and the pin only changes when a new minor line opens. There is no
+`{{major}}` tag on purpose: `3` crosses minor lines. The pin is `2.1.1` today because tags are created at build
+time and nothing backfills `2.1`; an exact patch is also the right pin for a line that will get no further ones.
+
+**Bump the pin in the last change before a tag**, never earlier — a bump sitting on `main` points every reader at
+an image that does not exist yet.

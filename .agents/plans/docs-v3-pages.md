@@ -71,15 +71,27 @@ Neither has a `v2.1.x` equivalent to copy.
       - Behind a proxy the list needs forwarded headers enabled, or it is compared against the proxy's address
         and can never match.
 
-## Two fixes to fold in while you are there
+## The image tag - what is left
 
-- [ ] `docs/_config.yml` carries the **v3.0.x `defaults` scope block twice** (around lines 216-225 - an
-      identical `path: "**/v3.0.x/**"` pair). Harmless to Jekyll, confusing to the next editor. Delete one.
-- [ ] The **older version folders' samples pin `binacle/binacle-net:latest`** -
-      `collections/_versions/v2.0.x/samples/docker/*/docker-compose.yml` and the same under `v2.1.x` - so a
-      v2.1.x reader copying a v2.1.x sample gets a 3.0.0 image after the release. Each version folder should pin
-      its own line. `collections/_common_pages/quick-start.md:26` also runs `latest`, and it is shared by every
-      version.
+`version_tag` in `_config.yml` is the one place a version-to-tag decision lives; it now holds a real docker tag
+per folder (`1.3.0`, `2.0.1`, `2.1.1`, `3.0`), with a comment there saying why. Frozen lines carry their newest
+patch, the live line carries the minor tag. Two things remain:
+
+- [ ] **`v3.0.x` sample files pin `3.0`, hardcoded.** These files have no front matter and are served as raw
+      downloads via `{% vlink %}`, so Jekyll never runs Liquid on them - `{{ page.version_tag }}` would reach the
+      reader literally. Copy the shape from the `v2.1.x` files, which pin `2.1.1` the same way.
+- [ ] **`collections/_common_pages/quick-start.md:26`** hardcodes `latest`. It is a common page rendered into
+      every version folder and its own text says it is the version-agnostic one, so `latest` is defensible here
+      in a way it is not anywhere else - but saying nothing is not: a v1.3.x reader running that line gets a v3
+      image. Either make it version-aware, or keep `latest` and add one line saying it follows the newest release
+      and to pin a version for anything they keep.
+
+## A full docs pass is owed, separately
+
+Out of scope here, recorded so it is not lost: the version labels on the **release-notes pages read
+inconsistently** (a `v2.0.0` where the folder is a `v2.x` line, and similar). The maintainer spotted it on
+2026-07-30 while checking the tag fix. It wants one deliberate pass over every version folder, not a fix folded
+into the v3 page writing.
 
 ## Done when
 

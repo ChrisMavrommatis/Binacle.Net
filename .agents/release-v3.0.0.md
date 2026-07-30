@@ -64,7 +64,7 @@ the deployed image is on the beta verification list.
 | B2 | Write the `v3.0.x` docs pages, including the two new configuration pages | [docs-v3-pages](plans/docs-v3-pages.md) |
 | B3 | Decide how the shared ViPaq protocol page is versioned, then fix it - it still says gzip | [docs-vipaq-protocol-page](plans/docs-vipaq-protocol-page.md) |
 | B4 | Generate `swagger/v3.json` and `swagger/v4.json` - the v4 "all algorithms" claim is corrected (2026-07-28) | [docs-swagger-documents](plans/docs-swagger-documents.md) |
-| B5 | Decide how the samples pin the docker image | [sample-image-pinning](plans/sample-image-pinning.md) |
+| B5 | Bump the five sample image pins to `3.0` - **no plan** | see below |
 | B6 | Run the ServiceModule suite once against Azure Storage - **no plan** | see below |
 | B7 | Confirm v4 still ships experimental, then announce all four breaking changes - **no plan** | see below |
 
@@ -76,8 +76,12 @@ is, so the call is made first rather than discovered inside the docs session.
 swagger set, and v3's document changed in this release because the ViPaq payload did. Both need a running API, so
 they are produced here and handed to the docs session, which writes only the pages beside them.
 
-**B5's deadline is set by A2.** All five repo samples pull `latest`. If the prerelease tag turns out to move
-`latest`, sample users get v3.0.0 at the beta rather than at the tag, and this moves into Gate A.
+- [ ] **B5 - the sample image pins.** The five samples pin `2.1.1` today. Bump them to **`3.0`** (the minor tag,
+  not `3.0.0`) in the **last change before the tag** - not earlier, or they name an image that does not exist for
+  as long as that change sits on `main`. Files are `samples/docker/*/docker-compose.yml` and
+  `samples/kubernetes/minimal-setup/binacle-deployment.yaml`; the standing rule is in the samples doc. Read A2's
+  answer first: if the beta published a `3.0` tag, that is fixed before this bump, or the samples point at a
+  prerelease.
 
 - [ ] **B6 - Azure Storage.** CI covers SQLite and Postgres only, so the Azure provider ships on trust even
   though `samples/docker/service-azure` points users at it. It stays in this release; removal is a later idea.
@@ -135,10 +139,10 @@ deliberately ignored.
 
 1. Gate A green.
 2. **Publish the beta image and deploy it.**
-3. **Work B1 on the running beta**, and B2-B5 in parallel while it is up.
+3. **Work B1 on the running beta**, and B2-B4 in parallel while it is up.
 4. B6, B7a.
-5. **Release the docs**, then tag `v3.0.0`. `release-docker-image.yml` publishes the final image on
-   `release: published`.
+5. **Release the docs**, then B5 (bump the sample pins) as the last change, then tag `v3.0.0`.
+   `release-docker-image.yml` publishes the final image on `release: published`.
 6. Paste `release-notes-v3.0.0.md` into the release body, with both breaking changes in it (B7b).
 7. Work `post-release-v3.0.0.md`.
 

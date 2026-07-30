@@ -24,32 +24,28 @@ commit.
 it says `api/src/Binacle.Net/Binacle.Net.csproj`, the publish step fails. That is a repo settings change, tracked
 as an action on the release file.
 
-## 2. Prove a prerelease tag does not move `latest`
+## 2. Prove a prerelease tag moves neither `latest` nor the minor tag
 
-The workflow fires on `release: published` and builds its tags with:
+The workflow fires on `release: published` and publishes two semver tags plus `latest`: `{{version}}` and
+`{{major}}.{{minor}}` (so v3.0.0 gives `3.0.0` and `3.0`, and a sample pinned to `3.0` inherits every later
+patch). Neither moving tag should ever land on a prerelease:
 
-```yaml
-uses: docker/metadata-action@v5
-tags: |
-  type=semver,pattern={{version}}
-```
+- `latest=auto` is the default `flavor:`, which applies `latest` only to a non-prerelease semver tag.
+- metadata-action is documented to skip `{{major}}.{{minor}}` for a prerelease, the same guard.
 
-There is no explicit `flavor:`, so the default `latest=auto` applies - `latest` is generated for a semver tag
-that is **not** a prerelease. On that reading, `v3.0.0-beta.1` produces only `binacle/binacle-net:3.0.0-beta.1`
-and leaves `latest` on `2.1.1`.
+**Neither has been observed in this repo.** If `v3.0.0-beta.1` moves `latest`, everyone on the docs quick-start
+gets a prerelease with breaking changes; if it publishes `3.0`, so does everyone pinned to the minor line. One
+beta tag answers both. Either dry-run the metadata step (`workflow_dispatch` a copy, or run
+`docker/metadata-action` locally against the tag name), or publish the beta and check Docker Hub immediately.
 
-That reading has never been tested, and it matters: every sample in the repo, the docs quick-start, and the
-sample compose files inside the older docs version folders all pull `binacle/binacle-net:latest`. If `latest`
-moves to the beta, every one of those users silently gets a prerelease with breaking changes.
+Fixes, if either fires: `flavor: latest=false` plus an explicit `latest` rule for final releases only, and
+`enable=` on the `{{major}}.{{minor}}` pattern to exclude prereleases. Delete the bad tag from Docker Hub.
 
-Confirm before publishing the beta release. Either:
-- dry-run the metadata step (`workflow_dispatch` a copy, or run `docker/metadata-action` locally against the tag
-  name), or
-- publish the beta and check Docker Hub immediately, with `latest` ready to be re-pointed.
-
-If it does move, set `flavor: latest=false` and add an explicit `latest` tag rule for final releases only.
+There is deliberately no `{{major}}` rule - a `3` tag hands a reader the next minor line on an ordinary pull, and
+nothing in the repo or docs pins it. Tags are also created at build time, so none of this backfills: `2.1` will
+never exist, and everything already released keeps its exact pin.
 
 ## Done when
 
 The image has been built once against current code, and the prerelease tagging behaviour is known rather than
-assumed. Record the answer here before deleting the file.
+assumed - for both moving tags. Record the answers here before deleting the file.
