@@ -86,7 +86,7 @@ the bottom of this file, rewritten 2026-08-06 once the beta was actually deploye
 | B1 | Work the beta verification list on the deployed image | **done 2026-08-06** - all boxes pass |
 | B2 | Write the `v3.0.x` docs pages, including the two new configuration pages | [docs-v3-pages](plans/docs-v3-pages.md) |
 | B3 | Fix the ViPaq protocol page | **done 2026-08-07** - split landed, all four versions written |
-| B4 | Generate `swagger/v3.json` and `swagger/v4.json` | **done 2026-08-06** - both generated, all checks pass |
+| B4 | Generate `swagger/v3.json` and `swagger/v4.json` | **done 2026-08-06** - generated and checked, but they sit in gitignored `build/openapi/`; moving them into `v3.0.x/swagger/` is B2 |
 | B5 | Bump the five sample image pins to `3.0` - **no plan** | see below |
 | B6 | Run the ServiceModule suite once against Azure Storage - **no plan** | see below |
 | B7 | Confirm v4 still ships experimental, then announce all four breaking changes - **no plan** | see below |

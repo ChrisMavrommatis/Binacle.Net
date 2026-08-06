@@ -63,6 +63,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - Presets can be **listed** with `presets` or **fetched one at a time** with `presets/{preset}`.  
 - V4 is **experimental and can change at any time**. V3 remains stable and is the recommended version.  
 - V3 endpoints are unchanged and remain stable, apart from the ViPaq payload.  
+- **ViPaq is no longer experimental.** The format is settled as of this release, where it carried an experimental warning through v2.1.1. A future format change takes a new `Version` code rather than altering the current one, so an older decoder rejects a newer token outright instead of misreading it.  
 - Added **forwarded headers** support, configured in `Config_Files/ForwardedHeaders.json`. **Disabled by default.**  
 - When enabled, the caller's address and scheme are resolved from `X-Forwarded-For` and `X-Forwarded-Proto` before anything reads them, so rate limiting and health check IP restrictions see the real caller rather than the proxy.  
 - Trust is explicit — a proxy on loopback or a private network is trusted by default, anything else must be named. The app **refuses to start** if nothing is trusted, because that would make every caller's header believable.  

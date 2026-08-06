@@ -1,6 +1,6 @@
 # Docs site - write the v3.0.x pages
 
-**Status:** Not started. Gates the v3.0.0 release (not the beta). The version-only restructure is **done** -
+**Status:** In progress. Gates the v3.0.0 release (not the beta). The version-only restructure is **done** -
 folders are `v1.3.x`, `v2.0.x`, `v2.1.x`, `v3.0.x`, `latest` is a redirect only, the site builds clean. The
 model, the standing rule for opening a new line, and the history now live in the canonical docs-site doc under
 its "Versioning model" section. What remains is writing the pages.
@@ -54,6 +54,30 @@ it.
 
 **`vlink` raises and fails the build on a missing target** - that is why the stub has no section links yet. Add a
 link only when its target lands.
+
+## The two swagger documents are generated but not yet safe
+
+B4 ran on 2026-08-06 and both documents passed their checks - no `/api/auth/token` path in v3, and the v4
+document carries the experimental banner. **They are not committed anywhere.** They sit at
+`build/openapi/Binacle.Net_v3.json` and `build/openapi/Binacle.Net_v4.json`, and `build/openapi/` is gitignored
+(`.gitignore:28`). A `just clean`, a fresh clone, or a different machine and they are gone, and B4 has to be
+re-run. Moving them is this session's first swagger step, not its last.
+
+- [ ] **Move and rename**, in one go:
+      - `build/openapi/Binacle.Net_v3.json` -> `docs/collections/_versions/v3.0.x/swagger/v3.json`
+      - `build/openapi/Binacle.Net_v4.json` -> `docs/collections/_versions/v3.0.x/swagger/v4.json`
+
+      The generator names files `Binacle.Net_<doc>.json`; the site expects the bare `v3.json` / `v4.json`, which
+      is what `v2.1.x/swagger/` holds. Renaming is part of the handover, not an accident to preserve.
+- [ ] Write `v3.md` and `v4.md` beside them, copying the shape from `v2.1.x/swagger/v3.md`.
+- [ ] **No `v2.json` and no `v2.md`** in this folder. V2 is removed in this version and lives on in `v2.1.x` and
+      `v2.0.x`.
+
+If either JSON has to be regenerated, the recipe is `just openapi generate`, which writes both into
+`build/openapi/`. It starts the app host itself, so no server needs bringing up - and it runs with **no launch
+profile, so ServiceModule is off**, which is the committed convention and the reason `v3.json` has no
+`/api/auth/token` path. A ServiceModule-on run adds that path and the documents stop being comparable across
+versions.
 
 ## Two configuration pages are new in v3.0.x
 
