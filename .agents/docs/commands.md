@@ -1,8 +1,8 @@
 ---
 id: commands
 description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
-verified: 2026-07-28
-check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; openapi recipes match config/openapi.just; agents recipes match config/agents.just; serve recipes match config/serve.just; install/assets match the root justfile; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml
+verified: 2026-08-06
+check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; openapi recipes match config/openapi.just; agents recipes match config/agents.just; serve recipes match config/serve.just; install/assets match the root justfile; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml; prerequisite versions match Directory.Build.props, .nvmrc, docs/.ruby-version, web/.ruby-version, and .github/workflows/run-tests.yml
 ---
 
 # Commands
@@ -11,6 +11,24 @@ Setup, running things, tests, coverage, the OpenAPI documents and the agent inde
 benchmarks, performance runs, the image build and the tmux session are still scripts in `config/`. All are run
 from the repo root. `just` with no arguments lists everything. For the `config/` directory anatomy (scripts,
 local compose, env, emulator state) see `$config`.
+
+## Prerequisites
+
+Install these before `just install`. Where a pin file exists, the version manager reads it automatically —
+you still need the manager itself installed first.
+
+| Tool | Version | Pin file | Needed for |
+|---|---|---|---|
+| .NET SDK | 10.x (`Directory.Build.props`) | none | building/running the API, `lib`, `vipaq` |
+| Node.js, via [nvm](https://github.com/nvm-sh/nvm) | 22 (matches CI) | `.nvmrc` at repo root | `just install`, the TS packages, `assets`, `docs`/`web` webpack watch |
+| Ruby, via [rbenv](https://github.com/rbenv/rbenv) | 3.4.7 | `docs/.ruby-version`, `web/.ruby-version` | `docs/` and `web/` (Jekyll) only |
+| [just](https://github.com/casey/just#installation) | any recent | none | every recipe in this doc; `sudo apt install just` on Debian/Ubuntu |
+| Docker | any recent | none | `just serve services`, `just build image`, `just image up` |
+
+Two gems used for maintenance are not in either Gemfile because they're one-off tools, not site dependencies —
+install them globally if you need them: `gem install bundler-audit` (adds `bundle audit`, checks the lockfile
+against the CVE database) and `gem install bundler-audit-fix` (adds `bundle audit-fix`, which bumps the flagged
+gems and rewrites the lockfile).
 
 ## Set up a fresh clone
 

@@ -15,6 +15,7 @@ you need, and trim or delete it once the work lands.
 | [ci-gates.md](ci-gates.md) | CI - make the PR gate mean something |
 | [ci-shared-scripts.md](ci-shared-scripts.md) | CI - one set of commands, run by both CI and a human |
 | [docker-release-tagging.md](docker-release-tagging.md) | Docker release - prove a prerelease tag is safe |
+| [docs-site-xss-through-dom.md](docs-site-xss-through-dom.md) | Docs site - fix CodeQL alert #7, DOM text reinterpreted as HTML |
 | [docs-swagger-documents.md](docs-swagger-documents.md) | Docs site - generate the v3 and v4 OpenAPI documents |
 | [docs-v3-pages.md](docs-v3-pages.md) | Docs site - write the v3.0.x pages |
 | [docs-vipaq-protocol-page.md](docs-vipaq-protocol-page.md) | Docs site - the shared ViPaq protocol page describes the old format |
