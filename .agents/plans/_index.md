@@ -15,7 +15,6 @@ you need, and trim or delete it once the work lands.
 | [ci-shared-scripts.md](ci-shared-scripts.md) | CI - one set of commands, run by both CI and a human |
 | [docs-swagger-documents.md](docs-swagger-documents.md) | Docs site - generate the v3 and v4 OpenAPI documents |
 | [docs-v3-pages.md](docs-v3-pages.md) | Docs site - write the v3.0.x pages |
-| [docs-vipaq-protocol-page.md](docs-vipaq-protocol-page.md) | Docs site - the shared ViPaq protocol page describes the old format |
 | [todos.md](todos.md) | TODOs |
 
 ## API

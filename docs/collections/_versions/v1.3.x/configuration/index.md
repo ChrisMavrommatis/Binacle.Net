@@ -82,13 +82,13 @@ come enabled by default.
 Allows Binacle.Net to run as a managed service with authentication and rate limiting.
 
 - [🔍 Service Module Overview]({% vlink /configuration/service-module/index.md %})
-- [🗄️ Database](% vlink /configuration/service-module/database.md %})
-- [🔐 Authentication](.% vlink /configuration/service-module/authentication.md %})
-- [👥 Users](% vlink /configuration/service-module/users.md %})
-- [📉 Rate Limiter](% vlink /configuration/service-module/rate-limiter.md %})
+- [🗄️ Database]({% vlink /configuration/service-module/database.md %})
+- [🔐 Authentication]({% vlink /configuration/service-module/authentication.md %})
+- [👥 Users]({% vlink /configuration/service-module/users.md %})
+- [📉 Rate Limiter]({% vlink /configuration/service-module/rate-limiter.md %})
 
 ### 🖥️ UI Module
 
 Provides a web-based UI for packing demos and protocol decoding.
 
-- [🔍 UI Module Overview](% vlink /configuration/ui-module/index.md %})
+- [🔍 UI Module Overview]({% vlink /configuration/ui-module/index.md %})

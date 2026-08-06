@@ -1,6 +1,7 @@
 # ViPaq
 
-> **Experimental — may change.**
+> **Stable as of Binacle.Net v3.0.0.** A future format change takes the next `Version` code rather than altering
+> `Version = 0` — see "Room to grow" (§2.3) in [PROTOCOL.md](PROTOCOL.md).
 
 ViPaq is a compact binary format for one packing result: a single bin plus a list of placed items. It is designed
 to be stored and moved as a short base64 text token.

@@ -1,8 +1,8 @@
 ---
 id: docs-site
 description: The published Jekyll documentation site at repo-root docs/ — versioned API docs with Swagger UI embed. `$docs-site` always means repo-root docs/, never .agents/docs/.
-verified: 2026-07-21
-check: Collections, versions, plugin list, and version folders match docs/_config.yml and docs/collections/_versions/
+verified: 2026-08-07
+check: Collections, versions, plugin list, and version folders match docs/_config.yml and docs/collections/_versions/; the common-page rule matches what is actually on collections/_common_pages/
 ---
 
 # Docs Site
@@ -29,6 +29,34 @@ just serve docs   # jekyll serve (port 7195) + webpack watch, one Ctrl-C stops b
 | `pages/` | Top-level pages (index, 404, robots.txt) |
 
 Versioned docs are served at `/version/:path/`. See "Versioning model" below.
+
+### What may go on a common page {#common-page-rule}
+
+A `_common_pages/` page renders **once**, at `/<name>/`, and every version's reader sees that one copy. So it
+carries only what is true for **all** of them: what a thing is, why it exists, and advice that does not turn on
+the version. Anything that varies goes on the versioned page and is linked to.
+
+**Never on a common page**, using the ViPaq pair as the worked example — these are the categories that have
+already gone wrong or are reserved for change:
+
+- The compression codec, or that compression happens at all.
+- Base64, or any statement about the stored or text form.
+- Integer encoding — fixed widths, width codes, "variable length encoding".
+- The header, its size, or any byte or bit layout.
+- Structure diagrams, field order, or the body layouts.
+- **Whether a feature is experimental or stable.** ViPaq was experimental through v2.1.1 and is stable from
+  v3.0.0, so the claim is version-varying like any other. Added 2026-08-07, when that flip left the general
+  ViPaq page saying "experimental" to a v3.0.0 reader.
+- A real config key, an endpoint path, or an API version number.
+- Comparative performance claims — they describe an implementation, and implementations change.
+
+`configuration-basics.md` is the model to copy: it teaches the mechanism with entirely invented names
+(`AModule`, `Settings__Logs__Retention`), so it has nothing to go stale, and it defers on the specifics.
+
+Two mechanical notes for a common page that needs to point at a versioned one. It has no `version` in its front
+matter, so **`vlink` cannot be used** — build the URL from `site.data.versions.current` instead, the same way
+`_layouts/redirect.html` and `_includes/sidebar.html` do, and it follows `current` with no edit. And never
+hardcode a version or `latest` in prose or a command without saying what it tracks.
 
 ## Versioning model
 

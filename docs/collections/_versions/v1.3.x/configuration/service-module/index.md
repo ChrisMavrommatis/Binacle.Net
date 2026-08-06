@@ -17,6 +17,15 @@ Authenticated users can bypass rate limits, ensuring seamless access to API endp
 > This module is disabled by default.
 {: .block-note}
 
+> ⚠️ **{{ page.version }} is the last version with public Service Module documentation.**
+>
+> The module was rebuilt in v2.0.0 and its public documentation was withdrawn from that release onward. These
+> pages describe {{ page.version }} and are not a guide to any later version. From v2.0.0 the module is also
+> exempt from the usual versioning rules - a breaking change to it does not force a major version increment.
+> The [v2.0.x Service Module page]({{ '/version/v2.0.x/configuration/service-module/' | relative_url }})
+> explains the reasoning.
+{: .block-warning}
+
 While Binacle.Net is primarily designed for private cloud hosting, the Service Module enables controlled
 public deployment by balancing performance, security, and cost-effectiveness.
 

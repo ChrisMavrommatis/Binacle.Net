@@ -42,7 +42,7 @@ Customize Binacle.Net to suit your environment. Explore the following configurat
 
 - [🏗️ Core]({% vlink /configuration/core/index.md %}): Provides essential API functionality, including Presets customization.
 - [📊 Diagnostics Module]({% vlink /configuration/diagnostics-module/index.md %}): Configure logging, health checks, and telemetry.
-- [🛡️ Service Module]({% vlink /configuration/service-module/index.md %}): Allows Binacle.Net to run as a Service.
+- [🛡️ Service Module]({% vlink /configuration/service-module/index.md %}): Allows Binacle.Net to run as a Service. Built for the hosted service - **no public documentation from v2.0.0 onward**.
 - [🖥️ UI Module]({% vlink /configuration/ui-module/index.md %}): Enable the visual demo interface for packing simulations.
 
 ---

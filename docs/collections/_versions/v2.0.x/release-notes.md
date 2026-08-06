@@ -1,18 +1,40 @@
 ---
-title: Release Notes v2.0.0
+title: Release Notes
 nav:
   order: 2
   icon: 🛠️
 ---
+
+Release notes for the **v2.0.x** line, newest release first. Every patch in this line is on this page.
+
+> 🛡️ **The Service Module is exempt from these notes.** From v2.0.0 it is developed for the hosted service, so a
+> breaking change to it is not documented here and does not force a major version increment. If you self-host
+> with the Service Module enabled, read every release before upgrading - a minor or patch release can break it.
+> Everything else on this page follows the usual rules. See the
+> [Service Module]({% vlink configuration/service-module/index.md %}) page.
+{: .block-note}
+
+---
+
+## v2.0.1
+
+*Released 2 October 2025 - [release on GitHub](https://github.com/ChrisMavrommatis/Binacle.Net/releases/tag/v2.0.1)*
+
+### 🔎 Overview
+- Fixed an issue with OpenAPI resolving the servers automatically.
+
+---
+
+## v2.0.0
+
+*Released 2 October 2025 - [release on GitHub](https://github.com/ChrisMavrommatis/Binacle.Net/releases/tag/v2.0.0)*
 
 Binacle.Net v2.0.0 is a major update from v1.3.0. 
 
 > v2.0.0 introduces breaking changes and new features. Existing integrations must be reviewed and updated.
 {: .block-warning}
 
----
-
-## 🔎 Overview
+### 🔎 Overview
 - **Service Module** was completely rewritten with new core business logic, breaking all existing integrations.
 - **V1 endpoints** were removed.
 - **V3 endpoints** were promoted from experimental to stable.
@@ -21,20 +43,20 @@ Binacle.Net v2.0.0 is a major update from v1.3.0.
 - **API documentation** now follows the OpenAPI 3.0 specification.
 - The project introduces **versioned documentation** with an official site.
 
-## ⚙️ Core Changes
+### ⚙️ Core Changes
 - Removal of all V1 endpoints.
 - V3 endpoints are now stable and fully supported.
 - Documentation migrated to the OpenAPI 3.0 specification (may affect users relying on the old format).
 - Swagger UI upgraded to OpenAPI 3.0.
 - Added support for **Scalar UI**.
 
-## 🧪 Diagnostics Module
+### 🧪 Diagnostics Module
 - Packing Logs removed **legacy fitting** and **legacy packing** modes.
 - These have been consolidated into **packing** and **fitting**.
 - Implementations depending on the old paths must be updated.
 - The default log path changed.
 
-## 🔌 Service Module
+### 🔌 Service Module
 The **Service Module** was entirely rewritten and its business logic has been fundamentally changed.
 
 - Originally designed to power **Binacle.Net as a Service**, the module will now be developed exclusively for that use case.
@@ -43,23 +65,23 @@ The **Service Module** was entirely rewritten and its business logic has been fu
 
 For additional details, see the [Service Module documentation]({% vlink configuration/service-module/index.md %}).
 
-## 🎨 UI Module
+### 🎨 UI Module
 - Vendor libraries are now bundled directly into the image rather than loaded from a CDN.
 - Includes various fixes and general UI improvements.
 
-## 📈 Algorithms
+### 📈 Algorithms
 - Enhanced performance for **BFD** and **WFD** algorithms.
 
-## 🏗️ Internal Work
+### 🏗️ Internal Work
 - Migrated testing framework to **XUnit v3**.
 - Renamed project structure from *Binacle.Net.Api* to simply *Binacle.Net*.
 
-## 📚 Versioned Docs
+### 📚 Versioned Docs
 - Launched an official documentation site, replacing the GitHub Wiki.
 - Documentation is now properly versioned, preserving older versions for reference.
 - Older versions will be gradually removed as they become obsolete. 
 
-## 🛠️ Migration Guide
+### 🛠️ Migration Guide
 To upgrade to **v2.0.0**, follow these steps:
 
 1. **Remove all V1 usage**

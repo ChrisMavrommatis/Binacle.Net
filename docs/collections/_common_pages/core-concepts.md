@@ -37,27 +37,30 @@ a trade-off favoring speed in practical scenarios.
 Binacle.Net's hybrid First Fit Decreasing (FFD) algorithm sorts items by decreasing size and places each item in the 
 first available space that fits within a bin.
 
-- ✅ Fast and efficient for large datasets
-- ✅ Outperforms WFD and BFD in computational speed
+- ✅ Places each item as soon as a space is found, without searching for a better one
 - ⚖️ Not always perfectly optimal, may leave unused space
 
 ### 🧊 Worst Fit Decreasing (WFD)
 Worst Fit Decreasing (WFD) is another hybrid heuristic. 
 Items are sorted by size and placed in the space leaving the most unused room in the bin.
 
-- ✅ Efficient in niche situations
+- ✅ Useful in niche situations
 - ⚖️ Tends to spread items out, which may help with distribution but not always with space usage
-- ❌ Generally slower and less efficient than FFD and BFD
 
 ### 📏 Best Fit Decreasing (BFD)
 Best Fit Decreasing (BFD) aims for the most snug packing, placing each item in the spot that leaves the least
 unused space in the bin.
 
-- ✅ Often yields slightly better packing efficiency than FFD or WFD
-- ⚖️ A middle ground in computational performance compared to FFD and WFD
+- ✅ Keeps the space left around each placement as small as it can
+- ⚖️ Examines the candidate spaces for each item rather than taking the first one that fits
 
 
 > Not all algorithms may be supported in every API release. Check the API documentation for your Binacle.Net version.
+{:.block-note }
+
+> Which algorithm is fastest, or packs tightest, depends on your data and on the Binacle.Net version you run.
+> These descriptions say what each algorithm does, not how they rank against each other. If it matters to your
+> workload, measure all three on your own bins and items.
 {:.block-note }
 
 ---

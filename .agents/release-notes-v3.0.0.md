@@ -17,11 +17,17 @@ Style is taken from the maintainer's published releases (https://github.com/Chri
 - Closes with `---` and a `**Full Changelog**:` compare link.
 - A minor/patch release drops all of this and is just `## Overview` with a few plain bullets.
 
-**Scope:** `v2.1.1` (2026-01-13, the last shipped image) → now; 189 commits. `v3.0.0-beta.1` sits at 186 of
-them. The 3 commits after the beta tag are `npm audit fix` / `bundle audit-fix` on the root, `docs/` and `web/`
-lockfiles, plus `.agents/` notes and `.nvmrc`. **None reach the image** — the Dockerfile copies only
-`build/binacle-net`, and every advisory they closed was a devDependency (`npm audit --omit=dev` on the pre-fix
-lockfile: 0). Checked 2026-08-06; the body below needs no change for them.
+**Scope:** `v2.1.1` (2026-01-13, the last shipped image) → now. `v3.0.0-beta.1` sits at 186 commits past
+`v2.1.1`. Everything after the beta tag is maintenance that **does not reach the image**, so the body below
+needs no change for any of it — checked 2026-08-06:
+
+- `npm audit fix` / `bundle audit-fix` on the root, `docs/` and `web/` lockfiles. Every advisory closed was a
+  devDependency (`npm audit --omit=dev` on the pre-fix lockfile returned 0). The Dockerfile copies only
+  `build/binacle-net`, and the UI module's JavaScript is hand-written and committed, not bundled.
+- The docs site unfreeze — `current` back at `v2.1.x` until the `v3.0.x` pages exist. Site content, not product.
+- The CodeQL `js/xss-through-dom` fix in `docs/_js/main.js`. Docs-site hardening, and not exploitable as the
+  code stood (both inputs were build-time constants).
+- `.agents/` notes and `.nvmrc`.
 
 **Before pasting:** confirm the version number / compare link. Fitting was verified unchanged (2026-07-19), so
 the `📈 Algorithms` section needs no caveat. The manual steps are the release actions.
@@ -40,6 +46,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - **V4 endpoints** were introduced as experimental.  
 - **V3 endpoints** remain stable and unchanged, and are the recommended version.  
 - **ViPaq** was rebuilt with a smaller, simpler format. Tokens from earlier versions no longer decode.  
+- **ViPaq** left experimental status — the format is stable as of this release.  
 - **Algorithms** were unified — fitting and packing now share one implementation.  
 - **Packing Logs** configuration was flattened, with breaking changes for existing integrations.  
 - **Forwarded headers** are now supported, so the real caller is resolved when running behind a proxy or CDN.  

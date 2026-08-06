@@ -66,7 +66,7 @@ This ensures that only authorized systems can query the health check endpoint.
 ## 🛠️ Built-in Checks
 Binacle.Net comes with built-in health checks, including:
 
-- ✅ **Database Check** – (Available with the **Service Module**) Verifies the health of the database connection.
+- ✅ **Database Check** – (Available with the [**Service Module**]({% vlink /configuration/service-module/index.md %})) Verifies the health of the database connection.
 
 You can disable specific health checks by listing them in the `RestrictedChecks` array.
 For example, to disable the **Database Check**, you can configure it like this:

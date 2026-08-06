@@ -28,6 +28,9 @@ Explore the following sections to get started and learn more about Binacle.Net:
 ## 🚀 [Quick Start]({% vlink /quick-start.md %})
 Get started with Binacle.Net in just a few steps! The Quick Start Guide covers the basics you need to run it quickly.
 
+## 🛠️ [Release Notes]({% vlink release-notes.md %})
+See what's new in the {{ page.version }} version of Binacle.Net.
+
 ## 📡 [API]({% vlink /api/index.md %})
 Understand the API endpoints, including how to use presets, send custom bin and item data, and query by preset to 
 find the most efficient packing solution.

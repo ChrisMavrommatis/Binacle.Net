@@ -84,6 +84,6 @@ Please refer to the [Service Module]({% vlink /configuration/service-module/inde
 
 Provides a web-based UI for packing demos and protocol decoding.
 
-- [🔍 UI Module Overview](% vlink /configuration/ui-module/index.md %})
+- [🔍 UI Module Overview]({% vlink /configuration/ui-module/index.md %})
 
 

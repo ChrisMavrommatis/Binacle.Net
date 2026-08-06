@@ -10,7 +10,9 @@ Run it locally using Docker or deploy it to the cloud with minimal setup.
 
 The default setup includes **Swagger UI** and the **UI Module** for easy testing and interaction.
 
-For version-specific details, see the dedicated **Quick Start Guide** in the documentation.
+For version-specific details, see the
+[Quick Start Guide for {{ site.data.versions.current }}]({{ '/version/' | append: site.data.versions.current | append: '/quick-start/' | relative_url }}),
+or pick your version from the [Versions]({% link _common_pages/version.html %}) page.
 
 ## 🖥️ Run Locally with Docker
 
@@ -27,6 +29,12 @@ docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -e UI_MODULE=Tr
 ```
 
 This starts Binacle.Net with Swagger UI and the UI Module on port 8080.
+
+> ⚠️ `latest` always follows the newest release, and releases can bring breaking changes.
+>
+> It is fine for a quick look. For anything you keep, pin a version instead - the Quick Start Guide for your
+> version gives the exact tag to use.
+{: .block-warning}
 
 ##### 3️⃣ Access Locally
 

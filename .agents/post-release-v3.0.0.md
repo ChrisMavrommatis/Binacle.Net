@@ -35,8 +35,12 @@ in the same change, leaving the text.
 The one place a release file may point at `ideas/`. These are unvetted and unscheduled - listed because the
 release makes each one more interesting than it was, not because they are committed.
 
-- [ideas/api/smoke-testing-the-image.md](ideas/api/smoke-testing-the-image.md) - the beta was the first time the
-  image ran anywhere, by hand. A smoke test is how that stops being a manual ritual.
+- [plans/api/smoke-testing-the-image.md](plans/api/smoke-testing-the-image.md) - the beta was the first time the
+  image ran anywhere, by hand, and v3.0.0's verification was manual again. A smoke test is how that stops being
+  a ritual. **Note this one is a plan, not an idea** - it is designed, with the OCI label prerequisite already
+  done, and only the suite is unbuilt. The link here said `ideas/` and pointed at nothing (fixed 2026-08-06).
+  Being designed rather than unvetted, it arguably belongs in the numbered table above rather than in this
+  section - that is a scheduling call, not a filing one.
 - [ideas/api/openapi-spec-followups.md](ideas/api/openapi-spec-followups.md) - v4 is experimental for the whole
   3.0.x line, so spec changes are cheapest right now.
 - [ideas/api/reduce-integration-friction.md](ideas/api/reduce-integration-friction.md) - this release asks every

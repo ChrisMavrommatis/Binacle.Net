@@ -1,6 +1,7 @@
 # ViPaq Protocol Specification
 
-> **Status: experimental.** ViPaq may change. This document defines the wire format and is the authority on what
+> **Status: stable as of Binacle.Net v3.0.0.** `Version = 0` is fixed; a future format change takes the next
+> `Version` code instead (§2.3). This document defines the wire format and is the authority on what
 > the bytes mean. Where an implementation differs from this document, the implementation has the bug, not the
 > spec. This document stands alone: everything needed to encode or decode a ViPaq blob is here, with no
 > dependency on any other file.

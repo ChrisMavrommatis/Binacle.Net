@@ -1,7 +1,7 @@
 ---
 id: vipaq
 description: Binacle.ViPaq — compact binary format for packing results. The wire is defined in PROTOCOL.md; this covers the C# API surface, repo layout, and tests.
-verified: 2026-07-28
+verified: 2026-08-07
 check: Public API surface (ViPaqSerializer, ViPaqSerializationOptions, Layout, Limits) and repo layout match vipaq/src/Binacle.ViPaq/
 also_update:
   - vipaq/typescript
@@ -10,7 +10,8 @@ also_update:
 
 # ViPaq
 
-> **Experimental — may change.**
+> **Stable as of Binacle.Net v3.0.0.** A future format change takes the next `Version` code rather than altering
+> `Version = 0` — see "Room to grow" (§2.3) in `vipaq/PROTOCOL.md`.
 
 `Binacle.ViPaq` is a compact binary format for one packing result: a single bin plus a list of placed items,
 stored and moved as a short base64 token. Used in v3 and v4 API responses when `IncludeViPaqData: true`.

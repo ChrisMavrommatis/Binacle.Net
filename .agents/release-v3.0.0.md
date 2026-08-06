@@ -1,6 +1,9 @@
 # Release - Binacle.Net v3.0.0
 
-**Status:** Not started. **Created:** 2026-07-16. **Restructured:** 2026-07-26.
+**Status:** In progress - **Gate A green, beta published and verified, docs unfrozen.** What is left is the
+`v3.0.x` documentation (B2, the long pole, now unblocked in every direction) and the small pre-tag items.
+**Created:** 2026-07-16. **Restructured:** 2026-07-26. **Status rewritten:** 2026-08-06. **B3 landed:**
+2026-08-07.
 
 The orchestrator for v3.0.0 (drops v2, adds experimental v4, rebuilt ViPaq). This is the **one exception** to the
 reference rules: it may point at any file to coordinate the release, and **nothing points back at it**. Delete it
@@ -82,8 +85,8 @@ the bottom of this file, rewritten 2026-08-06 once the beta was actually deploye
 | B0 | Unfreeze the docs site - point `current` back at `v2.1.x` and deploy | **done 2026-08-06** |
 | B1 | Work the beta verification list on the deployed image | **done 2026-08-06** - all boxes pass |
 | B2 | Write the `v3.0.x` docs pages, including the two new configuration pages | [docs-v3-pages](plans/docs-v3-pages.md) |
-| B3 | Decide how the shared ViPaq protocol page is versioned, then fix it - it still says gzip | [docs-vipaq-protocol-page](plans/docs-vipaq-protocol-page.md) |
-| B4 | Generate `swagger/v3.json` and `swagger/v4.json` - the v4 "all algorithms" claim is corrected (2026-07-28) | [docs-swagger-documents](plans/docs-swagger-documents.md) |
+| B3 | Fix the ViPaq protocol page | **done 2026-08-07** - split landed, all four versions written |
+| B4 | Generate `swagger/v3.json` and `swagger/v4.json` | **done 2026-08-06** - both generated, all checks pass |
 | B5 | Bump the five sample image pins to `3.0` - **no plan** | see below |
 | B6 | Run the ServiceModule suite once against Azure Storage - **no plan** | see below |
 | B7 | Confirm v4 still ships experimental, then announce all four breaking changes - **no plan** | see below |
@@ -118,13 +121,26 @@ continuously. **And the DataProtection key ring is not persisted** on the beta -
 v3.0.0, no release-notes line owed. It is written down as one sentence for the ServiceModule configuration page
 in [docs-v3-pages](plans/docs-v3-pages.md).
 
-**B3 is decided before B2 starts.** Moving the ViPaq protocol page into the version folders means every version
-folder needs a copy landed at once, because `vlink` fails the build on a missing target. That changes how big B2
-is, so the call is made first rather than discovered inside the docs session.
+**B3 landed 2026-08-07 - written, not just decided.** The page is split in two: a general `_common_pages` page
+with no implementation details and nothing that varies between versions, plus one versioned page per folder
+carrying the wire format. `v1.3.x`, `v2.0.x` and `v2.1.x` carry the old text, which was already right for them;
+`v3.0.x` is written fresh from `vipaq/PROTOCOL.md` and fixes all three of the errors the old page carried, not
+just the gzip one. The three `api/v3.md` links now use `vlink`, the landing page link is unchanged, and the
+general page resolves the current version from `site.data.versions.current`. The site builds clean, and the new
+page sits in the version sidebar between Configuration and Samples.
 
-**B4 covers two documents.** `v3.0.x` needs `v3.json` as well as `v4.json` - every version folder carries its own
-swagger set, and v3's document changed in this release because the ViPaq payload did. Both need a running API, so
-they are produced here and handed to the docs session, which writes only the pages beside them.
+The two audit fixes landed with it. `core-concepts.md` no longer ranks the three algorithms against each other -
+that was an unverified claim about code that has changed, on a page every version shares - and says instead that
+relative speed depends on your data and version. `quick-start.md` keeps `latest` but now warns that it follows
+the newest release and says to pin a version for anything kept; its "see the dedicated Quick Start Guide" prose
+is a real link now.
+
+**One thing B2 must know:** the `v3.0.x` ViPaq page links the wire spec at
+`github.com/ChrisMavrommatis/Binacle.Net/blob/v3.0.0/vipaq/PROTOCOL.md`. That URL 404s until the `v3.0.0` tag is
+pushed. It is deliberate - a versioned page should pin the spec it describes - but do not "fix" it to `main`.
+
+~~**B4 covers two documents.**~~ Done 2026-08-06 - `v3.json` and `v4.json` both generated, no `/api/auth/token`
+path, v4 carries the experimental banner. Handed to the docs session.
 
 - [ ] **B5 - the sample image pins.** The five samples pin `2.1.1` today. Bump them to **`3.0`** (the minor tag,
   not `3.0.0`) in the **last change before the tag** - not earlier, or they name an image that does not exist for
@@ -209,13 +225,11 @@ is docs plus the four small pre-tag items.
    forwarded-headers source header settles.
 4. ~~B0 - unfreeze and deploy the docs site.~~ Done 2026-08-06, with the CodeQL `js/xss-through-dom` fix in the
    same deploy.
-5. **B4 and B3, in parallel.** Neither depends on anything outstanding. B4 is a coding session
-   (`just openapi generate`) that hands the docs session two files it would otherwise wait on. B3 is a decision,
-   and B2 cannot start until it is made.
-6. **B2 - write the `v3.0.x` pages.** Now unblocked in both directions: B1's answers are in, so the two new
-   configuration pages document behaviour that has been observed in a real deployment rather than assumed. It
-   still waits on B3's decision and B4's two JSON documents. This is the long pole - everything below it is
-   small.
+5. ~~B4 and B3.~~ Both done - B4 on 2026-08-06, B3 written on 2026-08-07 along with the two general-page audit
+   fixes. `v3.0.x/vipaq-protocol.md` already exists, so B2 does not write it.
+6. **B2 - write the `v3.0.x` pages.** Fully unblocked: B1's answers are in, so the two new configuration pages
+   document behaviour observed in a real deployment rather than assumed, and B3 and B4 have both handed over.
+   This is the long pole - everything below it is small.
 7. B6, B7a.
 8. **Release the docs: B2's pages plus B8** (flip `current` back to `v3.0.x`). B8 is the undo of B0 and is the
    easiest item in this file to lose - nothing fails if it is skipped, the site just silently stays on v2.1.x.
