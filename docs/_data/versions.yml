@@ -9,10 +9,9 @@
 #   2. point `current` at it
 #   3. add its `defaults` scope block in _config.yml (a version without one is invisible)
 
-current: v3.0.x
+current: v2.1.x
 
 list:
-  - id: v3.0.x
   - id: v2.1.x
   - id: v2.0.x
   - id: v1.3.x

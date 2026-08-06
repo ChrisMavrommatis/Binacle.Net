@@ -8,13 +8,25 @@ its "Versioning model" section. What remains is writing the pages.
 `docs/` is off limits to a coding session - it publishes to the internet and is written in its own session. This
 file is the brief for that session.
 
-## The site is frozen until this lands
+## The site is no longer frozen - and that changes what this session must do
 
-`docs/_data/versions.yml` already says `current: v3.0.x`, and `docs/collections/_versions/v3.0.x/` contains only
-`index.md`. The `/version/latest/` redirect therefore points at an empty version. The docs deploy is manual
-(`workflow_dispatch`), so nothing is broken today - but the site cannot be deployed for **any** reason, not even
-a typo fix in v2.1.x, until these pages exist. Either write them, or point `current` back at `v2.1.x` in the
-meantime.
+It used to be. `docs/_data/versions.yml` said `current: v3.0.x` while that folder held only `index.md`, so
+`/version/latest/` redirected to an empty version and the site could not be deployed for **any** reason. That was
+undone on 2026-08-06: `current` is back at `v2.1.x`, `- id: v3.0.x` is out of `list`, the stub carries
+`sitemap: exclude: true`, and `collections/_sitemaps/version-3-0-x.xml` was deleted. The site deploys normally
+again.
+
+**So this session owns putting it back.** Writing the pages is not enough - v3.0.x is delisted, and pages nobody
+can reach are not a released version. As part of landing this work:
+
+- Set `current: v3.0.x` and re-add `- id: v3.0.x` at the **top** of `list` in `_data/versions.yml`.
+- Remove `sitemap: exclude: true` from `v3.0.x/index.md`.
+- Restore `collections/_sitemaps/version-3-0-x.xml`. Copy the shape from `version-2-1-x.xml`; it is four lines of
+  front matter. Without it `pages/robots.txt` never advertises the v3.0.x pages to crawlers.
+
+This is tracked as **B8** in `release-v3.0.0.md` and it is the easiest item in the release to lose, because
+nothing fails when it is skipped - the site just quietly keeps presenting v2.1.x as current after v3.0.0 ships.
+`_config.yml` was deliberately left untouched, so the `**/v3.0.x/**` scope block is still there and needs no edit.
 
 ## Write the pages
 
@@ -70,6 +82,18 @@ Neither has a `v2.1.x` equivalent to copy.
         resolved to at startup.
       - Behind a proxy the list needs forwarded headers enabled, or it is compared against the proxy's address
         and can never match.
+
+## One line owed to the ServiceModule configuration page
+
+Found on the beta 2026-08-06 and recorded here because `docs/` is written in this session, not that one. Not new
+in v3.0.0 and not a defect - stock ASP.NET behaviour that the beta simply made visible.
+
+- [ ] **Persist the DataProtection key ring.** The container logs two warnings on every boot: the key ring lives
+      at `/home/app/.aspnet/DataProtection-Keys` inside the container and is not persisted, and the keys are
+      written unencrypted. Anything protected with those keys stops being readable when the container is
+      replaced, which for a ServiceModule deployment means a redeploy invalidates them. One sentence on the
+      ServiceModule configuration page telling operators to mount that path on a volume is enough. The samples
+      already mount `/app/data`, so the shape is familiar.
 
 ## The image tag - what is left
 

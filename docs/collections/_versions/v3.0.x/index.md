@@ -6,6 +6,8 @@ nav:
   exclude: true
   order: 1
   icon: 🏠
+sitemap:
+  exclude: true
 ---
 
 

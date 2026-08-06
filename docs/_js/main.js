@@ -9,7 +9,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const url = versionSelect.dataset.versionselect;
                 const selectedVersion = event.target.value;
                 if (selectedVersion) {
-                    window.location.href = url + selectedVersion;
+                    const target = new URL(url + selectedVersion, window.location.origin);
+                    if (target.origin === window.location.origin) {
+                        window.location.href = target.href;
+                    }
                 }
             });
         });
