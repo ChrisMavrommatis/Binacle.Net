@@ -1,0 +1,2104 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Binacle.Net API v3",
+    "description": "Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.\n\n\n\n\n\n[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)\n\n[🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/binacle/binacle-net)\n\n",
+    "contact": {
+      "name": "Binacle.Net",
+      "url": "https://github.com/ChrisMavrommatis/Binacle.Net"
+    },
+    "license": {
+      "name": "GNU General Public License v3.0",
+      "url": "https://www.gnu.org/licenses/gpl-3.0.html"
+    },
+    "version": "3.0"
+  },
+  "paths": {
+    "/api/v3/presets": {
+      "get": {
+        "tags": [
+          "Presets"
+        ],
+        "summary": "List presets",
+        "description": "Lists the presets present in configuration.",
+        "operationId": "listPresets",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error. An unexpected error occurred. Exception details are shown only in a development environment.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                },
+                "example": {
+                  "type": "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+                  "title": "Unexpected Server Error",
+                  "status": 500,
+                  "detail": "An unexpected error occurred while processing your request. Please try again later or contact support."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK. Returns all of the configured presets wth the associated bins.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresetListResponse"
+                },
+                "example": {
+                  "result": "Success",
+                  "data": {
+                    "preset1": [
+                      {
+                        "id": "preset1_bin1",
+                        "length": 10,
+                        "width": 10,
+                        "height": 10
+                      },
+                      {
+                        "id": "preset1_bin2",
+                        "length": 20,
+                        "width": 20,
+                        "height": 20
+                      },
+                      {
+                        "id": "preset1_bin3",
+                        "length": 30,
+                        "width": 30,
+                        "height": 30
+                      }
+                    ],
+                    "preset2": [
+                      {
+                        "id": "preset2_bin1",
+                        "length": 10,
+                        "width": 20,
+                        "height": 30
+                      },
+                      {
+                        "id": "preset2_bin2",
+                        "length": 30,
+                        "width": 60,
+                        "height": 60
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/pack/by-custom": {
+      "post": {
+        "tags": [
+          "Pack"
+        ],
+        "summary": "Pack by custom",
+        "description": "Pack items using custom bins.",
+        "operationId": "packByCustom",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PackByCustomRequest"
+              },
+              "example": {
+                "parameters": {
+                  "algorithm": "FFD",
+                  "includeViPaqData": true
+                },
+                "bins": [
+                  {
+                    "id": "custom_bin_1",
+                    "length": 10,
+                    "width": 40,
+                    "height": 60
+                  },
+                  {
+                    "id": "custom_bin_2",
+                    "length": 20,
+                    "width": 40,
+                    "height": 60
+                  }
+                ],
+                "items": [
+                  {
+                    "id": "box_1",
+                    "quantity": 2,
+                    "length": 2,
+                    "width": 5,
+                    "height": 10
+                  },
+                  {
+                    "id": "box_2",
+                    "quantity": 1,
+                    "length": 12,
+                    "width": 15,
+                    "height": 10
+                  },
+                  {
+                    "id": "box_3",
+                    "quantity": 1,
+                    "length": 12,
+                    "width": 10,
+                    "height": 15
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error. An unexpected error occurred. Exception details are shown only in a development environment.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                },
+                "example": {
+                  "type": "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+                  "title": "Unexpected Server Error",
+                  "status": 500,
+                  "detail": "An unexpected error occurred while processing your request. Please try again later or contact support."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK. Returns an array of results indicating the result per bin.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackResponse"
+                },
+                "examples": {
+                  "fullypackedresponse": {
+                    "summary": "Fully Packed Response",
+                    "description": "Fully Packed Response example.",
+                    "value": {
+                      "result": "Success",
+                      "data": [
+                        {
+                          "result": "FullyPacked",
+                          "bin": {
+                            "id": "custom_bin_1",
+                            "length": 10,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "packedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 0,
+                              "z": 0
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 12,
+                              "z": 0
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10,
+                              "x": 0,
+                              "y": 0,
+                              "z": 15
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10,
+                              "x": 0,
+                              "y": 24,
+                              "z": 0
+                            }
+                          ],
+                          "unpackedItems": [ ],
+                          "packedItemsVolumePercentage": 100,
+                          "packedBinVolumePercentage": 15.83,
+                          "viPaqData": "AAAEAAooPAoMDwAAAAoMDwAMAAIFCgAADwIFCgAYAA=="
+                        },
+                        {
+                          "result": "FullyPacked",
+                          "bin": {
+                            "id": "custom_bin_2",
+                            "length": 20,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "packedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 0,
+                              "z": 0
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 12,
+                              "z": 0
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10,
+                              "x": 0,
+                              "y": 0,
+                              "z": 15
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10,
+                              "x": 0,
+                              "y": 24,
+                              "z": 0
+                            }
+                          ],
+                          "unpackedItems": [ ],
+                          "packedItemsVolumePercentage": 100,
+                          "packedBinVolumePercentage": 7.92,
+                          "viPaqData": "AAAEABQoPAoMDwAAAAoMDwAMAAIFCgAADwIFCgAYAA=="
+                        }
+                      ]
+                    }
+                  },
+                  "partiallypackedresponse": {
+                    "summary": "Partially Packed Response",
+                    "description": "Partially Packed Response example.",
+                    "value": {
+                      "result": "Failure",
+                      "data": [
+                        {
+                          "result": "PartiallyPacked",
+                          "bin": {
+                            "id": "custom_bin_2",
+                            "length": 20,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "packedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 0,
+                              "z": 0
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 12,
+                              "z": 0
+                            }
+                          ],
+                          "unpackedItems": [
+                            {
+                              "id": "box_1",
+                              "quantity": 2
+                            }
+                          ],
+                          "packedItemsVolumePercentage": 94.74,
+                          "packedBinVolumePercentage": 7.50,
+                          "viPaqData": "AAACABQoPAoMDwAAAAoMDwAMAA=="
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. The request is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                },
+                "examples": {
+                  "invalidJson": {
+                    "summary": "Invalid JSON",
+                    "description": "Example response when JSON is invalid",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                      "title": "Invalid JSON Format",
+                      "status": 400,
+                      "detail": "'p' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 1 | BytePositionInLine: 2."
+                    }
+                  },
+                  "malformedRequest": {
+                    "summary": "Malformed Request",
+                    "description": "Example response when the server could not read the request",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                      "title": "Malformed Request",
+                      "status": 400,
+                      "detail": "The server could not process the request because it is malformed or contains invalid data. Please verify the request format and try again."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content. The request is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                },
+                "examples": {
+                  "invalidAlgorithm": {
+                    "summary": "Invalid Algorithm",
+                    "description": "Example response when you provide invalid algorithm",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc4918#section-11.2",
+                      "title": "One or more validation errors occurred.",
+                      "status": 422,
+                      "errors": {
+                        "Parameters.Algorithm": [
+                          "'Algorithm' is required and must be one of the following values: FFD, WFD, BFD"
+                        ]
+                      }
+                    }
+                  },
+                  "invalidBinData": {
+                    "summary": "Invalid Bin Data",
+                    "description": "Example response when you provide invalid Bin data",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc4918#section-11.2",
+                      "title": "One or more validation errors occurred.",
+                      "status": 422,
+                      "errors": {
+                        "Bins": [
+                          "IDs in `Bins` must be unique"
+                        ],
+                        "Bins[0].Length": [
+                          "'Length' must be greater than '0'."
+                        ]
+                      }
+                    }
+                  },
+                  "invalidItemData": {
+                    "summary": "Invalid Item Data",
+                    "description": "Example response when you provide invalid Item data",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc4918#section-11.2",
+                      "title": "One or more validation errors occurred.",
+                      "status": 422,
+                      "errors": {
+                        "Items[1].Length": [
+                          "'Length' must be less than or equal to '65535'."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
+          }
+        }
+      }
+    },
+    "/api/v3/pack/by-preset/{preset}": {
+      "post": {
+        "tags": [
+          "Pack"
+        ],
+        "summary": "Pack by preset",
+        "description": "Pack items using a specified bin preset.",
+        "operationId": "packByPreset",
+        "parameters": [
+          {
+            "name": "preset",
+            "in": "path",
+            "description": "Name of the preset to use.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PackByPresetRequest"
+              },
+              "example": {
+                "parameters": {
+                  "algorithm": "FFD",
+                  "includeViPaqData": true
+                },
+                "items": [
+                  {
+                    "id": "box_1",
+                    "quantity": 2,
+                    "length": 2,
+                    "width": 5,
+                    "height": 10
+                  },
+                  {
+                    "id": "box_2",
+                    "quantity": 1,
+                    "length": 12,
+                    "width": 15,
+                    "height": 10
+                  },
+                  {
+                    "id": "box_3",
+                    "quantity": 1,
+                    "length": 12,
+                    "width": 10,
+                    "height": 15
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error. An unexpected error occurred. Exception details are shown only in a development environment.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                },
+                "example": {
+                  "type": "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+                  "title": "Unexpected Server Error",
+                  "status": 500,
+                  "detail": "An unexpected error occurred while processing your request. Please try again later or contact support."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK. Returns an array of results indicating the result per bin.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackResponse"
+                },
+                "examples": {
+                  "fullypackedresponse": {
+                    "summary": "Fully Packed Response",
+                    "description": "Fully Packed Response example.",
+                    "value": {
+                      "result": "Success",
+                      "data": [
+                        {
+                          "result": "FullyPacked",
+                          "bin": {
+                            "id": "preset_bin_1",
+                            "length": 10,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "packedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 0,
+                              "z": 0
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 12,
+                              "z": 0
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10,
+                              "x": 0,
+                              "y": 0,
+                              "z": 15
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10,
+                              "x": 0,
+                              "y": 24,
+                              "z": 0
+                            }
+                          ],
+                          "unpackedItems": [ ],
+                          "packedItemsVolumePercentage": 100,
+                          "packedBinVolumePercentage": 15.83,
+                          "viPaqData": "AAAEAAooPAoMDwAAAAoMDwAMAAIFCgAADwIFCgAYAA=="
+                        },
+                        {
+                          "result": "FullyPacked",
+                          "bin": {
+                            "id": "preset_bin_2",
+                            "length": 20,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "packedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 0,
+                              "z": 0
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 12,
+                              "z": 0
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10,
+                              "x": 0,
+                              "y": 0,
+                              "z": 15
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10,
+                              "x": 0,
+                              "y": 24,
+                              "z": 0
+                            }
+                          ],
+                          "unpackedItems": [ ],
+                          "packedItemsVolumePercentage": 100,
+                          "packedBinVolumePercentage": 7.92,
+                          "viPaqData": "AAAEABQoPAoMDwAAAAoMDwAMAAIFCgAADwIFCgAYAA=="
+                        }
+                      ]
+                    }
+                  },
+                  "partiallypackedresponse": {
+                    "summary": "Partially Packed Response",
+                    "description": "Partially Packed Response example.",
+                    "value": {
+                      "result": "Failure",
+                      "data": [
+                        {
+                          "result": "PartiallyPacked",
+                          "bin": {
+                            "id": "preset_bin_2",
+                            "length": 20,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "packedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 0,
+                              "z": 0
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15,
+                              "x": 0,
+                              "y": 12,
+                              "z": 0
+                            }
+                          ],
+                          "unpackedItems": [
+                            {
+                              "id": "box_1",
+                              "quantity": 2
+                            }
+                          ],
+                          "packedItemsVolumePercentage": 94.74,
+                          "packedBinVolumePercentage": 7.50,
+                          "viPaqData": "AAACABQoPAoMDwAAAAoMDwAMAA=="
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. The request is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                },
+                "examples": {
+                  "invalidJson": {
+                    "summary": "Invalid JSON",
+                    "description": "Example response when JSON is invalid",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                      "title": "Invalid JSON Format",
+                      "status": 400,
+                      "detail": "'p' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 1 | BytePositionInLine: 2."
+                    }
+                  },
+                  "malformedRequest": {
+                    "summary": "Malformed Request",
+                    "description": "Example response when the server could not read the request",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                      "title": "Malformed Request",
+                      "status": 400,
+                      "detail": "The server could not process the request because it is malformed or contains invalid data. Please verify the request format and try again."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found. The preset does not exist."
+          },
+          "422": {
+            "description": "Unprocessable Content. The request is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                },
+                "examples": {
+                  "invalidAlgorithm": {
+                    "summary": "Invalid Algorithm",
+                    "description": "Example response when you provide invalid algorithm",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc4918#section-11.2",
+                      "title": "One or more validation errors occurred.",
+                      "status": 422,
+                      "errors": {
+                        "Parameters.Algorithm": [
+                          "'Algorithm' is required and must be one of the following values: FFD, WFD, BFD"
+                        ]
+                      }
+                    }
+                  },
+                  "invalidItemData": {
+                    "summary": "Invalid Item Data",
+                    "description": "Example response when you provide invalid Item data",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc4918#section-11.2",
+                      "title": "One or more validation errors occurred.",
+                      "status": 422,
+                      "errors": {
+                        "Items": [
+                          "IDs in `Items` must be unique"
+                        ],
+                        "Items[1].Length": [
+                          "'Length' must be less than or equal to '65535'."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
+          }
+        }
+      }
+    },
+    "/api/v3/fit/by-custom": {
+      "post": {
+        "tags": [
+          "Fit"
+        ],
+        "summary": "Fit by custom",
+        "description": "Perform a bin fitting function using custom bins.",
+        "operationId": "fitByCustom",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FitByCustomRequest"
+              },
+              "example": {
+                "parameters": {
+                  "algorithm": "FFD"
+                },
+                "bins": [
+                  {
+                    "id": "custom_bin_1",
+                    "length": 10,
+                    "width": 40,
+                    "height": 60
+                  },
+                  {
+                    "id": "custom_bin_2",
+                    "length": 20,
+                    "width": 40,
+                    "height": 60
+                  }
+                ],
+                "items": [
+                  {
+                    "id": "box_1",
+                    "quantity": 2,
+                    "length": 2,
+                    "width": 5,
+                    "height": 10
+                  },
+                  {
+                    "id": "box_2",
+                    "quantity": 1,
+                    "length": 12,
+                    "width": 15,
+                    "height": 10
+                  },
+                  {
+                    "id": "box_3",
+                    "quantity": 1,
+                    "length": 12,
+                    "width": 10,
+                    "height": 15
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error. An unexpected error occurred. Exception details are shown only in a development environment.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                },
+                "example": {
+                  "type": "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+                  "title": "Unexpected Server Error",
+                  "status": 500,
+                  "detail": "An unexpected error occurred while processing your request. Please try again later or contact support."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK. Returns an array of results indicating if a bin can accommodate all the items.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FitResponse"
+                },
+                "examples": {
+                  "fullresponse": {
+                    "summary": "Full Response",
+                    "description": "Response Example indicating all items fit.",
+                    "value": {
+                      "result": "Success",
+                      "data": [
+                        {
+                          "result": "AllItemsFit",
+                          "bin": {
+                            "id": "custom_bin_1",
+                            "length": 10,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "fittedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10
+                            }
+                          ],
+                          "unfittedItems": [ ],
+                          "fittedBinVolumePercentage": 15.83,
+                          "fittedItemsVolumePercentage": 100
+                        },
+                        {
+                          "result": "AllItemsFit",
+                          "bin": {
+                            "id": "custom_bin_2",
+                            "length": 20,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "fittedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10
+                            }
+                          ],
+                          "unfittedItems": [ ],
+                          "fittedBinVolumePercentage": 7.92,
+                          "fittedItemsVolumePercentage": 100
+                        }
+                      ]
+                    }
+                  },
+                  "binnotfitresponse": {
+                    "summary": "Bin Not Fit Response",
+                    "description": "Response example when a bin can't accommodate all the items",
+                    "value": {
+                      "result": "Failure",
+                      "data": [
+                        {
+                          "result": "NotAllItemsFit",
+                          "bin": {
+                            "id": "custom_bin",
+                            "length": 10,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "fittedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            }
+                          ],
+                          "unfittedItems": [
+                            {
+                              "id": "box_1",
+                              "quantity": 2
+                            }
+                          ],
+                          "fittedBinVolumePercentage": 15.00,
+                          "fittedItemsVolumePercentage": 94.74
+                        }
+                      ]
+                    }
+                  },
+                  "earlyfailresponse": {
+                    "summary": "Early fail Response",
+                    "description": "Response example when a bin can't accommodate all the items due to an early fail check",
+                    "value": {
+                      "result": "Failure",
+                      "data": [
+                        {
+                          "result": "EarlyFail_TotalVolumeExceeded",
+                          "bin": {
+                            "id": "custom_bin",
+                            "length": 10,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "fittedItems": [ ],
+                          "unfittedItems": [
+                            {
+                              "id": "large_box",
+                              "quantity": 1
+                            }
+                          ],
+                          "fittedBinVolumePercentage": 0,
+                          "fittedItemsVolumePercentage": 0
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. The request is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                },
+                "examples": {
+                  "invalidJson": {
+                    "summary": "Invalid JSON",
+                    "description": "Example response when JSON is invalid",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                      "title": "Invalid JSON Format",
+                      "status": 400,
+                      "detail": "'p' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 1 | BytePositionInLine: 2."
+                    }
+                  },
+                  "malformedRequest": {
+                    "summary": "Malformed Request",
+                    "description": "Example response when the server could not read the request",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                      "title": "Malformed Request",
+                      "status": 400,
+                      "detail": "The server could not process the request because it is malformed or contains invalid data. Please verify the request format and try again."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content. The request is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                },
+                "examples": {
+                  "invalidAlgorithm": {
+                    "summary": "Invalid Algorithm",
+                    "description": "Example response when you provide invalid algorithm",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc4918#section-11.2",
+                      "title": "One or more validation errors occurred.",
+                      "status": 422,
+                      "errors": {
+                        "Parameters.Algorithm": [
+                          "'Algorithm' is required and must be one of the following values: FFD, WFD, BFD"
+                        ]
+                      }
+                    }
+                  },
+                  "invalidBinData": {
+                    "summary": "Invalid Bin Data",
+                    "description": "Example response when you provide invalid Bin data",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc4918#section-11.2",
+                      "title": "One or more validation errors occurred.",
+                      "status": 422,
+                      "errors": {
+                        "Bins": [
+                          "IDs in `Bins` must be unique"
+                        ],
+                        "Bins[0].Length": [
+                          "'Length' must be greater than '0'."
+                        ]
+                      }
+                    }
+                  },
+                  "invalidItemData": {
+                    "summary": "Invalid Item Data",
+                    "description": "Example response when you provide invalid Item data",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc4918#section-11.2",
+                      "title": "One or more validation errors occurred.",
+                      "status": 422,
+                      "errors": {
+                        "Items[1].Length": [
+                          "'Length' must be less than or equal to '65535'."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
+          }
+        }
+      }
+    },
+    "/api/v3/fit/by-preset/{preset}": {
+      "post": {
+        "tags": [
+          "Fit"
+        ],
+        "summary": "Fit by preset",
+        "description": "Perform a bin fit function using a specified bin preset.",
+        "operationId": "fitByPreset",
+        "parameters": [
+          {
+            "name": "preset",
+            "in": "path",
+            "description": "Name of the preset to use.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FitByPresetRequest"
+              },
+              "example": {
+                "parameters": {
+                  "algorithm": "FFD"
+                },
+                "items": [
+                  {
+                    "id": "box_1",
+                    "quantity": 2,
+                    "length": 2,
+                    "width": 5,
+                    "height": 10
+                  },
+                  {
+                    "id": "box_2",
+                    "quantity": 1,
+                    "length": 12,
+                    "width": 15,
+                    "height": 10
+                  },
+                  {
+                    "id": "box_3",
+                    "quantity": 1,
+                    "length": 12,
+                    "width": 10,
+                    "height": 15
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error. An unexpected error occurred. Exception details are shown only in a development environment.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                },
+                "example": {
+                  "type": "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+                  "title": "Unexpected Server Error",
+                  "status": 500,
+                  "detail": "An unexpected error occurred while processing your request. Please try again later or contact support."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK. Returns an array of results indicating if a bin can accommodate all the items.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FitResponse"
+                },
+                "examples": {
+                  "fullresponse": {
+                    "summary": "Full Response",
+                    "description": "Response Example indicating all items fit.",
+                    "value": {
+                      "result": "Success",
+                      "data": [
+                        {
+                          "result": "AllItemsFit",
+                          "bin": {
+                            "id": "preset_bin_1",
+                            "length": 10,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "fittedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10
+                            }
+                          ],
+                          "unfittedItems": [ ],
+                          "fittedBinVolumePercentage": 15.83,
+                          "fittedItemsVolumePercentage": 100
+                        },
+                        {
+                          "result": "AllItemsFit",
+                          "bin": {
+                            "id": "preset_bin_2",
+                            "length": 20,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "fittedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10
+                            },
+                            {
+                              "id": "box_1",
+                              "length": 2,
+                              "width": 5,
+                              "height": 10
+                            }
+                          ],
+                          "unfittedItems": [ ],
+                          "fittedBinVolumePercentage": 7.92,
+                          "fittedItemsVolumePercentage": 100
+                        }
+                      ]
+                    }
+                  },
+                  "binnotfitresponse": {
+                    "summary": "Bin Not Fit Response",
+                    "description": "Response example when a bin can't accommodate all the items",
+                    "value": {
+                      "result": "Failure",
+                      "data": [
+                        {
+                          "result": "NotAllItemsFit",
+                          "bin": {
+                            "id": "preset_bin",
+                            "length": 10,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "fittedItems": [
+                            {
+                              "id": "box_2",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            },
+                            {
+                              "id": "box_3",
+                              "length": 10,
+                              "width": 12,
+                              "height": 15
+                            }
+                          ],
+                          "unfittedItems": [
+                            {
+                              "id": "box_1",
+                              "quantity": 2
+                            }
+                          ],
+                          "fittedBinVolumePercentage": 15.00,
+                          "fittedItemsVolumePercentage": 94.74
+                        }
+                      ]
+                    }
+                  },
+                  "earlyfailresponse": {
+                    "summary": "Early fail Response",
+                    "description": "Response example when a bin can't accommodate all the items due to an early fail check",
+                    "value": {
+                      "result": "Failure",
+                      "data": [
+                        {
+                          "result": "EarlyFail_TotalVolumeExceeded",
+                          "bin": {
+                            "id": "preset_bin",
+                            "length": 10,
+                            "width": 40,
+                            "height": 60
+                          },
+                          "fittedItems": [ ],
+                          "unfittedItems": [
+                            {
+                              "id": "large_box",
+                              "quantity": 1
+                            }
+                          ],
+                          "fittedBinVolumePercentage": 0,
+                          "fittedItemsVolumePercentage": 0
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. The request is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                },
+                "examples": {
+                  "invalidJson": {
+                    "summary": "Invalid JSON",
+                    "description": "Example response when JSON is invalid",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                      "title": "Invalid JSON Format",
+                      "status": 400,
+                      "detail": "'p' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 1 | BytePositionInLine: 2."
+                    }
+                  },
+                  "malformedRequest": {
+                    "summary": "Malformed Request",
+                    "description": "Example response when the server could not read the request",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                      "title": "Malformed Request",
+                      "status": 400,
+                      "detail": "The server could not process the request because it is malformed or contains invalid data. Please verify the request format and try again."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found. The preset does not exist."
+          },
+          "422": {
+            "description": "Unprocessable Content. The request is invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                },
+                "examples": {
+                  "invalidAlgorithm": {
+                    "summary": "Invalid Algorithm",
+                    "description": "Example response when you provide invalid algorithm",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc4918#section-11.2",
+                      "title": "One or more validation errors occurred.",
+                      "status": 422,
+                      "errors": {
+                        "Parameters.Algorithm": [
+                          "'Algorithm' is required and must be one of the following values: FFD, WFD, BFD"
+                        ]
+                      }
+                    }
+                  },
+                  "invalidItemData": {
+                    "summary": "Invalid Item Data",
+                    "description": "Example response when you provide invalid Item data",
+                    "value": {
+                      "type": "https://tools.ietf.org/html/rfc4918#section-11.2",
+                      "title": "One or more validation errors occurred.",
+                      "status": 422,
+                      "errors": {
+                        "Items": [
+                          "IDs in `Items` must be unique"
+                        ],
+                        "Items[1].Length": [
+                          "'Length' must be less than or equal to '65535'."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Algorithm": {
+        "enum": [
+          "FFD",
+          "WFD",
+          "BFD"
+        ],
+        "type": "string",
+        "description": "The packing heuristic to use."
+      },
+      "Bin": {
+        "required": [
+          "id",
+          "length",
+          "width",
+          "height"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Caller-supplied identifier, echoed back on the matching result so requests and responses can be correlated."
+          },
+          "length": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Length of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          },
+          "width": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Width of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          },
+          "height": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Height of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          }
+        },
+        "description": "A bin (container) to pack items into or fit items against."
+      },
+      "BinFitResult": {
+        "required": [
+          "result",
+          "bin"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "description": "The result of the operation.",
+            "$ref": "#/components/schemas/BinFitResultStatus"
+          },
+          "bin": {
+            "description": "The bin these results are for.",
+            "$ref": "#/components/schemas/Bin"
+          },
+          "fittedItems": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FittedBox"
+            },
+            "description": "Items that fit in the bin."
+          },
+          "unfittedItems": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/UnfittedBox"
+            },
+            "description": "Items that do not fit in the bin."
+          },
+          "fittedBinVolumePercentage": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": [
+              "null",
+              "number"
+            ],
+            "description": "Percentage of the bin's volume the fitting items occupy (0-100).",
+            "format": "double"
+          },
+          "fittedItemsVolumePercentage": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": [
+              "null",
+              "number"
+            ],
+            "description": "Percentage of the items' volume that fits (0-100).",
+            "format": "double"
+          }
+        },
+        "description": "The fit result for one bin."
+      },
+      "BinFitResultStatus": {
+        "enum": [
+          "AllItemsFit",
+          "NotAllItemsFit",
+          "EarlyFail_TotalVolumeExceeded",
+          "EarlyFail_ItemDimensionExceeded"
+        ],
+        "type": "string",
+        "description": "Outcome of a fit check."
+      },
+      "BinPackResult": {
+        "required": [
+          "result",
+          "bin",
+          "packedItemsVolumePercentage",
+          "packedBinVolumePercentage"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "description": "The result of the operation.",
+            "$ref": "#/components/schemas/BinPackResultStatus"
+          },
+          "bin": {
+            "description": "The bin these results are for.",
+            "$ref": "#/components/schemas/Bin"
+          },
+          "packedItems": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/PackedBox"
+            },
+            "description": "Items placed in the bin, each with its placement."
+          },
+          "unpackedItems": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/UnpackedBox"
+            },
+            "description": "Items that could not be placed in the bin."
+          },
+          "packedItemsVolumePercentage": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number",
+            "description": "Percentage of the items' volume that was packed (0-100).",
+            "format": "double"
+          },
+          "packedBinVolumePercentage": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number",
+            "description": "Percentage of the bin's volume filled by the packed items (0-100).",
+            "format": "double"
+          },
+          "viPaqData": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "The packing result encoded as a ViPaq protocol token (Base64). Present only when requested."
+          }
+        },
+        "description": "The packing result for one bin."
+      },
+      "BinPackResultStatus": {
+        "enum": [
+          "Unknown",
+          "NotPacked",
+          "PartiallyPacked",
+          "FullyPacked",
+          "EarlyFail_ContainerVolumeExceeded",
+          "EarlyFail_ContainerDimensionExceeded"
+        ],
+        "type": "string",
+        "description": "Outcome of a packing operation."
+      },
+      "Box": {
+        "required": [
+          "id",
+          "quantity",
+          "length",
+          "width",
+          "height"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Caller-supplied identifier, echoed back on the matching result so requests and responses can be correlated."
+          },
+          "quantity": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Number of identical items of this type.",
+            "format": "int32"
+          },
+          "length": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Length of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          },
+          "width": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Width of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          },
+          "height": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Height of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          }
+        },
+        "description": "An item to pack or fit, with its dimensions and quantity."
+      },
+      "FitByCustomRequest": {
+        "required": [
+          "parameters",
+          "bins",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "description": "Options controlling the operation, such as the algorithm to use.",
+            "$ref": "#/components/schemas/FitRequestParameters"
+          },
+          "bins": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Bin"
+            },
+            "description": "The custom bins to consider."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            },
+            "description": "The items to fit or pack."
+          }
+        },
+        "description": "A request to fit items using custom bins."
+      },
+      "FitByPresetRequest": {
+        "required": [
+          "parameters",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "description": "Options controlling the operation, such as the algorithm to use.",
+            "$ref": "#/components/schemas/FitRequestParameters"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            },
+            "description": "The items to fit or pack."
+          }
+        },
+        "description": "A request to fit items using a preset."
+      },
+      "FitRequestParameters": {
+        "required": [
+          "algorithm"
+        ],
+        "type": "object",
+        "properties": {
+          "algorithm": {
+            "description": "The heuristic algorithm to use: FFD, WFD or BFD.",
+            "$ref": "#/components/schemas/Algorithm"
+          }
+        },
+        "description": "Options that control how the fit check runs."
+      },
+      "FitResponse": {
+        "required": [
+          "result",
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "description": "The result of the operation.",
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "data": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/BinFitResult"
+            },
+            "description": "The response payload."
+          }
+        },
+        "description": "The fit results."
+      },
+      "FittedBox": {
+        "required": [
+          "id",
+          "length",
+          "width",
+          "height"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Caller-supplied identifier, echoed back on the matching result so requests and responses can be correlated."
+          },
+          "length": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Length of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          },
+          "width": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Width of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          },
+          "height": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Height of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          }
+        },
+        "description": "An item that fits in the bin."
+      },
+      "HttpValidationProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "A URI reference identifying the problem type (RFC 7807)."
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "A short, human-readable summary of the problem type (RFC 7807)."
+          },
+          "status": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "description": "The HTTP status code for this problem (RFC 7807).",
+            "format": "int32"
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "A human-readable explanation specific to this occurrence (RFC 7807)."
+          },
+          "instance": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "A URI reference identifying the specific occurrence of the problem (RFC 7807)."
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "Validation errors, keyed by the field that failed."
+          }
+        },
+        "description": "An RFC 7807 problem-details response that also lists per-field validation errors."
+      },
+      "PackByCustomRequest": {
+        "required": [
+          "parameters",
+          "bins",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "description": "Options controlling the operation, such as the algorithm to use.",
+            "$ref": "#/components/schemas/PackRequestParameters"
+          },
+          "bins": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Bin"
+            },
+            "description": "The custom bins to consider."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            },
+            "description": "The items to fit or pack."
+          }
+        },
+        "description": "A request to pack items using custom bins."
+      },
+      "PackByPresetRequest": {
+        "required": [
+          "parameters",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "description": "Options controlling the operation, such as the algorithm to use.",
+            "$ref": "#/components/schemas/PackRequestParameters"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Box"
+            },
+            "description": "The items to fit or pack."
+          }
+        },
+        "description": "A request to pack items using a preset."
+      },
+      "PackedBox": {
+        "required": [
+          "id",
+          "length",
+          "width",
+          "height",
+          "x",
+          "y",
+          "z"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Caller-supplied identifier, echoed back on the matching result so requests and responses can be correlated."
+          },
+          "length": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Length of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          },
+          "width": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Width of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          },
+          "height": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Height of the bin or item, in the same unit as the other dimensions.",
+            "format": "int32"
+          },
+          "x": {
+            "minimum": 0,
+            "type": "integer",
+            "description": "Placement of the item along the length axis, measured from the bin origin.",
+            "format": "int32"
+          },
+          "y": {
+            "minimum": 0,
+            "type": "integer",
+            "description": "Placement of the item along the width axis, measured from the bin origin.",
+            "format": "int32"
+          },
+          "z": {
+            "minimum": 0,
+            "type": "integer",
+            "description": "Placement of the item along the height axis, measured from the bin origin.",
+            "format": "int32"
+          }
+        },
+        "description": "An item placed inside the bin, with its position."
+      },
+      "PackRequestParameters": {
+        "required": [
+          "algorithm"
+        ],
+        "type": "object",
+        "properties": {
+          "algorithm": {
+            "description": "The heuristic algorithm to use: FFD, WFD or BFD.",
+            "$ref": "#/components/schemas/Algorithm"
+          },
+          "includeViPaqData": {
+            "type": "boolean",
+            "description": "When true, the packing result includes its ViPaq data token."
+          }
+        },
+        "description": "Options that control how the packing runs."
+      },
+      "PackResponse": {
+        "required": [
+          "result",
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "description": "The result of the operation.",
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "data": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/BinPackResult"
+            },
+            "description": "The response payload."
+          }
+        },
+        "description": "The packing results."
+      },
+      "PresetListResponse": {
+        "required": [
+          "result",
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "description": "The result of the operation.",
+            "$ref": "#/components/schemas/ResultType"
+          },
+          "data": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Bin"
+              }
+            },
+            "description": "The response payload."
+          }
+        },
+        "description": "The presets configured on the server."
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "A URI reference identifying the problem type (RFC 7807)."
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "A short, human-readable summary of the problem type (RFC 7807)."
+          },
+          "status": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "description": "The HTTP status code for this problem (RFC 7807).",
+            "format": "int32"
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "A human-readable explanation specific to this occurrence (RFC 7807)."
+          },
+          "instance": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "A URI reference identifying the specific occurrence of the problem (RFC 7807)."
+          }
+        },
+        "description": "An error response in RFC 7807 problem-details format."
+      },
+      "ResultType": {
+        "enum": [
+          "Success",
+          "Failure"
+        ],
+        "type": "string",
+        "description": "Whether the operation succeeded or failed."
+      },
+      "UnfittedBox": {
+        "required": [
+          "id",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Caller-supplied identifier, echoed back on the matching result so requests and responses can be correlated."
+          },
+          "quantity": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Number of identical items of this type.",
+            "format": "int32"
+          }
+        },
+        "description": "An item that does not fit in the bin."
+      },
+      "UnpackedBox": {
+        "required": [
+          "id",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Caller-supplied identifier, echoed back on the matching result so requests and responses can be correlated."
+          },
+          "quantity": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "Number of identical items of this type.",
+            "format": "int32"
+          }
+        },
+        "description": "An item that could not be placed in the bin."
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Presets",
+      "description": "Predefined bin sets configured on the server."
+    },
+    {
+      "name": "Pack",
+      "description": "Pack items into bins and report how they fit."
+    },
+    {
+      "name": "Fit",
+      "description": "Check whether items fit into bins, without computing a full packing."
+    }
+  ]
+}
