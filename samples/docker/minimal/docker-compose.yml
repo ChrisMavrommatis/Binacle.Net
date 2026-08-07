@@ -1,0 +1,22 @@
+name: binacle-net-minimal
+
+# Binacle.Net sample: minimal
+#
+# Smoke profile: minimal. config/smoke/minimal.yml runs this same configuration against the image under
+# test on every release, so this file is a shape that is proven to work rather than one nobody checks.
+# If you change which modules are on here, change that profile too - or the pairing is a lie.
+
+services:
+  binacle-net:
+    # Pinned on purpose - a copied sample must not jump to a new major on the next pull.
+    image: binacle/binacle-net:3.0
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./Presets.json
+        target: /app/Config_Files/Presets.json
+        read_only: true
+      - type: bind
+        source: ./data
+        target: /app/data

@@ -70,9 +70,10 @@ directly.
 
 ## Regenerating
 
-The generators own only the derived files — `header/header-bytes.json` and the interop artifacts (decisions.md
-**D15**); every other vector is hand-authored. C#: `vipaq/tools/Binacle.ViPaq.VectorGenerators/`. TS:
-`vipaq/packages/binacle-vipaq/tools/`. Output is deterministic — a no-change re-run is byte-identical.
+The generators own only the derived files — `header/header-bytes.json` and the interop artifacts. **Every other
+vector is hand-authored**, so do not expect a regeneration to reproduce them. C#:
+`vipaq/tools/Binacle.ViPaq.VectorGenerators/`. TS: `vipaq/packages/binacle-vipaq/tools/`. Output is
+deterministic — a no-change re-run is byte-identical.
 
 ## What is **not** here (stays language-local on purpose)
 

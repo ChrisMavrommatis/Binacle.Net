@@ -2,7 +2,7 @@
 id: commands
 description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
 verified: 2026-08-06
-check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; openapi recipes match config/openapi.just; agents recipes match config/agents.just; serve recipes match config/serve.just; install/assets match the root justfile; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml; prerequisite versions match Directory.Build.props, .nvmrc, docs/.ruby-version, web/.ruby-version, and .github/workflows/run-tests.yml
+check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; openapi recipes match config/openapi.just; agents recipes match config/agents.just; serve recipes match config/serve.just; smoke recipes match config/smoke.just; install/assets match the root justfile; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
 ---
 
 # Commands
@@ -14,21 +14,16 @@ local compose, env, emulator state) see `$config`.
 
 ## Prerequisites
 
-Install these before `just install`. Where a pin file exists, the version manager reads it automatically —
-you still need the manager itself installed first.
+**`DEVELOPMENT.md` at the repo root is the single source for this** — the tools, their versions, their pin
+files, and the commands that install each one, docker and the two smoke binaries included. It is written for a
+human setting up a machine.
 
-| Tool | Version | Pin file | Needed for |
-|---|---|---|---|
-| .NET SDK | 10.x (`Directory.Build.props`) | none | building/running the API, `lib`, `vipaq` |
-| Node.js, via [nvm](https://github.com/nvm-sh/nvm) | 22 (matches CI) | `.nvmrc` at repo root | `just install`, the TS packages, `assets`, `docs`/`web` webpack watch |
-| Ruby, via [rbenv](https://github.com/rbenv/rbenv) | 3.4.7 | `docs/.ruby-version`, `web/.ruby-version` | `docs/` and `web/` (Jekyll) only |
-| [just](https://github.com/casey/just#installation) | any recent | none | every recipe in this doc; `sudo apt install just` on Debian/Ubuntu |
-| Docker | any recent | none | `just serve services`, `just build image`, `just image up` |
+Do not repeat any of it here, and do not answer a setup question from memory: read that file, or point the user
+at it. This section exists only to say where it is.
 
-Two gems used for maintenance are not in either Gemfile because they're one-off tools, not site dependencies —
-install them globally if you need them: `gem install bundler-audit` (adds `bundle audit`, checks the lockfile
-against the CVE database) and `gem install bundler-audit-fix` (adds `bundle audit-fix`, which bumps the flagged
-gems and rewrites the lockfile).
+The short version, for judging whether a command in this doc can run at all: .NET SDK 10.x, Node 22 (`.nvmrc`),
+Ruby 3.4.7 (`docs/.ruby-version`, `web/.ruby-version` — **both** sites need it), `just`, and docker for anything
+touching the image.
 
 ## Set up a fresh clone
 
@@ -172,6 +167,29 @@ bind-mounted folders and opens their permissions, which docker will not do for y
 stack needs which folder.
 
 The backing services for an API run from source are a different thing — that is `just serve services`.
+
+## Smoke the image
+
+Tests the image rather than the code: what it contains, and what its HTTP surface does with the modules
+switched on and off. Needs `container-structure-test` and `hurl` (see `DEVELOPMENT.md`) plus docker.
+
+```bash
+just smoke all                         # build binacle-net:local, check its structure, then every profile
+just smoke test-structure [image]      # static content only — reads the image, no container, no stack
+just smoke test <profile> [image]      # one profile end to end: up -> hurl -> down
+just smoke up <profile> [image]        # bring one up and leave it   [minimal|quickstart|prod|service|full]
+just smoke down <profile> [-v]         # stop it
+```
+
+Every recipe takes the image last and defaults to `binacle-net:local`, so the same suite runs against a local
+build or a published tag — `just smoke all binacle/binacle-net:3.0.0-beta.1`. Given anything but the local tag,
+`all` pulls instead of building. The stacks read it as `$BINACLE_IMAGE` with the same default.
+
+The static check reads the image, not a container, so `all` runs it **once** rather than once per profile. The
+four profiles are declared in one place, the `profiles` variable at the top of `config/smoke.just`.
+
+While editing a `.hurl`, skip the up/down cycle: `just smoke up prod`, then `just smoke::_test_profile prod` as
+many times as needed, then `just smoke down prod -v`.
 
 ## Regenerate the agent indexes
 

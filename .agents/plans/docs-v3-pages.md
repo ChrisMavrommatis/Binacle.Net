@@ -79,6 +79,57 @@ profile, so ServiceModule is off**, which is the committed convention and the re
 `/api/auth/token` path. A ServiceModule-on run adds that path and the documents stop being comparable across
 versions.
 
+## The samples were restructured - do not mirror the old names
+
+Landed 2026-08-07, after this file was written. `samples/` no longer holds what `v2.1.x` documents, and the
+`v3.0.x` sample pages must describe the **new** set. Copying the `v2.1.x` sample pages across would document
+folders that no longer exist.
+
+| Was | Is now |
+|---|---|
+| `docker/minimal-setup` | `docker/minimal` |
+| `docker/ui-setup` | `docker/quickstart` |
+| `docker/service-npgsql` + `docker/service-azure` | one `docker/service`, with SQLite active and Postgres and Azure Storage as commented alternatives |
+| *(nothing)* | `docker/prod` - **new**, and the most important one |
+| *(nothing)* | `docker/full` - **new** |
+| `kubernetes/minimal-setup` | `kubernetes/minimal` |
+
+The folder names are deliberate: each one matches a smoke profile of the same name under `config/smoke/`, so
+every shipped sample shape is run against the image on release. Worth one sentence on the samples index page -
+it is a real reason to trust them.
+
+- [ ] **`prod` vs `service` is the distinction the pages must get right.** They are two different products, not
+      two sizes. `prod` is the API behind the reader's own backend: health checks and packing logs, no docs, no
+      UI, no `/_debug`, no accounts, no database. `service` is Binacle.Net offered to other people, which is what
+      ServiceModule is for - accounts, JWT auth, rate limiting, storage. Most readers want `prod`; before this
+      split every service-shaped sample assumed the hosted case, so the commonest deployment had no starting
+      point. Steer the reader with that question, not with "small" and "large".
+- [ ] **`full` must carry the warning.** It turns `DEBUG_ENDPOINT` on, and `/_debug` echoes the caller's whole
+      request including their `Authorization` header. It is a demo box. The page must not read as a deployment
+      option.
+- [ ] **Sample files pin `binacle/binacle-net:3.0`** - already done in the repo, so the `v3.0.x` copies inherit
+      it. Six samples now, not five.
+- [ ] **The new samples ship more than two files each, and `v2.1.x` sets the wrong expectation.** Every
+      `v2.1.x/samples/docker/*/` folder holds exactly `docker-compose.yml`, `Presets.json` and `index.md`.
+      Copying that habit would silently drop the config files the new samples mount. What each folder needs:
+
+      | Sample | Files besides `index.md` |
+      |---|---|
+      | `minimal` | `docker-compose.yml`, `Presets.json` |
+      | `quickstart` | `docker-compose.yml`, `Presets.json` |
+      | `prod` | + `ForwardedHeaders.json`, `OpenTelemetry.Production.json` |
+      | `service` | + `JwtAuth.json`, `Cors.json` |
+      | `full` | + `JwtAuth.json` |
+
+      The `prod` and `service` compose files mount some of these behind comments, so a reader who uncomments a
+      mount and finds no file to download has hit a dead end. Copy the repo folder as it stands.
+- [ ] **There is no `.env` file any more.** The samples used to carry one holding only `COMPOSE_PROJECT_NAME`;
+      that moved into the compose file as a top-level `name:` on 2026-08-07, which is what every other compose
+      file in the repo already did. Nothing to copy, and nothing to mention on the page - it only matters so
+      that a missing `.env` does not read as an omission.
+- [ ] `v2.1.x`, `v2.0.x` and `v1.3.x` keep the old names and old pins. They document versions that shipped those
+      samples, and their links must not be repointed.
+
 ## Two configuration pages are new in v3.0.x
 
 Neither has a `v2.1.x` equivalent to copy.

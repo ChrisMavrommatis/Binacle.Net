@@ -1,60 +1,54 @@
-# prod - the real production shape: docs + service + health + packing logs on; UI_MODULE and DEBUG_ENDPOINT
-# off. The defining assertion is /_debug 404. Redirects are off.
+# prod - a self-hosted deployment: health checks and packing logs on, nothing else. No docs, no UI, no
+# /_debug, no ServiceModule. The defining assertion is /_health 200 with an EMPTY Features array, which proves
+# health is on AND that nothing else is, in one request. Redirects are off.
 
+# The custom presets are the positive that anchors every 404 below: this preset exists only in the mounted
+# file, so reading it back proves the right image started AND that it read config we supplied. A default
+# preset would have been there either way.
 GET http://localhost:8080/api/v3/presets
 HTTP 200
 
-GET http://localhost:8080/swagger/index.html
+GET http://localhost:8080/api/v4/presets
 HTTP 200
+[Asserts]
+jsonpath "$.presets['smoke-lockers']" count == 2
+jsonpath "$.presets['rectangular-cuboids']" not exists
 
-GET http://localhost:8080/scalar/
-HTTP 200
-
-GET http://localhost:8080/openapi/v3.json
-HTTP 200
-
-GET http://localhost:8080/openapi/v4.json
-HTTP 200
-
-# service on and swagger on, so the service document is served
-GET http://localhost:8080/openapi/service.json
-HTTP 200
-
-# health on: Features positively states swagger, scalar and service are on and ui/debug are off - this anchors
-# the 404s below so they cannot pass for the wrong reason.
+# health on, everything else off. Features can only ever contain SwaggerUI, ScalarUI, UIModule, ServiceModule,
+# RateLimiter and DebugEndpoint - HealthChecks and PackingLogs are not features - so empty is exactly right,
+# and any module switching itself on would break this line.
 GET http://localhost:8080/_health
 HTTP 200
 [Asserts]
 jsonpath "$.status" == "Healthy"
 jsonpath "$.entries.System.data.Version" != "Unknown"
-jsonpath "$.entries.System.data.Features" includes "SwaggerUI"
-jsonpath "$.entries.System.data.Features" includes "ScalarUI"
-jsonpath "$.entries.System.data.Features" includes "ServiceModule"
-jsonpath "$.entries.System.data.Features" not includes "UIModule"
-jsonpath "$.entries.System.data.Features" not includes "DebugEndpoint"
+jsonpath "$.entries.System.data.Features" count == 0
 
-# the production security assertion: the request-echoing debug endpoint is not exposed
-GET http://localhost:8080/_debug
+# no docs - swagger and scalar are off, so the openapi documents are not mounted either
+GET http://localhost:8080/swagger/index.html
 HTTP 404
 
-# UI module off
+GET http://localhost:8080/scalar/
+HTTP 404
+
+GET http://localhost:8080/openapi/v3.json
+HTTP 404
+
+GET http://localhost:8080/openapi/v4.json
+HTTP 404
+
+# no ServiceModule: the auth route is not mounted at all - 404, not the 405 a mounted POST-only route gives
+GET http://localhost:8080/api/auth/token
+HTTP 404
+
+# and no admin surface to protect
+GET http://localhost:8080/api/admin/account/11111111-1111-1111-1111-111111111111
+HTTP 404
+
+# no web UI
 GET http://localhost:8080/
 HTTP 404
 
-# service on: a token for the seeded admin proves the whole storage path in one request (the startup task wrote
-# the account before the port opened, and the endpoint reads it back).
-POST http://localhost:8080/api/auth/token
-Content-Type: application/json
-{
-  "Username": "admin@binacle.net",
-  "Password": "B1n4cl3Adm!n"
-}
-HTTP 200
-[Asserts]
-jsonpath "$.accessToken" exists
-jsonpath "$.tokenType" == "Bearer"
-
-# admin route mounted AND protected: 401, not 404 (never mounted) and not 200 (open to the world). Use a real
-# GUID - Guid.Empty is rejected as invalid (422) before the lookup.
-GET http://localhost:8080/api/admin/account/11111111-1111-1111-1111-111111111111
-HTTP 401
+# no debug endpoint
+GET http://localhost:8080/_debug
+HTTP 404

@@ -1,0 +1,14 @@
+name: binacle-smoke-minimal
+
+# Paired with samples/docker/minimal/ - the same configuration, written to be copied. Different files on
+# purpose: the sample pins a published image, while this one runs the image under test and carries tweaks a
+# user must never inherit. Change the modules here and change them there too.
+
+# Smoke profile `minimal` - the image exactly as shipped, no env at all. One claim: it boots from nothing and a
+# core route answers. No backend, no volume, nothing to persist. Matches the `minimal` sample.
+
+services:
+  binacle-net:
+    image: ${BINACLE_IMAGE:-binacle-net:local}
+    ports:
+      - "8080:8080"

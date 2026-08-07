@@ -1,0 +1,69 @@
+name: binacle-net-prod
+
+# Binacle.Net sample: prod
+#
+# Smoke profile: prod. config/smoke/prod.yml runs this same configuration against the image under
+# test on every release, so this file is a shape that is proven to work rather than one nobody checks.
+# If you change which modules are on here, change that profile too - or the pairing is a lie.
+
+services:
+  binacle-net:
+    # Pinned on purpose - a copied sample must not jump to a new major on the next pull. The minor tag picks up
+    # fixes within the 3.0 line and never a breaking change.
+    image: binacle/binacle-net:3.0
+    ports:
+      - "8080:8080"
+    volumes:
+      # Your bin set. This is the first thing to change - the shipped presets are examples, not defaults you
+      # should keep.
+      - type: bind
+        source: ./Presets.json
+        target: /app/Config_Files/Presets.json
+        read_only: true
+      # Packing logs are written here, so this deployment is not stateless. Keep the volume or the logs go with
+      # the container.
+      - type: bind
+        source: ./data
+        target: /app/data/
+
+      # Running behind a proxy, a load balancer or a CDN? Uncomment this and the block at the bottom of this
+      # file. Without it the app sees your proxy's address as the caller, which silently makes health check
+      # RestrictedIPs match the wrong host, partitions rate limiting wrongly, and puts the proxy's IP in every
+      # log line instead of the client's.
+      # - type: bind
+      #   source: ./ForwardedHeaders.json
+      #   target: /app/Config_Files/ForwardedHeaders.json
+      #   read_only: true
+
+      # Sending traces somewhere? Uncomment this and the OpenTelemetry section at the bottom.
+      # - type: bind
+      #   source: ./OpenTelemetry.Production.json
+      #   target: /app/Config_Files/DiagnosticsModule/OpenTelemetry.Production.json
+      #   read_only: true
+    environment:
+      # Health checks give your orchestrator something to probe. Packing logs record what was asked and what
+      # came back, which is what you want when a customer disputes a result.
+      - HealthChecks__Enabled=True
+      - PackingLogs__Enabled=True
+
+      # Delete packing log files older than this many days, once a day. Unset means keep everything forever,
+      # which fills a disk eventually.
+      # - PackingLogs__RetentionDays=30
+
+      # Deliberately absent: SWAGGER_UI, SCALAR_UI, UI_MODULE, DEBUG_ENDPOINT and SERVICE_MODULE.
+      #
+      # This is the API behind your own backend - your server calls it, so it needs no accounts, no auth and no
+      # database, and every surface you do not enable is one you do not have to defend. In particular /_debug
+      # echoes the caller's whole request back, including their Authorization header: never enable it here.
+      #
+      # If you want the interactive docs on an internal deployment, add SWAGGER_UI=True and SCALAR_UI=True.
+      # If you need accounts, JWT auth and rate limiting, you want the `service` sample instead.
+
+# OpenTelemetry, and somewhere to send it. Uncomment this service and the two blocks above, then point
+# OpenTelemetry.Production.json at whatever collector you actually use - the Aspire dashboard below is only the
+# easiest thing to look at while you are setting it up.
+#
+#  aspire-dashboard:
+#    image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
+#    ports:
+#      - '18888:18888'

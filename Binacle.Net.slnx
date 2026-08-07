@@ -16,26 +16,30 @@
   </Folder>
   <Folder Name="/samples/docker/">
     <File Path="samples/docker/README.md" />
-    <Project Path="samples/docker/minimal-setup/minimal-setup.dcproj">
+    <Project Path="samples/docker/full/full.dcproj">
       <Platform Project="AnyCPU" />
       <Build />
     </Project>
-    <Project Path="samples/docker/service-azure/service-azure.dcproj">
+    <Project Path="samples/docker/minimal/minimal.dcproj">
       <Platform Project="AnyCPU" />
       <Build />
     </Project>
-    <Project Path="samples/docker/service-npgsql/service-npgsql.dcproj">
+    <Project Path="samples/docker/prod/prod.dcproj">
       <Platform Project="AnyCPU" />
       <Build />
     </Project>
-    <Project Path="samples/docker/ui-setup/ui-setup.dcproj">
+    <Project Path="samples/docker/quickstart/quickstart.dcproj">
+      <Platform Project="AnyCPU" />
+      <Build />
+    </Project>
+    <Project Path="samples/docker/service/service.dcproj">
       <Platform Project="AnyCPU" />
       <Build />
     </Project>
   </Folder>
   <Folder Name="/samples/kubernetes/">
     <File Path="samples/kubernetes/README.md" />
-    <Project Path="samples/kubernetes/minimal-setup/minimal-setup.proj" Type="Shared">
+    <Project Path="samples/kubernetes/minimal/minimal.proj" Type="Shared">
       <Platform Project="AnyCPU" />
     </Project>
   </Folder>

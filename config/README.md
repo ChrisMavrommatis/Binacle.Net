@@ -16,6 +16,10 @@ just install                     # npm workspaces, both jekyll sites' gems, then
 just assets                      # only the asset copy - after changing anything under assets/
 ```
 
+`install` assumes the tools are already there. What they are, which versions, and how to install them -
+including docker and the two smoke binaries - is **[DEVELOPMENT.md](../DEVELOPMENT.md)** at the repo root. It is
+the only place that lives; nothing here repeats it.
+
 ---
 
 ## Serve
@@ -119,6 +123,46 @@ no binacle-net.
 The folder setup is written out in both `serve.just` and `image.just` rather than shared. A module that
 reaches into another one puts back the coupling that splitting them removed, and it is a few lines of `mkdir`
 and `chmod`.
+
+---
+
+## Smoke
+`smoke.just`, loaded as the `smoke` module. Tests the **image** rather than the code: what it contains, and what
+its HTTP surface does with the modules switched on and off. Needs `container-structure-test` and `hurl` -
+see [DEVELOPMENT.md](../DEVELOPMENT.md).
+
+```bash
+just smoke all                       # build binacle-net:local, check its structure, then every profile
+just smoke test-structure [image]    # the static content only - reads the image, no container
+just smoke test <profile> [image]    # one profile end to end: up -> hurl -> down
+just smoke up <profile> [image]      # bring one up and leave it   [minimal|quickstart|prod|service|full]
+just smoke down <profile> [-v]       # stop it
+```
+
+**Every recipe takes the image last and defaults to `binacle-net:local`**, so the same suite runs against a
+local build or a published tag:
+
+```bash
+just smoke all binacle/binacle-net:3.0.0-beta.1     # smoke what is actually on Docker Hub
+just smoke test prod binacle/binacle-net:3.0        # one profile against the released minor tag
+```
+
+Given anything but the local tag, `all` pulls instead of building - there is nothing to build, and building
+would tag `binacle-net:local` while the stacks went on using the image you asked for. The stacks read it as
+`$BINACLE_IMAGE` with the same default, so a bare `docker compose -f config/smoke/<profile>.yml` still works.
+
+Two halves. `config/smoke/structure.yaml` is read straight from the image - the shipped config files,
+`/app/data` ownership, the OCI labels. It has nothing to do with which stack is up, so `all` runs it once rather
+than once per profile. The other half is one `.hurl` per profile, run against a running stack. The four profiles
+- `minimal`, `quickstart`, `prod`, `service`, `full` - are declared in the `profiles` variable at the top of
+`smoke.just`, and each one is also a folder name under `samples/docker/`.
+
+Editing a `.hurl` is the one case for the private recipe: `just smoke up prod`, then
+`just smoke::_test_profile prod` as many times as you need, then `just smoke down prod -v`.
+
+**[`smoke/README.md`](smoke/README.md) has the rest** - what each profile claims, the two rules that decide
+whether a check belongs in this suite at all, and the gotchas that make a green run mean something. Read it
+before adding or changing an assertion.
 
 ---
 

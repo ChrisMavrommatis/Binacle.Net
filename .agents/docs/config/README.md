@@ -1,8 +1,8 @@
 ---
 id: config
-description: config/ — maintainer local-dev tooling: the test, coverage, openapi, agents, serve, build and image modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state
+description: config/ — maintainer local-dev tooling: the test, coverage, openapi, agents, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state
 verified: 2026-07-29
-check: Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, serve.just, build.just and image.just recipes, and the docker-compose stack/file/service table match config/
+check: Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, serve.just, build.just, image.just and smoke.just recipes, and the docker-compose stack/file/service table match config/
 also_update:
   - commands
   - samples
@@ -29,6 +29,7 @@ doc describes what's in the directory.
 | `openapi.just` | **Not a script** — the `openapi` module for the root `justfile`. `just openapi generate [dir]` builds the v3/v4 documents into gitignored `build/openapi/`, `just openapi lint [dir]` generates then Spectral-lints them against `.spectral.yaml` |
 | `agents.just` | **Not a script** — the `agents` module for the root `justfile`. `just agents all` regenerates the `_index.md` manifest for `.agents/docs`, `.agents/design`, `.agents/plans`, `.agents/memory` and `.agents/ideas` (grouped by area); `just agents generate-index <name>` does one |
 | `image.just` | **Not a script** — the `image` module for the root `justfile`. Runs what `build.just` produced: `just image up [full\|volume\|bind]` (default `full`) and `just image down [name]`; extra arguments pass through to `docker compose`. `up` creates and opens the bind-mounted folders first, and every stack stops with a pointer to `just build image` if `binacle-net:local` is missing |
+| `smoke.just` | **Not a script** — the `smoke` module for the root `justfile`. Tests the image rather than the code. `just smoke test-structure [image]` runs `container-structure-test` against `config/smoke/structure.yaml`; `just smoke test <profile> [image]` does up → hurl → down for one profile; `just smoke up`/`down` are the manual halves; `just smoke all [image]` builds, checks the structure once, then runs every profile. Every recipe takes the image last, default `binacle-net:local`, so a published tag can be smoked too |
 | `tmux.sh` | Builds/re-attaches the `binacle` tmux session (windows `api`/`docs`/`web`/`tests`/`misc`/`bench_1..3`); panes are pre-`cd`'d, nothing auto-runs |
 
 The launch profiles live in `serve.just`; the benchmark filters live inside the per-slice `benchmarks.*`
@@ -40,11 +41,13 @@ them all), `bundle install` for both jekyll sites, and copies `assets/` into `do
 
 ## Local Docker Compose
 
-**One compose file supports an API run from source; the other three run the built image**, and the two live in
-different modules for that reason. `docker-compose.yml` brings up what the app talks to and no binacle-net at
-all, so it belongs to `serve`, alongside `just serve api` (and it is what the Postgres/AzureStorage test leaves
-need). The other three follow `just build image` and answer a different question — does the shipped image work
-— so they are the `image` module's three stacks. That is also why only they check for `binacle-net:local`.
+**One compose file supports an API run from source; the rest run an image**, and they live in different modules
+for that reason. `docker-compose.yml` brings up what the app talks to and no binacle-net at all, so it belongs
+to `serve`, alongside `just serve api` (and it is what the Postgres/AzureStorage test leaves need). The three
+`docker-compose.*.yml` files follow `just build image` and answer a different question — does the shipped image
+work — so they are the `image` module's stacks, and that is why only they check for `binacle-net:local`. The
+five under `smoke/` answer a narrower question again — does it work *as configured* — and are driven entirely
+by `just smoke`, never by hand.
 
 | File | Module | Command | Project name | Runs |
 |---|---|---|---|---|
@@ -52,9 +55,20 @@ need). The other three follow `just build image` and answer a different question
 | `docker-compose.build.yml` | `image` | `just image up full` | `binacle-net-build` | **Full** — local image `binacle-net:local` + `azurite` + `postgres` + `aspire-dashboard`, all modules on; injects `JwtAuth.json` and `OpenTelemetry.Production.json` via compose `configs:`. All three storage backends run; pick one by moving the comment on the connection strings. The `image` module's default |
 | `docker-compose.volume.yml` | `image` | `just image up volume` | `binacle-net-volume` | **Simple** — the local image alone, ServiceModule on SQLite, data in a named volume |
 | `docker-compose.bind.yml` | `image` | `just image up bind` | `binacle-net-bind` | **Simple** — same, but data bind-mounted to a folder; `BINACLE_DATA_DIR` overrides where |
+| `smoke/<profile>.yml` | `smoke` | `just smoke up <profile>` | `binacle-smoke-<profile>` | **Five throwaway stacks** — `minimal`, `quickstart`, `prod`, `service`, `full`, one per smoke profile, and each name is also a `samples/docker/` folder. Storage is a named volume dropped on teardown, so they need no `_prepare`. They take the image from `$BINACLE_IMAGE` (default `binacle-net:local`); `service`/`full` inline `JwtAuth.json` and raise `RateLimiter__ApiUsageAnonymous` so a second run inside the hour does not go red on 429s; `prod` mounts its own `Presets.json` so reading it back proves the config-mount path |
 
 Each file carries its own `name:`, so no `--env-file` is needed to set the project name. Inside `image.just`
-the stack name maps to a file in one place, so `up` and `down` cannot disagree about which one it means.
+the stack name maps to a file in one place, so `up` and `down` cannot disagree about which one it means;
+`smoke.just` gets the same guarantee for free, since the profile name **is** the filename.
+
+The smoke stacks are separate files from `samples/` on purpose. They run the image under test and carry
+test-only tweaks — a raised rate limit, disposable storage — that a sample a user copies must never have.
+
+**`config/smoke/README.md` is the authority on that suite** — what each profile claims, the two rules that
+decide whether a check belongs in it (`assert what the image contains and wires, never what the algorithm
+computed`; `every check must be able to fail`), and the setup gotchas. It is written for a human, and it is
+where the design rationale went when the smoke plan was deleted on 2026-08-07. Read it before changing an
+assertion; do not re-derive any of it here.
 
 Which folders `up` prepares: `serve services` needs `config/azurite`; `image up full` needs that plus
 `config/data/logs` and `config/data/pack-logs`; `image up bind` needs `BINACLE_DATA_DIR` (default

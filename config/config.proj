@@ -8,6 +8,8 @@
         <Content Include="*.just"/>
         <Content Include="*.md"/>
         <Content Include="*.sh"/>
-        <Content Include="*.yml"/>
+        <Content Include="**\*.yml"/>
+        <Content Include="**\*.yaml"/>
+        <Content Include="**\*.hurl"/>
     </ItemGroup>
 </Project>

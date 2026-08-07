@@ -20,12 +20,6 @@ Left, in order:
    complete, while nothing in `config/` completes anything. Open: `tmux.sh` builds a session and attaches -
    no arguments, nothing to parameterise - so it may be the one that stays a script.
 
-**For the docs/web session.** `docs/README.md` and `web/README.md` both open with a setup block that says
-`npm run copy-assets-to-<site>` "from the repo root", then `bundle exec jekyll serve`. Those still work, but
-the one command now is `just install` once, then `just serve docs` / `just serve web` - which runs jekyll and
-the webpack watch together under one Ctrl-C. `just assets` is the asset copy on its own. Both files are off
-limits from a coding session, so the correction is left here.
-
 ## Why
 
 One entry point per job, called by both CI and a maintainer. CI keeps only what is genuinely CI's - checkout,

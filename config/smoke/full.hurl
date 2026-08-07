@@ -29,11 +29,11 @@ HTTP 200
 [Asserts]
 jsonpath "$.status" == "Healthy"
 jsonpath "$.entries.System.data.Version" != "Unknown"
-jsonpath "$.entries.System.data.Features" includes "SwaggerUI"
-jsonpath "$.entries.System.data.Features" includes "ScalarUI"
-jsonpath "$.entries.System.data.Features" includes "UIModule"
-jsonpath "$.entries.System.data.Features" includes "ServiceModule"
-jsonpath "$.entries.System.data.Features" includes "DebugEndpoint"
+jsonpath "$.entries.System.data.Features" contains "SwaggerUI"
+jsonpath "$.entries.System.data.Features" contains "ScalarUI"
+jsonpath "$.entries.System.data.Features" contains "UIModule"
+jsonpath "$.entries.System.data.Features" contains "ServiceModule"
+jsonpath "$.entries.System.data.Features" contains "DebugEndpoint"
 
 # debug endpoint on - echoes the request
 GET http://localhost:8080/_debug

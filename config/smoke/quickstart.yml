@@ -1,11 +1,15 @@
 name: binacle-smoke-quickstart
 
+# Paired with samples/docker/quickstart/ - the same configuration, written to be copied. Different files on
+# purpose: the sample pins a published image, while this one runs the image under test and carries tweaks a
+# user must never inherit. Change the modules here and change them there too.
+
 # Smoke profile `quickstart` - the README `docker run`: docs and the web UI, no auth, no backend. Feature flags
 # are exact-match True/False (case-sensitive), so all three must be exact `True`.
 
 services:
   binacle-net:
-    image: binacle-net:local
+    image: ${BINACLE_IMAGE:-binacle-net:local}
     ports:
       - "8080:8080"
     environment:

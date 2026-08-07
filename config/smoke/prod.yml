@@ -1,42 +1,45 @@
 name: binacle-smoke-prod
 
-# Smoke profile `prod` - the real production shape: docs + service + health + packing logs on; the web UI and
-# the /_debug endpoint OFF. Its defining assertion is that /_debug is 404 while auth still works. One backend
-# (SQLite), JwtAuth injected, and the anonymous rate limit raised so repeat runs do not hit 429.
+# Paired with samples/docker/prod/ - the same configuration, written to be copied. Different files on
+# purpose: the sample pins a published image, while this one runs the image under test and carries tweaks a
+# user must never inherit. Change the modules here and change them there too.
+
+# Smoke profile `prod` - a self-hosted production deployment. The API behind your own backend: health checks
+# and packing logs on, and nothing else. No docs, no web UI, no /_debug, and no ServiceModule - so no accounts,
+# no auth, no database. A single container.
+#
+# This is the shape most deployments actually are, and its defining assertion is that /_health answers 200 with
+# an EMPTY Features array. Features only ever lists SwaggerUI, ScalarUI, UIModule, ServiceModule, RateLimiter
+# and DebugEndpoint - HealthChecks and PackingLogs are not features - so empty is the positive proof that
+# health is on and nothing else is, in one request that can fail in both directions.
+#
+# It mounts its own Presets.json, which the shipped image does not contain. That is the point: reading a
+# preset that only exists in the mounted file proves the config-mount path works, which no default preset
+# could. `service` is the same deployment with ServiceModule added.
 
 configs:
-  # ServiceModule validates these at startup and will not boot without them. Smoke-only secret.
-  jwt_auth:
-    content: |
-      {
-        "JwtAuth": {
-          "Issuer": "https://localhost:8080",
-          "Audience": "https://localhost:8080",
-          "TokenSecret": "ThisIsAVerySecretKeyMeantToBeStoredSecurelyAndNotLikeThisSoPleaseChangeIt",
-          "ExpirationInSeconds": 3600
-        }
-      }
+  # Deliberately not the shipped presets - the assertion is that this file was read, not that the image has
+  # defaults. A real deployment replaces this file with its own bin set, which is the first thing an
+  # integrator does.
+  custom_presets:
+    file: ./prod-presets.json
 
 services:
   binacle-net:
-    image: binacle-net:local
+    image: ${BINACLE_IMAGE:-binacle-net:local}
     ports:
       - "8080:8080"
     configs:
-      - source: jwt_auth
-        target: /app/Config_Files/ServiceModule/JwtAuth.json
+      - source: custom_presets
+        target: /app/Config_Files/Presets.json
     environment:
-      - SWAGGER_UI=True
-      - SCALAR_UI=True
-      - SERVICE_MODULE=True
+      # SWAGGER_UI, SCALAR_UI, UI_MODULE, SERVICE_MODULE and DEBUG_ENDPOINT are all deliberately unset. That
+      # off-state is what this profile tests, and it is what a deployment behind your own backend wants: the
+      # fewest public surfaces that still answers and still reports its health.
       - HealthChecks__Enabled=True
       - PackingLogs__Enabled=True
-      # UI_MODULE and DEBUG_ENDPOINT are deliberately unset - that off-state is what this profile tests.
-      - SQLITE_CONNECTION_STRING=Data Source=/app/data/binacle-net-service.db;
-      # A smoke concern, not a shipped default: the anonymous limit decays over an hour, so repeat runs would go
-      # red with 429s. Presence is packaging, the number is behaviour.
-      - RateLimiter__ApiUsageAnonymous=SlidingWindow::100000/3600-30
     volumes:
+      # Packing logs write here, so this profile is not stateless. Thrown away on teardown.
       - app_data:/app/data/
 
 volumes:

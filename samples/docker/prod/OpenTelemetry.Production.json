@@ -1,0 +1,12 @@
+{
+  "OpenTelemetry": {
+    "Otlp": {
+      "Enabled": true,
+      "Endpoint": "http://aspire-dashboard:18889"
+    },
+    "AzureMonitor": {
+      "Enabled": false,
+      "ConnectionString": ""
+    }
+  }
+}

@@ -43,7 +43,7 @@ table of [README.md](README.md).
 
 | File | Description |
 |---|---|
-| [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: the test, coverage, openapi, agents, serve, build and image modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state |
+| [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: the test, coverage, openapi, agents, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state |
 
 ## Docs Site
 
@@ -83,7 +83,7 @@ table of [README.md](README.md).
 
 | File | Description |
 |---|---|
-| [samples/README.md](samples/README.md) | Deployment samples — Docker Compose (minimal, ui, service-npgsql, service-azure) and Kubernetes (minimal); feature flags, config wiring, and the keep-in-sync rule |
+| [samples/README.md](samples/README.md) | Deployment samples — Docker Compose (minimal, quickstart, prod, service, full) and Kubernetes (minimal); each folder name is a smoke profile name, feature flags, config wiring, and the keep-in-sync rule |
 
 ## Shared
 

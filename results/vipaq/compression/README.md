@@ -3,7 +3,8 @@
 How small ViPaq encodes, against protobuf under matched codecs. Produced by
 `vipaq/test/Binacle.ViPaq.PerformanceTests`, which writes its run to a build-local `PerformanceTests.Artifacts`
 folder (gitignored scratch). These files are the **hand-curated** baseline — to record a run, diff the scratch
-output against them and copy it in on a win (`.agents/docs/vipaq/decisions.md` D3).
+output against them and copy it in on a win. Only a win gets promoted, so these are the best measured sizes,
+not the most recent run.
 
 | File | What it shows |
 |---|---|

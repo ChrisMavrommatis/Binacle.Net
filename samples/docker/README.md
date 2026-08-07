@@ -1,58 +1,44 @@
 # Docker Compose Samples
-This folder provides sample configurations to run Binacle.Net with Docker Compose, showcasing different features and modules.
-You can choose the setup that fits your needs, from basic API functionality to full-featured setups.
 
-## 📦 Available Samples
+Five configurations, from nothing switched on to everything. Pick the one that matches what you are doing, copy
+the folder, and change `Presets.json` to your own bin set.
 
-### 1️⃣ Minimal Setup
-This sample demonstrates a minimal Docker Compose setup for Binacle.Net with essential features.
+| Sample | Use it when | Modules on |
+|---|---|---|
+| [minimal](minimal) | You want the smallest thing that answers | none |
+| [quickstart](quickstart) | You are trying Binacle.Net out for the first time | docs + web UI |
+| [prod](prod) | **Your own backend calls the API** | health checks, packing logs |
+| [service](service) | **Callers you do not control reach the API directly** | + docs, accounts, JWT auth, rate limiting, a database |
+| [full](full) | You want to see everything it can do, on a machine nobody else can reach | everything, including `/_debug` |
 
-**Directory**: `samples/docker/minimal-setup`
+## Which of prod and service?
 
-Key Features:
-- Basic API functionality
-- Lightweight configuration for easy setup and testing
-- Customizable bin configurations via Presets.json
+This is the choice that matters, and it is not about how big your deployment is.
 
+**`prod`** is the API sitting behind your own backend. Your server calls it, so it needs no accounts, no tokens
+and no database - and every surface you do not enable is one you do not have to defend. Most deployments are
+this.
 
-### 2️⃣ UI Setup
-A sample focused on running Binacle.Net with all the UI features. 
-This setup is ideal for users interacting with Binacle.Net for the first time or for demo purposes.
+**`service`** is Binacle.Net offered to other people. That is what ServiceModule is: accounts, JWT auth,
+per-caller rate limiting, and storage to keep them in. Take it when callers you do not control reach the API
+directly.
 
-**Directory**: `samples/docker/ui-setup`
+If you are unsure, start with `prod`. Adding ServiceModule later is a flag and a connection string.
 
-Key Features:
-- UI Module for interactive demos
-- Swagger & Scalar UI for API exploration
-- Customizable bin configurations via Presets.json
+## `full` is not a deployment
 
+It switches on `DEBUG_ENDPOINT`, which mounts `/_debug`. That endpoint echoes the caller's entire request back
+to them, including their `Authorization` header. It is on there so you can see what it does. Do not put that
+configuration anywhere other people can reach.
 
-### 3️⃣ Service Npgsql
-An as a Service sample with PostgreSQL as the database backend and the UI Module enabled for a user-friendly interface.
+## About the image tag
 
-**Directory**: `samples/docker/service-npgsql`
+Every sample pins `binacle/binacle-net:3.0` - the minor tag. It picks up fixes within the 3.0 line and never a
+breaking change. `latest` follows the newest release across majors, which is right for trying things out and
+wrong for anything you keep.
 
-Key Features:
-- Full Service Module functionality
-- PostgreSQL database backend
-- UI Module for easy interaction
-- Swagger & Scalar UI for API exploration
-- Customizable bin configurations via Presets.json
-- Health Checks
-- Packing Logs
+## These shapes are tested
 
-### 4️⃣ Service Azure
-An as a Service sample with Azure services as the database backend and the UI Module enabled for a user-friendly interface.
-
-**Directory**: `samples/docker/service-azure`
-
-Key Features:
-- Full Service Module functionality
-- Azure services as the database backend
-- UI Module for easy interaction
-- Swagger & Scalar UI for API exploration
-- Customizable bin configurations via Presets.json
-- Health Checks
-- Packing Logs
-- OpenTelemetry for monitoring
-- Aspire Dashboard for real-time metrics
+Each sample has a matching profile under `config/smoke/` with the same name, run against the image on every
+release. So these are configurations that are checked, rather than ones nobody runs. If you change which
+modules a sample turns on, change its profile too.

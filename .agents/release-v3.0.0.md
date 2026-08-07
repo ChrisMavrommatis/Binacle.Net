@@ -142,17 +142,31 @@ pushed. It is deliberate - a versioned page should pin the spec it describes - b
 ~~**B4 covers two documents.**~~ Done 2026-08-06 - `v3.json` and `v4.json` both generated, no `/api/auth/token`
 path, v4 carries the experimental banner. Handed to the docs session.
 
-- [ ] **B5 - the sample image pins.** The five samples pin `2.1.1` today. Bump them to **`3.0`** (the minor tag,
-  not `3.0.0`) in the **last change before the tag** - not earlier, or they name an image that does not exist for
-  as long as that change sits on `main`. Files are `samples/docker/*/docker-compose.yml` and
-  `samples/kubernetes/minimal-setup/binacle-deployment.yaml`; the standing rule is in the samples doc. Read A2's
-  answer first: if the beta published a `3.0` tag, that is fixed before this bump, or the samples point at a
-  prerelease.
+- [x] **B5 - the sample image pins.** Done 2026-08-07, but **earlier than this item intended** - read the caveat.
+  All six samples now pin **`3.0`** (the minor tag, not `3.0.0`): `samples/docker/*/docker-compose.yml` and
+  `samples/kubernetes/minimal/binacle-deployment.yaml`. A2 confirmed the beta published no `3.0` tag, so nothing
+  points at a prerelease.
 
-- [ ] **B6 - Azure Storage.** CI covers SQLite and Postgres only, so the Azure provider ships on trust even
-  though `samples/docker/service-azure` points users at it. It stays in this release; removal is a later idea.
-  The cheap cover is one deliberate run before tagging: bring up Azurite with
-  `just serve services -d`, then `just test api-service-integration AzureStorage`.
+  **The caveat.** This item said to bump in the last change before the tag, because a bump sitting on `main`
+  names an image that does not exist. That still holds and is now live: `3.0` appears on Docker Hub only when
+  v3.0.0 is published. The pins moved early because the samples were restructured in the same pass and the new
+  ones (`prod`, `service`, `full`) document v3-only settings - forwarded headers, `RetentionDays`, the
+  ServiceModule split - so pinning `2.1.1` would have been wrong in a different and worse way. **Do not leave
+  this on `main` long before tagging.**
+
+  The five samples are also no longer the same five. `minimal-setup` -> `minimal`, `ui-setup` -> `quickstart`,
+  `service-npgsql` and `service-azure` folded into one `service` carrying all three connection strings, plus new
+  `prod` and `full`. Every folder name is now a smoke profile name, so `just smoke` runs each shipped shape.
+
+- [ ] **B6 - Azure Storage.** CI covers SQLite and Postgres only, so the Azure provider ships on trust. The
+  cheap cover is one deliberate run before tagging: bring up Azurite with `just serve services -d`, then
+  `just test api-service-integration AzureStorage`.
+
+  **This got more important on 2026-08-07, not less.** The old justification was that `samples/docker/service-azure`
+  points users at the provider, so it earns its place. That sample is gone - folded into `service`, where Azure
+  is now one commented connection string among three. So Azure ships with no dedicated sample, no CI coverage
+  and no smoke profile (smoke is SQLite-only by design). This one run is the only thing standing behind it.
+  It stays in this release; removal is a stronger idea than it was.
 
 - [ ] **B7a - v4 is still experimental.** `ApiV4Document.IsExperimental` was set `true` on 2026-07-25, so the
   published OpenAPI document carries the warning that v4 may change at any time. Check it is still `true` before
@@ -236,7 +250,11 @@ is docs plus the four small pre-tag items.
 9. **B5 as the last change before the tag**, then tag `v3.0.0`. `release-docker-image.yml` publishes the final
    image on `release: published`. A2 confirmed no `3.0` tag exists yet, so the bump is safe.
 10. Paste `release-notes-v3.0.0.md` into the release body, with all four breaking changes in it (B7b).
-11. Work `post-release-v3.0.0.md`.
+11. **Smoke the published image before announcing anywhere:** `just smoke all binacle/binacle-net:3.0.0`. The
+    release workflow pushes without smoking - wiring that in is Gate 5 of `ci-gates` and is not done - so this
+    manual run is the only thing between a broken image and the people who pull it. It takes about a minute and
+    needs nothing brought up. The same command passed against `3.0.0-beta.1` on 2026-08-07.
+12. Work `post-release-v3.0.0.md`.
 
 ## Not in this release
 

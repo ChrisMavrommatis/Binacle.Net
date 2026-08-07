@@ -30,17 +30,19 @@ in the same change, leaving the text.
 | 7 | Refresh the curated lib benchmark ledger | [lib/benchmark-ledger](plans/lib/benchmark-ledger.md) | The committed numbers describe code that no longer exists after the geometry migration. Do not quote them until then. |
 | 8 | Grow the shared TestsKernel fixture cases | [shared/testskernel-data-extraction](plans/shared/testskernel-data-extraction.md) | Result selection has one baseline per case, and ViPaq's compression crossover is still provisional. |
 
+**The image smoke suite is done, not pending.** It was listed here as a candidate; it was built, run green
+against the published beta and its plan deleted on 2026-08-07 - 31 structure assertions and all five profiles
+(`minimal`, `quickstart`, `prod`, `service`, `full`). `just smoke all [image]` is the command, and it takes a
+published tag - run it against `binacle/binacle-net:3.0.0` once the release image is up, which is the cheapest
+confirmation that what shipped is what was tested. That run is now step 11 of the sequence in the release file,
+because until Gate 5 of [ci-gates](plans/ci-gates.md) wires it into the release workflow, nothing else checks
+the image that people actually pull.
+
 ## Ideas worth a look once this is out
 
 The one place a release file may point at `ideas/`. These are unvetted and unscheduled - listed because the
 release makes each one more interesting than it was, not because they are committed.
 
-- [plans/api/smoke-testing-the-image.md](plans/api/smoke-testing-the-image.md) - the beta was the first time the
-  image ran anywhere, by hand, and v3.0.0's verification was manual again. A smoke test is how that stops being
-  a ritual. **Note this one is a plan, not an idea** - it is designed, with the OCI label prerequisite already
-  done, and only the suite is unbuilt. The link here said `ideas/` and pointed at nothing (fixed 2026-08-06).
-  Being designed rather than unvetted, it arguably belongs in the numbered table above rather than in this
-  section - that is a scheduling call, not a filing one.
 - [ideas/api/openapi-spec-followups.md](ideas/api/openapi-spec-followups.md) - v4 is experimental for the whole
   3.0.x line, so spec changes are cheapest right now.
 - [ideas/api/reduce-integration-friction.md](ideas/api/reduce-integration-friction.md) - this release asks every

@@ -79,9 +79,41 @@ here from `ci-shared-scripts`, which owns moving commands into recipes, not deci
 - It currently reports two `oas3-api-servers` warnings and no errors. Decide whether the gate fails on
   warnings before turning it on, or it goes green with known noise and stops being read.
 
+## Gate 5 - smoke the image in the release workflow
+
+Moved here 2026-08-07 when `api/smoke-testing-the-image.md` was deleted. **The suite is built, green and
+proven** - `just smoke all binacle/binacle-net:3.0.0-beta.1` passed 31 structure assertions and all five
+profiles against the published beta. Nothing about it is unfinished. What is left is wiring, and it belongs
+here because the blockers are in the workflow, not the suite.
+
+Note this one goes in the **release** workflow, not the PR gate. Local by hand first; a gate nobody trusts gets
+disabled. The suite is already CI-ready as it stands: pinned binaries, non-zero exit on failure, JUnit output.
+
+- **`release-docker-image.yml` uses `build-push-action` with `push: true` and no `load:`,** so the image
+  never lands in the runner's daemon and **there is nothing to smoke.** Needs `load: true` first - cheap, one
+  platform.
+- **The workflow inlines its own `dotnet restore` + `dotnet publish`,** duplicating `build.just`. They match
+  today by coincidence. Until the workflow builds via `just build publish`, the smoke path and the release path
+  build the image two different ways and a green smoke says little about what shipped. This is the same blocker
+  as Gate 1 and it is **worth more than either gate** - it is in `ci-shared-scripts`.
+
+The path once those are fixed: install the two binaries the way `DEVELOPMENT.md` documents, build with
+`load: true`, run `just smoke test-structure <image>`, then `just smoke test <profile> <image>` for each of
+`minimal`, `quickstart`, `prod`, `service` and `full`. Push only if green.
+
+**All five profiles are one container each** - checked 2026-08-07 with `docker compose config --services`. There
+is no reason to stage them: `service` and `full` use SQLite in a named volume, so no profile brings up a
+database, and the whole suite is under ten seconds of container time. Every recipe takes the image as its last
+argument, so CI passes the tag it just built and never touches `just smoke all`, which would rebuild.
+
+**On a runner newer than noble, check hurl first.** It links `libxml2.so.2`, which Ubuntu 26.04 dropped -
+`DEVELOPMENT.md` has the detail and the workaround. A runner that moves off noble breaks this gate in a way
+that reads as a hurl bug rather than a distro change.
+
 ## Done when
 
 - A PR that breaks the image build fails before it merges.
 - The integration suites run against the module set the image ships, and the three TODOs are gone.
 - A PR gets a coverage number and a Sonar verdict without anyone pressing a button.
 - A PR that breaks the OpenAPI documents fails on the spec standards, not in review.
+- A release that would ship a broken image fails before it is pushed, without anyone running the smoke by hand.

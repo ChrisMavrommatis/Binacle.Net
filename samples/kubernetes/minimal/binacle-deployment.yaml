@@ -1,0 +1,37 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: binacle-net
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: binacle-net
+  template:
+    metadata:
+      labels:
+        app: binacle-net
+    spec:
+      containers:
+        - name: binacle-net
+          # Pinned on purpose - a copied sample must not jump to a new major on the next pull.
+          image: binacle/binacle-net:3.0
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: presets-volume
+              mountPath: /app/Config_Files/Presets.json
+              subPath: Presets.json
+              readOnly: true
+            - name: data-volume
+              mountPath: /app/data
+      volumes:
+        - name: presets-volume
+          configMap:
+            name: binacle-presets
+            items:
+              - key: Presets.json
+                path: Presets.json
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: binacle-data-pvc

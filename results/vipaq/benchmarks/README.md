@@ -6,6 +6,6 @@ its own build-local `BenchmarkDotNet.Artifacts`; copy the reports worth keeping 
 `results/lib/benchmarks/`.
 
 **Empty for now.** The size numbers are measured (see [../compression/](../compression/)), but the compression
-*time* has not been run yet — the one open cell in the codec race
-(`.agents/plans/vipaq/codec-race.md`, Table 3). Drop the first reports here when that run lands, following the
-scratch-vs-curated convention in the [parent README](../../README.md).
+*time* has not been run yet — so which codec is fastest, as opposed to smallest, is still an open question.
+Drop the first reports here when that run lands, following the scratch-vs-curated convention in the
+[parent README](../../README.md).

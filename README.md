@@ -12,6 +12,10 @@ Simply execute the following command in your terminal:
 ```bash
 docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -e UI_MODULE=True -e SCALAR_UI=True binacle/binacle-net:latest
 ```
+
+> `latest` follows the newest release, and a new major version can break your integration. It is the right tag
+> for trying Binacle.Net out. **Pin a version for anything you keep** - `binacle/binacle-net:3.0` tracks fixes
+> within the 3.0 line without ever changing behaviour under you.
 ### 🌐 Access the Interface
 - Swagger UI (API Documentation): http://localhost:8080/swagger/
 - Scalar UI (Alternative to Swagger): http://localhost:8080/scalar/
@@ -39,6 +43,19 @@ Start exploring Binacle.Net now! 🚀
 ```
 
 Each slice folder has its own `README.md` with details.
+
+## 🛠️ Building from source
+
+You need the .NET SDK, Node, Ruby, `just` and - for the container image only - Docker.
+**[DEVELOPMENT.md](DEVELOPMENT.md)** has the versions, the pin files and the install commands.
+
+```bash
+just install                     # npm workspaces, both sites' gems, then the asset copy
+just test all                    # every suite that needs nothing brought up
+just build image                 # publish, then tag binacle-net:local
+```
+
+`just` with no arguments lists every task.
 
 ## 📄 License
 

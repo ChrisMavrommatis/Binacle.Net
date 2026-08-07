@@ -1,5 +1,9 @@
 name: binacle-smoke-full
 
+# Paired with samples/docker/full/ - the same configuration, written to be copied. Different files on
+# purpose: the sample pins a published image, while this one runs the image under test and carries tweaks a
+# user must never inherit. Change the modules here and change them there too.
+
 # Smoke profile `full` - the dev/demo shape the shipped example stacks turn on, plus DEBUG_ENDPOINT. Everything
 # is on: the web UI serves and /_debug is deliberately 200. One backend (SQLite), JwtAuth injected, anonymous
 # rate limit raised.
@@ -18,7 +22,7 @@ configs:
 
 services:
   binacle-net:
-    image: binacle-net:local
+    image: ${BINACLE_IMAGE:-binacle-net:local}
     ports:
       - "8080:8080"
     configs:

@@ -1,0 +1,22 @@
+{
+	"PresetOptions": {
+		"Presets": {
+			"smoke-lockers": {
+				"Bins": [
+					{
+						"ID": "SmokeSmall",
+						"Length": 30,
+						"Width": 20,
+						"Height": 10
+					},
+					{
+						"ID": "SmokeLarge",
+						"Length": 60,
+						"Width": 40,
+						"Height": 30
+					}
+				]
+			}
+		}
+	}
+}

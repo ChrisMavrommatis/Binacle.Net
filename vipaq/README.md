@@ -34,7 +34,7 @@ Every dimension and coordinate must be in `[0, 65,535]`. Encoding a value above 
 ## More
 
 - The format, in full — [PROTOCOL.md](PROTOCOL.md)
-- How the two implementations are held to it — `test-vectors/README.md`
-- How the projects reference each other and who can see internals — `../.agents/docs/vipaq/dependencies.md`
+- How the two implementations are held to it — [test-vectors/README.md](test-vectors/README.md)
 
-Design rationale and maintainer notes live under `../.agents/`. None of it is normative; `PROTOCOL.md` is.
+**[PROTOCOL.md](PROTOCOL.md) is the only normative document.** Where anything else in the repo disagrees with
+it, the protocol wins and the other file is wrong.
