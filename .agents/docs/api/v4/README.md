@@ -1,7 +1,7 @@
 ---
 id: api/v4
 description: v4 API — active development. Endpoints, algorithm selection, parameters, contracts, and response shape.
-verified: 2026-07-25
+verified: 2026-08-08
 check: Endpoint table matches files in api/src/Binacle.Net/v4/Endpoints/; IsExperimental in ApiV4Document.cs matches what this says
 also_update:
   - api/v4/contracts
@@ -92,7 +92,9 @@ To add an endpoint, follow `$api/v4/add-endpoint`.
 
 ## Algorithm Selection
 
-Required. Use `Best` to auto-select the best result across all algorithms (FFD, WFD, BFD).
+Required. `Best` runs more than one heuristic and keeps the best result — **all three (FFD, WFD, BFD) on
+`fit/bin` and `pack/bin`, FFD plus BFD on every other route.** It is not all three everywhere; the wording in
+`v4/SchemaDescriptions.cs` (`Algorithm`) is the one that ships, and the docs site repeats it.
 `GetAlgorithm()` maps `Best` → `null` internally, which triggers the multi-algorithm path.
 Any other value picks a specific algorithm. You cannot omit the field — null fails the `NotNull()` validator.
 
