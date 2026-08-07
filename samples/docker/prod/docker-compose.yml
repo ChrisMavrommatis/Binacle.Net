@@ -8,9 +8,10 @@ name: binacle-net-prod
 
 services:
   binacle-net:
-    # Pinned on purpose - a copied sample must not jump to a new major on the next pull. The minor tag picks up
-    # fixes within the 3.0 line and never a breaking change.
-    image: binacle/binacle-net:3.0
+    # Pinned on purpose - a copied sample must not jump to a new major on the next pull. Pinned to the beta
+    # patch for now because binacle/binacle-net:3.0 does not exist on Docker Hub yet - move to the 3.0 minor
+    # tag once v3.0.0 is published.
+    image: binacle/binacle-net:3.0.0-beta.1
     ports:
       - "8080:8080"
     volumes:

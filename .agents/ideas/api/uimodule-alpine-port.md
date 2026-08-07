@@ -1,10 +1,17 @@
 # Idea: UIModule — port from Blazor reactivity to Alpine.js
 
 **Status:** Unvetted idea — no committed timeline or priority. Detailed below because the ground was already
-scouted, not because it's scheduled. **The "Current State" section was written 2026-05-26 and its build part was
-wrong — re-verified against the code 2026-07-08 and corrected. Re-check before trusting any path here.**
+scouted, not because it's scheduled.
+
 **Goal:** Replace Blazor Interactive Server reactivity with Alpine.js so `packages/binacle-net-ui`
 is the single source for the packing demo UI — shared between `web/` and `UIModule`.
+
+**Accuracy.** The build section was written 2026-05-26 and got four things wrong; it was re-verified against the
+code on 2026-07-08 and the corrections are recorded inline where they belong — the blockquote under "Build
+Pipeline Detail", and open question 4. Spot-checked again 2026-08-07: no webpack config in the package, no build
+scripts, no `src/index.ts`, `packingDemo.ts` still calls v3 at line 127, and the Three.js skew is still real.
+One drift found and fixed below: the package now also depends on `binacle-vipaq`. Treat the paths here as good,
+and re-check anything the build touches — it is the part that moved before.
 
 ## Why
 
@@ -81,9 +88,9 @@ The key decision: **how does the UIModule bundle get built and land in `wwwroot/
 >    `web/webpack.config.js` (`test: /[\\/]packages[\\/]binacle-net-ui[\\/]/`, priority 20). The real entries are
 >    `web/_js/{main,packing_demo,protocol_decoder}.js`. It has no `libraryTarget`, so it is a code-split chunk,
 >    not a consumable library — you cannot "add a second output" beside it.
-> 3. **The package has no `scripts` and no build deps.** `package.json` lists only `alpinejs` + `three` as
->    dependencies and the two `@types` as devDependencies. No webpack, no ts-loader. So `npm run build:uimodule`
->    has nothing to run and the MSBuild `<Exec>` below has no target.
+> 3. **The package has no `scripts` and no build deps.** `package.json` lists `alpinejs`, `three` and
+>    `binacle-vipaq` as dependencies and the two `@types` as devDependencies. No webpack, no ts-loader. So
+>    `npm run build:uimodule` has nothing to run and the MSBuild `<Exec>` below has no target.
 > 4. **There is no `src/index.ts`.** The entry points are `src/packingDemoPlugin.ts` and
 >    `src/protocolDecoderPlugin.ts`.
 

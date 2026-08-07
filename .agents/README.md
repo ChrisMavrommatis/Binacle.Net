@@ -12,7 +12,8 @@ reviewable. Read this first to know where things are.
 | `plans/` | Work not yet done — designs, TODOs, migrations, deferred decisions. | Find the plan in `plans/_index.md`. Trim/delete an item once it lands. |
 | `ideas/` | Rough, unvetted ideas — no commitment, no timeline. | Find the idea in `ideas/_index.md`. Move it to `plans/` once it's picked up (`ideas/README.md` says how). |
 | `memory/` | Durable "why" with no home in a doc or plan — gotchas, settled decisions, conventions. | Scan `memory/_index.md` at session start. Add a fact only if no doc/plan fits (`memory/README.md` says how). |
-| `release-v<version>.md` (+ companions) | The per-version release set, at root: the release plan, plus `release-notes-v<version>.md` (the GitHub release body) and `post-release-v<version>.md` (right-after-release work). | When cutting a release. Deleted once the version is out. |
+| `board.md` | **Where work is picked from.** Every plan, idea and one-liner not tied to a release, grouped by theme and then by readiness. Permanent — releases come and go underneath it. | Start here when choosing what to work on next. |
+| `release-v<version>.md` (+ companions) | The per-version release set, at root: the release plan, plus `release-notes-v<version>.md` (the GitHub release body) and `post-release-v<version>.md` (right-after-release work). | When cutting a release. The first two are deleted once the version is out; the post-release list goes when its own items are done. |
 
 Nothing here is loaded into the session up front — `CLAUDE.md` only points at this file, and you open
 what you need on demand. `docs/`, `design/`, `plans/`, `ideas/`, and `memory/` each have a generated `_index.md`
@@ -42,9 +43,17 @@ not to eagerly load unrelated context. Keep a new doc/plan/idea in its slice fol
 - **memory = the leftover why.** Not product behaviour (that's docs) and not future work (that's plans).
   Durable but mutable — it can change. One fact per file. If a memory's fact moves into a doc/plan,
   delete the memory.
+- **`board.md` = what to work on.** At root, permanent, and the answer to "what next". It groups every plan,
+  idea and one-liner by theme and then by readiness (`ready` / `blocked` / `deferred` / `in progress`), and it
+  names what each blocked item waits on. It is a **pointer surface, never a container** — the work itself stays
+  in the plan or idea file. Agents keep it current, but **an agent does not decide placement or priority on its
+  own**: adding a row you were told to record is fine, judging something "ready" and ranking it is the
+  maintainer's call.
 - **the `release-v<version>` set = shipping.** At root, one set per version: the plan, its notes, and the
-  post-release list. The plan is the **one exception** to the reference rules — it may point at any file to
-  coordinate the release, and nothing points back at it. Deleted once the version ships.
+  post-release list. The plan is an exception to the reference rules — it may point at any file to coordinate
+  the release, and nothing points back at it. The plan and notes are deleted once the version ships; the
+  post-release list is deleted when its own items are done, not by the tag. That list holds only what must
+  happen **because** the release shipped — standing work belongs on the board.
 
   **The release plan is an orchestrator, not a container.** It carries gated checklists — what must be green
   before a beta image, and before the tag — where each row either links to a plan that holds the whole item, or
@@ -82,12 +91,14 @@ and notes that come and go (`plans`, `ideas`, `memory`). Two rules keep the laye
 | **ideas** (ephemeral) | code, READMEs — **nothing under `.agents/`** | docs, design, plans, ideas, memory | Future maybes. Become a plan when picked up. |
 | **memory** (ephemeral) | ideally nothing — a doc or design only if it truly must | plans, ideas, memory | Rules/conventions that can stop being true. |
 | **`.agents/README.md`** (the map) | any file, as navigation | — | The one global map. The only exempt README. |
+| **`board.md`** (the work map) | any plan, idea or todo, as navigation | docs, design, memory | Permanent file, entirely ephemeral contents. Nothing points at it. |
 | **slice READMEs** (per layer) | its own layer's rules — a `docs/` README references only docs | same as its layer | Describe, rule, and index their own folder. |
 
 What falls out of these rules:
 
 - **Nothing points at a plan, idea, or memory** — not even a README section that lists them survives as a live
-  `$` link; navigation names them, it does not cite them. They vanish; incoming links dangle.
+  `$` link; navigation names them, it does not cite them. They vanish; incoming links dangle. The board is the
+  standing exception, and it pays for it with a rule: a landed plan is ticked and unlinked in the same change.
 - **Ideas and plans are self-contained.** They cite **no `$` reference at all** — not a doc, not a design, not
   each other. Name the area in plain words ("the ServiceModule doc") and inline any fact you need. A plan or idea
   is a scratchpad that gets deleted; a `$` reference out of one is a maintenance debt for a file that will not
@@ -100,6 +111,9 @@ What falls out of these rules:
 - **The release set is the second exception.** `release-v<version>.md` and its `post-release` / notes
   companions coordinate a release, so the plan may point at any file — but, like the map, **nothing points at
   it**. It is version-scoped and deleted once shipped.
+- **`board.md` is the third.** It is a permanent file whose contents are entirely ephemeral — that is the
+  point, and it is why it is exempt rather than an accident. Like the map and the release set, **nothing points
+  at it**. It is the only permanent file allowed to link an idea.
 - **A layer's own `_index.md` is navigation, not citation.** It lists its folder's files by name so they can be
   found; that is what an index is for, and it is regenerated, not maintained by hand.
 

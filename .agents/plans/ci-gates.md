@@ -7,10 +7,18 @@ ordering, so the shared parts were being written three times.
 Three gates, one story: **the PR gate is green without proving much.** The image is never built, the integration
 suites run core modules only, and Sonar runs when somebody remembers. Each gate below closes one of those.
 
+**Two gates moved out on 2026-08-07, and this file is back to the three it folded.** Linting the OpenAPI
+documents is one workflow step with a known answer, so it is a line in `todos.md`. Smoking the image runs in
+the release workflow rather than on a PR, so it moved to `ci-release-workflow-build`, which owns that file.
+Neither shared the checkout, the ordering or the runtime budget below - that is what made this file too big to
+finish in one sitting.
+
 ## What they share
 
-- **`ci-shared-scripts` lands first.** Every gate here calls a recipe rather than inlining its own commands, and
-  the image gate is blocked outright until the build/image split in that plan is done (see the image gate).
+- **`ci-release-workflow-build` lands first.** Every gate here calls a recipe rather than inlining its own
+  commands. The build/image split it used to wait on has landed, so no gate is blocked outright any more - but
+  until the release workflow builds through the same recipe, the image and smoke gates prove less than they
+  look like they prove. Both say so in their own sections.
 - **One job or three?** All three want a checkout and an SDK setup. Folding them into `run-tests.yml` pays for
   that once; separate workflows can each run on a schedule as well. Decide once, for all three, rather than per
   gate - that choice is most of why these were folded.
@@ -32,7 +40,7 @@ builds the solution and runs every suite on each PR; it does not build the image
 **Unblocked.** The split landed: the gate step is `just build image` (`config/build.just`), which publishes and
 builds with no push, no `sudo` and nothing interactive. The release workflow still inlines its own publish, so
 until it calls `just build publish` too, the gate proves the recipe builds - not that the release path does.
-That wiring is in `ci-shared-scripts`.
+That wiring is in `ci-release-workflow-build`.
 
 ## Gate 2 - run the integration tests with all modules enabled
 
@@ -69,51 +77,8 @@ the problem.
   first analysis after that change will show a step up in the number. It is a correction, not an improvement
   anyone made to the code - **do not set the ratchet from the old figure.**
 
-## Gate 4 - lint the OpenAPI documents on every PR
-
-The spec standards are enforced by whoever remembers to run Spectral. `just openapi lint` is one call that
-generates the documents itself and needs nothing brought up, so this is the cheapest gate of the four - moved
-here from `ci-shared-scripts`, which owns moving commands into recipes, not deciding what CI runs.
-
-- One step: `just openapi lint`.
-- It currently reports two `oas3-api-servers` warnings and no errors. Decide whether the gate fails on
-  warnings before turning it on, or it goes green with known noise and stops being read.
-
-## Gate 5 - smoke the image in the release workflow
-
-Moved here 2026-08-07 when `api/smoke-testing-the-image.md` was deleted. **The suite is built, green and
-proven** - `just smoke all binacle/binacle-net:3.0.0-beta.1` passed 31 structure assertions and all five
-profiles against the published beta. Nothing about it is unfinished. What is left is wiring, and it belongs
-here because the blockers are in the workflow, not the suite.
-
-Note this one goes in the **release** workflow, not the PR gate. Local by hand first; a gate nobody trusts gets
-disabled. The suite is already CI-ready as it stands: pinned binaries, non-zero exit on failure, JUnit output.
-
-- **`release-docker-image.yml` uses `build-push-action` with `push: true` and no `load:`,** so the image
-  never lands in the runner's daemon and **there is nothing to smoke.** Needs `load: true` first - cheap, one
-  platform.
-- **The workflow inlines its own `dotnet restore` + `dotnet publish`,** duplicating `build.just`. They match
-  today by coincidence. Until the workflow builds via `just build publish`, the smoke path and the release path
-  build the image two different ways and a green smoke says little about what shipped. This is the same blocker
-  as Gate 1 and it is **worth more than either gate** - it is in `ci-shared-scripts`.
-
-The path once those are fixed: install the two binaries the way `DEVELOPMENT.md` documents, build with
-`load: true`, run `just smoke test-structure <image>`, then `just smoke test <profile> <image>` for each of
-`minimal`, `quickstart`, `prod`, `service` and `full`. Push only if green.
-
-**All five profiles are one container each** - checked 2026-08-07 with `docker compose config --services`. There
-is no reason to stage them: `service` and `full` use SQLite in a named volume, so no profile brings up a
-database, and the whole suite is under ten seconds of container time. Every recipe takes the image as its last
-argument, so CI passes the tag it just built and never touches `just smoke all`, which would rebuild.
-
-**On a runner newer than noble, check hurl first.** It links `libxml2.so.2`, which Ubuntu 26.04 dropped -
-`DEVELOPMENT.md` has the detail and the workaround. A runner that moves off noble breaks this gate in a way
-that reads as a hurl bug rather than a distro change.
-
 ## Done when
 
 - A PR that breaks the image build fails before it merges.
 - The integration suites run against the module set the image ships, and the three TODOs are gone.
 - A PR gets a coverage number and a Sonar verdict without anyone pressing a button.
-- A PR that breaks the OpenAPI documents fails on the spec standards, not in review.
-- A release that would ship a broken image fails before it is pushed, without anyone running the smoke by hand.

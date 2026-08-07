@@ -143,16 +143,20 @@ pushed. It is deliberate - a versioned page should pin the spec it describes - b
 path, v4 carries the experimental banner. Handed to the docs session.
 
 - [x] **B5 - the sample image pins.** Done 2026-08-07, but **earlier than this item intended** - read the caveat.
-  All six samples now pin **`3.0`** (the minor tag, not `3.0.0`): `samples/docker/*/docker-compose.yml` and
-  `samples/kubernetes/minimal/binacle-deployment.yaml`. A2 confirmed the beta published no `3.0` tag, so nothing
-  points at a prerelease.
+  All six samples originally moved to pin **`3.0`** (the minor tag, not `3.0.0`): `samples/docker/*/docker-compose.yml`
+  and `samples/kubernetes/minimal/binacle-deployment.yaml`. A2 confirmed the beta published no `3.0` tag, so
+  nothing pointed at a prerelease - but the caveat below was not heeded, and the bump sat on `main` naming an
+  image that does not exist. **Fixed 2026-08-07**: the same six files are pinned to `binacle/binacle-net:3.0.0-beta.1`
+  instead, which does exist on Docker Hub. Bumping to `3.0` is back to being the last change before the tag - see
+  item 9 below.
 
-  **The caveat.** This item said to bump in the last change before the tag, because a bump sitting on `main`
-  names an image that does not exist. That still holds and is now live: `3.0` appears on Docker Hub only when
-  v3.0.0 is published. The pins moved early because the samples were restructured in the same pass and the new
-  ones (`prod`, `service`, `full`) document v3-only settings - forwarded headers, `RetentionDays`, the
-  ServiceModule split - so pinning `2.1.1` would have been wrong in a different and worse way. **Do not leave
-  this on `main` long before tagging.**
+  **The caveat.** This item said to bump to `3.0` in the last change before the tag, because a bump sitting on
+  `main` names an image that does not exist. That still holds: `3.0` appears on Docker Hub only when v3.0.0 is
+  published. The pins moved early the first time because the samples were restructured in the same pass and the
+  new ones (`prod`, `service`, `full`) document v3-only settings - forwarded headers, `RetentionDays`, the
+  ServiceModule split - so pinning `2.1.1` would have been wrong in a different and worse way. `3.0.0-beta.1` is
+  the fix for the same reason: real and v3-only, without naming a tag that is not there yet. **Do not leave the
+  `3.0` bump on `main` long before tagging.**
 
   The five samples are also no longer the same five. `minimal-setup` -> `minimal`, `ui-setup` -> `quickstart`,
   `service-npgsql` and `service-azure` folded into one `service` carrying all three connection strings, plus new
@@ -168,9 +172,9 @@ path, v4 carries the experimental banner. Handed to the docs session.
   and no smoke profile (smoke is SQLite-only by design). This one run is the only thing standing behind it.
   It stays in this release; removal is a stronger idea than it was.
 
-- [ ] **B7a - v4 is still experimental.** `ApiV4Document.IsExperimental` was set `true` on 2026-07-25, so the
-  published OpenAPI document carries the warning that v4 may change at any time. Check it is still `true` before
-  tagging - shipping v4 as stable would lock contracts that are meant to keep moving. The flip is 3.1.0 work.
+- [x] **B7a - v4 is still experimental.** `ApiV4Document.IsExperimental` is `true`, so the published OpenAPI
+  document carries the warning that v4 may change at any time. Re-confirm it is still `true` at tag time -
+  shipping v4 as stable would lock contracts that are meant to keep moving. The flip is 3.1.0 work.
 
 - [ ] **B7b - announce all four breaking changes** in the GitHub release body: V2 endpoints removed, ViPaq
   tokens, the flattened packing-logs configuration, and health check `RestrictedIPs`. All four are already
@@ -244,20 +248,22 @@ is docs plus the four small pre-tag items.
 6. **B2 - write the `v3.0.x` pages.** Fully unblocked: B1's answers are in, so the two new configuration pages
    document behaviour observed in a real deployment rather than assumed, and B3 and B4 have both handed over.
    This is the long pole - everything below it is small.
-7. B6, B7a.
+7. B6.
 8. **Release the docs: B2's pages plus B8** (flip `current` back to `v3.0.x`). B8 is the undo of B0 and is the
    easiest item in this file to lose - nothing fails if it is skipped, the site just silently stays on v2.1.x.
-9. **B5 as the last change before the tag**, then tag `v3.0.0`. `release-docker-image.yml` publishes the final
-   image on `release: published`. A2 confirmed no `3.0` tag exists yet, so the bump is safe.
+9. **Bump the six sample pins from `3.0.0-beta.1` to `3.0` as the last change before the tag**, then tag
+   `v3.0.0`. Re-confirm B7a - `ApiV4Document.IsExperimental` still `true` - right before tagging.
+   `release-docker-image.yml` publishes the final image on `release: published`. A2 confirmed no `3.0` tag
+   exists yet, so the bump is safe only once the tag is about to be published.
 10. Paste `release-notes-v3.0.0.md` into the release body, with all four breaking changes in it (B7b).
 11. **Smoke the published image before announcing anywhere:** `just smoke all binacle/binacle-net:3.0.0`. The
-    release workflow pushes without smoking - wiring that in is Gate 5 of `ci-gates` and is not done - so this
+    release workflow pushes without smoking - wiring that in is `ci-release-workflow-build` and is not done - so this
     manual run is the only thing between a broken image and the people who pull it. It takes about a minute and
     needs nothing brought up. The same command passed against `3.0.0-beta.1` on 2026-08-07.
 12. Work `post-release-v3.0.0.md`.
 
 ## Not in this release
 
-Everything else has a plan of its own and is listed in `post-release-v3.0.0.md` or the plans index. Do not pull
+Everything else has a plan of its own and is on `board.md`, grouped by area with its blockers named. Do not pull
 any of it in: CI work, the version stamp, the npm publishing decision, the `Parallel*` processors, migrating the
 UI clients off v3, the benchmark ledger, TestsKernel fixtures, and v4 going stable in 3.1.0.

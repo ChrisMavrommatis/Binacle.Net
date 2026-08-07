@@ -75,7 +75,7 @@ Fixed container config paths: `Presets.json` → `/app/Config_Files/Presets.json
 
 ## The image tag is pinned {#image-pin}
 
-All six samples pin `binacle/binacle-net:3.0` — `samples/docker/*/docker-compose.yml` and
+All six samples pin `binacle/binacle-net:3.0.0-beta.1` for now — `samples/docker/*/docker-compose.yml` and
 `samples/kubernetes/minimal/binacle-deployment.yaml`. Never `latest`: a sample is copied once and lives for
 years, so `latest` hands the reader the next major release on their next pull, with nothing in their config saying
 what changed.
@@ -87,5 +87,6 @@ bug fixes flow, breaking changes never do, and the pin only changes when a new m
 further ones, which is why v1.3.x and v2.x samples are pinned that way in the published docs snapshots.
 
 **`3.0` does not exist on Docker Hub until v3.0.0 is published.** The samples were rewritten to document v3-only
-settings, so pinning the old `2.1.1` would have been wrong in a different way — but it means these files point at
-an image that is not there yet. Do not leave them sitting on `main` for long before the tag.
+settings, so pinning the old `2.1.1` would have been wrong in a different way. They are pinned to
+`3.0.0-beta.1` in the meantime, which does exist, and move to the `3.0` minor tag as the last change before the
+tag - see `B5` in `release-v3.0.0.md`.

@@ -1,8 +1,24 @@
 # Integration tests: cover what the harness cannot see today
 
 **Status:** Designed, nothing built. Split out on 2026-07-29 from the smoke-testing work, because the two are
-different jobs: this one is **behaviour, in process**; the other is **packaging, in a container**. One session
-each.
+different jobs: this one is **behaviour, in process**; the other is **packaging, in a container**.
+
+## This is two sessions, and phase 1 stops before it writes anything
+
+Added 2026-08-07. The file used to say "one session each" and it was wrong about this one - it is two, and
+running them as one is how it produces the mistake it warns about below.
+
+**Phase 1 - investigate, read-only.** Answer the four questions at the bottom of this file. Write the answers
+back into this plan, replacing the guesses with what you found. **Then stop.** Do not write a test, do not
+touch a harness, do not delete a TODO. The maintainer decides the shape from your answers.
+
+**Phase 2 - build.** A later session writes the tests against a shape that is already settled, and deletes the
+`Challenge this` markers as it goes.
+
+The gate is here because the two big questions depend on each other. "One run with everything on, or a matrix?"
+cannot be answered until "how many more cross-module dependencies are there?" is answered, and that second one
+is real research. A session doing both will settle the shape early so it can get on with writing tests, which
+is exactly the failure this plan exists to avoid.
 
 ## Read this first: this file is a seed, not a spec
 
@@ -68,9 +84,10 @@ failure points at a line of C#. "Is `RateLimiter.json` in the image at all" is p
 configured origin" is behaviour. "The shipped image has no `Cors.json`, so it allows no browser origin" is
 packaging.
 
-## What to build
+## What to build - phase 2, after the gate above
 
-**Challenge this.** It is what the gap implies, written out so there is something concrete to reject.
+**Challenge this.** It is what the gap implies, written out so there is something concrete to reject. Phase 1
+does not build any of it; it decides whether this list is right.
 
 - [ ] Turn the modules on in the harnesses - Diagnostics, Service, UI - and delete the three TODOs.
 - [ ] **Decide: one run with everything on, or a small matrix over the combinations that actually ship.**
@@ -100,7 +117,7 @@ packaging.
 - **The ServiceModule harness disables the auth-token limiter on purpose.** If you turn it back on, the auth
   tests need to account for it.
 
-## Questions to come back with answers to
+## Questions to come back with answers to - this is phase 1's whole job
 
 - **One run or a matrix?** And if a matrix, which combinations - the ones the samples ship, or something
   smaller?

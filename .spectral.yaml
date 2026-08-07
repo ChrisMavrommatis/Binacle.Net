@@ -46,6 +46,22 @@ rules:
       field: description
       function: truthy
 
+  # ServiceModule paths must never appear in the generated documents. Generation runs with no launch profile
+  # (config/openapi.just), which keeps ServiceModule off; a run under a profile that turns it on produces a
+  # valid-looking document with an extra path, and that failure is silent — nobody diffs a swagger document by
+  # eye. /api/auth/token is the only ServiceModule path confirmed to leak this way: it has no WithGroupName, so
+  # ASP.NET's default rule puts it in every document. ServiceModule's other routes (/api/admin/...) declare
+  # WithGroupName("service") and stay out of v3/v4, so they are not checked here.
+  binacle-no-servicemodule-paths:
+    description: The documents must not carry ServiceModule paths - regenerate with ServiceModule off.
+    message: >-
+      '/api/auth/token' is a ServiceModule path and must not be in this document. It was generated with
+      ServiceModule on. Regenerate with 'just openapi generate' (no launch profile).
+    given: "$.paths['/api/auth/token']"
+    severity: error
+    then:
+      function: undefined
+
   # Numeric fields must not be documented as an [integer, string] / [number, string] union — that makes a
   # generated SDK type every dimension as `int | string`. Collapse to the numeric type instead.
   binacle-no-numeric-string-union:

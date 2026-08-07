@@ -1,7 +1,8 @@
-# v4 — flip from experimental to stable in 3.1.0
+# v4 — flip from experimental to stable
 
 **Status:** Waiting on 3.0.0 shipping. v4 goes out experimental in 3.0.0 and stays that way for the whole
-3.0.x line.
+3.0.x line. 3.1.0 is the intent, not a commitment — the flip needs the second condition below, and no endpoint
+is planned that would satisfy it yet.
 
 ## Why it ships experimental first
 

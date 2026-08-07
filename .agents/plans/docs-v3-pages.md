@@ -58,10 +58,11 @@ link only when its target lands.
 ## The two swagger documents are generated but not yet safe
 
 B4 ran on 2026-08-06 and both documents passed their checks - no `/api/auth/token` path in v3, and the v4
-document carries the experimental banner. **They are not committed anywhere.** They sit at
-`build/openapi/Binacle.Net_v3.json` and `build/openapi/Binacle.Net_v4.json`, and `build/openapi/` is gitignored
-(`.gitignore:28`). A `just clean`, a fresh clone, or a different machine and they are gone, and B4 has to be
-re-run. Moving them is this session's first swagger step, not its last.
+document carries the experimental banner. They sit at `build/openapi/Binacle.Net_v3.json` and
+`build/openapi/Binacle.Net_v4.json`, which is gitignored (`.gitignore:28`) and not yet committed anywhere - but
+that is cheap to fix: if they are ever lost, `just openapi generate` reproduces both in about a minute, and it
+starts its own app host so nothing needs bringing up first. Moving them is this session's first swagger step, not
+its last.
 
 - [ ] **Move and rename**, in one go:
       - `build/openapi/Binacle.Net_v3.json` -> `docs/collections/_versions/v3.0.x/swagger/v3.json`
@@ -73,11 +74,12 @@ re-run. Moving them is this session's first swagger step, not its last.
 - [ ] **No `v2.json` and no `v2.md`** in this folder. V2 is removed in this version and lives on in `v2.1.x` and
       `v2.0.x`.
 
-If either JSON has to be regenerated, the recipe is `just openapi generate`, which writes both into
-`build/openapi/`. It starts the app host itself, so no server needs bringing up - and it runs with **no launch
-profile, so ServiceModule is off**, which is the committed convention and the reason `v3.json` has no
-`/api/auth/token` path. A ServiceModule-on run adds that path and the documents stop being comparable across
-versions.
+**The real risk in regenerating is silent, not the gitignore.** `just openapi generate` runs with **no launch
+profile, so ServiceModule is off** - that is the committed convention, and it is why `v3.json` has no
+`/api/auth/token` path. Regenerate under a launch profile that turns ServiceModule on, and the build still
+succeeds: it writes a valid-looking document with one extra path, and nobody diffs a swagger document by eye - it
+just publishes. **After any regeneration, run `just openapi lint`** - it lints `build/openapi/*` against
+`.spectral.yaml`, which now fails the build if `/api/auth/token` is present in either document.
 
 ## The samples were restructured - do not mirror the old names
 
@@ -107,8 +109,19 @@ it is a real reason to trust them.
 - [ ] **`full` must carry the warning.** It turns `DEBUG_ENDPOINT` on, and `/_debug` echoes the caller's whole
       request including their `Authorization` header. It is a demo box. The page must not read as a deployment
       option.
-- [ ] **Sample files pin `binacle/binacle-net:3.0`** - already done in the repo, so the `v3.0.x` copies inherit
-      it. Six samples now, not five.
+- [ ] **Sample files pin `binacle/binacle-net:3.0`** in the published `v3.0.x` docs pages. In the repo right now
+      they pin `3.0.0-beta.1` instead, because `3.0` does not exist on Docker Hub until v3.0.0 tags - see B5 in
+      `release-v3.0.0.md`. Write the pages with `3.0`, the tag they will carry once that bump lands as the last
+      change before the tag. Six samples now, not five.
+
+      **You cannot wait for the repo files to catch up.** The docs are released at step 8 of the release
+      sequence and the pins move at step 9, so the final pin does not exist while this work is being done.
+      Typing `3.0` by hand is the only route.
+
+      **Also drop the pin comment's second half.** The repo compose files explain *why* they are on the beta
+      patch - "does not exist on Docker Hub yet", "move to the 3.0 minor tag once v3.0.0 is published". That is
+      an internal note about our release order and means nothing to a reader downloading a sample. Keep only the
+      durable sentence: `# Pinned on purpose - a copied sample must not jump to a new major on the next pull.`
 - [ ] **The new samples ship more than two files each, and `v2.1.x` sets the wrong expectation.** Every
       `v2.1.x/samples/docker/*/` folder holds exactly `docker-compose.yml`, `Presets.json` and `index.md`.
       Copying that habit would silently drop the config files the new samples mount. What each folder needs:
@@ -122,7 +135,10 @@ it is a real reason to trust them.
       | `full` | + `JwtAuth.json` |
 
       The `prod` and `service` compose files mount some of these behind comments, so a reader who uncomments a
-      mount and finds no file to download has hit a dead end. Copy the repo folder as it stands.
+      mount and finds no file to download has hit a dead end. Copy the repo folder as it stands, with **one
+      exception: the compose file's `image:` line and the comment above it.** Those get the `3.0` pin and the
+      one-sentence comment described in the bullet above - the repo copies carry a beta-patch pin and an
+      internal note that must not be published. Everything else in the folder is copied verbatim.
 - [ ] **There is no `.env` file any more.** The samples used to carry one holding only `COMPOSE_PROJECT_NAME`;
       that moved into the compose file as a top-level `name:` on 2026-08-07, which is what every other compose
       file in the repo already did. Nothing to copy, and nothing to mention on the page - it only matters so
