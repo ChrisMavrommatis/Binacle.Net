@@ -40,5 +40,6 @@ consumers generate their own.
 
 ## Do not
 
-- **Do not publish SDKs to close the codegen item** — the decision is a spec plus a codegen guide, not shipped
-  packages.
+- **Do not publish SDKs to close the codegen item** — the deliverable is a spec plus a codegen guide, not
+  shipped packages. That decision is not this file's to hold or to change: it is recorded as a memory, which is
+  where it survives if this idea is ever dropped.

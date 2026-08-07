@@ -1,23 +1,18 @@
 # Idea: reduce integration friction
 
-**Status:** Direction decided (2026-07-19) — **spec-first, generate-on-demand.** We do not ship SDKs by default.
-We keep one clean OpenAPI document per version and let consumers generate their own client. Plugins for
-non-developers stay a separate, demand-driven bet. The sections below record the reasoning and the open threads.
+**Status:** Direction decided (2026-07-19) — **spec-first, generate-on-demand.** Plugins for non-developers stay
+a separate, demand-driven bet. What is left here is the plugin thread and the open questions; the SDK half is
+settled and has moved.
 
-## The decision
+## The decision — moved out of this file 2026-08-07
 
-Publishing a clean per-version OpenAPI spec means any developer can generate a typed client in their language with
-one command. That covers the developer audience for ~zero maintenance, so:
+**"We ship a spec, not SDKs" is now recorded as a memory,** with its rationale and what would reverse it. It
+was living only here and in one other idea, which is the layer that gets deleted when an idea is built or
+dropped — a standing decision cannot survive there. Read it there rather than restating it; this file must not
+become a second copy that can disagree.
 
-- **Ship the spec, not SDKs.** The deliverable is a spec that generates well, plus a short "generate a client" doc.
-- **Official SDKs are demand-driven.** Only publish a package for a language once someone actually asks and the
-  reach justifies the upkeep. The clean spec makes that a config job, not a project, whenever it happens.
-- **Plugins are the only thing that serves non-developers** (store owners never run a generator) — a separate bet,
-  see below.
-
-Why not ship SDKs up front: every published SDK is a package to version, test, publish, and patch — times N
-languages, times v3/v4/v5, across npm + NuGet + Packagist. That is a standing tax for a maintainer, with no demand
-signal yet, for an audience (developers) that is perfectly happy to run a generator themselves.
+What that leaves for this idea: the spec side is done and guarded by the lint, so the remaining question is
+**everything that is not a developer with a code generator.**
 
 ## What makes generate-on-demand actually work
 
@@ -74,7 +69,7 @@ used (shipping-rate step, fulfillment box pick)? The plugin is thin once that is
 
 ## Do not
 
-- **Do not ship SDKs speculatively.** Keep the spec clean and let devs generate; publish a package only when a
-  specific language earns its keep.
 - **Do not build a plugin before the integration point is pinned.** A plugin that calls the API at the wrong step
   in checkout is worse than no plugin.
+
+The SDK rule that used to sit here is a memory now — see the note at the top.
