@@ -56,6 +56,11 @@ block first - it clears the two warnings the gate would otherwise have to ignore
 |---|---|---|
 | [api/integration-test-additions](plans/api/integration-test-additions.md) | ready | - |
 | [shared/testskernel-data-extraction](plans/shared/testskernel-data-extraction.md) | ready | - |
+| [ui-test-harness](plans/ui-test-harness.md) | ready | - |
+
+**`ui-test-harness` is why the Sonar coverage gate is red.** The UI is the only code with no harness at all -
+1571 lines at 0%, 22.5% of the coverage denominator. Recorded 2026-08-09; state and priority are the
+maintainer's call, not one an agent made.
 
 **`integration-test-additions` is two sessions.** Phase 1 investigates and stops; the maintainer picks the
 shape; phase 2 writes the tests. Do not run it as one job - the plan says why.

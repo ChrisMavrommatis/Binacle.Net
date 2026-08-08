@@ -35,13 +35,25 @@
   <Property Name="sonar.cs.vscoveragexml.reportsPaths">build/coverage/sonar/*.xml</Property>
   <Property Name="sonar.javascript.lcov.reportPaths">build/coverage/sonar/*.info</Property>
 
-  <!-- The v1/v2 variants of First/Best/Worst Fit Decreasing are separate implementations that happen to share
-       a shape, not copy-paste waiting to be factored out. Sonar cannot tell the difference and read them at
-       93% duplicated, which was most of the 38% it reported for lib/ and the reason the gate failed on
-       duplication. Detection is off for that folder only, so duplication elsewhere in lib/ still counts.
+  <!-- Two places where near-identical code is the design, not debt. This is a duplication exclusion, not an
+       issue ignore: every rule still runs on these files, only the copy-paste detector skips them.
 
-       This is a duplication exclusion, not an issue ignore: every rule still runs on these files. -->
-  <Property Name="sonar.cpd.exclusions">lib/src/Binacle.Lib/Algorithms/**</Property>
+       lib Algorithms: the v1/v2 variants of First/Best/Worst Fit Decreasing are separate implementations that
+       happen to share a shape. Sonar read them at 93% duplicated, which was most of the 38% it reported for
+       lib/ and the reason the gate first failed on duplication. Duplication elsewhere in lib/ still counts.
+
+       api v3: the v3 API is frozen - no new endpoints, no behavioural changes, no contract edits, because it
+       is a published contract and changing it breaks existing clients. v4 was therefore written beside it
+       rather than on top of it, so every shared shape exists twice on purpose and the copy in v3 can never be
+       removed. Excluding v3 also clears the v4 half of those pairs where v3 was the only other copy, which is
+       right: that pairing is an artifact of the freeze. Duplication *within* v4 still counts, and it is real -
+       the Fit/Pack endpoint pairs (PresetBin, PresetCompare, PresetSmallestBin) duplicate each other, and
+       nothing stops those being factored out.
+
+       Deliberately NOT excluded: the Npgsql/Sqlite repository pairs in ServiceModule.Infrastructure, at ~44%.
+       Two backends implementing one interface could share a base with dialect-specific SQL, so that is real
+       debt and stays visible. -->
+  <Property Name="sonar.cpd.exclusions">lib/src/Binacle.Lib/Algorithms/**,api/src/Binacle.Net/v3/**</Property>
 
   <!-- Build tooling, not shipped code. The .NET support projects (benchmarks, performance suites, tools and
        the two test kernels) are handled properly instead, by SonarQubeTestProject in Directory.Build.props -

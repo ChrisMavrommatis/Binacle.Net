@@ -64,6 +64,29 @@ the problem.
   time it blocks something, so pick a number that is true today and ratchet it.
 - Keep Automatic Analysis OFF. Coverage needs a CI run - Automatic Analysis only reads source, and the two fight.
 
+### The coverage condition fails on purpose {#coverage-red-on-purpose}
+
+**Decided 2026-08-09.** The project runs the built-in "Sonar way" gate, which asks for 80% coverage on new code.
+It is read-only, so that number cannot be edited without creating a custom gate - and it is not being met: after
+the 2026-08-09 scope work the project reads 53% overall, 56.9% on new code.
+
+The gap is almost entirely one thing. Four areas sit at **exactly 0% coverage** - the Blazor `UIModule` (959
+lines), and the `binacle-net-ui`, `cookies` and `theme-switcher` TS packages (612 between them). That is 1571
+lines, 22.5% of the whole coverage denominator. Without them the project reads about 68%.
+
+Excluding those four from coverage was considered and **rejected**: it moves the number without changing
+anything true. The coverage condition therefore stays red until the UI has a test harness, which is its own plan
+(the one on a UI test harness) rather than a line in the analysis xml. A red gate here means "the UI is
+untested", which is exactly what is true.
+
+Two consequences for this gate:
+
+- **Do not make coverage blocking on the PR gate yet.** A condition that is red before anyone writes a line
+  blocks every PR for a reason none of them caused, and gets waived within a week - the same failure this plan
+  already warns about for a floor nobody agreed on.
+- **When the floor is finally set, set it from a run that has settled**, and after the UI harness lands. The
+  2026-08-09 numbers are a correction to what was being measured, not work anyone did.
+
 ### Settings that live in the SonarCloud UI, not in the repo {#sonar-ui-settings}
 
 Scope, coverage paths and the test/product split are all in the repo now (the analysis xml and

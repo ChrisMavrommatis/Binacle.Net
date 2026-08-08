@@ -17,6 +17,7 @@ you need, and trim or delete it once the work lands.
 | [image-module-stacks.md](image-module-stacks.md) | Decide what the `image` module is still for |
 | [scripts-to-just-recipes.md](scripts-to-just-recipes.md) | Convert the last `config/*.sh` scripts to `just` recipes |
 | [todos.md](todos.md) | TODOs |
+| [ui-test-harness.md](ui-test-harness.md) | A test harness for the UI |
 
 ## API
 
