@@ -18,16 +18,13 @@ internal class SampleDataService : ISampleDataService
 	}
 
 	private readonly IWebHostEnvironment environment;
-	private readonly TimeProvider timeProvider;
 	private readonly SampleJsonData data;
 
 	public SampleDataService(
-		IWebHostEnvironment environment,
-		TimeProvider timeProvider
+		IWebHostEnvironment environment
 		)
 	{
 		this.environment = environment;
-		this.timeProvider = timeProvider;
 		this.data = this.ReadSampleData();
 	}
 
@@ -38,15 +35,18 @@ internal class SampleDataService : ISampleDataService
 
 		if (actualBinsIndex is null || actualItemsIndex is null)
 		{
-			var random = new Random(this.timeProvider.GetUtcNow().Millisecond);
+			// Random.Shared rather than a new Random seeded from the clock. That seed was the current
+			// millisecond, so it had 1000 possible values and two calls landing in the same millisecond - two
+			// visitors hitting the demo at once, or one clicking twice - were handed the identical sample.
+			// Which sample set the demo shows is not a security decision, so a PRNG is the right tool.
 			if (actualBinsIndex is null)
 			{
-				actualBinsIndex = random.Next(this.data.BinSets!.Count);
+				actualBinsIndex = Random.Shared.Next(this.data.BinSets!.Count);
 			}
 
 			if (actualItemsIndex is null)
 			{
-				actualItemsIndex = random.Next(this.data.ItemSets!.Count);
+				actualItemsIndex = Random.Shared.Next(this.data.ItemSets!.Count);
 			}
 		}
 

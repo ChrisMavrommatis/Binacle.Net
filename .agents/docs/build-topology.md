@@ -1,7 +1,7 @@
 ---
 id: build-topology
-description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props, central package management, the global.json test-runner opt-in, the publish/Dockerfile chain, and the NoTargets content projects
-verified: 2026-07-28
+description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props (including the SonarQubeTestProject rule for support projects), central package management, the global.json test-runner opt-in, the publish/Dockerfile chain, and the NoTargets content projects
+verified: 2026-08-09
 check: Solution structure, Directory.Build.props, Directory.Packages.props, global.json, Dockerfile, and content .proj files match the repo root
 also_update:
   - commands
@@ -27,7 +27,7 @@ The repo uses the XML `.slnx` solution format. Projects are grouped by solution 
 
 ## Shared C# props — `Directory.Build.props`
 
-Applies to **every** C# project in the repo. Only four properties:
+Applies to **every** C# project in the repo. Four unconditional properties:
 
 ```xml
 <TargetFramework>net10.0</TargetFramework>
@@ -41,6 +41,24 @@ So all C# is .NET 10, nullable-enabled, implicit-usings on. (No `LangVersion` or
 `AD0001` is suppressed because `Xunit.Analyzers`' `MemberDataShouldReferenceValidMember` crashes on valid member
 data in xunit 3.2.2 (referenced as `xunit.v3.mtp-v2`, see below) — an analyzer bug, and AD0001 is raised by the
 analyzer driver so editorconfig severity cannot reach it. The file carries the full reasoning.
+
+### `SonarQubeTestProject` — the support projects {#sonar-test-projects}
+
+A fifth property is set **conditionally**: any project whose directory path contains `/test/` or `/tools/` gets
+`<SonarQubeTestProject>true</SonarQubeTestProject>`. The path is normalised to forward slashes first, because
+`MSBuildProjectDirectory` is separator-native and the match would miss on Linux otherwise.
+
+The Scanner for .NET identifies a test project by its `Microsoft.NET.Test.Sdk` reference. That finds the xunit
+suites but **not** the ten support projects that have no such reference — both test kernels, `TestReporting`,
+the two benchmark projects, the two performance suites, and the three generator/converter tools. Without the
+property the scanner reads all ten as product code, which put 1203 lines into the coverage denominator that no
+test will ever cover and ran the product rule set over them (`S101` on benchmark class names, `S2223` on the
+TestsKernel key holders). Deriving it from the folder means a new support project is classified by where it
+lives, with nothing to remember.
+
+The property is read only by the scanner's own targets, which are injected during a Sonar run and absent
+otherwise, so a normal `dotnet build` never sees it. Sonar still applies **test-scope** rules to these files —
+the `[AssertionMethod]` markers that answer `S2699` stay load-bearing.
 
 ## Package versions — `Directory.Packages.props`
 

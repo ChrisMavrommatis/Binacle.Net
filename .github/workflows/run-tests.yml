@@ -32,8 +32,12 @@ jobs:
         image: postgres:17.6
         env:
           POSTGRES_USER: appuser
-          POSTGRES_PASSWORD: Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3
           POSTGRES_DB: binacle_net
+          # No POSTGRES_PASSWORD: this container lives for one job, is reachable only from it, and is thrown
+          # away after. Under trust it accepts any password for appuser, so the connection string the
+          # ServiceModule integration tests build - the shared local-dev one, password and all - still
+          # connects unchanged. The point is that no credential, not even a placeholder, sits in this file.
+          POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
         options: >-
@@ -59,7 +63,7 @@ jobs:
       # Pinned to a 1.x range: modules and `set working-directory` need a recent just, and ubuntu-latest's apt
       # ships one too old to parse config/tests.just.
       - name: Setup just
-        uses: extractions/setup-just@v4
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
         with:
           just-version: '^1.45'
 
@@ -70,8 +74,11 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '.config/dotnet-tools.json') }}
           restore-keys: ${{ runner.os }}-nuget-
 
+      # --ignore-scripts stops a dependency running arbitrary code at install time. Nothing here needs the
+      # lifecycle hooks: no workspace declares prepare/postinstall, and the one dependency with an install
+      # script is fsevents, which is darwin-only and never installed on this runner.
       - name: Install npm packages
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Build
         run: dotnet build Binacle.Net.slnx --configuration Release

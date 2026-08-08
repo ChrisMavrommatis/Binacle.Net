@@ -48,7 +48,7 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 		if (!validationResult.IsValid)
 		{
 			return Results.ValidationProblem(
-				validationResult!.GetValidationSummary(),
+				validationResult.GetValidationSummary(),
 				statusCode: StatusCodes.Status422UnprocessableEntity
 			);
 		}

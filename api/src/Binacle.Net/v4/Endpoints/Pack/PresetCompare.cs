@@ -75,7 +75,7 @@ internal class PresetCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 				results = await binacleService.MultipleBinsAsync(
 					algorithm.Value,
 					presetOption.Bins,
-					request.Items!,
+					request.Items,
 					request.Parameters.ForPackingOperation(),
 					cancellationToken
 				);
@@ -84,7 +84,7 @@ internal class PresetCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 			{
 				results = await binacleService.MultipleBinsAsync(
 					presetOption.Bins,
-					request.Items!,
+					request.Items,
 					request.Parameters.ForPackingOperation(),
 					cancellationToken
 				);

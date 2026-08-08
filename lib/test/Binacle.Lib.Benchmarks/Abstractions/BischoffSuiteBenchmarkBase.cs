@@ -26,7 +26,7 @@ public abstract class BischoffSuiteBenchmarkBase
 	}
 	protected OperationResult Run(TestAlgorithmFactory<IPackingAlgorithm> algorithmFactory, AlgorithmOperation operation)
 	{
-		var algorithmInstance = algorithmFactory(this.Scenario!.Bin, this.Scenario!.Items);
+		var algorithmInstance = algorithmFactory(this.Scenario!.Bin, this.Scenario.Items);
 		var result = algorithmInstance.Execute(new TestOperationParameters()
 		{
 			Operation = operation

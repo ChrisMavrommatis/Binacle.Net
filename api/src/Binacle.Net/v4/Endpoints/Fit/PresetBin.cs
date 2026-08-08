@@ -79,7 +79,7 @@ internal class PresetBin : IGroupedEndpoint<ApiV4EndpointGroup>
 				result = await binacleService.SingleBinAsync(
 					algorithm.Value,
 					binOption,
-					request.Items!,
+					request.Items,
 					request.Parameters.ForFittingOperation(),
 					cancellationToken
 				);
@@ -88,7 +88,7 @@ internal class PresetBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			{
 				result = await binacleService.SingleBinAsync(
 					binOption,
-					request.Items!,
+					request.Items,
 					request.Parameters.ForFittingOperation(),
 					cancellationToken
 				);

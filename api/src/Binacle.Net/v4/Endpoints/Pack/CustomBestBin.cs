@@ -61,8 +61,8 @@ internal class CustomBestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			{
 				result = await binacleService.BestBinAsync(
 					algorithm.Value,
-					request.Bins!,
-					request.Items!,
+					request.Bins,
+					request.Items,
 					request.Parameters.ForPackingOperation(),
 					cancellationToken
 				);
@@ -70,8 +70,8 @@ internal class CustomBestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			else
 			{
 				result = await binacleService.BestBinAsync(
-					request.Bins!,
-					request.Items!,
+					request.Bins,
+					request.Items,
 					request.Parameters.ForPackingOperation(),
 					cancellationToken
 				);

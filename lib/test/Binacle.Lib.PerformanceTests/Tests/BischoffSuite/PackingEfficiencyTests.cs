@@ -40,7 +40,7 @@ internal class PackingEfficiencyTests : ITest
 			var algorithmResults = new AlgorithmResult<double>();
 			foreach (var algorithmFactory in this.algorithmsUnderTest)
 			{
-				var algorithmInstance = algorithmFactory(scenario!.Bin, scenario.Items);
+				var algorithmInstance = algorithmFactory(scenario.Bin, scenario.Items);
 
 				var result = algorithmInstance.Execute(new TestOperationParameters
 				{
@@ -59,7 +59,7 @@ internal class PackingEfficiencyTests : ITest
 				);
 			}
 
-			scenarioCollectionResults.Add(scenario!.Name, algorithmResults);
+			scenarioCollectionResults.Add(scenario.Name, algorithmResults);
 		}
 
 		return new TestResult()

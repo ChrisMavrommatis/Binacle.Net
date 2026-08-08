@@ -64,6 +64,33 @@ the problem.
   time it blocks something, so pick a number that is true today and ratchet it.
 - Keep Automatic Analysis OFF. Coverage needs a CI run - Automatic Analysis only reads source, and the two fight.
 
+### Settings that live in the SonarCloud UI, not in the repo {#sonar-ui-settings}
+
+Scope, coverage paths and the test/product split are all in the repo now (the analysis xml and
+`Directory.Build.props`). These are the ones that cannot be, and they are what the gate actually hangs on. As of
+2026-08-09 none is applied.
+
+- **New code period - the one that matters.** It is set to `previous_version`, and because the scanner is never
+  passed `/v:` the project version never changes, so the period is still pinned to the **first analysis,
+  2025-04-15**. Sixteen months of work therefore count as "new code": 882 of 1059 code smells, and a gate asking
+  for 80% coverage on new code is really asking for it on everything ever written. Nothing else on this list
+  matters until this is fixed. **Set Administration > New Code to "Number of days = 30"** for now; once Sonar
+  runs on PRs (this gate), "reference branch = main" is the better answer, because each PR is then graded on
+  exactly what it changed.
+- **Three findings marked in the UI**, none of which has an honest code fix: `S2245` on `SampleDataService` and
+  on `getRandomInt.ts` (both pick demo data, not secrets), and `S2068` on the `AccountGetResponse` OpenAPI
+  example, where `PasswordHash` is the literal `"type::hash::salt"`.
+- **Automatic Analysis stays OFF**, as below.
+- **No source glob in the UI.** An `sonar.inclusions` of `src/**/*` left over from a flat layout is what made the
+  2026-08-07 run index 0 files and still report success. Scope is exclusions only, and they live in the xml.
+
+Two numbers to expect on the first run after the 2026-08-09 scope work, so nobody reads them as a regression or
+an improvement anyone earned: the project drops from ~50k to ~28k ncloc (vendored `assets/lib` and the
+`shared/data` fixtures leave), and overall coverage rises from 37.8% toward the low 50s (2329 uncovered vendored
+lines and 1203 lines of support code leave the denominator). Both are corrections to what was being measured.
+**Do not set the coverage ratchet from either the old figure or the first new one** - take it from a run that
+has settled.
+
 **Watch out:**
 
 - Build + coverage must sit between `Sonar begin` and `Sonar end`; the scanner only sees projects compiled in that

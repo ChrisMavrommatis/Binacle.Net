@@ -66,10 +66,10 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 			}
 			
 			var operationResults = await binacleService.MultipleBinsAsync(
-				request.Parameters!.Algorithm.ToLibAlgorithm(),
-				presetOption.Bins!,
-				request.Items!,
-				request.Parameters!,
+				request.Parameters.Algorithm.ToLibAlgorithm(),
+				presetOption.Bins,
+				request.Items,
+				request.Parameters,
 				cancellationToken
 			);
 
@@ -77,8 +77,8 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 			{
 				return Results.Ok(
 					PackResponse.Create(
-						presetOption.Bins!,
-						request.Items!,
+						presetOption.Bins,
+						request.Items,
 						request.Parameters,
 						operationResults
 					)

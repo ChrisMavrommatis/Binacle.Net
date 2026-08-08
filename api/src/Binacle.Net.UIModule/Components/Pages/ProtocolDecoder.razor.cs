@@ -14,11 +14,12 @@ public partial class ProtocolDecoder : AppletComponentBase
 {
 	protected override string Ref => "ProtocolDecoder";
 	
-	[Inject] 
-	internal MessagingService? MessagingService { get; set; }
-	
-	[Inject] 
-	internal LocalStorageService? LocalStorage { get; set; }
+	// Non-null with = default!: DI always sets an [Inject] property. See PackingVisualizer for the long note.
+	[Inject]
+	internal MessagingService MessagingService { get; set; } = default!;
+
+	[Inject]
+	internal LocalStorageService LocalStorage { get; set; } = default!;
 	
 	private Errors errors = new();
 
@@ -49,7 +50,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 					var decodedResult = DecodeResult(savedResult);
 					if (decodedResult is not null)
 					{
-						this.results.Add(savedResult, decodedResult!);
+						this.results.Add(savedResult, decodedResult);
 					}
 				}
 
@@ -67,7 +68,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 	{
 		try
 		{
-			var saved = await this.LocalStorage!.GetItemAsync<SavedResults>(SavedResultsKey);
+			var saved = await this.LocalStorage.GetItemAsync<SavedResults>(SavedResultsKey);
 			if (saved is null)
 			{
 				return [];
@@ -92,7 +93,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 	// Persists the current tokens under the current schema version.
 	private async Task SaveResultsAsync()
 	{
-		await this.LocalStorage!.SetItemAsync(
+		await this.LocalStorage.SetItemAsync(
 			SavedResultsKey,
 			new SavedResults(CurrentSchemaVersion, this.results.Keys.ToArray()));
 	}
@@ -132,7 +133,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 			return;
 		}
 
-		this.results.Add(resultString, decodedResult!);
+		this.results.Add(resultString, decodedResult);
 
 
 		this.Model.AddResult = string.Empty;
@@ -173,7 +174,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 
 	private async Task SelectResult(DecodedPackingResult result)
 	{
-		await this.MessagingService!
+		await this.MessagingService
 			.TriggerAsync<AsyncCallback<(Bin?, List<PackedItem>?)>>(
 				"UpdateScene",
 				() =>

@@ -20,7 +20,7 @@ internal class EnsureRequiredSqliteTablesExistStartupTask  : IStartupTask
 		using var scope = this.serviceProvider.CreateScope();
 		var connection = scope.ServiceProvider.GetRequiredService<SqliteConnection>();
 
-		await connection!.OpenAsync(cancellationToken);
+		await connection.OpenAsync(cancellationToken);
 
 		await SqliteAccountRepository.EnsureTableExistsAsync(connection);
 		await SqliteSubscriptionRepository.EnsureTableExistsAsync(connection);

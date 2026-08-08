@@ -75,7 +75,7 @@ public static class EndpointsWebApplicationExtensions
 				?.GetGenericArguments()
 				.FirstOrDefault();
 
-			if (groupType is not null && groups.TryGetValue(groupType!, out var routeGroup))
+			if (groupType is not null && groups.TryGetValue(groupType, out var routeGroup))
 			{
 				endpointInstance.DefineEndpoint(routeGroup);
 			}

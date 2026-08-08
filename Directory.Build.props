@@ -9,4 +9,25 @@
              editorconfig severity, so suppress it with NoWarn to stop it flooding every test build. -->
         <NoWarn>$(NoWarn);AD0001</NoWarn>
     </PropertyGroup>
+
+    <!--
+        Tell Sonar which projects are support code. The Scanner for .NET spots a test project by its
+        Microsoft.NET.Test.Sdk reference, so it finds the xunit suites on its own but reads the ten projects
+        without one - both test kernels, TestReporting, the benchmarks, the performance suites and the
+        generator/converter tools - as product code. That put 1203 lines into the coverage denominator that no
+        test will ever cover, and ran the product rule set over them: S101 firing on benchmark names like
+        BestBin_ResultSelection, and S2223 on the TestsKernel key holders, are both that.
+
+        Every project under a test/ or tools/ folder is support code, so the layout decides it and nothing has
+        to be listed. Marking the xunit suites too is a no-op - the scanner already had them.
+
+        SonarQubeTestProject is read only by the scanner's targets, which are injected during a Sonar run and
+        absent otherwise, so a normal build does not see this. Sonar still runs test-scope rules on these
+        files: the [AssertionMethod] markers for S2699 stay load-bearing.
+    -->
+    <PropertyGroup>
+        <!-- MSBuildProjectDirectory is separator-native, so normalise before matching or this misses on Linux. -->
+        <_BinacleProjectPath>$(MSBuildProjectDirectory.Replace('\', '/'))</_BinacleProjectPath>
+        <SonarQubeTestProject Condition="$(_BinacleProjectPath.Contains('/test/')) or $(_BinacleProjectPath.Contains('/tools/'))">true</SonarQubeTestProject>
+    </PropertyGroup>
 </Project>

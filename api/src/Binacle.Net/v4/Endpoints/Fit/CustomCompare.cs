@@ -61,8 +61,8 @@ internal class CustomCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 			{
 				results = await binacleService.MultipleBinsAsync(
 					algorithm.Value,
-					request.Bins!,
-					request.Items!,
+					request.Bins,
+					request.Items,
 					request.Parameters.ForFittingOperation(),
 					cancellationToken
 				);
@@ -70,8 +70,8 @@ internal class CustomCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 			else
 			{
 				results = await binacleService.MultipleBinsAsync(
-					request.Bins!,
-					request.Items!,
+					request.Bins,
+					request.Items,
 					request.Parameters.ForFittingOperation(),
 					cancellationToken
 				);
@@ -82,7 +82,7 @@ internal class CustomCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 				return Results.Ok(
 					FitCompareResponse.From(
 						request.Parameters,
-						request.Bins!,
+						request.Bins,
 						results
 					)
 				);

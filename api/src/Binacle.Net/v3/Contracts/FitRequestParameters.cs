@@ -43,7 +43,7 @@ internal class FitRequestParametersValidator : AbstractValidator<IWithFittingPar
 		RuleFor(x => x.Parameters)
 			.NotNull();
 
-		RuleFor(x => x.Parameters!)
+		RuleFor(x => x.Parameters)
 			.ChildRules(parametersValidator =>
 			{
 				parametersValidator.Include(new AlgorithmValidator());

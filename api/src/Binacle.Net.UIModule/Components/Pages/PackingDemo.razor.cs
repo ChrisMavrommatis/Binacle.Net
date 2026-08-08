@@ -16,11 +16,12 @@ public partial class PackingDemo : AppletComponentBase
 {
 	protected override string Ref => "PackingDemo";
 
-	[Inject] internal ISampleDataService? SampleDataService { get; set; }
+	// Non-null with = default!: DI always sets an [Inject] property. See PackingVisualizer for the long note.
+	[Inject] internal ISampleDataService SampleDataService { get; set; } = default!;
 
-	[Inject] protected IHttpClientFactory? HttpClientFactory { get; set; }
+	[Inject] protected IHttpClientFactory HttpClientFactory { get; set; } = default!;
 
-	[Inject] internal MessagingService? MessagingService { get; set; }
+	[Inject] internal MessagingService MessagingService { get; set; } = default!;
 
 	private Errors errors = new();
 	private List<PackingResult>? results;
@@ -36,7 +37,7 @@ public partial class PackingDemo : AppletComponentBase
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		var sampleData = this.SampleDataService!.GetSampleData(binsIndex: 0, itemsIndex: 0);
+		var sampleData = this.SampleDataService.GetSampleData(binsIndex: 0, itemsIndex: 0);
 		this.Model = sampleData;
 	}
 
@@ -74,7 +75,7 @@ public partial class PackingDemo : AppletComponentBase
 
 	private void RandomizeBinsFromSamples()
 	{
-		var sampleData = this.SampleDataService!.GetSampleData();
+		var sampleData = this.SampleDataService.GetSampleData();
 		this.Model.Bins = sampleData.Bins;
 	}
 
@@ -96,7 +97,7 @@ public partial class PackingDemo : AppletComponentBase
 
 	private void RandomizeItemsFromSamples()
 	{
-		var sampleData = this.SampleDataService!.GetSampleData();
+		var sampleData = this.SampleDataService.GetSampleData();
 		this.Model.Items = sampleData.Items;
 	}
 
@@ -109,7 +110,7 @@ public partial class PackingDemo : AppletComponentBase
 			return;
 		}
 
-		await this.MessagingService!
+		await this.MessagingService
 			.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
 				"UpdateScene",
 				async () =>
@@ -131,7 +132,7 @@ public partial class PackingDemo : AppletComponentBase
 							Bins = this.Model.Bins.Select(x => new UIModule.Models.Bin(x.ID, x)).ToList(),
 							Items = this.Model.Items.Select(x => new UIModule.Models.Item(x.ID, x, x.Quantity)).ToList()
 						};
-						var client = this.HttpClientFactory!.CreateClient("BinacleApi");
+						var client = this.HttpClientFactory.CreateClient("BinacleApi");
 						var response = await client.PostAsJsonAsync("api/v3/pack/by-custom", request);
 						if (response.StatusCode != HttpStatusCode.OK)
 						{
@@ -149,7 +150,7 @@ public partial class PackingDemo : AppletComponentBase
 
 						this.results = packResponse.Data ?? new List<PackingResult>();
 
-						var result = this.results!.FirstOrDefault()!;
+						var result = this.results.FirstOrDefault()!;
 
 						if (result.Bin is null)
 						{
@@ -222,7 +223,7 @@ public partial class PackingDemo : AppletComponentBase
 
 	private async Task SelectResult(UIModule.Models.PackingResult result)
 	{
-		await this.MessagingService!
+		await this.MessagingService
 			.TriggerAsync<AsyncCallback<(UIModule.Models.Bin?, List<UIModule.Models.PackedItem>?)>>(
 				"UpdateScene",
 				() =>

@@ -1,8 +1,8 @@
 ---
 id: samples
 description: Deployment samples — Docker Compose (minimal, quickstart, prod, service, full) and Kubernetes (minimal); each folder name is a smoke profile name, feature flags, config wiring, and the keep-in-sync rule
-verified: 2026-08-07
-check: Sample folders, compose env vars, bind-mounted config paths, and the pinned image tag match samples/; every samples/docker folder name has a config/smoke/<name>.yml with the same module set
+verified: 2026-08-09
+check: Sample folders, compose env vars, bind-mounted config paths, the k8s resource bounds, and the pinned image tag match samples/; every samples/docker folder name has a config/smoke/<name>.yml with the same module set
 also_update:
   - api/configuration
   - api/modules
@@ -58,7 +58,14 @@ Fixed container config paths: `Presets.json` → `/app/Config_Files/Presets.json
 
 | Sample | Demonstrates | Manifests |
 |---|---|---|
-| `minimal` | Core API on an existing cluster, internal only (`ClusterIP`) | `binacle-deployment.yaml` (1 replica, port 8080, presets from ConfigMap, data on PVC), `binacle-net-service.yaml` (ClusterIP 8080), `binacle-presets-configmap.yaml` (`binacle-presets`), `binacle-pvc.yaml` (`binacle-data-pvc`, RWO 1Gi) |
+| `minimal` | Core API on an existing cluster, internal only (`ClusterIP`) | `binacle-deployment.yaml` (1 replica, port 8080, presets from ConfigMap, data on PVC, resource requests/limits, `automountServiceAccountToken: false`), `binacle-net-service.yaml` (ClusterIP 8080), `binacle-presets-configmap.yaml` (`binacle-presets`), `binacle-pvc.yaml` (`binacle-data-pvc`, RWO 1Gi) |
+
+**The deployment sets resource bounds and drops the service account token.** Requests are `100m` CPU / `128Mi`
+memory / `256Mi` ephemeral-storage; limits are `512Mi` memory / `1Gi` ephemeral-storage. There is deliberately
+**no CPU limit** — packing is CPU-bound, and a limit throttles a request mid-solve instead of letting it finish
+and give the CPU back. `automountServiceAccountToken: false` because Binacle.Net never calls the Kubernetes API,
+so the default token is only ever an extra credential in the pod. The numbers are starting values for a reader to
+measure against, not a sizing recommendation; the manifest says so.
 
 ## Adding or modifying a sample
 

@@ -53,10 +53,10 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 		return await bindingResult.ValidateAsync(async request =>
 		{
 			var operationResults = await binacleService.MultipleBinsAsync(
-				request.Parameters!.Algorithm.ToLibAlgorithm(),
-				request.Bins!,
-				request.Items!,
-				request.Parameters!,
+				request.Parameters.Algorithm.ToLibAlgorithm(),
+				request.Bins,
+				request.Items,
+				request.Parameters,
 				cancellationToken
 			);
 
@@ -64,8 +64,8 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			{
 				return Results.Ok(
 					PackResponse.Create(
-						request.Bins!,
-						request.Items!,
+						request.Bins,
+						request.Items,
 						request.Parameters,
 						operationResults
 					)

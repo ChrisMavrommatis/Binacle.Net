@@ -60,7 +60,7 @@ public abstract class FastValidationBenchmarkBase
 	
 	protected OperationResult Run(TestAlgorithmFactory<IPackingAlgorithm> algorithmFactory)
 	{
-		var algorithmInstance = algorithmFactory(this.Scenario!.Bin, this.Scenario!.Items);
+		var algorithmInstance = algorithmFactory(this.Scenario!.Bin, this.Scenario.Items);
 		var result = algorithmInstance.Execute(new TestOperationParameters()
 		{
 			Operation = this.AlgorithmOperation

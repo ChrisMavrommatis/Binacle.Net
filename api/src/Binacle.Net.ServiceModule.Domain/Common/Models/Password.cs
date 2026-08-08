@@ -20,7 +20,7 @@ public class Password : ValueObject
 
 		try
 		{
-			return Parse(password!);
+			return Parse(password);
 		}
 		catch (Exception)
 		{

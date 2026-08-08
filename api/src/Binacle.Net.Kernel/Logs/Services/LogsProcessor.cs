@@ -34,7 +34,7 @@ internal class LogsProcessor<TRequest, TLog> : BackgroundService
 
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{
-		var logDirectory = Path.Combine(this.environment.ContentRootPath, this.options.Path!);
+		var logDirectory = Path.Combine(this.environment.ContentRootPath, this.options.Path);
 		this.EnsureDirectoryExists(logDirectory);
 		var exceptionsCount = 0;
 		this.logger.LogInformation("{Status} logs processor for {LogProcessorRequest}", "Starting",

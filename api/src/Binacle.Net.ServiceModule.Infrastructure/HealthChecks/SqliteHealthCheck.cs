@@ -17,7 +17,7 @@ internal class SqliteHealthCheck : IHealthCheck
 	{
 		try
 		{
-			await this.connection!.OpenAsync(cancellationToken).ConfigureAwait(false);
+			await this.connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 			var command = connection.CreateCommand();
 			command.CommandText = "select name from sqlite_master where type='table'";
 			var result = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);

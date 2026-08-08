@@ -21,7 +21,7 @@ internal class EnsureRequiredNpgsqlTablesExistStartupTask  : IStartupTask
 		var dataSource = scope.ServiceProvider.GetRequiredService<NpgsqlDataSource>();
 
 		var connection = dataSource.CreateConnection();
-		await connection!.OpenAsync(cancellationToken);
+		await connection.OpenAsync(cancellationToken);
 
 		await NpgsqlAccountRepository.EnsureTableExistsAsync(connection);
 		await NpgsqlSubscriptionRepository.EnsureTableExistsAsync(connection);

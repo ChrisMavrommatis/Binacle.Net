@@ -6,11 +6,14 @@ namespace Binacle.Net.UIModule.Components.Features;
 
 public partial class PackingVisualizer : ComponentBase, IDisposable
 {
+	// Declared non-null with = default!, not as a nullable that every call site then has to unwrap. DI always
+	// sets an [Inject] property before the component runs, so the nullability was never real - it just moved
+	// the cost to a ! on each use, which the compiler cleared only for the second and later deref in a method.
 	[Inject]
-	internal MessagingService? MessagingService { get; set; }
-	
+	internal MessagingService MessagingService { get; set; } = default!;
+
 	[Inject]
-	internal BinacleVisualizerService? Binacle { get; set; }
+	internal BinacleVisualizerService Binacle { get; set; } = default!;
 
 	[Parameter] 
 	public Bin? InitialBin { get; set; }
@@ -33,14 +36,14 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 		this.controls.Add("next", new Control("control-next", "chevron_right", NextAsync));
 		this.controls.Add("last", new Control("control-last", "last_page", LastAsync));
 
-		this.MessagingService?.On<AsyncCallback<(Bin?, List<PackedItem>?)>>(
+		this.MessagingService.On<AsyncCallback<(Bin?, List<PackedItem>?)>>(
 			"UpdateScene", UpdateSceneAsync);
 		base.OnInitialized();
 	}
 
 	public void Dispose()
 	{
-		this.MessagingService?.Off<AsyncCallback<(Bin?, List<PackedItem>?)>>("UpdateScene");
+		this.MessagingService.Off<AsyncCallback<(Bin?, List<PackedItem>?)>>("UpdateScene");
 		this.cancellationTokenSource?.Dispose();
 	}
 
@@ -53,7 +56,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			await this.Binacle!.InitializeSceneAsync(this.InitialBin!);
+			await this.Binacle.InitializeSceneAsync(this.InitialBin!);
 		}
 
 		await base.OnAfterRenderAsync(firstRender);
@@ -64,7 +67,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 	)
 	{
 		await this.StopRepeatingAsync();
-		await this.Binacle!.UpdateLoadingStartAsync();
+		await this.Binacle.UpdateLoadingStartAsync();
 		this.DisableAllControls();
 		var (bin, items) = await getUpdate();
 
@@ -75,7 +78,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 
 			await this.Binacle.RedrawSceneAsync(this.bin, this.items);
 			
-			this.itemsRendered = this.items!.Count;
+			this.itemsRendered = this.items.Count;
 		}
 
 		this.UpdateControlsStatus();
@@ -103,7 +106,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 			return;
 		}
 
-		if (this.itemsRendered >= this.items!.Count)
+		if (this.itemsRendered >= this.items.Count)
 		{
 			this.controls["first"].IsEnabled = true;
 			this.controls["previous"].IsEnabled = true;
@@ -131,7 +134,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 	{
 		this.DisableAllControls();
 		this.StateHasChanged();
-		await this.Binacle!.RedrawSceneAsync(this.bin!, null);
+		await this.Binacle.RedrawSceneAsync(this.bin!, null);
 		this.itemsRendered = 0;
 		this.UpdateControlsStatus();
 		this.StateHasChanged();
@@ -146,7 +149,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 
 		if (index > -1)
 		{
-			await this.Binacle!.RemoveItemFromSceneAsync(index);
+			await this.Binacle.RemoveItemFromSceneAsync(index);
 			this.itemsRendered -= 1;
 		}
 
@@ -174,7 +177,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 		this.itemsRendered = 0;
 		this.cancellationTokenSource = new CancellationTokenSource();
 
-		await this.Binacle!.RedrawSceneAsync(this.bin!, null);
+		await this.Binacle.RedrawSceneAsync(this.bin!, null);
 
 		await Task.Run(async () =>
 		{
@@ -182,7 +185,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 			{
 				for (var i = 0; i < this.items!.Count; i++)
 				{
-					var item = this.items![i];
+					var item = this.items[i];
 					await this.Binacle.AddItemToSceneAsync(this.bin, item, i);
 					this.itemsRendered += 1;
 					await Task.Delay(1000, this.cancellationTokenSource.Token);
@@ -201,7 +204,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 	{
 		if (this.cancellationTokenSource is not null)
 		{
-			await this.cancellationTokenSource!.CancelAsync();
+			await this.cancellationTokenSource.CancelAsync();
 		}
 
 		this.repeating = false;
@@ -220,8 +223,8 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 
 		if (index < this.items!.Count)
 		{
-			var item = this.items![index];
-			await this.Binacle!.AddItemToSceneAsync(bin, item, index);
+			var item = this.items[index];
+			await this.Binacle.AddItemToSceneAsync(bin, item, index);
 			this.itemsRendered += 1;
 		}
 
@@ -233,7 +236,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 	{
 		this.DisableAllControls();
 		this.StateHasChanged();
-		await this.Binacle!.RedrawSceneAsync(this.bin!, this.items!);
+		await this.Binacle.RedrawSceneAsync(this.bin!, this.items!);
 		this.itemsRendered = this.items!.Count;
 		this.UpdateControlsStatus();
 		this.StateHasChanged();

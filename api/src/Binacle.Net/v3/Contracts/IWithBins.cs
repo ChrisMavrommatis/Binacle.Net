@@ -18,7 +18,7 @@ internal class BinsValidator : AbstractValidator<IWithBins>
 			.NotEmpty();
 
 		RuleFor(x => x.Bins)
-			.Must(x => x!.Select(y => y.ID).Distinct().Count() == x!.Count)
+			.Must(x => x.Select(y => y.ID).Distinct().Count() == x.Count)
 			.WithMessage("IDs in `Bins` must be unique");
 
 		RuleForEach(x => x.Bins).ChildRules(binValidator =>

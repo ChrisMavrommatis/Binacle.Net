@@ -40,7 +40,7 @@ internal class BaselineComparisonTests : ITest
 		foreach (var scenario in BischoffSuiteScenarioProvider.GetScenarios())
 		{
 			var algorithmResults = new AlgorithmResult<double>();
-			var baselineAlgorithmInstance = this.baselineAlgorithm(scenario!.Bin, scenario.Items);
+			var baselineAlgorithmInstance = this.baselineAlgorithm(scenario.Bin, scenario.Items);
 			
 			var baselineResult = baselineAlgorithmInstance.Execute(new TestOperationParameters
 			{
@@ -51,7 +51,7 @@ internal class BaselineComparisonTests : ITest
 
 			foreach (var algorithmFactory in this.algorithmsUnderTest)
 			{
-				var algorithmInstance = algorithmFactory(scenario!.Bin, scenario.Items);
+				var algorithmInstance = algorithmFactory(scenario.Bin, scenario.Items);
 
 				var result = algorithmInstance.Execute(new TestOperationParameters
 				{
@@ -77,7 +77,7 @@ internal class BaselineComparisonTests : ITest
 						kvp.Value,
 						algorithmResults[baselineAlgorithmIdentifier]
 					);
-					scenarioCollectionResults.Add(scenario!.Name, algorithmResults);
+					scenarioCollectionResults.Add(scenario.Name, algorithmResults);
 					break;
 				}
 			}

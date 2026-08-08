@@ -75,7 +75,7 @@ internal class PresetSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 				result = await binacleService.SmallestBinAsync(
 					algorithm.Value,
 					presetOption.Bins,
-					request.Items!,
+					request.Items,
 					request.Parameters.ForPackingOperation(),
 					cancellationToken
 				);
@@ -84,7 +84,7 @@ internal class PresetSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			{
 				result = await binacleService.SmallestBinAsync(
 					presetOption.Bins,
-					request.Items!,
+					request.Items,
 					request.Parameters.ForPackingOperation(),
 					cancellationToken
 				);

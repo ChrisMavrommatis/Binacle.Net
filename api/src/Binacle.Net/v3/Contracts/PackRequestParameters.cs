@@ -45,7 +45,7 @@ internal class PackRequestParametersValidator : AbstractValidator<IWithPackingPa
 		RuleFor(x => x.Parameters)
 			.NotNull();
 
-		RuleFor(x => x.Parameters!)
+		RuleFor(x => x.Parameters)
 			.ChildRules(parametersValidator =>
 			{
 				parametersValidator.Include(new AlgorithmValidator());

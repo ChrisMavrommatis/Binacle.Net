@@ -47,17 +47,17 @@ public class BindingResult<T>
 		}
 
 		var validator = this.serviceProvider.GetRequiredService<IValidator<T>>();
-		var validationResult = await validator.ValidateAsync(this.request!, this.cancellationToken);
+		var validationResult = await validator.ValidateAsync(this.request, this.cancellationToken);
 
 		if (!validationResult.IsValid)
 		{
 			return Results.ValidationProblem(
-				validationResult!.GetValidationSummary(),
+				validationResult.GetValidationSummary(),
 				statusCode: StatusCodes.Status422UnprocessableEntity
 			);
 		}
 
-		return await handleValidRequest(this.request!);
+		return await handleValidRequest(this.request);
 	}
 
 
@@ -95,7 +95,7 @@ public class BindingResult<T>
 	{
 		try
 		{
-			var request = await httpContext.Request.ReadFromJsonAsync<T>();
+			var request = await httpContext.Request.ReadFromJsonAsync<T>(httpContext.RequestAborted);
 			return new(httpContext.RequestServices, request, null, httpContext.RequestAborted);
 		}
 		catch (Exception ex)

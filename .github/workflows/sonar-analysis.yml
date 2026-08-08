@@ -67,15 +67,17 @@ jobs:
       # Pinned to a 1.x range: modules and `set working-directory` need a recent just, and ubuntu-latest's apt
       # ships one too old to parse config/tests.just.
       - name: Setup just
-        uses: extractions/setup-just@v4
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
         with:
           just-version: '^1.45'
 
       - name: Restore tools
         run: dotnet tool restore
 
+      # --ignore-scripts stops a dependency running arbitrary code at install time. See run-tests.yml for why
+      # nothing here needs the lifecycle hooks.
       - name: Install npm packages
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Sonar begin
         env:

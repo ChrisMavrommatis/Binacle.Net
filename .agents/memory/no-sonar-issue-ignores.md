@@ -28,6 +28,35 @@ hop (a test reaching its assert through a `Dictionary<Type, Action>` shows the a
 and there is no code fix for the jwt.io sample JWT in the `TokenResponse` OpenAPI example — that one is marked
 False Positive in the SonarCloud UI.
 
+## Scope exclusions are not issue ignores
+
+`config/sonar-analysis.xml` **does** carry `sonar.exclusions`, `sonar.cpd.exclusions` and
+`sonar.coverage.exclusions`, and those are a different thing — do not read the rule above as forbidding them.
+An issue ignore says "run this rule here, then hide what it finds". A scope exclusion says "this is not our
+code, or not this metric's business":
+
+- `sonar.exclusions` drops vendored `assets/lib/**` and the `shared/data/**` fixture corpus. Nobody reviews or
+  fixes either, so measuring them only moved the totals.
+- `sonar.cpd.exclusions` covers `lib/src/Binacle.Lib/Algorithms/**`, where the v1/v2 variants are parallel
+  implementations by design. **Every rule still runs on those files** — only duplication detection stops.
+- Support projects are handled in `Directory.Build.props`, not here, via `SonarQubeTestProject` — see the
+  build-topology doc. That reclassifies them as test code rather than hiding anything.
+
+The test is whether a reader of the code would want to know. A hidden finding fails it; a file that was never
+ours does not.
+
+## Findings with no code answer, marked in the UI
+
+Two survive with nothing honest to change, and are marked in the SonarCloud UI beside the jwt.io JWT above:
+
+- **S2245 "use a cryptographically strong RNG"** on `SampleDataService` (which demo sample set to show) and
+  `getRandomInt.ts` (random box sizes in the UI demo). Neither is a security context, and swapping in
+  `RandomNumberGenerator` to pick a demo box would be cargo cult. Note the rule is `scope: MAIN`, so the same
+  finding in a benchmark or test kernel disappears on its own once that project is marked as test code.
+- **S2068 "hard-coded credential"** on `AccountGetResponse`'s OpenAPI example, where `PasswordHash` is the
+  literal `"type::hash::salt"`. It documents the *shape* of a stored hash and is not a credential; the rule
+  fires on the property name, so any literal there would trip it.
+
 **Why:** a finding answered in code stays reviewable and keeps the rule armed for the next occurrence; a
 finding answered in config is invisible and switches the rule off for everything matching the path.
 

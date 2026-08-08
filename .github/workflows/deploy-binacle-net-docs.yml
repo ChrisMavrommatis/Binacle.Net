@@ -26,7 +26,7 @@ jobs:
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
           GITHUB_SHA: ${{ github.sha }}
       - name: Deploy to DigitalOcean App Platform
-        uses: digitalocean/app_action/deploy@v2
+        uses: digitalocean/app_action/deploy@cc55bc9b848d25f9c1c9f831cf843fbab3fbfb15 # v2.0.11
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           app_name: 'binacle-net-docs'

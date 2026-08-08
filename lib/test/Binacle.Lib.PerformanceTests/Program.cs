@@ -121,8 +121,10 @@ internal class Program
 
 	    using (var scope = host.Services.CreateScope())
 	    {
-		    var testCoordinator = scope.ServiceProvider.GetService<TestRunner>();
-		    await testCoordinator!.RunAsync();
+		    // GetRequiredService, not GetService + !. TestRunner is registered a few lines up, so a null here
+		    // is a wiring bug: this throws naming the missing service instead of a NullReferenceException.
+		    var testCoordinator = scope.ServiceProvider.GetRequiredService<TestRunner>();
+		    await testCoordinator.RunAsync();
 	    }
     }
 }

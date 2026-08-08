@@ -41,7 +41,7 @@ internal class AccountBindingResult<T>
 		if (!accountIdValidationResult.IsValid)
 		{
 			return Results.ValidationProblem(
-				accountIdValidationResult!.GetValidationSummary(),
+				accountIdValidationResult.GetValidationSummary(),
 				statusCode: StatusCodes.Status422UnprocessableEntity
 			);
 		}
@@ -66,12 +66,12 @@ internal class AccountBindingResult<T>
 		}
 
 		var validator = this.serviceProvider.GetRequiredService<IValidator<T>>();
-		var validationResult = await validator.ValidateAsync(this.request!, this.cancellationToken);
+		var validationResult = await validator.ValidateAsync(this.request, this.cancellationToken);
 
 		if (!validationResult.IsValid)
 		{
 			return Results.ValidationProblem(
-				validationResult!.GetValidationSummary(),
+				validationResult.GetValidationSummary(),
 				statusCode: StatusCodes.Status422UnprocessableEntity
 			);
 		}
@@ -83,7 +83,7 @@ internal class AccountBindingResult<T>
 		);
 		
 		var result = accountResult.Match(
-			account => handleRequest(this.request!, account!),
+			account => handleRequest(this.request, account),
 			notFound => Task.FromResult<IResult>(Results.NotFound())
 		);
 		return await result;
@@ -124,7 +124,7 @@ internal class AccountBindingResult<T>
 	{
 		try
 		{
-			var request = await httpContext.Request.ReadFromJsonAsync<T>();
+			var request = await httpContext.Request.ReadFromJsonAsync<T>(httpContext.RequestAborted);
 			return new(httpContext.RequestServices, request, null, httpContext.RequestAborted);
 		}
 		catch (Exception ex)

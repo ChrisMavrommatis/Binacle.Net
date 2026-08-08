@@ -61,8 +61,8 @@ internal class CustomSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			{
 				result = await binacleService.SmallestBinAsync(
 					algorithm.Value,
-					request.Bins!,
-					request.Items!,
+					request.Bins,
+					request.Items,
 					request.Parameters.ForPackingOperation(),
 					cancellationToken
 				);
@@ -70,8 +70,8 @@ internal class CustomSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			else
 			{
 				result = await binacleService.SmallestBinAsync(
-					request.Bins!,
-					request.Items!,
+					request.Bins,
+					request.Items,
 					request.Parameters.ForPackingOperation(),
 					cancellationToken
 				);

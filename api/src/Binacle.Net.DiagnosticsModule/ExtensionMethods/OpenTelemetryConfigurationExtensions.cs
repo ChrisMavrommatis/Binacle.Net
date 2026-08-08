@@ -67,7 +67,7 @@ internal static class OpenTelemetryConfigurationExtensions
 		{
 			builder.UseOtlpExporter(
 				otlp.GetOtlpExportProtocol(),
-				new Uri(otlp.Endpoint!)
+				new Uri(otlp.Endpoint)
 			);
 			return;
 		}
@@ -85,7 +85,7 @@ internal static class OpenTelemetryConfigurationExtensions
 		{
 			if (!string.IsNullOrEmpty(options.ConnectionString))
 			{
-				azureMonitorOptions.ConnectionString = options.ConnectionString!;
+				azureMonitorOptions.ConnectionString = options.ConnectionString;
 			}
 			azureMonitorOptions.SamplingRatio = options.SamplingRatio;
 			azureMonitorOptions.EnableLiveMetrics = options.EnableLiveMetrics;
@@ -100,7 +100,7 @@ internal static class OpenTelemetryConfigurationExtensions
 	{
 		if (model.AdditionalAttributes?.Any() ?? false)
 		{
-			builder.AddAttributes(model.AdditionalAttributes!);
+			builder.AddAttributes(model.AdditionalAttributes);
 		}
 
 		return builder;

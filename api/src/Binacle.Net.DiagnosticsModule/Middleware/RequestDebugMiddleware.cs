@@ -108,6 +108,6 @@ internal class RequestDebugMiddleware
 
 		context.Response.StatusCode = StatusCodes.Status200OK;
 		context.Response.ContentType = "text/plain; charset=utf-8";
-		await context.Response.WriteAsync(output.ToString());
+		await context.Response.WriteAsync(output.ToString(), context.RequestAborted);
 	}
 }

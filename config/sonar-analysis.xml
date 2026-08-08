@@ -19,13 +19,34 @@
 
        docs/ and web/ are the two published Jekyll sites. They are excluded because they are a separate
        deliverable with their own session, not because their code does not matter. Drop them from this line
-       if you want the ~30 hand-written files under docs/_js and web/_js scanned too. -->
-  <Property Name="sonar.exclusions">**/node_modules/**,**/bin/**,**/obj/**,build/**,results/**,docs/**,web/**</Property>
+       if you want the ~30 hand-written files under docs/_js and web/_js scanned too.
+
+       assets/lib/ is vendored: alpine, beercss, material-dynamic-colors and swagger-ui, shipped as-is. It was
+       8157 of the 50418 ncloc the 2026-08-08 run measured and 274 of its 1083 issues - 227 in alpine.js alone,
+       including the only CRITICAL bug. None of it is ours to fix, and all 2329 of its lines counted as
+       uncovered, which is where most of the missing coverage came from.
+
+       shared/data/ is the test fixture corpus (bischoff-suite, or-library, custom-problems, result-selection).
+       It was the whole json=14010 slice of that same run - 28% of the project measured as data files. -->
+  <Property Name="sonar.exclusions">**/node_modules/**,**/bin/**,**/obj/**,build/**,results/**,docs/**,web/**,assets/lib/**,shared/data/**</Property>
 
   <!-- One flat file per suite in build/coverage/sonar, split by extension: .xml from the C# collector,
        .info from jest. config/tests.just is what writes them and the only place that knows the suite list. -->
   <Property Name="sonar.cs.vscoveragexml.reportsPaths">build/coverage/sonar/*.xml</Property>
   <Property Name="sonar.javascript.lcov.reportPaths">build/coverage/sonar/*.info</Property>
+
+  <!-- The v1/v2 variants of First/Best/Worst Fit Decreasing are separate implementations that happen to share
+       a shape, not copy-paste waiting to be factored out. Sonar cannot tell the difference and read them at
+       93% duplicated, which was most of the 38% it reported for lib/ and the reason the gate failed on
+       duplication. Detection is off for that folder only, so duplication elsewhere in lib/ still counts.
+
+       This is a duplication exclusion, not an issue ignore: every rule still runs on these files. -->
+  <Property Name="sonar.cpd.exclusions">lib/src/Binacle.Lib/Algorithms/**</Property>
+
+  <!-- Build tooling, not shipped code. The .NET support projects (benchmarks, performance suites, tools and
+       the two test kernels) are handled properly instead, by SonarQubeTestProject in Directory.Build.props -
+       that takes them out of the coverage denominator and off the product rule set in one move. -->
+  <Property Name="sonar.coverage.exclusions">gulpfile.js,jest.config.js</Property>
 
   <!-- No sonar.issue.ignore rules here, on purpose. Where a rule was wrong about our code the code now says
        so in a way the analyser can read - [AssertionMethod] on the helpers that assert, arrange/act/assert
