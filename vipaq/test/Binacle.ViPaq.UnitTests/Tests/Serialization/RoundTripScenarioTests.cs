@@ -20,7 +20,7 @@ public class RoundTripScenarioTests
 	{
 		var scenario = RoundTripProvider.Get(name);
 
-		var data = SerializationTestingFixture.Encode(scenario.ExpectedHeader, scenario.Bin, scenario.Items);
+		var data = ProtocolTestingFixture.Encode(scenario.ExpectedHeader, scenario.Bin, scenario.Items);
 
 		// A cheap guard that Encode actually wrote the header it was handed, and that ToBytes/FromBytes agree on
 		// these bytes. It is NOT an independent oracle — the header is the encode input, so it echoes back by
@@ -29,6 +29,9 @@ public class RoundTripScenarioTests
 		// header, which HeaderBytesTests does not exercise.
 		Header.FromBytes(data[0], data[1]).ShouldBe(scenario.ExpectedHeader);
 
-		SerializationTestingFixture.AssertDeserializesTo(data, scenario.Bin, scenario.Items);
+		var expected = new BinContents<long>(scenario.Bin, scenario.Items);
+		var actual = ProtocolTestingFixture.Deserialize<long>(data);
+
+		BinContents.AssertSame(expected, actual);
 	}
 }

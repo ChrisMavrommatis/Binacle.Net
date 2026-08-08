@@ -7,8 +7,12 @@
 # suites exist — adding one needs no edit here.
 #
 # The format is named after the consumer: `sonar` selects Visual Studio coverage xml for C#, the only C# format
-# Sonar imports, and lcov for TS. Both reportsPaths below are therefore a glob over that one folder, split by
+# Sonar imports, and lcov for TS. Both reportsPaths are therefore a glob over that one folder, split by
 # extension (.xml vs .info).
+#
+# Scope and those coverage paths live in config/sonar-analysis.xml, not here. The Scanner for .NET ignores
+# sonar-project.properties, so that xml is the file form it does read - `/s:` needs an absolute path, hence
+# $GITHUB_WORKSPACE. Only the key, org, token and host stay below.
 
 name: Sonar Analysis
 
@@ -82,8 +86,7 @@ jobs:
             /o:"${{ vars.SONAR_ORGANIZATION }}" \
             /d:sonar.token="$SONAR_TOKEN" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.vscoveragexml.reportsPaths="build/coverage/sonar/*.xml" \
-            /d:sonar.javascript.lcov.reportPaths="build/coverage/sonar/*.info"
+            /s:"$GITHUB_WORKSPACE/config/sonar-analysis.xml"
 
       # Build once here so the coverage run below can --no-build.
       - name: Build

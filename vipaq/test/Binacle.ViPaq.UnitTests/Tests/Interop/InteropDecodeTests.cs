@@ -37,6 +37,9 @@ public class InteropDecodeTests
 			ArtifactCodec.Gzip => new GzipCodec(),
 			_ => new NoOpCodec(),
 		};
-		SerializationTestingFixture.AssertCodecDecodesTo(artifact.Bytes, codec, artifact.Input.Bin, artifact.Input.Items);
+		var expected = new BinContents<long>(artifact.Input.Bin, artifact.Input.Items);
+		var actual = ProtocolTestingFixture.DecodeWith<long>(artifact.Bytes, codec);
+
+		BinContents.AssertSame(expected, actual);
 	}
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Analysis settings for the Sonar scan, passed with /s: from .github/workflows/sonar-analysis.yml.
+
+  This file rather than sonar-project.properties because the Scanner for .NET does not read that one - it
+  ignores it silently, with no warning. This xml is its equivalent. The /s: path must be absolute.
+
+  Token and host url stay on the command line. The token is a secret and does not belong in a committed file.
+
+  There is deliberately no sonar.inclusions. The scanner builds its module list from the build itself, so a
+  source glob can only fight it: an inclusion of `src/**/*` in the SonarCloud UI, left over from a flat
+  layout, is what made the 2026-08-07 run index 0 files and still report success. Scope is exclusions only.
+-->
+<SonarQubeAnalysisProperties xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
+
+  <!-- C# reaches the scanner through the build. TS reaches it through multi-language analysis, which walks
+       the working tree instead, so this list is mostly about keeping that walk off generated and vendored
+       files - node_modules alone was most of the 15794 files the broken run looked at.
+
+       docs/ and web/ are the two published Jekyll sites. They are excluded because they are a separate
+       deliverable with their own session, not because their code does not matter. Drop them from this line
+       if you want the ~30 hand-written files under docs/_js and web/_js scanned too. -->
+  <Property Name="sonar.exclusions">**/node_modules/**,**/bin/**,**/obj/**,build/**,results/**,docs/**,web/**</Property>
+
+  <!-- One flat file per suite in build/coverage/sonar, split by extension: .xml from the C# collector,
+       .info from jest. config/tests.just is what writes them and the only place that knows the suite list. -->
+  <Property Name="sonar.cs.vscoveragexml.reportsPaths">build/coverage/sonar/*.xml</Property>
+  <Property Name="sonar.javascript.lcov.reportPaths">build/coverage/sonar/*.info</Property>
+
+  <!-- No sonar.issue.ignore rules here, on purpose. Where a rule was wrong about our code the code now says
+       so in a way the analyser can read - [AssertionMethod] on the helpers that assert, arrange/act/assert
+       split so the check sits in the test body - rather than the finding being hidden from this file, where
+       nobody reviewing the code would ever see it. If a rule genuinely does not apply to this project, turn
+       it off in the quality profile, where it is visible to everyone, not here. -->
+
+</SonarQubeAnalysisProperties>

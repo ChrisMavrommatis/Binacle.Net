@@ -79,7 +79,11 @@ Binacle.Geometry                    leaf — geometry types + IWith[ReadOnly]Dim
    caller would.
 
 4. **Two doors into the internal `ProtocolEncoder`** — and they stay apart: the UnitTests fixture
-   (`SerializationTestingFixture`, curated/vector inputs) and the kernel's `ViPaqEncoder` (real-pack inputs).
+   (`ProtocolTestingFixture`, curated/vector inputs) and the kernel's `ViPaqEncoder` (real-pack inputs).
+   The UnitTests fixtures are split by which door a test goes through: `ProtocolTestingFixture` drives
+   `ProtocolEncoder` (a header is an input, so a test can force a columnar or wider blob) and
+   `ViPaqSerializerTestingFixture` drives the public `ViPaqSerializer` (which picks its own header).
+   `BinContents` holds what both need — the bin/item builders, and the field-by-field `AssertSame`.
 
 5. **No test project references a generator.** The generators are standalone tools: they write `test-vectors/`
    and `data/packed/`, and the suites read those files. A `ProjectReference` from a test project to a tool —

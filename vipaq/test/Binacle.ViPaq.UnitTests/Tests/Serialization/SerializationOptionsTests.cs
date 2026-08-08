@@ -13,33 +13,6 @@ public class SerializationOptionsTests
 			.Select(_ => new Binacle.Geometry.Item<int> { Length = 300, Width = 300, Height = 300, X = 0, Y = 0, Z = 0 })
 			.ToList();
 
-	private static byte[] Serialize(
-		Binacle.Geometry.Dimensions<int> bin,
-		IReadOnlyList<Binacle.Geometry.Item<int>> items,
-		Action<ViPaqSerializationOptions>? configure = null)
-		=> ViPaqSerializer.Serialize<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>, int>(bin, items, configure);
-
-	private static void AssertRoundTrips(byte[] blob, Binacle.Geometry.Dimensions<int> bin, IReadOnlyList<Binacle.Geometry.Item<int>> items)
-	{
-		var (resultBin, resultItems) =
-			ViPaqSerializer.Deserialize<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>, int>(blob);
-
-		resultBin.Length.ShouldBe(bin.Length);
-		resultBin.Width.ShouldBe(bin.Width);
-		resultBin.Height.ShouldBe(bin.Height);
-
-		resultItems.Count.ShouldBe(items.Count);
-		for (var index = 0; index < items.Count; index++)
-		{
-			resultItems[index].Length.ShouldBe(items[index].Length);
-			resultItems[index].Width.ShouldBe(items[index].Width);
-			resultItems[index].Height.ShouldBe(items[index].Height);
-			resultItems[index].X.ShouldBe(items[index].X);
-			resultItems[index].Y.ShouldBe(items[index].Y);
-			resultItems[index].Z.ShouldBe(items[index].Z);
-		}
-	}
-
 	// Every opt-in combination decodes back to the input — decode-to-input is the oracle (PROTOCOL.md §6.1).
 	[Theory]
 	[InlineData(false, Layout.RowMajor)]
@@ -48,22 +21,25 @@ public class SerializationOptionsTests
 	[InlineData(true, Layout.Columnar)]
 	public void Serialize_With_Options_RoundTrips(bool compress, Layout layout)
 	{
-		var items = RepetitiveItems(50);
-		var blob = Serialize(Bin, items, options =>
+		var expected = new BinContents<int>(Bin, RepetitiveItems(50));
+
+		var blob = ViPaqSerializerTestingFixture.Serialize(expected, options =>
 		{
 			options.Compress = compress;
 			options.Layout = layout;
 		});
+		var actual = ViPaqSerializerTestingFixture.Deserialize<int>(blob);
 
-		AssertRoundTrips(blob, Bin, items);
+		BinContents.AssertSame(expected, actual);
 	}
 
 	// The chosen layout lands in the header even with compression off.
 	[Fact]
 	public void Serialize_Columnar_Sets_The_Layout_Bit()
 	{
-		var items = RepetitiveItems(4);
-		var blob = Serialize(Bin, items, options => options.Layout = Layout.Columnar);
+		var binContents = new BinContents<int>(Bin, RepetitiveItems(4));
+
+		var blob = ViPaqSerializerTestingFixture.Serialize(binContents, options => options.Layout = Layout.Columnar);
 
 		Header.FromBytes(blob[0], blob[1]).Layout.ShouldBe(Layout.Columnar);
 	}
@@ -72,13 +48,14 @@ public class SerializationOptionsTests
 	[Fact]
 	public void Serialize_Compresses_A_Large_Repetitive_Pack()
 	{
-		var items = RepetitiveItems(50);
+		var expected = new BinContents<int>(Bin, RepetitiveItems(50));
 
-		var raw = Serialize(Bin, items);
-		var compressed = Serialize(Bin, items, options => options.Compress = true);
+		var raw = ViPaqSerializerTestingFixture.Serialize(expected);
+		var compressed = ViPaqSerializerTestingFixture.Serialize(expected, options => options.Compress = true);
+		var actual = ViPaqSerializerTestingFixture.Deserialize<int>(compressed);
 
 		compressed.Length.ShouldBeLessThan(raw.Length);
 		Header.FromBytes(compressed[0], compressed[1]).Compressed.ShouldBeTrue();
-		AssertRoundTrips(compressed, Bin, items);
+		BinContents.AssertSame(expected, actual);
 	}
 }

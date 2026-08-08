@@ -40,15 +40,5 @@ internal class Item :
 	[Range(1, ushort.MaxValue)]
 	public int Quantity { get; set; }
 
-	public int Volume
-	{
-		get
-		{
-			return this.CalculateVolume();
-		}
-		set
-		{
-
-		}
-	}
+	public int Volume => this.CalculateVolume();
 }

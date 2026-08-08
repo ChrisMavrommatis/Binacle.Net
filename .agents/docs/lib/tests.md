@@ -1,7 +1,7 @@
 ---
 id: lib/tests
 description: lib/test projects — unit tests, performance tests, benchmarks; AlgorithmFactories, CommonTestingFixture, ResultSelectionTestingFixture, and run aliases
-verified: 2026-07-28
+verified: 2026-08-09
 check: Project list, AlgorithmFactories/CommonTestingFixture/ResultSelectionTestingFixture, and aliases match lib/test/ and config/tests.just + config/performance.lib.sh + config/benchmarks.lib.sh
 also_update:
   - shared
@@ -27,28 +27,47 @@ kernel — see shared (`$shared`).
 (`new FirstFitDecreasing_v2<TestBin, TestItem>(bin, items)`), **not** through `IAlgorithmFactory`/DI.
 This keeps every version (including v1) under test without coupling it to the production factory.
 
+Both fixtures split arrange, act and assert into separate members, so a test body shows all three steps
+rather than handing them to one helper.
+
 `CommonTestingFixture` holds all six factories in `AlgorithmsUnderTest[]` and exposes:
 
 ```csharp
-RunTest(TestAlgorithmFactory<IPackingAlgorithm> factory, string scenarioName, AlgorithmOperation operation)
+Scenario GetScenarioByName(string scenarioName)
+OperationResult Run(TestAlgorithmFactory<IPackingAlgorithm> factory, Scenario scenario, AlgorithmOperation operation)
+void AssertResult(Scenario scenario, OperationResult result)
 ```
 
-It resolves the scenario from the kernel's `Algorithms` `AllScenariosProvider`, builds the algorithm, calls
-`Execute(new TestOperationParameters { Operation })`, then asserts via `scenario.Metrics.EvaluateResult` and
-`scenario.Result.EvaluateResult`. Test classes: `FittingBischoffSuiteTests`, `FittingCustomProblemsTests`,
-`PackingBischoffSuiteTests`, `PackingCustomProblemsTests` (each a `[Theory]` × `[MemberData]` over all six
-versions), plus `CreationTests`, `SanityTests`, `ResultSelectionTests`.
+`GetScenarioByName` resolves from the kernel's `Algorithms` `AllScenariosProvider`. `Run` builds the algorithm
+and calls `Execute(parameters)`, checking nothing. `AssertResult` does both checks —
+`scenario.Metrics.EvaluateResult` and `scenario.Result.EvaluateResult` — and is marked `[AssertionMethod]`
+so the analyser knows where the assertion lives. A test reads:
+
+```csharp
+var testScenario = this.Fixture.GetScenarioByName(scenario);
+
+var result = this.Fixture.Run(AlgorithmFactories.FFD_v1, testScenario, AlgorithmOperation.Fitting);
+
+this.Fixture.AssertResult(testScenario, result);
+```
+
+Test classes: `FittingBischoffSuiteTests`, `FittingCustomProblemsTests`, `PackingBischoffSuiteTests`,
+`PackingCustomProblemsTests` (each a `[Theory]` × `[MemberData]` over all six versions), plus `CreationTests`,
+`SanityTests`, `ResultSelectionTests`.
 
 `ResultSelectionTestingFixture`:
 
 ```csharp
-RunTest(string scenarioName, IResultSelectionStrategy strategy, Func<OperationResult, string> resultSelector)
+Scenario GetScenarioByName(string scenarioName)
+string Select(Scenario scenario, IResultSelectionStrategy strategy, Func<OperationResult, string> resultSelector)
 ```
 
-Pulls the scenario from the kernel's `ResultSelection` `AllScenariosProvider`, calls `strategy.Select(results)`,
-applies `resultSelector`, and asserts it equals `scenario.ExpectedResult`. `ResultSelectionTests` runs both
-strategy versions: `BestAlgorithm_v1/v2` (selector `x => x.AlgorithmInfo.GetAlgorithmIdentifierName()`),
-`BestBin_v1/v2` and `SmallestBin_v1/v2` (selector `x => x.Bin.ID`). See `$lib/result-selection`.
+`GetScenarioByName` pulls from the kernel's `ResultSelection` `AllScenariosProvider`; `Select` calls
+`strategy.Select(scenario.Results)` and applies `resultSelector`. There is no assert member here — the check
+is a single comparison, so the test makes it itself with `selected.ShouldBe(scenario.ExpectedResult)`.
+`ResultSelectionTests` runs both strategy versions: `BestAlgorithm_v1/v2` (selector
+`x => x.AlgorithmInfo.GetAlgorithmIdentifierName()`), `BestBin_v1/v2` and `SmallestBin_v1/v2` (selector
+`x => x.Bin.ID`). See `$lib/result-selection`.
 
 ## Binacle.Lib.PerformanceTests
 

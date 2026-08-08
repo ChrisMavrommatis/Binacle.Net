@@ -27,7 +27,7 @@ public class SerializationEncodingTests
 		var scenario = ExactBytesProvider.Get(name);
 		var header = Header.FromBytes(scenario.Bytes[0], scenario.Bytes[1]);
 
-		var data = SerializationTestingFixture.Encode(header, scenario.Bin, scenario.Items);
+		var data = ProtocolTestingFixture.Encode(header, scenario.Bin, scenario.Items);
 
 		data.ShouldBe(scenario.Bytes);
 	}
@@ -40,8 +40,11 @@ public class SerializationEncodingTests
 	public void Decode_Produces_Exact_Object(string name)
 	{
 		var scenario = ExactBytesProvider.Get(name);
+		var expected = new BinContents<long>(scenario.Bin, scenario.Items);
 
-		SerializationTestingFixture.AssertDeserializesTo(scenario.Bytes, scenario.Bin, scenario.Items);
+		var actual = ProtocolTestingFixture.Deserialize<long>(scenario.Bytes);
+
+		BinContents.AssertSame(expected, actual);
 	}
 
 	// This one stays on ViPaqSerializer on purpose: picking the narrowest width that holds each section, and
@@ -59,8 +62,8 @@ public class SerializationEncodingTests
 		var itemDimensionsWidth = (Width)itemDimensionsWidthValue;
 		var itemCoordinatesWidth = (Width)itemCoordinatesWidthValue;
 
-		var bin = SerializationTestingFixture.BuildBin<ulong>(binWidth);
-		var item = SerializationTestingFixture.BuildItem<ulong>(itemDimensionsWidth, itemCoordinatesWidth);
+		var bin = BinContents.BuildBin<ulong>(binWidth);
+		var item = BinContents.BuildItem<ulong>(itemDimensionsWidth, itemCoordinatesWidth);
 
 		var data = ViPaqSerializer.Serialize<Binacle.Geometry.Dimensions<ulong>, Binacle.Geometry.Item<ulong>, ulong>(bin, [item]);
 		var header = Header.FromBytes(data[0], data[1]);

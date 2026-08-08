@@ -62,18 +62,34 @@ public class ProtocolReaderTests
 		result.ShouldBe((int)wireValue);
 	}
 
-	// A type cannot live inside a data row, so the row carries the Type and this dictionary maps it
-	// to the matching generic call. Guards the regression where Read8Bits only worked when T was int.
-	private static readonly Dictionary<Type, Action> ByteReadAssertions = new()
+	private const byte SingleByte = 100; // 0x64, fits every signed and unsigned type
+
+	// A type cannot live inside a data row, so the row carries the Type and these maps reach the matching
+	// generic call. Two of them rather than one returning both halves, so the test keeps its arrange, act
+	// and assert as three separate lines: one supplies the expected value, the other does the read.
+	// Guards the regression where Read8Bits only worked when T was int.
+	private static readonly Dictionary<Type, Func<object>> ExpectedSingleByteByType = new()
 	{
-		[typeof(sbyte)] = AssertReadsByteAs<sbyte>,
-		[typeof(byte)] = AssertReadsByteAs<byte>,
-		[typeof(short)] = AssertReadsByteAs<short>,
-		[typeof(ushort)] = AssertReadsByteAs<ushort>,
-		[typeof(int)] = AssertReadsByteAs<int>,
-		[typeof(uint)] = AssertReadsByteAs<uint>,
-		[typeof(long)] = AssertReadsByteAs<long>,
-		[typeof(ulong)] = AssertReadsByteAs<ulong>,
+		[typeof(sbyte)] = ExpectedSingleByteAs<sbyte>,
+		[typeof(byte)] = ExpectedSingleByteAs<byte>,
+		[typeof(short)] = ExpectedSingleByteAs<short>,
+		[typeof(ushort)] = ExpectedSingleByteAs<ushort>,
+		[typeof(int)] = ExpectedSingleByteAs<int>,
+		[typeof(uint)] = ExpectedSingleByteAs<uint>,
+		[typeof(long)] = ExpectedSingleByteAs<long>,
+		[typeof(ulong)] = ExpectedSingleByteAs<ulong>,
+	};
+
+	private static readonly Dictionary<Type, Func<object>> SingleByteReadsByType = new()
+	{
+		[typeof(sbyte)] = ReadSingleByteAs<sbyte>,
+		[typeof(byte)] = ReadSingleByteAs<byte>,
+		[typeof(short)] = ReadSingleByteAs<short>,
+		[typeof(ushort)] = ReadSingleByteAs<ushort>,
+		[typeof(int)] = ReadSingleByteAs<int>,
+		[typeof(uint)] = ReadSingleByteAs<uint>,
+		[typeof(long)] = ReadSingleByteAs<long>,
+		[typeof(ulong)] = ReadSingleByteAs<ulong>,
 	};
 
 	[Theory]
@@ -87,18 +103,26 @@ public class ProtocolReaderTests
 	[InlineData(typeof(ulong))]
 	public void Read8Bits_Widens_Single_Byte_To_T(Type numericType)
 	{
-		ByteReadAssertions[numericType]();
+		var expected = ExpectedSingleByteByType[numericType]();
+
+		var actual = SingleByteReadsByType[numericType]();
+
+		actual.ShouldBe(expected);
 	}
 
-	// A single byte must read back as the typed value for any T, not just int.
-	private static void AssertReadsByteAs<T>()
+	// The literal widened to T: what a single-byte read should hand back.
+	private static object ExpectedSingleByteAs<T>()
+		where T : struct, IBinaryInteger<T>
+		=> T.CreateChecked(SingleByte);
+
+	// One byte on the wire, read back as T. Boxed so the row can carry it - both sides box the same T, so
+	// equality still compares like with like.
+	private static object ReadSingleByteAs<T>()
 		where T : struct, IBinaryInteger<T>
 	{
-		const byte value = 100; // 0x64, fits every signed and unsigned type
-		var reader = new ProtocolReader<T>(new MemoryStream([value]));
+		var stream = new MemoryStream([SingleByte]);
+		var reader = new ProtocolReader<T>(stream);
 
-		var result = reader.Read8Bits();
-
-		result.ShouldBe(T.CreateChecked(value));
+		return reader.Read8Bits();
 	}
 }

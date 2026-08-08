@@ -75,12 +75,15 @@ fully — this one then takes the highest utilization, `SmallestBin_v2` the leas
 
 ## How tests verify selection
 
-`ResultSelectionTestingFixture.RunTest(scenarioName, strategy, resultSelector)` takes:
-- a scenario name (from JSON test data under `shared/data/result-selection/`, embedded as
-  `ResultSelection/Data/` — see `$shared`)
+`ResultSelectionTestingFixture.GetScenarioByName(scenarioName)` resolves the scenario (from JSON test data
+under `shared/data/result-selection/`, embedded as `ResultSelection/Data/` — see `$shared`).
+
+`ResultSelectionTestingFixture.Select(scenario, strategy, resultSelector)` then takes:
+- that scenario
 - the strategy to test
 - a key extractor: `x => x.AlgorithmInfo.GetAlgorithmIdentifierName()` for BestAlgorithm,
   or `x => x.Bin.ID` for BestBin / SmallestBin
 
 Each scenario provides a pre-built `IDictionary<string, OperationResult>` and an `ExpectedResult` key.
-The test calls `Select()`, extracts the key, and asserts it equals `ExpectedResult`.
+`Select` calls `Select()` on the strategy and extracts the key; the test itself asserts it equals
+`ExpectedResult`, so the comparison stays visible in the test body.

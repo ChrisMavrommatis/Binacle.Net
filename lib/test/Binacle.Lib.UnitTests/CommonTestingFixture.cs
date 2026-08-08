@@ -1,7 +1,9 @@
 ﻿using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.Lib.Abstractions.Models;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Algorithms.ExtensionMethods;
 using Binacle.TestsKernel.Models;
+using Binacle.TestsKernel.Algorithms.Models;
 using Binacle.TestsKernel.Algorithms.Providers;
 
 namespace Binacle.Lib.UnitTests;
@@ -28,19 +30,31 @@ public sealed class CommonTestingFixture : IDisposable
 	{
 	}
 
-	public void RunTest(
+	// Arrange. The scenario carries both the input and what the result is measured against, so the test holds
+	// onto it and hands it back at the assert.
+	public Scenario GetScenarioByName(string scenarioName)
+		=> AllScenariosProvider.GetScenarioByName(scenarioName);
+
+	// Act. Just runs the algorithm - no checking, so a failure here is a broken run, not a failed expectation.
+	public OperationResult Run(
 		TestAlgorithmFactory<IPackingAlgorithm> algorithmFactory,
-		string scenarioName,
+		Scenario scenario,
 		AlgorithmOperation operation
 	)
 	{
-		var scenario = AllScenariosProvider.GetScenarioByName(scenarioName);
 		var algorithmInstance = algorithmFactory(scenario.Bin, scenario.Items);
-
-		var result = algorithmInstance.Execute(new TestOperationParameters
+		var parameters = new TestOperationParameters
 		{
 			Operation = operation
-		});
+		};
+
+		return algorithmInstance.Execute(parameters);
+	}
+
+	// Assert. Both checks have to run: Metrics pins how the algorithm got there, Result pins where it landed.
+	[AssertionMethod]
+	public void AssertResult(Scenario scenario, OperationResult result)
+	{
 		scenario.Metrics.EvaluateResult(result);
 		scenario.Result.EvaluateResult(result);
 	}
