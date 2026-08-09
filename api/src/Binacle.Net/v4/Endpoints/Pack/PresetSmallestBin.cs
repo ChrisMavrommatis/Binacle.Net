@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net.Mime;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
@@ -21,17 +22,17 @@ internal class PresetSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			.WithSummary("Pack the smallest bin in a preset")
 			.WithDescription("Pack every bin in a preset and return the result for the smallest bin that can fit the items.")
 
-			.Accepts<PackPresetSmallestBinRequest>("application/json")
-			.RequestExample<PackPresetSmallestBinRequestExample>("application/json")
+			.Accepts<PackPresetSmallestBinRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<PackPresetSmallestBinRequestExample>(MediaTypeNames.Application.Json)
 
-			.Produces<PackBinResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<PackBinResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK,
 				"Returns the result of the packing operation for the smallest bin in the preset that can fit the items.")
-			.ResponseExamples<PackPresetSmallestBinResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<PackPresetSmallestBinResponseExamples>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
 
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, "If the preset does not exist.")
@@ -43,13 +44,13 @@ internal class PresetSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			)
 			.ResponseExamples<PresetBinsValidationProblemResponseExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		[FromRoute][Description(SchemaDescriptions.PresetParam)] string preset,
 		BindingResult<PackPresetSmallestBinRequest> bindingResult,
 		IOptions<BinPresetOptions> presetOptions,

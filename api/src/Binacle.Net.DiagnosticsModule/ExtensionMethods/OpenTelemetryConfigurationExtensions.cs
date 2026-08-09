@@ -17,7 +17,7 @@ internal static class OpenTelemetryConfigurationExtensions
 		string[]? additionalMeters
 	)
 	{
-		if (additionalMeters?.Any() ?? false)
+		if (additionalMeters?.Length > 0)
 		{
 			foreach (var meter in additionalMeters)
 			{
@@ -33,7 +33,7 @@ internal static class OpenTelemetryConfigurationExtensions
 		string[]? additionalSources
 	)
 	{
-		if (additionalSources?.Any() ?? false)
+		if (additionalSources?.Length > 0)
 		{
 			foreach (var source in additionalSources)
 			{
@@ -44,6 +44,10 @@ internal static class OpenTelemetryConfigurationExtensions
 		return tracerProviderBuilder;
 	}
 
+	// Empty on purpose, both of them. ModuleDefinition already calls these from AddAspNetCoreInstrumentation
+	// and AddHttpClientInstrumentation, so the seam between our tracing options and the instrumentation's own
+	// options exists and is wired. Nothing in OpenTelemetryTracingConfigurationOptions needs to reach them
+	// yet. Keeping the call means adding the first setting is an edit here, not a change at the call site.
 	public static void ConfigureAspNetCoreInstrumentation(
 		this AspNetCoreTraceInstrumentationOptions options,
 		OpenTelemetryTracingConfigurationOptions tracingConfigurationOptions
@@ -98,7 +102,7 @@ internal static class OpenTelemetryConfigurationExtensions
 	)
 		where T : IOpenTelemetryAttributes
 	{
-		if (model.AdditionalAttributes?.Any() ?? false)
+		if (model.AdditionalAttributes?.Count > 0)
 		{
 			builder.AddAttributes(model.AdditionalAttributes);
 		}

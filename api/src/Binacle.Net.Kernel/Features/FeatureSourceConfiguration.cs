@@ -8,8 +8,8 @@ namespace Binacle.Net.Kernel.Features;
 public class FeatureSourceConfiguration
 {
 	private readonly FeatureManagerConfiguration parent;
-	private HashSet<Type> providerTypes;
-	private List<IFeatureProvider> providers;
+	private readonly HashSet<Type> providerTypes;
+	private readonly List<IFeatureProvider> providers;
 	internal IReadOnlyList<IFeatureProvider> Providers => this.providers.AsReadOnly();
 
 	public FeatureSourceConfiguration(FeatureManagerConfiguration parent)

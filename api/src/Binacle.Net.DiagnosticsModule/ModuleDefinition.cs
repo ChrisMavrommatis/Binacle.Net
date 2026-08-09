@@ -25,6 +25,9 @@ namespace Binacle.Net.DiagnosticsModule;
 
 public static class ModuleDefinition
 {
+	// Allocated once. As a `new[] { "Core" }` argument it was a fresh array on every registration call.
+	private static readonly string[] CoreTags = ["Core"];
+
 	public static void BootstrapLogger(this WebApplicationBuilder builder)
 	{
 		builder.Logging.ClearProviders();
@@ -44,7 +47,7 @@ public static class ModuleDefinition
 	
 	public static void AddDiagnosticsModule(this WebApplicationBuilder builder)
 	{
-		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initializing");
+		Log.Information("{ModuleName} module. Status {Status}", "Diagnostics", "Initializing");
 
 		// Logging
 		builder.AddJsonConfiguration(
@@ -152,7 +155,7 @@ public static class ModuleDefinition
 		builder.Services.AddHealthCheck<SystemHealthCheck>(
 			"System",
 			HealthStatus.Unhealthy,
-			new[] { "Core" }
+			CoreTags
 		);
 
 		// Registered as a feature so the health check reports whether it is live. It echoes headers back to the
@@ -162,7 +165,7 @@ public static class ModuleDefinition
 			builder.Services.Configure<FeatureOptions>(options => options.AddFeature("DebugEndpoint"));
 		}
 
-		Log.Information("{moduleName} module. Status {status}", "Diagnostics", "Initialized");
+		Log.Information("{ModuleName} module. Status {Status}", "Diagnostics", "Initialized");
 	}
 
 	public static void UseDiagnosticsModule(this WebApplication app)
@@ -172,7 +175,7 @@ public static class ModuleDefinition
 		if (Feature.IsEnabled("DEBUG_ENDPOINT"))
 		{
 			app.UseMiddleware<RequestDebugMiddleware>();
-			Log.Information("Debug endpoint. Status {status}. Path {path}", "Enabled", RequestDebugMiddleware.Path);
+			Log.Information("Debug endpoint. Status {Status}. Path {Path}", "Enabled", RequestDebugMiddleware.Path);
 		}
 
 		// After UseForwardedHeaders in the outer pipeline, which is the only place it can see whether the header

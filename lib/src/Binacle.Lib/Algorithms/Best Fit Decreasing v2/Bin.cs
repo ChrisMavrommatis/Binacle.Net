@@ -9,7 +9,7 @@ internal partial class BestFitDecreasing_v2<TBin, TItem> : IPackingAlgorithm
 {
 	private sealed class Bin : IWithID, IWithReadOnlyDimensions, IWithReadOnlyVolume
 	{
-		private TBin bin;
+		private readonly TBin bin;
 
 		internal Bin(TBin bin)
 		{

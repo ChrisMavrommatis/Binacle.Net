@@ -63,7 +63,7 @@ internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 
 		if (!success)
 		{
-			throw new ApplicationException($"{nameof(EnsureDefaultAdminAccountExistsStartupTask)} failed");
+			throw new InvalidOperationException($"{nameof(EnsureDefaultAdminAccountExistsStartupTask)} failed");
 		}
 	}
 }

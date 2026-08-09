@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Binacle.Net.ServiceModule.Infrastructure.Common;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
@@ -125,7 +126,7 @@ internal class SqliteSubscriptionRepository : ISubscriptionRepository
 		return TypedResult.Success;
 	}
 
-	private class SubscriptionDto
+	private sealed class SubscriptionDto
 	{
 		#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 		public string Id { get; set; }
@@ -144,10 +145,10 @@ internal class SqliteSubscriptionRepository : ISubscriptionRepository
 				accountId: Guid.Parse(this.AccountId),
 				status: Enum.Parse<SubscriptionStatus>(this.Status),
 				type: Enum.Parse<SubscriptionType>(this.Type),
-				creationDate: DateTimeOffset.Parse(this.CreatedAtUtc),
+				creationDate: SqliteDateTime.FromStorage(this.CreatedAtUtc),
 				id: Guid.Parse(this.Id),
 				isDeleted: this.IsDeleted == 1,
-				deletionDate: this.DeletedAtUtc != null ? DateTimeOffset.Parse(this.DeletedAtUtc) : null
+				deletionDate: this.DeletedAtUtc != null ? SqliteDateTime.FromStorage(this.DeletedAtUtc) : null
 			);
 		}
 
@@ -159,9 +160,9 @@ internal class SqliteSubscriptionRepository : ISubscriptionRepository
 				AccountId = entity.AccountId.ToString(),
 				Status = entity.Status.ToString(),
 				Type = entity.Type.ToString(),
-				CreatedAtUtc = entity.CreatedAtUtc.ToString(),
+				CreatedAtUtc = SqliteDateTime.ToStorage(entity.CreatedAtUtc),
 				IsDeleted = entity.IsDeleted ? 1 : 0,
-				DeletedAtUtc = entity.DeletedAtUtc?.ToString()
+				DeletedAtUtc = entity.DeletedAtUtc.HasValue ? SqliteDateTime.ToStorage(entity.DeletedAtUtc.Value) : null
 			};
 		}
 		
@@ -180,6 +181,6 @@ internal class SqliteSubscriptionRepository : ISubscriptionRepository
 				DeletedAtUtc TEXT
 			);
 		";
-		int rowsAffected = await connection.ExecuteAsync(sql);
+		await connection.ExecuteAsync(sql);
 	}
 }

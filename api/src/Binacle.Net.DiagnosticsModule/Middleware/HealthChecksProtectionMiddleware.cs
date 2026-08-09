@@ -60,7 +60,7 @@ internal class HealthChecksProtectionMiddleware
 			if (entry!.Contains('/') && entry.Trim() != network.ToString())
 			{
 				this.logger.LogWarning(
-					"Health check RestrictedIPs entry {entry} covers the whole network {network}", entry, network
+					"Health check RestrictedIPs entry {Entry} covers the whole network {Network}", entry, network
 				);
 			}
 		}
@@ -96,7 +96,7 @@ internal class HealthChecksProtectionMiddleware
 
 		if (!this.allowList.Allows(remoteIp))
 		{
-			logger.LogWarning("Health check request from {remoteIp} is not allowed", remoteIp);
+			logger.LogWarning("Health check request from {RemoteIp} is not allowed", remoteIp);
 			context.Response.StatusCode = StatusCodes.Status403Forbidden;
 			return;
 		}

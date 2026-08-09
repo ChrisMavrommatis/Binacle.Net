@@ -12,7 +12,6 @@ namespace Binacle.Net.ServiceModule.Services;
 internal class ApiUsageRateLimitingPolicy : IRateLimiterPolicy<string>
 {
 	private readonly IOptions<RateLimiterConfigurationOptions> options;
-	private readonly ILogger<ApiUsageRateLimitingPolicy> logger;
 	private readonly Func<OnRejectedContext, CancellationToken, ValueTask>?  onRejected;
 
 	public ApiUsageRateLimitingPolicy(
@@ -21,7 +20,6 @@ internal class ApiUsageRateLimitingPolicy : IRateLimiterPolicy<string>
 	)
 	{
 		this.options = options;
-		this.logger = logger;
 		this.onRejected = (ctx, token) =>
 		{
 			logger.LogWarning("Request rejected by {Policy}", nameof(ApiUsageRateLimitingPolicy));

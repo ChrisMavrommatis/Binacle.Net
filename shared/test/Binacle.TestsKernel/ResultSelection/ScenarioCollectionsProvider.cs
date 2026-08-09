@@ -12,13 +12,12 @@ public static class ScenarioCollectionsProvider
     {
         collections = new Dictionary<string, List<Models.Scenario>>();
 
-        var scenarioReader = new ScenarioReader();
         var files = EmbeddedResourceFileProvider.ByPrefix("Binacle.TestsKernel.ResultSelection.Data.");
 
         foreach (var file in files)
         {
             var collectionKey = GetCollectionKey(file);
-            var scenarios = scenarioReader.ReadScenarios(file);
+            var scenarios = ScenarioReader.ReadScenarios(file);
             collections.Add(collectionKey, scenarios);
         }
 		
@@ -33,9 +32,9 @@ public static class ScenarioCollectionsProvider
     {
         var normalizedKey = collectionKey.ToLower();
 
-        if (!collections.ContainsKey(normalizedKey))
+        if (!collections.TryGetValue(normalizedKey, out var scenarios))
             throw new ArgumentException($"Collection with key {normalizedKey} not found.");
 
-        return collections[normalizedKey];
+        return scenarios;
     }
 }

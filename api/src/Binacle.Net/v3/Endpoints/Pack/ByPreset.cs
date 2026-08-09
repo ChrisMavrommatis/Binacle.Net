@@ -1,5 +1,6 @@
 ﻿using Binacle.Net.Configuration;
 using System.ComponentModel;
+using System.Net.Mime;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Services;
 using Binacle.Net.v3.Contracts;
@@ -20,16 +21,16 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 			.WithSummary("Pack by preset")
 			.WithDescription("Pack items using a specified bin preset.")
 			
-			.Accepts<PackByPresetRequest>("application/json")
-			.RequestExample<PackByPresetRequestExample>("application/json")
+			.Accepts<PackByPresetRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<PackByPresetRequestExample>(MediaTypeNames.Application.Json)
 			
-			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseExamples<PackByPresetResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.Produces<PackResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+			.ResponseExamples<PackByPresetResponseExamples>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200Ok)
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
 			
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, ResponseDescription.ForPreset404NotFound)
@@ -41,13 +42,13 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 			)
 			.ResponseExamples<PackByPresetValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		[FromRoute][Description(SchemaDescriptions.PresetParam)] string preset,
 		BindingResult<PackByPresetRequest> bindingResult,
 		IOptions<BinPresetOptions> presetOptions,

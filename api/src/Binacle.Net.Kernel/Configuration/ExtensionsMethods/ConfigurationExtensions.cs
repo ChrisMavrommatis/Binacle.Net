@@ -18,7 +18,7 @@ public static class ConfigurationExtensions
 
 		if (!string.IsNullOrWhiteSpace(connectionString))
 		{
-			Log.Information("Connection String {connectionString} found in {location}", name, "Configuration File");
+			Log.Information("Connection String {ConnectionString} found in {Location}", name, "Configuration File");
 			return new ConnectionString(connectionString);
 		}
 
@@ -28,11 +28,11 @@ public static class ConfigurationExtensions
 
 		if (!string.IsNullOrWhiteSpace(connectionString))
 		{
-			Log.Information("Connection String {connectionString} found in {location}", name, $"Environment Variable: {variable}");
+			Log.Information("Connection String {ConnectionString} found in {Location}", name, $"Environment Variable: {variable}");
 			return new ConnectionString(connectionString);
 		}
 
-		Log.Warning("Connection String {connectionString} not found", name);
+		Log.Warning("Connection String {ConnectionString} not found", name);
 		return null;
 	}
 

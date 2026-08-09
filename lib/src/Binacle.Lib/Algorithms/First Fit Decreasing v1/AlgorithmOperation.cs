@@ -42,7 +42,7 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem>
 			var packed = false;
 			for (var i = 0; i < Item.TotalOrientations; i++)
 			{
-				var availableSpaceQuadrant = this.FindAvailableSpace(item, availableSpace);
+				var availableSpaceQuadrant = FindAvailableSpace(item, availableSpace);
 				if (availableSpaceQuadrant is not null)
 				{
 					this.Pack(item, availableSpaceQuadrant, availableSpace);
@@ -64,7 +64,7 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem>
 			.Complete();
 	}
 
-	private SpaceVolume? FindAvailableSpace(Item orientation, List<SpaceVolume> availableSpace)
+	private static SpaceVolume? FindAvailableSpace(Item orientation, List<SpaceVolume> availableSpace)
 	{
 		return availableSpace
 			.FirstOrDefault(space => 
@@ -78,7 +78,7 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem>
 	private void Pack(Item item, SpaceVolume spaceQuadrant, List<SpaceVolume> availableSpace)
 	{
 		item.Pack(spaceQuadrant);
-		var newAvailableSpaceQuadrants = this.SplitSpaceQuadrant(spaceQuadrant, item);
+		var newAvailableSpaceQuadrants = SplitSpaceQuadrant(spaceQuadrant, item);
 		availableSpace.Remove(spaceQuadrant);
 		if (newAvailableSpaceQuadrants.Count > 0)
 		{
@@ -87,7 +87,7 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem>
 		
 	}
 
-	private List<SpaceVolume> SplitSpaceQuadrant(SpaceVolume spaceQuadrant, Item orientation)
+	private static List<SpaceVolume> SplitSpaceQuadrant(SpaceVolume spaceQuadrant, Item orientation)
 	{
 		var newAvailableSpaces = new List<SpaceVolume>();
 

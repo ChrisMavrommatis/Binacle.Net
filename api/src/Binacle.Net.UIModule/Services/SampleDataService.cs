@@ -11,7 +11,7 @@ internal interface ISampleDataService
 
 internal class SampleDataService : ISampleDataService
 {
-	private class SampleJsonData
+	private sealed class SampleJsonData
 	{
 		public Dictionary<string, List<string>>? BinSets { get; set; }
 		public Dictionary<string, List<string>>? ItemSets { get; set; }
@@ -86,7 +86,7 @@ internal class SampleDataService : ISampleDataService
 		return bins.Select(ParseBin).ToList();
 	}
 
-	private ViewModels.Bin ParseBin(string value)
+	private static ViewModels.Bin ParseBin(string value)
 	{
 		var dimensions = CompactNotationParser.ParseDimensions<int>(value);
 		return new ViewModels.Bin(dimensions.Length, dimensions.Width, dimensions.Height);
@@ -97,7 +97,7 @@ internal class SampleDataService : ISampleDataService
 		return items.Select(ParseItem).ToList();
 	}
 
-	private ViewModels.Item ParseItem(string value)
+	private static ViewModels.Item ParseItem(string value)
 	{
 		var parsed = CompactNotationParser.ParseDimensionsAndQuantity<int>(value);
 		return new ViewModels.Item(parsed.Length, parsed.Width, parsed.Height, parsed.Quantity);

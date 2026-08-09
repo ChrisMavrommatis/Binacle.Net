@@ -128,7 +128,7 @@ internal class NpgsqlAccountRepository : IAccountRepository
 		return TypedResult.Success;
 	}
 
-	private class AccountDto
+	private sealed class AccountDto
 	{
 		#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 		public Guid Id { get; set; }
@@ -198,6 +198,6 @@ internal class NpgsqlAccountRepository : IAccountRepository
 			    DeletedAtUtc TIMESTAMPTZ
 			);
 		";
-		int rowsAffected = await connection.ExecuteAsync(sql);
+		await connection.ExecuteAsync(sql);
 	}
 }

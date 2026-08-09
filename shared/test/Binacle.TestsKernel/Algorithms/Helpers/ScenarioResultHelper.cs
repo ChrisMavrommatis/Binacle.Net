@@ -27,7 +27,7 @@ public static class ScenarioResultHelper
 	private static (OperationResultStatus resultStatus, EarlyExitReason earlyExitReason) ParseOperationResultStatus(
 		string compactString)
 	{
-		if (!compactString.Contains("-"))
+		if (!compactString.Contains('-'))
 		{
 			if (!Enum.TryParse(compactString, out OperationResultStatus parsedStatus))
 			{

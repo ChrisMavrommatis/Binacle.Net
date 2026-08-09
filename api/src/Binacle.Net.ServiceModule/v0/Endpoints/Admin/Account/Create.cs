@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
@@ -20,8 +21,8 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 		group.MapPost("/account", HandleAsync)
 			.WithSummary("Create account")
 			.WithDescription("Admins can use this endpoint to create accounts")
-			.Accepts<AccountCreateRequest>("application/json")
-			.RequestExample<AccountCreateRequestExample>("application/json")
+			.Accepts<AccountCreateRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<AccountCreateRequestExample>(MediaTypeNames.Application.Json)
 			
 			.Produces(StatusCodes.Status201Created)
 			.ResponseDescription(StatusCodes.Status201Created, "The account was created succesfully.")
@@ -30,7 +31,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.ResponseExamples<Status400ResponseExamples>(
 				StatusCodes.Status400BadRequest,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			
 			.Produces(StatusCodes.Status409Conflict)
@@ -43,11 +44,11 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			)
 			.ResponseExample<AccountCreateValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		BindingResult<AccountCreateRequest> bindingResult,
 		IAccountRepository accountRepository,
 		IPasswordService passwordService,

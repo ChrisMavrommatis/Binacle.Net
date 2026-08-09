@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Net.Mime;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v4.Contracts.Presets;
@@ -17,15 +18,15 @@ internal class List : IGroupedEndpoint<ApiV4EndpointGroup>
 			.WithTags("Presets")
 			.WithSummary("List presets")
 			.WithDescription("Lists the presets present in configuration.")
-			.Produces<PresetListResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, "application/json")
+			.Produces<PresetListResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK,
 				"Returns all of the configured presets with the associated bins."
 			).RequireCors(CorsPolicy.CoreApi);
 	}
 	
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		IOptions<BinPresetOptions> presetOptions,
 		ILogger<List> logger,
 		CancellationToken cancellationToken = default

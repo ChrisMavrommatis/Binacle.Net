@@ -3,7 +3,7 @@ using Binacle.TestsKernel.Files;
 
 namespace Binacle.TestsKernel.ResultSelection;
 
-internal class ScenarioReader
+internal static class ScenarioReader
 { 
     private class ReadScenario
     {
@@ -12,7 +12,7 @@ internal class ScenarioReader
         public Dictionary<string, string>? Results { get; set; }
     }
 
-    public List<Models.Scenario> ReadScenarios(IFile file)
+    public static List<Models.Scenario> ReadScenarios(IFile file)
     {
         var resultScenarios = new List<Models.Scenario>();
         using (var sr = new StreamReader(file.OpenRead()))

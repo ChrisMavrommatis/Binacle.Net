@@ -5,7 +5,7 @@ using Binacle.TestsKernel.Files;
 
 namespace Binacle.TestsKernel.Algorithms;
 
-internal class ScenarioReader
+internal static class ScenarioReader
 { 
 	private class ReadScenario
 	{
@@ -16,7 +16,7 @@ internal class ScenarioReader
 		public string[]? Items { get; set; }
 	}
 
-	public List<Scenario> ReadScenarios(IFile file)
+	public static List<Scenario> ReadScenarios(IFile file)
 	{
 		var resultScenarios = new List<Scenario>();
 		using (var sr = new StreamReader(file.OpenRead()))

@@ -83,7 +83,7 @@ internal sealed class NullableEnumConverter<T> : JsonConverter<T>
 
 	public override void WriteAsPropertyName(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
 	{
-		writer.WriteStringValue(this.WriteValue(value));
+		writer.WriteStringValue(WriteValue(value));
 	}
 
 	public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -93,10 +93,10 @@ internal sealed class NullableEnumConverter<T> : JsonConverter<T>
 
 	public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
 	{
-		writer.WriteStringValue(this.WriteValue(value));
+		writer.WriteStringValue(WriteValue(value));
 	}
 
-	private ReadOnlySpan<char> WriteValue(T value)
+	private static ReadOnlySpan<char> WriteValue(T value)
 	{
 		return value?.ToString();
 	}

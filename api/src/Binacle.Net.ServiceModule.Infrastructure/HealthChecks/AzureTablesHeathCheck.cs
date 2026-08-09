@@ -18,7 +18,7 @@ internal class AzureTablesHeathCheck : IHealthCheck
 		// azure table health 
 		try
 		{
-			var response = await tableServiceClient.GetPropertiesAsync(cancellationToken: cancellationToken);
+			await tableServiceClient.GetPropertiesAsync(cancellationToken: cancellationToken);
 			return HealthCheckResult.Healthy("Azure Tables");
 		}
 		catch (Exception ex)

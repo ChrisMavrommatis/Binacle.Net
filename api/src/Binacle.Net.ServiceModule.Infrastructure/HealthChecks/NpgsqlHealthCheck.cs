@@ -22,7 +22,7 @@ internal class NpgsqlHealthCheck : IHealthCheck
 			await connection.OpenAsync(cancellationToken);
 			var command = connection.CreateCommand();
 			command.CommandText = "SELECT 1";
-			var result = await command.ExecuteScalarAsync(cancellationToken);
+			await command.ExecuteScalarAsync(cancellationToken);
 			return HealthCheckResult.Healthy("Postgres");
 			
 		}

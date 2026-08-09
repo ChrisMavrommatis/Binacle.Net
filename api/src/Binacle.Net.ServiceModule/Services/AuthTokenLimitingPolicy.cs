@@ -11,7 +11,6 @@ namespace Binacle.Net.ServiceModule.Services;
 internal class AuthTokenRateLimitingPolicy : IRateLimiterPolicy<string>
 {
 	private readonly IOptions<RateLimiterConfigurationOptions> options;
-	private readonly ILogger<AuthTokenRateLimitingPolicy> logger;
 	private readonly Func<OnRejectedContext, CancellationToken, ValueTask>?  onRejected;
 
 	public AuthTokenRateLimitingPolicy(
@@ -20,7 +19,6 @@ internal class AuthTokenRateLimitingPolicy : IRateLimiterPolicy<string>
 	)
 	{
 		this.options = options;
-		this.logger = logger;
 		this.onRejected = (ctx, token) =>
 		{
 			logger.LogWarning("Request rejected by {Policy}", nameof(AuthTokenRateLimitingPolicy));

@@ -67,8 +67,9 @@ the problem.
 ### The coverage condition fails on purpose {#coverage-red-on-purpose}
 
 **Decided 2026-08-09.** The project runs the built-in "Sonar way" gate, which asks for 80% coverage on new code.
-It is read-only, so that number cannot be edited without creating a custom gate - and it is not being met: after
-the 2026-08-09 scope work the project reads 53% overall, 56.9% on new code.
+It is read-only, and on the **Free plan there is no way around that**: custom quality gates start at the Team
+plan, so 80% is not a number we can argue with, only one we can meet or fail. It is being failed - the
+2026-08-08 run reads **53.3% overall, 31.4% on new code**, the only failing condition on the gate.
 
 The gap is almost entirely one thing. Four areas sit at **exactly 0% coverage** - the Blazor `UIModule` (959
 lines), and the `binacle-net-ui`, `cookies` and `theme-switcher` TS packages (612 between them). That is 1571
@@ -87,19 +88,41 @@ Two consequences for this gate:
 - **When the floor is finally set, set it from a run that has settled**, and after the UI harness lands. The
   2026-08-09 numbers are a correction to what was being measured, not work anyone did.
 
+### The two published sites are back in scope {#sites-in-scope}
+
+**Changed 2026-08-09.** `sonar.exclusions` used to drop `docs/**` and `web/**` whole. The reason given was that
+they are a separate deliverable with their own session - a workflow reason, not a scope reason, and the test in
+the analysis xml is whether the code is ours to author, review and change. It is. The cost was concentrated
+exactly where it hurt: those two Jekyll sites are the only public attack surface in the repo, `5e5f8c02` was an
+XSS fix in one of them, and the exclusion kept Sonar from looking for the next one.
+
+What is in scope now is small - 6 hand-written js, 15 scss, and the site yml and json. The generated and
+vendored parts (`docs/js`, `web/js`, `docs/lib`, `web/lib`, the two `media` folders) are named individually and
+stay out; they are gitignored, so a CI checkout would not see them anyway. `docs/**/*.html` and `web/**/*.html`
+stay out too, because a Jekyll template with `---` front matter and Liquid in its attributes is not an HTML
+document and Sonar's HTML analyser can only misread it.
+
+**Findings under `docs/` and `web/` are not fixed in a coding session.** Both folders stay off limits per
+`CLAUDE.md`. Whatever the next run reports there gets written into `docs-v3-pages.md` or a new plan for the
+session that owns those files. Measuring and fixing are separate jobs, and only fixing was ever restricted.
+
 ### Settings that live in the SonarCloud UI, not in the repo {#sonar-ui-settings}
 
 Scope, coverage paths and the test/product split are all in the repo now (the analysis xml and
-`Directory.Build.props`). These are the ones that cannot be, and they are what the gate actually hangs on. As of
-2026-08-09 none is applied.
+`Directory.Build.props`). These are the ones that cannot be, and they are what the gate actually hangs on.
 
-- **New code period - the one that matters.** It is set to `previous_version`, and because the scanner is never
-  passed `/v:` the project version never changes, so the period is still pinned to the **first analysis,
-  2025-04-15**. Sixteen months of work therefore count as "new code": 882 of 1059 code smells, and a gate asking
-  for 80% coverage on new code is really asking for it on everything ever written. Nothing else on this list
-  matters until this is fixed. **Set Administration > New Code to "Number of days = 30"** for now; once Sonar
-  runs on PRs (this gate), "reference branch = main" is the better answer, because each PR is then graded on
-  exactly what it changed.
+- **New code period - the one that matters. Applied 2026-08-09; this entry is kept for the reasoning.** It used
+  to be `previous_version`, and because the scanner is never passed `/v:` the project version never changed, so
+  the period stayed pinned to the **first analysis, 2025-04-15**. Sixteen months of work counted as "new code":
+  882 of 1059 code smells, and a gate asking for 80% coverage on new code was really asking for it on everything
+  ever written. It is now **"Number of days = 30"** (`qualitygates/project_status` reports
+  `mode: days, parameter: 30`, baseline 2026-07-30), and the new-code smell count fell from 882 to 8. Once Sonar
+  runs on PRs (this gate), the textbook answer is **"reference branch = main"**, so each PR is graded on exactly
+  what it changed rather than on a rolling month that keeps moving under it. **Do not assume it applies here.**
+  The Free plan analyses only the main branch plus PRs targeting it, and a PR is already graded on its own diff
+  automatically, whatever the new code setting says. So "reference branch = main" may be either unavailable or a
+  no-op for us, and "days = 30" may be the permanent answer rather than a stopgap. Check it in
+  Administration > New Code before planning around it.
 - **Three findings marked in the UI**, none of which has an honest code fix: `S2245` on `SampleDataService` and
   on `getRandomInt.ts` (both pick demo data, not secrets), and `S2068` on the `AccountGetResponse` OpenAPI
   example, where `PasswordHash` is the literal `"type::hash::salt"`.
@@ -107,12 +130,13 @@ Scope, coverage paths and the test/product split are all in the repo now (the an
 - **No source glob in the UI.** An `sonar.inclusions` of `src/**/*` left over from a flat layout is what made the
   2026-08-07 run index 0 files and still report success. Scope is exclusions only, and they live in the xml.
 
-Two numbers to expect on the first run after the 2026-08-09 scope work, so nobody reads them as a regression or
-an improvement anyone earned: the project drops from ~50k to ~28k ncloc (vendored `assets/lib` and the
-`shared/data` fixtures leave), and overall coverage rises from 37.8% toward the low 50s (2329 uncovered vendored
-lines and 1203 lines of support code leave the denominator). Both are corrections to what was being measured.
-**Do not set the coverage ratchet from either the old figure or the first new one** - take it from a run that
-has settled.
+**What the scope work actually did**, so nobody reads it as a regression or an improvement anyone earned. The
+2026-08-08 run (revision `54a94b83`) came out at **24,931 ncloc, 53.3% coverage, 509 issues, 0 bugs, 0
+vulnerabilities, 0 hotspots, 3.4% duplication**, against ~50k ncloc and 37.8% coverage before. Vendored
+`assets/lib` and the `shared/data` fixtures left the line count; 2329 uncovered vendored lines and 1203 lines
+of support code left the coverage denominator. Every one of those moves is a correction to what was being
+measured, not work anyone did. **Do not set the coverage ratchet from either the old figure or that one** -
+take it from a run that has settled, after `vipaq/test-vectors` and the docs/web scope change land.
 
 **Watch out:**
 

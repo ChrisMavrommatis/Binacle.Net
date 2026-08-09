@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Kernel.Endpoints;
+using System.Net.Mime;
+using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
@@ -32,11 +33,11 @@ internal class Delete : IGroupedEndpoint<AdminGroup>
 			)
 			.ResponseExample<SubscriptionDeleteValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		[AsParameters] AccountId id,
 		IValidator<AccountId> validator,
 		IAccountRepository accountRepository,

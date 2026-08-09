@@ -19,7 +19,7 @@ public class BinPresetOptions : IConfigurationOptions
 
 	public Dictionary<string, BinPresetOption> Presets { get; set; } = new();
 	
-	private ConcurrentDictionary<string, BinOption> _binCache = new();
+	private readonly ConcurrentDictionary<string, BinOption> _binCache = new();
 	
 	public bool TryGetPreset(string presetName, [NotNullWhen(true)] out BinPresetOption? presetOption)
 	{

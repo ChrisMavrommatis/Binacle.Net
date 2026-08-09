@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
@@ -18,17 +19,17 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			.WithSummary("Fit a custom bin")
 			.WithDescription("Attempt to find if all items fit into a custom bin.")
 			
-			.Accepts<FitCustomBinRequest>("application/json")
-			.RequestExample<FitCustomBinRequestExample>("application/json")
+			.Accepts<FitCustomBinRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<FitCustomBinRequestExample>(MediaTypeNames.Application.Json)
 			
-			.Produces<FitBinResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<FitBinResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK, 
 				"Returns the result of the fitting operation for the specified custom bin and items.")
-			.ResponseExamples<FitCustomBinResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<FitCustomBinResponseExamples>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
 			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
@@ -37,13 +38,13 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			)
 			.ResponseExamples<CustomBinValidationProblemResponseExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-			 "application/problem+json"
+			 MediaTypeNames.Application.ProblemJson
 			)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		BindingResult<FitCustomBinRequest> bindingResult,
 		IBinacleService binacleService,
 		ILogger<CustomBin> logger,

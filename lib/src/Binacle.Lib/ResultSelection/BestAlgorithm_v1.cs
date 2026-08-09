@@ -9,8 +9,7 @@ public class BestAlgorithm_v1 : IResultSelectionStrategy
     {
         // best algorithm for this bin
         var fullyPacked = results.Values
-            .Where(r => r.Status == OperationResultStatus.FullyPacked)
-            .FirstOrDefault();
+            .FirstOrDefault(r => r.Status == OperationResultStatus.FullyPacked);
 
         if (fullyPacked != null)
             return fullyPacked;

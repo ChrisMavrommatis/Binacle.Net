@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
@@ -18,17 +19,17 @@ internal class CustomSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			.WithSummary("Pack the smallest custom bin")
 			.WithDescription("Pack every custom bin and return the result for the smallest bin that can fit the items.")
 			
-			.Accepts<PackCustomSmallestBinRequest>("application/json")
-			.RequestExample<PackCustomSmallestBinRequestExample>("application/json")
+			.Accepts<PackCustomSmallestBinRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<PackCustomSmallestBinRequestExample>(MediaTypeNames.Application.Json)
 			
-			.Produces<PackBinResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<PackBinResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK, 
 				"Returns the result of the packing operation for the smallest custom bin that can fit the items.")
-			.ResponseExamples<PackCustomSmallestBinResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<PackCustomSmallestBinResponseExamples>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
 			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
@@ -37,13 +38,13 @@ internal class CustomSmallestBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			)
 			.ResponseExamples<CustomBinsValidationProblemResponseExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		BindingResult<PackCustomSmallestBinRequest> bindingResult,
 		IBinacleService binacleService,
 		ILogger<CustomSmallestBin> logger,

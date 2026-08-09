@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
@@ -20,8 +21,8 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 		group.MapPost("/account/{id}/subscription", HandleAsync)
 			.WithSummary("Create subscription")
 			.WithDescription("Admins can use this endpoint to create a subscription for an account")
-			.Accepts<SubscriptionCreateRequest>("application/json")
-			.RequestExample<SubscriptionCreateRequestExample>("application/json")
+			.Accepts<SubscriptionCreateRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<SubscriptionCreateRequestExample>(MediaTypeNames.Application.Json)
 			
 			.Produces(StatusCodes.Status201Created)
 			.ResponseDescription(StatusCodes.Status201Created, "The subscription for the specified account was created succesfully")
@@ -39,11 +40,11 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 			)
 			.ResponseExamples<SubscriptionCreateValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		[AsParameters] AccountId id,
 		AccountBindingResult<SubscriptionCreateRequest> bindingResult,
 		IAccountRepository accountRepository,

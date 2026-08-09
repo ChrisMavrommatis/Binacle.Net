@@ -14,7 +14,7 @@ public static class ModuleDefinition
 {
 	public static void AddUIModule(this WebApplicationBuilder builder)
 	{
-		Log.Information("{moduleName} module. Status {status}", "UI", "Initializing");
+		Log.Information("{ModuleName} module. Status {Status}", "UI", "Initializing");
 
 		builder.WebHost.UseStaticWebAssets();
 		builder.AddJsonConfiguration(
@@ -66,7 +66,7 @@ public static class ModuleDefinition
 		builder.Services.AddScoped<Services.LocalStorageService>();
 		builder.Services.AddScoped<Services.ISampleDataService, Services.SampleDataService>();
 
-		Log.Information("{moduleName} module. Status {status}", "UI", "Initialized");
+		Log.Information("{ModuleName} module. Status {Status}", "UI", "Initialized");
 	}
 
 	public static void UseUIModule(this WebApplication app)

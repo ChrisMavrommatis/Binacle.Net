@@ -15,6 +15,8 @@ namespace Binacle.Net.ServiceModule.Infrastructure.Providers;
 
 internal class AzureStorageInfrastructureProvider : IInfrastructureProvider
 {
+	private static readonly string[] ServiceTags = ["Service"];
+
 	public string ConnectionStringName => "AzureStorage";
 	
 	public void Register(IHostApplicationBuilder builder, ConnectionString connectionString)
@@ -26,7 +28,7 @@ internal class AzureStorageInfrastructureProvider : IInfrastructureProvider
 		builder.Services.AddHealthCheck<AzureTablesHeathCheck>(
 			"Database",
 			HealthStatus.Unhealthy,
-			new[] { "Service" }
+			ServiceTags
 		);
 		 	
 		builder.Services.AddAzureClients(clientBuilder =>

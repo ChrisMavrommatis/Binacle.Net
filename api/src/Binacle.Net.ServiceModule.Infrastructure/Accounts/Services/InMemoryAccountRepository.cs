@@ -21,7 +21,7 @@ internal class InMemoryAccountRepository : IAccountRepository
 
 	public Task<FluxUnion<Account, NotFound>> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
 	{
-		var account = _accounts.Values.FirstOrDefault(x => x.Username == username);
+		var account = _accounts.GetValues().FirstOrDefault(x => x.Username == username);
 		if (account is not null && !account.IsDeleted)
 		{
 			return Task.FromResult<FluxUnion<Account, NotFound>>(account);
@@ -43,7 +43,7 @@ internal class InMemoryAccountRepository : IAccountRepository
 
 	public Task<FluxUnion<Success, NotFound>> UpdateAsync(Account account, CancellationToken cancellationToken = default)
 	{
-		if (_accounts.TryGetValue(account.Id, out var existingAccount))
+		if (_accounts.TryGetValue(account.Id, out _))
 		{
 			_accounts[account.Id] = account;
 			return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.Success);

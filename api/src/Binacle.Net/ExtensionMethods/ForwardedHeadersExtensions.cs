@@ -30,7 +30,7 @@ internal static class ForwardedHeadersExtensions
 
 			if (options.ForwardedHeaders == ForwardedHeaders.None)
 			{
-				Log.Information("Forwarded headers. Status {status}", "Disabled");
+				Log.Information("Forwarded headers. Status {Status}", "Disabled");
 				return;
 			}
 
@@ -39,7 +39,7 @@ internal static class ForwardedHeadersExtensions
 				.Concat(options.KnownProxies.Select(proxy => proxy.ToString()));
 
 			Log.Information(
-				"Forwarded headers. Status {status}. Trusting {trusted}. {forwardLimit} hop(s). Header {header}",
+				"Forwarded headers. Status {Status}. Trusting {Trusted}. {ForwardLimit} hop(s). Header {Header}",
 				"Enabled",
 				string.Join(", ", trustedSources),
 				options.ForwardLimit,

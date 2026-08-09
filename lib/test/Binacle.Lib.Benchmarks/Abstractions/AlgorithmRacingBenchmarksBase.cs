@@ -36,10 +36,6 @@ public abstract class AlgorithmRacingBenchmarksBase
 		this.Scenario = BischoffSuiteScenarioProvider.GetScenarioByName(scenarioName);
 	}
 	
-	[GlobalCleanup]
-	public void GlobalCleanup()
-	{
-	}
 	
 	protected abstract AlgorithmOperation AlgorithmOperation { get; }
 	protected abstract IAlgorithmFactory AlgorithmFactory { get; }

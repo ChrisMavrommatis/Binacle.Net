@@ -6,7 +6,7 @@ namespace Binacle.Net.Kernel.Features.Providers.Configuration;
 internal class ConfigurationFeatureProvider : IFeatureProvider
 {
 	internal const string DefaultSectionName = "Features";
-	private Dictionary<string, object> features = new Dictionary<string, object>();
+	private readonly Dictionary<string, object> features = new Dictionary<string, object>();
 
 	public ConfigurationFeatureProvider(IConfiguration configuration, string? sectionName = null)
 	{

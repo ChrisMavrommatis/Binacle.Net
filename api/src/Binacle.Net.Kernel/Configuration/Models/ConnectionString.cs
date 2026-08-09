@@ -106,12 +106,9 @@ public class ConnectionString
 	
 	public ConnectionString ThrowIfNotExists(string key)
 	{
-		if(this.keyValuePairs.TryGetValue(key, out var value))
+		if (this.keyValuePairs.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value))
 		{
-			if(!string.IsNullOrWhiteSpace(value))
-			{
-				return this;
-			}
+			return this;
 		}
 		throw new KeyNotFoundException($"Key '{key}' not found in connection string");
 	}

@@ -20,7 +20,7 @@ using Serilog;
 
 namespace Binacle.Net;
 
-public class Program
+public static class Program
 {
 	public static async Task Main(string[] args)
 	{
@@ -45,7 +45,7 @@ public class Program
 			reloadOnChange: true
 		);
 
-		Log.Information("{moduleName} module. Status {status}", "Core", "Initializing");
+		Log.Information("{ModuleName} module. Status {Status}", "Core", "Initializing");
 
 		builder.AddValidatableJsonConfigurationOptions<BinPresetOptions>();
 		builder.AddValidatableJsonConfigurationOptions<CorsOptions>();
@@ -125,7 +125,7 @@ public class Program
 
 		builder.ConfigureForwardedHeaders();
 
-		Log.Information("{moduleName} module. Status {status}", "Core", "Initialized");
+		Log.Information("{ModuleName} module. Status {Status}", "Core", "Initialized");
 
 		builder.AddDiagnosticsModule();
 

@@ -16,6 +16,8 @@ namespace Binacle.Net.ServiceModule.Infrastructure.Providers;
 
 internal class SqliteInfrastructureProvider : IInfrastructureProvider
 {
+	private static readonly string[] ServiceTags = ["Service"];
+
 	public string ConnectionStringName => "Sqlite";
 	
 	public void Register(IHostApplicationBuilder builder, ConnectionString connectionString)
@@ -30,7 +32,7 @@ internal class SqliteInfrastructureProvider : IInfrastructureProvider
 		builder.Services.AddHealthCheck<SqliteHealthCheck>(
 			"Database",
 			HealthStatus.Unhealthy,
-			new[] { "Service" }
+			ServiceTags
 		);
 		
 		builder.Services.AddStartupTask<EnsureRequiredSqliteTablesExistStartupTask>();

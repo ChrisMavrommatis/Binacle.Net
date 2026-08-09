@@ -10,7 +10,7 @@ internal class DimensionsValidator : AbstractValidator<IWithReadOnlyDimensions<i
 		RuleFor(x => x)
 			.MustNotThrow(x =>
 			{
-				var volume = checked(x.Length * x.Width * x.Height);
+				_ = checked(x.Length * x.Width * x.Height);
 			})
 			.WithMessage("The volume results in a number that the api cannot handle.");
 		

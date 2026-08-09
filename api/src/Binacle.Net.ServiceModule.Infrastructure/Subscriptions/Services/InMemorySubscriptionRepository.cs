@@ -22,7 +22,7 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 	
 	public Task<FluxUnion<Subscription, NotFound>> GetByAccountIdAsync(Guid accountId, CancellationToken cancellationToken = default)
 	{
-		var subscription = _subscriptions.Values.FirstOrDefault(s => s.AccountId == accountId);
+		var subscription = _subscriptions.GetValues().FirstOrDefault(s => s.AccountId == accountId);
 		if (subscription is not null && !subscription.IsDeleted)
 		{
 			return Task.FromResult<FluxUnion<Subscription, NotFound>>(subscription);
@@ -43,7 +43,7 @@ internal class InMemorySubscriptionRepository : ISubscriptionRepository
 
 	public Task<FluxUnion<Success, NotFound>> UpdateAsync(Subscription subscription, CancellationToken cancellationToken = default)
 	{
-		if (_subscriptions.TryGetValue(subscription.Id, out var existing))
+		if (_subscriptions.TryGetValue(subscription.Id, out _))
 		{
 			_subscriptions[subscription.Id] = subscription;
 			return Task.FromResult<FluxUnion<Success, NotFound>>(TypedResult.Success);

@@ -28,7 +28,7 @@ internal class AttributeOrderer : IOrderer
 			.SelectMany(group => group.OrderBy(b => GetBenchmarkOrder(b)));
 	}
 
-	private int GetBenchmarkOrder(BenchmarkCase benchmarkCase)
+	private static int GetBenchmarkOrder(BenchmarkCase benchmarkCase)
 	{
 		var orderAttr = benchmarkCase.Descriptor.WorkloadMethod
 			.GetCustomAttributes(typeof(BenchmarkOrderAttribute), false)

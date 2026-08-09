@@ -13,22 +13,29 @@
 -->
 <SonarQubeAnalysisProperties xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
 
-  <!-- C# reaches the scanner through the build. TS reaches it through multi-language analysis, which walks
-       the working tree instead, so this list is mostly about keeping that walk off generated and vendored
-       files - node_modules alone was most of the 15794 files the broken run looked at.
+  <!-- C# reaches the scanner through the build. TS reaches it through multi-language analysis, which walks the
+       working tree instead, so this list is mostly about keeping that walk off generated and vendored files.
 
-       docs/ and web/ are the two published Jekyll sites. They are excluded because they are a separate
-       deliverable with their own session, not because their code does not matter. Drop them from this line
-       if you want the ~30 hand-written files under docs/_js and web/_js scanned too.
+       The test for every entry: did we write it, do we review it, can we change it? If no, it goes here.
+       If yes, it stays in scope even when its findings are unwelcome.
 
-       assets/lib/ is vendored: alpine, beercss, material-dynamic-colors and swagger-ui, shipped as-is. It was
-       8157 of the 50418 ncloc the 2026-08-08 run measured and 274 of its 1083 issues - 227 in alpine.js alone,
-       including the only CRITICAL bug. None of it is ours to fix, and all 2329 of its lines counted as
-       uncovered, which is where most of the missing coverage came from.
+       - Build output: bin/, obj/, build/, results/, and the site equivalents docs/js, web/js, docs/media,
+         web/media (webpack bundles and copied assets). All gitignored, so CI never sees them anyway.
+       - Vendored: assets/lib/ and its build-time copies docs/lib/, web/lib/ - alpine, beercss,
+         material-dynamic-colors, swagger-ui. 8157 ncloc and 274 issues in the 2026-08-08 run, none ours to fix,
+         and 2329 uncovered lines that were most of the missing coverage.
+       - Not code: shared/data/ and vipaq/test-vectors/, the two fixture corpora. shared/data was the whole
+         json=14010 slice of that run, 28% of the project measured as data files.
+       - Jekyll templates: docs/**/*.html and web/**/*.html open with YAML front matter and carry Liquid tags
+         inside their attributes, so they are not HTML documents. Sonar's HTML analyser would report the
+         template syntax, not the page.
 
-       shared/data/ is the test fixture corpus (bischoff-suite, or-library, custom-problems, result-selection).
-       It was the whole json=14010 slice of that same run - 28% of the project measured as data files. -->
-  <Property Name="sonar.exclusions">**/node_modules/**,**/bin/**,**/obj/**,build/**,results/**,docs/**,web/**,assets/lib/**,shared/data/**</Property>
+       Changed 2026-08-09: this line used to drop docs/** and web/** whole, because those sites are written in
+       their own session. That is a workflow reason, not a scope reason, and it hid the only public attack
+       surface in the repo - 5e5f8c02 was an XSS fix in one of them. Back in scope: 6 hand-written js, 15 scss,
+       and the site yml and json. Fixing them is still not a coding session's job (CLAUDE.md); findings go in a
+       plan for the session that owns those files. -->
+  <Property Name="sonar.exclusions">**/node_modules/**,**/bin/**,**/obj/**,build/**,results/**,assets/lib/**,docs/lib/**,docs/js/**,docs/media/**,web/lib/**,web/js/**,web/media/**,docs/**/*.html,web/**/*.html,shared/data/**,vipaq/test-vectors/**</Property>
 
   <!-- One flat file per suite in build/coverage/sonar, split by extension: .xml from the C# collector,
        .info from jest. config/tests.just is what writes them and the only place that knows the suite list. -->
@@ -63,7 +70,11 @@
   <!-- No sonar.issue.ignore rules here, on purpose. Where a rule was wrong about our code the code now says
        so in a way the analyser can read - [AssertionMethod] on the helpers that assert, arrange/act/assert
        split so the check sits in the test body - rather than the finding being hidden from this file, where
-       nobody reviewing the code would ever see it. If a rule genuinely does not apply to this project, turn
-       it off in the quality profile, where it is visible to everyone, not here. -->
+       nobody reviewing the code would ever see it.
+
+       The usual escape hatch, turning a rule off in the quality profile, is not open to us: custom quality
+       profiles start at the Team plan and we are on Free, so "Sonar way" is fixed. A rule we disagree with is
+       therefore answered in code, or marked Accepted on the individual finding in the SonarCloud UI, where it
+       carries a reason and stays visible. Never with a blanket path ignore here. -->
 
 </SonarQubeAnalysisProperties>

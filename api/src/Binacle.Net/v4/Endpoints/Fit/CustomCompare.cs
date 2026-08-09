@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
@@ -18,17 +19,17 @@ internal class CustomCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 			.WithSummary("Compare custom bins")
 			.WithDescription("Fit-check every custom bin and return the result for each one.")
 
-			.Accepts<FitCustomCompareRequest>("application/json")
-			.RequestExample<FitCustomCompareRequestExample>("application/json")
+			.Accepts<FitCustomCompareRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<FitCustomCompareRequestExample>(MediaTypeNames.Application.Json)
 
-			.Produces<FitCompareResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<FitCompareResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK,
 				"Returns the result of the fitting operation for every custom bin, in the order they were sent.")
-			.ResponseExamples<FitCustomCompareResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<FitCustomCompareResponseExamples>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
 
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
@@ -37,13 +38,13 @@ internal class CustomCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 			)
 			.ResponseExamples<CustomBinsValidationProblemResponseExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		BindingResult<FitCustomCompareRequest> bindingResult,
 		IBinacleService binacleService,
 		ILogger<CustomCompare> logger,

@@ -1,4 +1,5 @@
-﻿using Binacle.Net.Kernel.Endpoints;
+using System.Net.Mime;
+using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v4.Contracts;
 using OpenApiExamples.ExtensionMethods;
 
@@ -18,7 +19,7 @@ internal class ApiV4EndpointGroup : IEndpointGroup
 			)
 			.ResponseExample<Status500ResponseExample>(
 				StatusCodes.Status500InternalServerError,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			);
 	}
 }

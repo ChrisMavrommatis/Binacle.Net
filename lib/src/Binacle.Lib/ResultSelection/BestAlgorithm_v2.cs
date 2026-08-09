@@ -16,7 +16,7 @@ public class BestAlgorithm_v2 : IResultSelectionStrategy
         OperationResult? best = null;
         double bestScore = -1;
 
-        foreach (var (key, result) in results)
+        foreach (var (_, result) in results)
         {
             double score = 0;
             if (result.Status == OperationResultStatus.FullyPacked)

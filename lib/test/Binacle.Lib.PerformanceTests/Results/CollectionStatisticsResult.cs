@@ -53,7 +53,7 @@ internal class CollectionStatisticsResult<T> : Dictionary<string, List<T>>, IRes
 		return table;
 	}
 
-	private double GetStdDev(List<T> orderedValues, double mean)
+	private static double GetStdDev(List<T> orderedValues, double mean)
 	{
 		if (orderedValues.Count < 2)
 		{
@@ -67,7 +67,7 @@ internal class CollectionStatisticsResult<T> : Dictionary<string, List<T>>, IRes
 		return Math.Sqrt(sumSquaredDiffs / orderedValues.Count);
 	}
 
-	private double GetMedian(List<T> orderedValues)
+	private static double GetMedian(List<T> orderedValues)
 	{
 		int count = orderedValues.Count;
 		if (count % 2 == 0)

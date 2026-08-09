@@ -39,11 +39,11 @@ public static class SpecializedScalingProblemsProvider
     
     public static List<TestBin> GetBins(int binCount)
 	{
-		if (!binsByQuantity.ContainsKey(binCount))
+		if (!binsByQuantity.TryGetValue(binCount, out var bins))
 		{
 			throw new ArgumentException($"Invalid bin count. Value {binCount} should be between 1 and 7.");
 		}
-		return binsByQuantity[binCount].Select(TestBin.FromCompactString).ToList();
+		return bins.Select(TestBin.FromCompactString).ToList();
 	}
 
     // items 

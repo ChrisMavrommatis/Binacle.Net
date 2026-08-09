@@ -17,7 +17,7 @@ public class SmallestBin_v2 : IResultSelectionStrategy
         int bestVolume = -1;
         double bestTiebreaker = -1;
         
-        foreach(var (key, result) in results)
+        foreach(var (_, result) in results)
         {
             bool isFullyPacked = result.Status == OperationResultStatus.FullyPacked;
             bool bestIsFullyPacked = best?.Status == OperationResultStatus.FullyPacked;

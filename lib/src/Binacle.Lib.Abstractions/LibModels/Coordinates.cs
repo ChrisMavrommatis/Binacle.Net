@@ -3,7 +3,7 @@ namespace Binacle.Lib.Models;
 internal readonly struct Coordinates : IWithReadOnlyCoordinates
 {
 
-	public static Coordinates Zero = new Coordinates(0, 0, 0);
+	public static readonly Coordinates Zero = new Coordinates(0, 0, 0);
 
 	public int X { get; }
 	public int Y { get; }

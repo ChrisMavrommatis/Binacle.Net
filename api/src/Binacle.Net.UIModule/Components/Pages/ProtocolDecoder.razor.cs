@@ -38,9 +38,9 @@ public partial class ProtocolDecoder : AppletComponentBase
 	// The stored shape: the saved tokens plus the schema version that wrote them.
 	private sealed record SavedResults(int Version, string[] Results);
 
-	protected override async Task OnAfterRenderAsync(bool isFirstRender)
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		if (isFirstRender)
+		if (firstRender)
 		{
 			var savedResults = await this.LoadSavedResultsAsync();
 			if (savedResults.Length > 0)
@@ -58,7 +58,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 			}
 		}
 
-		await base.OnAfterRenderAsync(isFirstRender);
+		await base.OnAfterRenderAsync(firstRender);
 	}
 
 	// Reads the stored tokens, but only if they carry the current schema version. Anything else — the old bare
@@ -186,7 +186,7 @@ public partial class ProtocolDecoder : AppletComponentBase
 							throw new InvalidOperationException("Selected result has no bin");
 						}
 
-						if (!(this.results?.TryGetValue(result.EncodedResult, out var existingResult) ?? false))
+						if (!(this.results?.TryGetValue(result.EncodedResult, out _) ?? false))
 						{
 							throw new InvalidOperationException("Could not find selected result");
 						}

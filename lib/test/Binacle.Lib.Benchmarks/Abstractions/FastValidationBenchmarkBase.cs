@@ -23,11 +23,6 @@ public abstract class FastValidationBenchmarkBase
 		 this.Scenario = this.GetScenario();
 	}
 	
-	[GlobalCleanup]
-	public void GlobalCleanup()
-	{
-	}
-	
 	[Benchmark(Baseline = true)]
 	[BenchmarkOrder(10)]
 	public OperationResult FFD_v1()

@@ -200,7 +200,7 @@ public class FitCustomBinBehavior : BehaviourTestsBase
 
 	#endregion
 
-	private FitCustomBinRequest CreateSpecialRequest(Action<OperationParameters>? modifyParameters = null)
+	private static FitCustomBinRequest CreateSpecialRequest(Action<OperationParameters>? modifyParameters = null)
 	{
 		var request = new FitCustomBinRequest
 		{

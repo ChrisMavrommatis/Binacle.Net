@@ -10,7 +10,7 @@ public static class OpenApiServiceCollectionExtensions
 
 		var openApiDocuments = assemblyTypes
 			.Where(t => typeof(IOpenApiDocument).IsAssignableFrom(t) && !t.IsInterface)
-			.Where(t => t.GetInterfaces().Any(i => !i.GetGenericArguments().Any()))
+			.Where(t => t.GetInterfaces().Any(i => i.GetGenericArguments().Length == 0))
 			.Select(t => (IOpenApiDocument)Activator.CreateInstance(t)!)
 			.ToList();
 		

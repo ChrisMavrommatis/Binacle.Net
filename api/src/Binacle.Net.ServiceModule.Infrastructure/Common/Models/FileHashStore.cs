@@ -19,10 +19,7 @@ internal class FileHashStore
 	}
 	internal FileHashStore(JsonSerializerOptions jsonSerializerOptions)
 	{
-		if (jsonSerializerOptions is null)
-		{
-			throw new ArgumentNullException(nameof(jsonSerializerOptions));
-		}
+		ArgumentNullException.ThrowIfNull(jsonSerializerOptions);
 
 		if (jsonSerializerOptions.WriteIndented)
 		{
@@ -67,7 +64,7 @@ internal class FileHashStore
 		};
 	}
 
-	private class Entry
+	private sealed class Entry
 	{
 		public string FilePath { get; set; } = null!;
 		public string Md5Hash { get; set; } = null!;

@@ -11,7 +11,7 @@ public class Generator
 		this.random = new Random(seed);
 		
 	}
-	public List<TestBin> GenerateBins(int count, int length, int width, int height)
+	public static List<TestBin> GenerateBins(int count, int length, int width, int height)
 	{
 		var bins = new List<TestBin>(count);
 		for (int i = 0; i < count; i++)

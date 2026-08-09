@@ -39,7 +39,7 @@ public class TestRunner
 			var results = testResultGroup.ToArray();
 			foreach (var result in results)
 			{
-				this.logger.LogInformation(result.ConsolePrint());
+				this.logger.LogInformation("{TestResult}", result.ConsolePrint());
 			}
 
 			foreach (var fileWriter in fileWriters)

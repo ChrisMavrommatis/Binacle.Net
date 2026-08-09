@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Binacle.Net.ServiceModule.Infrastructure.Common;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
@@ -127,7 +128,7 @@ internal class SqliteAccountRepository : IAccountRepository
 		return TypedResult.Success;
 	}
 
-	private class AccountDto
+	private sealed class AccountDto
 	{
 		#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 		public string Id { get; set; }
@@ -151,12 +152,12 @@ internal class SqliteAccountRepository : IAccountRepository
 				role: Enum.Parse<AccountRole>(this.Role),
 				email: this.Email,
 				status: Enum.Parse<AccountStatus>(this.Status),
-				creationDate: DateTimeOffset.Parse(this.CreatedAtUtc),
+				creationDate: SqliteDateTime.FromStorage(this.CreatedAtUtc),
 				id: Guid.Parse(this.Id),
 				isDeleted: this.IsDeleted == 1,
 				securityStamp: Guid.Parse(this.SecurityStamp),
 				password: password,
-				deletionDate: this.DeletedAtUtc != null ? DateTimeOffset.Parse(this.DeletedAtUtc) : null,
+				deletionDate: this.DeletedAtUtc != null ? SqliteDateTime.FromStorage(this.DeletedAtUtc) : null,
 				subscriptionId: this.SubscriptionId != null ? Guid.Parse(this.SubscriptionId) : null
 			);
 		}
@@ -173,9 +174,9 @@ internal class SqliteAccountRepository : IAccountRepository
 				Password = entity.Password?.ToString(),
 				SecurityStamp = entity.SecurityStamp.ToString(),
 				SubscriptionId = entity.SubscriptionId?.ToString(),
-				CreatedAtUtc = entity.CreatedAtUtc.ToString(),
+				CreatedAtUtc = SqliteDateTime.ToStorage(entity.CreatedAtUtc),
 				IsDeleted = entity.IsDeleted ? 1 : 0,
-				DeletedAtUtc = entity.DeletedAtUtc?.ToString()
+				DeletedAtUtc = entity.DeletedAtUtc.HasValue ? SqliteDateTime.ToStorage(entity.DeletedAtUtc.Value) : null
 			};
 		}
 	}
@@ -197,6 +198,6 @@ internal class SqliteAccountRepository : IAccountRepository
 				DeletedAtUtc TEXT
 			);
 		";
-		int rowsAffected = await connection.ExecuteAsync(sql);
+		await connection.ExecuteAsync(sql);
 	}
 }

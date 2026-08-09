@@ -211,7 +211,7 @@ public class PackCustomBinBehavior : BehaviourTestsBase
 
 	#endregion
 
-	private PackCustomBinRequest CreateSpecialRequest(Action<OperationParameters>? modifyParameters = null)
+	private static PackCustomBinRequest CreateSpecialRequest(Action<OperationParameters>? modifyParameters = null)
 	{
 		var request = new PackCustomBinRequest
 		{

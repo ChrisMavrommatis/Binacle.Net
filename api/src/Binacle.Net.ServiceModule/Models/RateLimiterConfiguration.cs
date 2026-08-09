@@ -74,7 +74,7 @@ internal class RateLimiterConfiguration
 		{
 			nameof(RateLimiterType.FixedWindow) => CreateFixedWindow(options),
 			nameof(RateLimiterType.SlidingWindow) => CreateSlidingWindow(options),
-			nameof(RateLimiterType.NoLimiter) => CreateNoLimiter(options),
+			nameof(RateLimiterType.NoLimiter) => CreateNoLimiter(),
 			_ => throw new InvalidOperationException("RateLimiter type must be of 'FixedWindow' or 'SlidingWindow' ")
 		};
 	}
@@ -120,7 +120,7 @@ internal class RateLimiterConfiguration
 		};
 	}
 	
-	private static RateLimiterConfiguration CreateNoLimiter(string options)
+	private static RateLimiterConfiguration CreateNoLimiter()
 	{
 		return new RateLimiterConfiguration
 		{

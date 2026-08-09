@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+using System.Net.Mime;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
@@ -24,9 +25,9 @@ public static class EndpointsRouteHandlerBuilderExtensions
 		params string[] additionalContentTypes
 	)
 	{
-		if (responseType is Type && string.IsNullOrEmpty(contentType))
+		if (responseType is not null && string.IsNullOrEmpty(contentType))
 		{
-			contentType = "application/json";
+			contentType = MediaTypeNames.Application.Json;
 		}
 
 		if (contentType is null)

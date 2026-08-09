@@ -36,10 +36,6 @@ public abstract class BinParallelizationThresholdBenchmarkBase
         this.Items = SpecializedScalingProblemsProvider.GetItems(this.ItemCount);
     }
 
-    [GlobalCleanup]
-    public void GlobalCleanup()
-    {
-    }
 
     protected abstract IAlgorithmFactory AlgorithmFactory { get; }
     protected abstract AlgorithmOperation AlgorithmOperation { get; }

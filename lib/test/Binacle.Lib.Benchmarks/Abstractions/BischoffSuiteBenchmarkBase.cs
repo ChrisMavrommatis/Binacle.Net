@@ -20,10 +20,6 @@ public abstract class BischoffSuiteBenchmarkBase
 		this.Scenario = BischoffSuiteScenarioProvider.GetScenarioByName(this.ScenarioName!);
 	}
 	
-	[GlobalCleanup]
-	public void GlobalCleanup()
-	{
-	}
 	protected OperationResult Run(TestAlgorithmFactory<IPackingAlgorithm> algorithmFactory, AlgorithmOperation operation)
 	{
 		var algorithmInstance = algorithmFactory(this.Scenario!.Bin, this.Scenario.Items);

@@ -17,10 +17,6 @@ public abstract class ResultSelectionBenchmarkBase
 		this.Scenario = AllScenariosProvider.GetScenarioByName(this.ScenarioName!);
 	}
 	
-	[GlobalCleanup]
-	public void GlobalCleanup()
-	{
-	}
 	protected OperationResult Run(IResultSelectionStrategy strategy)
 	{
 		var result = strategy.Select(this.Scenario!.Results);

@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
@@ -20,8 +21,8 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 		group.MapPut("/account/{id}", HandleAsync)
 			.WithSummary("Update an account")
 			.WithDescription("Admins can use this endpoint to update an account")
-			.Accepts<AccountUpdateRequest>("application/json")
-			.RequestExample<AccountUpdateRequestExample>("application/json")
+			.Accepts<AccountUpdateRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<AccountUpdateRequestExample>(MediaTypeNames.Application.Json)
 			
 			.Produces(StatusCodes.Status204NoContent)
 			.ResponseDescription(StatusCodes.Status204NoContent, "The account was updated succesfully")
@@ -30,7 +31,7 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.ResponseExamples<Status400ResponseExamples>(
 				StatusCodes.Status400BadRequest,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			
 			.Produces(StatusCodes.Status404NotFound)
@@ -46,11 +47,11 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			)
 			.ResponseExample<AccountUpdateValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		[AsParameters] AccountId id,
 		AccountBindingResult<AccountUpdateRequest> bindingResult,
 		IAccountRepository accountRepository,

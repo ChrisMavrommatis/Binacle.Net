@@ -38,10 +38,6 @@ public abstract class AlgorithmParallelizationThresholdBenchmarkBase
         this.Items = SpecializedScalingProblemsProvider.GetItems(this.ItemCount);
     }
 	
-    [GlobalCleanup]
-    public void GlobalCleanup()
-    {
-    }
     [Benchmark(Baseline = true)]
     [BenchmarkOrder(10)]
     public IDictionary<string,OperationResult> Loop()

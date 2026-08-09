@@ -10,7 +10,7 @@ internal partial class BestFitDecreasing_v2<TBin, TItem> : IPackingAlgorithm
 {
 	private sealed class Item : IWithID, IWithReadOnlyDimensions, IWithReadOnlyVolume, IWithReadOnlyCoordinates
 	{
-		internal static ushort TotalOrientations = 6;
+		internal const ushort TotalOrientations = 6;
 
 		private readonly TItem originalItem;
 

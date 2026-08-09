@@ -14,7 +14,7 @@ internal class HealthCheckConfigurationOptionsValidator : AbstractValidator<Heal
 		RuleFor(x => x.Path)
 			.Cascade(CascadeMode.Stop)
 			.NotEmpty()
-			.Must(path => path!.StartsWith("/"))
+			.Must(path => path!.StartsWith('/'))
 			.WithMessage("'{PropertyName}' must start with '/', for example '/_health'.");
 		// The rule sits straight on RuleForEach, not inside ChildRules: FluentValidation does not run a child
 		// validator on a null element, so a null entry passed startup and then threw out of the middleware on the

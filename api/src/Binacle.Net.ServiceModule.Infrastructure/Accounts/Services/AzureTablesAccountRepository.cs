@@ -51,7 +51,7 @@ internal class AzureTablesAccountRepository : IAccountRepository
 	)
 	{
 		var pageableResult = this.tableClient.QueryAsync<AccountTableEntity>(
-			x => x.Username == username && x.IsDeleted == false,
+			x => x.Username == username && !x.IsDeleted,
 			maxPerPage: 1,
 			cancellationToken: cancellationToken
 		);
@@ -124,7 +124,7 @@ internal class AzureTablesAccountRepository : IAccountRepository
 		return TypedResult.NotFound;
 	}
 	
-	private class AccountTableEntity : ITableEntity
+	private sealed class AccountTableEntity : ITableEntity
 	{
 		#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 		public AccountTableEntity()

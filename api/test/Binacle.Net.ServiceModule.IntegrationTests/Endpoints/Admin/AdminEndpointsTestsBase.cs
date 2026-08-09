@@ -22,7 +22,7 @@ public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 		return ValueTask.CompletedTask;
 	}
 	
-	protected Guid GetCreatedId(HttpResponseMessage response)
+	protected static Guid GetCreatedId(HttpResponseMessage response)
 	{
 		var location = response.Headers.Location!.ToString();
 		var parts = location.Split(["/"], StringSplitOptions.RemoveEmptyEntries);

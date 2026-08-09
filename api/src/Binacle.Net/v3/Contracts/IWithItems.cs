@@ -31,7 +31,7 @@ internal class ItemsValidator : AbstractValidator<IWithItems>
 			itemValidator.RuleFor(item => item)
 				.MustNotThrow(item =>
 				{
-					var volume = checked((item.Length * item.Width * item.Height) * item.Quantity);
+					_ = checked((item.Length * item.Width * item.Height) * item.Quantity);
 				})
 				.WithMessage("The total volume of the item results in a number that the api cannot handle.");
 		});
@@ -39,7 +39,7 @@ internal class ItemsValidator : AbstractValidator<IWithItems>
 		RuleFor(x => x.Items)
 			.MustNotThrow(x =>
 			{
-				var volume = x.Sum(item => (item.Length * item.Width * item.Height) * item.Quantity);
+				_ = x.Sum(item => (item.Length * item.Width * item.Height) * item.Quantity);
 			})
 			.WithMessage("The total volume of all the items results in a number that the api cannot handle.");
 	}

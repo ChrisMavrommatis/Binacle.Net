@@ -171,7 +171,7 @@ public class Create : AdminEndpointsTestsBase
 		);
 		response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-		var id = this.GetCreatedId(response);
+		var id = GetCreatedId(response);
 		var newAccount = this.accountCredentialsUnderTest with {Id = id};
 		await this.Sut.EnsureAccountDoesNotExist(newAccount);
 	}

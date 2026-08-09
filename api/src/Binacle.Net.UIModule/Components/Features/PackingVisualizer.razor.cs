@@ -45,6 +45,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 	{
 		this.MessagingService.Off<AsyncCallback<(Bin?, List<PackedItem>?)>>("UpdateScene");
 		this.cancellationTokenSource?.Dispose();
+		GC.SuppressFinalize(this);
 	}
 
 	protected override async Task OnParametersSetAsync()
@@ -89,7 +90,7 @@ public partial class PackingVisualizer : ComponentBase, IDisposable
 
 	private void UpdateControlsStatus()
 	{
-		if (this.bin is null || this.items is null || !this.items.Any())
+		if (this.bin is null || this.items is null || this.items.Count == 0)
 		{
 			this.DisableAllControls();
 			return;

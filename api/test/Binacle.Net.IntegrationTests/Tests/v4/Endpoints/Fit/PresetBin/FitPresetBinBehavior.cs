@@ -266,7 +266,7 @@ public class FitPresetBinBehavior : BehaviourTestsBase
 
 	#endregion
 
-	private FitPresetBinRequest CreateSpecialRequest(Action<OperationParameters>? modifyParameters = null)
+	private static FitPresetBinRequest CreateSpecialRequest(Action<OperationParameters>? modifyParameters = null)
 	{
 		var request = new FitPresetBinRequest
 		{

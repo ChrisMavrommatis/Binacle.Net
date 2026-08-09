@@ -4,7 +4,7 @@ namespace Binacle.Net.UIModule.ViewModels;
 
 public class Errors  : IEnumerable<string>
 {
-	private List<string> _errors = new();
+	private readonly List<string> _errors = new();
 	
 	public void Add(string error)
 	{

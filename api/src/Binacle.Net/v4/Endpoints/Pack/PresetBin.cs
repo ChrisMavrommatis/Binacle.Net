@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net.Mime;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
@@ -21,17 +22,17 @@ internal class PresetBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			.WithSummary("Pack a bin from a preset")
 			.WithDescription("Pack items into a bin from a preset. The preset and bin must be specified in the URL path.")
 			
-			.Accepts<PackPresetBinRequest>("application/json")
-			.RequestExample<PackPresetBinRequestExample>("application/json")
+			.Accepts<PackPresetBinRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<PackPresetBinRequestExample>(MediaTypeNames.Application.Json)
 			
-			.Produces<PackBinResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<PackBinResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK, 
 				"Returns the result of the packing operation for the specified bin and items.")
-			.ResponseExamples<PackPresetBinResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<PackPresetBinResponseExamples>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
 			
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(
@@ -46,13 +47,13 @@ internal class PresetBin : IGroupedEndpoint<ApiV4EndpointGroup>
 			)
 			.ResponseExamples<PresetBinValidationProblemResponseExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 	
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		[FromRoute][Description(SchemaDescriptions.PresetParam)] string preset,
 		[FromRoute][Description(SchemaDescriptions.BinParam)] string bin,
 		BindingResult<PackPresetBinRequest> bindingResult,

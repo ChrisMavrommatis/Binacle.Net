@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Services;
@@ -17,16 +18,16 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			.WithSummary("Pack by custom")
 			.WithDescription("Pack items using custom bins.")
 			
-			.Accepts<PackByCustomRequest>("application/json")
-			.RequestExample<PackByCustomRequestExample>("application/json")
+			.Accepts<PackByCustomRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<PackByCustomRequestExample>(MediaTypeNames.Application.Json)
 			
-			.Produces<PackResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<PackResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForPackResponse200Ok)
-			.ResponseExamples<PackByCustomResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<PackByCustomResponseExamples>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
 			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
@@ -35,13 +36,13 @@ internal class ByCustom : IGroupedEndpoint<ApiV3EndpointGroup>
 			)
 			.ResponseExamples<PackByCustomValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		BindingResult<PackByCustomRequest> bindingResult,
 		IBinacleService binacleService,
 		ILogger<ByCustom> logger,

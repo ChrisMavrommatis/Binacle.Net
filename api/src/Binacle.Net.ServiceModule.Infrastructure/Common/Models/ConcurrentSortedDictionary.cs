@@ -62,22 +62,18 @@ internal class ConcurrentSortedDictionary<TKey, TValue> : IEnumerable<KeyValuePa
 			this.dict.Clear();
 	}
 
-	public IEnumerable<TKey> Keys
+	// A method, not a property: each call takes the lock and copies the whole key set. As a property that
+	// cost is invisible at the call site, and `foreach (var k in d.Keys)` inside a loop pays it every time.
+	public IEnumerable<TKey> GetKeys()
 	{
-		get
-		{
-			lock (this.lockObj)
-				return new List<TKey>(this.dict.Keys);
-		}
+		lock (this.lockObj)
+			return new List<TKey>(this.dict.Keys);
 	}
 
-	public IEnumerable<TValue> Values
+	public IEnumerable<TValue> GetValues()
 	{
-		get
-		{
-			lock (this.lockObj)
-				return new List<TValue>(this.dict.Values);
-		}
+		lock (this.lockObj)
+			return new List<TValue>(this.dict.Values);
 	}
 
 	public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()

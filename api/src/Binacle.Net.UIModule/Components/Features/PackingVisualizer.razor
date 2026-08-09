@@ -14,7 +14,12 @@
 				var isFirst = count == 0;
 				count++;
 				var isLast = count == this.controls.Count;
-				var @class =  isFirst ? "bottom-left-round" : isLast ? "bottom-right-round" : "no-round";
+				var @class = (isFirst, isLast) switch
+				{
+					(true, _) => "bottom-left-round",
+					(_, true) => "bottom-right-round",
+					_ => "no-round"
+				};
 				<button type="button" class="border tertiary-container class max @(@class)" disabled="@(control.IsEnabled ? null : "disabled")"  id="@(control.Element.Id)" @onclick=@control.ClickAsync>
 					<MaterialSymbol Name="@control.Icon" />
 				</button>

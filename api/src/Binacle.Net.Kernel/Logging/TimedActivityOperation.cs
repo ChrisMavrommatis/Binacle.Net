@@ -17,5 +17,6 @@ public class TimedActivityOperation : TimedOperation
 	{
 		base.Dispose();
 		this.activity?.Dispose();
+		GC.SuppressFinalize(this);
 	}
 }

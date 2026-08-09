@@ -23,7 +23,7 @@ internal class FeatureManager : IFeatureManager
 		this.defaultNotFoundBehavior = defaultNotFoundBehavior;
 	}
 
-	internal static IFeatureManager None = new NullFeatureManager();
+	internal static readonly IFeatureManager None = new NullFeatureManager();
 
 	public bool IsEnabled(string featureName)
 	{

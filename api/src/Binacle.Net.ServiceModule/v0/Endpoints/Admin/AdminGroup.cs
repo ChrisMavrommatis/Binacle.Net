@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
@@ -37,7 +38,7 @@ internal class AdminGroup : IEndpointGroup
 				)
 				.ResponseExample<Status500ResponseExample>(
 					StatusCodes.Status500InternalServerError,
-					"application/problem+json"
+					MediaTypeNames.Application.ProblemJson
 				);
 	}
 }

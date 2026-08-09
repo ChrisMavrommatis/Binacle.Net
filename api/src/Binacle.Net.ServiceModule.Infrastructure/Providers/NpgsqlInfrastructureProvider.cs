@@ -16,6 +16,8 @@ namespace Binacle.Net.ServiceModule.Infrastructure.Providers;
 
 internal class NpgsqlInfrastructureProvider : IInfrastructureProvider
 {
+	private static readonly string[] ServiceTags = ["Service"];
+
 	public string ConnectionStringName => "Postgres";
 
 	public void Register(IHostApplicationBuilder builder, ConnectionString connectionString)
@@ -35,7 +37,7 @@ internal class NpgsqlInfrastructureProvider : IInfrastructureProvider
 		builder.Services.AddHealthCheck<NpgsqlHealthCheck>(
 			"Database",
 			HealthStatus.Unhealthy,
-			new[] { "Service" }
+			ServiceTags
 		);
 
 		builder.Services.AddStartupTask<EnsureRequiredNpgsqlTablesExistStartupTask>();

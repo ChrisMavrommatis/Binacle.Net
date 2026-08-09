@@ -146,7 +146,7 @@
 					{
 						var isFullyPacked = result.Result == UIModule.Models.PackResultType.FullyPacked;
 						var percentage = result.PackedBinVolumePercentage;
-						var colorClass = this.GetColorClass(result);
+						var colorClass = GetColorClass(result);
 
 						<a class="row wave padding @(IsSelected(result) ? $"surface-container border" : string.Empty)"
 						   @onclick="@(() => this.SelectResult(result))">

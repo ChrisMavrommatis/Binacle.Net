@@ -255,7 +255,7 @@ public partial class PackingDemo : AppletComponentBase
 				});
 	}
 
-	private string GetColorClass(UIModule.Models.PackingResult result)
+	private static string GetColorClass(UIModule.Models.PackingResult result)
 	{
 		var baseColor = result.Result switch
 		{

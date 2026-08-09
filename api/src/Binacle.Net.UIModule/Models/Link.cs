@@ -12,7 +12,7 @@ internal class Link
 	
 	public string Title { get; init; }
 	public string Url { get; init; }
-	public Target Target { get; } = Target.Self;
+	public Target Target { get; }
 	
 	public string GetTarget() => this.Target == Target.Blank ? "_blank" : "_self";
 }

@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v3.Contracts;
@@ -17,16 +18,16 @@ internal class ByCustom: IGroupedEndpoint<ApiV3EndpointGroup>
 			.WithSummary("Fit by custom")
 			.WithDescription("Perform a bin fitting function using custom bins.")
 			
-			.Accepts<FitByCustomRequest>("application/json")
-			.RequestExample<FitByCustomRequestExample>("application/json")
+			.Accepts<FitByCustomRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<FitByCustomRequestExample>(MediaTypeNames.Application.Json)
 			
-			.Produces<FitResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<FitResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK, ResponseDescription.ForFitResponse200Ok)
-			.ResponseExamples<FitByCustomResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<FitByCustomResponseExamples>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
 			
 			.ProducesValidationProblem(StatusCodes.Status422UnprocessableEntity)
 			.ResponseDescription(
@@ -35,13 +36,13 @@ internal class ByCustom: IGroupedEndpoint<ApiV3EndpointGroup>
 			)
 			.ResponseExamples<FitByCustomValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		BindingResult<FitByCustomRequest> bindingResult,
 		IBinacleService binacleService,
 		ILogger<ByCustom> logger,

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Net.Mime;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v3.Contracts;
@@ -16,8 +17,8 @@ internal class List : IGroupedEndpoint<ApiV3EndpointGroup>
 			.WithTags("Presets")
 			.WithSummary("List presets")
 			.WithDescription("Lists the presets present in configuration.")
-			.Produces<PresetListResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, "application/json")
+			.Produces<PresetListResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+			.ResponseExample<PresetListResponseExample>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK,
 				"Returns all of the configured presets wth the associated bins."
 			).RequireCors(CorsPolicy.CoreApi);

@@ -9,7 +9,7 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem> : IPackingAlgorithm
 {
 	private sealed class Item : IWithID, IWithReadOnlyDimensions, IWithReadOnlyVolume, IWithReadOnlyCoordinates
 	{
-		internal static ushort TotalOrientations = 6;
+		internal const ushort TotalOrientations = 6;
 
 		private readonly int originalLength;
 		private readonly int originalWidth;

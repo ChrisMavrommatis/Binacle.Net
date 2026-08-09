@@ -43,11 +43,11 @@
 
 @code {
 
-	private Link License => new Link(Binacle.Net.Metadata.License, $"{Binacle.Net.Metadata.GitHub}/blob/main/LICENSE.GPL-3.0", Target.Blank);
+	private static Link License => new Link(Binacle.Net.Metadata.License, $"{Binacle.Net.Metadata.GitHub}/blob/main/LICENSE.GPL-3.0", Target.Blank);
 
-	private string CopyrightNotice => $"© 2023-{DateTime.Now.Year} Chris Mavrommatis / Binacle.Net. All Rights Reserved";
+	private static string CopyrightNotice => $"© 2023-{DateTime.Now.Year} Chris Mavrommatis / Binacle.Net. All Rights Reserved";
 
-	private Dictionary<string, List<string>> ArticleContents =>
+	private static Dictionary<string, List<string>> ArticleContents =>
 		new Dictionary<string, List<string>>()
 		{
 			{

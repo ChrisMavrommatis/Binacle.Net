@@ -91,8 +91,8 @@ internal class ForwardedHeadersDiagnosticsMiddleware
 		if (!this.ForwardedHeadersEnabled)
 		{
 			this.logger.LogWarning(
-				"Forwarded headers are disabled, but a request arrived carrying {header}. The caller is being read "
-				+ "as {remoteIp}, which is the proxy. Enable forwarded headers in ForwardedHeaders.json and trust "
+				"Forwarded headers are disabled, but a request arrived carrying {Header}. The caller is being read "
+				+ "as {RemoteIp}, which is the proxy. Enable forwarded headers in ForwardedHeaders.json and trust "
 				+ "that proxy. Logged once.",
 				this.options.ForwardedForHeaderName,
 				context.Connection.RemoteIpAddress
@@ -101,7 +101,7 @@ internal class ForwardedHeadersDiagnosticsMiddleware
 		}
 
 		this.logger.LogWarning(
-			"A request arrived carrying {header}, but it was not applied: {remoteIp} is not in the trust list, so "
+			"A request arrived carrying {Header}, but it was not applied: {RemoteIp} is not in the trust list, so "
 			+ "the caller is being read as the proxy. Add it to TrustedProxies in ForwardedHeaders.json, or turn on "
 			+ "TrustPrivateNetworks if the proxy sits on a private network. Logged once.",
 			this.options.ForwardedForHeaderName,

@@ -54,7 +54,7 @@ internal class AzureTablesSubscriptionRepository : ISubscriptionRepository
 	)
 	{
 		var pageableResult = this.tableClient.QueryAsync<SubscriptionTableEntity>(
-			x => x.AccountId == accountId && x.IsDeleted == false,
+			x => x.AccountId == accountId && !x.IsDeleted,
 			maxPerPage: 1,
 			cancellationToken: cancellationToken
 		);
@@ -129,7 +129,7 @@ internal class AzureTablesSubscriptionRepository : ISubscriptionRepository
 	}
 
 
-	private class SubscriptionTableEntity : ITableEntity
+	private sealed class SubscriptionTableEntity : ITableEntity
 	{
 		#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 		public SubscriptionTableEntity()

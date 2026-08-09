@@ -23,7 +23,7 @@ public static class ModuleDefinition
 {
 	public static void AddServiceModule(this WebApplicationBuilder builder)
 	{
-		Log.Information("{moduleName} module. Status {status}", "Service", "Initializing");
+		Log.Information("{ModuleName} module. Status {Status}", "Service", "Initializing");
 
 		builder.AddJsonConfiguration(
 			filePath: "ServiceModule/ConnectionStrings.json",
@@ -119,7 +119,7 @@ public static class ModuleDefinition
 			options.AddFeature("ServiceModule");
 		});
 
-		Log.Information("{moduleName} module. Status {status}", "Service", "Initialized");
+		Log.Information("{ModuleName} module. Status {Status}", "Service", "Initialized");
 	}
 
 	public static void UseServiceModule(this WebApplication app)

@@ -33,7 +33,7 @@ internal class PackingLogsConfigurationOptionsValidator : AbstractValidator<Pack
 		});
 	}
 
-	private bool BeValidDateFormat(string dateFormat)
+	private static bool BeValidDateFormat(string dateFormat)
 	{
 		try
 		{

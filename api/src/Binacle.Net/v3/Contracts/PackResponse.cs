@@ -81,15 +81,13 @@ public class PackResponse : ResponseBase<List<BinPackResult>>
 					}).ToList()
 			};
 
-			if (parameters.IncludeViPaqData)
+			if (parameters.IncludeViPaqData && result.PackedItems is not null && result.PackedItems.Count > 0)
 			{
-				if (result.PackedItems is not null && result.PackedItems.Count > 0)
-				{
-					result.ViPaqData = ViPaqSerializer
-						.Serialize<Bin, PackedBox, int>(result.Bin, result.PackedItems)
-						.ToBase64();
-				}				
+				result.ViPaqData = ViPaqSerializer
+					.Serialize<Bin, PackedBox, int>(result.Bin, result.PackedItems)
+					.ToBase64();
 			}
+
 			
 			results.Add(result);
 		}

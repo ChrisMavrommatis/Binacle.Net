@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
@@ -20,8 +21,8 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 		group.MapPatch("/account/{id}", HandleAsync)
 			.WithSummary("Partially update an account")
 			.WithDescription("Admins can use this endpoint to partially update an account")
-			.Accepts<AccountPatchRequest>("application/json")
-			.RequestExamples<AccountPatchRequestExamples>("application/json")
+			.Accepts<AccountPatchRequest>(MediaTypeNames.Application.Json)
+			.RequestExamples<AccountPatchRequestExamples>(MediaTypeNames.Application.Json)
 			.Produces(StatusCodes.Status204NoContent)
 			.ResponseDescription(StatusCodes.Status204NoContent, "The account was updated succesfully")
 			
@@ -29,7 +30,7 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
 			.ResponseExamples<Status400ResponseExamples>(
 				StatusCodes.Status400BadRequest,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			
 			.Produces(StatusCodes.Status404NotFound)
@@ -45,11 +46,11 @@ internal class Patch : IGroupedEndpoint<AdminGroup>
 			)
 			.ResponseExamples<AccountPatchValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		[AsParameters] AccountId id,
 		AccountBindingResult<AccountPatchRequest> bindingResult,
 		IAccountRepository accountRepository,

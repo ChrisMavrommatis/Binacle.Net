@@ -21,7 +21,7 @@ internal class HeaderHelperTestCaseProvider : IEnumerable<object[]>
 	private const string itemCoordinatesWidth = nameof(Header.ItemCoordinatesWidth);
 
 	// Every supported type accepts the smallest sections -> no error.
-	public IEnumerable<object[]> SupportedTypeCases =>
+	public static IEnumerable<object[]> SupportedTypeCases =>
 	[
 		[typeof(sbyte), "8-8-8", null!, null!],
 		[typeof(byte), "8-8-8", null!, null!],
@@ -34,7 +34,7 @@ internal class HeaderHelperTestCaseProvider : IEnumerable<object[]>
 	];
 
 	// A type the format does not support -> ArgumentException naming the generic parameter.
-	public IEnumerable<object[]> UnsupportedTypeCases =>
+	public static IEnumerable<object[]> UnsupportedTypeCases =>
 	[
 		[typeof(char), "8-8-8", argumentException, "T"],
 		[typeof(nint), "8-8-8", argumentException, "T"],
@@ -43,7 +43,7 @@ internal class HeaderHelperTestCaseProvider : IEnumerable<object[]>
 
 	// Type width is exactly the section width -> no error (the boundary; the guard uses "<"). Every non-byte
 	// supported type holds Sixteen, so 16-16-16 is an exact fit for all of them.
-	public IEnumerable<object[]> ExactFitCases =>
+	public static IEnumerable<object[]> ExactFitCases =>
 	[
 		[typeof(short), "16-16-16", null!, null!],
 		[typeof(ushort), "16-16-16", null!, null!],
@@ -54,7 +54,7 @@ internal class HeaderHelperTestCaseProvider : IEnumerable<object[]>
 	];
 
 	// Sections below the type width, in mixed widths -> no error.
-	public IEnumerable<object[]> MixedFitCases =>
+	public static IEnumerable<object[]> MixedFitCases =>
 	[
 		[typeof(int), "16-8-8", null!, null!],
 		[typeof(int), "8-16-8", null!, null!],
@@ -64,7 +64,7 @@ internal class HeaderHelperTestCaseProvider : IEnumerable<object[]>
 	];
 
 	// 8 bit types: any section above 8 is too wide -> throws and names that section.
-	public IEnumerable<object[]> Section_8Bits_TooWideCases =>
+	public static IEnumerable<object[]> Section_8Bits_TooWideCases =>
 	[
 		[typeof(sbyte), "16-8-8", argumentOutOfRangeException, binDimensionsWidth],
 		[typeof(sbyte), "8-16-8", argumentOutOfRangeException, itemDimensionsWidth],
@@ -76,7 +76,7 @@ internal class HeaderHelperTestCaseProvider : IEnumerable<object[]>
 	];
 
 	// More than one section is too wide -> the first one in order (bin, then item dim) is named.
-	public IEnumerable<object[]> PrecedenceCases =>
+	public static IEnumerable<object[]> PrecedenceCases =>
 	[
 		[typeof(byte), "16-16-8", argumentOutOfRangeException, binDimensionsWidth],
 		[typeof(byte), "8-16-16", argumentOutOfRangeException, itemDimensionsWidth],

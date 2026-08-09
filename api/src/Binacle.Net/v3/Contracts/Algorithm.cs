@@ -22,7 +22,6 @@ internal class AlgorithmValidator : AbstractValidator<IWithAlgorithm>
 {
 	public AlgorithmValidator()
 	{
-		var enumValues = Enum.GetValues<Algorithm>();
 		
 		RuleFor(x => x.Algorithm)
 			.NotNull()

@@ -53,15 +53,13 @@ public abstract class BinResponseBase
 			PackedBinVolumePercentage = operationResult.PackedBinVolumePercentage,
 			PackedItemsVolumePercentage = operationResult.PackedItemsVolumePercentage,
 		};
-		if (parameters.IncludeViPaqData)
+		if (parameters.IncludeViPaqData && result.PackedItems is not null && result.PackedItems.Count > 0)
 		{
-			if (result.PackedItems is not null && result.PackedItems.Count > 0)
-			{
-				result.ViPaqData = ViPaqSerializer
-					.Serialize<Bin, PackedBox, int>(result.Bin, result.PackedItems)
-					.ToBase64();
-			}
+			result.ViPaqData = ViPaqSerializer
+				.Serialize<Bin, PackedBox, int>(result.Bin, result.PackedItems)
+				.ToBase64();
 		}
+
 
 		return result;
 	}

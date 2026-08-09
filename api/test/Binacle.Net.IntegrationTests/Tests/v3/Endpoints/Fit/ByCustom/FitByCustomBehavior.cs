@@ -103,7 +103,7 @@ public class FitByCustomBehavior : BehaviourTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Large Volume, Returns With Early Fail Total Volume Exceeded")]
 	public async Task Post_WithLargeVolume_ReturnsWithEarlyFail_TotalVolumeExceeded()
 	{
-		var request = this.CreateSpecialRequest();
+		var request = CreateSpecialRequest();
 		request.Items!.FirstOrDefault(x => x.ID == "special_box_1")!.Quantity = 3;
 
 		await base.FitRequest_ValidateBasedOnParameters(
@@ -123,7 +123,7 @@ public class FitByCustomBehavior : BehaviourTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Large Dimension, Returns With Early Fail Item Dimension Exceeded")]
 	public async Task Post_WithLargeDimension_ReturnsWithEarlyFail_ItemDimensionExceeded()
 	{
-		var request = this.CreateSpecialRequest();
+		var request = CreateSpecialRequest();
 		var specialBox = request.Items!.FirstOrDefault(x => x.ID == "special_box_1")!;
 		specialBox.Length = 61;
 		specialBox.Width = 5;
@@ -143,7 +143,7 @@ public class FitByCustomBehavior : BehaviourTestsBase
 		);
 	}
 
-	private FitByCustomRequest CreateSpecialRequest(
+	private static FitByCustomRequest CreateSpecialRequest(
 		Action<FitRequestParameters>? modifyParameters = null
 	)
 	{

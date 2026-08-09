@@ -24,7 +24,7 @@ internal class EnumStringsSchemaTransformer : IOpenApiSchemaTransformer
 			return Task.CompletedTask;
 		
 		
-		var converterType = context?.JsonPropertyInfo?.CustomConverter?.GetType();
+		var converterType = context.JsonPropertyInfo?.CustomConverter?.GetType();
 		if (converterType == typeof(JsonStringEnumConverter))
 		{
 			schema.Type = JsonSchemaType.String;
@@ -32,24 +32,24 @@ internal class EnumStringsSchemaTransformer : IOpenApiSchemaTransformer
 		}
 
 
-		if ((converterType?.IsGenericType ?? false) && converterType?.GetGenericTypeDefinition() == typeof(JsonStringNullableEnumConverter<>))
+		if (converterType is { IsGenericType: true } && converterType.GetGenericTypeDefinition() == typeof(JsonStringNullableEnumConverter<>))
 		{
 			schema.Type = JsonSchemaType.String;
-			schema.Enum = this.GetEnumOptions(underlyingPropertyType);
+			schema.Enum = GetEnumOptions(underlyingPropertyType);
 			return Task.CompletedTask;
 		}
 		
 		if (converterType == typeof(JsonStringNullableEnumConverter))
 		{
 			schema.Type = JsonSchemaType.String;
-			schema.Enum = this.GetEnumOptions(underlyingPropertyType);
+			schema.Enum = GetEnumOptions(underlyingPropertyType);
 			return Task.CompletedTask;
 		}
 		return Task.CompletedTask;
 
 	}
 
-	private IList<JsonNode> GetEnumOptions(Type enumType)
+	private static IList<JsonNode> GetEnumOptions(Type enumType)
 	{
 		var enumValues = Enum.GetValues(enumType).Cast<object>();
 		

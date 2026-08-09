@@ -100,7 +100,7 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Default Parameters, Reports All Items")]
 	public async Task Post_WithDefaultParameters_ReportsAllItems()
 	{
-		var request = this.CreateSpecialRequest();
+		var request = CreateSpecialRequest();
 
 		await base.PackRequest_ValidateBasedOnParameters(
 			routePath,
@@ -116,7 +116,7 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With ViPaq Data, Returns ViPaq Data")]
 	public async Task Post_WithViPaqData_ReturnsViPaqData()
 	{
-		var request = this.CreateSpecialRequest(parameters => parameters.IncludeViPaqData = true);
+		var request = CreateSpecialRequest(parameters => parameters.IncludeViPaqData = true);
 
 		await base.PackRequest_ValidateBasedOnParameters(
 			routePath,
@@ -131,7 +131,7 @@ public class PackByCustomBehavior : Abstractions.BehaviourTestsBase
 		);
 	}
 	
-	private Binacle.Net.v3.Contracts.PackByCustomRequest CreateSpecialRequest(
+	private static Binacle.Net.v3.Contracts.PackByCustomRequest CreateSpecialRequest(
 		Action<Binacle.Net.v3.Contracts.PackRequestParameters>? modifyParameters = null
 	)
 	{

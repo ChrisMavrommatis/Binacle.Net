@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
@@ -18,8 +19,8 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 		group.MapPut("/account/{id}/subscription", HandleAsync)
 			.WithSummary("Update subscription")
 			.WithDescription("Admins can use this endpoint to update the subscription for an account")
-			.Accepts<SubscriptionUpdateRequest>("application/json")
-			.RequestExample<SubscriptionUpdateRequestExample>("application/json")
+			.Accepts<SubscriptionUpdateRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<SubscriptionUpdateRequestExample>(MediaTypeNames.Application.Json)
 			
 			.Produces(StatusCodes.Status204NoContent)
 			.ResponseDescription(StatusCodes.Status204NoContent, "The subscription was updated successfully")
@@ -34,11 +35,11 @@ internal class Update : IGroupedEndpoint<AdminGroup>
 			)
 			.ResponseExamples<SubscriptionUpdateValidationProblemExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		[AsParameters] AccountId id,
 		AccountBindingResult<SubscriptionUpdateRequest> requestResult,
 		ISubscriptionRepository subscriptionRepository,

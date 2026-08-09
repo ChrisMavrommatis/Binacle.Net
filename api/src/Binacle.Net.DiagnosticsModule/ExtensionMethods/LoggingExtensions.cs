@@ -8,8 +8,7 @@ public static class LoggingExtensions
 	public static LoggerConfiguration WithBinacleVersion(
 		this LoggerEnrichmentConfiguration enrich)
 	{
-		if (enrich == null)
-			throw new ArgumentNullException(nameof(enrich));
+		ArgumentNullException.ThrowIfNull(enrich);
 
 		return enrich.With<Services.BinacleVersionEnricher>();
 	}

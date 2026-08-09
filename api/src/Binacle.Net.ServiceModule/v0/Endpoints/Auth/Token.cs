@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
@@ -26,16 +27,16 @@ internal class Token : IEndpoint
 			.WithDescription(
 				"Use this endpoint if you have the credentials to get a token and use the service without limits"
 			)
-			.Accepts<TokenRequest>("application/json")
-			.RequestExample<TokenRequestExample>("application/json")
+			.Accepts<TokenRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<TokenRequestExample>(MediaTypeNames.Application.Json)
 			
-			.Produces<TokenResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseExample<TokenResponseExample>(StatusCodes.Status200OK, "application/json")
+			.Produces<TokenResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+			.ResponseExample<TokenResponseExample>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK, "The credentials are valid.")
 			
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
 			
 			.Produces(StatusCodes.Status401Unauthorized)
 			.ResponseDescription(StatusCodes.Status401Unauthorized, "The credentials are invalid.")
@@ -47,19 +48,19 @@ internal class Token : IEndpoint
 			.ResponseDescription(StatusCodes.Status422UnprocessableEntity, ResponseDescription.For422UnprocessableContent)
 			.ResponseExample<TokenRequestValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			
 			.ProducesProblem(StatusCodes.Status500InternalServerError)
 			.ResponseDescription(StatusCodes.Status500InternalServerError, ResponseDescription.For500InternalServerError)
 			.ResponseExample<Status500ResponseExample>(
 				StatusCodes.Status500InternalServerError,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			.RequireRateLimiting("AuthToken");
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		BindingResult<TokenRequest> bindingResult,
 		IAccountRepository accountRepository,
 		ISubscriptionRepository subscriptionRepository,

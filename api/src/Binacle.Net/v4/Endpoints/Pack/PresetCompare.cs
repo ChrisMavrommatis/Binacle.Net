@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net.Mime;
 using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
@@ -21,17 +22,17 @@ internal class PresetCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 			.WithSummary("Compare the bins in a preset")
 			.WithDescription("Pack every bin in a preset and return the result for each one.")
 
-			.Accepts<PackPresetCompareRequest>("application/json")
-			.RequestExample<PackPresetCompareRequestExample>("application/json")
+			.Accepts<PackPresetCompareRequest>(MediaTypeNames.Application.Json)
+			.RequestExample<PackPresetCompareRequestExample>(MediaTypeNames.Application.Json)
 
-			.Produces<PackCompareResponse>(StatusCodes.Status200OK, "application/json")
+			.Produces<PackCompareResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK,
 				"Returns the result of the packing operation for every bin in the preset.")
-			.ResponseExamples<PackPresetCompareResponseExamples>(StatusCodes.Status200OK, "application/json")
+			.ResponseExamples<PackPresetCompareResponseExamples>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 
 			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.ResponseDescription(StatusCodes.Status400BadRequest, ResponseDescription.For400BadRequest)
-			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, "application/problem+json")
+			.ResponseExamples<Status400ResponseExamples>(StatusCodes.Status400BadRequest, MediaTypeNames.Application.ProblemJson)
 
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, "If the preset does not exist.")
@@ -43,13 +44,13 @@ internal class PresetCompare : IGroupedEndpoint<ApiV4EndpointGroup>
 			)
 			.ResponseExamples<PresetBinsValidationProblemResponseExamples>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			)
 			.RequireRateLimiting("ApiUsage")
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		[FromRoute][Description(SchemaDescriptions.PresetParam)] string preset,
 		BindingResult<PackPresetCompareRequest> bindingResult,
 		IOptions<BinPresetOptions> presetOptions,

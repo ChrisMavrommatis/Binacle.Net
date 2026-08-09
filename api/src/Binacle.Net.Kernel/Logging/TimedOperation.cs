@@ -30,5 +30,6 @@ public class TimedOperation : IDisposable
 		var delta = Stopwatch.GetElapsedTime(this.startingTimestamp);
 		this.args[^1] = delta.TotalMilliseconds;
 		this.logger.Log(this.logLevel, $"{this.messageTemplate} completed in {{OperationDurationMs}}ms", this.args);
+		GC.SuppressFinalize(this);
 	}
 }

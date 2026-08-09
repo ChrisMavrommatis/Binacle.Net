@@ -41,7 +41,7 @@
 			}
 			else
 			{
-				@foreach (var (key, result) in this.results)
+				@foreach (var (_, result) in this.results)
 				{
 					<a class="row wave padding max @(IsSelected(result) ? $"surface-container border" : string.Empty)"
 					   @onclick="@(() => this.SelectResult(result))">

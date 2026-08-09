@@ -1,3 +1,4 @@
+using System.Net.Mime;
 ﻿using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
@@ -23,7 +24,7 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 			.WithDescription("Admins can use this endpoint to get an account's information")
 			.Produces<AccountGetResponse>(StatusCodes.Status200OK)
 			.ResponseDescription(StatusCodes.Status200OK, "The account exists")
-			.ResponseExample<AccountGetResponseExample>(StatusCodes.Status200OK, "application/json")
+			.ResponseExample<AccountGetResponseExample>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			
 			.Produces(StatusCodes.Status404NotFound)
 			.ResponseDescription(StatusCodes.Status404NotFound, AccountResponseDescription.For404NotFound)
@@ -35,11 +36,11 @@ internal class Get : IGroupedEndpoint<AdminGroup>
 			)
 			.ResponseExample<AccountGetValidationProblemExample>(
 				StatusCodes.Status422UnprocessableEntity,
-				"application/problem+json"
+				MediaTypeNames.Application.ProblemJson
 			);
 	}
 
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		[AsParameters] AccountId id,
 		[FromQuery] bool? allowDeleted,
 		IValidator<AccountId> validator,

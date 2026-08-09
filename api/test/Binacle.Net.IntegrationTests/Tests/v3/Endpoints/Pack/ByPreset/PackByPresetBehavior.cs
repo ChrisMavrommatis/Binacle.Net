@@ -98,7 +98,7 @@ public class PackByPresetBehavior:  Abstractions.BehaviourTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With Default Parameters, Reports All Items")]
 	public async Task Post_WithDefaultParameters_ReportsAllItems()
 	{
-		var request = this.CreateSpecialRequest();
+		var request = CreateSpecialRequest();
 		var preset = presetOptions.Value.Presets[PresetKeys.SpecialSet];
 		var urlPath = routePath.Replace("{preset}", PresetKeys.SpecialSet);
 		await base.PackRequest_ValidateBasedOnParameters(
@@ -115,7 +115,7 @@ public class PackByPresetBehavior:  Abstractions.BehaviourTestsBase
 	[Fact(DisplayName = $"POST {routePath}. With ViPaq Data, Returns ViPaq Data")]
 	public async Task Post_WithViPaqData_ReturnsViPaqData()
 	{
-		var request = this.CreateSpecialRequest(parameters => parameters.IncludeViPaqData = true);
+		var request = CreateSpecialRequest(parameters => parameters.IncludeViPaqData = true);
 		var preset = presetOptions.Value.Presets[PresetKeys.SpecialSet];
 		var urlPath = routePath.Replace("{preset}", PresetKeys.SpecialSet);
 		await base.PackRequest_ValidateBasedOnParameters(
@@ -131,7 +131,7 @@ public class PackByPresetBehavior:  Abstractions.BehaviourTestsBase
 		);
 	}
 	
-	private Binacle.Net.v3.Contracts.PackByPresetRequest CreateSpecialRequest(
+	private static Binacle.Net.v3.Contracts.PackByPresetRequest CreateSpecialRequest(
 		Action<Binacle.Net.v3.Contracts.PackRequestParameters>? modifyParameters = null
 	)
 	{

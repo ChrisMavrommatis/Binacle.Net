@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net.Mime;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.v4.Contracts.Presets;
@@ -18,8 +19,8 @@ internal class Get : IGroupedEndpoint<ApiV4EndpointGroup>
 			.WithSummary("Get a preset")
 			.WithDescription("Gets the bins configured for a single preset.")
 
-			.Produces<PresetResponse>(StatusCodes.Status200OK, "application/json")
-			.ResponseExample<PresetResponseExample>(StatusCodes.Status200OK, "application/json")
+			.Produces<PresetResponse>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
+			.ResponseExample<PresetResponseExample>(StatusCodes.Status200OK, MediaTypeNames.Application.Json)
 			.ResponseDescription(StatusCodes.Status200OK, "Returns the preset with its associated bins.")
 
 			.Produces(StatusCodes.Status404NotFound)
@@ -29,7 +30,7 @@ internal class Get : IGroupedEndpoint<ApiV4EndpointGroup>
 	}
 
 	#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-	internal async Task<IResult> HandleAsync(
+	internal static async Task<IResult> HandleAsync(
 		[FromRoute][Description(SchemaDescriptions.PresetParam)] string preset,
 		IOptions<BinPresetOptions> presetOptions,
 		ILogger<Get> logger,
