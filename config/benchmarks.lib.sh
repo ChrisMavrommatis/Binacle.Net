@@ -20,12 +20,12 @@ declare -A benchmark_aliases=(
 echo "Running from $ROOT_DIR"
 
 # Get Argument
-if [ $# -eq 0 ]; then
+if [[ $# -eq 0 ]]; then
     echo "No arguments provided. Running all benchmarks."
     FILTER="*"
 else
     FILTER="${benchmark_aliases[$1]}"
-    if [ -z "$FILTER" ]; then
+    if [[ -z "$FILTER" ]]; then
         echo "Invalid benchmark. Available: ${!benchmark_aliases[*]}"
         exit 1
     fi

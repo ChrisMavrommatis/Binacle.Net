@@ -8,7 +8,7 @@ export default class ThemeSwitcherButtonElement extends HTMLElement {
 	}
 
 	connectedCallback() {
-		this._defaultMode = this.getAttribute("data-default-theme") || 'light';
+		this._defaultMode = this.dataset.defaultTheme || 'light';
 		let themeValue = Cookies.get('theme');
 		if(!themeValue){
 			// No cookie set, use default mode
@@ -64,11 +64,11 @@ export default class ThemeSwitcherButtonElement extends HTMLElement {
 	changeThemeElementsAccordingToTheme() {
 		const themeChangingElements = document.querySelectorAll('[data-theme]');
 		themeChangingElements.forEach(element => {
-			const attribute = element.getAttribute('data-theme');
+			const attribute = element.dataset.theme;
 
 			const themeValue = this.isDarkTheme()
-				? element.getAttribute("data-darktheme")
-				: element.getAttribute("data-lighttheme");
+				? element.dataset.darktheme
+				: element.dataset.lighttheme;
 			element.setAttribute(attribute, themeValue);
 		});
 	}

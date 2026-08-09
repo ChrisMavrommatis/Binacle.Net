@@ -44,15 +44,15 @@ internal static class OpenTelemetryConfigurationExtensions
 		return tracerProviderBuilder;
 	}
 
-	// Empty on purpose, both of them. ModuleDefinition already calls these from AddAspNetCoreInstrumentation
-	// and AddHttpClientInstrumentation, so the seam between our tracing options and the instrumentation's own
-	// options exists and is wired. Nothing in OpenTelemetryTracingConfigurationOptions needs to reach them
-	// yet. Keeping the call means adding the first setting is an edit here, not a change at the call site.
 	public static void ConfigureAspNetCoreInstrumentation(
 		this AspNetCoreTraceInstrumentationOptions options,
 		OpenTelemetryTracingConfigurationOptions tracingConfigurationOptions
 	)
 	{
+		// Empty on purpose. ModuleDefinition already calls this from AddAspNetCoreInstrumentation, so the seam
+		// between our tracing options and the instrumentation's own options exists and is wired. Nothing in
+		// OpenTelemetryTracingConfigurationOptions needs to reach it yet, and keeping the call means adding the
+		// first setting is an edit here rather than a change at the call site.
 	}
 
 	public static void ConfigureHttpClientInstrumentation(
@@ -60,6 +60,10 @@ internal static class OpenTelemetryConfigurationExtensions
 		OpenTelemetryTracingConfigurationOptions tracingConfigurationOptions
 	)
 	{
+		// Empty on purpose. ModuleDefinition already calls this from AddHttpClientInstrumentation, so the seam
+		// between our tracing options and the instrumentation's own options exists and is wired. Nothing in
+		// OpenTelemetryTracingConfigurationOptions needs to reach it yet, and keeping the call means adding the
+		// first setting is an edit here rather than a change at the call site.
 	}
 
 	public static void UseOtlpExporter(

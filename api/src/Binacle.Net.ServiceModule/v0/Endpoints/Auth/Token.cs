@@ -77,43 +77,66 @@ internal class Token : IEndpoint
 				return Results.Unauthorized();
 			}
 			
-			if (!account.HasPassword())
+			var rejection = Reject(account, request, passwordService);
+			if (rejection is not null)
 			{
-				return Results.Unauthorized();
+				return rejection;
 			}
 
-			if (!passwordService.PasswordMatches(account.Password!, request.Password))
-			{
-				return Results.Unauthorized();
-			}
-			
-			if (account.IsSuspended())
-			{
-				return Results.Forbid();
-			}
-
-			if (!account.IsActive())
-			{
-				return Results.Unauthorized();
-			}
-
-			Subscription? subscription = null;
-			if (account.HasSubscription())
-			{
-				var subscriptionResult = await subscriptionRepository.GetByAccountIdAsync(
-					account.Id, 
-					cancellationToken: cancellationToken
-				);
-				
-				subscriptionResult.TryGetValue<Subscription>(out var foundSubscription);
-				if (foundSubscription is not null && foundSubscription.IsActive())
-				{
-					subscription = foundSubscription;
-				}
-			}
+			var subscription = account.HasSubscription()
+				? await GetActiveSubscriptionAsync(subscriptionRepository, account.Id, cancellationToken)
+				: null;
 
 			var token = tokenService.GenerateToken(account, subscription);
 			return Results.Ok(TokenResponse.Create(token));
 		});
+	}
+
+	// Returns the result to send back, or null when the caller has proved who they are. The order is
+	// load-bearing: the password is verified before the account state is looked at, so a caller with the
+	// wrong password gets the same 401 whatever state the account is in and cannot probe for suspended
+	// accounts. Only a caller who already authenticated ever sees the 403.
+	private static IResult? Reject(Account account, TokenRequest request, IPasswordService passwordService)
+	{
+		if (!account.HasPassword())
+		{
+			return Results.Unauthorized();
+		}
+
+		if (!passwordService.PasswordMatches(account.Password!, request.Password))
+		{
+			return Results.Unauthorized();
+		}
+
+		if (account.IsSuspended())
+		{
+			return Results.Forbid();
+		}
+
+		if (!account.IsActive())
+		{
+			return Results.Unauthorized();
+		}
+
+		return null;
+	}
+
+	// A missing or inactive subscription is not an error here - the token is still issued, just without one.
+	private static async Task<Subscription?> GetActiveSubscriptionAsync(
+		ISubscriptionRepository subscriptionRepository,
+		Guid accountId,
+		CancellationToken cancellationToken
+	)
+	{
+		var subscriptionResult = await subscriptionRepository.GetByAccountIdAsync(
+			accountId,
+			cancellationToken: cancellationToken
+		);
+
+		subscriptionResult.TryGetValue<Subscription>(out var foundSubscription);
+
+		return foundSubscription is not null && foundSubscription.IsActive()
+			? foundSubscription
+			: null;
 	}
 }

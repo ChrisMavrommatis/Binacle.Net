@@ -25,8 +25,8 @@
 	function changeThemeElementsAccordingToTheme(){
 		const themeChangingElements = document.querySelectorAll('[data-theme]');
 		themeChangingElements.forEach(element => {
-			const attribute = element.getAttribute('data-theme');
-			var themeValue = isDarkTheme() ? element.getAttribute("data-darktheme") : element.getAttribute("data-lighttheme");
+			const attribute = element.dataset.theme;
+			const themeValue = isDarkTheme() ? element.dataset.darktheme : element.dataset.lighttheme;
 			element.setAttribute(attribute, themeValue);
 		});
 	}

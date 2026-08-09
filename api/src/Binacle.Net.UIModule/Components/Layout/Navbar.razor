@@ -2,9 +2,9 @@
 	<header>
 		<Logo class="large" />
 	</header>
-	@if (MenuItems is not null)
+	@if (menuItems is not null)
 	{
-		@foreach (var menuItem in MenuItems)
+		@foreach (var menuItem in menuItems)
 		{
 			<NavLink href="@menuItem.Url" ActiveClass="active">
 				@menuItem.Content.Render()
@@ -16,9 +16,9 @@
 </nav>
 
 <nav class="s bottom secondary">
-	@if (MenuItems is not null)
+	@if (menuItems is not null)
 	{
-		@foreach (var menuItem in MenuItems)
+		@foreach (var menuItem in menuItems)
 		{
 			<NavLink href="@menuItem.Url" ActiveClass="active">
 				@menuItem.Content.Render()
@@ -33,16 +33,26 @@
 	[Inject]
 	private Services.AppletsService? AppletsService { get; set; }
 
-	// MaterialSymbol is built here as a content model (IRendableContentComponent), not rendered as a
-	// component, so setting its Name parameter directly is intended. BL0005 does not apply.
+	// Built once here rather than from a property. The markup reads it four times - twice per nav, in the
+	// `is not null` check and the `foreach` - and as an expression-bodied property each of those rebuilt the
+	// list and allocated a MaterialSymbol per applet. AppletsService.Applets is fixed in its constructor and
+	// never mutated, so there is nothing to recompute.
+	private List<Models.LinkWithContent>? menuItems;
+
+	protected override void OnInitialized()
+	{
+		// MaterialSymbol is built here as a content model (IRendableContentComponent), not rendered as a
+		// component, so setting its Name parameter directly is intended. BL0005 does not apply.
 #pragma warning disable BL0005
-	private List<Models.LinkWithContent>? MenuItems =>
-		this.AppletsService?.Applets
+		this.menuItems = this.AppletsService?.Applets
 			.Select(applet => new Models.LinkWithContent(applet.Title, applet.Ref, new MaterialSymbol()
 			{
 				Name = applet.Icon
 			}))
 			.ToList();
 #pragma warning restore BL0005
+
+		base.OnInitialized();
+	}
 
 }
