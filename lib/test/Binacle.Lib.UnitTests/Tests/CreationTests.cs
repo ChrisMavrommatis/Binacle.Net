@@ -1,4 +1,4 @@
-﻿using Binacle.Lib.Exceptions;
+using Binacle.Lib.Exceptions;
 using Binacle.TestsKernel.Models;
 using Bogus;
 

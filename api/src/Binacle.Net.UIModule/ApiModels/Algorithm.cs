@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.UIModule.ApiModels;
+namespace Binacle.Net.UIModule.ApiModels;
 
 internal enum Algorithm
 {

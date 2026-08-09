@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Binacle.Net.UIModule.Models;
 using Binacle.Net.UIModule.Services;
 using Binacle.Net.UIModule.ViewModels;

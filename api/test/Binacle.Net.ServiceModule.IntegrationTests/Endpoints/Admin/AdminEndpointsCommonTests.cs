@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Headers;
 using Binacle.Net.ServiceModule.Configuration;
 using Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;

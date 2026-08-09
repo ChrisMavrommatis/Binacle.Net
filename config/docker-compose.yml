@@ -1,4 +1,4 @@
-﻿name: binacle-net-services
+name: binacle-net-services
 
 # Backing services only - no binacle-net. This is what `just serve api` talks to, and what the Postgres and
 # AzureStorage test leaves need, so it belongs to the `serve` module rather than to `image`.

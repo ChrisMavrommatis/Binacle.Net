@@ -1,4 +1,4 @@
-﻿# Binacle.Net
+# Binacle.Net
 
 ## 📝 Overview
 Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.

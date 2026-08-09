@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Kernel.OpenApi.Transformers;
+using Binacle.Net.Kernel.OpenApi.Transformers;
 using Microsoft.AspNetCore.OpenApi;
 
 namespace Binacle.Net;

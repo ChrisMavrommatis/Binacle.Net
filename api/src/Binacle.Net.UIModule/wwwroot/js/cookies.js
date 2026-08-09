@@ -1,4 +1,4 @@
-﻿/*! based on js-cookie v3.0.5 */
+/*! based on js-cookie v3.0.5 */
 (function (global) {
 	/// Cookies
 	var defaultAttributes = {

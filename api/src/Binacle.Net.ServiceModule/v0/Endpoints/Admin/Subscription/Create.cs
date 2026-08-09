@@ -1,5 +1,5 @@
 using System.Net.Mime;
-﻿using Binacle.Net.Kernel.Endpoints;
+using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;

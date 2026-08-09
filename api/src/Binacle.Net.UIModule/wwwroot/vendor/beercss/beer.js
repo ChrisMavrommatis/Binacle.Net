@@ -1,4 +1,4 @@
-﻿/* beercss@3.10.8 */
+/* beercss@3.10.8 */
 const _emptyNodeList = [];
 function isTouchable() {
     return window == null ? void 0 : window.matchMedia("(pointer: coarse)").matches;

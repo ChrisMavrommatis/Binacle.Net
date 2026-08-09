@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Binacle.Net.Configuration;
 using Binacle.Net.IntegrationTests;

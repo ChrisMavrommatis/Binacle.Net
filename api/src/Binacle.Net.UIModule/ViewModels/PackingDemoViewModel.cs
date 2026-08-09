@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.UIModule.ViewModels;
+namespace Binacle.Net.UIModule.ViewModels;
 
 internal class PackingDemoViewModel
 {

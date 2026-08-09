@@ -1,4 +1,4 @@
-﻿POST https://{{HOST}}/api/v3/pack/by-custom
+POST https://{{HOST}}/api/v3/pack/by-custom
 Accept: application/json
 Content-Type: application/json
 

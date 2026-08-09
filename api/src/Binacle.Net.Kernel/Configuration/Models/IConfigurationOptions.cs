@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.Kernel.Configuration.Models;
+namespace Binacle.Net.Kernel.Configuration.Models;
 
 public interface IConfigurationOptions
 {

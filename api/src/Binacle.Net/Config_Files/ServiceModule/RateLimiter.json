@@ -1,4 +1,4 @@
-﻿{
+{
 	"RateLimiter": {
     "ApiUsageAnonymous" :  "SlidingWindow::60/3600-30",
     "AuthToken": "SlidingWindow::20/3600-30",

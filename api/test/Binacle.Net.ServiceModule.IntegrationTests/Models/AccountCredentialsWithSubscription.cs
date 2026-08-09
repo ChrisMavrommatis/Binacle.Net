@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.IntegrationTests.Models;
+namespace Binacle.Net.ServiceModule.IntegrationTests.Models;
 
 public record AccountCredentialsWithSubscription(
 	Guid Id,

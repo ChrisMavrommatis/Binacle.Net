@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.Domain.Common.Models;
+namespace Binacle.Net.ServiceModule.Domain.Common.Models;
 
 public class Password : ValueObject
 {

@@ -1,4 +1,4 @@
-﻿using Binacle.TestsKernel.Algorithms.Providers;
+using Binacle.TestsKernel.Algorithms.Providers;
 
 namespace Binacle.Lib.UnitTests;
 

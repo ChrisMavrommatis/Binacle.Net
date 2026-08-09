@@ -1,4 +1,4 @@
-﻿name: binacle-net-build
+name: binacle-net-build
 
 # Full — everything switched on, for testing the whole image: ServiceModule on Postgres, plus Azurite and
 # SQLite ready to switch to, and the Aspire dashboard for telemetry. All three backends run; pick which one

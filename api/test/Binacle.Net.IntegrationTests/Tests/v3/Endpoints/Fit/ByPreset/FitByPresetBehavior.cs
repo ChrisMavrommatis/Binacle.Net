@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Configuration;
+using Binacle.Net.Configuration;
 using Binacle.Net.IntegrationTests.v3.Abstractions;
 using Binacle.Net.v3.Contracts;
 using Microsoft.Extensions.DependencyInjection;

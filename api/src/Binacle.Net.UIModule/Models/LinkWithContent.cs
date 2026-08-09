@@ -1,4 +1,4 @@
-﻿using Binacle.Net.UIModule.Components;
+using Binacle.Net.UIModule.Components;
 
 namespace Binacle.Net.UIModule.Models;
 

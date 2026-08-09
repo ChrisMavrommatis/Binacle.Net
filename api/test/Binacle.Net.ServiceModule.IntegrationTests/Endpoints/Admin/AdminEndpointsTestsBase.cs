@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin;
+namespace Binacle.Net.ServiceModule.IntegrationTests.Endpoints.Admin;
 
 public abstract partial class AdminEndpointsTestsBase :  IAsyncLifetime
 {

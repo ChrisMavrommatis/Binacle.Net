@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.v0.Contracts.Common.Interfaces;
+namespace Binacle.Net.ServiceModule.v0.Contracts.Common.Interfaces;
 
 internal interface IWithUsername
 {

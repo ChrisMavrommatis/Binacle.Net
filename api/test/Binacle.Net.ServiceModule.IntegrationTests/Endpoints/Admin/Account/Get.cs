@@ -1,4 +1,4 @@
-﻿using Binacle.Net.ServiceModule.IntegrationTests.Models;
+using Binacle.Net.ServiceModule.IntegrationTests.Models;
 using System.Net.Http.Json;
 using Binacle.Net.ServiceModule.Domain.Accounts.Models;
 using Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;

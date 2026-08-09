@@ -1,4 +1,4 @@
-﻿using Binacle.Net.ServiceModule.v0.Contracts.Common;
+using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Admin;

@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.Models;
+namespace Binacle.Net.ServiceModule.Models;
 
 public static class ApplicationClaimTypes
 {

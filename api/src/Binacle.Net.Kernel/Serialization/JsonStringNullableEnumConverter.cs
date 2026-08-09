@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.

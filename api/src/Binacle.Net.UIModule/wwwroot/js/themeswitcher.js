@@ -1,4 +1,4 @@
-﻿(function (global) {
+(function (global) {
 	const modeButton = document.querySelector('[data-role="theme-button"]');
 	const themeIcon = modeButton.querySelector('i')
 	const body = document.querySelector('body');

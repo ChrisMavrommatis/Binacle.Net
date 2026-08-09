@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.DiagnosticsModule.Configuration.Models;
+namespace Binacle.Net.DiagnosticsModule.Configuration.Models;
 
 internal interface IOpenTelemetryAttributes
 {

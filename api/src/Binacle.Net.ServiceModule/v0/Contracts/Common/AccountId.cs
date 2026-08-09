@@ -1,4 +1,4 @@
-﻿using Binacle.Net.ServiceModule.v0.Resources;
+using Binacle.Net.ServiceModule.v0.Resources;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 

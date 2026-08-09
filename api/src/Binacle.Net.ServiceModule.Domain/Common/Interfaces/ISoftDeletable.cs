@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.Domain.Common.Interfaces;
+namespace Binacle.Net.ServiceModule.Domain.Common.Interfaces;
 
 public interface ISoftDeletable
 {

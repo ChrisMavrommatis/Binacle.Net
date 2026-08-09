@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Json;
 using Binacle.Net.UIModule.Models;
 using Binacle.Net.UIModule.Services;

@@ -1,4 +1,4 @@
-﻿using Binacle.Net.UIModule.ViewModels;
+using Binacle.Net.UIModule.ViewModels;
 using Microsoft.AspNetCore.Components;
 
 namespace Binacle.Net.UIModule.Components.Features;

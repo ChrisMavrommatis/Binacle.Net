@@ -1,4 +1,4 @@
-﻿import Alpine from 'alpinejs';
+import Alpine from 'alpinejs';
 
 import {packingDemoPlugin} from 'binacle-net-ui';
 Alpine.plugin(packingDemoPlugin);

@@ -1,4 +1,4 @@
-﻿using Binacle.Net.DiagnosticsModule.Configuration.Models;
+using Binacle.Net.DiagnosticsModule.Configuration.Models;
 using Binacle.Net.Kernel.Network;
 using FluentValidation;
 

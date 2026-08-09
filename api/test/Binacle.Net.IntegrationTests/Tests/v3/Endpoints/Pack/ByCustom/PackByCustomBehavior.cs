@@ -1,4 +1,4 @@
-﻿
+
 namespace Binacle.Net.IntegrationTests.v3.Endpoints.Pack.ByCustom;
 
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]

@@ -1,4 +1,4 @@
-﻿using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
+using Binacle.Net.ServiceModule.Domain.Accounts.Entities;
 using Binacle.Net.ServiceModule.IntegrationTests.Models;
 
 namespace Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;

@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.Domain.Common;
+namespace Binacle.Net.ServiceModule.Domain.Common;
 
 public abstract class ValueObject
 {

@@ -1,4 +1,4 @@
-﻿{
+{
 	"Serilog": {
 		"MinimumLevel": {
 			"Default": "Information",

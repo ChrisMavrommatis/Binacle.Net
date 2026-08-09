@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Kernel.Validation.Services;
+using Binacle.Net.Kernel.Validation.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

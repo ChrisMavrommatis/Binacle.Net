@@ -1,4 +1,4 @@
-﻿using Binacle.Lib;
+using Binacle.Lib;
 using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.Net.ExtensionMethods;

@@ -1,4 +1,4 @@
-﻿using Binacle.Lib.Abstractions.Models;
+using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.Net.UIModule.Models;
 

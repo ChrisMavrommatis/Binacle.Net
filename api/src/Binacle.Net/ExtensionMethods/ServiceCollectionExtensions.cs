@@ -1,4 +1,4 @@
-﻿using Binacle.Lib;
+using Binacle.Lib;
 using Binacle.Lib.Abstractions;
 using Binacle.Lib.AlgorithmProcessing;
 using Binacle.Lib.ResultSelection;

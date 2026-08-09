@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.Domain.Accounts.Models;
+namespace Binacle.Net.ServiceModule.Domain.Accounts.Models;
 
 public enum AccountStatus
 {

@@ -1,4 +1,4 @@
-﻿using Binacle.Net.DiagnosticsModule.Configuration.Models;
+using Binacle.Net.DiagnosticsModule.Configuration.Models;
 using FluentValidation;
 using OpenTelemetry.Exporter;
 

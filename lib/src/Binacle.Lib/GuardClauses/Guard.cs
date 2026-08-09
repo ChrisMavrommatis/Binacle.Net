@@ -1,4 +1,4 @@
-﻿namespace Binacle.Lib.GuardClauses;
+namespace Binacle.Lib.GuardClauses;
 
 internal interface IGuardClause
 {

@@ -1,4 +1,4 @@
-﻿{
+{
 	"HealthChecks": {
 		"Enabled": false,
 		"Path": "/_health",

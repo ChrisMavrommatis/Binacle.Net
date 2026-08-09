@@ -1,4 +1,4 @@
-﻿export default {
+export default {
 	read: function (value) {
 		if (value[0] === '"') {
 			value = value.slice(1, -1)

@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Binacle.Net.ServiceModule.IntegrationTests.ExtensionMethods;
 using Binacle.Net.ServiceModule.IntegrationTests.Models;
 

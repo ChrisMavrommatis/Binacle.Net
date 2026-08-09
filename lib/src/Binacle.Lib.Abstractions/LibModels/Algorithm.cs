@@ -1,4 +1,4 @@
-﻿namespace Binacle.Lib;
+namespace Binacle.Lib;
 
 public enum Algorithm
 {

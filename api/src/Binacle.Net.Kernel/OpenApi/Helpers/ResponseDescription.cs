@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Binacle.Net.Kernel.OpenApi.Models;
 
 namespace Binacle.Net.Kernel.OpenApi.Helpers;

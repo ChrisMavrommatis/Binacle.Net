@@ -1,4 +1,4 @@
-﻿using Binacle.Net.ServiceModule.Domain.Common.Interfaces;
+using Binacle.Net.ServiceModule.Domain.Common.Interfaces;
 
 namespace Binacle.Net.ServiceModule.Domain.Common;
 

@@ -1,4 +1,4 @@
-﻿using Azure.Data.Tables;
+using Azure.Data.Tables;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Binacle.Net.ServiceModule.Infrastructure.HealthChecks;

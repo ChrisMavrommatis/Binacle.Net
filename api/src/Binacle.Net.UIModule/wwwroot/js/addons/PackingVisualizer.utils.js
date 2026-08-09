@@ -1,4 +1,4 @@
-﻿import * as THREE from 'three';
+import * as THREE from 'three';
 
 const _itemMaterial = new THREE.MeshNormalMaterial({ transparent: true, opacity: 0.6 });
 

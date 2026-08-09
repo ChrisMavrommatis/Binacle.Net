@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Validators;
+using Binacle.Net.Validators;
 using FluentValidation;
 
 namespace Binacle.Net.v3.Contracts;

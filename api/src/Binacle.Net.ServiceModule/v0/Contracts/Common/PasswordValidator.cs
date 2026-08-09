@@ -1,4 +1,4 @@
-﻿using Binacle.Net.ServiceModule.v0.Contracts.Common.Interfaces;
+using Binacle.Net.ServiceModule.v0.Contracts.Common.Interfaces;
 using FluentValidation;
 
 namespace Binacle.Net.ServiceModule.v0.Contracts.Common;

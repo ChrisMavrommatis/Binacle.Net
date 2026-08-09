@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net;
+namespace Binacle.Net;
 
 
 internal static class ErrorMessage

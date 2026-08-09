@@ -1,4 +1,4 @@
-﻿using Binacle.Net.ServiceModule.Domain.Common.Models;
+using Binacle.Net.ServiceModule.Domain.Common.Models;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 
 namespace Binacle.Net.ServiceModule.Domain.Subscriptions.Services;

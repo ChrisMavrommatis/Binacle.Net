@@ -1,4 +1,4 @@
-﻿namespace Binacle.Lib.Exceptions;
+namespace Binacle.Lib.Exceptions;
 
 public class DimensionException : Exception
 {

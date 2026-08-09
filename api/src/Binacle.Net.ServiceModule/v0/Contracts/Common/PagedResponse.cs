@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.v0.Contracts.Common;
+namespace Binacle.Net.ServiceModule.v0.Contracts.Common;
 
 internal class PagedResponse<T>
 {

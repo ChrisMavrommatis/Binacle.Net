@@ -1,4 +1,4 @@
-﻿
+
 namespace Binacle.Lib.UnitTests;
 
 [Trait("Sanity Tests", "Ensures the tests are configured correctly")]

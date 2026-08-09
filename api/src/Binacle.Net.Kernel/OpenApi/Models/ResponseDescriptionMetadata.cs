@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.Kernel.OpenApi.Models;
+namespace Binacle.Net.Kernel.OpenApi.Models;
 
 internal sealed class ResponseDescriptionMetadata
 {

@@ -1,4 +1,4 @@
-﻿# _plugins/vlink.rb
+# _plugins/vlink.rb
 module Jekyll
   module Tags
     class VLink < Liquid::Tag

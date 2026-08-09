@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
+namespace Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
 
 public enum SubscriptionStatus
 {

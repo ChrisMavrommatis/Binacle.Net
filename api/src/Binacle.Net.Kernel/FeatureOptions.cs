@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net;
+namespace Binacle.Net;
 
 public class FeatureOptions
 {

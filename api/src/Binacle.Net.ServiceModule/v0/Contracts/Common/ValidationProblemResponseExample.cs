@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Kernel.OpenApi.Helpers;
+using Binacle.Net.Kernel.OpenApi.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using OpenApiExamples.Abstractions;
 

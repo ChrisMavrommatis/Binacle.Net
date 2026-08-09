@@ -1,4 +1,4 @@
-﻿using System.Threading.Channels;
+using System.Threading.Channels;
 using Binacle.Lib;
 using Binacle.Lib.Abstractions;
 using Binacle.Lib.Abstractions.Algorithms;

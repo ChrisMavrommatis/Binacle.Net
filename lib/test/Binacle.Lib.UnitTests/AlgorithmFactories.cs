@@ -1,4 +1,4 @@
-﻿using Binacle.Lib.Abstractions.Algorithms;
+using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Models;
 

@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Kernel.Endpoints;
+using Binacle.Net.Kernel.Endpoints;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;

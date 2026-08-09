@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.Kernel.Validation.Services;

@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Kernel.Configuration.Models;
+using Binacle.Net.Kernel.Configuration.Models;
 
 namespace Binacle.Net.DiagnosticsModule.Configuration.Models;
 

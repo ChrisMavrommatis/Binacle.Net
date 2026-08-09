@@ -1,4 +1,4 @@
-﻿using Binacle.Net.UIModule.Models;
+using Binacle.Net.UIModule.Models;
 using Binacle.Net.UIModule.Services;
 using Microsoft.AspNetCore.Components;
 

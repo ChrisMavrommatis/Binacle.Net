@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Kernel.OpenApi.Models;
+using Binacle.Net.Kernel.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 
 namespace Binacle.Net;

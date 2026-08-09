@@ -1,4 +1,4 @@
-﻿using Binacle.Net.ServiceModule.Models;
+using Binacle.Net.ServiceModule.Models;
 using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 

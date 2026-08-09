@@ -1,4 +1,4 @@
-﻿links:
+links:
   - type: 'text/css'
     rel: 'stylesheet'
     href: '/lib/beercss/beer.min.css'

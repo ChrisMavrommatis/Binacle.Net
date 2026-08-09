@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Kernel.Configuration.Models;
+using Binacle.Net.Kernel.Configuration.Models;
 using Binacle.Net.ServiceModule.Domain.Accounts.Services;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Services;
 using Binacle.Net.ServiceModule.Infrastructure.Accounts.Services;

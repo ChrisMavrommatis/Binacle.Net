@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.v4;
+namespace Binacle.Net.v4;
 
 internal static class ResponseDescription
 {

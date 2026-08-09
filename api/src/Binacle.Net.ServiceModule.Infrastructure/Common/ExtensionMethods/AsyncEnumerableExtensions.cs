@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.Infrastructure.Common.ExtensionMethods;
+namespace Binacle.Net.ServiceModule.Infrastructure.Common.ExtensionMethods;
 
 internal static class AsyncEnumerableExtensions
 {

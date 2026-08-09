@@ -1,4 +1,4 @@
-﻿using OpenApiExamples;
+using OpenApiExamples;
 using OpenApiExamples.Abstractions;
 using System.ComponentModel;
 

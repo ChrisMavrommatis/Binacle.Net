@@ -1,4 +1,4 @@
-﻿using OpenTelemetry.Exporter;
+using OpenTelemetry.Exporter;
 
 namespace Binacle.Net.DiagnosticsModule.Configuration.Models;
 

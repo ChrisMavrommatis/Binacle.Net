@@ -1,4 +1,4 @@
-﻿namespace Binacle.Lib.Abstractions.Models;
+namespace Binacle.Lib.Abstractions.Models;
 
 public interface IWithID : IWithReadOnlyID
 {

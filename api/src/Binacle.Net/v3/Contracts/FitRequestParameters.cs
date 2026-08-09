@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Binacle.Lib;
 using Binacle.Lib.Abstractions.Algorithms;
 using Binacle.Net.ExtensionMethods;

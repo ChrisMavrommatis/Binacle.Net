@@ -1,4 +1,4 @@
-﻿using Binacle.TestsKernel.Algorithms.Providers;
+using Binacle.TestsKernel.Algorithms.Providers;
 
 #pragma warning disable xUnit1007 
 

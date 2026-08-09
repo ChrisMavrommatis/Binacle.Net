@@ -1,4 +1,4 @@
-﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Binacle.Net.DiagnosticsModule.Configuration.Models;
 using OpenTelemetry;
 using OpenTelemetry.Exporter;

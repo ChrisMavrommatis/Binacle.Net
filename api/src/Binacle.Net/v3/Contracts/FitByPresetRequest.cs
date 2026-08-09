@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Binacle.Net.Kernel.OpenApi.Helpers;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;

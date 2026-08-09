@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Net.Mime;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;

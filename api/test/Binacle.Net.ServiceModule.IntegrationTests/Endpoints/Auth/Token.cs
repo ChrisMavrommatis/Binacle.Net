@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Json;
 using Binacle.Net.ServiceModule.Domain;
 using Binacle.Net.ServiceModule.v0.Contracts.Auth;

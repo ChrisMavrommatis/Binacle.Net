@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.Domain;
+namespace Binacle.Net.ServiceModule.Domain;
 
 public class ServiceModuleOptions
 {

@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.UIModule.Models;
+namespace Binacle.Net.UIModule.Models;
 
 internal class Applet
 {

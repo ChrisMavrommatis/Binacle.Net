@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Json;
 using Binacle.Net.Configuration;
 using Binacle.Net.v3.Contracts;

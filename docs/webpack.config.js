@@ -1,4 +1,4 @@
-﻿const path = require('path');
+const path = require('path');
 const dest = 'js';
 
 module.exports = (env, argv) => {

@@ -1,4 +1,4 @@
-﻿{
+{
   "JwtAuth": {
     "Issuer": "https://localhost:8080",
     "Audience": "https://localhost:8080",

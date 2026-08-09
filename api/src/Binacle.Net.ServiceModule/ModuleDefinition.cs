@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using System.Text;
 using Binacle.Net.Kernel.OpenApi.ExtensionsMethods;
 using Binacle.Net.ServiceModule.Configuration;

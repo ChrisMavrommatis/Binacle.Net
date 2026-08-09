@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.UIModule.Services;
+namespace Binacle.Net.UIModule.Services;
 
 internal class AppletsService
 {

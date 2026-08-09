@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Kernel.OpenApi;
+using Binacle.Net.Kernel.OpenApi;
 using Microsoft.AspNetCore.OpenApi;
 using OpenApiExamples.ExtensionMethods;
 

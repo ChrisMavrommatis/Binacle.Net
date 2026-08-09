@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Binacle.Net.Kernel.Configuration.Models;
 using Binacle.Net.ServiceModule.Models;
 using FluentValidation;

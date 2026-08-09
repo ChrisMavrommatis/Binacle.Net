@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
 		<!-- The whole new wire is internal: Header, Width, Layout, the encoder/decoder, and the codecs. -->

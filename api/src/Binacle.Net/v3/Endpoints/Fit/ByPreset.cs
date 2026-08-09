@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Configuration;
+using Binacle.Net.Configuration;
 using System.ComponentModel;
 using System.Net.Mime;
 using Binacle.Net.Kernel.Endpoints;

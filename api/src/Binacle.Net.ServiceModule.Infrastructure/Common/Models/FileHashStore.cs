@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 
 namespace Binacle.Net.ServiceModule.Infrastructure.Common.Models;
 

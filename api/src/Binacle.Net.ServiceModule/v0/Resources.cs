@@ -1,4 +1,4 @@
-﻿namespace Binacle.Net.ServiceModule.v0.Resources;
+namespace Binacle.Net.ServiceModule.v0.Resources;
 
 internal static class ResponseDescription
 {

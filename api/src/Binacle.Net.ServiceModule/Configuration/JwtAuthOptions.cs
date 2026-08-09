@@ -1,4 +1,4 @@
-﻿using Binacle.Net.Kernel.Configuration.Models;
+using Binacle.Net.Kernel.Configuration.Models;
 using FluentValidation;
 
 namespace Binacle.Net.ServiceModule.Configuration;

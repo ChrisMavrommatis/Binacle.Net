@@ -1,5 +1,5 @@
 using System.Net.Mime;
-﻿using Binacle.Net.Kernel.Endpoints;
+using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.ServiceModule.v0.Contracts.Admin;
 using Binacle.Net.ServiceModule.v0.Contracts.Common;
 using Binacle.Net.ServiceModule.v0.Resources;
