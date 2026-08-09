@@ -11,7 +11,7 @@ internal class EnumStringsSchemaTransformer : IOpenApiSchemaTransformer
 	public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context,
 		CancellationToken cancellationToken)
 	{
-		var propertyType = context?.JsonPropertyInfo?.PropertyType;
+		var propertyType = context.JsonPropertyInfo?.PropertyType;
 		if (propertyType is null)
 		{
 			return Task.CompletedTask;

@@ -16,7 +16,7 @@ you need, and trim or delete it once the work lands.
 | [docs-v3-pages.md](docs-v3-pages.md) | Docs site - write the v3.0.x pages |
 | [image-module-stacks.md](image-module-stacks.md) | Decide what the `image` module is still for |
 | [scripts-to-just-recipes.md](scripts-to-just-recipes.md) | Convert the last `config/*.sh` scripts to `just` recipes |
-| [sonar-issue-triage.md](sonar-issue-triage.md) | Sonar - triage the open issues |
+| [sonar-issue-triage.md](sonar-issue-triage.md) | Sonar - what is left after the 2026-08-09 sweep |
 | [todos.md](todos.md) | TODOs |
 | [ui-test-harness.md](ui-test-harness.md) | A test harness for the UI |
 

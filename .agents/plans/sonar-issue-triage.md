@@ -1,229 +1,117 @@
-# Sonar - triage the open issues
+# Sonar - what is left after the 2026-08-09 sweep
 
-**Status:** In progress. Opened 2026-08-09 from the 2026-08-08 run (revision `54a94b83`, 509 open issues,
-88 distinct rules). One batch has landed; the rest is sorted below by what it is worth, not by count.
+**Status:** Sweep done. Rewritten 2026-08-09 against the run on `016d7478`, which is the first analysis with
+the corrected scope. **509 open issues -> 305**, and the C# reduction is bigger than that looks: 24 of the 305
+are new arrivals from `docs/` and `web/` coming back into scope, so ~228 were actually cleared.
 
-**Read [[sonar-touching-untested-code]] first.** None of these issues fails the quality gate - only new code
-is graded and `new_maintainability_rating` is A. Fixing them is housekeeping, and fixing one in a file with
-no tests actively makes `new_coverage` worse. Sort the work by the coverage of the files it lands in.
-
-**Do not trust Sonar's effort estimates.** It rates S2223 at 380 minutes for 19 issues. Every one of them is
-a one-word change. The estimates are per-rule averages and know nothing about our code.
-
-## Done 2026-08-09 (65 issues)
-
-| Rule | n | Fix |
+| | before | after |
 |---|---|---|
-| S3260 | 14 | `private class` -> `private sealed class` |
-| S1481 | 21 | unused locals: `out _`, dropped assignment, `_ = checked(...)`, `var (_, x)` |
-| S6678 | 18 | Serilog placeholders to PascalCase |
-| S2933 | 9 | fields made `readonly` |
-| CA1816 | 3 of 13 | `GC.SuppressFinalize(this)` in the three `src/` Dispose methods |
+| Open issues | 509 | 305 |
+| ncloc | 24,931 | 30,559 |
+| Coverage / new coverage | 53.3% / 31.4% | 52.8% / **45.4%** |
+| Duplication | 3.4% | 2.9% |
+| Bugs / hotspots | 0 / 0 | 0 / 0 |
+| **Vulnerabilities** | **0** | **7** |
+| Security rating | A | **E** |
+| Quality gate | ERROR | ERROR (`new_coverage` only) |
 
-Two of those needed care and are worth remembering. Several S1481 hits were `var volume = checked(...)`
-inside a FluentValidation `MustNotThrow`, where the unused variable **is** the overflow guard - deleting the
-line would have removed a real check silently, so they became `_ = checked(...)`. And three camelCase braces
-in the S6678 files were C# interpolation or a route pattern (`{variable}`, `{trustedProxy}`,
-`{documentName}`), not log placeholders; renaming those breaks the build.
+Read [[sonar-touching-untested-code]] before fixing anything else here, and
+[[algorithm-identifier-is-a-format]] before renaming anything.
 
-## Tier A - fix these, they are real {#tier-a}
+## The seven vulnerabilities, and why they only just appeared {#vulnerabilities}
 
-Worth doing on their merits, not to move a number. **Landed 2026-08-09 except the three noted at the end.**
+**All seven are in `docs/collections/_versions/**` - the versioned sample files users download.** They were
+invisible until the exclusion change on 2026-08-09, because `docs/**` was excluded whole. This is the single
+most valuable thing the sweep produced, and it is exactly the argument that motivated narrowing the exclusion:
+the two published sites are the only public attack surface in the repo, and they were the one thing not being
+looked at.
 
-- **DONE. S2223 (19) + S2743 (6) - mutable public statics, overlapping.** These are the same six lines in `lib`
-  plus thirteen more. `internal static ushort TotalOrientations = 6` sits inside the generic
-  `BestFitDecreasing_v2<TBin, TItem>`, so it is both writable by anyone and **not shared between closed
-  constructions** - each `<TBin, TItem>` pair gets its own copy, which is not what `static` looks like it
-  says. `const` fixes both rules in one word. The rest: `Coordinates.Zero` is a `public static` field on a
-  struct, so any caller can reassign the origin for the whole process; two `ActivitySource` fields; nine
-  `public static string` message constants in `ServiceModule/v0/Resources.cs`; `FeatureManager.None`. All
-  become `const` or `static readonly`. **Highest value per keystroke in the whole list.**
-- **DONE. S4487 (2) - unread private `logger` field.** In `ApiUsageRateLimitingPolicy` and
-  `AuthTokenRateLimitingPolicy` the constructor assigned `this.logger`, but the `onRejected` lambda closes
-  over the **parameter** `logger` instead, so the field was dead state. Field and assignment deleted; the
-  closure keeps the logger alive exactly as before.
-- **DONE, and it grew. S6580 (4) - date parsed with no format provider**, in the two Sqlite repositories.
-  Sonar only flags the parse, but the **write** side was `entity.CreatedAtUtc.ToString()`, equally
-  culture-dependent. Fixing only the read would have made things *worse*: today both sides use the ambient
-  culture and at least agree with each other, so a strict-invariant read against an ambient write breaks a
-  `de-DE` machine that works now. Both sides had to move together, and they now go through one type,
-  `Common/SqliteDateTime.cs`, which owns the format. Storage form is `yyyy/MM/dd HH:mm:ss`, UTC, big-endian
-  so the TEXT column sorts as the instant does. `FromStorage` uses `Parse` rather than `ParseExact` on
-  purpose, so rows already written in the old invariant "G" form still read and no migration is needed.
-  Verified by the Sqlite-backed integration suite (107 tests), which round-trips both entities.
-- **DONE. S2365 (2 of 3) - properties that copy collections.** `ConcurrentSortedDictionary.Keys`/`.Values`
-  became `GetKeys()`/`GetValues()`. Both call sites were `_accounts.Values.FirstOrDefault(...)`, which
-  copies the whole dictionary to find one row - the cost is now visible where it is paid.
-- **DONE. S112 (1)** `ApplicationException` in `EnsureDefaultAdminAccountExistsStartupTask` became
-  `InvalidOperationException`. **S1186 (2)** the two empty OpenTelemetry instrumentation hooks now carry a
-  comment saying why they are empty; they are called from `ModuleDefinition`, so the seam is real and only
-  the body is absent. **Check that comment reads true** - it is inferred from the call site, not from
-  anyone's stated intent.
+**None of this is fixable from a coding session** - repo-root `docs/` is off limits per `CLAUDE.md`. It belongs
+to the docs/web session. Written up here so it is not lost.
 
-### Left out of Tier A after looking at the code {#tier-a-deferred}
+- **BLOCKER, `json:S6418` - FIXED 2026-08-09.** `v1.3.x/samples/docker/full-deployment/aspire-dashboard-config.json`
+  shipped a GUID as `PrimaryApiKey`, and the matching `docker-compose.yml` repeated it in
+  `OTEL_EXPORTER_OTLP_HEADERS`. Both now read `ThisIsAPlaceholderOtlpApiKeyPleaseGenerateYourOwn`, matching
+  the `TokenSecret` placeholder style already used in `samples/docker/*/JwtAuth.json`. That is the fix S6418
+  actually wants and the one [[no-sonar-issue-ignores]] prescribes: change the value so it stops looking like
+  a credential, rather than hiding the finding. **The two files must always agree** - the sample breaks if
+  only one is edited. This was the finding driving the security rating to E.
+- **6 x kubernetes rules** on `binacle-deployment.yaml` in **both** `v2.0.x` and `v2.1.x` samples: `S6865`
+  (automounted service account not bound to RBAC), `S6864` (no memory limit), `S6870` (no storage limit).
 
-- **S3776 (2) - cognitive complexity 17 vs 15.** `Auth/Token.cs` and `Program.cs`. Token's `HandleAsync` is
-  a chain of guard clauses on the authentication path; Program.cs is the composition root. Both are
-  refactors with behaviour risk for two points of a metric, and neither should be done in passing. Decide
-  whether it is worth it at all.
-- **S2365 (1 of 3) - `Navbar.MenuItems`.** The property rebuilds the list with `.Select(...).ToList()` and
-  the markup reads it **four times**, so every render pays for four rebuilds. Real, but the fix is a Blazor
-  render-path change (cache in a field, or hoist to a local in the markup) in a component with no tests.
-  Worth doing with the UI harness, not before.
-- **S1075 (2) - moved to Tier D.** The two "hardcoded URIs" are the GPL licence URL and the project's
-  GitHub URL in the OpenAPI documents. They are canonical constants, not configuration, and extracting them
-  to a named `const` does not satisfy S1075 anyway - the rule is about the literal, wherever it lives.
-- **javascript:S1874 + S1121 (2) - moved to Tier D.** Both are in `packages/cookies`, which
-  `package.json` describes as "based on js-cookie v3.0.5", pinned to the upstream version. Both flagged
-  lines are upstream code, and the `escape` call is deliberate there - it encodes `()` per RFC 6265, which
-  `encodeURIComponent` does not. Changing them diverges a fork from the library it tracks, for style.
+  **The live sample was already fixed and the frozen copies were not.** `samples/kubernetes/minimal/binacle-deployment.yaml`
+  gained a full `resources:` block with requests and limits in `938c6d7e`; the `docs/` copies for v2.0.x and
+  v2.1.x still have no `resources:` block at all. So a user following the current docs downloads the
+  vulnerable manifest. That gap is the real finding, and it is a pattern worth checking for elsewhere: a fix
+  applied to `samples/` does not reach the versioned copies under `docs/`.
 
-## Tier B - mechanical and safe, do in batches {#tier-b}
+Note the gate still passes on security. The BOM commit touched line 1 of those files but the findings sit on
+lines 10-16, so they count as old code. The gate is not wrong - it just is not the place these will surface.
 
-Each batch is one decision then repetition. Build and run the suites after each.
+## What is left, by size {#remaining}
 
-- **DONE, 69 of 82. S2325 (50) + CA1822 (47) - "make this method static".** Applied by adding `static` at
-  every flagged declaration, then letting the compiler find the call sites: CS0176 says exactly where an
-  instance reference is now illegal, so nothing depends on a search being complete. Two rounds, 18 then 84
-  errors - the second wave only appeared once `Binacle.TestsKernel` built again, which is a reminder that a
-  green build on a broken dependency graph is not evidence.
-
-  Two follow-on edits came out of it. `ScenarioReader` in both TestsKernel namespaces had only
-  `ReadScenarios`, so once that went static the `new ScenarioReader()` in each provider was dead - removed,
-  call qualified with the type, and both classes made `static class`. Leaving them instantiable would have
-  traded this finding for a fresh S1118.
-
-  **The five `[GlobalCleanup]` methods were removed instead, and that was the important one.** All five
-  benchmark bases had an empty `public void GlobalCleanup() { }`, which is why they were flagged - a method
-  with no body accesses no instance state. Making them `static` compiles and is silently wrong:
-  **BenchmarkDotNet only discovers `[GlobalCleanup]` on instance methods**, so a static one is never called.
-  Benchmarks are not in any test suite, so nothing here would have caught it. They were empty, so they are
-  gone entirely, which settles the finding and the hook in one move. A sweep of every other method turned
-  static in this batch found none sitting under an attribute, so these five were the only framework hooks
-  at risk.
-
-  **The lesson worth keeping: `static` is safe for a method the compiler resolves, and a trap for one a
-  framework discovers by reflection.** Attribute-driven hooks - `[GlobalSetup]`, `[GlobalCleanup]`, xunit
-  lifecycle, model binders - are found by signature, and the compiler will not tell you when the signature
-  stops matching. Check what discovers a method before making it static.
-
-  **5 reverted, on purpose:**
-
-  - **5 reverted after the compiler objected** - `CommonTestingFixture.Run`, `.GetScenarioByName`,
-    `.AssertResult` and `ResultSelectionTestingFixture.Select`, `.GetScenarioByName`. These are reached as
-    `this.Fixture.GetScenarioByName(...)` from 60 test bodies. Making them static forces
-    `CommonTestingFixture.GetScenarioByName(...)` at every call site, which stops the tests going through the
-    fixture at all and breaks the arrange/act/assert shape in [[tests-arrange-act-assert]] - a pattern the
-    maintainer asked for directly. **The rule is wrong about this design.** Mark the five Accepted in the UI.
-
-### What the v3 freeze actually covers {#v3-freeze-scope}
-
-**Decided by the maintainer, 2026-08-09.** The eight v3 sites were held back at first, then applied after a
-direct ruling: *"as long as it works it's fine, it doesn't change the contract for an outsider."*
-
-That draws the line in a useful place, and [[v3-frozen]] should be read this way. The freeze protects the
-**published contract** - routes, request and response shapes, status codes, behaviour a client can observe.
-It does not fence off the implementation behind it. `internal async Task<IResult> HandleAsync` becoming
-`internal static async Task<IResult> HandleAsync` changes nothing any caller can see.
-
-Two v3 files had already been edited in the S1481 batch before this came up - a dead `enumValues` local in
-`v3/Contracts/Algorithm.cs`, and two `var volume = ...` turned into `_ = ...` in `v3/Contracts/IWithItems.cs`.
-Both are behaviour-preserving; the `checked` and `Sum` expressions still run, which is the whole point of
-those `MustNotThrow` validators. They fall inside the line drawn above.
-- **WON'T FIX. S101 (38) - `BestAlgorithm_v1` and friends.** Renamed to `BestAlgorithmV1` on 2026-08-09,
-  then **reverted the same day** on a maintainer ruling: `_v1` lowercase is the house style everywhere, with
-  no exceptions. The reason is [[algorithm-identifier-is-a-format]] - `GetAlgorithmIdentifierName()` emits
-  `FFD_v2`, the baseline fixtures store it, and `AlgorithmInfoHelper` parses it by splitting on `_`. Every
-  version suffix in the codebase matches that format on purpose, and matching a C# naming rule instead would
-  make the code disagree with its own data.
-
-  **These 38 are marked Accepted in the SonarCloud UI.** That is the only answer available - a custom quality
-  profile needs the Team plan, so the rule cannot be switched off ([[no-sonar-issue-ignores]]). Do not attempt
-  this rename again; the finding is answered, not outstanding.
-
-  Worth keeping from the attempt, because it is what made the revert cheap and safe. Nothing is published -
-  no `dotnet pack`, no `nuget push`, no `IsPackable` - and **the type names appear in no string literal**: no
-  `nameof`, no `GetType().Name`, nothing in `shared/data`, `results/` or config. A rename was therefore purely
-  mechanical in both directions. Had any name been reachable as text, the forward rename would have changed
-  behaviour while every test still compiled.
-
-  Also learned: a blanket `_v1` -> `V1` would have broken things regardless. Around 35 other `_v1`/`_v2`
-  identifiers exist - the `BFD_v1`/`FFD_v1`/`WFD_v1` constants, and benchmark names like
-  `OR_Library_Packing_WFD_v2` that the `results/` ledgers key on.
-
-- **S1192 (30) - repeated string literals** to constants. Needs a naming and placement decision per cluster,
-  then it is mechanical. Ten of the thirty are in 0%-coverage files.
 - **xUnit1042 (22) + xUnit1050 (10)** - `MemberData`/`ClassData` returning untyped `object[]`. The fix is
-  `TheoryData<T>`, which is a genuine improvement to the ViPaq suites, but it is a rewrite of each data
-  source rather than an edit.
-- **CA1873 (13)** guard expensive log arguments, **CA1816 (10 remaining)** see the open question below,
-  **CA2208 (9)** exception `paramName` misused as a message - that one needs an exception-type decision,
-  not a mechanical fix. **CA1859 (9)** concrete return types, **CA2211 (7)** non-constant public fields.
-- **S1117 (7)** parameter hides a field, **S3241 (7)** return value nobody reads, **S4136 (5)** overloads not
-  adjacent, **S2326 (5)** unused generic parameter, **S3928 (4)** `paramName` naming, **S3881 (4)** dispose
-  pattern, **S3442 (3)** constructor visibility, **S8970 (2)** null-forgiving where nullable is off,
-  **S1104 (2)** public field to property, **S3246 (1)** missing `out` for covariance.
-- **One-liners:** CA1860 (5) `.Any()` to length check, CA1861 (5) constant arrays to `static readonly`,
-  CA1854 (4) `TryGetValue` over `ContainsKey`, S1066 (3) merge nested `if`, CA1510 (2) `ThrowIfNull`,
-  CA1850 (2) `SHA256.HashData`, S1125 (2) redundant booleans, S2589 (2) unnecessary null check, S3267 (2)
-  loop to `Where`, CA2254 (2) varying log template, CA1866 + S6610 (2) `StartsWith(char)`, CA1847 (1)
-  `Contains(char)`, S2971 (1) fold `Where` into `FirstOrDefault`, S2629 (1) interpolation in a log template,
-  S3358 (1) nested ternary, S3604 (1) redundant initializer, S927 (1) parameter name vs base, S1172 (1)
-  unused parameter, S1118 (1) static class, ASP0025 (1) `AddAuthorizationBuilder`, CA1869 (1) cache
-  `JsonSerializerOptions`.
-- **shelldre:S7688 (4)** - `[` to `[[` in the `config/` shell scripts. Trivial, and those scripts are being
-  converted to `just` recipes anyway ([[scripts-to-just-recipes]]), so it may resolve itself.
+  `TheoryData<T>`, a real improvement to the ViPaq and Kernel suites, but a rewrite per data source rather
+  than an edit. Biggest remaining item.
+- **S101 (38) - closed as WON'T FIX.** Renamed and reverted on 2026-08-09; `_v1` lowercase is the house style
+  because `GetAlgorithmIdentifierName()` emits `FFD_v2` and the fixtures parse it. See
+  [[algorithm-identifier-is-a-format]]. **Mark these Accepted in the UI.** Do not attempt the rename again.
+- **CA1873 (13)** guard expensive log arguments. **CA1816 (10)** the xunit `DisposeAsync` fixtures - see the
+  open question below. **CA1859 (9)** concrete return types, mostly in test helpers. **CA2208 (9)** exception
+  `paramName` misused as a message, which needs an exception-type decision rather than a swap.
+- **S1192 (11)** - the media-type half is done (150 literals, `MediaTypeNames.Application.Json`/`.ProblemJson`,
+  no new constants). Left: `box_1/2/3` in both `ExampleData.cs` (file-private consts, values unchanged so the
+  OpenAPI examples stay identical), `first`/`previous`/`repeat` in `PackingVisualizer` (dictionary keys, so a
+  const prevents a runtime `KeyNotFoundException` - but UIModule is 0% covered), and two canonical URLs.
+- **S2325 (8) + CA1822 (13)** - the residue of the make-static sweep. 5 are the testing-fixture methods
+  reverted on purpose (below); the rest are worth another pass.
+- **S3776 (2)** cognitive complexity 17 vs 15 in `Auth/Token.cs` and `Program.cs`, **S2365 (1)**
+  `Navbar.MenuItems` rebuilding its list on each of four reads per render, **ASP0025**, **CA1869**, and a
+  thin tail of one-liners.
+- **~45 TypeScript/JavaScript** modernisation items in `packages/` and `vipaq/packages/`, nearly all in
+  0%-coverage files, so each fix costs new-code coverage and buys style. Do these with the UI harness.
 
-## Tier C - TypeScript and JavaScript modernisation (~45) {#tier-c}
+## Decisions on record - do not redo these {#decided}
 
-Almost all in `packages/` and `vipaq/packages/`, and almost all in files at 0% coverage, so every fix here
-costs new-code coverage and buys style. Low priority, and better done alongside the UI test harness.
-
-`javascript:S7761` (7) prefer `.dataset`, `typescript:S1444` (8) public static should be readonly,
-`S6557` (4) `startsWith`, `S7772` (4) `node:fs`, `S7773` (3) `Number.parseInt`, `S6582` (3) optional chain,
-`S7755` (2) `.at()`, `typescript:S2933` (2) readonly member, `S7758` (2) `codePointAt`, `S4138` (3)
-`for-of`, `S7769` (2) `Math.hypot`, `S1128` (2) unused import, `S7754` (1) `.some()`, `S7781` (1)
-`replaceAll`, `S6647` (1) useless constructor, `typescript:S1854` (1) dead assignment, `S7726` (1) unnamed
-function, `S5906` (1) and `S5914` (1) assertion style in the ViPaq TS tests.
-
-**javascript:S3504 (5)** - `var` instead of `let`/`const` in the UIModule's own `wwwroot` JS. Trivial, and
-that code is ours rather than vendored, so it is the one item here worth doing early.
-
-## Tier D - leave them, or mark Accepted in the UI {#tier-d}
-
-We are on the Free plan, so a rule cannot be switched off ([[no-sonar-issue-ignores]]). The only honest
-answers are a code change or marking the individual finding Accepted with a reason.
-
-- **S3458 (6) - "remove this empty case clause".** The code is `case 0: default:` in the six `Item.Rotate`
-  switches, where orientation 0 and the fallback are deliberately the same branch and `case 0:` documents
-  which one is the identity. Removing it satisfies the analyser and loses the point. Mark Accepted.
-- **S1854 (3) - "useless assignment to `newSpaces`".** The statement is
-  `newAvailableSpaces[--newSpaces] = ...`; the decrement is the index. Only the final write to the variable
-  is dead, and there is no way to remove it that reads better. Mark Accepted.
-- **S1075 (2) - hardcoded URIs.** The GPL licence URL and the GitHub URL in the OpenAPI documents. Canonical
-  constants, and a named `const` does not satisfy the rule anyway. Mark Accepted.
-- **javascript:S1874 (1) + S1121 (2 lines) - `packages/cookies`.** A tracked fork of js-cookie v3.0.5. Both
-  are upstream lines and `escape` is deliberate (RFC 6265 `()` encoding). Mark Accepted, and say in the
-  reason that the file tracks upstream.
-- **S1135 (2) - TODO comments.** INFO severity. They are tracked work, which is what a TODO is for.
-- **S125 (4) - commented-out code.** Judgement per site; some is explanation, some is leftovers.
-- **shelldre:S1192 (1)** - `cd ./config` 12 times in a shell script. Superseded by
-  [[scripts-to-just-recipes]].
+- **S101 renames** - reverted, house style is `_v1`. Mark Accepted.
+- **5 testing-fixture methods** (`CommonTestingFixture.Run`, `.GetScenarioByName`, `.AssertResult`,
+  `ResultSelectionTestingFixture.Select`, `.GetScenarioByName`) - static was applied, then reverted. They are
+  reached as `this.Fixture.X(...)` from 60 test bodies; static forces `CommonTestingFixture.X(...)` and stops
+  the tests going through the fixture at all, breaking [[tests-arrange-act-assert]]. Mark Accepted.
+- **S3458 (6)** `case 0: default:` in the six `Item.Rotate` switches - `case 0` documents the identity
+  orientation. Mark Accepted.
+- **S1854 (3)** `newAvailableSpaces[--newSpaces] = ...` - the decrement is the index. Mark Accepted.
+- **S1075 (2)** the GPL licence and GitHub URLs in the OpenAPI documents - canonical constants, and a named
+  `const` does not satisfy the rule anyway. Mark Accepted.
+- **javascript:S1874 + S1121** in `packages/cookies` - upstream js-cookie v3.0.5 lines, and the `escape` is
+  deliberate (RFC 6265 `()` encoding). Mark Accepted, with the reason that the file tracks upstream.
+- **S1135 (2)** TODO comments at INFO severity. Leave.
 
 ## Open question - CA1816 on the ten test fixtures {#ca1816-question}
 
-Three of the thirteen are done. The other ten are xunit `IAsyncLifetime` classes in
-`ServiceModule.IntegrationTests` whose `DisposeAsync` ends in `await base.DisposeAsync()`. Adding
-`GC.SuppressFinalize(this)` to a test fixture that will never have a finalizer is ceremony of exactly the
-kind [[no-sonar-issue-ignores]] rejects elsewhere. Either add the line ten times and stop thinking about it,
-or mark the ten Accepted with "test fixture, no finalizer". Not decided.
+Three of thirteen are done (`TimedOperation`, `TimedActivityOperation`, `PackingVisualizer`). The other ten
+are xunit `IAsyncLifetime` classes whose `DisposeAsync` ends in `await base.DisposeAsync()`. Adding
+`GC.SuppressFinalize(this)` to a fixture that will never have a finalizer is ceremony. Either add the line ten
+times, or mark the ten Accepted with "test fixture, no finalizer". Not decided.
 
-## An observation that is not a Sonar finding {#rotate-cycle}
+## Two traps this sweep produced, both worth remembering {#traps}
 
-While reading `Item.Rotate` for S2743: `TotalOrientations` is 6, and the guard is
-`if (this.currentOrientation >= TotalOrientations) this.currentOrientation = 0; else this.currentOrientation++;`.
-Starting from 0 that cycles 0,1,2,3,4,5,6,0 - seven steps, with 6 falling through to `default`, which is the
-same branch as `case 0`. So the identity orientation appears twice per cycle. That may be intended or may be
-an off-by-one; all 8679 lib unit tests pass either way, and changing it changes packing results. **Flagged,
-not touched.** Someone who knows the algorithm's intent should decide, and if it is intended it deserves a
-comment saying so.
+- **A script that prepends a line to a file relocates the BOM instead of preserving it.** The media-type pass
+  inserted `using System.Net.Mime;` ahead of a BOM-carrying first line, leaving a stray `U+FEFF` stranded at
+  the start of line 2 in 16 files. It survived a full build and 10,041 tests, and no BOM tool would find it,
+  because position 0 was no longer a BOM. Write after the BOM, not before it.
+- **Removing one redundant `?.` can introduce `CS8602`.** The S2589 fix on `EnumStringsSchemaTransformer`
+  dropped `context?.` on line 27 but left it on line 14, so flow analysis still treated `context` as
+  possibly-null and warned on the bare dereference. It did not show in an incremental Debug build - only a
+  `--no-incremental -c Release` build surfaced it, which is what CI runs. **Verify a warning-count claim with
+  a clean Release build**, not an incremental one.
+
+## Still true, and still what the gate hangs on {#gate}
+
+`new_coverage` is the only failing condition: **45.4% against 80%**, up from 31.4% as the August cleanup
+commits age out of the rolling 30-day window. Nothing else fails. The 305 open issues block nothing -
+`new_maintainability_rating` is A.
+
+The 80% cannot be lowered: custom quality gates need the Team plan, and the project is on Free. So the gate
+goes green when the UI gets tested, not by configuration - which is [[ui-test-harness]], and the reason
+[[ci-gates]] says not to make coverage blocking on the PR gate yet.

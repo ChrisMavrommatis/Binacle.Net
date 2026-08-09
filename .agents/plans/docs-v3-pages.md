@@ -231,3 +231,30 @@ the session that writes that folder.
 ## Done when
 
 The `v3.0.x` folder is a full version, the site builds, and the deploy is unblocked. Delete this file then.
+
+## Security findings in the versioned samples - from the 2026-08-09 Sonar run {#sonar-vulnerabilities}
+
+Added by a coding session that cannot fix them: repo-root `docs/` is off limits per `CLAUDE.md`, so these are
+written down rather than changed. Full context in [[sonar-issue-triage]].
+
+Narrowing `sonar.exclusions` on 2026-08-09 brought `docs/` into analysis for the first time and immediately
+surfaced **seven vulnerabilities, all in `docs/collections/_versions/**`** - the sample files readers download.
+They take the project's security rating from A to E.
+
+- **BLOCKER - the sample files are already fixed, the prose may still need a line.** The GUID that
+  `v1.3.x/samples/docker/full-deployment/` published as `PrimaryApiKey` (and repeated in `docker-compose.yml`
+  as `OTEL_EXPORTER_OTLP_HEADERS`) is now `ThisIsAPlaceholderOtlpApiKeyPleaseGenerateYourOwn` in both files.
+  **Check whether the surrounding page tells the reader to generate their own key**, the way
+  `samples/docker/service/README.md` does for `TokenSecret`. If it does not, it should.
+- **Six Kubernetes findings** on `binacle-deployment.yaml` in **both** `v2.0.x` and `v2.1.x`
+  `samples/kubernetes/minimal-setup/`: no memory limit (`S6864`), no storage limit (`S6870`), and an
+  automounted service account not bound to RBAC (`S6865`).
+
+  **The live sample is already fixed; the published copies are not.** `samples/kubernetes/minimal/binacle-deployment.yaml`
+  gained a full `resources:` block with requests and limits in `938c6d7e`. The `docs/` copies for v2.0.x and
+  v2.1.x have no `resources:` block at all, so a reader following the docs downloads the worse manifest.
+
+That last point generalises and is worth a check across the whole site: **a fix applied to repo-root `samples/`
+does not reach the versioned copies under `docs/collections/_versions/`.** Whether the frozen copies should be
+corrected, or annotated as historical with a pointer to the current sample, is a docs decision - but shipping a
+manifest with no resource limits to anyone reading the current version is worth resolving either way.
