@@ -2,7 +2,7 @@
 // Underscores are separators.
 export function parseByte(token: string): number {
 	const normalized = token.replace(/_/g, "");
-	if (normalized.startsWith("0x")) return parseInt(normalized.slice(2), 16);
-	if (normalized.startsWith("0b")) return parseInt(normalized.slice(2), 2);
+	if (normalized.startsWith("0x")) return Number.parseInt(normalized.slice(2), 16);
+	if (normalized.startsWith("0b")) return Number.parseInt(normalized.slice(2), 2);
 	throw new Error(`Byte token '${token}' must start with 0x or 0b.`);
 }

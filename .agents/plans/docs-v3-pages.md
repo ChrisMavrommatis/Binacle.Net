@@ -246,13 +246,12 @@ They take the project's security rating from A to E.
   as `OTEL_EXPORTER_OTLP_HEADERS`) is now `ThisIsAPlaceholderOtlpApiKeyPleaseGenerateYourOwn` in both files.
   **Check whether the surrounding page tells the reader to generate their own key**, the way
   `samples/docker/service/README.md` does for `TokenSecret`. If it does not, it should.
-- **Six Kubernetes findings** on `binacle-deployment.yaml` in **both** `v2.0.x` and `v2.1.x`
-  `samples/kubernetes/minimal-setup/`: no memory limit (`S6864`), no storage limit (`S6870`), and an
-  automounted service account not bound to RBAC (`S6865`).
-
-  **The live sample is already fixed; the published copies are not.** `samples/kubernetes/minimal/binacle-deployment.yaml`
-  gained a full `resources:` block with requests and limits in `938c6d7e`. The `docs/` copies for v2.0.x and
-  v2.1.x have no `resources:` block at all, so a reader following the docs downloads the worse manifest.
+- **Six Kubernetes findings - already fixed in the sample files.** `binacle-deployment.yaml` in both `v2.0.x`
+  and `v2.1.x` now carries `automountServiceAccountToken: false` and a `resources:` block with requests and
+  limits, matching what `samples/kubernetes/minimal/` has had since `938c6d7e`. Image tags untouched. The
+  `index.md` pages link the files for download rather than inlining them, so no prose change was needed - but
+  **check whether the page should say anything about the resource values**, since they are starting points
+  rather than a recommendation and the manifest comments say so.
 
 That last point generalises and is worth a check across the whole site: **a fix applied to repo-root `samples/`
 does not reach the versioned copies under `docs/collections/_versions/`.** Whether the frozen copies should be

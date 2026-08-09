@@ -36,14 +36,21 @@ to the docs/web session. Written up here so it is not lost.
   actually wants and the one [[no-sonar-issue-ignores]] prescribes: change the value so it stops looking like
   a credential, rather than hiding the finding. **The two files must always agree** - the sample breaks if
   only one is edited. This was the finding driving the security rating to E.
-- **6 x kubernetes rules** on `binacle-deployment.yaml` in **both** `v2.0.x` and `v2.1.x` samples: `S6865`
-  (automounted service account not bound to RBAC), `S6864` (no memory limit), `S6870` (no storage limit).
+- **6 x kubernetes rules - FIXED 2026-08-09.** `S6865` (automounted service account), `S6864` (no memory
+  limit) and `S6870` (no storage limit) on `binacle-deployment.yaml` in both `v2.0.x` and `v2.1.x`.
 
-  **The live sample was already fixed and the frozen copies were not.** `samples/kubernetes/minimal/binacle-deployment.yaml`
-  gained a full `resources:` block with requests and limits in `938c6d7e`; the `docs/` copies for v2.0.x and
-  v2.1.x still have no `resources:` block at all. So a user following the current docs downloads the
-  vulnerable manifest. That gap is the real finding, and it is a pattern worth checking for elsewhere: a fix
-  applied to `samples/` does not reach the versioned copies under `docs/`.
+  **The cause was drift, not a missing decision.** `samples/kubernetes/minimal/binacle-deployment.yaml` already
+  had `automountServiceAccountToken: false` and a full `resources:` block with requests and limits, added in
+  `938c6d7e`. The two frozen copies under `docs/` never got it, so a reader following the published v2.0.x or
+  v2.1.x instructions downloaded the unhardened manifest. Both now carry the same two blocks, comments
+  included, with their own image tags untouched (`2.0.1` and `2.1.1`). Purely additive - 16 lines each, nothing
+  removed.
+
+  That also cleared six maintainability findings in the same files: `S6873`, `S6892` and `S6897` all wanted the
+  `requests:` entries the same block provides. **12 kubernetes findings closed by one change.**
+
+  **The lesson is the general one:** a fix applied to `samples/` does not reach the versioned copies under
+  `docs/collections/_versions/`, and nothing enforces that it does. Worth a sweep whenever a sample changes.
 
 Note the gate still passes on security. The BOM commit touched line 1 of those files but the findings sit on
 lines 10-16, so they count as old code. The gate is not wrong - it just is not the place these will surface.

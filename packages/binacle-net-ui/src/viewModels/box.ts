@@ -56,7 +56,7 @@ export default class Box implements Dimensions {
 				errors.push(dimension.name, `${dimension.name} is required`);
 			}
 
-			if (isNaN(dimension.value)) {
+			if (Number.isNaN(dimension.value)) {
 				errors.push(dimension.name,`${dimension.name} must be a number`);
 			}
 
