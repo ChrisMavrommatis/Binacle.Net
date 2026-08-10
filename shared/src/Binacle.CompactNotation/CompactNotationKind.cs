@@ -1,6 +1,6 @@
 namespace Binacle.CompactNotation;
 
-// Which block a compact string is, as decided by CompactNotation.Detect.
+// Which block a compact string is, as decided by CompactNotationParser.Detect.
 public enum CompactNotationKind
 {
 	Dimensions,

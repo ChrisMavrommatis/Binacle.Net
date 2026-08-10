@@ -54,8 +54,8 @@ internal static class OrLibraryParser
 			// Line 3: how many box types follow.
 			var boxTypeCount = int.Parse(ReadFields(reader)[0]);
 
-			// One line per box type: type, length, flag, width, flag, height, flag, quantity. We take the three
-			// dimensions and the quantity; the type number and the orientation flags we skip.
+			// One line per box type: type, length, flag, width, flag, height, flag, quantity — hence the gaps
+			// in the indices below, where the type number and the orientation flags are skipped over.
 			var boxTypes = new List<RawBoxType>(boxTypeCount);
 			for (var boxType = 0; boxType < boxTypeCount; boxType++)
 			{
@@ -87,6 +87,6 @@ internal static class OrLibraryParser
 			}
 		}
 
-		throw new InvalidDataException("Unexpected end of OR-Library file — the problem count and the data disagree.");
+		throw new InvalidDataException("Unexpected end of OR-Library file - the problem count and the data disagree.");
 	}
 }

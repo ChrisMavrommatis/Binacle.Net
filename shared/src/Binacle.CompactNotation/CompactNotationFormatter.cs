@@ -3,9 +3,9 @@ using Binacle.Geometry;
 
 namespace Binacle.CompactNotation;
 
-// Formats geometry into the compact text notation — the inverse of CompactNotationParser. Single-block primitives
-// (FormatDimensions -> "LxWxH", FormatCoordinates -> "(X,Y,Z)", FormatQuantity -> "[Q]") plus the compile-guaranteed
-// composites (FormatItem, FormatDimensionsAndQuantity). All read through the read-only interfaces.
+// Formats geometry into the compact text notation — the inverse of CompactNotationParser. Single-block
+// primitives (FormatDimensions -> "LxWxH", FormatCoordinates -> "(X,Y,Z)", FormatQuantity -> "[Q]") plus the
+// two composites below. All read through the read-only interfaces.
 public static class CompactNotationFormatter
 {
 	public static string FormatDimensions<T>(IWithReadOnlyDimensions<T> dimensions)
@@ -20,9 +20,8 @@ public static class CompactNotationFormatter
 		where T : struct, IBinaryInteger<T>
 		=> $"[{quantity.Quantity}]";
 
-	// Concise, compile-guaranteed composites (mirror the parser's ParseItem / ParseDimensionsAndQuantity).
-	// TValue is inferred from the argument, so callers write FormatItem(x) with no type args; the constraints
-	// guarantee at compile time that x actually carries both blocks (a value missing one won't compile).
+	// These mirror the parser's ParseItem / ParseDimensionsAndQuantity. TValue is inferred, so callers write
+	// FormatItem(x) with no type args, and the constraints reject a value missing a block at compile time.
 
 	// "LxWxH (X,Y,Z)" — dimensions plus a placement.
 	public static string FormatItem<TValue>(TValue value)

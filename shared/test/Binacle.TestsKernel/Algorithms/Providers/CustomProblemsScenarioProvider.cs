@@ -39,9 +39,8 @@ public static class CustomProblemsScenarioProvider
 		=> scenarios[name];
 
 	// The bins these scenarios run against, one entry per ID, in the order the scenarios introduce them. The API
-	// test host registers exactly this set as the `custom-problems` preset, so both it and anything asserting
-	// against that preset read the list here instead of writing it down — the scenario data owns it, and it grows
-	// whenever a scenario adds a bin.
+	// test host registers exactly this set as the `custom-problems` preset, so the list is never written down
+	// twice — the scenario data owns it, and it grows whenever a scenario adds a bin.
 	public static IReadOnlyList<TestBin> GetDistinctBins()
 		=> distinctBins;
 

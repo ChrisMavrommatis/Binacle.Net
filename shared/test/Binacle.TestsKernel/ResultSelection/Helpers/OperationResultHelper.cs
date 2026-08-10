@@ -9,10 +9,7 @@ internal static class OperationResultHelper
 {
 	public static OperationResult ParseFromCompactString(string compactString)
 	{
-		// "60x40x10 FFD_v2 PartiallyPacked 72.13 96.11",
-		// "60x40x10 BFD_v2 FullyPacked 75.05 100",
-		// "60x40x10 WFD_v2 PartiallyPacked 69.22"
-		
+		// "<bin> <algorithm> <status> <bin volume %> <items volume %>", e.g. "60x40x30 FFD_v2 FullyPacked 95 100".
 		var parts = compactString.Split(' ');
 		if (parts.Length != 5)
 		{

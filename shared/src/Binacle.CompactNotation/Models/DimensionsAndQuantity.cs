@@ -14,9 +14,8 @@ public class DimensionsAndQuantity<T> : IWithDimensions<T>
 	public T Height { get; set; }
 	public int Quantity { get; set; }
 
-	// Test-only (no production consumer), so internal rather than public — visible to the CompactNotation unit
-	// tests, which exercise the expand behavior. Expands into Quantity standalone dimensions (mirrors how
-	// ParseItems expands a placed item's "[Q]").
+	// Internal rather than public: no production consumer, only the CompactNotation unit tests. Expands into
+	// Quantity standalone dimensions — the same expansion ParseItems does for a placed item's "[Q]".
 	internal IReadOnlyList<Dimensions<T>> Flatten()
 	{
 		var result = new List<Dimensions<T>>(this.Quantity);

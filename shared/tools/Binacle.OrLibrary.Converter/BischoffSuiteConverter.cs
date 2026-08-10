@@ -18,11 +18,9 @@ namespace Binacle.OrLibrary.Converter;
 public sealed class BischoffSuiteConverter : IConverter
 {
 	// Every Bischoff & Ratcliff instance fills the container to ~98% but never tessellates perfectly, so the
-	// outcome is always PartiallyPacked — some boxes go in, never all of them, and never none. We record that as
-	// the expected result for both operations (packing and fitting) rather than running the packer here. The
-	// tests kernel runs the real packer against this baseline and asserts they match: if an instance ever comes
-	// out FullyPacked or NotPacked, that assertion fails — the signal that something packed unusually well, or
-	// nothing fit at all.
+	// outcome is always PartiallyPacked — some boxes go in, never all of them, and never none. Recorded twice,
+	// once per operation (packing and fitting). The tests kernel runs the real packer against this baseline, so
+	// a FullyPacked or NotPacked fails: the signal that something packed unusually well, or nothing fit at all.
 	private const string ExpectedResult = "PartiallyPacked PartiallyPacked";
 
 	public void Convert()

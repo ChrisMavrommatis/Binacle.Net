@@ -11,7 +11,8 @@ public interface IWithDimensions<T> : IWithReadOnlyDimensions<T>
 	new T Height { get; set; }
 }
 
-// Non-generic int shortcut. Reaches the mutable generic directly.
+// Non-generic int shortcut. Unlike its siblings it also extends the non-generic read-only form, so a
+// mutable value can be passed where a plain IWithReadOnlyDimensions is asked for.
 public interface IWithDimensions : IWithReadOnlyDimensions, IWithDimensions<int>
 {
 }

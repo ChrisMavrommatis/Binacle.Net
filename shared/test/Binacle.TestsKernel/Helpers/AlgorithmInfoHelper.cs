@@ -7,7 +7,7 @@ public static class AlgorithmInfoHelper
 {
     public static AlgorithmInfo ParseFromCompactString(string compactString)
     {
-        // FFD_v1 Packing
+        // e.g. "FFD_v1"
         var algorithmParts =compactString.Split('_');
         if (algorithmParts.Length != 2)
         {

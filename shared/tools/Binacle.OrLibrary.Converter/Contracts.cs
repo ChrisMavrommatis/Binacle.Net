@@ -3,7 +3,7 @@ namespace Binacle.OrLibrary.Converter;
 // The tests-kernel compact scenario, in the exact shape and property order the kernel reads and writes:
 // Name, Bin, Metrics, Result, Items. This is what we serialize, one array per thpack file.
 //
-//   Name    — "OrLibrary_thpack{file}_{problem index}", e.g. "OrLibrary_thpack1_1".
+//   Name     — "OrLibrary_thpack{file}_{problem index}", e.g. "OrLibrary_thpack1_1".
 //   Bin      — the container as "LxWxH".
 //   Metrics  — "ItemsVolume BinVolume ItemsCount Percentage": totals over all box types, and their volume ratio.
 //   Result   — "{PackingStatus} {FittingStatus}": the expected outcome the tests assert against.

@@ -1,9 +1,8 @@
 namespace Binacle.TestReporting;
 
 // Finds the repository root by climbing from the running binary to the folder that holds the marker file (the
-// solution file by default). Bind once, then Find resolves paths under the root — Find() gives the root itself,
-// Find("a", "b") gives <root>/a/b. Lets a tool or report write to stable repo-level paths no matter how deep the
-// build puts the executable.
+// solution file by default). Bind once, then Find resolves paths under it. Lets a tool or report write to
+// stable repo-level paths no matter how deep the build puts the executable.
 //
 //   var repo = RepositoryRoot.Bind();
 //   var dir = repo.Find("vipaq", "test-vectors", "interop");
