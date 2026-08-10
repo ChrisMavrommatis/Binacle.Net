@@ -21,9 +21,8 @@ public sealed class ResultSelectionTestingFixture : IDisposable
 	public Scenario GetScenarioByName(string scenarioName)
 		=> AllScenariosProvider.GetScenarioByName(scenarioName);
 
-	// Act. Selects, then projects to the string the test compares. No checking here - the comparison is a
-	// plain Shouldly call the test makes itself, which is a framework Sonar already recognises, so nothing
-	// on this side needs an [AssertionMethod] hint.
+	// Act. Selects, then projects to the string the test compares. No assertion here - the test makes its
+	// own Shouldly call, which Sonar already recognises, so this side needs no [AssertionMethod] hint.
 	public string Select(
 		Scenario scenario,
 		IResultSelectionStrategy selectionStrategy,

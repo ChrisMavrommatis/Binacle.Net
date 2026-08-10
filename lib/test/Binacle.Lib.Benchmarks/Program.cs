@@ -21,7 +21,6 @@ internal class Program
 			.WithOptions(ConfigOptions.DisableLogFile)
 			.WithBuildTimeout(TimeSpan.FromMinutes(20))
 			.WithSummaryStyle(SummaryStyle.Default.WithMaxParameterColumnWidth(50));
-		// custom order
 		config.Orderer = new AttributeOrderer();
 		// Pin BDN output next to the project, so reports land in the same place no matter where you launch from.
 		config.ArtifactsPath = Path.GetFullPath(

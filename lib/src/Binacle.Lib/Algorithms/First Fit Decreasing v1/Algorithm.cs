@@ -24,7 +24,8 @@ internal partial class FirstFitDecreasing_v1<TBin, TItem>: IPackingAlgorithm
 
 		this.bin = new Bin(bin);
 
-		// I think this is overkill since we check the dimensions
+		// Not covered by the dimension guards above: Volume is an unchecked int multiply, so three
+		// positive dimensions can still overflow into zero or negative.
 		Guard.Against
 			.ZeroOrNegativeVolume(this.bin);
 

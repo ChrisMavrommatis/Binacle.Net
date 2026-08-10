@@ -72,14 +72,12 @@ internal class CollectionStatisticsResult<T> : Dictionary<string, List<T>>, IRes
 		int count = orderedValues.Count;
 		if (count % 2 == 0)
 		{
-			// Even number of elements
 			var middle1 = Convert.ToDouble(orderedValues[(count / 2) - 1]);
 			var middle2 = Convert.ToDouble(orderedValues[count / 2]);
 			return (middle1 + middle2) / 2.0;
 		}
 		else
 		{
-			// Odd number of elements
 			return Convert.ToDouble(orderedValues[count / 2]);
 		}
 	}

@@ -7,7 +7,7 @@ public class SmallestBin_v1 : IResultSelectionStrategy
 {
     public OperationResult Select(IDictionary<string, OperationResult> results)
     {
-        // best algorithm for this bin
+        // Prefer a fully packed result, and among those the smallest bin.
         var fullyPacked = results.Values
             .Where(r => r.Status == OperationResultStatus.FullyPacked)
             .OrderBy(r => r.Bin.Volume)
@@ -16,7 +16,7 @@ public class SmallestBin_v1 : IResultSelectionStrategy
         if (fullyPacked != null)
             return fullyPacked;
 
-        // fallback: most of the order packed
+        // Nothing packed fully - smallest bin still wins, ties go to whichever packed the most.
         return results.Values
             .OrderBy(r => r.Bin.Volume)
             .ThenByDescending(r => r.PackedItemsVolumePercentage)

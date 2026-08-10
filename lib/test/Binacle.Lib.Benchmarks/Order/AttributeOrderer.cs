@@ -22,7 +22,6 @@ internal class AttributeOrderer : IOrderer
 
 	public IEnumerable<BenchmarkCase> GetSummaryOrder(ImmutableArray<BenchmarkCase> benchmarksCases, Summary summary)
 	{
-		// First group by the parameters, then order within the group by BenchmarkOrder
 		return benchmarksCases
 			.GroupBy(b => b.Parameters.DisplayInfo)
 			.SelectMany(group => group.OrderBy(b => GetBenchmarkOrder(b)));

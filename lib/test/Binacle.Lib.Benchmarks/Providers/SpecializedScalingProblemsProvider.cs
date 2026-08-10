@@ -18,14 +18,16 @@ public static class SpecializedScalingProblemsProvider
 		);
 	}
 	
-    // bins 
-    // 60x40x10 => [24000]
-    // 60x40x15 => [36000]
-    // 60x40x20 => [48000]
-    // 60x40x25 => [60000]
-    // 60x40x30 => [72000]
-    // 60x40x35 => [84000]
-    // 60x40x40 => [96000]
+    // Keyed by bin count - each entry is the one before it plus the next taller bin.
+    //
+    //   bin        volume
+    //   60x40x10    24000
+    //   60x40x15    36000
+    //   60x40x20    48000
+    //   60x40x25    60000
+    //   60x40x30    72000
+    //   60x40x35    84000
+    //   60x40x40    96000   <- MaxSizeBin
     private static Dictionary<int, string[]> binsByQuantity = new Dictionary<int, string[]>()
     {
         {1, ["60x40x10"]},
@@ -46,22 +48,21 @@ public static class SpecializedScalingProblemsProvider
 		return bins.Select(TestBin.FromCompactString).ToList();
 	}
 
-    // items 
-    // 2x5x10-3    = 3  (100x3)   [300]
-    // 12x15x10-4  = 7  (1800x4)  [7200]
-    // 8x8x8-6     = 13 (512x6)   [3072]   => FIT TO ALL
-    //     ----------------------------------
-    //               13           [10572]
-    // 5x5x15-4	   = 17  (375x4)  [1500]
-    // 10x8x8-6	   = 23  (640x6)  [3840]
-    // 4x4x4-6	   = 29  (64x6)   [684]
-    // 2x15x5-8    = 37  (150x8)  [1200]
-    // 10x9x1-10   = 47  (90x10)  [900]
-    // 10x10x10-12 = 59  (1000x12)[12000]
-    // 17x15x15-8  = 67  (3825x8) [30600]
-    // 16x10x7-12  = 79  (1120x12)[13440] => All But BFD On Max fail
-    // ----------------------------------
-    //               79		      [74736]
+    // Keyed by the running item count - each entry is the one before it plus the next item type,
+    // which is why the keys look arbitrary. The last two columns are those running totals.
+    //
+    //   item        qty  unit vol  row vol  items  total vol
+    //   2x5x10        3       100      300      3        300
+    //   12x15x10      4      1800     7200      7       7500
+    //   8x8x8         6       512     3072     13      10572   <- the baseline scenario; fits every bin
+    //   5x5x15        4       375     1500     17      12072
+    //   10x8x8        6       640     3840     23      15912
+    //   4x4x4         6        64      384     29      16296
+    //   2x15x5        8       150     1200     37      17496
+    //   10x9x1       10        90      900     47      18396
+    //   10x10x10     12      1000    12000     59      30396
+    //   17x15x15      8      3825    30600     67      60996
+    //   16x10x7      12      1120    13440     79      74436   <- all but BFD fail on the max bin
 
     private static Dictionary<int, string[]> itemsByQuantity = new Dictionary<int, string[]>()
     {

@@ -59,40 +59,36 @@ internal partial class BestFitDecreasing_v2<TBin, TItem> : IPackingAlgorithm
 			else
 				this.currentOrientation++;
 
+			// The six permutations of the box's three axes. Case 0 is the item as it came in, and
+			// orientation 6 folds back onto it, so a full six-call sweep ends where it started.
 			switch (this.currentOrientation)
 			{
-				// VolumetricItem(item.Length, item.Width, item.Height)
 				case 0:
 				default:
 					this.Length = this.originalItem.Length;
 					this.Width = this.originalItem.Width;
 					this.Height = this.originalItem.Height;
 					break;
-				// new VolumetricItem(item.Length, item.Height, item.Width)
 				case 1:
 					this.Length = this.originalItem.Length;
 					this.Width = this.originalItem.Height;
 					this.Height = this.originalItem.Width;
 					break;
-				//new VolumetricItem(item.Width, item.Length, item.Height)
 				case 2:
 					this.Length = this.originalItem.Width;
 					this.Width = this.originalItem.Length;
 					this.Height = this.originalItem.Height;
 					break;
-				// new VolumetricItem(item.Width, item.Height, item.Length)
 				case 3:
 					this.Length = this.originalItem.Width;
 					this.Width = this.originalItem.Height;
 					this.Height = this.originalItem.Length;
 					break;
-				// new VolumetricItem(item.Height, item.Length, item.Width)
 				case 4:
 					this.Length = this.originalItem.Height;
 					this.Width = this.originalItem.Length;
 					this.Height = this.originalItem.Width;
 					break;
-				// new VolumetricItem(item.Height, item.Width, item.Length)
 				case 5:
 					this.Length = this.originalItem.Height;
 					this.Width = this.originalItem.Width;
@@ -108,7 +104,6 @@ internal partial class BestFitDecreasing_v2<TBin, TItem> : IPackingAlgorithm
 			this.IsPacked = true;
 			this.coordinates = spaceQuadrant.Coordinates;
 		}
-		// when quantity is greater that 0
 
 
 

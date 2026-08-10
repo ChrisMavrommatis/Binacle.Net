@@ -7,7 +7,7 @@ public class BestBin_v1 : IResultSelectionStrategy
 {
     public OperationResult Select(IDictionary<string, OperationResult> results)
     {
-        // best algorithm for this bin
+        // Prefer a fully packed result, and among those the bin left with the least room to spare.
         var fullyPacked = results.Values
             .Where(r => r.Status == OperationResultStatus.FullyPacked)
             .OrderByDescending(r => r.PackedBinVolumePercentage)
@@ -16,7 +16,7 @@ public class BestBin_v1 : IResultSelectionStrategy
         if (fullyPacked != null)
             return fullyPacked;
 
-        // fallback: most of the order packed
+        // Nothing packed fully - same rule, now over the partial results.
         return results.Values
             .OrderByDescending(r => r.PackedBinVolumePercentage)
             .First();
