@@ -4,7 +4,7 @@ namespace Binacle.Net.UIModule.Models;
 
 internal class UnpackedItem :IWithID, IWithQuantity
 {
-	// Json Deserialize
+	// Parameterless ctor, for System.Text.Json.
 	public UnpackedItem()
 	{
 		this.ID = string.Empty;

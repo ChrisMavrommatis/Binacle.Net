@@ -18,7 +18,6 @@ public class InputTextAreaField : InputTextArea
 	
 	protected override void BuildRenderTree(RenderTreeBuilder builder)
 	{
-		// se border
 		builder.OpenElement(0, "div");
 		var classes = EditContext?.FieldCssClass(FieldIdentifier);
 		builder.AddAttribute(1, "class", $"field label textarea {ContainerFieldClass} {classes}");

@@ -17,7 +17,6 @@ public class InputNumberField<TValue> : InputNumber<TValue>
 	
 	protected override void BuildRenderTree(RenderTreeBuilder builder)
 	{
-		// se border
 		builder.OpenElement(0, "div");
 		var classes = EditContext?.FieldCssClass(FieldIdentifier);
 		builder.AddAttribute(1, "class", $"field label {ContainerFieldClass} {classes}");

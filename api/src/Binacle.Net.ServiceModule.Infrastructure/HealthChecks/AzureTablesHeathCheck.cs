@@ -15,7 +15,6 @@ internal class AzureTablesHeathCheck : IHealthCheck
 	public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
 		CancellationToken cancellationToken = default)
 	{
-		// azure table health 
 		try
 		{
 			await tableServiceClient.GetPropertiesAsync(cancellationToken: cancellationToken);

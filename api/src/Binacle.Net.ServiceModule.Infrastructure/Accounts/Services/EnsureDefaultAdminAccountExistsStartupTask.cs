@@ -25,7 +25,6 @@ internal class EnsureDefaultAdminAccountExistsStartupTask : IStartupTask
 		var timeProvider = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
 		
-		// get configuration
 		var options = scope.ServiceProvider.GetRequiredService<IOptions<ServiceModuleOptions>>();
 		var configuredAdminCredentials =
 			ServiceModuleOptions.ParseAccountCredentials(options.Value.DefaultAdminAccount);

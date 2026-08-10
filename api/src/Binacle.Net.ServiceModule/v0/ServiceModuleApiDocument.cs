@@ -22,7 +22,6 @@ internal class ServiceModuleApiDocument : IOpenApiDocument
 			document.Info.Title = this.Title;
 			document.Info.Version = this.Version;
 			document.Info.Description = __description__;
-			// gpl 3 license
 			document.Info.License = new OpenApiLicense
 			{
 				Name = "GNU General Public License v3.0",

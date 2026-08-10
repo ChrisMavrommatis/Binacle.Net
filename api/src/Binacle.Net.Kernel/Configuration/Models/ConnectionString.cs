@@ -84,7 +84,8 @@ public class ConnectionString
 				}
 				catch
 				{
-					// ignore
+					// Enum.Parse(Type, ...) has no TryParse overload, so the catch is how this branch gets the
+					// same "leave it null and fall back to defaultValue" behaviour as the ones above.
 				}
 				break;
 			default:
@@ -114,6 +115,5 @@ public class ConnectionString
 	}
 
 
-	// implicit assign
 	public static implicit operator string(ConnectionString connectionString) => connectionString.value;
 }

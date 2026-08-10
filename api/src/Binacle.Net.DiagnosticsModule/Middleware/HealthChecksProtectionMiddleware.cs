@@ -70,7 +70,6 @@ internal class HealthChecksProtectionMiddleware
 
 	public async Task InvokeAsync(HttpContext context)
 	{
-		// Ignore if the request is not for the health checks path
 		if (!context.Request.Path.StartsWithSegments(this.options.Value.Path))
 		{
 			await next(context);

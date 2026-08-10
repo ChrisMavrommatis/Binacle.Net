@@ -25,16 +25,7 @@ internal static class ApiDocument
 			Name = "Binacle.Net",
 			Url = new Uri(Binacle.Net.Metadata.GitHub)
 		};
-		
-		// document.Servers =
-		// [
-		// 	new OpenApiServer
-		// 	{
-		// 		Url = "http://localhost:8080",
-		// 		Description = "Local instance (Docker quickstart)"
-		// 	}
-		// ];
-		
+
 		if (document.Tags is not null)
 		{
 			foreach (var tag in document.Tags)

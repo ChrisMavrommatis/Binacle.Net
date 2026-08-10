@@ -57,7 +57,6 @@ public static class ModuleDefinition
 			reloadOnChange: true
 		);
 
-		// overwrite default logger
 		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 		{
 			loggerConfiguration
@@ -148,7 +147,6 @@ public static class ModuleDefinition
 		// Health Checks
 		builder.AddValidatableJsonConfigurationOptions<HealthCheckConfigurationOptions>();
 
-		// Add health checks
 		builder.Services
 			.AddHealthChecks();
 		

@@ -26,12 +26,19 @@ public static class IPEntry
 		var slashIndex = entry.IndexOf('/');
 		var addressText = slashIndex < 0 ? entry : entry[..slashIndex];
 
-		// The one guard this type exists for. IPAddress.TryParse still reads the inet_aton forms - "010.10.10.10"
-		// is octal and lands on 8.10.10.10, "0x0A.10.10.10" is hex, "10.1" and "167772161" both come out as
-		// 10.0.0.1 - and it drops an IPv6 scope id instead of matching on it. An entry that admits a host other
-		// than the one it reads as is the whole risk here, so an entry has to come back out of ToString exactly as
-		// it went in. IPv6 is held to the same rule, which is why "2001:0db8::1" has to be written "2001:db8::1":
-		// one rule beats a table of refused spellings.
+		// The one guard this type exists for: an entry must never admit a host other than the one it reads as.
+		// IPAddress.TryParse still accepts the inet_aton forms, so the rule is that an address has to come back
+		// out of ToString exactly as it went in. What that refuses:
+		//
+		//   "010.10.10.10"    octal, lands on 8.10.10.10
+		//   "0x0A.10.10.10"   hex, lands on 10.10.10.10
+		//   "10.1"            short form, lands on 10.0.0.1
+		//   "167772161"       bare integer, the same 10.0.0.1
+		//   "2001:0db8::1"    IPv6 held to the same rule, so it must be written "2001:db8::1"
+		//
+		// One rule beats a table of refused spellings. A scope id needs its own check: "fe80::1%1" survives
+		// ToString intact, so the round-trip alone would let it through, and a scope id is not something a
+		// network entry can match on.
 		if (!IPAddress.TryParse(addressText, out var address)
 		    || addressText.Contains('%')
 		    || address.ToString() != addressText)

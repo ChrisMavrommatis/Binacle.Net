@@ -27,11 +27,9 @@ public static class Program
 		var builder = WebApplication.CreateSlimBuilder(args);
 		builder.BootstrapLogger();
 
-		// Slim builder
+		// CreateSlimBuilder omits both of these; the default builder wires them up for you.
 		builder.WebHost.UseKestrelHttpsConfiguration();
-
-		// Slim builder
-		builder.WebHost.UseQuic(); //HTTP 3 support
+		builder.WebHost.UseQuic(); // HTTP/3 support
 
 		builder.Configuration
 			.SetBasePath($"{Directory.GetCurrentDirectory()}/Config_Files");
@@ -51,7 +49,6 @@ public static class Program
 		builder.AddValidatableJsonConfigurationOptions<CorsOptions>();
 		builder.AddValidatableJsonConfigurationOptions<ForwardedHeadersConfigurationOptions>();
 
-		// Feature Management
 		Feature.Manager = new FeatureManagerConfiguration()
 			.ReadFrom.Configuration(builder.Configuration)
 			.ReadFrom.EnvironmentVariables()
@@ -139,10 +136,7 @@ public static class Program
 			builder.AddUIModule();
 		}
 
-		// SWAGGER_UI from environment vars
 		var swaggerEnabled = Feature.IsEnabled("SWAGGER_UI");
-
-		// SCALAR_UI from environment vars
 		var scalarEnabled = Feature.IsEnabled("SCALAR_UI");
 
 		builder.Services.Configure<FeatureOptions>(options =>
@@ -165,7 +159,7 @@ public static class Program
 		// would bypass them.
 		app.UseForwardedHeaders();
 
-		// Slim builder
+		// Also omitted by CreateSlimBuilder.
 		app.UseHttpsRedirection();
 
 		app.UseExceptionHandler();

@@ -7,7 +7,7 @@ internal class PackedItem :
 	IWithDimensions,
 	IWithCoordinates
 {
-	// Json Deserialize
+	// Parameterless ctor, for System.Text.Json.
 	public PackedItem()
 	{
 		this.ID = string.Empty;

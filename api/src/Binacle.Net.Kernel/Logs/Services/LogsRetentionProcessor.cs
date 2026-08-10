@@ -52,7 +52,7 @@ internal class LogsRetentionProcessor<TRequest> : BackgroundService
 		}
 		catch (OperationCanceledException)
 		{
-			// shutting down
+			// Cancellation here means shutdown, not a fault.
 		}
 	}
 

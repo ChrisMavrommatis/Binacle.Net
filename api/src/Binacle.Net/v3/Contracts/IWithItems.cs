@@ -18,7 +18,6 @@ internal class ItemsValidator : AbstractValidator<IWithItems>
 			.NotNull()
 			.NotEmpty();
 
-		// Each ItemID must be unique
 		RuleFor(x => x.Items)
 			.Must(x => x.Select(y => y.ID).Distinct().Count() == x.Count)
 			.WithMessage("IDs in `Items` must be unique");
