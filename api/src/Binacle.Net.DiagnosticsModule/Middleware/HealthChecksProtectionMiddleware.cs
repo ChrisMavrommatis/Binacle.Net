@@ -41,10 +41,12 @@ internal class HealthChecksProtectionMiddleware
 		{
 			var entry = entries[index];
 
-			// Startup validation rejects a malformed entry, so reaching this is a bug. Throwing beats keeping the
-			// default network: that one has no base address, so it would turn every health request into an error,
-			// and a silently dropped entry would quietly widen or narrow the allow-list instead. The position is in
-			// the message because the entry itself can be null or blank.
+			// Startup validation rejects a malformed entry, so reaching this is a bug.
+			//
+			// Throwing beats keeping the default network: that one has no base address,
+			// so it would turn every health request into an error,
+			// and a silently dropped entry would quietly widen or narrow the allow-list instead.
+			// The position is in the message because the entry itself can be null or blank.
 			if (!IPEntry.TryParse(entry, out var network))
 			{
 				throw new InvalidOperationException(
@@ -70,6 +72,7 @@ internal class HealthChecksProtectionMiddleware
 
 	public async Task InvokeAsync(HttpContext context)
 	{
+		// Ignore if the request is not for the health checks path
 		if (!context.Request.Path.StartsWithSegments(this.options.Value.Path))
 		{
 			await next(context);

@@ -115,5 +115,6 @@ public class ConnectionString
 	}
 
 
+	// implicit assign
 	public static implicit operator string(ConnectionString connectionString) => connectionString.value;
 }

@@ -1,8 +1,7 @@
 using System.Threading.Channels;
-using Binacle.Net;
-using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.DiagnosticsModule.Configuration.Models;
 using Binacle.Net.DiagnosticsModule.Logs.Models;
+using Binacle.Net.Kernel.Logs.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -10,8 +9,6 @@ namespace Binacle.Net.DiagnosticsModule.ExtensionMethods;
 
 internal static class LogProcessorServiceCollectionExtensions
 {
-	// Reads the (flat) packing-logs config and registers the generic processor for the packing request/entry.
-	// Fit and pack both flow through the one channel.
 	public static void AddOptionsBasedPackingLogProcessor(this IServiceCollection services)
 	{
 		services.AddLogProcessor<AlgorithmOperationLogChannelRequest, PackingLogEntry>(

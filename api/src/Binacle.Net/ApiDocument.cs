@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using System.Text;
 using Binacle.Net.Kernel.OpenApi;
 using Microsoft.OpenApi;
 
 namespace Binacle.Net;
-
 
 internal static class ApiDocument
 {
@@ -23,7 +21,7 @@ internal static class ApiDocument
 		document.Info.Contact = new OpenApiContact
 		{
 			Name = "Binacle.Net",
-			Url = new Uri(Binacle.Net.Metadata.GitHub)
+			Url = new Uri(Metadata.GitHub)
 		};
 
 		// Relative "/" because Binacle.Net is self-hosted - the API sits at the root of wherever the reader
@@ -35,14 +33,15 @@ internal static class ApiDocument
 			new OpenApiServer { Url = "/" }
 		];
 
-		if (document.Tags is not null)
+		if (document.Tags is null)
 		{
-			foreach (var tag in document.Tags)
+			return;
+		}
+		foreach (var tag in document.Tags)
+		{
+			if (tag.Name is not null && __tagDescriptions__.TryGetValue(tag.Name, out var description))
 			{
-				if (tag.Name is not null && __tagDescriptions__.TryGetValue(tag.Name, out var description))
-				{
-					tag.Description = description;
-				}
+				tag.Description = description;
 			}
 		}
 	}
@@ -55,15 +54,15 @@ internal static class ApiDocument
 	};
 	
 	private static string __description__ = new StringBuilder()
-		.AppendLine(Binacle.Net.Metadata.Description)
+		.AppendLine(Metadata.Description)
 		.AppendLine()
 		.AppendLine("{{status}}")
 		.AppendLine()
 		.AppendLine("{{deprecated}}")
 		.AppendLine()
-		.AppendLine($"[View on Github]({Binacle.Net.Metadata.GitHub})")
+		.AppendLine($"[View on Github]({Metadata.GitHub})")
 		.AppendLine()
-		.AppendLine($"[🐳 Binacle.Net on Dockerhub]({Binacle.Net.Metadata.Dockerhub})")
+		.AppendLine($"[🐳 Binacle.Net on Dockerhub]({Metadata.Dockerhub})")
 		.AppendLine()
 		.ToString();
 	

@@ -1,7 +1,6 @@
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Binacle.Net.DiagnosticsModule.Configuration.Models;
 using OpenTelemetry;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Instrumentation.Http;
 using OpenTelemetry.Metrics;
@@ -68,7 +67,7 @@ internal static class OpenTelemetryConfigurationExtensions
 
 	public static void UseOtlpExporter(
 		this OpenTelemetryBuilder builder,
-		Configuration.Models.OtlpExporterConfigurationOptions otlp
+		OtlpExporterConfigurationOptions otlp
 	)
 	{
 		if (!string.IsNullOrEmpty(otlp.Endpoint))

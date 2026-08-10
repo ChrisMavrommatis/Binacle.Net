@@ -4,7 +4,6 @@ using Binacle.Net.Configuration;
 using Binacle.Net.DiagnosticsModule;
 using Binacle.Net.ExtensionMethods;
 using Binacle.Net.Kernel.Features;
-using Binacle.Net.Kernel.OpenApi;
 using Binacle.Net.Kernel.OpenApi.ExtensionsMethods;
 using Binacle.Net.ServiceModule;
 using Binacle.Net.Services;
@@ -13,7 +12,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Json;
 using OpenApiExamples.ExtensionMethods;
-using Scalar.AspNetCore;
 using Serilog;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
@@ -27,9 +25,11 @@ public static class Program
 		var builder = WebApplication.CreateSlimBuilder(args);
 		builder.BootstrapLogger();
 
-		// CreateSlimBuilder omits both of these; the default builder wires them up for you.
+		// Ommited by Slim builder
 		builder.WebHost.UseKestrelHttpsConfiguration();
-		builder.WebHost.UseQuic(); // HTTP/3 support
+
+		// Ommited by Slim builder
+		builder.WebHost.UseQuic(); //HTTP 3 support
 
 		builder.Configuration
 			.SetBasePath($"{Directory.GetCurrentDirectory()}/Config_Files");
@@ -49,6 +49,7 @@ public static class Program
 		builder.AddValidatableJsonConfigurationOptions<CorsOptions>();
 		builder.AddValidatableJsonConfigurationOptions<ForwardedHeadersConfigurationOptions>();
 
+		// Feature Management
 		Feature.Manager = new FeatureManagerConfiguration()
 			.ReadFrom.Configuration(builder.Configuration)
 			.ReadFrom.EnvironmentVariables()
@@ -136,7 +137,10 @@ public static class Program
 			builder.AddUIModule();
 		}
 
+		// SWAGGER_UI from environment vars
 		var swaggerEnabled = Feature.IsEnabled("SWAGGER_UI");
+
+		// SCALAR_UI from environment vars
 		var scalarEnabled = Feature.IsEnabled("SCALAR_UI");
 
 		builder.Services.Configure<FeatureOptions>(options =>
@@ -159,7 +163,7 @@ public static class Program
 		// would bypass them.
 		app.UseForwardedHeaders();
 
-		// Also omitted by CreateSlimBuilder.
+		// Omited by Slim builder
 		app.UseHttpsRedirection();
 
 		app.UseExceptionHandler();

@@ -71,9 +71,10 @@ public static class ModuleDefinition
 
 	public static void UseUIModule(this WebApplication app)
 	{
+		// Configure the HTTP request pipeline.
 		if (!app.Environment.IsDevelopment())
 		{
-			// HSTS defaults to 30 days. Raise it if the deployment warrants a longer commitment.
+			// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 			app.UseHsts();
 		}
 		app.MapStaticAssets();

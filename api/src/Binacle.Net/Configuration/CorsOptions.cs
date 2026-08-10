@@ -33,9 +33,6 @@ internal class CorsOptionsOptionsValidator : AbstractValidator<CorsOptions>
 {
 	public CorsOptionsOptionsValidator()
 	{
-		// The whole section is optional, and no origins means no browser is allowed through — a valid, closed
-		// default. What is worth refusing is an origin the browser can never match, because that fails at request
-		// time in someone else's console, not here.
 		When(x => x.CoreApi?.AllowedOrigins is not null, () =>
 		{
 			RuleForEach(x => x.CoreApi!.AllowedOrigins)

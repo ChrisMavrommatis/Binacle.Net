@@ -1,10 +1,11 @@
-// Microsoft.AspNetCore.HttpOverrides ships its own deprecated IPNetwork; the alias keeps this file on the
-// System.Net one that KnownIPNetworks takes.
-using IPNetwork = System.Net.IPNetwork;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Network;
 using Microsoft.AspNetCore.HttpOverrides;
 using Serilog;
+
+// Microsoft.AspNetCore.HttpOverrides ships its own deprecated IPNetwork.
+// System.Net one that KnownIPNetworks takes.
+using IPNetwork = System.Net.IPNetwork;
 
 namespace Binacle.Net.ExtensionMethods;
 
@@ -50,9 +51,7 @@ internal static class ForwardedHeadersExtensions
 		return builder;
 	}
 
-	// The whole mapping from our configuration onto the framework's, and nothing else: no host, no container, no
-	// logging. Everything the middleware goes on to do is decided in here, which is what makes it testable on its
-	// own.
+	// Just mapping. Internal because its testable
 	internal static void Apply(
 		ForwardedHeadersConfigurationOptions? configuredOptions,
 		ForwardedHeadersOptions options
@@ -60,7 +59,7 @@ internal static class ForwardedHeadersExtensions
 	{
 		if (configuredOptions?.Enabled != true)
 		{
-			// Written rather than left alone. ASPNETCORE_FORWARDEDHEADERS_ENABLED switches the middleware on from
+			// ASPNETCORE_FORWARDEDHEADERS_ENABLED switches the middleware on from
 			// the environment with both trust lists emptied, which believes any caller's header. This runs after
 			// that one, so disabled stays disabled whatever the environment says.
 			options.ForwardedHeaders = ForwardedHeaders.None;
@@ -76,7 +75,7 @@ internal static class ForwardedHeadersExtensions
 		}
 
 		// The framework seeds these with loopback. Clearing is only safe because the validator refuses to start
-		// with nothing trusted — two empty lists switch the check off entirely rather than matching nothing.
+		// with nothing trusted, two empty lists switch the check off entirely rather than matching nothing.
 		if (!configuredOptions.TrustLoopback)
 		{
 			options.KnownIPNetworks.Clear();
@@ -93,8 +92,9 @@ internal static class ForwardedHeadersExtensions
 
 		foreach (var trustedProxy in configuredOptions.TrustedProxies ?? [])
 		{
-			// Startup validation rejects a malformed entry, so reaching this is a bug. It throws rather than
-			// skipping the entry, because a dropped one silently narrows who is trusted and leaves the app
+			// Startup validation rejects a malformed entry, so reaching this is a bug.
+			// It throws rather than skipping the entry, because a dropped one
+			// silently narrows who is trusted and leaves the app
 			// reading a header from a proxy it no longer recognises.
 			if (!IPEntry.TryParse(trustedProxy, out var trustedNetwork))
 			{
@@ -104,8 +104,9 @@ internal static class ForwardedHeadersExtensions
 				);
 			}
 
-			// A single address parses to a network of one, so both forms go in the same list. The middleware
-			// checks KnownProxies and KnownIPNetworks alike, so nothing is lost by not splitting them.
+			// A single address parses to a network of one, so both forms go in the same list.
+			// The middleware checks KnownProxies and KnownIPNetworks alike,
+			// so nothing is lost by not splitting them.
 			options.KnownIPNetworks.Add(trustedNetwork);
 		}
 	}

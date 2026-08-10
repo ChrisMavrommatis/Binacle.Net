@@ -42,8 +42,6 @@ internal class FitCustomCompareResponseExamples : IMultipleOpenApiExamplesProvid
 {
 	public IEnumerable<IOpenApiExample<FitCompareResponse>> GetExamples()
 	{
-		// The items fit every bin in the set, which is the point of comparing: the outcome is the same and only
-		// the utilization separates them, so the caller can see what each bin would cost them.
 		yield return OpenApiExample.Create(
 			"compareResponse",
 			"Compare Response",

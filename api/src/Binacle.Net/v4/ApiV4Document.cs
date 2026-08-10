@@ -11,8 +11,6 @@ internal class ApiV4Document : IOpenApiDocument
 	public string Title => $"Binacle.Net API {DocumentName}";
 	public string Version => "4.0";
 	public bool IsDeprecated => false;
-	// v4 ships experimental in 3.0.0 so its contracts can still change; it goes stable in 3.1.0, once it has run
-	// in a real deployment and gained an endpoint without reshaping an existing one.
 	public bool IsExperimental => true;
 
 	public void Configure(OpenApiOptions options)

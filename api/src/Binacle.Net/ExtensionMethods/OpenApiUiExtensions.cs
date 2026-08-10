@@ -5,9 +5,6 @@ namespace Binacle.Net.ExtensionMethods;
 
 internal static class OpenApiUiExtensions
 {
-	// Both UIs read the same documents from the same route, so they are wired together. Neither is mapped when
-	// both features are off, which also means /openapi/*.json is not served at all - the document is only
-	// reachable through a UI that is turned on.
 	public static void MapApiDocumentUi(this WebApplication app, bool swaggerEnabled, bool scalarEnabled)
 	{
 		if (!swaggerEnabled && !scalarEnabled)

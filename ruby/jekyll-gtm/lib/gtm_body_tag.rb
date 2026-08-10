@@ -2,14 +2,15 @@ module Jekyll
   class GTMBodyTag < Liquid::Tag
     def initialize(tag_name, markup, tokens)
       super
+      # Capture the GTM ID parameter
       @id = markup.strip
     end
 
     def render(context)
-      # The tag takes either a literal ID or the name of a Liquid variable holding one.
+      # Evaluate the GTM ID variable in the Liquid context if it's a Liquid variable
       gtm_id = context[@id] || @id
 
-      # No ID configured: render nothing rather than an iframe with a blank id.
+      # Return an empty string if GTM ID is not provided
       return '' if gtm_id.nil? || gtm_id.empty?
 
       <<~HTML

@@ -15,7 +15,7 @@ internal class PackingLogsConfigurationOptions : IConfigurationOptions
 	public string? FileName { get; set; }
 	public string? DateFormat { get; set; }
 	public int? ChannelLimit { get; set; }
-	// Null (default) keeps every file — deletion is left to an external prune. Set it (e.g. 7) to auto-delete
-	// local files older than that many days.
+	// Null (default) keeps every file. Deletion is left to an external prune.
+	// Set it (e.g. 7) to auto-delete local files older than that many days.
 	public int? RetentionDays { get; set; }
 }

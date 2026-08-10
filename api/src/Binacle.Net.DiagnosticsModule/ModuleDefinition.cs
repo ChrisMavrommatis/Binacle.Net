@@ -1,6 +1,5 @@
-using Binacle.Net.DiagnosticsModule.ExtensionMethods;
-using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.DiagnosticsModule.Configuration.Models;
+using Binacle.Net.DiagnosticsModule.ExtensionMethods;
 using Binacle.Net.DiagnosticsModule.Middleware;
 using Binacle.Net.DiagnosticsModule.Services;
 using Binacle.Net.Kernel.Features;
@@ -25,7 +24,6 @@ namespace Binacle.Net.DiagnosticsModule;
 
 public static class ModuleDefinition
 {
-	// Allocated once. As a `new[] { "Core" }` argument it was a fresh array on every registration call.
 	private static readonly string[] CoreTags = ["Core"];
 
 	public static void BootstrapLogger(this WebApplicationBuilder builder)
@@ -57,6 +55,7 @@ public static class ModuleDefinition
 			reloadOnChange: true
 		);
 
+		// overwrite default logger
 		builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 		{
 			loggerConfiguration
@@ -147,6 +146,7 @@ public static class ModuleDefinition
 		// Health Checks
 		builder.AddValidatableJsonConfigurationOptions<HealthCheckConfigurationOptions>();
 
+		// Add health checks
 		builder.Services
 			.AddHealthChecks();
 		
@@ -156,11 +156,12 @@ public static class ModuleDefinition
 			CoreTags
 		);
 
-		// Registered as a feature so the health check reports whether it is live. It echoes headers back to the
-		// caller, so leaving it on is not something you want to discover months later.
 		if (Feature.IsEnabled("DEBUG_ENDPOINT"))
 		{
-			builder.Services.Configure<FeatureOptions>(options => options.AddFeature("DebugEndpoint"));
+			builder.Services.Configure<FeatureOptions>(options =>
+			{
+				options.AddFeature("DebugEndpoint");
+			});
 		}
 
 		Log.Information("{ModuleName} module. Status {Status}", "Diagnostics", "Initialized");
@@ -168,17 +169,12 @@ public static class ModuleDefinition
 
 	public static void UseDiagnosticsModule(this WebApplication app)
 	{
-		// First in this module's pipeline on purpose: it reports what the server received, so it should answer
-		// even when routing, CORS or auth downstream are the thing that is broken.
 		if (Feature.IsEnabled("DEBUG_ENDPOINT"))
 		{
 			app.UseMiddleware<RequestDebugMiddleware>();
 			Log.Information("Debug endpoint. Status {Status}. Path {Path}", "Enabled", RequestDebugMiddleware.Path);
 		}
 
-		// After UseForwardedHeaders in the outer pipeline, which is the only place it can see whether the header
-		// was applied. Always registered: both states it reports are silent otherwise, and the check costs one
-		// header lookup that misses until it has warned.
 		app.UseMiddleware<ForwardedHeadersDiagnosticsMiddleware>();
 
 		var healthChecksOptions = app.Services.GetRequiredService<IOptions<HealthCheckConfigurationOptions>>();

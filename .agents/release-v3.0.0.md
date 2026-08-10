@@ -98,6 +98,7 @@ the bottom of this file, rewritten 2026-08-06 once the beta was actually deploye
 | B6 | Run the ServiceModule suite once against Azure Storage - **no plan** | see below |
 | B7 | Confirm v4 still ships experimental, then announce all four breaking changes - **no plan** | see below |
 | B8 | Flip `current` forward to `v3.0.x` again and redeploy the docs - **no plan** | see below |
+| B9 | Strip the `AI-GENERATED` review tokens - **no plan** | see below |
 
 **B1 came back clean.** All boxes pass. The three changes the beta existed to test - forwarded headers, the
 health check allow-list, and rate limiting on the resolved caller - all behave as designed against a real
@@ -253,11 +254,10 @@ path, v4 carries the experimental banner. Handed to the docs session.
   | `samples/README.md` | the pin paragraph |
   | `samples/docker/README.md` | the pin paragraph |
 
-  **Also drop the two-line comment above each `image:` line at the `3.0` bump.** It explains our release order
-  ("does not exist on Docker Hub yet", "move to the 3.0 minor tag once v3.0.0 is published"), which means
-  nothing to a reader who copied the file. The published docs copies already trimmed it to the one durable
-  sentence: `# Pinned on purpose - a copied sample must not jump to a new major on the next pull.` The repo
-  copies should end up matching.
+  **The two-line comment above each `image:` line is already dropped** - done ahead of the bump, in the
+  comment-pruning pass, because the durable sentence is right at any pin value. All six now read exactly
+  `# Pinned on purpose - a copied sample must not jump to a new major on the next pull.`, matching the
+  published docs copies. Only the `image:` lines themselves are left to move.
 
   Two more mention the beta as an **example** rather than a pin - `config/README.md` and `config/smoke.just`,
   both showing "smoke what is actually on Docker Hub". Neither is wrong today and neither ships to a user, but
@@ -334,6 +334,31 @@ path, v4 carries the experimental banner. Handed to the docs session.
   **This is still the single most losable item in Gate B** - nothing fails if the deploy is skipped, the site
   just quietly keeps serving v2.1.x as current. And note the ordering trap the config half creates: `main` now
   says v3.0.x is current, so **deploying before the tag publishes an unreleased version as current**.
+
+- [x] **B9 - strip the `AI-GENERATED` review tokens. Done 2026-08-11 - zero left, whole repo.** A
+  comment-provenance pass on 2026-08-10 tagged every
+  comment written by an agent with a marker line (`# AI-GENERATED` / `// AI-GENERATED`) directly above the
+  block, so the maintainer can rewrite each one by hand and keep the comments in a human voice. **They are
+  scaffolding and must not ship.** The first pass marked 1,223 comments, which was unreviewable; it was then
+  triaged down on the same day to the ones that actually carry a claim worth checking - a reason, a risk, a
+  measurement, a "never do X". Comments that only restate what the code does had their marker dropped and are
+  considered accepted as written.
+
+  The maintainer cleared `samples/**` and `docs/**` first - readers copy those files verbatim - then worked
+  the rest down to zero. **`grep -rn "AI-GENERATED"` now returns nothing anywhere in the repo.** The only
+  remaining hits for that string are this file and the pre-existing `AI-generated search summaries` line in
+  `docs/pages/robots.txt` and `web/pages/robots.txt`, neither of which is a marker.
+
+  **Where an agent's rewrite was kept on purpose, that is the decision** - the pass was never "revert
+  everything an agent wrote", and several agent comments were judged better than the line they replaced
+  (the unchecked-multiply overflow note on the packing algorithms, the empty-catch explanation in
+  `ConnectionString.cs`, the curated-scenario table in `BischoffCuratedProblemsProvider.cs`). A later
+  session must not treat a surviving agent comment as damage to undo.
+
+  **The `docs/` half was done by a coding session, against the usual rule**, at the maintainer's explicit
+  instruction on 2026-08-10. It touched no prose, no front matter and no `.md` file - only sample YAML,
+  `_config.yml`, `_data/versions.yml` and one plugin. Recorded here because that rule says every crossing
+  gets recorded. `web/` was scanned and needed nothing: 60 human comment lines, no agent-written ones.
 
 **Docs are a Gate B item, not a Gate A one.** The beta ships before the docs are written - that is deliberate,
 and it is why the beta exists. The site *was* frozen in the meantime: `docs/_data/versions.yml` said

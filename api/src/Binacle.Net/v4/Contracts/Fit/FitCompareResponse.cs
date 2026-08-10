@@ -13,8 +13,6 @@ public class FitCompareResponse
 	[Description(SchemaDescriptions.Results)]
 	public required List<FitBinResponse> Results { get; set; }
 
-	// Walks the requested bins rather than the result dictionary so the response keeps the order
-	// the caller sent the bins in.
 	internal static FitCompareResponse From<TBin>(
 		OperationParameters parameters,
 		List<TBin> bins,

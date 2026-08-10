@@ -28,13 +28,7 @@ jobs:
       # Paths hardcoded, not Actions variables. The Dockerfile's COPY and the .dockerignore allowlist fix the
       # output to build/binacle-net, and build.just publishes the same project to the same place. A variable can
       # only drift from those two hardcoded facts and silently build an image without the app in it. Keep this
-      # line in step with build.just's `publish` recipe.
-      #
-      # --no-self-contained since 2026-08-10. It was --self-contained while the image bases on aspnet, so every
-      # published image carried two copies of .NET: the bundled one the app ran on, and the base image's, which
-      # nothing loaded. Dropping it took the image from 150.2 MB to 103.2 MB, measured locally, with all 31
-      # structure assertions and all five smoke profiles green. It also means a .NET security fix reaches users
-      # by rebasing on a newer aspnet tag rather than by republishing the app.
+      # line in step with build.just's `publish` recipe, which explains --no-self-contained.
       run: dotnet publish api/src/Binacle.Net/Binacle.Net.csproj -c Release -o build/binacle-net --no-restore --no-self-contained --runtime linux-x64
     - name: Extract Docker metadata
       id: meta
@@ -45,7 +39,7 @@ jobs:
         # {{version}} is the immutable pin (3.0.0). {{major}}.{{minor}} is the moving one (3.0 -> newest 3.0.x),
         # which is what the samples pin: a copied sample then inherits bug fixes and never a breaking change.
         # A prerelease gets neither: metadata-action skips {{major}}.{{minor}} for a prerelease tag, the same
-        # guard as latest=auto below, so v3.0.0-beta.1 publishes only 3.0.0-beta.1. Verify on the first beta.
+        # guard as latest=auto below, so v3.0.0-beta.1 publishes only 3.0.0-beta.1.
         # No {{major}} tag on purpose: "3" would cross minor lines, and nothing here should pin it.
         tags: |
           type=semver,pattern={{version}}
@@ -58,9 +52,9 @@ jobs:
         labels: |
           org.opencontainers.image.licenses=GPL-3.0-only AND CC-BY-SA-4.0
           org.opencontainers.image.url=https://www.binacle.net
-        # latest=auto is the default; it is written out because the beta depends on it. Under auto, "latest" is
-        # applied only when the semver tag is not a prerelease, so publishing v3.0.0-beta.1 must not move
-        # "latest" onto the beta and drag sample users onto it. Verify this on the first beta tag.
+        # latest=auto is the default; it is written out because every prerelease depends on it. Under auto,
+        # "latest" is applied only when the semver tag is not a prerelease, so publishing a beta does not move
+        # "latest" onto it and drag sample users along.
         flavor: |
           latest=auto
     - name: Login to Docker Hub

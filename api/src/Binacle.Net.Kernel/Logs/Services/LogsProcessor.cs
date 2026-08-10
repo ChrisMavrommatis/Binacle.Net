@@ -58,6 +58,7 @@ internal class LogsProcessor<TRequest, TLog> : BackgroundService
 				await using (var writer = new StreamWriter(logFile, append: true))
 				{
 					await writer.WriteLineAsync(json.AsMemory(), stoppingToken).ConfigureAwait(false);
+					// Ensure data is written to disk
 					await writer.FlushAsync(stoppingToken).ConfigureAwait(false);
 				}
 

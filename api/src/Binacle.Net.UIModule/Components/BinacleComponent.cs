@@ -15,8 +15,10 @@ public abstract class BinacleComponentBase : ComponentBase
 	{
 		base.OnParametersSet();
 
+		// extract class attribute
 		_classes = $"{UnmatchedAttributes.GetValueOrDefault("class")}";
 
+		// extract non-class attributes
 		_attributes =
 			UnmatchedAttributes
 				.Where(x => x.Key != "class")

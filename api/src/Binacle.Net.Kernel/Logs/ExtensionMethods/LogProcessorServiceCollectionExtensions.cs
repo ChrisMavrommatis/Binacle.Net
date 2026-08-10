@@ -7,8 +7,6 @@ namespace Binacle.Net;
 
 public static class LogProcessorServiceCollectionExtensions
 {
-	// Registers a generic log processor for a request type that knows how to become its log entry. The concrete
-	// request/entry types (and the channel + options factories) are supplied by the feature that owns them.
 	public static IServiceCollection AddLogProcessor<TChannelRequest, TLog>(
 		this IServiceCollection services,
 		Func<IServiceProvider, LogsProcessorOptions<TChannelRequest>> optionsFactory,

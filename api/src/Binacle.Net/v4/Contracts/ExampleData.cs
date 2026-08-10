@@ -60,7 +60,7 @@ internal static class ExampleData
 
 	// Derived, not written down, for the same reason the ViPaq token is (see ViPaqExampleExtensions): a
 	// hand-typed percentage drifts from the items beside it. The partially-packed examples had in fact drifted
-	// — they claimed 79.37/12.58 for a layout the formula below puts at 94.74/15.00.
+	// — they claimed 79.37/12.58 for a layout the formula puts at 94.74/15.00. Formula per $lib/result-building.
 	internal static T WithVolumePercentages<T>(this T response)
 		where T : BinResponseBase
 	{

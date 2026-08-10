@@ -63,6 +63,7 @@ internal class BaselineComparisonTests : ITest
 				algorithmResults.Add(algorithmIdentifier, (double)result.PackedBinVolumePercentage);
 			}
 			
+			// find if any result is better than the baseline
 			foreach (var kvp in algorithmResults)
 			{
 				if (kvp.Key == baselineAlgorithmIdentifier)

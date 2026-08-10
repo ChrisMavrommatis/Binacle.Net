@@ -23,10 +23,13 @@ public static class EmbeddedResourceFileProvider
 
 		foreach (var resource in resources)
 		{
+			// Strip the prefix to get the relative path
 			var relativePath = resource.Substring(prefix.Length);
-
-			// No '.' means no extension, so it is not one of the data files. Skip it.
+			
+			// Find the last '.' to separate file name and extension
 			var lastDotIndex = relativePath.LastIndexOf('.');
+
+			// Ensure there's at least one '.' to split the file
 			if (lastDotIndex < 0)
 			{
 				continue; 

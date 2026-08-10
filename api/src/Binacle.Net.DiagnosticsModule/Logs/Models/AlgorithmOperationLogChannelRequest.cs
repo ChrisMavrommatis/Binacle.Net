@@ -5,8 +5,6 @@ using Binacle.Net.Kernel.Logs.Models;
 
 namespace Binacle.Net.DiagnosticsModule.Logs.Models;
 
-// The packing-log channel message. Published by the API after each fit/pack; the generic LogsProcessor asks it to
-// become a PackingLogEntry (ILogEntryConvertible) in the background — the request thread only enqueued references.
 public class AlgorithmOperationLogChannelRequest : ILogEntryConvertible<PackingLogEntry>
 {
 	public required IReadOnlyCollection<IIdentifiableBin> Bins { get; init; }
@@ -41,8 +39,6 @@ public class AlgorithmOperationLogChannelRequest : ILogEntryConvertible<PackingL
 		};
 	}
 
-	// Maps this request to its log line, in the background (the processor supplies the timestamp). Bins / items /
-	// results become compact strings; parameters are the loose string list the request's parameter type provided.
 	public PackingLogEntry ToLogEntry(DateTimeOffset timestamp)
 	{
 		return new PackingLogEntry
@@ -67,8 +63,7 @@ public class AlgorithmOperationLogChannelRequest : ILogEntryConvertible<PackingL
 		};
 	}
 
-	// One compact string per id. Grouped defensively: ids are validated unique upstream, but the log must never
-	// throw and stall the processor, so a stray duplicate simply takes the first.
+	// One compact string per id.
 	private static IReadOnlyDictionary<string, string> MapCompact<T>(
 		IEnumerable<T> source,
 		Func<T, string> toCompact)
@@ -79,7 +74,8 @@ public class AlgorithmOperationLogChannelRequest : ILogEntryConvertible<PackingL
 			.ToDictionary(group => group.Key, group => toCompact(group.First()));
 	}
 
-	// Group items by id into compact strings. Several items can share an id (e.g. multiple packed units of the
+	// Group items by id into compact strings.
+	// Several items can share an id (e.g. multiple packed units of the
 	// same box), so each id maps to an array.
 	private static IReadOnlyDictionary<string, string[]> GroupCompact<T>(
 		IEnumerable<T> items,

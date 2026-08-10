@@ -7,7 +7,6 @@ namespace Binacle.Net.ExtensionMethods;
 
 internal static class LogChannelExtensions
 {
-	// Single-result convenience: wrap the (key, result) into a one-entry dictionary.
 	internal static ValueTask WriteToChannelAsync<TBin, TBox, TParams>(
 		this Channel<AlgorithmOperationLogChannelRequest>? logChannel,
 		List<TBin> bins,
@@ -46,7 +45,6 @@ internal static class LogChannelExtensions
 		where TBox : class, IIdentifiableItem
 		where TParams : class, ILogParametersProvider
 	{
-		// Logging off (null channel) — bail before any work so a disabled feature costs the request nothing.
 		if (logChannel is null)
 		{
 			return;

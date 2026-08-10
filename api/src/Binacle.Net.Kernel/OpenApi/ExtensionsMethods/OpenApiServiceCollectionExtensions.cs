@@ -14,6 +14,7 @@ public static class OpenApiServiceCollectionExtensions
 			.Select(t => (IOpenApiDocument)Activator.CreateInstance(t)!)
 			.ToList();
 		
+		// Register the endpoint definitions
 		foreach(var openApiDocument in openApiDocuments)
 		{
 			services.AddSingleton(openApiDocument);
