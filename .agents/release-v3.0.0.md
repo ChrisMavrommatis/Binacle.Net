@@ -182,22 +182,45 @@ path, v4 carries the experimental banner. Handed to the docs session.
   made it in. The packing-logs step is the one most easily lost, and leaving it out fails a user's startup with
   no explanation. The two that need the extra explanation are in the section below.
 
-- [ ] **B8 - flip `current` forward again.** B0 points `docs/_data/versions.yml` at `current: v2.1.x` to unfreeze
-  the site. That has to be undone as part of releasing the docs, or v3.0.0 ships with the docs site still
-  presenting v2.1.x as current and `/version/latest/` still redirecting there. Relist `- id: v3.0.x` at the top
-  of `list`, set `current: v3.0.x`, drop whatever B0 did to hide the stub, restore
-  `docs/collections/_sitemaps/version-3-0-x.xml` (B0 deleted it, four lines - without it the v3.0.x pages are
-  never submitted for indexing), then deploy. **This is the single
-  most losable item in Gate B** - it is an undo of a change made weeks earlier, it lives in a file nobody
-  otherwise touches, and nothing fails if it is skipped. The site simply stays on the old version.
+- [ ] **B8 - flip `current` forward again.** **The config half is done**: the docs-v3 work landed on `main` as
+  `3dc6f1ac` with `current: v3.0.x`, `- id: v3.0.x` back at the top of `list`, the stub's `sitemap: exclude`
+  gone, and `docs/collections/_sitemaps/version-3-0-x.xml` restored. What is left is the **deploy**, plus one
+  edit that must go out with it:
+
+  - [ ] **Put the real date and release link in `v3.0.x/release-notes.md`.** The `## v3.0.0` section carries
+    interim wording - it asserts no date and links the releases *list* - because the tag did not exist when the
+    pages were written. Once v3.0.0 is tagged, swap that italic line for the usual
+    *"Released &lt;date&gt; - [release on GitHub](.../releases/tag/v3.0.0)"*, matching every other version folder.
+    One line. Deploying with the interim wording is not a failure, but leaving it there permanently means the
+    current version's notes never say when it shipped.
+  - [ ] **Carry three additions from `release-notes-v3.0.0.md` into `v3.0.x/release-notes.md`.** The two files
+    are the same notes in two places, and the GitHub body gained content on 2026-08-10 that the page does not
+    have. All three are for the `## v3.0.0` section, worded to match the page's plain-ASCII style:
+    - **Overview**, one bullet after the health check line: the image creates `/app/data` and gives it to the
+      app user, so a volume mounted there is writable.
+    - **Core Changes**, replacing "The `Dockerfile` and existing environment variables are unchanged" (which is
+      false - the Dockerfile changed three times this release): the `/app/data` fix, spelled out - docker used
+      to create the mount point as root, the app does not run as root, so packing logs and the SQLite database
+      could not be written to a fresh named volume; `libgssapi-krb5-2` now ships, so Npgsql stops printing
+      "Cannot load library libgssapi_krb5.so.2" at every start, which was harmless but read as fatal; OCI
+      labels on the image; and only then "existing environment variables are unchanged".
+    - **A `🔌 Service Module` section**, between Diagnostics and UI Module: the auth token rate limit
+      partitions on the connection's remote address instead of a caller-supplied header, so varying the header
+      no longer resets your own login throttle. The page already carries the exemption note at the top, so it
+      needs only the fix itself, not the exemption sentence the GitHub body repeats.
+  - [ ] Deploy the docs. It is `workflow_dispatch` only.
+
+  **This is still the single most losable item in Gate B** - nothing fails if the deploy is skipped, the site
+  just quietly keeps serving v2.1.x as current. And note the ordering trap the config half creates: `main` now
+  says v3.0.x is current, so **deploying before the tag publishes an unreleased version as current**.
 
 **Docs are a Gate B item, not a Gate A one.** The beta ships before the docs are written - that is deliberate,
 and it is why the beta exists. The site *was* frozen in the meantime: `docs/_data/versions.yml` said
 `current: v3.0.x` while that folder held only `index.md`, so `/version/latest/` redirected to an empty version
 and the site could not be deployed for any reason - not even a typo fix or the open CodeQL alert. **B0 removed
-that freeze on 2026-08-06** and deployed, taking the CodeQL fix with it. `current` is `v2.1.x` and v3.0.x is
-delisted until its pages exist. **B8 puts it back**, and the same steps are written into
-[docs-v3-pages](plans/docs-v3-pages.md) so the session that writes the pages also relists the version.
+that freeze on 2026-08-06** and deployed, taking the CodeQL fix with it. **B8 put it back on 2026-08-10**: the
+pages exist, `current` is `v3.0.x` again and the version is relisted, so only the deploy remains. See
+[docs-v3-pages](plans/docs-v3-pages.md) for what those pages cover.
 
 ---
 
@@ -249,8 +272,14 @@ is docs plus the four small pre-tag items.
    document behaviour observed in a real deployment rather than assumed, and B3 and B4 have both handed over.
    This is the long pole - everything below it is small.
 7. B6.
-8. **Release the docs: B2's pages plus B8** (flip `current` back to `v3.0.x`). B8 is the undo of B0 and is the
-   easiest item in this file to lose - nothing fails if it is skipped, the site just silently stays on v2.1.x.
+8. **Release the docs - B8's deploy.** B2's pages and B8's config are both on `main` already; this step is now
+   the deploy plus the one-line real date and release link in `v3.0.x/release-notes.md`. It is the easiest item
+   in this file to lose - nothing fails if it is skipped, the site just silently stays on v2.1.x.
+
+   **This step now has to run *after* step 9, not before it.** Two things need the tag to exist: the release
+   notes date and its `releases/tag/v3.0.0` link, and the fact that `main` already says v3.0.x is current, so
+   deploying earlier presents an unreleased version as current. It still has to land before step 12, because the
+   announcement points at pages that must be live. Tag, then deploy the docs, then announce.
 9. **Bump the six sample pins from `3.0.0-beta.1` to `3.0` as the last change before the tag**, then tag
    `v3.0.0`. Re-confirm B7a - `ApiV4Document.IsExperimental` still `true` - right before tagging.
    `release-docker-image.yml` publishes the final image on `release: published`. A2 confirmed no `3.0` tag

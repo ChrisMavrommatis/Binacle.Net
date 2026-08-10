@@ -19,7 +19,7 @@ Style is taken from the maintainer's published releases (https://github.com/Chri
 
 **Scope:** `v2.1.1` (2026-01-13, the last shipped image) → now. `v3.0.0-beta.1` sits at 186 commits past
 `v2.1.1`. Everything after the beta tag is maintenance that **does not reach the image**, so the body below
-needs no change for any of it — checked 2026-08-06:
+needs no change for any of it — checked 2026-08-06, re-checked through `3dc6f1ac` on 2026-08-10:
 
 - `npm audit fix` / `bundle audit-fix` on the root, `docs/` and `web/` lockfiles. Every advisory closed was a
   devDependency (`npm audit --omit=dev` on the pre-fix lockfile returned 0). The Dockerfile copies only
@@ -28,6 +28,13 @@ needs no change for any of it — checked 2026-08-06:
 - The CodeQL `js/xss-through-dom` fix in `docs/_js/main.js`. Docs-site hardening, and not exploitable as the
   code stood (both inputs were build-time constants).
 - `.agents/` notes and `.nvmrc`.
+- **The Sonar sweep (2026-08-07 → 08-09) and the BOM removal.** Large by file count and it does touch shipping
+  code, but every change is a refactor: extracted methods, `const` over `static`, discards for unused locals,
+  `{Placeholder}` casing in log templates. The two behaviour-shaped ones are not: collapsing nested `if`s in
+  `PackResponse` / `BinResponseBase` keeps the same condition, and `WriteAsync` on `/_debug` merely takes the
+  request's cancellation token. The forwarded-headers and health check middleware changed only log-template
+  casing, so **B1's beta verification still holds against this code**.
+- The docs-v3 merge (`3dc6f1ac`) and the sample hardening under `docs/collections/_versions/**` — site content.
 
 **Before pasting:** confirm the version number / compare link. Fitting was verified unchanged (2026-07-19), so
 the `📈 Algorithms` section needs no caveat. The manual steps are the release actions.
@@ -51,6 +58,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - **Packing Logs** configuration was flattened, with breaking changes for existing integrations.  
 - **Forwarded headers** are now supported, so the real caller is resolved when running behind a proxy or CDN.  
 - **Health check IP restrictions** are matched differently, with breaking changes for existing allow-lists.  
+- **The image creates `/app/data`** and gives it to the app user, so a volume mounted there is writable.  
 - The project was **restructured**, separating the API, library, and ViPaq into their own roots.  
 - **Versioned documentation** now covers every minor line, so older images keep their docs.  
 
@@ -72,7 +80,10 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - `TrustedProxies` entries are **read exactly as written**, the same rule as health check `RestrictedIPs`. `010.10.10.10` used to be read as octal and trust `8.10.10.10`, and `172.17.1` used to mean `172.17.0.1`; both now fail startup validation rather than trusting a host you did not name.  
 - Added a **`/_debug` endpoint**, off by default, enabled with `DEBUG_ENDPOINT=True`. It echoes the caller's own request — connection address and headers — for working out what a proxy is sending.  
 - A **startup warning** when a forwarding header arrives and does not take effect, either because the feature is off or because the trust list does not name your proxy. Logged once. Without it both states are silent and the app quietly reads the proxy as the caller.  
-- The `Dockerfile` and existing environment variables are unchanged.  
+- **The image now creates `/app/data` and gives it to the app user.** A volume mounted there is writable with no extra setup. Previously docker created the mount point as root, the app does not run as root, and packing logs and the SQLite database could not be written to a fresh named volume.  
+- The image ships `libgssapi-krb5-2`, so Npgsql stops printing `Cannot load library libgssapi_krb5.so.2` at every start. Nothing was broken — the app authenticates with a password, not Kerberos — but the message read like a fatal error.  
+- The image carries **OCI labels** — title, description, source, url, documentation, vendor, licence and base image — plus version, revision and created per build.  
+- Existing environment variables are unchanged.  
 
 ## 🧪 Diagnostics Module
 - Packing Logs configuration was **flattened** — `Path`, `FileName`, `DateFormat`, and `ChannelLimit` now sit directly under `PackingLogs`.  
@@ -85,6 +96,10 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - Health check `RestrictedIPs` now matches **IPv4 callers in containers**. Addresses arriving in IPv4-mapped IPv6 form are unmapped before comparison, which they previously were not — no IPv4 entry could match.  
 - Removed the **`start-end` range form** from `RestrictedIPs`. Entries such as `192.168.1.0-192.168.1.255` now fail startup validation. Use CIDR instead.  
 - `RestrictedIPs` entries are now **read exactly as written**. An IPv4 address must be four plain decimal parts with no leading zeros, and an IPv6 address must be in its short, lowercase form. `010.10.10.10` used to be read as octal and admit `8.10.10.10`; `10.1` used to mean `10.0.0.1`; `167772161` meant the same. All of these now fail startup validation instead of quietly admitting a host you did not name. `192.168.1.1/24` still means the whole `192.168.1.0/24` — that is what CIDR notation means — but the startup log now says so.  
+
+## 🔌 Service Module
+- The Service Module is **exempt from these notes** — since v2.0.0 it is developed for the hosted service, so a change to it is not documented here and does not force a major version. If you self-host with `SERVICE_MODULE` enabled, read the full changelog before upgrading. One fix is worth calling out on its own:  
+- **The auth token rate limit no longer partitions on a caller-supplied header.** It partitions on the connection's remote address, which forwarded headers resolve to the real caller wherever a proxy is trusted. Before this, varying the header reset your own login throttle.  
 
 ## 🎨 UI Module
 - The Protocol Decoder reads the **new ViPaq format only**. Strings from earlier versions are rejected.  

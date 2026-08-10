@@ -33,6 +33,12 @@ Place these files in a directory of your choice. This directory will be your pro
 
 ## Customize (Optional)
 
+> **Generate your own OTLP API key.** `aspire-dashboard-config.json` ships a placeholder as `PrimaryApiKey`,
+> and `docker-compose.yml` repeats it in `OTEL_EXPORTER_OTLP_HEADERS`. It is published here, so anyone can read
+> it. Replace it in both files with a value you generate yourself, and keep the two the same or the app cannot
+> send telemetry to the dashboard.
+{:.block-warning}
+
 Edit the `Presets.json` file to adjust the bin configurations as per your needs.
 
 Create a `.env` file in the same directory with the content:
@@ -88,7 +94,8 @@ This will launch Binacle.Net with the following features:
 - 📊 **OpenTelemetry**:  
   Customize telemetry configuration by editing `OpenTelemetry.Production.json`.
 - 📈 **Aspire Dashboard**:  
-  Adjust settings in `aspire-dashboard-config.json` to fine-tune the dashboard.
+  Adjust settings in `aspire-dashboard-config.json` to fine-tune the dashboard. Its `PrimaryApiKey` is a
+  placeholder - replace it with your own, and match it in `OTEL_EXPORTER_OTLP_HEADERS` in `docker-compose.yml`.
 
 ## 📂 Logs Folder
 When running the application, a `./data` folder will be created to store application data, 

@@ -228,38 +228,40 @@ above it later. `release-notes-v3.0.0.md` at the `.agents/` root is the body to 
 version folder now has a release-notes page in this shape**; `v3.0.x` is the only one left, and it belongs to
 the session that writes that folder.
 
-## Three defects in the `features/docs-v3` branch - fix before the docs deploy {#docs-v3-branch-defects}
+## Three defects from the `features/docs-v3` branch - fixed 2026-08-10 {#docs-v3-branch-defects}
 
-Found reviewing the branch against `main` on 2026-08-10. The pages themselves are complete and correct - every
-checklist item above is met, every `vlink` and `link` target resolves, the swagger documents are clean, and the
-`3.0` pins and trimmed pin comment are right. These three are the whole list. The branch merges into `main` with
-no conflicts, and the docs deploy is `workflow_dispatch` only, so nothing publishes until someone runs it.
+Found reviewing the branch against `main` on 2026-08-10, and **all three fixed the same day**, after the branch
+merged as `3dc6f1ac`. The maintainer authorised the two prose-touching fixes explicitly, which is why a coding
+session made them; the manifest fix is the `CLAUDE.md` security carve-out and is recorded as such below. The
+pages themselves were already complete and correct - every checklist item above is met, every `vlink` and `link`
+target resolves, the swagger documents are clean, and the `3.0` pins and trimmed pin comment are right. The site
+builds clean after the fixes.
 
-- [ ] **The Kubernetes manifest is missing the hardening every other copy has.**
-      `docs/collections/_versions/v3.0.x/samples/kubernetes/minimal/binacle-deployment.yaml` has neither
-      `automountServiceAccountToken: false` nor a `resources:` block. This is the same drift that hit the
-      `v2.0.x` and `v2.1.x` copies, repeated in the folder that becomes the **current** version - so it brings
-      back S6865, S6864 and S6870 plus the three `requests:` maintainability rules, and this time as **new
-      code**, where it counts against the new-code gate and the security rating.
+**One thing is still owed, at tag time** - see the release-notes item below.
 
-      Copy both blocks verbatim from `samples/kubernetes/minimal/binacle-deployment.yaml`, comments included:
-      `automountServiceAccountToken: false` goes under `spec:` above `containers:`, and `resources:` goes
-      under the container between `ports:` and `volumeMounts:`. **Leave the `image:` line alone** - the
-      published copy pins `binacle/binacle-net:3.0` and carries only the one-sentence pin comment, which is
-      correct and deliberate; the repo copy still pins `3.0.0-beta.1` and explains why, which must not ship.
-- [ ] **Twelve new files carry a UTF-8 BOM.** `016d7478` stripped the BOM from all 436 tracked files that had
-      one; these are new on the branch and put twelve back. Strip the BOM from each, changing nothing else:
+- [x] **The Kubernetes manifest is missing the hardening every other copy has.** Fixed 2026-08-10. **This use of
+      the `CLAUDE.md` carve-out is recorded here**: it is a security fix to a downloadable sample file, touching
+      no prose, no front matter and no `.md`, and matching repo-root `samples/` exactly. The copy at
+      `v3.0.x/samples/kubernetes/minimal/binacle-deployment.yaml` now differs from
+      `samples/kubernetes/minimal/binacle-deployment.yaml` in the `image:` line and its comment only, which is
+      the intended difference. It had neither `automountServiceAccountToken: false` nor a `resources:` block -
+      the same drift that hit the `v2.0.x` and `v2.1.x` copies, repeated in the folder that becomes the
+      **current** version, so it brought back S6865, S6864 and S6870 plus the three `requests:` maintainability
+      rules as **new code**, where they count against the new-code gate and the security rating.
+- [x] **Twelve new files carried a UTF-8 BOM.** Stripped 2026-08-10, changing nothing else; no tracked file in
+      the repo has a BOM now, so `016d7478` holds everywhere again. They were all new on the branch:
       `v3.0.x/downloads/Presets.json`; `Presets.json` in all five of
       `samples/docker/{minimal,quickstart,prod,service,full}/`; `JwtAuth.json` in `samples/docker/full/` and
-      `samples/docker/service/`; and all four files in `samples/kubernetes/minimal/`
-      (`binacle-deployment.yaml`, `binacle-net-service.yaml`, `binacle-presets-configmap.yaml`,
-      `binacle-pvc.yaml`).
-- [ ] **`v3.0.x/release-notes.md` says the release already happened.** The `## v3.0.0` section reads
-      *"Released 8 August 2026"* and links `.../releases/tag/v3.0.0`. **v3.0.0 is not out** - `v3.0.0-beta.1`
-      published on 2026-07-30 and a beta 2 is next, so the tag does not exist and that link 404s. The date and
-      link have to be the real ones, which means this page cannot be finished until the tag lands. Until then
-      the section needs wording that does not assert a release date, and the final pass belongs in the release
-      sequence beside the `current: v3.0.x` flip.
+      `samples/docker/service/`; and all four files in `samples/kubernetes/minimal/`.
+- [x] **`v3.0.x/release-notes.md` said the release already happened.** The `## v3.0.0` section read
+      *"Released 8 August 2026"* and linked `.../releases/tag/v3.0.0`. **v3.0.0 is not out** - `v3.0.0-beta.1`
+      published on 2026-07-30 and a beta 2 is next, so the tag does not exist and that link 404s. Replaced
+      2026-08-10 with interim wording that asserts no date and links the releases *list*, which always resolves.
+
+      **This is the one thing still owed.** The date and the tag link have to become the real ones, and they do
+      not exist until v3.0.0 is tagged. Swapping the italic line back is a one-line edit and it belongs in the
+      release sequence, beside the `current: v3.0.x` flip - it is now written into `release-v3.0.0.md` as part
+      of that step so it is not carried by this file alone.
 
 The branch also flips `docs/_data/versions.yml` to `current: v3.0.x` and restores the sitemap, which is the
 release checklist item for putting v3.0.x back on the site. That is the right change on the branch and it is
@@ -272,8 +274,9 @@ The `v3.0.x` folder is a full version, the site builds, and the deploy is unbloc
 
 ## Security findings in the versioned samples - from the 2026-08-09 Sonar run {#sonar-vulnerabilities}
 
-Added by a coding session that cannot fix them: repo-root `docs/` is off limits per `CLAUDE.md`, so these are
-written down rather than changed. Full context in [[sonar-issue-triage]].
+Added by a coding session that cannot fix them: repo-root `docs/` is off limits per `CLAUDE.md`, so these were
+written down rather than changed. Full context in [[sonar-issue-triage]]. **Both open prose checks were answered
+and written on 2026-08-10**, with the maintainer's explicit go-ahead - the detail is on each bullet.
 
 Narrowing `sonar.exclusions` on 2026-08-09 brought `docs/` into analysis for the first time and immediately
 surfaced **seven vulnerabilities, all in `docs/collections/_versions/**`** - the sample files readers download.
@@ -282,16 +285,20 @@ They take the project's security rating from A to E.
 - **BLOCKER - the sample files are already fixed, the prose may still need a line.** The GUID that
   `v1.3.x/samples/docker/full-deployment/` published as `PrimaryApiKey` (and repeated in `docker-compose.yml`
   as `OTEL_EXPORTER_OTLP_HEADERS`) is now `ThisIsAPlaceholderOtlpApiKeyPleaseGenerateYourOwn` in both files.
-  **Check whether the surrounding page tells the reader to generate their own key**, the way
-  `samples/docker/service/README.md` does for `TokenSecret`. If it does not, it should.
+  It did not tell the reader to generate their own key. **Written 2026-08-10**: a warning block at the top of
+  the page's "Customize (Optional)" section, plus a sentence on the Aspire Dashboard bullet further down, both
+  saying to replace the placeholder in *both* files and keep the two the same.
 - **Six Kubernetes findings - already fixed in the sample files.** `binacle-deployment.yaml` in both `v2.0.x`
   and `v2.1.x` now carries `automountServiceAccountToken: false` and a `resources:` block with requests and
   limits, matching what `samples/kubernetes/minimal/` has had since `938c6d7e`. Image tags untouched. The
-  `index.md` pages link the files for download rather than inlining them, so no prose change was needed - but
-  **check whether the page should say anything about the resource values**, since they are starting points
-  rather than a recommendation and the manifest comments say so.
+  `index.md` pages link the files for download rather than inlining them, so no prose change was needed. The
+  page *should* say something about the resource values, since they are starting points rather than a
+  recommendation and the manifest comments say so. **Written 2026-08-10 on the `v3.0.x` page only** - a note
+  block under "Customize" saying the values are a starting point, to measure, and why there is no CPU limit.
+  The frozen `v2.0.x` and `v2.1.x` pages were left alone; see the paragraph below, which is the open question.
 
-That last point generalises and is worth a check across the whole site: **a fix applied to repo-root `samples/`
+That last point generalises and is still open across the whole site: **a fix applied to repo-root `samples/`
 does not reach the versioned copies under `docs/collections/_versions/`.** Whether the frozen copies should be
-corrected, or annotated as historical with a pointer to the current sample, is a docs decision - but shipping a
-manifest with no resource limits to anyone reading the current version is worth resolving either way.
+corrected, or annotated as historical with a pointer to the current sample, is a docs decision. It no longer
+blocks the release - the current version's manifest ships limits and its page explains them - but the frozen
+lines still carry corrected files with no page saying so.

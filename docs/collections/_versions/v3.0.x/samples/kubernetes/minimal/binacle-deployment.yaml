@@ -1,4 +1,4 @@
-﻿apiVersion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: binacle-net
@@ -12,12 +12,28 @@ spec:
       labels:
         app: binacle-net
     spec:
+      # Binacle.Net never calls the Kubernetes API, so it has no use for a service account token. Left on, the
+      # default token is mounted into the container and is one more thing an attacker who reaches the pod can
+      # use.
+      automountServiceAccountToken: false
       containers:
         - name: binacle-net
           # Pinned on purpose - a copied sample must not jump to a new major on the next pull.
           image: binacle/binacle-net:3.0
           ports:
             - containerPort: 8080
+          # Starting values, not a recommendation - measure your own load before trusting them. Without limits
+          # a single pod can take the whole node down with it, which is why they are here at all. Packing is
+          # CPU bound and allocation heavy, so give it room to burst: there is deliberately no cpu limit,
+          # because a limit throttles a request mid-solve rather than letting it finish and free the CPU.
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+              ephemeral-storage: 256Mi
+            limits:
+              memory: 512Mi
+              ephemeral-storage: 1Gi
           volumeMounts:
             - name: presets-volume
               mountPath: /app/Config_Files/Presets.json
