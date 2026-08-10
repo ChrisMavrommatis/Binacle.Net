@@ -41,3 +41,13 @@ encoding is not ours to control, and a mangled character in a startup error is o
   whole job is that content, so a change made in passing gets published without anyone reviewing it as public writing. Read
   them freely. If work needs a page written or corrected, **write down what the page must say** in the relevant
   plan or release file and leave it for that session.
+
+  **One carve-out: a security fix to a downloadable sample file.** The `docs/collections/_versions/**` folders
+  hold sample files readers download and run - compose files, Kubernetes manifests, config json. When an
+  analyser flags one of those as vulnerable, a coding session may fix the **file**, because that is the same
+  mechanical change it would make to `samples/` and nobody reads it as writing. This is narrow on purpose:
+  the change must touch no prose, no front matter and no `.md` file, and it must match what repo-root
+  `samples/` already does. Anything else - including a sentence on the page explaining the fix - still goes
+  in a plan for the docs session. The carve-out exists because these files are the only public attack surface
+  in the repo and a fix to `samples/` does not reach the frozen copies; leaving one vulnerable until an
+  unrelated session runs was the worse trade. Record every use of it in the plan that owns the work.

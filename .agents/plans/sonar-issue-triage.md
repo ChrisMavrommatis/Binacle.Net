@@ -15,6 +15,9 @@ are new arrivals from `docs/` and `web/` coming back into scope, so ~228 were ac
 | Security rating | A | **E** |
 | Quality gate | ERROR | ERROR (`new_coverage` only) |
 
+**The `after` column is that run, not now.** All seven vulnerabilities were fixed later the same day in
+`d0150235`, so the next run should read 0 and rating A again. Nothing else in the table has moved.
+
 Read [[sonar-touching-untested-code]] before fixing anything else here, and
 [[algorithm-identifier-is-a-format]] before renaming anything.
 
@@ -26,8 +29,13 @@ most valuable thing the sweep produced, and it is exactly the argument that moti
 the two published sites are the only public attack surface in the repo, and they were the one thing not being
 looked at.
 
-**None of this is fixable from a coding session** - repo-root `docs/` is off limits per `CLAUDE.md`. It belongs
-to the docs/web session. Written up here so it is not lost.
+**All seven were fixed in `d0150235`, from a coding session.** At the time that was against the `CLAUDE.md`
+rule that repo-root `docs/` is off limits. **Settled 2026-08-10: the rule now carries a carve-out** for exactly
+this - a security fix to a downloadable sample file under `docs/collections/_versions/**`, touching no prose, no
+front matter and no `.md`, matching what `samples/` already does. `d0150235` is in bounds under it. Read the
+rule in `CLAUDE.md` before using it; it is narrower than "docs findings are fair game", and every use gets
+recorded in the plan that owns the work. The changes here were the two `binacle-deployment.yaml` files below;
+the `v1.3.x` key change was in `samples/`, which was always in bounds.
 
 - **BLOCKER, `json:S6418` - FIXED 2026-08-09.** `v1.3.x/samples/docker/full-deployment/aspire-dashboard-config.json`
   shipped a GUID as `PrimaryApiKey`, and the matching `docker-compose.yml` repeated it in
@@ -52,8 +60,10 @@ to the docs/web session. Written up here so it is not lost.
   **The lesson is the general one:** a fix applied to `samples/` does not reach the versioned copies under
   `docs/collections/_versions/`, and nothing enforces that it does. Worth a sweep whenever a sample changes.
 
-Note the gate still passes on security. The BOM commit touched line 1 of those files but the findings sit on
-lines 10-16, so they count as old code. The gate is not wrong - it just is not the place these will surface.
+Note the gate never failed on security, and still will not. On the `016d7478` run the findings sat on lines
+10-16 of files the BOM commit had only touched on line 1, so they counted as old code. `d0150235` then changed
+exactly those lines - they are new code now, but they are also fixed, so there is nothing left to fail on. The
+gate was never the place these were going to surface.
 
 ## What is left, by size {#remaining}
 

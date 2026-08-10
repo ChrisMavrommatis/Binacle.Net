@@ -228,6 +228,44 @@ above it later. `release-notes-v3.0.0.md` at the `.agents/` root is the body to 
 version folder now has a release-notes page in this shape**; `v3.0.x` is the only one left, and it belongs to
 the session that writes that folder.
 
+## Three defects in the `features/docs-v3` branch - fix before the docs deploy {#docs-v3-branch-defects}
+
+Found reviewing the branch against `main` on 2026-08-10. The pages themselves are complete and correct - every
+checklist item above is met, every `vlink` and `link` target resolves, the swagger documents are clean, and the
+`3.0` pins and trimmed pin comment are right. These three are the whole list. The branch merges into `main` with
+no conflicts, and the docs deploy is `workflow_dispatch` only, so nothing publishes until someone runs it.
+
+- [ ] **The Kubernetes manifest is missing the hardening every other copy has.**
+      `docs/collections/_versions/v3.0.x/samples/kubernetes/minimal/binacle-deployment.yaml` has neither
+      `automountServiceAccountToken: false` nor a `resources:` block. This is the same drift that hit the
+      `v2.0.x` and `v2.1.x` copies, repeated in the folder that becomes the **current** version - so it brings
+      back S6865, S6864 and S6870 plus the three `requests:` maintainability rules, and this time as **new
+      code**, where it counts against the new-code gate and the security rating.
+
+      Copy both blocks verbatim from `samples/kubernetes/minimal/binacle-deployment.yaml`, comments included:
+      `automountServiceAccountToken: false` goes under `spec:` above `containers:`, and `resources:` goes
+      under the container between `ports:` and `volumeMounts:`. **Leave the `image:` line alone** - the
+      published copy pins `binacle/binacle-net:3.0` and carries only the one-sentence pin comment, which is
+      correct and deliberate; the repo copy still pins `3.0.0-beta.1` and explains why, which must not ship.
+- [ ] **Twelve new files carry a UTF-8 BOM.** `016d7478` stripped the BOM from all 436 tracked files that had
+      one; these are new on the branch and put twelve back. Strip the BOM from each, changing nothing else:
+      `v3.0.x/downloads/Presets.json`; `Presets.json` in all five of
+      `samples/docker/{minimal,quickstart,prod,service,full}/`; `JwtAuth.json` in `samples/docker/full/` and
+      `samples/docker/service/`; and all four files in `samples/kubernetes/minimal/`
+      (`binacle-deployment.yaml`, `binacle-net-service.yaml`, `binacle-presets-configmap.yaml`,
+      `binacle-pvc.yaml`).
+- [ ] **`v3.0.x/release-notes.md` says the release already happened.** The `## v3.0.0` section reads
+      *"Released 8 August 2026"* and links `.../releases/tag/v3.0.0`. **v3.0.0 is not out** - `v3.0.0-beta.1`
+      published on 2026-07-30 and a beta 2 is next, so the tag does not exist and that link 404s. The date and
+      link have to be the real ones, which means this page cannot be finished until the tag lands. Until then
+      the section needs wording that does not assert a release date, and the final pass belongs in the release
+      sequence beside the `current: v3.0.x` flip.
+
+The branch also flips `docs/_data/versions.yml` to `current: v3.0.x` and restores the sitemap, which is the
+release checklist item for putting v3.0.x back on the site. That is the right change on the branch and it is
+safe to merge, but it means **deploying the docs before the v3.0.0 tag would present an unreleased version as
+current.** Deploy is manual, so this only needs remembering, not guarding.
+
 ## Done when
 
 The `v3.0.x` folder is a full version, the site builds, and the deploy is unblocked. Delete this file then.

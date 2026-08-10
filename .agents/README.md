@@ -70,7 +70,11 @@ Neither is part of `.agents/`, but the rule belongs here because it decides wher
 repo-root `docs/` is the published site, while `.agents/docs/` is this system's reference layer — the two are
 unrelated, and only the first is off limits. Do not edit them from a coding session. When a change needs a page
 written or corrected, record **what the page must say** in the plan or release file that owns the work, and leave the writing
-to that session. `CLAUDE.md` carries this as a critical rule.
+to that session. `CLAUDE.md` carries this as a critical rule, along with its one carve-out: a coding session may
+apply a **security fix to a downloadable sample file** under `docs/collections/_versions/**` - the compose files,
+manifests and config json readers download - provided it touches no prose, no front matter and no `.md`, and
+matches what repo-root `samples/` already does. Read the rule there before using it, and record each use in the
+plan that owns the work.
 
 ## Who may reference whom — keep the layers from bleeding
 

@@ -34,9 +34,15 @@ jobs:
           POSTGRES_USER: appuser
           POSTGRES_DB: binacle_net
           # No POSTGRES_PASSWORD: this container lives for one job, is reachable only from it, and is thrown
-          # away after. Under trust it accepts any password for appuser, so the connection string the
-          # ServiceModule integration tests build - the shared local-dev one, password and all - still
-          # connects unchanged. The point is that no credential, not even a placeholder, sits in this file.
+          # away after, so there is nothing for a password to protect. Under trust it accepts any password for
+          # appuser, and the ServiceModule integration tests fall back to the shared local-dev connection
+          # string - password and all - so they connect unchanged.
+          #
+          # This removes the credential from this file, not from the repo. The same local-dev password is
+          # still in config/docker-compose.yml, config/docker-compose.build.yml, the test default in
+          # BinacleApi.cs and Config_Files/ServiceModule/ConnectionStrings.Development.json, where it is
+          # load-bearing - that postgres does ask for it. It is the same value everywhere on purpose, and it
+          # says what it is. Change it in all five or none.
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
