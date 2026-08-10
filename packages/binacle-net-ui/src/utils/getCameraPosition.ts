@@ -14,7 +14,7 @@ export function getCameraPosition(bin: Dimensions) {
 	let cameraPositionY = longestDimension;
 	let cameraPositionZ = longestDimension * 1.2;
 
-	// if square
+	// A cube reads as flat head-on, so pull the camera further back than for an oblong bin.
 	if (bin.length === bin.width && bin.width === bin.height) {
 		cameraPositionX = longestDimension;
 		cameraPositionY = longestDimension;

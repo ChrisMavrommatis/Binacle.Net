@@ -112,7 +112,7 @@ function parseThree(compact: string, separator: string): [number, number, number
 }
 
 // Reads one integer. Throws on empty or non-integer, matching C#'s long/int parse (so the two suites agree
-// on malformed input). `.` is left for a future decimals feature.
+// on malformed input).
 function parseNumber(value: string): number {
 	const trimmed = value.trim();
 	const parsed = Number(trimmed);

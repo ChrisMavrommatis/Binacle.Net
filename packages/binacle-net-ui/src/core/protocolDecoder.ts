@@ -42,9 +42,8 @@ export const protocolDecoderApp = defineComponent(() => ({
 				});
 		});
 	},
-	// Reads the stored tokens, but only if they carry the current schema version. Anything else — the old bare
-	// array, an older version, or corrupt JSON — is from a previous ViPaq wire and cannot be decoded, so it is
-	// discarded and the user is told once.
+	// Reads the stored tokens, but only if they carry the current schema version. Anything else — an older
+	// version, the old bare array, or corrupt JSON — is discarded, and the user is told once.
 	loadSavedResults(): string[] {
 		const raw = localStorage.getItem(SAVED_RESULTS_KEY);
 		if (!raw) {

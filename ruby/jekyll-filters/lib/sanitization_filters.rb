@@ -1,5 +1,6 @@
 module Jekyll
 	module SanitizationFilters
+    # Flattens page content into a single line of plain text, for a meta description.
     def clean_content(input, length = 160)
       input = input.to_s
 
@@ -9,11 +10,7 @@ module Jekyll
       .gsub(/ {2,}/, ' ') # Replace multiple spaces with a single space
       .strip
 
-       # Truncate to the specified length
-       truncated = transformed[0...length]
-
-       # Return the final description
-       truncated
+      transformed[0...length]
     end
 	end
 end

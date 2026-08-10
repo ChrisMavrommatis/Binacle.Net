@@ -2,18 +2,16 @@ module Jekyll
   class GTMHeadTag < Liquid::Tag
     def initialize(tag_name, markup, tokens)
       super
-      # Capture the GTM ID parameter
       @id = markup.strip
     end
 
     def render(context)
-      # Evaluate the GTM ID variable in the Liquid context if it's a Liquid variable
+      # The tag takes either a literal ID or the name of a Liquid variable holding one.
       gtm_id = context[@id] || @id
 
-      # Return an empty string if GTM ID is not provided
+      # No ID configured: render nothing rather than a script tag with a blank id.
       return '' if gtm_id.nil? || gtm_id.empty?
 
-      # Output the Google Tag Manager script with the specified GTM ID
       <<~HTML
         <!-- Google Tag Manager -->
         <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

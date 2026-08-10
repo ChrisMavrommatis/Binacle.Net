@@ -8,7 +8,6 @@ export default class ErrorCollection {
 	}
 
 	push(fieldName: string, message: string) {
-		// to lower
 		const normalizedFieldName = fieldName.toLowerCase();
 		this.fields[normalizedFieldName] = this.fields[normalizedFieldName] || [];
 		this.fields[normalizedFieldName].push(message);

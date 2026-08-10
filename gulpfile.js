@@ -17,8 +17,6 @@ const ASSETS = {
 		options: {encoding: false}
 	}
 };
-// ----------------- Begin Functions  ----------------- //
-// Main Functions
 function copyAssets(destinationDir) {
 	let tasks = [];
 	console.log(`Assets -> ${destinationDir}`);
@@ -50,9 +48,6 @@ function copyAssets(destinationDir) {
 	});
 }
 
-// ----------------- End Functions  ----------------- //
-
-// Tasks
 task('copy-assets-to-web', async function(){
 	return copyAssets('web');
 });

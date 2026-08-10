@@ -21,6 +21,5 @@ export function createItem(
 	let mesh = new Mesh(itemGeometry, material);
 	mesh.position.set(meshPosition.x, meshPosition.y, meshPosition.z);
 	mesh.name = `item_${index}`;
-	// mesh.typeName = 'item';
 	return mesh;
 }

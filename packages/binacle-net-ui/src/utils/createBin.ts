@@ -5,7 +5,6 @@ import {getThemeColors} from "./getThemeColors";
 export function createBin(bin: Dimensions) {
 	let geometry = new BoxGeometry(bin.length, bin.height, bin.width);
 
-	// or WireframeGeometry( geometry )
 	let geo = new EdgesGeometry(geometry);
 
 	const colors = getThemeColors(window.document.body, "tertiary-container");
