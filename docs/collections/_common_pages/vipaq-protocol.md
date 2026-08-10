@@ -33,7 +33,7 @@ It carries:
 
 That is everything needed to redraw the packing, and nothing else. Items come back in the order they were sent.
 
-## 🔄 Tokens Do Not Move Between Versions
+## 🔄 Strings Do Not Move Between Versions
 
 A ViPaq string is only readable by an implementation that speaks the same version of the format, and the format
 changed in Binacle.Net v3.0.0.
@@ -41,7 +41,7 @@ changed in Binacle.Net v3.0.0.
 - Binacle.Net **v2.1.1 and earlier** produce the older format.
 - Binacle.Net **v3.0.0 and later** produce and read only the newer one. There is no fallback reader.
 
-If you run an old and a new image side by side, their tokens do not interoperate. An old string handed to a new
+If you run an old and a new image side by side, their strings do not interoperate. An old string handed to a new
 decoder fails with a format error rather than being silently misread, so the failure is visible rather than
 producing a wrong packing.
 

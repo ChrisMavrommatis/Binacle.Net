@@ -1,0 +1,10 @@
+{
+  "ForwardedHeaders": {
+    "Enabled": true,
+    "TrustLoopback": true,
+    "TrustPrivateNetworks": true,
+    "TrustedProxies": [],
+    "ForwardLimit": 1,
+    "ForwardedForHeaderName": null
+  }
+}

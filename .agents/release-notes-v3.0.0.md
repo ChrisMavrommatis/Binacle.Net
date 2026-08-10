@@ -37,7 +37,7 @@ the `📈 Algorithms` section needs no caveat. The manual steps are the release 
 Binacle.Net v3.0.0 is a major update from v2.1.1.
 
 > [!Warning]
-> **v3.0.0 introduces breaking changes. Existing integrations must be reviewed and updated. V2 endpoints are removed, ViPaq tokens from earlier versions no longer decode, and health check IP restrictions are matched differently.**
+> **v3.0.0 introduces breaking changes. Existing integrations must be reviewed and updated. V2 endpoints are removed, ViPaq strings from earlier versions no longer decode, and health check IP restrictions are matched differently.**
 
 ---
 
@@ -45,7 +45,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - **V2 endpoints** were removed.  
 - **V4 endpoints** were introduced as experimental.  
 - **V3 endpoints** remain stable and unchanged, and are the recommended version.  
-- **ViPaq** was rebuilt with a smaller, simpler format. Tokens from earlier versions no longer decode.  
+- **ViPaq** was rebuilt with a smaller, simpler format. Strings from earlier versions no longer decode.  
 - **ViPaq** left experimental status — the format is stable as of this release.  
 - **Algorithms** were unified — fitting and packing now share one implementation.  
 - **Packing Logs** configuration was flattened, with breaking changes for existing integrations.  
@@ -63,7 +63,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - Presets can be **listed** with `presets` or **fetched one at a time** with `presets/{preset}`.  
 - V4 is **experimental and can change at any time**. V3 remains stable and is the recommended version.  
 - V3 endpoints are unchanged and remain stable, apart from the ViPaq payload.  
-- **ViPaq is no longer experimental.** The format is settled as of this release, where it carried an experimental warning through v2.1.1. A future format change takes a new `Version` code rather than altering the current one, so an older decoder rejects a newer token outright instead of misreading it.  
+- **ViPaq is no longer experimental.** The format is settled as of this release, where it carried an experimental warning through v2.1.1. A future format change takes a new `Version` code rather than altering the current one, so an older decoder rejects a newer string outright instead of misreading it.  
 - Added **forwarded headers** support, configured in `Config_Files/ForwardedHeaders.json`. **Disabled by default.**  
 - When enabled, the caller's address and scheme are resolved from `X-Forwarded-For` and `X-Forwarded-Proto` before anything reads them, so rate limiting and health check IP restrictions see the real caller rather than the proxy.  
 - Trust is explicit — a proxy on loopback or a private network is trusted by default, anything else must be named. The app **refuses to start** if nothing is trusted, because that would make every caller's header believable.  
@@ -87,7 +87,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - `RestrictedIPs` entries are now **read exactly as written**. An IPv4 address must be four plain decimal parts with no leading zeros, and an IPv6 address must be in its short, lowercase form. `010.10.10.10` used to be read as octal and admit `8.10.10.10`; `10.1` used to mean `10.0.0.1`; `167772161` meant the same. All of these now fail startup validation instead of quietly admitting a host you did not name. `192.168.1.1/24` still means the whole `192.168.1.0/24` — that is what CIDR notation means — but the startup log now says so.  
 
 ## 🎨 UI Module
-- The Protocol Decoder reads the **new ViPaq format only**. Tokens from earlier versions are rejected.  
+- The Protocol Decoder reads the **new ViPaq format only**. Strings from earlier versions are rejected.  
 
 ## 📈 Algorithms
 - **Fitting and packing now share one algorithm.** Fitting stops early on the first item that does not fit.  
@@ -118,10 +118,10 @@ To upgrade to **v3.0.0**, follow these steps:
    - V3 requires an algorithm to be selected, where V2 used a fixed one, and drops V2's other parameters.  
    - See the [v2.1.x documentation](https://docs.binacle.net/version/v2.1.x/) for the old contract.
 
-3. **Regenerate all ViPaq tokens**  
+3. **Regenerate all ViPaq strings**  
    - The format was rebuilt and is not backwards compatible.  
-   - Tokens from earlier versions no longer decode, and there is no fallback reader.  
-   - Re-run the packing request to get a new token. Any stored token — a saved link or a bookmarked result — is stale.  
+   - Strings from earlier versions no longer decode, and there is no fallback reader.  
+   - Re-run the packing request to get a new one. Any stored string — a saved link or a bookmarked result — is stale.  
    - This applies to V3 responses as well, even though V3 is otherwise unchanged.
 
 4. **Do not mix versions**  

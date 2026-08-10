@@ -1,0 +1,81 @@
+name: binacle-net-service
+
+# Binacle.Net sample: service
+#
+# Smoke profile: service. config/smoke/service.yml runs this same configuration against the image under
+# test on every release, so this file is a shape that is proven to work rather than one nobody checks.
+# If you change which modules are on here, change that profile too - or the pairing is a lie.
+
+services:
+  binacle-net:
+    # Pinned on purpose - a copied sample must not jump to a new major on the next pull.
+    image: binacle/binacle-net:3.0
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./Presets.json
+        target: /app/Config_Files/Presets.json
+        read_only: true
+      # ServiceModule validates these at startup and will not boot without them. CHANGE THE TOKEN SECRET.
+      - type: bind
+        source: ./JwtAuth.json
+        target: /app/Config_Files/ServiceModule/JwtAuth.json
+        read_only: true
+      # The SQLite database and the packing logs both live here.
+      - type: bind
+        source: ./data
+        target: /app/data/
+
+      # Browser calling this API directly? Uncomment - CORS is not in the image, you supply it. Nothing is
+      # allowed through until you do, which is a valid closed default.
+      # - type: bind
+      #   source: ./Cors.json
+      #   target: /app/Config_Files/Cors.json
+      #   read_only: true
+
+      # Behind a proxy, a load balancer or a CDN? Copy ForwardedHeaders.json from the `prod` sample and mount
+      # it here. Without it, rate limiting partitions on your proxy's address rather than the caller's, so one
+      # slow client can exhaust the bucket for everyone.
+      # - type: bind
+      #   source: ./ForwardedHeaders.json
+      #   target: /app/Config_Files/ForwardedHeaders.json
+      #   read_only: true
+
+      # Sending traces somewhere? Copy OpenTelemetry.Production.json from the `prod` sample and mount it here.
+      # - type: bind
+      #   source: ./OpenTelemetry.Production.json
+      #   target: /app/Config_Files/DiagnosticsModule/OpenTelemetry.Production.json
+      #   read_only: true
+    environment:
+      - SWAGGER_UI=True
+      - SCALAR_UI=True
+      - SERVICE_MODULE=True
+      - HealthChecks__Enabled=True
+      - PackingLogs__Enabled=True
+
+      # Deliberately absent: UI_MODULE and DEBUG_ENDPOINT. Other people can reach this deployment, and /_debug
+      # echoes the caller's whole request back including their Authorization header. The docs stay on because
+      # they are documentation, not a debug surface. For the demo UI, see the `full` sample.
+
+      # Storage providers are tried in order - AzureStorage, Postgres, Sqlite - and the first one with a
+      # connection string wins, so exactly one of these may be set. SQLite is the simplest thing that works and
+      # keeps everything in the mounted folder.
+      - SQLITE_CONNECTION_STRING=Data Source=/app/data/binacle-net-service.db;
+
+      # Postgres. Point this at your own database - a production deployment should not run its database in the
+      # same compose file. The host is whatever your server is called; it is not localhost, because that means
+      # this container.
+      # - POSTGRES_CONNECTION_STRING=Host=your-postgres-host;Port=5432;Database=binacle_net;Username=binacle;Password=CHANGE_ME
+
+      # Azure Storage. Take the connection string from your storage account in the portal - it is the whole
+      # string, starting DefaultEndpointsProtocol.
+      # - AZURESTORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=YOUR_ACCOUNT;AccountKey=YOUR_KEY;EndpointSuffix=core.windows.net
+
+      # The first admin account, seeded once on first start. Change it, then change the password after logging
+      # in - it is in this file in plain text.
+      - BINACLE_ADMIN_CREDENTIALS=admin@binacle.net:B1n4cl3Adm!n
+
+      # Where a browser should call this API. Used by the shipped clients, so it is the address YOUR users
+      # reach, not the container's.
+      - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/

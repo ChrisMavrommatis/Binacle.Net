@@ -1,0 +1,9 @@
+{
+  "Cors": {
+    "CoreApi": {
+      "AllowedOrigins": [
+        "https://your-site.example"
+      ]
+    }
+  }
+}

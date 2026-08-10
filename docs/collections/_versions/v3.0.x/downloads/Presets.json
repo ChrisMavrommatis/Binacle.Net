@@ -1,0 +1,72 @@
+﻿{
+  "PresetOptions": {
+    "Presets": {
+      "rectangular-cuboids": {
+        "Bins": [
+          {
+            "ID": "Small",
+            "Length": 60,
+            "Width": 40,
+            "Height": 10
+          },
+          {
+            "ID": "Medium",
+            "Length": 60,
+            "Width": 40,
+            "Height": 20
+          },
+          {
+            "ID": "Large",
+            "Length": 60,
+            "Width": 40,
+            "Height": 30
+          }
+        ]
+      },
+      "perfect-cubes": {
+        "Bins": [
+          {
+            "ID": "Small",
+            "Length": 10,
+            "Width": 10,
+            "Height": 10
+          },
+          {
+            "ID": "Medium",
+            "Length": 20,
+            "Width": 20,
+            "Height": 20
+          },
+          {
+            "ID": "Large",
+            "Length": 30,
+            "Width": 30,
+            "Height": 30
+          }
+        ]
+      },
+      "sample": {
+        "Bins": [
+          {
+            "ID": "Small",
+            "Length": 62,
+            "Width": 45,
+            "Height": 8
+          },
+          {
+            "ID": "Medium",
+            "Length": 62,
+            "Width": 45,
+            "Height": 17
+          },
+          {
+            "ID": "Large",
+            "Length": 62,
+            "Width": 45,
+            "Height": 36
+          }
+        ]
+      }
+    }
+  }
+}
