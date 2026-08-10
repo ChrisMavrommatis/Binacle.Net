@@ -12,7 +12,8 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [ci-gates.md](ci-gates.md) | CI - make the PR gate mean something |
-| [ci-release-workflow-build.md](ci-release-workflow-build.md) | CI - fix the release workflow: build through the recipe, then smoke before pushing |
+| [ci-release-workflow-build.md](ci-release-workflow-build.md) | CI - rebuild how the image is released |
+| [image-base-slimming.md](image-base-slimming.md) | Harden and slim the base image |
 | [image-module-stacks.md](image-module-stacks.md) | Decide what the `image` module is still for |
 | [scripts-to-just-recipes.md](scripts-to-just-recipes.md) | Convert the last `config/*.sh` scripts to `just` recipes |
 | [sonar-issue-triage.md](sonar-issue-triage.md) | Sonar - what is left after the 2026-08-09 sweep |

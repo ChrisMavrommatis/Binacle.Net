@@ -26,6 +26,15 @@ internal static class ApiDocument
 			Url = new Uri(Binacle.Net.Metadata.GitHub)
 		};
 
+		// Relative "/" because Binacle.Net is self-hosted - the API sits at the root of wherever the reader
+		// deployed it, and naming our own demo host would bake it into every generated client as the default.
+		// Set rather than left absent, which OpenAPI already reads as "/": generating under a launch profile
+		// fills Servers with a localhost URL, and nobody catches that by eye in a published spec.
+		document.Servers =
+		[
+			new OpenApiServer { Url = "/" }
+		];
+
 		if (document.Tags is not null)
 		{
 			foreach (var tag in document.Tags)

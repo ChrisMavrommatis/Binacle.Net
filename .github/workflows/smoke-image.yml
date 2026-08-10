@@ -1,0 +1,104 @@
+# Smokes an image that already exists on a registry: its static content, then every shipped profile end to end.
+#
+# This runs against a *published* tag, not a build. That is the point - it is the check that what people can
+# actually pull works, which is the one thing a build-and-push pipeline never proves. Until the release workflow
+# smokes before it pushes, this is that check, run by hand at release time.
+#
+# One job, one step per thing that can break, the same shape as run-tests.yml: a red check names the profile
+# rather than making you read a log. Every step is a `just smoke ...` call, so the `run:` line of a red step is
+# what you paste into a terminal to reproduce it. The suite itself lives in config/smoke.just - nothing about
+# what gets asserted is decided here, and adding a profile is that file plus one step below.
+#
+# The structure check runs once, not once per profile: it reads the image rather than a container, so the same
+# 31 assertions behind five different stacks would answer the same question five times.
+
+name: Smoke Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Image to smoke, with tag (e.g. binacle/binacle-net:3.0.0-beta.2)'
+        required: true
+        type: string
+
+jobs:
+  smoke:
+    # Pinned, NOT ubuntu-latest. hurl links libxml2.so.2; Ubuntu 26.04 ships only libxml2.so.16 and carries no
+    # compat package, so hurl dies there with a missing-library error that reads like a hurl bug rather than a
+    # distro change (DEVELOPMENT.md has the detail and the workaround). ubuntu-latest will move to 26.04
+    # eventually, and this workflow is run rarely enough that it would break on the day it is needed most.
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    env:
+      # Read once here so every step below smokes the same thing, and the tag appears in the run's env rather
+      # than only inside six separate command lines.
+      IMAGE: ${{ inputs.image }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned to a 1.x range for the same reason run-tests.yml does it: modules and `set working-directory`
+      # need a recent just, and ubuntu's apt ships one too old to parse config/smoke.just.
+      - name: Setup just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+        with:
+          just-version: '^1.45'
+
+      # Both tools are single static binaries at a pinned version, installed exactly as DEVELOPMENT.md says so a
+      # CI run and a laptop run install the same bytes. Not cached on purpose - two downloads of a few MB cost
+      # less than a cache key that can go stale against the version it is meant to pin.
+      - name: Install smoke tools
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL -o /tmp/cst \
+            https://github.com/GoogleContainerTools/container-structure-test/releases/download/v1.22.1/container-structure-test-linux-amd64
+          install -m0755 /tmp/cst "$HOME/.local/bin/container-structure-test"
+          curl -fsSL -o /tmp/hurl.tar.gz \
+            https://github.com/Orange-OpenSource/hurl/releases/download/8.0.1/hurl-8.0.1-x86_64-unknown-linux-gnu.tar.gz
+          tar xzf /tmp/hurl.tar.gz -C /tmp
+          install -m0755 /tmp/hurl-8.0.1-x86_64-unknown-linux-gnu/bin/hurl "$HOME/.local/bin/hurl"
+          # ~/.local/bin is on PATH for an interactive shell but not for later workflow steps.
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Tool versions
+        run: |
+          just --version
+          container-structure-test version
+          hurl --version
+
+      # Pulled once, as its own step, so "that tag does not exist" is one red line instead of six. The compose
+      # stacks would each pull on their own otherwise, and a typo in the tag would look like five broken
+      # profiles rather than one bad input.
+      - name: Pull the image
+        id: pull
+        run: docker pull "$IMAGE"
+
+      # !cancelled() so every profile still runs after one fails - you see all the red, not just the first,
+      # which is the same reason run-tests.yml carries it. Gated on the pull as well: if there is no image
+      # there is nothing to say, and six failures that all mean "no image" is noise, not information.
+      - name: Smoke - image structure
+        if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
+        run: just smoke test-structure "$IMAGE"
+
+      - name: Smoke - minimal
+        if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
+        run: just smoke test minimal "$IMAGE"
+
+      - name: Smoke - quickstart
+        if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
+        run: just smoke test quickstart "$IMAGE"
+
+      - name: Smoke - prod
+        if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
+        run: just smoke test prod "$IMAGE"
+
+      - name: Smoke - service
+        if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
+        run: just smoke test service "$IMAGE"
+
+      - name: Smoke - full
+        if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
+        run: just smoke test full "$IMAGE"

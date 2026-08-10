@@ -11,7 +11,8 @@ reference rules: it may point at any file to coordinate the release, and **nothi
 once v3.0.0 is out.
 
 Companions:
-- `release-notes-v3.0.0.md` - the GitHub release body, ready to paste.
+- `release-notes-v3.0.0.md` - **the GitHub release body, and nothing else.** Published verbatim. Its style
+  rules, its scope check and what to confirm before publishing all live in "The release notes file" below.
 - `post-release-v3.0.0.md` - what to do once the release is out.
 
 ## How to work this file
@@ -157,6 +158,22 @@ trusting the refactor.
   behaviour-preserving in intent; the suites agree, and beta 2 is the check that a real host agrees too.
 - **The release workflow pins its actions by SHA** now. Beta 2 is the first run of the pinned workflow, so it
   also proves the publish path still works before the real tag depends on it.
+- **The image is framework-dependent as of 2026-08-10, and beta 2 is the first one built that way.** The
+  publish dropped `--self-contained`; it had been set while the Dockerfile bases on `aspnet:10.0`, so every
+  image carried two copies of .NET - the bundled one the app ran on, and the base image's, which nothing
+  loaded. **This is the one change in beta 2 that alters the artifact**, so it is the one to keep in mind if
+  the deployed image behaves oddly. Measured and tested locally before promotion:
+
+  | | Before | After |
+  |---|---|---|
+  | Image | 150.2 MB | **103.2 MB** |
+  | Publish output | 123 MB | **18 MB** |
+  | `System.*.dll` shipped | 172 | **4** |
+  | `runtimeconfig.json` | `includedFrameworks` | `frameworks` |
+
+  All 31 structure assertions, all five smoke profiles and all eleven test leaves green on the rebuilt image.
+  The entrypoint did not change - `dotnet Binacle.Net.dll` was always the framework-dependent idiom, which is
+  what made the old pairing wrong in the first place.
 
 The verification list is short, because B1 already covered the deployment-shaped behaviour and none of the
 middleware it exercised changed except log-template casing:
@@ -181,6 +198,22 @@ middleware it exercised changed except log-template casing:
 **What beta 2 does not need to re-do:** the fitting differential, the old-ViPaq-token rejection, the health
 check allow-list, or the login throttle partition. All four are in "Already verified - do not re-audit" or
 closed by B1, and nothing behind them changed.
+
+**Beta 2 now has a second job - added 2026-08-10.** It is also the test run for the rebuilt release workflow
+(tag-triggered, push the immutable tag, smoke the registry copy, then promote). That is a deliberate change to
+"Not in this release"; the reasoning is at the bottom of this file. Two consequences for this list:
+
+- **Land the workflow rebuild before tagging beta 2**, and diff the publish output first. If `just build
+  publish` produces the same file list and sizes as the old restore-plus-publish, beta 2's image is
+  byte-identical to what the old path would have built - which is what keeps the code verification above
+  uncontaminated by the pipeline change. Without that diff you are testing two things and cannot tell which
+  broke.
+- **A prerelease cannot test tag promotion**, because the guards skip it by design. Close that separately with
+  the throwaway-tag check in the CI plan. It is the newest command in the workflow and it would otherwise run
+  for the first time on v3.0.0.
+
+If landing both at once feels like too much, the fallback is beta 2 on the current workflow and a beta 3 for
+the pipeline. That costs one prerelease and buys a clean separation.
 
 **B3 landed 2026-08-07 - written, not just decided.** The page is split in two: a general `_common_pages` page
 with no implementation details and nothing that varies between versions, plus one versioned page per folder
@@ -287,6 +320,15 @@ path, v4 carries the experimental banner. Handed to the docs session.
       partitions on the connection's remote address instead of a caller-supplied header, so varying the header
       no longer resets your own login throttle. The page already carries the exemption note at the top, so it
       needs only the fix itself, not the exemption sentence the GitHub body repeats.
+  - [ ] **Replace the two stale swagger documents under `docs/collections/_versions/v3.0.x/swagger/`.** They
+    are frozen copies of the generated OpenAPI documents, and as of the `servers` fix on 2026-08-10 they no
+    longer match what `just openapi generate` produces (both v3 and v4 now carry a `servers` entry with the
+    single relative `/`; these copies still have none). Regenerate with `just openapi generate` and copy
+    `build/openapi/Binacle.Net_v3.json` -> `docs/collections/_versions/v3.0.x/swagger/v3.json` and
+    `build/openapi/Binacle.Net_v4.json` -> `docs/collections/_versions/v3.0.x/swagger/v4.json` - note the
+    generator's file names differ from what the site expects, so the rename is part of the handover, not
+    a detail to skip. Shipping the docs without this leaves the published spec disagreeing with the released
+    image.
   - [ ] Deploy the docs. It is `workflow_dispatch` only.
 
   **This is still the single most losable item in Gate B** - nothing fails if the deploy is skipped, the site
@@ -299,6 +341,84 @@ and it is why the beta exists. The site *was* frozen in the meantime: `docs/_dat
 and the site could not be deployed for any reason - not even a typo fix or the open CodeQL alert. **B0 removed
 that freeze on 2026-08-06** and deployed, taking the CodeQL fix with it. **B8 put it back on 2026-08-10**: the
 pages exist, `current` is `v3.0.x` again and the version is relisted, so only the deploy remains.
+
+---
+
+## The release notes file - how to keep it, and what it must say {#release-notes}
+
+`release-notes-v3.0.0.md` is **body only**. Everything in it is published verbatim as the GitHub release body -
+no preamble, no instructions, no title line (the release title is set separately). It was split on 2026-08-10;
+the guidance that used to sit on top of it is everything below, and this is now its only home.
+
+**Why it is body only.** The rebuilt release workflow creates the release with `gh release create --notes-file`,
+so anything left in that file gets published. Even before the rebuild lands it is the right shape: a file you
+paste whole cannot be pasted wrongly.
+
+**So when you change the notes, change them there and keep this section true.** If a fact below stops holding -
+a new commit that a user *can* observe, a section that gains a caveat - it is this file that has to be updated,
+not the body, and usually both.
+
+### Style, taken from the maintainer's published releases
+
+See https://github.com/ChrisMavrommatis/Binacle.Net/releases.
+
+- Opens with one line: `Binacle.Net vX.Y.Z is a major update from vA.B.C.`
+- A breaking release uses a GitHub alert - `> [!Warning]` - then `---`.
+- Sections, in this order, **only the ones that apply**: `🔎 Overview`, `⚙️ Core Changes`,
+  `🧪 Diagnostics Module`, `🔌 Service Module`, `🎨 UI Module`, `📈 Algorithms`, `🏗️ Internal Work`,
+  `📚 Versioned Docs`, `🛠️ Migration Guide`.
+- Bullets are short, past tense, **bold** on the key term, code and paths in backticks. Lines end with two
+  spaces (a markdown line break). **No tables** - the published releases use none.
+- Migration guide: `To upgrade to **vX.Y.Z**, follow these steps:` then numbered `**Bold title**` steps with
+  indented `-` sub-bullets.
+- Closes with `---` and a `**Full Changelog**:` compare link.
+- A minor/patch release drops all of this and is just `## Overview` with a few plain bullets.
+
+### Scope, and why the body needs nothing for the post-beta work
+
+**Scope:** `v2.1.1` (2026-01-13, the last shipped image) -> now. `v3.0.0-beta.1` sits at 186 commits past
+`v2.1.1`, and 27 more have landed since that tag. **The body needs no change for any of them** - but note the
+reason, because an earlier version of this got it wrong. It is not that the later work misses the image; part
+of it ships. It is that none of it changes anything a user can observe, so there is nothing to announce.
+Checked 2026-08-06, re-checked through `ea9f035b` on 2026-08-10, the second time against the `v3.0.0-beta.1`
+tag rather than the commit log:
+
+- `npm audit fix` / `bundle audit-fix` on the root, `docs/` and `web/` lockfiles. Every advisory closed was a
+  devDependency (`npm audit --omit=dev` on the pre-fix lockfile returned 0). The Dockerfile copies only
+  `build/binacle-net`, and the UI module's JavaScript is hand-written and committed, not bundled.
+- The docs site unfreeze - `current` back at `v2.1.x` until the `v3.0.x` pages exist. Site content, not product.
+- The CodeQL `js/xss-through-dom` fix in `docs/_js/main.js`. Docs-site hardening, and not exploitable as the
+  code stood (both inputs were build-time constants).
+- `.agents/` notes and `.nvmrc`.
+- **The Sonar sweep (2026-08-07 -> 08-09) and the BOM removal.** Large by file count and **it ships** - this is
+  the part the old wording denied. Every change is a refactor: extracted methods, media-type constants over
+  string literals, handlers made `static`, discards for unused locals, `{Placeholder}` casing in log templates.
+  The largest single file is `ServiceModule/v0/Endpoints/Auth/Token.cs`, whose rejection chain became one
+  extracted `Reject` helper. The two behaviour-shaped ones are not: collapsing nested `if`s in `PackResponse` /
+  `BinResponseBase` keeps the same condition, and `WriteAsync` on `/_debug` merely takes the request's
+  cancellation token. The forwarded-headers and health check middleware changed only log-template casing, so
+  **B1's beta verification still holds against this code** - and **beta 2 is what proves the rest of it in a
+  real deployment** rather than on the strength of this paragraph.
+- **ViPaq's source changed comments only.** `Header.cs`, `ProtocolEncoder.cs`, `DeflateCodec.cs` and
+  `ViPaqSerializer.cs` have no behavioural diff against the beta 1 tag, so the wire format is untouched and the
+  ViPaq lines in the body need no caveat.
+- **The Dockerfile did not change after beta 1 at all.** `/app/data`, `libgssapi-krb5-2` and the OCI labels
+  were all in that image already, so the `⚙️ Core Changes` lines describing them are announcing something that
+  has already run in a deployment.
+- The docs-v3 merge (`3dc6f1ac`) and the sample hardening under `docs/collections/_versions/**` - site content.
+
+**Two more that land after this section was written** and are the ones most likely to need re-checking: the
+`servers` entry added to both OpenAPI documents on 2026-08-10, and the release-workflow rebuild. Neither
+changes observable API behaviour - `servers` is the value OpenAPI already defaults to, and the workflow does
+not touch the app - so neither earns a line in the body. Re-confirm that before publishing if more lands.
+
+### Before publishing
+
+- Confirm the version number and the compare link at the bottom.
+- Fitting was verified unchanged (2026-07-19), so `📈 Algorithms` needs no caveat.
+- All four breaking changes must be present (B7b), along with the migration guide.
+- The same content has to reach `v3.0.x/release-notes.md` on the docs site - B8 lists the three additions that
+  page is still missing.
 
 ---
 
@@ -344,33 +464,43 @@ publish, and the docs deploy follows the tag.
 1. ~~Gate A.~~ Done - A1, A3, A4 landed 2026-07-27/30, A2 answered 2026-08-06.
 2. ~~Publish the beta image and deploy it.~~ Done - published 2026-07-30.
 3. ~~B1 - beta 1 verification.~~ Done 2026-08-06, all boxes pass, no defects. Two non-blocking actions remain -
-   turn `DEBUG_ENDPOINT` off, and re-confirm the resolved caller once the forwarded-headers source header
-   settles. Both are now on beta 2's list at step 8, which is the run that closes them.
+    turn `DEBUG_ENDPOINT` off, and re-confirm the resolved caller once the forwarded-headers source header
+    settles. Both are now on beta 2's list at step 8, which is the run that closes them.
 4. ~~B0 - unfreeze and deploy the docs site.~~ Done 2026-08-06, with the CodeQL `js/xss-through-dom` fix in the
-   same deploy.
+    same deploy.
 5. ~~B4 and B3.~~ Both done - B4 on 2026-08-06, B3 written on 2026-08-07 along with the two general-page audit
-   fixes. `v3.0.x/vipaq-protocol.md` already exists, so B2 does not write it.
+    fixes. `v3.0.x/vipaq-protocol.md` already exists, so B2 does not write it.
 6. ~~B2 - write the `v3.0.x` pages.~~ Done 2026-08-10. The long pole is down; everything below it is small.
 7. **Confirm the suites are green before cutting beta 2.** `just test all` - eleven leaves, nothing to bring
-   up, about two minutes. This step was never written down and should have been: the sweep that beta 2 exists
-   to test is exactly the kind of change a suite catches first and cheapest. Green on 2026-08-10.
-8. **B2X - tag `v3.0.0-beta.2`, then work its verification list.** The list is short because B1 covered the
-   deployment-shaped behaviour and the middleware it exercised did not change. Turning `DEBUG_ENDPOINT` off and
-   re-confirming the resolved caller are both on it.
-9. **Bump the nine files from `3.0.0-beta.1` to `3.0.0-beta.2`** (B5), once beta 2 is actually on Docker Hub.
-   Six pins plus `README.md`, `samples/README.md` and `samples/docker/README.md`.
-10. B6 - the one Azure Storage run.
-11. **Bump the same nine files to `3.0` as the last change before the tag**, then tag `v3.0.0`. Drop the
+    up, about two minutes. This step was never written down and should have been: the sweep that beta 2 exists
+    to test is exactly the kind of change a suite catches first and cheapest. Green on 2026-08-10.
+8. **Land the release-workflow rebuild**, and diff the publish output before going near a tag. Steps 1 and 2 of
+    the CI plan: build through `just build publish`, then the tag-triggered restructure with digest promotion
+    and the smoke gate. Beta 2 is what proves it, so it goes in first.
+9. **B2X - tag `v3.0.0-beta.2`, then work its verification list.** The list is short because B1 covered the
+    deployment-shaped behaviour and the middleware it exercised did not change. Turning `DEBUG_ENDPOINT` off and
+    re-confirming the resolved caller are both on it. This run now also exercises the rebuilt pipeline - and
+    afterwards, do the throwaway-tag promotion check, which the beta itself cannot cover.
+10. **Bump the nine files from `3.0.0-beta.1` to `3.0.0-beta.2`** (B5), once beta 2 is actually on Docker Hub.
+    Six pins plus `README.md`, `samples/README.md` and `samples/docker/README.md`.
+11. B6 - the one Azure Storage run.
+12. **Bump the same nine files to `3.0` as the last change before the tag**, then tag `v3.0.0`. Drop the
     two-line internal comment above each `image:` line in the same change, and sweep the two `config/` examples.
     Re-confirm B7a - `ApiV4Document.IsExperimental` still `true` - right before tagging.
     `release-docker-image.yml` publishes the final image on `release: published`. A2 confirmed no `3.0` tag
     exists yet, so the bump is safe only once the tag is about to be published.
-12. Paste `release-notes-v3.0.0.md` into the release body, with all four breaking changes in it (B7b).
-13. **Smoke the published image before announcing anywhere:** `just smoke all binacle/binacle-net:3.0.0`. The
-    release workflow pushes without smoking - wiring that in is `ci-release-workflow-build` and is not done - so this
-    manual run is the only thing between a broken image and the people who pull it. It takes about a minute and
-    needs nothing brought up. The same command passed against `3.0.0-beta.1` on 2026-08-07.
-14. **Release the docs - B8's deploy.** B2's pages and B8's config are both on `main` already; this step is the
+13. **The release body** - with all four breaking changes in it (B7b). `release-notes-v3.0.0.md` is body only
+    as of 2026-08-10, so it publishes whole either way. **How it gets there depends on step 8:** with the
+    workflow rebuild in, the release is created from that file and there is nothing to paste - check the
+    rendered body instead. Without it, paste the file whole. See "The release notes file" for what to confirm
+    first.
+14. **Smoke the published image before announcing anywhere.** Again depends on step 8: with the rebuild in,
+    this is a gate inside the pipeline and `3.0` and `latest` never point at anything unsmoked, so the manual
+    run becomes a confirmation. Without it, `just smoke all binacle/binacle-net:3.0.0` by hand is the only
+    thing between a broken image and the people who pull it - about a minute, nothing to bring up. The same
+    command passed against `3.0.0-beta.1` on 2026-08-07, and the `smoke-image.yml` workflow does it on a
+    runner from a tag you type.
+15. **Release the docs - B8's deploy.** B2's pages and B8's config are both on `main` already; this step is the
     deploy, plus the three additions and the real date and release link in `v3.0.x/release-notes.md`. It is the
     easiest item in this file to lose - nothing fails if it is skipped, the site just silently stays on v2.1.x.
 
@@ -378,10 +508,27 @@ publish, and the docs deploy follows the tag.
     its `releases/tag/v3.0.0` link, and the fact that `main` already says v3.0.x is current, so deploying
     earlier presents an unreleased version as current. It still has to land before anything is announced,
     because the announcement points at pages that must be live. Tag, then deploy the docs, then announce.
-15. Work `post-release-v3.0.0.md`.
+16. Work `post-release-v3.0.0.md`.
 
 ## Not in this release
 
 Everything else has a plan of its own and is on `board.md`, grouped by area with its blockers named. Do not pull
-any of it in: CI work, the version stamp, the npm publishing decision, the `Parallel*` processors, migrating the
-UI clients off v3, the benchmark ledger, TestsKernel fixtures, and v4 going stable in 3.1.0.
+any of it in: the version stamp, the npm publishing decision, the `Parallel*` processors, migrating the UI
+clients off v3, the benchmark ledger, TestsKernel fixtures, and v4 going stable in 3.1.0.
+
+**A second exception, decided 2026-08-10: dropping `--self-contained`.** Landed in `build.just` and the release
+workflow after being measured and fully tested locally - 150.2 MB down to 103.2 MB, all smoke and test suites
+green. It is in because beta 2 is the run that proves it on a real deployment, and because shipping v3.0.0 with
+two .NET runtimes in the image is a worse outcome than testing one flag during a beta. The rest of the image
+work - chiseled bases and the hardened-image question - stays out.
+
+**One exception, decided 2026-08-10: the release-workflow rebuild is in, and beta 2 is its test.** CI work was
+on this list until then. The reason for the change is that a prerelease tag is the only free test that pipeline
+will ever get - it runs the whole path, and metadata-action's guards mean it moves neither `latest` nor the
+minor tag, so a failure costs a deleted tag instead of a bad release. Deferring it meant the first run of a
+rebuilt publish path would be v3.0.0 itself, which is the one release that cannot be taken back.
+
+Scope is capped at what a prerelease can prove: build through the recipe, the tag-triggered restructure with
+digest promotion, and the smoke gate. SBOM, provenance and multi-arch stay out - they change the artifact, and
+nothing about them needs the beta. The CI plan holds the detail, including the one step a prerelease **cannot**
+test and the five-minute manual check that closes it.

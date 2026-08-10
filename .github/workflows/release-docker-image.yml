@@ -29,7 +29,13 @@ jobs:
       # output to build/binacle-net, and build.just publishes the same project to the same place. A variable can
       # only drift from those two hardcoded facts and silently build an image without the app in it. Keep this
       # line in step with build.just's `publish` recipe.
-      run: dotnet publish api/src/Binacle.Net/Binacle.Net.csproj -c Release -o build/binacle-net --no-restore --self-contained --runtime linux-x64
+      #
+      # --no-self-contained since 2026-08-10. It was --self-contained while the image bases on aspnet, so every
+      # published image carried two copies of .NET: the bundled one the app ran on, and the base image's, which
+      # nothing loaded. Dropping it took the image from 150.2 MB to 103.2 MB, measured locally, with all 31
+      # structure assertions and all five smoke profiles green. It also means a .NET security fix reaches users
+      # by rebasing on a newer aspnet tag rather than by republishing the app.
+      run: dotnet publish api/src/Binacle.Net/Binacle.Net.csproj -c Release -o build/binacle-net --no-restore --no-self-contained --runtime linux-x64
     - name: Extract Docker metadata
       id: meta
       uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0

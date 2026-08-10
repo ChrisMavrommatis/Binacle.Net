@@ -1,7 +1,7 @@
 ---
 id: commands
 description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
-verified: 2026-08-06
+verified: 2026-08-10
 check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; openapi recipes match config/openapi.just; agents recipes match config/agents.just; serve recipes match config/serve.just; smoke recipes match config/smoke.just; install/assets match the root justfile; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
 ---
 
@@ -124,8 +124,9 @@ Generation is off by default (`-p:GenerateOpenApi=true`, set by the recipe) so a
 the app host. The destination is `-p:OpenApiDir`; MSBuild resolves a relative one against the **project**
 directory, which is why the recipe passes an absolute path.
 
-`just openapi lint` currently reports two `oas3-api-servers` warnings and no errors — that's the parked
-`servers` decision, not a regression.
+`just openapi lint` is clean — no errors and no warnings. Both documents carry a `servers` entry with a single
+relative `/`, set in the shared document transform, so a run that reports `oas3-api-servers` means something
+removed it.
 
 ## Performance tests
 

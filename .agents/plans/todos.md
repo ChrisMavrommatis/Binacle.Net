@@ -11,14 +11,11 @@ a decision or a set of sub-steps gets its own plan file instead.
   needs nothing brought up. Moved out of `ci-gates` on 2026-08-07 - it shares none of that plan's checkout,
   ordering or runtime constraints.
 
-  **Add the `servers` block first.** The lint reports two `oas3-api-servers` warnings and no errors, and the
-  only open question is whether the gate fails on warnings. A `servers` entry clears both, after which the gate
-  can fail on warnings from day one with nothing to argue about. Turn the gate on first and you choose between
-  a gate that ignores warnings - which stops being read - and one that is red on arrival.
-
-  The shape was decided 2026-08-07: **a single relative `/`**, in both documents. Binacle is self-hosted, so
-  the API is at the root of wherever the reader deployed it. Do not name `api.binacle.net` - it is real and it
-  serves our own demo, and putting it in the spec makes it the baked-in default of every generated client.
+  **Unblocked 2026-08-10.** The prerequisite was the `servers` block, because the lint reported two
+  `oas3-api-servers` warnings and turning the gate on first would have forced a choice between a gate that
+  ignores warnings - which stops being read - and one that is red on arrival. The block landed, both documents
+  carry a single relative `/`, and the lint is now clean: 0 errors, 0 warnings. **So set the gate to fail on
+  warnings** - there is nothing left to argue about, and that is the whole reason the ordering mattered.
 
 ## ServiceModule
 

@@ -48,14 +48,27 @@ Agents keep this file current. Two rules:
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [ci-release-workflow-build](plans/ci-release-workflow-build.md) | ready | - |
+| [ci-release-workflow-build](plans/ci-release-workflow-build.md) | **in progress - pulled into the v3.0.0 beta cycle** | - |
 | [ci-gates](plans/ci-gates.md) | blocked | `ci-release-workflow-build` |
+| [image-base-slimming](plans/image-base-slimming.md) | ready - **timing not decided** | - |
 
 **Do `ci-release-workflow-build` first.** The release workflow still builds the image its own way and pushes it
 without ever running it. Both PR gates below it prove less than they look like they prove until that lands.
 
-One-liner, in [todos](plans/todos.md): **lint the OpenAPI documents on every PR.** Ready, but add the `servers`
-block first - it clears the two warnings the gate would otherwise have to ignore.
+**`image-base-slimming` is here because it is about the shipped artifact** - move it if you would rather it sat
+elsewhere. The duplicated-runtime finding it opened with **landed on 2026-08-10 and went into v3.0.0**: dropping
+`--self-contained` took the image from 150.2 MB to 103.2 MB, and beta 2 is the first built that way. The file is
+now about the base itself, which is ~90% of what remains - chiseled, and whether Docker Hardened Images earn
+their subscription. **Not scheduled.**
+
+**It stopped being standing work on 2026-08-10.** The maintainer pulled the first half into the v3.0.0 release,
+because a prerelease tag is the only free test that pipeline gets and beta 2 is the run. The release plan owns
+the scheduling; the plan file owns the how. Only the parts a beta can prove moved - SBOM, provenance and
+multi-arch are still here and still unscheduled.
+
+One-liner, in [todos](plans/todos.md): **lint the OpenAPI documents on every PR.** Ready, and no longer
+blocked - the `servers` block landed on 2026-08-10 and the lint is clean, so the gate can fail on warnings
+from day one.
 
 ## Testing
 
