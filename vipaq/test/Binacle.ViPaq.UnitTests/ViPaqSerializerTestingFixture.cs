@@ -2,12 +2,13 @@ using System.Numerics;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// The public path: everything goes through ViPaqSerializer, the entry point a real caller uses. It picks its
-// own header — raw, row-major, narrowest — so nothing here takes one. Choosing that header is ViPaqSerializer's
-// own job (PROTOCOL.md §4/§6), which is exactly what these tests pin.
+// The public path: everything goes through ViPaqSerializer, the entry point a real caller uses. It derives the
+// widths itself (narrowest that fits) and takes compression and layout from the caller's options, defaulting to
+// raw and row-major. Choosing that header is ViPaqSerializer's own job (PROTOCOL.md §4/§6), which is exactly
+// what these tests pin.
 //
-// Use ProtocolTestingFixture instead when a test needs to force a header: a compressed, columnar or
-// deliberately wide blob is unreachable from this side.
+// Use ProtocolTestingFixture instead when a test needs to force the widths — a deliberately wide blob is
+// unreachable from this side.
 //
 // Nothing here checks anything. Every method serializes or deserializes and hands back a BinContents, so a
 // test keeps its arrange, act and assert on three separate lines and compares with BinContents.AssertSame.

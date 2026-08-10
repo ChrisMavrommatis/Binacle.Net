@@ -5,7 +5,7 @@ using Google.Protobuf;
 namespace Binacle.ViPaq.TestsKernel.Protobuf;
 
 // Turns a scenario into protobuf bytes — the baseline ViPaq is measured against. To keep the comparison fair it
-// runs the *same codec* as the ViPaq side of the same file (codec-race.md): the NoOp file compares raw against
+// runs the *same codec* as the ViPaq side of the same file: the NoOp file compares raw against
 // raw, the deflate file deflate against deflate, the gzip file gzip against gzip. So the only thing that differs
 // in a table is the format, never the compressor. Protobuf has no layout, so the two layout tables in a file
 // share the same protobuf bytes.

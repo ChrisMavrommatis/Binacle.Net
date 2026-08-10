@@ -5,9 +5,8 @@ namespace Binacle.ViPaq.Compression;
 // Raw DEFLATE (RFC 1951), no wrapper.
 //
 // Cheaper than gzip by ~18 bytes a blob: gzip's magic, mtime, OS byte and CRC trailer buy nothing here. The
-// header already says the body is compressed, the body already knows its own length, and the choosing layer
-// only keeps a compressed body when it came out shorter. Framing is dead weight that pushes the point where
-// compressing starts to pay further out.
+// header already says the body is compressed and the body already knows its own length, so that framing is
+// dead weight that pushes the point where compressing starts to pay further out.
 //
 // Same DEFLATE stream underneath as gzip. `DeflateStream` pairs with `CompressionStream('deflate-raw')` in a
 // browser and `zlib.createDeflateRaw` in Node — which is what makes it portable, and is only proven by the

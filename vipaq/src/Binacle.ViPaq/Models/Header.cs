@@ -12,9 +12,10 @@ namespace Binacle.ViPaq;
 //   [Version][Compressed][Layout][reserved]      [Bin dims][Item dims][Item coords][reserved]
 //   [2 bits ][1 bit     ][1 bit ][4 bits  ]      [2 bits  ][2 bits   ][2 bits     ][2 bits  ]
 //
-// Every field is `init`. `Compressed` included: the blind encoder obeys it rather than deciding it. Trying
-// both and keeping the shorter blob is the choosing layer's job (PROTOCOL.md §6, decisions.md D7), and it
-// does that by building two headers, not by mutating one.
+// Every field is `init`, `Compressed` included: the blind encoder obeys that bit rather than deciding it.
+// Anything wanting a different form builds a second header instead of mutating this one — which is how the
+// measurement harness races codecs (PROTOCOL.md §6, decisions.md D7). The serializer itself does not race;
+// its `Compress` option is a straight on/off.
 internal readonly record struct Header
 {
 	// The header is always two bytes, and it is never compressed.
@@ -35,18 +36,16 @@ internal readonly record struct Header
 	public required Width ItemCoordinatesWidth { get; init; }
 
 	// The header for this data, at the library's default form: the narrowest widths that hold each section
-	// (PROTOCOL.md §4), uncompressed and row-major. The mirror of `FromBytes` — that reads a header off the wire,
-	// this derives one from the values. The width rule has exactly one home (decisions.md D14): `Serialize`
-	// calls this to write a blob, and the codec race calls it to force a mode, and neither re-derives a width.
+	// (PROTOCOL.md §4), uncompressed and row-major. The mirror of `FromBytes` — that reads a header off the
+	// wire, this derives one from the values.
 	//
-	// `Compressed` and `Layout` are left at their defaults. Whether compressing paid can only be known after
-	// compressing and comparing (§6, D7), so it is not decided here; and layout is unmeasured, so row-major. A
-	// caller that wants a different form takes this and `with`-s those two bits — the codec race does exactly
-	// that.
-	//
-	// The three sections are sized independently: a big bin can hold small items at large coordinates, so they
-	// genuinely disagree (findings.md: Bischoff packs to 16/8/16). With no items both item widths stay `Eight`,
-	// which is exactly what §4 requires of an empty blob.
+	//   - Widths are derived here and nowhere else (decisions.md D14). `Serialize` calls this to write a blob
+	//     and the measurement harness calls it to force a mode; neither re-derives a width.
+	//   - The three sections are sized independently, because they genuinely disagree: a big bin can hold small
+	//     items at large coordinates (findings.md: Bischoff packs to 16/8/16).
+	//   - With no items, both item widths stay `Eight` — what §4 requires of an empty blob.
+	//   - `Compressed` and `Layout` stay at their defaults (see the note on the type). Layout is unmeasured, so
+	//     row-major. A caller wanting another form `with`-s those two bits.
 	public static Header Create<TBin, TItem, T>(TBin bin, IReadOnlyList<TItem> items)
 		where T : struct, IBinaryInteger<T>
 		where TBin : IWithReadOnlyDimensions<T>

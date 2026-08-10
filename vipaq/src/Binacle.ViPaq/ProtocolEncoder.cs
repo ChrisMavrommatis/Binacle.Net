@@ -14,9 +14,9 @@ namespace Binacle.ViPaq;
 // It never re-derives a width from the values it reads (§4), which is what lets a deliberately-too-wide blob
 // round-trip.
 //
-// The codec is a constructor argument, so this class is fully testable: hand it a dummy codec and every
-// combination of widths, layout and compression becomes forceable. Once the DEFLATE-versus-gzip race is
-// settled the codec is pinned by `Version` (§6) and the constructor takes the winner.
+// The codec is a constructor argument rather than a decision made here, so this class is fully testable: hand
+// it a dummy codec and every combination of widths, layout and compression becomes forceable.
+// `ViPaqSerializer.ResolveCodec` picks the real one.
 //
 // Encode and Decode live together because they are one agreement read in two directions: whatever Encode
 // writes, Decode must read back.
@@ -76,8 +76,7 @@ internal sealed class ProtocolEncoder
 		HeaderHelper.ThrowOnInvalidHeader<T>(header);
 
 		// Run the body through the codec, which was resolved from the header: a NoOp passes a raw body through,
-		// the real codec inflates a compressed one (§7, step 4). The item count lives inside it (§3), so it
-		// cannot be read until now.
+		// the real codec inflates a compressed one (§7, step 4).
 		var body = this.compressionCodec.Decompress(rest);
 
 		ValidationHelper.ThrowIfBodyHasNoItemCount(body);

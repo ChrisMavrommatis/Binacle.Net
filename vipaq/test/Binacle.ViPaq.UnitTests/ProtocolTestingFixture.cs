@@ -5,9 +5,9 @@ namespace Binacle.ViPaq.UnitTests;
 
 // The lower path: encode and decode through ProtocolEncoder, which is handed a header rather than choosing
 // one. That is the whole point of driving it directly — layout and all three widths are inputs, so a test can
-// force a columnar or wider blob. ViPaqSerializer chooses nothing yet (it always writes raw, row-major,
-// narrowest), so a test driven through it can never reach the layout or width variants. For the path a real
-// caller takes, use ViPaqSerializerTestingFixture instead.
+// force a columnar or deliberately-too-wide blob. ViPaqSerializer derives the widths itself, so a test driven
+// through it can never reach the width variants. For the path a real caller takes, use
+// ViPaqSerializerTestingFixture instead.
 //
 // These helpers are uncompressed: the encoder gets the NoOp codec, so the body stays byte-for-byte readable
 // (the exact-byte pins depend on that). The exception is DecodeWith, which takes a codec so the

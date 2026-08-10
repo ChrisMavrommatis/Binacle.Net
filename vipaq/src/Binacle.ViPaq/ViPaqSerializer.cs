@@ -11,9 +11,7 @@ namespace Binacle.ViPaq;
 // is where that goes. Three things are the encoder's choice, all recorded in the header so a decoder never
 // guesses (PROTOCOL.md §4 "Selection", §6, decisions.md D14):
 //
-//   - **Widths** — the narrowest that holds each section, sized independently. A big bin can hold small items
-//     at large coordinates, so the three sections genuinely disagree (findings.md: Bischoff packs to 16/8/16).
-//     With no items, both item widths must be `Eight` (§4).
+//   - **Widths** — derived by `Header.Create`: the narrowest that holds each section, each sized independently.
 //   - **Layout** — the caller's choice through `ViPaqSerializationOptions`, default `RowMajor` (D16).
 //   - **Compressed** — the caller's choice too, default off. The codec follows from the header (`ResolveCodec`):
 //     raw DEFLATE when set, a pass-through NoOp when not. Pinned by `Version` (§6, D16).
@@ -37,8 +35,7 @@ public static class ViPaqSerializer
 		var options = new ViPaqSerializationOptions();
 		configure?.Invoke(options);
 
-		// Create picks the widths; the caller's options set the layout and whether to compress. The width rule
-		// has exactly one home (D14) — never re-derived.
+		// Create picks the widths; the caller's options set the layout and whether to compress.
 		var header = Header.Create<TBin, TItem, T>(bin, items) with
 		{
 			Layout = options.Layout,

@@ -8,9 +8,10 @@ namespace Binacle.ViPaq.UnitTests;
 // but fails the header-bytes assertion.
 //
 // These drive ProtocolEncoder (through the fixture), not ViPaqSerializer, so the scenario's header is an input:
-// that is what lets a scenario be columnar or wider than narrowest. ViPaqSerializer always writes raw,
-// row-major, narrowest, so those scenarios are unreachable through it. Every scenario is uncompressed for now
-// (compression is deferred, PROTOCOL.md §6).
+// that is what lets a scenario be columnar or wider than narrowest. ViPaqSerializer derives the widths itself,
+// so those scenarios are unreachable through it. Every scenario is uncompressed, because the fixture's NoOp
+// codec is what keeps the header-bytes pin meaningful (PROTOCOL.md §6.1 forbids comparing real compressed
+// bytes).
 [Trait("Result Tests", "Ensures results are as expected")]
 public class RoundTripScenarioTests
 {
