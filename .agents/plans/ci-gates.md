@@ -103,8 +103,10 @@ stay out too, because a Jekyll template with `---` front matter and Liquid in it
 document and Sonar's HTML analyser can only misread it.
 
 **Findings under `docs/` and `web/` are not fixed in a coding session.** Both folders stay off limits per
-`CLAUDE.md`. Whatever the next run reports there gets written into `docs-v3-pages.md` or a new plan for the
-session that owns those files. Measuring and fixing are separate jobs, and only fixing was ever restricted.
+`CLAUDE.md`, with the one carve-out that rule names for downloadable sample files. Whatever the next run
+reports there gets written into `sonar-issue-triage.md` - which already holds the `docs/` findings from the
+2026-08-09 sweep - or a new plan for the session that owns those files. Measuring and fixing are separate jobs,
+and only fixing was ever restricted.
 
 ### Settings that live in the SonarCloud UI, not in the repo {#sonar-ui-settings}
 

@@ -13,7 +13,6 @@ you need, and trim or delete it once the work lands.
 |---|---|
 | [ci-gates.md](ci-gates.md) | CI - make the PR gate mean something |
 | [ci-release-workflow-build.md](ci-release-workflow-build.md) | CI - fix the release workflow: build through the recipe, then smoke before pushing |
-| [docs-v3-pages.md](docs-v3-pages.md) | Docs site - write the v3.0.x pages |
 | [image-module-stacks.md](image-module-stacks.md) | Decide what the `image` module is still for |
 | [scripts-to-just-recipes.md](scripts-to-just-recipes.md) | Convert the last `config/*.sh` scripts to `just` recipes |
 | [sonar-issue-triage.md](sonar-issue-triage.md) | Sonar - what is left after the 2026-08-09 sweep |

@@ -111,6 +111,27 @@ are xunit `IAsyncLifetime` classes whose `DisposeAsync` ends in `await base.Disp
 `GC.SuppressFinalize(this)` to a fixture that will never have a finalizer is ceremony. Either add the line ten
 times, or mark the ten Accepted with "test fixture, no finalizer". Not decided.
 
+## Open question - the frozen versioned sample copies {#frozen-copies-question}
+
+Carried here on 2026-08-10 when the docs-v3 plan was deleted; it is the one thing that outlived that work, and
+it belongs with the drift it came from (see the lesson at the end of `{#vulnerabilities}`).
+
+The seven sample **files** are fixed. What is unresolved is the **prose** around the frozen ones. The `v2.0.x`
+and `v2.1.x` pages now ship corrected manifests with nothing on the page saying so, and the resource values are
+starting points rather than a recommendation. The `v3.0.x` page was given a note under "Customize" saying
+exactly that on 2026-08-10; the two frozen pages were deliberately left alone, pending this decision.
+
+Two directions, and it is a docs decision, not a coding one:
+
+- **Correct the frozen copies whenever the current one is corrected**, and say nothing on the page. Cheapest,
+  but it silently rewrites what a released version shipped.
+- **Annotate the frozen pages as historical**, pointing at the current sample. Honest about what that version
+  shipped, but it leaves a reader on an old page holding a file we know is worse.
+
+Either way it wants a rule written down somewhere durable, because the failure mode is silent: nobody diffs a
+four-version-old manifest, and the analyser only found these because an exclusion was narrowed. Nothing here
+blocks a release - the current version's manifest ships limits and its page explains them.
+
 ## Two traps this sweep produced, both worth remembering {#traps}
 
 - **A script that prepends a line to a file relocates the BOM instead of preserving it.** The media-type pass

@@ -1,7 +1,7 @@
 ---
 id: samples
 description: Deployment samples — Docker Compose (minimal, quickstart, prod, service, full) and Kubernetes (minimal); each folder name is a smoke profile name, feature flags, config wiring, and the keep-in-sync rule
-verified: 2026-08-09
+verified: 2026-08-10
 check: Sample folders, compose env vars, bind-mounted config paths, the k8s resource bounds, and the pinned image tag match samples/; every samples/docker folder name has a config/smoke/<name>.yml with the same module set
 also_update:
   - api/configuration
@@ -82,7 +82,7 @@ measure against, not a sizing recommendation; the manifest says so.
 
 ## The image tag is pinned {#image-pin}
 
-All six samples pin `binacle/binacle-net:3.0.0-beta.1` for now — `samples/docker/*/docker-compose.yml` and
+All six samples pin the same tag — `samples/docker/*/docker-compose.yml` and
 `samples/kubernetes/minimal/binacle-deployment.yaml`. Never `latest`: a sample is copied once and lives for
 years, so `latest` hands the reader the next major release on their next pull, with nothing in their config saying
 what changed.
@@ -93,7 +93,16 @@ bug fixes flow, breaking changes never do, and the pin only changes when a new m
 `{{major}}` tag on purpose: `3` crosses minor lines. An exact patch is the right pin only for a line that will get no
 further ones, which is why v1.3.x and v2.x samples are pinned that way in the published docs snapshots.
 
-**`3.0` does not exist on Docker Hub until v3.0.0 is published.** The samples were rewritten to document v3-only
-settings, so pinning the old `2.1.1` would have been wrong in a different way. They are pinned to
-`3.0.0-beta.1` in the meantime, which does exist, and move to the `3.0` minor tag as the last change before the
-tag - see `B5` in `release-v3.0.0.md`.
+**Until a minor tag exists, the pin is the newest published prerelease** — `3.0.0-beta.1` today. The samples
+document v3-only settings, so the old `2.1.1` would be wrong in a different way, and `3.0` does not resolve on
+Docker Hub until v3.0.0 is published. The rule for every move is the same: **a pin on `main` must name an image
+that already exists**, so the pin follows a publish and never precedes one.
+
+Three files outside the six carry the tag in prose and have to move with them: `README.md` at the repo root,
+`samples/README.md` and `samples/docker/README.md`. Two more mention it as an example only —
+`config/README.md` and `config/smoke.just`.
+
+The published docs snapshots under `docs/collections/_versions/v3.0.x/samples/` pin `3.0` directly, because a
+snapshot describes the released version rather than the working tree. They also carry a shorter comment above
+the `image:` line: the repo copies explain our release order, which means nothing to a reader who downloaded
+the file.

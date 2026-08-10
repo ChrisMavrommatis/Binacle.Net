@@ -18,8 +18,11 @@ Style is taken from the maintainer's published releases (https://github.com/Chri
 - A minor/patch release drops all of this and is just `## Overview` with a few plain bullets.
 
 **Scope:** `v2.1.1` (2026-01-13, the last shipped image) → now. `v3.0.0-beta.1` sits at 186 commits past
-`v2.1.1`. Everything after the beta tag is maintenance that **does not reach the image**, so the body below
-needs no change for any of it — checked 2026-08-06, re-checked through `3dc6f1ac` on 2026-08-10:
+`v2.1.1`, and 27 more have landed since that tag. **The body below needs no change for any of them** — but note
+the reason, because an earlier version of this paragraph got it wrong. It is not that the later work misses the
+image; part of it ships. It is that none of it changes anything a user can observe, so there is nothing to
+announce. Checked 2026-08-06, re-checked through `ea9f035b` on 2026-08-10, the second time against the
+`v3.0.0-beta.1` tag rather than the commit log:
 
 - `npm audit fix` / `bundle audit-fix` on the root, `docs/` and `web/` lockfiles. Every advisory closed was a
   devDependency (`npm audit --omit=dev` on the pre-fix lockfile returned 0). The Dockerfile copies only
@@ -28,12 +31,21 @@ needs no change for any of it — checked 2026-08-06, re-checked through `3dc6f1
 - The CodeQL `js/xss-through-dom` fix in `docs/_js/main.js`. Docs-site hardening, and not exploitable as the
   code stood (both inputs were build-time constants).
 - `.agents/` notes and `.nvmrc`.
-- **The Sonar sweep (2026-08-07 → 08-09) and the BOM removal.** Large by file count and it does touch shipping
-  code, but every change is a refactor: extracted methods, `const` over `static`, discards for unused locals,
-  `{Placeholder}` casing in log templates. The two behaviour-shaped ones are not: collapsing nested `if`s in
-  `PackResponse` / `BinResponseBase` keeps the same condition, and `WriteAsync` on `/_debug` merely takes the
-  request's cancellation token. The forwarded-headers and health check middleware changed only log-template
-  casing, so **B1's beta verification still holds against this code**.
+- **The Sonar sweep (2026-08-07 → 08-09) and the BOM removal.** Large by file count and **it ships** — this is
+  the part the old wording denied. Every change is a refactor: extracted methods, media-type constants over
+  string literals, handlers made `static`, discards for unused locals, `{Placeholder}` casing in log templates.
+  The largest single file is `ServiceModule/v0/Endpoints/Auth/Token.cs`, whose rejection chain became one
+  extracted `Reject` helper. The two behaviour-shaped ones are not: collapsing nested `if`s in `PackResponse` /
+  `BinResponseBase` keeps the same condition, and `WriteAsync` on `/_debug` merely takes the request's
+  cancellation token. The forwarded-headers and health check middleware changed only log-template casing, so
+  **B1's beta verification still holds against this code** — and **beta 2 is what proves the rest of it in a
+  real deployment** rather than on the strength of this paragraph.
+- **ViPaq's source changed comments only.** `Header.cs`, `ProtocolEncoder.cs`, `DeflateCodec.cs` and
+  `ViPaqSerializer.cs` have no behavioural diff against the beta 1 tag, so the wire format is untouched and the
+  ViPaq lines below need no caveat.
+- **The Dockerfile did not change after beta 1 at all.** `/app/data`, `libgssapi-krb5-2` and the OCI labels
+  were all in that image already, so the `⚙️ Core Changes` lines describing them are announcing something that
+  has already run in a deployment.
 - The docs-v3 merge (`3dc6f1ac`) and the sample hardening under `docs/collections/_versions/**` — site content.
 
 **Before pasting:** confirm the version number / compare link. Fitting was verified unchanged (2026-07-19), so

@@ -26,10 +26,15 @@ in the same change, leaving the text.
       [ci-release-workflow-build](plans/ci-release-workflow-build.md) wires it in, this manual run is the only
       thing between a broken image and the people who pull it. About a minute, nothing to bring up.
 
-- [ ] **Confirm `3.0` resolves on Docker Hub, and that `latest` moved.** The six sample pins were bumped from
-      `3.0.0-beta.1` to `3.0` in the last change before the tag. Until the release image is published that tag
-      does not exist, so this is the check that the samples on `main` are not pointing at nothing. A2 verified
-      the prerelease moved neither `latest` nor the minor tag; this is the same check for the real release.
+- [ ] **Confirm `3.0` resolves on Docker Hub, and that `latest` moved.** Nine files were bumped from
+      `3.0.0-beta.2` to `3.0` in the last change before the tag - six pins plus `README.md`, `samples/README.md`
+      and `samples/docker/README.md`. Until the release image is published that tag does not exist, so this is
+      the check that `main` is not pointing at nothing. A2 verified a prerelease moved neither `latest` nor the
+      minor tag; this is the same check for the real release, where both are expected to move.
+
+      **Check the repo landing page by eye while you are here.** `README.md` is the one that carried a
+      beta-conditional sentence ("Until then, pin `binacle/binacle-net:3.0.0-beta.2`") and it is the most read
+      file in the repo. A stale beta pin there outlives every other miss.
 
 - [ ] **Delete the release set.** `release-v3.0.0.md` and `release-notes-v3.0.0.md` go once the release is out
       and verified. This file goes when its own list is clear.

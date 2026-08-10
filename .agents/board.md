@@ -31,8 +31,15 @@ Agents keep this file current. Two rules:
 ## What is not here
 
 - **The active release.** v3.0.0 is in flight - `release-v3.0.0.md` holds its gates and
-  `post-release-v3.0.0.md` holds the days right after it. `docs-v3-pages` is release work (item B2) and is
-  tracked there, not here. **Do not pull board work into the release.**
+  `post-release-v3.0.0.md` holds the days right after it. **Do not pull board work into the release.**
+
+  `docs-v3-pages` was release work (item B2). B2 landed on 2026-08-10 and the plan was deleted. The one
+  question that outlived it - whether the frozen versioned sample copies get corrected or annotated - moved
+  into `sonar-issue-triage`, which already held the findings it came from.
+
+  **`sonar-issue-triage` has never had a row here**, and it should: the sweep is done but it still carries the
+  CA1816 decision, the frozen-copies question and what the quality gate hangs on. **Placement and priority are
+  the maintainer's call**, so it has not been put in a table.
 - **Reference material.** Docs, design and memory are not work. Find them through their own indexes.
 
 ---
