@@ -20,8 +20,9 @@ what you need on demand. `docs/`, `design/`, `plans/`, `ideas/`, and `memory/` e
 (a grouped manifest); regenerate them all with `just agents all` after adding or renaming a file.
 
 **Everything is grouped by slice, mirroring the repo layout.** A slice is a top-level area of the
-codebase (`api`, `lib`, `vipaq`, `shared`, …); files that don't map to one live at the root under
-`General`. The docs, design, plans, and ideas for a slice sit in a folder of the same name, so an agent can open
+codebase (`api`, `lib`, `vipaq`, `shared`, `config`, `ci-cd`, …); files that don't map to one live at the root
+under `General`. Most slices are a directory; `ci-cd` is the exception and covers `.github/workflows/`.
+The docs, design, plans, and ideas for a slice sit in a folder of the same name, so an agent can open
 just the slice it's working on and skip everything else — the point is to find the relevant guidance fast,
 not to eagerly load unrelated context. Keep a new doc/plan/idea in its slice folder for the same reason.
 

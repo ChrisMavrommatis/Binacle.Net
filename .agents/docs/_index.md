@@ -39,6 +39,13 @@ table of [README.md](README.md).
 | [api/v4/contracts.md](api/v4/contracts.md) | Request/response contract types, validators, and OpenAPI examples for v4 (v3 follows the same shape) |
 | [api/v4/README.md](api/v4/README.md) | v4 API — active development. Endpoints, algorithm selection, parameters, contracts, and response shape. |
 
+## CI/CD
+
+| File | Description |
+|---|---|
+| [ci-cd/README.md](ci-cd/README.md) | CI/CD — the six GitHub Actions workflows in .github/workflows, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need |
+| [ci-cd/release-pipeline.md](ci-cd/release-pipeline.md) | The release pipeline in release-docker-image.yml — four jobs from a pushed tag to a published GitHub release, the immutable-then-promote tag order, and how a prerelease differs |
+
 ## Config
 
 | File | Description |

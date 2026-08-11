@@ -73,6 +73,7 @@ generate-index name:
         [api]="API"
         [lib]="Lib"
         [vipaq]="ViPaq"
+        [ci-cd]="CI/CD"
         [docs-site]="Docs Site"
         [web-site]="Web Site"
     )

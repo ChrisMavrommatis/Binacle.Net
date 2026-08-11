@@ -48,8 +48,9 @@ Agents keep this file current. Two rules:
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [ci-release-workflow-build](plans/ci-release-workflow-build.md) | **in progress - pulled into the v3.0.0 beta cycle** | - |
-| [ci-gates](plans/ci-gates.md) | blocked | `ci-release-workflow-build` |
+| [ci-release-workflow-build](plans/ci-cd/ci-release-workflow-build.md) | **in progress - pulled into the v3.0.0 beta cycle** | - |
+| [ci-gates](plans/ci-cd/ci-gates.md) | blocked | `ci-release-workflow-build` |
+| [ci-cd/release-pipeline-rebuild](plans/ci-cd/release-pipeline-rebuild.md) | blocked | v3.0.0 shipping |
 | [image-base-slimming](plans/image-base-slimming.md) | ready - **timing not decided** | - |
 
 **Do `ci-release-workflow-build` first.** The release workflow still builds the image its own way and pushes it
@@ -65,6 +66,12 @@ their subscription. **Not scheduled.**
 because a prerelease tag is the only free test that pipeline gets and beta 2 is the run. The release plan owns
 the scheduling; the plan file owns the how. Only the parts a beta can prove moved - SBOM, provenance and
 multi-arch are still here and still unscheduled.
+
+**`release-pipeline-rebuild` replaces the pipeline `ci-release-workflow-build` is landing**, and is blocked
+by its own instruction rather than by a dependency: it says do this after v3.0.0, because the workflow in the
+working tree is what beta 2 exists to test. It moves the release to GHCR-first with a Docker Hub copy, and
+moves the release body into `CHANGELOG.md`. Designed 2026-08-11; **placement and priority are the maintainer's
+call**, so it is parked at the bottom of this table rather than ranked.
 
 One-liner, in [todos](plans/todos.md): **lint the OpenAPI documents on every PR.** Ready, and no longer
 blocked - the `servers` block landed on 2026-08-10 and the lint is clean, so the gate can fail on warnings
@@ -143,8 +150,8 @@ Idea: [shared/extend-shared-models](ideas/shared/extend-shared-models.md) - park
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [image-module-stacks](plans/image-module-stacks.md) | ready | - |
-| [scripts-to-just-recipes](plans/scripts-to-just-recipes.md) | ready | - |
+| [image-module-stacks](plans/config/image-module-stacks.md) | ready | - |
+| [scripts-to-just-recipes](plans/config/scripts-to-just-recipes.md) | ready | - |
 
 Both are maintainer tooling - no user sees either, and nothing in CI calls them. `image-module-stacks` is a
 decision about two compose stacks the smoke suite has made redundant. `scripts-to-just-recipes` is

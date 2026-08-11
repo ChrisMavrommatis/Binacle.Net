@@ -11,11 +11,7 @@ you need, and trim or delete it once the work lands.
 
 | File | Description |
 |---|---|
-| [ci-gates.md](ci-gates.md) | CI - make the PR gate mean something |
-| [ci-release-workflow-build.md](ci-release-workflow-build.md) | CI - rebuild how the image is released |
 | [image-base-slimming.md](image-base-slimming.md) | Harden and slim the base image |
-| [image-module-stacks.md](image-module-stacks.md) | Decide what the `image` module is still for |
-| [scripts-to-just-recipes.md](scripts-to-just-recipes.md) | Convert the last `config/*.sh` scripts to `just` recipes |
 | [sonar-issue-triage.md](sonar-issue-triage.md) | Sonar - what is left after the 2026-08-09 sweep |
 | [todos.md](todos.md) | TODOs |
 | [ui-test-harness.md](ui-test-harness.md) | A test harness for the UI |
@@ -27,6 +23,21 @@ you need, and trim or delete it once the work lands.
 | [api/integration-test-additions.md](api/integration-test-additions.md) | Integration tests: cover what the harness cannot see today |
 | [api/ui-clients-off-v3.md](api/ui-clients-off-v3.md) | Migrate the shipped UI clients off the v3 API |
 | [api/v4-stable.md](api/v4-stable.md) | v4 — flip from experimental to stable |
+
+## CI/CD
+
+| File | Description |
+|---|---|
+| [ci-cd/ci-gates.md](ci-cd/ci-gates.md) | CI - make the PR gate mean something |
+| [ci-cd/ci-release-workflow-build.md](ci-cd/ci-release-workflow-build.md) | CI - rebuild how the image is released |
+| [ci-cd/release-pipeline-rebuild.md](ci-cd/release-pipeline-rebuild.md) | CI/CD - rebuild the release pipeline on GHCR, and put the notes in CHANGELOG.md |
+
+## Config
+
+| File | Description |
+|---|---|
+| [config/image-module-stacks.md](config/image-module-stacks.md) | Decide what the `image` module is still for |
+| [config/scripts-to-just-recipes.md](config/scripts-to-just-recipes.md) | Convert the last `config/*.sh` scripts to `just` recipes |
 
 ## Lib
 

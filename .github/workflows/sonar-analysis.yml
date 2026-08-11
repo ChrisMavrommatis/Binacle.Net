@@ -1,18 +1,12 @@
-# Sends coverage to SonarCloud. Manual, because coverage needs a CI run: Automatic Analysis only reads
-# source, so it must be OFF or the two fight. Build + coverage sit between begin/end — the scanner only
-# sees projects compiled in that pair. A failing suite skips "Sonar end", so a failed run publishes nothing.
+# Sends coverage to SonarCloud. Keep Automatic Analysis OFF in the UI: it only reads source, so it can never
+# report coverage, and the two fight if both are on.
 #
-# Coverage is one call to `just coverage all sonar`, which runs the same test leaves a maintainer runs and writes
-# one flat file per suite into build/coverage/sonar/. config/tests.just is the only place that knows which
-# suites exist — adding one needs no edit here.
+# Build and coverage MUST stay between begin and end - the scanner only sees projects compiled in that pair.
+# A failing suite skips "Sonar end", so a broken run publishes nothing. That is deliberate.
 #
-# The format is named after the consumer: `sonar` selects Visual Studio coverage xml for C#, the only C# format
-# Sonar imports, and lcov for TS. Both reportsPaths are therefore a glob over that one folder, split by
-# extension (.xml vs .info).
-#
-# Scope and those coverage paths live in config/sonar-analysis.xml, not here. The Scanner for .NET ignores
-# sonar-project.properties, so that xml is the file form it does read - `/s:` needs an absolute path, hence
-# $GITHUB_WORKSPACE. Only the key, org, token and host stay below.
+# Scope, coverage paths and the report formats live in config/sonar-analysis.xml, not here; the Scanner for
+# .NET ignores sonar-project.properties, and `/s:` needs an absolute path. Only the key, org, token and host
+# stay below.
 
 name: Sonar Analysis
 
@@ -64,8 +58,7 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '.config/dotnet-tools.json') }}
           restore-keys: ${{ runner.os }}-nuget-
 
-      # Pinned to a 1.x range: modules and `set working-directory` need a recent just, and ubuntu-latest's apt
-      # ships one too old to parse config/tests.just.
+      # 1.x range: ubuntu's apt ships a just too old to parse config/tests.just.
       - name: Setup just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
         with:
@@ -74,8 +67,7 @@ jobs:
       - name: Restore tools
         run: dotnet tool restore
 
-      # --ignore-scripts stops a dependency running arbitrary code at install time. See run-tests.yml for why
-      # nothing here needs the lifecycle hooks.
+      # --ignore-scripts stops a dependency running arbitrary code at install time. See run-tests.yml.
       - name: Install npm packages
         run: npm ci --ignore-scripts
 

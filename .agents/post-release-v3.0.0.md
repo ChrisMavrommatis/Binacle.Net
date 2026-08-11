@@ -23,7 +23,7 @@ in the same change, leaving the text.
 - [ ] **Smoke the published image.** `just smoke all binacle/binacle-net:3.0.0`. This is step 11 of the release
       sequence and it is repeated here because it is the one thing that must happen against the *published*
       artifact rather than a local build. The release workflow pushes without smoking - until
-      [ci-release-workflow-build](plans/ci-release-workflow-build.md) wires it in, this manual run is the only
+      [ci-release-workflow-build](plans/ci-cd/ci-release-workflow-build.md) wires it in, this manual run is the only
       thing between a broken image and the people who pull it. About a minute, nothing to bring up.
 
 - [ ] **Confirm `3.0` resolves on Docker Hub, and that `latest` moved.** Nine files were bumped from

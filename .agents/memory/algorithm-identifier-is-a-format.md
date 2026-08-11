@@ -33,7 +33,8 @@ names (`CustomProblems_Fitting_BFD_v1`), and the benchmark class names (`Algorit
 An S101 sweep on 2026-08-09 renamed the 14 lib types to `BestFitDecreasingV1` and so on, then **reverted the
 whole thing** on that ruling. Do not redo it. The 38 S101 findings it would have cleared are marked Accepted
 in the SonarCloud UI instead - a custom quality profile is not available on the Free plan, so per-finding is
-the only way to answer a rule here ([[no-sonar-issue-ignores]]). See [[sonar-issue-triage]].
+the only way to answer a rule here (see the memory on Sonar issue ignores). The Sonar triage plan records
+this as decided.
 
 The test and benchmark names were never flagged anyway: they live in projects that `Directory.Build.props`
 marks `SonarQubeTestProject`, and S101 is scope MAIN. Only the 14 product types ever appeared.

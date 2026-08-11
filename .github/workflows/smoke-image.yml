@@ -1,16 +1,11 @@
 # Smokes an image that already exists on a registry: its static content, then every shipped profile end to end.
+# Run by hand against any published tag, and called by release-docker-image.yml as its gate.
 #
-# This runs against a *published* tag, not a build. That is the point - it is the check that what people can
-# actually pull works, which is the one thing a build-and-push pipeline never proves. Until the release workflow
-# smokes before it pushes, this is that check, run by hand at release time.
+# It must stay a check on a PUBLISHED tag, not a local build - a registry round trip is exactly what changes
+# compression, manifest shape and attestation handling.
 #
-# One job, one step per thing that can break, the same shape as run-tests.yml: a red check names the profile
-# rather than making you read a log. Every step is a `just smoke ...` call, so the `run:` line of a red step is
-# what you paste into a terminal to reproduce it. The suite itself lives in config/smoke.just - nothing about
-# what gets asserted is decided here, and adding a profile is that file plus one step below.
-#
-# The structure check runs once, not once per profile: it reads the image rather than a container, so the same
-# 31 assertions behind five different stacks would answer the same question five times.
+# config/smoke.just decides what gets asserted; adding a profile is one edit there plus one step below. The
+# structure check runs once rather than per profile because it reads the image, not a container.
 
 name: Smoke Image
 
@@ -21,35 +16,38 @@ on:
         description: 'Image to smoke, with tag (e.g. binacle/binacle-net:3.0.0-beta.2)'
         required: true
         type: string
+  # Same input as the manual trigger, so `inputs.image` serves both and the release path runs the exact steps
+  # a maintainer runs by hand.
+  workflow_call:
+    inputs:
+      image:
+        description: 'Image to smoke, with tag'
+        required: true
+        type: string
 
 jobs:
   smoke:
-    # Pinned, NOT ubuntu-latest. hurl links libxml2.so.2; Ubuntu 26.04 ships only libxml2.so.16 and carries no
-    # compat package, so hurl dies there with a missing-library error that reads like a hurl bug rather than a
-    # distro change (DEVELOPMENT.md has the detail and the workaround). ubuntu-latest will move to 26.04
-    # eventually, and this workflow is run rarely enough that it would break on the day it is needed most.
+    # Pinned, NOT ubuntu-latest. hurl links libxml2.so.2 and Ubuntu 26.04 ships only libxml2.so.16 with no
+    # compat package, so hurl dies there with what reads like a hurl bug (DEVELOPMENT.md has the workaround).
     runs-on: ubuntu-24.04
     permissions:
       contents: read
 
     env:
-      # Read once here so every step below smokes the same thing, and the tag appears in the run's env rather
-      # than only inside six separate command lines.
+      # Read once so every step below smokes the same thing.
       IMAGE: ${{ inputs.image }}
 
     steps:
       - uses: actions/checkout@v4
 
-      # Pinned to a 1.x range for the same reason run-tests.yml does it: modules and `set working-directory`
-      # need a recent just, and ubuntu's apt ships one too old to parse config/smoke.just.
+      # 1.x range: ubuntu's apt ships a just too old to parse config/smoke.just.
       - name: Setup just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
         with:
           just-version: '^1.45'
 
-      # Both tools are single static binaries at a pinned version, installed exactly as DEVELOPMENT.md says so a
-      # CI run and a laptop run install the same bytes. Not cached on purpose - two downloads of a few MB cost
-      # less than a cache key that can go stale against the version it is meant to pin.
+      # Pinned versions, installed exactly as DEVELOPMENT.md says, so CI and a laptop get the same bytes. Not
+      # cached on purpose: a cache key can go stale against the version it is meant to pin.
       - name: Install smoke tools
         run: |
           mkdir -p "$HOME/.local/bin"
@@ -69,16 +67,13 @@ jobs:
           container-structure-test version
           hurl --version
 
-      # Pulled once, as its own step, so "that tag does not exist" is one red line instead of six. The compose
-      # stacks would each pull on their own otherwise, and a typo in the tag would look like five broken
-      # profiles rather than one bad input.
+      # Its own step so "that tag does not exist" is one red line instead of five broken-looking profiles.
       - name: Pull the image
         id: pull
         run: docker pull "$IMAGE"
 
-      # !cancelled() so every profile still runs after one fails - you see all the red, not just the first,
-      # which is the same reason run-tests.yml carries it. Gated on the pull as well: if there is no image
-      # there is nothing to say, and six failures that all mean "no image" is noise, not information.
+      # !cancelled() so every profile still runs after one fails - you see all the red, not just the first.
+      # Also gated on the pull: six failures that all mean "no image" is noise.
       - name: Smoke - image structure
         if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
         run: just smoke test-structure "$IMAGE"

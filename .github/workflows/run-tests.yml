@@ -1,14 +1,11 @@
-# Runs every test leaf on PR. One job so setup + build happen once; each leaf is its own step, so a red check
-# names the one suite that broke. ServiceModule runs once per backend as duplicated steps (Sqlite, Postgres) —
-# cheaper than a matrix job at this count, and each backend is an obvious line.
+# Runs every test leaf on PR. One job so setup and build happen once; one step per leaf so a red check names
+# the suite. ServiceModule is duplicated steps per backend rather than a matrix - cheaper at this count.
 #
-# Every step is a `just test <leaf>` call, so the `run:` line of a red step is what you paste into a terminal to
-# reproduce it. The leaves live in config/tests.just, which is the only place that knows which project a leaf
-# maps to — adding a suite is one edit there plus one step here, and neither half can drift into "green in CI,
-# missing locally".
+# config/tests.just is the only place that knows which project a leaf maps to, so adding a suite is one edit
+# there plus one step here and the two halves cannot drift into "green in CI, missing locally".
 #
-# DOTNET_TEST_ARGS is set for the whole job: CI builds the solution once and every leaf runs against that
-# build. Unset on a laptop, so the same recipes do a plain `dotnet test`.
+# DOTNET_TEST_ARGS is job-wide: CI builds the solution once and every leaf runs --no-build against it. Unset
+# on a laptop, where the same recipes do a plain `dotnet test`.
 
 name: Run Tests
 
@@ -25,8 +22,8 @@ jobs:
     env:
       DOTNET_TEST_ARGS: --configuration Release --no-build
 
-    # Postgres is up for the whole job so the ServiceModule (Postgres) step can reach it. It sits idle during
-    # the other steps — a trivial cost, and simpler than starting it inline.
+    # Up for the whole job so the ServiceModule (Postgres) step can reach it. Idle during the others, which is
+    # cheaper than starting it inline.
     services:
       postgres:
         image: postgres:17.6
@@ -34,15 +31,12 @@ jobs:
           POSTGRES_USER: appuser
           POSTGRES_DB: binacle_net
           # No POSTGRES_PASSWORD: this container lives for one job, is reachable only from it, and is thrown
-          # away after, so there is nothing for a password to protect. Under trust it accepts any password for
-          # appuser, and the ServiceModule integration tests fall back to the shared local-dev connection
-          # string - password and all - so they connect unchanged.
+          # away after, so there is nothing for a password to protect. Under trust it accepts any password, so
+          # the tests connect unchanged with the shared local-dev connection string.
           #
-          # This removes the credential from this file, not from the repo. The same local-dev password is
-          # still in config/docker-compose.yml, config/docker-compose.build.yml, the test default in
-          # BinacleApi.cs and Config_Files/ServiceModule/ConnectionStrings.Development.json, where it is
-          # load-bearing - that postgres does ask for it. It is the same value everywhere on purpose, and it
-          # says what it is. Change it in all five or none.
+          # That local-dev password is still load-bearing in config/docker-compose.yml,
+          # config/docker-compose.build.yml, BinacleApi.cs and ConnectionStrings.Development.json. It is the
+          # same value everywhere on purpose - change it in all of them or none.
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
@@ -66,8 +60,7 @@ jobs:
           node-version: 22
           cache: npm
 
-      # Pinned to a 1.x range: modules and `set working-directory` need a recent just, and ubuntu-latest's apt
-      # ships one too old to parse config/tests.just.
+      # 1.x range: ubuntu's apt ships a just too old to parse config/tests.just.
       - name: Setup just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
         with:
@@ -81,16 +74,15 @@ jobs:
           restore-keys: ${{ runner.os }}-nuget-
 
       # --ignore-scripts stops a dependency running arbitrary code at install time. Nothing here needs the
-      # lifecycle hooks: no workspace declares prepare/postinstall, and the one dependency with an install
-      # script is fsevents, which is darwin-only and never installed on this runner.
+      # hooks: no workspace declares prepare/postinstall.
       - name: Install npm packages
         run: npm ci --ignore-scripts
 
       - name: Build
         run: dotnet build Binacle.Net.slnx --configuration Release
 
-      # if: !cancelled() so every leaf still runs after one fails — you see all red leaves, not just the first.
-      # The cheap unit leaves come first, so an obvious break shows up before the integration hosts start.
+      # !cancelled() so every leaf still runs after one fails - you see all the red, not just the first. Cheap
+      # unit leaves first, so an obvious break shows up before the integration hosts start.
       - name: Test - Lib (Unit)
         if: ${{ !cancelled() }}
         run: just test lib-unit
@@ -131,8 +123,8 @@ jobs:
         if: ${{ !cancelled() }}
         run: just test api-core-integration
 
-      # The backend is the recipe's argument, so it sets BINACLE_TEST_INFRA itself and rejects a typo instead
-      # of falling through to the default and reporting a green run for a backend nobody exercised.
+      # The backend is the recipe's argument, so a typo is rejected instead of falling through to the default
+      # and reporting green for a backend nobody exercised.
       - name: Test - API Service [Sqlite] (Integration)
         if: ${{ !cancelled() }}
         run: just test api-service-integration Sqlite

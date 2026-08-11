@@ -7,6 +7,12 @@ description: Manifest of every file under .agents/design, grouped by area. Regen
 Every design record in `.agents/design/`, grouped by area. The settled design behind the docs — the
 decisions (why) and the findings (measured evidence). Permanent and citable; read the one you need.
 
+## CI/CD
+
+| File | Description |
+|---|---|
+| [ci-cd/decisions.md](ci-cd/decisions.md) | CI/CD decisions ledger — why the release pipeline is tag-triggered and promotes by digest, why workflows call just recipes, the pinning rules, and the open questions about the PR gate and supply-chain attestation. |
+
 ## Lib
 
 | File | Description |

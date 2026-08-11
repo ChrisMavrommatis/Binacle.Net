@@ -16,7 +16,7 @@ the whole reason the gate is red. Nothing was broken and nothing regressed. The 
 number.
 
 **The rule:** fix old findings in files that have tests. Leave old findings in files that do not, until
-they do. The UI is the clear case and its harness is its own plan ([[ci-gates]] points at it).
+they do. The UI is the clear case and its harness is its own plan (the PR gate plan points at it).
 
 Two things that follow, both easy to get wrong:
 
@@ -35,4 +35,4 @@ and S2325 ("make this method static") not, since the latter edits call sites ins
 and left it untested", which is exactly what happened, and exactly what it is for.
 
 **How to apply:** before a bulk fix of an old rule, check the coverage on the files it lands in. Sort the
-work by that, not by rule. See [[no-sonar-issue-ignores]] for what to do with findings you will not fix.
+work by that, not by rule. See the memory on Sonar issue ignores for what to do with findings you will not fix.

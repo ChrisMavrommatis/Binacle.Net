@@ -1,79 +1,209 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+# Four jobs, in the order that keeps a broken artifact away from the people who pull it:
+#
+#   push tag v3.0.0 -> just build publish -> push the IMMUTABLE tag (3.0.0) -> smoke the registry copy
+#     -> move 3.0 and latest onto that digest -> create the GitHub release
+#
+# Do NOT add `release: published` back as a second trigger: the release created in the last job would re-enter
+# this workflow and build everything twice.
+#
+# Why this shape - the promote-by-digest order, the two metadata steps, the pinning - is in
+# .agents/design/ci-cd/decisions.md. What it does is .agents/docs/ci-cd/release-pipeline.md.
 
 name: Build and Release Docker Image
 
 on:
-  release:
-    types: [ "published" ]
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     permissions:
       contents: read
 
-    runs-on: ubuntu-latest
+    outputs:
+      # Assembled once here rather than re-pasted out of vars in three jobs.
+      image: ${{ steps.image.outputs.image }}
+      repo: ${{ steps.image.outputs.repo }}
+      digest: ${{ steps.push.outputs.digest }}
+      moving_tags: ${{ steps.meta-moving.outputs.tags }}
 
     steps:
-    - name: Release Tag
-      run: echo "Runing release for ${{ github.ref_name }}"
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ vars.DONET_VERSION }}
-    - name: Restore dependencies
-      run: dotnet restore --runtime linux-x64
-    - name: Publish
-      # Paths hardcoded, not Actions variables. The Dockerfile's COPY and the .dockerignore allowlist fix the
-      # output to build/binacle-net, and build.just publishes the same project to the same place. A variable can
-      # only drift from those two hardcoded facts and silently build an image without the app in it. Keep this
-      # line in step with build.just's `publish` recipe, which explains --no-self-contained.
-      run: dotnet publish api/src/Binacle.Net/Binacle.Net.csproj -c Release -o build/binacle-net --no-restore --no-self-contained --runtime linux-x64
-    - name: Extract Docker metadata
-      id: meta
-      uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
-      with:
-        images: |
-          ${{ vars.DOCKERHUB_ORGNAME }}/${{ vars.DOCKERHUB_REPO }}
-        # {{version}} is the immutable pin (3.0.0). {{major}}.{{minor}} is the moving one (3.0 -> newest 3.0.x),
-        # which is what the samples pin: a copied sample then inherits bug fixes and never a breaking change.
-        # A prerelease gets neither: metadata-action skips {{major}}.{{minor}} for a prerelease tag, the same
-        # guard as latest=auto below, so v3.0.0-beta.1 publishes only 3.0.0-beta.1.
-        # No {{major}} tag on purpose: "3" would cross minor lines, and nothing here should pin it.
-        tags: |
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-        # Corrects the two labels metadata-action gets wrong on its own, both of which override the Dockerfile
-        # at build time. licenses: auto-detection returns NOASSERTION because the repo is dual-licensed. url:
-        # auto-fills the repo, but the image should point at the landing site. Every other label (title,
-        # description, source, revision, created, version) is left to metadata-action, and documentation/vendor
-        # /base.name come from the Dockerfile.
-        labels: |
-          org.opencontainers.image.licenses=GPL-3.0-only AND CC-BY-SA-4.0
-          org.opencontainers.image.url=https://www.binacle.net
-        # latest=auto is the default; it is written out because every prerelease depends on it. Under auto,
-        # "latest" is applied only when the semver tag is not a prerelease, so publishing a beta does not move
-        # "latest" onto it and drag sample users along.
-        flavor: |
-          latest=auto
-    - name: Login to Docker Hub
-      uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
-    - name: Build and push
-      uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5.4.0
-      with:
-        context: .
-        file: ${{ vars.BUILD_DOCKERFILE }}
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-        # Was github.ref_name, which put "v3.0.0" in BINACLE_VERSION while the image tag said "3.0.0". Both now
-        # come from the same stripped value, so the version the container reports matches the tag you pulled.
-        build-args: |
-          VERSION=${{ steps.meta.outputs.version }}
-      
+      - name: Release Tag
+        run: echo "Running release for ${{ github.ref_name }}"
+
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ vars.DONET_VERSION }}
+
+      # 1.x range: ubuntu's apt ships a just too old to parse config/build.just.
+      - name: Setup just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+        with:
+          just-version: '^1.45'
+
+      # config/build.just owns the project, the output folder and --no-self-contained, so CI and a laptop build
+      # the same thing. Do not inline restore/publish here again.
+      - name: Publish
+        run: just build publish
+
+      # Always produces a tag - 3.0.0, or 3.0.0-beta.2 for a prerelease. This is what gets built and pushed.
+      - name: Docker metadata - immutable tag
+        id: meta-immutable
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
+        with:
+          images: |
+            ${{ vars.DOCKERHUB_ORGNAME }}/${{ vars.DOCKERHUB_REPO }}
+          tags: |
+            type=semver,pattern={{version}}
+          # The only two labels metadata-action gets wrong: licenses auto-detects to NOASSERTION on a
+          # dual-licensed repo, and url auto-fills the repo instead of the landing site. Both override the
+          # Dockerfile. Everything else comes from metadata-action or stays as the Dockerfile set it.
+          labels: |
+            org.opencontainers.image.licenses=GPL-3.0-only AND CC-BY-SA-4.0
+            org.opencontainers.image.url=https://www.binacle.net
+
+      # The tags that follow a line rather than pin a build: 3.0 and latest.
+      #
+      # Comes out EMPTY for a prerelease - metadata-action skips {{major}}.{{minor}} and latest=auto withholds
+      # latest - and that is the entire prerelease guard, which is why the promote job needs no `if:` of its
+      # own. No {{major}} tag on purpose: a bare "3" would cross minor lines.
+      - name: Docker metadata - moving tags
+        id: meta-moving
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
+        with:
+          images: |
+            ${{ vars.DOCKERHUB_ORGNAME }}/${{ vars.DOCKERHUB_REPO }}
+          tags: |
+            type=semver,pattern={{major}}.{{minor}}
+          flavor: |
+            latest=auto
+
+      - name: Assemble the image reference
+        id: image
+        run: |
+          repo="${{ vars.DOCKERHUB_ORGNAME }}/${{ vars.DOCKERHUB_REPO }}"
+          echo "repo=${repo}" >> "$GITHUB_OUTPUT"
+          echo "image=${repo}:${{ steps.meta-immutable.outputs.version }}" >> "$GITHUB_OUTPUT"
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+
+      # The immutable tag and nothing else. file: is the literal Dockerfile at the repo root - there is exactly
+      # one, so a repo variable could only drift from it.
+      - name: Build and push the immutable tag
+        id: push
+        uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5.4.0
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ${{ steps.meta-immutable.outputs.tags }}
+          labels: ${{ steps.meta-immutable.outputs.labels }}
+          # meta-immutable's version, never github.ref_name: the latter would put "v3.0.0" in BINACLE_VERSION
+          # while the image tag said "3.0.0".
+          build-args: |
+            VERSION=${{ steps.meta-immutable.outputs.version }}
+
+  # The gate. Calls smoke-image.yml rather than copying its steps, so the release path runs exactly what a
+  # maintainer runs by hand. Red here means the moving tags stay put and no release is created.
+  smoke:
+    needs: build
+    uses: ./.github/workflows/smoke-image.yml
+    with:
+      image: ${{ needs.build.outputs.image }}
+
+  promote:
+    needs: [ build, smoke ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+
+      # `imagetools create` re-points existing manifests - no pull, no rebuild, no second push - so 3.0 and
+      # latest land on the exact digest the smoke job passed. Do not replace this with a second build.
+      #
+      # Guarded on the step rather than the job, so a prerelease shows a green promote with nothing to do
+      # instead of a skipped job that later `needs:` would have to special-case.
+      - name: Promote the moving tags onto the smoked digest
+        if: ${{ needs.build.outputs.moving_tags != '' }}
+        env:
+          MOVING_TAGS: ${{ needs.build.outputs.moving_tags }}
+          SOURCE: ${{ needs.build.outputs.repo }}@${{ needs.build.outputs.digest }}
+        run: |
+          set -euo pipefail
+          tags=()
+          args=()
+          while IFS= read -r tag; do
+            if [ -n "$tag" ]; then
+              tags+=("$tag")
+              args+=(-t "$tag")
+            fi
+          done <<< "$MOVING_TAGS"
+          echo "Promoting ${SOURCE} to: ${tags[*]}"
+          docker buildx imagetools create "${args[@]}" "$SOURCE"
+          # Read back where each tag landed. A prerelease can never reach this command, so it is the least
+          # exercised one here and the log is the only evidence it worked.
+          for tag in "${tags[@]}"; do
+            echo -n "${tag} -> "
+            docker buildx imagetools inspect "$tag" --format '{{ .Manifest.Digest }}'
+          done
+
+      - name: Nothing to promote
+        if: ${{ needs.build.outputs.moving_tags == '' }}
+        run: echo "Prerelease tag - metadata-action produced no moving tags, so latest and the minor tag stay put."
+
+  release:
+    needs: [ build, smoke, promote ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Last, so the release never describes an image that failed to build, push or smoke.
+      #
+      # .agents/release-notes-<tag>.md is body only - no title line, no preamble - so it publishes whole. No
+      # such file is the normal case for a prerelease, and generated notes beat a body written for another
+      # version.
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          notes=".agents/release-notes-${TAG}.md"
+          # A hyphen in a semver tag is the prerelease marker.
+          case "$TAG" in
+            *-*) prerelease=(--prerelease) ;;
+            *)   prerelease=() ;;
+          esac
+          if [ -f "$notes" ]; then
+            echo "Publishing the body from ${notes}"
+            gh release create "$TAG" --title "$TAG" --notes-file "$notes" "${prerelease[@]}"
+          else
+            echo "No ${notes} - falling back to generated notes."
+            gh release create "$TAG" --title "$TAG" --generate-notes "${prerelease[@]}"
+          fi

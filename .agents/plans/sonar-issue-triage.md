@@ -18,8 +18,8 @@ are new arrivals from `docs/` and `web/` coming back into scope, so ~228 were ac
 **The `after` column is that run, not now.** All seven vulnerabilities were fixed later the same day in
 `d0150235`, so the next run should read 0 and rating A again. Nothing else in the table has moved.
 
-Read [[sonar-touching-untested-code]] before fixing anything else here, and
-[[algorithm-identifier-is-a-format]] before renaming anything.
+Read the memory on touching untested code before fixing anything else here, and the one on the algorithm
+identifier being a format before renaming anything.
 
 ## The seven vulnerabilities, and why they only just appeared {#vulnerabilities}
 
@@ -41,7 +41,7 @@ the `v1.3.x` key change was in `samples/`, which was always in bounds.
   shipped a GUID as `PrimaryApiKey`, and the matching `docker-compose.yml` repeated it in
   `OTEL_EXPORTER_OTLP_HEADERS`. Both now read `ThisIsAPlaceholderOtlpApiKeyPleaseGenerateYourOwn`, matching
   the `TokenSecret` placeholder style already used in `samples/docker/*/JwtAuth.json`. That is the fix S6418
-  actually wants and the one [[no-sonar-issue-ignores]] prescribes: change the value so it stops looking like
+  actually wants and the one the memory on Sonar issue ignores prescribes: change the value so it stops looking like
   a credential, rather than hiding the finding. **The two files must always agree** - the sample breaks if
   only one is edited. This was the finding driving the security rating to E.
 - **6 x kubernetes rules - FIXED 2026-08-09.** `S6865` (automounted service account), `S6864` (no memory
@@ -72,7 +72,7 @@ gate was never the place these were going to surface.
   than an edit. Biggest remaining item.
 - **S101 (38) - closed as WON'T FIX.** Renamed and reverted on 2026-08-09; `_v1` lowercase is the house style
   because `GetAlgorithmIdentifierName()` emits `FFD_v2` and the fixtures parse it. See
-  [[algorithm-identifier-is-a-format]]. **Mark these Accepted in the UI.** Do not attempt the rename again.
+  the memory on the algorithm identifier being a format. **Mark these Accepted in the UI.** Do not attempt the rename again.
 - **CA1873 (13)** guard expensive log arguments. **CA1816 (10)** the xunit `DisposeAsync` fixtures - see the
   open question below. **CA1859 (9)** concrete return types, mostly in test helpers. **CA2208 (9)** exception
   `paramName` misused as a message, which needs an exception-type decision rather than a swap.
@@ -94,7 +94,7 @@ gate was never the place these were going to surface.
 - **5 testing-fixture methods** (`CommonTestingFixture.Run`, `.GetScenarioByName`, `.AssertResult`,
   `ResultSelectionTestingFixture.Select`, `.GetScenarioByName`) - static was applied, then reverted. They are
   reached as `this.Fixture.X(...)` from 60 test bodies; static forces `CommonTestingFixture.X(...)` and stops
-  the tests going through the fixture at all, breaking [[tests-arrange-act-assert]]. Mark Accepted.
+  the tests going through the fixture at all, breaking the arrange/act/assert convention. Mark Accepted.
 - **S3458 (6)** `case 0: default:` in the six `Item.Rotate` switches - `case 0` documents the identity
   orientation. Mark Accepted.
 - **S1854 (3)** `newAvailableSpaces[--newSpaces] = ...` - the decrement is the index. Mark Accepted.
@@ -151,5 +151,5 @@ commits age out of the rolling 30-day window. Nothing else fails. The 305 open i
 `new_maintainability_rating` is A.
 
 The 80% cannot be lowered: custom quality gates need the Team plan, and the project is on Free. So the gate
-goes green when the UI gets tested, not by configuration - which is [[ui-test-harness]], and the reason
-[[ci-gates]] says not to make coverage blocking on the PR gate yet.
+goes green when the UI gets tested, not by configuration - which is the UI test harness plan, and the reason
+the PR gate plan says not to make coverage blocking on the PR gate yet.
