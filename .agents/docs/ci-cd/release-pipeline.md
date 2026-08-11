@@ -68,9 +68,16 @@ used. A `metadata-action` step computes the public tag set, then one `docker bui
 the manifest **by digest** from GHCR under all three public tags at once, and cosign signs the result. It never
 checks out, so it holds no `contents` permission.
 
-**`release`** — checkout, `just`, then `gh release create` with `--notes-file` built by
-`just changelog extract <section>`. A tag containing a hyphen also gets `--prerelease`. It `needs:` the `notes`
-job because it reads that job's `section` output.
+**`release`** — checkout, `just`, then the release body from `just changelog extract <section>`. It `needs:`
+the `notes` job because it reads that job's `section` output, and the prerelease flag is set explicitly either
+way from whether the tag contains a hyphen.
+
+**It creates the release, or edits one that already exists.** GitHub's web UI cannot create a bare tag — the
+only way to tag from the site is to publish a release, which makes both at once — so by the time this job runs
+the release may be there already. A plain `gh release create` would fail on that after every other job had
+succeeded, leaving the image published and one red job. Editing instead means the body comes from
+`CHANGELOG.md` whichever way the tag was made, and a release marked prerelease by hand is corrected for a real
+version tag.
 
 ## Copy, never rebuild
 
@@ -158,7 +165,10 @@ image carries the same metadata shape a pushed one does.
 
 ## What still happens by hand
 
-- **Deciding the tag and pushing it.** The pipeline has no other entry point.
+- **Deciding the tag and creating it.** The pipeline has no other entry point. Two ways, and both work:
+  `git tag v3.0.0 && git push origin v3.0.0`, or *Releases → Draft a new release → Choose a tag → Create new
+  tag on publish* on github.com. The web route also creates the release, which is why the last job edits rather
+  than insists on creating.
 - **Writing the `[Unreleased]` section of `CHANGELOG.md`** as the work lands, and renaming that heading to the
   version before the real tag.
 - **The publish check on a throwaway tag**, since a prerelease cannot reach that job.

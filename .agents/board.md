@@ -48,18 +48,21 @@ Agents keep this file current. Two rules:
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [ci-release-workflow-build](plans/ci-cd/ci-release-workflow-build.md) | **superseded - multi-arch only** | needs trimming |
+| [ci-cd/multi-arch-images](plans/ci-cd/multi-arch-images.md) | **not scheduled** | does anyone run it on ARM? |
 | [ci-gates](plans/ci-cd/ci-gates.md) | ready - **was blocked, unblocked 2026-08-11** | - |
 | [ci-cd/release-pipeline-rebuild](plans/ci-cd/release-pipeline-rebuild.md) | **in progress - pipeline landed** | the GHCR visibility flip, after beta 2 |
 | [image-base-slimming](plans/image-base-slimming.md) | ready - **timing not decided** | - |
 
-**`ci-release-workflow-build` was superseded on 2026-08-11.** The pipeline was rebuilt on GHCR instead, and
-everything that plan described has landed in some form - including the SBOM and provenance it listed as later
-work. Only its multi-arch section is still live. **The file needs trimming to that section**, and it was left
-whole so the multi-arch reasoning can be checked against the pipeline that now exists rather than discarded.
+**`ci-release-workflow-build` is gone - it landed as the GHCR rebuild on 2026-08-11**, including the SBOM and
+provenance it had listed as later work. Its one unbuilt section became `multi-arch-images`; the rest is
+described in the CI/CD docs and decisions ledger now.
 
-**`ci-gates` is no longer blocked on it.** The release workflow builds through `just build publish` now, so the
-PR gates below it would prove what they claim to prove.
+**`multi-arch-images` is blocked on a question, not on work.** The published image is `linux/amd64` only. If
+nobody runs Binacle.Net on ARM, that is a defensible choice and the useful action is writing it down as a
+decision rather than building anything.
+
+**`ci-gates` is no longer blocked.** The release workflow builds through `just build publish` now, so the PR
+gates below it would prove what they claim to prove.
 
 **`image-base-slimming` is here because it is about the shipped artifact** - move it if you would rather it sat
 elsewhere. The duplicated-runtime finding it opened with **landed on 2026-08-10 and went into v3.0.0**: dropping

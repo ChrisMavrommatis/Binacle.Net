@@ -326,7 +326,16 @@ jobs:
       # The section was already proven to exist by the `notes` job, so this only formats and publishes it.
       # `extract` promotes the section's headings back to h2 - in the file they sit at h3, nested under the
       # version heading, and a release body has no such parent.
-      - name: Create the GitHub release
+      #
+      # Create OR edit, because the release may already exist. GitHub's web UI cannot create a bare tag: the
+      # only way to tag from the site is to publish a release, which creates both at once. That is a normal way
+      # to start this pipeline, and a plain `gh release create` would fail on it after everything else had
+      # already succeeded - image pushed, tags moved, signed - leaving one red job and a hand-typed body.
+      # Editing instead means the body always comes from CHANGELOG.md however the tag was made.
+      #
+      # The prerelease flag is set explicitly in both directions rather than only when true, so a release
+      # marked prerelease by hand in the UI is corrected for a real version tag.
+      - name: Create or update the GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
@@ -334,8 +343,18 @@ jobs:
         run: |
           set -euo pipefail
           case "$TAG" in
-            *-*) prerelease=(--prerelease) ;;
-            *)   prerelease=() ;;
+            *-*) pre=true  ;;
+            *)   pre=false ;;
           esac
           just changelog extract "$SECTION" > "$RUNNER_TEMP/notes.md"
-          gh release create "$TAG" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" "${prerelease[@]}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists - replacing its body with the ${SECTION} section."
+            gh release edit "$TAG" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --prerelease="$pre"
+          else
+            echo "Creating release ${TAG} from the ${SECTION} section."
+            if [ "$pre" = true ]; then
+              gh release create "$TAG" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --prerelease
+            else
+              gh release create "$TAG" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md"
+            fi
+          fi

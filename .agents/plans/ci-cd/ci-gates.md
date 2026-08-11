@@ -9,16 +9,15 @@ suites run core modules only, and Sonar runs when somebody remembers. Each gate 
 
 **Two gates moved out on 2026-08-07, and this file is back to the three it folded.** Linting the OpenAPI
 documents is one workflow step with a known answer, so it is a line in `todos.md`. Smoking the image runs in
-the release workflow rather than on a PR, so it moved to `ci-release-workflow-build`, which owns that file.
+the release workflow rather than on a PR, so it moved to the release-pipeline work, which owned that file.
 Neither shared the checkout, the ordering or the runtime budget below - that is what made this file too big to
 finish in one sitting.
 
 ## What they share
 
-- **`ci-release-workflow-build` lands first.** Every gate here calls a recipe rather than inlining its own
-  commands. The build/image split it used to wait on has landed, so no gate is blocked outright any more - but
-  until the release workflow builds through the same recipe, the image and smoke gates prove less than they
-  look like they prove. Both say so in their own sections.
+- **Nothing blocks these any more - changed 2026-08-11.** Every gate here calls a recipe rather than inlining
+  its own commands, and the release pipeline now builds through `just build publish` too. The wiring these
+  gates used to wait on has landed, so the image and smoke gates would prove exactly what they claim to.
 - **One job or three?** All three want a checkout and an SDK setup. Folding them into `run-tests.yml` pays for
   that once; separate workflows can each run on a schedule as well. Decide once, for all three, rather than per
   gate - that choice is most of why these were folded.
@@ -37,10 +36,9 @@ builds the solution and runs every suite on each PR; it does not build the image
 - Add an image build step to the PR gate. Build only - no push, no login, no Docker Hub credentials on a PR.
 - Use the same Dockerfile and the same publish arguments the release workflow uses, or the gate proves nothing.
 
-**Unblocked.** The split landed: the gate step is `just build image` (`config/build.just`), which publishes and
-builds with no push, no `sudo` and nothing interactive. The release workflow still inlines its own publish, so
-until it calls `just build publish` too, the gate proves the recipe builds - not that the release path does.
-That wiring is in `ci-release-workflow-build`.
+**Unblocked, and fully so as of 2026-08-11.** The gate step is `just build image` (`config/build.just`), which
+publishes and builds with no push, no `sudo` and nothing interactive. The release pipeline now calls
+`just build publish` as well, so this gate proves the release path builds rather than just the recipe.
 
 ## Gate 2 - run the integration tests with all modules enabled
 

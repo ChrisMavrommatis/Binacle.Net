@@ -29,7 +29,7 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [ci-cd/ci-gates.md](ci-cd/ci-gates.md) | CI - make the PR gate mean something |
-| [ci-cd/ci-release-workflow-build.md](ci-cd/ci-release-workflow-build.md) | CI - rebuild how the image is released |
+| [ci-cd/multi-arch-images.md](ci-cd/multi-arch-images.md) | CI - publish the image for arm64 as well as amd64 |
 | [ci-cd/release-pipeline-rebuild.md](ci-cd/release-pipeline-rebuild.md) | CI/CD - finish the GHCR release pipeline |
 
 ## Config
