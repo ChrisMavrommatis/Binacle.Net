@@ -13,7 +13,7 @@ also_update:
 
 Six workflows in `.github/workflows/`. They test a pull request, analyse it, release the Docker image, and
 deploy the two Jekyll sites. This doc covers what runs, when, and the conventions every one of them follows.
-The release pipeline has its own page (`$ci-cd/release-pipeline`) because it is four jobs with an ordering
+The release pipeline has its own page (`$ci-cd/release-pipeline`) because it is six jobs with an ordering
 that matters.
 
 **Where the line with `config/` sits.** `config/` (`$config`) owns *what a command does* — the `just` modules
@@ -25,9 +25,9 @@ described in `$config`. Nothing about a recipe's behaviour is repeated here.
 
 | Workflow | Trigger | What it does |
 |---|---|---|
-| `run-tests.yml` | `pull_request`, `workflow_dispatch` | Every test leaf. One job so setup and build happen once; one step per leaf so a red check names the suite. Postgres runs as a job service |
+| `run-tests.yml` | `pull_request`, `workflow_dispatch`, `workflow_call` | Every test leaf. One job so setup and build happen once; one step per leaf so a red check names the suite. Postgres runs as a job service. Called by the release pipeline as its "this commit passed CI" gate |
 | `sonar-analysis.yml` | `workflow_dispatch` | Build plus `just coverage all sonar` between `Sonar begin`/`Sonar end`, published to SonarCloud |
-| `release-docker-image.yml` | `push` on tags `v*` | The release pipeline — publish, push the immutable tag, smoke it, promote the moving tags, create the GitHub release. See `$ci-cd/release-pipeline` |
+| `release-docker-image.yml` | `push` on tags `v*` | The release pipeline — check the changelog section, run the suite, build and push to GHCR, smoke it there, copy to Docker Hub, create the GitHub release. See `$ci-cd/release-pipeline` |
 | `smoke-image.yml` | `workflow_dispatch`, `workflow_call` | Pulls a published image and runs the structure check plus all five smoke profiles. Called by the release pipeline as its gate, or run by hand against any tag |
 | `deploy-binacle-net-docs.yml` | `workflow_dispatch` | Tags the commit `docs-release-<run>`, deploys repo-root `docs/` (`$docs-site`) to DigitalOcean App Platform |
 | `deploy-binacle-net-web.yml` | `workflow_dispatch` | Tags the commit `web-release-<run>`, deploys repo-root `web/` (`$web-site`) the same way |
@@ -47,13 +47,25 @@ not an end state.
 - **Repeated leaf steps carry `if: ${{ !cancelled() }}`**, so one failure does not hide the rest. You see all
   the red at once. In `smoke-image.yml` the same condition also gates on the pull having succeeded — six
   failures that all mean "no such image" is noise.
-- **Third-party actions are pinned by commit SHA** with the version in a trailing comment
-  (`extractions/setup-just@53165ef... # v4.0.0`). `actions/*` and `docker/setup-*` first-party actions are
-  pinned by major tag.
+- **Every action is pinned by commit SHA**, first-party included, with the version in a trailing comment
+  (`extractions/setup-just@53165ef... # v4.0.0`). `.github/dependabot.yml` raises a weekly PR per action and
+  rewrites the SHA and the comment together, which is what keeps a pin from quietly going stale.
 - **`just` is pinned to `^1.45`** everywhere it is installed. Modules and `set working-directory` need a recent
   just, and Ubuntu's apt ships one too old to parse the module files.
+- **A tool with no maintained action is installed by `curl` from its own release, one step per tool, pinned by
+  version and by SHA-256.** `container-structure-test` and `hurl` are both like this — the only hurl action is
+  archived and neither project ships an `action.yml`, so a generic third-party installer would add a dependency
+  without removing one. Each step ends by printing the version it installed, so the log names the tool that
+  failed rather than "smoke tools". The checksums make a swapped release asset fail the build instead of run;
+  hurl publishes its own, and the `container-structure-test` one was taken from the binary in use because
+  upstream publishes none.
 - **`permissions:` is declared per job**, least privilege. `contents: read` almost everywhere; the release job
   takes `contents: write` to create the release, and the two deploy workflows take it to push their marker tag.
+  The build job takes `packages: write` for GHCR, and the publish job declares no `contents` at all because it
+  never checks out. Both take `id-token: write`, which is what keyless cosign signing needs and the only
+  reason either has it.
+- **Every job declares `timeout-minutes`.** The default is six hours, which is what a hung container or a
+  wedged smoke profile would otherwise burn.
 - **`npm ci --ignore-scripts`**, so an install-time lifecycle hook cannot run arbitrary code. Nothing in the
   workspaces declares `prepare`/`postinstall`.
 - **Runners are `ubuntu-latest`, with one deliberate exception**: `smoke-image.yml` pins `ubuntu-24.04`,
@@ -80,10 +92,17 @@ the pre-move `src/` path after the layout change and broke the publish.
 
 | Secret | Used by |
 |---|---|
-| `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN` | `release-docker-image` — login, in both the build and promote jobs |
+| `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN` | `release-docker-image` — the `publish` job only, which is the only job that touches Docker Hub |
 | `SONAR_TOKEN` | `sonar-analysis` |
 | `DIGITALOCEAN_ACCESS_TOKEN` | both deploy workflows |
-| `GITHUB_TOKEN` | `release-docker-image`, to create the release |
+| `GITHUB_TOKEN` | `release-docker-image` — GHCR login in `build` and `publish`, and creating the release |
+
+**Signing needs no secret either.** cosign runs keyless — it exchanges the job's OIDC token for a short-lived
+certificate — so there is no signing key in the repo and none to rotate. That is what `id-token: write` buys.
+
+**GHCR needs no new secret, and that is a reason it was chosen.** `GITHUB_TOKEN` is minted for a single run and
+expires with it, so the staging registry has no stored credential to rotate and no classic personal access
+token to depend on. Pulling a staged image needs no credential at all, because the package is public.
 
 ## Environments
 
@@ -108,5 +127,8 @@ Stated plainly, because the gaps are not obvious from a green check.
 - **Only two of the three storage backends are exercised.** `run-tests.yml` runs the ServiceModule suite
   against SQLite and Postgres. The Azure Storage provider has no CI coverage at all, and `sonar-analysis.yml`
   runs the service suite against SQLite only, so its coverage never reaches the Postgres or Azure provider code.
-- **One architecture, no supply-chain attestation.** The image is `linux/amd64` only, with no SBOM, no
-  provenance and no signature.
+- **One architecture.** The image is `linux/amd64` only. It does ship an SPDX SBOM and SLSA provenance, and is
+  cosign-signed — see `$ci-cd/release-pipeline`.
+- **Nothing tells users how to verify any of that.** The signature and attestations are published; the
+  `cosign verify` invocation, with the certificate identity and OIDC issuer to match, is not documented
+  anywhere a user would look. Until it is, the signing is not doing the job it was added for.

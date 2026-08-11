@@ -19,6 +19,9 @@ mod openapi 'config/openapi.just'
 # The .agents/ manifests: `just agents all` after adding, renaming or re-describing a file there.
 mod agents 'config/agents.just'
 
+# CHANGELOG.md sections: `just changelog extract <version|Unreleased>`, `just changelog check <version>`.
+mod changelog 'config/changelog.just'
+
 # Run from source: `just serve api [profile]`, `just serve docs`, `just serve web`, `just serve services`.
 mod serve 'config/serve.just'
 

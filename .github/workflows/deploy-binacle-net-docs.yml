@@ -9,12 +9,14 @@ jobs:
   deploy:
     name: Deploy Binacle.Net Docs
     runs-on: ubuntu-latest
+    # A tag push and a DigitalOcean deploy trigger. Neither is long-running.
+    timeout-minutes: 20
     environment:
       name: binacle-net-docs
       url: https://docs.binacle.net
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Tag Commit for Docs Deployment
         run: |
           TAG_NAME="docs-release-${GITHUB_RUN_NUMBER}"

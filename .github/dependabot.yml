@@ -1,0 +1,21 @@
+# Keeps the SHA-pinned actions moving. A pin without automation is a pin that rots: it stays on whatever
+# commit it was set to and stops getting security fixes, which is worse than a floating tag because nothing
+# reports it. Dependabot rewrites the SHA and the trailing `# vX.Y.Z` comment together, so the comment stays
+# honest.
+#
+# Actions only, on purpose. NuGet is managed centrally in Directory.Packages.props and npm is a small dev-only
+# set - both are reviewed by hand, and adding them here would bury the action updates in noise.
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # One PR per action rather than a batch: a broken update should name the action that broke it.
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - ci-cd
+    commit-message:
+      prefix: ci

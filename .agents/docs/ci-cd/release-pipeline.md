@@ -1,8 +1,8 @@
 ---
 id: ci-cd/release-pipeline
-description: The release pipeline in release-docker-image.yml — four jobs from a pushed tag to a published GitHub release, the immutable-then-promote tag order, and how a prerelease differs
+description: The release pipeline in release-docker-image.yml — six jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step a prerelease never reaches, and the CHANGELOG.md release body
 verified: 2026-08-11
-check: The four jobs, their needs: edges and job outputs match release-docker-image.yml; the metadata-action tag patterns still produce the immutable/moving split; smoke-image.yml still accepts the same workflow_call input
+check: The six jobs, their needs: edges and job outputs match release-docker-image.yml; the publish job's hyphen guard and the release job's !failure() are both still there; run-tests.yml and smoke-image.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased
 also_update:
   - ci-cd
   - config
@@ -10,8 +10,9 @@ also_update:
 
 # The release pipeline
 
-`release-docker-image.yml`. One pushed tag produces a smoked image on Docker Hub and a GitHub release, in an
-order chosen so that nothing a user follows moves until the artifact has been tested.
+`release-docker-image.yml`. One pushed tag produces a smoked image on GHCR, a copy of that exact image on
+Docker Hub, and a GitHub release. The order is cheapest check first, so nothing that cannot be undone happens
+until the things that can be checked cheaply have passed.
 
 ## The flow
 
@@ -19,67 +20,125 @@ order chosen so that nothing a user follows moves until the artifact has been te
 git push origin v3.0.0
   |
   v  on: push: tags: 'v*'
-build     just build publish, then push the IMMUTABLE tag only (3.0.0) and capture its digest
-smoke     pull that tag from the registry, structure check + all five profiles
-promote   point 3.0 and latest at the same digest, by manifest, with no rebuild
-release   gh release create, from the notes file
+notes     the CHANGELOG.md section this tag publishes exists and is not empty   (seconds)
+test      the whole suite, by calling run-tests.yml                             (minutes)
+build     just build publish, push the immutable tag to GHCR, capture the digest
+smoke     pull that digest back from GHCR, structure check + all five profiles
+publish   imagetools copy to Docker Hub - SKIPPED for a prerelease
+release   gh release create, body from CHANGELOG.md
 ```
 
-Each job `needs:` the ones before it, so a red smoke leaves the moving tags where they were and creates no
-release.
+Each job `needs:` the ones before it, so a red anywhere leaves Docker Hub untouched and creates no release.
 
-## The four jobs
+## The rule the shape exists to enforce
 
-**`build`** — checkout, .NET, `just`, then `just build publish`. Two `docker/metadata-action` steps
-(below), a Docker Hub login, buildx, and one `docker/build-push-action` that pushes the immutable tag alone.
-`VERSION` is passed as a build arg from the metadata step's stripped `version` output, not from
-`github.ref_name`, so `BINACLE_VERSION` inside the container never carries the leading `v`.
+**GHCR carries everything, including betas. Docker Hub carries releases only.**
 
-Job outputs: `image` (the full `repo:tag` the smoke job pulls), `repo`, `digest` (from the push step) and
-`moving_tags`.
+Nothing unsmoked and nothing unreleased is ever visible on the registry users pull from. GHCR is the staging
+registry and its package is public, so a beta is pullable by anyone who needs it — including the deployment
+host — with no credential.
 
-**`smoke`** — `uses: ./.github/workflows/smoke-image.yml` with the `image` output. It calls the same workflow a
-maintainer runs by hand, rather than copying its steps, so the release path and a manual check are the same
+## The six jobs
+
+**`notes`** — checkout, `just`, then work out which section this tag publishes and check it exists. A tag
+containing a hyphen publishes `Unreleased`; any other tag publishes its own version with the leading `v`
+stripped. `just changelog check <section>` fails if the section is missing or empty. Job output: `section`.
+
+This runs first, and everything waits on it. The alternative is finding out at the end, with the image already
+on Docker Hub and `latest` already moved.
+
+**`test`** — `uses: ./.github/workflows/run-tests.yml`, no inputs. Nothing guarantees a tag sits on a commit
+that passed CI, because a tag can be pushed at anything; this is that guarantee. It runs after the notes gate
+rather than beside it, so a missing section is reported in seconds instead of after a full suite.
+
+**`build`** — checkout, .NET, `just`, then `just build publish`. One `docker/metadata-action` step, a GHCR
+login with `GITHUB_TOKEN`, buildx, and one `docker/build-push-action` that pushes the immutable tag to GHCR
+with `provenance: mode=max` and `sbom: true`. `VERSION` is passed as a build arg from the metadata step's
+stripped `version` output, not from `github.ref_name`, so `BINACLE_VERSION` inside the container never carries
+the leading `v`. It ends by signing the pushed digest with cosign.
+
+Job outputs: `staging` (the full `ghcr.io/...:tag` the smoke job pulls), `version` and `digest`.
+
+**`smoke`** — `uses: ./.github/workflows/smoke-image.yml` with the `staging` output. It calls the same workflow
+a maintainer runs by hand, rather than copying its steps, so the release path and a manual check are the same
 thing. See `$ci-cd` for that workflow's runner pin.
 
-**`promote`** — logs in, then one `docker buildx imagetools create` that points the moving tags at the digest
-the smoke job just tested. `imagetools create` re-points an existing manifest: no pull, no rebuild, no second
-push. Each moved tag is then read back with `imagetools inspect` and its digest printed, because this is the
-least exercised command in the file. The step is guarded on `moving_tags` being non-empty; a second step prints
-why there was nothing to do.
+**`publish`** — the only job that touches Docker Hub and the only place the stored Docker Hub credential is
+used. A `metadata-action` step computes the public tag set, then one `docker buildx imagetools create` moves
+the manifest **by digest** from GHCR under all three public tags at once, and cosign signs the result. It never
+checks out, so it holds no `contents` permission.
 
-**`release`** — checks out, then `gh release create`. The body comes from `.agents/release-notes-<tag>.md` when
-that file exists, and falls back to `--generate-notes` when it does not. A tag containing a hyphen gets
-`--prerelease`.
+**`release`** — checkout, `just`, then `gh release create` with `--notes-file` built by
+`just changelog extract <section>`. A tag containing a hyphen also gets `--prerelease`. It `needs:` the `notes`
+job because it reads that job's `section` output.
 
-## Immutable first, then promote
+## Copy, never rebuild
 
-`3.0.0` is pushed and smoked before `3.0` and `latest` are moved onto it.
+`imagetools create` transfers a manifest, and a manifest is content-addressed, so the digest is preserved:
+what Docker Hub serves is bit for bit what the smoke job passed. The copy source is the digest rather than the
+tag, so the guarantee holds even if something re-tagged staging in between. All three tags go in one command,
+because they are aliases of one manifest and the blobs need moving only once.
 
-The trade is deliberate. The immutable tag is briefly public and unsmoked — but nobody follows an exact pin on
-release day, since it did not exist a minute earlier. The moving tags are what the samples, the README and the
-quick start tell people to follow, and those never point at anything unsmoked.
+A second build in the publish job would ship an image nothing tested, however identical the inputs looked.
 
 Smoking the registry copy rather than a locally loaded image is the point of the shape: compression, manifest
 shape and attestation handling are exactly what a registry round trip changes.
 
+## What ships alongside the image
+
+The pushed artifact is an OCI **image index**, not a single manifest: the `linux/amd64` manifest plus an
+`unknown/unknown` attestation manifest carrying two in-toto documents.
+
+| | Predicate | Produced by |
+|---|---|---|
+| SBOM | `https://spdx.dev/Document` | `sbom: true` on `build-push-action` |
+| Provenance | `https://slsa.dev/provenance/v1` | `provenance: mode=max` on the same step |
+
+Both are manifests inside the index, so they travel with the copy to Docker Hub.
+
+**The cosign signature does not.** It is stored as its own `sha256-<digest>.sig` tag in the repository rather
+than inside the index, so the image is signed twice — once on GHCR in `build`, once on Docker Hub in
+`publish`. Signing is keyless: cosign exchanges the job's OIDC token for a short-lived certificate, which is
+why both jobs declare `id-token: write` and why no signing key exists to store. The signature is made against
+the **digest**, so one signature covers `x.y.z`, `x.y` and `latest` alike.
+
 ## How a prerelease differs
 
-Nothing in the workflow asks whether a tag is a prerelease. Two `metadata-action` steps do it by construction:
+A hyphen in a semver tag is the prerelease marker, and the workflow acts on it in two places.
 
-| Step | Tag pattern | `v3.0.0` | `v3.0.0-beta.2` |
-|---|---|---|---|
-| `meta-immutable` | `type=semver,pattern={{version}}` | `3.0.0` | `3.0.0-beta.2` |
-| `meta-moving` | `type=semver,pattern={{major}}.{{minor}}` plus `flavor: latest=auto` | `3.0`, `latest` | *(empty)* |
+| | `v3.0.0` | `v3.0.0-beta.2` |
+|---|---|---|
+| Section the `notes` job checks | `3.0.0` | `Unreleased` |
+| Pushed to GHCR | `3.0.0` | `3.0.0-beta.2` |
+| `publish` job | runs | **skipped** — `if: !contains(github.ref_name, '-')` |
+| Docker Hub tags | `3.0.0`, `3.0`, `latest` | *(none — Docker Hub is never touched)* |
+| GitHub release | normal | marked `--prerelease` |
 
-metadata-action skips `{{major}}.{{minor}}` for a prerelease tag, and `latest=auto` withholds `latest` for the
-same reason. So `moving_tags` comes out empty and the promote step is a natural no-op — the guard is the tag
-pattern, not an `if:` somebody has to keep correct.
+The skip is at job level and deliberately stricter than `metadata-action`'s own behaviour, which withholds
+`{{major}}.{{minor}}` and `latest` for a prerelease but would still publish the immutable tag.
 
-There is no `{{major}}` tag on purpose. A bare `3` would cross minor lines.
+A prerelease still gets a GitHub release, because the image really is pullable — from GHCR. This is what makes
+the `release` job's `if: ${{ !failure() && !cancelled() }}` load-bearing: `publish` is skipped for a
+prerelease, and a skipped dependency skips everything downstream unless the condition says otherwise.
 
-**The consequence for testing:** a prerelease exercises every step of this pipeline except promotion, which it
-can never reach. That one command needs a separate check against a throwaway tag.
+**The consequence for testing:** a prerelease exercises every job except `publish`, which it can never reach.
+That whole job needs a separate check against a throwaway tag.
+
+## Where the release body comes from
+
+`CHANGELOG.md` at the repo root, newest version first, Keep a Changelog shape. One section accumulates per
+cycle: betas publish `## [Unreleased]`, and renaming that heading to the version is the last edit before the
+real tag.
+
+The parsing lives in `config/changelog.just`, not in the workflow, so CI and a laptop read the file the same
+way and the exact body can be previewed before the tag is pushed. See `$config` for the module.
+
+Inside the file a release is `##` and its own sections are `###`, nesting under the single `# Changelog`.
+`just changelog extract` shifts each section so its shallowest heading returns to `##`, because a release body
+has no such parent. Relative depth inside the body is preserved and nothing has to be recorded anywhere.
+
+A real release whose section is missing fails the `notes` job. There is no fallback to generated notes — that
+would silently publish a commit list as the release body.
 
 ## Labels
 
@@ -90,9 +149,9 @@ Three sources, and they do not collide.
 - **Per-build labels are applied at build time**, never as `LABEL` fed by `ARG`: version, revision and created
   change every build, so as Dockerfile layers they would bust the cache from that point down. `--label` sets
   image-config metadata with no layer.
-- **`meta-immutable` overrides two** that metadata-action gets wrong on its own: `licenses`, because
-  auto-detection returns `NOASSERTION` for a dual-licensed repo, and `url`, which should be the landing site
-  rather than the repo.
+- **The `build` job's metadata step overrides two** that metadata-action gets wrong on its own: `licenses`,
+  because auto-detection returns `NOASSERTION` for a dual-licensed repo, and `url`, which should be the landing
+  site rather than the repo.
 
 `config/build.just` does the same three per-build labels for a local `just build image`, so a locally built
 image carries the same metadata shape a pushed one does.
@@ -100,7 +159,7 @@ image carries the same metadata shape a pushed one does.
 ## What still happens by hand
 
 - **Deciding the tag and pushing it.** The pipeline has no other entry point.
-- **Writing `.agents/release-notes-<tag>.md`** before the tag is pushed, if the release should have a written
-  body. It is body only — no title line, no preamble — precisely so it can be published whole.
-- **The promotion check on a throwaway tag**, since a prerelease cannot reach that step.
+- **Writing the `[Unreleased]` section of `CHANGELOG.md`** as the work lands, and renaming that heading to the
+  version before the real tag.
+- **The publish check on a throwaway tag**, since a prerelease cannot reach that job.
 - **Deploying the docs site**, which is its own `workflow_dispatch` workflow and is not chained to a release.

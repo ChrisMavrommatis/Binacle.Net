@@ -44,13 +44,13 @@ table of [README.md](README.md).
 | File | Description |
 |---|---|
 | [ci-cd/README.md](ci-cd/README.md) | CI/CD — the six GitHub Actions workflows in .github/workflows, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need |
-| [ci-cd/release-pipeline.md](ci-cd/release-pipeline.md) | The release pipeline in release-docker-image.yml — four jobs from a pushed tag to a published GitHub release, the immutable-then-promote tag order, and how a prerelease differs |
+| [ci-cd/release-pipeline.md](ci-cd/release-pipeline.md) | The release pipeline in release-docker-image.yml — six jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step a prerelease never reaches, and the CHANGELOG.md release body |
 
 ## Config
 
 | File | Description |
 |---|---|
-| [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: the test, coverage, openapi, agents, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state |
+| [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state |
 
 ## Docs Site
 

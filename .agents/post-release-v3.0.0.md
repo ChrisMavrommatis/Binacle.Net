@@ -20,24 +20,35 @@ in the same change, leaving the text.
 
 ## Do these because the tag just happened
 
-- [ ] **Smoke the published image.** `just smoke all binacle/binacle-net:3.0.0`. This is step 11 of the release
-      sequence and it is repeated here because it is the one thing that must happen against the *published*
-      artifact rather than a local build. The release workflow pushes without smoking - until
-      [ci-release-workflow-build](plans/ci-cd/ci-release-workflow-build.md) wires it in, this manual run is the only
-      thing between a broken image and the people who pull it. About a minute, nothing to bring up.
+- [ ] **Smoke the published image.** `just smoke all binacle/binacle-net:3.0.0`. About a minute, nothing to
+      bring up.
+
+      **This is a confirmation now, not the safety net it used to be.** The old workflow pushed to Docker Hub
+      without ever running the image, so this manual run was the only thing between a broken image and the
+      people who pull it. Since 2026-08-11 the pipeline smokes the GHCR copy before anything is copied across.
+      What it still buys is the one thing the pipeline cannot check: that the *copy* landed something runnable,
+      not just something with the right digest.
 
 - [ ] **Confirm `3.0` resolves on Docker Hub, and that `latest` moved.** Nine files were bumped from
-      `3.0.0-beta.2` to `3.0` in the last change before the tag - six pins plus `README.md`, `samples/README.md`
+      `3.0.0-beta.1` to `3.0` in the last change before the tag - six pins plus `README.md`, `samples/README.md`
       and `samples/docker/README.md`. Until the release image is published that tag does not exist, so this is
       the check that `main` is not pointing at nothing. A2 verified a prerelease moved neither `latest` nor the
       minor tag; this is the same check for the real release, where both are expected to move.
 
-      **Check the repo landing page by eye while you are here.** `README.md` is the one that carried a
-      beta-conditional sentence ("Until then, pin `binacle/binacle-net:3.0.0-beta.2`") and it is the most read
-      file in the repo. A stale beta pin there outlives every other miss.
+      **Check the signature and the attestations while you are here** - `cosign verify` against the digest, and
+      `docker buildx imagetools inspect` for the SBOM and provenance entries. The `publish` job is skipped for
+      every prerelease, so the copy that produced these tags and the signature over them have run exactly once
+      before this: on the throwaway pipeline-test tag. This is the first time they have run for real.
 
-- [ ] **Delete the release set.** `release-v3.0.0.md` and `release-notes-v3.0.0.md` go once the release is out
-      and verified. This file goes when its own list is clear.
+      **Check the repo landing page by eye while you are here.** `README.md` is the one that carried a
+      beta-conditional sentence ("Until then, pin `binacle/binacle-net:3.0.0-beta.1`") and it is the most read
+      file in the repo. A stale beta pin there outlives every other miss. Note the tag it names: betas stopped
+      reaching Docker Hub on 2026-08-11, so `3.0.0-beta.1` is the last one that ever existed there and there is
+      no `beta.2` to have leaked through.
+
+- [ ] **Delete the release set.** `release-v3.0.0.md` goes once the release is out and verified. This file goes
+      when its own list is clear. `release-notes-v3.0.0.md` is already gone - deleted 2026-08-11 when the
+      release body moved to `CHANGELOG.md`, which is permanent and stays.
 
 - [ ] **Check the docs site is actually on v3.0.x.** B8 flipped `current` forward as part of releasing the
       docs. Confirm `/version/latest/` lands on `v3.0.x` and the version picker shows four versions. This is

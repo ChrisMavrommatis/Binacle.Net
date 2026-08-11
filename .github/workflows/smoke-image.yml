@@ -30,15 +30,19 @@ jobs:
     # Pinned, NOT ubuntu-latest. hurl links libxml2.so.2 and Ubuntu 26.04 ships only libxml2.so.16 with no
     # compat package, so hurl dies there with what reads like a hurl bug (DEVELOPMENT.md has the workaround).
     runs-on: ubuntu-24.04
+    # Five profiles, each a container boot plus a hurl run. Twice the observed worst case.
+    timeout-minutes: 30
     permissions:
       contents: read
+      # For the GHCR login below. Harmless on the manual Docker Hub dispatch, which never uses it.
+      packages: read
 
     env:
       # Read once so every step below smokes the same thing.
       IMAGE: ${{ inputs.image }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       # 1.x range: ubuntu's apt ships a just too old to parse config/smoke.just.
       - name: Setup just
@@ -46,26 +50,64 @@ jobs:
         with:
           just-version: '^1.45'
 
-      # Pinned versions, installed exactly as DEVELOPMENT.md says, so CI and a laptop get the same bytes. Not
-      # cached on purpose: a cache key can go stale against the version it is meant to pin.
-      - name: Install smoke tools
+      # One step per tool, each ending in its own version line, so the log says what is installed next to the
+      # thing that installed it. A red step names the tool instead of "smoke tools".
+      #
+      # Installed by curl from the official release rather than by an action, deliberately. There is no
+      # maintained action for either: the only hurl one is archived, neither upstream ships an action.yml, and
+      # a generic "install from a release" wrapper trades a readable curl for an unreadable dependency.
+      #
+      # Pinned by version AND by checksum, so a replaced release asset fails the build instead of running.
+      # Versions match DEVELOPMENT.md, so CI and a laptop get the same bytes. Not cached on purpose: a cache
+      # key can go stale against the version it is meant to pin.
+      #
+      # ~/.local/bin is on PATH for an interactive shell but not for later workflow steps, hence GITHUB_PATH.
+      - name: Install container-structure-test
+        env:
+          VERSION: v1.22.1
+          # Upstream publishes no checksum for this asset, so this one was taken from the binary that is
+          # actually in use. It cannot prove the first download was genuine; it does prove every later one
+          # matches it.
+          SHA256: fa35e89512a8978585f76cf41397956d2e3a30c62c2ad3fb857b1597074d14ca
         run: |
+          set -euo pipefail
           mkdir -p "$HOME/.local/bin"
           curl -fsSL -o /tmp/cst \
-            https://github.com/GoogleContainerTools/container-structure-test/releases/download/v1.22.1/container-structure-test-linux-amd64
+            "https://github.com/GoogleContainerTools/container-structure-test/releases/download/${VERSION}/container-structure-test-linux-amd64"
+          echo "${SHA256}  /tmp/cst" | sha256sum -c -
           install -m0755 /tmp/cst "$HOME/.local/bin/container-structure-test"
-          curl -fsSL -o /tmp/hurl.tar.gz \
-            https://github.com/Orange-OpenSource/hurl/releases/download/8.0.1/hurl-8.0.1-x86_64-unknown-linux-gnu.tar.gz
-          tar xzf /tmp/hurl.tar.gz -C /tmp
-          install -m0755 /tmp/hurl-8.0.1-x86_64-unknown-linux-gnu/bin/hurl "$HOME/.local/bin/hurl"
-          # ~/.local/bin is on PATH for an interactive shell but not for later workflow steps.
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/container-structure-test" version
 
-      - name: Tool versions
+      - name: Install hurl
+        env:
+          VERSION: 8.0.1
+          # Published by upstream as hurl-<version>-x86_64-unknown-linux-gnu.tar.gz.sha256.
+          SHA256: cac7c4670d69444db120edb21fe06c97ba8c80dcc52279957c8dd18f05fb0c06
         run: |
-          just --version
-          container-structure-test version
-          hurl --version
+          set -euo pipefail
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL -o /tmp/hurl.tar.gz \
+            "https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl-${VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+          echo "${SHA256}  /tmp/hurl.tar.gz" | sha256sum -c -
+          tar xzf /tmp/hurl.tar.gz -C /tmp
+          install -m0755 "/tmp/hurl-${VERSION}-x86_64-unknown-linux-gnu/bin/hurl" "$HOME/.local/bin/hurl"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/hurl" --version
+
+      - name: just version
+        run: just --version
+
+      # Only for a GHCR image, so the manual Docker Hub dispatch keeps working with no credential at all.
+      # The staging package is public and an anonymous pull would succeed without this - it is here so the
+      # smoke still works if the package is ever flipped to private, which is one click and no warning.
+      - name: Login to GHCR
+        if: ${{ startsWith(inputs.image, 'ghcr.io/') }}
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # Its own step so "that tag does not exist" is one red line instead of five broken-looking profiles.
       - name: Pull the image

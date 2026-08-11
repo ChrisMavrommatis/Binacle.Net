@@ -30,7 +30,7 @@ you need, and trim or delete it once the work lands.
 |---|---|
 | [ci-cd/ci-gates.md](ci-cd/ci-gates.md) | CI - make the PR gate mean something |
 | [ci-cd/ci-release-workflow-build.md](ci-cd/ci-release-workflow-build.md) | CI - rebuild how the image is released |
-| [ci-cd/release-pipeline-rebuild.md](ci-cd/release-pipeline-rebuild.md) | CI/CD - rebuild the release pipeline on GHCR, and put the notes in CHANGELOG.md |
+| [ci-cd/release-pipeline-rebuild.md](ci-cd/release-pipeline-rebuild.md) | CI/CD - finish the GHCR release pipeline |
 
 ## Config
 

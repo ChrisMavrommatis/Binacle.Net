@@ -1,8 +1,8 @@
 ---
 id: ci-cd/decisions
-description: CI/CD decisions ledger — why the release pipeline is tag-triggered and promotes by digest, why workflows call just recipes, the pinning rules, and the open questions about the PR gate and supply-chain attestation.
+description: CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why a prerelease is skipped at job level, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation.
 verified: 2026-08-11
-check: Decisions still match .github/workflows/*.yml and config/build.just; D2/D3 against release-docker-image.yml, D6 against smoke-image.yml's runs-on, D12 against build.just's publish recipe
+check: Decisions still match .github/workflows/*.yml and config/build.just; D2/D3/D14 against release-docker-image.yml's publish job and its hyphen guard, D7 against config/changelog.just, D6 against smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe
 ---
 
 # CI/CD — decisions ledger
@@ -26,38 +26,85 @@ inverts that — a failure leaves a tag you delete, and nothing a user ever saw.
 **This is a replacement, not an addition.** Leaving both triggers on would make the release created in the last
 job re-trigger the whole workflow and build everything a second time.
 
-### D2 — push the immutable tag, smoke the registry copy, then promote by digest
+### D2 — build once, smoke the registry copy, then copy by digest
 
-Order: push `3.0.0` alone, pull it back and smoke it, then move `3.0` and `latest` onto that same digest with
-`docker buildx imagetools create`.
+Order: push the immutable tag to GHCR alone, pull it back from there and smoke it, then copy that digest to
+Docker Hub with `docker buildx imagetools create`, under all three public tags at once.
 
 **Why not the tempting alternative.** Building with `load: true`, smoking the local image, then pushing sounds
 equivalent and is not — it tests a local copy that *ought to be* identical to what lands in the registry.
 Compression, manifest shape and attestation handling are precisely what a registry round trip changes, so the
 only honest smoke target is what the registry actually serves.
 
-**Why the exposure is acceptable.** The immutable tag is briefly public and unsmoked. Nobody is following
-`3.0.0` on release day — it did not exist a minute earlier. The moving tags are the ones the samples, the
-README and the quick start point at, and they never point at anything unsmoked. The alternative buys a smaller
-exposure window on a tag nobody watches, in exchange for never testing the registry copy at all.
+**Promotion is a transfer, not a rebuild.** A manifest is content-addressed, so `imagetools create` preserves
+the digest: Docker Hub serves the exact bytes that passed, not a rebuild that ought to match. The copy source
+is the digest rather than the tag, so that holds even if something re-tagged staging in between. All three tags
+go in one command - they are aliases of one manifest, so the blobs move once.
 
-**Promotion is a re-point, not a rebuild.** `imagetools create` aims new tags at an existing manifest. It
-uploads nothing, so the moving tags land on the exact bytes that passed, not on a rebuild that ought to match.
+**Verified across registries on 2026-08-11, not assumed.** The published `v3.0.0-beta.1` index - an amd64
+manifest plus its attestation manifest - was copied by digest from Docker Hub into a scratch registry. It came
+out on `sha256:c458644...`, the digest it went in with, and all three tags resolved to it. The attestation
+entry survived the copy.
 
-### D3 — `metadata-action` runs twice, and an empty tag list is the prerelease guard
+**Superseded 2026-08-11 — what changed and what did not.** This decision originally ran entirely on Docker Hub:
+the immutable tag was pushed there, smoked there, and `docker buildx imagetools create` re-pointed `3.0` and
+`latest`. The reasoning above survived intact; only the registry topology changed. What forced it was the one
+cost the old shape accepted and should not have — an unsmoked artifact was briefly public on the registry users
+pull from. It was argued as acceptable because nobody follows an exact pin on release day, and that is true, but
+"true for the tag nobody watches" is a weaker claim than "never happens", and D14 makes it never happen for
+free. The copy command did not change - `imagetools create` handles a cross-registry source as readily as a
+local one, which is what kept a third-party tool out of the job that moves the artifact users pull.
 
-One step for the immutable tag (`{{version}}`), one for the moving tags (`{{major}}.{{minor}}` plus
-`latest=auto`).
+### D3 — the prerelease guard is an explicit job-level skip
 
-**Why:** hand-rolling "is this a prerelease" is the thing most likely to be subtly wrong, and metadata-action
-already gets it right — it skips `{{major}}.{{minor}}` for a prerelease, and `latest=auto` withholds `latest`
-for the same reason. Splitting the step turns that into the guard: the moving list comes out empty, so the
-promote step is a natural no-op instead of an `if:` condition somebody has to maintain.
+`publish` carries `if: ${{ !contains(github.ref_name, '-') }}`, so a prerelease ends after `smoke` and never
+reaches Docker Hub at all.
+
+**Why not lean on metadata-action.** It gets the moving tags right on its own — it skips `{{major}}.{{minor}}`
+for a prerelease, and `latest=auto` withholds `latest` for the same reason — and that was the guard until
+2026-08-11. But it is a guard on the *moving* tags only: metadata-action would still publish the immutable tag
+for a prerelease, which is exactly what must not reach Docker Hub now. So the guard moved up a level, from "the
+tag list comes out empty" to "the job does not run", and is deliberately stricter than the action's own
+behaviour.
 
 **Observed, not assumed.** Checked on Docker Hub on 2026-08-06 after `v3.0.0-beta.1`: it published
-`3.0.0-beta.1` and moved neither `latest` nor `3.0`, and no `3.0` tag existed at all.
+`3.0.0-beta.1` and moved neither `latest` nor `3.0`, and no `3.0` tag existed at all. That evidence is what
+retires the *need* for the metadata-action guard rather than contradicting it — the behaviour is real, it is
+just no longer the thing standing between a beta and Docker Hub.
+
+**The cost of moving it.** A skipped job skips everything downstream by default, so `release` needs
+`if: ${{ !failure() && !cancelled() }}` or a beta would get no GitHub release. That condition is load-bearing;
+it is not defensive boilerplate.
 
 No `{{major}}` tag is emitted on purpose — a bare `3` would cross minor lines.
+
+### D14 — GHCR is the staging registry, and the package is public
+
+Everything built lands on `ghcr.io/chrismavrommatis/binacle-net` first. Docker Hub receives only what has been
+smoked there, and only for a real release.
+
+**Why a second registry at all.** It buys the property D2 used to trade away: nothing unsmoked and nothing
+unreleased is ever visible where users pull from. **GHCR carries everything including betas; Docker Hub carries
+releases only.**
+
+**Why GHCR specifically, and why public.** `GITHUB_TOKEN` is minted per run and expires with it, so staging
+needs no stored credential and nothing to rotate. Keeping the package public extends that to the consumer side:
+the deployment host pulls a beta with no `docker login`, no credential on the server, and no dependency on a
+classic personal access token — which is what a private package would have required, since fine-grained tokens
+have no equivalent for packages and classic ones are on a deprecation path.
+
+Private was never the goal. Keeping Docker Hub free of anything unsmoked or unreleased was, and a public
+staging package achieves it without adding a secret anywhere.
+
+**One manual step this depends on**, and it comes *after* the first run rather than before it: the package's
+visibility must be set to public, because GHCR defaults every new package to private regardless of repo
+visibility, and it cannot be changed before the package exists.
+
+**The workflow creates the package on its own** — `packages: write` is enough to create one in the repo's
+namespace, and the `Dockerfile`'s `org.opencontainers.image.source` label is what links it back. An earlier
+version of this decision claimed a manual first push was required; it is not. The `permission_denied` failure
+that claim came from is real but narrower — it happens when a package already exists in the namespace
+*unlinked*, from a personal token or a recreated repo.
 
 ### D4 — a workflow step calls a `just` recipe, it does not inline the command
 
@@ -91,15 +138,36 @@ hurl dies there with a missing-library error that reads like a hurl bug rather t
 `ubuntu-latest` will move to 26.04 eventually, and this workflow runs rarely enough that it would break on the
 day it is needed most.
 
-### D7 — the release body is a file, published whole
+### D7 — `CHANGELOG.md` is the single source of release notes, and a missing section is fatal
 
-`gh release create --notes-file .agents/release-notes-<tag>.md`, falling back to `--generate-notes` when there
-is no such file.
+`gh release create --notes-file`, with the body produced by `just changelog extract <section>`. The `notes` job
+proves the section exists before anything is built. There is **no fallback to generated notes.**
 
-**Why:** the file is body only — no title line, no preamble, no instructions — precisely so it can be published
-whole. A file you paste whole cannot be pasted wrongly, and a file the workflow reads cannot be forgotten. The
-fallback matters because a prerelease normally has no written body, and publishing notes written for a different
-version is worse than generating them.
+**Why a changelog and not a per-release file.** The body used to come from `.agents/release-notes-<tag>.md`,
+which was body-only so it could be published whole — that part was right and is kept. What was wrong is where
+it lived: `.agents/` deletes a release's companions once the version ships, so the notes source was a file whose
+own contract guaranteed it would disappear. A published release body is a permanent record, and it belongs in a
+permanent file at the repo root where users read it.
+
+**Why one section accumulates per cycle.** Betas publish `## [Unreleased]`; renaming that heading to the
+version is the last edit before the real tag. A beta's notes are the in-progress notes at that moment, not a
+version of their own, which is also why prereleases are excluded from the file — the GitHub releases stay as
+the record of what each beta said.
+
+**Why no fallback.** The old `--generate-notes` fallback existed because a prerelease normally had no written
+body. Under the current shape a prerelease publishes `[Unreleased]`, which always exists mid-cycle, so the
+fallback's only remaining effect would be to let a *real* release silently publish a commit list as its body.
+Failing the build in seconds is the better outcome, and it is checked first for exactly that reason.
+
+**Why the parsing is a `just` recipe and not inline YAML.** Same reason as D4 — CI and a laptop must read the
+file the same way, and the exact body has to be previewable before the tag is pushed. A section terminates at
+the next heading that *parses as a version*, not at the next `## `, because bodies carry their own subheadings
+and stopping at those would truncate every section at its first one.
+
+**Heading depth is normalised in the file and restored on the way out.** A release is `##` and its own sections
+are `###`, so the file nests under a single `# Changelog`. `extract` shifts each section so its shallowest
+heading returns to `##`, since a release body has no parent heading. Deriving the shift from the section's own
+minimum keeps relative depth intact and means nothing has to be recorded anywhere.
 
 ### D8 — Sonar analysis is a CI run, and Automatic Analysis stays off
 
@@ -135,14 +203,24 @@ everywhere on purpose. Change it in all of them or none.
 no workspace declares `prepare` or `postinstall`, and the only dependency with an install script is `fsevents`,
 which is darwin-only and never installed on a Linux runner. The flag costs nothing and closes the hole.
 
-### D11 — third-party actions are pinned by commit SHA
+### D11 — every action is pinned by commit SHA, and Dependabot keeps the pins moving
 
-With the version in a trailing comment, so the pin is readable. First-party `actions/*` and `docker/setup-*`
-stay on a major tag.
+With the version in a trailing comment, so the pin is readable. `.github/dependabot.yml` raises a weekly PR per
+action, rewriting the SHA and the comment together.
 
-**Why:** a mutable tag on a third-party action is a supply-chain hole — the tag can be re-pointed at any commit,
-including after review. The trailing comment is what keeps the pin maintainable; a bare SHA tells a reader
-nothing about how far behind it is.
+**Why:** a mutable tag is a supply-chain hole — it can be re-pointed at any commit, including after review. The
+trailing comment is what keeps the pin maintainable; a bare SHA tells a reader nothing about how far behind it
+is.
+
+**Why first-party actions too, as of 2026-08-11.** `actions/*` and `docker/setup-*` were left on major tags on
+the grounds that the publisher is trusted. That is a weaker rule than it looks: the risk a SHA pin addresses is
+the tag being re-pointed, and `actions/checkout@v4` is exactly as re-pointable as any other tag. Two rules also
+meant every reader had to know which action fell under which. One rule, applied to all six workflows.
+
+**The pin and the automation are one decision, not two.** A pinned action with nothing watching it stays on
+whatever commit it was set to and stops receiving security fixes, which is worse than a floating tag because
+nothing reports it. `docker/build-push-action` sat at v5.4.0, several majors behind, which is what made the
+point concrete.
 
 ### D12 — the image is framework-dependent, and the publish flag is spelled out
 
@@ -174,15 +252,59 @@ metadata-action overrides two of the Dockerfile's constant labels on purpose —
 auto-detection returns `NOASSERTION` for a dual-licensed repo, and `url`, which should be the landing site
 rather than the repo.
 
+### D15 — the image carries an SBOM and provenance, and is signed keyless
+
+`build-push-action` gets `provenance: mode=max` and `sbom: true`; `cosign sign` runs against the digest with
+no key, using the job's OIDC token.
+
+**Provenance was already being produced, and the ledger said the opposite.** Inspecting the published
+`v3.0.0-beta.1` on 2026-08-11 showed an OCI **image index**: the amd64 manifest plus an `unknown/unknown`
+manifest annotated `vnd.docker.reference.type: attestation-manifest`, carrying an in-toto document with
+predicate type `https://slsa.dev/provenance/v1`. That is buildx's default in Actions. Nothing in this repo
+asked for it, which is exactly how it came to be written down as absent. Stating it in the workflow makes it a
+choice rather than a default that can change underneath us.
+
+**`mode=max` over the default `min`** records the full build definition rather than just the materials. The
+only build arg is `VERSION`, so nothing secret is captured — adding a secret-bearing build arg means revisiting
+this.
+
+**Why signing is separate from attestation, and why it happens twice.** The SBOM and provenance say how the
+image was built; without a signature they do not prove the record itself was not altered. cosign closes that.
+But a cosign signature is stored as its own `sha256-<digest>.sig` tag in the repository, **not** as a manifest
+inside the index — so unlike the attestations it does not travel with the copy in D2. The staging image is
+signed on GHCR (which is the only place a beta ever exists, so a beta is verifiable) and the published image is
+signed again on Docker Hub. Signing the **digest** rather than a tag means one signature covers `x.y.z`, `x.y`
+and `latest`, since all three are aliases of it.
+
+**Keyless, so there is no key.** cosign exchanges the job's OIDC token for a short-lived certificate, which is
+why both jobs need `id-token: write` and why this adds no secret to the repo. `sigstore/cosign-installer` comes
+from the sigstore org itself rather than an individual, which is the standard this is adhering to in the first
+place.
+
+**Verified on 2026-08-11, not assumed.** A throwaway image built with both flags produced a single attestation
+manifest carrying two in-toto layers — `https://spdx.dev/Document` and `https://slsa.dev/provenance/v1` — and a
+cross-registry `imagetools create` of that index came out on the digest it went in with, attestations intact.
+
+**What this obliges.** Users have no way to verify what they are not told about. Publishing signed images
+without a documented `cosign verify` invocation, including the certificate identity and OIDC issuer to match
+against, is decoration. That page is owed and is not written yet.
+
 ## Open
 
-### O1 — a prerelease cannot test the promotion step
+### O1 — a prerelease cannot test the publish step, and this got worse
 
-By design: D3 makes the moving tag list empty for a prerelease, so `imagetools create` never runs. That is the
-newest and least exercised command in the pipeline, and the first tag that reaches it would otherwise be a real
-release — the one that cannot be taken back.
+By design: D3 skips the whole `publish` job for a prerelease. The first tag to reach it would otherwise be a
+real release — the one that cannot be taken back.
 
-The answer is a separate check against a throwaway tag, run once, before a release depends on it. Not yet done.
+**It got worse on 2026-08-11, and deliberately.** Under the old shape a prerelease at least ran the promote
+job, which was a no-op but proved the job's setup — the login, the credential, the runner. Now the entire job
+is skipped, so an untested `publish` means an untested Docker Hub login and an untested copy, both first
+exercised by a real release. The copy command itself has been checked by hand against a scratch registry (D2),
+which leaves the job's credentials and wiring as the real unknown.
+
+The answer is unchanged in shape and larger in scope: a separate check against a throwaway tag, run once,
+before a real release depends on it. It has to exercise the `publish` job end to end — pushing a disposable tag
+to the Docker Hub repo and deleting it after — not just the copy command in isolation. Not yet done.
 
 ### O2 — how much the pull-request gate should prove
 
@@ -197,10 +319,9 @@ Excluding them was considered and rejected: it moves the number without changing
 that is red before anyone writes a line blocks every PR for a reason none of them caused, and gets waived within
 a week. It goes green when the UI gets a test harness, not by configuration.
 
-### O3 — supply-chain attestation and multi-arch are deliberately absent
+### O3 — multi-arch is still absent
 
-No SBOM, no provenance, no signature, `linux/amd64` only.
+`linux/amd64` only. No second architecture is built, and nothing asks for one yet.
 
-They are out because they **change the artifact**, and the pipeline rebuild was scoped to what a prerelease tag
-could prove without altering what ships. That reasoning expires once the pipeline itself is trusted; nothing
-about these needs a beta to justify them. Not scheduled.
+It stays out because it **changes the artifact** and roughly doubles build time, and because there is no
+evidence of demand. Attestation and signing, which used to share this entry, are now done — see D15.

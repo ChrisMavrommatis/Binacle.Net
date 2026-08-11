@@ -2,17 +2,26 @@
 
 **Status:** In progress - **Gate A green, beta 1 published and verified, docs written.** B2 landed, so the long
 pole is down: the `v3.0.x` folder is a full version and the site builds. What is left is **a second beta**
-(decided 2026-08-10 - see Gate B2X), then B6, then the tag and the docs deploy.
+(see Gate B2X), then B6, then the tag and the docs deploy.
 **Created:** 2026-07-16. **Restructured:** 2026-07-26. **Status rewritten:** 2026-08-06. **B3 landed:**
-2026-08-07. **B2 landed and beta 2 added:** 2026-08-10.
+2026-08-07. **B2 landed and beta 2 added:** 2026-08-10. **Rewritten for the GHCR pipeline:** 2026-08-11.
 
 The orchestrator for v3.0.0 (drops v2, adds experimental v4, rebuilt ViPaq). This is the **one exception** to the
 reference rules: it may point at any file to coordinate the release, and **nothing points back at it**. Delete it
 once v3.0.0 is out.
 
-Companions:
-- `release-notes-v3.0.0.md` - **the GitHub release body, and nothing else.** Published verbatim. Its style
-  rules, its scope check and what to confirm before publishing all live in "The release notes file" below.
+**The release pipeline was replaced on 2026-08-11, and it changes this file throughout.** The old workflow built,
+pushed straight to Docker Hub, smoked there and promoted the moving tags. The new one stages everything on GHCR,
+smokes it there, and **copies to Docker Hub only for a real release** - a prerelease never reaches Docker Hub at
+all. Three consequences run through everything below, so they are stated once here:
+
+- **Beta 2 will exist only at `ghcr.io/chrismavrommatis/binacle-net:3.0.0-beta.2`.** There will be no
+  `binacle/binacle-net:3.0.0-beta.2`, ever.
+- **The release body now comes from `CHANGELOG.md`**, extracted by the workflow. `release-notes-v3.0.0.md` was
+  deleted on 2026-08-11; its content is the `## [Unreleased]` section, byte for byte.
+- **Beta 2 is the first run of the new pipeline**, which is why it is a bigger event than it was.
+
+Companion:
 - `post-release-v3.0.0.md` - what to do once the release is out.
 
 ## How to work this file
@@ -157,8 +166,8 @@ trusting the refactor.
   constants, a `Reject` helper extracted from the rejection chain, `HandleAsync` made `static`), `Program.cs`,
   `OpenApiUiExtensions.cs`, the UI module's code-behind, and every v3 and v4 endpoint going `static`. All
   behaviour-preserving in intent; the suites agree, and beta 2 is the check that a real host agrees too.
-- **The release workflow pins its actions by SHA** now. Beta 2 is the first run of the pinned workflow, so it
-  also proves the publish path still works before the real tag depends on it.
+- **The release pipeline is new as of 2026-08-11.** Six jobs, GHCR staging, a Docker Hub copy that a prerelease
+  skips, cosign signing, an SBOM and provenance. Beta 2 is its first run end to end - see the second job below.
 - **The image is framework-dependent as of 2026-08-10, and beta 2 is the first one built that way.** The
   publish dropped `--self-contained`; it had been set while the Dockerfile bases on `aspnet:10.0`, so every
   image carried two copies of .NET - the bundled one the app ran on, and the base image's, which nothing
@@ -179,14 +188,25 @@ trusting the refactor.
 The verification list is short, because B1 already covered the deployment-shaped behaviour and none of the
 middleware it exercised changed except log-template casing:
 
-- [ ] Publish `v3.0.0-beta.2` and confirm the workflow's SHA-pinned actions still build and push.
-- [ ] Confirm the prerelease still moves neither `latest` nor a `3.0` tag - the same A2 check, now against a
-      workflow whose actions were re-pinned.
+- [ ] Tag `v3.0.0-beta.2` and confirm all six jobs run: the changelog gate, the suite, the GHCR build, the
+      smoke, **`publish` skipped**, and the release created anyway. Nothing has to be set up on GHCR first -
+      the build job creates the package on its first push and the `Dockerfile`'s
+      `org.opencontainers.image.source` label links it to the repo.
+- [ ] **Then set the package public.** It is created private - GHCR's default for every new package, whatever
+      the repo's visibility - and it cannot be changed before it exists. This is the only manual step in the
+      pipeline, and everything about pulling a beta without a credential depends on it.
+- [ ] **Confirm Docker Hub is untouched.** No `3.0.0-beta.2` tag, `latest` and `3.0` where they were. This is
+      the A2 check restated for a pipeline that now skips the whole publish job rather than emitting an empty
+      tag list.
 - [ ] Confirm `BINACLE_VERSION` inside the image reads `3.0.0-beta.2`, with no leading `v`. The fix that
       strips the `v` was already in beta 1 (`c6981e90`, checked against the tag), so this is a confirmation
       rather than a first test - but it was never actually observed on a published image, and it is one
       `docker inspect` away.
-- [ ] Smoke the published beta: `just smoke all binacle/binacle-net:3.0.0-beta.2`.
+- [ ] Confirm the smoke job passed against the GHCR copy, and that the image carries its SBOM, provenance and
+      cosign signature: `cosign verify` plus `docker buildx imagetools inspect` on the digest.
+- [ ] Pull it on the deployment host **with no `docker login`** -
+      `docker pull ghcr.io/chrismavrommatis/binacle-net:3.0.0-beta.2`. This is the check that the public
+      package actually works from outside, and the whole beta deployment depends on it.
 - [ ] Deploy it and exercise the auth token endpoint. `Token.cs` is the single most restructured shipping file
       and its rejection chain is now one extracted helper - a wrong branch here returns the wrong status code
       to a real client, which no unit test shape catches as well as one live call.
@@ -200,21 +220,20 @@ middleware it exercised changed except log-template casing:
 check allow-list, or the login throttle partition. All four are in "Already verified - do not re-audit" or
 closed by B1, and nothing behind them changed.
 
-**Beta 2 now has a second job - added 2026-08-10.** It is also the test run for the rebuilt release workflow
-(tag-triggered, push the immutable tag, smoke the registry copy, then promote). That is a deliberate change to
-"Not in this release"; the reasoning is at the bottom of this file. Two consequences for this list:
+**Beta 2's second job: it is the first run of the new pipeline.** The rebuild landed on 2026-08-11, before
+v3.0.0 rather than after it, so beta 2 exercises a publish path nothing has ever run. That is deliberate - a
+prerelease tag is the only free test this pipeline will ever get, and a failure costs a deleted tag instead of a
+bad release.
 
-- **Land the workflow rebuild before tagging beta 2**, and diff the publish output first. If `just build
-  publish` produces the same file list and sizes as the old restore-plus-publish, beta 2's image is
-  byte-identical to what the old path would have built - which is what keeps the code verification above
-  uncontaminated by the pipeline change. Without that diff you are testing two things and cannot tell which
-  broke.
-- **A prerelease cannot test tag promotion**, because the guards skip it by design. Close that separately with
-  the throwaway-tag check in the CI plan. It is the newest command in the workflow and it would otherwise run
-  for the first time on v3.0.0.
+**But a prerelease does not test all of it, and the untested part grew.** `publish` is skipped for a beta, so
+the Docker Hub copy **and** the second cosign signature both wait for v3.0.0 itself. Under the old design the
+untested step was one `imagetools create`; it is now a copy plus a signature against a registry the pipeline has
+not touched in that run.
 
-If landing both at once feels like too much, the fallback is beta 2 on the current workflow and a beta 3 for
-the pipeline. That costs one prerelease and buys a clean separation.
+- [ ] **Close it with a throwaway tag before v3.0.0.** Tag something like `v0.0.1-pipeline-test` on a scratch
+      branch, let the full path run against Docker Hub, confirm the three tags land on the smoked digest and
+      `cosign verify` passes, then delete the tag, the release and the pushed tags. Five minutes, and it is the
+      only way this runs twice before it runs on the release.
 
 **B3 landed 2026-08-07 - written, not just decided.** The page is split in two: a general `_common_pages` page
 with no implementation details and nothing that varies between versions, plus one versioned page per folder
@@ -237,11 +256,21 @@ pushed. It is deliberate - a versioned page should pin the spec it describes - b
 ~~**B4 covers two documents.**~~ Done 2026-08-06 - `v3.json` and `v4.json` both generated, no `/api/auth/token`
 path, v4 carries the experimental banner. Handed to the docs session.
 
-- [ ] **B5 - the image pins move twice now, not once.** They sit at `3.0.0-beta.1` today. Beta 2 adds a step:
-  **after `v3.0.0-beta.2` publishes** they move to `3.0.0-beta.2`, and then to **`3.0`** as the last change
-  before the v3.0.0 tag. The rule behind both moves is the same one this item has always carried - **a pin on
-  `main` must name an image that exists on Docker Hub** - so each bump follows its publish rather than
-  preceding it.
+- [ ] **B5 - the image pins move once, to `3.0`, as the last change before the tag.** They sit at
+  `3.0.0-beta.1` today and **they stay there until then.**
+
+  **This item said "twice" until 2026-08-11 and that is now impossible.** It planned a bump to `3.0.0-beta.2`
+  after beta 2 published. Under the new pipeline a prerelease never reaches Docker Hub, so
+  `binacle/binacle-net:3.0.0-beta.2` will not exist and cannot be pinned. The rule this item has always carried
+  is what settles it - **a pin on `main` must name an image that exists on Docker Hub** - and `3.0.0-beta.1` is
+  the last beta that will ever satisfy it. Leaving the pins alone is therefore not laziness; it is the only
+  value that stays true between now and the tag.
+
+  **Decided 2026-08-11, and it is reversible.** The alternative was pointing the samples at
+  `ghcr.io/chrismavrommatis/binacle-net` for the beta window. Rejected: it puts a second registry in front of
+  every reader of the landing page for a fortnight, then takes it away again, and the samples exist to be copied
+  by people who want a working deployment rather than to track the beta. Anyone who wants beta 2 gets the GHCR
+  reference from the release body, which is where a prerelease belongs.
 
   **It is nine files, not six.** The six the item originally named are the pin itself; three more carry the
   beta in prose, and they are the ones that get missed:
@@ -270,6 +299,10 @@ path, v4 carries the experimental banner. Handed to the docs session.
   for the same reason: real and v3-only, without naming a tag that is not there yet. **Do not leave the `3.0`
   bump on `main` long before tagging.**
 
+  **One sentence to re-read at the bump.** `README.md`, `samples/README.md` and `samples/docker/README.md` all
+  explain the beta pin with some version of "since `3.0` does not exist on Docker Hub yet". That reason expires
+  the moment v3.0.0 publishes, so the prose goes with the pin - not just the number.
+
   The five samples are also no longer the same five. `minimal-setup` -> `minimal`, `ui-setup` -> `quickstart`,
   `service-npgsql` and `service-azure` folded into one `service` carrying all three connection strings, plus new
   `prod` and `full`. Every folder name is now a smoke profile name, so `just smoke` runs each shipped shape.
@@ -290,9 +323,12 @@ path, v4 carries the experimental banner. Handed to the docs session.
 
 - [ ] **B7b - announce all four breaking changes** in the GitHub release body: V2 endpoints removed, ViPaq
   tokens, the flattened packing-logs configuration, and health check `RestrictedIPs`. All four are already
-  written into `release-notes-v3.0.0.md`, along with a six-step migration guide - this is the check that they
-  made it in. The packing-logs step is the one most easily lost, and leaving it out fails a user's startup with
-  no explanation. The two that need the extra explanation are in the section below.
+  written into the `## [Unreleased]` section of `CHANGELOG.md`, along with a six-step migration guide - this is
+  the check that they made it in. The packing-logs step is the one most easily lost, and leaving it out fails a
+  user's startup with no explanation. The two that need the extra explanation are in the section below.
+
+  **Preview it rather than reading the file:** `just changelog extract Unreleased` prints exactly what the
+  workflow will publish, headings and all.
 
 - [ ] **B8 - flip `current` forward again.** **The config half is done**: the docs-v3 work landed on `main` as
   `3dc6f1ac` with `current: v3.0.x`, `- id: v3.0.x` back at the top of `list`, the stub's `sitemap: exclude`
@@ -305,9 +341,10 @@ path, v4 carries the experimental banner. Handed to the docs session.
     *"Released &lt;date&gt; - [release on GitHub](.../releases/tag/v3.0.0)"*, matching every other version folder.
     One line. Deploying with the interim wording is not a failure, but leaving it there permanently means the
     current version's notes never say when it shipped.
-  - [ ] **Carry three additions from `release-notes-v3.0.0.md` into `v3.0.x/release-notes.md`.** The two files
-    are the same notes in two places, and the GitHub body gained content on 2026-08-10 that the page does not
-    have. All three are for the `## v3.0.0` section, worded to match the page's plain-ASCII style:
+  - [ ] **Carry three additions from `CHANGELOG.md` into `v3.0.x/release-notes.md`.** The two are the same
+    notes in two places, and the release body gained content on 2026-08-10 that the page does not have. Run
+    `just changelog extract Unreleased` to see the current text. All three are for the `## v3.0.0` section,
+    worded to match the page's plain-ASCII style:
     - **Overview**, one bullet after the health check line: the image creates `/app/data` and gives it to the
       app user, so a volume mounted there is writable.
     - **Core Changes**, replacing "The `Dockerfile` and existing environment variables are unchanged" (which is
@@ -369,19 +406,26 @@ pages exist, `current` is `v3.0.x` again and the version is relisted, so only th
 
 ---
 
-## The release notes file - how to keep it, and what it must say {#release-notes}
+## The release notes - how to keep them, and what they must say {#release-notes}
 
-`release-notes-v3.0.0.md` is **body only**. Everything in it is published verbatim as the GitHub release body -
-no preamble, no instructions, no title line (the release title is set separately). It was split on 2026-08-10;
-the guidance that used to sit on top of it is everything below, and this is now its only home.
+**The notes live in `CHANGELOG.md` at the repo root, in the `## [Unreleased]` section.** The workflow extracts
+that section and publishes it as the release body. `release-notes-v3.0.0.md` was deleted on 2026-08-11 - its
+content moved across byte for byte, and keeping both would have been two sources of truth for one paragraph.
 
-**Why it is body only.** The rebuilt release workflow creates the release with `gh release create --notes-file`,
-so anything left in that file gets published. Even before the rebuild lands it is the right shape: a file you
-paste whole cannot be pasted wrongly.
+**The one edit this adds to the release.** `[Unreleased]` is renamed to `## 3.0.0` as the **last change before
+the v3.0.0 tag**, alongside the B5 pin bump. Every beta publishes `[Unreleased]`, so nothing is renamed until
+the real tag. If you forget, the `notes` job fails in under a minute and nothing is built - which is the point
+of putting that gate first.
 
-**So when you change the notes, change them there and keep this section true.** If a fact below stops holding -
-a new commit that a user *can* observe, a section that gains a caveat - it is this file that has to be updated,
-not the body, and usually both.
+**In the file, a section's own headings are `###`**, nested under the `##` version heading. `just changelog
+extract` shifts them back to `##` on the way out, so the published body matches every earlier release. Do not
+"fix" the file to use `##` throughout - that breaks the nesting under `# Changelog` and the extractor's
+terminator both.
+
+**Preview before you tag:** `just changelog extract Unreleased` prints exactly what will be published.
+
+**So when you change the notes, change `CHANGELOG.md` and keep this section true.** If a fact below stops
+holding - a new commit that a user *can* observe, a section that gains a caveat - both have to move.
 
 ### Style, taken from the maintainer's published releases
 
@@ -432,16 +476,23 @@ tag rather than the commit log:
   has already run in a deployment.
 - The docs-v3 merge (`3dc6f1ac`) and the sample hardening under `docs/collections/_versions/**` - site content.
 
-**Two more that land after this section was written** and are the ones most likely to need re-checking: the
-`servers` entry added to both OpenAPI documents on 2026-08-10, and the release-workflow rebuild. Neither
-changes observable API behaviour - `servers` is the value OpenAPI already defaults to, and the workflow does
-not touch the app - so neither earns a line in the body. Re-confirm that before publishing if more lands.
+**Three more that land after this section was written**, and the third is the one that actually earns a line:
+
+- The `servers` entry added to both OpenAPI documents on 2026-08-10. It is the value OpenAPI already defaults
+  to, so nothing observable changed.
+- The release-pipeline rebuild on 2026-08-11. The workflow does not touch the app.
+- **The image now carries an SPDX SBOM, SLSA provenance and a cosign signature.** This one *is* user-visible -
+  it is something a consumer can verify that they could not verify before - so **it wants a bullet in
+  `⚙️ Core Changes`**, with the `cosign verify` invocation. It is the only post-beta change in this release that
+  a user can observe, and it was not in the body when the pipeline landed. Check it is there before publishing.
 
 ### Before publishing
 
 - Confirm the version number and the compare link at the bottom.
 - Fitting was verified unchanged (2026-07-19), so `📈 Algorithms` needs no caveat.
 - All four breaking changes must be present (B7b), along with the migration guide.
+- The signing/SBOM bullet is present - see the third item above.
+- `## [Unreleased]` has been renamed to `## 3.0.0`. The `notes` job fails the build if not.
 - The same content has to reach `v3.0.x/release-notes.md` on the docs site - B8 lists the three additions that
   page is still missing.
 
@@ -479,12 +530,13 @@ deliberately ignored.
 
 ## The sequence
 
-Rewritten 2026-08-10, when B2 landed and a second beta was decided. Gate A is green, beta 1 is verified, the
-docs are written. What is left is beta 2, B6, then the tag and the deploy.
+Rewritten 2026-08-11, when the GHCR pipeline landed. Gate A is green, beta 1 is verified, the docs are written,
+the pipeline is rebuilt. What is left is the GHCR setup, beta 2, B6, then the tag and the deploy.
 
-**The ordering rule that drives all of it:** a pin on `main` must name an image that exists, and the docs may
-not be deployed before the tag, because `main` already says v3.0.x is current. So each pin bump follows its
-publish, and the docs deploy follows the tag.
+**The ordering rule that drives all of it:** a pin on `main` must name an image that exists **on Docker Hub**,
+and the docs may not be deployed before the tag, because `main` already says v3.0.x is current. Under the new
+pipeline a beta never reaches Docker Hub, so there is now exactly **one** pin bump - to `3.0`, just before the
+tag - and the docs deploy still follows the tag.
 
 1. ~~Gate A.~~ Done - A1, A3, A4 landed 2026-07-27/30, A2 answered 2026-08-06.
 2. ~~Publish the beta image and deploy it.~~ Done - published 2026-07-30.
@@ -499,32 +551,36 @@ publish, and the docs deploy follows the tag.
 7. **Confirm the suites are green before cutting beta 2.** `just test all` - eleven leaves, nothing to bring
     up, about two minutes. This step was never written down and should have been: the sweep that beta 2 exists
     to test is exactly the kind of change a suite catches first and cheapest. Green on 2026-08-10.
-8. **Land the release-workflow rebuild**, and diff the publish output before going near a tag. Steps 1 and 2 of
-    the CI plan: build through `just build publish`, then the tag-triggered restructure with digest promotion
-    and the smoke gate. Beta 2 is what proves it, so it goes in first.
-9. **B2X - tag `v3.0.0-beta.2`, then work its verification list.** The list is short because B1 covered the
-    deployment-shaped behaviour and the middleware it exercised did not change. Turning `DEBUG_ENDPOINT` off and
-    re-confirming the resolved caller are both on it. This run now also exercises the rebuilt pipeline - and
-    afterwards, do the throwaway-tag promotion check, which the beta itself cannot cover.
-10. **Bump the nine files from `3.0.0-beta.1` to `3.0.0-beta.2`** (B5), once beta 2 is actually on Docker Hub.
-    Six pins plus `README.md`, `samples/README.md` and `samples/docker/README.md`.
-11. B6 - the one Azure Storage run.
-12. **Bump the same nine files to `3.0` as the last change before the tag**, then tag `v3.0.0`. Drop the
-    two-line internal comment above each `image:` line in the same change, and sweep the two `config/` examples.
-    Re-confirm B7a - `ApiV4Document.IsExperimental` still `true` - right before tagging.
-    `release-docker-image.yml` publishes the final image on `release: published`. A2 confirmed no `3.0` tag
-    exists yet, so the bump is safe only once the tag is about to be published.
-13. **The release body** - with all four breaking changes in it (B7b). `release-notes-v3.0.0.md` is body only
-    as of 2026-08-10, so it publishes whole either way. **How it gets there depends on step 8:** with the
-    workflow rebuild in, the release is created from that file and there is nothing to paste - check the
-    rendered body instead. Without it, paste the file whole. See "The release notes file" for what to confirm
-    first.
-14. **Smoke the published image before announcing anywhere.** Again depends on step 8: with the rebuild in,
-    this is a gate inside the pipeline and `3.0` and `latest` never point at anything unsmoked, so the manual
-    run becomes a confirmation. Without it, `just smoke all binacle/binacle-net:3.0.0` by hand is the only
-    thing between a broken image and the people who pull it - about a minute, nothing to bring up. The same
-    command passed against `3.0.0-beta.1` on 2026-08-07, and the `smoke-image.yml` workflow does it on a
-    runner from a tag you type.
+8. ~~Land the release-pipeline rebuild.~~ Done 2026-08-11, and it went in **before** v3.0.0 rather than after -
+    six jobs, GHCR staging, a Docker Hub copy a prerelease skips, cosign signing, SBOM and provenance. It sits
+    in the working tree, unshipped. The plan on finishing the GHCR pipeline holds what is left of it.
+9. **B2X - tag `v3.0.0-beta.2`, then work its verification list.** This is the first end-to-end run of the new
+    pipeline as well as the code check. Expect five jobs to run and `publish` to be skipped. Turning
+    `DEBUG_ENDPOINT` off and re-confirming the resolved caller are both on the list.
+
+    **No GHCR setup is needed first.** The build job creates the package on its first push - `packages: write`
+    is enough, and the `Dockerfile`'s `org.opencontainers.image.source` label is what links it to the repo. The
+    smoke job pulls it back with the same run's token, so the whole pipeline works on a package nobody has
+    touched.
+10. **Set the GHCR package to public** - the one manual step, and it can only happen **after** step 9, because
+    the package does not exist until the first push and GHCR defaults every new one to private. Package
+    settings, change visibility. Then confirm a credential-free `docker pull
+    ghcr.io/chrismavrommatis/binacle-net:3.0.0-beta.2` from the deployment host - until this is done the pull
+    needs a token, which is exactly what the public package exists to avoid.
+11. **Do the throwaway-tag check.** A beta skips `publish` entirely, so the Docker Hub copy and the release
+    signature are still untested. Tag a scratch `v0.0.1-pipeline-test`, let the whole path run, confirm the
+    three tags land on the smoked digest and `cosign verify` passes, then delete the tag, the release and the
+    pushed tags. **Do this before v3.0.0, not after** - it is the only way that job runs twice.
+12. B6 - the one Azure Storage run.
+13. **The last change before the tag, all in one commit:** rename `## [Unreleased]` to `## 3.0.0` in
+    `CHANGELOG.md`, bump the nine files from `3.0.0-beta.1` to `3.0`, and sweep the "since `3.0` does not exist
+    yet" prose in the three READMEs. Then re-confirm B7a - `ApiV4Document.IsExperimental` still `true` - and
+    tag `v3.0.0`. Also sweep the two `config/` examples that name a beta tag.
+14. **The pipeline does the rest.** The tag triggers it: the changelog gate, the suite, the GHCR build, the
+    smoke, the Docker Hub copy under all three tags, the signature, and the release created from the `3.0.0`
+    section. **Nothing here is manual any more** - what used to be steps 13 and 14 (paste the body, smoke the
+    published image by hand) are both inside the workflow now. Watch the run instead, and check the rendered
+    body and `docker buildx imagetools inspect` afterwards.
 15. **Release the docs - B8's deploy.** B2's pages and B8's config are both on `main` already; this step is the
     deploy, plus the three additions and the real date and release link in `v3.0.x/release-notes.md`. It is the
     easiest item in this file to lose - nothing fails if it is skipped, the site just silently stays on v2.1.x.
