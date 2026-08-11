@@ -17,7 +17,8 @@ does not outlive the work. This is where that reasoning lives now.
 
 ### D1 — the release pipeline triggers on the tag, not on `release: published`
 
-`on: push: tags: 'v*'`, and creating the GitHub release is the pipeline's **last** job rather than its trigger.
+`on: push: tags: 'v[0-9]*'`, and creating the GitHub release is the pipeline's **last** job rather than its
+trigger.
 
 **Why:** with `release: published`, the release is already public when the workflow starts, so a failure leaves
 an announced release whose image never arrived. Building from the tag and creating the release at the end
@@ -25,6 +26,18 @@ inverts that — a failure leaves a tag you delete, and nothing a user ever saw.
 
 **This is a replacement, not an addition.** Leaving both triggers on would make the release created in the last
 job re-trigger the whole workflow and build everything a second time.
+
+**The pattern is `v[0-9]*` rather than `v*` because this repo has three tag-pushing workflows.** The two site
+deploys create `docs-release-<run>` and `web-release-<run>`, and a release build must never fire on one. Neither
+matches either pattern, so this is not a fix for a live bug — it is refusing to depend on a coincidence of
+naming, and on the second coincidence underneath it: those workflows push with `GITHUB_TOKEN`, which GitHub
+does not let trigger further workflows. That protection disappears the day either switches to a PAT.
+
+**The residual risk this does not close: re-pushing an old version tag.** `v1.0.0` matches, and now that
+`CHANGELOG.md` carries a `## [1.0.0]` section the notes gate would pass rather than stop it. `latest=auto`
+marks any non-prerelease semver as latest, so a re-pushed old tag would move `latest` backwards onto it.
+Deliberate action is needed to get there, so it is recorded rather than guarded — but do not delete and
+re-push a released tag.
 
 ### D2 — build once, smoke the registry copy, then copy by digest
 

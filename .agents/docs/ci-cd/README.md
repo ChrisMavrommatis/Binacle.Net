@@ -27,7 +27,7 @@ described in `$config`. Nothing about a recipe's behaviour is repeated here.
 |---|---|---|
 | `run-tests.yml` | `pull_request`, `workflow_dispatch`, `workflow_call` | Every test leaf. One job so setup and build happen once; one step per leaf so a red check names the suite. Postgres runs as a job service. Called by the release pipeline as its "this commit passed CI" gate |
 | `sonar-analysis.yml` | `workflow_dispatch` | Build plus `just coverage all sonar` between `Sonar begin`/`Sonar end`, published to SonarCloud |
-| `release-docker-image.yml` | `push` on tags `v*` | The release pipeline — check the changelog section, run the suite, build and push to GHCR, smoke it there, copy to Docker Hub, create the GitHub release. See `$ci-cd/release-pipeline` |
+| `release-docker-image.yml` | `push` on tags `v[0-9]*` | The release pipeline — check the changelog section, run the suite, build and push to GHCR, smoke it there, copy to Docker Hub, create the GitHub release. See `$ci-cd/release-pipeline` |
 | `smoke-image.yml` | `workflow_dispatch`, `workflow_call` | Pulls a published image and runs the structure check plus all five smoke profiles. Called by the release pipeline as its gate, or run by hand against any tag |
 | `deploy-binacle-net-docs.yml` | `workflow_dispatch` | Tags the commit `docs-release-<run>`, deploys repo-root `docs/` (`$docs-site`) to DigitalOcean App Platform |
 | `deploy-binacle-net-web.yml` | `workflow_dispatch` | Tags the commit `web-release-<run>`, deploys repo-root `web/` (`$web-site`) the same way |
@@ -35,6 +35,11 @@ described in `$config`. Nothing about a recipe's behaviour is repeated here.
 **Only two of the six run on their own.** `run-tests.yml` runs on every pull request and the release pipeline
 runs on a tag. The other four are `workflow_dispatch` — somebody presses a button. That is the current state,
 not an end state.
+
+**Three workflows push git tags, and the namespaces must not overlap.** The release pipeline fires on
+`v[0-9]*`; the two deploy workflows create `docs-release-<run>` and `web-release-<run>`. That is the whole
+reason the release trigger is not the looser `v*` — a deploy tag must never build and publish an image. Any new
+workflow that pushes a tag has to stay out of the `v<digit>` namespace.
 
 ## Conventions every workflow follows
 

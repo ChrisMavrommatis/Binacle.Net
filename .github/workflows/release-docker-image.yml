@@ -26,7 +26,15 @@ name: Build and Release Docker Image
 on:
   push:
     tags:
-      - 'v*'
+      # `v` FOLLOWED BY A DIGIT, not the looser `v*`. Two other workflows push tags of their own -
+      # deploy-binacle-net-docs.yml pushes `docs-release-<run>` and deploy-binacle-net-web.yml pushes
+      # `web-release-<run>` - and a release build must never fire on one of those. Neither matches today, but
+      # `v*` would also catch `vNext` or any branch-ish name someone tags, and this pattern cannot.
+      #
+      # Do not rely on the other protection that happens to exist: those workflows push with GITHUB_TOKEN, and
+      # GitHub does not trigger workflows from a GITHUB_TOKEN push. That silently stops working the day either
+      # one switches to a PAT.
+      - 'v[0-9]*'
 
 permissions:
   contents: read

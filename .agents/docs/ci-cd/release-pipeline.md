@@ -19,7 +19,7 @@ until the things that can be checked cheaply have passed.
 ```
 git push origin v3.0.0
   |
-  v  on: push: tags: 'v*'
+  v  on: push: tags: 'v[0-9]*'
 notes     the CHANGELOG.md section this tag publishes exists and is not empty   (seconds)
 test      the whole suite, by calling run-tests.yml                             (minutes)
 build     just build publish, push the immutable tag to GHCR, capture the digest

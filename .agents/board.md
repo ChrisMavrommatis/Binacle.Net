@@ -48,13 +48,18 @@ Agents keep this file current. Two rules:
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [ci-release-workflow-build](plans/ci-cd/ci-release-workflow-build.md) | **in progress - pulled into the v3.0.0 beta cycle** | - |
-| [ci-gates](plans/ci-cd/ci-gates.md) | blocked | `ci-release-workflow-build` |
-| [ci-cd/release-pipeline-rebuild](plans/ci-cd/release-pipeline-rebuild.md) | blocked | v3.0.0 shipping |
+| [ci-release-workflow-build](plans/ci-cd/ci-release-workflow-build.md) | **superseded - multi-arch only** | needs trimming |
+| [ci-gates](plans/ci-cd/ci-gates.md) | ready - **was blocked, unblocked 2026-08-11** | - |
+| [ci-cd/release-pipeline-rebuild](plans/ci-cd/release-pipeline-rebuild.md) | **in progress - pipeline landed** | the GHCR visibility flip, after beta 2 |
 | [image-base-slimming](plans/image-base-slimming.md) | ready - **timing not decided** | - |
 
-**Do `ci-release-workflow-build` first.** The release workflow still builds the image its own way and pushes it
-without ever running it. Both PR gates below it prove less than they look like they prove until that lands.
+**`ci-release-workflow-build` was superseded on 2026-08-11.** The pipeline was rebuilt on GHCR instead, and
+everything that plan described has landed in some form - including the SBOM and provenance it listed as later
+work. Only its multi-arch section is still live. **The file needs trimming to that section**, and it was left
+whole so the multi-arch reasoning can be checked against the pipeline that now exists rather than discarded.
+
+**`ci-gates` is no longer blocked on it.** The release workflow builds through `just build publish` now, so the
+PR gates below it would prove what they claim to prove.
 
 **`image-base-slimming` is here because it is about the shipped artifact** - move it if you would rather it sat
 elsewhere. The duplicated-runtime finding it opened with **landed on 2026-08-10 and went into v3.0.0**: dropping
@@ -67,11 +72,11 @@ because a prerelease tag is the only free test that pipeline gets and beta 2 is 
 the scheduling; the plan file owns the how. Only the parts a beta can prove moved - SBOM, provenance and
 multi-arch are still here and still unscheduled.
 
-**`release-pipeline-rebuild` replaces the pipeline `ci-release-workflow-build` is landing**, and is blocked
-by its own instruction rather than by a dependency: it says do this after v3.0.0, because the workflow in the
-working tree is what beta 2 exists to test. It moves the release to GHCR-first with a Docker Hub copy, and
-moves the release body into `CHANGELOG.md`. Designed 2026-08-11; **placement and priority are the maintainer's
-call**, so it is parked at the bottom of this table rather than ranked.
+**`release-pipeline-rebuild` landed on 2026-08-11**, before v3.0.0 rather than after it - the maintainer's
+call, which makes beta 2 the first run of the new pipeline. The workflows, `CHANGELOG.md`, the changelog
+module and dependabot are all in the working tree. What is left in the file is the GHCR visibility flip (which
+can only happen after the first run creates the package), two open questions, and telling users how to verify
+the signature. **The v3.0.0 release plan owns the scheduling from here.**
 
 One-liner, in [todos](plans/todos.md): **lint the OpenAPI documents on every PR.** Ready, and no longer
 blocked - the `servers` block landed on 2026-08-10 and the lint is clean, so the gate can fail on warnings

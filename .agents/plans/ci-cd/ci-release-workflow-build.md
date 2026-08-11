@@ -1,8 +1,18 @@
 # CI - rebuild how the image is released
 
-**Status:** Not started. Split out of `ci-shared-scripts` on 2026-08-07, absorbed the smoke gate the same day,
-and **rewritten 2026-08-10** after a design pass. One plan owns `release-docker-image.yml` end to end - every
-change below touches that one file, and splitting them only creates an ordering to remember.
+**Status: SUPERSEDED 2026-08-11, except for multi-arch.** The pipeline was rebuilt on GHCR instead, and
+everything below except the multi-arch section either landed in a different shape or landed exactly as written:
+the tag trigger, build through the recipe, promote by digest, the smoke gate, creating the release, **and the
+SBOM and provenance this file listed as later work**. What it did not anticipate is that staging moved to GHCR
+and that a prerelease now skips Docker Hub entirely.
+
+**Read `.agents/docs/ci-cd/release-pipeline.md` for what the pipeline actually does, and the CI/CD decisions
+ledger for why.** This file is kept only for the multi-arch section, which is still true and still unbuilt.
+Everything above that section is history and should not be worked from - the trigger is `v[0-9]*` now, not
+`v*`, and the promotion is cross-registry.
+
+**This file needs trimming to just the multi-arch part.** Left whole for now so nothing is lost before someone
+checks the multi-arch reasoning against the pipeline that exists.
 
 **Scheduled against the beta cycle - decided 2026-08-10.** An earlier draft of this file deferred everything
 past v3.0.0, on the grounds that you should not change the publish path in the window you depend on it. The

@@ -19,6 +19,8 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Tag Commit for Web Deployment
         run: |
+          # The prefix must not start with `v` followed by a digit: release-docker-image.yml fires
+          # on `v[0-9]*` and would build and publish an image from this deploy tag.
           TAG_NAME="web-release-${GITHUB_RUN_NUMBER}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
