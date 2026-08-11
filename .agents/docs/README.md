@@ -1,7 +1,7 @@
 ---
 id: docs
 description: Repo overview and index of agent documentation
-verified: 2026-07-10
+verified: 2026-08-11
 check: Repo layout table matches actual directories in the root
 ---
 
@@ -40,7 +40,7 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `web/` | Jekyll marketing/web site (`$web-site`) |
 | `api/requests/` | HTTP request files for manual testing (subfolders: v3, v4, Service) |
 | `samples/` | Docker and Kubernetes deployment samples (user-facing starting points) |
-| `config/` | Maintainer local-dev tooling — the `just` modules (test, coverage, openapi, agents, serve), the benchmark/performance/build scripts, local compose, env, emulator state |
+| `config/` | Maintainer local-dev tooling — the `just` modules (test, coverage, openapi, agents, serve, build, image, smoke), the benchmark/performance scripts, local compose, env, emulator state |
 | `.github/workflows/` | The six GitHub Actions workflows — PR tests, Sonar, the release pipeline, image smoke, and the two site deploys (`$ci-cd`) |
 | `shared/data/` | OR-library packing benchmark data |
 

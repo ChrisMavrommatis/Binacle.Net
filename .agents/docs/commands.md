@@ -1,14 +1,15 @@
 ---
 id: commands
 description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
-verified: 2026-08-10
+verified: 2026-08-11
 check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; openapi recipes match config/openapi.just; agents recipes match config/agents.just; serve recipes match config/serve.just; smoke recipes match config/smoke.just; install/assets match the root justfile; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
 ---
 
 # Commands
 
-Setup, running things, tests, coverage, the OpenAPI documents and the agent indexes are `just` recipes; the
-benchmarks, performance runs, the image build and the tmux session are still scripts in `config/`. All are run
+Setup, running things, tests, coverage, the OpenAPI documents, the image build, the smoke suite and the agent
+indexes are `just` recipes; only the benchmarks, the performance runs and the tmux session are still scripts in
+`config/`. All are run
 from the repo root. `just` with no arguments lists everything. For the `config/` directory anatomy (scripts,
 local compose, env, emulator state) see `$config`.
 
@@ -183,7 +184,7 @@ just smoke down <profile> [-v]         # stop it
 ```
 
 Every recipe takes the image last and defaults to `binacle-net:local`, so the same suite runs against a local
-build or a published tag — `just smoke all binacle/binacle-net:3.0.0-beta.1`. Given anything but the local tag,
+build or a published tag — `just smoke all binacle/binacle-net:<tag>`. Given anything but the local tag,
 `all` pulls instead of building. The stacks read it as `$BINACLE_IMAGE` with the same default.
 
 The static check reads the image, not a container, so `all` runs it **once** rather than once per profile. The

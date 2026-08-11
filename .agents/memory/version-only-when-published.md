@@ -36,8 +36,3 @@ that are harmless today:
 - A nested `Directory.Build.props` does **not** inherit the root one - MSBuild imports only the nearest. A
   `vipaq/Directory.Build.props` added carelessly silently drops `TargetFramework`, `Nullable`, `ImplicitUsings`
   and the `AD0001` `NoWarn`. It has to `<Import>` the root explicitly.
-
-Two gotchas that apply whenever the tag feeds a version: MSBuild rejects a leading `v` outright
-(`'v3.0.0' is not a valid version string`), while a prerelease suffix like `3.0.0-beta.1` is accepted. Tags here
-are `v2.1.1` style, so use `steps.meta.outputs.version`, which is already stripped, and not
-`github.ref_name`.

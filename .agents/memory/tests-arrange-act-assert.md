@@ -24,7 +24,7 @@ Assert directly in the test body with Shouldly when the check is a single compar
 the assert is genuinely several field checks — the ViPaq `AssertSame` is field-by-field on purpose, so a
 wiring bug reads as a clear mismatch rather than a whole-object inequality.
 
-The current fixture surfaces are in `$lib/tests` and `$vipaq/README`.
+The current fixture surfaces are in `$lib/tests` and `$vipaq`.
 
 **Why:** the maintainer asked for it directly, and it is what makes Sonar's S2699 pass honestly rather than
 by suppression. A test whose assertion is invisible is one nobody can review — the analyser complaining is a

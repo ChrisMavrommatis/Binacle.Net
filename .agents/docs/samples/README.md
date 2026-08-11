@@ -1,7 +1,7 @@
 ---
 id: samples
 description: Deployment samples — Docker Compose (minimal, quickstart, prod, service, full) and Kubernetes (minimal); each folder name is a smoke profile name, feature flags, config wiring, and the keep-in-sync rule
-verified: 2026-08-10
+verified: 2026-08-11
 check: Sample folders, compose env vars, bind-mounted config paths, the k8s resource bounds, and the pinned image tag match samples/; every samples/docker folder name has a config/smoke/<name>.yml with the same module set
 also_update:
   - api/configuration
@@ -93,7 +93,9 @@ bug fixes flow, breaking changes never do, and the pin only changes when a new m
 `{{major}}` tag on purpose: `3` crosses minor lines. An exact patch is the right pin only for a line that will get no
 further ones, which is why v1.3.x and v2.x samples are pinned that way in the published docs snapshots.
 
-**Until a minor tag exists, the pin is the newest published prerelease** — `3.0.0-beta.1` today. The samples
+**Until a minor tag exists, the pin is the newest published prerelease.** Read the value out of the sample
+files rather than from here — it moves with every prerelease, and a version named in a doc goes stale
+silently. The samples
 document v3-only settings, so the old `2.1.1` would be wrong in a different way, and `3.0` does not resolve on
 Docker Hub until v3.0.0 is published. The rule for every move is the same: **a pin on `main` must name an image
 that already exists**, so the pin follows a publish and never precedes one.

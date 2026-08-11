@@ -1,7 +1,7 @@
 ---
 id: config
 description: config/ — maintainer local-dev tooling: the test, coverage, openapi, agents, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state
-verified: 2026-07-29
+verified: 2026-08-11
 check: Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, serve.just, build.just, image.just and smoke.just recipes, and the docker-compose stack/file/service table match config/
 also_update:
   - commands
@@ -10,9 +10,9 @@ also_update:
 
 # Config
 
-`config/` is the **maintainer's local-dev tooling** — the just modules for tests, coverage, OpenAPI and the
-agent indexes, run/build scripts, local Docker Compose, and
-emulator state. It is **not** a deployment template; user-facing deployment starting points live in
+`config/` is the **maintainer's local-dev tooling** — the just modules for tests, coverage, OpenAPI, the
+agent indexes, the build, the image stacks and the smoke suite, plus the benchmark scripts, local Docker
+Compose and emulator state. It is **not** a deployment template; user-facing deployment starting points live in
 samples (`$samples`). For the quick "how do I run X" reference see `$commands`; this
 doc describes what's in the directory.
 
