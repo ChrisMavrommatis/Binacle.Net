@@ -50,7 +50,7 @@ Agents keep this file current. Two rules:
 |---|---|---|
 | [ci-cd/multi-arch-images](plans/ci-cd/multi-arch-images.md) | **not scheduled** | does anyone run it on ARM? |
 | [ci-gates](plans/ci-cd/ci-gates.md) | ready - **was blocked, unblocked 2026-08-11** | - |
-| [ci-cd/release-pipeline-rebuild](plans/ci-cd/release-pipeline-rebuild.md) | **in progress - pipeline landed** | the GHCR visibility flip, after beta 2 |
+| [ci-cd/release-pipeline-rebuild](plans/ci-cd/release-pipeline-rebuild.md) | **in progress - proven by beta 2** | the throwaway-tag check, before v3.0.0 |
 | [image-base-slimming](plans/image-base-slimming.md) | ready - **timing not decided** | - |
 
 **`ci-release-workflow-build` is gone - it landed as the GHCR rebuild on 2026-08-11**, including the SBOM and
@@ -75,11 +75,11 @@ because a prerelease tag is the only free test that pipeline gets and beta 2 is 
 the scheduling; the plan file owns the how. Only the parts a beta can prove moved - SBOM, provenance and
 multi-arch are still here and still unscheduled.
 
-**`release-pipeline-rebuild` landed on 2026-08-11**, before v3.0.0 rather than after it - the maintainer's
-call, which makes beta 2 the first run of the new pipeline. The workflows, `CHANGELOG.md`, the changelog
-module and dependabot are all in the working tree. What is left in the file is the GHCR visibility flip (which
-can only happen after the first run creates the package), two open questions, and telling users how to verify
-the signature. **The v3.0.0 release plan owns the scheduling from here.**
+**`release-pipeline-rebuild` landed and was proven by `v3.0.0-beta.2` on 2026-08-11** - every job behaved,
+Docker Hub was untouched, and the release body came out of `CHANGELOG.md`. The GHCR package is public. What is
+left in the file is the throwaway-tag check (the `publish` job has still never run), two open questions for the
+maintainer, and telling users how to verify the signature. **The v3.0.0 release plan owns the scheduling from
+here.**
 
 One-liner, in [todos](plans/todos.md): **lint the OpenAPI documents on every PR.** Ready, and no longer
 blocked - the `servers` block landed on 2026-08-10 and the lint is clean, so the gate can fail on warnings

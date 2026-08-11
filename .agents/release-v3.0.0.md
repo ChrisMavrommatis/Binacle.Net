@@ -12,11 +12,13 @@ once v3.0.0 is out.
 
 **The release pipeline was replaced on 2026-08-11, and it changes this file throughout.** The old workflow built,
 pushed straight to Docker Hub, smoked there and promoted the moving tags. The new one stages everything on GHCR,
-smokes it there, and **copies to Docker Hub only for a real release** - a prerelease never reaches Docker Hub at
-all. Three consequences run through everything below, so they are stated once here:
+smokes it there, and **copies the smoked digest to Docker Hub** - so nothing unsmoked ever reaches the registry
+users pull from. Three consequences run through everything below, so they are stated once here:
 
-- **Beta 2 will exist only at `ghcr.io/chrismavrommatis/binacle-net:3.0.0-beta.2`.** There will be no
-  `binacle/binacle-net:3.0.0-beta.2`, ever.
+- **GHCR is staging only.** Every tag is copied to Docker Hub after it is smoked, betas included - a prerelease
+  just gets its immutable tag, never `3.0` or `latest`. Beta 2 shipped on 2026-08-11 under an earlier rule that
+  stopped prereleases at GHCR; that rule was reversed the same day, so `3.0.0-beta.2` is on GHCR only and every
+  later tag lands on Docker Hub normally.
 - **The release body now comes from `CHANGELOG.md`**, extracted by the workflow. `release-notes-v3.0.0.md` was
   deleted on 2026-08-11; its content is the `## [Unreleased]` section, byte for byte.
 - **Beta 2 is the first run of the new pipeline**, which is why it is a bigger event than it was.
@@ -230,10 +232,26 @@ the Docker Hub copy **and** the second cosign signature both wait for v3.0.0 its
 untested step was one `imagetools create`; it is now a copy plus a signature against a registry the pipeline has
 not touched in that run.
 
-- [ ] **Close it with a throwaway tag before v3.0.0.** Tag something like `v0.0.1-pipeline-test` on a scratch
-      branch, let the full path run against Docker Hub, confirm the three tags land on the smoked digest and
-      `cosign verify` passes, then delete the tag, the release and the pushed tags. Five minutes, and it is the
-      only way this runs twice before it runs on the release.
+- [ ] **Close it with a throwaway tag before v3.0.0 - but point it at a scratch repo, not the real one.**
+      The naive version of this check is a trap, twice over:
+
+      - **The tag must not contain a hyphen.** A hyphen is the prerelease marker, so `v0.0.1-pipeline-test`
+        would skip `publish` exactly like a beta does and prove nothing while looking green.
+      - **A clean `v0.0.1` would move `latest` on Docker Hub.** `metadata-action` never contacts the registry -
+        it reads the git ref and nothing else - so `latest=auto` marks any non-prerelease semver as latest with
+        no comparison against what is already published. `0.0.1` would take `latest` off `2.1.1`.
+
+      So repoint the registry rather than weakening the tag:
+
+      1. Change the repo variable `DOCKERHUB_REPO` from `binacle-net` to `binacle-net-pipeline-test`. It is a
+         variable precisely so this is one edit and no code change.
+      2. Tag `v0.0.1` - no hyphen, so `publish` actually runs.
+      3. Confirm `0.0.1`, `0.0` and `latest` all land in the scratch repo on the digest the smoke job passed,
+         and that `cosign verify` passes against the Docker Hub copy.
+      4. Delete the scratch Docker Hub repo, the git tag, and the GitHub release. Delete the `0.0.1` version
+         from the GHCR package too.
+      5. **Change `DOCKERHUB_REPO` back.** This is the step that gets forgotten, and forgetting it publishes
+         v3.0.0 to the wrong repo - see step 13 of the sequence, which re-checks it.
 
 **B3 landed 2026-08-07 - written, not just decided.** The page is split in two: a general `_common_pages` page
 with no implementation details and nothing that varies between versions, plus one versioned page per folder
@@ -259,18 +277,11 @@ path, v4 carries the experimental banner. Handed to the docs session.
 - [ ] **B5 - the image pins move once, to `3.0`, as the last change before the tag.** They sit at
   `3.0.0-beta.1` today and **they stay there until then.**
 
-  **This item said "twice" until 2026-08-11 and that is now impossible.** It planned a bump to `3.0.0-beta.2`
-  after beta 2 published. Under the new pipeline a prerelease never reaches Docker Hub, so
-  `binacle/binacle-net:3.0.0-beta.2` will not exist and cannot be pinned. The rule this item has always carried
-  is what settles it - **a pin on `main` must name an image that exists on Docker Hub** - and `3.0.0-beta.1` is
-  the last beta that will ever satisfy it. Leaving the pins alone is therefore not laziness; it is the only
-  value that stays true between now and the tag.
-
-  **Decided 2026-08-11, and it is reversible.** The alternative was pointing the samples at
-  `ghcr.io/chrismavrommatis/binacle-net` for the beta window. Rejected: it puts a second registry in front of
-  every reader of the landing page for a fortnight, then takes it away again, and the samples exist to be copied
-  by people who want a working deployment rather than to track the beta. Anyone who wants beta 2 gets the GHCR
-  reference from the release body, which is where a prerelease belongs.
+  **This item said "twice" and could go back to saying it, but should not.** The rule it has always carried
+  still applies - **a pin on `main` must name an image that exists on Docker Hub** - and betas do reach Docker
+  Hub again, so a `3.0.0-beta.2` bump is possible. It is not worth it: `3.0.0-beta.2` is not on Docker Hub
+  (it shipped under the brief rule that stopped prereleases at GHCR), beta 3 may never happen, and churning
+  nine files twice to land on `3.0` a week later buys nothing a reader would notice.
 
   **It is nine files, not six.** The six the item originally named are the pin itself; three more carry the
   beta in prose, and they are the ones that get missed:
@@ -534,9 +545,9 @@ Rewritten 2026-08-11, when the GHCR pipeline landed. Gate A is green, beta 1 is 
 the pipeline is rebuilt. What is left is the GHCR setup, beta 2, B6, then the tag and the deploy.
 
 **The ordering rule that drives all of it:** a pin on `main` must name an image that exists **on Docker Hub**,
-and the docs may not be deployed before the tag, because `main` already says v3.0.x is current. Under the new
-pipeline a beta never reaches Docker Hub, so there is now exactly **one** pin bump - to `3.0`, just before the
-tag - and the docs deploy still follows the tag.
+and the docs may not be deployed before the tag, because `main` already says v3.0.x is current. There is
+exactly **one** pin bump left - to `3.0`, just before the tag - and the docs deploy still follows the tag. See
+B5 for why the intermediate beta bump is not worth doing.
 
 1. ~~Gate A.~~ Done - A1, A3, A4 landed 2026-07-27/30, A2 answered 2026-08-06.
 2. ~~Publish the beta image and deploy it.~~ Done - published 2026-07-30.
@@ -568,14 +579,19 @@ tag - and the docs deploy still follows the tag.
     ghcr.io/chrismavrommatis/binacle-net:3.0.0-beta.2` from the deployment host - until this is done the pull
     needs a token, which is exactly what the public package exists to avoid.
 11. **Do the throwaway-tag check.** A beta skips `publish` entirely, so the Docker Hub copy and the release
-    signature are still untested. Tag a scratch `v0.0.1-pipeline-test`, let the whole path run, confirm the
-    three tags land on the smoked digest and `cosign verify` passes, then delete the tag, the release and the
-    pushed tags. **Do this before v3.0.0, not after** - it is the only way that job runs twice.
+    signature are still untested. **Point `DOCKERHUB_REPO` at a scratch repo first**, then tag `v0.0.1` - with
+    no hyphen, or `publish` skips again, and against a scratch repo, or `latest=auto` moves `latest` off
+    `2.1.1`. Full detail is on B2X's list. **Do this before v3.0.0, not after** - it is the only way that job
+    runs twice.
 12. B6 - the one Azure Storage run.
 13. **The last change before the tag, all in one commit:** rename `## [Unreleased]` to `## 3.0.0` in
     `CHANGELOG.md`, bump the nine files from `3.0.0-beta.1` to `3.0`, and sweep the "since `3.0` does not exist
     yet" prose in the three READMEs. Then re-confirm B7a - `ApiV4Document.IsExperimental` still `true` - and
     tag `v3.0.0`. Also sweep the two `config/` examples that name a beta tag.
+
+    **First, check `DOCKERHUB_REPO` reads `binacle-net` again.** Step 11 changes it and changing it back is the
+    easiest thing in this release to forget. Nothing fails if it is wrong - v3.0.0 just publishes to the scratch
+    repo, `latest` never moves, and the first person to notice is a user.
 14. **The pipeline does the rest.** The tag triggers it: the changelog gate, the suite, the GHCR build, the
     smoke, the Docker Hub copy under all three tags, the signature, and the release created from the `3.0.0`
     section. **Nothing here is manual any more** - what used to be steps 13 and 14 (paste the body, smoke the

@@ -1,12 +1,16 @@
 # CI/CD - finish the GHCR release pipeline
 
-**Status:** The pipeline itself landed 2026-08-11, in the working tree, unshipped. What is left is the
-maintainer setup it depends on, two open questions, and one handoff. **Read the first section before pushing
-any tag** - the pipeline cannot work until the GHCR package exists.
+**Status: the pipeline is built and proven.** `v3.0.0-beta.2` ran the whole thing on 2026-08-11 and every job
+did what it was meant to - `notes` 9s, `test` 2m08, `build` 1m23, `smoke` 26s, **`publish` skipped**, `release`
+9s. Verified independently afterwards: Docker Hub untouched (`latest` still on the January digest, no
+`3.0.0-beta.2`, no `3.0`), the GHCR package public and pullable with no credential, `BINACLE_VERSION` correct,
+SBOM and provenance in the index, the signature attached as an OCI referrer, and the release body byte-identical
+to `just changelog extract Unreleased`.
+
+**What is left is not the pipeline.** One untested job, two open questions, and one owed doc. All below.
 
 **Timing note.** The original plan said to do this after v3.0.0 shipped. The maintainer decided on 2026-08-11 to
-do it before v3.0.0 and before beta 2, so **beta 2 is the first run of this pipeline** rather than of the old
-one. That is what makes Phase 4 below blocking rather than housekeeping.
+do it before, so beta 2 became its first run rather than v3.0.0.
 
 ## What landed
 
@@ -29,35 +33,30 @@ one. That is what makes Phase 4 below blocking rather than housekeeping.
   absent, which is now corrected.
 - The ci-cd docs and the decisions ledger rewritten for the above.
 
-## 1. GHCR setup - one manual step, and it comes AFTER the first run
+## 1. ~~GHCR setup~~ Done 2026-08-11
 
-**Corrected 2026-08-11.** This section used to say the package had to be pushed by hand first and that the
-pipeline would not work without it. That is wrong on both counts, and it would have sent the maintainer looking
-for a setup screen that does nothing.
+The workflow created the package itself on its first push - `packages: write` is enough in the repo's own
+namespace, and the `Dockerfile`'s `org.opencontainers.image.source` label is what links it. No manual push was
+needed, contrary to what this section originally claimed.
 
-**The workflow creates the package itself.** The build job pushes with `packages: write`, which is enough to
-create a package in the repo's own namespace, and the `Dockerfile` already carries
-`org.opencontainers.image.source` pointing at this repo - the label GHCR uses to link a package to it. The smoke
-job then pulls it back with the same run's token. So the whole pipeline works against a package nobody has
-touched.
+Visibility is public: verified by pulling `3.0.0-beta.2` from a machine with no `ghcr.io` entry in its docker
+config at all.
 
-The `permission_denied` failure is real but narrower than stated: it happens when a package **already exists**
-in the namespace unlinked - pushed earlier from a personal token, or left behind by a deleted and recreated
-repo. It is not what a first push does.
+**Worth keeping:** the `permission_denied` failure this section used to warn about is real but narrow - it
+happens when a package **already exists** in the namespace unlinked, from a personal token or a deleted and
+recreated repo. It is not what a first push does.
 
-- [ ] **Set the package visibility to public** - the only manual step, and it cannot happen until the first
-      pipeline run has created the package. GHCR defaults every new package to private regardless of repo
-      visibility.
-- [ ] Confirm `docker pull ghcr.io/chrismavrommatis/binacle-net:<tag>` works from the OVH server with no
-      `docker login` at all. This is what the public package buys, and the only way to know it worked.
+- [ ] Confirm the credential-free pull from the deployment host specifically. Proven from one machine, not
+      from that one.
 
-## 2. Two open questions - ask the maintainer, do not decide alone
+## 2. One open question - ask the maintainer, do not decide alone
 
-- **Where the beta instructions point.** `samples/` and `README.md` pin a Docker Hub beta tag today, which this
-  design makes impossible - a beta only ever exists on GHCR. Someone has to decide what the beta instructions
-  say. This is now live, not hypothetical: beta 2 will not be on Docker Hub.
 - **The docs site release-notes page.** Whether it is generated from `CHANGELOG.md` or stays hand-copied. It is
   a docs decision and repo-root `docs/` is off limits here - write down what the page must say and leave it.
+
+~~Where the beta instructions point.~~ **Answered 2026-08-11 by removing the prerelease skip.** Betas now reach
+Docker Hub with their immutable tag, so `samples/` and `README.md` can keep pinning a Docker Hub beta exactly as
+they always have. Nothing to decide.
 
 ## 3. ~~Handoff - the old release-notes file~~ Done 2026-08-11
 
@@ -78,11 +77,20 @@ This is user-facing writing, so it belongs on the docs site, which is off limits
 writes it needs the real values from the first signed run - the certificate identity is the workflow's own
 ref, so it is not knowable until a tag has actually been pushed.
 
-## 5. Before a real release - the throwaway-tag check
+## 5. Before a real release - the moving-tag gap
 
-A prerelease skips the whole `publish` job, so the Docker Hub login and the copy are both first exercised by a
-real release. Push a disposable tag to the Docker Hub repo, confirm the copy lands on the smoked
-digest, then delete it. This is O1 in the decisions ledger, and it got wider with this rebuild.
+**Much smaller than it was, after the 2026-08-11 reversal.** `publish` now runs for every tag, so a beta
+already proves the Docker Hub login, the credential, the cross-registry copy and the release-side signature.
+
+What a beta still cannot cover is the **moving tags**: it produces only its immutable tag, so `3.0` and
+`latest` are first created on the release itself. That is one extra argument to an `imagetools create` call
+that will have run several times by then, so this is now a judgement call rather than a must.
+
+**If you do test it, two traps.** A tag containing a hyphen is a prerelease and produces no moving tags, so it
+proves nothing. A clean `v0.0.1` against the real repo **would move `latest`** - metadata-action never queries
+the registry, and `latest=auto` marks any non-prerelease semver as latest. Point `DOCKERHUB_REPO` at a scratch
+repo, tag `v0.0.1`, check the three tags land on the smoked digest, then delete everything and **point
+`DOCKERHUB_REPO` back**.
 
 ## Done when
 
@@ -90,7 +98,7 @@ digest, then delete it. This is O1 in the decisions ledger, and it got wider wit
   **nothing** on Docker Hub.
 - A release tag does all of that plus copies to Docker Hub as `x.y.z`, `x.y` and `latest`, all three on the
   digest the smoke job passed.
-- The OVH server pulls a beta with no credentials.
+- The deployment host pulls a beta with no credentials.
 
 ## Do not
 

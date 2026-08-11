@@ -6,8 +6,9 @@
 # The order is cheapest-check-first: the notes gate is seconds, the suite is minutes, the build is longer
 # still. Nothing that costs money runs until the things that cannot be fixed after the fact have passed.
 #
-# A PRERELEASE STOPS AFTER SMOKE. `publish` is skipped for any tag with a hyphen, so a beta exists only on
-# GHCR and Docker Hub never sees an unreleased artifact. Deploying a beta therefore pulls from GHCR.
+# EVERY TAG REACHES DOCKER HUB, prerelease included - but a prerelease only ever gets its immutable tag.
+# metadata-action withholds {{major}}.{{minor}} and latest for one, so a beta can never move `3.0` or
+# `latest`. GHCR is staging only; what users pull is always Docker Hub.
 #
 # The copy preserves the digest - a manifest transfer is content-addressed - so what Docker Hub serves is bit
 # for bit what the smoke job passed. Never rebuild between the two: that would ship an image nothing tested.
@@ -15,6 +16,9 @@
 # The image ships an SPDX SBOM and SLSA provenance as attestations, and is signed with cosign keyless. The
 # signature is NOT part of the index and does not survive the copy, so it is made twice - once on GHCR, once
 # on Docker Hub. The attestations do travel, because they are manifests inside the index.
+#
+# Nothing deletes the GHCR staging copy. That is deliberate - it is the rollback source if a Docker Hub tag is
+# ever found bad, and deleting inside the release path would let a cleanup failure fail a release.
 #
 # Do NOT add `release: published` as a second trigger - the release created in the last job would re-enter
 # this workflow and build everything twice.
@@ -26,14 +30,9 @@ name: Build and Release Docker Image
 on:
   push:
     tags:
-      # `v` FOLLOWED BY A DIGIT, not the looser `v*`. Two other workflows push tags of their own -
-      # deploy-binacle-net-docs.yml pushes `docs-release-<run>` and deploy-binacle-net-web.yml pushes
-      # `web-release-<run>` - and a release build must never fire on one of those. Neither matches today, but
-      # `v*` would also catch `vNext` or any branch-ish name someone tags, and this pattern cannot.
-      #
-      # Do not rely on the other protection that happens to exist: those workflows push with GITHUB_TOKEN, and
-      # GitHub does not trigger workflows from a GITHUB_TOKEN push. That silently stops working the day either
-      # one switches to a PAT.
+      # `v` then a DIGIT, not the looser `v*`: the two deploy workflows push `docs-release-<run>` and
+      # `web-release-<run>`, and a release build must never fire on one. Any new tag-pushing workflow has to
+      # stay out of the `v<digit>` namespace.
       - 'v[0-9]*'
 
 permissions:
@@ -166,17 +165,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # SLSA provenance and an SPDX SBOM, both attached as attestation manifests alongside the image.
-          #
-          # Provenance was already being produced - buildx attaches it by default in Actions - but implicitly,
-          # which is how it ended up recorded as absent. Stated here so it is a choice rather than a default
-          # that can change under us.
-          #
-          # mode=max records the full build definition, not just the materials. The only build arg is VERSION,
-          # so nothing secret is captured; do not add a secret-bearing build arg without revisiting this.
-          #
-          # Both make the pushed artifact an OCI index rather than a single manifest. That is what the copy in
-          # `publish` has to carry, and it does - the copy moves the whole index.
+          # Stated explicitly, not left to buildx's defaults, so it stays a choice. mode=max records the full
+          # build definition; the only build arg is VERSION, so nothing secret is captured - revisit this
+          # before adding a secret-bearing one. Both make the artifact an OCI index, which the copy carries
+          # whole.
           provenance: mode=max
           sbom: true
           # metadata-action's version, never github.ref_name: the latter would put "v3.0.0" in BINACLE_VERSION
@@ -188,12 +180,10 @@ jobs:
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
 
       # Signs the DIGEST, not a tag, so the signature covers the artifact rather than a name that can move.
-      # The staging image is signed too, not only the public one, so a beta is verifiable - GHCR is the only
-      # place a beta ever exists.
       #
-      # A cosign signature is stored as its own `sha256-<digest>.sig` tag in the same repository. It is NOT
-      # part of the image index, which is why it does not travel with the copy in `publish` and why that job
-      # signs again against Docker Hub.
+      # Attached as an OCI 1.1 referrer - fallback tag `sha256-<digest>`, NO `.sig` suffix; older cosign made
+      # those, this one does not. A referrer is not inside the index, so it does not survive the copy, which is
+      # why `publish` signs again.
       - name: Sign the staging image
         env:
           TARGET: ${{ steps.ref.outputs.staging }}@${{ steps.push.outputs.digest }}
@@ -210,18 +200,17 @@ jobs:
     with:
       image: ${{ needs.build.outputs.staging }}
 
-  # The only job that touches Docker Hub, and the only place the stored credential is used. It copies with
-  # `docker buildx imagetools create`, which ships with the runner - no third-party tool is installed to move
-  # the artifact that users pull.
+  # The only job that touches Docker Hub, and the only place the stored credential is used. `imagetools create`
+  # ships with the runner, so no third-party tool moves the artifact users pull.
   #
-  # SKIPPED FOR A PRERELEASE. A hyphen in a semver tag is the prerelease marker, so a beta ends at `smoke` and
-  # lives only on GHCR. This is stricter than metadata-action's own guard, which would still have published
-  # the immutable tag publicly.
+  # Runs for EVERY tag. A prerelease is narrowed by the metadata step below, not by a condition here: it emits
+  # only the immutable tag, because metadata-action withholds {{major}}.{{minor}} and latest=auto withholds
+  # latest. Do not add a job-level skip - `smoke` already guarantees nothing unsmoked gets here, and a skip
+  # only makes betas unpullable from Docker Hub.
   #
   # No `contents` permission: this job never checks out.
   publish:
     needs: [ build, smoke ]
-    if: ${{ !contains(github.ref_name, '-') }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -260,14 +249,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
-      # `imagetools create` transfers the manifest rather than rebuilding, so the digest is preserved and
-      # Docker Hub serves exactly what the smoke job passed. Reading the SOURCE by DIGEST is what makes that
-      # hold even if something re-tagged staging in between.
-      #
-      # All three tags go in one command: they are aliases of one manifest, so the blobs move once.
-      #
-      # Verified across registries, not assumed - a copy of the published beta index (amd64 manifest plus its
-      # attestation) came out the far side on the same digest it went in with.
+      # `imagetools create` transfers a manifest rather than rebuilding, so the digest is preserved and Docker
+      # Hub serves exactly what `smoke` passed. Reading SOURCE by DIGEST keeps that true even if something
+      # re-tagged staging. All tags go in one command - they alias one manifest, so the blobs move once.
       - name: Copy the smoked digest to Docker Hub
         env:
           SOURCE: ${{ needs.build.outputs.staging }}@${{ needs.build.outputs.digest }}
@@ -293,23 +277,20 @@ jobs:
       - name: Setup cosign
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
 
-      # Once, against the digest - all three public tags are aliases of it, so signing the digest signs what
-      # every one of them resolves to. A signature made on GHCR does not come across with the manifest copy,
-      # so this is not a duplicate of the build job's signature; it is the one users can actually verify.
+      # Against the digest, so one signature covers every public tag aliasing it. Not a duplicate of the build
+      # job's - a GHCR signature does not come across with the copy, and this is the one users verify.
       - name: Sign the published image
         env:
           TARGET: ${{ vars.DOCKERHUB_ORGNAME }}/${{ vars.DOCKERHUB_REPO }}@${{ needs.build.outputs.digest }}
         run: cosign sign --yes "$TARGET"
 
-  # Last, so the release never describes an image that failed to build, smoke or publish.
+  # Last, so the release never describes an image that failed to build, smoke or publish. `needs` includes
+  # `notes` because this reads that job's output.
   #
-  # The `if:` is load-bearing: `publish` is skipped for a prerelease, and a skipped dependency skips everything
-  # downstream by default. Without this a beta would get no GitHub release at all.
-  #
-  # `needs` includes `notes` because this reads that job's output.
+  # If any job above ever becomes conditional, this needs `if: !failure() && !cancelled()` - a skipped
+  # dependency skips everything downstream, and a beta would silently get no release.
   release:
     needs: [ notes, test, build, smoke, publish ]
-    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

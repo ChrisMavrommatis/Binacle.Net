@@ -1,6 +1,6 @@
 ---
 id: ci-cd/decisions
-description: CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why a prerelease is skipped at job level, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation.
+description: CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation.
 verified: 2026-08-11
 check: Decisions still match .github/workflows/*.yml and config/build.just; D2/D3/D14 against release-docker-image.yml's publish job and its hyphen guard, D7 against config/changelog.just, D6 against smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe
 ---
@@ -68,37 +68,40 @@ pull from. It was argued as acceptable because nobody follows an exact pin on re
 free. The copy command did not change - `imagetools create` handles a cross-registry source as readily as a
 local one, which is what kept a third-party tool out of the job that moves the artifact users pull.
 
-### D3 — the prerelease guard is an explicit job-level skip
+### D3 — the prerelease guard is metadata-action's, not an explicit skip
 
-`publish` carries `if: ${{ !contains(github.ref_name, '-') }}`, so a prerelease ends after `smoke` and never
-reaches Docker Hub at all.
-
-**Why not lean on metadata-action.** It gets the moving tags right on its own — it skips `{{major}}.{{minor}}`
-for a prerelease, and `latest=auto` withholds `latest` for the same reason — and that was the guard until
-2026-08-11. But it is a guard on the *moving* tags only: metadata-action would still publish the immutable tag
-for a prerelease, which is exactly what must not reach Docker Hub now. So the guard moved up a level, from "the
-tag list comes out empty" to "the job does not run", and is deliberately stricter than the action's own
-behaviour.
+`publish` runs for every tag. A prerelease reaches Docker Hub with its **immutable tag only**, because
+metadata-action skips `{{major}}.{{minor}}` for one and `latest=auto` withholds `latest` for the same reason.
+So a beta can never move `3.0` or `latest`, and the guard is the action's rather than this workflow's.
 
 **Observed, not assumed.** Checked on Docker Hub on 2026-08-06 after `v3.0.0-beta.1`: it published
-`3.0.0-beta.1` and moved neither `latest` nor `3.0`, and no `3.0` tag existed at all. That evidence is what
-retires the *need* for the metadata-action guard rather than contradicting it — the behaviour is real, it is
-just no longer the thing standing between a beta and Docker Hub.
+`3.0.0-beta.1` and moved neither `latest` nor `3.0`, and no `3.0` tag existed at all.
 
-**The cost of moving it.** A skipped job skips everything downstream by default, so `release` needs
-`if: ${{ !failure() && !cancelled() }}` or a beta would get no GitHub release. That condition is load-bearing;
-it is not defensive boilerplate.
+**Reversed 2026-08-11, same day it was introduced.** For part of that day `publish` carried
+`if: ${{ !contains(github.ref_name, '-') }}`, so a prerelease stopped after `smoke` and lived only on GHCR —
+"Docker Hub carries releases only". Two things killed it:
+
+- **It was never a safety rule.** The property that matters is *nothing unsmoked reaches Docker Hub*, and that
+  comes from `smoke` running before `publish`. It holds identically with or without the skip. What the skip
+  actually bought was a tidy tag list.
+- **It cost real deployability.** A beta could then be pulled only from GHCR, and a host that cannot route to
+  GitHub's AS36459 — which is not hypothetical — could not deploy the beta at all. Paying that for tidiness is
+  the wrong trade.
+
+**What the reversal takes back with it.** `release` no longer needs `if: ${{ !failure() && !cancelled() }}`;
+with nothing conditional above it, plain `needs` says the same thing. Restore that condition if any job in the
+chain ever becomes conditional again, or a beta will silently get no GitHub release.
 
 No `{{major}}` tag is emitted on purpose — a bare `3` would cross minor lines.
 
 ### D14 — GHCR is the staging registry, and the package is public
 
 Everything built lands on `ghcr.io/chrismavrommatis/binacle-net` first. Docker Hub receives only what has been
-smoked there, and only for a real release.
+smoked there.
 
-**Why a second registry at all.** It buys the property D2 used to trade away: nothing unsmoked and nothing
-unreleased is ever visible where users pull from. **GHCR carries everything including betas; Docker Hub carries
-releases only.**
+**Why a second registry at all.** It buys the property D2 used to trade away: nothing unsmoked is ever visible
+where users pull from - `smoke` runs against the staging copy, and only a smoked digest is ever copied across. **GHCR is staging; Docker Hub is what users pull, and it carries every tag the
+pipeline publishes, betas included.**
 
 **Why GHCR specifically, and why public.** `GITHUB_TOKEN` is minted per run and expires with it, so staging
 needs no stored credential and nothing to rotate. Keeping the package public extends that to the consumer side:
@@ -283,11 +286,21 @@ this.
 
 **Why signing is separate from attestation, and why it happens twice.** The SBOM and provenance say how the
 image was built; without a signature they do not prove the record itself was not altered. cosign closes that.
-But a cosign signature is stored as its own `sha256-<digest>.sig` tag in the repository, **not** as a manifest
-inside the index — so unlike the attestations it does not travel with the copy in D2. The staging image is
-signed on GHCR (which is the only place a beta ever exists, so a beta is verifiable) and the published image is
-signed again on Docker Hub. Signing the **digest** rather than a tag means one signature covers `x.y.z`, `x.y`
-and `latest`, since all three are aliases of it.
+But a cosign signature is **not** a manifest inside the index — so unlike the attestations it does not travel
+with the copy in D2. The staging image is signed on GHCR (which is the only place a beta ever exists, so a beta
+is verifiable) and the published image is signed again on Docker Hub. Signing the **digest** rather than a tag
+means one signature covers `x.y.z`, `x.y` and `latest`, since all three are aliases of it.
+
+**Corrected 2026-08-11, against the real artifact.** This said the signature lands in a `sha256-<digest>.sig`
+tag. That is the older cosign scheme and it is not what happens here. `sigstore/cosign-installer` v4.1.2
+installs a cosign that attaches the signature as an **OCI 1.1 referrer**: a manifest whose `subject` is the
+index digest, one layer of `artifactType` `application/vnd.dev.sigstore.bundle.v0.3+json`, reachable through
+the referrers API and by the fallback tag `sha256-<digest>` with no suffix. Verified by walking the GHCR
+manifests for `v3.0.0-beta.2`.
+
+The correction does not move the decision — a referrer is still outside the index and still does not survive
+`imagetools create`, so signing twice is still required. It matters because anyone auditing the registry for a
+`.sig` tag will not find one and may conclude the image is unsigned.
 
 **Keyless, so there is no key.** cosign exchanges the job's OIDC token for a short-lived certificate, which is
 why both jobs need `id-token: write` and why this adds no secret to the repo. `sigstore/cosign-installer` comes
@@ -306,18 +319,20 @@ against, is decoration. That page is owed and is not written yet.
 
 ### O1 — a prerelease cannot test the publish step, and this got worse
 
-By design: D3 skips the whole `publish` job for a prerelease. The first tag to reach it would otherwise be a
-real release — the one that cannot be taken back.
+**Mostly closed by the D3 reversal on 2026-08-11.** For part of that day `publish` was skipped entirely for a
+prerelease, which meant the Docker Hub login, the copy and the release-side signature were all first exercised
+by a real release. That is no longer true: `publish` now runs for every tag, so a beta proves the job's
+credentials, its wiring, the cross-registry copy and the signature.
 
-**It got worse on 2026-08-11, and deliberately.** Under the old shape a prerelease at least ran the promote
-job, which was a no-op but proved the job's setup — the login, the credential, the runner. Now the entire job
-is skipped, so an untested `publish` means an untested Docker Hub login and an untested copy, both first
-exercised by a real release. The copy command itself has been checked by hand against a scratch registry (D2),
-which leaves the job's credentials and wiring as the real unknown.
+**What is still untested is narrower: the moving tags.** A prerelease produces only its immutable tag, so
+`{{major}}.{{minor}}` and `latest=auto` firing correctly — and `imagetools create` being handed three
+references instead of one — are first proven on the release itself. That is one extra argument to a command
+that will have run several times by then.
 
-The answer is unchanged in shape and larger in scope: a separate check against a throwaway tag, run once,
-before a real release depends on it. It has to exercise the `publish` job end to end — pushing a disposable tag
-to the Docker Hub repo and deleting it after — not just the copy command in isolation. Not yet done.
+Whether that residual deserves a throwaway-tag run is a judgement call rather than an obvious yes. If it is
+done, note the two traps: a tag containing a hyphen is treated as a prerelease and proves nothing, and a clean
+`v0.0.1` against the real repo **would move `latest`**, because metadata-action never queries the registry and
+`latest=auto` marks any non-prerelease semver as latest. Point `DOCKERHUB_REPO` at a scratch repo instead.
 
 ### O2 — how much the pull-request gate should prove
 

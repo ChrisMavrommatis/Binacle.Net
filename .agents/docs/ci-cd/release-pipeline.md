@@ -24,7 +24,7 @@ notes     the CHANGELOG.md section this tag publishes exists and is not empty   
 test      the whole suite, by calling run-tests.yml                             (minutes)
 build     just build publish, push the immutable tag to GHCR, capture the digest
 smoke     pull that digest back from GHCR, structure check + all five profiles
-publish   imagetools copy to Docker Hub - SKIPPED for a prerelease
+publish   imagetools copy to Docker Hub - a prerelease gets its immutable tag only
 release   gh release create, body from CHANGELOG.md
 ```
 
@@ -32,11 +32,11 @@ Each job `needs:` the ones before it, so a red anywhere leaves Docker Hub untouc
 
 ## The rule the shape exists to enforce
 
-**GHCR carries everything, including betas. Docker Hub carries releases only.**
+**Nothing unsmoked reaches Docker Hub.**
 
-Nothing unsmoked and nothing unreleased is ever visible on the registry users pull from. GHCR is the staging
-registry and its package is public, so a beta is pullable by anyone who needs it — including the deployment
-host — with no credential.
+That comes from job ordering, not from the registry split: `smoke` runs against the staging copy and only a
+digest that passed is ever copied across. GHCR is staging; Docker Hub is what users pull, and it carries every
+tag the pipeline publishes — betas included, with the immutable tag only.
 
 ## The six jobs
 
@@ -103,33 +103,42 @@ The pushed artifact is an OCI **image index**, not a single manifest: the `linux
 
 Both are manifests inside the index, so they travel with the copy to Docker Hub.
 
-**The cosign signature does not.** It is stored as its own `sha256-<digest>.sig` tag in the repository rather
-than inside the index, so the image is signed twice — once on GHCR in `build`, once on Docker Hub in
-`publish`. Signing is keyless: cosign exchanges the job's OIDC token for a short-lived certificate, which is
-why both jobs declare `id-token: write` and why no signing key exists to store. The signature is made against
-the **digest**, so one signature covers `x.y.z`, `x.y` and `latest` alike.
+**The cosign signature does not.** It is a separate manifest rather than a child of the index, so the image is
+signed twice — once on GHCR in `build`, once on Docker Hub in `publish`.
+
+Specifically, cosign attaches it as an **OCI 1.1 referrer**: a manifest whose `subject` points at the index
+digest, carrying one layer of `artifactType`
+`application/vnd.dev.sigstore.bundle.v0.3+json`, discoverable through the registry's referrers API and
+addressable by the fallback tag `sha256-<digest>` — **no `.sig` suffix**. Observed on
+`v3.0.0-beta.2`, 2026-08-11. The older cosign scheme put signatures in a `sha256-<digest>.sig` tag instead;
+this repo does not use it, so do not go looking for one.
+
+Either way the point stands: a referrer is not inside the index, so `imagetools create` does not carry it, and
+the published image must be signed where it lands.
+
+Signing is keyless — cosign exchanges the job's OIDC token for a short-lived certificate, which is why both
+jobs declare `id-token: write` and why no signing key exists to store. The signature is made against the
+**digest**, so one signature covers `x.y.z`, `x.y` and `latest` alike.
 
 ## How a prerelease differs
 
-A hyphen in a semver tag is the prerelease marker, and the workflow acts on it in two places.
+A hyphen in a semver tag is the prerelease marker. Every job runs either way; what changes is the tag set.
 
 | | `v3.0.0` | `v3.0.0-beta.2` |
 |---|---|---|
 | Section the `notes` job checks | `3.0.0` | `Unreleased` |
 | Pushed to GHCR | `3.0.0` | `3.0.0-beta.2` |
-| `publish` job | runs | **skipped** — `if: !contains(github.ref_name, '-')` |
-| Docker Hub tags | `3.0.0`, `3.0`, `latest` | *(none — Docker Hub is never touched)* |
+| `publish` job | runs | runs |
+| Docker Hub tags | `3.0.0`, `3.0`, `latest` | `3.0.0-beta.2` only |
 | GitHub release | normal | marked `--prerelease` |
 
-The skip is at job level and deliberately stricter than `metadata-action`'s own behaviour, which withholds
-`{{major}}.{{minor}}` and `latest` for a prerelease but would still publish the immutable tag.
+**No job is conditional.** The narrowing is entirely `metadata-action`'s: it withholds `{{major}}.{{minor}}`
+and `latest` for a prerelease, so a beta can never move a tag anyone is following.
 
-A prerelease still gets a GitHub release, because the image really is pullable — from GHCR. This is what makes
-the `release` job's `if: ${{ !failure() && !cancelled() }}` load-bearing: `publish` is skipped for a
-prerelease, and a skipped dependency skips everything downstream unless the condition says otherwise.
-
-**The consequence for testing:** a prerelease exercises every job except `publish`, which it can never reach.
-That whole job needs a separate check against a throwaway tag.
+**The consequence for testing:** a prerelease now exercises every job, `publish` included. What it still does
+not cover is the *moving-tag* half — creating `3.0` and `latest` — since a beta produces neither. That is one
+extra argument to the same `imagetools create` call, so the residual gap is much smaller than it was, but it
+is not nothing: `latest=auto` firing correctly is first proven on a real release.
 
 ## Where the release body comes from
 

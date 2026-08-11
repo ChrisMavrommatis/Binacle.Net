@@ -11,7 +11,7 @@ decisions (why) and the findings (measured evidence). Permanent and citable; rea
 
 | File | Description |
 |---|---|
-| [ci-cd/decisions.md](ci-cd/decisions.md) | CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why a prerelease is skipped at job level, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation. |
+| [ci-cd/decisions.md](ci-cd/decisions.md) | CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation. |
 
 ## Lib
 

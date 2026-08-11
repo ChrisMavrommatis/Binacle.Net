@@ -84,7 +84,7 @@ Set in GitHub repo settings, read as `${{ vars.* }}`.
 |---|---|---|
 | `DONET_VERSION` | `run-tests`, `sonar-analysis`, `release-docker-image` | The .NET SDK version for `actions/setup-dotnet`. **The name is misspelled** ("DONET"). It matches the repo setting, so do not correct it in one file only |
 | `DOCKERHUB_ORGNAME` | `release-docker-image` | Docker Hub org, the first half of the image name |
-| `DOCKERHUB_REPO` | `release-docker-image` | Docker Hub repo, the second half |
+| `DOCKERHUB_REPO` | `release-docker-image` | Docker Hub repo, the second half. Also the lever for testing the `publish` job without touching the real repo: point it at a scratch repo, tag a non-prerelease version, then point it back |
 | `SONAR_PROJECT_KEY` | `sonar-analysis` | SonarCloud project key |
 | `SONAR_ORGANIZATION` | `sonar-analysis` | SonarCloud organisation |
 
