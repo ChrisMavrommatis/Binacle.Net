@@ -125,13 +125,13 @@ api-service-integration backend="":
 
 # Runs one test project. Every C# leaf goes through here, so the flags live in one place.
 #
-# Files are named after the project alone. Nothing needs to tell C# from TS today - in build/coverage/sonar the
-# extension already does it (.xml here, .info from jest), and in build/coverage/cobertura both are .xml and
+# Files are named after the project alone. Nothing needs to tell C# from TS today - in artifacts/coverage/sonar the
+# extension already does it (.xml here, .info from jest), and in artifacts/coverage/cobertura both are .xml and
 # every consumer wants them merged anyway. If that changes, put the language in the name (`<name>.cs.xml` /
 # `<name>.ts.info`) rather than in a folder, so the Sonar globs stay one line each.
 #
 # Coverage is not a second run - the collector rides along inside this one. Set COVERAGE_FORMAT and the same
-# leaf also writes its results and coverage into build/, named after the project. `just coverage all` sets it.
+# leaf also writes its results and coverage into artifacts/, named after the project. `just coverage all` sets it.
 #
 # The output path must be absolute: a relative --coverage-output lands inside the project's own
 # bin/.../TestResults instead of where you asked.
@@ -153,8 +153,8 @@ _dotnet_test project:
     esac
 
     name=$(basename {{ project }})
-    results="$(pwd)/build/tests"
-    coverage="$(pwd)/build/coverage/$COVERAGE_FORMAT"
+    results="$(pwd)/artifacts/tests"
+    coverage="$(pwd)/artifacts/coverage/$COVERAGE_FORMAT"
     mkdir -p "$results" "$coverage"
 
     # No `--` before the runner options: the Microsoft.Testing.Platform `dotnet test` hands unrecognized
@@ -173,7 +173,7 @@ _dotnet_test project:
 # name is the package's `displayName`, which matches its npm name.
 #
 # Paths are absolute because jest resolves them against the package, so a relative one would land inside the
-# package instead of build/.
+# package instead of artifacts/.
 [private]
 _jest_test package:
     #!/usr/bin/env bash
@@ -192,8 +192,8 @@ _jest_test package:
         *) echo "Unknown COVERAGE_FORMAT '$COVERAGE_FORMAT'. Use cobertura or sonar." >&2; exit 1 ;;
     esac
 
-    results="$(pwd)/build/tests"
-    coverage="$(pwd)/build/coverage/$COVERAGE_FORMAT"
+    results="$(pwd)/artifacts/tests"
+    coverage="$(pwd)/artifacts/coverage/$COVERAGE_FORMAT"
     mkdir -p "$results" "$coverage"
 
     npx jest --selectProjects {{ package }} \

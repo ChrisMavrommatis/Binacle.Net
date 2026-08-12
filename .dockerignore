@@ -1,7 +1,7 @@
-# The image copies one thing: build/binacle-net. So this is an allowlist, not a list of leftovers to remember -
+# The image copies one thing: artifacts/binacle-net. So this is an allowlist, not a list of leftovers to remember -
 # ignore the whole repo, add that one folder back. Anything new in the tree is out of the context by default.
 *
-!build/binacle-net
+!artifacts/binacle-net
 
 # Last, so it beats the line above: the published folder carries the Config_Files/*.Development.json overrides
 # and those must never land in the image.

@@ -10,7 +10,7 @@
 	     Two knobs, both overridable with -p: on the command line:
 
 	       GenerateOpenApi  false          opt in with -p:GenerateOpenApi=true
-	       OpenApiDir       build/openapi  destination; prefer absolute, a relative path resolves
+	       OpenApiDir       artifacts/openapi  destination; prefer absolute, a relative path resolves
 	                                       against this project's directory
 
 	     GenerateOpenApi defaulting to false is load-bearing rather than a convenience: ApiDescription.Server
@@ -24,7 +24,7 @@
 	     directly also still works - a command-line property outranks an assignment here. -->
 	<PropertyGroup>
 		<GenerateOpenApi Condition="'$(GenerateOpenApi)' == ''">false</GenerateOpenApi>
-		<OpenApiDir Condition="'$(OpenApiDir)' == ''">$(MSBuildProjectDirectory)/../../../build/openapi</OpenApiDir>
+		<OpenApiDir Condition="'$(OpenApiDir)' == ''">$(MSBuildProjectDirectory)/../../../artifacts/openapi</OpenApiDir>
 
 		<OpenApiGenerateDocumentsOnBuild>$(GenerateOpenApi)</OpenApiGenerateDocumentsOnBuild>
 		<OpenApiDocumentsDirectory>$(OpenApiDir)</OpenApiDocumentsDirectory>

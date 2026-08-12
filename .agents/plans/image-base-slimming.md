@@ -16,7 +16,7 @@ From `docker history` on a locally built image:
 | Layer | Size |
 |---|---|
 | base - `mcr.microsoft.com/dotnet/aspnet:10.0` | **93.7 MB** |
-| the app - `COPY build/binacle-net` | 18.4 MB |
+| the app - `COPY artifacts/binacle-net` | 18.4 MB |
 | `libgssapi-krb5-2` via apt | 2.5 MB |
 | everything else (workdir, `/app/data`, user) | negligible |
 

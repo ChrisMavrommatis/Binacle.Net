@@ -13,7 +13,7 @@ also_update:
 session; see `.agents/README.md`.
 
 Jekyll site at `web/`. The public marketing and landing site for Binacle.Net.
-Built with Jekyll + webpack + TypeScript. Output goes to `../build/web`.
+Built with Jekyll + webpack + TypeScript. Output goes to `../artifacts/web`.
 
 Run locally:
 

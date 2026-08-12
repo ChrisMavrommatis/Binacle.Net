@@ -1,6 +1,6 @@
 # The API image, loaded by the root justfile as the `build` module.
 #
-#   just build publish            publish the API into build/binacle-net
+#   just build publish            publish the API into artifacts/binacle-net
 #   just build image [version]    publish, then docker build -t binacle-net:<version>
 #
 # Both are written to be callable from CI as they stand - nothing interactive, no sudo, no local-only paths -
@@ -17,10 +17,10 @@ set no-exit-message := true
 
 api_project := "api/src/Binacle.Net/Binacle.Net.csproj"
 
-# Not a parameter: the Dockerfile hardcodes COPY ["build/binacle-net", "."] and .dockerignore allowlists that
+# Not a parameter: the Dockerfile hardcodes COPY ["artifacts/binacle-net", "."] and .dockerignore allowlists that
 # one path, so publishing anywhere else builds an image without the app in it. A `dir` argument would only
 # offer a choice that does not exist.
-publish_dir := "build/binacle-net"
+publish_dir := "artifacts/binacle-net"
 
 # List the recipes
 default:
@@ -34,12 +34,12 @@ default:
 #
 # Keep this in step with release-docker-image.yml's publish step - the two must not drift.
 
-# Publish the API framework-dependent for linux-x64, into build/binacle-net
+# Publish the API framework-dependent for linux-x64, into artifacts/binacle-net
 publish:
     dotnet publish {{ api_project }} -c Release -o {{ publish_dir }} --no-self-contained --runtime linux-x64
 
 # The publish is a dependency rather than a check on the folder: `docker build` reads whatever is in
-# build/binacle-net, so skipping it when the folder exists is how a stale image gets tagged and shipped.
+# artifacts/binacle-net, so skipping it when the folder exists is how a stale image gets tagged and shipped.
 #
 # The version lands in the image twice - as the tag and, via the build arg, as BINACLE_VERSION, which is what
 # the running container reports. They come from the same value here for the same reason the release workflow

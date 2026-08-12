@@ -39,16 +39,16 @@ once per runtime identifier and having the Dockerfile pick the right one:
 
 ```dockerfile
 ARG TARGETARCH
-COPY ["build/binacle-net-${TARGETARCH}", "."]
+COPY ["artifacts/binacle-net-${TARGETARCH}", "."]
 ```
 
-publishing to `build/binacle-net-amd64` and `build/binacle-net-arm64`.
+publishing to `artifacts/binacle-net-amd64` and `artifacts/binacle-net-arm64`.
 
 **The trap is the naming.** Docker's `TARGETARCH` is `amd64` / `arm64`; .NET's runtime identifiers are
 `linux-x64` / `linux-arm64`. They do not match, and the mapping has to live in exactly one place or the image
 gets the wrong binaries and still builds.
 
-Also note `.dockerignore` allowlists `build/binacle-net`. Renaming the publish directories means updating it,
+Also note `.dockerignore` allowlists `artifacts/binacle-net`. Renaming the publish directories means updating it,
 or nothing gets copied and the image builds empty - the same failure `build.just` already warns about.
 
 ### Two shapes

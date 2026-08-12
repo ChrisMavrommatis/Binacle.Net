@@ -63,13 +63,13 @@ is the same run with extra output, not a second one.
 ```bash
 just coverage all                # every suite + the table (cobertura)
 just coverage all sonar          # the formats Sonar imports
-just coverage report             # merge the last cobertura run -> build/coverage/html-report/index.html
+just coverage report             # merge the last cobertura run -> artifacts/coverage/html-report/index.html
 just coverage table              # re-print the table without re-running
 ```
 
 The format names the consumer: `cobertura` is what the table and the HTML report read, `sonar` is Visual Studio
-xml for C# plus lcov for TS. Output is one flat file per suite under `build/tests/` and
-`build/coverage/<format>/`, named after the project or package.
+xml for C# plus lcov for TS. Output is one flat file per suite under `artifacts/tests/` and
+`artifacts/coverage/<format>/`, named after the project or package.
 
 ---
 
@@ -77,7 +77,7 @@ xml for C# plus lcov for TS. Output is one flat file per suite under `build/test
 Two small modules, `openapi.just` and `agents.just`.
 
 ```bash
-just openapi generate [dir]      # write build/openapi/Binacle.Net_v3.json and _v4.json
+just openapi generate [dir]      # write artifacts/openapi/Binacle.Net_v3.json and _v4.json
 just openapi lint [dir]          # generate, then Spectral them against .spectral.yaml
 just agents all                  # rewrite every .agents/**/_index.md
 ```
@@ -90,11 +90,11 @@ The documents come out of the build, not out of a running server, so nothing has
 `build.just`, loaded as the `build` module. The publish and the image, nothing else.
 
 ```bash
-just build publish               # dotnet publish -> build/binacle-net
+just build publish               # dotnet publish -> artifacts/binacle-net
 just build image [version]       # publish, then docker build -t binacle-net:<version>, default local
 ```
 
-`image` re-publishes every time - `docker build` copies whatever sits in `build/binacle-net`, so skipping it is
+`image` re-publishes every time - `docker build` copies whatever sits in `artifacts/binacle-net`, so skipping it is
 how a stale image gets tagged. The output path is fixed because the Dockerfile hardcodes it.
 
 Neither recipe touches the container data folders, and neither needs `sudo`, so CI can call them as they stand.

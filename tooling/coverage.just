@@ -6,10 +6,10 @@
 #
 # The format names the consumer, not the file format: `cobertura` is what the table and the HTML report read,
 # `sonar` is Visual Studio xml for C# plus lcov for TS. Each writes one flat file per suite into
-# build/coverage/<format>/, named after the project or package.
+# artifacts/coverage/<format>/, named after the project or package.
 #
 # Nothing here knows which test project or package exists, and nothing here runs a test. Each recipe sets
-# COVERAGE_FORMAT and calls `just test all`; every leaf writes its own files into build/, because coverage is
+# COVERAGE_FORMAT and calls `just test all`; every leaf writes its own files into artifacts/, because coverage is
 # the same run with extra output, not a second run. What is left here is only what happens afterwards: merge
 # and report.
 #
@@ -34,9 +34,9 @@ run format:
     esac
 
     # The whole folder, not just this format's: a leftover cobertura run would otherwise still be sitting there
-    # after a sonar run, and `report` would merge it and look perfectly normal. build/coverage always holds
+    # after a sonar run, and `report` would merge it and look perfectly normal. artifacts/coverage always holds
     # exactly one run.
-    rm -rf build/tests build/coverage
+    rm -rf artifacts/tests artifacts/coverage
 
     # `|| true` because a failing suite still wrote its report, and `table` is what reports the verdict.
     # Without it a failed run would print no table at all - the one time you most want to see it.
@@ -47,19 +47,19 @@ report:
     #!/usr/bin/env bash
     set -euo pipefail
     # Only cobertura carries the per-line data the report needs; a sonar run leaves nothing to merge.
-    if [ ! -d build/coverage/cobertura ]; then
-        echo "No cobertura coverage in build/coverage. Run 'just coverage all' first." >&2
+    if [ ! -d artifacts/coverage/cobertura ]; then
+        echo "No cobertura coverage in artifacts/coverage. Run 'just coverage all' first." >&2
         exit 1
     fi
     dotnet tool restore > /dev/null
     # Test-support assemblies are dropped: a test helper scoring itself says nothing about shipped code.
     dotnet reportgenerator \
-        -reports:'build/coverage/cobertura/*.xml' \
-        -targetdir:'build/coverage/html-report' \
+        -reports:'artifacts/coverage/cobertura/*.xml' \
+        -targetdir:'artifacts/coverage/html-report' \
         -assemblyfilters:'-Binacle.TestsKernel;-*.UnitTests;-*.IntegrationTests' \
         -reporttypes:'Html;TextSummary;MarkdownSummaryGithub' \
         > /dev/null
-    echo "HTML report: build/coverage/html-report/index.html"
+    echo "HTML report: artifacts/coverage/html-report/index.html"
 
 # One row per suite, and the run's exit code (the Coverage column needs cobertura)
 table format='cobertura':
@@ -73,7 +73,7 @@ table format='cobertura':
 
     # Cobertura keeps the whole-file rate on its root element, which is all a row needs.
     rate() {
-        local file="build/coverage/{{ format }}/$1.xml"
+        local file="artifacts/coverage/{{ format }}/$1.xml"
         [ -f "$file" ] || { echo "-"; return; }
         local value
         value=$(grep -o 'line-rate="[0-9.]*"' "$file" | head -1 | cut -d'"' -f2)
@@ -87,11 +87,11 @@ table format='cobertura':
 
     echo ""
     # The C# suites write CTRF; jest writes its own JSON. Same numbers, different field names.
-    for report in build/tests/*.ctrf.json; do
+    for report in artifacts/tests/*.ctrf.json; do
         name=$(basename "$report" .ctrf.json)
         row "$name" "$(count "$report" passed)" "$(count "$report" failed)" "$(count "$report" skipped)"
     done
-    for report in build/tests/*.jest.json; do
+    for report in artifacts/tests/*.jest.json; do
         name=$(basename "$report" .jest.json)
         row "$name" "$(count "$report" numPassedTests)" "$(count "$report" numFailedTests)" \
             "$(count "$report" numPendingTests)"

@@ -39,7 +39,7 @@ Start exploring Binacle.Net now! 🚀
 ├── /samples      # Docker Compose and Kubernetes deployment samples
 ├── /tooling      # Every task the repo can run - just modules, scripts, local compose
 ├── /assets       # Shared static assets copied into the sites at build time
-├── /build        # Build output for the docs and web sites
+├── /artifacts    # Build output - published app, sites, OpenAPI, test results, coverage
 └── /results      # Benchmark and packing-efficiency output
 ```
 

@@ -25,7 +25,7 @@ node_modules
 # Project Specific
 # Build-time OpenAPI documents (emitted by OpenApiGenerateDocumentsOnBuild); the frozen per-version specs
 # under docs/collections/_versions/**/swagger/ stay the committed source of truth.
-build/openapi/
+artifacts/openapi/
 data/logs/
 data/pack-logs/
 packing-logs/
@@ -37,10 +37,10 @@ Output
 output
 # Published app, copied into the image by the Dockerfile. The generic "output" rule above no longer
 # covers it now that it is named after what it holds.
-build/binacle-net/
+artifacts/binacle-net/
 # Per-suite test results and coverage, written by `just test` / `just coverage`.
-build/tests/
-build/coverage/
+artifacts/tests/
+artifacts/coverage/
 
 ## Copied from UI Module
 src/Binacle.Net/wwwroot/ 
@@ -62,7 +62,7 @@ _site
 .jekyll-metadata
 
 ## Docs
-build/docs
+artifacts/docs
 docs/js
 docs/media
 docs/lib
@@ -70,7 +70,7 @@ docs/*.ico
 docs/*.png
 
 ## Website
-build/web
+artifacts/web
 web/js
 web/media
 web/lib

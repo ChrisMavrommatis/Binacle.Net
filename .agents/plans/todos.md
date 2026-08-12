@@ -23,7 +23,7 @@ Found in a 2026-08-12 sweep of every comment outside `.agents`. The layer is in 
 `just` modules, the workflows and the sample compose files carry "why" at the point of use, which is where it
 has to stay. These two are the exceptions.
 
-- `Dockerfile`, the line above `COPY ["build/binacle-net", "."]`, reads "from the 'build' stage". **There is no
+- `Dockerfile`, the line above `COPY ["artifacts/binacle-net", "."]`, reads "from the 'build' stage". **There is no
   build stage** - the publish happens outside the file, in `just build publish`. Say that instead, and that
   the path is hardcoded here and allowlisted in `.dockerignore`, so publishing elsewhere builds an empty image.
 

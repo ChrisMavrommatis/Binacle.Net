@@ -11,7 +11,7 @@ check: Collections, versions, plugin list, and version folders match docs/_confi
 are reading). It is off limits from a coding session; see `.agents/README.md`.
 
 Jekyll site at `docs/`. The public API documentation for Binacle.Net users.
-Built with Jekyll + webpack + TypeScript. Output goes to `../build/docs`.
+Built with Jekyll + webpack + TypeScript. Output goes to `../artifacts/docs`.
 
 Run locally:
 

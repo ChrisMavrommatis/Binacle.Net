@@ -91,7 +91,7 @@ Coverage is not a second run — the collector rides along inside the test run, 
 ```bash
 just coverage all                      # every suite + the table (cobertura)
 just coverage all sonar                # the formats Sonar imports
-just coverage report                   # merge the last run into build/coverage/html-report/index.html
+just coverage report                   # merge the last run into artifacts/coverage/html-report/index.html
 just coverage table                    # re-print the table without re-running
 ```
 
@@ -101,17 +101,17 @@ or package:
 
 | Path | Holds |
 |---|---|
-| `build/tests/<suite>.ctrf.json` | test results (jest packages write `<package>.jest.json`) |
-| `build/coverage/cobertura/<suite>.xml` | coverage for the table and the HTML report |
-| `build/coverage/sonar/<suite>.xml` | C# coverage for Sonar; TS is `<package>.info` (lcov) |
-| `build/coverage/html-report/` | the merged report, written by `just coverage report` |
+| `artifacts/tests/<suite>.ctrf.json` | test results (jest packages write `<package>.jest.json`) |
+| `artifacts/coverage/cobertura/<suite>.xml` | coverage for the table and the HTML report |
+| `artifacts/coverage/sonar/<suite>.xml` | C# coverage for Sonar; TS is `<package>.info` (lcov) |
+| `artifacts/coverage/html-report/` | the merged report, written by `just coverage report` |
 
 The table prints a row per suite (`Passed`/`Failed`/`Skipped`/`Coverage`) and its exit code is the run's verdict.
 
 ## OpenAPI documents
 
 ```bash
-just openapi generate                  # build/openapi/Binacle.Net_v3.json + _v4.json
+just openapi generate                  # artifacts/openapi/Binacle.Net_v3.json + _v4.json
 just openapi generate <dir>            # write them somewhere else (pass an absolute path)
 just openapi lint [<dir>]              # generate, then lint with Spectral against .spectral.yaml
 ```
@@ -219,11 +219,11 @@ staging layout for the `just` recipes and the remaining `tooling/*.sh` scripts. 
 ## Build (Docker image)
 
 ```bash
-just build publish                     # dotnet publish -> build/binacle-net
+just build publish                     # dotnet publish -> artifacts/binacle-net
 just build image [version]             # publish, then docker build -t binacle-net:<version> (default local)
 ```
 
-`image` always re-publishes first — `docker build` copies whatever is in `build/binacle-net`, so skipping the
+`image` always re-publishes first — `docker build` copies whatever is in `artifacts/binacle-net`, so skipping the
 publish is how a stale image gets tagged. The version becomes both the image tag and `BINACLE_VERSION` inside
 the container, which is what the running app reports.
 

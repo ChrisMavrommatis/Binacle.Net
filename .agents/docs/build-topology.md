@@ -22,7 +22,7 @@ The repo uses the XML `.slnx` solution format. Projects are grouped by solution 
 - `/api/src/`, `/api/test/` — `Binacle.Net`, `Binacle.Net.Kernel`, the three modules (+ ServiceModule.Domain/.Infrastructure), two integration-test projects and four unit-test projects (one per source project that has unit tests: `Binacle.Net`, `Kernel`, `DiagnosticsModule`, `ServiceModule`)
 - `/vipaq/src/`, `/vipaq/test/`, `/shared/src/`, `/shared/test/` — ViPaq + its tests + `Binacle.Geometry` and `Binacle.CompactNotation` (in `shared/src`) + `Binacle.TestsKernel`, `Binacle.TestReporting` and `Binacle.CompactNotation.UnitTests` (in `shared/test`)
 - `/vipaq/tools/` (`Binacle.ViPaq.VectorGenerators`, `Binacle.ViPaq.PackedDataGenerator`), `/shared/tools/` (`Binacle.OrLibrary.Converter`) — standalone generators, not referenced by the shipped projects
-- `/samples/docker/` (4 `.dcproj`), `/samples/kubernetes/` (`.proj`), `/results/`, `/api/` (requests), `/build/`
+- `/samples/docker/` (4 `.dcproj`), `/samples/kubernetes/` (`.proj`), `/results/`, `/api/` (requests), `/artifacts/`
 - Top-level content projects: `assets/assets.proj`, `tooling/tooling.proj`, `docs/docs.proj`, `web/web.proj`
 - `/_root/` — loose files (`.dockerignore`, `.editorconfig`, `Directory.Build.props`, `Directory.Packages.props`, `Dockerfile`, `global.json`, `gulpfile.js`, `package.json`, README)
 
@@ -125,23 +125,23 @@ do their own webpack bundling separately (see docs site (`$docs-site`) / web sit
 The Dockerfile is **single-stage** — the publish happens outside it, in the `build` just module
 (`tooling/build.just`):
 
-1. `just build publish` runs `dotnet publish -c Release -o build/binacle-net --no-self-contained --runtime
+1. `just build publish` runs `dotnet publish -c Release -o artifacts/binacle-net --no-self-contained --runtime
    linux-x64` of `api/src/Binacle.Net/Binacle.Net.csproj`. **Framework-dependent** — the runtime comes from the
    base image, so the app layer is ~18 MB rather than ~123 MB.
-2. `Dockerfile` (`mcr.microsoft.com/dotnet/aspnet:10.0`) does `COPY ["build/binacle-net", "."]`, sets
+2. `Dockerfile` (`mcr.microsoft.com/dotnet/aspnet:10.0`) does `COPY ["artifacts/binacle-net", "."]`, sets
    `ARG VERSION → ENV BINACLE_VERSION`, `USER $APP_UID`, `ENTRYPOINT ["dotnet", "Binacle.Net.dll"]`.
 3. `just build image [version]` does step 1 then `docker build --build-arg VERSION=<version>
    -t binacle-net:<version> .` (default `local`), plus the three per-build OCI labels (version, revision,
    created). It stops there — run it with `just image up full`. CI builds the same image the same way; see
    CI/CD (`$ci-cd`).
 
-`build/binacle-net` is not configurable: the Dockerfile hardcodes it in its `COPY` and `.dockerignore`
+`artifacts/binacle-net` is not configurable: the Dockerfile hardcodes it in its `COPY` and `.dockerignore`
 allowlists that one path, so the publish has to land exactly there.
 
 There is no `EXPOSE`/`ASPNETCORE_HTTP_PORTS` in the Dockerfile — the aspnet:10.0 base defaults to port 8080;
-compose/k8s map it. `build/` is **output only** (generated `binacle-net/`, `docs/`, `web/`, `openapi/`, plus
+compose/k8s map it. `artifacts/` is **output only** (generated `binacle-net/`, `docs/`, `web/`, `openapi/`, plus
 `tests/` and `coverage/` from a test run) — never edit it. Each folder is named after what produced it, so a
-look at `build/` says which artifact is which.
+look at `artifacts/` says which artifact is which.
 
 ## Content projects (`Microsoft.Build.NoTargets`)
 

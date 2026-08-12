@@ -26,7 +26,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # Copy everything needed to run the app from the "build" stage.
-COPY ["build/binacle-net", "."]
+COPY ["artifacts/binacle-net", "."]
 
 # Logs, pack-logs, and the SQLite database are written here. It has to exist in the image and be owned by the
 # app user: docker creates a mount point that the image does not have as root, and the app does not run as

@@ -1,6 +1,6 @@
 # The OpenAPI documents, loaded by the root justfile as the `openapi` module.
 #
-#   just openapi generate          write build/openapi/Binacle.Net_v3.json and _v4.json
+#   just openapi generate          write artifacts/openapi/Binacle.Net_v3.json and _v4.json
 #   just openapi generate <dir>    write them somewhere else
 #   just openapi lint [<dir>]      generate, then lint them against .spectral.yaml
 #
@@ -18,9 +18,9 @@ set working-directory := '..'
 set no-exit-message := true
 
 # Absolute on purpose: MSBuild resolves a relative OpenApiDir against the *project* directory, so a plain
-# `build/openapi` would land in api/src/Binacle.Net/. justfile_directory() is the root justfile's directory,
+# `artifacts/openapi` would land in api/src/Binacle.Net/. justfile_directory() is the root justfile's directory,
 # not this file's, so it is the repo root.
-openapi_dir := justfile_directory() / "build" / "openapi"
+openapi_dir := justfile_directory() / "artifacts" / "openapi"
 
 # List the recipes
 default:

@@ -19,7 +19,7 @@
        The test for every entry: did we write it, do we review it, can we change it? If no, it goes here.
        If yes, it stays in scope even when its findings are unwelcome.
 
-       - Build output: bin/, obj/, build/, results/, and the site equivalents docs/js, web/js, docs/media,
+       - Build output: bin/, obj/, artifacts/, results/, and the site equivalents docs/js, web/js, docs/media,
          web/media (webpack bundles and copied assets). All gitignored, so CI never sees them anyway.
        - Vendored: assets/lib/ and its build-time copies docs/lib/, web/lib/ - alpine, beercss,
          material-dynamic-colors, swagger-ui. 8157 ncloc and 274 issues in the 2026-08-08 run, none ours to fix,
@@ -35,12 +35,12 @@
        surface in the repo - 5e5f8c02 was an XSS fix in one of them. Back in scope: 6 hand-written js, 15 scss,
        and the site yml and json. Fixing them is still not a coding session's job (CLAUDE.md); findings go in a
        plan for the session that owns those files. -->
-  <Property Name="sonar.exclusions">**/node_modules/**,**/bin/**,**/obj/**,build/**,results/**,assets/lib/**,docs/lib/**,docs/js/**,docs/media/**,web/lib/**,web/js/**,web/media/**,docs/**/*.html,web/**/*.html,shared/data/**,vipaq/test-vectors/**</Property>
+  <Property Name="sonar.exclusions">**/node_modules/**,**/bin/**,**/obj/**,artifacts/**,results/**,assets/lib/**,docs/lib/**,docs/js/**,docs/media/**,web/lib/**,web/js/**,web/media/**,docs/**/*.html,web/**/*.html,shared/data/**,vipaq/test-vectors/**</Property>
 
-  <!-- One flat file per suite in build/coverage/sonar, split by extension: .xml from the C# collector,
+  <!-- One flat file per suite in artifacts/coverage/sonar, split by extension: .xml from the C# collector,
        .info from jest. tooling/tests.just is what writes them and the only place that knows the suite list. -->
-  <Property Name="sonar.cs.vscoveragexml.reportsPaths">build/coverage/sonar/*.xml</Property>
-  <Property Name="sonar.javascript.lcov.reportPaths">build/coverage/sonar/*.info</Property>
+  <Property Name="sonar.cs.vscoveragexml.reportsPaths">artifacts/coverage/sonar/*.xml</Property>
+  <Property Name="sonar.javascript.lcov.reportPaths">artifacts/coverage/sonar/*.info</Property>
 
   <!-- Two places where near-identical code is the design, not debt. This is a duplication exclusion, not an
        issue ignore: every rule still runs on these files, only the copy-paste detector skips them.

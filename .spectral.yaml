@@ -1,4 +1,4 @@
-# Spectral ruleset for the Binacle.Net OpenAPI documents (build/openapi/*.json).
+# Spectral ruleset for the Binacle.Net OpenAPI documents (artifacts/openapi/*.json).
 # Encodes the standards set in the spec audit so they cannot silently regress: stable operationIds,
 # descriptions on every schema/property/tag, and no numeric-as-string unions.
 #

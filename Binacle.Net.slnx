@@ -3,8 +3,8 @@
     <Platform Name="Any CPU" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/build/">
-    <File Path="build/README.md" />
+  <Folder Name="/artifacts/">
+    <File Path="artifacts/README.md" />
   </Folder>
   <Folder Name="/api/">
     <Project Path="api/requests/requests.proj" Type="Shared">

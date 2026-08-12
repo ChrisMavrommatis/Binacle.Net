@@ -56,7 +56,7 @@ publishing, or is a new behaviour that only fails in a real deployment - which i
 - [x] **A1 - publish paths hardcoded.** The publish step read `${{ vars.API_PROJECT_PATH }}` /
   `${{ vars.BUILD_OUTPUT }}`, and the former still pointed at the pre-move `src/Binacle.Net/Binacle.Net.csproj`,
   so it failed after the `src/` -> `api/src/` move. Instead of depending on a repo-settings variable, the
-  workflow now hardcodes `api/src/Binacle.Net/Binacle.Net.csproj` and `-o build/binacle-net` - matching the
+  workflow now hardcodes `api/src/Binacle.Net/Binacle.Net.csproj` and `-o artifacts/binacle-net` - matching the
   Dockerfile's fixed `COPY` source and `build.just`, which cannot drift. No Actions variable needed. Change is
   in the working tree; the human commits. (`BUILD_DOCKERFILE`, `DONET_VERSION`, `DOCKERHUB_*` are still
   variables and were unaffected by the move.)
@@ -143,7 +143,7 @@ operators to mount a volume at `/home/app/.aspnet/DataProtection-Keys`. Nothing 
 
 **B2 landed 2026-08-10.** The `v3.0.x` folder is a full version: API v3 and v4 pages, both new configuration
 pages, all six sample folders with the config files they mount, `swagger/v3.json` + `v4.json` moved out of
-gitignored `build/openapi/` with a `.md` beside each, `quick-start.md` and `release-notes.md`. Verified rather
+gitignored `artifacts/openapi/` with a `.md` beside each, `quick-start.md` and `release-notes.md`. Verified rather
 than assumed: the site builds clean, `/version/latest/` redirects to `v3.0.x`, `robots.txt` advertises all four
 sitemaps, neither swagger document carries an `/api/auth/token` path, v4 keeps its experimental banner, the
 docs sample pins read `3.0`, every Kubernetes copy has the hardening, and no tracked file carries a BOM. One
@@ -372,8 +372,8 @@ path, v4 carries the experimental banner. Handed to the docs session.
     are frozen copies of the generated OpenAPI documents, and as of the `servers` fix on 2026-08-10 they no
     longer match what `just openapi generate` produces (both v3 and v4 now carry a `servers` entry with the
     single relative `/`; these copies still have none). Regenerate with `just openapi generate` and copy
-    `build/openapi/Binacle.Net_v3.json` -> `docs/collections/_versions/v3.0.x/swagger/v3.json` and
-    `build/openapi/Binacle.Net_v4.json` -> `docs/collections/_versions/v3.0.x/swagger/v4.json` - note the
+    `artifacts/openapi/Binacle.Net_v3.json` -> `docs/collections/_versions/v3.0.x/swagger/v3.json` and
+    `artifacts/openapi/Binacle.Net_v4.json` -> `docs/collections/_versions/v3.0.x/swagger/v4.json` - note the
     generator's file names differ from what the site expects, so the rename is part of the handover, not
     a detail to skip. Shipping the docs without this leaves the published spec disagreeing with the released
     image.
@@ -465,7 +465,7 @@ tag rather than the commit log:
 
 - `npm audit fix` / `bundle audit-fix` on the root, `docs/` and `web/` lockfiles. Every advisory closed was a
   devDependency (`npm audit --omit=dev` on the pre-fix lockfile returned 0). The Dockerfile copies only
-  `build/binacle-net`, and the UI module's JavaScript is hand-written and committed, not bundled.
+  `artifacts/binacle-net`, and the UI module's JavaScript is hand-written and committed, not bundled.
 - The docs site unfreeze - `current` back at `v2.1.x` until the `v3.0.x` pages exist. Site content, not product.
 - The CodeQL `js/xss-through-dom` fix in `docs/_js/main.js`. Docs-site hardening, and not exploitable as the
   code stood (both inputs were build-time constants).
