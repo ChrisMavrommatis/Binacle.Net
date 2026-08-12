@@ -49,6 +49,21 @@ These are the lessons from converting everything else. They are worth following 
 The benchmark and performance harnesses write results, and `results/` is a hand-curated vault - harnesses write
 to gitignored scratch, never straight into it. Do not let a recipe change where output lands.
 
+## Six stale references clear themselves when this lands
+
+`lib/README.md` (2), `results/lib/README.md` (2), `results/lib/benchmarks/README.md` and
+`results/lib/efficiency/README.md` all give `./tooling/performance.lib.sh` or `./tooling/benchmarks.lib.sh` as
+the command to run.
+
+Those are the only places outside `tooling/`, `.agents/` and the repo's top-level docs that name the folder,
+and the rule says nothing else should. They were left alone deliberately on 2026-08-12 rather than deleted:
+each is the only place a reader of that slice learns how to run its benchmarks, so removing them costs
+something real. Converting these scripts turns every one into a recipe name - `just bench lib` - which is not a
+path into `tooling/` at all, so the violation disappears without anyone writing the prose twice.
+
+**Update those four files as part of this work.** If the conversion is abandoned, the references need deciding
+on their own terms instead.
+
 ## Done when
 
 Every `tooling/*.sh` a maintainer types is a `just` recipe, or says in one line at the top why it stayed a

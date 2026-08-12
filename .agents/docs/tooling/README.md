@@ -84,3 +84,24 @@ modules rather than shared: a module reaching into another one restores the coup
 - `tooling/azurite/` holds Azurite emulator state (`__azurite_db_*__.json`).
 - `tooling/tooling.proj` is a `Microsoft.Build.NoTargets` content project (no compile) that includes the config
   files in the solution — see `$build-topology`.
+
+## The folder itself
+
+Renamed from `config/` on 2026-08-12, and `build/` became `artifacts/` in the same change. The old names were
+each wrong in a different way: `config/` held recipes rather than configuration, while the API's own runtime
+settings live in `Config_Files`; `build/` held output, which the .NET convention calls `artifacts/` and the Go
+convention reads as the opposite — build *scripts*. `eng/` was considered and rejected as jargon, `tooling/`
+being the plain word for what it holds. `artifacts/` is not `results/`: that one is committed measured
+evidence, records that outlive a build.
+
+**Every module sets `set working-directory := '..'`, which resolves relative to the module file.** The folder
+therefore has to stay one level below the repo root. Moving it deeper or shallower breaks every path in every
+recipe at once, and does it silently — the recipes still parse.
+
+**References point one way: out of `tooling/`, never into it.** This folder may name anything; almost nothing
+may name it. The exceptions are (a) whatever operates on it — the `justfile` `mod` lines, `Binacle.Net.slnx`,
+the `.gitignore` state-dir patterns, the `/s:` argument in `sonar-analysis.yml`; (b) this `.agents/` layer,
+whose job is describing the repo; (c) the repo's own top-level docs, `README.md`, `DEVELOPMENT.md` and
+`CLAUDE.md`, because something has to say the folder exists. **Never a comment**, and never a file a user
+copies — a sample that names a maintainer's path is handing a reader something they cannot use. A comment that
+needs to talk about this folder is a briefing, not a trap, and belongs here or in design instead.

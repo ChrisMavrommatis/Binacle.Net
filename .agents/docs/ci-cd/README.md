@@ -49,6 +49,11 @@ workflow that pushes a tag has to stay out of the `v<digit>` namespace.
   is what you paste into a terminal to reproduce it.
 - **One step per thing that can break, and every step is named.** A red check should name the suite or the
   profile, not make you open a log.
+- **Adding a test leaf or a smoke profile is two edits: one in the module, one step in the workflow.** The
+  module owns what the thing does; the workflow owns that it runs on a PR. Neither half implies the other, and
+  the pairing is what stops a suite from being "green in CI" while it does not exist locally, or existing
+  locally while CI never runs it. Add the leaf to `tests.just` or the profile to `smoke.just`, then add the
+  matching step.
 - **Repeated leaf steps carry `if: ${{ !cancelled() }}`**, so one failure does not hide the rest. You see all
   the red at once. In `smoke-image.yml` the same condition also gates on the pull having succeeded — six
   failures that all mean "no such image" is noise.

@@ -12,7 +12,6 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [image-base-slimming.md](image-base-slimming.md) | Harden and slim the base image |
-| [layout-rename.md](layout-rename.md) | Top-level layout: `config/` becomes `tooling/`, `build/` becomes `artifacts/` |
 | [sonar-issue-triage.md](sonar-issue-triage.md) | Sonar - what is left after the 2026-08-09 sweep |
 | [todos.md](todos.md) | TODOs |
 | [ui-test-harness.md](ui-test-harness.md) | A test harness for the UI |
