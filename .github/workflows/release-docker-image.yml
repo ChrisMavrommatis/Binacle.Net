@@ -1,29 +1,15 @@
-# Six jobs. The image is built once, lands on GHCR, and only reaches Docker Hub after it has been smoked
-# there:
+# Six jobs, cheapest check first:
 #
 #   push tag v3.0.0 -> notes gate -> test -> build+push GHCR -> smoke -> copy to Docker Hub -> release
 #
-# The order is cheapest-check-first: the notes gate is seconds, the suite is minutes, the build is longer
-# still. Nothing that costs money runs until the things that cannot be fixed after the fact have passed.
+# Three things to know before you change anything here:
 #
-# EVERY TAG REACHES DOCKER HUB, prerelease included - but a prerelease only ever gets its immutable tag.
-# metadata-action withholds {{major}}.{{minor}} and latest for one, so a beta can never move `3.0` or
-# `latest`. GHCR is staging only; what users pull is always Docker Hub.
-#
-# The copy preserves the digest - a manifest transfer is content-addressed - so what Docker Hub serves is bit
-# for bit what the smoke job passed. Never rebuild between the two: that would ship an image nothing tested.
-#
-# The image ships an SPDX SBOM and SLSA provenance as attestations, and is signed with cosign keyless. The
-# signature is NOT part of the index and does not survive the copy, so it is made twice - once on GHCR, once
-# on Docker Hub. The attestations do travel, because they are manifests inside the index.
-#
-# Nothing deletes the GHCR staging copy. That is deliberate - it is the rollback source if a Docker Hub tag is
-# ever found bad, and deleting inside the release path would let a cleanup failure fail a release.
-#
-# Do NOT add `release: published` as a second trigger - the release created in the last job would re-enter
-# this workflow and build everything twice.
-#
-# Why this shape is in .agents/design/ci-cd/decisions.md. What it does is .agents/docs/ci-cd/release-pipeline.md.
+#   - Never rebuild the image between `build` and `publish`. The copy is by digest, which is what makes the
+#     published image bit for bit the one `smoke` passed. A rebuild ships something nothing tested.
+#   - cosign runs twice on purpose. A signature is a referrer, not part of the index, so it does not survive
+#     the copy and has to be made again where the image lands.
+#   - Do NOT add `release: published` as a second trigger. The release created in the last job would re-enter
+#     this workflow and build everything twice.
 
 name: Build and Release Docker Image
 

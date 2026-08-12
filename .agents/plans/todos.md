@@ -17,6 +17,22 @@ a decision or a set of sub-steps gets its own plan file instead.
   carry a single relative `/`, and the lint is now clean: 0 errors, 0 warnings. **So set the gate to fail on
   warnings** - there is nothing left to argue about, and that is the whole reason the ordering mattered.
 
+## Comments
+
+Found in a 2026-08-12 sweep of every comment outside `.agents`. The layer is in good shape overall - the
+`just` modules, the workflows and the sample compose files carry "why" at the point of use, which is where it
+has to stay. These two are the exceptions.
+
+- `Dockerfile`, the line above `COPY ["build/binacle-net", "."]`, reads "from the 'build' stage". **There is no
+  build stage** - the publish happens outside the file, in `just build publish`. Say that instead, and that
+  the path is hardcoded here and allowlisted in `.dockerignore`, so publishing elsewhere builds an empty image.
+
+- `config/tmux.sh` carries ~40 comment lines that restate the line below them ("# Select the first pane" over
+  `tmux select-pane`), and two banners are wrong: window 5's block closes with a `WINDOW 6` banner and window
+  6's opens with `WINDOW 5`. Nothing here folds into `.agents` - it is deletable noise. **Do this with the
+  keep-or-convert decision in the scripts-to-just-recipes plan**, not before: if the script moves into a
+  shebang recipe body whole, the noise moves with it.
+
 ## ServiceModule
 
 - `api/src/Binacle.Net.ServiceModule/Services/ApiUsageRateLimitingPolicy.cs:34`

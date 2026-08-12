@@ -36,15 +36,16 @@ in the same change, leaving the text.
       minor tag; this is the same check for the real release, where both are expected to move.
 
       **Check the signature and the attestations while you are here** - `cosign verify` against the digest, and
-      `docker buildx imagetools inspect` for the SBOM and provenance entries. The `publish` job is skipped for
-      every prerelease, so the copy that produced these tags and the signature over them have run exactly once
-      before this: on the throwaway pipeline-test tag. This is the first time they have run for real.
+      `docker buildx imagetools inspect` for the SBOM and provenance entries. `publish` runs for every tag now,
+      but no tag has been pushed since that became true - beta 2 ran during the few hours the prerelease skip
+      existed. So the copy that produced these tags and the signature over them have run at most once before
+      this, on the throwaway pipeline-test tag if it was done at all.
 
       **Check the repo landing page by eye while you are here.** `README.md` is the one that carried a
       beta-conditional sentence ("Until then, pin `binacle/binacle-net:3.0.0-beta.1`") and it is the most read
-      file in the repo. A stale beta pin there outlives every other miss. Note the tag it names: betas stopped
-      reaching Docker Hub on 2026-08-11, so `3.0.0-beta.1` is the last one that ever existed there and there is
-      no `beta.2` to have leaked through.
+      file in the repo. A stale beta pin there outlives every other miss. Note the tag it names: `3.0.0-beta.1`
+      is the only beta on Docker Hub, because beta 2 was tagged during the few hours the prerelease skip
+      existed. Betas do reach Docker Hub again, with their immutable tag only.
 
 - [ ] **Delete the release set.** `release-v3.0.0.md` goes once the release is out and verified. This file goes
       when its own list is clear. `release-notes-v3.0.0.md` is already gone - deleted 2026-08-11 when the
@@ -57,6 +58,6 @@ in the same change, leaving the text.
 
 ## Everything else
 
-On [the board](board.md). The CI work, the UI clients, the v4 flip, the `Parallel*` decision, the benchmark
+On the board. The CI work, the UI clients, the v4 flip, the `Parallel*` decision, the benchmark
 ledger and the TestsKernel fixtures are all there, grouped by area with their blockers named. Pick from there
 once this list is clear.

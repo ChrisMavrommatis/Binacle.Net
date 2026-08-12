@@ -2,7 +2,7 @@
 id: ci-cd/decisions
 description: CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation.
 verified: 2026-08-11
-check: Decisions still match .github/workflows/*.yml and config/build.just; D2/D3/D14 against release-docker-image.yml's publish job and its hyphen guard, D7 against config/changelog.just, D6 against smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe
+check: Decisions still match .github/workflows/*.yml and config/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against config/changelog.just, D6 against smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe
 ---
 
 # CI/CD — decisions ledger
@@ -115,6 +115,12 @@ staging package achieves it without adding a secret anywhere.
 **One manual step this depends on**, and it comes *after* the first run rather than before it: the package's
 visibility must be set to public, because GHCR defaults every new package to private regardless of repo
 visibility, and it cannot be changed before the package exists.
+
+**Nothing deletes the staging copy, and that is deliberate.** It is the rollback source if a Docker Hub tag is
+ever found bad — the exact bits that were smoked, still addressable by digest. The second reason is failure
+mode: a cleanup step inside the release path can fail, and a release that goes red *after* the image is
+published is the worst outcome the ordering exists to avoid. If the package ever needs pruning, it happens on
+its own schedule, not in this workflow.
 
 **The workflow creates the package on its own** — `packages: write` is enough to create one in the repo's
 namespace, and the `Dockerfile`'s `org.opencontainers.image.source` label is what links it back. An earlier

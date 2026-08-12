@@ -79,8 +79,27 @@ plan that owns the work.
 
 ## Who may reference whom — keep the layers from bleeding
 
+### First, the boundary: references point out of `.agents`, never into it
+
+**No file outside `.agents/` may point a reader at `.agents/` content.** Not a code comment, not a workflow
+comment, not a repo README. `CLAUDE.md` is the single exception, because something has to say this directory
+exists; it carries the rule too. Files inside `.agents/` point outward freely — at code, at paths, at anything.
+
+Two things this is *not*:
+
+- **A path a tool operates on is not a reference.** `config/agents.just` reads and writes `.agents/**/_index.md`,
+  and the root `justfile` registers it. Those are operands. What is banned is the pointer — "see
+  `.agents/design/ci-cd/decisions.md` for why" — which makes an outside file depend on a layout we rearrange at
+  will. This whole `design/` split is the proof that we do.
+- **A ban on comments.** Comments stay, and they are **strictly for humans**: the person editing that line, told
+  why the trap in front of them is a trap. Anything an *agent* needs — background, history, "keep this in step
+  with X" — goes in the matching layer here instead. A fact written in both places will disagree within a
+  release.
+
+### Then, inside: two rules keep the layers from bleeding
+
 Two **permanent** layers describe the code as it is now (`docs`, `design`); three **ephemeral** ones capture work
-and notes that come and go (`plans`, `ideas`, `memory`). Two rules keep the layers from bleeding:
+and notes that come and go (`plans`, `ideas`, `memory`).
 
 - **Nothing permanent points at anything ephemeral.** A plan/idea is deleted when built or dropped, and a memory
   can stop being true, so a link to one dangles. If a permanent file needs the content, it wasn't ephemeral —
@@ -98,6 +117,8 @@ and notes that come and go (`plans`, `ideas`, `memory`). Two rules keep the laye
 | **`.agents/README.md`** (the map) | any file, as navigation | — | The one global map. The only exempt README. |
 | **`board.md`** (the work map) | any plan, idea or todo, as navigation | docs, design, memory | Permanent file, entirely ephemeral contents. Nothing points at it. |
 | **slice READMEs** (per layer) | its own layer's rules — a `docs/` README references only docs | same as its layer | Describe, rule, and index their own folder. |
+| **anything outside `.agents/`** | code, paths, itself | **`.agents/` — anything at all** | Code, workflows, repo READMEs. A tool's operand path is not a reference. |
+| **`CLAUDE.md`** (the door) | any file, as navigation | — | The one exception to the line above. It exists to say `.agents/` is there. |
 
 What falls out of these rules:
 
@@ -114,11 +135,15 @@ What falls out of these rules:
   any file. A slice README follows its own layer's rules: it describes, rules, and indexes its folder, but a
   `docs/` README still references only docs.
 - **The release set is the second exception.** `release-v<version>.md` and its `post-release` / notes
-  companions coordinate a release, so the plan may point at any file — but, like the map, **nothing points at
-  it**. It is version-scoped and deleted once shipped.
+  companions coordinate a release, so the plan may point at any file — **except `board.md`** — but, like the
+  map, **nothing points at it**. It is version-scoped and deleted once shipped.
 - **`board.md` is the third.** It is a permanent file whose contents are entirely ephemeral — that is the
   point, and it is why it is exempt rather than an accident. Like the map and the release set, **nothing points
   at it**. It is the only permanent file allowed to link an idea.
+
+  **"Nothing" means nothing, and it beats the release-set carve-out.** A release file may *name* the board in
+  plain words — "everything else is on the board" — but it may not link it. The two rules read as a conflict
+  otherwise, and this is the way it resolves.
 - **A layer's own `_index.md` is navigation, not citation.** It lists its folder's files by name so they can be
   found; that is what an index is for, and it is regenerated, not maintained by hand.
 

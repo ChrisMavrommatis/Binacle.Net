@@ -28,15 +28,13 @@ default:
 
 # One command, not restore + publish --no-restore: publish restores on its own, and nothing caches the restore
 # between the two, so the split step only adds a place for the two runtime identifiers to drift apart.
-
-# Publish the API framework-dependent for linux-x64, into build/binacle-net
 #
 # --no-self-contained is spelled out rather than left to the default of a bare --runtime: the runtime comes
-# from the base image, which is the whole point, and that has to be readable on the line. The image was
-# self-contained until 2026-08-10 while basing on aspnet, so it carried two copies of .NET - the bundled one
-# the app ran on, and the base image's, which nothing loaded. Framework-dependent also means a .NET security
-# fix reaches users by rebasing on a newer aspnet tag rather than by republishing the app, which matters for a
-# project that ships months apart. Keep this in step with release-docker-image.yml's publish step.
+# from the base image, which is the whole point, and that has to be readable on the line.
+#
+# Keep this in step with release-docker-image.yml's publish step - the two must not drift.
+
+# Publish the API framework-dependent for linux-x64, into build/binacle-net
 publish:
     dotnet publish {{ api_project }} -c Release -o {{ publish_dir }} --no-self-contained --runtime linux-x64
 

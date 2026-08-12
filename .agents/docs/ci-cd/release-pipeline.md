@@ -1,8 +1,8 @@
 ---
 id: ci-cd/release-pipeline
-description: The release pipeline in release-docker-image.yml — six jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step a prerelease never reaches, and the CHANGELOG.md release body
-verified: 2026-08-11
-check: The six jobs, their needs: edges and job outputs match release-docker-image.yml; the publish job's hyphen guard and the release job's !failure() are both still there; run-tests.yml and smoke-image.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased
+description: The release pipeline in release-docker-image.yml — six jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step every tag reaches with a prerelease narrowed to its immutable tag, and the CHANGELOG.md release body
+verified: 2026-08-12
+check: The six jobs, their needs: edges and job outputs match release-docker-image.yml; no job carries a prerelease condition and the release job's !failure() note is still accurate; run-tests.yml and smoke-image.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased
 also_update:
   - ci-cd
   - config
@@ -180,5 +180,6 @@ image carries the same metadata shape a pushed one does.
   than insists on creating.
 - **Writing the `[Unreleased]` section of `CHANGELOG.md`** as the work lands, and renaming that heading to the
   version before the real tag.
-- **The publish check on a throwaway tag**, since a prerelease cannot reach that job.
+- **The moving-tag check on a throwaway tag.** A prerelease reaches the `publish` job but produces only its
+  immutable tag, so `3.0` and `latest` are first created on a real release.
 - **Deploying the docs site**, which is its own `workflow_dispatch` workflow and is not chained to a release.

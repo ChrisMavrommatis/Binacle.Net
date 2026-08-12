@@ -4,11 +4,6 @@
 # A leaf is one project and one run, so it is also one CI step. One recipe per leaf because shell
 # completion only completes recipe names - a leaf passed as an argument cannot complete without a
 # hand-written list that drifts.
-#
-# Leaf names are `<slice>[-<component>][-<language>]-<kind>`, with the kind spelled out: `unit` and
-# `integration`, never `ut`/`it`. Two leaves must never differ by one letter in the middle of a word, and a
-# prefix you type must narrow to something. The language segment appears only where a slice has both a C#
-# project and a TS package - `lib` has one language, so `lib-unit` needs no `-cs`.
 
 # Module recipes run where the module file lives (config/), which would break every path below.
 set working-directory := '..'

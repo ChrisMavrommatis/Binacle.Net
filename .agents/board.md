@@ -77,9 +77,9 @@ multi-arch are still here and still unscheduled.
 
 **`release-pipeline-rebuild` landed and was proven by `v3.0.0-beta.2` on 2026-08-11** - every job behaved,
 Docker Hub was untouched, and the release body came out of `CHANGELOG.md`. The GHCR package is public. What is
-left in the file is the throwaway-tag check (the `publish` job has still never run), two open questions for the
-maintainer, and telling users how to verify the signature. **The v3.0.0 release plan owns the scheduling from
-here.**
+left in the file is four things: the credential-free pull from the deployment host, the moving-tag check on a
+throwaway tag, one open question for the maintainer, and telling users how to verify the signature. **The
+v3.0.0 release plan owns the scheduling from here.**
 
 One-liner, in [todos](plans/todos.md): **lint the OpenAPI documents on every PR.** Ready, and no longer
 blocked - the `servers` block landed on 2026-08-10 and the lint is clean, so the gate can fail on warnings
@@ -116,8 +116,8 @@ an existing contract, and no such endpoint is planned. The only candidate is the
 Promote it, or pick another, or the flip has no path.
 
 Ideas: [api/pack-first-bin-endpoint](ideas/api/pack-first-bin-endpoint.md) - **the candidate `v4-stable` needs.**
-[api/openapi-spec-followups](ideas/api/openapi-spec-followups.md) - the `servers` block has a decided shape and
-is really scheduled work sitting in an idea file. [api/packing-only-image](ideas/api/packing-only-image.md) ·
+[api/openapi-spec-followups](ideas/api/openapi-spec-followups.md) - down to one item, the codegen doc page,
+since the `servers` block landed on 2026-08-10. [api/packing-only-image](ideas/api/packing-only-image.md) ·
 [api/reduce-integration-friction](ideas/api/reduce-integration-friction.md) - direction settled, nothing to
 build. [api/uimodule-alpine-port](ideas/api/uimodule-alpine-port.md) - do it **after** the v4 migration above,
 not before; porting a page you are about to rewrite is wasted work.

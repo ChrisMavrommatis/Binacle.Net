@@ -35,6 +35,22 @@ encoding is not ours to control, and a mangled character in a startup error is o
 - **Never commit, stage, or push.** The human commits, always — even when a task is done and green.
   Leave all changes in the working tree.
 
+- **References point one way: out of `.agents`, never into it.** A file under `.agents/` may point at code, a
+  path, a README, anything. **No file outside `.agents/` may point a reader at `.agents/` content** — not a
+  code comment, not a workflow comment, not a repo README. This file is the single exception, because
+  something has to say the directory exists.
+
+  A **path a tool operates on is not a reference.** `config/agents.just` reads and writes `.agents/**/_index.md`
+  and the root `justfile` registers it; those are operands, and they stay. What is banned is the pointer — "see
+  `.agents/design/ci-cd/decisions.md` for why" — because it makes a file outside the system depend on a layout
+  the system is free to change.
+
+- **Comments are strictly for humans. Anything an agent needs goes in `.agents/`.** The test is who is reading:
+  a person editing that line, or an agent being briefed. A comment earns its place by explaining the trap in
+  front of it — why the path must be absolute, why there is no `--` before the runner options. Background, task
+  history, "keep this in step with X", and anything that reads like instructions to an agent belong in the
+  matching `.agents/` layer instead. Never both: a fact duplicated in a comment and a doc will disagree.
+
 - **Never edit repo-root `docs/` or `web/`.** Both publish to the internet — `docs/` is the versioned
   documentation site, `web/` is the marketing site. (`.agents/docs/` is a different thing entirely — the agent
   reference layer, and editing it is fine.) They are written in their own dedicated session, by an agent whose

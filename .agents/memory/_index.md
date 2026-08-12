@@ -19,6 +19,7 @@ conventions, decisions, gotchas. See [README.md](README.md) for when and how to 
 | [results-curated.md](results-curated.md) | results/ is a hand-curated vault — harnesses write to gitignored scratch, never straight into results/ |
 | [servicemodule-test-infra.md](servicemodule-test-infra.md) | Test-host config goes through an env var the harness reads, never a .runsettings file — the MTP runner ignores VSTest runsettings |
 | [sonar-touching-untested-code.md](sonar-touching-untested-code.md) | Fixing an old Sonar smell in an untested file makes the quality gate worse - changed lines become "new code" and count as uncovered |
+| [test-leaf-naming.md](test-leaf-naming.md) | How a test leaf is named - <slice>[-<component>][-<language>]-<kind>, kind spelled out, no two leaves a letter apart |
 | [tests-arrange-act-assert.md](tests-arrange-act-assert.md) | A test body shows arrange, act and assert as separate lines — never one helper that does all three |
 | [v2-dropped.md](v2-dropped.md) | The v2 API does not exist on this branch — only v3 and v4; never add v2 code, docs, or references |
 | [v3-frozen.md](v3-frozen.md) | v3 API is frozen — never modify it; all new endpoints and contract work go in v4 only |
