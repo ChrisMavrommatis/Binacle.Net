@@ -12,8 +12,21 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    # One PR per action rather than a batch: a broken update should name the action that broke it.
-    open-pull-requests-limit: 5
+    # A broken update must name the action that broke it - but only a major can really break one, so only a
+    # major needs its own PR. Minor and patch on these actions are almost entirely toolkit churn; batching
+    # them costs no blame and keeps them from filling the queue. Anything not matched by a group still gets
+    # an individual PR, so majors arrive one at a time on their own.
+    groups:
+      actions-routine:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    # Headroom for a week where several majors land together - each one is its own PR, and at 5 the sixth
+    # silently never opens.
+    open-pull-requests-limit: 10
     labels:
       - dependencies
       - ci-cd
