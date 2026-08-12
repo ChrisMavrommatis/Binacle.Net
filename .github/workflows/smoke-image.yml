@@ -4,8 +4,7 @@
 # It must stay a check on a PUBLISHED tag, not a local build - a registry round trip is exactly what changes
 # compression, manifest shape and attestation handling.
 #
-# config/smoke.just decides what gets asserted; adding a profile is one edit there plus one step below. The
-# structure check runs once rather than per profile because it reads the image, not a container.
+# The structure check runs once rather than per profile because it reads the image, not a container.
 
 name: Smoke Image
 
@@ -44,7 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      # 1.x range: ubuntu's apt ships a just too old to parse config/smoke.just.
+      # 1.x range: ubuntu's apt ships a just too old to parse this repo's module files.
       - name: Setup just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
         with:

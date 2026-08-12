@@ -15,7 +15,7 @@
 #
 # The steps are public on purpose - `just --list coverage` shows them and each one can be run alone.
 
-# Module recipes run where the module file lives (config/), which would break every path below.
+# Module recipes run where the module file lives (tooling/), which would break every path below.
 set working-directory := '..'
 
 # The runner already said why it failed and `table` prints the verdict, so just's own line adds nothing.

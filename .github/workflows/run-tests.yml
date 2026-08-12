@@ -1,9 +1,6 @@
 # Runs every test leaf on PR. One job so setup and build happen once; one step per leaf so a red check names
 # the suite. ServiceModule is duplicated steps per backend rather than a matrix - cheaper at this count.
 #
-# config/tests.just is the only place that knows which project a leaf maps to, so adding a suite is one edit
-# there plus one step here and the two halves cannot drift into "green in CI, missing locally".
-#
 # DOTNET_TEST_ARGS is job-wide: CI builds the solution once and every leaf runs --no-build against it. Unset
 # on a laptop, where the same recipes do a plain `dotnet test`.
 
@@ -38,9 +35,9 @@ jobs:
           # away after, so there is nothing for a password to protect. Under trust it accepts any password, so
           # the tests connect unchanged with the shared local-dev connection string.
           #
-          # That local-dev password is still load-bearing in config/docker-compose.yml,
-          # config/docker-compose.build.yml, BinacleApi.cs and ConnectionStrings.Development.json. It is the
-          # same value everywhere on purpose - change it in all of them or none.
+          # That local-dev password is still load-bearing in the local compose stacks, BinacleApi.cs and
+          # ConnectionStrings.Development.json. It is the same value everywhere on purpose - change it in all
+          # of them or none.
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
@@ -64,7 +61,7 @@ jobs:
           node-version: 22
           cache: npm
 
-      # 1.x range: ubuntu's apt ships a just too old to parse config/tests.just.
+      # 1.x range: ubuntu's apt ships a just too old to parse this repo's module files.
       - name: Setup just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
         with:

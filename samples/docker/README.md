@@ -40,6 +40,5 @@ is right for trying things out and wrong for anything you keep.
 
 ## These shapes are tested
 
-Each sample has a matching profile under `config/smoke/` with the same name, run against the image on every
-release. So these are configurations that are checked, rather than ones nobody runs. If you change which
-modules a sample turns on, change its profile too.
+Every sample here is smoke-tested against the image on every release. So these are configurations that are
+checked, rather than ones nobody runs.

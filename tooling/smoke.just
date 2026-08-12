@@ -10,16 +10,16 @@
 # build or a published tag - `just smoke test service binacle/binacle-net:3.0.0-beta.1` smokes what is actually on
 # Docker Hub. The stacks read it as $BINACLE_IMAGE with the same default, so a bare `docker compose` still works.
 #
-# Static content is one container-structure-test file (config/smoke/structure.yaml) read straight from the
+# Static content is one container-structure-test file (tooling/smoke/structure.yaml) read straight from the
 # image; the HTTP surface is one .hurl per profile run against a running stack. The structure check reads the
 # image rather than a container, so it runs once per `all` and not once per profile - the same 31 assertions
 # repeated behind five different stacks answer the same question five times.
 #
 # The stacks are separate files from samples/ on purpose: they raise the anonymous rate limit and throw their
-# storage away, which the samples must never do. The Smoke section of config/README.md has the two rules that
+# storage away, which the samples must never do. The Smoke section of tooling/README.md has the two rules that
 # decide what belongs in this suite - read them before adding a check.
 
-# Module recipes run where the module file lives (config/), which would break every path below.
+# Module recipes run where the module file lives (tooling/), which would break every path below.
 set working-directory := '..'
 
 # docker, container-structure-test and hurl all print why they failed; just's own line adds nothing.
@@ -34,7 +34,7 @@ local_image := "binacle-net:local"
 
 # The profiles, declared once. just has no list type, so this is a space-separated string - which is what both
 # `all`'s loop and `_check`'s match want anyway. Adding a profile is this line plus the two files under
-# config/smoke/ named after it.
+# tooling/smoke/ named after it.
 profiles := "minimal quickstart prod service full"
 
 # List the recipes
@@ -43,7 +43,7 @@ default:
 
 # The image's static content: the shipped files, their permissions, the metadata and the OCI labels
 test-structure image=local_image:
-    {{ cst }} test --image {{ image }} --config config/smoke/structure.yaml
+    {{ cst }} test --image {{ image }} --config tooling/smoke/structure.yaml
 
 # One profile end to end: up -> hurl -> down [minimal|quickstart|prod|service|full]
 test profile image=local_image:
@@ -62,7 +62,7 @@ test profile image=local_image:
 # up and a down each time.
 [private]
 _test_profile profile:
-    {{ hurl }} --test --retry 30 --retry-interval 1000 config/smoke/{{ profile }}.hurl
+    {{ hurl }} --test --retry 30 --retry-interval 1000 tooling/smoke/{{ profile }}.hurl
 
 # Bring a profile up and leave it running [minimal|quickstart|prod|service|full]
 up profile image=local_image:
@@ -106,10 +106,10 @@ _check profile:
 
 # The profile name maps to a compose file here and nowhere else, so up and down cannot disagree about which
 # file a name means. The image reaches the stack as $BINACLE_IMAGE, which every smoke compose file reads with
-# the same binacle-net:local default - so a bare `docker compose -f config/smoke/<profile>.yml` still works.
+# the same binacle-net:local default - so a bare `docker compose -f tooling/smoke/<profile>.yml` still works.
 [private]
 _compose profile image *args:
     #!/usr/bin/env bash
     set -euo pipefail
     just smoke::_check "{{ profile }}"
-    BINACLE_IMAGE="{{ image }}" docker compose -f "config/smoke/{{ profile }}.yml" {{ args }}
+    BINACLE_IMAGE="{{ image }}" docker compose -f "tooling/smoke/{{ profile }}.yml" {{ args }}

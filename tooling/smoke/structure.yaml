@@ -2,7 +2,7 @@
 # Runs without a running container (works on --driver tar). "This is how the image is supposed to be shipped."
 # This is a complete declaration on purpose - it asserts every shipped file even where a dynamic test would
 # also catch a regression, because it says "this is how the image is supposed to be shipped". The Smoke section
-# of config/README.md has the rules that decide what belongs here.
+# of tooling/README.md has the rules that decide what belongs here.
 
 schemaVersion: 2.0.0
 

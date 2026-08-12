@@ -1,10 +1,10 @@
 ---
 name: no-sonar-issue-ignores
-description: Sonar findings are answered in code, never with a sonar.issue.ignore rule in config/sonar-analysis.xml
+description: Sonar findings are answered in code, never with a sonar.issue.ignore rule in tooling/sonar-analysis.xml
 type: decision
 ---
 
-`config/sonar-analysis.xml` carries no `sonar.issue.ignore.multicriteria` entries, and none should be added.
+`tooling/sonar-analysis.xml` carries no `sonar.issue.ignore.multicriteria` entries, and none should be added.
 A suppression there hides a finding from everyone reading the code, in a file nobody opens.
 
 When a rule is wrong about our code, answer it in the code so the answer is visible:
@@ -45,7 +45,7 @@ False Positive in the SonarCloud UI.
 
 ## Scope exclusions are not issue ignores
 
-`config/sonar-analysis.xml` **does** carry `sonar.exclusions`, `sonar.cpd.exclusions` and
+`tooling/sonar-analysis.xml` **does** carry `sonar.exclusions`, `sonar.cpd.exclusions` and
 `sonar.coverage.exclusions`, and those are a different thing — do not read the rule above as forbidding them.
 An issue ignore says "run this rule here, then hide what it finds". A scope exclusion says "this is not our
 code, or not this metric's business":
@@ -75,6 +75,6 @@ Two survive with nothing honest to change, and are marked in the SonarCloud UI b
 **Why:** a finding answered in code stays reviewable and keeps the rule armed for the next occurrence; a
 finding answered in config is invisible and switches the rule off for everything matching the path.
 
-**How to apply:** never add an ignore rule to `config/sonar-analysis.xml`. Fix the code, mark the assertion
+**How to apply:** never add an ignore rule to `tooling/sonar-analysis.xml`. Fix the code, mark the assertion
 helper, or mark the individual finding in the SonarCloud UI with a reason. The quality profile is not an
 option on the Free plan - see [the escape hatch section](#no-profile-escape).

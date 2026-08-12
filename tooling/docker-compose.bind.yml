@@ -9,7 +9,7 @@ name: binacle-net-bind
 #
 #   up     just image up bind
 #   down   just image down bind       # the folder stays
-#   wipe   rm -rf ./config/data
+#   wipe   rm -rf ./tooling/data
 #
 # Point somewhere else with BINACLE_DATA_DIR. Whatever you choose, it must stay readable by you: a
 # container-owned directory anywhere in the repo fails `docker build`, which walks the whole context.

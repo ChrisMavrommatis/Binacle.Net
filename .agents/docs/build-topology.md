@@ -23,7 +23,7 @@ The repo uses the XML `.slnx` solution format. Projects are grouped by solution 
 - `/vipaq/src/`, `/vipaq/test/`, `/shared/src/`, `/shared/test/` — ViPaq + its tests + `Binacle.Geometry` and `Binacle.CompactNotation` (in `shared/src`) + `Binacle.TestsKernel`, `Binacle.TestReporting` and `Binacle.CompactNotation.UnitTests` (in `shared/test`)
 - `/vipaq/tools/` (`Binacle.ViPaq.VectorGenerators`, `Binacle.ViPaq.PackedDataGenerator`), `/shared/tools/` (`Binacle.OrLibrary.Converter`) — standalone generators, not referenced by the shipped projects
 - `/samples/docker/` (4 `.dcproj`), `/samples/kubernetes/` (`.proj`), `/results/`, `/api/` (requests), `/build/`
-- Top-level content projects: `assets/assets.proj`, `config/config.proj`, `docs/docs.proj`, `web/web.proj`
+- Top-level content projects: `assets/assets.proj`, `tooling/tooling.proj`, `docs/docs.proj`, `web/web.proj`
 - `/_root/` — loose files (`.dockerignore`, `.editorconfig`, `Directory.Build.props`, `Directory.Packages.props`, `Dockerfile`, `global.json`, `gulpfile.js`, `package.json`, README)
 
 ## Shared C# props — `Directory.Build.props`
@@ -94,7 +94,7 @@ Two consequences for anything that shells out to `dotnet test`:
 
 - The project comes from `--project`, never a bare path. A bare directory is now an error.
 - Runner options go straight on the command line, **not** after a `--`. See `_dotnet_test` in
-  `config/tests.just`.
+  `tooling/tests.just`.
 
 The xunit reference is `xunit.v3.mtp-v2`, not plain `xunit.v3`. Same xunit version, different platform adapter:
 `xunit.v3` pins `xunit.v3.mtp-v1`, which is MTP 1.x. `Microsoft.Testing.Extensions.CodeCoverage` moved to MTP 2.x
@@ -123,7 +123,7 @@ do their own webpack bundling separately (see docs site (`$docs-site`) / web sit
 ## Docker build chain
 
 The Dockerfile is **single-stage** — the publish happens outside it, in the `build` just module
-(`config/build.just`):
+(`tooling/build.just`):
 
 1. `just build publish` runs `dotnet publish -c Release -o build/binacle-net --no-self-contained --runtime
    linux-x64` of `api/src/Binacle.Net/Binacle.Net.csproj`. **Framework-dependent** — the runtime comes from the
@@ -146,13 +146,13 @@ look at `build/` says which artifact is which.
 ## Content projects (`Microsoft.Build.NoTargets`)
 
 Several `.proj` files don't compile anything — they use the `Microsoft.Build.NoTargets` SDK to pull non-code files
-into the solution (and travel with build output): `config/config.proj`, `docs/docs.proj`, `web/web.proj`,
+into the solution (and travel with build output): `tooling/tooling.proj`, `docs/docs.proj`, `web/web.proj`,
 `assets/assets.proj`, `api/requests/requests.proj`, `results/*/*.proj`, `samples/kubernetes/*/*.proj`. The Docker
 samples use `Microsoft.Docker.Sdk` `.dcproj` files instead. None of these affect the C# build.
 
-## `config/` vs `samples/`
+## `tooling/` vs `samples/`
 
-`config/` is the **maintainer's local-dev tooling** — the `tests.just`, `coverage.just`, `openapi.just`,
+`tooling/` holds **every task the repo can run**, CI included — the `tests.just`, `coverage.just`, `openapi.just`,
 `agents.just`, `serve.just` and `build.just` modules for `just`, the scripts that have not moved yet (the
 per-slice `performance.*`, `benchmarks.*`, `tmux.sh`), local compose files, and emulator state. `samples/` are
 **user-facing deployment starting points** to copy and run the published image. See `$commands` for

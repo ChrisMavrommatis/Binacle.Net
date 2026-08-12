@@ -1,7 +1,7 @@
 # Packing Efficiency Results
 
 How well each algorithm fills a bin, and how long it takes. Written by
-`lib/test/Binacle.Lib.PerformanceTests` (`./config/performance.lib.sh`) and committed so a rerun can be
+`lib/test/Binacle.Lib.PerformanceTests` (`./tooling/performance.lib.sh`) and committed so a rerun can be
 diffed against a known baseline. Records, not source.
 
 | File | What it shows |

@@ -1,8 +1,9 @@
-# Config
+# Tooling
 
-The maintainer's local-dev tooling: the `just` modules, the scripts that have not moved into one, the local
-compose files, and emulator state. Everything here is run from the repo root. `just` with no arguments lists
-every task.
+Every task this repo can run: the `just` modules, the scripts that have not moved into one, the local compose
+files, and emulator state. CI calls these same recipes rather than keeping its own copy, so a workflow step and
+a maintainer running the command by hand do the same thing. Everything here is run from the repo root. `just`
+with no arguments lists every task.
 
 This is **not** a deployment template - `samples/` holds the user-facing starting points.
 
@@ -149,9 +150,9 @@ just smoke test prod binacle/binacle-net:3.0        # one profile against the re
 
 Given anything but the local tag, `all` pulls instead of building - there is nothing to build, and building
 would tag `binacle-net:local` while the stacks went on using the image you asked for. The stacks read it as
-`$BINACLE_IMAGE` with the same default, so a bare `docker compose -f config/smoke/<profile>.yml` still works.
+`$BINACLE_IMAGE` with the same default, so a bare `docker compose -f tooling/smoke/<profile>.yml` still works.
 
-Two halves. `config/smoke/structure.yaml` is read straight from the image - the shipped config files,
+Two halves. `tooling/smoke/structure.yaml` is read straight from the image - the shipped config files,
 `/app/data` ownership, the OCI labels. It has nothing to do with which stack is up, so `all` runs it once rather
 than once per profile. The other half is one `.hurl` per profile, run against a running stack. The four profiles
 - `minimal`, `quickstart`, `prod`, `service`, `full` - are declared in the `profiles` variable at the top of
@@ -171,11 +172,11 @@ before adding or changing an assertion.
 it to 0700, which leaves a directory in the repo you cannot read - and that fails the next `docker build`,
 because the CLI walks the whole context before it builds. Wipe it with `just image down full -v`.
 
-App logs and Azurite state are bind-mounted into `config/` so you can open them, which means the folders have
+App logs and Azurite state are bind-mounted into `tooling/` so you can open them, which means the folders have
 to exist and be writable by the container before anything starts - docker never chowns a bind mount, and the
 containers write as their own users. The `up` recipes do that, per stack: `just serve services` needs
-`config/azurite`; `image up full` needs it plus `config/data/{logs,pack-logs}`; `image up bind` needs
-`BINACLE_DATA_DIR` (default `config/data`); `image up volume` needs none.
+`tooling/azurite`; `image up full` needs it plus `tooling/data/{logs,pack-logs}`; `image up bind` needs
+`BINACLE_DATA_DIR` (default `tooling/data`); `image up volume` needs none.
 
 They open the **directory** and nothing inside it. The files belong to whoever wrote them - the app as
 `APP_UID`, azurite as root - and stay writable to that same writer, so a recursive `chmod` would fail on
@@ -185,7 +186,7 @@ itself, which the daemon makes as root.
 The `volume` stack keeps its data where you cannot open it directly. To read it:
 
 ```bash
-docker compose -f ./config/docker-compose.volume.yml cp binacle-net:/app/data ./out
+docker compose -f ./tooling/docker-compose.volume.yml cp binacle-net:/app/data ./out
 ```
 
 ---
@@ -194,10 +195,10 @@ docker compose -f ./config/docker-compose.volume.yml cp binacle-net:/app/data ./
 Still scripts, one per slice. Both take `-c Release` and write into gitignored folders.
 
 ```bash
-./config/benchmarks.lib.sh [FastValidation|AlgorithmRacing|BischoffSuite|Parallelization|ResultSelection]
-./config/benchmarks.vipaq.sh [Encode|Decode]      # no argument = every benchmark
-./config/performance.lib.sh                       # console runner, writes markdown reports
-./config/performance.vipaq.sh
+./tooling/benchmarks.lib.sh [FastValidation|AlgorithmRacing|BischoffSuite|Parallelization|ResultSelection]
+./tooling/benchmarks.vipaq.sh [Encode|Decode]      # no argument = every benchmark
+./tooling/performance.lib.sh                       # console runner, writes markdown reports
+./tooling/performance.vipaq.sh
 ```
 
 The alias tables live at the top of each `benchmarks.*` script - that is the list to change when a benchmark

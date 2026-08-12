@@ -47,9 +47,9 @@ src/Binacle.Net/wwwroot/
 
 ## data
 azurite/
-config/minio_data/
-config/postgres/
-config/data/
+tooling/minio_data/
+tooling/postgres/
+tooling/data/
 
 *.db
 *.sqlite

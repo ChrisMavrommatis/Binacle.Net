@@ -37,7 +37,7 @@ Start exploring Binacle.Net now! 🚀
 ├── /docs         # Documentation site (Jekyll)
 ├── /web          # Binacle.Net website (Jekyll)
 ├── /samples      # Docker Compose and Kubernetes deployment samples
-├── /config       # Local-dev scripts (run, test, benchmark, build)
+├── /tooling      # Every task the repo can run - just modules, scripts, local compose
 ├── /assets       # Shared static assets copied into the sites at build time
 ├── /build        # Build output for the docs and web sites
 └── /results      # Benchmark and packing-efficiency output

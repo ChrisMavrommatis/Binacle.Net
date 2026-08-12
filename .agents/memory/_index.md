@@ -15,7 +15,7 @@ conventions, decisions, gotchas. See [README.md](README.md) for when and how to 
 | [migration-no-silent-deletions.md](migration-no-silent-deletions.md) | Migrations land as small reviewable diffs — every removed test needs a visible successor, never a silent delete |
 | [name-each-step.md](name-each-step.md) | Give each step a named local — no nested or chained call expressions squeezed into one statement |
 | [no-published-sdks.md](no-published-sdks.md) | We ship an OpenAPI document per version, not client SDKs — consumers generate their own; publishing a package needs real demand first. |
-| [no-sonar-issue-ignores.md](no-sonar-issue-ignores.md) | Sonar findings are answered in code, never with a sonar.issue.ignore rule in config/sonar-analysis.xml |
+| [no-sonar-issue-ignores.md](no-sonar-issue-ignores.md) | Sonar findings are answered in code, never with a sonar.issue.ignore rule in tooling/sonar-analysis.xml |
 | [results-curated.md](results-curated.md) | results/ is a hand-curated vault — harnesses write to gitignored scratch, never straight into results/ |
 | [servicemodule-test-infra.md](servicemodule-test-infra.md) | Test-host config goes through an env var the harness reads, never a .runsettings file — the MTP runner ignores VSTest runsettings |
 | [sonar-touching-untested-code.md](sonar-touching-untested-code.md) | Fixing an old Sonar smell in an untested file makes the quality gate worse - changed lines become "new code" and count as uncovered |

@@ -5,7 +5,7 @@ verified: 2026-08-12
 check: The six jobs, their needs: edges and job outputs match release-docker-image.yml; no job carries a prerelease condition and the release job's !failure() note is still accurate; run-tests.yml and smoke-image.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased
 also_update:
   - ci-cd
-  - config
+  - tooling
 ---
 
 # The release pipeline
@@ -146,8 +146,8 @@ is not nothing: `latest=auto` firing correctly is first proven on a real release
 cycle: betas publish `## [Unreleased]`, and renaming that heading to the version is the last edit before the
 real tag.
 
-The parsing lives in `config/changelog.just`, not in the workflow, so CI and a laptop read the file the same
-way and the exact body can be previewed before the tag is pushed. See `$config` for the module.
+The parsing lives in `tooling/changelog.just`, not in the workflow, so CI and a laptop read the file the same
+way and the exact body can be previewed before the tag is pushed. See `$tooling` for the module.
 
 Inside the file a release is `##` and its own sections are `###`, nesting under the single `# Changelog`.
 `just changelog extract` shifts each section so its shallowest heading returns to `##`, because a release body
@@ -169,7 +169,7 @@ Three sources, and they do not collide.
   because auto-detection returns `NOASSERTION` for a dual-licensed repo, and `url`, which should be the landing
   site rather than the repo.
 
-`config/build.just` does the same three per-build labels for a local `just build image`, so a locally built
+`tooling/build.just` does the same three per-build labels for a local `just build image`, so a locally built
 image carries the same metadata shape a pushed one does.
 
 ## What still happens by hand

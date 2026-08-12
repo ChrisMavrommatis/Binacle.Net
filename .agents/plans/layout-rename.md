@@ -83,6 +83,77 @@ folders and this file.
 state directories - `config/minio_data/`, `config/postgres/`, `config/data/`, `config/azurite/` - and a running
 container bind-mounted into a path that just moved fails in a way that looks unrelated.
 
+## Phase 1b - references point one way, out of `tooling/`
+
+**Decided 2026-08-12, after phase 1 landed.** Phase 1 renamed every reference. It should have deleted most of
+them. The rule is the one `CLAUDE.md` already applies to `.agents/`, now extended: **nothing outside `tooling/`
+may name it, except the thing that runs it and the `.agents/` layer that documents it. Never in a comment.**
+
+- **A path a tool operates on is not a reference.** The `justfile` `mod` lines, `Binacle.Net.slnx`, the
+  `.gitignore` state-dir patterns and the `/s:` argument in `sonar-analysis.yml` all stay - a tool opens them.
+- **`.agents/` may point at `tooling/` freely.** Docs, plans and design are the layer whose job is describing
+  the repo, and the reference rule has always run outward from there.
+- **A comment that needs to talk about `tooling/` is in the wrong file.** It is background for whoever is being
+  briefed, not a trap in front of the line, so it belongs in `.agents/docs/ci-cd/` or `.agents/design/ci-cd/`.
+- **`tooling/` pointing outward is fine and already correct.** `tooling/smoke/README.md` states the
+  `samples/docker/<name>` to `tooling/smoke/<name>` mapping from the tooling side, which is why deleting the
+  samples-side half loses nothing.
+
+- **The repo's own top-level docs are the exception**, for the same reason `CLAUDE.md` gives itself one:
+  something has to say the folder exists. `README.md`'s directory tree, `DEVELOPMENT.md`'s "Where to go next",
+  and the `CLAUDE.md` rule's own example all name `tooling/` and all stay. The test is whether the file's job
+  is describing the repo's shape to a human arriving at it. A workflow comment, a sample a user copies and a
+  slice README are not that.
+
+### Delete - pure pointers, stated correctly elsewhere already
+
+- `samples/docker/README.md` - the "Each sample has a matching profile under `tooling/smoke/`" sentence.
+- Five `samples/docker/<profile>/docker-compose.yml`, line 5 - the `# Smoke profile: <name>. tooling/smoke/...`
+  comment. These are files a user copies; they must not carry a maintainer's path.
+- Three `samples/docker/{full,prod,service}/README.md` - the same sentence in prose.
+
+Keep the user-facing claim in all nine, drop only the path: "this configuration is smoke-tested against the
+image on every release". The "change the profile too" instruction goes with the path - it is aimed at a
+maintainer, and `tooling/smoke/README.md` already carries it on the side that can act on it.
+
+### Reword - keep the human reason, drop the path
+
+- Four `# 1.x range: ubuntu's apt ships a just too old to parse tooling/<x>.just` in `run-tests.yml`,
+  `smoke-image.yml`, `sonar-analysis.yml`, `release-docker-image.yml`. The trap is real and belongs next to the
+  version pin; naming the module file is what has to go.
+- `run-tests.yml` - the local-dev password comment naming two compose files by path.
+- `.spectral.yaml` - the comment naming `tooling/openapi.just`.
+- `justfile` header - "Benchmarks, performance and the tmux session are still `tooling/*.sh`". It is a comment
+  inside the file that owns the modules, and it is describing layout rather than a trap. Drop the path.
+
+### Move into `.agents/docs/ci-cd/` - agent-facing background, not comments
+
+Four workflow header comments. Each states a fact about which file owns a decision, which is exactly the
+"briefing" shape the comment rule excludes. Carry the content over, then delete the comment.
+
+- `run-tests.yml` - "tests.just is the only place that knows which project a leaf maps to, so adding a suite is
+  one edit."
+- `smoke-image.yml` - "smoke.just decides what gets asserted; adding a profile is one edit there plus one step."
+- `sonar-analysis.yml` - "scope, coverage paths and report formats live in the analysis xml, not the workflow."
+- `release-docker-image.yml` - "build.just owns the project, the output folder and `--no-self-contained`, so CI
+  and a laptop build the same way."
+
+### Judgement call, flagged rather than decided
+
+`lib/README.md` and the three `results/lib/**` READMEs give `./tooling/performance.lib.sh` and
+`./tooling/benchmarks.lib.sh` as the command to run. That is a pointer by the rule, but it is also the only
+place a reader of that slice learns how to run its benchmarks, so deleting it costs something real.
+
+**These fix themselves.** The plan to convert the last loose scripts to `just` recipes turns both into recipe
+names, and a recipe name is not a path into `tooling/`. Leave these six references alone until that lands, then
+they become `just bench lib` and the violation is gone without anyone writing prose twice.
+
+### For the docs session, added here
+
+The five frozen sample compose files under `docs/collections/_versions/v3.0.x/samples/docker/**` should have
+their line 5 comment **deleted**, not repointed at `tooling/smoke/`. Same reason as the live copies: a file a
+reader downloads must not name maintainer tooling. This supersedes item 2 in the docs-session list below.
+
 ## Phase 2 - `build/` becomes `artifacts/`
 
 Runs after phase 1 lands, not beside it. Both phases edit `coverage.just`, `tests.just`, `build.just`,

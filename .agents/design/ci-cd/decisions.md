@@ -2,7 +2,7 @@
 id: ci-cd/decisions
 description: CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation.
 verified: 2026-08-11
-check: Decisions still match .github/workflows/*.yml and config/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against config/changelog.just, D6 against smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe
+check: Decisions still match .github/workflows/*.yml and tooling/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against tooling/changelog.just, D6 against smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe
 ---
 
 # CI/CD — decisions ledger
@@ -130,7 +130,7 @@ that claim came from is real but narrower — it happens when a package already 
 
 ### D4 — a workflow step calls a `just` recipe, it does not inline the command
 
-**Why:** the release workflow used to inline `dotnet restore` + `dotnet publish` while `config/build.just`
+**Why:** the release workflow used to inline `dotnet restore` + `dotnet publish` while `tooling/build.just`
 published the same project to the same place. They matched by coincidence, and a coincidence is not a
 guarantee — the project path, the output folder and the runtime identifier each had two homes that could drift.
 Calling the recipe makes CI and a laptop build the same thing by construction.
@@ -147,7 +147,7 @@ of building anything, and is deliberately kept out of the build recipes.
 
 **Why:** a repo setting is invisible to a reader of the repo, it is not versioned with the code, and it can only
 drift from the fact it duplicates. One did — `API_PROJECT_PATH` still named the pre-move `src/` path after the
-layout change and broke the publish. The project and output folder are decided in `config/build.just`, and
+layout change and broke the publish. The project and output folder are decided in `tooling/build.just`, and
 there is exactly one `Dockerfile`, at the repo root.
 
 What legitimately stays a variable is a value with **no** home in the repo: the SDK version, the Docker Hub
@@ -202,7 +202,7 @@ Two mechanical consequences: the checkout needs `fetch-depth: 0`, because a shal
 new to the new-code comparison; and the scanner is a Java program whatever language it analyses, so the job sets
 up a JDK.
 
-**Scope and coverage paths live in `config/sonar-analysis.xml`, not in the workflow.** The Scanner for .NET
+**Scope and coverage paths live in `tooling/sonar-analysis.xml`, not in the workflow.** The Scanner for .NET
 ignores `sonar-project.properties`, so that XML is the file form it reads, and `/s:` needs an absolute path.
 Only the key, org, token and host stay in the YAML.
 
@@ -215,7 +215,7 @@ nothing for a password to protect. Under `trust` it accepts any password, so the
 unchanged using the shared local-dev connection string.
 
 **This removed the credential from that file, not from the repo.** The same local-dev password is still in
-`config/docker-compose.yml`, `config/docker-compose.build.yml`, the test default in `BinacleApi.cs` and
+`tooling/docker-compose.yml`, `tooling/docker-compose.build.yml`, the test default in `BinacleApi.cs` and
 `Config_Files/ServiceModule/ConnectionStrings.Development.json`, where it is load-bearing. It is the same value
 everywhere on purpose. Change it in all of them or none.
 

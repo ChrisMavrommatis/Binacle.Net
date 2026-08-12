@@ -5,7 +5,7 @@
 # completion only completes recipe names - a leaf passed as an argument cannot complete without a
 # hand-written list that drifts.
 
-# Module recipes run where the module file lives (config/), which would break every path below.
+# Module recipes run where the module file lives (tooling/), which would break every path below.
 set working-directory := '..'
 
 # The test runner already printed why it failed, so just's own "Recipe failed" line adds nothing. The exit

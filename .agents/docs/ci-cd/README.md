@@ -5,7 +5,7 @@ verified: 2026-08-11
 check: The workflow table matches the files in .github/workflows; the vars/secrets tables match every ${{ vars.* }} and ${{ secrets.* }} reference in them; the pinned just version and runner labels still match
 also_update:
   - ci-cd/release-pipeline
-  - config
+  - tooling
   - commands
 ---
 
@@ -16,10 +16,10 @@ deploy the two Jekyll sites. This doc covers what runs, when, and the convention
 The release pipeline has its own page (`$ci-cd/release-pipeline`) because it is six jobs with an ordering
 that matters.
 
-**Where the line with `config/` sits.** `config/` (`$config`) owns *what a command does* — the `just` modules
+**Where the line with `tooling/` sits.** `tooling/` (`$tooling`) owns *what a command does* — the `just` modules
 for build, test, coverage, openapi and smoke. This slice owns *what runs on a runner and in what order*. A
-workflow step says `just build publish` and stops; how that publishes is decided in `config/build.just` and
-described in `$config`. Nothing about a recipe's behaviour is repeated here.
+workflow step says `just build publish` and stops; how that publishes is decided in `tooling/build.just` and
+described in `$tooling`. Nothing about a recipe's behaviour is repeated here.
 
 ## What runs, and when
 
@@ -43,7 +43,7 @@ workflow that pushes a tag has to stay out of the `v<digit>` namespace.
 
 ## Conventions every workflow follows
 
-- **A step calls a `just` recipe; it does not inline the command.** `config/*.just` is the only place that
+- **A step calls a `just` recipe; it does not inline the command.** `tooling/*.just` is the only place that
   knows which project a leaf maps to, what the publish flags are, or what a smoke profile brings up. This is
   what keeps "green in CI" and "green on a laptop" the same claim, and it means the `run:` line of a red step
   is what you paste into a terminal to reproduce it.
@@ -89,7 +89,7 @@ Set in GitHub repo settings, read as `${{ vars.* }}`.
 | `SONAR_ORGANIZATION` | `sonar-analysis` | SonarCloud organisation |
 
 **Three variables were removed and must not come back.** `API_PROJECT_PATH` and `BUILD_OUTPUT` are decided in
-`config/build.just`; `BUILD_DOCKERFILE` is the literal `Dockerfile` at the repo root. A repo setting that
+`tooling/build.just`; `BUILD_DOCKERFILE` is the literal `Dockerfile` at the repo root. A repo setting that
 duplicates a fact in the repo can only drift from it, and one of them did — `API_PROJECT_PATH` still pointed at
 the pre-move `src/` path after the layout change and broke the publish.
 

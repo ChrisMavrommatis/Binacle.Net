@@ -158,8 +158,8 @@ Idea: [shared/extend-shared-models](ideas/shared/extend-shared-models.md) - park
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [image-module-stacks](plans/config/image-module-stacks.md) | ready | - |
-| [scripts-to-just-recipes](plans/config/scripts-to-just-recipes.md) | ready | - |
+| [image-module-stacks](plans/tooling/image-module-stacks.md) | ready | - |
+| [scripts-to-just-recipes](plans/tooling/scripts-to-just-recipes.md) | ready | - |
 
 Both are maintainer tooling - no user sees either, and nothing in CI calls them. `image-module-stacks` is a
 decision about two compose stacks the smoke suite has made redundant. `scripts-to-just-recipes` is

@@ -109,7 +109,7 @@
   <Project Path="assets/assets.proj" Type="Shared">
     <Platform Project="AnyCPU" />
   </Project>
-  <Project Path="config/config.proj" Type="Shared">
+  <Project Path="tooling/tooling.proj" Type="Shared">
     <Platform Project="AnyCPU" />
   </Project>
   <Project Path="docs/docs.proj" Type="Shared">

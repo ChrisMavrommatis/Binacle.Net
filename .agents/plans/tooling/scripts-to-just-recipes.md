@@ -1,24 +1,24 @@
-# Convert the last `config/*.sh` scripts to `just` recipes
+# Convert the last `tooling/*.sh` scripts to `just` recipes
 
 **Status:** Not started. Split out of `ci-shared-scripts` on 2026-08-07, and deliberately not named `ci-`
 anything: **CI runs none of these.** They gate nothing and no workflow calls them. This is about
 discoverability, and nothing else.
 
 Every script CI cares about has already moved. Tests, coverage, the OpenAPI documents, the agent indexes,
-running things from source, the build and the image stacks are `just` modules under `config/`; setup is
+running things from source, the build and the image stacks are `just` modules under `tooling/`; setup is
 `just install` / `just assets` in the root justfile.
 
 Five are left:
 
-- `config/benchmarks.lib.sh`
-- `config/benchmarks.vipaq.sh`
-- `config/performance.lib.sh`
-- `config/performance.vipaq.sh`
-- `config/tmux.sh`
+- `tooling/benchmarks.lib.sh`
+- `tooling/benchmarks.vipaq.sh`
+- `tooling/performance.lib.sh`
+- `tooling/performance.vipaq.sh`
+- `tooling/tmux.sh`
 
 ## Why bother, given they work
 
-`just --list` answers "what can I run here", and recipe names complete on tab. Nothing in `config/` completes
+`just --list` answers "what can I run here", and recipe names complete on tab. Nothing in `tooling/` completes
 anything, so these five are findable only by knowing they exist. That is the whole benefit - it is real, but it
 is small, and this plan should not be allowed to grow past it.
 
@@ -51,5 +51,5 @@ to gitignored scratch, never straight into it. Do not let a recipe change where 
 
 ## Done when
 
-Every `config/*.sh` a maintainer types is a `just` recipe, or says in one line at the top why it stayed a
+Every `tooling/*.sh` a maintainer types is a `just` recipe, or says in one line at the top why it stayed a
 script.

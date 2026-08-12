@@ -40,7 +40,7 @@ encoding is not ours to control, and a mangled character in a startup error is o
   code comment, not a workflow comment, not a repo README. This file is the single exception, because
   something has to say the directory exists.
 
-  A **path a tool operates on is not a reference.** `config/agents.just` reads and writes `.agents/**/_index.md`
+  A **path a tool operates on is not a reference.** `tooling/agents.just` reads and writes `.agents/**/_index.md`
   and the root `justfile` registers it; those are operands, and they stay. What is banned is the pointer — "see
   `.agents/design/ci-cd/decisions.md` for why" — because it makes a file outside the system depend on a layout
   the system is free to change.

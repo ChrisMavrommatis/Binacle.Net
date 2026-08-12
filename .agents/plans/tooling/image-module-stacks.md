@@ -1,6 +1,6 @@
 # Decide what the `image` module is still for
 
-**Status:** Not started, and **nothing has been changed**. `config/image.just` and its three stacks -
+**Status:** Not started, and **nothing has been changed**. `tooling/image.just` and its three stacks -
 `docker-compose.build.yml`, `docker-compose.volume.yml`, `docker-compose.bind.yml` - are exactly as they have
 always been. This file records what a 2026-08-07 session found when it examined them, so the next session does
 not rediscover it.
@@ -55,11 +55,11 @@ files written *by the image* is its real niche, and `just serve api` covers that
 
 This was tried on 2026-08-07 and reverted. Compose resolves relative bind sources against **the compose file's
 own directory**. `docker-compose.build.yml` binds `./data` and `./azurite`, and `docker-compose.yml` binds
-`./azurite` too - today both mean `config/azurite`, so the services stack and the image stack share emulator
-state. Moved into `config/image/`, they silently stop sharing and you get two Azurites, with nothing failing to
+`./azurite` too - today both mean `tooling/azurite`, so the services stack and the image stack share emulator
+state. Moved into `tooling/image/`, they silently stop sharing and you get two Azurites, with nothing failing to
 tell you.
 
-Putting the bind targets inside the subfolder instead does not help. `.gitignore` covers `config/data/` but not
+Putting the bind targets inside the subfolder instead does not help. `.gitignore` covers `tooling/data/` but not
 a nested copy, and a container-owned unreadable directory inside the build context fails the next
 `docker build` while the CLI walks it - which is the exact failure the comments in those files already warn
 about.

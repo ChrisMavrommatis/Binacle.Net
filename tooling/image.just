@@ -13,7 +13,7 @@
 # The folder setup below is copied from `serve`, not shared with it. A module that reaches into another one
 # puts back the coupling that splitting them removed, and this is a few lines of mkdir and chmod.
 
-# Module recipes run where the module file lives (config/), which would break every path below.
+# Module recipes run where the module file lives (tooling/), which would break every path below.
 set working-directory := '..'
 
 # docker prints why it failed, so just's own "Recipe failed" line adds nothing. The exit code still
@@ -53,10 +53,10 @@ _compose name *args:
         bind)   file=docker-compose.bind.yml ;;
         *) echo "Unknown stack '{{ name }}'. Use full, volume or bind." >&2; exit 1 ;;
     esac
-    docker compose -f "config/$file" {{ args }}
+    docker compose -f "tooling/$file" {{ args }}
 
 # Which folders a stack bind-mounts. Compose resolves a relative bind source against the compose file's own
-# directory, so every path here is relative to config/ and this recipe works from there too.
+# directory, so every path here is relative to tooling/ and this recipe works from there too.
 #
 # An unknown name does nothing and falls through to _compose, which is where it is rejected - keeping one
 # reject means this case only has to answer "what does it mount", not "is it real".
@@ -64,7 +64,7 @@ _compose name *args:
 _prepare name:
     #!/usr/bin/env bash
     set -euo pipefail
-    cd config
+    cd tooling
 
     # Creates the directory if it is missing, then makes sure the container can write into it.
     #

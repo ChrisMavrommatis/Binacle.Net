@@ -25,5 +25,5 @@ half-typed with tab. Two leaves a letter apart is how someone runs the wrong sui
 result.
 
 **How to apply:** when adding a suite, name the leaf before writing it and check it against the existing list
-in `config/tests.just`. Adding it to that module's `all` recipe is a separate judgement - `all` is the
+in `tooling/tests.just`. Adding it to that module's `all` recipe is a separate judgement - `all` is the
 infra-free set, so a leaf joins it only once someone confirms it passes with nothing brought up.

@@ -14,7 +14,7 @@
 # the few lines of folder setup below are copied there rather than shared, because a module that reaches into
 # another one puts the coupling back that splitting them removed. Nothing here is called by CI.
 
-# Module recipes run where the module file lives (config/), which would break every path below.
+# Module recipes run where the module file lives (tooling/), which would break every path below.
 set working-directory := '..'
 
 # dotnet, jekyll and webpack all print why they failed, so just's own "Recipe failed" line adds nothing.
@@ -58,24 +58,24 @@ services *args:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    # Azurite bind-mounts config/azurite for its state. Left to itself docker creates a missing bind source as
+    # Azurite bind-mounts tooling/azurite for its state. Left to itself docker creates a missing bind source as
     # root, which leaves emulator state in the repo you cannot open - so make it first, and make sure the
     # container can write into it.
     #
     # The directory only, never `-R`: azurite writes its files as root and they stay root's, so a recursive
     # chmod would fail on exactly those while making nothing more writable - a password prompt on every run
     # for no gain.
-    mkdir -p config/azurite
-    if [ "$(stat -c '%a' config/azurite)" != "777" ]; then
+    mkdir -p tooling/azurite
+    if [ "$(stat -c '%a' tooling/azurite)" != "777" ]; then
         # A plain chmod covers a directory we just made. Only one docker made for us needs sudo.
-        chmod 777 config/azurite 2>/dev/null || sudo chmod 777 config/azurite
+        chmod 777 tooling/azurite 2>/dev/null || sudo chmod 777 tooling/azurite
     fi
 
-    docker compose -f config/docker-compose.yml up {{ args }}
+    docker compose -f tooling/docker-compose.yml up {{ args }}
 
 # Stop the backing services [-v drops the postgres volume]
 services-down *args:
-    docker compose -f config/docker-compose.yml down {{ args }}
+    docker compose -f tooling/docker-compose.yml down {{ args }}
 
 # Docs site: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
 docs: (_serve-n-watch 'docs')

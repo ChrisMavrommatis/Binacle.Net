@@ -36,7 +36,7 @@ builds the solution and runs every suite on each PR; it does not build the image
 - Add an image build step to the PR gate. Build only - no push, no login, no Docker Hub credentials on a PR.
 - Use the same Dockerfile and the same publish arguments the release workflow uses, or the gate proves nothing.
 
-**Unblocked, and fully so as of 2026-08-11.** The gate step is `just build image` (`config/build.just`), which
+**Unblocked, and fully so as of 2026-08-11.** The gate step is `just build image` (`tooling/build.just`), which
 publishes and builds with no push, no `sudo` and nothing interactive. The release pipeline now calls
 `just build publish` as well, so this gate proves the release path builds rather than just the recipe.
 

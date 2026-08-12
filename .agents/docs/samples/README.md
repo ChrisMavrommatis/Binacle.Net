@@ -2,7 +2,7 @@
 id: samples
 description: Deployment samples — Docker Compose (minimal, quickstart, prod, service, full) and Kubernetes (minimal); each folder name is a smoke profile name, feature flags, config wiring, and the keep-in-sync rule
 verified: 2026-08-11
-check: Sample folders, compose env vars, bind-mounted config paths, the k8s resource bounds, and the pinned image tag match samples/; every samples/docker folder name has a config/smoke/<name>.yml with the same module set
+check: Sample folders, compose env vars, bind-mounted config paths, the k8s resource bounds, and the pinned image tag match samples/; every samples/docker folder name has a tooling/smoke/<name>.yml with the same module set
 also_update:
   - api/configuration
   - api/modules
@@ -13,9 +13,9 @@ also_update:
 Deployment examples under `samples/`. They run the published image at an **exact pinned version** and demonstrate
 real module configurations. Index: `samples/README.md` (the in-tree one).
 
-**`samples/` vs `config/`** — `samples/` are **starting points a user copies** to stand up their own deployment.
-`config/` is the **maintainer's local-dev tooling** (run scripts, local compose, emulator state) — not a
-deployment template. Don't conflate them: a change for local dev belongs in `config/`; a deployment-shape change
+**`samples/` vs `tooling/`** — `samples/` are **starting points a user copies** to stand up their own deployment.
+`tooling/` holds **every task the repo can run** (the `just` modules, run scripts, local compose, emulator state) — not a
+deployment template. Don't conflate them: a change for local dev belongs in `tooling/`; a deployment-shape change
 belongs in `samples/`.
 
 > **Keep in sync with the code.** Samples encode actual feature flags, env vars, connection-string names, and
@@ -77,7 +77,7 @@ measure against, not a sizing recommendation; the manifest says so.
   `.dcproj` (SDK `Microsoft.Docker.Sdk`). `JwtAuth.json` is required only with `SERVICE_MODULE=True`;
   `OpenTelemetry.Production.json` + `aspire-dashboard-config.json` only when shipping OTel/Aspire.
 - Published samples bind config files read-only and use the pinned image tag (see below). The local build pipeline
-  (`config/docker-compose.build.yml`, fed by `just build image`) instead uses `binacle-net:local` and injects config via
+  (`tooling/docker-compose.build.yml`, fed by `just build image`) instead uses `binacle-net:local` and injects config via
   compose `configs:` — see `$build-topology`.
 
 ## The image tag is pinned {#image-pin}
@@ -102,7 +102,7 @@ that already exists**, so the pin follows a publish and never precedes one.
 
 Three files outside the six carry the tag in prose and have to move with them: `README.md` at the repo root,
 `samples/README.md` and `samples/docker/README.md`. Two more mention it as an example only —
-`config/README.md` and `config/smoke.just`.
+`tooling/README.md` and `tooling/smoke.just`.
 
 The published docs snapshots under `docs/collections/_versions/v3.0.x/samples/` pin `3.0` directly, because a
 snapshot describes the released version rather than the working tree. They also carry a shorter comment above

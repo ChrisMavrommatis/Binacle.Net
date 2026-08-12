@@ -11,7 +11,7 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the 1st window horizontally
 	tmux split-window -h -t $SESSION_NAME:0 
 
-	# Panes stay at the repo root: what these windows run is `just`, not a script in config/
+	# Panes stay at the repo root: what these windows run is `just`, not a script in tooling/
 	
 	
 	# Select the first pane
@@ -58,7 +58,7 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the window horizontally
  	tmux split-window -h -t $SESSION_NAME:3
 
-  # Panes stay at the repo root: what these windows run is `just`, not a script in config/
+  # Panes stay at the repo root: what these windows run is `just`, not a script in tooling/
 
   ###-------------------------WINDOW 3----------------------------###
 
@@ -69,7 +69,7 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the window horizontally
  	tmux split-window -h -t $SESSION_NAME:4
 
-  # Panes stay at the repo root: what these windows run is `just`, not a script in config/
+  # Panes stay at the repo root: what these windows run is `just`, not a script in tooling/
 
   ###-------------------------WINDOW 4----------------------------###	
 	
@@ -87,11 +87,11 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
   # Split the 3rd pane horizontally
   tmux split-window -h -t $SESSION_NAME:5.2
   
-  # Set the cd to /config
-  tmux send-keys -t $SESSION_NAME:5.0 'cd ./config' C-m
-  tmux send-keys -t $SESSION_NAME:5.1 'cd ./config' C-m
-  tmux send-keys -t $SESSION_NAME:5.2 'cd ./config' C-m
-  tmux send-keys -t $SESSION_NAME:5.3 'cd ./config' C-m
+  # Set the cd to /tooling
+  tmux send-keys -t $SESSION_NAME:5.0 'cd ./tooling' C-m
+  tmux send-keys -t $SESSION_NAME:5.1 'cd ./tooling' C-m
+  tmux send-keys -t $SESSION_NAME:5.2 'cd ./tooling' C-m
+  tmux send-keys -t $SESSION_NAME:5.3 'cd ./tooling' C-m
   # Select the first pane
   tmux select-pane -t $SESSION_NAME:5.0
   	
@@ -110,11 +110,11 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
     # Split the 3rd pane horizontally
     tmux split-window -h -t $SESSION_NAME:6.2
     
-    # Set the cd to /config
-    tmux send-keys -t $SESSION_NAME:6.0 'cd ./config' C-m
-    tmux send-keys -t $SESSION_NAME:6.1 'cd ./config' C-m
-    tmux send-keys -t $SESSION_NAME:6.2 'cd ./config' C-m
-    tmux send-keys -t $SESSION_NAME:6.3 'cd ./config' C-m
+    # Set the cd to /tooling
+    tmux send-keys -t $SESSION_NAME:6.0 'cd ./tooling' C-m
+    tmux send-keys -t $SESSION_NAME:6.1 'cd ./tooling' C-m
+    tmux send-keys -t $SESSION_NAME:6.2 'cd ./tooling' C-m
+    tmux send-keys -t $SESSION_NAME:6.3 'cd ./tooling' C-m
     # Select the first pane
     tmux select-pane -t $SESSION_NAME:6.0
     	
@@ -133,11 +133,11 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
     # Split the 3rd pane horizontally
     tmux split-window -h -t $SESSION_NAME:7.2
     
-    # Set the cd to /config
-    tmux send-keys -t $SESSION_NAME:7.0 'cd ./config' C-m
-    tmux send-keys -t $SESSION_NAME:7.1 'cd ./config' C-m
-    tmux send-keys -t $SESSION_NAME:7.2 'cd ./config' C-m
-    tmux send-keys -t $SESSION_NAME:7.3 'cd ./config' C-m
+    # Set the cd to /tooling
+    tmux send-keys -t $SESSION_NAME:7.0 'cd ./tooling' C-m
+    tmux send-keys -t $SESSION_NAME:7.1 'cd ./tooling' C-m
+    tmux send-keys -t $SESSION_NAME:7.2 'cd ./tooling' C-m
+    tmux send-keys -t $SESSION_NAME:7.3 'cd ./tooling' C-m
     # Select the first pane
     tmux select-pane -t $SESSION_NAME:7.0
     	

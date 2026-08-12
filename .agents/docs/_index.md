@@ -46,12 +46,6 @@ table of [README.md](README.md).
 | [ci-cd/README.md](ci-cd/README.md) | CI/CD — the six GitHub Actions workflows in .github/workflows, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need |
 | [ci-cd/release-pipeline.md](ci-cd/release-pipeline.md) | The release pipeline in release-docker-image.yml — six jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step every tag reaches with a prerelease narrowed to its immutable tag, and the CHANGELOG.md release body |
 
-## Config
-
-| File | Description |
-|---|---|
-| [config/README.md](config/README.md) | config/ — maintainer local-dev tooling: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state |
-
 ## Docs Site
 
 | File | Description |
@@ -98,6 +92,12 @@ table of [README.md](README.md).
 |---|---|
 | [shared/dependencies.md](shared/dependencies.md) | Shared slice dependency tree — Geometry (the BCL-only leaf everything geometric bottoms out on), CompactNotation, TestReporting, and the TestsKernel test hub; who references them and who sees internals. |
 | [shared/README.md](shared/README.md) | Shared slice — Binacle.TestsKernel (scenario data, compact-string formats, providers, fixtures) and shared/data (OR-Library benchmark data) |
+
+## Tooling
+
+| File | Description |
+|---|---|
+| [tooling/README.md](tooling/README.md) | tooling/ — every task the repo can run, called by CI and by hand alike: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state |
 
 ## ViPaq
 

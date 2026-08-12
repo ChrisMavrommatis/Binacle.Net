@@ -4,9 +4,7 @@
 # Build and coverage MUST stay between begin and end - the scanner only sees projects compiled in that pair.
 # A failing suite skips "Sonar end", so a broken run publishes nothing. That is deliberate.
 #
-# Scope, coverage paths and the report formats live in config/sonar-analysis.xml, not here; the Scanner for
-# .NET ignores sonar-project.properties, and `/s:` needs an absolute path. Only the key, org, token and host
-# stay below.
+# Only the key, org, token and host stay below; everything else the scanner needs is passed by `/s:`.
 
 name: Sonar Analysis
 
@@ -60,7 +58,7 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '.config/dotnet-tools.json') }}
           restore-keys: ${{ runner.os }}-nuget-
 
-      # 1.x range: ubuntu's apt ships a just too old to parse config/tests.just.
+      # 1.x range: ubuntu's apt ships a just too old to parse this repo's module files.
       - name: Setup just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
         with:
@@ -82,7 +80,7 @@ jobs:
             /o:"${{ vars.SONAR_ORGANIZATION }}" \
             /d:sonar.token="$SONAR_TOKEN" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /s:"$GITHUB_WORKSPACE/config/sonar-analysis.xml"
+            /s:"$GITHUB_WORKSPACE/tooling/sonar-analysis.xml"
 
       # Build once here so the coverage run below can --no-build.
       - name: Build

@@ -40,7 +40,7 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `web/` | Jekyll marketing/web site (`$web-site`) |
 | `api/requests/` | HTTP request files for manual testing (subfolders: v3, v4, Service) |
 | `samples/` | Docker and Kubernetes deployment samples (user-facing starting points) |
-| `config/` | Maintainer local-dev tooling — the `just` modules (test, coverage, openapi, agents, serve, build, image, smoke), the benchmark/performance scripts, local compose, env, emulator state |
+| `tooling/` | Every task the repo can run, called by CI and by hand alike — the `just` modules (test, coverage, openapi, agents, serve, build, image, smoke), the benchmark/performance scripts, local compose, env, emulator state |
 | `.github/workflows/` | The six GitHub Actions workflows — PR tests, Sonar, the release pipeline, image smoke, and the two site deploys (`$ci-cd`) |
 | `shared/data/` | OR-library packing benchmark data |
 
@@ -70,9 +70,9 @@ and build the Docker image.
 | Run behind a proxy / resolve the real client IP | `$api/configuration`, `$api/modules/diagnostics` |
 | Run or deploy with Docker / Kubernetes | `$samples`, `$commands`, `$build-topology` |
 | Understand the build & workspace layout | `$build-topology`, `$commands` |
-| Change a GitHub Actions workflow | `$ci-cd`, `$config` (the recipe it calls) |
+| Change a GitHub Actions workflow | `$ci-cd`, `$tooling` (the recipe it calls) |
 | Understand how the image gets released | `$ci-cd/release-pipeline`, `$build-topology` |
-| Add a CI check or a PR gate | `$ci-cd`, `$config` |
+| Add a CI check or a PR gate | `$ci-cd`, `$tooling` |
 
 ## Slice Docs
 
@@ -87,7 +87,7 @@ and build the Docker image.
 - Docs Site (`$docs-site`) — the published Jekyll site at repo-root `docs/`
 - Web Site (`$web-site`) — the published Jekyll site at repo-root `web/`
 - Samples (`$samples`) — Docker & Kubernetes deployment starting points
-- Config (`$config`) — maintainer local-dev tooling: scripts, local compose, env, emulator state
+- Tooling (`$tooling`) — every task the repo can run: the `just` modules, scripts, local compose, env, emulator state
 - CI/CD (`$ci-cd`) — the GitHub Actions workflows, their conventions, vars and secrets; the release pipeline
   is `$ci-cd/release-pipeline`
 - Build Topology (`$build-topology`) — solution, npm workspaces, asset copy, Docker build chain

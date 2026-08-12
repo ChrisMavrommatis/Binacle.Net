@@ -27,7 +27,7 @@ has to stay. These two are the exceptions.
   build stage** - the publish happens outside the file, in `just build publish`. Say that instead, and that
   the path is hardcoded here and allowlisted in `.dockerignore`, so publishing elsewhere builds an empty image.
 
-- `config/tmux.sh` carries ~40 comment lines that restate the line below them ("# Select the first pane" over
+- `tooling/tmux.sh` carries ~40 comment lines that restate the line below them ("# Select the first pane" over
   `tmux select-pane`), and two banners are wrong: window 5's block closes with a `WINDOW 6` banner and window
   6's opens with `WINDOW 5`. Nothing here folds into `.agents` - it is deletable noise. **Do this with the
   keep-or-convert decision in the scripts-to-just-recipes plan**, not before: if the script moves into a

@@ -5,10 +5,10 @@
 #
 # Both are written to be callable from CI as they stand - nothing interactive, no sudo, no local-only paths -
 # so the image a maintainer builds and the image the release workflow ships come from one recipe. Creating and
-# opening up the bind-mounted config/data and config/azurite is not here: those are a precondition of running
+# opening up the bind-mounted tooling/data and tooling/azurite is not here: those are a precondition of running
 # the compose stack, not of building anything, and one of them needs sudo, which CI must not run.
 
-# Module recipes run where the module file lives (config/), which would break every path below.
+# Module recipes run where the module file lives (tooling/), which would break every path below.
 set working-directory := '..'
 
 # dotnet and docker both print why they failed, so just's own "Recipe failed" line adds nothing. The exit code

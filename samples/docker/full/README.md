@@ -31,6 +31,6 @@ plain text, which is another reason this is not a deployment.
 
 `/_health` lists which modules are on under `Features` - a quick way to confirm a flag did what you expected.
 
-## What this maps to
+## Tested on every release
 
-`config/smoke/full.yml` runs this same configuration against the image on every release.
+This configuration is smoke-tested against the image on every release.

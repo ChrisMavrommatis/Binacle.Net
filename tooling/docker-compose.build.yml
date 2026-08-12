@@ -3,7 +3,7 @@ name: binacle-net-build
 # Full — everything switched on, for testing the whole image: ServiceModule on Postgres, plus Azurite and
 # SQLite ready to switch to, and the Aspire dashboard for telemetry. All three backends run; pick which one
 # the app talks to by moving the comment on the connection strings below, then recreate binacle-net.
-# App logs and Azurite state are bind-mounted into config/, so those folders must exist and be writable before
+# App logs and Azurite state are bind-mounted into tooling/, so those folders must exist and be writable before
 # anything starts — docker never chowns a bind mount, and the containers write as their own users rather than
 # as you. Postgres is the exception: it keeps its data in a named volume, out of the repo.
 #
@@ -14,7 +14,7 @@ name: binacle-net-build
 #   up     just image up full
 #   down   just image down full                # keeps the data
 #   wipe   just image down full -v             # drops the postgres volume too
-#          sudo rm -rf ./config/data ./config/azurite     # sudo: they write as root
+#          sudo rm -rf ./tooling/data ./tooling/azurite     # sudo: they write as root
 #
 # Log in as admin@binacle.net / B1n4cl3Adm!n — seeded on first start by a startup task.
 # API on http://localhost:8080, dashboard on http://localhost:18888.

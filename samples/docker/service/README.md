@@ -55,6 +55,6 @@ Copy `ForwardedHeaders.json` from the [prod](../prod) sample and uncomment the m
 anywhere else: without it, rate limiting partitions on your proxy's address rather than the caller's, so one
 heavy client exhausts the bucket for everybody.
 
-## What this maps to
+## Tested on every release
 
-`config/smoke/service.yml` runs this same configuration against the image on every release.
+This configuration is smoke-tested against the image on every release.

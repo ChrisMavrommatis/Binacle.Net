@@ -3,7 +3,7 @@
 The assertions and stacks for `just smoke`. This suite tests the **image** rather than the code: what is inside
 it, and what its HTTP surface does with the modules switched on and off.
 
-The recipes live in `config/smoke.just`; this folder is the data they read. Everything is run from the repo
+The recipes live in `tooling/smoke.just`; this folder is the data they read. Everything is run from the repo
 root. The tools - `container-structure-test` and `hurl` - are not part of `just install`; see
 [DEVELOPMENT.md](../../DEVELOPMENT.md).
 
@@ -33,7 +33,7 @@ It keeps the `.yaml` extension against the `.yml` stacks on purpose: it is the o
 ## The five profiles
 
 Real configurations, from nothing switched on to everything. They are declared in one place - the `profiles`
-variable at the top of `config/smoke.just` - which is what both the `all` loop and the unknown-name check read.
+variable at the top of `tooling/smoke.just` - which is what both the `all` loop and the unknown-name check read.
 Adding a profile is that line plus a `.hurl` and a `.yml` named after it.
 
 **Each profile name is also a sample folder name** under `samples/docker/`. Same configuration, different
@@ -134,7 +134,7 @@ throwaway JWT secret - that a sample a user copies must never have. The samples 
 the thing users start from.
 
 **The names are the contract.** A profile and a sample folder with the same name are the same configuration:
-`samples/docker/prod` is `config/smoke/prod.{yml,hurl}`. Change one and change the other, or the name is lying.
+`samples/docker/prod` is `tooling/smoke/prod.{yml,hurl}`. Change one and change the other, or the name is lying.
 A sample the suite never runs is untested advice, which is the same argument that produced this suite one level
 out.
 

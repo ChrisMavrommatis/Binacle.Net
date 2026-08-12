@@ -2,9 +2,8 @@ name: binacle-net-quickstart
 
 # Binacle.Net sample: quickstart
 #
-# Smoke profile: quickstart. config/smoke/quickstart.yml runs this same configuration against the image under
-# test on every release, so this file is a shape that is proven to work rather than one nobody checks.
-# If you change which modules are on here, change that profile too - or the pairing is a lie.
+# This configuration is smoke-tested against the image on every release, so it is a shape that is
+# proven to work rather than one nobody checks.
 
 services:
   binacle-net:

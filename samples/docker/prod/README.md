@@ -67,7 +67,7 @@ Packing logs are written to `/app/data`, which is why there is a volume. Keep it
 container does. `PackingLogs__RetentionDays` deletes files older than N days once a day; leaving it unset keeps
 everything forever, which fills a disk eventually.
 
-## What this maps to
+## Tested on every release
 
-`config/smoke/prod.yml` runs this same configuration against the image on every release, so this is a shape
-that is checked rather than one nobody runs.
+This configuration is smoke-tested against the image on every release, so it is a shape that is checked
+rather than one nobody runs.

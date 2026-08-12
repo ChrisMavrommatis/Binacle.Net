@@ -2,16 +2,16 @@
 id: commands
 description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
 verified: 2026-08-11
-check: Test leaves match config/tests.just; coverage recipes match config/coverage.just; openapi recipes match config/openapi.just; agents recipes match config/agents.just; serve recipes match config/serve.just; smoke recipes match config/smoke.just; install/assets match the root justfile; aliases and scripts match config/*.sh; docker-compose.yml service list matches config/docker-compose.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
+check: Test leaves match tooling/tests.just; coverage recipes match tooling/coverage.just; openapi recipes match tooling/openapi.just; agents recipes match tooling/agents.just; serve recipes match tooling/serve.just; smoke recipes match tooling/smoke.just; install/assets match the root justfile; aliases and scripts match tooling/*.sh; docker-compose.yml service list matches tooling/docker-compose.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
 ---
 
 # Commands
 
 Setup, running things, tests, coverage, the OpenAPI documents, the image build, the smoke suite and the agent
 indexes are `just` recipes; only the benchmarks, the performance runs and the tmux session are still scripts in
-`config/`. All are run
-from the repo root. `just` with no arguments lists everything. For the `config/` directory anatomy (scripts,
-local compose, env, emulator state) see `$config`.
+`tooling/`. All are run
+from the repo root. `just` with no arguments lists everything. For the `tooling/` directory anatomy (scripts,
+local compose, env, emulator state) see `$tooling`.
 
 ## Prerequisites
 
@@ -61,7 +61,7 @@ The API launch profiles:
 
 ## Run Tests
 
-Tests are `just` recipes, not scripts — one recipe per suite ("leaf"), defined in `config/tests.just` and
+Tests are `just` recipes, not scripts — one recipe per suite ("leaf"), defined in `tooling/tests.just` and
 loaded as the `test` module. `just --list test` lists them; the same recipes are what CI calls, so a red step
 is the line to paste here.
 
@@ -135,8 +135,8 @@ Per slice; write reports to a gitignored scratch folder — see [results/README.
 scratch-vs-curated convention:
 
 ```bash
-./config/performance.lib.sh
-./config/performance.vipaq.sh
+./tooling/performance.lib.sh
+./tooling/performance.vipaq.sh
 ```
 
 ## Benchmarks
@@ -144,8 +144,8 @@ scratch-vs-curated convention:
 Per slice; BenchmarkDotNet, markdown-only, output pinned next to the project:
 
 ```bash
-./config/benchmarks.lib.sh [FastValidation|AlgorithmRacing|BischoffSuite|Parallelization|ResultSelection]
-./config/benchmarks.vipaq.sh [Encode|Decode]
+./tooling/benchmarks.lib.sh [FastValidation|AlgorithmRacing|BischoffSuite|Parallelization|ResultSelection]
+./tooling/benchmarks.vipaq.sh [Encode|Decode]
 # No argument = all
 ```
 
@@ -165,7 +165,7 @@ Extra arguments go straight through to `docker compose`. The name is positional,
 a flag — `just image up -d` reads `-d` as the stack name and is rejected.
 
 All three check for `binacle-net:local` and tell you to build it if it is missing. `up` also creates the
-bind-mounted folders and opens their permissions, which docker will not do for you. See `$config` for which
+bind-mounted folders and opens their permissions, which docker will not do for you. See `$tooling` for which
 stack needs which folder.
 
 The backing services for an API run from source are a different thing — that is `just serve services`.
@@ -188,7 +188,7 @@ build or a published tag — `just smoke all binacle/binacle-net:<tag>`. Given a
 `all` pulls instead of building. The stacks read it as `$BINACLE_IMAGE` with the same default.
 
 The static check reads the image, not a container, so `all` runs it **once** rather than once per profile. The
-four profiles are declared in one place, the `profiles` variable at the top of `config/smoke.just`.
+four profiles are declared in one place, the `profiles` variable at the top of `tooling/smoke.just`.
 
 While editing a `.hurl`, skip the up/down cycle: `just smoke up prod`, then `just smoke::_test_profile prod` as
 many times as needed, then `just smoke down prod -v`.
@@ -209,12 +209,12 @@ can't leave an index untouched and look like it worked.
 ## Dev session (tmux)
 
 ```bash
-./config/tmux.sh
+./tooling/tmux.sh
 ```
 
 Builds (or re-attaches to) a tmux session named `binacle` with windows `api`, `docs`, `web`, `tests`, `misc`, and
 `bench_1`/`bench_2`/`bench_3`. Each pane is pre-`cd`'d to the right folder but runs nothing automatically — it's a
-staging layout for the `just` recipes and the remaining `config/*.sh` scripts. Requires `tmux`.
+staging layout for the `just` recipes and the remaining `tooling/*.sh` scripts. Requires `tmux`.
 
 ## Build (Docker image)
 

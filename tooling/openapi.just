@@ -10,7 +10,7 @@
 # (no /api/auth/token path). Generation is off by default; the two knobs and why they look like that are in
 # api/src/Binacle.Net/Binacle.Net.csproj.
 
-# Module recipes run where the module file lives (config/), which would break every path below.
+# Module recipes run where the module file lives (tooling/), which would break every path below.
 set working-directory := '..'
 
 # dotnet and spectral both print why they failed, so just's own "Recipe failed" line adds nothing. The exit

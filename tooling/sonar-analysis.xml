@@ -38,7 +38,7 @@
   <Property Name="sonar.exclusions">**/node_modules/**,**/bin/**,**/obj/**,build/**,results/**,assets/lib/**,docs/lib/**,docs/js/**,docs/media/**,web/lib/**,web/js/**,web/media/**,docs/**/*.html,web/**/*.html,shared/data/**,vipaq/test-vectors/**</Property>
 
   <!-- One flat file per suite in build/coverage/sonar, split by extension: .xml from the C# collector,
-       .info from jest. config/tests.just is what writes them and the only place that knows the suite list. -->
+       .info from jest. tooling/tests.just is what writes them and the only place that knows the suite list. -->
   <Property Name="sonar.cs.vscoveragexml.reportsPaths">build/coverage/sonar/*.xml</Property>
   <Property Name="sonar.javascript.lcov.reportPaths">build/coverage/sonar/*.info</Property>
 

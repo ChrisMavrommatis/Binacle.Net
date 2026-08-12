@@ -20,7 +20,7 @@ what you need on demand. `docs/`, `design/`, `plans/`, `ideas/`, and `memory/` e
 (a grouped manifest); regenerate them all with `just agents all` after adding or renaming a file.
 
 **Everything is grouped by slice, mirroring the repo layout.** A slice is a top-level area of the
-codebase (`api`, `lib`, `vipaq`, `shared`, `config`, `ci-cd`, …); files that don't map to one live at the root
+codebase (`api`, `lib`, `vipaq`, `shared`, `tooling`, `ci-cd`, …); files that don't map to one live at the root
 under `General`. Most slices are a directory; `ci-cd` is the exception and covers `.github/workflows/`.
 The docs, design, plans, and ideas for a slice sit in a folder of the same name, so an agent can open
 just the slice it's working on and skip everything else — the point is to find the relevant guidance fast,
@@ -87,7 +87,7 @@ exists; it carries the rule too. Files inside `.agents/` point outward freely �
 
 Two things this is *not*:
 
-- **A path a tool operates on is not a reference.** `config/agents.just` reads and writes `.agents/**/_index.md`,
+- **A path a tool operates on is not a reference.** `tooling/agents.just` reads and writes `.agents/**/_index.md`,
   and the root `justfile` registers it. Those are operands. What is banned is the pointer — "see
   `.agents/design/ci-cd/decisions.md` for why" — which makes an outside file depend on a layout we rearrange at
   will. This whole `design/` split is the proof that we do.

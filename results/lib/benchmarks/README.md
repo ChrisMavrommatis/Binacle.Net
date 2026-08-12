@@ -11,5 +11,5 @@ baseline. These are records, not source — nothing reads them at build time.
 The raw folders are grouped by the runtime and machine they were measured on. Numbers only compare **within**
 a folder — a Windows run and a Linux run are not the same ruler.
 
-Regenerate with `./config/benchmarks.lib.sh`, then copy the reports in and add a dated summary if the run is worth
+Regenerate with `./tooling/benchmarks.lib.sh`, then copy the reports in and add a dated summary if the run is worth
 keeping.

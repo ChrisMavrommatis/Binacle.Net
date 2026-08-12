@@ -9,7 +9,7 @@ name: binacle-net-volume
 #   up    just image up volume
 #   down  just image down volume                                          # keeps the data
 #   wipe  just image down volume -v                                       # deletes the volume and the db
-#   read  docker compose -f ./config/docker-compose.volume.yml cp binacle-net:/app/data ./out
+#   read  docker compose -f ./tooling/docker-compose.volume.yml cp binacle-net:/app/data ./out
 #
 # Log in as admin@binacle.net / B1n4cl3Adm!n — seeded on first start by a startup task.
 

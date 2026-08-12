@@ -1,20 +1,21 @@
 ---
-id: config
-description: config/ — maintainer local-dev tooling: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state
-verified: 2026-08-11
-check: Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, changelog.just, serve.just, build.just, image.just and smoke.just recipes, and the docker-compose stack/file/service table match config/
+id: tooling
+description: tooling/ — every task the repo can run, called by CI and by hand alike: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state
+verified: 2026-08-12
+check: Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, changelog.just, serve.just, build.just, image.just and smoke.just recipes, and the docker-compose stack/file/service table match tooling/
 also_update:
   - commands
   - samples
 ---
 
-# Config
+# Tooling
 
-`config/` is the **maintainer's local-dev tooling** — the just modules for tests, coverage, OpenAPI, the
+`tooling/` holds **every task the repo can run** — the just modules for tests, coverage, OpenAPI, the
 agent indexes, the build, the image stacks and the smoke suite, plus the benchmark scripts, local Docker
-Compose and emulator state. It is **not** a deployment template; user-facing deployment starting points live in
-samples (`$samples`). For the quick "how do I run X" reference see `$commands`; this
-doc describes what's in the directory.
+Compose and emulator state. CI calls these same recipes rather than keeping its own copy, so a workflow step
+and a maintainer typing the command do the same thing. It is **not** a deployment template; user-facing
+deployment starting points live in samples (`$samples`). For the quick "how do I run X" reference see
+`$commands`; this doc describes what's in the directory.
 
 ## Scripts and `just` modules (run from the repo root)
 
@@ -30,7 +31,7 @@ doc describes what's in the directory.
 | `agents.just` | **Not a script** — the `agents` module for the root `justfile`. `just agents all` regenerates the `_index.md` manifest for `.agents/docs`, `.agents/design`, `.agents/plans`, `.agents/memory` and `.agents/ideas` (grouped by area); `just agents generate-index <name>` does one |
 | `changelog.just` | **Not a script** — the `changelog` module for the root `justfile`. Reads `CHANGELOG.md` at the repo root. `just changelog extract <version\|Unreleased>` prints one release's section, with its headings promoted from `###` back to `##` for a release body; `just changelog check <version\|Unreleased>` exits 1 if that section is missing or empty. The release workflow calls both, so CI and a laptop parse the file the same way and the exact body can be previewed before a tag is pushed — see `$ci-cd/release-pipeline` |
 | `image.just` | **Not a script** — the `image` module for the root `justfile`. Runs what `build.just` produced: `just image up [full\|volume\|bind]` (default `full`) and `just image down [name]`; extra arguments pass through to `docker compose`. `up` creates and opens the bind-mounted folders first, and every stack stops with a pointer to `just build image` if `binacle-net:local` is missing |
-| `smoke.just` | **Not a script** — the `smoke` module for the root `justfile`. Tests the image rather than the code. `just smoke test-structure [image]` runs `container-structure-test` against `config/smoke/structure.yaml`; `just smoke test <profile> [image]` does up → hurl → down for one profile; `just smoke up`/`down` are the manual halves; `just smoke all [image]` builds, checks the structure once, then runs every profile. Every recipe takes the image last, default `binacle-net:local`, so a published tag can be smoked too |
+| `smoke.just` | **Not a script** — the `smoke` module for the root `justfile`. Tests the image rather than the code. `just smoke test-structure [image]` runs `container-structure-test` against `tooling/smoke/structure.yaml`; `just smoke test <profile> [image]` does up → hurl → down for one profile; `just smoke up`/`down` are the manual halves; `just smoke all [image]` builds, checks the structure once, then runs every profile. Every recipe takes the image last, default `binacle-net:local`, so a published tag can be smoked too |
 | `tmux.sh` | Builds/re-attaches the `binacle` tmux session (windows `api`/`docs`/`web`/`tests`/`misc`/`bench_1..3`); panes are pre-`cd`'d, nothing auto-runs |
 
 The launch profiles live in `serve.just`; the benchmark filters live inside the per-slice `benchmarks.*`
@@ -65,21 +66,21 @@ the stack name maps to a file in one place, so `up` and `down` cannot disagree a
 The smoke stacks are separate files from `samples/` on purpose. They run the image under test and carry
 test-only tweaks — a raised rate limit, disposable storage — that a sample a user copies must never have.
 
-**`config/smoke/README.md` is the authority on that suite** — what each profile claims, the two rules that
+**`tooling/smoke/README.md` is the authority on that suite** — what each profile claims, the two rules that
 decide whether a check belongs in it (`assert what the image contains and wires, never what the algorithm
 computed`; `every check must be able to fail`), and the setup gotchas. It is written for a human, and it is
 where the design rationale went when the smoke plan was deleted on 2026-08-07. Read it before changing an
 assertion; do not re-derive any of it here.
 
-Which folders `up` prepares: `serve services` needs `config/azurite`; `image up full` needs that plus
-`config/data/logs` and `config/data/pack-logs`; `image up bind` needs `BINACLE_DATA_DIR` (default
-`config/data`); `image up volume` needs none. It opens the **directory** only, never `-R` — the files inside
+Which folders `up` prepares: `serve services` needs `tooling/azurite`; `image up full` needs that plus
+`tooling/data/logs` and `tooling/data/pack-logs`; `image up bind` needs `BINACLE_DATA_DIR` (default
+`tooling/data`); `image up volume` needs none. It opens the **directory** only, never `-R` — the files inside
 belong to whoever wrote them (the app as `APP_UID`, azurite as root) and stay writable to that writer, so a
 recursive `chmod` would fail on them while making nothing more writable. `sudo` is used only for a directory
 docker created itself, which the daemon makes as root. The few lines that do this are **copied** into both
 modules rather than shared: a module reaching into another one restores the coupling the split removed.
 
 ## Emulator state
-- `config/azurite/` holds Azurite emulator state (`__azurite_db_*__.json`).
-- `config/config.proj` is a `Microsoft.Build.NoTargets` content project (no compile) that includes the config
+- `tooling/azurite/` holds Azurite emulator state (`__azurite_db_*__.json`).
+- `tooling/tooling.proj` is a `Microsoft.Build.NoTargets` content project (no compile) that includes the config
   files in the solution — see `$build-topology`.

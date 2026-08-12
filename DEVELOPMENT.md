@@ -160,7 +160,7 @@ just build image                 # publish, then tag binacle-net:local
 
 ## Where to go next
 
-- `config/README.md` - every `just` module in detail: serve, test, coverage, build, image, smoke, and the
+- `tooling/README.md` - every `just` module in detail: serve, test, coverage, build, image, smoke, and the
   container data folders they use.
-- `config/smoke/README.md` - what the image smoke suite asserts and why.
+- `tooling/smoke/README.md` - what the image smoke suite asserts and why.
 - Each top-level folder has its own `README.md`.

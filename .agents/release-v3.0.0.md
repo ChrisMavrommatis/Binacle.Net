@@ -299,7 +299,7 @@ path, v4 carries the experimental banner. Handed to the docs session.
   `# Pinned on purpose - a copied sample must not jump to a new major on the next pull.`, matching the
   published docs copies. Only the `image:` lines themselves are left to move.
 
-  Two more mention the beta as an **example** rather than a pin - `config/README.md` and `config/smoke.just`,
+  Two more mention the beta as an **example** rather than a pin - `tooling/README.md` and `tooling/smoke.just`,
   both showing "smoke what is actually on Docker Hub". Neither is wrong today and neither ships to a user, but
   they read as stale once the tag is out. Sweep them at the `3.0` bump.
 
@@ -587,7 +587,7 @@ B5 for why the intermediate beta bump is not worth doing.
 13. **The last change before the tag, all in one commit:** rename `## [Unreleased]` to `## 3.0.0` in
     `CHANGELOG.md`, bump the nine files from `3.0.0-beta.1` to `3.0`, and sweep the "since `3.0` does not exist
     yet" prose in the three READMEs. Then re-confirm B7a - `ApiV4Document.IsExperimental` still `true` - and
-    tag `v3.0.0`. Also sweep the two `config/` examples that name a beta tag.
+    tag `v3.0.0`. Also sweep the two `tooling/` examples that name a beta tag.
 
     **First, check `DOCKERHUB_REPO` reads `binacle-net` again.** Step 11 changes it and changing it back is the
     easiest thing in this release to forget. Nothing fails if it is wrong - v3.0.0 just publishes to the scratch

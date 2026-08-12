@@ -12,6 +12,7 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [image-base-slimming.md](image-base-slimming.md) | Harden and slim the base image |
+| [layout-rename.md](layout-rename.md) | Top-level layout: `config/` becomes `tooling/`, `build/` becomes `artifacts/` |
 | [sonar-issue-triage.md](sonar-issue-triage.md) | Sonar - what is left after the 2026-08-09 sweep |
 | [todos.md](todos.md) | TODOs |
 | [ui-test-harness.md](ui-test-harness.md) | A test harness for the UI |
@@ -32,13 +33,6 @@ you need, and trim or delete it once the work lands.
 | [ci-cd/multi-arch-images.md](ci-cd/multi-arch-images.md) | CI - publish the image for arm64 as well as amd64 |
 | [ci-cd/release-pipeline-rebuild.md](ci-cd/release-pipeline-rebuild.md) | CI/CD - finish the GHCR release pipeline |
 
-## Config
-
-| File | Description |
-|---|---|
-| [config/image-module-stacks.md](config/image-module-stacks.md) | Decide what the `image` module is still for |
-| [config/scripts-to-just-recipes.md](config/scripts-to-just-recipes.md) | Convert the last `config/*.sh` scripts to `just` recipes |
-
 ## Lib
 
 | File | Description |
@@ -51,3 +45,10 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [shared/testskernel-data-extraction.md](shared/testskernel-data-extraction.md) | TestsKernel — grow the shared fixture cases |
+
+## Tooling
+
+| File | Description |
+|---|---|
+| [tooling/image-module-stacks.md](tooling/image-module-stacks.md) | Decide what the `image` module is still for |
+| [tooling/scripts-to-just-recipes.md](tooling/scripts-to-just-recipes.md) | Convert the last `tooling/*.sh` scripts to `just` recipes |

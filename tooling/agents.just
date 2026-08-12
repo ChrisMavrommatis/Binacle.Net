@@ -10,7 +10,7 @@
 # root-level files under "General" - and one line per file. The description comes from `description:` in the
 # front matter, falling back to the first `# ` heading, then the filename.
 
-# Module recipes run where the module file lives (config/), which would break every path below.
+# Module recipes run where the module file lives (tooling/), which would break every path below.
 set working-directory := '..'
 
 # The generator already printed why it failed, so just's own "Recipe failed" line adds nothing.
@@ -68,7 +68,7 @@ generate-index name:
     )
 
     # group -> heading, for the groups whose capitalisation we can't guess. Any other group gets its first
-    # letter uppercased, which is right for shared, samples, config and every slice added since.
+    # letter uppercased, which is right for shared, samples, tooling and every slice added since.
     declare -A group_headings=(
         [api]="API"
         [lib]="Lib"
