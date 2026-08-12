@@ -29,6 +29,7 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - dependencies
-      - ci-cd
+      # Quoted on purpose: an unquoted `area: ci-cd` in a list is a YAML map, not the string the label needs.
+      - "area: ci-cd"
     commit-message:
       prefix: ci
