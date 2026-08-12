@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.ViPaq;
 using System.ComponentModel;
 using Binacle.Net.Kernel.OpenApi.Attributes;

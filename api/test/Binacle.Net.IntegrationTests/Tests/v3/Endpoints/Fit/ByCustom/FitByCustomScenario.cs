@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using Binacle.Net.v3.Contracts;
 using Binacle.TestsKernel;
-using Binacle.Lib;
 using Binacle.TestsKernel.Algorithms.Providers;
 using Binacle.Net.IntegrationTests.v3.ExtensionMethods;
 

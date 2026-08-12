@@ -7,11 +7,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+	  <ProjectReference Include="..\..\..\shared\src\Binacle.Packing\Binacle.Packing.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Using Include="Binacle.Geometry" />
+	  <Using Include="Binacle.Packing" />
 	  <Using Include="Binacle.Lib.Models" />
 	</ItemGroup>
 

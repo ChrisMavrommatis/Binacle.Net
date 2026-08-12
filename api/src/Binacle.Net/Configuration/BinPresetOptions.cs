@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Kernel.Configuration.Models;
 using FluentValidation;
 

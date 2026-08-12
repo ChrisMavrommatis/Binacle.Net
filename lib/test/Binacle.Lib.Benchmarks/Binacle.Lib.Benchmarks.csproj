@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Using Include="Binacle.Geometry" />
+    <Using Include="Binacle.Packing" />
   </ItemGroup>
 
 </Project>

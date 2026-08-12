@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using Binacle.Net.Kernel.OpenApi.Attributes;
-using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.Net.v3.Contracts;
 

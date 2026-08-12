@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Binacle.CompactNotation;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Kernel.Logs.Models;
 
 namespace Binacle.Net.DiagnosticsModule.Logs.Models;

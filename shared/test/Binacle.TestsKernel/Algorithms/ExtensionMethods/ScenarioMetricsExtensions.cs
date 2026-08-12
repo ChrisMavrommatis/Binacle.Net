@@ -1,4 +1,3 @@
-using Binacle.Lib.Abstractions.Models;
 using Binacle.TestsKernel.ExtensionMethods;
 
 namespace Binacle.TestsKernel.Algorithms.ExtensionMethods;

@@ -1,0 +1,22 @@
+
+namespace Binacle.Packing;
+
+public sealed class PackedItem : ResultItem, IWithReadOnlyCoordinates
+{
+	internal PackedItem(string id, IWithReadOnlyDimensions dimensions, IWithReadOnlyCoordinates coordinates)
+		: this(id, dimensions, new Coordinates(coordinates))
+	{
+	}
+	
+	internal PackedItem(string id, IWithReadOnlyDimensions dimensions, Coordinates coordinates)
+		: base(id, dimensions)
+	{
+		this.coordinates = coordinates;
+	}
+
+	private Coordinates coordinates;
+
+	public int X => this.coordinates.X;
+	public int Y => this.coordinates.Y;
+	public int Z => this.coordinates.Z;
+}

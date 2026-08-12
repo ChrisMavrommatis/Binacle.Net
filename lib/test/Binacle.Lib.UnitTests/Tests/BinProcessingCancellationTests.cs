@@ -1,6 +1,5 @@
 using Binacle.Lib.Abstractions;
 using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.AlgorithmProcessing;
 using Binacle.TestsKernel.Models;
 

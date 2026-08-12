@@ -1,4 +1,4 @@
-using Binacle.Lib.Abstractions.Models;
+using Binacle.Packing;
 using System.ComponentModel.DataAnnotations;
 using Binacle.CompactNotation;
 

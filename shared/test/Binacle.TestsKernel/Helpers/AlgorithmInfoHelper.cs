@@ -1,5 +1,3 @@
-using Binacle.Lib;
-using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.TestsKernel.Helpers;
 
@@ -14,7 +12,7 @@ public static class AlgorithmInfoHelper
             throw new ArgumentException(
                 $"Invalid algorithm info format. Value {compactString} should have format 'AlgorithmName_vVersion'.");
         }
-        if (!Enum.TryParse<Lib.Algorithm>(algorithmParts[0], out var parsedAlgorithm))
+        if (!Enum.TryParse<Algorithm>(algorithmParts[0], out var parsedAlgorithm))
         {
             throw new ArgumentException(
                 $"Invalid algorithm info format. Value {compactString} should have format 'AlgorithmName_vVersion'.");

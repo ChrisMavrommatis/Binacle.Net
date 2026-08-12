@@ -1,4 +1,3 @@
-using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.TestsKernel.Algorithms.Helpers;
 

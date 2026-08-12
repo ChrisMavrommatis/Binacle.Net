@@ -1,4 +1,3 @@
-using Binacle.Lib;
 using Binacle.TestsKernel.Algorithms.Models;
 using Binacle.TestsKernel.Models;
 

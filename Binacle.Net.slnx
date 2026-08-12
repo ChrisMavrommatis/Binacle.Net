@@ -44,7 +44,6 @@
     </Project>
   </Folder>
   <Folder Name="/lib/src/">
-    <Project Path="lib/src/Binacle.Lib.Abstractions/Binacle.Lib.Abstractions.csproj" />
     <Project Path="lib/src/Binacle.Lib/Binacle.Lib.csproj" />
   </Folder>
   <Folder Name="/lib/test/">
@@ -85,6 +84,7 @@
   <Folder Name="/shared/src/">
     <Project Path="shared/src/Binacle.CompactNotation/Binacle.CompactNotation.csproj" />
     <Project Path="shared/src/Binacle.Geometry/Binacle.Geometry.csproj" />
+    <Project Path="shared/src/Binacle.Packing/Binacle.Packing.csproj" />
   </Folder>
   <Folder Name="/shared/test/">
     <Project Path="shared/test/Binacle.CompactNotation.UnitTests/Binacle.CompactNotation.UnitTests.csproj" />

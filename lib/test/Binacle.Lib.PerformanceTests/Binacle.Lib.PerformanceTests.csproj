@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Using Include="Binacle.Geometry" />
+    <Using Include="Binacle.Packing" />
     <Using Include="Binacle.TestReporting" />
   </ItemGroup>
 

@@ -2,7 +2,6 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using Binacle.CompactNotation;
 using Binacle.Lib;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.TestReporting;
 using LibModels = Binacle.Lib.Models;
 

@@ -22,6 +22,7 @@
 		<Using Include="Xunit" />
 		<Using Include="Shouldly" />
 		<Using Include="Binacle.Geometry" />
+		<Using Include="Binacle.Packing" />
 	</ItemGroup>
 
 	<ItemGroup>

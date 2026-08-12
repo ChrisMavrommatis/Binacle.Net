@@ -2,7 +2,6 @@ using System.Text.Json;
 using Binacle.Net.UIModule.Models;
 using Binacle.Net.UIModule.Services;
 using Binacle.Net.UIModule.ViewModels;
-using Binacle.Lib;
 using Binacle.CompactNotation;
 using Binacle.ViPaq;
 using Microsoft.AspNetCore.Components;

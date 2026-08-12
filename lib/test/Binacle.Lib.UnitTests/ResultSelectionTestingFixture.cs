@@ -1,5 +1,4 @@
 using Binacle.Lib.Abstractions;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.TestsKernel.ResultSelection.Models;
 using Binacle.TestsKernel.ResultSelection.Providers;
 

@@ -1,6 +1,5 @@
 using BenchmarkDotNet.Attributes;
 using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Algorithms.Models;
 using Binacle.TestsKernel.Models;

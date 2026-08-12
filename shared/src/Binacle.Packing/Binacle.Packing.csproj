@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <!-- The result models have internal constructors and internal setters, so anything that fabricates a
+             result rather than reading one needs to be a friend. Binacle.Lib builds them for real; the fixture
+             kernel builds them from compact strings to drive result-selection tests. -->
+        <InternalsVisibleTo Include="Binacle.Lib"/>
+        <InternalsVisibleTo Include="Binacle.TestsKernel"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Binacle.Geometry\Binacle.Geometry.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Binacle.Geometry" />
+    </ItemGroup>
+
+</Project>
