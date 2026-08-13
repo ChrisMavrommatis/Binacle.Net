@@ -493,9 +493,16 @@ tag rather than the commit log:
   to, so nothing observable changed.
 - The release-pipeline rebuild on 2026-08-11. The workflow does not touch the app.
 - **The image now carries an SPDX SBOM, SLSA provenance and a cosign signature.** This one *is* user-visible -
-  it is something a consumer can verify that they could not verify before - so **it wants a bullet in
-  `⚙️ Core Changes`**, with the `cosign verify` invocation. It is the only post-beta change in this release that
-  a user can observe, and it was not in the body when the pipeline landed. Check it is there before publishing.
+  it is something a consumer can verify that they could not verify before. **Written into `⚙️ Core Changes`
+  2026-08-13**, with the `cosign verify` invocation and an `imagetools inspect` line for the SBOM.
+
+**And one more, found on 2026-08-13 when the body was re-checked against the beta 1 tag.** The publish dropped
+`--self-contained` on 2026-08-10, and v2.1.1 shipped with it, so **every v3.0.0 image is around a third
+smaller** - 103 MB against 150 MB - because it runs on the base image's .NET instead of bundling a second copy.
+Observable, and it was missing from the body. Added to `🔎 Overview` and `⚙️ Core Changes` the same day, along
+with the pipeline rebuild and the `config/` -> `tooling/`, `build/` -> `artifacts/` renames in
+`🏗️ Internal Work`. Nothing else since beta 1 changes what a user sees: the rest is Dependabot action bumps,
+`.agents/` notes, and comment rewording in the samples.
 
 ### Before publishing
 

@@ -20,6 +20,8 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - **Forwarded headers** are now supported, so the real caller is resolved when running behind a proxy or CDN.  
 - **Health check IP restrictions** are matched differently, with breaking changes for existing allow-lists.  
 - **The image creates `/app/data`** and gives it to the app user, so a volume mounted there is writable.  
+- **The image is signed**, and carries an SBOM and build provenance, so you can verify what you pull.  
+- **The image is about a third smaller** — it uses the .NET runtime from its base image instead of bundling a second copy.  
 - The project was **restructured**, separating the API, library, and ViPaq into their own roots.  
 - **Versioned documentation** now covers every minor line, so older images keep their docs.  
 
@@ -44,6 +46,16 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - **The image now creates `/app/data` and gives it to the app user.** A volume mounted there is writable with no extra setup. Previously docker created the mount point as root, the app does not run as root, and packing logs and the SQLite database could not be written to a fresh named volume.  
 - The image ships `libgssapi-krb5-2`, so Npgsql stops printing `Cannot load library libgssapi_krb5.so.2` at every start. Nothing was broken — the app authenticates with a password, not Kerberos — but the message read like a fatal error.  
 - The image carries **OCI labels** — title, description, source, url, documentation, vendor, licence and base image — plus version, revision and created per build.  
+- **The image is signed, and ships an SBOM and build provenance.** Signing is keyless, so there is no public key to fetch — the signature is checked against the workflow that produced it — and it covers the digest, so it holds for every tag pointing at that image:
+
+  ```bash
+  cosign verify binacle/binacle-net:3.0.0 \
+    --certificate-identity-regexp '^https://github\.com/ChrisMavrommatis/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
+    --certificate-oidc-issuer https://token.actions.githubusercontent.com
+  ```
+
+  The SPDX SBOM and SLSA provenance travel inside the image index; `docker buildx imagetools inspect binacle/binacle-net:3.0.0` lists them.  
+- **The image is smaller — around 103 MB, where the same image built the old way was 150 MB.** The app is published framework-dependent, so it runs on the .NET runtime already in the `aspnet:10.0` base image instead of carrying a second copy of it. Nothing about running the container changes.  
 - Existing environment variables are unchanged.  
 
 ### 🧪 Diagnostics Module
@@ -77,6 +89,9 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - Added benchmark suites for algorithms, bin processing, result selection, and ViPaq.  
 - Added cross-language ViPaq interop tests between C# and TypeScript.  
 - Patched two **high-severity advisories** in transitive dependencies — `Microsoft.OpenApi` and the bundled **SQLite** native library.  
+- **Rebuilt the release pipeline.** A tag now builds the image once, stages it on GHCR, smoke tests it there, then copies the tested digest to Docker Hub — so what is published is bit for bit what passed, and a failure anywhere leaves Docker Hub untouched. The release body is this changelog, extracted by the workflow.  
+- Renamed two top-level folders — `config/` is now `tooling/`, and build output goes to `artifacts/` instead of `build/`.  
+- Every GitHub Action is pinned to a commit SHA, kept current by Dependabot.  
 
 ### 📚 Versioned Docs
 - Documentation is now versioned per minor line — `v1.3.x`, `v2.0.x`, `v2.1.x`, `v3.0.x` — so any image can be matched to its docs.  
