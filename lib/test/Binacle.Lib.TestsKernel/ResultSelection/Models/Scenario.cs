@@ -1,5 +1,5 @@
 
-namespace Binacle.TestsKernel.ResultSelection.Models;
+namespace Binacle.Lib.TestsKernel.ResultSelection.Models;
 
 public record CollectionScenario(
     string CollectionKey,

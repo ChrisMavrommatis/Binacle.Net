@@ -2,10 +2,12 @@
 
     <ItemGroup>
         <!-- The result models have internal constructors and internal setters, so anything that fabricates a
-             result rather than reading one needs to be a friend. Binacle.Lib builds them for real; the fixture
-             kernel builds them from compact strings to drive result-selection tests. -->
+             result rather than reading one needs to be a friend. Binacle.Lib builds them for real; the lib
+             fixture kernel builds them from compact strings to drive result-selection tests, and uses the
+             internal Dimensions struct to satisfy PackedBin. A grant is not a dependency edge - it annotates
+             one the grantee's ProjectReference already declares. -->
         <InternalsVisibleTo Include="Binacle.Lib"/>
-        <InternalsVisibleTo Include="Binacle.TestsKernel"/>
+        <InternalsVisibleTo Include="Binacle.Lib.TestsKernel"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -21,6 +21,13 @@
 # - a Liquid tag, an Alpine component, a custom element. Those all arrive through an edge that is written
 # here already.
 #
+# An InternalsVisibleTo grant is not an edge. When A grants to B, nothing in A resolves B - A compiles fine
+# if B does not exist. The grant records that B depends on A more deeply than usual, on its internals rather
+# than its public API, so the dependency runs B -> A, the same way B's ProjectReference already points. A
+# grant never adds an edge; it annotates one that is already declared. The rule that falls out: every grant
+# must name an assembly that references the granter, directly or transitively. One that does not is dead
+# weight, granting access nobody can take.
+#
 # The files at the repo root sit in no slice, so they get their own block at the bottom rather than being
 # left out. Naming slices is their whole job, but "everything may name everything" is still worth writing
 # down - unsaid, a clean run looks like it covered them.
@@ -32,19 +39,15 @@
 slices:
 
   # The bottom of the stack. Binacle.Geometry references nothing at all and everything else is built on it.
-  # Binacle.CompactNotation is the text form of that geometry. shared/data is the fixture corpus and
-  # shared/test is the fixture kernel and report writer that every other C# suite loads.
+  # Binacle.CompactNotation is the text form of that geometry, Binacle.Packing the vocabulary a packing
+  # result is written in. shared/data is the fixture corpus and shared/test is the algorithm fixture kernel
+  # and the report writer.
   shared:
     ".": []
     src: []
-    test:
-      # The only upward edge in the repo. Binacle.TestsKernel is the fixture kernel api, lib and vipaq all
-      # load, and it types its scenarios against the packer's abstractions, so the bottom layer reaches up
-      # one. Removing it means moving the kernel into lib/test.
-      - slice: lib
-        why: Binacle.TestsKernel types its scenarios against Binacle.Lib.Abstractions
+    test: []                         # Binacle.TestsKernel needs only Binacle.Packing, Geometry and CompactNotation
     tools: []                        # the OR-Library converter, which only reads and writes shared/
-    data: []                         # problem files, no code
+    data: []                         # problem files read by more than one slice, no code
 
   # Static files the two Jekyll sites are built from. gulp copies them in; nothing here points anywhere.
   assets:
@@ -72,14 +75,16 @@ slices:
   lib:
     ".": []
     src: [shared]                    # Binacle.Geometry supplies the dimension and coordinate types
-    test: [shared]                   # loads the fixture kernel and the report writer in shared/test
+    test: [shared]                   # loads the algorithm fixture kernel and the report writer in shared/test
+    data: []                         # the result-selection fixtures, read only by lib/test. No code
 
   # The wire format: a C# encoder, a TypeScript port of it, and the vectors that keep the two honest.
   vipaq:
     spec: vipaq/PROTOCOL.md          # the one doc this slice's comments may cite
     ".": []
     src: [shared]                    # the encoder writes Binacle.Geometry dimensions and coordinates
-    test: [shared]                   # fixture kernel, report writer, and vectors written in compact notation
+    test: [shared]                   # the report writer, and vectors written in compact notation. Not the
+                                     # fixture kernel - vipaq has its own, and has never loaded shared/test's
     tools:
       - shared                       # reads problems from shared/data, writes shared-format reports
       # vipaq and lib sit at the same height, so this one has to explain itself. It is confined to tools:
@@ -106,8 +111,8 @@ slices:
   # The service.
   api:
     ".": []
-    src: [shared, lib, vipaq]        # packs with Binacle.Lib, returns the result ViPaq-encoded
-    test: [shared, lib]              # asserts on Binacle.Lib.Abstractions, runs shared/test's fixture kernel
+    src: [shared, lib, vipaq]        # only Binacle.Net itself names the packer, and only to wire it
+    test: [shared]                   # runs shared/test's fixture kernel; asserts on Binacle.Packing, not on lib
     requests: []                     # .http files against a running instance
 
   # The documentation site. Called "docs-site" in the agent guidance, because .agents/docs/ is a different

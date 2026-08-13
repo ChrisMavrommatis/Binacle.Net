@@ -2,14 +2,14 @@
 id: lib/models
 description: Lib model types and IWith* interfaces — Bin, Item, packed/unpacked results, and the constraints used in generic type parameters
 verified: 2026-07-06
-check: Type and interface names match lib/src/Binacle.Lib.Abstractions/; generic geometry interfaces match shared/src/Binacle.Geometry/
+check: Type and interface names match shared/src/Binacle.Packing/ and lib/src/Binacle.Lib/Abstractions/; generic geometry interfaces match shared/src/Binacle.Geometry/
 also_update:
   - api/v4/contracts
 ---
 
 # Models
 
-All types live in `lib/src/Binacle.Lib.Abstractions/` unless noted. The **generic** geometry interfaces and the
+The packing vocabulary lives in `shared/src/Binacle.Packing/`; the engine interfaces in `lib/src/Binacle.Lib/Abstractions/`. The **generic** geometry interfaces and the
 concrete `Dimensions<T>` / `Coordinates<T>` live in the shared `Binacle.Geometry` leaf (`shared/src/Binacle.Geometry/`,
 namespace `Binacle.Geometry`) — see [IWith* interfaces](#iwith-interfaces).
 
@@ -57,12 +57,12 @@ The generic dimensions/coordinates/quantity interfaces live in the shared `Binac
 | `IWithQuantity<T>` | inherits the above; adds settable `Quantity` |
 
 The read-only vs mutable split is deliberate: formatting reads through the read-only interface, vipaq deserialize
-writes through the mutable one. This leaf is the single home — `Binacle.Lib.Abstractions`, `Binacle.CompactNotation`,
+writes through the mutable one. This leaf is the single home — `Binacle.Packing`, `Binacle.CompactNotation`,
 and `Binacle.ViPaq` all point at it.
 
 ### Lib's non-generic `int` shortcuts
 
-`Binacle.Lib.Abstractions.Models` keeps non-generic shortcut interfaces with the **same names** — they inherit the
+`Binacle.Packing` keeps non-generic shortcut interfaces with the **same names** — they inherit the
 leaf's generics bound to `int` (e.g. `IWithReadOnlyDimensions : Binacle.Geometry.IWithReadOnlyDimensions<int>`). This
 is what `Bin`, `Item`, and the result models implement, so most lib/API code never mentions `<T>`. Use the generic
 `<T>` form only for non-`int` types (e.g. vipaq's `ushort` path).
@@ -76,21 +76,22 @@ is what `Bin`, `Item`, and the result models implement, so most lib/API code nev
 | `IWithCoordinates` | `Models/IWithCoordinates.cs` |
 | `IWithReadOnlyCoordinates` | `Models/IWithReadOnlyCoordinates.cs` |
 
-### Lib-owned interfaces (not in the leaf)
+### Packing-owned interfaces (not in the leaf)
 
-`IWithID` and the volume interfaces stay in `lib/src/Binacle.Lib.Abstractions/Models/` — they are not geometry, so
-they never moved. Volume is still generic over `System.Numerics.INumber<T>`.
+`IWithID` is identity, not geometry, so it sits in `shared/src/Binacle.Packing/Abstractions/` rather than in
+`Binacle.Geometry`. The volume interfaces are in `Binacle.Geometry`, still generic over
+`System.Numerics.INumber<T>`.
 
 | Interface | File | What it requires |
 |---|---|---|
-| `IWithID` | `Models/IWithID.cs` | `string ID { get; set; }` |
+| `IWithID` | `Binacle.Packing/Abstractions/IWithID.cs` | `string ID { get; set; }` |
 | `IWithReadOnlyID` | `Models/IWithReadOnlyID.cs` | `string ID { get; }` |
 | `IWithVolume` | `Models/IWithVolume.cs` | `int Volume { get; set; }` (non-generic over `IWithVolume<T> : INumber<T>`) |
 | `IWithReadOnlyVolume` | `Models/IWithReadOnlyVolume.cs` | `int Volume { get; }` |
 
 ### Identifiable markers — read-only composites
 
-`Binacle.Lib.Abstractions.Models` also defines two read-only composite markers, used where a consumer reads only
+`Binacle.Packing` also defines two read-only composite markers, used where a consumer reads only
 id + geometry (chiefly the packing log — a `List<concrete>` hands off with no copy):
 
 | Interface | File | Composes |

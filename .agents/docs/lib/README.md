@@ -1,7 +1,7 @@
 ---
 id: lib
-description: Binacle.Lib and Binacle.Lib.Abstractions — the algorithm layer
-verified: 2026-07-15
+description: Binacle.Lib — the algorithm layer, the only project in lib/src
+verified: 2026-08-13
 check: Project list and test aliases match the solution
 also_update:
   - lib/tests
@@ -12,10 +12,13 @@ also_update:
 
 If you don't know where to start, read `$lib/processors` first.
 
-Two projects:
+One src project:
 
-- `lib/src/Binacle.Lib.Abstractions` — interfaces only; used by both `Binacle.Lib` and the API layer
-- `lib/src/Binacle.Lib` — the actual algorithm code and processors
+- `lib/src/Binacle.Lib` — the algorithm code, processors and result selection. Its `Abstractions/` folder holds
+  the engine interfaces; the vocabulary a caller needs is `Binacle.Packing`, in `shared/src`.
+
+Plus, in this slice: `lib/test/Binacle.Lib.TestsKernel` (the result-selection fixture kernel) and
+`lib/data/result-selection` (the fixtures it embeds).
 
 ## Docs
 
@@ -45,7 +48,7 @@ scenario data format and providers.
 
 ## Dependencies
 
-The Abstractions/Lib split and the composition-root rule (only `Binacle.Net` references the concrete lib) are in
+The composition-root rule (only `Binacle.Net` references the packer) and the two tests kernels are in
 `$lib/dependencies`.
 
 ## Concepts

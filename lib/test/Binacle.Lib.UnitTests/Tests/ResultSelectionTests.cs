@@ -1,5 +1,5 @@
 using Binacle.Lib.ResultSelection;
-using Binacle.TestsKernel.ResultSelection.Providers;
+using Binacle.Lib.TestsKernel.ResultSelection.Providers;
 
 namespace Binacle.Lib.UnitTests;
 

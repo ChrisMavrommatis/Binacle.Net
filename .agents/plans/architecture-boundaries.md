@@ -4,8 +4,13 @@ description: A human-readable architecture.yml stating what each part of the rep
 
 # architecture.yml - state the boundaries, then let tools read them
 
-**Status:** Not started. Designed 2026-08-12, revised twice the same day - once after an independent dependency
+**Status:** Part done. Designed 2026-08-12, revised twice the same day - once after an independent dependency
 audit, once after an adversarial review that rejected the first proposed file. Master plan for one topic.
+
+**`architecture.yml` exists at the repo root and states the real shape as of 2026-08-13** - corrected after the
+`Binacle.Packing` extraction and the tests-kernel split, then checked by re-deriving the graph from every
+`ProjectReference`. So phase 1's *file* half is done and the tooling phases are unblocked. **The comment check
+and the fifteen comment fixes are not done** - that is what phase 1 still owes, and it is the visible win.
 
 ## The goal, in order
 
@@ -161,8 +166,9 @@ for - 13 slices, `results` and `artifacts` as sinks, and the agent guidance dire
   draft that put a `why` on all thirty edges destroyed the mechanism - the one real inversion was buried among
   twenty-nine ordinary ones.
 - **No `components:` level.** A draft added one for `api` alone. It does not survive the code: `kernel: []`
-  is false (`Binacle.Net.Kernel.csproj:19,20` references `Binacle.Lib.Abstractions` and
-  `Binacle.CompactNotation`), and `modules: [kernel]` breaks because a module is three projects
+  is false (`Binacle.Net.Kernel.csproj` references `Binacle.CompactNotation`; it referenced
+  `Binacle.Lib.Abstractions` too until that project was deleted), and `modules: [kernel]` breaks because a
+  module is three projects
   (`Binacle.Net.ServiceModule.csproj:26-28` references `.Domain` and `.Infrastructure`). The rule it was
   trying to express is type-level anyway - see below.
 
@@ -268,10 +274,10 @@ the file for goal 1, but mark them documentation-only or a green run gets read a
 
 ## Phases
 
-1. **`architecture.yml`, hand-written to be read, plus the comment check and the fifteen fixes.** One change.
-   The file proves it is machine-readable, the check delivers the visible win, and the repo is not left holding
-   a new file format that looks machine-checked but is not. A check that is red the day it lands teaches
-   everyone to ignore it, so the fixes ship with it.
+1. **`architecture.yml`, hand-written to be read, plus the comment check and the fifteen fixes.** The file is
+   **done**; the check and the fifteen fixes are **not**, and they still ship together. A check that is red the
+   day it lands teaches everyone to ignore it, so the fixes go in the same change as the check. Re-run the greps
+   first - the fifteen sites were counted on 2026-08-12 and have not been re-checked.
 2. **ArchUnitNET as a test leaf**, leading with the two type-level rules - the api module boundary and
    v3-frozen - not the thirty slice edges.
 3. **dependency-cruiser**, config at the repo root so it sees both workspaces.
@@ -295,31 +301,28 @@ types it needed came down to `shared/src` instead.
   `api/src/Binacle.Net.Kernel` that no file in that project used. Only `Binacle.Net` itself now names the packer,
   and only to wire it. That is a different rule from the api module boundary above, but the same idea one layer
   out - and unlike that one, a graph walk can see it.
-- **`architecture.yml` has not been updated yet** and still declares the old shape. Those edits are listed
-  below and belong to this plan - do not start any tooling phase before they land, because a checker written
-  against the file as it stands today would bake in an exception that no longer exists.
+- **`architecture.yml` is now correct - done 2026-08-13.** `shared: test: []`, `api: test: [shared]`, the
+  `api: src` comment, a `lib: data` scope for the result-selection fixtures, the `vipaq: test` comment (vipaq
+  has never loaded the shared kernel), and the friend-assembly rule in the preamble. The graph was re-derived
+  from every `ProjectReference` in the repo and matches the file: no upward edges, no undeclared edges. **The
+  tooling phases are no longer blocked.**
 
-### The edits `architecture.yml` needs
-
-- **`shared: test: []`.** Delete the `why:` block under it. `Binacle.TestsKernel` needs `Binacle.Packing`,
-  `Binacle.Geometry` and `Binacle.CompactNotation`, all in `shared/src`. Its comment also wrongly claims the
-  kernel is loaded by "api, lib and vipaq" - vipaq has never used it.
-- **`api: test: [shared]`.** The lib edge is gone. The integration suite used `CalculateVolume`,
-  `EarlyExitReason` and `OperationResultStatus`, all of which now live in `shared/src`.
-- **`api: src:`** keeps `[shared, lib, vipaq]`, but the comment should say only `Binacle.Net` carries the lib
-  edge, and only to wire the packer.
-- **Add `Binacle.Packing`** to the `shared/src` description. Geometry stays reference-free at the bottom.
-- **`vipaq: tools:`** keeps its `why` on lib - the packed-data generator references `Binacle.Lib` itself and
-  runs the real packer.
-- **Add the friend-assembly rule to the preamble**, per the section further down.
-
-**Two claims earlier in this file are now stale and were left in place deliberately**, because they are the
+**Three claims earlier in this file are now stale and were left in place deliberately**, because they are the
 audit's record of what was true on 2026-08-12 and the reasoning around them still reads correctly:
 
 - "One inversion, repo-wide: `shared/test/Binacle.TestsKernel.csproj:41` references `lib/src/Binacle.Lib.Abstractions`."
   That reference is gone and so is the project it pointed at.
 - "An audit of every `ProjectReference` found exactly one surprising edge, already known." That edge has since
   been removed rather than documented, which is the outcome the audit was arguing for.
+- The fifteen comment sites and the counts around them were measured on 2026-08-12 and have not been re-checked
+  since. Re-run the greps before relying on the number; the sites themselves are still unfixed.
+
+**One structural change since the audit.** `shared/test/Binacle.TestsKernel` was split on 2026-08-13: its
+result-selection half became `lib/test/Binacle.Lib.TestsKernel`, and the fixtures it embeds moved from
+`shared/data/result-selection` to `lib/data/result-selection`. That adds a `lib: data` scope and a fourth
+project under `lib/test`, both already in `architecture.yml`. It changes no edge - the new project sits on
+`shared/src` like the old half did. `Binacle.Packing`'s friend grant now names `Binacle.Lib.TestsKernel`
+instead of `Binacle.TestsKernel`; per the rule above, that is still not an edge.
 
 ## Decisions needed
 

@@ -1,7 +1,6 @@
-using Binacle.TestsKernel.Helpers;
-using Binacle.TestsKernel.Models;
+using Binacle.CompactNotation;
 
-namespace Binacle.TestsKernel.ResultSelection.Helpers;
+namespace Binacle.Lib.TestsKernel.ResultSelection.Helpers;
 
 internal static class OperationResultHelper
 {
@@ -14,7 +13,11 @@ internal static class OperationResultHelper
 		{
 			throw new FormatException($"Invalid compact string format: {compactString}");
 		}
-		var bin = TestBin.FromCompactString(parts[0]);
+		// PackedBin wants the non-generic IWithReadOnlyDimensions; the parser returns the generic Dimensions<int>,
+		// which does not implement it. Binacle.Packing's own internal Dimensions does, and this project is a
+		// friend, so it bridges the two without dragging in a bin model from the shared kernel.
+		var parsed = CompactNotationParser.ParseDimensions<int>(parts[0]);
+		var bin = new Binacle.Packing.Dimensions(parsed.Length, parsed.Width, parsed.Height);
 		var algorithmInfo = AlgorithmInfoHelper.ParseFromCompactString(parts[1]);
 		var status = Enum.Parse<OperationResultStatus>(parts[2]);
 		var binPct = decimal.Parse(parts[3]);

@@ -1,13 +1,13 @@
-using Binacle.TestsKernel.ResultSelection.Models;
+using Binacle.Lib.TestsKernel.ResultSelection.Models;
 
-namespace Binacle.TestsKernel.ResultSelection.Providers;
+namespace Binacle.Lib.TestsKernel.ResultSelection.Providers;
 
-public static class SmallestBinScenarioProvider
+public static class BestBinScenarioProvider
 {
     private static readonly Dictionary<string, Scenario> scenarios;
-    static SmallestBinScenarioProvider()
+    static BestBinScenarioProvider()
     {
-        var dataProvider = new MultipleScenarioCollectionsProvider(CollectionKeys.SmallestBin.ToArray());
+        var dataProvider = new MultipleScenarioCollectionsProvider(CollectionKeys.BestBin.ToArray());
         scenarios = new Dictionary<string, Scenario>();
         foreach (var collectionScenario in dataProvider)
         {

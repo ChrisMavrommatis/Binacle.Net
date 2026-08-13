@@ -17,7 +17,7 @@ decisions (why) and the findings (measured evidence). Permanent and citable; rea
 
 | File | Description |
 |---|---|
-| [lib/decisions.md](lib/decisions.md) | Lib decisions ledger — why Algorithm.Best races a different set per path, and the open parallelization question. |
+| [lib/decisions.md](lib/decisions.md) | Lib decisions ledger — why Algorithm.Best races a different set per path, where the packing vocabulary lives, why there are two tests kernels, and the open parallelization question. |
 | [lib/findings.md](lib/findings.md) | Lib findings — the measured evidence (algorithm racing cost, parallel racing gain) behind the decisions. |
 
 ## ViPaq

@@ -44,9 +44,9 @@ Binacle.Geometry                    leaf — geometry types + IWith[ReadOnly]Dim
    │              │           refs: ViPaq, CompactNotation, TestReporting
    │              │
    │              └────── Binacle.ViPaq.PackedDataGenerator  (no IVT)  tool exe — freezes data/packed/
-   │                          refs: Lib, Lib.Abstractions, ViPaq, CompactNotation, Geometry, TestReporting
+   │                          refs: Lib, Packing, ViPaq, CompactNotation, Geometry, TestReporting
    │
-   └── lib/src/Binacle.Lib (+ .Abstractions)   the packing engine — reached only by PackedDataGenerator
+   └── lib/src/Binacle.Lib                     the packing engine — reached only by PackedDataGenerator
 ```
 
 `Binacle.TestReporting` (a shared markdown-report writer) is referenced by PerformanceTests and both generators.
@@ -61,7 +61,7 @@ Binacle.Geometry                    leaf — geometry types + IWith[ReadOnly]Dim
 | `Binacle.ViPaq.PerformanceTests` | exe | TestsKernel, TestReporting | yes | `RoundTripCheck` gate + size/codec reports |
 | `Binacle.ViPaq.Benchmarks` | exe | TestsKernel | yes | BenchmarkDotNet timings |
 | `Binacle.ViPaq.VectorGenerators` | tool exe | ViPaq, CompactNotation, TestReporting | yes | regenerates `test-vectors/` |
-| `Binacle.ViPaq.PackedDataGenerator` | tool exe | Lib(+Abstractions), ViPaq, CompactNotation, Geometry, TestReporting | **no** | packs problems offline, freezes `data/packed/` |
+| `Binacle.ViPaq.PackedDataGenerator` | tool exe | Lib, Packing, ViPaq, CompactNotation, Geometry, TestReporting | **no** | packs problems offline, freezes `data/packed/` |
 
 ## The walls (easy to break, deliberate)
 

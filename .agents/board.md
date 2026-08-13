@@ -37,9 +37,12 @@ Agents keep this file current. Two rules:
   question that outlived it - whether the frozen versioned sample copies get corrected or annotated - moved
   into `sonar-issue-triage`, which already held the findings it came from.
 
-  **`sonar-issue-triage` has never had a row here**, and it should: the sweep is done but it still carries the
-  CA1816 decision, the frozen-copies question and what the quality gate hangs on. **Placement and priority are
-  the maintainer's call**, so it has not been put in a table.
+  `sonar-issue-triage` and `architecture-boundaries` used to be listed here as having no row. They now have
+  one, under Architecture and quality.
+
+  **`lib/extract-packing-contracts` is done and its file is deleted** (2026-08-13). The code, `architecture.yml`,
+  `lib/README.md` and all fourteen agent-reference files landed; its durable reasoning moved into the lib
+  decisions ledger as D2 and D3.
 - **Reference material.** Docs, design and memory are not work. Find them through their own indexes.
 
 ---
@@ -84,6 +87,25 @@ v3.0.0 release plan owns the scheduling from here.**
 One-liner, in [todos](plans/todos.md): **lint the OpenAPI documents on every PR.** Ready, and no longer
 blocked - the `servers` block landed on 2026-08-10 and the lint is clean, so the gate can fail on warnings
 from day one.
+
+## Architecture and quality
+
+Cross-cutting work that belongs to no single slice. **These two are not ranked against each other** - the order
+below is alphabetical, not a priority.
+
+| Plan | State | Waiting on |
+|---|---|---|
+| [architecture-boundaries](plans/architecture-boundaries.md) | in progress | - |
+| [sonar-issue-triage](plans/sonar-issue-triage.md) | ready | - |
+
+**`architecture-boundaries` is what gets picked up next**, by the maintainer's call on 2026-08-13. Its file half
+is done: `architecture.yml` states the real shape and the graph was re-derived from every `ProjectReference` to
+prove it, so nothing is blocked. What is left is the comment check - two arms, the filename list and the bare
+`$id` pattern - shipping in one change with the fifteen comment fixes, then ArchUnitNET, dependency-cruiser and
+lychee. **Re-run the greps first:** the fifteen sites were counted on 2026-08-12 and have not been re-checked.
+
+**`sonar-issue-triage` is the sweep's leftovers.** The sweep itself is done; the file still carries the CA1816
+decision, the frozen-copies question and what the quality gate hangs on.
 
 ## Testing
 

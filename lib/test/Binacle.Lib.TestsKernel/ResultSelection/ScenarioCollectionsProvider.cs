@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
-using Binacle.TestsKernel.Files;
+using Binacle.Lib.TestsKernel.Files;
 
-namespace Binacle.TestsKernel.ResultSelection;
+namespace Binacle.Lib.TestsKernel.ResultSelection;
 
 public static class ScenarioCollectionsProvider
 {
@@ -12,7 +12,7 @@ public static class ScenarioCollectionsProvider
     {
         collections = new Dictionary<string, List<Models.Scenario>>();
 
-        var files = EmbeddedResourceFileProvider.ByPrefix("Binacle.TestsKernel.ResultSelection.Data.");
+        var files = EmbeddedResourceFileProvider.ByPrefix("ResultSelection.");
 
         foreach (var file in files)
         {

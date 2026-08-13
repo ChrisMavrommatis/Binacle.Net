@@ -1,5 +1,5 @@
 
-namespace Binacle.TestsKernel.ExtensionMethods;
+namespace Binacle.TestsKernel.Algorithms.ExtensionMethods;
 
 public static class OperationResultExtensions
 {

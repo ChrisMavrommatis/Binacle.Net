@@ -53,10 +53,13 @@ report:
     fi
     dotnet tool restore > /dev/null
     # Test-support assemblies are dropped: a test helper scoring itself says nothing about shipped code.
+    # `*.TestsKernel` covers all three kernels and any future one, so adding a kernel needs no edit here.
+    # TestReporting and the ViPaq kernel reach the report only if a suite that runs under coverage starts
+    # referencing them; they are named so that day is silent rather than a denominator shift nobody notices.
     dotnet reportgenerator \
         -reports:'artifacts/coverage/cobertura/*.xml' \
         -targetdir:'artifacts/coverage/html-report' \
-        -assemblyfilters:'-Binacle.TestsKernel;-*.UnitTests;-*.IntegrationTests' \
+        -assemblyfilters:'-*.TestsKernel;-Binacle.TestReporting;-*.UnitTests;-*.IntegrationTests' \
         -reporttypes:'Html;TextSummary;MarkdownSummaryGithub' \
         > /dev/null
     echo "HTML report: artifacts/coverage/html-report/index.html"

@@ -1,4 +1,4 @@
-namespace Binacle.TestsKernel.ResultSelection;
+namespace Binacle.Lib.TestsKernel.ResultSelection;
 
 public static class CollectionKeys
 {

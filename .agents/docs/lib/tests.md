@@ -1,7 +1,7 @@
 ---
 id: lib/tests
 description: lib/test projects — unit tests, performance tests, benchmarks; AlgorithmFactories, CommonTestingFixture, ResultSelectionTestingFixture, and run aliases
-verified: 2026-08-09
+verified: 2026-08-13
 check: Project list, AlgorithmFactories/CommonTestingFixture/ResultSelectionTestingFixture, and aliases match lib/test/ and tooling/tests.just + tooling/performance.lib.sh + tooling/benchmarks.lib.sh
 also_update:
   - shared
@@ -11,11 +11,15 @@ also_update:
 
 # Lib Tests
 
-Three projects under `lib/test/`. Scenario data and the `TestAlgorithmFactory<>` delegate come from the shared
-kernel — see shared (`$shared`).
+Four projects under `lib/test/`, one of them a fixture kernel rather than a suite. Algorithm scenario data and
+the `TestAlgorithmFactory<>` delegate come from the shared kernel — see shared (`$shared`). The
+**result-selection** fixtures come from this slice's own `Binacle.Lib.TestsKernel`, which embeds
+`lib/data/result-selection` under the manifest prefix `ResultSelection.` — it is here rather than in `shared`
+because nothing outside this slice reads it (`$lib/dependencies`).
 
 | Project | Kind | Run |
 |---|---|---|
+| `Binacle.Lib.TestsKernel` | fixture library (no suite) | — |
 | `Binacle.Lib.UnitTests` | xUnit | `just test lib-unit` |
 | `Binacle.Lib.PerformanceTests` | console host (writes markdown reports) | `./tooling/performance.lib.sh` |
 | `Binacle.Lib.Benchmarks` | BenchmarkDotNet | `./tooling/benchmarks.lib.sh [FastValidation\|AlgorithmRacing\|BischoffSuite\|Parallelization\|ResultSelection]` |
@@ -62,7 +66,7 @@ Scenario GetScenarioByName(string scenarioName)
 string Select(Scenario scenario, IResultSelectionStrategy strategy, Func<OperationResult, string> resultSelector)
 ```
 
-`GetScenarioByName` pulls from the kernel's `ResultSelection` `AllScenariosProvider`; `Select` calls
+`GetScenarioByName` pulls from `Binacle.Lib.TestsKernel`'s `ResultSelection` `AllScenariosProvider`; `Select` calls
 `strategy.Select(scenario.Results)` and applies `resultSelector`. There is no assert member here — the check
 is a single comparison, so the test makes it itself with `selected.ShouldBe(scenario.ExpectedResult)`.
 `ResultSelectionTests` runs both strategy versions: `BestAlgorithm_v1/v2` (selector

@@ -62,16 +62,16 @@ everything downstream — HTTPS redirection, the health check IP allow-list, rat
 Projects live in three top-level directories: `lib/src/`, `api/src/`, `vipaq/src/`.
 
 ```
-lib/src/Binacle.Lib.Abstractions          → Binacle.Geometry
-lib/src/Binacle.Lib                       → Binacle.Lib.Abstractions
+shared/src/Binacle.Packing                → Binacle.Geometry
+lib/src/Binacle.Lib                       → Binacle.Packing
 vipaq/src/Binacle.ViPaq                   → Binacle.Geometry
 
-api/src/Binacle.Net.Kernel                → Binacle.Lib.Abstractions, Binacle.CompactNotation
+api/src/Binacle.Net.Kernel                → Binacle.CompactNotation
 api/src/Binacle.Net.DiagnosticsModule     → Binacle.Net.Kernel
 api/src/Binacle.Net.ServiceModule.Domain  (no dependencies)
 api/src/Binacle.Net.ServiceModule.Infrastructure → Binacle.Net.Kernel, ServiceModule.Domain
 api/src/Binacle.Net.ServiceModule         → Binacle.Net.Kernel, ServiceModule.Domain, ServiceModule.Infrastructure
-api/src/Binacle.Net.UIModule              → Binacle.Net.Kernel, Binacle.Lib.Abstractions, Binacle.ViPaq, Binacle.CompactNotation
+api/src/Binacle.Net.UIModule              → Binacle.Net.Kernel, Binacle.Packing, Binacle.ViPaq, Binacle.CompactNotation
 api/src/Binacle.Net                       → Binacle.Lib, all modules, Binacle.ViPaq
 ```
 
@@ -80,7 +80,8 @@ This is the API slice's view. The full graph across every slice — including wh
 
 Key rules:
 - Kernel has no dependency on `Binacle.Net` or any module — safe to use from anywhere
-- Lib and Lib.Abstractions have no API dependencies — pure algorithm layer
+- Lib and Binacle.Packing have no API dependencies — pure algorithm layer
+- Only `Binacle.Net` references the packer; the Kernel, the modules and the tests take `Binacle.Packing`
 - Modules depend on Kernel but not on each other
 - `Binacle.Net` is the only project that references everything
 

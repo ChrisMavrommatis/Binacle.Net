@@ -58,10 +58,10 @@ table of [README.md](README.md).
 |---|---|
 | [lib/algorithm-factory.md](lib/algorithm-factory.md) | IAlgorithmFactory — how algorithm instances are created, DI registration, and how tests construct algorithms directly |
 | [lib/algorithms.md](lib/algorithms.md) | Packing heuristics (FFD/WFD/BFD) — versions, operation types, trade-offs, and the fit/pack guarantee |
-| [lib/dependencies.md](lib/dependencies.md) | Lib slice dependency tree — the Abstractions/Lib split, who sees internals (IVT), and the composition-root rule (only Binacle.Net references the concrete Binacle.Lib; everyone else uses Abstractions). |
+| [lib/dependencies.md](lib/dependencies.md) | Lib slice dependency tree — Binacle.Lib as the single src project, its own result-selection tests kernel, who sees internals (IVT), and the composition-root rule (only Binacle.Net references the packer). |
 | [lib/models.md](lib/models.md) | Lib model types and IWith* interfaces — Bin, Item, packed/unpacked results, and the constraints used in generic type parameters |
 | [lib/processors.md](lib/processors.md) | IAlgorithmProcessor, IBinProcessor, and IMultiAlgorithmBinProcessor — their factories and which algorithms each execution path uses |
-| [lib/README.md](lib/README.md) | Binacle.Lib and Binacle.Lib.Abstractions — the algorithm layer |
+| [lib/README.md](lib/README.md) | Binacle.Lib — the algorithm layer, the only project in lib/src |
 | [lib/result-building.md](lib/result-building.md) | OperationResultBuilder — how OperationResult is constructed, status rules, volume percentages, and integrity checks |
 | [lib/result-selection.md](lib/result-selection.md) | IResultSelector, IResultSelectionStrategy, and the three selection strategies — scoring rules, tie-breaking, and how tests verify them |
 | [lib/tests.md](lib/tests.md) | lib/test projects — unit tests, performance tests, benchmarks; AlgorithmFactories, CommonTestingFixture, ResultSelectionTestingFixture, and run aliases |
@@ -90,8 +90,8 @@ table of [README.md](README.md).
 
 | File | Description |
 |---|---|
-| [shared/dependencies.md](shared/dependencies.md) | Shared slice dependency tree — Geometry (the BCL-only leaf everything geometric bottoms out on), CompactNotation, TestReporting, and the TestsKernel test hub; who references them and who sees internals. |
-| [shared/README.md](shared/README.md) | Shared slice — Binacle.TestsKernel (scenario data, compact-string formats, providers, fixtures) and shared/data (OR-Library benchmark data) |
+| [shared/dependencies.md](shared/dependencies.md) | Shared slice dependency tree — Geometry (the BCL-only leaf everything geometric bottoms out on), CompactNotation, Packing, TestReporting, and the algorithm TestsKernel; who references them and who sees internals. |
+| [shared/README.md](shared/README.md) | Shared slice — Binacle.TestsKernel (algorithm scenario data, compact-string formats, providers, fixtures) and shared/data (the fixture corpus more than one slice reads) |
 
 ## Tooling
 

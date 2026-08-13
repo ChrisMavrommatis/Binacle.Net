@@ -12,6 +12,7 @@ conventions, decisions, gotchas. See [README.md](README.md) for when and how to 
 | File | Description |
 |---|---|
 | [algorithm-identifier-is-a-format.md](algorithm-identifier-is-a-format.md) | The FFD_v2 / BFD_v1 string is a parsed data format, not a naming style - never tidy the underscore out of it |
+| [bulk-rename-traps.md](bulk-rename-traps.md) | Four traps when sweeping a namespace or type rename across this repo — spaces in Algorithms/ folder names, unstaged files and git mv, global usings that collide, and fully-qualified names |
 | [migration-no-silent-deletions.md](migration-no-silent-deletions.md) | Migrations land as small reviewable diffs — every removed test needs a visible successor, never a silent delete |
 | [name-each-step.md](name-each-step.md) | Give each step a named local — no nested or chained call expressions squeezed into one statement |
 | [no-published-sdks.md](no-published-sdks.md) | We ship an OpenAPI document per version, not client SDKs — consumers generate their own; publishing a package needs real demand first. |

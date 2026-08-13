@@ -18,9 +18,9 @@ Docker build. For the commands themselves see `$commands`.
 
 The repo uses the XML `.slnx` solution format. Projects are grouped by solution folder, mirroring the repo slices:
 
-- `/lib/src/`, `/lib/test/` — `Binacle.Lib(.Abstractions)` + the three lib test projects
+- `/lib/src/`, `/lib/test/` — `Binacle.Lib` (the only src project) + four lib test projects, one of them `Binacle.Lib.TestsKernel`
 - `/api/src/`, `/api/test/` — `Binacle.Net`, `Binacle.Net.Kernel`, the three modules (+ ServiceModule.Domain/.Infrastructure), two integration-test projects and four unit-test projects (one per source project that has unit tests: `Binacle.Net`, `Kernel`, `DiagnosticsModule`, `ServiceModule`)
-- `/vipaq/src/`, `/vipaq/test/`, `/shared/src/`, `/shared/test/` — ViPaq + its tests + `Binacle.Geometry` and `Binacle.CompactNotation` (in `shared/src`) + `Binacle.TestsKernel`, `Binacle.TestReporting` and `Binacle.CompactNotation.UnitTests` (in `shared/test`)
+- `/vipaq/src/`, `/vipaq/test/`, `/shared/src/`, `/shared/test/` — ViPaq + its tests + `Binacle.Geometry`, `Binacle.CompactNotation` and `Binacle.Packing` (in `shared/src`) + `Binacle.TestsKernel`, `Binacle.TestReporting` and `Binacle.CompactNotation.UnitTests` (in `shared/test`)
 - `/vipaq/tools/` (`Binacle.ViPaq.VectorGenerators`, `Binacle.ViPaq.PackedDataGenerator`), `/shared/tools/` (`Binacle.OrLibrary.Converter`) — standalone generators, not referenced by the shipped projects
 - `/samples/docker/` (4 `.dcproj`), `/samples/kubernetes/` (`.proj`), `/results/`, `/api/` (requests), `/artifacts/`
 - Top-level content projects: `assets/assets.proj`, `tooling/tooling.proj`, `docs/docs.proj`, `web/web.proj`
@@ -50,10 +50,11 @@ A fifth property is set **conditionally**: any project whose directory path cont
 `MSBuildProjectDirectory` is separator-native and the match would miss on Linux otherwise.
 
 The Scanner for .NET identifies a test project by its `Microsoft.NET.Test.Sdk` reference. That finds the xunit
-suites but **not** the ten support projects that have no such reference — both test kernels, `TestReporting`,
-the two benchmark projects, the two performance suites, and the three generator/converter tools. Without the
-property the scanner reads all ten as product code, which put 1203 lines into the coverage denominator that no
-test will ever cover and ran the product rule set over them (`S101` on benchmark class names, `S2223` on the
+suites but **not** the eleven support projects that have no such reference — all three test kernels,
+`TestReporting`, the two benchmark projects, the two performance suites, and the three generator/converter
+tools. Without the property the scanner reads all eleven as product code, which put 1203 lines into the coverage
+denominator that no test will ever cover (measured when there were ten, before `Binacle.Lib.TestsKernel` was
+split out, so the real figure is now a little higher) and ran the product rule set over them (`S101` on benchmark class names, `S2223` on the
 TestsKernel key holders). Deriving it from the folder means a new support project is classified by where it
 lives, with nothing to remember.
 

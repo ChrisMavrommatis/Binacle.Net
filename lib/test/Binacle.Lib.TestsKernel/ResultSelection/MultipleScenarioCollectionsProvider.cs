@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Binacle.TestsKernel.ResultSelection;
+namespace Binacle.Lib.TestsKernel.ResultSelection;
 
 internal class MultipleScenarioCollectionsProvider : IEnumerable<Models.CollectionScenario>
 {

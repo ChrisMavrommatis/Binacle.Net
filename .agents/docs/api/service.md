@@ -8,7 +8,7 @@ check: Method signatures match IBinacleService in api/src/Binacle.Net/Services/B
 # IBinacleService
 
 Defined in `api/src/Binacle.Net/Services/BinacleService.cs`. The interface is `internal` — it lives in the
-`Binacle.Net` assembly, not in `Binacle.Lib.Abstractions`. Endpoint handlers inject it and call the appropriate
+`Binacle.Net` assembly, not in the packer or `Binacle.Packing`. Endpoint handlers inject it and call the appropriate
 method. They do not touch processors or factories directly.
 
 ## Methods
@@ -26,7 +26,7 @@ ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
 The same generic signature and constraints apply to every method below (the `MultipleBinsAsync` overloads
 return `ValueTask<IDictionary<string, OperationResult>>`). The table simplifies argument names for readability.
 
-`IIdentifiableBin` / `IIdentifiableItem` (in `Binacle.Lib.Abstractions.Models`) are the read-only markers the
+`IIdentifiableBin` / `IIdentifiableItem` (in `Binacle.Packing`) are the read-only markers the
 packing log reads through — see Models (`$lib/models`). `ILogParametersProvider` lets the params render
 themselves into the log. All three exist so the service output can flow into the log channel with no copy.
 
