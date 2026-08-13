@@ -32,8 +32,8 @@ internal class InvalidIPEntryProvider : IEnumerable<object?[]>
 		yield return ["fe80::1%eth0"]; // a scope id is dropped, not matched on
 		yield return ["fe80::1%12"];
 
-		// An IPv4-mapped CIDR entry. Unmapping it leaves an IPv4 address, and /120 is past /32, so it is refused
-		// here rather than parsing and then matching no caller.
+		// Unmapping leaves an IPv4 address and /120 is past /32, so it is refused rather than parsing and then
+		// matching no caller.
 		yield return ["::ffff:192.168.1.0/120"];
 
 		yield return ["192.168.1.0/"];

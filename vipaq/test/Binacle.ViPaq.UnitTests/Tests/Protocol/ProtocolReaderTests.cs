@@ -3,11 +3,10 @@ using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// The reader pulls bytes off the wire little-endian (low byte first). ReadUInt16 returns a fixed width and
-// is used for the header, so T does not matter there; the rows below use ProtocolReader<int> for it.
-// Read8Bits / Read16Bits read the same bytes but widen the value to T. The byte vectors are the shared
-// little-endian/<width>.json files, also used by the writer tests, so read and write are checked against
-// the same known bytes.
+// The reader pulls bytes off the wire little-endian. ReadUInt16 returns a fixed width and is used for the
+// header, so T does not matter there. Read8Bits / Read16Bits read the same bytes but widen the value to T. The
+// byte vectors are the shared little-endian/<width>.json files, so read and write grade against the same
+// bytes.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class ProtocolReaderTests
 {
@@ -24,8 +23,8 @@ public class ProtocolReaderTests
 		result.ShouldBe((int)expected);
 	}
 
-	// At end of stream a single-byte read must throw, not hand back a phantom byte. This is the lib-level
-	// pin for the fix that lets a truncated 8-bit body be rejected (see the shared decode-invalid vector).
+	// At end of stream a single-byte read must throw, not hand back a phantom byte, or a truncated 8-bit body
+	// would be accepted.
 	[Fact]
 	public void Read8Bits_Throws_At_End_Of_Stream()
 	{
@@ -47,9 +46,8 @@ public class ProtocolReaderTests
 		result.ShouldBe(expected);
 	}
 
-	// Read16Bits reads the same little-endian bytes, then widens the value to T. It reuses the same vectors:
-	// bytes in, the wider T value out. This is the only place the 16-bit little-endian order is pinned now
-	// that the unused concrete readers are gone.
+	// Read16Bits reads the same little-endian bytes, then widens to T. The only place the 16-bit byte order is
+	// pinned on the read side.
 	[Theory]
 	[MemberData(nameof(LittleEndianProvider.UInt16Names), MemberType = typeof(LittleEndianProvider))]
 	public void Read16Bits_Widens_To_T(string name)
@@ -65,9 +63,8 @@ public class ProtocolReaderTests
 	private const byte SingleByte = 100; // 0x64, fits every signed and unsigned type
 
 	// A type cannot live inside a data row, so the row carries the Type and these maps reach the matching
-	// generic call. Two of them rather than one returning both halves, so the test keeps its arrange, act
-	// and assert as three separate lines: one supplies the expected value, the other does the read.
-	// Guards the regression where Read8Bits only worked when T was int.
+	// generic call. Two maps rather than one returning both halves, so arrange, act and assert stay on three
+	// lines. Guards the regression where Read8Bits only worked when T was int.
 	private static readonly Dictionary<Type, Func<object>> ExpectedSingleByteByType = new()
 	{
 		[typeof(sbyte)] = ExpectedSingleByteAs<sbyte>,
@@ -115,8 +112,7 @@ public class ProtocolReaderTests
 		where T : struct, IBinaryInteger<T>
 		=> T.CreateChecked(SingleByte);
 
-	// One byte on the wire, read back as T. Boxed so the row can carry it - both sides box the same T, so
-	// equality still compares like with like.
+	// Boxed so the row can carry it. Both sides box the same T, so equality compares like with like.
 	private static object ReadSingleByteAs<T>()
 		where T : struct, IBinaryInteger<T>
 	{

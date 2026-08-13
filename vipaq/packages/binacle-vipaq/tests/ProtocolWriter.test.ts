@@ -5,9 +5,8 @@ import {Sizes} from "../src/utils";
 import {expectBytes} from "./support/bytes";
 import {uint8Cases, uint16Cases} from "./providers/LittleEndianCases";
 
-// Each write primitive range-checks like C#'s CreateChecked. Only 8- and 16-bit widths exist now; the old 32/64
-// -bit writes are gone. A value one over its ceiling (or negative) must throw, not truncate; the largest in-range
-// value still writes. maxBytes is the little-endian encoding of `max`.
+// Each write primitive range-checks like C#'s CreateChecked. A value one over its ceiling, or negative, must
+// throw rather than truncate; the largest in-range value still writes. maxBytes is `max` little-endian.
 const widthCeilings = [
 	{name: "8-bit", size: 1, max: Sizes.eightBitsMax, write: (w: ProtocolWriter, v: number) => w.write8Bits(v), maxBytes: [0xff]},
 	{name: "16-bit", size: 2, max: Sizes.sixteenBitsMax, write: (w: ProtocolWriter, v: number) => w.write16Bits(v), maxBytes: [0xff, 0xff]},

@@ -1,6 +1,6 @@
 // Ports C#: Providers/Serialization/RoundTripProvider.cs. A (bin, items) input plus the header the encoder must
-// produce (ExpectedHeader, in header-notation text form). Read row by row, resolved into Scenario objects.
-// Consumed by roundTrip.test.ts. Not a *.test.ts file, so jest does not run it.
+// produce, in header-notation text form.
+// Not a *.test.ts file, so jest does not run it.
 
 import {readVectors} from "../support/vectorReader";
 import {parseBin, parseItems, parseHeader} from "../support/vectorParser";

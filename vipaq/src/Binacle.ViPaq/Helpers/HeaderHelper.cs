@@ -2,8 +2,8 @@ using System.Numerics;
 
 namespace Binacle.ViPaq.Helpers;
 
-// What a header cannot answer on its own: whether the caller's generic argument is wide enough to hold what
-// the header declares. That is a question about `T`, not about the header, so it does not live on `Header`.
+// Whether the caller's generic argument is wide enough for what the header declares. A question about `T`, not
+// about the header, so it does not live on `Header`.
 internal static class HeaderHelper
 {
 	// The widest width each generic argument can hold. A blob with 16-bit sections cannot be read into a byte.

@@ -9,15 +9,11 @@ namespace Binacle.ViPaq.PerformanceTests.Tests;
 
 // Stored size for every scenario, ViPaq against protobuf, at one (codec, layout).
 //
-// One test is one table. `Program` registers one per (codec file × scenario set × layout), and protobuf runs the
-// same codec as ViPaq, so the comparison is like-for-like — the only thing that differs is the format. That is
-// the fairness rule the old report broke by comparing a compressed ViPaq token against raw protobuf.
+// Protobuf runs the same codec as ViPaq, so only the format differs. Comparing a compressed ViPaq token against
+// raw protobuf is the unfairness this rule exists to stop.
 //
-// Base64 is the stored form, so it is the headline, with the raw byte counts beside it. There is no layout
-// column: layout is fixed per table, and it does not move raw size anyway.
-//
-// The set, layout and codec are passed in. Today that is the real custom and Bischoff packs; synthetic is never
-// size-measured (gzip can't grip random data) — it only feeds the BDN speed/memory benchmarks.
+// Base64 is the stored form and the headline, with raw byte counts beside it. No layout column: layout is fixed
+// per table and does not move raw size. Synthetic data is never size-measured - gzip can't grip random data.
 internal class VipaqProtobufSizeComparisonTest : ITest
 {
 	private readonly IReadOnlyCollection<Scenario> scenarios;
@@ -74,8 +70,7 @@ internal class VipaqProtobufSizeComparisonTest : ITest
 			var protobufToken = protobufEncoder.Encode(scenario);
 			var protobufTokenBase64 = protobufToken.ToBase64();
 
-			// Base64 against base64, the stored form, as a plain ratio: 0.30 means ViPaq is 30% the size of
-			// protobuf. Under 1.0 means ViPaq is the smaller of the two.
+			// Stored form against stored form: 0.30 means ViPaq is 30% the size of protobuf.
 			var ratio = (double)vipaqTokenBase64.Length / protobufTokenBase64.Length;
 
 			table.AddRow(

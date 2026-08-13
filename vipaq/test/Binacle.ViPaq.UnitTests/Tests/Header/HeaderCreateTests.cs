@@ -2,16 +2,15 @@ using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// Header.Create picks a width for the bin, the item dimensions, and the item coordinates, each from its own
-// values, and takes the biggest item in the list. Deciding "this value -> that width" is WidthHelper's job
-// (tested there), so here we only check the wiring, the "biggest wins" loop, and the empty-list default. It
-// always builds an uncompressed, row-major header (compression and layout are the choosing layer's job, not
-// Create's). One wide type (ulong) is used because it can hold a value in every width bucket.
+// Header.Create picks a width for the bin, the item dimensions and the item coordinates, each from its own
+// values, taking the biggest item in the list. "This value -> that width" is WidthHelper's job and is tested
+// there, so this covers the wiring, the "biggest wins" loop and the empty-list default. ulong is used because
+// it holds a value in every width bucket.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class HeaderCreateTests
 {
-	// A value whose required storage is exactly this width: the top of each bucket. This forces WidthHelper
-	// to pick this exact width. Different job from WidthValues.DistinctValue, which picks an interior value.
+	// The top of each bucket, which forces WidthHelper to pick that exact width. Different job from
+	// WidthValues.DistinctValue, which picks an interior value.
 	private static ulong BoundaryValueFor(Width width) => width switch
 	{
 		Width.Eight => byte.MaxValue,     // 255
@@ -40,9 +39,8 @@ public class HeaderCreateTests
 	private static Header CreateFor(Binacle.Geometry.Dimensions<ulong> bin, params Binacle.Geometry.Item<ulong>[] items) =>
 		Header.Create<Binacle.Geometry.Dimensions<ulong>, Binacle.Geometry.Item<ulong>, ulong>(bin, items);
 
-	// Wiring matrix: each of the three widths comes from its own input, and the form is always raw + row-major.
-	// Width is internal, so a public [Theory] method cannot name it (CS0051); the boxed widths ride the theory
-	// data as object and are cast back here.
+	// Each of the three widths comes from its own input; the form is always raw + row-major. Width is internal,
+	// so a public [Theory] cannot name it (CS0051): the boxed widths ride the row as object.
 	[Theory]
 	[ClassData(typeof(HeaderWidthComboProvider))]
 	public void Create_Sets_Each_Width_From_Its_Own_Input(

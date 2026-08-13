@@ -6,9 +6,8 @@ import {DecodedPackingResult} from "../viewModels";
 
 const SAVED_RESULTS_KEY = 'ProtocolDecoderSavedResults';
 
-// Bump when the ViPaq wire changes. "2" is the rebuilt wire (PROTOCOL.md). The stored value carries its own
-// version; anything without a matching version — including the old bare array of tokens — is from a previous
-// format and cannot be decoded, so it is discarded on load.
+// Bump when the ViPaq wire changes. "2" is the rebuilt wire (PROTOCOL.md). Anything without a matching
+// version, the old bare array of tokens included, cannot be decoded and is discarded on load.
 const CURRENT_SCHEMA_VERSION = 2;
 
 interface SavedResults {
@@ -42,8 +41,8 @@ export const protocolDecoderApp = defineComponent(() => ({
 				});
 		});
 	},
-	// Reads the stored tokens, but only if they carry the current schema version. Anything else — an older
-	// version, the old bare array, or corrupt JSON — is discarded, and the user is told once.
+	// Only reads tokens carrying the current schema version. Anything else is discarded and the user is told
+	// once.
 	loadSavedResults(): string[] {
 		const raw = localStorage.getItem(SAVED_RESULTS_KEY);
 		if (!raw) {

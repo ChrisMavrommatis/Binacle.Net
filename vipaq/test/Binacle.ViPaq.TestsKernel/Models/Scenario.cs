@@ -1,12 +1,10 @@
 namespace Binacle.ViPaq.TestsKernel.Models;
 
-// One benchmark input: a bin plus placed items, exactly what both ViPaq and protobuf serialize.
-// Uses the shared Binacle.Geometry types so ViPaq's public Serialize takes it as-is and no second
-// model can drift from it.
+// One benchmark input: a bin plus placed items, exactly what both ViPaq and protobuf serialize. Uses the shared
+// Binacle.Geometry types so no second model can drift from them.
 //
-// WidthBits and Spread are what we *asked the generator for*. They label the scenario so reports can
-// group by shape. What ViPaq actually stored (8- or 16-bit per section, compressed or not) is read
-// back from the token's header — see ViPaqHeader. Never trust these tags as ground truth for size.
+// WidthBits and Spread are what the generator was asked for, and only label the scenario. Never trust them as
+// ground truth for size - what ViPaq actually stored is read back from the token's header.
 public sealed record Scenario
 {
 	public required string Name { get; init; }

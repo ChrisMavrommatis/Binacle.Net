@@ -2,24 +2,18 @@ using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// The exact bytes on the wire. This is the anchor for the format: the two header bytes, little-endian
-// item count, then bin dimensions, then each item's dimensions and coordinates. The TypeScript
-// mirror must produce the same bytes for the same input, so this is the cross-language contract.
-// Both directions are pinned against the same golden vectors: encode -> bytes, and bytes ->
-// object. Pinning both sides catches a bug that is symmetric in encode+decode, which a
-// round-trip test would miss.
+// The exact bytes on the wire, and the cross-language contract: the TypeScript mirror must produce the same
+// bytes for the same input. Both directions are pinned against the same golden vectors, which catches a bug
+// symmetric in encode+decode that a round-trip test would miss.
 //
 // Encode goes through ProtocolEncoder, not ViPaqSerializer: the header is derived from the golden bytes and
-// handed in, so the test pins the exact bytes a given header produces rather than whatever widths ViPaqSerializer
-// happens to pick. All exact-bytes vectors are raw (compressed bytes are not reproducible, so they can never be
-// pinned here), so the encoder gets the NoOp codec and the body stays byte-for-byte readable.
+// handed in, so the test pins the bytes a given header produces. All exact-bytes vectors are raw, because
+// compressed bytes are not reproducible.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class SerializationEncodingTests
 {
-	// Golden vectors from the shared exact-bytes.json: known input -> the exact bytes it must produce.
-	// The row carries the Name; the case (bin, items, bytes) is resolved by name. Each case pins byte
-	// order, header packing, and field order at once. Values are read as `long` (the interoperable
-	// range fits long exactly).
+	// Known input -> the exact bytes it must produce. Each case pins byte order, header packing and field
+	// order at once.
 	[Theory]
 	[MemberData(nameof(ExactBytesProvider.Names), MemberType = typeof(ExactBytesProvider))]
 	public void Encode_Produces_Exact_Bytes(string name)
@@ -32,9 +26,8 @@ public class SerializationEncodingTests
 		data.ShouldBe(scenario.Bytes);
 	}
 
-	// The inverse of the serialize golden: the same known bytes must decode back to the same bin and
-	// items. This pins the decode path against literal bytes, so a bug that is symmetric in
-	// serialize+deserialize (and would slip past the round-trip tests) is caught here.
+	// The inverse: the same known bytes decode back to the same bin and items. Pinning decode against literal
+	// bytes catches a bug symmetric in serialize+deserialize.
 	[Theory]
 	[MemberData(nameof(ExactBytesProvider.Names), MemberType = typeof(ExactBytesProvider))]
 	public void Decode_Produces_Exact_Object(string name)
@@ -47,10 +40,9 @@ public class SerializationEncodingTests
 		BinContents.AssertSame(expected, actual);
 	}
 
-	// This one stays on ViPaqSerializer on purpose: picking the narrowest width that holds each section, and
-	// leaving the blob uncompressed, is ViPaqSerializer's own job (the choosing layer, PROTOCOL.md §4/§6) — the
-	// exact thing ProtocolEncoder does NOT do, since it is handed a header. So this is the right place to pin
-	// that choice. Width is internal, so the boxed widths ride the theory data as object and are cast back here.
+	// Stays on ViPaqSerializer on purpose: picking the narrowest width and leaving the blob uncompressed is its
+	// own job (PROTOCOL.md §4/§6), and ProtocolEncoder cannot pin it. Width is internal, so the boxed widths
+	// ride the row as object.
 	[Theory]
 	[ClassData(typeof(HeaderWidthComboProvider))]
 	public void ViPaqSerializer_Chooses_Correct_Widths_In_Header(

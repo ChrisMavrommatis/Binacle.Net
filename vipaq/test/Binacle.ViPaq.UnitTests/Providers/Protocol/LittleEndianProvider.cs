@@ -2,10 +2,9 @@ using System.Globalization;
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// little-endian/<width>.json as xUnit theory rows: a value paired with its little-endian bytes (low byte
-// first). Read tests go bytes -> value, write tests go value -> bytes; both run the same rows. Rows carry
-// just the Name (a clean failure label); the test resolves the scenario per width via UInt8(name) /
-// UInt16(name). Only the two live wire widths remain (byte / ushort) — the 32/64-bit tiers are gone.
+// little-endian/<width>.json as xUnit theory rows: a value paired with its little-endian bytes. Read tests go
+// bytes -> value, write tests go value -> bytes; both run the same rows. Rows carry just the Name, and the test
+// resolves the scenario per width.
 internal static class LittleEndianProvider
 {
 	public sealed record Scenario<TValue>(TValue Value, byte[] Bytes);
@@ -40,7 +39,7 @@ internal static class LittleEndianProvider
 		return scenarios;
 	}
 
-	// Value tokens are "0x..." (up to 16 hex digits) — parse to ulong, then Load casts to each width.
+	// Value tokens are "0x..." up to 16 hex digits, so parse to ulong; Load casts down to each width.
 	private static ulong ParseValue(string token) =>
 		ulong.Parse(token.Replace("_", "")[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 

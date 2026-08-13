@@ -1,14 +1,12 @@
 
 namespace Binacle.ViPaq.UnitTests;
 
-// The public entry point, end to end. Every other serialization test drives ProtocolEncoder directly (so it can
-// force a compressed or columnar header, which ViPaqSerializer never can). But that leaves ViPaqSerializer's own
-// job untested: choosing a raw, row-major, narrowest header AND round-tripping a real caller through Serialize
-// -> Deserialize. These few cases pin exactly that — the one path a real caller actually takes.
+// The public entry point, end to end. Every other serialization test drives ProtocolEncoder directly, which
+// leaves ViPaqSerializer's own job untested: choosing a raw, row-major, narrowest header and round-tripping a
+// caller through Serialize -> Deserialize.
 //
-// ViPaqSerializer only ever writes raw blobs, so these are all raw; the compressed-refusal on the decode side is
-// pinned separately in SerializationBehaviorTests. Fields are distinct per item so a wiring bug (one field read
-// into another, or items swapped) shows up as a mismatch.
+// All raw, since ViPaqSerializer only writes raw blobs. Fields are distinct per item so a wiring bug shows up
+// as a mismatch.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class ViPaqSerializerTests
 {

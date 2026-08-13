@@ -1,9 +1,8 @@
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// round-trip-scenarios.json as xUnit theory rows. Each scenario is a (bin, items) input plus the header
-// the serializer must produce (ExpectedHeader, in HeaderNotation text form). The test serializes, checks the
-// two header bytes match that header, then deserializes and asserts the items come back unchanged.
+// round-trip-scenarios.json as xUnit theory rows: a (bin, items) input plus the header the serializer must
+// produce, in HeaderNotation text form.
 internal static class RoundTripProvider
 {
 	private const string FileName = "serialization/round-trip-scenarios.json";

@@ -1,8 +1,7 @@
 namespace Binacle.TestReporting;
 
-// Finds the repository root by climbing from the running binary to the folder that holds the marker file (the
-// solution file by default). Bind once, then Find resolves paths under it. Lets a tool or report write to
-// stable repo-level paths no matter how deep the build puts the executable.
+// Climbs from the running binary to the folder holding the marker file (the solution file by default), so a
+// tool or report writes to stable repo-level paths no matter how deep the build puts the executable.
 //
 //   var repo = RepositoryRoot.Bind();
 //   var dir = repo.Find("vipaq", "test-vectors", "interop");
@@ -11,7 +10,7 @@ public static class RepositoryRoot
 	public static RepositoryRootLocator Bind(string markerFileName = "Binacle.Net.slnx") => new(markerFileName);
 }
 
-// Holds the located root so repeated Find calls just combine segments — the climb happens once, at Bind.
+// Holds the located root, so the climb happens once, at Bind.
 public sealed class RepositoryRootLocator
 {
 	private readonly string root;

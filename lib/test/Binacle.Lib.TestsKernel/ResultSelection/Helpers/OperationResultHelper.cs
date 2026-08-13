@@ -13,9 +13,8 @@ internal static class OperationResultHelper
 		{
 			throw new FormatException($"Invalid compact string format: {compactString}");
 		}
-		// PackedBin wants the non-generic IWithReadOnlyDimensions; the parser returns the generic Dimensions<int>,
-		// which does not implement it. Binacle.Packing's own internal Dimensions does, and this project is a
-		// friend, so it bridges the two without dragging in a bin model from the shared kernel.
+		// PackedBin wants the non-generic IWithReadOnlyDimensions, which the parser's Dimensions<int> does not
+		// implement. Binacle.Packing's internal Dimensions does, and this project is a friend.
 		var parsed = CompactNotationParser.ParseDimensions<int>(parts[0]);
 		var bin = new Binacle.Packing.Dimensions(parsed.Length, parsed.Width, parsed.Height);
 		var algorithmInfo = AlgorithmInfoHelper.ParseFromCompactString(parts[1]);

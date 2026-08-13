@@ -62,17 +62,13 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 			.Build();
 
 		builder
-			// Additional configuration files are present when running in test
-			// Because the project is set up to include the feature file, along with the environment as well
-			// This will cause the tests to add the additional test config file
+			// The project includes the feature file alongside the environment, so this pulls in the test config.
 			.UseEnvironment("Test")
-			// This configuration is used during the creation of the application
-			// (e.g. BEFORE WebApplication.CreateBuilder(args) is called in Program.cs).
+			// Read before WebApplication.CreateBuilder(args) runs in Program.cs.
 			.UseConfiguration(configuration)
 			.ConfigureAppConfiguration(configurationBuilder =>
 			{
-				// This overrides configuration settings that were added as part
-				// of building the Host (e.g. calling WebApplication.CreateBuilder(args)).
+				// Overrides whatever WebApplication.CreateBuilder(args) added.
 				configurationBuilder.AddInMemoryCollection(preBuildConfigurationValues);
 				//configurationBuilder.AddJsonFile();
 			});
@@ -88,9 +84,8 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 		});
 	}
 
-	// Infra is chosen the way production chooses it — by which connection string is set (prod env names).
-	// The only addition is an explicit SQLite fallback so a bare `dotnet test` runs with no external service;
-	// CI sets one env var per matrix leg. The choice is logged by the caller so it is never silent.
+	// Infra is chosen the way production chooses it, by which connection string is set. The only addition is a
+	// SQLite fallback so a bare `dotnet test` runs with no external service; CI sets one env var per matrix leg.
 	private static (string ConfigKey, string ConnectionString) ResolveTestInfrastructure()
 	{
 		var testInfra = Environment.GetEnvironmentVariable("BINACLE_TEST_INFRA");
@@ -132,8 +127,8 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 
 	public async ValueTask InitializeAsync()
 	{
-		// A fresh DI scope per helper call: the DB repositories are scoped and a SQLite connection is not
-		// thread-safe, so resolving from the root provider shares one connection across parallel tests.
+		// A fresh DI scope per call: a SQLite connection is not thread-safe, and resolving from the root provider
+		// would share one across parallel tests.
 		using var scope = this.Services.CreateScope();
 		var passwordService = scope.ServiceProvider.GetRequiredService<IPasswordService>();
 		var options = scope.ServiceProvider.GetRequiredService<IOptions<ServiceModuleOptions>>();

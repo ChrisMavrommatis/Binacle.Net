@@ -1,13 +1,8 @@
 // mirrors src/utils/headerToBytes.ts + headerFromBytes.ts (inverse pair -> one file)
 // ports C#: HeaderBytesTests. All 32 combos: every header notation packs to its two bytes and back.
 //
-// Folded in from the deleted encodingInfo.test.ts (1-byte header) and writeEncodingInfoToBuffer.test.ts. The
-// header is two bytes now, packed by headerToBytes; the old "header lands at index 0, body follows" check is
-// covered by the exact-bytes vectors (ViPaqSerializer.test.ts), which pin bytes 0-1 as the header.
-//
-// Also folded away: the compression tests (compressBuffer.test.ts, getDecodingDataStream.test.ts) are gone
-// because compression is deferred (PROTOCOL.md §6) — they return when the codec is chosen. The reserved-version
-// reject those exercised is now pinned by ViPaqSerializer.test.ts ("on a reserved version") and headerFromBytes.
+// "Header lands at index 0, body follows" is covered by the exact-bytes vectors in ViPaqSerializer.test.ts,
+// which pin bytes 0-1 as the header.
 import {headerBytesCases} from "../providers/HeaderBytesCases";
 import {headerToBytes, headerFromBytes} from "../../src/utils";
 

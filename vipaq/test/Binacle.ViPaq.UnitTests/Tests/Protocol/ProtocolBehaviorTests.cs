@@ -1,7 +1,6 @@
 namespace Binacle.ViPaq.UnitTests;
 
-// The writer and reader reject bad use rather than corrupting the stream: a value that does not
-// fit the wire width throws, and using either after dispose throws.
+// The writer and reader reject bad use rather than corrupting the stream.
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class ProtocolBehaviorTests
 {
@@ -23,8 +22,7 @@ public class ProtocolBehaviorTests
 		Should.Throw<OverflowException>(() => writer.Write16Bits(70_000));
 	}
 
-	// Dispose semantics are only enforced for non-MemoryStream streams (MemoryStream skips the
-	// disposed check), so these wrap a MemoryStream in a BufferedStream to exercise that path.
+	// MemoryStream skips the disposed check, so these wrap it in a BufferedStream to reach that path.
 	[Fact]
 	public void Writer_Throws_When_Used_After_Dispose()
 	{
@@ -43,9 +41,8 @@ public class ProtocolBehaviorTests
 		Should.Throw<ObjectDisposedException>(() => reader.Read8Bits());
 	}
 
-	// BufferedStream, not MemoryStream: MemoryStream.Flush() is a no-op even after close, so it would
-	// hide a second Dispose flushing a dead stream. BufferedStream.Flush() throws once disposed, so
-	// this is the case that proves Dispose is actually idempotent.
+	// BufferedStream, not MemoryStream: MemoryStream.Flush() is a no-op even after close and would hide a
+	// second Dispose flushing a dead stream. BufferedStream.Flush() throws once disposed.
 	[Fact]
 	public void Writer_Dispose_Is_Safe_To_Call_Twice()
 	{

@@ -7,8 +7,8 @@ namespace Binacle.ViPaq.Layouts;
 //
 //   L L L ... | W W W ... | H H H ... | X X X ... | Y Y Y ... | Z Z Z ...
 //
-// This puts like magnitudes next to each other, which usually compresses better. Uncompressed it is exactly
-// as long as row-major: the same values, in a different order. Whether it actually pays is unmeasured.
+// Like magnitudes sit next to each other, which usually compresses better. Uncompressed it is exactly as long
+// as row-major. Whether it pays is unmeasured.
 internal sealed class ColumnarCodec<T> : ILayoutEncoder<T>, ILayoutDecoder<T>
 	where T : struct, IBinaryInteger<T>
 {

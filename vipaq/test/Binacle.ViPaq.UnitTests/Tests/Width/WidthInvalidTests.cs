@@ -4,11 +4,10 @@ using Binacle.ViPaq.UnitTests.Providers;
 namespace Binacle.ViPaq.UnitTests;
 
 // Shared picker-reject vectors, split by kind. Each picker must throw an ArgumentOutOfRangeException whose
-// ParamName names the offending field (Length / Width / Height for dimensions, X / Y / Z for coordinates).
+// ParamName names the offending field.
 //
-// Folded in from the deleted BitSizeHelperSaturationTests: there is no saturation any more (the old code
-// capped every type at 2^53-1), so a value above the 65535 ceiling is rejected outright. Those over-ceiling
-// cases now live in width-invalid.json as the "exceeds max (65536)" rows.
+// There is no saturation: a value above the 65535 ceiling is rejected outright, which is what the
+// "exceeds max (65536)" rows in width-invalid.json cover.
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class WidthInvalidTests
 {

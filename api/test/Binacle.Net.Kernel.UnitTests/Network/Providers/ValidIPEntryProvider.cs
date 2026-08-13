@@ -20,8 +20,8 @@ internal class ValidIPEntryProvider : IEnumerable<object[]>
 		yield return ["  10.0.0.1  ", "10.0.0.1", 32];
 		yield return [" 192.168.1.0/24 ", "192.168.1.0", 24];
 
-		// Host bits are masked off, as they are everywhere else in .NET. The entry names one host and admits 256,
-		// so the caller warns about it, but it parses.
+		// Host bits are masked off, as everywhere else in .NET: the entry names one host and admits 256. The
+		// caller warns about it, but it parses.
 		yield return ["192.168.1.1/24", "192.168.1.0", 24];
 		yield return ["192.168.1.255/24", "192.168.1.0", 24];
 

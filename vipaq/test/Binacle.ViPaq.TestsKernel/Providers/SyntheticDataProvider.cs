@@ -3,25 +3,22 @@ using Binacle.ViPaq.TestsKernel.Models;
 
 namespace Binacle.ViPaq.TestsKernel.Providers;
 
-// Synthetic (generated) scenarios — the CPU/memory sibling of the real BischoffDataProvider /
-// CustomProblemsDataProvider. Deterministic random data at item counts no real pack reaches (2000, 5000), for the
-// speed/memory benchmarks only.
+// Deterministic random scenarios at item counts no real pack reaches (2000, 5000), for the speed and memory
+// benchmarks only.
 //
-// **Never use these for size or compression.** Random data has nothing for a codec to grip, so it reports the
-// *opposite* of real behaviour — size and crossover use real data only. CPU and memory, though,
-// depend on item count and byte width, not on whether values repeat, so random is fine and preferred here: it
-// scales freely and deliberately exercises the expensive path.
+// Never use these for size or compression. Random data has nothing for a codec to grip, so it reports the
+// opposite of real behaviour. CPU and memory depend on item count and byte width, not on whether values repeat,
+// so random is fine there and scales freely.
 public static class SyntheticDataProvider
 {
-	// A fixed seed base, so every run generates byte-identical scenarios (BDN builds them in GlobalSetup, and a
-	// benchmark whose input changed between runs would not be comparable).
+	// A fixed seed base: a benchmark whose input changed between runs would not be comparable.
 	private const int SeedBase = 20_260_714;
 
 	private const ushort EightBitMax = 255;
 	private const ushort SixteenBitMax = 65_535;
 
-	// Two counts past any real pack, at each width family. Spread is "mixed" — CPU and memory do not depend on
-	// where the values sit, only on the count and the byte width.
+	// Two counts past any real pack, at each width family. Spread is "mixed": CPU and memory depend on the count
+	// and byte width, not on where the values sit.
 	private static readonly int[] Counts = [2_000, 5_000];
 	private static readonly int[] WidthBitsMatrix = [8, 16];
 
@@ -52,8 +49,7 @@ public static class SyntheticDataProvider
 		// Deterministic per (count, widthBits): same seed → same bytes every run.
 		var random = new Random(SeedBase + (widthBits * 100_000) + count);
 
-		// 8-bit keeps every value in one byte; 16-bit forces two bytes by starting dimensions past 255. Bin is
-		// the width max so any item value is in range.
+		// 16-bit forces two bytes by starting dimensions past 255. Bin is the width max so any item is in range.
 		var maxValue = widthBits == 8 ? EightBitMax : SixteenBitMax;
 		var minDimension = widthBits == 8 ? (ushort)1 : (ushort)256;
 

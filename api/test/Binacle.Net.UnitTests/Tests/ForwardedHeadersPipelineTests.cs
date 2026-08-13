@@ -10,16 +10,15 @@ using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.UnitTests;
 
-// ConfigureForwardedHeaders only writes options; whether a caller actually gets resolved is the framework acting
-// on them. These map our configuration the way the app does, hand the result to the real framework middleware,
-// and read back the address everything downstream would rate limit and allow-list on.
+// ConfigureForwardedHeaders only writes options; whether a caller gets resolved is the framework acting on
+// them. These map the configuration the way the app does, hand the result to the real middleware, and read back
+// the address everything downstream would rate limit and allow-list on.
 [Trait("Behavioral Tests", "Ensures forwarded headers resolve the caller as configured")]
 public class ForwardedHeadersPipelineTests
 {
 	private const string forwardedFor = "X-Forwarded-For";
 
-	// The address the socket appears to come from - the proxy, in every case here. A DefaultHttpContext has no
-	// peer, so it is set by hand, exactly where Kestrel would have set it.
+	// A DefaultHttpContext has no peer, so this is set by hand where Kestrel would have set it.
 	private const string proxyAddress = "10.0.0.7";
 
 	private static ForwardedHeadersMiddleware MiddlewareWith(
@@ -94,8 +93,7 @@ public class ForwardedHeadersPipelineTests
 		context.Connection.RemoteIpAddress.ShouldBe(IPAddress.Parse("203.0.113.5"));
 	}
 
-	// Two hops with a limit of one: only the nearest is read, so padding the header cannot push the result
-	// further back than the real topology.
+	// Two hops with a limit of one: padding the header cannot push the result past the real topology.
 	[Fact]
 	public async Task An_Entry_Beyond_The_Forward_Limit_Is_Ignored()
 	{
@@ -145,8 +143,7 @@ public class ForwardedHeadersPipelineTests
 		context.Connection.RemoteIpAddress.ShouldBe(IPAddress.Parse(proxyAddress));
 	}
 
-	// Disabled has to stay disabled even with a trusted proxy in front, because the header is the one thing a
-	// caller can write freely.
+	// Disabled stays disabled even with a trusted proxy in front: the header is the one thing a caller writes.
 	[Fact]
 	public async Task A_Disabled_Configuration_Reads_No_Header()
 	{

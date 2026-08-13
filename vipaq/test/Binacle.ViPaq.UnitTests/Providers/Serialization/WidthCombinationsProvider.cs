@@ -2,14 +2,11 @@ using System.Collections;
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// Every (bin, item-dim, item-coord) width combination. There are only two widths now (Eight/Sixteen), so this
-// is the 2x2x2 set, and it covers mixed widths too (e.g. small dimensions, large coordinates).
+// Every (bin, item-dim, item-coord) width combination: the 2x2x2 set, mixed widths included.
 //
-// The numeric type used to be a fourth column here, which forced the test to look the type up in a dictionary
-// and call a generic helper through a delegate - which buried the assertion. The type is now picked by the
-// test method instead (one per type), so each row is just widths and the test can arrange, act and assert in
-// plain sight. Width is internal, so a public [Theory] cannot name it (CS0051): the widths ride as object and
-// the test casts them back.
+// The numeric type is picked by the test method, one per type, not carried as a fourth column - a type column
+// forces a dictionary lookup and a delegate call, which buries the assertion. Width is internal, so a public
+// [Theory] cannot name it (CS0051): the widths ride as object and the test casts them back.
 internal class WidthCombinationsProvider : IEnumerable<object[]>
 {
 	private static readonly Width[] widths = [Width.Eight, Width.Sixteen];

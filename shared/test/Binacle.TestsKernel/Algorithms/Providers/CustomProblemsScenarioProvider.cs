@@ -37,17 +37,16 @@ public static class CustomProblemsScenarioProvider
 	public static Scenario GetScenarioByName(string name)
 		=> scenarios[name];
 
-	// The bins these scenarios run against, one entry per ID, in the order the scenarios introduce them. The API
-	// test host registers exactly this set as the `custom-problems` preset, so the list is never written down
-	// twice — the scenario data owns it, and it grows whenever a scenario adds a bin.
+	// The bins these scenarios run against, in the order the scenarios introduce them. The API test host
+	// registers exactly this set as the `custom-problems` preset, so the list is never written down twice.
 	public static IReadOnlyList<TestBin> GetDistinctBins()
 		=> distinctBins;
 
 	public static IEnumerable<string> GetDistinctBinIds()
 		=> distinctBins.Select(x => x.ID);
 
-	// An item that fits this bin fits every one of them, which is what lets a caller name the expected winner of
-	// a smallest-bin or best-fit selection without hardcoding an ID.
+	// An item fitting this bin fits every one of them, so a caller can name the expected winner of a
+	// smallest-bin or best-fit selection without hardcoding an ID.
 	public static TestBin GetSmallestBin()
 		=> distinctBins.MinBy(bin => bin.CalculateVolume())!;
 }

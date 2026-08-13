@@ -1,7 +1,7 @@
 // mirrors src/utils/getBodyLength.ts
-// ports C#: Header.GetBodyLength. The body length the writer pre-sizes its buffer to: everything after the two
-// header bytes = count(2) + 3*binBytes + count*(3*itemDimBytes + 3*itemCoordBytes). The header bytes are NOT
-// counted here — ProtocolEncoder prepends them. If this is short the writer runs off the end.
+// ports C#: Header.GetBodyLength. The length the writer pre-sizes its buffer to:
+// count(2) + 3*binBytes + count*(3*itemDimBytes + 3*itemCoordBytes). The two header bytes are NOT counted -
+// ProtocolEncoder prepends them. If this is short the writer runs off the end.
 import {getBodyLength} from "../../src/utils";
 import {Header, Layout, Version, Width} from "../../src/models";
 

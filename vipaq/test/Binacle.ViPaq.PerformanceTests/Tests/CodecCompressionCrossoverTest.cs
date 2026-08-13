@@ -6,14 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Binacle.ViPaq.PerformanceTests.Tests;
 
-// Holds the layout fixed and puts the three codecs side by side, ViPaq only: for every scenario, the raw (NoOp)
-// size next to the deflate and gzip sizes. That answers at a glance what the split size report buries — does
-// compressing this pack pay at all, and which codec is smallest — and, read down the item-count ladder, where
-// compression first starts to pay (the try-both threshold).
+// Layout fixed, the three codecs side by side, ViPaq only: the raw (NoOp) size next to deflate and gzip. Read
+// down the item-count ladder it shows where compression first starts to pay.
 //
-// One test is one (scenario set × layout); `Program` registers a Row file and a Columnar file. Rows are ordered
-// by item count so the crossover is easy to spot. Real data is not a clean ladder — it has gaps — so the
-// crossover is as fine as the data allows, not to the single item.
+// One test is one (scenario set × layout). Real data is not a clean ladder, so the crossover is as fine as the
+// data allows, not to the single item.
 internal class CodecCompressionCrossoverTest : ITest
 {
 	private readonly IReadOnlyCollection<Scenario> scenarios;
@@ -46,16 +43,15 @@ internal class CodecCompressionCrossoverTest : ITest
 		var table = new TableResult(
 			"Scenario", "Items", "Widths b/i/c", "Raw b64", "Deflate b64", "Gzip b64", "Best", "Saved %");
 
-		// Raw is NoOp: the body passed through, so it is the uncompressed baseline the other two are read against.
+		// Raw is NoOp: the body passed through, the baseline the other two are read against.
 		var rawEncoder = new ViPaqEncoder(new NoOpCodec());
 		var deflateEncoder = new ViPaqEncoder(new DeflateCodec());
 		var gzipEncoder = new ViPaqEncoder(new GzipCodec());
 
 		Scenario? crossover = null;
 
-		// Order by item count (then name) so the ladder reads cleanly and the crossover below is the *smallest*
-		// count where compression first pays. Unordered, the row order is embedded-resource enumeration order,
-		// which is not stable across rebuilds.
+		// Ordered so the crossover below is the smallest count where compression pays. Unordered, the row order
+		// is embedded-resource enumeration order, which is not stable across rebuilds.
 		foreach (var scenario in this.scenarios
 			.OrderBy(scenario => scenario.ItemCount)
 			.ThenBy(scenario => scenario.Name, StringComparer.Ordinal))
@@ -66,7 +62,7 @@ internal class CodecCompressionCrossoverTest : ITest
 			var deflate = deflateEncoder.Encode(scenario, this.encoderInfo).ToBase64().Length;
 			var gzip = gzipEncoder.Encode(scenario, this.encoderInfo).ToBase64().Length;
 
-			// Savings of the better compressed form against raw. Negative when compression only inflated the pack.
+			// Negative when compression only inflated the pack.
 			var bestCompressed = Math.Min(deflate, gzip);
 			var savedPercent = (raw - bestCompressed) / (double)raw * 100;
 
@@ -102,7 +98,7 @@ internal class CodecCompressionCrossoverTest : ITest
 		};
 	}
 
-	// The smallest of the three. Raw wins ties, then deflate — so a "Raw" best means compression did not pay here.
+	// The smallest of the three. Raw wins ties, then deflate, so a "Raw" best means compression did not pay.
 	private static string BestLabel(int raw, int deflate, int gzip)
 	{
 		if (raw <= deflate && raw <= gzip)

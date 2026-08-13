@@ -6,9 +6,8 @@ import {Coordinates, CompactNotationKind, Dimensions, Item} from "./types";
 //   coordinates "(X,Y,Z)"   comma-separated inside parens
 //   quantity    "[Q]"       one int inside brackets
 // Valid entries: "LxWxH" | "LxWxH [Q]" | "LxWxH (X,Y,Z)" | "LxWxH (X,Y,Z) [Q]" | "(X,Y,Z)".
-// Parsing is explicit — the caller usually knows the shape and calls the matching parse function; detect
-// picks the block when the shape is unknown. Numbers are plain JS `number`; the interoperable range is
-// [0, 2^53-1]. Parse is lenient about range (it just reads the integers).
+// The caller usually knows the shape and calls the matching parse function; detect picks the block when it
+// does not. Numbers are plain JS `number`, range [0, 2^53-1]. Parsing is lenient about range.
 
 // --- parse (text -> shape) ---
 
@@ -111,8 +110,8 @@ function parseThree(compact: string, separator: string): [number, number, number
 	return [parseNumber(parts[0]), parseNumber(parts[1]), parseNumber(parts[2])];
 }
 
-// Reads one integer. Throws on empty or non-integer, matching C#'s long/int parse (so the two suites agree
-// on malformed input). `.` is left for a future decimals feature.
+// Throws on empty or non-integer, matching C#'s long/int parse, so the two suites agree on malformed input.
+// `.` is left for a future decimals feature.
 function parseNumber(value: string): number {
 	const trimmed = value.trim();
 	const parsed = Number(trimmed);

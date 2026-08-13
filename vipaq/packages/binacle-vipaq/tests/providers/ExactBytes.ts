@@ -10,7 +10,7 @@ import {Coordinates, Dimensions} from "../../src/models";
 type Item = Dimensions & Coordinates;
 
 // Raw exact-bytes.json row: the (bin, items) input and the exact wire bytes laid out by segment. Header is the
-// two form/width bytes now (PROTOCOL.md §2), so it is an array like the other segments.
+// two form/width bytes (PROTOCOL.md §2).
 interface Vector {
 	Name: string;
 	Bin: string;

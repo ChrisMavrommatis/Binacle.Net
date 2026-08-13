@@ -1,7 +1,6 @@
-// Ports C#: Providers/Width/WidthSelectionProvider.cs. Kind splits the rows into dimensions ("LxWxH") and
-// coordinates ("X,Y,Z"); each runs through its own picker and must return expected. Both pickers use identical
-// width math and the two sets together cover every bucket, so they can't drift. getCoordinatesWidth needs a full
-// item, so coordinate cases carry a probe with dims defaulted to 1.
+// Ports C#: Providers/Width/WidthSelectionProvider.cs. Kind splits the rows into dimensions and coordinates;
+// each runs through its own picker. getCoordinatesWidth needs a full item, so coordinate cases carry a probe
+// with dims defaulted to 1.
 // Not a *.test.ts file, so jest does not run it.
 
 import {readVectors} from "../support/vectorReader";

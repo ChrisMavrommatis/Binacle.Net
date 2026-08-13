@@ -1,6 +1,6 @@
 // ports C#: WidthSelectionTests
-// Kind splits the rows: dimensions run the dimensions picker, coordinates run the coordinates picker; each must
-// return the expected width. The two sets together cover every bucket, pinning the pickers together.
+// Kind splits the rows: dimensions run the dimensions picker, coordinates the coordinates picker. The two sets
+// together cover every bucket.
 import {getDimensionsWidth, getCoordinatesWidth} from "../src/utils";
 import {dimensionCases, coordinateCases} from "./providers/WidthSelection";
 

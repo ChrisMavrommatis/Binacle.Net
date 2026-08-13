@@ -59,9 +59,8 @@ internal static class ForwardedHeadersExtensions
 	{
 		if (configuredOptions?.Enabled != true)
 		{
-			// ASPNETCORE_FORWARDEDHEADERS_ENABLED switches the middleware on from
-			// the environment with both trust lists emptied, which believes any caller's header. This runs after
-			// that one, so disabled stays disabled whatever the environment says.
+			// ASPNETCORE_FORWARDEDHEADERS_ENABLED switches the middleware on from the environment with both trust
+			// lists emptied, which believes any caller's header. This runs after it, so disabled stays disabled.
 			options.ForwardedHeaders = ForwardedHeaders.None;
 			return;
 		}
@@ -75,7 +74,7 @@ internal static class ForwardedHeadersExtensions
 		}
 
 		// The framework seeds these with loopback. Clearing is only safe because the validator refuses to start
-		// with nothing trusted, two empty lists switch the check off entirely rather than matching nothing.
+		// with nothing trusted: two empty lists switch the check off entirely rather than matching nothing.
 		if (!configuredOptions.TrustLoopback)
 		{
 			options.KnownIPNetworks.Clear();
@@ -92,10 +91,8 @@ internal static class ForwardedHeadersExtensions
 
 		foreach (var trustedProxy in configuredOptions.TrustedProxies ?? [])
 		{
-			// Startup validation rejects a malformed entry, so reaching this is a bug.
-			// It throws rather than skipping the entry, because a dropped one
-			// silently narrows who is trusted and leaves the app
-			// reading a header from a proxy it no longer recognises.
+			// Startup validation rejects a malformed entry, so reaching this is a bug. It throws rather than
+			// skipping, because a dropped entry silently narrows who is trusted.
 			if (!IPEntry.TryParse(trustedProxy, out var trustedNetwork))
 			{
 				throw new InvalidOperationException(
@@ -104,9 +101,8 @@ internal static class ForwardedHeadersExtensions
 				);
 			}
 
-			// A single address parses to a network of one, so both forms go in the same list.
-			// The middleware checks KnownProxies and KnownIPNetworks alike,
-			// so nothing is lost by not splitting them.
+			// A single address parses to a network of one, and the middleware checks KnownProxies and
+			// KnownIPNetworks alike, so both forms go in the same list.
 			options.KnownIPNetworks.Add(trustedNetwork);
 		}
 	}

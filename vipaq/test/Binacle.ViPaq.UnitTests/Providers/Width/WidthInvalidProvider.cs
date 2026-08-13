@@ -1,9 +1,8 @@
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// width-invalid.json as xUnit theory rows. Kind splits the rows into two sets, each a values triple its
-// picker must reject: dimensions ("LxWxH") and coordinates ("X,Y,Z"). Field is the offending field's
-// PascalCase name, which equals the thrown ArgumentException ParamName. A row is one kind, never both.
+// width-invalid.json as xUnit theory rows. Kind splits the rows into two sets, each a values triple its picker
+// must reject. Field is the offending field's PascalCase name, which equals the thrown ParamName.
 internal static class WidthInvalidProvider
 {
 	private const string FileName = "width/width-invalid.json";

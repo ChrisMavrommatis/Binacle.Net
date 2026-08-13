@@ -41,17 +41,13 @@ public class BinacleApi : WebApplicationFactory<IApiMarker>
 			.Build();
 
 		builder
-			// Additional configuration files are present when running in test
-			// Because the project is set up to include the feature file, along with the environment as well
-			// This will cause the tests to add the additional test config file
+			// The project includes the feature file alongside the environment, so this pulls in the test config.
 			.UseEnvironment("Test")
-			// This configuration is used during the creation of the application
-			// (e.g. BEFORE WebApplication.CreateBuilder(args) is called in Program.cs).
+			// Read before WebApplication.CreateBuilder(args) runs in Program.cs.
 			.UseConfiguration(configuration)
 			.ConfigureAppConfiguration(configurationBuilder =>
 			{
-				// This overrides configuration settings that were added as part
-				// of building the Host (e.g. calling WebApplication.CreateBuilder(args)).
+				// Overrides whatever WebApplication.CreateBuilder(args) added.
 				configurationBuilder.AddInMemoryCollection(preBuildConfigurationValues);
 				//configurationBuilder.AddJsonFile();
 			});

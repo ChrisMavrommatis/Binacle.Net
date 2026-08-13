@@ -7,19 +7,12 @@ using Binacle.ViPaq.Layouts;
 
 namespace Binacle.ViPaq;
 
-// The blind layer (PROTOCOL.md §1, §3, §6, §7). It is handed a header and it obeys it — the widths to work at,
-// the layout to work in, and whether to compress. It decides nothing. Choosing the header is the serializer's
-// job.
+// The blind layer (PROTOCOL.md §1, §3, §6, §7). Handed a header, it obeys it and decides nothing; the
+// serializer chooses the header. It never re-derives a width from the values it reads (§4), which is what lets
+// a deliberately-too-wide blob round-trip.
 //
-// It never re-derives a width from the values it reads (§4), which is what lets a deliberately-too-wide blob
-// round-trip.
-//
-// The codec is a constructor argument rather than a decision made here, so this class is fully testable: hand
-// it a dummy codec and every combination of widths, layout and compression becomes forceable.
-// `ViPaqSerializer.ResolveCodec` picks the real one.
-//
-// Encode and Decode live together because they are one agreement read in two directions: whatever Encode
-// writes, Decode must read back.
+// The codec is a constructor argument, so tests can force every combination of widths, layout and compression
+// with a dummy codec. `ViPaqSerializer.ResolveCodec` picks the real one.
 internal sealed class ProtocolEncoder
 {
 	private readonly ICompressionCodec compressionCodec;
@@ -30,8 +23,8 @@ internal sealed class ProtocolEncoder
 		this.compressionCodec = compressionCodec;
 	}
 
-	// Produces a whole blob, obeying the header's Compressed bit. Refuses the impossible: a header whose widths
-	// cannot hold the data is an argument error, not a silent truncation (§8, encode side).
+	// Produces a whole blob, obeying the header's Compressed bit. A header whose widths cannot hold the data is
+	// an argument error, not a silent truncation (§8, encode side).
 	public byte[] Encode<TBin, TItem, T>(Header header, TBin bin, IReadOnlyList<TItem> items)
 		where T : struct, IBinaryInteger<T>
 		where TBin : IWithReadOnlyDimensions<T>
@@ -63,8 +56,8 @@ internal sealed class ProtocolEncoder
 		return PrependHeader(compressedBody, header);
 	}
 
-	// `rest` is everything after the two header bytes: the body, still compressed if the header says so. The
-	// uint16 item count is inside it (§3), so it cannot be read until after the body is inflated (§7, step 4).
+	// `rest` is everything after the two header bytes, still compressed if the header says so. The uint16 item
+	// count is inside it (§3), so it cannot be read until the body is inflated (§7, step 4).
 	public (TBin, IList<TItem>) Decode<TBin, TItem, T>(Header header, byte[] rest)
 		where T : struct, IBinaryInteger<T>
 		where TBin : IWithDimensions<T>, new()
@@ -75,8 +68,7 @@ internal sealed class ProtocolEncoder
 		// The generic argument has to be able to hold what the header declares.
 		HeaderHelper.ThrowOnInvalidHeader<T>(header);
 
-		// Run the body through the codec, which was resolved from the header: a NoOp passes a raw body through,
-		// the real codec inflates a compressed one (§7, step 4).
+		// The codec was resolved from the header: NoOp passes a raw body through (§7, step 4).
 		var body = this.compressionCodec.Decompress(rest);
 
 		ValidationHelper.ThrowIfBodyHasNoItemCount(body);
@@ -84,12 +76,12 @@ internal sealed class ProtocolEncoder
 		var numberOfItems = BinaryPrimitives.ReadUInt16LittleEndian(body);
 		var contents = body[sizeof(ushort)..];
 
-		// One length check covers both truncation and trailing bytes (§7, steps 1 and 8). Every read below is
-		// in bounds because of it, so none of them needs a guard.
+		// One length check covers truncation and trailing bytes (§7, steps 1 and 8), so no read below needs a
+		// bounds guard.
 		ValidationHelper.ThrowIfContentsIsNotExactlyAsLongAsDeclared(contents, header, numberOfItems);
 
-		// Reading from a byte[] rather than a live decompression stream keeps ProtocolReader on its
-		// MemoryStream fast path instead of pulling one or two bytes at a time off an inflating stream.
+		// A byte[] keeps ProtocolReader on its MemoryStream fast path; a live decompression stream would hand it
+		// one or two bytes at a time.
 		using var memoryStream = new MemoryStream(contents);
 		using var protocolReader = new ProtocolReader<T>(memoryStream);
 		var bin = new TBin

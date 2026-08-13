@@ -3,16 +3,12 @@ using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// Cross-language interop decode — the whole point of the interop vectors. Every artifact, from either producer
-// (artifact-cs.*.json and artifact-ts.*.json) and in every codec (raw/deflate/gzip), must deserialize back to the
-// exact input it was made from. So the .NET deserializer reads C#'s own output AND the TS output, in all three
-// codecs; the TS suite does the mirror. One method per producer, keyed "<codec>/<name>".
+// Cross-language interop decode. Every artifact, from either producer and in every codec, must deserialize back
+// to the exact input it was made from. The TS suite runs the mirror.
 //
-// Compressed blobs are never byte-compared across languages — DeflateStream and CompressionStream can emit
-// different valid streams. The only contract is decode-to-input. byte 0/1 is still pinned, so a blob that silently
-// stayed uncompressed (or picked the wrong widths) fails before the round-trip check. Every artifact decodes the
-// same way — ProtocolEncoder + the codec named by the file (raw = NoOp, which leaves the body untouched) — so
-// there is no special case per codec.
+// Compressed blobs are never byte-compared across languages: DeflateStream and CompressionStream can emit
+// different valid streams, so the only contract is decode-to-input. Bytes 0 and 1 are still pinned, so a blob
+// that silently stayed uncompressed, or picked the wrong widths, fails before the round-trip check.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class InteropDecodeTests
 {

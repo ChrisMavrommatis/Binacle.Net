@@ -1,8 +1,7 @@
 // ports C#: LayoutCodecTests
 //
-// The layout codecs lay the item fields out either row-major (each item whole) or columnar (each field for every
-// item). These drive both codecs through ProtocolEncoder and prove: each layout round-trips, the two layouts
-// differ on the wire but agree on length, and an unknown layout code is rejected. Everything is uncompressed.
+// Drives both layout codecs through ProtocolEncoder and proves three things: each layout round-trips, the two
+// differ on the wire but agree on length, and an unknown layout code is rejected. All uncompressed.
 import {ProtocolEncoder} from "../src/ProtocolEncoder";
 import {noOpCodec} from "../src/compression";
 import {getLayoutDecoder, getLayoutEncoder} from "../src/layouts";

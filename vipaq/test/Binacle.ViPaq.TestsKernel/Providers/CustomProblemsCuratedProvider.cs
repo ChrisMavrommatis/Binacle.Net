@@ -2,13 +2,12 @@ using Binacle.ViPaq.TestsKernel.Models;
 
 namespace Binacle.ViPaq.TestsKernel.Providers;
 
-// The hand-picked custom scenarios the benchmarks fan out over — the sibling of CustomProblemsDataProvider, which
-// holds them all. Split by the two paths ViPaq takes so both are measured; the curated check in the performance
-// tests confirms the uncompressed ones really stay uncompressed. Names resolve through CustomProblemsDataProvider.
+// The hand-picked custom scenarios the benchmarks fan out over, split by the two paths ViPaq takes so both are
+// measured. The curated check confirms the uncompressed ones really stay uncompressed.
 public static class CustomProblemsCuratedProvider
 {
-	// Small packs that stay under the compression threshold — the raw, no-gzip path. Mostly 8-bit; the last is a
-	// small 16-bit pack so the uncompressed 16-bit path (bin + item dimensions ≥ 256) is measured, not just 8-bit.
+	// Small packs under the compression threshold: the raw path. Mostly 8-bit; the last is a small 16-bit pack,
+	// so the uncompressed 16-bit path is measured too.
 	public static IEnumerable<string> UncompressedNames =>
 	[
 		"Baseline_5x5x5-1_FitsIn_60x40x10",              // 1 item, 8-bit

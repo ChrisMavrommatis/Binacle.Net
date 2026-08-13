@@ -1,13 +1,11 @@
 // ports C#: InteropDecodeTests
 //
-// Every interop artifact — from either producer (artifact-cs.*.json, artifact-ts.*.json) and in every codec
-// (raw/deflate/gzip) — must deserialize back to its input through the TS library. So TS reads its own output AND
-// C#'s, in all three codecs; the C# suite does the mirror. The two header bytes are pinned first (version,
-// compression, layout, all widths), then the decoded bin/items must equal the input.
+// Every interop artifact, from either producer and in every codec, must deserialize back to its input through
+// the TS library. The C# suite runs the mirror. The two header bytes are pinned first, then the decoded
+// bin/items must equal the input.
 //
-// Every artifact decodes the same way — ProtocolEncoder + the codec named by the file (raw = NoOp, which leaves
-// the body untouched) — so there is no special case per codec. Compressed bytes are never compared across
-// languages (PROTOCOL.md §6.1) — decode-to-input is the whole contract.
+// Compressed bytes are never compared across languages (PROTOCOL.md §6.1): decode-to-input is the whole
+// contract.
 import {ProtocolEncoder} from "../src/ProtocolEncoder";
 import {CompressionCodec, deflateCodec, gzipCodec, noOpCodec} from "../src/compression";
 import {Header} from "../src/models";

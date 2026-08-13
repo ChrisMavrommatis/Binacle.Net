@@ -3,14 +3,11 @@ import {Sizes} from "./sizes";
 import {getDimensionsWidth} from "./getDimensionsWidth";
 import {getCoordinatesWidth} from "./getCoordinatesWidth";
 
-// Ports C#: Header.Create. The header for this data at the library's default form: the narrowest widths that
-// hold each section (PROTOCOL.md §4), uncompressed and row-major. The three sections are sized independently — a
-// big bin can hold small items at large coordinates — so they genuinely disagree. With no items, both item
-// widths stay Eight, which is what §4 requires of an empty blob.
+// Ports C#: Header.Create. Narrowest widths that hold each section (PROTOCOL.md §4), uncompressed and
+// row-major. The three sections are sized independently because they disagree: a big bin can hold small items
+// at large coordinates. With no items both item widths stay Eight, as §4 requires.
 //
-// Compression and layout are left at their defaults (raw, row-major): whether compressing pays can only be known
-// after trying it (deferred, PROTOCOL.md §6), and layout is unmeasured. A caller that wants a different form
-// takes this header and changes those fields — the interop generator does exactly that for the columnar cases.
+// A caller wanting a different form takes this header and changes `compressed` / `layout`.
 export function createHeader(bin: Dimensions, items: (Dimensions & Coordinates)[]): Header {
 	if (items.length > Sizes.maxItemCount) {
 		throw new Error(`Items cannot be more than ${Sizes.maxItemCount}`);

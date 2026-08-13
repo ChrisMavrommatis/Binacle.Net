@@ -10,9 +10,7 @@ namespace Binacle.ViPaq.PerformanceTests.ExtensionMethods;
 
 public static class ServiceCollectionExtensions
 {
-	// One file per codec: NoOp is the raw-size baseline (it passes the body through), deflate and gzip are the
-	// two candidates being raced. Inside each file, every real scenario set is crossed with both layouts, and
-	// protobuf is run through the same codec, so every table is a like-for-like format comparison.
+	// NoOp is the raw-size baseline; deflate and gzip are the two candidates being raced.
 	private static (string Name, ICompressionCodec Codec, string Blurb)[] Codecs =
 	[
 		("NoOp", new NoOpCodec(), "Uncompressed baseline — the codec passes the body through, so these are raw sizes."),
@@ -20,8 +18,7 @@ public static class ServiceCollectionExtensions
 		("Gzip", new GzipCodec(), "Bodies compressed with gzip, both sides."),
 	];
 	
-	// Real sets: placed results from Binacle.ViPaq.PackedDataGenerator (FFD). Synthetic random data is never
-	// size-measured (gzip can't grip it) — it only feeds the BDN speed/memory benchmarks.
+	// Real sets only. Synthetic random data is never size-measured - gzip can't grip it.
 	private static (string Label, IReadOnlyCollection<Scenario> Scenarios)[] ScenarioSets =
 	[
 		("custom packs", CustomProblemsDataProvider.All),
@@ -30,8 +27,7 @@ public static class ServiceCollectionExtensions
 
 	private static EncoderInfo[] Layouts = [EncoderInfo.RowMajor, EncoderInfo.Columnar];
 
-	// One file per codec, ViPaq against protobuf. Inside each file every real scenario set is crossed with both
-	// layouts, and protobuf runs the same codec, so every table is a like-for-like format comparison.
+	// One file per codec. Protobuf runs the same codec as ViPaq, so every table compares format, not compression.
 	public static IServiceCollection AddVipaqProtobufSizeComparisonTests(this IServiceCollection services)
 	{
 		foreach (var (codecName, codec, blurb) in Codecs)
@@ -65,8 +61,8 @@ public static class ServiceCollectionExtensions
 		return services;
 	}
 
-	// One file per layout, ViPaq only, all three codecs side by side. Holds the layout still so a reader sees, per
-	// scenario, the raw size next to deflate and gzip — where compression starts to pay, and which codec wins.
+	// One file per layout, ViPaq only, all three codecs side by side. Layout is held still so the raw size reads
+	// against deflate and gzip per scenario.
 	public static IServiceCollection AddCodecCompressionCrossoverTests(this IServiceCollection services)
 	{
 		foreach (var layout in Layouts)

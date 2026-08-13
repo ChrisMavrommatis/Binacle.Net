@@ -1,7 +1,7 @@
 namespace Binacle.ViPaq.UnitTests;
 
-// Invalid input is rejected rather than silently mishandled. Encode rejections are argument errors (a caller
-// bug); decode rejections are ViPaqFormatException (a malformed blob).
+// Invalid input is rejected, not silently mishandled. Encode rejections are argument errors, decode rejections
+// are ViPaqFormatException.
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class SerializationBehaviorTests
 {
@@ -39,8 +39,8 @@ public class SerializationBehaviorTests
 			ViPaqSerializer.Deserialize<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>, int>([]));
 	}
 
-	// A header with a reserved version (10 or 11) is rejected when read back. The second byte is the (all-zero)
-	// widths byte, so the blob is a whole two-byte header.
+	// A reserved version (10 or 11) is rejected when read back. The second byte is the all-zero widths byte, so
+	// the blob is a whole two-byte header.
 	[Theory]
 	[InlineData((byte)0b10_00_00_00)] // Reserved2
 	[InlineData((byte)0b11_00_00_00)] // Reserved3
@@ -50,8 +50,7 @@ public class SerializationBehaviorTests
 			ViPaqSerializer.Deserialize<Binacle.Geometry.Dimensions<int>, Binacle.Geometry.Item<int>, int>([formByte, 0]));
 	}
 
-	// A reserved width code (10 or 11) never reaches the wire, so reading one back is a malformed blob. The
-	// widths byte sets the bin width to code 11.
+	// A reserved width code never reaches the wire, so reading one back is a malformed blob.
 	[Fact]
 	public void Deserialize_Throws_When_Width_Code_Is_Reserved()
 	{

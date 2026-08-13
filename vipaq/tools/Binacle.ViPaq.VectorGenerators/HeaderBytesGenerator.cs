@@ -2,14 +2,11 @@ using Binacle.TestReporting;
 
 namespace Binacle.ViPaq.VectorGenerators;
 
-// Emits every valid header combo (2 compressed x 2 layouts x 2 bin widths x 2 item-dim widths x 2 item-coord
-// widths = 32) to header-bytes.json — the golden both suites read for header pack/unpack. Version is always
-// Version1: reserved versions never reach the wire, so they pack to no bytes to pin. Compressed is the outer
-// loop and item-coordinates the inner, so the file reads left to right in the same order as the notation. Each
-// row names the header in HeaderNotation text form and carries the two bytes it packs to (Header.ToBytes),
-// written as grouped binary so the bit layout stays human-checkable. Each row is a concrete HeaderByteVector,
-// so the schema (field names) lives in that class; CompactJson writes one row per line so the file stays
-// greppable.
+// Emits every valid header combo (2 compressed x 2 layouts x 2 bin x 2 item-dim x 2 item-coord widths = 32) to
+// header-bytes.json, the golden both suites read for header pack/unpack. Version is always Version1: reserved
+// versions never reach the wire, so there are no bytes to pin. Compressed is the outer loop and item-coordinates
+// the inner, so the file reads left to right in notation order. Bytes are written as grouped binary so the bit
+// layout stays human-checkable.
 public sealed class HeaderBytesGenerator : IVectorGenerator
 {
 	public void Generate()
@@ -44,7 +41,7 @@ public sealed class HeaderBytesGenerator : IVectorGenerator
 			{
 				Header = HeaderNotation.Format(header),
 				// Byte 0 groups as [Version 2][Compressed 1][Layout 1][reserved 4]; byte 1 as
-				// [Bin 2][ItemDim 2][ItemCoord 2][reserved 2] — the layout in Header.
+				// [Bin 2][ItemDim 2][ItemCoord 2][reserved 2].
 				Bytes = [ToGroupedBinary(bytes[0], 2, 1, 1, 4), ToGroupedBinary(bytes[1], 2, 2, 2, 2)],
 			});
 		}

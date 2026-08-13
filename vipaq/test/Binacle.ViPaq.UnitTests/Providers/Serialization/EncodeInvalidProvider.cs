@@ -1,9 +1,8 @@
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// encode-invalid.json as xUnit theory rows. Each scenario is a (bin, items) input the serializer must
-// reject end-to-end; the test only asserts that serialize throws. The `:Q` suffix expands the
-// item-count scenario to 65536 items without listing them.
+// encode-invalid.json as xUnit theory rows: a (bin, items) input the serializer must reject end-to-end. The
+// `:Q` suffix expands the item-count scenario to 65536 items without listing them.
 internal static class EncodeInvalidProvider
 {
 	private const string FileName = "serialization/encode-invalid.json";

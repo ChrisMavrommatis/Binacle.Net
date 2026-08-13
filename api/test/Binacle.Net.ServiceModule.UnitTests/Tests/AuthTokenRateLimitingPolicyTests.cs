@@ -8,8 +8,8 @@ using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.ServiceModule.UnitTests;
 
-// The login throttle partitions on the connection address. It used to read X-Forwarded-For directly, which let a
-// caller reset their own limit by varying the header — these tests exist so that cannot come back.
+// The login throttle partitions on the connection address. It once read X-Forwarded-For directly, which let a
+// caller reset their own limit by varying the header. These tests exist so that cannot come back.
 [Trait("Behavioral Tests", "Ensures the auth token rate limit partitions on the connection address")]
 public class AuthTokenRateLimitingPolicyTests
 {
@@ -56,8 +56,8 @@ public class AuthTokenRateLimitingPolicyTests
 		first.PartitionKey.ShouldBe(second.PartitionKey);
 	}
 
-	// The regression this file exists for. The header is the caller's to write, so if it reached the partition key
-	// anyone could hand themselves a fresh limit on every attempt.
+	// The header is the caller's to write, so reaching the partition key would hand anyone a fresh limit on
+	// every attempt.
 	[Fact]
 	public void A_Forged_Forwarded_Header_Does_Not_Move_The_Partition()
 	{

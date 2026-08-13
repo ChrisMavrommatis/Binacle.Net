@@ -2,14 +2,9 @@ namespace Binacle.ViPaq.Compression;
 
 // Squeezes the body, and unsqueezes it (PROTOCOL.md §6).
 //
-// **The wire is not pluggable. This interface is.** The spec fixes one codec per `Version` and puts no codec
-// field on the wire, so a shipped blob is never ambiguous about how to inflate it — `ViPaqSerializer` names one
-// codec and only that one ever reaches a caller.
-//
-// The interface exists for the two layers above it. `ProtocolEncoder` takes a codec so it can be handed a
-// `NoOpCodec` and every combination of widths, layout and compression becomes forceable with the body still
-// readable (§6.1 forbids comparing real compressed bytes). And the permanent harness measures deflate against
-// gzip on every run, mirroring both onto protobuf, so both implementations stay for as long as those tables do.
+// The wire is not pluggable; this interface is. The spec fixes one codec per `Version` and puts no codec field
+// on the wire. The interface exists for tests (a `NoOpCodec` makes every width/layout/compression combination
+// forceable with the body still readable) and for the harness, which measures deflate against gzip on every run.
 //
 // Do not delete an implementation because the wire settled on the other one. Do not read this interface as
 // permission to put a codec field on the wire.

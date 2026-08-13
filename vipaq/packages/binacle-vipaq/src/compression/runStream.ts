@@ -1,11 +1,10 @@
 // Runs bytes through a Web-Streams transform (CompressionStream / DecompressionStream) and collects the whole
-// output into one array. Shared by deflateCodec and gzipCodec — the only thing that differs between them is which
-// stream they build.
+// output into one array. Shared by deflateCodec and gzipCodec.
 //
-// The write is left floating on purpose: CompressionStream applies backpressure, so write() may not resolve until
-// the reader drains it. Awaiting the write before reading would deadlock. So we start write-then-close, read to
-// the end, and only then await the write. Invalid input rejects BOTH sides; the read loop surfaces the real error
-// (the codec wraps it), and the no-op catch keeps the write-side rejection from going unhandled when it does.
+// The write is left floating on purpose: CompressionStream applies backpressure, so write() may not resolve
+// until the reader drains it, and awaiting it before reading would deadlock. Invalid input rejects BOTH sides;
+// the read loop surfaces the real error, and the no-op catch keeps the write-side rejection from going
+// unhandled.
 export async function runStream(
 	data: Uint8Array,
 	stream: CompressionStream | DecompressionStream,

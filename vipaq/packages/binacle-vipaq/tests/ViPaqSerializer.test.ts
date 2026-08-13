@@ -1,10 +1,9 @@
 // mirrors src/ViPaqSerializer.ts (serialize + deserialize tested together — they are inverses)
 // ports C#: ViPaqSerializerTests + SerializationEncodingTests + SerializationBehaviorTests
 //
-// ViPaqSerializer is the choosing layer: by default it writes raw, row-major, narrowest. Compression and layout
-// are opt-in options (defaults off / row-major). So these cover its own job — exact bytes for the default,
-// the width it chooses, a real end-to-end round trip, the opt-in options, and the guards. The forced wider/mode
-// variants live in roundTrip.test.ts (they go through ProtocolEncoder directly).
+// ViPaqSerializer is the choosing layer: by default it writes raw, row-major, narrowest. These cover its own
+// job - exact bytes for the default, the width it chooses, a round trip, the opt-in options and the guards. The
+// forced wider/mode variants live in roundTrip.test.ts.
 import ViPaqSerializer from "../src/ViPaqSerializer";
 import {Dimensions, Layout, Version, Width} from "../src/models";
 import {headerFromBytes} from "../src/utils";
@@ -19,15 +18,15 @@ async function roundTrip(input: Dimensions, items: Item[]) {
 
 describe("ViPaqSerializer", () => {
 	describe("serialize produces exact bytes", () => {
-		// ports C#: SerializationEncodingTests.Encode_Produces_Exact_Bytes (all exact-bytes vectors are raw,
-		// row-major, narrowest — exactly what ViPaqSerializer chooses, so its output is the golden).
+		// ports C#: SerializationEncodingTests.Encode_Produces_Exact_Bytes. Every exact-bytes vector is raw,
+		// row-major, narrowest, which is exactly what ViPaqSerializer chooses.
 		test.each(exactBytesCases)("for $name", async ({bin: input, items, bytes}) => {
 			const data = await ViPaqSerializer.serialize(input, items);
 			expectBytes(data, bytes);
 		});
 
-		// ports C#: ViPaqSerializer_Chooses_Correct_Widths_In_Header. Only 8- and 16-bit widths exist; a value
-		// above 65535 is rejected (see encodeInvalid), not widened.
+		// ports C#: ViPaqSerializer_Chooses_Correct_Widths_In_Header. A value above 65535 is rejected, not
+		// widened.
 		test.each([
 			{name: "255 -> 8-bit", dimension: 255, width: Width.Eight},
 			{name: "256 -> 16-bit", dimension: 256, width: Width.Sixteen},
@@ -103,9 +102,8 @@ describe("ViPaqSerializer", () => {
 			await expect(ViPaqSerializer.deserialize(data)).rejects.toThrow();
 		});
 
-		// A blob whose compressed bit is set but whose body is not a valid DEFLATE stream is malformed: decode
-		// runs the body through the codec and the codec rejects it. (Here the body is a valid *raw* blob, which is
-		// not valid deflate.)
+		// The compressed bit is set but the body is a valid raw blob, which is not a valid DEFLATE stream, so
+		// the codec rejects it.
 		test("rejects a compressed blob with a body that is not a deflate stream", async () => {
 			const data = new Uint8Array(exactBytesCases[0].bytes);
 			data[0] = data[0] | 0b0010_0000;
@@ -113,7 +111,7 @@ describe("ViPaqSerializer", () => {
 		});
 	});
 
-	// ports C#: SerializationOptionsTests. The opt-in paths — compression and columnar layout.
+	// ports C#: SerializationOptionsTests. The opt-in paths: compression and columnar layout.
 	describe("options", () => {
 		const compressibleBin = bin(1000, 1000, 1000);
 		const repetitiveItems = (count: number) =>

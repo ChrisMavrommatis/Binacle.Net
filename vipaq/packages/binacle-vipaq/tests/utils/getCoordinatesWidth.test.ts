@@ -1,7 +1,6 @@
 // mirrors src/utils/getCoordinatesWidth.ts
 // Mirrors C# WidthHelper.GetCoordinatesWidth, separate impl. Unlike dimensions, coordinate 0 is legal (an item
-// flush against the origin) — uses < 0, not <= 0. Only Eight and Sixteen exist; a value above the 16-bit ceiling
-// is rejected outright.
+// flush against the origin), so the guard is < 0, not <= 0.
 import {getCoordinatesWidth, Sizes} from "../../src/utils";
 import {Width} from "../../src/models";
 import {anItem} from "../support/builders";

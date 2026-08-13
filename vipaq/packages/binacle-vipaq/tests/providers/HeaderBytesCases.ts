@@ -1,6 +1,6 @@
-// Ports C#: Providers/Header/HeaderBytesProvider.cs. Every Header combo (all 32) and the two header bytes it
-// packs to. `bytes` is an independent golden — the parser building `header` never sees it, so the test is a real
-// check, not a round-trip. Consumed by tests/utils/header.test.ts.
+// Ports C#: Providers/Header/HeaderBytesProvider.cs. All 32 Header combos and the two header bytes each packs
+// to. `bytes` is an independent golden - the parser building `header` never sees it, so this is a real check,
+// not a round-trip.
 // Not a *.test.ts file, so jest does not run it.
 
 import {readVectors} from "../support/vectorReader";

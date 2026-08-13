@@ -2,10 +2,8 @@ using System.Collections;
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// Each supported type at the value boundaries it can reach.
-// The width steps up from Eight to Sixteen at 256. There is no wider width, so a value above the 65535
-// ceiling is a reject (see WidthInvalidProvider), not a bucket here. A type caps at its own range, so a
-// byte can never get to 256. Row: numeric type, value, expected width.
+// Each supported type at the value boundaries it can reach. The width steps up from Eight to Sixteen at 256;
+// above the 65535 ceiling is a reject, not a bucket here. Row: numeric type, value, expected width.
 internal class WidthBoundaryByTypeProvider : IEnumerable<object[]>
 {
 	public IEnumerator<object[]> GetEnumerator()

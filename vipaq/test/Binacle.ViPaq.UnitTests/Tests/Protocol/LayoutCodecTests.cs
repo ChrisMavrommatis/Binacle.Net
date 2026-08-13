@@ -4,17 +4,9 @@ using Binacle.ViPaq.Layouts;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// Successor to the deleted ProtocolExtensionsTests and ProtocolExtensionsBehaviorTests. The old extensions
-// wrote and read a dimensions/coordinates block field-by-field at a chosen width; that job now lives in the
-// layout codecs, which lay the item fields out either row-major (each item whole: L W H X Y Z) or columnar
-// (each field for every item). These drive both codecs through ProtocolEncoder with the NoOp codec (so the
-// body stays readable) and prove three things: each layout round-trips, the two layouts differ on the wire but
-// agree on the values, and an unknown layout code is rejected.
-//
-// Folded in from ProtocolExtensionsBehaviorTests: that test proved an unsupported BitSize was rejected. There
-// is no BitSize any more; the equivalent guard is that LayoutCodecFactory rejects an unknown Layout code, which
-// the two "Throws_For_Unknown_Layout" facts pin. Its over-ceiling read-reject case is gone with the 64-bit
-// tier and now lives in the width-invalid vectors / SerializationBehaviorTests.
+// Drives both layout codecs through ProtocolEncoder with the NoOp codec, so the body stays readable, and
+// proves three things: each layout round-trips, the two layouts differ on the wire but agree on the values,
+// and an unknown layout code is rejected.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class LayoutCodecTests
 {
@@ -61,8 +53,7 @@ public class LayoutCodecTests
 		}
 	}
 
-	// The layout bit really reorders the body: same values, same length, different bytes. Compares the body
-	// (past the two header bytes, whose layout bit already differs) so the difference is the reordering itself.
+	// Compares past the two header bytes, whose layout bit already differs, so what is left is the reordering.
 	[Fact]
 	public void The_Two_Layouts_Differ_On_The_Wire_But_Agree_On_Length()
 	{

@@ -1,14 +1,12 @@
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// Which compression a producer applied to an interop artifact. Raw = uncompressed (NoOp). The wire has no codec
-// field, so Deflate and Gzip share the same 'comp' header — the codec is known here from the file name, not from
-// the bytes (PROTOCOL.md §6). The whole point of the matrix is that each language can deserialize the other's
-// output in every one of these modes.
+// Which compression a producer applied to an interop artifact. The wire has no codec field, so Deflate and Gzip
+// share the same 'comp' header - the codec is known from the file name, not from the bytes (PROTOCOL.md §6).
 internal enum ArtifactCodec { Raw, Deflate, Gzip }
 
-// The interop vector file names in one place, as VectorReader takes them (the on-disk slash path, same as the TS
-// readVectors). input.json is shared; each producer has its own folder (interop/cs, interop/ts) holding one file
-// per codec — interop/<lang>/<codec>.json. Mirrors the TS artifactFiles list.
+// The interop vector file names, as VectorReader takes them (the on-disk slash path, same as the TS
+// readVectors). input.json is shared; each producer has its own folder holding one file per codec:
+// interop/<lang>/<codec>.json. Mirrors the TS artifactFiles list.
 internal static class InteropFiles
 {
 	public const string Input = "interop/input.json";

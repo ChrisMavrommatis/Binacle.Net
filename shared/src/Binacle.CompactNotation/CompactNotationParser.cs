@@ -10,9 +10,9 @@ namespace Binacle.CompactNotation;
 //   coordinates "(X,Y,Z)"   comma-separated inside parens
 //   quantity    "[Q]"       one int inside brackets
 // Valid entries: "LxWxH" | "LxWxH [Q]" | "LxWxH (X,Y,Z)" | "LxWxH (X,Y,Z) [Q]" | "(X,Y,Z)".
-// Parsing is explicit — the caller usually knows the shape and calls the matching method; Detect picks the
-// block when the shape is unknown. Parse is lenient about range (it just reads the integers); each consumer
-// enforces its own limits.
+//
+// The caller usually knows the shape and calls the matching method; Detect picks the block when it does not.
+// Parsing is lenient about range - it just reads the integers - so each consumer enforces its own limits.
 public static class CompactNotationParser
 {
 	// "LxWxH" -> Dimensions.
@@ -41,8 +41,8 @@ public static class CompactNotationParser
 		return int.Parse(body[1..^1], CultureInfo.InvariantCulture);
 	}
 
-	// "LxWxH" or "LxWxH [Q]" -> dimensions plus a count (default 1). Coordinates are not allowed here — a
-	// placed item is ParseItem / ParseItems. Call Flatten() on the result to expand the count into copies.
+	// "LxWxH" or "LxWxH [Q]" -> dimensions plus a count (default 1). Coordinates are not allowed here; a placed
+	// item is ParseItem / ParseItems. Flatten() expands the count into copies.
 	public static DimensionsAndQuantity<T> ParseDimensionsAndQuantity<T>(string compact)
 		where T : struct, IBinaryInteger<T>
 	{
@@ -57,8 +57,7 @@ public static class CompactNotationParser
 		};
 	}
 
-	// "LxWxH (X,Y,Z)" -> one placed item. Coords are required; a "[Q]" repeat is a list concern
-	// (use ParseItems).
+	// "LxWxH (X,Y,Z)" -> one placed item. Coords are required; a "[Q]" repeat is ParseItems' concern.
 	public static Item<T> ParseItem<T>(string compact)
 		where T : struct, IBinaryInteger<T>
 	{
@@ -110,8 +109,7 @@ public static class CompactNotationParser
 
 	// --- helpers ---
 
-	// Splits a trailing "[Q]" off a compact string. Returns the remaining body (trimmed) and the quantity,
-	// defaulting to 1 when there is no "[Q]". Shared by ParseItems and ParseDimensionsAndQuantity.
+	// Splits a trailing "[Q]" off a compact string, returning the trimmed body and the quantity (1 if absent).
 	private static (string Body, int Quantity) SplitQuantity(string compact)
 	{
 		var body = compact.Trim();
@@ -123,7 +121,7 @@ public static class CompactNotationParser
 		return (body[..bracket].Trim(), ParseQuantity(body[bracket..]));
 	}
 
-	// "LxWxH (X,Y,Z)" -> the six numbers. Each part owns its separator ('x' vs ','), so a coordinate is never
+	// "LxWxH (X,Y,Z)" -> the six numbers. Each part owns its separator ('x' vs ','), so a coordinate cannot be
 	// read as a dimension.
 	private static (T Length, T Width, T Height, T X, T Y, T Z) ParseItemGeometry<T>(string compact)
 		where T : struct, IBinaryInteger<T>

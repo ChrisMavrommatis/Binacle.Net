@@ -1,8 +1,8 @@
 import {Header, Layout, Version, Width} from "./models";
 
-// Ports C#: HeaderNotation. Text form of a Header, used by the test vectors and the interop generator so a
-// vector can name the exact header its bytes were produced under. Wire-specific (it names Header/Width/Layout/
-// Version), so it stays in the vipaq mirror; the geometry notation lives in binacle-compact-notation.
+// Ports C#: HeaderNotation. Text form of a Header, so a test vector can name the exact header its bytes were
+// produced under. Wire-specific, so it stays in the vipaq mirror; geometry notation lives in
+// binacle-compact-notation.
 //
 // Grammar (six underscore-delimited tokens, in wire order):
 //
@@ -11,10 +11,9 @@ import {Header, Layout, Version, Width} from "./models";
 //   v1_raw_row_8_8_8      uncompressed, row-major, all 8-bit
 //   v1_raw_col_16_16_16   uncompressed, columnar, all 16-bit
 //
-// Version leads and is mandatory (positional parsing stays forward-safe). The compressed flag is a bare bit
-// (`comp`, never a codec name) — the header carries no codec. Widths are only `8` or `16`; reserved codes never
-// reach the wire, so they never reach the notation. A bad label is not a bad blob, so a bad token throws a plain
-// Error (mirrors C# throwing FormatException, not ViPaqFormatException).
+// Version leads and is mandatory, which keeps positional parsing forward-safe. The compressed flag is a bare
+// bit, never a codec name, because the header carries no codec. Widths are only `8` or `16`. A bad label is not
+// a bad blob, so a bad token throws a plain Error, not ViPaqFormatError.
 
 const separator = "_";
 const tokenCount = 6;

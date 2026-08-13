@@ -5,7 +5,7 @@ using Binacle.Net.Kernel.UnitTests.Network.Providers;
 namespace Binacle.Net.Kernel.UnitTests.Network;
 
 // What an entry in a configured IP list means. Modules match callers against these, so a spelling that parses
-// to a different host than it reads as is the failure this covers.
+// to a different host than it reads as is the failure covered here.
 [Trait("Behavioral Tests", "Ensures configured IP entries parse and match as expected")]
 public class IPEntryTests
 {
@@ -31,8 +31,8 @@ public class IPEntryTests
 		IPEntry.TryParse(entry, out _).ShouldBeFalse();
 	}
 
-	// Each of these pins a decision against the BCL's own reading, so the BCL's answer is asserted first. Without
-	// that contrast the strictness looks like a bug and gets removed.
+	// The BCL's answer is asserted first: without that contrast the strictness looks like a bug and gets
+	// removed.
 	[Fact]
 	public void A_Leading_Zero_Is_Refused_Rather_Than_Read_As_Octal()
 	{
@@ -61,8 +61,8 @@ public class IPEntryTests
 		network.Contains(IPAddress.Parse("192.168.1.255")).ShouldBeTrue();
 	}
 
-	// The value after the slash used to be read as an address mask elsewhere in the app, so "192.168.1.0/24"
-	// admitted nearly the whole IPv4 range. As a prefix length it admits 256 addresses.
+	// The value after the slash was once read as an address mask, so "192.168.1.0/24" admitted nearly the whole
+	// IPv4 range. As a prefix length it admits 256 addresses.
 	[Fact]
 	public void A_Slash_24_Entry_Covers_Its_Own_Block_And_Nothing_Outside_It()
 	{

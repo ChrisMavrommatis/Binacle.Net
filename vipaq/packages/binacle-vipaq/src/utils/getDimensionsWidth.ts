@@ -2,10 +2,9 @@ import {Dimensions, Width} from "../models";
 import {Sizes} from "./sizes";
 
 // Ports C#: WidthHelper.GetDimensionsWidth. The narrowest width that holds all three dimensions. Dimensions
-// must be positive (a zero-sized box is not a box). Only Eight and Sixteen exist now: a value above the 16-bit
-// ceiling is outside the protocol and is rejected outright — there is no wider width to grow into, and no
-// saturation. Reachable in TS (a float like 1e19 is a valid number); in C# the type system stops most of it.
-// Names the offending field so the message matches C#'s per-field ParamName.
+// must be positive (a zero-sized box is not a box). A value above the 16-bit ceiling is rejected outright: no
+// wider width, no saturation. Reachable in TS, where a float like 1e19 is a valid number; C#'s type system
+// stops most of it. Names the offending field so the message matches C#'s per-field ParamName.
 export function getDimensionsWidth(item: Dimensions): Width {
 	if (item.length <= 0) {
 		throw new Error(`'length' must be greater than 0`);

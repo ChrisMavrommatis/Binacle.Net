@@ -15,8 +15,7 @@ public class BinProcessingCancellationTests
 		Operation = AlgorithmOperation.Packing
 	};
 
-	// Enough bins that a cancelled run has somewhere to stop, and enough items that each bin costs
-	// real work rather than exiting immediately.
+	// Enough bins for a cancelled run to have somewhere to stop, and enough items that each bin costs real work.
 	private static List<TestBin> CreateBins()
 		=> Enumerable.Range(1, 20)
 			.Select(index => new TestBin { ID = $"bin_{index}", Length = 100, Width = 100, Height = 100 })
@@ -70,8 +69,7 @@ public class BinProcessingCancellationTests
 		var processor = new LoopBinProcessor(new CountingAlgorithmFactory(algorithmFactory, out var counter));
 		using var cts = new CancellationTokenSource();
 
-		// Cancel once the run is underway, so the processor stops at a bin boundary rather than
-		// never starting. Proves the check runs per bin, not just once on entry.
+		// Cancel once the run is underway, so the check is proven per bin rather than once on entry.
 		counter.CancelAfter(cts, 3);
 
 		Assert.Throws<OperationCanceledException>(() =>

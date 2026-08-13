@@ -4,9 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Binacle.Net.Kernel.Logs.Services;
 
-// Sibling to LogsProcessor with its own loop — it never touches the write channel, so a slow sweep can never stall
-// logging. Deletes local log files past their retention age. When RetentionDays is null it does nothing: keeping
-// files is the safe default because these logs are an archive, and deletion stays the operator's job until opted in.
+// Deletes local log files past their retention age. Its own loop, never touching the write channel, so a slow
+// sweep cannot stall logging. With RetentionDays null it does nothing: these logs are an archive, so keeping
+// them is the safe default and deletion is opt-in.
 internal class LogsRetentionProcessor<TRequest> : BackgroundService
 {
 	private readonly IHostEnvironment environment;
@@ -37,11 +37,11 @@ internal class LogsRetentionProcessor<TRequest> : BackgroundService
 		}
 
 		var logDirectory = Path.Combine(this.environment.ContentRootPath, this.options.Path);
-		// Turn the filename format ("{0}.ndjson") into a glob ("*.ndjson") so we only ever match our own files.
+		// The filename format ("{0}.ndjson") becomes a glob ("*.ndjson"), so only our own files ever match.
 		var searchPattern = string.Format(this.options.FileNameFormat, "*");
 		var retention = TimeSpan.FromDays(this.options.RetentionDays.Value);
 
-		// Day granularity is enough — files roll once a day. Sweep on start, then once a day.
+		// Files roll once a day, so sweeping on start and then daily is enough.
 		using var timer = new PeriodicTimer(TimeSpan.FromDays(1));
 		try
 		{

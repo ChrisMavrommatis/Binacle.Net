@@ -8,8 +8,8 @@ using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.DiagnosticsModule.UnitTests;
 
-// The middleware reads only the connection's remote address, so a DefaultHttpContext drives it fully — no test
-// host, no server. Who gets a 403 is what an operator can lock themselves out with.
+// The middleware reads only the connection's remote address, so a DefaultHttpContext drives it fully: no test
+// host, no server.
 [Trait("Behavioral Tests", "Ensures health check IP protection behaves as expected")]
 public class HealthChecksProtectionMiddlewareTests
 {
@@ -101,8 +101,8 @@ public class HealthChecksProtectionMiddlewareTests
 		reachedHealthCheck().ShouldBeTrue();
 	}
 
-	// CIDR notation masks host bits off in every .NET parser, so "192.168.1.1/24" quietly admits 256 addresses.
-	// The entry is accepted, because that is what the notation means everywhere, but it cannot pass in silence.
+	// CIDR notation masks host bits off in every .NET parser, so "192.168.1.1/24" admits 256 addresses. Accepted,
+	// because that is what the notation means, but not in silence.
 	[Fact]
 	public void An_Entry_Whose_Host_Bits_Were_Masked_Off_Is_Reported()
 	{
@@ -121,8 +121,7 @@ public class HealthChecksProtectionMiddlewareTests
 		warning.ShouldContain("192.168.1.0/24");
 	}
 
-	// The message has to name the position: the entry itself can be null or blank, and a list of ten with one bad
-	// line is unreadable without it.
+	// The message has to name the position: the entry itself can be null or blank.
 	[Fact]
 	public void A_Malformed_Entry_That_Slipped_Past_Validation_Fails_On_Construction()
 	{

@@ -1,6 +1,6 @@
 // Ports C#: Providers/EncodeInvalidProvider.cs. A (bin, items) input the serializer must reject end-to-end.
-// The `:Q` suffix expands the item-count scenario to 65536 items without listing them. Consumed by
-// encodeInvalid.test.ts. Not a *.test.ts file, so jest does not run it.
+// The `:Q` suffix expands the item-count scenario to 65536 items without listing them.
+// Not a *.test.ts file, so jest does not run it.
 
 import {readVectors} from "../support/vectorReader";
 import {parseBin, parseItems} from "../support/vectorParser";

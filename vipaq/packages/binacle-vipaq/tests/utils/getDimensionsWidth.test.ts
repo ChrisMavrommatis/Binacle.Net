@@ -1,7 +1,7 @@
 // mirrors src/utils/getDimensionsWidth.ts
-// Mirrors C# WidthHelper.GetDimensionsWidth, separate impl. Dimensions must be positive — uses <= 0, so 0 is
-// rejected (unlike coordinates). Only Eight and Sixteen exist; a value above the 16-bit ceiling is rejected
-// outright (no wider tier, no saturation).
+// Mirrors C# WidthHelper.GetDimensionsWidth, separate impl. Dimensions must be positive, so the guard is <= 0
+// and 0 is rejected, unlike coordinates. A value above the 16-bit ceiling is rejected: no wider tier, no
+// saturation.
 import {getDimensionsWidth, Sizes} from "../../src/utils";
 import {Width} from "../../src/models";
 import {bin} from "../support/builders";

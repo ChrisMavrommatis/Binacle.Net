@@ -23,8 +23,7 @@ internal class HealthChecksProtectionMiddleware
 		this.next = next;
 		this.logger = logger;
 		this.options = options;
-		// Built once. HealthChecks.json is not reloaded (see HealthCheckConfigurationOptions.ReloadOnChange), so
-		// moving to IOptionsMonitor means calling this again on change and changing nothing else.
+		// Built once, because HealthChecks.json is not reloaded.
 		this.allowList = this.BuildAllowList(options.Value.RestrictedIPs);
 	}
 
@@ -41,12 +40,10 @@ internal class HealthChecksProtectionMiddleware
 		{
 			var entry = entries[index];
 
-			// Startup validation rejects a malformed entry, so reaching this is a bug.
-			//
-			// Throwing beats keeping the default network: that one has no base address,
-			// so it would turn every health request into an error,
-			// and a silently dropped entry would quietly widen or narrow the allow-list instead.
-			// The position is in the message because the entry itself can be null or blank.
+			// Startup validation rejects a malformed entry, so reaching this is a bug. Throwing beats keeping the
+			// default network, which has no base address and would error every health request, and beats
+			// dropping the entry, which would quietly widen or narrow the allow-list. The position is in the
+			// message because the entry itself can be null or blank.
 			if (!IPEntry.TryParse(entry, out var network))
 			{
 				throw new InvalidOperationException(
@@ -57,8 +54,8 @@ internal class HealthChecksProtectionMiddleware
 
 			networks[index] = network;
 
-			// "192.168.1.1/24" is the whole 192.168.1.0/24, which is 256 hosts an entry naming one does not look
-			// like. Every parser in .NET masks the host bits off in silence; this one says what it ended up with.
+			// "192.168.1.1/24" is the whole 192.168.1.0/24, 256 hosts. Every parser in .NET masks the host bits
+			// off in silence; this one says what it ended up with.
 			if (entry!.Contains('/') && entry.Trim() != network.ToString())
 			{
 				this.logger.LogWarning(
@@ -85,8 +82,8 @@ internal class HealthChecksProtectionMiddleware
 			return;
 		}
 
-		// Behind a proxy this is the caller only once the forwarded headers middleware has resolved it; without that
-		// it is the proxy, and no operator address will ever match.
+		// Behind a proxy this is the caller only once the forwarded headers middleware has resolved it; without
+		// that it is the proxy, and no operator address will ever match.
 		var remoteIp = context.Connection.RemoteIpAddress;
 
 		if (remoteIp is null)
@@ -106,9 +103,8 @@ internal class HealthChecksProtectionMiddleware
 		await next(context);
 	}
 
-	// The parsed RestrictedIPs, and the only thing that knows what they mean. Nested rather than file-scoped:
-	// CS9051 forbids a file-local type in a member signature of a non-file-local type, which the field and
-	// BuildAllowList both are. An allow-list anything else needed would belong in the Kernel beside IPEntry.
+	// The parsed RestrictedIPs. Nested rather than file-scoped: CS9051 forbids a file-local type in a member
+	// signature of a non-file-local type, which the field and BuildAllowList both are.
 	internal sealed class HealthCheckAllowList
 	{
 		private readonly IPNetwork[] networks;
