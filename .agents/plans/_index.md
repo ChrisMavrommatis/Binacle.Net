@@ -21,6 +21,7 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [api/integration-test-additions.md](api/integration-test-additions.md) | Integration tests: cover what the harness cannot see today |
+| [api/rate-limiting-owned-by-servicemodule.md](api/rate-limiting-owned-by-servicemodule.md) | Move rate limiting out of the core endpoints and into the ServiceModule |
 | [api/ui-clients-off-v3.md](api/ui-clients-off-v3.md) | Migrate the shipped UI clients off the v3 API |
 | [api/v4-stable.md](api/v4-stable.md) | v4 — flip from experimental to stable |
 
@@ -29,6 +30,8 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [ci-cd/ci-gates.md](ci-cd/ci-gates.md) | CI - make the PR gate mean something |
+| [ci-cd/dockerhub-overview.md](ci-cd/dockerhub-overview.md) | The Docker Hub repository page |
+| [ci-cd/dockerhub-tag-immutability.md](ci-cd/dockerhub-tag-immutability.md) | Turn on Docker Hub tag immutability, for release tags only |
 | [ci-cd/multi-arch-images.md](ci-cd/multi-arch-images.md) | CI - publish the image for arm64 as well as amd64 |
 | [ci-cd/release-pipeline-rebuild.md](ci-cd/release-pipeline-rebuild.md) | CI/CD - finish the GHCR release pipeline |
 
@@ -50,4 +53,5 @@ you need, and trim or delete it once the work lands.
 | File | Description |
 |---|---|
 | [tooling/image-module-stacks.md](tooling/image-module-stacks.md) | Decide what the `image` module is still for |
+| [tooling/image-verification-recipes.md](tooling/image-verification-recipes.md) | Verify a published image - recipes, and telling users they can |
 | [tooling/scripts-to-just-recipes.md](tooling/scripts-to-just-recipes.md) | Convert the last `tooling/*.sh` scripts to `just` recipes |

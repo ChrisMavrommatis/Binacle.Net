@@ -293,9 +293,11 @@ this.
 **Why signing is separate from attestation, and why it happens twice.** The SBOM and provenance say how the
 image was built; without a signature they do not prove the record itself was not altered. cosign closes that.
 But a cosign signature is **not** a manifest inside the index — so unlike the attestations it does not travel
-with the copy in D2. The staging image is signed on GHCR (which is the only place a beta ever exists, so a beta
-is verifiable) and the published image is signed again on Docker Hub. Signing the **digest** rather than a tag
-means one signature covers `x.y.z`, `x.y` and `latest`, since all three are aliases of it.
+with the copy in D2. The staging image is signed on GHCR and the published image is signed again on Docker Hub,
+so an image is verifiable wherever it is pulled from. (The parenthetical here used to say GHCR was the only
+place a beta ever exists; that stopped being true on 2026-08-11 when the prerelease skip was reversed, and
+`3.0.0-beta.2` is on both registries.) Signing the **digest** rather than a tag means one signature covers
+`x.y.z`, `x.y` and `latest`, since all three are aliases of it.
 
 **Corrected 2026-08-11, against the real artifact.** This said the signature lands in a `sha256-<digest>.sig`
 tag. That is the older cosign scheme and it is not what happens here. `sigstore/cosign-installer` v4.1.2
@@ -307,6 +309,11 @@ manifests for `v3.0.0-beta.2`.
 The correction does not move the decision — a referrer is still outside the index and still does not survive
 `imagetools create`, so signing twice is still required. It matters because anyone auditing the registry for a
 `.sig` tag will not find one and may conclude the image is unsigned.
+
+**A second way to reach that wrong conclusion, found 2026-08-13 on the published beta 2.** Docker Hub answers
+the referrers API for the signature; **GHCR answers it with a 404**, so the same query returns nothing there.
+The signature is present - it is in the GHCR tag list as `sha256-<digest>` and `cosign verify` passes against
+both registries. Only a failed verify is evidence of an unsigned image; an empty referrers response is not.
 
 **Keyless, so there is no key.** cosign exchanges the job's OIDC token for a short-lived certificate, which is
 why both jobs need `id-token: write` and why this adds no secret to the repo. `sigstore/cosign-installer` comes

@@ -1,7 +1,7 @@
 ---
 id: api/modules/service
 description: ServiceModule — JWT auth, rate limiting, account/subscription management. Three projects using clean architecture.
-verified: 2026-07-28
+verified: 2026-08-13
 check: Routes, config file names, and connection string name match ServiceModule source
 also_update:
   - api/configuration
@@ -69,7 +69,9 @@ Rate limiter config is rule-based (sliding window) — loaded from `Config_Files
 Only `ApiUsage` and `AuthToken` are registered as ASP.NET policies; `ApiUsageDemoSubscription` is used
 internally by the `ApiUsage` policy to apply different limits based on subscription type.
 
-When ServiceModule is off, `.RequireRateLimiting("ApiUsage")` on core endpoints is a no-op.
+When ServiceModule is off, `.RequireRateLimiting("ApiUsage")` on core endpoints is a no-op. The OpenAPI
+documents follow: `AddRateLimiterResponse()` gates the `429` on the `"RateLimiter"` feature this module
+registers, so a document generated with the module off carries no `429` on any endpoint. See `$api/openapi`.
 
 ## Domain Layer
 

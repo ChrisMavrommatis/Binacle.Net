@@ -1,8 +1,8 @@
 ---
 id: api/openapi
 description: OpenAPI wiring — IOpenApiDocument, the Kernel transformers (JWT, 429, response descriptions, enum-as-string), what endpoint groups auto-wire, and the external OpenApiExamples package
-verified: 2026-07-15
-check: IOpenApiDocument, transformers, and OpenApiOptions extensions match api/src/Binacle.Net.Kernel/OpenApi/; group 500 wiring matches v4/ApiV4EndpointGroup.cs
+verified: 2026-08-13
+check: IOpenApiDocument, transformers, and OpenApiOptions extensions match api/src/Binacle.Net.Kernel/OpenApi/; group 500 wiring matches v4/ApiV4EndpointGroup.cs; RateLimiterResponseOperationTransformer still checks both the "RateLimiter" feature and the endpoint metadata
 also_update:
   - api/v4/add-endpoint
   - api/kernel
@@ -39,8 +39,25 @@ document's `Configure()`:
 |---|---|---|
 | `AddResponseDescription()` | `ResponseDescriptionOperationTransformer` | Applies the per-endpoint response description set via the `.ResponseDescription(status, text)` endpoint extension, formatted by `ResponseDescription.Format` |
 | `AddJwtAuthentication()` | JWT document + operation transformers | Adds a `"Bearer"` security scheme and marks `[Authorize]` operations. No-ops when there's no auth scheme (ServiceModule off) — driven by `IOptionalDependency<IAuthenticationSchemeProvider>` |
-| `AddRateLimiterResponse()` | `RateLimiterResponseOperationTransformer` | Adds a `429` response to operations with `[EnableRateLimiting]`, only when the `"RateLimiter"` feature is enabled |
+| `AddRateLimiterResponse()` | `RateLimiterResponseOperationTransformer` | Adds a `429` response to operations with `[EnableRateLimiting]`, only when the `"RateLimiter"` feature is enabled (see below) |
 | `AddEnumStringsSchema()` | `EnumStringsSchemaTransformer` | Renders enum properties as `string` schemas (and fills enum names for the nullable converters) |
+
+### The `429` needs both guards
+
+`RateLimiterResponseOperationTransformer` checks two things, and dropping either one produces a wrong document:
+
+1. the `"RateLimiter"` feature is enabled — registered by `AddServiceModule`, so this means "the ServiceModule
+   is on and there is an actual limiter"; and
+2. the operation carries `[EnableRateLimiting]` metadata, from `.RequireRateLimiting("ApiUsage")` on the endpoint.
+
+The endpoint metadata alone is not enough. `.RequireRateLimiting(...)` sits unconditionally in the v3/v4 endpoint
+files, but it is inert without the module, so on its own it declares nothing a caller can observe. Documenting the
+`429` off the metadata alone puts a response in the document that the build cannot emit.
+
+This matters most for the **generated** documents. `just openapi generate` builds them from a host with no launch
+profile, so ServiceModule is off — that document already has no `v0` ServiceModule paths and no
+`/api/auth/token`, and it must have no `429` either, or it describes a shape that exists nowhere. A live instance
+running with the module on serves a document that does carry the `429`, correctly.
 
 Helpers in Kernel: `ResponseDescription.Format`, `HttpStatusDescriptions` (int → status name map),
 `OpenApiValidationProblemExample`, `ResponseDescriptionMetadata`, and the `.ResponseDescription(status, text)`
