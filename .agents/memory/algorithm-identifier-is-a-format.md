@@ -2,6 +2,10 @@
 name: algorithm-identifier-is-a-format
 description: The FFD_v2 / BFD_v1 string is a parsed data format, not a naming style - never tidy the underscore out of it
 type: gotcha
+when: renaming an algorithm class, enum member or identifier string
+paths:
+  - "lib/**"
+  - "shared/src/Binacle.Packing/**"
 ---
 
 `AlgorithmExtensions.GetAlgorithmIdentifierName()` builds `$"{ShortName}_v{Version}"`, giving `FFD_v2`,

@@ -1,3 +1,9 @@
+---
+description: add refresh-token support to ServiceModule
+paths:
+  - "api/**"
+---
+
 # Idea: add refresh-token support to ServiceModule
 
 **Status:** Unvetted idea. Likely done together with the ServiceModule rework (see Timing).

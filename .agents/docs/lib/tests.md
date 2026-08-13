@@ -7,6 +7,9 @@ also_update:
   - shared
   - lib/algorithm-factory
   - lib/result-selection
+paths:
+  - "lib/test/**"
+
 ---
 
 # Lib Tests

@@ -7,6 +7,12 @@ also_update:
   - commands
   - samples
   - ci-cd
+paths:
+  - "Binacle.Net.slnx"
+  - "Directory.*.props"
+  - "global.json"
+  - "**/*.csproj"
+  - "Dockerfile"
 ---
 
 # Build Topology

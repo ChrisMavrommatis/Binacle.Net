@@ -6,6 +6,8 @@ check: Sample folders, compose env vars, bind-mounted config paths, the k8s reso
 also_update:
   - api/configuration
   - api/modules
+paths:
+  - "samples/**"
 ---
 
 # Samples

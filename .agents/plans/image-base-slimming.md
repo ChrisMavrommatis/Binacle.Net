@@ -1,3 +1,7 @@
+---
+description: Harden and slim the base image
+---
+
 # Harden and slim the base image
 
 **Status:** The finding this file was opened for is **fixed**. The image was carrying two .NET runtimes; the

@@ -1,3 +1,9 @@
+---
+description: reduce integration friction
+paths:
+  - "api/**"
+---
+
 # Idea: reduce integration friction
 
 **Status:** Direction decided (2026-07-19) — **spec-first, generate-on-demand.** Plugins for non-developers stay

@@ -5,6 +5,8 @@ verified: 2026-07-06
 check: Collections, JS bundles, and plugin list match web/_config.yml and web/js/
 also_update:
   - packages
+paths:
+  - "web/**"
 ---
 
 # Web Site

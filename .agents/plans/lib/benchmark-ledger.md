@@ -1,3 +1,9 @@
+---
+description: Refresh the curated lib benchmark ledger
+paths:
+  - "lib/**"
+---
+
 # Refresh the curated lib benchmark ledger
 
 **Status:** Deferred, not started. The committed lib benchmark results are stale, not just old.

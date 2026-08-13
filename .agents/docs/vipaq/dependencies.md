@@ -3,6 +3,8 @@ id: vipaq/dependencies
 description: ViPaq project dependency tree — who references whom, who can see internals, and the deliberate walls (UnitTests never references TestsKernel; no test project references a generator).
 verified: 2026-07-24
 check: ProjectReference and InternalsVisibleTo entries in vipaq/**/*.csproj match the graph and the boundary rules below
+paths:
+  - "vipaq/**"
 ---
 
 # ViPaq — project dependencies

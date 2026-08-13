@@ -2,6 +2,7 @@
 name: bulk-rename-traps
 description: Four traps when sweeping a namespace or type rename across this repo — spaces in Algorithms/ folder names, unstaged files and git mv, global usings that collide, and fully-qualified names
 type: gotcha
+when: sweeping a namespace or type rename across the repo
 ---
 
 Four things that go wrong when renaming a namespace or moving a type across this repo. All four were hit for

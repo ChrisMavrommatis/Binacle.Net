@@ -6,7 +6,7 @@ namespace Binacle.ViPaq.PerformanceTests.PreReportChecks;
 
 // Round-trips every real pack forced to 16-bit widths through `ProtocolEncoder` directly — the wrapper only picks
 // the narrowest widths, so this is the one path that drives the 16-bit read on the mostly-8-bit real data (a
-// too-wide width is conformant, D14). Each codec × both layouts.
+// too-wide width is conformant). Each codec × both layouts.
 internal sealed class ForcedWidthRoundTripCheck : IPreReportCheck
 {
 	private static readonly ICompressionCodec[] Codecs =

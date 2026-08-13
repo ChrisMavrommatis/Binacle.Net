@@ -1,3 +1,7 @@
+---
+description: Release - Binacle.Net v3.0.0
+---
+
 # Release - Binacle.Net v3.0.0
 
 **Status:** In progress - **Gate A green, beta 1 published and verified, docs written.** B2 landed, so the long

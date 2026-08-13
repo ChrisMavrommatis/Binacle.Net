@@ -2,6 +2,9 @@
 name: v3-frozen
 description: v3 API is frozen — never modify it; all new endpoints and contract work go in v4 only
 type: convention
+when: changing anything under api/src/Binacle.Net/v3
+paths:
+  - "api/src/Binacle.Net/v3/**"
 ---
 
 The v3 API is stable and frozen. Do not modify v3 code — no new endpoints, no behavioural changes,

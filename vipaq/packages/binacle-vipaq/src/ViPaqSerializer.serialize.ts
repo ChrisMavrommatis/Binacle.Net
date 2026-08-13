@@ -6,7 +6,7 @@ import {ViPaqSerializationOptions} from "./ViPaqSerializationOptions";
 
 // Ports C#: ViPaqSerializer.Serialize. The choosing layer, and the only entry point a caller needs. It picks the
 // header — the narrowest widths that hold each section — and the caller's options set the layout and whether to
-// compress (defaults off / row-major, D16). The codec follows from the header (resolveCodec); the encoder obeys.
+// compress (defaults off / row-major). The codec follows from the header (resolveCodec); the encoder obeys.
 export async function serialize(
 	bin: Dimensions,
 	items: (Dimensions & Coordinates)[],

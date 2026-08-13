@@ -1,3 +1,9 @@
+---
+description: a schema-migration path for the ServiceModule store
+paths:
+  - "api/**"
+---
+
 # Idea: a schema-migration path for the ServiceModule store
 
 **Status:** Unvetted idea. Not a priority now — becomes one the first time the schema changes after go-live.

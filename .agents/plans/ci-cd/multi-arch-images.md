@@ -1,3 +1,9 @@
+---
+description: CI - publish the image for arm64 as well as amd64
+paths:
+  - ".github/workflows/**"
+---
+
 # CI - publish the image for arm64 as well as amd64
 
 **Status:** Not started, and **not scheduled** - the demand question below has never been answered. Trimmed out

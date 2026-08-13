@@ -2,6 +2,9 @@
 name: v2-dropped
 description: The v2 API does not exist on this branch — only v3 and v4; never add v2 code, docs, or references
 type: convention
+when: touching API versioning, routes or docs
+paths:
+  - "api/**"
 ---
 
 `features/new_api_version` drops the v2 API entirely. There is no `api/src/Binacle.Net/v2/`.

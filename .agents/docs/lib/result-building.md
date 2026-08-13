@@ -3,6 +3,10 @@ id: lib/result-building
 description: OperationResultBuilder — how OperationResult is constructed, status rules, volume percentages, and integrity checks
 verified: 2026-07-15
 check: OperationResultBuilder API matches source in lib/src/Binacle.Lib/
+paths:
+  - "lib/src/Binacle.Lib/Models/OperationResultBuilder.cs"
+  - "shared/src/Binacle.Packing/Models/**"
+
 ---
 
 # Result Building

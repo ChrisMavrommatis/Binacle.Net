@@ -5,6 +5,10 @@ verified: 2026-07-15
 check: Route patterns match endpoint files; Presets.json optional:false confirmed in config
 also_update:
   - api/configuration
+paths:
+  - "api/src/Binacle.Net/Configuration/BinPresetOptions.cs"
+  - "api/src/Binacle.Net/Config_Files/Presets.json"
+
 ---
 
 # Presets

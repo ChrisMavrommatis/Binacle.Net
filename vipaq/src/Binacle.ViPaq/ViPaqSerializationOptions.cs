@@ -3,7 +3,7 @@ namespace Binacle.ViPaq;
 // The caller-facing knobs for Serialize. Both default to the smallest, safest choice: no compression, row-major.
 // The header records whatever was actually used, so a decoder never needs to be told any of this.
 //
-// Compression and layout are the encoder's choice (PROTOCOL.md §4, decisions.md D16), exposed here rather than
+// Compression and layout are the encoder's choice (PROTOCOL.md §4), exposed here rather than
 // pinned, so the default stays raw and row-major and a caller opts in when they want a smaller token.
 public sealed class ViPaqSerializationOptions
 {

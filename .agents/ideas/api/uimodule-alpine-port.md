@@ -1,3 +1,9 @@
+---
+description: UIModule - port from Blazor reactivity to Alpine.js
+paths:
+  - "api/**"
+---
+
 # Idea: UIModule — port from Blazor reactivity to Alpine.js
 
 **Status:** Unvetted idea — no committed timeline or priority. Detailed below because the ground was already

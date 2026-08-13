@@ -2,6 +2,9 @@
 name: results-curated
 description: results/ is a hand-curated vault — harnesses write to gitignored scratch, never straight into results/
 type: convention
+when: writing anything into results/
+paths:
+  - "results/**"
 ---
 
 `results/` holds committed benchmark and size evidence, organized by slice — `lib/` and `vipaq/`, each split into

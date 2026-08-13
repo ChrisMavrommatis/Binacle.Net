@@ -2,6 +2,10 @@
 name: test-leaf-naming
 description: How a test leaf is named - <slice>[-<component>][-<language>]-<kind>, kind spelled out, no two leaves a letter apart
 type: convention
+when: adding or renaming a test leaf
+paths:
+  - "tooling/tests.just"
+  - "**/test/**"
 ---
 
 A test leaf is one project and one run, so it is also one CI step. Its recipe name follows:

@@ -9,12 +9,12 @@ namespace Binacle.ViPaq;
 //
 // `ProtocolEncoder` is blind: it is handed a header and obeys it. Something has to decide that header, and this
 // is where that goes. Three things are the encoder's choice, all recorded in the header so a decoder never
-// guesses (PROTOCOL.md §4 "Selection", §6, decisions.md D14):
+// guesses (PROTOCOL.md §4 "Selection", §6):
 //
 //   - **Widths** — derived by `Header.Create`: the narrowest that holds each section, each sized independently.
-//   - **Layout** — the caller's choice through `ViPaqSerializationOptions`, default `RowMajor` (D16).
+//   - **Layout** — the caller's choice through `ViPaqSerializationOptions`, default `RowMajor`.
 //   - **Compressed** — the caller's choice too, default off. The codec follows from the header (`ResolveCodec`):
-//     raw DEFLATE when set, a pass-through NoOp when not. Pinned by `Version` (§6, D16).
+//     raw DEFLATE when set, a pass-through NoOp when not. Pinned by `Version` (§6).
 //
 // Both directions are the same three lines: build/read the header, resolve the codec from it, hand both to the
 // encoder. The uint16 item count lives *inside* the body (§3), so only the encoder can read it (§7, steps 4-5).
@@ -59,8 +59,8 @@ public static class ViPaqSerializer
 		return new ProtocolEncoder(codec).Decode<TBin, TItem, T>(header, data[Header.ByteCount..]);
 	}
 
-	// The codec a header's body is written and read with. The wire pins one codec by Version (PROTOCOL.md §6,
-	// D16): raw DEFLATE when the Compressed bit is set, otherwise a NoOp that passes the raw body through. One
+	// The codec a header's body is written and read with. The wire pins one codec by Version (PROTOCOL.md §6):
+	// raw DEFLATE when the Compressed bit is set, otherwise a NoOp that passes the raw body through. One
 	// place decides which — the same rule for encode and decode.
 	private static ICompressionCodec ResolveCodec(Header header)
 		=> header.Compressed ? new DeflateCodec() : new NoOpCodec();

@@ -8,7 +8,7 @@ namespace Binacle.ViPaq.TestsKernel.Providers;
 // speed/memory benchmarks only.
 //
 // **Never use these for size or compression.** Random data has nothing for a codec to grip, so it reports the
-// *opposite* of real behaviour — size and crossover use real data only (decisions.md D9). CPU and memory, though,
+// *opposite* of real behaviour — size and crossover use real data only. CPU and memory, though,
 // depend on item count and byte width, not on whether values repeat, so random is fine and preferred here: it
 // scales freely and deliberately exercises the expensive path.
 public static class SyntheticDataProvider
@@ -21,7 +21,7 @@ public static class SyntheticDataProvider
 	private const ushort SixteenBitMax = 65_535;
 
 	// Two counts past any real pack, at each width family. Spread is "mixed" — CPU and memory do not depend on
-	// where the values sit, only on the count and the byte width (D9).
+	// where the values sit, only on the count and the byte width.
 	private static readonly int[] Counts = [2_000, 5_000];
 	private static readonly int[] WidthBitsMatrix = [8, 16];
 

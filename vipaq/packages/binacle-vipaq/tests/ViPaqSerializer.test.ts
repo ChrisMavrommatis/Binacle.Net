@@ -2,7 +2,7 @@
 // ports C#: ViPaqSerializerTests + SerializationEncodingTests + SerializationBehaviorTests
 //
 // ViPaqSerializer is the choosing layer: by default it writes raw, row-major, narrowest. Compression and layout
-// are opt-in options (defaults off / row-major, D16). So these cover its own job — exact bytes for the default,
+// are opt-in options (defaults off / row-major). So these cover its own job — exact bytes for the default,
 // the width it chooses, a real end-to-end round trip, the opt-in options, and the guards. The forced wider/mode
 // variants live in roundTrip.test.ts (they go through ProtocolEncoder directly).
 import ViPaqSerializer from "../src/ViPaqSerializer";

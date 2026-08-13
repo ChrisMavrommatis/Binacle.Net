@@ -3,6 +3,8 @@ id: docs-site
 description: The published Jekyll documentation site at repo-root docs/ — versioned API docs with Swagger UI embed. `$docs-site` always means repo-root docs/, never .agents/docs/.
 verified: 2026-08-07
 check: Collections, versions, plugin list, and version folders match docs/_config.yml and docs/collections/_versions/; the common-page rule matches what is actually on collections/_common_pages/
+paths:
+  - "docs/**"
 ---
 
 # Docs Site

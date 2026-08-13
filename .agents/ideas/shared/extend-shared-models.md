@@ -1,3 +1,9 @@
+---
+description: take the shared model leaf further
+paths:
+  - "shared/**"
+---
+
 # Idea: take the shared model leaf further
 
 **Status:** Unvetted idea. Parked leftovers from the finished `Binacle.Geometry` extraction.

@@ -5,6 +5,8 @@ verified: 2026-07-15
 check: Component x-data names, plugin exports, and model layers match packages/binacle-net-ui/src/
 also_update:
   - packages
+paths:
+  - "packages/**"
 ---
 
 # binacle-net-ui

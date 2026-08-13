@@ -2,6 +2,9 @@
 name: no-published-sdks
 description: We ship an OpenAPI document per version, not client SDKs — consumers generate their own; publishing a package needs real demand first.
 type: decision
+when: anyone asks for a client SDK or package
+paths:
+  - "api/**"
 ---
 
 Binacle.Net publishes **no client libraries** — no npm package, no NuGet package, no generated client in any

@@ -7,6 +7,7 @@ reviewable. Read this first to know where things are.
 
 | Path | What it is | When to use it |
 |---|---|---|
+| `rules/` | **Every standing rule, one file per rule.** Each declares in its front matter whether it is always-on or fetched on a trigger. | Read `rules/README.md` at the start of any task that writes something. Match the trigger, open that one file. |
 | `docs/` | Stable reference docs for the codebase — slices, endpoints, modules, build. | Find the topic in `docs/_index.md` (or a task in `docs/README.md`), then read that file. |
 | `design/` | The settled design *behind* the docs — decisions (why) and findings (measured evidence). Permanent, but it can change. | Find it in `design/_index.md`. It cites docs with `$id` references; docs never cite it. |
 | `plans/` | Work not yet done — designs, TODOs, migrations, deferred decisions. | Find the plan in `plans/_index.md`. Trim/delete an item once it lands. |
@@ -15,9 +16,21 @@ reviewable. Read this first to know where things are.
 | `board.md` | **Where work is picked from.** Every plan, idea and one-liner not tied to a release, grouped by theme and then by readiness. Permanent — releases come and go underneath it. | Start here when choosing what to work on next. |
 | `release-v<version>.md` (+ companions) | The per-version release set, at root: the release plan, plus `release-notes-v<version>.md` (the GitHub release body) and `post-release-v<version>.md` (right-after-release work). | When cutting a release. The first two are deleted once the version is out; the post-release list goes when its own items are done. |
 
-Nothing here is loaded into the session up front — `CLAUDE.md` only points at this file, and you open
-what you need on demand. `docs/`, `design/`, `plans/`, `ideas/`, and `memory/` each have a generated `_index.md`
-(a grouped manifest); regenerate them all with `just agents all` after adding or renaming a file.
+Nothing here is loaded up front. `CLAUDE.md` carries the four always-on rules and points at this file; you
+fetch the rest on demand.
+
+**Every file declares when it is needed, so you can decide without opening it.** The front matter is the fetch
+key, and every layer uses the same three optional keys on top of whatever else it carries:
+
+```yaml
+description: what this file is, in one line     # every file
+when: the plain-language trigger                # rules and memory - when this fires
+paths: ["lib/src/**"]                           # the code it covers
+```
+
+**Each layer has a generated `_index.md` listing those fields as yaml**, so one read of an index tells you
+which files matter for the code you are about to touch: match your path against `paths:`, or grep
+`load: always`. Regenerate them all with `just agents all` after adding, renaming or re-describing a file.
 
 **Everything is grouped by slice, mirroring the repo layout.** A slice is a top-level area of the
 codebase (`api`, `lib`, `vipaq`, `shared`, `tooling`, `ci-cd`, …); files that don't map to one live at the root
@@ -77,75 +90,10 @@ manifests and config json readers download - provided it touches no prose, no fr
 matches what repo-root `samples/` already does. Read the rule there before using it, and record each use in the
 plan that owns the work.
 
-## Who may reference whom — keep the layers from bleeding
+## Who may reference whom
 
-### First, the boundary: references point out of `.agents`, never into it
-
-**No file outside `.agents/` may point a reader at `.agents/` content.** Not a code comment, not a workflow
-comment, not a repo README. `CLAUDE.md` is the single exception, because something has to say this directory
-exists; it carries the rule too. Files inside `.agents/` point outward freely — at code, at paths, at anything.
-
-Two things this is *not*:
-
-- **A path a tool operates on is not a reference.** `tooling/agents.just` reads and writes `.agents/**/_index.md`,
-  and the root `justfile` registers it. Those are operands. What is banned is the pointer — "see
-  `.agents/design/ci-cd/decisions.md` for why" — which makes an outside file depend on a layout we rearrange at
-  will. This whole `design/` split is the proof that we do.
-- **A ban on comments.** Comments stay, and they are **strictly for humans**: the person editing that line, told
-  why the trap in front of them is a trap. Anything an *agent* needs — background, history, "keep this in step
-  with X" — goes in the matching layer here instead. A fact written in both places will disagree within a
-  release.
-
-### Then, inside: two rules keep the layers from bleeding
-
-Two **permanent** layers describe the code as it is now (`docs`, `design`); three **ephemeral** ones capture work
-and notes that come and go (`plans`, `ideas`, `memory`).
-
-- **Nothing permanent points at anything ephemeral.** A plan/idea is deleted when built or dropped, and a memory
-  can stop being true, so a link to one dangles. If a permanent file needs the content, it wasn't ephemeral —
-  move it into a doc or design first.
-- **Docs reference only docs.** `docs` are the plain "what is now"; `design` is the "why", and design can change
-  under the docs — so a doc must never depend on it. Design points at docs, never the reverse.
-
-| File type | May reference | Never references | Lifecycle |
-|---|---|---|---|
-| **docs** (permanent) | code, READMEs, **docs** | design, plans, ideas, memory | The "what is now". Kept current. |
-| **design** (permanent, can change) | code, READMEs, **docs, design** | plans, ideas, memory | The "why" behind the docs. Points at docs; docs never point back. |
-| **plans** (ephemeral) | code, READMEs — **nothing under `.agents/`** | docs, design, plans, ideas, memory | Work being built now-ish. Deleted when it lands. |
-| **ideas** (ephemeral) | code, READMEs — **nothing under `.agents/`** | docs, design, plans, ideas, memory | Future maybes. Become a plan when picked up. |
-| **memory** (ephemeral) | ideally nothing — a doc or design only if it truly must | plans, ideas, memory | Rules/conventions that can stop being true. |
-| **`.agents/README.md`** (the map) | any file, as navigation | — | The one global map. The only exempt README. |
-| **`board.md`** (the work map) | any plan, idea or todo, as navigation | docs, design, memory | Permanent file, entirely ephemeral contents. Nothing points at it. |
-| **slice READMEs** (per layer) | its own layer's rules — a `docs/` README references only docs | same as its layer | Describe, rule, and index their own folder. |
-| **anything outside `.agents/`** | code, paths, itself | **`.agents/` — anything at all** | Code, workflows, repo READMEs. A tool's operand path is not a reference. |
-| **`CLAUDE.md`** (the door) | any file, as navigation | — | The one exception to the line above. It exists to say `.agents/` is there. |
-
-What falls out of these rules:
-
-- **Nothing points at a plan, idea, or memory** — not even a README section that lists them survives as a live
-  `$` link; navigation names them, it does not cite them. They vanish; incoming links dangle. The board is the
-  standing exception, and it pays for it with a rule: a landed plan is ticked and unlinked in the same change.
-- **Ideas and plans are self-contained.** They cite **no `$` reference at all** — not a doc, not a design, not
-  each other. Name the area in plain words ("the ServiceModule doc") and inline any fact you need. A plan or idea
-  is a scratchpad that gets deleted; a `$` reference out of one is a maintenance debt for a file that will not
-  outlive the work.
-- **Memory stays as self-contained as it can.** Ideally it references nothing; if it truly must, only a doc or
-  design — never another memory, plan, or idea.
-- **Only the top-level `.agents/README.md` (and `CLAUDE.md`) is exempt** — it is the global map, so it may *name*
-  any file. A slice README follows its own layer's rules: it describes, rules, and indexes its folder, but a
-  `docs/` README still references only docs.
-- **The release set is the second exception.** `release-v<version>.md` and its `post-release` / notes
-  companions coordinate a release, so the plan may point at any file — **except `board.md`** — but, like the
-  map, **nothing points at it**. It is version-scoped and deleted once shipped.
-- **`board.md` is the third.** It is a permanent file whose contents are entirely ephemeral — that is the
-  point, and it is why it is exempt rather than an accident. Like the map and the release set, **nothing points
-  at it**. It is the only permanent file allowed to link an idea.
-
-  **"Nothing" means nothing, and it beats the release-set carve-out.** A release file may *name* the board in
-  plain words — "everything else is on the board" — but it may not link it. The two rules read as a conflict
-  otherwise, and this is the way it resolves.
-- **A layer's own `_index.md` is navigation, not citation.** It lists its folder's files by name so they can be
-  found; that is what an index is for, and it is regenerated, not maintained by hand.
+One table, one file: `rules/who-references-whom.md`. It covers every layer, the outward boundary, and the
+three exceptions. Nothing here restates it.
 
 ## How to reference — the `$` symbol scheme
 
@@ -161,17 +109,13 @@ Point at another agent doc with a **`$` reference**, not a file path. Paths brea
 - `also_update:` lists sibling docs by **id** (`vipaq/findings`), not path.
 - Reference **code, `results/`, and the wire spec by real path** — the `$` scheme is for `.agents` docs only.
 
-**Ref codes stay inside the agent docs.** A label like `$vipaq#D16` is an agent's cross-reference; a human reading
-"D16" has no idea what it means. Never put a bare code in anything human-facing — the `release-notes` /
-`release-actions` files, PR text, or a message to the maintainer. There, spell out the thing.
+**Ref codes stay inside the agent docs** - see `rules/ref-codes-stay-in-the-agent-docs.md`.
 
 ## Rules of thumb
 
-- Put a fact in exactly one place. Cross-link agent docs with `$` references (see above); never duplicate.
-- The human commits — never commit, stage, or push. Leave changes in the working tree.
-- When you edit a doc, update its `verified:` date and check its `also_update:` list. When verifying a
-  doc, its `check:` field says exactly what to confirm.
-- **Rules live at the scope they cover.** A repo-wide rule → `CLAUDE.md` (which holds only those). A rule about
-  the whole `.agents` system → this README. A rule about one layer → that layer's README (a docs rule →
-  `docs/README.md`). A rule tied to one topic → its own doc or memory: v3-is-frozen in `memory/v3-frozen.md`,
-  endpoint rules (`BindingResult<T>`, rate limiting, CORS) in `docs/api/`.
+The standing rules moved to `rules/`, one file each - read `rules/README.md` rather than hunting for them
+here. Two that shape how you use *this* directory:
+
+- **Find the layer first, then the file.** Each layer has an `_index.md` manifest; open that, not every file.
+- **A rule about the whole system belongs in `rules/`. A fact about one topic belongs in the doc or memory
+  that owns it** - v3-is-frozen in `memory/v3-frozen.md`, endpoint rules in `docs/api/`.

@@ -2,6 +2,9 @@
 name: servicemodule-test-infra
 description: Test-host config goes through an env var the harness reads, never a .runsettings file — the MTP runner ignores VSTest runsettings
 type: gotcha
+when: changing ServiceModule test-host configuration
+paths:
+  - "api/test/Binacle.Net.ServiceModule.IntegrationTests/**"
 ---
 
 ServiceModule integration tests pick their database backend from the `BINACLE_TEST_INFRA` env var, with an

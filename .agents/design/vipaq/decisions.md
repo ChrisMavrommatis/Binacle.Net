@@ -6,6 +6,8 @@ check: Locked decisions are not contradicted by vipaq/PROTOCOL.md or vipaq/src/B
 also_update:
   - vipaq/architecture
   - vipaq/findings
+paths:
+  - "vipaq/**"
 ---
 
 # ViPaq — decisions ledger

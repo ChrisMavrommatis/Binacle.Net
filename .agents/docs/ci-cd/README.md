@@ -7,6 +7,8 @@ also_update:
   - ci-cd/release-pipeline
   - tooling
   - commands
+paths:
+  - ".github/workflows/**"
 ---
 
 # CI/CD

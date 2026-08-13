@@ -1,3 +1,9 @@
+---
+description: Admin site for user management
+paths:
+  - "api/**"
+---
+
 # Idea: Admin site for user management
 
 **Status:** Unvetted idea.

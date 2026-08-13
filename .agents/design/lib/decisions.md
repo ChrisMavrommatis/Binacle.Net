@@ -5,6 +5,8 @@ verified: 2026-08-13
 check: Algorithm sets match AlgorithmProcessorFactory.Create and BinProcessorFactory.CreateMultiAlgorithm; the project and fixture layout matches lib/ and shared/
 also_update:
   - lib/findings
+paths:
+  - "lib/**"
 ---
 
 # Lib — decisions ledger
@@ -44,8 +46,10 @@ own `Abstractions/` folder. `lib/src` now holds one project. See `$lib/dependenc
 
 **Why the line falls where it does.** `Binacle.Geometry` holds what the notation and the wire format need;
 `Binacle.Packing` holds what only the packer and its consumers need. That is a fact about usage, not taste.
-`IWithQuantity` is used by `Binacle.CompactNotation`, the OR-Library converter and the notation unit tests —
-consumers that never touch packing — so it is correctly in Geometry. `IWithID` is used by none of them, only by
+The quantity interfaces are used by `Binacle.CompactNotation`, the OR-Library converter and the notation unit
+tests — consumers that never touch packing — so they are correctly in Geometry. All three name
+`IWithReadOnlyQuantity<T>`, the read-only base, not `IWithQuantity<T>` itself; the pair moves together.
+`IWithID` is used by none of those three, only by
 `api/src`, `lib/src`, `lib/test` and the fixture kernels. That is why identity is packing vocabulary and not
 geometry.
 

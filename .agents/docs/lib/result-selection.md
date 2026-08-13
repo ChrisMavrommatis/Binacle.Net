@@ -5,6 +5,9 @@ verified: 2026-07-24
 check: Strategy class names and scoring rules match lib/src/Binacle.Lib/
 also_update:
   - api/service
+paths:
+  - "lib/src/Binacle.Lib/ResultSelection/**"
+
 ---
 
 # Result Selection

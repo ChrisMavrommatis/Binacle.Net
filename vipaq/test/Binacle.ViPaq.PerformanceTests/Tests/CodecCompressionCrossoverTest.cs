@@ -9,7 +9,7 @@ namespace Binacle.ViPaq.PerformanceTests.Tests;
 // Holds the layout fixed and puts the three codecs side by side, ViPaq only: for every scenario, the raw (NoOp)
 // size next to the deflate and gzip sizes. That answers at a glance what the split size report buries — does
 // compressing this pack pay at all, and which codec is smallest — and, read down the item-count ladder, where
-// compression first starts to pay (the D7 try-both threshold).
+// compression first starts to pay (the try-both threshold).
 //
 // One test is one (scenario set × layout); `Program` registers a Row file and a Columnar file. Rows are ordered
 // by item count so the crossover is easy to spot. Real data is not a clean ladder — it has gaps — so the

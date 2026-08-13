@@ -9,8 +9,12 @@ audit, once after an adversarial review that rejected the first proposed file. M
 
 **`architecture.yml` exists at the repo root and states the real shape as of 2026-08-13** - corrected after the
 `Binacle.Packing` extraction and the tests-kernel split, then checked by re-deriving the graph from every
-`ProjectReference`. So phase 1's *file* half is done and the tooling phases are unblocked. **The comment check
-and the fifteen comment fixes are not done** - that is what phase 1 still owes, and it is the visible win.
+`ProjectReference`. So phase 1's *file* half is done and the tooling phases are unblocked.
+
+**The comment fixes are done - all 27 of them, on 2026-08-13. The check itself is not built.** That inverts
+what phase 1 owes: the sites below are already clean, so whoever writes the check will find it green on day
+one, which is the state it wanted anyway. Do not go looking for the fifteen sites to fix; go and confirm the
+check catches nothing, then keep it that way.
 
 ## The goal, in order
 
@@ -29,6 +33,21 @@ follow only when something breaks. The strong case for a type-level tool is not 
 will be green forever; it is the two rules a graph walk can never see (the api module boundary, and v3-frozen).
 
 ## Why this exists
+
+**It was fifteen sites. Re-measured on 2026-08-13 it was 27, in four file types.** The count below is the
+2026-08-12 audit; the corrected breakdown is 14 filenames, 2 `$references` and 11 bare ref codes. All 27 are
+fixed. Two of them were never counted and matter for how the check is scoped:
+
+- **`Directory.Packages.props` carried `$build-topology`.** A `.cs`/`.ts`-only scan never sees it. The scan has
+  to cover every tracked file - `.props`, `.csproj`, workflows, just recipes - or a whole file type is exempt.
+- **`ViPaqSerializer.cs` had a second bare `D16` two lines below the site the audit listed.** Counting sites by
+  eye finds the one you are looking at, not the one beside it.
+
+**The bare ref codes are a third arm, not a footnote.** `D16` names no file and uses no `$`, so a filename arm
+and a `$id` arm both sail past it - and it is the worst of the three to read, because a person editing that
+line has no way to find out what D16 was. There were 11, against 14 and 2 for the other two shapes.
+
+The original audit's list, kept because it is the record of what was found and where:
 
 **Fifteen comment lines in thirteen files point at agent guidance.** Fourteen are under `vipaq/`, citing `decisions.md`,
 `findings.md` or `architecture.md` by bare filename, several with a bare ref code (`D9`, `D14`, `D16`) that
@@ -217,9 +236,13 @@ Without that sentence the extraction reads as introducing a `shared/src -> lib` 
 
 **The rule that falls out is worth a check.** If a grant marks an existing edge, every grant must have one: the
 named assembly must reference the granter, directly or transitively. A grant naming an assembly that does not is
-dead weight - it grants access nobody can take. Run by hand against the repo's six grants, this already found
-one - a grant to `Binacle.Lib.UnitTests` for internals that project never touched, since deleted. Cheaper than
-any of the graph tools and it caught something on its first run.
+dead weight - it grants access nobody can take. It already found one - a grant to `Binacle.Lib.UnitTests` for
+internals that project never touched, since deleted. Cheaper than any of the graph tools and it caught
+something on its first run.
+
+**Re-counted 2026-08-13: there are 19 grants across 9 granting projects, not six.** Do not size the check by
+the old number. All 19 pass the rule today, so the check lands green. Re-derive rather than trust it:
+`grep -rn 'InternalsVisibleTo' --include=*.csproj .`
 
 ## Enforcement
 
@@ -229,20 +252,38 @@ and a generator recipe to do what `rg -n '(decisions|findings|architecture)\.md'
 `tooling/` plus a step in `.github/workflows/run-tests.yml` is the same check in the repo's existing idiom.
 Adopt Semgrep the day a rule appears that a regex genuinely cannot express.
 
-**The banned-name list is hardcoded; the generator checks for collisions.** The obvious design - generate the
-alternation from every `.md` basename under the agent guidance directory - was measured and is unusable:
-78 distinct basenames produce **94 hits** across the repo against **15** for the narrow list. `README.md` alone
-accounts for most, and hits land in `Binacle.Net.slnx`, `DEVELOPMENT.md` and four `docs/collections/_versions/`
-pages that a coding session may not edit. So invert it: keep a short list of names distinctive to agent
-guidance, and have the generated check fail the build when a **new** agent-doc basename is distinctive enough
-to belong on the list, or when a listed name gains a twin elsewhere in the repo. That turns "the regex has
-never heard of the name" into a build error rather than into noise.
+**Derive the banned-name list; do not hardcode it. The 94-vs-15 measurement that said otherwise was wrong.**
+The rejected design - generate the alternation from every `.md` basename under the agent guidance directory -
+was measured at **94 hits** against **15** for a narrow hand-written list, and dismissed. Re-measured on
+2026-08-13, those 94 came from two things: `README.md`, which exists all over the repo, and the published
+sites, whose own pages legitimately link their own `concepts.md` (14 files). Take out the basenames that also
+exist outside the guidance directory - `README.md` and `presets.md`, the only two - and skip `docs/` and
+`web/`, which a coding session may not edit anyway, and the derived list of 77 names produces **13 files, 14
+lines, every one a real violation**. Zero noise.
 
-**The check has two arms, and the second is the cheap one.** Arm one is the filename list above. Arm two is
-any `` `$id` `` style reference outside the agent guidance directory - one pattern, no list to maintain,
-because the `$` scheme is used nowhere else in the repo. Arm two is what catches
-`api/src/Binacle.Net/v4/Contracts/ExampleData.cs:63`, which arm one misses entirely. Build both, or the check
-ships with a hole in it that a whole slice already fell through.
+That matters beyond tidiness: **deriving the list removes the need for the collision arm entirely.** A
+hardcoded list needs a second mechanism to say when it has rotted; derivation *is* that mechanism, free. A doc
+added tomorrow is covered the day it lands, and a name that gains a twin outside drops out by itself. The same
+trick runs the other two arms - `$references` match the `id:` values the docs declare, bare ref codes match the
+`D1…`/`O1…`/`F1…` headings that define them.
+
+**What derivation costs, and it must be asserted rather than assumed:** an empty derived list makes the check
+report clean forever. Fail loudly when the guidance directory yields no distinctive basenames, no ids, or no
+ref codes.
+
+**Three arms, not two, and each is blind to the others.** Arm one is the derived filename list. Arm two is a
+`` `$id` `` reference - match it against the ids the docs actually declare, because a generic `$word` pattern
+hits every shell variable and every minified asset in the repo, which is thousands of lines of noise. Arm three
+is the bare ref code. Arm two is what catches `api/src/Binacle.Net/v4/Contracts/ExampleData.cs` and
+`Directory.Packages.props`; arm three catches 11 sites neither of the others can see. Build all three, or the
+check ships with a hole a whole file type already fell through.
+
+**Two shell traps, both of which produced a green run over 14 real violations while it was being written:**
+
+- `xargs` returns 123 when **any** of its grep batches finds nothing, which is the normal case here. Test the
+  output for emptiness, never the exit status.
+- Six algorithm folders have spaces in their names, so plain `xargs` splits those paths into fragments that
+  match nothing. `-d '\n'` is not optional. This is the same trap already written down for bulk renames.
 
 **Then the graph tools, if and when they are wanted.**
 
@@ -340,9 +381,14 @@ duplication bugs. That is worth knowing when judging how much the graph half is 
 
 - `binacle-compact-notation` moves from `dependencies` to `devDependencies` in
   `vipaq/packages/binacle-vipaq/package.json`.
-- `api/src/Binacle.Net/Binacle.Net.csproj:73` declares `<Using Include="Binacle.Geometry" />` with no
-  `ProjectReference` - Geometry arrives transitively through `Binacle.Lib`. Breaks the day `lib` stops
-  referencing `shared`.
+- **A global `Using` with no matching `ProjectReference` is a pattern, not one file. Re-counted 2026-08-13:
+  19 declarations across 13 projects**, in every slice that has C#. `api/src/Binacle.Net/Binacle.Net.csproj`
+  has two of them, `:73` for `Binacle.Geometry` and `:74` for `Binacle.Packing`; the rest sit in `Kernel`,
+  `UIModule`, `DiagnosticsModule`, `Binacle.Lib` itself, all four lib test projects, two shared test projects
+  and three vipaq test projects. Every one resolves transitively, so they all compile today, and every one
+  breaks the day the project it borrows from stops referencing what it borrows. Cheap to check - it reads only
+  `.csproj` files. Whether the fix is 19 added references or a decision that transitive resolution is fine here
+  is not settled; the loose end is that nobody has decided.
 - **The UIModule vendored assets have already drifted, not "will drift".** `beer.css`, `beer.js`,
   `beer.min.css` and `beer.min.js` differ between `assets/lib/beercss/` and
   `api/src/Binacle.Net.UIModule/wwwroot/vendor/beercss/`; only the four `.woff2` files still match. And

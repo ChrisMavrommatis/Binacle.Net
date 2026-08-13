@@ -2,6 +2,9 @@
 name: tests-arrange-act-assert
 description: A test body shows arrange, act and assert as separate lines — never one helper that does all three
 type: convention
+when: writing a test body
+paths:
+  - "**/test/**"
 ---
 
 A test method must show all three steps in its own body. Not `=> this.Fixture.RunTest(factory, name, op);`,

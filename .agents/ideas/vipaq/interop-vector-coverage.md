@@ -1,3 +1,9 @@
+---
+description: more interop vector coverage
+paths:
+  - "vipaq/**"
+---
+
 # Idea: more interop vector coverage
 
 **Status:** Unvetted idea. Low value — add only if a real need appears.

@@ -2,6 +2,9 @@
 name: migration-no-silent-deletions
 description: Migrations land as small reviewable diffs — every removed test needs a visible successor, never a silent delete
 type: convention
+when: deleting or replacing a test during a migration
+paths:
+  - "**/test/**"
 ---
 
 Phase 1 of a migration is **small changes a human can review**. A silent deletion is not reviewable: the

@@ -11,7 +11,7 @@ namespace Binacle.ViPaq.Compression;
 // `CompressionStream('gzip')` in a browser.
 //
 // A .NET quirk worth knowing before reading a benchmark: on this data `CompressionLevel.Optimal` produced a
-// *smaller* blob than `SmallestSize` (findings.md). Level never reaches the wire, so it can change freely.
+// *smaller* blob than `SmallestSize`. Level never reaches the wire, so it can change freely.
 internal sealed class GzipCodec : ICompressionCodec
 {
 	public byte[] Compress(ReadOnlySpan<byte> body)

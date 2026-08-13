@@ -1,6 +1,8 @@
 ---
 id: vipaq/history
 description: ViPaq design history — superseded throwaway-prototype measurements (2026-07-05) that informed the locked decisions. Reference only, not current truth.
+paths:
+  - "vipaq/**"
 ---
 
 # ViPaq — design history

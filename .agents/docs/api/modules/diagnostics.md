@@ -5,6 +5,9 @@ verified: 2026-07-27
 check: Env var names match DiagnosticsModule config handling
 also_update:
   - api/configuration
+paths:
+  - "api/src/Binacle.Net.DiagnosticsModule/**"
+
 ---
 
 # DiagnosticsModule

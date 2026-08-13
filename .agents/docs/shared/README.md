@@ -6,6 +6,8 @@ check: Collection keys, compact-string parsers, and provider class names and met
 also_update:
   - lib/tests
   - api/tests
+paths:
+  - "shared/**"
 ---
 
 # Shared

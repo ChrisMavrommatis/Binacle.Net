@@ -5,6 +5,8 @@ verified: 2026-07-24
 check: Numbers match the latest results/vipaq/compression/ size reports and results/vipaq/benchmarks/ output
 also_update:
   - vipaq/decisions
+paths:
+  - "vipaq/**"
 ---
 
 # ViPaq — findings (the measured evidence)

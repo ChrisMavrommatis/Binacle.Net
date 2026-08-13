@@ -5,6 +5,9 @@ verified: 2026-07-27
 check: IApiMarker and registration helpers match api/src/Binacle.Net.Kernel/
 also_update:
   - api/endpoints
+paths:
+  - "api/src/Binacle.Net.Kernel/**"
+
 ---
 
 # Kernel

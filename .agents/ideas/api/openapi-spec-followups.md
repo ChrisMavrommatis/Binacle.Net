@@ -1,3 +1,9 @@
+---
+description: OpenAPI spec follow-ups
+paths:
+  - "api/**"
+---
+
 # Idea: OpenAPI spec follow-ups
 
 **Status:** Parked, and down to one item. The spec audit is done and the Spectral lint (`.spectral.yaml`,

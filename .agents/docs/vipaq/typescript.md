@@ -5,6 +5,8 @@ verified: 2026-07-28
 check: TS API signatures and divergences match vipaq/packages/binacle-vipaq/src/
 also_update:
   - vipaq
+paths:
+  - "vipaq/**"
 ---
 
 # ViPaq — TypeScript Mirror

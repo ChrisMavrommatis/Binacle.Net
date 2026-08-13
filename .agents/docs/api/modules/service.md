@@ -5,6 +5,11 @@ verified: 2026-07-28
 check: Routes, config file names, and connection string name match ServiceModule source
 also_update:
   - api/configuration
+paths:
+  - "api/src/Binacle.Net.ServiceModule/**"
+  - "api/src/Binacle.Net.ServiceModule.Domain/**"
+  - "api/src/Binacle.Net.ServiceModule.Infrastructure/**"
+
 ---
 
 # ServiceModule

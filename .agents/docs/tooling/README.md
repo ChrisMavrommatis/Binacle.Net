@@ -1,11 +1,13 @@
 ---
-id: tooling
-description: tooling/ — every task the repo can run, called by CI and by hand alike: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state
-verified: 2026-08-12
-check: Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, changelog.just, serve.just, build.just, image.just and smoke.just recipes, and the docker-compose stack/file/service table match tooling/
+id: "tooling"
+description: "tooling/ — every task the repo can run, called by CI and by hand alike: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state"
+verified: "2026-08-12"
+check: "Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, changelog.just, serve.just, build.just, image.just and smoke.just recipes, and the docker-compose stack/file/service table match tooling/"
 also_update:
   - commands
   - samples
+paths:
+  - "tooling/**"
 ---
 
 # Tooling

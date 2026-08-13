@@ -5,6 +5,8 @@ verified: 2026-07-28
 check: Startup sequence matches Program.cs; dep map matches actual project references
 also_update:
   - api/modules
+paths:
+  - "api/**"
 ---
 
 # API

@@ -6,6 +6,8 @@ check: Project list and test aliases match the solution
 also_update:
   - lib/tests
   - shared
+paths:
+  - "lib/**"
 ---
 
 # Lib

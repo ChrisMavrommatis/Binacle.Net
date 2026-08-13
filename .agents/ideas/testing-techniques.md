@@ -1,3 +1,7 @@
+---
+description: testing techniques not in use
+---
+
 # Idea: testing techniques not in use
 
 **Status:** Unvetted. A survey of what exists, what is already here, and what might be worth adopting.

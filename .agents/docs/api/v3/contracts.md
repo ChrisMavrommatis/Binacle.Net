@@ -5,6 +5,9 @@ verified: 2026-07-15
 check: Field names and enum values match api/src/Binacle.Net/v3/Contracts/
 also_update:
   - api/v3
+paths:
+  - "api/src/Binacle.Net/v3/Contracts/**"
+
 ---
 
 # v3 Contracts

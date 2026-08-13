@@ -1,3 +1,7 @@
+---
+description: Post-release - the days right after Binacle.Net v3.0.0
+---
+
 # Post-release - the days right after Binacle.Net v3.0.0
 
 **Status:** Do these once v3.0.0 is out. None gate the release. Like the release plan, this coordinates other

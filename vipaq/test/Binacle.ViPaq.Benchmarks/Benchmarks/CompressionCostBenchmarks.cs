@@ -10,9 +10,8 @@ namespace Binacle.ViPaq.Benchmarks.Benchmarks;
 
 // Prices the compression itself — the one cell the other benchmarks leave empty (they run NoOp only). NoOp passes
 // the body straight through, so `Deflate − NoOp` is what deflate's squeezing actually costs, and `Gzip − Deflate`
-// is gzip's extra framing. Row-major, over the two curated Bischoff packs (16-bit, compressible). Feeds the
-// compression-time line in findings.md. Run with `--filter *CompressionCost*` (a short job is enough for the
-// magnitude).
+// is gzip's extra framing. Row-major, over the two curated Bischoff packs (16-bit, compressible). Run with
+// `--filter *CompressionCost*` (a short job is enough for the magnitude).
 [MemoryDiagnoser]
 public class CompressionCostBenchmarks : ScenarioBenchmarkBase
 {

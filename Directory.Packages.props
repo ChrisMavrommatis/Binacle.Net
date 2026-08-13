@@ -84,10 +84,10 @@
 		<PackageVersion Include="FluxResults" Version="1.0.0" />
 	</ItemGroup>
 
-	<!-- Testing. The runner half is a matched set - see the global.json section of $build-topology before
-	     touching any of it. xunit.v3.mtp-v2 is the Microsoft.Testing.Platform v2 adapter; plain xunit.v3 is the
-	     v1 one, and CodeCoverage has been v2-only since 18.1.0. Mixing the two throws TypeLoadException on
-	     IDataConsumer before a single test runs. -->
+	<!-- Testing. The runner half is a matched set - read the rest of this comment before touching any of it,
+	     and check the SDK pin in global.json too. xunit.v3.mtp-v2 is the Microsoft.Testing.Platform v2
+	     adapter; plain xunit.v3 is the v1 one, and CodeCoverage has been v2-only since 18.1.0. Mixing the two
+	     throws TypeLoadException on IDataConsumer before a single test runs. -->
 	<ItemGroup>
 		<PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.9.0" />
 		<PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2" />

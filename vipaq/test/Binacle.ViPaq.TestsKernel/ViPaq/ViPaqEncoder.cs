@@ -9,7 +9,7 @@ namespace Binacle.ViPaq.TestsKernel.ViPaq;
 // race's whole job is to force every mode. So it borrows one thing from the wrapper, the width choice
 // (`Header.Create`, reachable here only through InternalsVisibleTo), then flips `Compressed` and `Layout` for
 // the mode and hands the encoder the mode's codec. It never re-derives a width — that spec lives in
-// `Header.Create` alone (decisions.md D14).
+// `Header.Create` alone.
 //
 // Every scenario is ushort, so that is the integer type both calls name; ViPaq itself decides 8- vs 16-bit per
 // section from the values. Base64 is the real stored form and the headline number, so a report reads size off

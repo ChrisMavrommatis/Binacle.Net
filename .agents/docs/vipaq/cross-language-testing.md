@@ -5,6 +5,8 @@ verified: 2026-07-14
 check: Vector file list, generator paths, and interop test names match vipaq/test-vectors/ and the two suites
 also_update:
   - vipaq/typescript
+paths:
+  - "vipaq/**"
 ---
 
 # ViPaq — Cross-Language Wire Testing

@@ -1,6 +1,6 @@
 # The .agents/ manifests, loaded by the root justfile as the `agents` module.
 #
-#   just agents all                      rewrite all five _index.md
+#   just agents all                      rewrite all six _index.md
 #   just agents generate-index plans     rewrite one
 #
 # Run it after adding, renaming, moving or re-describing any file under those directories - the index is the
@@ -27,7 +27,7 @@ default:
 all:
     #!/usr/bin/env bash
     set -euo pipefail
-    for name in docs design plans memory ideas; do
+    for name in rules docs design plans memory ideas; do
         just agents::generate-index "$name"
     done
 
@@ -35,7 +35,7 @@ all:
 # rather than in a script the recipe would only call. The three tables come first and the rest is the
 # algorithm, so adding an index or renaming a group never means reading the generator.
 
-# Rewrite one manifest [docs|design|plans|memory|ideas]
+# Rewrite one manifest [rules|docs|design|plans|memory|ideas]
 generate-index name:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -43,6 +43,7 @@ generate-index name:
     # index -> heading. This table is also the validation: an index with no row here is a typo, and a missed
     # typo would write a manifest with an empty heading and look like it worked.
     declare -A headings=(
+        [rules]="Agent Rules Index"
         [docs]="Agent Docs Index"
         [design]="Agent Design Index"
         [plans]="Agent Plans Index"
@@ -54,6 +55,8 @@ generate-index name:
     # purpose: just strips that indent, so they land at column 0 in the manifest. Indent them to line up with
     # their own row and the manifest gets the leading spaces too.
     declare -A blurbs=(
+        [rules]="Every standing rule, one file per rule. \`load: always\` must be known before you start; the rest
+    are fetched when their \`when:\` fires. See [README.md](README.md) for the trigger table."
         [docs]="Every doc in \`.agents/docs/\`, grouped by area. Scan for your topic, then read that file — do not work
     from this summary. Task-based entry points (\"I want to add a v4 endpoint\") are in the \"Common Tasks\"
     table of [README.md](README.md)."
@@ -80,7 +83,7 @@ generate-index name:
 
     index='{{ name }}'
     heading="${headings[$index]:-}"
-    [[ -n "$heading" ]] || { echo "Unknown index '$index'. Use docs, design, plans, memory or ideas." >&2; exit 1; }
+    [[ -n "$heading" ]] || { echo "Unknown index '$index'. Use rules, docs, design, plans, memory or ideas." >&2; exit 1; }
 
     dir=".agents/$index"
     [[ -d "$dir" ]] || { echo "$dir does not exist." >&2; exit 1; }
@@ -93,9 +96,26 @@ generate-index name:
       local file="$1" desc
       desc=$(awk 'NR==1 && $0=="---"{f=1;next} f && $0=="---"{exit}
                   f && /^description:/{sub(/^description:[[:space:]]*/,"");print;exit}' "$file")
+      desc="${desc%\"}"; desc="${desc#\"}"
       [[ -z "$desc" ]] && desc=$(grep -m1 "^# " "$file" | sed 's/^#[[:space:]]*//')
       [[ -z "$desc" ]] && desc="${file##*/}"
       printf '%s' "${desc//|/\\|}"
+    }
+
+    # field <file> <name> -> a scalar front-matter field, empty if absent. Same front-matter-only scan as
+    # describe, so an example inside a code fence cannot leak in.
+    field() {
+      awk -v k="$2" 'NR==1 && $0=="---"{f=1;next} f && $0=="---"{exit}
+                     f && $0 ~ "^"k":" {sub("^"k":[[:space:]]*","");gsub(/^"|"$/,"");print;exit}' "$1"
+    }
+
+    # list <file> <name> -> a yaml list field flattened to "a, b, c". Reads the indented "  - item" lines that
+    # follow the key and stops at the next key or the end of the block.
+    list() {
+      awk -v k="$2" 'NR==1 && $0=="---"{f=1;next} f && $0=="---"{exit}
+                     f && $0 ~ "^"k":" {c=1;next}
+                     c && /^[[:space:]]+- /{gsub(/^[[:space:]]+- |"/,"");printf "%s\"%s\"",(n++?", ":""),$0;next}
+                     c && /^[^[:space:]]/{exit}' "$1"
     }
 
     {
@@ -126,8 +146,7 @@ generate-index name:
         echo ""
         echo "## ${group_headings[$grp]:-${grp^}}"
         echo ""
-        echo "| File | Description |"
-        echo "|---|---|"
+        echo '```yaml'
       } >> "$index_file"
       for rel in "${files[@]}"; do
         if [[ "$grp" == "General" ]]; then
@@ -135,8 +154,16 @@ generate-index name:
         else
           [[ "$rel" != "$grp/"* ]] && continue
         fi
-        echo "| [$rel]($rel) | $(describe "$dir/$rel") |" >> "$index_file"
+        f="$dir/$rel"
+        {
+          echo "- file: $rel"
+          echo "  description: \"$(describe "$f" | sed 's/"/\\"/g')\""
+          w=$(field "$f" when);   [[ -n "$w" ]] && echo "  when: \"${w//\"/\\\"}\""
+          l=$(field "$f" load);   [[ -n "$l" ]] && echo "  load: $l"
+          g=$(list  "$f" paths);  [[ -n "$g" ]] && echo "  paths: [$g]"
+        } >> "$index_file"
       done
+      echo '```' >> "$index_file"
     done
 
     echo "Regenerated $index_file"

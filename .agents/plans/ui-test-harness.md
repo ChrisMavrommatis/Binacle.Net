@@ -1,3 +1,7 @@
+---
+description: A test harness for the UI
+---
+
 # A test harness for the UI
 
 **Status:** Not started. Decided 2026-08-09, while treating Sonar findings: the coverage gate stays red until

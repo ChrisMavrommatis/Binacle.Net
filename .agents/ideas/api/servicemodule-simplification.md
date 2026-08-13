@@ -1,3 +1,9 @@
+---
+description: simplify ServiceModule - collapse the ceremony, keep the provider seam
+paths:
+  - "api/**"
+---
+
 # Idea: simplify ServiceModule — collapse the ceremony, keep the provider seam
 
 **Status:** Unvetted idea. Post-v4, not mid-release.

@@ -1,3 +1,9 @@
+---
+description: TestsKernel - grow the shared fixture cases
+paths:
+  - "shared/**"
+---
+
 # TestsKernel — grow the shared fixture cases
 
 **Status (2026-08-13):** The data move is **done**, and the fixtures have since been split by consumer. Bischoff

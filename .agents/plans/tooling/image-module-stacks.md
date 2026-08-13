@@ -1,3 +1,9 @@
+---
+description: Decide what the `image` module is still for
+paths:
+  - "tooling/**"
+---
+
 # Decide what the `image` module is still for
 
 **Status:** Not started, and **nothing has been changed**. `tooling/image.just` and its three stacks -

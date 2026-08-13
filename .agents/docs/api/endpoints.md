@@ -5,6 +5,10 @@ verified: 2026-07-06
 check: IGroupedEndpoint hierarchy matches api/src/Binacle.Net.Kernel/Endpoints/
 also_update:
   - api/kernel
+paths:
+  - "api/src/Binacle.Net/v3/**"
+  - "api/src/Binacle.Net/v4/**"
+
 ---
 
 # Endpoints

@@ -3,6 +3,9 @@ id: api/service
 description: IBinacleService — method reference for SingleBinAsync, MultipleBinsAsync, SmallestBinAsync, BestBinAsync; return types, call pattern, and algorithm selection
 verified: 2026-07-16
 check: Method signatures match IBinacleService in api/src/Binacle.Net/Services/BinacleService.cs
+paths:
+  - "api/src/Binacle.Net/Services/**"
+
 ---
 
 # IBinacleService

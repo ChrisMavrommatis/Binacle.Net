@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
 	];
 	
 	// Real sets: placed results from Binacle.ViPaq.PackedDataGenerator (FFD). Synthetic random data is never
-	// size-measured (D9: gzip can't grip it) — it only feeds the BDN speed/memory benchmarks.
+	// size-measured (gzip can't grip it) — it only feeds the BDN speed/memory benchmarks.
 	private static (string Label, IReadOnlyCollection<Scenario> Scenarios)[] ScenarioSets =
 	[
 		("custom packs", CustomProblemsDataProvider.All),

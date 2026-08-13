@@ -17,7 +17,7 @@ namespace Binacle.ViPaq.PerformanceTests.Tests;
 // column: layout is fixed per table, and it does not move raw size anyway.
 //
 // The set, layout and codec are passed in. Today that is the real custom and Bischoff packs; synthetic is never
-// size-measured (D9: gzip can't grip random data) — it only feeds the BDN speed/memory benchmarks.
+// size-measured (gzip can't grip random data) — it only feeds the BDN speed/memory benchmarks.
 internal class VipaqProtobufSizeComparisonTest : ITest
 {
 	private readonly IReadOnlyCollection<Scenario> scenarios;

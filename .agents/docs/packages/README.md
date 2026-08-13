@@ -7,6 +7,8 @@ also_update:
   - packages/binacle-net-ui
   - web-site
   - api/modules/ui
+paths:
+  - "packages/**"
 ---
 
 # Packages

@@ -1,3 +1,9 @@
+---
+description: Convert the last `tooling/*.sh` scripts to `just` recipes
+paths:
+  - "tooling/**"
+---
+
 # Convert the last `tooling/*.sh` scripts to `just` recipes
 
 **Status:** Not started. Split out of `ci-shared-scripts` on 2026-08-07, and deliberately not named `ci-`

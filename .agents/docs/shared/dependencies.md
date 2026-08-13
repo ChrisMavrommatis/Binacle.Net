@@ -3,6 +3,8 @@ id: shared/dependencies
 description: Shared slice dependency tree — Geometry (the BCL-only leaf everything geometric bottoms out on), CompactNotation, Packing, TestReporting, and the algorithm TestsKernel; who references them and who sees internals.
 verified: 2026-08-13
 check: ProjectReference and InternalsVisibleTo entries in shared/**/*.csproj match the graph and notes below
+paths:
+  - "shared/**"
 ---
 
 # Shared — project dependencies

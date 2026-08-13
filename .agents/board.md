@@ -1,3 +1,7 @@
+---
+description: The board - what there is to work on
+---
+
 # The board - what there is to work on
 
 **This is where you pick work from.** Everything not tied to a release lives here: plans, ideas and the

@@ -14,7 +14,7 @@ namespace Binacle.ViPaq;
 //
 // Every field is `init`, `Compressed` included: the blind encoder obeys that bit rather than deciding it.
 // Anything wanting a different form builds a second header instead of mutating this one — which is how the
-// measurement harness races codecs (PROTOCOL.md §6, decisions.md D7). The serializer itself does not race;
+// measurement harness races codecs (PROTOCOL.md §6). The serializer itself does not race;
 // its `Compress` option is a straight on/off.
 internal readonly record struct Header
 {
@@ -39,10 +39,10 @@ internal readonly record struct Header
 	// (PROTOCOL.md §4), uncompressed and row-major. The mirror of `FromBytes` — that reads a header off the
 	// wire, this derives one from the values.
 	//
-	//   - Widths are derived here and nowhere else (decisions.md D14). `Serialize` calls this to write a blob
+	//   - Widths are derived here and nowhere else. `Serialize` calls this to write a blob
 	//     and the measurement harness calls it to force a mode; neither re-derives a width.
 	//   - The three sections are sized independently, because they genuinely disagree: a big bin can hold small
-	//     items at large coordinates (findings.md: Bischoff packs to 16/8/16).
+	//     items at large coordinates (the Bischoff suite packs to 16/8/16).
 	//   - With no items, both item widths stay `Eight` — what §4 requires of an empty blob.
 	//   - `Compressed` and `Layout` stay at their defaults (see the note on the type). Layout is unmeasured, so
 	//     row-major. A caller wanting another form `with`-s those two bits.

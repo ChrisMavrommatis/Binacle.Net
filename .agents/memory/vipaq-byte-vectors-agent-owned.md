@@ -2,6 +2,9 @@
 name: vipaq-byte-vectors-agent-owned
 description: ViPaq byte-exact golden vectors carry a byte-by-byte comment — a wall of hex nobody can check is not a test
 type: convention
+when: editing ViPaq byte-exact golden vectors
+paths:
+  - "vipaq/test-vectors/**"
 ---
 
 ViPaq's hand-derived wire bytes — `ExactBytesProvider` in the C# unit tests, `tests/providers/ExactBytes.ts` and

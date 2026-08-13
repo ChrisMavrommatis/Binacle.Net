@@ -1,3 +1,9 @@
+---
+description: per-user packing logs
+paths:
+  - "api/**"
+---
+
 # Idea: per-user packing logs
 
 **Status:** Unvetted idea. The *decision* about where this belongs is already settled and shipped —

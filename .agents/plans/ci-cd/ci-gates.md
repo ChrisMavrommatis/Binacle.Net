@@ -1,3 +1,9 @@
+---
+description: CI - make the PR gate mean something
+paths:
+  - ".github/workflows/**"
+---
+
 # CI - make the PR gate mean something
 
 **Status:** Not started. After v3.0.0. Folded on 2026-07-28 from `ci-docker-image-gate`,

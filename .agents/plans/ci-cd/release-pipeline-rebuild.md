@@ -1,3 +1,9 @@
+---
+description: CI/CD - finish the GHCR release pipeline
+paths:
+  - ".github/workflows/**"
+---
+
 # CI/CD - finish the GHCR release pipeline
 
 **Status: the pipeline is built and proven.** `v3.0.0-beta.2` ran the whole thing on 2026-08-11 and every job

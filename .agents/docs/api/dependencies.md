@@ -3,6 +3,8 @@ id: api/dependencies
 description: API slice dependency tree — Binacle.Net as composition root, the Kernel floor, the always-compiled modules (Diagnostics, Service, UI), the ServiceModule clean-architecture split, and who sees internals.
 verified: 2026-07-14
 check: ProjectReference and InternalsVisibleTo entries in api/**/*.csproj match the graph and the walls below
+paths:
+  - "api/**"
 ---
 
 # API — project dependencies

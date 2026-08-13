@@ -4,7 +4,7 @@ import {Layout} from "./models";
 // choice: no compression, row-major. The header records whatever was actually used, so a decoder never needs any
 // of this.
 //
-// Compression and layout are the encoder's choice (PROTOCOL.md §4, decisions.md D16), exposed here rather than
+// Compression and layout are the encoder's choice (PROTOCOL.md §4), exposed here rather than
 // pinned, so the default stays raw and row-major and a caller opts in when they want a smaller token.
 export interface ViPaqSerializationOptions {
 	// When true, serialize compresses the body (raw DEFLATE) and sets the compressed bit; when false it writes the

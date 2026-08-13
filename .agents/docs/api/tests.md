@@ -5,6 +5,9 @@ verified: 2026-07-28
 check: Test folders mirror api/src/Binacle.Net/v{3,4}/Endpoints/; validBinId, PresetKeys, special bins, and base-class asserts match api/test/ source
 also_update:
   - shared
+paths:
+  - "api/test/**"
+
 ---
 
 # API Tests
