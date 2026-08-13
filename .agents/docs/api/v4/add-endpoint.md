@@ -1,7 +1,7 @@
 ---
 id: api/v4/add-endpoint
 description: Step-by-step guide for adding a new v4 endpoint
-verified: 2026-07-06
+verified: 2026-08-13
 check: Code template matches a real v4 endpoint file and compiles
 also_update:
   - api/v4
@@ -83,8 +83,10 @@ internal class MyEndpoint : IGroupedEndpoint<ApiV4EndpointGroup>
 
 > **Rate limiting:** add `.RequireRateLimiting("ApiUsage")` to endpoints that handle user compute requests
 > (all `fit` and `pack` routes, including their preset variants). Read-only list endpoints do **not** get it —
-> e.g. the live `GET /api/v4/presets` is not rate-limited (no `429` in its OpenAPI responses). It's safe to
-> include unconditionally where it does belong: it's a no-op when ServiceModule is off.
+> e.g. the live `GET /api/v4/presets` is not rate-limited. It's safe to include unconditionally where it does
+> belong: it's a no-op when ServiceModule is off. The `429` follows the same rule — it appears in the OpenAPI
+> document only when the endpoint has the metadata **and** the ServiceModule is on to supply the limiter, so a
+> document generated without the module carries no `429` at all.
 
 > **CORS:** add `.RequireCors(CorsPolicy.CoreApi)` where CORS protection is needed. Check existing endpoints in the
 > same group for the expected pattern before deciding.

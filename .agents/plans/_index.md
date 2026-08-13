@@ -28,6 +28,9 @@ you need, and trim or delete it once the work lands.
 - file: api/integration-test-additions.md
   description: "Integration tests: cover what the harness cannot see today"
   paths: ["api/**"]
+- file: api/rate-limiting-owned-by-servicemodule.md
+  description: "Move rate limiting out of the core endpoints and into the ServiceModule"
+  paths: ["api/**"]
 - file: api/ui-clients-off-v3.md
   description: "Migrate the shipped UI clients off the v3 API"
   paths: ["api/**"]
@@ -41,6 +44,12 @@ you need, and trim or delete it once the work lands.
 ```yaml
 - file: ci-cd/ci-gates.md
   description: "CI - make the PR gate mean something"
+  paths: [".github/workflows/**"]
+- file: ci-cd/dockerhub-overview.md
+  description: "The Docker Hub repository page"
+  paths: [".github/workflows/**"]
+- file: ci-cd/dockerhub-tag-immutability.md
+  description: "Turn on Docker Hub tag immutability, for release tags only"
   paths: [".github/workflows/**"]
 - file: ci-cd/multi-arch-images.md
   description: "CI - publish the image for arm64 as well as amd64"
@@ -74,6 +83,9 @@ you need, and trim or delete it once the work lands.
 ```yaml
 - file: tooling/image-module-stacks.md
   description: "Decide what the `image` module is still for"
+  paths: ["tooling/**"]
+- file: tooling/image-verification-recipes.md
+  description: "Verify a published image - recipes, and telling users they can"
   paths: ["tooling/**"]
 - file: tooling/scripts-to-just-recipes.md
   description: "Convert the last `tooling/*.sh` scripts to `just` recipes"

@@ -28,9 +28,16 @@ internal class RateLimiterResponseOperationTransformer : IOpenApiOperationTransf
 		CancellationToken cancellationToken
 	)
 	{
-		// 429 is documented whenever an endpoint opts into rate limiting, regardless of whether the RateLimiter
-		// feature is toggled on right now. It is part of the endpoint's contract, and the published spec (built
-		// with the feature off) must still tell a generated client that 429 can happen.
+		// Both guards are needed. The endpoint's .RequireRateLimiting(...) is inert without the RateLimiter
+		// feature, so on its own it says nothing a caller can observe - documenting 429 off the metadata alone
+		// puts a response in the spec that this build cannot emit.
+		var options = context.ApplicationServices.GetService<IOptions<FeatureOptions>>();
+
+		if (!(options?.Value.IsFeatureEnabled("RateLimiter") ?? false))
+		{
+			return Task.CompletedTask;
+		}
+
 		if (context.Description.ActionDescriptor.EndpointMetadata
 		    .OfType<EnableRateLimitingAttribute>()
 		    .Any())

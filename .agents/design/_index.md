@@ -7,6 +7,14 @@ description: Manifest of every file under .agents/design, grouped by area. Regen
 Every design record in `.agents/design/`, grouped by area. The settled design behind the docs — the
 decisions (why) and the findings (measured evidence). Permanent and citable; read the one you need.
 
+## API
+
+```yaml
+- file: api/decisions.md
+  description: "API decisions ledger — why the OpenAPI `429` is gated on the RateLimiter feature and not on endpoint metadata alone, and what the generated documents are a document of."
+  paths: ["api/**"]
+```
+
 ## CI/CD
 
 ```yaml

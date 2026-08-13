@@ -1,7 +1,7 @@
 ---
 id: api/v4
 description: v4 API — active development. Endpoints, algorithm selection, parameters, contracts, and response shape.
-verified: 2026-08-08
+verified: 2026-08-13
 check: Endpoint table matches files in api/src/Binacle.Net/v4/Endpoints/; IsExperimental in ApiV4Document.cs matches what this says
 also_update:
   - api/v4/contracts
@@ -42,9 +42,10 @@ See Fit vs Pack (`$concepts`) for the underlying concept.
 | GET | `/api/v4/presets` | List all presets with their bins |
 | GET | `/api/v4/presets/{preset}` | Get bin definitions for a preset |
 
-All POST (fit/pack) endpoints are rate-limited (`.RequireRateLimiting("ApiUsage")`) and return `429`.
-The two `GET /api/v4/presets…` endpoints are **not** rate-limited — their only responses are `200`, `500`,
-and, for the single-preset one, `404`.
+All POST (fit/pack) endpoints are rate-limited (`.RequireRateLimiting("ApiUsage")`) and return `429` —
+but only with ServiceModule on, which is what supplies the limiter. With it off there is no limiter, no `429`,
+and no `429` in the OpenAPI document either. The two `GET /api/v4/presets…` endpoints are **not** rate-limited
+under any configuration — their only responses are `200`, `500`, and, for the single-preset one, `404`.
 
 Every route taking a `{preset}` returns `404` when the preset does not exist; `fit|pack/bin/{preset}/{bin}`
 also returns `404` for an unknown bin within a known preset.

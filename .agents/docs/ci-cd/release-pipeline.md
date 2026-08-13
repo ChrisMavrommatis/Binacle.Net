@@ -1,7 +1,7 @@
 ---
 id: "ci-cd/release-pipeline"
 description: "The release pipeline in release-docker-image.yml — six jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step every tag reaches with a prerelease narrowed to its immutable tag, and the CHANGELOG.md release body"
-verified: "2026-08-12"
+verified: "2026-08-13"
 check: "The six jobs, their needs: edges and job outputs match release-docker-image.yml; no job carries a prerelease condition and the release job's !failure() note is still accurate; run-tests.yml and smoke-image.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased"
 also_update:
   - ci-cd
@@ -114,6 +114,13 @@ digest, carrying one layer of `artifactType`
 addressable by the fallback tag `sha256-<digest>` — **no `.sig` suffix**. Observed on
 `v3.0.0-beta.2`, 2026-08-11. The older cosign scheme put signatures in a `sha256-<digest>.sig` tag instead;
 this repo does not use it, so do not go looking for one.
+
+**The two registries expose it differently, and one of them looks broken.** Docker Hub serves the signature
+through the referrers API; **GHCR answers `/v2/.../referrers/<digest>` with a 404**, so a referrers query there
+returns nothing at all. The signature is present either way — on GHCR it is visible in the tag list as
+`sha256-<digest>`, and `cosign verify` passes against both, checked on the published `3.0.0-beta.2`
+(2026-08-13). An empty referrers response from GHCR is not evidence of a missing signature; only a failed
+`cosign verify` is.
 
 Either way the point stands: a referrer is not inside the index, so `imagetools create` does not carry it, and
 the published image must be signed where it lands.
