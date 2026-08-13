@@ -1,7 +1,7 @@
 ---
 id: api/kernel
 description: Binacle.Net.Kernel — shared patterns used by all API projects and modules
-verified: 2026-07-27
+verified: 2026-08-13
 check: IApiMarker and registration helpers match api/src/Binacle.Net.Kernel/
 also_update:
   - api/endpoints
@@ -161,8 +161,13 @@ The slash picks the form; nothing else is attempted. Two behaviours are worth kn
   through `IPAddress.ToString()`, which is one rule instead of a table. IPv6 is held to the same rule, so
   `2001:0db8::1` must be written `2001:db8::1`.
 - **Host bits are masked off**, as they are everywhere else in .NET: `192.168.1.1/24` is the whole
-  `192.168.1.0/24`. The BCL does this silently and the docs claim it throws - it does not. Callers that show a
-  list to an operator should say what an entry resolved to.
+  `192.168.1.0/24`. The BCL does this silently and the docs claim it throws - it does not. **This is a caller
+  obligation, not just a fact about this type:** a caller that hands the list to an operator has to say what
+  each entry resolved to, because 256 addresses is not what the operator wrote.
+  `HealthChecksProtectionMiddleware` is the one caller that honours it today.
+
+`TryParse` never throws, including on an `AddressFamily` it does not know - it refuses instead. That is
+deliberate: the input comes from a config file, and a config file must not be able to crash startup.
 
 `Normalize` unmaps an IPv4-mapped IPv6 address, which a dual-mode socket produces for every IPv4 caller. The
 entry side is normalised during parse, so an IPv4-mapped CIDR entry (`::ffff:192.168.1.0/120`) is refused rather

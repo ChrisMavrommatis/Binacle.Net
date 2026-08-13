@@ -10,8 +10,7 @@ namespace Binacle.ViPaq;
 //   v1_raw_row_8_8_8      uncompressed, row-major, all 8-bit (an empty or small pack)
 //   v1_comp_col_16_8_16   compressed, columnar, 16-bit bin dims, 8-bit item dims, 16-bit item coords (Bischoff)
 //
-// Version leads and is mandatory: that is what makes positional parsing forward-safe, since the header cannot
-// gain a field without a version bump. The compressed flag is a bare bit - never `deflate` or `gzip`, because
+// Version leads and is mandatory. The compressed flag is a bare bit - never `deflate` or `gzip`, because
 // the wire carries no codec field (PROTOCOL.md §6). Widths are only `8` or `16`; reserved codes 2 and 3 never
 // reach the wire, so they have no notation.
 //

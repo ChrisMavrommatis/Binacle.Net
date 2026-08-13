@@ -82,6 +82,10 @@ slice otherwise. Bischoff and custom-problems qualify twice over — two slices 
 the ViPaq packed-data generator reads the same files by path at run time — so they stay put. ViPaq had already
 settled this shape with its own `vipaq/data/packed`.
 
+**The friend grant is preferred to a shared bin model.** `OperationResultHelper` bridges through Packing's
+internal `Dimensions` rather than taking a bin type from the shared algorithm kernel. Reaching for that kernel
+would give the lib fixture hub a dependency on fixtures it never reads, to borrow one type (`TestBin`).
+
 **Each kernel owns its own embedded-resource reader.** `Assembly.GetExecutingAssembly()` resolves to the
 assembly holding the data, so one shared reader would look in the wrong assembly and find nothing. The three
 kernels' `IFile` shapes have diverged for the same reason, which is why a "common test library" for file access

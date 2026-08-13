@@ -1,7 +1,7 @@
 ---
 id: vipaq/decisions
 description: ViPaq decisions ledger — the locked decisions and their reasons, plus the open questions.
-verified: 2026-07-24
+verified: 2026-08-13
 check: Locked decisions are not contradicted by vipaq/PROTOCOL.md or vipaq/src/Binacle.ViPaq
 also_update:
   - vipaq/architecture
@@ -218,6 +218,21 @@ whether compression paid, so a small pack can come out larger, which §6 allows 
 it stays available in the harness for measurement, not in the serializer). `Deserialize` reads compressed blobs
 again; the old refusal is gone. `ProtocolEncoder` takes the codec as a **required** argument in both languages;
 `NoOpCodec` keeps the compressed path testable with the body readable.
+
+### D17 — notation splits by what it names, and `Version` leads so parsing stays forward-safe
+
+Recovered 2026-08-13 from comments during the comment-thinning pass; the reasoning had no home in the docs.
+
+**`HeaderNotation` stays in `Binacle.ViPaq` and does not move to the shared leaf.** It names `Header`, `Width`,
+`Layout` and `Version` - all wire-specific types the shared `Binacle.CompactNotation` leaf cannot hold without
+taking a dependency on the format. The geometry notation it sits beside (`10x10x10 (0,0,0)`) is the opposite
+case: it names nothing wire-specific, so it lives in the leaf and always has. **The rule: notation follows the
+types it names, not the file it is used from.**
+
+**`Version` is the first token of the grammar on purpose.** The header cannot gain a field without a version
+bump, and a bump changes token 0, so a parser that reads token 0 first can always tell whether it understands
+the rest. That is what makes positional parsing safe to extend, and it is why the grammar is not
+order-independent.
 
 ## Open — decide with data
 

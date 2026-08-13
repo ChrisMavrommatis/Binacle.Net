@@ -132,6 +132,10 @@ It provides:
 embedded `BischoffSuite/orlib_thpack1..7.json`. Only `thpack1–7` map to `BischoffSuite`; `thpack8/9` are not in
 the embedded suite. `thpack9-fixed.txt` patches a missing indicator in thpack9 problems 18–20.
 
+**The converter carries the published result as a fixed baseline, so it never runs the packer.** That is why
+`Binacle.OrLibrary.Converter` needs no dependency on `lib` - it reads and writes `shared/` and nothing else.
+Recomputing the baseline instead of copying it would put the packer in the bottom slice.
+
 ## Dependencies
 
 How the shared projects reference each other and who sees internals — `Geometry` the leaf, `Binacle.Packing` the
