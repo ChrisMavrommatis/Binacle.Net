@@ -1,6 +1,5 @@
-// Unit coverage for the compression codecs and the ProtocolEncoder compressed path. The cross-language proof —
-// each language decoding the other's deflate/gzip output — lives in the interop tests; this pins the TS side on
-// its own. No golden bytes here: compressed bytes are not compared (PROTOCOL.md §6.1), only decode-to-input.
+// The compression codecs and the ProtocolEncoder compressed path, TS side only; the cross-language proof lives
+// in the interop tests. No golden bytes: compressed bytes are not compared (PROTOCOL.md §6.1).
 import {deflateCodec, gzipCodec, noOpCodec} from "../src/compression";
 import {ProtocolEncoder} from "../src/ProtocolEncoder";
 import {Header, Layout, Version, Width} from "../src/models";
@@ -25,8 +24,7 @@ describe("compression codecs", () => {
 		expect((await deflateCodec.compress(repetitive)).length).toBeLessThan(repetitive.length);
 	});
 
-	// Raw DEFLATE has no wrapper; gzip adds ~18 bytes of magic, mtime, OS byte and a CRC trailer. So on the same
-	// input deflate is always the smaller of the two — which is why deflate is the pick.
+	// Gzip adds ~18 bytes of magic, mtime, OS byte and a CRC trailer, so deflate is always the smaller.
 	test("deflate output is smaller than gzip's (no wrapper)", async () => {
 		const data = new Uint8Array(300).fill(4);
 		expect((await deflateCodec.compress(data)).length).toBeLessThan((await gzipCodec.compress(data)).length);
@@ -63,8 +61,8 @@ describe("ProtocolEncoder compressed path", () => {
 		expect(decoded.items).toEqual(items);
 	});
 
-	// A real codec must actually shrink a compressible body — proves the compressed bit does something, not just
-	// that NoOp round-trips. Many identical items give deflate plenty to grip.
+	// Proves the compressed bit does something, not just that NoOp round-trips. Many identical items give
+	// deflate plenty to grip.
 	test("deflate makes a compressible blob smaller than the raw one", async () => {
 		const many = Array.from({length: 300}, () => item(1, 2, 3, 4, 5, 6));
 		const raw = await new ProtocolEncoder(noOpCodec).encode(header(false), theBin, many);
@@ -72,8 +70,8 @@ describe("ProtocolEncoder compressed path", () => {
 		expect(deflated.length).toBeLessThan(raw.length);
 	});
 
-	// With NoOp the compressed path runs but the body stays readable, so a NoOp "compressed" blob has the same
-	// body as the raw one — only the header's compressed bit differs. This is what makes the framing checkable.
+	// With NoOp the compressed path runs but the body stays readable, so only the header's compressed bit
+	// differs from the raw blob. That is what makes the framing checkable.
 	test("noOp leaves the body identical to the raw blob's", async () => {
 		const raw = await new ProtocolEncoder(noOpCodec).encode(header(false), theBin, items);
 		const noOpCompressed = await new ProtocolEncoder(noOpCodec).encode(header(true), theBin, items);

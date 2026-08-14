@@ -2,18 +2,15 @@ using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// A bin and its items come back unchanged through encode -> decode, across types, widths, and the special
-// cases (zero coordinates, no items, a large body). The round trip runs through ProtocolEncoder (via the
-// fixture) under the library's default header — raw, row-major, narrowest — so it covers the same shape a
-// real caller hits without going through ViPaqSerializer, which cannot be told a different header.
+// A bin and its items come back unchanged through encode -> decode, across types, widths and the special cases
+// (zero coordinates, no items, a large body). Runs through ProtocolEncoder under the library's default header,
+// so it covers the shape a real caller hits.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class SerializationRoundTripTests
 {
-	// One method per numeric type rather than a type column in the row. A type cannot live in a data row, and
-	// looking it up meant calling the generic round trip through a delegate - which hid the assertion from
-	// anyone (and anything) reading the test. Three near-identical methods is the cheaper trade: each one
-	// arranges, acts and asserts in plain sight. Width is internal, so a public [Theory] cannot name it
-	// (CS0051); the boxed widths ride the row as object and are cast back here.
+	// One method per numeric type rather than a type column: a type cannot live in a data row, and looking it
+	// up means calling the round trip through a delegate, which hides the assertion. Width is internal, so a
+	// public [Theory] cannot name it (CS0051): the boxed widths ride the row as object.
 	[Theory]
 	[ClassData(typeof(WidthCombinationsProvider))]
 	public void RoundTrips_Across_Widths_As_UShort(
@@ -92,8 +89,7 @@ public class SerializationRoundTripTests
 	[Fact]
 	public void RoundTrips_With_A_Large_Body()
 	{
-		// 60 small items make a body far larger than a single item. The library never compresses (no codec
-		// is chosen), so this just checks a large uncompressed body round-trips intact.
+		// 60 small items, so this checks a large uncompressed body round-trips intact.
 		var bin = BinContents.BuildBin<int>(Width.Eight);
 		var items = Enumerable.Range(0, 60)
 			.Select(_ => BinContents.BuildItem<int>(Width.Eight, Width.Eight))
@@ -108,9 +104,9 @@ public class SerializationRoundTripTests
 	[Fact]
 	public void RoundTrips_Multiple_Distinct_Items()
 	{
-		// Every field of every item is different, so a serializer that swaps, drops, or reorders
-		// items shows up as a mismatch. The matrix above only ever uses one item per row, and the
-		// large-body case uses 60 identical items — neither can catch an item-loop bug.
+		// Every field of every item differs, so a serializer that swaps, drops or reorders items shows up as a
+		// mismatch. The matrix above uses one item per row and the large-body case 60 identical ones, so
+		// neither can catch an item-loop bug.
 		var bin = BinContents.BuildBin<int>(Width.Eight);
 		var items = new List<Binacle.Geometry.Item<int>>
 		{
@@ -128,9 +124,8 @@ public class SerializationRoundTripTests
 	[Fact]
 	public void RoundTrips_When_Item_Count_Exceeds_255()
 	{
-		// The item count is a little-endian uint16. Under 256 its high byte is always 0, so a bug
-		// in that second byte would stay hidden. 300 items force a non-zero high byte (300 = 0x012C).
-		// Each item carries its index in every field, so order is checked at scale too.
+		// The item count is a little-endian uint16. Under 256 its high byte is always 0, so a bug in that
+		// second byte would stay hidden; 300 items force a non-zero high byte (300 = 0x012C).
 		var bin = BinContents.BuildBin<int>(Width.Eight);
 		var items = Enumerable.Range(0, 300)
 			.Select(i => new Binacle.Geometry.Item<int>

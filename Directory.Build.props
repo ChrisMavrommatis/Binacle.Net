@@ -12,11 +12,12 @@
 
     <!--
         Tell Sonar which projects are support code. The Scanner for .NET spots a test project by its
-        Microsoft.NET.Test.Sdk reference, so it finds the xunit suites on its own but reads the ten projects
-        without one - both test kernels, TestReporting, the benchmarks, the performance suites and the
+        Microsoft.NET.Test.Sdk reference, so it finds the xunit suites on its own but reads the eleven projects
+        without one - all three test kernels, TestReporting, the benchmarks, the performance suites and the
         generator/converter tools - as product code. That put 1203 lines into the coverage denominator that no
         test will ever cover, and ran the product rule set over them: S101 firing on benchmark names like
-        BestBin_ResultSelection, and S2223 on the TestsKernel key holders, are both that.
+        BestBin_ResultSelection, and S2223 on the TestsKernel key holders, are both that. The 1203 was measured
+        when there were ten, before Binacle.Lib.TestsKernel was split out.
 
         Every project under a test/ or tools/ folder is support code, so the layout decides it and nothing has
         to be listed. Marking the xunit suites too is a no-op - the scanner already had them.

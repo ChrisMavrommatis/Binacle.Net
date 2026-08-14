@@ -2,6 +2,9 @@
 name: name-each-step
 description: Give each step a named local — no nested or chained call expressions squeezed into one statement
 type: convention
+when: writing C# with nested or chained call expressions
+paths:
+  - "**/*.cs"
 ---
 
 Do not nest calls or chain them into one dense statement. Give each step a named local, even where the

@@ -3,6 +3,8 @@ id: api/decisions
 description: API decisions ledger — why the OpenAPI `429` is gated on the RateLimiter feature and not on endpoint metadata alone, and what the generated documents are a document of.
 verified: 2026-08-13
 check: D1 against api/src/Binacle.Net.Kernel/OpenApi/Transformers/RateLimiterResponseOperationTransformer.cs, which must check both the "RateLimiter" feature and EnableRateLimitingAttribute
+paths:
+  - "api/**"
 ---
 
 # API — decisions ledger

@@ -25,7 +25,7 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `api/test/Binacle.Net.ServiceModule.IntegrationTests` | Tests for auth and rate limiting (ServiceModule only) |
 | `api/test/*.UnitTests` | One unit suite per source project — `Binacle.Net`, `Kernel`, `DiagnosticsModule`, `ServiceModule`. `Kernel.UnitTests` is split by feature folder |
 | `lib/src/Binacle.Lib` | Core bin-packing algorithms and processors |
-| `lib/src/Binacle.Lib.Abstractions` | Interfaces shared between `Binacle.Lib` and the API layer |
+| `shared/src/Binacle.Packing` | The packing vocabulary shared between `Binacle.Lib` and the API layer |
 | `lib/test/` | Lib unit tests, performance tests, benchmarks |
 | `vipaq/src/Binacle.ViPaq` | Compact binary format for encoding packing results |
 | `vipaq/test/` | ViPaq unit tests |

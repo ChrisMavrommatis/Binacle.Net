@@ -2,10 +2,9 @@ using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// The writer puts bytes on the wire little-endian (low byte first). WriteUInt16 takes a fixed width and is
-// used for the header. Write8Bits / Write16Bits narrow T down to the wire width first, then write the same
-// bytes. These pin the exact byte order, and they reuse the shared little-endian/<width>.json vectors as
-// the reader tests so both sides agree on the bytes.
+// The writer puts bytes on the wire little-endian. WriteUInt16 takes a fixed width and is used for the header.
+// Write8Bits / Write16Bits narrow T to the wire width first. Reuses the same little-endian/<width>.json vectors
+// as the reader tests, so both sides agree on the bytes.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class ProtocolWriterTests
 {
@@ -37,8 +36,7 @@ public class ProtocolWriterTests
 		stream.ToArray().ShouldBe(expected);
 	}
 
-	// Write16Bits narrows T down to the wire width, then writes the same little-endian bytes. This is the
-	// only place the 16-bit byte order is pinned now that the unused concrete writers are gone.
+	// The only place the 16-bit byte order is pinned on the write side.
 	[Theory]
 	[MemberData(nameof(LittleEndianProvider.UInt16Names), MemberType = typeof(LittleEndianProvider))]
 	public void Write16Bits_Narrows_T_And_Writes_Little_Endian(string name)

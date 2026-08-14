@@ -5,15 +5,12 @@ import {CompressionCodec} from "./compression";
 import {ProtocolReader} from "./ProtocolReader";
 import {ProtocolWriter} from "./ProtocolWriter";
 
-// Ports C#: ProtocolEncoder. The blind layer (PROTOCOL.md §1, §3, §6, §7). It is handed a header and it obeys it
-// — the widths to work at, the layout to work in, and whether to compress. It decides nothing; choosing the
-// header is ViPaqSerializer's job. Encode and decode live together because they are one agreement read in two
-// directions.
+// Ports C#: ProtocolEncoder. The blind layer (PROTOCOL.md §1, §3, §6, §7). Handed a header, it obeys it and
+// decides nothing; ViPaqSerializer chooses the header.
 //
-// The codec is a required constructor argument, exactly like C#: no default, so a caller always says which one.
-// Hand it noOpCodec and the compressed path runs with the body left readable (§6.1 forbids comparing real
-// compressed bytes); hand it deflateCodec/gzipCodec for a real stream. encode/decode are async because the
-// browser compressor (CompressionStream) is async.
+// The codec is a required constructor argument, no default, so a caller always says which one. noOpCodec runs
+// the compressed path with the body left readable (§6.1 forbids comparing real compressed bytes). encode and
+// decode are async because the browser compressor (CompressionStream) is async.
 export class ProtocolEncoder {
 	constructor(private readonly codec: CompressionCodec) {}
 
@@ -38,9 +35,7 @@ export class ProtocolEncoder {
 
 		getLayoutEncoder(header.layout)(writer, items, header);
 
-		// Run the whole body — count and contents (§3) — through the codec. The codec was resolved from the
-		// header, so it is a NoOp when the blob is raw (passes the body through) and the real codec when it is
-		// compressed. The encoder just runs it.
+		// The whole body - count and contents (§3) - goes through the codec, which was resolved from the header.
 		const body = await this.codec.compress(writer.buffer);
 
 		const blob = new Uint8Array(Header.byteCount + body.length);
@@ -52,9 +47,7 @@ export class ProtocolEncoder {
 	// Reads a body (everything after the two header bytes) back under the given header. One length check covers
 	// both truncation and trailing bytes (PROTOCOL.md §7, steps 1 and 8), so every read below is in bounds.
 	async decode(header: Header, rest: Uint8Array<ArrayBuffer>): Promise<{bin: Bin; items: Item[]}> {
-		// Run the body through the codec, which was resolved from the header: a NoOp passes a raw body through,
-		// the real codec inflates a compressed one (§7, step 4). The item count lives inside it (§3), so it
-		// cannot be read until now.
+		// The body has to be inflated first (§7, step 4): the item count lives inside it (§3).
 		const body = await this.codec.decompress(rest);
 
 		if (body.length < 2) {

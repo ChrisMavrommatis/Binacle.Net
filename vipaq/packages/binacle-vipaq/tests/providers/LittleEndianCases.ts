@@ -1,6 +1,5 @@
-// Ports C#: Providers/Protocol/LittleEndianProvider.cs. A value paired with its little-endian bytes (low byte
-// first). Reader and writer tests run the same rows. One export per width; only the 8- and 16-bit widths exist
-// now (the 32/64-bit vectors are gone with those tiers).
+// Ports C#: Providers/Protocol/LittleEndianProvider.cs. A value paired with its little-endian bytes. Reader and
+// writer tests run the same rows. One export per width.
 // Not a *.test.ts file, so jest does not run it.
 
 import {readVectors} from "../support/vectorReader";

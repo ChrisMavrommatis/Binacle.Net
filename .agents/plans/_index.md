@@ -9,49 +9,85 @@ you need, and trim or delete it once the work lands.
 
 ## General
 
-| File | Description |
-|---|---|
-| [image-base-slimming.md](image-base-slimming.md) | Harden and slim the base image |
-| [sonar-issue-triage.md](sonar-issue-triage.md) | Sonar - what is left after the 2026-08-09 sweep |
-| [todos.md](todos.md) | TODOs |
-| [ui-test-harness.md](ui-test-harness.md) | A test harness for the UI |
+```yaml
+- file: architecture-boundaries.md
+  description: "A human-readable architecture.yml stating what each part of the repo may and may not reference, readable on its own and consumable by off-the-shelf tools."
+- file: image-base-slimming.md
+  description: "Harden and slim the base image"
+- file: sonar-issue-triage.md
+  description: "Sonar - what is left after the 2026-08-09 sweep"
+- file: todos.md
+  description: "TODOs"
+- file: ui-test-harness.md
+  description: "A test harness for the UI"
+```
 
 ## API
 
-| File | Description |
-|---|---|
-| [api/integration-test-additions.md](api/integration-test-additions.md) | Integration tests: cover what the harness cannot see today |
-| [api/rate-limiting-owned-by-servicemodule.md](api/rate-limiting-owned-by-servicemodule.md) | Move rate limiting out of the core endpoints and into the ServiceModule |
-| [api/ui-clients-off-v3.md](api/ui-clients-off-v3.md) | Migrate the shipped UI clients off the v3 API |
-| [api/v4-stable.md](api/v4-stable.md) | v4 — flip from experimental to stable |
+```yaml
+- file: api/integration-test-additions.md
+  description: "Integration tests: cover what the harness cannot see today"
+  paths: ["api/**"]
+- file: api/rate-limiting-owned-by-servicemodule.md
+  description: "Move rate limiting out of the core endpoints and into the ServiceModule"
+  paths: ["api/**"]
+- file: api/ui-clients-off-v3.md
+  description: "Migrate the shipped UI clients off the v3 API"
+  paths: ["api/**"]
+- file: api/v4-stable.md
+  description: "v4 - flip from experimental to stable"
+  paths: ["api/**"]
+```
 
 ## CI/CD
 
-| File | Description |
-|---|---|
-| [ci-cd/ci-gates.md](ci-cd/ci-gates.md) | CI - make the PR gate mean something |
-| [ci-cd/dockerhub-overview.md](ci-cd/dockerhub-overview.md) | The Docker Hub repository page |
-| [ci-cd/dockerhub-tag-immutability.md](ci-cd/dockerhub-tag-immutability.md) | Turn on Docker Hub tag immutability, for release tags only |
-| [ci-cd/multi-arch-images.md](ci-cd/multi-arch-images.md) | CI - publish the image for arm64 as well as amd64 |
-| [ci-cd/release-pipeline-rebuild.md](ci-cd/release-pipeline-rebuild.md) | CI/CD - finish the GHCR release pipeline |
+```yaml
+- file: ci-cd/ci-gates.md
+  description: "CI - make the PR gate mean something"
+  paths: [".github/workflows/**"]
+- file: ci-cd/dockerhub-overview.md
+  description: "The Docker Hub repository page"
+  paths: [".github/workflows/**"]
+- file: ci-cd/dockerhub-tag-immutability.md
+  description: "Turn on Docker Hub tag immutability, for release tags only"
+  paths: [".github/workflows/**"]
+- file: ci-cd/multi-arch-images.md
+  description: "CI - publish the image for arm64 as well as amd64"
+  paths: [".github/workflows/**"]
+- file: ci-cd/release-pipeline-rebuild.md
+  description: "CI/CD - finish the GHCR release pipeline"
+  paths: [".github/workflows/**"]
+```
 
 ## Lib
 
-| File | Description |
-|---|---|
-| [lib/benchmark-ledger.md](lib/benchmark-ledger.md) | Refresh the curated lib benchmark ledger |
-| [lib/parallel-processors-decision.md](lib/parallel-processors-decision.md) | Decide what happens to the three `Parallel*` processors |
+```yaml
+- file: lib/benchmark-ledger.md
+  description: "Refresh the curated lib benchmark ledger"
+  paths: ["lib/**"]
+- file: lib/parallel-processors-decision.md
+  description: "Decide what happens to the three `Parallel*` processors"
+  paths: ["lib/**"]
+```
 
 ## Shared
 
-| File | Description |
-|---|---|
-| [shared/testskernel-data-extraction.md](shared/testskernel-data-extraction.md) | TestsKernel — grow the shared fixture cases |
+```yaml
+- file: shared/testskernel-data-extraction.md
+  description: "TestsKernel - grow the shared fixture cases"
+  paths: ["shared/**"]
+```
 
 ## Tooling
 
-| File | Description |
-|---|---|
-| [tooling/image-module-stacks.md](tooling/image-module-stacks.md) | Decide what the `image` module is still for |
-| [tooling/image-verification-recipes.md](tooling/image-verification-recipes.md) | Verify a published image - recipes, and telling users they can |
-| [tooling/scripts-to-just-recipes.md](tooling/scripts-to-just-recipes.md) | Convert the last `tooling/*.sh` scripts to `just` recipes |
+```yaml
+- file: tooling/image-module-stacks.md
+  description: "Decide what the `image` module is still for"
+  paths: ["tooling/**"]
+- file: tooling/image-verification-recipes.md
+  description: "Verify a published image - recipes, and telling users they can"
+  paths: ["tooling/**"]
+- file: tooling/scripts-to-just-recipes.md
+  description: "Convert the last `tooling/*.sh` scripts to `just` recipes"
+  paths: ["tooling/**"]
+```

@@ -8,11 +8,9 @@ using Binacle.ViPaq.TestsKernel.ViPaq;
 
 namespace Binacle.ViPaq.Benchmarks.Benchmarks;
 
-// Prices the compression itself — the one cell the other benchmarks leave empty (they run NoOp only). NoOp passes
-// the body straight through, so `Deflate − NoOp` is what deflate's squeezing actually costs, and `Gzip − Deflate`
-// is gzip's extra framing. Row-major, over the two curated Bischoff packs (16-bit, compressible). Feeds the
-// compression-time line in findings.md. Run with `--filter *CompressionCost*` (a short job is enough for the
-// magnitude).
+// Prices the compression itself, which the other benchmarks leave out by running NoOp only. NoOp passes the
+// body straight through, so `Deflate − NoOp` is what deflate's squeezing costs and `Gzip − Deflate` is gzip's
+// extra framing. Row-major, over the two curated Bischoff packs. Run with `--filter *CompressionCost*`.
 [MemoryDiagnoser]
 public class CompressionCostBenchmarks : ScenarioBenchmarkBase
 {
@@ -39,7 +37,7 @@ public class CompressionCostBenchmarks : ScenarioBenchmarkBase
 		this.deflateEncoder = new ViPaqEncoder(new DeflateCodec());
 		this.gzipEncoder = new ViPaqEncoder(new GzipCodec());
 
-		// One header (row-major, compressed bit set); the codec decides whether the body is actually squeezed.
+		// One header, row-major with the compressed bit set; the codec decides whether the body is squeezed.
 		this.header = ViPaqHeader.Create(this.Scenario, EncoderInfo.RowMajor);
 		this.noopToken = this.noopEncoder.Encode(this.Scenario, EncoderInfo.RowMajor);
 		this.deflateToken = this.deflateEncoder.Encode(this.Scenario, EncoderInfo.RowMajor);

@@ -5,6 +5,9 @@ verified: 2026-07-24
 check: Types and validators match api/src/Binacle.Net/v4/Contracts/; mappers match v4/ExtensionMethods/
 also_update:
   - api/v4
+paths:
+  - "api/src/Binacle.Net/v4/Contracts/**"
+
 ---
 
 # Contracts

@@ -1,5 +1,4 @@
 using System.Threading.Channels;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Kernel.Logs.Models;
 using Binacle.Net.DiagnosticsModule.Logs.Models;
 

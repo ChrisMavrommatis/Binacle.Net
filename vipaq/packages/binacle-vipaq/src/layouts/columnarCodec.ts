@@ -8,7 +8,7 @@ import {ProtocolWriter} from "../ProtocolWriter";
 //   L L L ... | W W W ... | H H H ... | X X X ... | Y Y Y ... | Z Z Z ...
 //
 // Like magnitudes sit next to each other, which usually compresses better. Uncompressed it is exactly as long
-// as row-major: the same values in a different order.
+// as row-major.
 export function writeColumnar(writer: ProtocolWriter, items: (Dimensions & Coordinates)[], header: Header): void {
 	const dimensionsWidth = header.itemDimensionsWidth;
 	const coordinatesWidth = header.itemCoordinatesWidth;

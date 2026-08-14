@@ -6,6 +6,9 @@ check: Code template matches a real v4 endpoint file and compiles
 also_update:
   - api/v4
   - api/v4/contracts
+paths:
+  - "api/src/Binacle.Net/v4/**"
+
 ---
 
 # How to Add an Endpoint

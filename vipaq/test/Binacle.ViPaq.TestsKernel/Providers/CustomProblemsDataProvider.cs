@@ -2,11 +2,10 @@ using Binacle.ViPaq.TestsKernel.Models;
 
 namespace Binacle.ViPaq.TestsKernel.Providers;
 
-// Real placed results for the custom, hand-authored problems: each scenario is the bin plus the *placed* items
-// the packer produced (L,W,H and X,Y,Z). Generated offline by Binacle.ViPaq.PackedDataGenerator (FFD, pinned)
-// and committed under vipaq/data/packed/custom-problems/; read here as embedded resources at static init. Only
-// placed geometry is stored (no token) — the token is derivable, so we compute it when we benchmark.
-// Do not hand-edit.
+// Real placed results for the custom, hand-authored problems: the bin plus the placed items the packer
+// produced. Generated offline by Binacle.ViPaq.PackedDataGenerator (FFD, pinned), committed under
+// vipaq/data/packed/custom-problems/ and read here as embedded resources. No token is stored - it is derivable,
+// so the benchmark computes it. Do not hand-edit.
 public static class CustomProblemsDataProvider
 {
 	private const string Family = "custom-problems";

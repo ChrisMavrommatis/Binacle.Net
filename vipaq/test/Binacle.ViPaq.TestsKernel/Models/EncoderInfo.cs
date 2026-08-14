@@ -1,9 +1,8 @@
 namespace Binacle.ViPaq.TestsKernel.Models;
 
-// Which form of a token to build, minus the codec. The codec race always compresses (NoOp is how it prices the
-// raw size, by passing the body through), so there is no "compressed?" flag here — only the layout, which is
-// ViPaq's alone. `Layout` is a library-internal enum, so it cannot be a public member; the two forms are handed
-// out as ready-made instances instead, which is also all a report ever needs.
+// Which form of a token to build, minus the codec. The race always compresses - NoOp prices the raw size - so
+// there is no "compressed?" flag, only the layout. `Layout` is a library-internal enum and cannot be a public
+// member, so the two forms are handed out as ready-made instances.
 public sealed record EncoderInfo
 {
 	internal Layout Layout { get; init; }

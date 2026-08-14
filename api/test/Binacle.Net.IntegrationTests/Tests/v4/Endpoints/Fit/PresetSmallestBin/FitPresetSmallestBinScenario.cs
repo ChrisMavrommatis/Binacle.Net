@@ -1,7 +1,6 @@
+using Binacle.Packing;
 using System.Net;
 using System.Net.Http.Json;
-using Binacle.Lib;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.v4.Contracts.Fit;
 using Binacle.TestsKernel.Algorithms.Providers;
 

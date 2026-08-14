@@ -1,4 +1,3 @@
-using Binacle.Lib.Abstractions.Models;
 using System.Runtime.CompilerServices;
 using Binacle.Lib.Exceptions;
 

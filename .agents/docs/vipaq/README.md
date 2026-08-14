@@ -6,6 +6,8 @@ check: Public API surface (ViPaqSerializer, ViPaqSerializationOptions, Layout, L
 also_update:
   - vipaq/typescript
   - vipaq/cross-language-testing
+paths:
+  - "vipaq/**"
 ---
 
 # ViPaq

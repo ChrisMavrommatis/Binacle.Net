@@ -1,5 +1,5 @@
-// Ports C#: Layout. How the items are arranged in the body (PROTOCOL.md §3). The header bit says which one the
-// encoder used, and a decoder obeys it — neither is normative.
+// Ports C#: Layout. How the items are arranged in the body (PROTOCOL.md §3). Neither is normative: the header
+// bit says which one the encoder used.
 export const enum Layout {
 	// Each item whole: L W H X Y Z, then the next item.
 	RowMajor = 0,

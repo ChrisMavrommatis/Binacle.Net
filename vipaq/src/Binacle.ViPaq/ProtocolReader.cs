@@ -4,11 +4,10 @@ using System.Runtime.CompilerServices;
 
 namespace Binacle.ViPaq;
 
-// Reads one value at a time, little-endian. It does not know what a dimension or a coordinate is: which values
-// come back in what order is the caller's business — the layout codecs for the items, ProtocolDecoder for the bin.
+// Reads one value at a time, little-endian. Which values come back in what order is the caller's business.
 //
-// Nothing is range-checked on the way in. An 8- or 16-bit field cannot hold a value outside ViPaq's range, which
-// is what PROTOCOL.md §5 means by "a decoder has nothing to range-check".
+// Nothing is range-checked: an 8- or 16-bit field cannot hold a value outside ViPaq's range, which is what
+// PROTOCOL.md §5 means by "a decoder has nothing to range-check".
 internal class ProtocolReader<T> : IDisposable, IAsyncDisposable
 	where T : struct, IBinaryInteger<T>
 {
@@ -30,8 +29,7 @@ internal class ProtocolReader<T> : IDisposable, IAsyncDisposable
 		return BinaryPrimitives.ReadUInt16LittleEndian(buffer);
 	}
 
-	// Picks the read for a Width. Read8Bits / Read16Bits are the two it can pick — the names match the Width
-	// enum, and each reads the wire width then widens the value to the caller's T.
+	// Picks the read for a Width. Read8Bits / Read16Bits read the wire width, then widen to the caller's T.
 	public T ReadValue(Width width)
 	{
 		return width switch
@@ -61,8 +59,7 @@ internal class ProtocolReader<T> : IDisposable, IAsyncDisposable
 
 		if (read < 0)
 		{
-			// EOF. Reject instead of returning a phantom value — a truncated body must fail, the same way the
-			// multi-byte ReadExactly path throws (PROTOCOL.md §7).
+			// EOF. Reject rather than return a phantom value: a truncated body must fail (PROTOCOL.md §7).
 			throw new EndOfStreamException("Unexpected end of stream while reading a byte.");
 		}
 

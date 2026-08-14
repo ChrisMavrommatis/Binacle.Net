@@ -39,11 +39,13 @@
 	
 	<ItemGroup>
 		<ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
+		<ProjectReference Include="..\..\..\shared\src\Binacle.Packing\Binacle.Packing.csproj" />
 		<ProjectReference Include="..\..\..\shared\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Using Include="Binacle.Geometry" />
+		<Using Include="Binacle.Packing" />
 	</ItemGroup>
 
 	<ItemGroup>

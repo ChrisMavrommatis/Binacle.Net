@@ -6,6 +6,9 @@ check: IOpenApiDocument, transformers, and OpenApiOptions extensions match api/s
 also_update:
   - api/v4/add-endpoint
   - api/kernel
+paths:
+  - "api/src/**/OpenApi/**"
+
 ---
 
 # OpenAPI

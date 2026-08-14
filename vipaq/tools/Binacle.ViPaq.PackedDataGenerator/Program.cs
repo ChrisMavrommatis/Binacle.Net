@@ -3,18 +3,16 @@ using Binacle.TestReporting;
 
 namespace Binacle.ViPaq.PackedDataGenerator;
 
-// Packs the Bischoff suite + custom problems with Binacle.Lib and freezes the *placed* results (bin + items
-// with L/W/H and X/Y/Z) as committed data files under vipaq/data/packed (split into bischoff-suite/ and
-// custom-problems/). The ViPaq tests-kernel reads those files instead of a hardcoded, API-captured
-// RealDataProvider. Takes no arguments on purpose: a run always regenerates every algorithm in the list below,
-// so it can't half-run and leave the data mixed. Output is deterministic, so a no-change re-run is
-// byte-identical (no git noise).
+// Packs the Bischoff suite and custom problems with Binacle.Lib and freezes the placed results as committed
+// data files under vipaq/data/packed. Takes no arguments on purpose: a run always regenerates every algorithm
+// in the list below, so it cannot half-run and leave the data mixed. Output is deterministic, so a no-change
+// re-run is byte-identical.
 //
-// FFD is the pinned algorithm today. Adding WFD/BFD later is one entry in the list; the algorithm rides on the
-// file name as a ".<algo>" suffix (orlib_thpack1.ffd.json), so the sets sit side by side without mixing.
+// FFD is the pinned algorithm today. Adding WFD/BFD is one entry in the list; the algorithm rides on the file
+// name as a ".<algo>" suffix (orlib_thpack1.ffd.json), so the sets sit side by side without mixing.
 internal class Program
 {
-	// The source families: where to read the problems, the subfolder to write placed results into, and the files.
+	// Where to read the problems, the subfolder to write placed results into, and the files.
 	private static readonly SourceFamily[] Families =
 	[
 		new(

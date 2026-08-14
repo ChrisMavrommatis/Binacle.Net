@@ -7,11 +7,13 @@
 
     <!--
         Fixtures are sourced from shared/data (one place they're generated/edited, one place they live), not kernel
-        copies. LogicalName reproduces the manifest name the kernel already expects so no reader changes. Link keeps
-        these out-of-project files under a virtual folder in the IDE instead of scattering them at the project root.
-        Bischoff suite is the OR-Library converter's output; custom-problems and result-selection are hand-authored.
-        Result-selection uses one flat entry per case (no ** wildcard): a recursive wildcard with %(RecursiveDir)
-        would inject a backslash into LogicalName and corrupt the manifest name.
+        copies. Both sets are read by more than one slice, which is why they live in shared/data rather than in a
+        slice: the api integration suite and the lib tests read them through this kernel, and the ViPaq packed-data
+        generator reads the same files by path at run time. LogicalName reproduces the manifest name the reader
+        expects. Link keeps these out-of-project files under a virtual folder in the IDE instead of scattering them
+        at the project root. Bischoff suite is the OR-Library converter's output; custom-problems are hand-authored.
+        One flat entry per folder (no ** wildcard): a recursive wildcard with %(RecursiveDir) would inject a
+        backslash into LogicalName and corrupt the manifest name.
     -->
     <ItemGroup>
         <EmbeddedResource Include="..\..\data\bischoff-suite\*.json">
@@ -22,28 +24,17 @@
             <Link>Algorithms\Data\CustomProblems\%(Filename)%(Extension)</Link>
             <LogicalName>Binacle.TestsKernel.Algorithms.Data.CustomProblems.%(Filename)%(Extension)</LogicalName>
         </EmbeddedResource>
-        <EmbeddedResource Include="..\..\data\result-selection\BestAlgorithm\*.json">
-            <Link>ResultSelection\Data\BestAlgorithm\%(Filename)%(Extension)</Link>
-            <LogicalName>Binacle.TestsKernel.ResultSelection.Data.BestAlgorithm.%(Filename)%(Extension)</LogicalName>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\..\data\result-selection\BestBin\*.json">
-            <Link>ResultSelection\Data\BestBin\%(Filename)%(Extension)</Link>
-            <LogicalName>Binacle.TestsKernel.ResultSelection.Data.BestBin.%(Filename)%(Extension)</LogicalName>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\..\data\result-selection\SmallestBin\*.json">
-            <Link>ResultSelection\Data\SmallestBin\%(Filename)%(Extension)</Link>
-            <LogicalName>Binacle.TestsKernel.ResultSelection.Data.SmallestBin.%(Filename)%(Extension)</LogicalName>
-        </EmbeddedResource>
     </ItemGroup>
 
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\lib\src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+        <ProjectReference Include="..\..\src\Binacle.Packing\Binacle.Packing.csproj" />
         <ProjectReference Include="..\..\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <Using Include="Binacle.Geometry" />
+        <Using Include="Binacle.Packing" />
     </ItemGroup>
 
 </Project>

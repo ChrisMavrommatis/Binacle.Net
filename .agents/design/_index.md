@@ -9,27 +9,41 @@ decisions (why) and the findings (measured evidence). Permanent and citable; rea
 
 ## API
 
-| File | Description |
-|---|---|
-| [api/decisions.md](api/decisions.md) | API decisions ledger — why the OpenAPI `429` is gated on the RateLimiter feature and not on endpoint metadata alone, and what the generated documents are a document of. |
+```yaml
+- file: api/decisions.md
+  description: "API decisions ledger — why the OpenAPI `429` is gated on the RateLimiter feature and not on endpoint metadata alone, and what the generated documents are a document of."
+  paths: ["api/**"]
+```
 
 ## CI/CD
 
-| File | Description |
-|---|---|
-| [ci-cd/decisions.md](ci-cd/decisions.md) | CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation. |
+```yaml
+- file: ci-cd/decisions.md
+  description: "CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation."
+  paths: [".github/workflows/**"]
+```
 
 ## Lib
 
-| File | Description |
-|---|---|
-| [lib/decisions.md](lib/decisions.md) | Lib decisions ledger — why Algorithm.Best races a different set per path, and the open parallelization question. |
-| [lib/findings.md](lib/findings.md) | Lib findings — the measured evidence (algorithm racing cost, parallel racing gain) behind the decisions. |
+```yaml
+- file: lib/decisions.md
+  description: "Lib decisions ledger — why Algorithm.Best races a different set per path, where the packing vocabulary lives, why there are two tests kernels, and the open parallelization question."
+  paths: ["lib/**"]
+- file: lib/findings.md
+  description: "Lib findings — the measured evidence (algorithm racing cost, parallel racing gain) behind the decisions."
+  paths: ["lib/**"]
+```
 
 ## ViPaq
 
-| File | Description |
-|---|---|
-| [vipaq/decisions.md](vipaq/decisions.md) | ViPaq decisions ledger — the locked decisions and their reasons, plus the open questions. |
-| [vipaq/findings.md](vipaq/findings.md) | ViPaq findings — the measured evidence (base64 size, encode/decode time) behind the decisions. |
-| [vipaq/history.md](vipaq/history.md) | ViPaq design history — superseded throwaway-prototype measurements (2026-07-05) that informed the locked decisions. Reference only, not current truth. |
+```yaml
+- file: vipaq/decisions.md
+  description: "ViPaq decisions ledger — the locked decisions and their reasons, plus the open questions."
+  paths: ["vipaq/**"]
+- file: vipaq/findings.md
+  description: "ViPaq findings — the measured evidence (base64 size, encode/decode time) behind the decisions."
+  paths: ["vipaq/**"]
+- file: vipaq/history.md
+  description: "ViPaq design history — superseded throwaway-prototype measurements (2026-07-05) that informed the locked decisions. Reference only, not current truth."
+  paths: ["vipaq/**"]
+```

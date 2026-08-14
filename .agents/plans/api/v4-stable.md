@@ -1,3 +1,9 @@
+---
+description: v4 - flip from experimental to stable
+paths:
+  - "api/**"
+---
+
 # v4 — flip from experimental to stable
 
 **Status:** Waiting on 3.0.0 shipping. v4 goes out experimental in 3.0.0 and stays that way for the whole

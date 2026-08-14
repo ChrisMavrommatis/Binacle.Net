@@ -5,6 +5,9 @@ verified: 2026-07-15
 check: Heuristic directory names match lib/src/Binacle.Lib/Algorithms/; v2 default confirmed in AlgorithmFactory.cs
 also_update:
   - lib/algorithm-factory
+paths:
+  - "lib/src/Binacle.Lib/Algorithms/**"
+
 ---
 
 # Algorithms

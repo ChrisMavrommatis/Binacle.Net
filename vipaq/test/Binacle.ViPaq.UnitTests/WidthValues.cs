@@ -2,11 +2,9 @@ using System.Numerics;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// A distinct, deterministic value that fits inside a width bucket. fieldIndex (0, 1, 2, ...)
-// shifts each field to a different value, so a wiring bug (writing one field but reading another)
-// shows up as a mismatch. Curated, not random: ViPaq asserts on exact bytes, width boundaries,
-// and field order, so the values are load-bearing. Shared by the serialization builders, so this
-// "what value goes in each field" rule lives in one place. Only two widths exist now (Eight/Sixteen).
+// A distinct, deterministic value inside a width bucket. fieldIndex shifts each field to a different value, so
+// a wiring bug (writing one field but reading another) shows up as a mismatch. Curated, not random: ViPaq
+// asserts on exact bytes, width boundaries and field order, so the values are load-bearing.
 internal static class WidthValues
 {
 	public static T DistinctValue<T>(Width size, int fieldIndex)

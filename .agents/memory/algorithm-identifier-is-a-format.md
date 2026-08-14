@@ -2,6 +2,10 @@
 name: algorithm-identifier-is-a-format
 description: The FFD_v2 / BFD_v1 string is a parsed data format, not a naming style - never tidy the underscore out of it
 type: gotcha
+when: renaming an algorithm class, enum member or identifier string
+paths:
+  - "lib/**"
+  - "shared/src/Binacle.Packing/**"
 ---
 
 `AlgorithmExtensions.GetAlgorithmIdentifierName()` builds `$"{ShortName}_v{Version}"`, giving `FFD_v2`,
@@ -10,7 +14,7 @@ it is a **wire format**, and three things already depend on parsing it:
 
 - `LoopAlgorithmProcessor` and `ParallelAlgorithmProcessor` key their results dictionary with it, and
   `ResultSelector` reads those keys.
-- `shared/data/result-selection/*/baseline.json` stores it as fixture data, in both `ExpectedResult` and the
+- `lib/data/result-selection/*/baseline.json` stores it as fixture data, in both `ExpectedResult` and the
   `Results` keys - `"BFD_v2"`, `"60x40x10 FFD_v2 PartiallyPacked 70 95"`.
 - `AlgorithmInfoHelper.ParseFromCompactString` reads it back by splitting on `_` and requiring the second
   half to start with `v`. Change the separator or drop the `v` and it throws on every fixture row.

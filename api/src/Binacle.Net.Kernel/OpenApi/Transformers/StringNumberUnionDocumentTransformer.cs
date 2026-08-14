@@ -3,13 +3,12 @@ using Microsoft.OpenApi;
 
 namespace Binacle.Net.Kernel.OpenApi.Transformers;
 
-// The web JSON defaults accept a number as a JSON number or a numeric string, and ASP.NET mirrors that in the
-// schema as an `[integer, string]` (or `[number, string]`) union — which makes a generated SDK type the value as
-// `int | string`. This collapses the union back to the numeric type across the whole document.
+// The web JSON defaults accept a number as a JSON number or a numeric string, and ASP.NET mirrors that as an
+// `[integer, string]` union, which makes a generated SDK type the value as `int | string`. This collapses the
+// union back to the numeric type across the whole document.
 //
-// Generic on purpose: it keys off the schema shape, never off property names, so it belongs in the Kernel. It is
-// document-only — runtime parsing is untouched, so the server still accepts numeric strings and the response wire
-// does not change.
+// It keys off the schema shape, never off property names, so it belongs in the Kernel. Document-only: runtime
+// parsing is untouched, so the server still accepts numeric strings.
 internal class StringNumberUnionDocumentTransformer : IOpenApiDocumentTransformer
 {
 	public Task TransformAsync(

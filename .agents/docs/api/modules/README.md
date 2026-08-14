@@ -6,6 +6,9 @@ check: Module list and feature flags match Feature.Manager source
 also_update:
   - api
   - api/configuration
+paths:
+  - "api/src/Binacle.Net.*Module*/**"
+
 ---
 
 # Modules

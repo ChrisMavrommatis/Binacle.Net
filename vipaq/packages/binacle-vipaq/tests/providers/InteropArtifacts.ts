@@ -1,9 +1,8 @@
-// Ports C#: Providers/Interop/InteropVectors.cs + CSharpArtifacts.cs + TypeScriptArtifacts.cs. The C# side splits
-// into a shared loader plus one provider per producer; TS keeps a single loader here. Each producer has its own
-// folder (interop/cs, interop/ts) with one file per codec (raw/deflate/gzip.json), all serializing the shared
-// input.json; each blob must deserialize back to it. Reads ALL of them, so TS decodes its own output AND the C#
-// output, in every codec — the cross-language guarantee. Each row joins to input.json by Name. Not a *.test.ts
-// file, so jest does not run it.
+// Ports C#: Providers/Interop/InteropVectors.cs + CSharpArtifacts.cs + TypeScriptArtifacts.cs. The C# side
+// splits into a shared loader plus one provider per producer; TS keeps a single loader here.
+//
+// Each producer has its own folder with one file per codec, all serializing the shared input.json. This reads
+// all of them, so TS decodes its own output and C#'s, in every codec. Each row joins to input.json by Name.
 
 import {readVectors} from "../support/vectorReader";
 import {parseBin, parseItems, parseHeader} from "../support/vectorParser";
@@ -26,8 +25,8 @@ interface ArtifactVector {
 	Base64: string;
 }
 
-// ExpectedHeader lives on the input (producer-independent, spec-determined), so the header pin checks a declared
-// value instead of one echoed back from the generator's own output.
+// ExpectedHeader lives on the input, so the header pin checks a declared value instead of one echoed back from
+// the generator's own output.
 type Input = {expectedHeader: Header; bin: Dimensions; items: Item[]};
 
 export interface InteropArtifactCase {
@@ -61,8 +60,8 @@ function loadInputs(): Map<string, Input> {
 	return inputs;
 }
 
-// A compressed artifact carries the input's header with the compressed bit set (deflate and gzip are
-// indistinguishable on the wire — §6); raw keeps the input's header as-is.
+// A compressed artifact carries the input's header with the compressed bit set - deflate and gzip are
+// indistinguishable on the wire (§6).
 function compressedHeader(header: Header): Header {
 	return new Header(
 		header.version,
@@ -74,9 +73,8 @@ function compressedHeader(header: Header): Header {
 	);
 }
 
-// Lazy on purpose: this joins each artifact row to input.json and throws on an unknown Name. Calling it at module
-// top-level would make that throw fire the moment ANYTHING imports this file — including the integrity test,
-// which must run first and report "which names differ" clearly.
+// Lazy on purpose: it throws on an unknown Name, and at module top-level that would fire the moment anything
+// imports this file - including the integrity test, which must run first and report which names differ.
 export function loadInteropArtifactCases(): InteropArtifactCase[] {
 	const inputs = loadInputs();
 	const cases: InteropArtifactCase[] = [];

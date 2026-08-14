@@ -2,6 +2,7 @@
 name: sonar-touching-untested-code
 description: Fixing an old Sonar smell in an untested file makes the quality gate worse - changed lines become "new code" and count as uncovered
 type: gotcha
+when: fixing a Sonar smell in a file with no test coverage
 ---
 
 Sonar counts a line as **new code** because it changed, not because of why it changed. Cleaning up an old

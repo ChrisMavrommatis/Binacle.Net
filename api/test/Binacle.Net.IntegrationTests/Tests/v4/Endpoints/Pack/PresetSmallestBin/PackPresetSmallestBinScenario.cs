@@ -1,8 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
-using Binacle.Lib;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.v4.Contracts.Pack;
+using Binacle.Packing;
 using Binacle.TestsKernel.Algorithms.Providers;
 
 namespace Binacle.Net.IntegrationTests.v4.Endpoints.Pack.PresetSmallestBin;

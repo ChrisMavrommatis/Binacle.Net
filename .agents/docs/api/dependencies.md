@@ -3,6 +3,8 @@ id: api/dependencies
 description: API slice dependency tree — Binacle.Net as composition root, the Kernel floor, the always-compiled modules (Diagnostics, Service, UI), the ServiceModule clean-architecture split, and who sees internals.
 verified: 2026-07-14
 check: ProjectReference and InternalsVisibleTo entries in api/**/*.csproj match the graph and the walls below
+paths:
+  - "api/**"
 ---
 
 # API — project dependencies
@@ -26,12 +28,12 @@ Binacle.Net  (Web SDK, entry / composition root)   [IVT → IntegrationTests, Se
       │        ├── ServiceModule.Infrastructure → Kernel, ServiceModule.Domain   [IVT → SM.IntegrationTests]
       │        └── ServiceModule.Domain         → (nothing)                       [IVT → SM.IntegrationTests]
       │
-      └── UIModule  (Razor SDK)    → Kernel, Binacle.Lib.Abstractions, Binacle.CompactNotation, Binacle.ViPaq
+      └── UIModule  (Razor SDK)    → Kernel, Binacle.Packing, Binacle.CompactNotation, Binacle.ViPaq
 
-Kernel  → Binacle.Lib.Abstractions, Binacle.CompactNotation      shared API floor (every module refs it)
+Kernel  → Binacle.CompactNotation                                shared API floor (every module refs it)
 
 Tests
-   IntegrationTests               xUnit  → Binacle.Net, Binacle.Lib.Abstractions, Binacle.TestsKernel
+   IntegrationTests               xUnit  → Binacle.Net, Binacle.Packing, Binacle.TestsKernel
    ServiceModule.IntegrationTests xUnit  → ServiceModule, Binacle.Net
 ```
 
@@ -40,20 +42,21 @@ Tests
 | Project | Kind | References | Sees internals | Role |
 |---|---|---|---|---|
 | `Binacle.Net` | Web exe | Lib, ViPaq, Diagnostics/Service/UI modules | grants IVT | entry point + composition root; registers the concrete lib |
-| `Binacle.Net.Kernel` | library | Lib.Abstractions, CompactNotation | — | shared API tooling: endpoint registration, OpenAPI, flags, validation |
+| `Binacle.Net.Kernel` | library | CompactNotation | — | shared API tooling: endpoint registration, OpenAPI, flags, validation |
 | `Binacle.Net.DiagnosticsModule` | library | Kernel, CompactNotation | — | always-on logging / telemetry / health |
 | `Binacle.Net.ServiceModule` | library | Kernel, Domain, Infrastructure | grants IVT | JWT auth, rate limiting, accounts (composes its own layers) |
 | `Binacle.Net.ServiceModule.Domain` | library | — | grants IVT | entities + repository interfaces (pure) |
 | `Binacle.Net.ServiceModule.Infrastructure` | library | Kernel, Domain | grants IVT | DB providers |
-| `Binacle.Net.UIModule` | Razor library | Kernel, Lib.Abstractions, CompactNotation, ViPaq | — | Blazor packing demo |
-| `Binacle.Net.IntegrationTests` | xUnit exe | Binacle.Net, Lib.Abstractions, TestsKernel | via Binacle.Net IVT | v3/v4 HTTP tests |
+| `Binacle.Net.UIModule` | Razor library | Kernel, Packing, CompactNotation, ViPaq | — | Blazor packing demo |
+| `Binacle.Net.IntegrationTests` | xUnit exe | Binacle.Net, Packing, TestsKernel | via Binacle.Net IVT | v3/v4 HTTP tests |
 | `Binacle.Net.ServiceModule.IntegrationTests` | xUnit exe | ServiceModule, Binacle.Net | via IVT | auth + rate-limit tests |
 
 ## The walls
 
 1. **`Binacle.Net` is the only composition root.** It is the single project that references the concrete
-   `Binacle.Lib` (and `ViPaq`, and all three modules). Everything downstream depends on `Lib.Abstractions`, so the
-   algorithms are wired once, here.
+   `Binacle.Lib` (and `ViPaq`, and all three modules). Nothing else in the slice references the packer at all -
+   the Kernel, the modules and the integration suite take `Binacle.Packing` in `shared/src` for the result
+   vocabulary. So the algorithms are wired once, here.
 
 2. **Modules never reference the entry point.** The arrows go one way: `Binacle.Net` → each module. A module
    depending back on `Binacle.Net` would be a cycle and a design break. Modules are compiled in regardless; feature

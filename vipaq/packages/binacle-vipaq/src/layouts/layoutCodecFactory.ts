@@ -4,8 +4,8 @@ import {ProtocolWriter} from "../ProtocolWriter";
 import {readRowMajor, writeRowMajor} from "./rowMajorCodec";
 import {readColumnar, writeColumnar} from "./columnarCodec";
 
-// Ports C#: LayoutCodecFactory. Picks the write/read pair for a Layout bit, and rejects an unknown code — the
-// same guard C# has, so a reserved layout can never be silently ignored.
+// Ports C#: LayoutCodecFactory. Picks the write/read pair for a Layout bit, and rejects an unknown code so a
+// reserved layout is never silently ignored.
 export type LayoutEncoder = (writer: ProtocolWriter, items: (Dimensions & Coordinates)[], header: Header) => void;
 export type LayoutDecoder = (reader: ProtocolReader, items: Item[], header: Header) => void;
 

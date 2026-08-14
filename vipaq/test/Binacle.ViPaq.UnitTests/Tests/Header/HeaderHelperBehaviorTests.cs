@@ -3,10 +3,8 @@ using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// Behaviour of the header guards: the throws and their "does not throw" boundaries. The width guard
-// (HeaderHelper.ThrowOnInvalidHeader) is data driven (see HeaderHelperTestCaseProvider). A type cannot be
-// put in a data row, so a small lookup table turns the type from the row into the real call. The item-count
-// guard is ValidationHelper.ThrowIfTooManyItems.
+// The header guards: the throws and their "does not throw" boundaries. A type cannot go in a data row, so a
+// lookup table turns the type from the row into the real call.
 [Trait("Behavioral Tests", "Ensures operations behave as expected")]
 public class HeaderHelperBehaviorTests
 {
@@ -26,8 +24,7 @@ public class HeaderHelperBehaviorTests
 		[typeof(nuint)]  = header => HeaderHelper.ThrowOnInvalidHeader<nuint>(header),
 	};
 
-	// Width is internal, so a public [Theory] method cannot name it (CS0051); the boxed widths ride the theory
-	// data as object and are cast back here.
+	// Width is internal, so a public [Theory] cannot name it (CS0051): the boxed widths ride the row as object.
 	[Theory]
 	[ClassData(typeof(HeaderHelperTestCaseProvider))]
 	public void ThrowOnInvalidHeader_Behaves_As_Expected(

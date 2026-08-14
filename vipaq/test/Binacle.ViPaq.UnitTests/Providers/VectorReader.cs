@@ -4,10 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// Reads the shared cross-language vectors in vipaq/test-vectors/. They are embedded into this assembly (see
-// the .csproj), so these tests grade against the exact same files the TypeScript suite reads and neither side
-// can drift on the wire format. Callers pass the on-disk path ("protocol/little-endian/uint8.json") — the same
-// string the TS readVectors takes — so the two readers line up. Edit a case in the JSON, not here.
+// Reads the shared cross-language vectors in vipaq/test-vectors/, embedded into this assembly, so these tests
+// grade against the exact same files the TypeScript suite reads. Callers pass the on-disk path
+// ("protocol/little-endian/uint8.json"), the same string the TS readVectors takes. Edit a case in the JSON.
 internal static class VectorReader
 {
 	private static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
@@ -20,9 +19,7 @@ internal static class VectorReader
 		Converters = { new JsonStringEnumConverter() }, // BitSize etc. arrive as enum names ("Eight").
 	};
 
-	// Reads a vector file (e.g. "serialization/exact-bytes.json" or "protocol/little-endian/uint16.json") into its
-	// rows. The files are embedded under a flattened "Data.<dotted>" logical name (see the .csproj), so '/' maps
-	// to '.' here.
+	// The files are embedded under a flattened "Data.<dotted>" logical name, so '/' maps to '.' here.
 	public static T[] Read<T>(string fileName)
 	{
 		var resourceName = "Data." + fileName.Replace('/', '.');

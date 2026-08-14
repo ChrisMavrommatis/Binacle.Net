@@ -2,15 +2,13 @@ using System.Collections;
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// Full matrix for the HeaderHelper.ThrowOnInvalidHeader<T> guard.
-// Each row is: the numeric type, the three section widths as "bin-itemDim-itemCoord",
-// the error it should throw (null = no error), and the field that error should name.
-// Widths use 8 / 16 to mean the two Width values — there is no 32/64 any more.
+// Full matrix for the HeaderHelper.ThrowOnInvalidHeader<T> guard. Each row is: the numeric type, the three
+// section widths as "bin-itemDim-itemCoord", the error it should throw (null = no error), and the field that
+// error should name.
 //
-// The rule under test: a type can hold a section only if the type is at least as wide. byte/sbyte hold
-// Eight; every other supported type holds Sixteen (the format's ceiling). The guard checks bin first, then
-// item dimensions, then item coordinates, and names the first section that is too wide. The two types of
-// each width (e.g. sbyte and byte) behave the same, so both siblings are listed.
+// The rule under test: a type holds a section only if it is at least as wide. byte/sbyte hold Eight; every
+// other supported type holds Sixteen. The guard checks bin, then item dimensions, then item coordinates, and
+// names the first section that is too wide.
 internal class HeaderHelperTestCaseProvider : IEnumerable<object[]>
 {
 	private static readonly Type argumentException = typeof(ArgumentException);
@@ -41,8 +39,7 @@ internal class HeaderHelperTestCaseProvider : IEnumerable<object[]>
 		[typeof(nuint), "8-8-8", argumentException, "T"],
 	];
 
-	// Type width is exactly the section width -> no error (the boundary; the guard uses "<"). Every non-byte
-	// supported type holds Sixteen, so 16-16-16 is an exact fit for all of them.
+	// Type width exactly the section width -> no error. The boundary: the guard uses "<".
 	public static IEnumerable<object[]> ExactFitCases =>
 	[
 		[typeof(short), "16-16-16", null!, null!],
@@ -97,8 +94,7 @@ internal class HeaderHelperTestCaseProvider : IEnumerable<object[]>
 		return allCases.Select(ToTestCase).GetEnumerator();
 	}
 
-	// Turn a readable row [type, "8-8-8", error, field] into what the test needs:
-	// [type, binWidth, itemDimWidth, itemCoordWidth, error, field].
+	// [type, "8-8-8", error, field] -> [type, binWidth, itemDimWidth, itemCoordWidth, error, field].
 	private static object[] ToTestCase(object[] row)
 	{
 		var widths = ((string)row[1]).Split('-');

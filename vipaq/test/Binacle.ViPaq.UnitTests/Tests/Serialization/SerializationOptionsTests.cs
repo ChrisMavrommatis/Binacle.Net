@@ -1,7 +1,7 @@
 namespace Binacle.ViPaq.UnitTests;
 
-// ViPaqSerializer's opt-in options: compression and columnar layout. The default (raw, row-major) is pinned
-// elsewhere; these prove the toggles round-trip and that the header records what the caller asked for.
+// ViPaqSerializer's opt-in options: compression and columnar layout. These prove the toggles round-trip and
+// that the header records what the caller asked for; the default is pinned elsewhere.
 [Trait("Behavioral Tests", "Ensures serializer options behave as expected")]
 public class SerializationOptionsTests
 {
@@ -13,7 +13,7 @@ public class SerializationOptionsTests
 			.Select(_ => new Binacle.Geometry.Item<int> { Length = 300, Width = 300, Height = 300, X = 0, Y = 0, Z = 0 })
 			.ToList();
 
-	// Every opt-in combination decodes back to the input — decode-to-input is the oracle (PROTOCOL.md §6.1).
+	// Decode-to-input is the oracle (PROTOCOL.md §6.1).
 	[Theory]
 	[InlineData(false, Layout.RowMajor)]
 	[InlineData(false, Layout.Columnar)]

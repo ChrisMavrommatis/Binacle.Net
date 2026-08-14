@@ -1,8 +1,7 @@
 import {Width} from "../models";
 
-// Ports C#: WidthHelper.ByteCount. How many bytes one value of a width takes on the wire. A reserved width
-// never reaches the wire, so asking for its byte count is a bug (encode side) or a malformed blob (decode
-// side) — either way, throw rather than guess.
+// Ports C#: WidthHelper.ByteCount. Bytes on the wire for one value of a width. A reserved width never reaches
+// the wire, so asking for its byte count is a bug or a malformed blob - throw rather than guess.
 export function widthByteCount(width: Width): number {
 	switch (width) {
 		case Width.Eight:

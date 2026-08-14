@@ -1,3 +1,7 @@
+---
+description: Sonar - what is left after the 2026-08-09 sweep
+---
+
 # Sonar - what is left after the 2026-08-09 sweep
 
 **Status:** Sweep done. Rewritten 2026-08-09 against the run on `016d7478`, which is the first analysis with
@@ -67,6 +71,14 @@ gate was never the place these were going to surface.
 
 ## What is left, by size {#remaining}
 
+- **`lib/data/**` is missing from `sonar.exclusions`, and it is a one-line fix.** Found 2026-08-13. The
+  exclusion line names `shared/data/**` and `vipaq/test-vectors/**` as the fixture corpora. The tests-kernel
+  split moved the result-selection fixtures to `lib/data/result-selection/`, which no entry covers, so those
+  json files are now indexed where they used to be skipped. Small in size - three files - but it is the same
+  class as the `shared/data` entry that turned out to be 28% of the project measured as data. **A new fixture
+  folder needs a new entry**, and this is the first time that has come up, so the line is now a list rather
+  than a pair. Two other spots repeat the exclusion list in prose and drift with it: the comment above the
+  line, and the no-sonar-issue-ignores memory.
 - **xUnit1042 (22) + xUnit1050 (10)** - `MemberData`/`ClassData` returning untyped `object[]`. The fix is
   `TheoryData<T>`, a real improvement to the ViPaq and Kernel suites, but a rewrite per data source rather
   than an edit. Biggest remaining item.

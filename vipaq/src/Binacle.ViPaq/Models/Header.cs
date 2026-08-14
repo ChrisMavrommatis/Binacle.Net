@@ -4,25 +4,20 @@ using Binacle.ViPaq.Helpers;
 
 namespace Binacle.ViPaq;
 
-// The two header bytes (PROTOCOL.md §2). This is both what the encoder is told to do and what lands on the
-// wire — there is no separate directive type, because the spec already makes the header describe the blob
-// completely.
+// The two header bytes (PROTOCOL.md §2). Also the encoder's directive - there is no separate directive type.
 //
 //   Byte 0 — form                                Byte 1 — widths
 //   [Version][Compressed][Layout][reserved]      [Bin dims][Item dims][Item coords][reserved]
 //   [2 bits ][1 bit     ][1 bit ][4 bits  ]      [2 bits  ][2 bits   ][2 bits     ][2 bits  ]
 //
-// Every field is `init`, `Compressed` included: the blind encoder obeys that bit rather than deciding it.
-// Anything wanting a different form builds a second header instead of mutating this one — which is how the
-// measurement harness races codecs (PROTOCOL.md §6, decisions.md D7). The serializer itself does not race;
-// its `Compress` option is a straight on/off.
+// Every field is `init`, `Compressed` included: the encoder obeys that bit, it does not decide it. To get a
+// different form, build a second header (PROTOCOL.md §6).
 internal readonly record struct Header
 {
-	// The header is always two bytes, and it is never compressed.
+	// Always two bytes, never compressed.
 	public const int ByteCount = 2;
 
-	// Not `required`: `Version1` is 0, so the default is the only version this implementation writes. Codes
-	// 1-3 are reserved (PROTOCOL.md §2.3) and a decoder rejects them.
+	// Not `required`: `Version1` is 0, the only version written. Codes 1-3 are reserved (PROTOCOL.md §2.3).
 	public Version Version { get; init; }
 
 	public required bool Compressed { get; init; }
@@ -35,17 +30,10 @@ internal readonly record struct Header
 
 	public required Width ItemCoordinatesWidth { get; init; }
 
-	// The header for this data, at the library's default form: the narrowest widths that hold each section
-	// (PROTOCOL.md §4), uncompressed and row-major. The mirror of `FromBytes` — that reads a header off the
-	// wire, this derives one from the values.
-	//
-	//   - Widths are derived here and nowhere else (decisions.md D14). `Serialize` calls this to write a blob
-	//     and the measurement harness calls it to force a mode; neither re-derives a width.
-	//   - The three sections are sized independently, because they genuinely disagree: a big bin can hold small
-	//     items at large coordinates (findings.md: Bischoff packs to 16/8/16).
-	//   - With no items, both item widths stay `Eight` — what §4 requires of an empty blob.
-	//   - `Compressed` and `Layout` stay at their defaults (see the note on the type). Layout is unmeasured, so
-	//     row-major. A caller wanting another form `with`-s those two bits.
+	// Narrowest widths that hold each section (PROTOCOL.md §4), uncompressed and row-major. Widths are derived
+	// here and nowhere else. The three sections are sized independently because they disagree: a big bin can
+	// hold small items at large coordinates (Bischoff packs to 16/8/16). With no items both item widths stay
+	// `Eight`, as §4 requires. A caller wanting another form `with`-s `Compressed` and `Layout`.
 	public static Header Create<TBin, TItem, T>(TBin bin, IReadOnlyList<TItem> items)
 		where T : struct, IBinaryInteger<T>
 		where TBin : IWithReadOnlyDimensions<T>
@@ -129,16 +117,14 @@ internal readonly record struct Header
 		};
 	}
 
-	// A body's length is fixed once the header and the item count are known — no field is variable-length.
-	// That one number is also the whole of decode's structural check: a body of exactly this length cannot be
-	// truncated and cannot have bytes left over (PROTOCOL.md §7, steps 1 and 8).
+	// Nothing is variable-length, so this one number is decode's whole structural check: a body of exactly this
+	// length cannot be truncated and cannot have bytes left over (PROTOCOL.md §7, steps 1 and 8).
 	public int GetBodyLength(int itemCount)
 	{
 		return sizeof(ushort) + this.GetContentsLength(itemCount);
 	}
 
-	// The body minus its leading uint16 item count: the bin dimensions, then the items. This is what the
-	// encoder writes and the decoder reads once the count is already known.
+	// The body minus its leading uint16 item count: the bin dimensions, then the items.
 	public int GetContentsLength(int itemCount)
 	{
 		var bytesPerItem = 3 * (
@@ -150,8 +136,7 @@ internal readonly record struct Header
 			+ (itemCount * bytesPerItem);
 	}
 
-	// A header a caller built by hand can still be unwritable. Both checks are encode-side caller errors, not
-	// malformed input.
+	// A hand-built header can still be unwritable. Both checks are caller errors, not malformed input.
 	private void ThrowIfNotWritable()
 	{
 		if (this.Version != Version.Version1)
@@ -163,8 +148,7 @@ internal readonly record struct Header
 				);
 		}
 
-		// An encoder must never write a reserved width code (PROTOCOL.md §4). ByteCount throws on one, so a
-		// reserved width cannot reach the wire.
+		// ByteCount throws on a reserved width code, keeping it off the wire (PROTOCOL.md §4).
 		WidthHelper.ByteCount(this.BinDimensionsWidth);
 		WidthHelper.ByteCount(this.ItemDimensionsWidth);
 		WidthHelper.ByteCount(this.ItemCoordinatesWidth);

@@ -2,6 +2,10 @@
 name: no-sonar-issue-ignores
 description: Sonar findings are answered in code, never with a sonar.issue.ignore rule in tooling/sonar-analysis.xml
 type: decision
+when: answering a Sonar finding
+paths:
+  - "tooling/sonar-analysis.xml"
+  - "Directory.Build.props"
 ---
 
 `tooling/sonar-analysis.xml` carries no `sonar.issue.ignore.multicriteria` entries, and none should be added.

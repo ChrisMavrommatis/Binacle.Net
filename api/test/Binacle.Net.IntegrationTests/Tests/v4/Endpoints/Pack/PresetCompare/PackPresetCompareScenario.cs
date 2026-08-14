@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using Binacle.Lib;
 using Binacle.Net.v4.Contracts.Pack;
 using Binacle.TestsKernel;
 using Binacle.TestsKernel.Algorithms.Providers;

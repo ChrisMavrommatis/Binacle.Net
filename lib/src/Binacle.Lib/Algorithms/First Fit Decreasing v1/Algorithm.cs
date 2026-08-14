@@ -1,5 +1,4 @@
 using Binacle.Lib.Abstractions.Algorithms;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.Lib.GuardClauses;
 
 namespace Binacle.Lib.Algorithms;

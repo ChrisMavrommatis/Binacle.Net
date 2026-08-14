@@ -3,9 +3,9 @@ using Binacle.Net.DiagnosticsModule.Configuration.Validators;
 
 namespace Binacle.Net.DiagnosticsModule.UnitTests;
 
-// PackingLogs configuration was flattened in v3.0.0, so an existing deployment is the most likely source of a
-// config that no longer fits. Every case below is a shape an operator can arrive with; the validator has to name
-// the problem rather than fall over on it, because PackingLogs.json is not optional and is read on every start.
+// PackingLogs configuration was flattened in v3.0.0, so an existing deployment is the likeliest source of a
+// config that no longer fits. The validator has to name the problem rather than fall over: PackingLogs.json is
+// not optional and is read on every start.
 [Trait("Behavioral Tests", "Ensures packing logs configuration is validated as expected")]
 public class PackingLogsConfigurationOptionsValidatorTests
 {
@@ -48,8 +48,8 @@ public class PackingLogsConfigurationOptionsValidatorTests
 		this.validator.Validate(OptionsWith(path: path)).IsValid.ShouldBeFalse();
 	}
 
-	// FileName carries the date placeholder, so a name without {0} would write every day to one file. A missing
-	// FileName has to report itself the same way — this is the case that used to throw out of the validator.
+	// FileName carries the date placeholder, so a name without {0} writes every day to one file. A missing
+	// FileName once threw out of the validator instead of reporting itself.
 	[Theory]
 	[InlineData(null)]
 	[InlineData("")]
@@ -92,8 +92,8 @@ public class PackingLogsConfigurationOptionsValidatorTests
 		this.validator.Validate(OptionsWith(retentionDays: retentionDays)).IsValid.ShouldBeFalse();
 	}
 
-	// This is the setting most likely to be wrong after the v3.0.0 flattening, so it gets one clear line that
-	// shows a working value rather than three lines of framework defaults.
+	// The setting likeliest to be wrong after the v3.0.0 flattening, so it gets one line showing a working value
+	// rather than three lines of framework defaults.
 	[Fact]
 	public void A_missing_file_name_is_reported_once_with_an_example()
 	{

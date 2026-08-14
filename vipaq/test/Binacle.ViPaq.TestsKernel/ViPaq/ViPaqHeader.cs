@@ -2,17 +2,12 @@ using Binacle.ViPaq.TestsKernel.Models;
 
 namespace Binacle.ViPaq.TestsKernel.ViPaq;
 
-// What the harness needs to know about a token, read off its header.
+// What the harness needs to know about a token, read off its header: did ViPaq compress (so the harness can
+// mirror that on protobuf), which width did it pick, and what would the token have cost raw.
 //
-// It answers two questions: "did ViPaq compress?" (so the harness can mirror that on protobuf) and "which width
-// did ViPaq pick?" (so a report can confirm the scenario landed where we expected). It also gives the size the
-// token would have had raw, which the crossover report sets the real token against.
-//
-// It re-reads nothing. The library's own `Header` does the parsing and the size arithmetic, and this type just
-// hands the answers out in terms the reports can print — `Header`, `Width` and `Layout` are all internal, so
-// they cannot appear on a public member here. Keeping the spec in one place is why the library grants
-// `InternalsVisibleTo` to this project. `Compressed` is its own header bit; it is not a `Version`, as it was
-// before the rewrite.
+// The library's own `Header` does the parsing and the size arithmetic; this only prints the answers. `Header`,
+// `Width` and `Layout` are internal, so they cannot appear on a public member here - which is why the library
+// grants `InternalsVisibleTo` to this project.
 public readonly record struct ViPaqHeader
 {
 	internal readonly Header Header;
@@ -22,15 +17,13 @@ public readonly record struct ViPaqHeader
 		this.Header = header;
 	}
 
-	// Throws ViPaqFormatException on a malformed header — an unsupported version, a set reserved bit, or a
-	// reserved width code.
+	// Throws ViPaqFormatException on a malformed header.
 	public static ViPaqHeader Read(byte[] token)
 		=> new(Header.FromBytes(token[0], token[1]));
 
-	// Builds the header for a scenario in a forced mode, before any token exists. The widths come from the
-	// library's own width choice (`Header.Create`, the one spec that decides them), then the mode is stamped on:
-	// the race always compresses (NoOp is how it prices the raw size), so `Compressed` is always set, and `Layout`
-	// comes from the mode. This is what the encoder is handed to force a mode.
+	// The header for a scenario in a forced mode, before any token exists. Widths come from `Header.Create`,
+	// then the mode is stamped on. The race always compresses - NoOp is how it prices the raw size - so
+	// `Compressed` is always set.
 	public static ViPaqHeader Create(Scenario scenario, EncoderInfo encoderInfo)
 	{
 		var header = Header.Create<Dimensions<ushort>, Item<ushort>, ushort>(

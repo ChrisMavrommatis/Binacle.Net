@@ -1,10 +1,10 @@
 namespace Binacle.Net.v3.Contracts;
 
-// The sample geometry every OpenAPI example is built from, in one place — the v3 mirror of v4's ExampleData.
-// Percentages are derived (WithVolumePercentages), not hand-typed, so a documentation number can never drift
-// from the items beside it (the old hardcoded values had); the ViPaq token is derived the same way (see
-// ViPaqExampleExtensions). The packed layouts are what the algorithms actually produce for Items() in a
-// 10x40x60 bin, which is why the packed dimensions are rotations of the requested ones.
+// The sample geometry every OpenAPI example is built from, the v3 mirror of v4's ExampleData. Percentages and
+// the ViPaq token are derived, not hand-typed, so a documentation number cannot drift from the items beside it.
+//
+// The packed layouts are what the algorithms actually produce for Items() in a 10x40x60 bin, which is why the
+// packed dimensions are rotations of the requested ones.
 internal static class ExampleData
 {
 	private const int binLength = 10;
@@ -74,9 +74,7 @@ internal static class ExampleData
 		new() { ID = "large_box", Quantity = 1 },
 	];
 
-	// Factories rather than a mutate-after extension because the percentages are required members: deriving them
-	// here means a hand-typed number can never drift from the items beside it, the same reason the ViPaq token is
-	// derived (see ViPaqExampleExtensions).
+	// Factories rather than a mutate-after extension, because the percentages are required members.
 	internal static BinPackResult PackedResult(
 		Bin bin,
 		BinPackResultStatus status,

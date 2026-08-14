@@ -1,3 +1,9 @@
+---
+description: "Integration tests: cover what the harness cannot see today"
+paths:
+  - "api/**"
+---
+
 # Integration tests: cover what the harness cannot see today
 
 **Status:** Designed, nothing built. Split out on 2026-07-29 from the smoke-testing work, because the two are

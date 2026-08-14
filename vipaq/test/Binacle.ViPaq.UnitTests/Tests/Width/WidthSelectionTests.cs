@@ -3,13 +3,8 @@ using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// Shared width-selection vectors, split by kind. Dimensions and coordinates use identical width math, so
-// each picker must return the expected width; the two sets together cover every bucket, pinning the pickers
-// so they can't drift.
-//
-// Folded in from the deleted BitSizeHelperTests: that test pinned the Eight<->Sixteen boundary (255 -> Eight,
-// 256 -> Sixteen) inline; those rows now live in width-selection.json. Its 32/64-bit boundary cases are gone
-// with those tiers.
+// Shared width-selection vectors, split by kind. Dimensions and coordinates use identical width math, and the
+// two sets together cover every bucket, including the 255 -> Eight / 256 -> Sixteen boundary.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class WidthSelectionTests
 {

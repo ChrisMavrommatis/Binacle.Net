@@ -2,9 +2,8 @@ using System.Numerics;
 
 namespace Binacle.ViPaq.Layouts;
 
-// Builds the codec for a Layout bit. Both codecs are stateless, so each is made once and shared. One instance
-// answers both calls — the split is only about which half of it the caller is handed, and so which constraints
-// its items must meet.
+// Builds the codec for a Layout bit. Both codecs are stateless, so each is made once and shared; one instance
+// answers both calls, and the split only decides which half the caller is handed.
 internal static class LayoutCodecFactory<T>
 	where T : struct, IBinaryInteger<T>
 {

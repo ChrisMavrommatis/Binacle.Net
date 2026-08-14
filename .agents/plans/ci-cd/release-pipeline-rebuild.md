@@ -1,3 +1,9 @@
+---
+description: CI/CD - finish the GHCR release pipeline
+paths:
+  - ".github/workflows/**"
+---
+
 # CI/CD - finish the GHCR release pipeline
 
 **Status: the pipeline is built and proven.** `v3.0.0-beta.2` first ran it on 2026-08-11, under the rule that
@@ -8,8 +14,8 @@ docs and the decisions ledger now, so it is not repeated here. **This file is do
 the credential-free half of the deployment-host pull, one open question, the signature-verification page (now
 owned elsewhere), and the moving-tag gap.
 
-**Timing note.** The original plan said to do this after v3.0.0 shipped. The maintainer decided on 2026-08-11 to
-do it before, so beta 2 became its first run rather than v3.0.0.
+**Why a beta ran it first.** A prerelease tag is the only free test this pipeline gets - a failure costs a
+deleted tag instead of a bad release. Beta 2 was that run.
 
 ## 1. Confirm the credential-free pull from the deployment host
 
@@ -19,10 +25,15 @@ do it before, so beta 2 became its first run rather than v3.0.0.
 - [ ] **The credential-free half, on that host specifically.** Only open if the test server has a `ghcr.io`
       entry in its docker config. A `docker logout ghcr.io` and a re-pull closes it.
 
-## 2. One open question - ask the maintainer, do not decide alone
+## 2. The docs release-notes page - answered 2026-08-14
 
-- **The docs site release-notes page.** Whether it is generated from `CHANGELOG.md` or stays hand-copied. It is
-  a docs decision and repo-root `docs/` is off limits here - write down what the page must say and leave it.
+**It stays hand-copied, and it gets updated by hand as part of each docs deploy.** Not generated from
+`CHANGELOG.md`.
+
+That closes the last open question in this file. **The cost is known and accepted:** the same release notes live
+in two places and they drift - v3.0.0's docs deploy carries three edits that exist purely because the release
+body gained content the page never got. **So the deploy checklist is the control**, and every release's docs
+handover has to list what changed in the changelog since the page was written.
 
 ## 3. Owed: tell users how to verify the signature - moved out on 2026-08-14
 

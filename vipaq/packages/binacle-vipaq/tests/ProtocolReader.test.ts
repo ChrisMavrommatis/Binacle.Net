@@ -1,7 +1,6 @@
 // mirrors src/ProtocolReader.ts
-// ports C#: ProtocolReaderTests. TS reads into JS numbers (no generic T). Only 8- and 16-bit widths exist now,
-// so the old 32/64-bit reads and the interoperable-ceiling guard (values above 2^53) are gone — a 16-bit value
-// is always in range.
+// ports C#: ProtocolReaderTests. TS reads into JS numbers, with no generic T. Nothing is range-checked: a
+// 16-bit value is always in range.
 import {ProtocolReader} from "../src/ProtocolReader";
 import {ProtocolWriter} from "../src/ProtocolWriter";
 import {uint8Cases, uint16Cases} from "./providers/LittleEndianCases";

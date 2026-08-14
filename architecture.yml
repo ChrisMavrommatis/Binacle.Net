@@ -1,0 +1,187 @@
+# What each part of this repo may reference. The only place this is written down.
+#
+# A slice is a top level directory. A scope is the second path segment - src, test, tools, _js and so on.
+# "." is the files at the slice root, where a Gemfile, a webpack config or a just module lives.
+#
+# Read an entry as: this scope may reference these slices, and nothing else.
+#
+# A bare target name means that slice's src. `lib: [shared]` reads "lib/src is built on shared/src", and
+# that is what fixes each slice's place in the stack. The scope a reference actually lands in is in the
+# comment beside it, because that is a fact about the code, not about the stack.
+#
+# An empty list means the scope may reference nothing. Self edges - a scope pointing inside its own slice -
+# are implicit and never written. Nothing declares an edge into a sink.
+#
+# A plain name is an ordinary edge: something further down, used the normal way. An edge sideways or upward
+# carries a `why` saying what the code actually does with it. Those three are the ones worth reading.
+#
+# What counts as a reference: a path or a module name that a build, a test or the running code resolves.
+# A ProjectReference, an import, a `path:` gem, a webpack rule, a path in a just recipe. Prose in a README
+# or a comment does not count, and neither does a name registered at run time by something already imported
+# - a Liquid tag, an Alpine component, a custom element. Those all arrive through an edge that is written
+# here already.
+#
+# An InternalsVisibleTo grant is not an edge. When A grants to B, nothing in A resolves B - A compiles fine
+# if B does not exist. The grant records that B depends on A more deeply than usual, on its internals rather
+# than its public API, so the dependency runs B -> A, the same way B's ProjectReference already points. A
+# grant never adds an edge; it annotates one that is already declared. The rule that falls out: every grant
+# must name an assembly that references the granter, directly or transitively. One that does not is dead
+# weight, granting access nobody can take.
+#
+# The files at the repo root sit in no slice, so they get their own block at the bottom rather than being
+# left out. Naming slices is their whole job, but "everything may name everything" is still worth writing
+# down - unsaid, a clean run looks like it covered them.
+#
+# Three slices have a different name in the agent guidance: .github is "ci-cd" there, docs is "docs-site"
+# and web is "web-site". This file names them after the directory, because that is what a tool resolves.
+# The alias is noted beside each one.
+
+slices:
+
+  # The bottom of the stack. Binacle.Geometry references nothing at all and everything else is built on it.
+  # Binacle.CompactNotation is the text form of that geometry, Binacle.Packing the vocabulary a packing
+  # result is written in. shared/data is the fixture corpus and shared/test is the algorithm fixture kernel
+  # and the report writer.
+  shared:
+    ".": []
+    src: []
+    test: []                         # Binacle.TestsKernel needs only Binacle.Packing, Geometry and CompactNotation
+    tools: []                        # the OR-Library converter, which only reads and writes shared/
+    data: []                         # problem files read by more than one slice, no code
+
+  # Static files the two Jekyll sites are built from. gulp copies them in; nothing here points anywhere.
+  assets:
+    ".": []
+    lib: []                          # vendored bundles - alpine, beercss, material-dynamic-colors, swagger-ui
+    media: []                        # logos and marks
+
+  # Two local Jekyll plugins. Both depend on the jekyll gem and on nothing in this repo.
+  ruby:
+    ".": []
+    jekyll-gtm: []
+    jekyll-filters: []
+
+  # Compose files and manifests a reader downloads and runs. They name a published image, not a slice.
+  samples:
+    ".": []
+    docker: []
+    kubernetes: []
+
+  # The dotnet local tool manifest. Read by `dotnet tool restore`; points at nothing.
+  .config:
+    ".": []
+
+  # The packer.
+  lib:
+    ".": []
+    src: [shared]                    # Binacle.Geometry supplies the dimension and coordinate types
+    test: [shared]                   # loads the algorithm fixture kernel and the report writer in shared/test
+    data: []                         # the result-selection fixtures, read only by lib/test. No code
+
+  # The wire format: a C# encoder, a TypeScript port of it, and the vectors that keep the two honest.
+  vipaq:
+    spec: vipaq/PROTOCOL.md          # the one doc this slice's comments may cite
+    ".": []
+    src: [shared]                    # the encoder writes Binacle.Geometry dimensions and coordinates
+    test: [shared]                   # the report writer, and vectors written in compact notation. Not the
+                                     # fixture kernel - vipaq has its own, and has never loaded shared/test's
+    tools:
+      - shared                       # reads problems from shared/data, writes shared-format reports
+      # vipaq and lib sit at the same height, so this one has to explain itself. It is confined to tools:
+      # vipaq/src must never reach for a packer.
+      - slice: lib
+        why: the packed-data generator runs the real packer to produce its frozen fixtures
+    packages:
+      # Same shape one level up, and the same confinement: the shipped TypeScript in
+      # vipaq/packages/binacle-vipaq/src imports nothing from packages/. Its tests and its interop tool do.
+      - slice: packages
+        why: the port's tests and interop generator parse vectors with binacle-compact-notation
+    data: []                         # frozen packed results, no code
+    test-vectors: []                 # cross-language vectors, no code
+
+  # The TypeScript packages. Mixed on purpose: binacle-compact-notation and cookies are small and
+  # standalone, binacle-net-ui is a whole visualiser.
+  packages:
+    ".": []
+    binacle-compact-notation: []
+    cookies: []
+    theme-switcher: []               # imports cookies, its neighbour in this slice
+    binacle-net-ui: [vipaq]          # decodes a packing result with binacle-vipaq, in vipaq/packages
+
+  # The service.
+  api:
+    ".": []
+    src: [shared, lib, vipaq]        # only Binacle.Net itself names the packer, and only to wire it
+    test: [shared]                   # runs shared/test's fixture kernel; asserts on Binacle.Packing, not on lib
+    requests: []                     # .http files against a running instance
+
+  # The documentation site. Called "docs-site" in the agent guidance, because .agents/docs/ is a different
+  # thing. Agents must not write it, but that is an editing rule, not a graph fact: it really does pull in
+  # gems, assets and a package.
+  docs:
+    ".": [assets, ruby]              # the Gemfile loads both plugins by path; _config.yml names a logo
+    _data: [assets]                  # the include list points at the beercss bundle
+    _layouts: [assets]               # the favicon, and swagger-ui on the swagger page
+    _js: [packages]                  # main.js registers the theme-switcher custom element
+    _includes: []
+    _plugins: []                     # VLink.rb, a Jekyll tag for versioned links
+    _sass: []
+    collections: []
+    css: []
+    pages: []
+
+  # The marketing site. Called "web-site" in the agent guidance. Same shape as docs, plus the packing demo
+  # and the protocol decoder.
+  web:
+    ".": [assets, ruby, packages, vipaq]  # Gemfile, logo, and webpack splitting the two demos into chunks
+    _data: [assets]                  # the include list points at the beercss bundle
+    _layouts: [assets]               # the favicon
+    _js: [packages]                  # registers theme-switcher and mounts the binacle-net-ui plugins
+    _includes: []
+    _sass: []
+    collections: []
+    css: []
+    pages: []
+
+  # The task runner. Its job is to build, test and run everything, so it names everything.
+  tooling:
+    ".": [api, lib, shared, vipaq, packages, assets, docs, web]
+    smoke: []                        # compose stacks and hurl scripts against the built image
+
+  # CI. Called "ci-cd" in the agent guidance, which is the only slice there that is not named after its
+  # directory. Almost everything it does goes through a just recipe, which is why it names so little.
+  .github:
+    ".": []                          # dependabot config
+    workflows: [tooling, .config]    # `just` recipes, tooling/sonar-analysis.xml, the tool manifest
+
+# The files at the repo root. Listed per file so a reader can see which one reaches where, and so that
+# adding a root file is a decision rather than a blind spot. Files that carry only prose or settings name
+# no slice and are not listed: the READMEs, the licences, Directory.*.props, global.json, NuGet.Config.
+root:
+  Binacle.Net.slnx: [api, assets, docs, lib, samples, shared, tooling, vipaq, web]  # every project and folder
+  justfile:         [tooling]           # loads the nine just modules
+  gulpfile.js:      [assets, docs, web] # copies assets/ into both sites
+  jest.config.js:   [packages, vipaq]   # the two jest projects
+  package.json:     [packages, vipaq]   # npm workspaces
+  Dockerfile:       []                  # copies artifacts/binacle-net, and artifacts is a sink
+  .dockerignore:    []                  # same
+  .spectral.yaml:   []                  # lints artifacts/openapi, and artifacts is a sink
+
+# A mirror is a port of a canonical implementation into another language. The port's comments may name the
+# canonical's types; the canonical never names the port. Today the ports carry 42 `Ports C#:` comments and
+# the C# side names no TypeScript type anywhere. This records that, it does not change it.
+mirrors:
+  - canonical: vipaq/src/Binacle.ViPaq
+    port:      vipaq/packages/binacle-vipaq
+  - canonical: shared/src/Binacle.CompactNotation
+    port:      packages/binacle-compact-notation
+
+# May be pointed at, never point out. Edges into these are not written above: build output has no say in
+# what may use it.
+sinks: [results, artifacts]
+
+# The opposite rule, and the reason it is a separate key: agent guidance points outward at anything, and
+# nothing outside it may point back. That is a rule about pointers in comments and prose, not about the
+# graph - a path a tool reads and writes is an operand, not a pointer, so tooling/agents.just stays.
+# See CLAUDE.md.
+never_referenced: [.agents]

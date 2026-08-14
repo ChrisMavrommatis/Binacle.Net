@@ -3,22 +3,19 @@ using Binacle.ViPaq.Compression;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// The lower path: encode and decode through ProtocolEncoder, which is handed a header rather than choosing
-// one. That is the whole point of driving it directly — layout and all three widths are inputs, so a test can
-// force a columnar or deliberately-too-wide blob. ViPaqSerializer derives the widths itself, so a test driven
-// through it can never reach the width variants. For the path a real caller takes, use
-// ViPaqSerializerTestingFixture instead.
+// The lower path: encode and decode through ProtocolEncoder, which is handed a header rather than choosing one.
+// Layout and all three widths are inputs, so a test can force a columnar or deliberately-too-wide blob -
+// unreachable through ViPaqSerializer, which derives the widths itself. Use ViPaqSerializerTestingFixture for
+// the path a real caller takes.
 //
-// These helpers are uncompressed: the encoder gets the NoOp codec, so the body stays byte-for-byte readable
-// (the exact-byte pins depend on that). The exception is DecodeWith, which takes a codec so the
-// cross-language decode test can read deflate/gzip blobs (raw passes a NoOp).
+// These helpers are uncompressed: the encoder gets the NoOp codec, so the body stays byte-for-byte readable and
+// the exact-byte pins hold. DecodeWith is the exception, taking a codec so the cross-language decode test can
+// read deflate/gzip blobs.
 //
-// Nothing here checks anything. Every method encodes or decodes and hands back a BinContents, so a test
-// keeps its arrange, act and assert on three separate lines and compares with BinContents.AssertSame.
+// Nothing here checks anything. Every method hands back a BinContents to compare with BinContents.AssertSame.
 internal static class ProtocolTestingFixture
 {
-	// Builds a whole blob under a caller-chosen header. The header decides widths and layout; ProtocolEncoder
-	// obeys it. Uncompressed only, so the codec is always NoOp.
+	// A whole blob under a caller-chosen header. Uncompressed only, so the codec is always NoOp.
 	public static byte[] Encode<T>(
 		Header header,
 		Binacle.Geometry.Dimensions<T> bin,
@@ -40,9 +37,8 @@ internal static class ProtocolTestingFixture
 		return Deserialize<T>(encoded);
 	}
 
-	// Convenience for the width matrix, which only needs some valid header to round-trip: uses the library's
-	// default (raw, row-major, narrowest) — the same header ViPaqSerializer would pick, but reached through
-	// ProtocolEncoder like every other path here.
+	// For the width matrix, which only needs some valid header: the library's default (raw, row-major,
+	// narrowest), reached through ProtocolEncoder like every other path here.
 	public static BinContents<T> RoundTrip<T>(BinContents<T> binContents)
 		where T : struct, IBinaryInteger<T>
 	{
@@ -51,8 +47,8 @@ internal static class ProtocolTestingFixture
 		return RoundTrip(header, binContents);
 	}
 
-	// Decode a whole blob (the two header bytes plus the body). The header is read off the wire; every blob
-	// on this path is uncompressed, so the codec is NoOp. Pins decode against literal bytes, not the encoder.
+	// Decode a whole blob, header read off the wire. Uncompressed, so the codec is NoOp. Pins decode against
+	// literal bytes, not the encoder.
 	public static BinContents<T> Deserialize<T>(byte[] data)
 		where T : struct, IBinaryInteger<T>
 	{
@@ -61,8 +57,8 @@ internal static class ProtocolTestingFixture
 		return DecodeWith<T>(data, codec);
 	}
 
-	// Decodes through ProtocolEncoder + the given codec — the cross-language decode test passes the codec
-	// named by the artifact file (raw = NoOp, deflate/gzip = the real codec), so one call decodes every mode.
+	// The cross-language decode test passes the codec named by the artifact file, so one call decodes every
+	// mode.
 	public static BinContents<T> DecodeWith<T>(byte[] data, ICompressionCodec codec)
 		where T : struct, IBinaryInteger<T>
 	{

@@ -5,6 +5,9 @@ verified: 2026-07-15
 check: Class names match lib/src/Binacle.Lib/AlgorithmFactory.cs; DI registration matches api/src/Binacle.Net/ExtensionMethods/ServiceCollectionExtensions.cs
 also_update:
   - lib/algorithms
+paths:
+  - "lib/src/Binacle.Lib/AlgorithmFactor*"
+
 ---
 
 # Algorithm Factory

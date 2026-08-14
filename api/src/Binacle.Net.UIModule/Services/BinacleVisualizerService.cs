@@ -1,4 +1,4 @@
-using Binacle.Lib.Abstractions.Models;
+using Binacle.Packing;
 using Microsoft.JSInterop;
 
 namespace Binacle.Net.UIModule.Services;

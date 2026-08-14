@@ -4,9 +4,8 @@ using System.Runtime.CompilerServices;
 
 namespace Binacle.ViPaq;
 
-// Writes one value at a time, little-endian (PROTOCOL.md §0). It does not know what a dimension or a
-// coordinate is: grouping values into triples, and the order they go in, is the caller's business — the layout
-// codecs for the items, ProtocolEncoder for the bin.
+// Writes one value at a time, little-endian (PROTOCOL.md §0). Grouping values into triples, and the order they
+// go in, is the caller's business.
 internal class ProtocolWriter<T> : IDisposable, IAsyncDisposable
 	where T : struct, IBinaryInteger<T>
 {
@@ -29,8 +28,7 @@ internal class ProtocolWriter<T> : IDisposable, IAsyncDisposable
 		this.InternalWrite(buffer);
 	}
 
-	// Picks the write for a Width. Write8Bits / Write16Bits are the two it can pick — the names match the
-	// Width enum, and each narrows the caller's T down to the wire width before writing those bytes.
+	// Picks the write for a Width. Write8Bits / Write16Bits narrow the caller's T to the wire width first.
 	public void WriteValue(T value, Width width)
 	{
 		switch (width)
@@ -95,8 +93,8 @@ internal class ProtocolWriter<T> : IDisposable, IAsyncDisposable
 
 	public void Dispose()
 	{
-		// Flush has to stay inside the guard. Calling it on an already-disposed stream throws on
-		// non-MemoryStream streams, so a second Dispose would blow up if Flush ran first.
+		// Flush has to stay inside the guard: on a non-MemoryStream it throws once the stream is disposed, so a
+		// second Dispose would blow up if Flush ran first.
 		if (!this.disposed)
 		{
 			this.stream.Flush();
@@ -107,7 +105,7 @@ internal class ProtocolWriter<T> : IDisposable, IAsyncDisposable
 
 	public async ValueTask DisposeAsync()
 	{
-		// Same as Dispose: flush only while we still own a live stream, so a second call is a no-op.
+		// Same as Dispose: flush only while the stream is still live, so a second call is a no-op.
 		if (!this.disposed)
 		{
 			await this.stream.FlushAsync();

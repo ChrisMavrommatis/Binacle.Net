@@ -3,6 +3,10 @@ id: lib/result-building
 description: OperationResultBuilder — how OperationResult is constructed, status rules, volume percentages, and integrity checks
 verified: 2026-07-15
 check: OperationResultBuilder API matches source in lib/src/Binacle.Lib/
+paths:
+  - "lib/src/Binacle.Lib/Models/OperationResultBuilder.cs"
+  - "shared/src/Binacle.Packing/Models/**"
+
 ---
 
 # Result Building
@@ -10,7 +14,7 @@ check: OperationResultBuilder API matches source in lib/src/Binacle.Lib/
 ## OperationResultBuilder
 
 `OperationResultBuilder<TBin, TItem>` (`lib/src/Binacle.Lib/Models/OperationResultBuilder.cs`) is internal to `Binacle.Lib`.
-It's the only way an `OperationResult` is created — `OperationResult` (`lib/src/Binacle.Lib.Abstractions/Algorithms/Models/OperationResultStatus.cs`)
+It's the only way an `OperationResult` is created — `OperationResult` (`shared/src/Binacle.Packing/Models/OperationResultStatus.cs`)
 has an internal constructor and cannot be instantiated directly.
 
 Each algorithm creates a builder during initialisation and calls it at the end of `Execute()`.
@@ -27,7 +31,7 @@ builder
 
 `EarlyExit(reason)` calls `Complete()` first, then overwrites the status to `EarlyExit` and sets the reason.
 
-`EarlyExitReason` values (from `lib/src/Binacle.Lib.Abstractions/Algorithms/Models/OperationResultStatus.cs`):
+`EarlyExitReason` values (from `shared/src/Binacle.Packing/Models/OperationResultStatus.cs`):
 
 | Value | When set |
 |---|---|

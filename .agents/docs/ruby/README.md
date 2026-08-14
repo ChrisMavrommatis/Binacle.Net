@@ -3,6 +3,8 @@ id: ruby
 description: Ruby gems under ruby/ — Jekyll plugins used by docs/ and web/ sites.
 verified: 2026-07-15
 check: Gem list, filter names, and tag names match ruby/ source files
+paths:
+  - "ruby/**"
 ---
 
 # Gems

@@ -5,8 +5,7 @@ namespace Binacle.ViPaq.Helpers;
 
 internal static class WidthHelper
 {
-	// Bytes on the wire for one integer at this width. Throws on a reserved code — an encoder must never
-	// write one (PROTOCOL.md §4).
+	// Bytes on the wire for one integer at this width. Throws on a reserved code (PROTOCOL.md §4).
 	public static int ByteCount(Width width)
 	{
 		return width switch
@@ -18,7 +17,7 @@ internal static class WidthHelper
 	}
 
 	// The narrowest width that holds all three dimensions. Also the range check: dimensions must be >= 1 and
-	// <= MaxValue (PROTOCOL.md §5). There is no wider width to widen to.
+	// <= MaxValue (PROTOCOL.md §5).
 	public static Width GetDimensionsWidth<TObject, T>(TObject obj)
 		where T : struct, IBinaryInteger<T>
 		where TObject : IWithReadOnlyDimensions<T>
@@ -34,7 +33,7 @@ internal static class WidthHelper
 			);
 	}
 
-	// The narrowest width that holds all three coordinates. Zero is valid — an item flush to the bin origin.
+	// The narrowest width that holds all three coordinates. Zero is valid: an item flush to the bin origin.
 	public static Width GetCoordinatesWidth<TObject, T>(TObject obj)
 		where T : struct, IBinaryInteger<T>
 		where TObject : IWithReadOnlyCoordinates<T>

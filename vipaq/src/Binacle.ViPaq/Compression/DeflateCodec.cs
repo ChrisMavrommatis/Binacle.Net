@@ -2,15 +2,11 @@ using System.IO.Compression;
 
 namespace Binacle.ViPaq.Compression;
 
-// Raw DEFLATE (RFC 1951), no wrapper.
+// Raw DEFLATE (RFC 1951), no wrapper. Cheaper than gzip by ~18 bytes a blob, which pushes the point where
+// compressing starts to pay closer in.
 //
-// Cheaper than gzip by ~18 bytes a blob: gzip's magic, mtime, OS byte and CRC trailer buy nothing here. The
-// header already says the body is compressed and the body already knows its own length, so that framing is
-// dead weight that pushes the point where compressing starts to pay further out.
-//
-// Same DEFLATE stream underneath as gzip. `DeflateStream` pairs with `CompressionStream('deflate-raw')` in a
-// browser and `zlib.createDeflateRaw` in Node — which is what makes it portable, and is only proven by the
-// cross-language round-trip tests. Do not take it on trust.
+// `DeflateStream` pairs with `CompressionStream('deflate-raw')` in a browser and `zlib.createDeflateRaw` in
+// Node. That is only proven by the cross-language round-trip tests - do not take it on trust.
 internal sealed class DeflateCodec : ICompressionCodec
 {
 	public byte[] Compress(ReadOnlySpan<byte> body)

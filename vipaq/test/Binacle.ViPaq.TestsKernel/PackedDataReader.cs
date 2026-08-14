@@ -5,10 +5,9 @@ using Binacle.ViPaq.TestsKernel.Models;
 
 namespace Binacle.ViPaq.TestsKernel;
 
-// Reads the frozen placed-result files that Binacle.ViPaq.PackedDataGenerator emits under vipaq/data/packed
-// (bischoff-suite/ and custom-problems/) and the .csproj embeds as "PackedData.<family>.<name>.<algo>.json", and
-// turns their rows into Scenarios. Kept self-contained on purpose — the kernel does not reference the ViPaq
-// UnitTests, so it has its own reader rather than borrowing VectorReader. Regenerate the data with the tool.
+// Reads the frozen placed-result files that Binacle.ViPaq.PackedDataGenerator emits under vipaq/data/packed and
+// the .csproj embeds as "PackedData.<family>.<name>.<algo>.json", and turns their rows into Scenarios. It has
+// its own reader rather than borrowing VectorReader because the kernel does not reference the ViPaq UnitTests.
 internal static class PackedDataReader
 {
 	private const string ResourcePrefix = "PackedData.";
@@ -20,8 +19,8 @@ internal static class PackedDataReader
 		ReadCommentHandling = JsonCommentHandling.Skip,
 	};
 
-	// The scenarios from one family's embedded files (e.g. "bischoff-suite" or "custom-problems"). The file
-	// provider returns the files in sorted order, so the flattened stream is stable.
+	// The scenarios from one family's embedded files. The file provider returns them sorted, so the flattened
+	// stream is stable.
 	public static IEnumerable<Scenario> Read(string family)
 	{
 		var files = EmbeddedResourceFileProvider.ByPrefix(ResourcePrefix)
@@ -43,9 +42,8 @@ internal static class PackedDataReader
 
 	private static Scenario ToScenario(PackedRecord record)
 	{
-		// Parse as int (the notation's natural width) then narrow to ushort with a checked cast. Placed values
-		// fit comfortably — the largest Bischoff coordinate is ~587, far below ushort's 65535 — so the cast is
-		// a guard, not a lossy conversion.
+		// Parse as int, then narrow with a checked cast. The largest Bischoff coordinate is ~587, far below
+		// ushort's 65535, so the cast is a guard, not a lossy conversion.
 		var binInt = CompactNotationParser.ParseDimensions<int>(record.Bin);
 		var bin = new Dimensions<ushort>
 		{
@@ -79,8 +77,8 @@ internal static class PackedDataReader
 		};
 	}
 
-	// One row as stored on disk: compact-notation strings plus the derived width family. No token is stored —
-	// it is derivable from the geometry and its compressed bytes vary by runtime.
+	// One row as stored on disk: compact-notation strings plus the derived width family. No token is stored - it
+	// is derivable from the geometry, and its compressed bytes vary by runtime.
 	private sealed class PackedRecord
 	{
 		public required string Name { get; init; }

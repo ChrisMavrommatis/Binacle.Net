@@ -8,19 +8,17 @@ using Binacle.TestReporting;
 
 namespace Binacle.OrLibrary.Converter;
 
-// Converts the raw OR-Library text (thpack1..7 — the Bischoff & Ratcliff instances) into the tests-kernel
-// bischoff-suite JSON, one file per thpack. thpack8 and thpack9 are NOT part of the Bischoff suite (different
-// sources and a different problem class) and are left out — see the raw data README.
+// Converts the raw OR-Library text (thpack1..7, the Bischoff & Ratcliff instances) into the tests-kernel
+// bischoff-suite JSON, one file per thpack. thpack8 and thpack9 are NOT part of the Bischoff suite - different
+// sources, a different problem class - so they are left out.
 //
-// Metrics is pure arithmetic over the bin and box types. Result is a fixed baseline (see ExpectedResult below),
-// so the tool never runs the packer and needs no algorithm dependency. Output is deterministic, so a no-change
-// re-run is byte-identical (no git noise).
+// Metrics is pure arithmetic over the bin and box types, and Result is a fixed baseline, so the tool never runs
+// the packer. Output is deterministic, so a no-change re-run is byte-identical.
 public sealed class BischoffSuiteConverter : IConverter
 {
 	// Every Bischoff & Ratcliff instance fills the container to ~98% but never tessellates perfectly, so the
-	// outcome is always PartiallyPacked — some boxes go in, never all of them, and never none. Recorded twice,
-	// once per operation (packing and fitting). The tests kernel runs the real packer against this baseline, so
-	// a FullyPacked or NotPacked fails: the signal that something packed unusually well, or nothing fit at all.
+	// outcome is always PartiallyPacked. Recorded once per operation. The tests kernel runs the real packer
+	// against this baseline, so a FullyPacked or NotPacked fails and signals a real change.
 	private const string ExpectedResult = "PartiallyPacked PartiallyPacked";
 
 	public void Convert()
@@ -50,8 +48,7 @@ public sealed class BischoffSuiteConverter : IConverter
 		}
 	}
 
-	// Reads a raw thpack file from the tool's own embedded resources (LogicalName "thpackN.txt"), so the input
-	// travels with the build and the tool doesn't have to locate the raw data on disk.
+	// Read from the tool's own embedded resources, so the input travels with the build.
 	private static string ReadEmbeddedRawText(string thpackName)
 	{
 		var resourceName = $"{thpackName}.txt";
@@ -82,10 +79,9 @@ public sealed class BischoffSuiteConverter : IConverter
 		};
 	}
 
-	// "ItemsVolume BinVolume ItemsCount Percentage" — totals over all box types (volume and count), the bin's own
-	// volume, and how full the bin would be if every box fit. Percentage is rounded to 2 decimals with trailing
-	// zeros trimmed but at least one kept (e.g. 98.83, 98.7, 100.0). Volumes use long so the multiply can't
-	// overflow mid-sum; the values themselves sit well within int.
+	// "ItemsVolume BinVolume ItemsCount Percentage": totals over all box types, the bin's volume, and how full
+	// it would be if every box fit. Percentage keeps 2 decimals with trailing zeros trimmed but one kept (98.83,
+	// 98.7, 100.0). Volumes use long so the multiply cannot overflow mid-sum.
 	private static string BuildMetrics(Dimensions<int> bin, IReadOnlyList<RawBoxType> boxTypes)
 	{
 		var itemsVolume = boxTypes.Sum(box => (long)box.Length * box.Width * box.Height * box.Quantity);

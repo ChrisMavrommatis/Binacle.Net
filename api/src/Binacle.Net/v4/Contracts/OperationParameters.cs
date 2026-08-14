@@ -29,7 +29,7 @@ public class OperationParameters :
     [Description(SchemaDescriptions.IncludeViPaqData)]
     public bool IncludeViPaqData { get; set; } = false;
 
-    public Lib.Algorithm? GetAlgorithm()
+    public Binacle.Packing.Algorithm? GetAlgorithm()
     {
         if (!this.Algorithm.HasValue)
         {
@@ -38,9 +38,9 @@ public class OperationParameters :
 
         return this.Algorithm.Value switch
         {
-            Contracts.Algorithm.FFD => Lib.Algorithm.FFD,
-            Contracts.Algorithm.WFD => Lib.Algorithm.WFD,
-            Contracts.Algorithm.BFD => Lib.Algorithm.BFD,
+            Contracts.Algorithm.FFD => Binacle.Packing.Algorithm.FFD,
+            Contracts.Algorithm.WFD => Binacle.Packing.Algorithm.WFD,
+            Contracts.Algorithm.BFD => Binacle.Packing.Algorithm.BFD,
             _ => null
         };
     }

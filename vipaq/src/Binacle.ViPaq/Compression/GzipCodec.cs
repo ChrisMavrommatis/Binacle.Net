@@ -2,16 +2,12 @@ using System.IO.Compression;
 
 namespace Binacle.ViPaq.Compression;
 
-// Gzip (RFC 1952) — the same DEFLATE stream as `DeflateCodec`, wrapped in ~18 bytes of magic, mtime, OS byte
-// and a CRC trailer.
+// Gzip (RFC 1952) - the same DEFLATE stream as `DeflateCodec`, wrapped in ~18 bytes of magic, mtime, OS byte
+// and a CRC trailer. That wrapper is redundant here, but it is recognisable in a hex dump and it is what gets
+// raced against raw DEFLATE. `GZipStream` pairs with `CompressionStream('gzip')` in a browser.
 //
-// The wrapper is redundant here (the header already says the body is compressed, and the body knows its own
-// length), but it is what the old format used and it is the more recognisable thing to find in a hex dump.
-// Kept so it can be raced against raw DEFLATE on real packs. `GZipStream` pairs with
-// `CompressionStream('gzip')` in a browser.
-//
-// A .NET quirk worth knowing before reading a benchmark: on this data `CompressionLevel.Optimal` produced a
-// *smaller* blob than `SmallestSize` (findings.md). Level never reaches the wire, so it can change freely.
+// A .NET quirk: on this data `CompressionLevel.Optimal` produced a smaller blob than `SmallestSize`. Level
+// never reaches the wire, so it can change freely.
 internal sealed class GzipCodec : ICompressionCodec
 {
 	public byte[] Compress(ReadOnlySpan<byte> body)

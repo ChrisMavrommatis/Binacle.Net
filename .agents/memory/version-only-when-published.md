@@ -2,6 +2,10 @@
 name: version-only-when-published
 description: A component gets its own version number only once it is published independently; until then the docker image's BINACLE_VERSION is the only version.
 type: decision
+when: adding a version number or a Directory.Build.props to a component
+paths:
+  - "**/Directory.Build.props"
+  - "**/*.csproj"
 ---
 
 Nothing in this repo carries a version of its own. No `<VersionPrefix>` or `<Version>` in

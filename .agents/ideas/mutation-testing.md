@@ -1,3 +1,7 @@
+---
+description: mutation testing with Stryker.NET
+---
+
 # Idea: mutation testing with Stryker.NET
 
 **Status:** Unvetted idea. Nothing adopted, nothing decided. Worth one contained experiment before any

@@ -5,6 +5,9 @@ verified: 2026-07-24
 check: Strategy class names and scoring rules match lib/src/Binacle.Lib/
 also_update:
   - api/service
+paths:
+  - "lib/src/Binacle.Lib/ResultSelection/**"
+
 ---
 
 # Result Selection
@@ -76,7 +79,8 @@ fully — this one then takes the highest utilization, `SmallestBin_v2` the leas
 ## How tests verify selection
 
 `ResultSelectionTestingFixture.GetScenarioByName(scenarioName)` resolves the scenario (from JSON test data
-under `shared/data/result-selection/`, embedded as `ResultSelection/Data/` — see `$shared`).
+under `lib/data/result-selection/`, embedded by `lib/test/Binacle.Lib.TestsKernel` under the manifest prefix
+`ResultSelection.` — see `$lib/tests`).
 
 `ResultSelectionTestingFixture.Select(scenario, strategy, resultSelector)` then takes:
 - that scenario

@@ -1,3 +1,9 @@
+---
+description: Verify a published image - recipes, and telling users they can
+paths:
+  - "tooling/**"
+---
+
 # Verify a published image - recipes, and telling users they can
 
 **Status:** Not started. **Nothing is implemented** - a working prototype was built on 2026-08-13, run green

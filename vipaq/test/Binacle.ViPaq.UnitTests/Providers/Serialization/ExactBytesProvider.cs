@@ -1,9 +1,8 @@
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// exact-bytes.json as xUnit theory rows. Each row carries just the Name (a clean failure label, since a
-// Bin + Item[] + byte[] dump would be unreadable); the test resolves the parsed scenario by name. The
-// `Bytes` object is flattened by the blob itself (Blob.ToByteArray).
+// exact-bytes.json as xUnit theory rows. Each row carries just the Name, because a Bin + Item[] + byte[] dump
+// makes an unreadable failure label; the test resolves the parsed scenario by name.
 internal static class ExactBytesProvider
 {
 	private const string FileName = "serialization/exact-bytes.json";

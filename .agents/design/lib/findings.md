@@ -5,6 +5,8 @@ verified: 2026-07-17
 check: Numbers match the latest AlgorithmRacing_Packing_v2 report in lib/test/Binacle.Lib.Benchmarks/BenchmarkDotNet.Artifacts/results/
 also_update:
   - lib/decisions
+paths:
+  - "lib/**"
 ---
 
 # Lib — findings (the measured evidence)

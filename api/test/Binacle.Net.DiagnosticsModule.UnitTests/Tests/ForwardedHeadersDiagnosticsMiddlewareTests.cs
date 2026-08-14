@@ -6,8 +6,8 @@ using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.DiagnosticsModule.UnitTests;
 
-// The two states this warns about are the ones an operator cannot see from outside: the app is reading the proxy
-// as the caller, and everything downstream agrees with it. Both are silent without this, so what it logs is the
+// The two states this warns about are the ones an operator cannot see from outside: the app is reading the
+// proxy as the caller, and everything downstream agrees. Both are silent otherwise, so what it logs is the
 // behaviour under test.
 [Trait("Behavioral Tests", "Ensures an ignored forwarded header is reported once")]
 public class ForwardedHeadersDiagnosticsMiddlewareTests
@@ -98,8 +98,7 @@ public class ForwardedHeadersDiagnosticsMiddlewareTests
 		logger.Warnings.ShouldBeEmpty();
 	}
 
-	// A misconfigured proxy sends the header on every request. Warning each time buries the log it is trying to
-	// draw attention to, so this is the rule that matters most in a real deployment.
+	// A misconfigured proxy sends the header on every request, and warning each time buries the log.
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
@@ -116,8 +115,7 @@ public class ForwardedHeadersDiagnosticsMiddlewareTests
 		logger.Warnings.Count.ShouldBe(1);
 	}
 
-	// A CDN that overwrites its own single-value header is the case the vendor-header setting exists for, so the
-	// diagnostic has to follow the configured name rather than assume X-Forwarded-For.
+	// The diagnostic has to follow the configured header name rather than assume X-Forwarded-For.
 	[Fact]
 	public async Task A_Vendor_Header_Name_Is_Watched_Instead()
 	{

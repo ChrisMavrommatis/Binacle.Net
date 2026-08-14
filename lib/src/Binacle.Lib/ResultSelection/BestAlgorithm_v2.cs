@@ -1,5 +1,4 @@
 using Binacle.Lib.Abstractions;
-using Binacle.Lib.Abstractions.Models;
 
 namespace Binacle.Lib.ResultSelection;
 

@@ -3,6 +3,9 @@ id: commands
 description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
 verified: 2026-08-11
 check: Test leaves match tooling/tests.just; coverage recipes match tooling/coverage.just; openapi recipes match tooling/openapi.just; agents recipes match tooling/agents.just; serve recipes match tooling/serve.just; smoke recipes match tooling/smoke.just; install/assets match the root justfile; aliases and scripts match tooling/*.sh; docker-compose.yml service list matches tooling/docker-compose.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
+paths:
+  - "justfile"
+  - "tooling/**"
 ---
 
 # Commands

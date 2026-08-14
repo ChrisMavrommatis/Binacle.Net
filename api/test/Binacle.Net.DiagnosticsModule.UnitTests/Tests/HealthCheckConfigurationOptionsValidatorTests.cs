@@ -3,9 +3,9 @@ using Binacle.Net.DiagnosticsModule.Configuration.Validators;
 
 namespace Binacle.Net.DiagnosticsModule.UnitTests;
 
-// Startup validation is what keeps a bad allow-list away from the middleware, so an unsupported entry has to
-// fail here rather than at the first health request. Which spellings are unsupported is IPEntry's business and
-// is covered exhaustively in the Kernel tests; these rows only prove the validator refuses what IPEntry refuses.
+// Startup validation keeps a bad allow-list away from the middleware, so an unsupported entry fails here
+// rather than at the first health request. Which spellings are unsupported is covered exhaustively in the
+// Kernel tests; these rows prove the validator refuses what IPEntry refuses.
 [Trait("Behavioral Tests", "Ensures health check configuration is validated as expected")]
 public class HealthCheckConfigurationOptionsValidatorTests
 {
@@ -45,8 +45,7 @@ public class HealthCheckConfigurationOptionsValidatorTests
 	}
 
 	// A null arrives from a stray comma in the JSON list. It has no value to name in the message, so the row has
-	// to be findable by index instead - and it has to fail here, because reaching the middleware means an
-	// exception on the first health request rather than a refused start.
+	// to be findable by index.
 	[Fact]
 	public void A_Null_Entry_Is_Reported_By_Its_Position_In_The_List()
 	{
@@ -63,8 +62,8 @@ public class HealthCheckConfigurationOptionsValidatorTests
 		this.validator.Validate(OptionsWith("/_health", null)).IsValid.ShouldBeTrue();
 	}
 
-	// A missing Path used to throw out of the validator instead of failing it, so the app died on a stack trace
-	// rather than reporting the setting. HealthChecks.json is not optional, so every deployment reads it.
+	// A missing Path once threw out of the validator instead of failing it, so the app died on a stack trace
+	// rather than reporting the setting.
 	[Theory]
 	[InlineData(null)]
 	[InlineData("")]
@@ -84,8 +83,7 @@ public class HealthCheckConfigurationOptionsValidatorTests
 		result.Errors.Count.ShouldBe(1);
 	}
 
-	// The entry has to appear in the message: a list of ten with one bad line is unreadable otherwise, and the
-	// range form being gone is the part an upgrading operator needs told.
+	// The entry has to appear in the message, or a list of ten with one bad line is unreadable.
 	[Fact]
 	public void An_Unsupported_Entry_Message_Names_The_Entry_And_The_Removed_Form()
 	{

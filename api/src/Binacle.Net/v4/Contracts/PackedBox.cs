@@ -1,4 +1,3 @@
-using Binacle.Lib.Abstractions.Models;
 using System.ComponentModel;
 using Binacle.Net.Kernel.OpenApi.Attributes;
 

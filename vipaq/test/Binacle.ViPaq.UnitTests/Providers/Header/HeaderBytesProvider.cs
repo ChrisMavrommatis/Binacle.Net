@@ -1,9 +1,8 @@
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// header-bytes.json as xUnit theory rows: every Header combo and the two header bytes it packs to. The row
-// carries the header notation (both the label and the input); the test resolves the parsed Header and the
-// expected bytes by that notation. `Bytes` is an independent golden — the parser that builds the Header never
-// sees it, so this is a real check, not a round-trip.
+// header-bytes.json as xUnit theory rows: every Header combo and the two header bytes it packs to. `Bytes` is
+// an independent golden - the parser that builds the Header never sees it, so this is a real check, not a
+// round-trip.
 internal static class HeaderBytesProvider
 {
 	private const string FileName = "header/header-bytes.json";
@@ -28,8 +27,8 @@ internal static class HeaderBytesProvider
 		}
 	}
 
-	// Exposes Keys/Get(key), not Names/Get(name) like the other providers: this file has no Name field —
-	// the header notation is both the label and the lookup key, so the deviation is intentional.
+	// Keys/Get(key), not Names/Get(name) like the other providers: this file has no Name field, so the header
+	// notation is both the label and the lookup key.
 	public static IEnumerable<object[]> Keys
 		=> scenarios.Keys.Select(key => new object[] { key });
 

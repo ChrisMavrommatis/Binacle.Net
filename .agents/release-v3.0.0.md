@@ -1,369 +1,214 @@
+---
+description: Release - Binacle.Net v3.0.0
+---
+
 # Release - Binacle.Net v3.0.0
 
-**Status:** In progress. **Gate A green. Beta 1 and beta 2 published, verified and deployed. Docs written. The
-pipeline is rebuilt and proven end to end.** What is left is the architecture branch, the rate limiter tests, a
-beta 3 to cover both, one Azure run, the pin bump, the tag, and the docs deploy - plus three registry and
-verification items that do not gate any of it.
+**Status:** In progress. Beta 1 and beta 2 published, verified and deployed. The pipeline is rebuilt and proven
+end to end. The architecture branch is merged, the suite is green and the OpenAPI documents are proven unmoved.
+What is left is the builds on the gate, one run, one beta, and the tag - plus seven items that run alongside
+and hold nothing up.
 
-**Created:** 2026-07-16. **Rewritten for the GHCR pipeline:** 2026-08-11. **Beta 2 re-cut and verified:**
-2026-08-13. **Pruned to what remains:** 2026-08-14. **Architecture branch pulled in, beta 3 added:** 2026-08-14.
+**Created:** 2026-07-16. **Rewritten for the GHCR pipeline:** 2026-08-11. **Scope reset:** 2026-08-14 - the
+maintainer proposed eight more items; five came in, three were refused with reasons recorded below.
 
-The orchestrator for v3.0.0 (drops v2, adds experimental v4, rebuilt ViPaq). This is the **one exception** to the
-reference rules: it may point at any file to coordinate the release, and **nothing points back at it**. Delete it
-once v3.0.0 is out.
+The orchestrator for v3.0.0 (drops v2, adds experimental v4, rebuilt ViPaq). This is the **one exception** to
+the reference rules: it may point at any file to coordinate the release, and **nothing points back at it**.
+Delete it once v3.0.0 is out.
 
-Companion: `post-release-v3.0.0.md` - what to do once the release is out.
+Companion: `post-release-v3.0.0.md` - the checks to run once the release is out.
 
-## What is left
+---
 
-| # | Item | State |
-|---|---|---|
-| B10 | Merge `features/arch_tests` - the architecture restructure and the rules layer | open, do this first |
-| B11 | Cut, verify and deploy beta 3 - it carries B2X's two open checks | open, after B10 |
-| B15 | Rate limiter integration tests, and a coverage bump | open, after B10 |
-| B6 | One Azure Storage run, **after the merge** | open |
-| B12 | Image verification - the recipe and the surfaces | open, not a gate |
-| B13 | The Docker Hub page - credential, file, workflow | open, not a gate |
-| B14 | Docker Hub tag immutability - the rule, not the switch | open, not a gate |
-| B5 | Bump nine files to `3.0`, in the last commit before the tag | open |
-| - | Commit the `429` OpenAPI guard, re-run the suites, rename the changelog section, tag `v3.0.0` | open |
-| B8 | Deploy the docs, with three edits that go out with it | open, after the tag |
+## The scope decision - 2026-08-14
 
-Everything else in Gate A and Gate B is done. The done items are collapsed to one line each below; the sections
-that remain carry their full instructions.
+Eight items were proposed. Each was read against its own plan. **Seven ship, and the eighth ships in part.**
+What is left out is named below, and each piece of it carries a trap or a dependency that a release week is the
+worst time to meet.
 
-**Six items are new on 2026-08-14** and they reorder everything under them.
+### Ships
 
-- **B10 and B11** - the architecture branch was standing work until the maintainer pulled it into this release.
-  It changes shipping code, so beta 2's image evidence stops covering the tree that ships, and the two checks
-  left open on the beta 2 host move to beta 3 rather than being done twice.
-- **B15** - a carve-out from the integration-test plan. Nothing anywhere asserts a 429 ever happens, and two of
-  this release's claims rest on that.
-- **B12, B13 and B14** came off the board, spent an afternoon in the post-release list, and landed here. Each
-  has tooling or a decision that has to be settled before the tag; only the confirmation is post-release. **They
-  do not gate the tag** - if one is not ready, the release goes without it.
+| Item | Why it earned a place |
+|---|---|
+| **Rate limiter tests** | Two of this release's claims rest on behaviour nothing tests. |
+| **Rate limiting owned by the ServiceModule** | The durable fix for the bug the two-guard transformer patches. Pulled in on 2026-08-14 at the maintainer's call. |
+| **Image verification** | The release advertises signing, SBOM and provenance. Today no user can check any of it. |
+| **The Docker Hub page** | It advertises 2.1.1 as latest. The tag is what makes it wrong rather than stale. |
+| **The PR gate change** | Image build + OpenAPI lint + **three architecture checks**. One workflow edit, everything green on arrival. |
+| **The client-generation page** | The spec is published and nobody knows they can generate a client from it. One docs page, and it applies to every version. |
+| **More ViPaq interop vectors** | Four rows of fixture data. Cheap, and the format froze in this release so they will not need redoing. |
 
-**What still gates the tag:** B10, B15, B6, B11, B5 and the changelog rename, in that order. That is all - B12,
-B13 and B14 run alongside and B8 comes after.
+### Does not ship, and why
+
+| Item | The blocker |
+|---|---|
+| **The heavy architecture tools** | ArchUnitNET, dependency-cruiser and lychee. **Three lighter checks ship instead** - see the PR gate section. What is deferred is everything that needs a new toolchain: ArchUnitNET wants a new test project that becomes a node in the graph it inspects, and `.xUnitV3` may drag in plain `xunit.v3` when this repo pins `xunit.v3.mtp-v2` on purpose - the mismatch throws before a single test runs. dependency-cruiser has no root `tsconfig.json` to work from; there are four, and `web/` has none. |
+| **CI gates 2 and 3** | **Deferred at the maintainer's call, 2026-08-14.** Gate 2 runs the all-modules integration tests, which are not being written here. Gate 3 is Sonar and coverage, and its own plan says **do not make coverage blocking yet** - the condition is red before anyone writes a line. Gate 1 ships; these two have nothing to gate. |
+| **Raising test coverage** | **Decided 2026-08-14: do not test the Blazor UIModule.** The Alpine port deletes most of what would be tested, so writing bUnit tests now means writing them twice, in two languages. The port goes first. What is left that could be tested today is 612 lines of TypeScript, which does not move an 80% new-code gate on its own. **What ships here is the modest bump the rate limiter tests bring, and nothing more.** |
+
+---
 
 ## How to work this file
 
-Two gates. **Gate A** had to be green before the first beta image; **Gate B** before the final tag. Each row is
-either a link to a plan under `.agents/plans/` that holds the whole item, or a checkbox for a one-line action.
+**Two lists.** The gate is what must be green before the tag. Everything under "Runs alongside" is real work
+that does **not** hold the tag - if one is not ready, the release goes without it.
 
-**When a plan lands, its file is deleted.** Tick the row here and drop the link in the same change, leaving the
-text. Otherwise this index rots into a list of dead links within a fortnight.
+Each row is either a **link to a plan** that holds the whole item, with a line saying what that plan is, or a
+**self-contained checklist** where the item is small enough that a separate file would be overhead.
 
-**How the pipeline works now**, because it shapes every item below. The workflow stages every build on GHCR,
-smokes it there, and **copies the smoked digest to Docker Hub** - so nothing unsmoked reaches the registry users
-pull from. Every tag is copied across, betas included; a prerelease just gets its immutable tag, never `3.0` or
-`latest`. The release body is extracted from `CHANGELOG.md` by the workflow.
+**When a plan lands, its file is deleted.** Tick the row here and drop the link in the same change. Otherwise
+this index rots into dead links.
 
----
-
-## Gate A - green
-
-- **A1** - publish paths hardcoded in the workflow, no Actions variable needed. Done 2026-07-27.
-- **A2** - a prerelease moves neither `latest` nor the minor tag. Observed on Docker Hub 2026-08-06, after beta 1.
-- **A3** - health check IP restrictions, four defects and the missing tests. Done 2026-07-27.
-- **A4** - forwarded headers, warn-once diagnostics and the missing tests. Done 2026-07-27.
-
-A3 and A4 gated the beta rather than the tag because the beta is deployed behind a proxy with a health check
-allow-list: A3 was the allow-list, A4 is what makes its failure modes visible instead of silent.
-
-### Already verified - do not re-audit
-
-- **Fitting results are unchanged.** Differential-tested 2026-07-19 against the real `binacle/binacle-net:2.1.1`
-  image across all three algorithms, zero disagreements. No release-notes caveat needed.
-- **Old ViPaq tokens fail loudly.** Verified 2026-07-19, locked 2026-07-20 with four regression vectors in
-  `vipaq/test-vectors/serialization/decode-invalid.json`. Zero silent misparses.
-- **The login throttle no longer partitions on a caller-supplied header.** `GetClientIp()` deleted 2026-07-24;
-  `AuthTokenRateLimitingPolicy` partitions on `Connection.RemoteIpAddress`.
-- **ViPaq's wire format did not move after beta 1** - source changed comments only, so beta 1's ViPaq evidence
-  covers the shipped image.
-- **The Dockerfile did not change after beta 1 at all.** `/app/data`, `libgssapi-krb5-2` and the OCI labels were
-  all in that image already.
+**How the pipeline works**, because it shapes every item below. Every build is staged on GHCR, smoked there,
+and the smoked digest is **copied** to Docker Hub - so nothing unsmoked reaches the registry users pull from.
+A prerelease gets its immutable tag only, never `3.0` or `latest`. The release body is extracted from
+`CHANGELOG.md` by the workflow.
 
 ---
 
-## Gate B
+## The gate - all of this before the tag
 
 | # | Item | State |
 |---|---|---|
-| B0 | Unfreeze the docs site, point `current` back at `v2.1.x`, deploy | **done 2026-08-06** |
-| B1 | Beta 1 verification on the deployed image | **done 2026-08-06** - all boxes pass, no defects |
-| B2 | Write the `v3.0.x` docs pages | **done 2026-08-10** - site builds, `/version/latest/` lands on v3.0.x |
-| B2X | Publish, verify and deploy beta 2 | **done bar two boxes, which moved to B11** - see below |
-| B3 | Fix the ViPaq protocol page | **done 2026-08-07** - split landed, all four versions written |
-| B4 | Generate `swagger/v3.json` and `swagger/v4.json` | **done 2026-08-06** - regenerated again under B8 |
-| B5 | Move the sample image pins | **open** - see below |
-| B6 | Run the ServiceModule suite once against Azure Storage | **open** - see below |
-| B7 | v4 stays experimental; announce all four breaking changes | **done, re-confirm at the tag** |
-| B8 | Flip `current` forward and redeploy the docs | **open, after the tag** - see below |
-| B9 | Strip the `AI-GENERATED` review tokens | **done 2026-08-11** - zero left, whole repo |
-| B10 | Merge `features/arch_tests` | **open** - see below |
-| B11 | Beta 3 | **open**, after B10 - see below |
-| B12 | Image verification - the recipe, and the surfaces that tell users | **open** - see below |
-| B13 | The Docker Hub page - credential, file and workflow | **open** - see below |
-| B14 | Docker Hub tag immutability - correct the rule | **open** - see below |
-| B15 | Rate limiter integration tests, and a coverage bump | **open** - see below |
+| 1 | Rate limiter tests | **open - do this first** |
+| 2 | Rate limiting owned by the ServiceModule | open, **after 1** |
+| 3 | The Azure Storage run | open, one command |
+| 4 | Beta 3 | open, after 1-3 |
+| 5 | The last commit: pins, prose and the changelog rename | open |
+| 6 | Tag `v3.0.0` | open |
 
-**On B9, one thing a later session must not undo.** The pass was never "revert everything an agent wrote", and
-several agent comments were kept on purpose because they were judged better than the line they replaced - the
-unchecked-multiply overflow note on the packing algorithms, the empty-catch explanation in `ConnectionString.cs`,
-the curated-scenario table in `BischoffCuratedProblemsProvider.cs`. A surviving agent comment is not damage.
+### 1. Rate limiter tests
 
-**On B7, what still has to hold at the tag.** `ApiV4Document.IsExperimental` must still be `true` - shipping v4
-as stable would lock contracts meant to keep moving, and the flip is 3.1.0 work. And all four breaking changes
-plus the six migration steps must survive the `## [Unreleased]` -> `## 3.0.0` rename; `just changelog extract
-3.0.0` after the rename is the same preview that was checked byte-for-byte against the published beta 2 body.
+**A carve-out from [api/integration-test-additions](plans/api/integration-test-additions.md)** - a large plan
+that designs full module-matrix integration coverage and deliberately stops before writing anything, so the
+maintainer picks the shape. **None of that runs here.** Its four phase-1 questions, the module matrix and the
+CORS gap all stay on the board. What comes into the release is its sharpest single finding.
 
-### B2X - beta 2 {#beta-2}
-
-Beta 2 exists because 27 commits landed after beta 1 and the assumption that they miss the image was **not
-true** - the Sonar sweep changed shipping code in `api/src`, `lib/src` and `vipaq/src`, and the image went
-framework-dependent on 2026-08-10 (150.2 MB -> 103.2 MB, 172 `System.*.dll` -> 4). It was also the first run of
-the rebuilt pipeline, which was deliberate: a prerelease tag is the only free test that pipeline gets, and a
-failure costs a deleted tag instead of a bad release.
-
-**Published 2026-08-13** from `d317cd2b`, digest `sha256:ccce2a44`, and **deployed to the test server
-2026-08-14**. Verified: all six jobs green with `publish` included, the GHCR package public to an anonymous
-puller, Docker Hub took `3.0.0-beta.2` and nothing else moved, the copy preserved the digest, `BINACLE_VERSION`
-reads `3.0.0-beta.2`, the image is signed on both registries, SBOM and provenance are in the index, 31/31
-structure assertions and all five smoke profiles pass against the published image, and the release body is
-byte-identical to `just changelog extract Unreleased`.
-
-- [x] **The deployment host pulled it.** Deployed on the test server 2026-08-14. The package is public to an
-      anonymous puller, proven from another machine. If that host has a `ghcr.io` entry in its docker config,
-      the credential-free half of this check is still unproven - it costs a `docker logout ghcr.io` and a
-      re-pull to close.
-- [x] **`DEBUG_ENDPOINT` is off on the deployment** - 2026-08-14. It had been on and answering publicly since
-      beta 1, echoing the caller's `Authorization` header back, and it was the only real exposure B1 left
-      behind. It did not survive beta 2, which is what that run was for.
-**The last two boxes moved to B11 on 2026-08-14.** They are live checks on a deployed host, and beta 3 replaces
-the host they would run against. Doing them on beta 2 first would mean doing them twice. They are stated in
-full under B11; nothing about what they check has changed.
-
-- **Exercise the auth token endpoint** - moved to B11.
-- **Re-confirm the resolved caller** - moved to B11.
-
-**What beta 2 does not need to re-do:** the fitting differential, the old-ViPaq-token rejection, the health
-check allow-list, or the login throttle partition. All four are in "Already verified" or closed by B1, and
-nothing behind them changed.
-
-**Two things beta 2 still does not prove**, both structural rather than untried. **The moving tags** - a
-prerelease withholds `{{major}}.{{minor}}` and `latest`, so `3.0` and `latest` are written for the first time by
-v3.0.0 itself; that is one extra argument to an `imagetools create` call that has run several times. And
-**`latest=auto` does not consult the registry** - it reads the git ref, so any non-prerelease semver takes
-`latest`. Right for v3.0.0, and the reason a throwaway `v0.0.1` against the real repo would have moved `latest`
-off `2.1.1`. Recorded because the trap outlives the plan that found it.
-
-### B10 - merge `features/arch_tests` {#arch-merge}
-
-**Pulled into the release on 2026-08-14.** It was standing work; the maintainer decided it ships in v3.0.0. It
-is the third exception taken to "not in this release", and the largest.
-
-**What is on the branch.** Five commits off `2471ec0d`, 520 files. Three separate things in one branch:
-
-- **The packing-contract extraction.** `Binacle.Lib.Abstractions` is broken up: the geometry half folds into
-  `Binacle.Geometry`, the packing vocabulary becomes a new `shared/src/Binacle.Packing`, the engine interfaces
-  go into `Binacle.Lib`, which is left as the only project in `lib/src`. `shared/test/Binacle.TestsKernel`
-  splits, its result-selection half becoming `lib/test/Binacle.Lib.TestsKernel`, with the fixtures moving from
-  `shared/data/` to `lib/data/`. The repo ends with **no upward edge** - nothing under `shared/` references
-  `lib/` or `api/`.
-- **`architecture.yml` at the repo root**, plus the 27 comment fixes that stop code pointing into the agent
-  guidance. The **check** that enforces it is not built and is not release work.
-- **The `.agents/rules/` layer and a rewritten `CLAUDE.md`.** Process only, invisible to users.
-
-**Why it is safe enough to take this late.** The shipping-code change is namespaces, `using` lines and
-`ProjectReference` entries - 84 non-comment changed lines across `api/src`, against 356 total. No type was
-renamed, no contract type changed shape, `Auth/Token.cs` is untouched, and the `Dockerfile`, the workflows,
-`CHANGELOG.md` and `samples/` are all untouched. The rest is comment thinning.
-
-**The merge is clean against the committed tree and conflicts with the staged one.** `git merge-tree main
-features/arch_tests` comes back clean today only because the pending `.agents` work is staged rather than
-committed. Twelve files are modified on both sides:
-
-`board.md`, `release-v3.0.0.md`, `post-release-v3.0.0.md`, `design/_index.md`, `design/ci-cd/decisions.md`,
-`docs/api/modules/service.md`, `docs/api/openapi.md`, `docs/api/v4/README.md`, `docs/api/v4/add-endpoint.md`,
-`docs/ci-cd/release-pipeline.md`, `plans/_index.md`, `plans/ci-cd/release-pipeline-rebuild.md`.
-
-**Resolve them by rule, not file by file.** The branch forked before all of that work, so its copies are the
-older text plus one systematic addition:
-
-- **This file, `post-release-v3.0.0.md`, `board.md` and the four docs/design/plan files: take the current
-  content.** The branch has nothing new in them except front matter.
-- **Then re-apply the branch's `description:` front matter**, which is the convention it introduces across
-  every `.agents` file. Port the branch's "Architecture and quality" board section too - that part is real.
-- **Never hand-resolve an `_index.md`.** Run `just agents all` after the merge; it writes six indexes now, not
-  five.
-
-**Three chores the merge does not do for itself:**
-
-- [ ] **Front matter on the five files added since the fork** - the four new plans under `plans/api/`,
-      `plans/ci-cd/` and `plans/tooling/`, and `design/api/decisions.md`. The design one already has it; the
-      four plans do not, and they are invisible to the new convention until they do.
-- [ ] **Regenerate and diff the OpenAPI documents.** The contract types moved namespace. Schema names come off
-      the short type name so nothing should move, but "should" is not a check - `just openapi generate` and
-      diff against `docs/collections/_versions/v3.0.x/swagger/`. Do it **after** the `429` guard is committed,
-      or the guard's change and the merge's change are indistinguishable in the diff.
-- [ ] **`just test all`, then `just openapi lint`.** Eleven leaves, about two minutes. The branch renames
-      projects that `tooling/coverage.just` and `Directory.Build.props` both describe.
-
-### B11 - beta 3 {#beta-3}
-
-**Decided 2026-08-14.** B10 changes shipping code, so beta 2's image evidence describes a tree that is not the
-one shipping. This is the same reasoning that produced beta 2 out of beta 1, and it costs one tag.
-
-**What beta 3 is for, and it is narrower than beta 2 was.** Beta 2 was proving the rebuilt pipeline. That is
-proven. Beta 3 exists to put the restructured tree on a real host and run the two live checks against the
-image that actually ships.
-
-- [ ] **Cut it from the merge commit**, once `just test all` is green and the OpenAPI diff is understood.
-- [ ] **Exercise the auth token endpoint.** `ServiceModule/v0/Endpoints/Auth/Token.cs` is the single most
-      restructured shipping file and its rejection chain is now one extracted `Reject` helper. A wrong branch
-      returns the wrong status code to a real client, which no unit test shape catches as well as one live call.
-      **The merge does not touch this file** - the check is owed from beta 2 and is being paid here.
-- [ ] **Re-confirm the resolved caller** once the forwarded-headers source header settles. During B1 it moved
-      between boots (`CF-Connecting-IP` on one, `X-Forwarded-For` on a later one). The resolved caller was
-      correct whenever it was observed, but the two are not equivalent behind a CDN and the health check
-      allow-list is compared against whatever they resolve to.
-- [ ] **Confirm the image still runs and the version stamp reads `3.0.0-beta.3`.** The pipeline smokes the GHCR
-      copy before anything is copied, so a broken image cannot reach Docker Hub; this is the deployment half,
-      which the pipeline does not see.
-
-**What beta 3 does not need to re-do:** everything in "Already verified", plus every structural thing beta 2
-proved - the six jobs, the digest-preserving copy, the signature on both registries, the SBOM and provenance,
-the release body extraction. None of it moves because a namespace did.
-
-**Still not proven, same as after beta 2.** A prerelease withholds `{{major}}.{{minor}}` and `latest`, so `3.0`
-and `latest` are written for the first time by v3.0.0 itself.
-
-### B12, B13, B14 - the three that came off the board {#off-the-board}
-
-**Pulled in on 2026-08-14.** They were briefly in `post-release-v3.0.0.md` and that was wrong: each carries
-tooling and a decision that has to be figured out **before** the tag, and only the confirmation belongs after.
-That file is checks only. **None of these three gates the tag** - if one is not ready, it ships without it -
-but each is cheaper now than after.
-
-#### B12 - image verification
-
-[tooling/image-verification-recipes](plans/tooling/image-verification-recipes.md). The release notes say the
-image is signed and carries an SBOM and provenance, and nothing tells a user how to check any of it. As of the
-tag we advertise a property no user can confirm.
-
-**Before the tag:**
-
-- [ ] **The `just` recipe.** A prototype was built on 2026-08-13, run green against `3.0.0-beta.2`, then
-      reverted, so the tree is clean and the plan holds what it learned. Five checks, and the order matters -
-      each answers something the next assumes.
-- [ ] **Decide the placement first.** It is the plan's own open question and it changes what gets written. It
-      is coupled to `image-module-stacks`, which is still on the board.
-- [ ] **Write the two surfaces a coding session owns.** The plan names five; two are writable here.
-- [ ] **Hand the docs-site surface to B8.** Repo-root `docs/` is off limits from a coding session, so write
-      down what the page must say and let the docs deploy carry it. **This is the deadline that makes B12
-      pre-tag rather than post-tag** - B8 runs once, straight after the tag, and a surface that misses it waits
-      for the next docs deploy.
-- [ ] **The fifth surface is the Docker Hub page**, so B12 goes before or with B13, never after. Otherwise the
-      page gets written twice.
-
-#### B13 - the Docker Hub page
-
-[ci-cd/dockerhub-overview](plans/ci-cd/dockerhub-overview.md). The description advertises `2.1.1` as latest and
-hand-lists fifteen tags, none of them 3.x. For a lot of people that page is the first thing they read about the
-project, and the tag is what makes it wrong rather than merely stale.
-
-**Before the tag:**
-
-- [ ] **Test the credential first - five minutes, and it decides the whole item.** The plan has the exact
-      calls. Two traps in it: test `POST /v2/auth/token`, not the legacy `/v2/users/login/` whose 403s would
-      condemn the plan for no reason; and **back the page up and PATCH the current text straight back**, never
-      a placeholder - a green result and a defaced public page in the same second. If the widest scope still
-      403s with Admin confirmed, the plan says do **not** fall back to an account password. Record the answer
-      and the date in the plan either way.
-- [ ] **Write `.github/dockerhub-overview.md`** and the `update-dockerhub-overview.yml` workflow.
-- [ ] **The logo and the categories** - pure web form, nothing gated.
-
-**What is not done before the tag: publishing it.** The text names `3.0`, a tag that does not exist and will
-not point at a signed image until v3.0.0. **Do not let the file reach `main` early** - the workflow triggers on
-a push touching that path, so landing it is publishing it. Hold the file, or land it and run the workflow by
-`workflow_dispatch` after the tag.
-
-#### B14 - tag immutability
-
-[ci-cd/dockerhub-tag-immutability](plans/ci-cd/dockerhub-tag-immutability.md). Not caused by the release, but
-v3.0.0 is the first run that writes moving tags, which is when the trap in it becomes real.
-
-**Before the tag - the rule only, not the switch:**
-
-- [ ] **Confirm the setting is even offered** in the repository's settings UI. It appears in the API response,
-      so plan availability is probably not the blocker, but the sponsored org's entitlements decide it.
-- [ ] **Correct the rule.** It reads `".*"` today with the switch off. **A rule marks matching tags immutable;
-      it does not exempt them** - so that value would freeze `latest` and `3.0`, the two tags designed to move.
-      Write a rule that matches exact-version tags only, and confirm the value took.
-
-**Leave the switch off until after v3.0.0.** Turning it on with a wrong rule fails the publish job *after* the
-image has been built, smoked and copied - a red at the last step of an otherwise good release, with the moving
-tags half written. There is no version of this worth risking the release for.
-
-### B15 - rate limiter integration tests, and a coverage bump {#rate-limiter-tests}
-
-**Added 2026-08-14 at the maintainer's call.** This is a **carve-out** from
-[api/integration-test-additions](plans/api/integration-test-additions.md), not the whole plan. That plan's four
-phase-1 questions, the module matrix and the CORS gap all stay on the board; what comes into the release is its
-sharpest single finding.
-
-**The finding, verified 2026-07-29 and still true:** **no test anywhere asserts that a 429 ever happens.**
+**The finding, verified 2026-07-29 and confirmed still true on 2026-08-14: no test anywhere asserts that a 429
+ever happens.**
 
 - The core harnesses boot with modules off, so the `"ApiUsage"` policy is never registered, the
   `.RequireRateLimiting("ApiUsage")` metadata on all 18 endpoints is inert, and the middleware is not in the
   pipeline. That harness cannot see rate limiting at all.
 - The ServiceModule harness turns the module on and then sets `RateLimiter:AuthToken` to `NoLimiter::0`
-  (`api/test/Binacle.Net.ServiceModule.IntegrationTests/BinacleApi.cs`), deliberately disabling the limiter so
-  the auth tests are not throttled.
+  (`api/test/Binacle.Net.ServiceModule.IntegrationTests/BinacleApi.cs`), disabling the limiter so the auth
+  tests are not throttled.
 
-So someone could reorganise module registration until nothing is limited, and every suite would stay green
-while the shipped API stopped limiting anyone.
+Someone could reorganise module registration until nothing is limited, and every suite would stay green while
+the shipped API stopped limiting anyone.
 
-**Why it is release work and not board work.** Two of this release's own claims rest on behaviour nothing
-tests. The login throttle change - it partitions on `Connection.RemoteIpAddress` instead of a caller-supplied
-header, so varying a header no longer resets your own throttle - is in "Already verified" on the strength of
-**one hand-check on 2026-07-24**, and it is the one security-relevant change in the release with no regression
-behind it. And the `429` OpenAPI guard says the module-off document must not document a status the build cannot
-emit; that is asserted by a decision record and a transformer, and by nothing executable.
+**Why it is release work.** Two of this release's own claims rest on behaviour nothing tests. The login
+throttle change - it partitions on `Connection.RemoteIpAddress` instead of a caller-supplied header, so varying
+a header no longer resets your own throttle - is the one security-relevant change in the release, and it rests
+on **a single hand-check from 2026-07-24**. And the `429` OpenAPI guard says a module-off document must not
+document a status the build cannot emit; that is asserted by a decision record and a transformer, and by
+nothing executable.
 
-**What to build:**
-
-- [ ] **A 429 arrives when the module is on.** The shipped limits are in
+- [ ] **A 429 arrives when the module is on.** Shipped limits are in
       `Config_Files/ServiceModule/RateLimiter.json` - `ApiUsageAnonymous` is `SlidingWindow::60/3600-30`,
-      `AuthToken` is `SlidingWindow::20/3600-30`. **The test must read the configured number, not guess it.**
-- [ ] **No limiting when the module is off.** The pair is the point: one test each side proves the behaviour is
-      the module's, which is what the `429` guard and the decision behind it claim.
+      `AuthToken` is `SlidingWindow::20/3600-30`. **The test reads the configured number, never guesses it.**
+- [ ] **No limiting when the module is off.** The pair is the point: one test each side proves the behaviour
+      belongs to the module, which is what the `429` guard claims.
 - [ ] **The auth throttle partitions on the connection address.** Vary the caller-supplied header across
-      requests and assert the throttle does **not** reset. This is the one that turns a hand-check into a
-      regression test, and it is the highest-value test in the list.
+      requests and assert the throttle does **not** reset. **This is the highest-value test in the release** -
+      it turns the one hand-checked security change into a regression test.
 - [ ] **Do not turn the limiter on in the shared harness.** A live limiter is a shared bucket across a suite
-      that hits endpoints repeatedly, and the failure mode is random 429s that read as flakiness rather than as
-      a limit. Use a dedicated harness instance with a tiny limit and its own tests. The existing auth tests
-      keep `NoLimiter::0`.
+      that hits endpoints repeatedly, and the failure mode is random 429s that read as flakiness. Use a
+      dedicated harness instance with a tiny limit and its own tests. The existing auth tests keep
+      `NoLimiter::0`.
 
-**On coverage, and keep this modest.** Cover what this release changed, not the global number. **The gate is a
-different problem and is not this item** - the Sonar quality gate hangs on `new_coverage`, and the UI is 1571
-lines at 0%, 22.5% of the denominator. That is `ui-test-harness`, it is a whole harness, and it stays on the
-board. Do not let this grow into it.
+**On coverage, and keep it modest.** Cover what this release changed, not the global number. The Sonar gate is
+a different problem and is not this item.
 
-**Sequencing: after B10.** The merge renames projects and moves the types these tests touch. Writing them first
-means writing them twice.
+### 2. Rate limiting owned by the ServiceModule
 
-### B5 - move the sample image pins
+**[api/rate-limiting-owned-by-servicemodule](plans/api/rate-limiting-owned-by-servicemodule.md)** - a plan that
+moves `.RequireRateLimiting("ApiUsage")` out of the 18 core endpoint files and lets the module attach it off a
+policy-neutral marker the endpoint author places. **Investigated and proven feasible on 2026-08-13** in a
+throwaway ASP.NET Core 10 project. Read it in full; the mechanism has a trap that fails silently.
 
-- [ ] **The pins move once, to `3.0`, as the last change before the tag.** They sit at `3.0.0-beta.1` today and
-  **they stay there until then.** The rule that drives it: **a pin on `main` must name an image that exists on
-  Docker Hub.** An intermediate bump to `3.0.0-beta.2` is possible now that betas reach Docker Hub, but it is
-  not worth churning nine files twice to land on `3.0` a week later.
+**Pulled into the release on 2026-08-14 at the maintainer's call.**
 
-  **It is nine files, not six.** The six are the pin itself; three more carry the beta in prose, and they are
-  the ones that get missed:
+**What it buys.** Today the core API names a policy only the module supplies, so the call is a no-op whenever
+the module is off - and the OpenAPI transformer needs **two** guards to stay honest about `429`. If only the
+ServiceModule can ever add the rate-limiting attribute, then the presence of that metadata *means* the module is
+on, and the feature-flag guard becomes redundant rather than load-bearing. **The `429` cannot get into a
+module-off document even if a later session deletes a guard, because there is no guard left to delete.** That
+guard has already been deleted once by someone who reasoned about it and got it wrong, and the published beta
+specs shipped a `429` no module-off build can emit.
+
+- [ ] **Do this after the rate limiter tests, not before.** The plan's own warning: this changes *how* the
+      attribute arrives on the endpoint, with no test that would notice if it stopped arriving. **Doing it with
+      no test is how it ships broken and quiet.** Step 1 is that test.
+- [ ] **Use `Finally`, not `Add`, for the group convention.** Conventions registered with `Add` run *before*
+      each endpoint's own conventions, so the marker is not in the metadata yet and the check finds nothing. **No
+      error, no warning, just no rate limiting.** This was the first thing the proof of concept got wrong.
+- [ ] **Confirm the metadata reaches the OpenAPI document inside this repo, early.** It did in the prototype -
+      resolving the API description provider after `StartAsync()` showed the marked endpoint reporting policy
+      `ApiUsage` and the unmarked one reporting none. **The whole payoff rests on it**, so re-prove it here
+      before writing the rest.
+- [ ] **Settle the convention seam shape.** The plan lists two candidates and says explicitly not to treat it as
+      decided: a Kernel interface resolved as `IEnumerable<>`, or the `IOptionalDependency<T>` pattern already
+      used for the OpenAPI JWT wiring. Also decide whether conventions apply to groups only or to ungrouped
+      endpoints too - **only grouped endpoints need it today.**
+- [ ] **Delete the feature-flag guard last**, and only after the step above is confirmed in this repo.
+- [ ] **Update the API decisions ledger in the same change.** It currently records why the transformer needs two
+      guards. When one goes away, the ledger and the code disagree until it is rewritten.
+
+**v3 is in scope and this does not break the freeze.** The 12 v3 and v4 endpoint files change, but the swap is
+behaviour-preserving by construction - the same attribute ends up on the same endpoints and a caller cannot tell
+the difference. **Prove it rather than assume it:** compare the generated v3 document before and after with the
+module off (both should have no `429`), and confirm a module-on instance still returns `429`. The v3 document is
+already proven unmoved by the restructure, so any movement here is this change's.
+
+`.RequireRateLimiting("AuthToken")` on the ServiceModule's own token endpoint **stays as it is.** That endpoint
+belongs to the module, so naming the module's own policy is correct there.
+
+**It overlaps the ServiceModule simplification idea**, which would move this code anyway. That direction is
+still unsettled and is on the board. Shipping this first means the simplification inherits a smaller surface;
+it does not mean the simplification is decided.
+
+### 3. The Azure Storage run
+
+- [ ] `just serve services -d`, then `just test api-service-integration AzureStorage`.
+
+  CI covers SQLite and Postgres only, so the Azure provider ships on trust. **This got more important on
+  2026-08-07:** the `service-azure` sample was folded into `service`, where Azure is one commented connection
+  string among three. So Azure ships with no dedicated sample, no CI coverage and no smoke profile. **This one
+  run is the only thing standing behind it.**
+
+### 4. Beta 3
+
+**Why there is one.** The architecture merge changed shipping code, so beta 2's image evidence describes a tree
+that is not the one shipping. Same reasoning that produced beta 2 out of beta 1, and it costs one tag.
+
+**It is narrower than beta 2 was.** Beta 2 proved the rebuilt pipeline; that is proven. Beta 3 exists to put
+the restructured tree on a real host and pay two live checks owed from beta 2.
+
+**Correction, 2026-08-14.** An earlier draft justified this on `Auth/Token.cs` being the most restructured
+shipping file. **The merge does not touch that file at all** - verified against the diff. The two checks below
+are debts from beta 2, not consequences of the merge. Do not scope this as a re-audit of the restructure.
+
+- [ ] **Cut it from the merge commit.**
+- [ ] **Exercise the auth token endpoint.** `ServiceModule/v0/Endpoints/Auth/Token.cs` - its rejection chain is
+      one extracted `Reject` helper, and a wrong branch returns the wrong status code to a real client, which
+      no unit test shape catches as well as one live call.
+- [ ] **Re-confirm the resolved caller** once the forwarded-headers source header settles. During beta 1 it
+      moved between boots (`CF-Connecting-IP` on one, `X-Forwarded-For` on a later one). The resolved caller
+      was correct whenever observed, but the two are not equivalent behind a CDN and the health check
+      allow-list is compared against whatever they resolve to.
+- [ ] **Confirm the image runs and the version stamp reads `3.0.0-beta.3`.** The pipeline smokes the GHCR copy
+      before anything is copied, so a broken image cannot reach Docker Hub. This is the deployment half, which
+      the pipeline does not see.
+
+**What beta 3 does not re-do:** everything in "Already verified", plus every structural thing beta 2 proved -
+the six jobs, the digest-preserving copy, the signature on both registries, the SBOM and provenance, the
+release body extraction. None of it moves because a namespace did.
+
+### 5. The last commit before the tag - all in one
+
+- [ ] **Rename `## [Unreleased]` to `## 3.0.0`** in `CHANGELOG.md`.
+- [ ] **Move nine pins from `3.0.0-beta.1` to `3.0`:**
 
   | File | What to change |
   |---|---|
@@ -373,79 +218,299 @@ means writing them twice.
   | `samples/README.md` | the pin paragraph |
   | `samples/docker/README.md` | the pin paragraph |
 
-  **The prose goes with the number.** All three READMEs explain the beta pin with some version of "since `3.0`
-  does not exist on Docker Hub yet". That reason expires the moment v3.0.0 publishes.
+- [ ] **The prose goes with the number, and it is more than nine files.** **Corrected 2026-08-14 - an earlier
+      draft claimed the comment above each `image:` line was already dropped. It is not.** All six compose and
+      manifest files still carry two extra comment lines: *"Pinned to the beta patch for now because
+      `binacle/binacle-net:3.0` does not exist on Docker Hub yet - move to the 3.0 minor tag once v3.0.0 is
+      published."* Delete those two lines in all six, leaving only *"Pinned on purpose - a copied sample must
+      not jump to a new major on the next pull."* The three READMEs carry the same reason in prose. **That
+      reason expires the moment v3.0.0 publishes.**
+- [ ] **Sweep two more that name a beta as an example** - `tooling/README.md` and `tooling/smoke.just`, both
+      showing "smoke what is actually on Docker Hub". Neither is wrong today; both read as stale after the tag.
+- [ ] **Re-confirm `ApiV4Document.IsExperimental` is still `true`.** Shipping v4 as stable would lock contracts
+      meant to keep moving. The flip is 3.1.0 work.
+- [ ] **Preview the body:** `just changelog extract 3.0.0` after the rename. That is exactly what publishes.
 
-  The two-line comment above each `image:` line is already dropped - all six read exactly `# Pinned on purpose -
-  a copied sample must not jump to a new major on the next pull.`, matching the published docs copies. Only the
-  `image:` lines are left to move.
+**The rule that drives the pin timing: a pin on `main` must name an image that exists on Docker Hub.** The pins
+sit at `3.0.0-beta.1` through the whole sequence, beta 3 included. They moved early once before, on 2026-08-07,
+and sat on `main` naming an image that did not exist. **Do not leave the `3.0` bump on `main` long before
+tagging.**
 
-  Two more mention the beta as an **example** rather than a pin - `tooling/README.md` and `tooling/smoke.just`,
-  both showing "smoke what is actually on Docker Hub". Neither is wrong today, both read as stale once the tag
-  is out. Sweep them at the same time.
+### 6. Tag
 
-  **The caveat.** The pins moved early once before, on 2026-08-07, and sat on `main` naming an image that did
-  not exist. **Do not leave the `3.0` bump on `main` long before tagging.**
+- [ ] **Tag `v3.0.0`.** The pipeline does the rest: the changelog gate, the suite, the GHCR build, the smoke,
+      the Docker Hub copy under all three tags, the signature, and the release created from the `3.0.0`
+      section. **Nothing here is manual any more.** Watch the run, then check the rendered body and
+      `docker buildx imagetools inspect`.
 
-### B6 - Azure Storage
+---
 
-- [ ] CI covers SQLite and Postgres only, so the Azure provider ships on trust. One deliberate run before
-  tagging: `just serve services -d`, then `just test api-service-integration AzureStorage`.
+## Runs alongside - real work, does not hold the tag
 
-  **This got more important on 2026-08-07, not less.** The `service-azure` sample is gone, folded into
-  `service`, where Azure is one commented connection string among three. So Azure ships with no dedicated
-  sample, no CI coverage and no smoke profile (smoke is SQLite-only by design). This one run is the only thing
-  standing behind it. Removal is a stronger idea than it was, but not in this release.
+Each is cheaper now than after. **If one is not ready, the release goes without it** - with one exception,
+named below.
 
-### B8 - deploy the docs, after the tag
+### Image verification
 
-**The config half is done**: `main` carries `current: v3.0.x`, `- id: v3.0.x` back at the top of `list`, the
-stub's `sitemap: exclude` gone, and `docs/collections/_sitemaps/version-3-0-x.xml` restored. What is left is the
-deploy plus three edits that must go out with it. Repo-root `docs/` is off limits to a coding session - this is
-the docs session's work, written here for it.
+**[tooling/image-verification-recipes](plans/tooling/image-verification-recipes.md)** - a plan in two halves. The
+first is a `just` recipe running five checks that today take five commands and a 90-character flag. The second
+is **telling anyone the signing exists**, across five surfaces. All five checks were run green against
+`3.0.0-beta.2` on 2026-08-13 by a prototype that was then reverted, so the plan holds proven commands and the
+tree is clean.
+
+**The release notes say the image is signed and carries an SBOM and provenance, and nothing tells a user how to
+check any of it.** As of the tag we advertise a property no user can confirm.
+
+**Split it, because only one half has an open decision.**
+
+- [ ] **The two surfaces a coding session owns - no decision needed, do these first.** `SECURITY.md` gets the
+      permanent short version: what is signed, the two commands, what a pass means and what it does not.
+      `README.md` gets one line under the pin note pointing at it, no commands.
+- [ ] **Hand the docs-site page to the docs deploy.** Repo-root `docs/` is off limits from a coding session.
+      The plan already contains the full text the page must carry, verified verbatim against beta 2. **This is
+      the one deadline in this section: the docs deploy runs once, straight after the tag, and a surface that
+      misses it waits for the next deploy.** This is why the item is pre-tag rather than post-tag.
+- [ ] **The placement is decided - 2026-08-14. It goes in the `image` module.** `just image verify <version>`,
+      with an optional check name, and the five checks as private helpers. The plan's own open question is
+      closed.
+
+      **The reasoning, because it changes another plan too.** The maintainer's call was that `image` is for the
+      image, and the supporting services it currently stands up - Postgres, Azurite, the telemetry collector -
+      belong in `serve`, which is the local dev toolkit. That makes `image` mean "the image", local and
+      published, which is exactly the module a verification recipe belongs to. **The stack move itself is board
+      work, not release work** - it is recorded in the plan on what the `image` module is for, and this recipe
+      does not wait for it.
+
+      Two constraints from the plan hold whatever happens: the **version argument is required, never
+      defaulted** - a default rots into a tag nobody meant to check - and the module's header sentence has to
+      change, because it currently says everything in the module runs `binacle-net:local` and this is the first
+      recipe that reads a registry.
+- [ ] **Then build the recipe.** Version argument required, never defaulted. No `docker login` anywhere - these
+      are the commands a user runs. `cosign` goes into `DEVELOPMENT.md` with a pinned version.
+- [ ] **Write the Docker Hub page's verification section from the same wording** - see the ordering note below.
+
+**One ordering constraint that binds every surface.** Any example naming a tag must name a **signed** tag.
+Signing started with beta 2, so `3.0.0-beta.1` fails with `no signatures found`, which reads as our bug rather
+than as history - and `3.0` and `latest` do not point at a signed image until v3.0.0 publishes. Write the prose
+version-neutral with a placeholder.
+
+### The Docker Hub page
+
+**[ci-cd/dockerhub-overview](plans/ci-cd/dockerhub-overview.md)** - a large plan covering the credential test,
+the file, the workflow that pushes it, the full page draft, the logo and the categories. The page advertises
+`2.1.1` as latest and hand-lists fifteen tags, none of them 3.x. For a lot of people it is the first thing they
+read about the project.
+
+- [ ] **Test the credential first - five minutes, and it decides the whole item.** The plan has the exact
+      calls. **Two traps in it.** Test `POST /v2/auth/token`, which is what the action calls - not the legacy
+      `/v2/users/login/`, whose 403s would condemn the plan for no reason. And **back the page up, then PATCH
+      the current text straight back**, never a placeholder: a green result and a defaced public page in the
+      same second. Record the answer and the date in the plan either way.
+- [ ] **Write `.github/dockerhub-overview.md`, with a placeholder wherever a version appears.**
+- [ ] **Add the page update to the release workflow** - **decided 2026-08-14, and it changed the design.** The
+      page is published by the release run, in the same place the release notes are posted. **Not** by a
+      workflow triggered on a push to the page's own path, which was the earlier draft.
+
+      **Why it is better.** The page describes the tags a release writes, so the release is the moment its
+      content becomes true. It also kills a trap outright: with a path trigger, landing the file *is* publishing
+      it, so the file could never sit on `main` waiting for a tag.
+
+      Three constraints on the step: **run it last**, after the Docker Hub copy and signature have succeeded,
+      with nothing depending on it - a cosmetic failure must not redden a release that shipped a correct image.
+      **Gate it on a non-prerelease**, the same rule the moving tags already follow, so a beta never rewrites a
+      page describing the stable line. And **keep `workflow_dispatch`**, so a typo is fixed without cutting a
+      release.
+- [ ] **Substitute the version at publish time.** Keep concrete version numbers out of the committed file. This
+      is what stops the page rotting - without it the file names `3.0` forever and is wrong the day 3.1.0 ships.
+- [ ] **The logo and the categories** - pure web form, nothing gated.
+- [ ] **Take the verification section's wording from the image verification work**, not a second draft of it.
+
+**The file can land on `main` whenever.** Nothing publishes it until a release runs. That is the whole point of
+the trigger change, and it means this item no longer has to be finished in any particular order against the tag.
+
+### Docker Hub tag immutability - the rule only
+
+**Small enough to be self-contained. The plan that holds the rest stays on the board**, because the part worth
+having later is the switch and that is not a release item.
+
+Read from the repository API on 2026-08-13: `"immutable_tags_settings": { "enabled": false, "rules": [".*"] }`.
+
+**The trap: a rule marks matching tags immutable - it does not exempt them.** So `".*"` would freeze **every**
+tag, `latest` and `3.0` included, and those two are designed to move.
+
+- [ ] **Confirm the setting is offered** in the repository's settings UI. It appears in the API response, so
+      plan availability is probably not the blocker, but the sponsored org's entitlements decide it.
+- [ ] **Correct the rule to `^\d+\.\d+\.\d+$`** - released versions only. Not full semver: `3.0.0-beta.2` was
+      re-cut on 2026-08-13, that is a normal thing to do to a beta, and a prerelease-matching rule would have
+      blocked it with the release half shipped. Read the value back from the API rather than trusting the form.
+- [ ] **Leave the switch off until after v3.0.0.** Turning it on with a wrong rule fails the publish job
+      *after* the image has been built, smoked and copied - a red at the last step of an otherwise good
+      release, with the moving tags half written. **There is no version of this worth risking the release for.**
+
+### The PR gate - one workflow change
+
+**Everything below lands in `run-tests.yml` in one change.** They all add to the same gate, they are all ready,
+and doing them separately means touching that file five times and arguing about job ordering five times.
+**Every one lands green**, which is the state a new gate wants - a check that is red on arrival teaches everyone
+to ignore it.
+
+- [ ] **Build the image on every PR.** The step is `just build image` - publishes and builds with no push, no
+      login, no `sudo`, nothing interactive. Today the image is built in CI only when a release is published,
+      so a PR never proves the image still builds, and a break is found at release time. That is exactly what
+      happened after the `Binacle.Geometry` extraction, where the image had not been built for the whole
+      restructure. **Use the same Dockerfile and publish arguments the release workflow uses, or the gate
+      proves nothing** - the release path now goes through `just build publish`, so it does.
+- [ ] **Lint the OpenAPI documents.** One step: `just openapi lint`. It generates the documents itself and needs
+      nothing brought up. **Set it to fail on warnings** - the `servers` block landed on 2026-08-10 and the lint
+      is clean at 0 errors and 0 warnings, confirmed again on 2026-08-14, so there is nothing left to argue
+      about.
+**Then three architecture checks**, from **[architecture-boundaries](plans/architecture-boundaries.md)** - a
+large plan whose file half already shipped on the merged branch along with all 27 comment fixes.
+
+**Why these three and not the graph tools.** The branch built the foundation and stopped: `architecture.yml`
+exists, the repo now conforms to it (no upward edges, the graph re-derived from every `ProjectReference` to
+prove it), and the 27 comment sites are fixed. **What does not exist is anything at all that reads any of it.**
+A declarative file nothing checks is a lockfile - regenerated, never read - which is the exact failure the
+plan's own first goal warns about.
+
+All three below **read files the repo already has, need no new dependency, and are green today.** That is the
+whole selection rule. Everything needing a new toolchain is deferred.
+
+- [ ] **The comment check.** A `just` recipe plus a step, not Semgrep. **Three arms, each blind to the other
+      two:** a derived filename list, `$id`-style references matched against the ids the docs declare, and bare
+      ref codes matched against the headings that define them. **Derive every list, never hardcode it** - and
+      fail loudly when a derived list comes back empty, because an empty list makes the check report clean
+      forever. **Two shell traps, both of which produced a green run over 14 real violations while the prototype
+      was written:** `xargs` returns 123 when any grep batch finds nothing, so test the output for emptiness and
+      never the exit status; and six algorithm folders have spaces in their names, so `-d '\n'` is not optional.
+- [ ] **The graph check - this is the one that stops `architecture.yml` rotting.** Re-derive the edges from
+      every `ProjectReference` in the repo and compare them against what the file declares. Fail on an
+      undeclared edge and on a declared entry nothing uses. **A script already did exactly this once**, when the
+      file was written, and came back clean - no undeclared edges, no dead entries, no cycles. It was not kept.
+      Keep it this time.
+
+      **Two things it must handle.** A bare target in the file means that slice's `src`, so resolve it before
+      comparing or the declared graph reads as cyclic. And **the project graph is not the whole graph** -
+      `vipaq/tools` reads `shared/data` by resolving a path at run time, which no `ProjectReference` audit sees.
+      That edge is already declared; the check just must not report it as dead.
+- [ ] **The `InternalsVisibleTo` check.** Every grant must name an assembly that references the granter,
+      directly or transitively. **A grant that does not is dead weight - it grants access nobody can take.**
+      Confirmed on 2026-08-14: **19 grants across 9 granting projects, all passing.** It has already caught one
+      dead grant, to a test project that never touched the internals, since deleted. **Cheaper than any of the
+      graph tools and it found something on its first run.**
+
+      **The trap: expand `$(ProjectName)` first.** Most grants are written `$(ProjectName).UnitTests` rather
+      than spelled out, so a naive string compare matches nothing and the check passes for the wrong reason.
+
+- [ ] **Do not go looking for violations to fix first.** All three land green. Confirm each catches nothing,
+      then keep it that way.
+
+**What is deliberately left out of this bundle.** The global-`Using`-with-no-`ProjectReference` check would be
+**red** - there are 19 such declarations across 13 projects, every one resolves transitively today, and whether
+the fix is 19 added references or a decision that transitive resolution is fine here **has never been settled.**
+A check that lands red on a question nobody has answered is the thing this whole bundle is shaped to avoid.
+
+**Gates 2 and 3, and the heavy architecture tools, do not come with this** - see the scope decision at the top.
+
+### More ViPaq interop vectors
+
+**Pulled in on 2026-08-14 at the maintainer's call**, from the interop vector coverage idea. **Delete that idea
+file when this lands.**
+
+**Why now rather than never.** The idea's own argument against was that a future wire-format change regenerates
+the vectors anyway, so adding rows early means doing them twice. **ViPaq's format left experimental and froze in
+this release**, so that argument is spent - these rows will not need redoing.
+
+The cost is small by design: each is new rows in `vipaq/test-vectors/interop/input.json` plus a regen, and the
+matrix fans them across both the C# and TypeScript suites automatically.
+
+- [ ] **Width-boundary flips in a coordinate**, mirroring the ones already covered for dimensions. A separate
+      encoder from dims, though it shares a picker - which is exactly why the dims coverage does not imply it.
+- [ ] **An empty items list.**
+- [ ] **Many distinct items** - varied dims and coordinates, not repeats of one value.
+- [ ] **Compressed payloads at 32-bit and 64-bit widths.**
+- [ ] **Regenerate and run both suites.** These are committed generator output; nothing is hand-written.
+
+**Do not rebuild the cross-runtime rows.** Foreign-runtime gzip blobs and .NET 8/9 rows were built once and
+removed on purpose - a gzip decoder reads any valid gzip, so they proved nothing, and they needed hand-captured
+Docker bytes, which breaks the one-generator-committed-output discipline the rest of the vectors keep. The
+finding they demonstrated is preserved in the protocol spec.
+
+### The client-generation page
+
+**Pulled in on 2026-08-14 at the maintainer's call**, from the OpenAPI follow-ups idea - which is down to this
+one item, so **delete that idea file when this lands.**
+
+**The payoff for publishing a spec at all.** A short page with copy-paste commands that generate a client from
+the published per-version spec - `hey-api` for TypeScript, `kiota` for C#, and whatever else is worth naming.
+**Today the spec is published and nothing tells anyone they can do this.** It turns "there is a spec" into "here
+is your client in thirty seconds" for the cost of one page.
+
+**It applies to every version, not just v3.0.x** - the maintainer's call. Each version folder publishes its own
+`swagger/v3.json` and `swagger/v4.json`, so the commands work against v1.3.x, v2.0.x, v2.1.x and v3.0.x alike.
+**Write it so the version is a placeholder the reader substitutes**, rather than four near-identical pages that
+drift apart.
+
+- [ ] **Repo-root `docs/` is off limits from a coding session**, so this is the docs session's work. It goes out
+      with the docs deploy below.
+- [ ] **Do not publish SDKs to close this.** The deliverable is a spec plus a generation guide, not shipped
+      packages. That decision is recorded as a memory and is not this item's to change.
+
+### The docs deploy - after the tag
+
+**The config half is done:** `main` carries `current: v3.0.x`, `- id: v3.0.x` back at the top of `list`, and
+`docs/collections/_sitemaps/version-3-0-x.xml` restored - all verified 2026-08-14. What is left is the deploy
+plus six edits that must go out with it. Repo-root `docs/` is off limits to a coding session; this is the docs
+session's work, written here for it.
 
 - [ ] **Put the real date and release link in `v3.0.x/release-notes.md`.** The `## v3.0.0` section carries
-  interim wording - it asserts no date and links the releases *list* - because the tag did not exist when the
-  pages were written. Swap that italic line for *"Released &lt;date&gt; - [release on
-  GitHub](.../releases/tag/v3.0.0)"*, matching every other version folder.
-- [ ] **Carry three additions from `CHANGELOG.md` into `v3.0.x/release-notes.md`.** They are the same notes in
-  two places, and the release body gained content on 2026-08-10 that the page does not have. Run `just changelog
-  extract Unreleased` to see the current text. All three go in the `## v3.0.0` section, in the page's
-  plain-ASCII style:
+      interim wording because the tag did not exist when the pages were written. Swap the italic line for
+      *"Released &lt;date&gt; - [release on GitHub](.../releases/tag/v3.0.0)"*, matching every other version
+      folder.
+- [ ] **Carry three additions from `CHANGELOG.md` into `v3.0.x/release-notes.md`.** Same notes in two places,
+      and the release body gained content on 2026-08-10 the page does not have.
+
+      **Decided 2026-08-14: this page stays hand-copied.** It is not generated from `CHANGELOG.md`. The drift
+      below is the accepted cost, so **this checklist is the control** - every future release's docs handover has
+      to list what the changelog gained since the page was last written. Run
+      `just changelog extract Unreleased` to see the current text. All three go in the `## v3.0.0` section, in
+      the page's plain-ASCII style:
   - **Overview**, one bullet after the health check line: the image creates `/app/data` and gives it to the app
     user, so a volume mounted there is writable.
-  - **Core Changes**, replacing "The `Dockerfile` and existing environment variables are unchanged" (false - the
-    Dockerfile changed three times this release): the `/app/data` fix spelled out - docker used to create the
+  - **Core Changes**, replacing *"The `Dockerfile` and existing environment variables are unchanged"* - which is
+    false, the Dockerfile changed three times this release. Spell out the `/app/data` fix (docker created the
     mount point as root, the app does not run as root, so packing logs and the SQLite database could not be
-    written to a fresh named volume; `libgssapi-krb5-2` now ships, so Npgsql stops printing "Cannot load library
-    libgssapi_krb5.so.2" at every start, which was harmless but read as fatal; OCI labels on the image; and only
-    then "existing environment variables are unchanged".
-  - **A `🔌 Service Module` section**, between Diagnostics and UI Module: the auth token rate limit partitions on
-    the connection's remote address instead of a caller-supplied header, so varying the header no longer resets
-    your own login throttle. The page already carries the exemption note at the top.
-- [ ] **Replace the two stale swagger documents under `docs/collections/_versions/v3.0.x/swagger/`.** They are
-  frozen copies and no longer match `just openapi generate`. Regenerate and copy
-  `artifacts/openapi/Binacle.Net_v3.json` -> `swagger/v3.json` and `artifacts/openapi/Binacle.Net_v4.json` ->
-  `swagger/v4.json`; the generator's file names differ from what the site expects, so the rename is part of the
-  handover. Two things changed since the copies were taken: both documents now carry a `servers` entry with the
-  single relative `/`, and **the `429` responses come out** - the transformer that documents `429` had lost its
-  feature-flag guard, so it was documenting the status in a document generated with the ServiceModule off, which
-  has no limiter and cannot emit one. The copies currently carry 14 `429` mentions in v4 and 4 in v3;
-  regenerated, both are zero, which is what v2.1.x shipped. For v3 that **restores** the published shape rather
-  than changing it, so nothing about the frozen v3 contract moves. It is still a visible change to the published
-  spec, so mention it wherever the update is described.
-- [ ] **Carry B12's signature-verification page.** The images are signed and carry an SBOM and provenance, and
-  the docs site says so nowhere. B12 writes down what the page must make - the verified `cosign verify`
-  invocation, the three points it has to make, and the rule that any example tag names a signed image - and
-  this deploy is what puts it live. **Check B12 actually left that text before deploying**; if it did not, the
-  page waits for the next docs deploy, which is the reason B12 is pre-tag work.
+    written to a fresh named volume); `libgssapi-krb5-2` now shipping, so Npgsql stops printing "Cannot load
+    library libgssapi_krb5.so.2" at every start, which was harmless but read as fatal; OCI labels on the image;
+    and only then "existing environment variables are unchanged".
+  - **A `🔌 Service Module` section**, between Diagnostics and UI Module: the auth token rate limit partitions
+    on the connection's remote address instead of a caller-supplied header, so varying the header no longer
+    resets your own login throttle.
+- [ ] **Replace the two swagger documents under `docs/collections/_versions/v3.0.x/swagger/`.** Copy
+      `artifacts/openapi/Binacle.Net_v3.json` -> `swagger/v3.json` and `artifacts/openapi/Binacle.Net_v4.json`
+      -> `swagger/v4.json`; the generator's file names differ from what the site expects, so the rename is part
+      of the handover.
+
+      **The diff is already measured - 2026-08-14, do not re-derive it.** Freshly generated against the frozen
+      copies, the **only** differences are: both documents gain a `servers` entry with the single relative `/`,
+      and **the `429` responses come out** - 4 mentions in v3 and 14 in v4 go to zero. Nothing else moves. No
+      schema name changed despite the namespace restructure, which is the thing that was worth checking. For v3
+      this **restores** the shape v2.1.x shipped rather than changing it, so nothing about the frozen v3
+      contract moves. It is still a visible change to the published spec, so mention it wherever the update is
+      described.
+- [ ] **Carry the signature-verification page.** The image verification work writes down what the page must
+      say - the verified `cosign verify` invocation, the three points it has to make, and the rule that any
+      example tag names a signed image. **Check that text actually exists before deploying**; if it does not,
+      the page waits for the next docs deploy, which is the reason that work is pre-tag.
+- [ ] **Write the client-generation page**, per the item above. It is cross-version, so decide once where a
+      page that is not version-specific lives on that site rather than copying it into four folders.
 - [ ] **Deploy.** It is `workflow_dispatch` only.
 
 **This is the single most losable item in the release** - nothing fails if the deploy is skipped, the site just
-quietly keeps serving v2.1.x as current. **It has to run after the tag**, for two reasons: the notes need the
-date and the `releases/tag/v3.0.0` link, and `main` already says v3.0.x is current, so deploying earlier presents
-an unreleased version as current. It has to land before anything is announced, because the announcement points
-at pages that must be live. Tag, then deploy the docs, then announce.
+quietly keeps serving v2.1.x as current. **It has to run after the tag**, because the notes need the date and
+the `releases/tag/v3.0.0` link, and `main` already says v3.0.x is current, so deploying earlier presents an
+unreleased version as current. It has to land before anything is announced. **Tag, then deploy the docs, then
+announce.**
 
 **One deliberate 404, do not "fix" it.** The `v3.0.x` ViPaq page links the wire spec at
 `github.com/ChrisMavrommatis/Binacle.Net/blob/v3.0.0/vipaq/PROTOCOL.md`, which 404s until the tag is pushed. A
@@ -453,91 +518,120 @@ versioned page should pin the spec it describes; do not repoint it at `main`.
 
 ---
 
-## The release notes {#release-notes}
+## Already done - do not re-audit
 
-**They live in `CHANGELOG.md`, in the `## [Unreleased]` section**, and the workflow extracts that section as the
-release body. The content is complete and was checked byte-for-byte against the published beta 2 body on
+**Gate A, all four items.** Publish paths hardcoded in the workflow (2026-07-27). A prerelease moves neither
+`latest` nor the minor tag (observed on Docker Hub 2026-08-06). Health check IP restrictions, four defects and
+the missing tests (2026-07-27). Forwarded headers, warn-once diagnostics and the missing tests (2026-07-27).
+
+**Verified behaviour:**
+
+- **Fitting results are unchanged.** Differential-tested 2026-07-19 against the real
+  `binacle/binacle-net:2.1.1` image across all three algorithms, zero disagreements. No release-notes caveat
+  needed.
+- **Old ViPaq tokens fail loudly.** Verified 2026-07-19, locked 2026-07-20 with four regression vectors in
+  `vipaq/test-vectors/serialization/decode-invalid.json`. Zero silent misparses.
+- **The login throttle no longer partitions on a caller-supplied header.** `GetClientIp()` deleted 2026-07-24;
+  `AuthTokenRateLimitingPolicy` partitions on `Connection.RemoteIpAddress`. **This is the one still resting on
+  a hand-check - see the rate limiter tests above.**
+- **ViPaq's wire format did not move after beta 1** - source changed comments only.
+- **The Dockerfile did not change after beta 1 at all.**
+
+**Release milestones:**
+
+- **The docs pages** (2026-08-10) - site builds, `/version/latest/` lands on v3.0.x. **The ViPaq protocol page
+  split** (2026-08-07) - all four versions written. **The `AI-GENERATED` review token strip** (2026-08-11) -
+  zero left, whole repo.
+
+  On that last one: the pass was never "revert everything an agent wrote". Several agent comments were kept on
+  purpose because they were better than the line they replaced - the unchecked-multiply overflow note on the
+  packing algorithms, the empty-catch explanation in `ConnectionString.cs`, the curated-scenario table in
+  `BischoffCuratedProblemsProvider.cs`. **A surviving agent comment is not damage.**
+
+- **Beta 2** - published 2026-08-13 from `d317cd2b`, digest `sha256:ccce2a44`, deployed to the test server
+  2026-08-14. All six jobs green with `publish` included, the GHCR package public to an anonymous puller,
+  Docker Hub took `3.0.0-beta.2` and nothing else moved, the copy preserved the digest, the image is signed on
+  both registries, SBOM and provenance are in the index, 31/31 structure assertions and all five smoke profiles
+  pass against the published image, and the release body is byte-identical to `just changelog extract
+  Unreleased`. `DEBUG_ENDPOINT` was confirmed off on the deployment - it had been on and answering publicly
+  since beta 1, echoing the caller's `Authorization` header back, and it was the only real exposure beta 1 left
+  behind.
+
+- **The release pipeline rebuild** - proven end to end by beta 2. What remains of that plan is the one docs
+  decision above, plus a post-release check.
+
+- **The architecture merge** - **done, and it went in the other direction.** `main` was merged into
+  `features/arch_tests` at `16289d4d`, so the branch now contains all of `main` and landing it is a
+  fast-forward. **All the conflict-resolution instructions this file used to carry are spent.** Verified
+  2026-08-14: front matter is on all five files added since the fork, six `_index.md` are generated, `just test
+  all` is green across eleven leaves (72 / 35 / 622 / 107, 0 failed), `just openapi lint` reports 0 errors and 0
+  warnings, and the OpenAPI regenerate-and-diff came back with no schema movement at all.
+
+- **The `429` OpenAPI guard** - committed at `dec5212c`. Both guards are in
+  `RateLimiterResponseOperationTransformer.cs` with the reasoning comment.
+
+**Two things beta 2 does not prove**, both structural rather than untried. **The moving tags** - a prerelease
+withholds `{{major}}.{{minor}}` and `latest`, so `3.0` and `latest` are written for the first time by v3.0.0
+itself; that is one extra argument to an `imagetools create` call that has run several times. And
+**`latest=auto` does not consult the registry** - it reads the git ref, so any non-prerelease semver takes
+`latest`. Right for v3.0.0, and the reason a throwaway `v0.0.1` against the real repo would have moved `latest`
+off `2.1.1`. **Recorded because the trap outlives the plan that found it.**
+
+---
+
+## The release notes
+
+**They live in `CHANGELOG.md`, in the `## [Unreleased]` section**, and the workflow extracts that section as
+the release body. The content is complete and was checked byte-for-byte against the published beta 2 body on
 2026-08-13 - all four breaking changes, the six migration steps, the signing and SBOM bullet, the image-size
 drop, and `RetentionDays`. Nothing since then changes what a user can observe.
 
-Three mechanics to keep in mind:
+Three mechanics:
 
-- **`[Unreleased]` is renamed to `## 3.0.0` as the last change before the tag**, alongside the B5 pin bump.
-  Every beta publishes `[Unreleased]`. If you forget, the `notes` job fails in under a minute and nothing is
-  built - which is why that gate runs first.
+- **`[Unreleased]` is renamed to `## 3.0.0` as the last change before the tag.** Every beta publishes
+  `[Unreleased]`. If you forget, the `notes` job fails in under a minute and nothing is built - which is why
+  that gate runs first.
 - **A section's own headings are `###`**, nested under the `##` version heading. `just changelog extract` shifts
-  them back to `##` on the way out. Do not "fix" the file to use `##` throughout - that breaks the nesting under
-  `# Changelog` and the extractor's terminator both.
-- **Preview with `just changelog extract 3.0.0`** after the rename. That is exactly what gets published.
+  them back to `##` on the way out. **Do not "fix" the file to use `##` throughout** - that breaks the nesting
+  under `# Changelog` and the extractor's terminator both.
+- **The compare link at the bottom already reads `v2.1.1...v3.0.0`** - correct from the tag onward, and a 404
+  on every beta release page until then. Left as it is deliberately; the alternative is editing it twice.
 
-**The compare link at the bottom already reads `v2.1.1...v3.0.0`** - correct from the tag onward, and a 404 on
-every beta release page until then. Left as it is deliberately; the alternative is editing it twice.
+**The restructure gets no changelog line - decided 2026-08-14.** No user-observable behaviour changes, nothing
+is published to NuGet, and no contract moves - the OpenAPI diff proves the last one. The four breaking changes
+stay four. Anyone building from source sees `Binacle.Lib.Abstractions` disappear, and that is not worth a line.
 
 ---
 
 ## The sequence
 
-Steps 1-11 are done: Gate A, both betas, B0 through B4, the docs pages, the pipeline rebuild, the public GHCR
-package. Beta 2 is deployed on the test server as of 2026-08-14. What is left, in order:
+1. **Rate limiter tests.**
+2. **Rate limiting owned by the ServiceModule.** After 1, never before - it is the test that makes this safe.
+3. **The Azure Storage run.**
+4. **Cut, deploy and verify beta 3.** After 2, so the beta carries the endpoint change.
+5. **The last commit:** changelog rename, nine pins, six comment blocks, three READMEs, two tooling examples,
+   and the `IsExperimental` re-confirm.
+6. **Tag `v3.0.0`.** The pipeline does the rest.
+7. **Deploy the docs**, with the six edits above.
+8. **Work `post-release-v3.0.0.md`.**
 
-1. **Commit the staged `.agents` work and the `429` OpenAPI guard.**
-   `RateLimiterResponseOperationTransformer.cs` is shipping code and the restored guard is still only in the
-   index. It has to be in before the tag - B8's swagger regeneration depends on it, and an uncommitted fix is
-   one that ships by accident or not at all. Committing first is also what makes the B10 merge resolvable:
-   twelve `.agents` files are modified on both sides, and a staged change is not something git can merge.
-2. **B10 - merge `features/arch_tests`**, resolving by the rule above, then the three chores: front matter on
-   the five new files, `just agents all`, and the OpenAPI regenerate-and-diff.
-3. **`just test all`** - eleven leaves, about two minutes, nothing to bring up. Both the guard and the merge
-   changed shipping code after beta 2, so the last green run does not cover the tree as it stands.
-4. **B15 - the rate limiter tests.** After the merge, so they are written once against the final project
-   layout.
-5. **B6** - the one Azure Storage run. **After the merge**, not before: it is the only evidence the Azure
-   provider works at all, and the merge moves the types underneath it.
-6. **B11 - cut, deploy and verify beta 3**, and clear the two checks carried over from B2X.
-7. **B12, B13 and B14, in that order**, any time from here. B12 before B13 because one of its five surfaces is
-   the Docker Hub page. **They run alongside, and none of them holds the tag.** B12 has one hard deadline
-   inside it: the docs-site surface has to reach B8's handover list before the tag, because B8 runs once.
-8. **The last commit before the tag, all in one:** rename `## [Unreleased]` to `## 3.0.0`, bump the nine files
-   from `3.0.0-beta.1` to `3.0`, sweep the "since `3.0` does not exist yet" prose in the three READMEs, and
-   sweep the two `tooling/` examples that name a beta tag. Then re-confirm `ApiV4Document.IsExperimental` is
-   still `true`, and tag `v3.0.0`.
-7. **The pipeline does the rest.** The tag triggers it: the changelog gate, the suite, the GHCR build, the
-   smoke, the Docker Hub copy under all three tags, the signature, and the release created from the `3.0.0`
-   section. **Nothing here is manual any more.** Watch the run, then check the rendered body and `docker buildx
-   imagetools inspect`.
-8. **B8 - deploy the docs**, with the three edits above.
-9. **Work `post-release-v3.0.0.md`.**
+**Everything under "Runs alongside" happens any time from now to step 5**, in whatever order suits, with two
+orderings that matter: **image verification goes before the Docker Hub page**, or the verification section gets
+written twice; and **the docs-site text from image verification must exist before step 7**, because that deploy
+runs once.
 
-**The pins bump once, at step 6, and beta 3 does not move them.** They sit at `3.0.0-beta.1` through the whole
-sequence. B5 already says why: the rule is that a pin on `main` names an image that exists on Docker Hub, and
-`3.0.0-beta.1` still does. Churning nine files to reach `3.0.0-beta.3` for a few days is the trade B5 already
-refused once.
-
-**Does the restructure need a changelog line?** No user-observable behaviour changes, nothing is published to
-NuGet, and no contract moves - so the four breaking changes stay four and the `[Unreleased]` section is
-already correct as it stands. Anyone building from source sees `Binacle.Lib.Abstractions` disappear. If that is
-worth a line it is a housekeeping bullet, not a fifth breaking change; **the maintainer's call, and the default
-is to leave it out.**
+---
 
 ## Not in this release
 
-Everything else has a plan of its own and is on the board, grouped by area with its blockers named. Do not pull
-any of it in: the version stamp, the npm publishing decision, the `Parallel*` processors, migrating the UI
-clients off v3, the benchmark ledger, TestsKernel fixtures, and v4 going stable in 3.1.0.
+Everything else has a plan or an idea of its own and is on the board, grouped by area with its blockers named.
+**Do not pull any of it in.**
 
-**Three exceptions have been taken.** Two on 2026-08-10, both already in: **dropping `--self-contained`**
-(150.2 MB -> 103.2 MB, all suites green, and beta 2 is the run that proved it on a real deployment) and **the
-release-pipeline rebuild** (a prerelease tag is the only free test that pipeline will ever get; deferring it
-meant the first run of a rebuilt publish path would be v3.0.0 itself). The third, on 2026-08-14, is **B10** -
-the architecture restructure. The rest of the image work - chiseled bases and the hardened-image question -
-stays out.
+**Held back on 2026-08-14, with reasons:** the heavy architecture tools (ArchUnitNET, dependency-cruiser,
+lychee), CI gates 2 and 3, and raising test coverage. The scope decision at the top of this file carries the
+reasoning.
 
-**Three more came off the board on 2026-08-14** and are B12, B13 and B14: the Docker Hub repository page, the
-image-verification work and tag immutability. They spent an afternoon in `post-release-v3.0.0.md` and that was
-wrong - each carries tooling or a decision that has to be settled before the tag, and that file is checks only.
-**None of the three gates the tag.** A fourth, B15, is a carve-out from the integration-test plan rather than
-the whole thing.
-
-**The architecture check does not come with B10.** The branch fixes all 27 comment sites; the check that keeps
-them fixed is CI work and stays on the board. A check landing days before a tag is a red build with nothing to
-gain.
+**Three exceptions were taken earlier and are all in.** Dropping `--self-contained` (2026-08-10, 150.2 MB ->
+103.2 MB, proven by beta 2). The release-pipeline rebuild (2026-08-10 - a prerelease tag is the only free test
+that pipeline will ever get). The architecture restructure (2026-08-14 - merged, green, and proven not to move
+a single schema).

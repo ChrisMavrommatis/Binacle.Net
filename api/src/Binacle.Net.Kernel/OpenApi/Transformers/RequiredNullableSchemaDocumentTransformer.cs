@@ -3,15 +3,13 @@ using Microsoft.OpenApi;
 
 namespace Binacle.Net.Kernel.OpenApi.Transformers;
 
-// A property typed `SomeEnum?` but marked required renders as `oneOf: [null, $ref]` — the generator
-// describes the C# type, which allows null, while the validator rejects it. A client generated from
-// that schema would send null and get a 422. The nullable C# type is deliberate: it is what lets the
-// validator answer with the list of valid values instead of a raw deserializer error, so the schema
-// is what has to give.
+// A property typed `SomeEnum?` but marked required renders as `oneOf: [null, $ref]`: the generator describes
+// the C# type, which allows null, while the validator rejects it, so a generated client would send null and get
+// a 422. The nullable C# type is deliberate - it is what lets the validator answer with the list of valid
+// values instead of a raw deserializer error - so the schema is what gives.
 //
-// This runs at document level because a schema transformer cannot fix it: for a nullable enum the
-// schema transformer is handed the enum's own schema (the one hoisted into components), never the
-// property schema, and the `oneOf` wrapper is added after transformers run.
+// Document level, because a schema transformer cannot fix it: for a nullable enum it is handed the enum's own
+// hoisted schema, never the property schema, and the `oneOf` wrapper is added after transformers run.
 internal class RequiredNullableSchemaDocumentTransformer : IOpenApiDocumentTransformer
 {
 	public Task TransformAsync(

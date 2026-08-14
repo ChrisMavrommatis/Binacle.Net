@@ -1,7 +1,6 @@
 // mirrors src/utils/createHeader.ts
-// Picks each section's width from the largest value in it: bin dims set the bin width; the largest item dims
-// across all items set the item-dims width; likewise item coords. Mirrors C# Header.Create. Only Eight and
-// Sixteen exist now (the 32/64-bit buckets are gone). Curated literals, no faker — one value per bucket.
+// Picks each section's width from the largest value in it. Mirrors C# Header.Create. Curated literals, no
+// faker: one value per bucket.
 import {createHeader} from "../../src/utils";
 import {Width} from "../../src/models";
 import {bin, item} from "../support/builders";
@@ -53,8 +52,8 @@ describe("createHeader", () => {
 		expect(header.itemCoordinatesWidth).toBe(Width.Eight);
 	});
 
-	// ports C#: ValidationHelper.ThrowIfTooManyItems. The count rides in a uint16, so 65535 is the most items
-	// ViPaq can hold. The guard only counts, so cheap identical 1x1x1 items at the origin are enough.
+	// ports C#: ValidationHelper.ThrowIfTooManyItems. The count rides in a uint16, so 65535 is the ceiling.
+	// The guard only counts, so identical 1x1x1 items are enough.
 	describe("enforces the item-count limit", () => {
 		test("accepts 65535 items", () => {
 			const items = Array.from({length: 65535}, () => item(1, 1, 1, 0, 0, 0));

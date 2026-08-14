@@ -1,6 +1,5 @@
-// Ports C#: Providers/VectorReader.cs. Reads a shared vector file from vipaq/test-vectors/ into its rows.
-// C# embeds the files as resources; here we read them from disk with fs — the SAME files, so neither
-// side can drift on the wire format. Edit a case in the JSON, not here.
+// Ports C#: Providers/VectorReader.cs. Reads a shared vector file from vipaq/test-vectors/ into its rows. C#
+// embeds the same files as resources, so neither side can drift on the wire format. Edit a case in the JSON.
 // Not a *.test.ts file, so jest does not run it.
 
 import * as fs from "fs";

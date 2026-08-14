@@ -1,10 +1,7 @@
-// Byte-exact assertions for the wire format.
+// Byte-exact assertions for the wire format. Compared as hex so a failure reads "00 01 00 0a ..." vs
+// "00 01 00 0b ..." and shows which byte moved, instead of jest's dense numeric array diff.
 //
-// The format is byte-exact, so most failures are "wrong byte at index N". We compare as hex so the
-// failure line reads "00 01 00 0a ..." vs "00 01 00 0b ..." and you can see which byte moved, instead
-// of jest's dense numeric array diff. Every byte test fails the same readable way.
-//
-// Not a *.test.ts file, so jest does not run it — it is imported by the tests that do.
+// Not a *.test.ts file, so jest does not run it.
 
 export function toHex(bytes: Uint8Array | number[]): string {
 	return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join(" ");

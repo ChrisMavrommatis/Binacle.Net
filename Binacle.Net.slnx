@@ -44,11 +44,11 @@
     </Project>
   </Folder>
   <Folder Name="/lib/src/">
-    <Project Path="lib/src/Binacle.Lib.Abstractions/Binacle.Lib.Abstractions.csproj" />
     <Project Path="lib/src/Binacle.Lib/Binacle.Lib.csproj" />
   </Folder>
   <Folder Name="/lib/test/">
     <Project Path="lib/test/Binacle.Lib.UnitTests/Binacle.Lib.UnitTests.csproj" />
+    <Project Path="lib/test/Binacle.Lib.TestsKernel/Binacle.Lib.TestsKernel.csproj" />
     <Project Path="lib/test/Binacle.Lib.Benchmarks/Binacle.Lib.Benchmarks.csproj" />
     <Project Path="lib/test/Binacle.Lib.PerformanceTests/Binacle.Lib.PerformanceTests.csproj" />
   </Folder>
@@ -85,6 +85,7 @@
   <Folder Name="/shared/src/">
     <Project Path="shared/src/Binacle.CompactNotation/Binacle.CompactNotation.csproj" />
     <Project Path="shared/src/Binacle.Geometry/Binacle.Geometry.csproj" />
+    <Project Path="shared/src/Binacle.Packing/Binacle.Packing.csproj" />
   </Folder>
   <Folder Name="/shared/test/">
     <Project Path="shared/test/Binacle.CompactNotation.UnitTests/Binacle.CompactNotation.UnitTests.csproj" />

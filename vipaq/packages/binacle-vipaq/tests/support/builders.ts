@@ -1,5 +1,5 @@
-// Shared test data builders. Curated literals, no faker — inputs are deterministic so golden byte
-// tests stay exact. Use anItem({...}) to override only the field a test cares about.
+// Shared test data builders. Curated literals, no faker, so golden byte tests stay exact. Use anItem({...}) to
+// override only the field a test cares about.
 //
 // Not a *.test.ts file, so jest does not run it.
 

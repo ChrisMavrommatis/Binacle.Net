@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Binacle.CompactNotation;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Kernel.Logs.Models;
 
 namespace Binacle.Net.DiagnosticsModule.Logs.Models;
@@ -16,10 +15,9 @@ public class AlgorithmOperationLogChannelRequest : ILogEntryConvertible<PackingL
 	{
 	}
 
-	// Builds the channel message with no copy: List<TBin> is an IReadOnlyCollection<TBin>, and
-	// IReadOnlyCollection<out T> is covariant, so a list of IIdentifiable* flows straight in. We retain references
-	// (not snapshots) — safe because the stored types are read-only and the algorithm has finished reading by the
-	// time we enqueue. All shaping happens later, in ToLogEntry (background).
+	// No copy: IReadOnlyCollection<out T> is covariant, so a list of IIdentifiable* flows straight in. References
+	// are retained rather than snapshotted, which is safe because the stored types are read-only and the
+	// algorithm has finished reading by the time this is enqueued. Shaping happens later in ToLogEntry.
 	public static AlgorithmOperationLogChannelRequest From<TBin, TItem, TParams>(
 		List<TBin> bins,
 		List<TItem> items,
@@ -74,9 +72,7 @@ public class AlgorithmOperationLogChannelRequest : ILogEntryConvertible<PackingL
 			.ToDictionary(group => group.Key, group => toCompact(group.First()));
 	}
 
-	// Group items by id into compact strings.
-	// Several items can share an id (e.g. multiple packed units of the
-	// same box), so each id maps to an array.
+	// Several items can share an id (multiple packed units of the same box), so each id maps to an array.
 	private static IReadOnlyDictionary<string, string[]> GroupCompact<T>(
 		IEnumerable<T> items,
 		Func<T, string> toCompact)

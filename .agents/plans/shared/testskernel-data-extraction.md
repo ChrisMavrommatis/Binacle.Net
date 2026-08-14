@@ -1,13 +1,20 @@
+---
+description: TestsKernel - grow the shared fixture cases
+paths:
+  - "shared/**"
+---
+
 # TestsKernel — grow the shared fixture cases
 
-**Status (2026-07-15):** The data move is **done** — Bischoff suite, custom-problems, and result-selection are all
-out of the kernel and embedded from `shared/data/` by manifest name (the kernel's `Algorithms/Data/` tree is empty,
-tests green). Only the "review and grow the cases" work below remains. When nothing pending is left, delete this file.
+**Status (2026-08-13):** The data move is **done**, and the fixtures have since been split by consumer. Bischoff
+suite and custom-problems stay in `shared/data/` because more than one slice reads them; result-selection moved to
+`lib/data/result-selection/` and is embedded by the new `lib/test/Binacle.Lib.TestsKernel`, whose manifest prefix
+is `ResultSelection.`. Only the "review and grow the cases" work below remains. Delete this file when nothing
+pending is left.
 
-Fixtures now live in `shared/data/` — one place they're generated or hand-authored, one place they live. A new JSON
-file dropped into the right `shared/data/*` folder is picked up automatically (the `.csproj` embeds each set with a
+A new JSON file dropped into the right data folder is picked up automatically (each `.csproj` embeds its set with a
 `*.json` glob), so growing coverage is just authoring files. Provenance and the thpack1–7 vs thpack8/9 caveat live
-in the `shared/data/*/README.md` files — read those before touching the data.
+in the `README.md` beside each data folder — read those before touching the data.
 
 ## Pending — review and grow result-selection
 
@@ -16,7 +23,8 @@ Result selection has the thinnest coverage: a single `baseline.json` per case (B
 - Add scenarios that exercise the tie-breaks and edge picks each selector is meant to make (e.g. equal-fit bins
   where the smallest wins; algorithms that tie on fit but differ on efficiency; a bin that only one algorithm can
   fill). Name cases so the intent is obvious.
-- Cross-check against the selectors in `ResultSelection/Providers/` so every branch has at least one scenario.
+- Cross-check against the selectors in `lib/src/Binacle.Lib/ResultSelection/` so every branch has a scenario.
+  The fixtures and their providers are in `lib/data/result-selection/` and `lib/test/Binacle.Lib.TestsKernel/`.
 
 ## Pending — add more problems to `custom-problems`
 

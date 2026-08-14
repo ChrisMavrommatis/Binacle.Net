@@ -1,7 +1,6 @@
-// Ports C#: Providers/Width/WidthInvalidProvider.cs. Kind splits the rows into two sets, each a value its picker
-// must reject: dimensions ("LxWxH") and coordinates ("X,Y,Z"). field is the offending field's PascalCase name. A
-// row is one kind, never both. getCoordinatesWidth needs a full item, so coordinate cases carry a probe with
-// dims defaulted to 1 (the picker reads only x/y/z).
+// Ports C#: Providers/Width/WidthInvalidProvider.cs. Kind splits the rows into two sets, each a value its
+// picker must reject. field is the offending field's PascalCase name. getCoordinatesWidth needs a full item, so
+// coordinate cases carry a probe with dims defaulted to 1.
 // Not a *.test.ts file, so jest does not run it.
 
 import {readVectors} from "../support/vectorReader";

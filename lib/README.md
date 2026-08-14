@@ -7,8 +7,8 @@ items, it works out whether they fit (**fit**) and packs as many as it can (**pa
 
 | Path | What it is |
 |---|---|
-| `src/Binacle.Lib.Abstractions` | Interfaces only — shared by `Binacle.Lib` and the API layer. No dependencies. |
-| `src/Binacle.Lib` | The algorithms, processors, and result building. |
+| `src/Binacle.Lib` | The algorithms, processors, and result building. The only project in `src`. |
+| `data/result-selection` | Hand-authored result-selection fixtures. Read by this slice's tests only. |
 
 ## How it works
 
@@ -41,6 +41,7 @@ then picks the best outcome across algorithms or across bins.
 
 | Project | Run with | Covers |
 |---|---|---|
+| `test/Binacle.Lib.TestsKernel` | — | Fixture kernel for result selection. Embeds `data/result-selection`. |
 | `test/Binacle.Lib.UnitTests` | `just test lib-unit` | All algorithm versions × scenarios; result selection |
 | `test/Binacle.Lib.PerformanceTests` | `./tooling/performance.lib.sh` | Algorithm performance (console runner) |
 | `test/Binacle.Lib.Benchmarks` | `./tooling/benchmarks.lib.sh` | BenchmarkDotNet microbenchmarks |

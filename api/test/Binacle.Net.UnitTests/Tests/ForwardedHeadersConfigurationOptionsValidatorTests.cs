@@ -2,9 +2,9 @@ using Binacle.Net.Configuration;
 
 namespace Binacle.Net.UnitTests;
 
-// Forwarded headers decide who the caller is, and the caller is what rate limiting partitions on and what the
-// health check allow-list matches. A configuration that trusts the wrong thing does not fail visibly — it just
-// starts believing a header anyone can write, so these rules have to hold at startup.
+// Forwarded headers decide who the caller is, which is what rate limiting partitions on and what the health
+// check allow-list matches. A configuration that trusts the wrong thing does not fail visibly - it starts
+// believing a header anyone can write - so these rules have to hold at startup.
 [Trait("Behavioral Tests", "Ensures forwarded headers configuration is validated as expected")]
 public class ForwardedHeadersConfigurationOptionsValidatorTests
 {
@@ -26,8 +26,8 @@ public class ForwardedHeadersConfigurationOptionsValidatorTests
 		ForwardLimit = forwardLimit
 	};
 
-	// The framework treats "nothing trusted" as "check nothing", so it believes every caller's header rather than
-	// matching none of them. Refusing to start is the only safe answer, and it is the rule most worth pinning.
+	// The framework treats "nothing trusted" as "check nothing", so it believes every caller's header rather
+	// than matching none. Refusing to start is the only safe answer.
 	[Fact]
 	public void Enabled_With_Nothing_Trusted_Fails_Validation()
 	{
@@ -44,8 +44,8 @@ public class ForwardedHeadersConfigurationOptionsValidatorTests
 		this.validator.Validate(options).IsValid.ShouldBeFalse();
 	}
 
-	// Any one of the three trust sources is enough — an operator naming their proxy explicitly should not also
-	// have to leave the broad flags on.
+	// Any one of the three trust sources is enough: naming a proxy explicitly should not also require the broad
+	// flags.
 	[Theory]
 	[InlineData(true, false, null)]
 	[InlineData(false, true, null)]
@@ -65,8 +65,8 @@ public class ForwardedHeadersConfigurationOptionsValidatorTests
 		this.validator.Validate(options).IsValid.ShouldBeTrue();
 	}
 
-	// Disabled is the default, and nothing inside the When gate applies — an operator switching the feature off
-	// should not have to keep a valid trust list around.
+	// Disabled is the default, and nothing inside the When gate applies, so switching the feature off does not
+	// require keeping a valid trust list.
 	[Fact]
 	public void A_Disabled_Configuration_Needs_No_Trusted_Source()
 	{
@@ -92,9 +92,8 @@ public class ForwardedHeadersConfigurationOptionsValidatorTests
 		this.validator.Validate(options).IsValid.ShouldBeTrue();
 	}
 
-	// Entries are read through IPEntry, so a spelling that parses to a different host than it reads as is refused
-	// here rather than trusted. The exhaustive table lives with the parser in Binacle.Net.Kernel.UnitTests; these
-	// rows prove this list is held to it.
+	// Entries are read through IPEntry, so a spelling that parses to a different host is refused rather than
+	// trusted. The exhaustive table lives with the parser; these rows prove this list is held to it.
 	[Theory]
 	[InlineData("not-an-address")]
 	[InlineData("172.16.0.1-172.16.0.9")]
@@ -128,8 +127,8 @@ public class ForwardedHeadersConfigurationOptionsValidatorTests
 		this.validator.Validate(OptionsWith(forwardLimit: forwardLimit)).IsValid.ShouldBeTrue();
 	}
 
-	// A whole-object rule reports with an empty property name unless it is named, which would leave the operator
-	// with a sentence and no clue which section produced it.
+	// A whole-object rule reports with an empty property name unless it is named, leaving the operator a
+	// sentence with no clue which section produced it.
 	[Fact]
 	public void The_Nothing_Trusted_Error_Names_The_Section()
 	{

@@ -2,7 +2,6 @@ using System.Text.Json;
 using Binacle.Net.UIModule.Models;
 using Binacle.Net.UIModule.Services;
 using Binacle.Net.UIModule.ViewModels;
-using Binacle.Lib;
 using Binacle.CompactNotation;
 using Binacle.ViPaq;
 using Microsoft.AspNetCore.Components;
@@ -30,9 +29,8 @@ public partial class ProtocolDecoder : AppletComponentBase
 
 	private const string SavedResultsKey = "ProtocolDecoderSavedResults";
 
-	// Bump when the ViPaq wire changes. "2" is the rebuilt wire (PROTOCOL.md). The stored value carries its own
-	// version; anything without a matching version — including the old bare array of tokens — is from a previous
-	// format and cannot be decoded, so it is discarded on load.
+	// Bump when the ViPaq wire changes. "2" is the rebuilt wire (PROTOCOL.md). Anything without a matching
+	// version, the old bare array of tokens included, cannot be decoded and is discarded on load.
 	private const int CurrentSchemaVersion = 2;
 
 	// The stored shape: the saved tokens plus the schema version that wrote them.
@@ -61,9 +59,8 @@ public partial class ProtocolDecoder : AppletComponentBase
 		await base.OnAfterRenderAsync(firstRender);
 	}
 
-	// Reads the stored tokens, but only if they carry the current schema version. Anything else — the old bare
-	// array, an older version, or corrupt JSON — is from a previous ViPaq wire and cannot be decoded, so it is
-	// discarded and the user is told once.
+	// Only reads tokens carrying the current schema version. Anything else - the old bare array, an older
+	// version, corrupt JSON - cannot be decoded, so it is discarded and the user is told once.
 	private async Task<string[]> LoadSavedResultsAsync()
 	{
 		try

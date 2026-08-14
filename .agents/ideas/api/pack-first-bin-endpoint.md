@@ -1,3 +1,9 @@
+---
+description: pack/first-bin endpoint
+paths:
+  - "api/**"
+---
+
 # Idea: pack/first-bin endpoint
 
 **Status:** Unvetted idea. Was planned for v4, then pulled out — it may target v3.1 instead. Nothing is decided.

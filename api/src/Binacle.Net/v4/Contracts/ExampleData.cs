@@ -1,11 +1,10 @@
 namespace Binacle.Net.v4.Contracts;
 
-// The sample geometry every OpenAPI example is built from, in one place. Each member is a method, not a field:
-// callers mutate what they get back (WithViPaqData and WithVolumePercentages both write to the instance they
-// are handed), so every caller needs its own copy.
+// The sample geometry every OpenAPI example is built from. Each member is a method, not a field: callers
+// mutate what they get back, so each needs its own copy.
 //
-// The layouts here are what the algorithms actually produce for Items() in a 10x40x60 bin, which is why the
-// packed dimensions are rotations of the requested ones.
+// The layouts are what the algorithms actually produce for Items() in a 10x40x60 bin, which is why the packed
+// dimensions are rotations of the requested ones.
 internal static class ExampleData
 {
 	// Every example bin is this shape unless it is one of a set — see Bins.
@@ -58,9 +57,8 @@ internal static class ExampleData
 		UnpackedBox.From("box_1", 2),
 	];
 
-	// Derived, not written down, for the same reason the ViPaq token is (see ViPaqExampleExtensions): a
-	// hand-typed percentage drifts from the items beside it. The partially-packed examples had in fact drifted
-	// — they claimed 79.37/12.58 for a layout the formula puts at 94.74/15.00. Formula per $lib/result-building.
+	// Derived, not written down: a hand-typed percentage drifts from the items beside it. The partially-packed
+	// examples had drifted, claiming 79.37/12.58 for a layout the formula puts at 94.74/15.00.
 	internal static T WithVolumePercentages<T>(this T response)
 		where T : BinResponseBase
 	{

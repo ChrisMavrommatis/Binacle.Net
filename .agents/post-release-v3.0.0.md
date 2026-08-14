@@ -1,89 +1,115 @@
-# Post-release - the days right after Binacle.Net v3.0.0
+---
+description: Post-release - the checks to run once Binacle.Net v3.0.0 is out
+---
 
-**Status:** Do these once v3.0.0 is out. None gate the release. Like the release plan, this coordinates other
-files and nothing points back at it. Delete it once the list is clear - the tag does not delete it, working
-through it does.
+# Post-release - the checks to run once v3.0.0 is out
 
-**The cap, and it is tighter than it was.** Only things that must happen *because this release just shipped*
-belong here. Not "soon", not "in 3.0.x" - **now, because of the tag.** Everything else is standing work and
-lives on the board.
+**Status:** Do these once v3.0.0 is tagged and the pipeline has run. **None of them gate anything** - the
+release is already out by the time this file opens.
 
-**Sharpened on 2026-08-14: this file is checks only.** Every item is something you look at, run or read back -
-no tooling to build, no decision to take, nothing to figure out. Three items arrived here that day from the
-board (the Docker Hub page, image verification, tag immutability) and went straight out again into the release
-plan, because each carried real work that has to be settled before the tag. **What stayed is the confirmation
-half of all three.**
+**This file is self-contained and it is checks only.** Every item is something you look at, run or read back.
+No tooling to build, no decision to take, nothing to figure out, and **nothing here links to a plan** - if an
+item needed a plan, it was not a post-release check.
 
-That is the test for anything proposed for this file. If working it needs a decision, a credential, a new file
-or a workflow, it is not a post-release check - it belongs in the release plan while there is still time, or on
-the board if there is not.
+**That is the test for anything proposed for this file.** If working it needs a decision, a credential, a new
+file or a workflow, it belongs in the release plan while there is still time, or on the board if there is not.
 
-Rewritten 2026-08-07. This file had become a second backlog, which its own cap warned against: it was carrying
-the CI plans, the UI client migration, the benchmark ledger, the TestsKernel fixtures and the v4 flip. None of
-those are consequences of shipping v3.0.0 - they are just the next things to do. They moved to `board.md`,
-which is permanent and exists to hold exactly that.
+**Delete this file once the list is clear.** The tag does not delete it; working through it does.
 
-**Same index rule as the release plan.** When a plan lands its file is deleted - tick the row and drop the link
-in the same change, leaving the text.
+Rewritten 2026-08-14, when the release scope was reset.
 
 ---
 
-## Do these because the tag just happened
+## Confirm the release landed
 
 - [ ] **Smoke the published image.** `just smoke all binacle/binacle-net:3.0.0`. About a minute, nothing to
       bring up.
 
-      **This is a confirmation now, not the safety net it used to be.** The old workflow pushed to Docker Hub
-      without ever running the image, so this manual run was the only thing between a broken image and the
-      people who pull it. Since 2026-08-11 the pipeline smokes the GHCR copy before anything is copied across.
-      What it still buys is the one thing the pipeline cannot check: that the *copy* landed something runnable,
-      not just something with the right digest.
+      **This is a confirmation, not a safety net.** The pipeline smokes the GHCR copy before anything is copied
+      across, so a broken image cannot reach Docker Hub. What this still buys is the one thing the pipeline
+      cannot check: that the **copy** landed something runnable, not just something with the right digest.
 
-- [ ] **Confirm `3.0` resolves on Docker Hub, and that `latest` moved.** Nine files were bumped from
-      `3.0.0-beta.1` to `3.0` in the last change before the tag - six pins plus `README.md`, `samples/README.md`
-      and `samples/docker/README.md`. Until the release image is published that tag does not exist, so this is
-      the check that `main` is not pointing at nothing. A2 verified a prerelease moved neither `latest` nor the
-      minor tag; this is the same check for the real release, where both are expected to move.
+- [ ] **Confirm `3.0` resolves on Docker Hub, and that `latest` moved.** Both are written for the first time by
+      this release - every beta withheld them. Until now `latest` resolved to `2.1.1`.
 
-      **Check the signature and the attestations while you are here** - `cosign verify` against the digest, and
-      `docker buildx imagetools inspect` for the SBOM and provenance entries. Both have run against the real
-      Docker Hub repo once already: beta 2 was re-cut on 2026-08-13, after the prerelease skip was reversed, so
-      the copy and the release-side signature are proven rather than first-run. What is new at v3.0.0 is only
-      that the copy writes three tags instead of one.
+- [ ] **Confirm `3.0.0` resolves, and that all three tags share one digest.**
+      `docker buildx imagetools inspect binacle/binacle-net:3.0.0 --format '{{ .Manifest.Digest }}'`, then the
+      same for `3.0` and `latest`. Three names, one hash, or the copy did not do what it claims.
 
-      **Check the repo landing page by eye while you are here.** `README.md` is the one that carried a
-      beta-conditional sentence ("Until then, pin `binacle/binacle-net:3.0.0-beta.1`") and it is the most read
-      file in the repo. A stale beta pin there outlives every other miss. Note that **both betas are on Docker
-      Hub** - `3.0.0-beta.1` and `3.0.0-beta.2`, immutable tags only - so a stale pin still resolves to a real
-      image and will not fail loudly.
+- [ ] **Verify the signature and the attestations against the real `3.0.0`.**
+      `cosign verify binacle/binacle-net:3.0.0` with **both** the certificate-identity regexp and the OIDC
+      issuer - the identity flag is the entire value, since anyone with a GitHub account can sign anything.
+      Then `docker buildx imagetools inspect` for the SBOM and provenance entries.
 
-- [ ] **Publish the Docker Hub page, then read it.** The file and the workflow were built before the tag; the
-      page could not go live because its text names `3.0`. Run the workflow, then look at the rendered page:
-      the description names 3.x rather than `2.1.1`, the hand-maintained tag list is gone, the logo is there
-      and the categories took. **This is a publish and an eyeball, not a rewrite** - if it turns into a rewrite,
-      the pre-tag half did not happen and it goes back to a plan.
+      **Check both registries.** A signature is a referrer stored beside the image rather than inside the
+      index, so it does not survive the copy and the pipeline signs twice. Checking one proves nothing about
+      the other.
 
-- [ ] **Run the verification recipe against the real `3.0.0`.** It was proven against `3.0.0-beta.2` and
-      against a two-tag copy. v3.0.0 is the first time the copy writes three tags, so run the five checks
-      once more and confirm the surfaces that now tell users about it are accurate - the invocation on the
-      page has to be the one that works.
+      All of this has run green against `3.0.0-beta.2` already. What is new at v3.0.0 is only that the copy
+      writes three tags instead of one.
+
+- [ ] **Read the repo landing page by eye.** `README.md` carried a beta-conditional sentence - *"Until then,
+      pin `binacle/binacle-net:3.0.0-beta.1`"* - and it is the most read file in the repo. **A stale beta pin
+      there outlives every other miss.** Note that both betas are still on Docker Hub, so a stale pin resolves
+      to a real image and **will not fail loudly.** You have to look.
 
 - [ ] **Confirm nothing froze.** The immutability rule was corrected before the tag and the switch was left
-      off, so v3.0.0's publish should have written `3.0.0`, `3.0` and `latest` with no interference. Read the
-      repository's `immutable_tags_settings` back and check the corrected rule is still the value stored.
-      **The switch decision belongs after this**, with a real release behind it.
+      off, so the publish should have written `3.0.0`, `3.0` and `latest` with no interference. Read
+      `immutable_tags_settings` back from the repository API and check the corrected rule is still the value
+      stored.
 
-- [ ] **Delete the release set.** `release-v3.0.0.md` goes once the release is out and verified. This file goes
-      when its own list is clear. `release-notes-v3.0.0.md` is already gone - deleted 2026-08-11 when the
-      release body moved to `CHANGELOG.md`, which is permanent and stays.
+## Read what the release published
 
-- [ ] **Check the docs site is actually on v3.0.x.** B8 flipped `current` forward as part of releasing the
-      docs. Confirm `/version/latest/` lands on `v3.0.x` and the version picker shows four versions. This is
-      the item most likely to have been silently skipped, because nothing fails when it is - the site just
-      keeps presenting v2.1.x.
+- [ ] **Read the Docker Hub page - the release already published it.** The page update runs inside the release
+      workflow now, so there is nothing to trigger by hand. Look at the rendered page: the description names 3.x
+      rather than `2.1.1`, the version placeholders were substituted with the real numbers, the hand-maintained
+      tag list is gone, the verification section is there, and the logo and categories took.
 
-## Everything else
+      **This is an eyeball, not a rewrite.** If it turns into a rewrite, the pre-tag half did not happen.
 
-On the board. The CI work, the architecture check, the UI clients, the v4 flip, the `Parallel*` decision, the
-benchmark ledger and the TestsKernel fixtures are all there, grouped by area with their blockers named. The
-board also carries the order they should be worked in. Pick from there once this list is clear.
+      **This is the first run of that step**, and the first time the page goes from describing 2.x to describing
+      3.x - so it is worth reading properly rather than glancing at.
+
+- [ ] **Run the verification checks against the real `3.0.0`, from a clean shell.** They were proven against
+      `3.0.0-beta.2` and against a two-tag copy. This is the first time the copy writes three tags. **Confirm
+      the invocation printed on the Docker Hub page and in `SECURITY.md` is the one that actually works** - a
+      published command that fails reads as our bug.
+
+- [ ] **Check the docs site is on v3.0.x.** Confirm `/version/latest/` lands on `v3.0.x` and the version picker
+      shows four versions. **This is the item most likely to have been silently skipped**, because nothing
+      fails when it is - the site just keeps presenting v2.1.x.
+
+## Two loose ends the release could not close
+
+- [ ] **The credential-free pull.** `3.0.0-beta.2` was deployed to the test server, so the host reaches GHCR
+      and the public package answers it. What is unproven is whether that host did it **without** a stored
+      credential. Only open if the test server has a `ghcr.io` entry in its docker config. A
+      `docker logout ghcr.io` and a re-pull closes it.
+
+- [ ] **Decide the immutability switch, now that a real release is behind it.** The rule is corrected and the
+      switch is off. Turning it on means testing it on a scratch repo first - there is no undo, and an
+      immutable tag cannot be deleted either, so a release tag pushed by mistake is permanent. **If you decide
+      not to turn it on, write that down as a decision and drop the plan.** Leaving it as a permanently open
+      question is the one outcome with no value.
+
+## Tidy up
+
+- [ ] **Delete `release-v3.0.0.md`** once the release is out and verified.
+- [ ] **Move anything left in it to the board** rather than carrying it forward. If it was not done for the
+      release, it is standing work now.
+- [ ] **Delete this file** when its own list is clear.
+
+`release-notes-v3.0.0.md` is already gone - deleted 2026-08-11 when the release body moved to `CHANGELOG.md`,
+which is permanent and stays.
+
+## Then what
+
+**The board.** It holds every plan and idea not tied to this release, grouped by area with blockers named, and
+it carries a recommended order.
+
+**Three things were held back from v3.0.0 and are waiting there:** the heavy architecture tools (ArchUnitNET,
+dependency-cruiser, lychee), CI gates 2 and 3, and the Blazor half of the UI test harness that the coverage gate
+hangs on. **Each is waiting on something specific**, and the board row names it.
+
+**The first thing to do is not a build.** The ServiceModule direction decision places five ideas, two one-liners
+and the Azure Storage removal question in one sitting. **Pick from the board once this list is clear.**

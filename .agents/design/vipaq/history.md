@@ -1,6 +1,8 @@
 ---
 id: vipaq/history
 description: ViPaq design history — superseded throwaway-prototype measurements (2026-07-05) that informed the locked decisions. Reference only, not current truth.
+paths:
+  - "vipaq/**"
 ---
 
 # ViPaq — design history
@@ -66,3 +68,18 @@ The original decision scoped the codec race as a throwaway: run it once, record 
 permanent ruler — the worry being that bolting an experiment onto the ruler stops it being comparable over time.
 Reversed because the race is not only about the codec: it also settles row-major vs columnar (a permanent concern)
 and fixes the compressed-vs-raw-protobuf comparison bug. So the codecs became permanent harness fixtures.
+
+## Where the deleted test files went
+
+Recovered 2026-08-13 from comments during the comment-thinning pass. The v2 rebuild (D11) deleted several test
+files and folded their cases into new ones. Nothing recorded where they went, so "was this ever covered?" had no
+answer outside the comments that are now gone.
+
+| Deleted | Absorbed by | What happened to the cases |
+|---|---|---|
+| `ProtocolExtensionsTests`, `ProtocolExtensionsBehaviorTests` | `Tests/Protocol/LayoutCodecTests.cs` | The old extensions wrote and read a dimensions block field-by-field at a chosen width; that job moved to the layout codecs. "Unsupported BitSize rejected" became "LayoutCodecFactory rejects an unknown Layout code"; the over-ceiling read-reject case moved to the width-invalid vectors. |
+| `BitSizeHelperTests` | `Tests/Width/WidthSelectionTests.cs` | Its `255 -> Eight` / `256 -> Sixteen` rows now live in `width-selection.json`. |
+| `BitSizeHelperSaturationTests` | `Tests/Width/WidthInvalidTests.cs` | The old code capped every type at `2^53-1`; those cases became the "exceeds max (65536)" rows. |
+| `encodingInfo.test.ts`, `writeEncodingInfoToBuffer.test.ts` | `packages/binacle-vipaq/tests/utils/header.test.ts` | Both were written for the 1-byte header era. |
+| `compressBuffer.test.ts`, `getDecodingDataStream.test.ts` | `tests/compression.test.ts`, `tests/decodeInvalid.test.ts` | Deleted with the reason "compression is deferred", which D16 then overtook - but the coverage came back in the v2 shape rather than as the old files. Round-trip per codec, deflate-vs-gzip wrapper size and "rejects bytes that are not its stream" are in `compression.test.ts`; the uncompressed-passthrough case is its `noOp leaves the body identical` test; the reserved-version rejection moved to the shared `decode-invalid.json` vectors. Only the gzip-magic-bytes assertion has no direct successor. |
+

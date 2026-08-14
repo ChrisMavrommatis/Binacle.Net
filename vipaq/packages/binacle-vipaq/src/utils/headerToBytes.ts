@@ -1,10 +1,9 @@
 import {Header, Version} from "../models";
 import {widthByteCount} from "./widthByteCount";
 
-// Ports C#: Header.ToBytes. Packs the header into its two wire bytes (PROTOCOL.md §2.1, §2.2). A header a caller
-// built by hand can still be unwritable — a reserved version or a reserved width must never reach the wire — so
-// those are checked here (widthByteCount throws on a reserved width). Both are encode-side caller errors, not
-// malformed input.
+// Ports C#: Header.ToBytes. Packs the header into its two wire bytes (PROTOCOL.md §2.1, §2.2). A hand-built
+// header can still be unwritable: a reserved version or width must never reach the wire, so both are checked
+// here (widthByteCount throws on a reserved width). Caller errors, not malformed input.
 export function headerToBytes(header: Header): Uint8Array<ArrayBuffer> {
 	if (header.version !== Version.Version1) {
 		throw new Error(`This implementation writes only version ${Version.Version1}`);

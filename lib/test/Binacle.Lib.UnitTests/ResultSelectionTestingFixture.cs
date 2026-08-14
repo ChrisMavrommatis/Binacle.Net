@@ -1,7 +1,6 @@
 using Binacle.Lib.Abstractions;
-using Binacle.Lib.Abstractions.Models;
-using Binacle.TestsKernel.ResultSelection.Models;
-using Binacle.TestsKernel.ResultSelection.Providers;
+using Binacle.Lib.TestsKernel.ResultSelection.Models;
+using Binacle.Lib.TestsKernel.ResultSelection.Providers;
 
 namespace Binacle.Lib.UnitTests;
 

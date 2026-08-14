@@ -7,6 +7,10 @@ also_update:
   - api/modules/service
   - api/modules/diagnostics
   - api/modules
+paths:
+  - "api/src/Binacle.Net/Config_Files/**"
+  - "api/src/Binacle.Net/Configuration/**"
+
 ---
 
 # Configuration

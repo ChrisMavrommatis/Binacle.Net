@@ -1,36 +1,21 @@
 namespace Binacle.ViPaq;
 
-// The text form of a `Header`, used by the test vectors and the interop generators so a vector can name the
-// exact header its bytes were produced under (PROTOCOL.md §6.1 requires this: byte comparison is only meaningful
-// once the header is pinned).
+// The text form of a `Header`, so a test vector can name the exact header its bytes were produced under
+// (PROTOCOL.md §6.1: byte comparison only means something once the header is pinned).
 //
-// It stays in the library because it is wire-specific — it names `Header`, `Width`, `Layout` and `Version`,
-// which the shared `Binacle.CompactNotation` leaf cannot hold. The geometry notation (dimensions, coordinates,
-// items — `"10x10x10 (0,0,0)"`) is not here and never was; it lives in that leaf.
-//
-// ## The grammar
+// The grammar, six underscore-delimited tokens in wire order:
 //
 //   v{N}_{raw|comp}_{row|col}_{binW}_{itemDimW}_{itemCoordW}
-//
-// Six tokens, underscore-delimited, in wire order — it reads left to right exactly as the two header bytes lay
-// out (`Version, Compressed, Layout | BinW, ItemDim, ItemCoord`). Examples:
 //
 //   v1_raw_row_8_8_8      uncompressed, row-major, all 8-bit (an empty or small pack)
 //   v1_comp_col_16_8_16   compressed, columnar, 16-bit bin dims, 8-bit item dims, 16-bit item coords (Bischoff)
 //
-// Three calls the grammar makes, and why:
+// Version leads and is mandatory. The compressed flag is a bare bit - never `deflate` or `gzip`, because
+// the wire carries no codec field (PROTOCOL.md §6). Widths are only `8` or `16`; reserved codes 2 and 3 never
+// reach the wire, so they have no notation.
 //
-//   - **Version leads and is mandatory.** It is what makes positional parsing forward-safe: the header cannot
-//     gain a field without a version bump, and a bump changes token 0, so `Parse` reads it first and rejects
-//     anything but `v1` — the same stance as `Header.FromBytes`, which reads only `Version1`.
-//   - **The compressed flag is a bare bit — `comp`, never `deflate` or `gzip`.** The header carries no codec
-//     field; the codec is pinned by `Version` (PROTOCOL.md §6). Naming a codec here would imply the wire carries
-//     one, which is the mistake §6 exists to prevent.
-//   - **Widths are only `8` or `16`.** The reserved codes 2 and 3 never reach the wire (`Header.ToBytes`), so
-//     they never reach the notation either; `Parse` and `Format` both reject them.
-//
-// A malformed notation string is a bad label, not a bad blob, so `Parse` throws `FormatException` — the .NET
-// idiom for an unparseable string. `ViPaqFormatException` stays reserved for wire bytes.
+// A malformed notation string is a bad label, not a bad blob, so `Parse` throws `FormatException`.
+// `ViPaqFormatException` stays reserved for wire bytes.
 internal static class HeaderNotation
 {
 	private const char Separator = '_';
@@ -72,8 +57,7 @@ internal static class HeaderNotation
 		};
 	}
 
-	// Only Version1 has a spelling: it is the one version this implementation writes, and reserved codes never
-	// reach the wire, so they have no notation either (mirrors `Header.ToBytes`).
+	// Only Version1 has a spelling - the one version written. Reserved codes never reach the wire.
 	private static string FormatVersion(Version version)
 	{
 		return version switch

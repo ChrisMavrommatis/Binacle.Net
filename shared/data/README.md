@@ -1,6 +1,8 @@
 # Data
 
-Problem datasets used by the benchmarks and performance/regression tests. Three folders:
+Problem datasets used by the benchmarks and performance/regression tests. A set lives here when **more than one
+slice reads it**; a set with a single consumer lives in that slice (result-selection is in `lib/data`, ViPaq's
+packed data in `vipaq/data`). Three folders:
 
 | Folder | What | Consumer |
 | --- | --- | --- |
@@ -9,8 +11,8 @@ Problem datasets used by the benchmarks and performance/regression tests. Three 
 | [`custom-problems/`](custom-problems/README.md) | Hand-authored problems (baseline / complex / simple), same tests-kernel format. | The **tests kernel**. |
 
 `bischoff-suite` and `custom-problems` share the tests-kernel **scenario compact format**: a JSON array where
-each entry is `Name`, `Bin` (`"LxWxH"`), `Metrics`, `Result`, and `Items` (`["LxWxH [Q]"]`). These are the same
-JSON files already embedded in the tests kernel (`Binacle.TestsKernel/Algorithms/Data/`).
+each entry is `Name`, `Bin` (`"LxWxH"`), `Metrics`, `Result`, and `Items` (`["LxWxH [Q]"]`). The tests kernel
+embeds these very files by `Link`, so there is no second copy to keep in step.
 
 `Items` are item **types** with a quantity (`"108x76x30 [40]"`), never *placed* items — there are no x/y/z
 coordinates here. `Metrics` (`ItemsVolume BinVolume ItemsCount Percentage`) is pure arithmetic over `Bin` +

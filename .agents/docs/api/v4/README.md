@@ -5,6 +5,9 @@ verified: 2026-08-13
 check: Endpoint table matches files in api/src/Binacle.Net/v4/Endpoints/; IsExperimental in ApiV4Document.cs matches what this says
 also_update:
   - api/v4/contracts
+paths:
+  - "api/src/Binacle.Net/v4/**"
+
 ---
 
 # v4 API

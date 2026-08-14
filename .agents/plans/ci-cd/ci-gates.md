@@ -1,6 +1,12 @@
+---
+description: CI - make the PR gate mean something
+paths:
+  - ".github/workflows/**"
+---
+
 # CI - make the PR gate mean something
 
-**Status:** Not started. After v3.0.0. Folded on 2026-07-28 from `ci-docker-image-gate`,
+**Status:** Not started. Folded on 2026-07-28 from `ci-docker-image-gate`,
 `ci-all-modules-integration-tests` and `ci-sonar-coverage-gate` - they share a trigger, a workflow and an
 ordering, so the shared parts were being written three times.
 

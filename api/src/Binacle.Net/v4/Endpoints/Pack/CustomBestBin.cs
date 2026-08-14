@@ -1,5 +1,4 @@
 using System.Net.Mime;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.Net.Configuration;
 using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Services;

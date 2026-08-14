@@ -2,7 +2,6 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using Binacle.CompactNotation;
 using Binacle.Lib;
-using Binacle.Lib.Abstractions.Models;
 using Binacle.TestReporting;
 using LibModels = Binacle.Lib.Models;
 
@@ -10,11 +9,9 @@ namespace Binacle.ViPaq.PackedDataGenerator;
 
 // Packs one source family with one algorithm and writes the placed results into a subfolder of
 // vipaq/data/packed. The algorithm rides on the file name as a ".<algo>" suffix, so a second algorithm sits
-// beside this one in the same folder. Packing reproduces the API's exact call path —
-// AlgorithmFactory.Create(...).Execute(Packing).
+// beside this one in the same folder. Packing reproduces the API's exact call path.
 //
-// One generator = one algorithm, fixed for the run, so nothing downstream has to ask which produced a given
-// file. The output is pure geometry and carries no ViPaq bytes, so nothing here touches the wire format.
+// One generator is one algorithm, fixed for the run. The output is pure geometry and carries no ViPaq bytes.
 internal sealed class PackedDataGenerator
 {
 	private static readonly JsonSerializerOptions ReadOptions = new()
@@ -29,12 +26,11 @@ internal sealed class PackedDataGenerator
 		WriteIndented = true,
 		IndentCharacter = '\t',
 		IndentSize = 1,
-		// Keep coordinate commas and 'x' literal instead of \u escapes — the content is plain text, so this is
-		// safe and the committed files stay readable.
+		// Keep coordinate commas and 'x' literal instead of \u escapes, so the committed files stay readable.
 		Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
 	};
 
-	// Where placed results are written, as path segments under the repo root. Each family gets its own subfolder.
+	// Path segments under the repo root. Each family gets its own subfolder.
 	private static readonly string[] OutputRoot = ["vipaq", "data", "packed"];
 
 	private readonly AlgorithmFactory factory;
@@ -45,7 +41,7 @@ internal sealed class PackedDataGenerator
 		this.factory = new AlgorithmFactory();
 	}
 
-	// The caller writes the per-algorithm log lines, so it needs to name the algorithm this generator packs with.
+	// The caller writes the per-algorithm log lines, so it needs this name.
 	public Algorithm Algorithm { get; }
 
 	public async Task<GenerationResult> GenerateAsync(SourceFamily family, RepositoryRootLocator locator)
@@ -94,7 +90,7 @@ internal sealed class PackedDataGenerator
 		var index = 0;
 		foreach (var itemString in scenario.Items)
 		{
-			// Item *types* with a quantity — pass the quantity to the lib Item; the algorithm expands it.
+			// Item types with a quantity: the algorithm expands it.
 			var itemType = CompactNotationParser.ParseDimensionsAndQuantity<int>(itemString);
 			items.Add(
 				new LibModels.Item(
@@ -109,8 +105,8 @@ internal sealed class PackedDataGenerator
 
 		var result = this.factory.Create(this.Algorithm, bin, items).Execute(new PackingOperationParameters());
 
-		// Flag anything that did not fully place. Bischoff instances are PartiallyPacked by design (fill ~98%),
-		// so those leftovers are expected; a NotPacked / EarlyExit is worth a louder note. Still emitted either way.
+		// Bischoff instances are PartiallyPacked by design (fill ~98%), so those leftovers are expected. A
+		// NotPacked / EarlyExit is worth a louder note. Emitted either way.
 		var unpackedCount = result.UnpackedItems.Sum(unpacked => unpacked.Quantity);
 		if (unpackedCount > 0 ||
 			result.Status is not (OperationResultStatus.FullyPacked or OperationResultStatus.PartiallyPacked))
@@ -129,8 +125,7 @@ internal sealed class PackedDataGenerator
 		return sample;
 	}
 
-	// 8 if every bin dimension, item dimension and coordinate fits in a byte; 16 otherwise. This is the width
-	// family the sample belongs to; ViPaq chooses the actual per-section width from the values at encode time.
+	// The sample's width family, not what ViPaq stores: ViPaq picks the per-section width at encode time.
 	private static int DeriveWidthBits(PackedBin bin, IReadOnlyList<PackedItem> items)
 	{
 		var max = Math.Max(bin.Length, Math.Max(bin.Width, bin.Height));

@@ -5,6 +5,9 @@ verified: 2026-07-15
 check: Endpoint list, field names, and enum values match api/src/Binacle.Net/v3/
 also_update:
   - api/v3/contracts
+paths:
+  - "api/src/Binacle.Net/v3/**"
+
 ---
 
 # v3 API

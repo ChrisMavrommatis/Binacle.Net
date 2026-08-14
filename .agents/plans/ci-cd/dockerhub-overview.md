@@ -1,7 +1,14 @@
+---
+description: The Docker Hub repository page
+paths:
+  - ".github/workflows/**"
+---
+
 # The Docker Hub repository page
 
-**Status:** not started. Not a release gate - the page can be fixed by hand at any time. **One thing here is
-ordered against the release though: the page must not go live before v3.0.0.** Section 5 says why.
+**Status:** not started. **The page is published by the release workflow**, in the same run that posts the
+release notes - so the file can land on `main` at any time and nothing goes live until a release writes the tags
+it describes. Section 4 says why, and records that an earlier draft of this plan got the trigger wrong.
 
 The page at `https://hub.docker.com/r/binacle/binacle-net` is typed into a web form and has been since v2.1.1.
 Four things are wrong with it at once:
@@ -134,22 +141,43 @@ Two behaviours of the action to know before writing the workflow:
   Leaving `short-description` unset does not clear the existing short description.
 - It **silently truncates the short description to 100 bytes** with a warning in the log, rather than failing.
 
-**A separate workflow, not a job in the release pipeline.** `update-dockerhub-overview.yml`, on `push` to `main`
-filtered to `paths: .github/dockerhub-overview.md`, plus `workflow_dispatch`.
+### It runs on a release, not on a push - decided 2026-08-14
 
-Three reasons, in order of weight:
+**The page is updated by the release workflow, in the same run that publishes the release notes.** Not by a
+push-triggered workflow of its own.
 
-- **Prose should not need a tag.** A typo on the page would otherwise wait for the next release, or force a
-  throwaway one.
-- **It sidesteps the prerelease question.** A job inside the release pipeline fires on every tag including betas,
-  so it would need a condition - and the pipeline deliberately has no conditional jobs. The narrowing there is
-  metadata-action's, and there is no equivalent trick for a description push.
-- **A failure there is cosmetic; a failure in the pipeline is not.** The release pipeline's jobs are ordered so
-  nothing irreversible happens after a red. A description push has nothing to do with that ordering and should
-  not be able to redden a run that shipped a good image.
+**An earlier draft of this plan said the opposite, and it was wrong.** It proposed `push` to `main` filtered to
+the page's own path. That design makes **landing the file the same act as publishing it**, so the file could
+never sit on `main` waiting for a tag - it had to be held out of the branch, or landed and immediately live with
+text describing tags that did not exist yet. The whole "ordering gate" below existed to manage a hazard the
+trigger created.
 
-The cost is that the page and the tags are updated by two different events. Section 5 removes almost all of what
-that could desynchronise.
+**Publishing on release fixes it at the root.** The page describes the tags a release writes, so the moment
+those tags exist is the moment the page becomes true. One event, one source of truth.
+
+Three things the old design was protecting, and how each is kept:
+
+- **Prose should not need a tag.** **Keep `workflow_dispatch`.** A typo is fixed by a manual run, not by cutting
+  a release.
+- **Prereleases must not touch the page.** **Gate the job on a non-prerelease**, the same rule the moving tags
+  already follow - a beta gets its immutable tag and nothing else, and it must not rewrite a page describing the
+  stable line. The pipeline already makes this distinction inside metadata-action; this makes it a job condition.
+- **A cosmetic failure must not redden a good release.** **Put it last**, after the Docker Hub copy and the
+  signature have succeeded, with nothing depending on it. A page that failed to update is worth seeing in the
+  run; it is not worth failing a release that shipped a correct image.
+
+### Substitute the version at publish time
+
+**This is what stops the page rotting, and it removes the ordering problem permanently rather than for one
+release.** Keep version numbers out of the committed file - use placeholders and let the release job fill them
+in from the version it just published.
+
+Without it the file names `3.0` forever, and it is wrong the day 3.1.0 ships. With it the file is written once
+and every release republishes it correctly, which is the same reason the tag list is being deleted from the page
+in the first place.
+
+Substitute at minimum the exact version and the minor tag. **Everything else on the page should read the same in
+every release**, and anything that cannot is a sign it belongs in the Tags tab rather than in prose.
 
 ## 5. What the page should say
 
@@ -161,17 +189,18 @@ release, to duplicate two pages that maintain themselves, is the reason the page
 which tags move, which never do, and which one to put in a compose file. It changes about once a minor - only the
 pinning example carries a number - so the file stops needing an edit per release.
 
-### The ordering gate - read before publishing anything
+### The constraint the release trigger already satisfies
 
-**The draft below names `3.0`, and that tag does not exist.** Docker Hub currently resolves `latest` to 2.1.1 and
-has no `3.0` row at all. Worse, `3.0` and `latest` will not point at a **signed** image until v3.0.0 is
-published: signing started at beta 2, and both moving tags still resolve to 2.1.1's unsigned digest.
+**Every tag this page names must exist and be signed at the moment the page goes live.** Today `latest` still
+resolves to 2.1.1 and there is no `3.0` row at all; signing started at beta 2, so both moving tags currently
+point at an unsigned digest. A reader running the page today would get `manifest unknown` on the quick start and
+`no signatures found` on the verify - the second reads as our bug rather than as history.
 
-So a reader who ran this page today would get a `manifest unknown` on the quick start and a `no signatures found`
-on the verify - the second of which reads as our bug rather than as history.
+**Publishing from the release job satisfies this by construction**, because the job runs after the copy that
+writes those tags. There is no separate gate to remember and no version of the file that has to be held back.
 
-**Do not publish this page before v3.0.0 ships.** If it has to go up sooner, substitute `3.0.0-beta.2` at every
-occurrence and drop the tag table's `3.0` and `latest` rows, because neither is true yet.
+The one case still worth checking by hand is the **first** run, where the page goes from describing 2.x to
+describing 3.x.
 
 ### Who owns the "Verifying what you pulled" section
 
@@ -346,10 +375,12 @@ at it.
    403s at the widest scope with Admin confirmed, and the only fallback is a password, stop - the rest is not
    worth it.
 3. Get the draft in section 5 read as writing, and settle the short description.
-4. Add `.github/dockerhub-overview.md` and `.github/workflows/update-dockerhub-overview.yml`.
-5. Run it once with `workflow_dispatch` and look at the page.
-6. **Hold the `3.0`-naming version until v3.0.0 is out**, per the ordering gate.
-7. Add the workflow to the ci-cd docs table and its secret to the secrets table. Delete this file.
+4. Add `.github/dockerhub-overview.md`, with placeholders where a version appears. **It can land on `main`
+   whenever** - nothing publishes it.
+5. Add the page step to the release workflow: last, gated on a non-prerelease, substituting the version, with
+   nothing depending on it. Keep `workflow_dispatch` for prose fixes.
+6. Run it once with `workflow_dispatch` and read the rendered page.
+7. Add the step to the ci-cd docs table and its secret to the secrets table. Delete this file.
 
 ## 8. Do not
 
@@ -359,3 +390,9 @@ at it.
 - Name GHCR on the page. It is staging, and the rate-limit reason to mention it no longer exists.
 - Publish a page whose quick start or verify command names a tag that is absent or unsigned.
 - Put the tag list back. It is what rotted the page the first time.
+- **Trigger the page update on a push to its own path.** That makes landing the file the same act as publishing
+  it, which is the trap this plan was rewritten to remove.
+- **Let a failed page update fail the release.** It runs last, after everything irreversible has already
+  succeeded, and nothing depends on it.
+- **Commit a concrete version into the page.** Use a placeholder and substitute it at publish, or the file is
+  wrong the day the next minor ships.

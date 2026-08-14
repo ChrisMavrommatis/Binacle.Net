@@ -1,3 +1,9 @@
+---
+description: a packing-only image variant, without the ServiceModule assemblies
+paths:
+  - "api/**"
+---
+
 # Idea: a packing-only image variant, without the ServiceModule assemblies
 
 **Status:** Unvetted idea. `SERVICE_MODULE` already defaults off — this is about shipping *less*, not changing a

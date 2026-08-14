@@ -2,12 +2,11 @@ using Binacle.CompactNotation;
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// Turns the shared vectors into typed values. Geometry parsing is the shared CompactNotationParser (one grammar
-// for the whole repo); this class forwards to it. Bins and items are the shared Binacle.Geometry models
-// (Dimensions is dimensions-only; Item is the placed model). The standalone ParseDimensions/ParseCoordinates
-// helpers return the shared Binacle.Geometry models too (they exercise the protocol writer in isolation). Header
-// notation stays vipaq-local (it needs Header/Width/Layout/Version). It also owns the test-vector byte tokens.
-// Everything numeric is parsed as `long` — it holds the whole interoperable range [0, 65_535] and is the natural
+// Turns the shared vectors into typed values. Geometry parsing forwards to the shared CompactNotationParser,
+// one grammar for the whole repo, and returns the shared Binacle.Geometry models. Header notation stays
+// vipaq-local because it needs Header/Width/Layout/Version.
+//
+// Everything numeric is parsed as `long`: it holds the whole interoperable range [0, 65_535] and is the natural
 // pair for JS `number`.
 internal static class VectorParser
 {
@@ -41,7 +40,7 @@ internal static class VectorParser
 	public static List<Binacle.Geometry.Item<long>> ParseItems(IEnumerable<string> compactItems)
 		=> CompactNotationParser.ParseItems<long>(compactItems).ToList();
 
-	// Header notation is wire-specific (Header/Width/Layout/Version) — stays on vipaq's own notation.
+	// Header notation is wire-specific, so it stays on vipaq's own notation.
 	public static Header ParseHeader(string notation)
 		=> HeaderNotation.Parse(notation);
 }

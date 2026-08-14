@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <!--
+        Hand-authored result-selection fixtures, sourced from lib/data (one place they're edited, one place they
+        live), not a kernel copy. They sit in the lib slice because the lib unit tests and benchmarks are their
+        only readers; the fixture sets more than one slice reads stay in shared/data.
+        The LogicalName prefix names the purpose, not this assembly, so a rename does not silently break the
+        manifest. One flat entry per case folder (no ** wildcard): a recursive wildcard with %(RecursiveDir)
+        would inject a backslash into LogicalName and corrupt the manifest name.
+    -->
+    <ItemGroup>
+        <EmbeddedResource Include="..\..\data\result-selection\BestAlgorithm\*.json">
+            <Link>ResultSelection\Data\BestAlgorithm\%(Filename)%(Extension)</Link>
+            <LogicalName>ResultSelection.BestAlgorithm.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\..\data\result-selection\BestBin\*.json">
+            <Link>ResultSelection\Data\BestBin\%(Filename)%(Extension)</Link>
+            <LogicalName>ResultSelection.BestBin.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\..\data\result-selection\SmallestBin\*.json">
+            <Link>ResultSelection\Data\SmallestBin\%(Filename)%(Extension)</Link>
+            <LogicalName>ResultSelection.SmallestBin.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\shared\src\Binacle.Packing\Binacle.Packing.csproj" />
+        <ProjectReference Include="..\..\..\shared\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Binacle.Geometry" />
+        <Using Include="Binacle.Packing" />
+    </ItemGroup>
+
+</Project>

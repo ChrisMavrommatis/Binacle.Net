@@ -7,14 +7,11 @@ import {parseHeader} from "../src/headerNotation";
 import {Header} from "../src/models";
 import {Artifact} from "./Artifact";
 
-// Ports C#: InteropArtifactGenerator. Encodes each shared interop input with the TS ViPaq library and writes the
-// bytes (base64) to the interop/ts folder, one file per codec: ts/raw.json, ts/deflate.json, ts/gzip.json.
-// Mirrors the C# generator (which writes interop/cs) off the same input.
+// Ports C#: InteropArtifactGenerator. Encodes each shared interop input with the TS ViPaq library and writes
+// the base64 to interop/ts, one file per codec. Mirrors the C# generator off the same input.
 //
-// It drives ProtocolEncoder, not ViPaqSerializer, so it obeys each scenario's ExpectedHeader — that is what lets
-// it force compression on and emit the columnar/wider scenarios. Raw uses the NoOp codec; deflate/gzip set the
-// header's compressed bit and run the real codec. The cross-language decode test proves each language reads all
-// three, from either producer.
+// It drives ProtocolEncoder, not ViPaqSerializer, so it obeys each scenario's ExpectedHeader - the only way to
+// force compression on and emit the columnar/wider scenarios.
 
 interface InputScenario {
 	Name: string;
@@ -39,7 +36,7 @@ export async function generateInteropArtifact(): Promise<void> {
 	const interopDir = path.join(__dirname, "..", "..", "..", "test-vectors", "interop");
 	const inputs: InputScenario[] = JSON.parse(fs.readFileSync(path.join(interopDir, "input.json"), "utf8"));
 
-	// This is the TS producer, so it only ever writes its own folder — no language stem anywhere.
+	// The TS producer only ever writes its own folder, so there is no language stem anywhere.
 	const outputDir = path.join(interopDir, "ts");
 	fs.mkdirSync(outputDir, {recursive: true});
 
@@ -60,7 +57,7 @@ export async function generateInteropArtifact(): Promise<void> {
 			artifacts.push(new Artifact(input.Name, "typescript", Buffer.from(bytes).toString("base64")));
 		}
 
-		// Tabs, expanded — matches the C# interop generator's WriteIndented output style.
+		// Tabs, expanded, to match the C# generator's WriteIndented output.
 		const outputPath = path.join(outputDir, `${mode.suffix}.json`);
 		fs.writeFileSync(outputPath, JSON.stringify(artifacts, null, "\t"));
 		console.log(`Wrote ${artifacts.length} ${mode.suffix} artifact(s) to ${outputPath}`);

@@ -1,3 +1,9 @@
+---
+description: simplify ServiceModule - collapse the ceremony, keep the provider seam
+paths:
+  - "api/**"
+---
+
 # Idea: simplify ServiceModule — collapse the ceremony, keep the provider seam
 
 **Status:** Unvetted idea. Post-v4, not mid-release.
@@ -36,10 +42,11 @@ Two different things hide under "clean architecture" here, and they deserve oppo
 The packing core (`Binacle.Lib`, `Binacle.Geometry`, `Binacle.Net.Kernel`). That is a genuinely reusable library,
 not ceremony — the "simplify" instinct is only about ServiceModule's layering.
 
-## Timing
+## What makes this risky to start
 
-After v4 ships. Re-architecting the module mid-release adds risk to a release that is about the API version, not
-the auth layer. There is no external forcing function, so it waits.
+It re-architects the module wholesale, so it wants a window where nothing else is moving through the same code.
+There is no external forcing function - nothing breaks if it never happens, which is why it has never been
+urgent and why it keeps being the thing five other items wait on.
 
 ## Open questions
 

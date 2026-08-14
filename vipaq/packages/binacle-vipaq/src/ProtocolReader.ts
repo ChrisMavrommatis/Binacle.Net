@@ -1,8 +1,7 @@
 import {Width} from "./models";
 
-// Ports C#: ProtocolReader. Reads one value at a time, little-endian — the mirror of ProtocolWriter. Grouping is
-// the caller's business (the layout codecs, ProtocolEncoder). Only 8- and 16-bit widths exist now, so the old
-// 32/64-bit reads and their out-of-range guard are gone: a 16-bit value is always in [0, 65535].
+// Ports C#: ProtocolReader. Reads one value at a time, little-endian. Grouping is the caller's business.
+// Nothing is range-checked: a 16-bit value is always in [0, 65535].
 export class ProtocolReader {
 	private data: DataView<ArrayBuffer>;
 	private offset: number;

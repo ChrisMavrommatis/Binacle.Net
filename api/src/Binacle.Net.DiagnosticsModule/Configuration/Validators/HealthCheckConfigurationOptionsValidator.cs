@@ -8,17 +8,15 @@ internal class HealthCheckConfigurationOptionsValidator : AbstractValidator<Heal
 {
 	public HealthCheckConfigurationOptionsValidator()
 	{
-		// Cascade(Stop) is important.
-		// Without it every rule in the chain runs even after one fails.
-		// So a null was reported twice and then dereferenced by the predicate.
+		// Without Cascade(Stop) every rule in the chain runs after one fails, so a null is reported twice and
+		// then dereferenced by the predicate.
 		RuleFor(x => x.Path)
 			.Cascade(CascadeMode.Stop)
 			.NotEmpty()
 			.Must(path => path!.StartsWith('/'))
 			.WithMessage("'{PropertyName}' must start with '/', for example '/_health'.");
-		// The rule sits straight on RuleForEach, not inside ChildRules: FluentValidation does not run a child
-		// validator on a null element, so a null entry passed startup and then threw out of the middleware on the
-		// first health request.
+		// Straight on RuleForEach, not inside ChildRules: FluentValidation does not run a child validator on a
+		// null element, so a null entry passes startup and then throws out of the middleware.
 		RuleForEach(x => x.RestrictedIPs)
 			.Must(entry => IPEntry.TryParse(entry, out _))
 			.WithMessage(

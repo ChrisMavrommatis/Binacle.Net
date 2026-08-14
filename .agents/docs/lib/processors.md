@@ -5,6 +5,10 @@ verified: 2026-07-15
 check: Interface names and Process() signatures match lib/src/Binacle.Lib/
 also_update:
   - api/service
+paths:
+  - "lib/src/Binacle.Lib/AlgorithmProcessing/**"
+  - "lib/src/Binacle.Lib/BinProcessing/**"
+
 ---
 
 # Processors

@@ -1,3 +1,9 @@
+---
+description: Move rate limiting out of the core endpoints and into the ServiceModule
+paths:
+  - "api/**"
+---
+
 # Move rate limiting out of the core endpoints and into the ServiceModule
 
 **Status:** Investigated and proven feasible on 2026-08-13. Nothing built. The mechanism below was verified in a
@@ -122,8 +128,11 @@ stopped arriving. Either land the rate-limiting integration test first, or add a
 work: with the module on, a marked endpoint carries `EnableRateLimitingAttribute` and an unmarked one does not.
 Doing it with neither is how this ships broken and quiet.
 
-## Timing
+## Relationship to the two-guard fix
 
-Not a v3.0.0 item - the guard is back in the working tree and the beta problem is fixed without this. It is the
-durable fix for the same bug. It also overlaps the ServiceModule simplification idea, which would move this code
-anyway, so check that direction has been decided before starting.
+The two-guard transformer is the working fix for the same bug; this is the durable one. It removes the need for
+the feature-flag guard rather than competing with it, so the guard's reasoning in the API decisions ledger stays
+correct until this lands and then gets updated in the same change.
+
+It overlaps the ServiceModule simplification idea, which would move this code anyway. If that direction is
+settled first, read it before starting; if this lands first, the simplification inherits a smaller surface.

@@ -2,7 +2,7 @@ using Binacle.Net.ServiceModule.Configuration;
 
 namespace Binacle.Net.ServiceModule.UnitTests;
 
-// These settings sign and check every token the module issues. A weak or missing one is not a runtime error —
+// These settings sign and check every token the module issues. A weak or missing one is not a runtime error,
 // it is a working deployment with worthless tokens, so startup is the only place to catch it.
 [Trait("Behavioral Tests", "Ensures JWT auth configuration is validated as expected")]
 public class JwtAuthOptionsValidatorTests
@@ -65,8 +65,8 @@ public class JwtAuthOptionsValidatorTests
 		this.validator.Validate(OptionsWith(tokenSecret: usableSecret + "z")).IsValid.ShouldBeTrue();
 	}
 
-	// Two minutes is the floor. A shorter expiry would have clients re-authenticating faster than a token is
-	// useful, which reads as the login endpoint being broken.
+	// Two minutes is the floor: shorter has clients re-authenticating faster than a token is useful, which reads
+	// as the login endpoint being broken.
 	[Theory]
 	[InlineData(0)]
 	[InlineData(60)]
@@ -84,8 +84,8 @@ public class JwtAuthOptionsValidatorTests
 		this.validator.Validate(OptionsWith(expirationInSeconds: expirationInSeconds)).IsValid.ShouldBeTrue();
 	}
 
-	// One error per missing setting. Split rules used to report each empty value twice, so an operator with an
-	// empty section got eight lines for four settings and had to work out which were duplicates.
+	// One error per missing setting. Split rules reported each empty value twice, so an empty section gave eight
+	// lines for four settings.
 	[Fact]
 	public void Each_Missing_Setting_Is_Reported_Once()
 	{

@@ -1,9 +1,8 @@
 
 namespace Binacle.ViPaq.UnitTests.Providers;
 
-// width-selection.json as xUnit theory rows. Kind splits the rows into dimensions ("LxWxH") and
-// coordinates ("X,Y,Z"); each row runs through its own picker and must return the expected width. Both pickers
-// use identical width math, and the two sets together cover every width bucket, so they can't drift apart.
+// width-selection.json as xUnit theory rows. Kind splits the rows into dimensions and coordinates; each runs
+// through its own picker. Both pickers use identical width math, and the two sets together cover every bucket.
 internal static class WidthSelectionProvider
 {
 	private const string FileName = "width/width-selection.json";

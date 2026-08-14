@@ -7,13 +7,11 @@ namespace Binacle.ViPaq.UnitTests;
 internal readonly record struct BinContents<T>(Binacle.Geometry.Dimensions<T> Bin, IReadOnlyList<Binacle.Geometry.Item<T>> Items)
 	where T : struct, IBinaryInteger<T>;
 
-// Everything both serialization paths share: the builders that make a pack, and the one comparison that
-// checks two of them match. Neither belongs to a path - ProtocolTestingFixture and
-// ViPaqSerializerTestingFixture both build inputs with these and both hand their result to AssertSame.
+// Everything both serialization paths share: the builders that make a pack, and the one comparison that checks
+// two of them match.
 //
-// Data is deterministic and curated (the per-field values come from WidthValues), not Bogus: ViPaq asserts on
-// exact bytes, width boundaries, and field order, so the values are load-bearing. Reintroduce Bogus only if a
-// future test needs don't-care inputs (the way the Lib creation tests do).
+// Data is deterministic and curated, not Bogus: ViPaq asserts on exact bytes, width boundaries and field order,
+// so the values are load-bearing. Reintroduce Bogus only for don't-care inputs.
 internal static class BinContents
 {
 	public static Binacle.Geometry.Dimensions<T> BuildBin<T>(Width size)
@@ -37,9 +35,8 @@ internal static class BinContents
 			Z = WidthValues.DistinctValue<T>(coordinatesSize, 5),
 		};
 
-	// Field-by-field compare. Bin and Item are plain classes (no value equality), so we check each
-	// field; this also makes a wiring bug (one field read into another) show up as a clear mismatch.
-	// Marked so the analyser knows this is where the checking happens - see AssertionMethodAttribute.
+	// Field-by-field compare. Bin and Item are plain classes with no value equality, and going field by field
+	// makes a wiring bug (one field read into another) show up as a clear mismatch.
 	[AssertionMethod]
 	public static void AssertSame<T>(BinContents<T> expected, BinContents<T> actual)
 		where T : struct, IBinaryInteger<T>

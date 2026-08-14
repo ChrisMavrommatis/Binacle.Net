@@ -1,6 +1,4 @@
-using Binacle.Lib;
 using Binacle.CompactNotation;
-using Binacle.Lib.Abstractions.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Binacle.Net.UIModule.ViewModels;

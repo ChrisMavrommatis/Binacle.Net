@@ -10,11 +10,15 @@
 		     Bin/Item the token path uses. TestReporting has the shared RepositoryRoot used to find the repo root
 		     (no bespoke locator per tool). This tool runs offline once and freezes its output. -->
 		<ProjectReference Include="..\..\..\lib\src\Binacle.Lib\Binacle.Lib.csproj" />
-		<ProjectReference Include="..\..\..\lib\src\Binacle.Lib.Abstractions\Binacle.Lib.Abstractions.csproj" />
+		<ProjectReference Include="..\..\..\shared\src\Binacle.Packing\Binacle.Packing.csproj" />
 		<ProjectReference Include="..\..\src\Binacle.ViPaq\Binacle.ViPaq.csproj" />
 		<ProjectReference Include="..\..\..\shared\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
 		<ProjectReference Include="..\..\..\shared\src\Binacle.Geometry\Binacle.Geometry.csproj" />
 		<ProjectReference Include="..\..\..\shared\test\Binacle.TestReporting\Binacle.TestReporting.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Binacle.Packing" />
 	</ItemGroup>
 
 </Project>

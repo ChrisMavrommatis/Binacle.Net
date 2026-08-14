@@ -4,9 +4,9 @@ using Binacle.ViPaq.UnitTests.Providers;
 
 namespace Binacle.ViPaq.UnitTests;
 
-// Every supported type checked at the value boundaries it can reach. A value cannot be put in a
-// data row as type T, so a small lookup table turns the type from the row into the real call.
-// Dimensions and coordinates share the same width thresholds, so one row grades both.
+// Every supported type at the value boundaries it can reach. A value cannot go in a data row as type T, so a
+// lookup table turns the type from the row into the real call. Dimensions and coordinates share the same width
+// thresholds, so one row grades both.
 [Trait("Result Tests", "Ensures results are as expected")]
 public class WidthBoundaryByTypeTests
 {
@@ -34,7 +34,7 @@ public class WidthBoundaryByTypeTests
 		return (dimensions, coordinates);
 	}
 
-	// Width is internal, so the boxed expected width rides the theory data as object and is cast back here.
+	// Width is internal, so the boxed expected width rides the row as object.
 	[Theory]
 	[ClassData(typeof(WidthBoundaryByTypeProvider))]
 	public void GetWidth_Returns_Expected_For_Type_At_Boundary(Type numericType, ulong value, object expectedValue)
@@ -46,7 +46,7 @@ public class WidthBoundaryByTypeTests
 		coordinates.ShouldBe(expected);
 	}
 
-	// Coordinates allow zero (dimensions do not), so (0, 0, 0) is the lowest valid coordinate.
+	// Coordinates allow zero, dimensions do not, so (0, 0, 0) is the lowest valid coordinate.
 	[Fact]
 	public void GetCoordinatesWidth_Returns_Eight_When_All_Coordinates_Are_Zero()
 	{

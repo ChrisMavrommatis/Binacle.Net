@@ -3,6 +3,8 @@ id: packages/dependencies
 description: TypeScript packages dependency tree — the npm workspaces and which package imports (and declares) which.
 verified: 2026-07-14
 check: package.json deps plus actual `from "<pkg>"` imports across packages/*/src and vipaq/packages/binacle-vipaq/src match the graph; every workspace import is declared
+paths:
+  - "packages/**"
 ---
 
 # Packages — TypeScript dependencies
