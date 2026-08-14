@@ -1,7 +1,7 @@
 ---
 id: api/modules/service
 description: ServiceModule — JWT auth, rate limiting, account/subscription management. Three projects using clean architecture.
-verified: 2026-08-13
+verified: 2026-08-14
 check: Routes, config file names, and connection string name match ServiceModule source
 also_update:
   - api/configuration
@@ -66,7 +66,7 @@ Two policies registered by this module:
 
 | Policy name | Applied to |
 |---|---|
-| `ApiUsage` | Core API endpoints (`v3/`, `v4/`) via `.RequireRateLimiting("ApiUsage")` |
+| `ApiUsage` | Core API endpoints (`v3/`, `v4/`) that call `.RateLimited()` |
 | `AuthToken` | Auth token endpoint |
 
 Rate limiter config is rule-based (sliding window) — loaded from `Config_Files/ServiceModule/RateLimiter.json`.
@@ -74,9 +74,11 @@ Rate limiter config is rule-based (sliding window) — loaded from `Config_Files
 Only `ApiUsage` and `AuthToken` are registered as ASP.NET policies; `ApiUsageDemoSubscription` is used
 internally by the `ApiUsage` policy to apply different limits based on subscription type.
 
-When ServiceModule is off, `.RequireRateLimiting("ApiUsage")` on core endpoints is a no-op. The OpenAPI
-documents follow: `AddRateLimiterResponse()` gates the `429` on the `"RateLimiter"` feature this module
-registers, so a document generated with the module off carries no `429` on any endpoint. See `$api/openapi`.
+The module attaches `ApiUsage` itself, through an `IEndpointConvention` it registers in `AddServiceModule`. The
+convention reads the `RateLimitedMetadata` marker a core endpoint places with `.RateLimited()` and adds
+`[EnableRateLimiting("ApiUsage")]`; the Kernel's endpoint registrar runs it inside a `Finally` convention, after
+each endpoint's own. **The core names no policy**, so with the module off there is no limiter and no metadata —
+and the OpenAPI documents follow, carrying no `429` on any endpoint. See `$api/openapi`.
 
 ## Domain Layer
 

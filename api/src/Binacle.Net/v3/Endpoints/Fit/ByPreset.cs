@@ -44,7 +44,7 @@ internal class ByPreset : IGroupedEndpoint<ApiV3EndpointGroup>
 				StatusCodes.Status422UnprocessableEntity,
 				MediaTypeNames.Application.ProblemJson
 			)
-			.RequireRateLimiting("ApiUsage")
+			.RateLimited()
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 

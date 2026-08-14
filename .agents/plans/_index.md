@@ -28,9 +28,6 @@ you need, and trim or delete it once the work lands.
 - file: api/integration-test-additions.md
   description: "Integration tests: cover what the harness cannot see today"
   paths: ["api/**"]
-- file: api/rate-limiting-owned-by-servicemodule.md
-  description: "Move rate limiting out of the core endpoints and into the ServiceModule"
-  paths: ["api/**"]
 - file: api/ui-clients-off-v3.md
   description: "Migrate the shipped UI clients off the v3 API"
   paths: ["api/**"]

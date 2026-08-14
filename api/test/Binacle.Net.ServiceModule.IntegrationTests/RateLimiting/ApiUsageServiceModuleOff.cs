@@ -2,9 +2,9 @@ using System.Net;
 
 namespace Binacle.Net.ServiceModule.IntegrationTests.RateLimiting;
 
-// The other half of the pair. The same endpoints carry the same .RequireRateLimiting("ApiUsage") line with the
-// module off, and it is inert: nothing registers the policy and the middleware is not in the pipeline. Without
-// this test, a build that limited nobody would still pass the module-on one.
+// The other half of the pair. The same endpoints still call .RateLimited() with the module off, and nothing
+// reads the marker: no policy, no attribute, no middleware in the pipeline. Without this test, a build that
+// limited nobody would still pass the module-on one.
 [Trait("Rate Limiting Tests", "Ensures the ApiUsage endpoints are not limited with the ServiceModule off")]
 [Collection(nameof(RateLimiterCollection))]
 public class ApiUsageServiceModuleOff

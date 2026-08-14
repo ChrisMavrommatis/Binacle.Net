@@ -1,8 +1,8 @@
 ---
 id: api/decisions
-description: API decisions ledger — why the OpenAPI `429` is gated on the RateLimiter feature and not on endpoint metadata alone, and what the generated documents are a document of.
-verified: 2026-08-13
-check: D1 against api/src/Binacle.Net.Kernel/OpenApi/Transformers/RateLimiterResponseOperationTransformer.cs, which must check both the "RateLimiter" feature and EnableRateLimitingAttribute
+description: API decisions ledger — why a module-off document carries no `429` and what guarantees it, and what the generated documents are a document of.
+verified: 2026-08-14
+check: D1 against api/src/Binacle.Net.Kernel/OpenApi/Transformers/RateLimiterResponseOperationTransformer.cs, which must check EnableRateLimitingAttribute, and against RateLimitedEndpointConvention as the only thing that attaches it
 paths:
   - "api/**"
 ---
@@ -14,17 +14,20 @@ the docs under it; this file is the reasoning, so a later session does not undo 
 
 ## Locked
 
-### D1 — the OpenAPI `429` is gated on the `"RateLimiter"` feature, not on endpoint metadata alone
+### D1 — a module-off document must carry no `429`, and the metadata is what guarantees it
 
-`RateLimiterResponseOperationTransformer` documents `429 Too Many Requests` only when **both** hold: the
-`"RateLimiter"` feature is enabled, and the operation carries `[EnableRateLimiting]`. Either guard alone
-produces a wrong document.
+`RateLimiterResponseOperationTransformer` documents `429 Too Many Requests` when the operation carries
+`[EnableRateLimiting]`, and that single check is enough because **only `AddServiceModule` ever attaches it**.
+The core endpoints call `.RateLimited()`, a marker naming no policy; the module's `IEndpointConvention` turns
+that marker into the attribute. Metadata present therefore *means* a limiter is registered.
 
-**Why the feature guard cannot be dropped.** `.RequireRateLimiting("ApiUsage")` sits unconditionally in the
-v3/v4 endpoint files, but the limiter itself is registered by `AddServiceModule`. With the module off the call
-is a no-op, so the metadata on its own declares nothing a caller can observe. Documenting the `429` from the
-metadata alone puts a response in the document that the build cannot emit, which is a false statement in a
-contract.
+**It took two guards until 2026-08-14, and the second one was load-bearing.** The v3/v4 endpoint files used to
+call `.RequireRateLimiting("ApiUsage")` directly, naming a policy only the module supplies. With the module off
+the call was a no-op but the metadata was still there, so the transformer also had to check the `"RateLimiter"`
+feature — otherwise the document advertised a response the build cannot emit, which is a false statement in a
+contract. **Moving the policy name into the module removed the need for that guard rather than the guard
+alone.** Do not read its deletion as a decision that metadata was always sufficient: it was not, and the
+difference is which assembly puts the attribute there.
 
 **What the generated documents are a document of.** `just openapi generate` builds them from a host with no
 launch profile, so the ServiceModule is off, and the output describes **the image a self-hoster runs at its
@@ -39,7 +42,8 @@ told it can happen. That argument fails on its own terms: a client generated fro
 has no `/api/auth/token`, which is the thing it would need in order to stop being rate-limited, so the
 document serves neither the self-hoster nor a caller of the hosted service. The guard went back in on
 2026-08-13, before v3.0.0 shipped. The removal reached the v3.0.0 betas, whose published swagger copies carry
-the `429`; regenerating them takes it out and returns the v3 document to the shape v2.1.x published.
+the `429`; regenerating them takes it out and returns the v3 document to the shape v2.1.x published. On
+2026-08-14 the guard came out for the last time, because by then nothing was left for it to guard.
 
 **If a contract for the hosted service is ever wanted, it is a second document**, generated with the module on,
 carrying the auth paths and the `429` together. Do not approximate it by loosening this one.

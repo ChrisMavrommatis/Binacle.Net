@@ -52,13 +52,31 @@ public static class EndpointsWebApplicationExtensions
 			.Where(t => typeof(IEndpointGroup).IsAssignableFrom(t))
 			.Where(t => t is {IsClass: true, IsAbstract:false, IsInterface: false})
 			.ToList();
-		
+
 		var groups = new Dictionary<Type, RouteGroupBuilder>();
+
+		// None registered means no module is here to contribute one, and no endpoint gets anything it did not
+		// ask for itself.
+		var conventions = serviceProvider.GetServices<IEndpointConvention>().ToList();
 
 		foreach (var groupType in endpointGroupTypes)
 		{
 			var groupInstance = (IEndpointGroup)ActivatorUtilities.CreateInstance(serviceProvider, groupType);
 			var routeGroup = groupInstance.DefineEndpointGroup(app);
+
+			if (conventions.Count > 0)
+			{
+				// Finally, never Add: an Add convention on the group runs before each endpoint's own, so
+				// anything reading metadata reads it half written. Owned here so no module has to know.
+				((IEndpointConventionBuilder)routeGroup).Finally(endpointBuilder =>
+				{
+					foreach (var convention in conventions)
+					{
+						convention.Apply(endpointBuilder);
+					}
+				});
+			}
+
 			groups[groupType] = routeGroup;
 		}
 		

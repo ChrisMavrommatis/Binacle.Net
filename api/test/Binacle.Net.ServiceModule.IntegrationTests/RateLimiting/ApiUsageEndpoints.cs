@@ -8,12 +8,19 @@ using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.ServiceModule.IntegrationTests.RateLimiting;
 
-// Every POST under the v3 and v4 groups is user compute and belongs behind the ApiUsage limiter. The list is
-// derived from the routes rather than from the endpoints' own rate limiting metadata: derived from the metadata,
-// an endpoint that lost .RequireRateLimiting would drop out of the list instead of failing.
+// Every POST under the v3 and v4 groups is user compute and belongs behind the ApiUsage limiter; the GETs are
+// the preset lists and belong outside it. Both lists are derived from the routes rather than from the endpoints'
+// own rate limiting metadata: derived from the metadata, an endpoint that lost .RateLimited() would drop out of
+// the list instead of failing.
 internal static class ApiUsageEndpoints
 {
 	public static IReadOnlyList<string> RoutesOf(WebApplicationFactory<IApiMarker> api)
+		=> RoutesOf(api, HttpMethods.Post);
+
+	public static IReadOnlyList<string> ReadOnlyRoutesOf(WebApplicationFactory<IApiMarker> api)
+		=> RoutesOf(api, HttpMethods.Get);
+
+	private static IReadOnlyList<string> RoutesOf(WebApplicationFactory<IApiMarker> api, string httpMethod)
 	{
 		var presets = api.Services.GetRequiredService<IOptions<BinPresetOptions>>().Value;
 		var preset = presets.Presets.First(entry => entry.Value.Bins.Count > 0);
@@ -21,7 +28,7 @@ internal static class ApiUsageEndpoints
 		var routes = api.Services.GetRequiredService<EndpointDataSource>().Endpoints
 			.OfType<RouteEndpoint>()
 			.Where(endpoint => endpoint.Metadata.GetMetadata<HttpMethodMetadata>()?.HttpMethods
-				.Contains(HttpMethods.Post) ?? false)
+				.Contains(httpMethod) ?? false)
 			.Select(endpoint => endpoint.RoutePattern.RawText!)
 			.Where(route => route.StartsWith("/api/v3/") || route.StartsWith("/api/v4/"))
 			// Route values have to resolve to something real, or the endpoint answers 404 for the preset rather

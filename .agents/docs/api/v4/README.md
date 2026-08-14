@@ -1,7 +1,7 @@
 ---
 id: api/v4
 description: v4 API — active development. Endpoints, algorithm selection, parameters, contracts, and response shape.
-verified: 2026-08-13
+verified: 2026-08-14
 check: Endpoint table matches files in api/src/Binacle.Net/v4/Endpoints/; IsExperimental in ApiV4Document.cs matches what this says
 also_update:
   - api/v4/contracts
@@ -42,7 +42,7 @@ See Fit vs Pack (`$concepts`) for the underlying concept.
 | GET | `/api/v4/presets` | List all presets with their bins |
 | GET | `/api/v4/presets/{preset}` | Get bin definitions for a preset |
 
-All POST (fit/pack) endpoints are rate-limited (`.RequireRateLimiting("ApiUsage")`) and return `429` —
+All POST (fit/pack) endpoints are rate-limited (`.RateLimited()`) and return `429` —
 but only with ServiceModule on, which is what supplies the limiter. With it off there is no limiter, no `429`,
 and no `429` in the OpenAPI document either. The two `GET /api/v4/presets…` endpoints are **not** rate-limited
 under any configuration — their only responses are `200`, `500`, and, for the single-preset one, `404`.

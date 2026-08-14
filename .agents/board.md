@@ -35,10 +35,10 @@ file and the release.
 **The active release.** v3.0.0 is in flight. Its plan holds the gates and its post-release companion holds the
 checks that follow the tag. **Do not pull board work into the release.**
 
-**Eight items are release work as of 2026-08-14** and are not to be started here (a ninth, the rate limiter test
-carve-out, landed that day): rate limiting owned by the ServiceModule, image verification, the Docker Hub page, the Docker Hub
-immutability **rule** (not the switch), the PR gate change and its three architecture checks, the docs deploy,
-the client-generation page, and more ViPaq interop vectors. **Their plan files stay under `plans/`** - the
+**Seven items are release work as of 2026-08-14** and are not to be started here - two more landed that day, the
+rate limiter test carve-out and rate limiting owned by the ServiceModule: image verification, the Docker Hub
+page, the Docker Hub immutability **rule** (not the switch), the PR gate change and its three architecture
+checks, the docs deploy, the client-generation page, and more ViPaq interop vectors. **Their plan files stay under `plans/`** - the
 release takes a slice of most of them and leaves the rest, and a file is deleted only when nothing is left in
 it.
 
@@ -208,8 +208,8 @@ because the format froze in this release.
 
 ## ServiceModule
 
-**No plan rows here - the one that was is release work.** Rate limiting owned by the ServiceModule was pulled
-into v3.0.0 on 2026-08-14. Its file stays under `plans/api/` until it lands.
+**No plan rows here.** Rate limiting owned by the ServiceModule landed in v3.0.0 on 2026-08-14 and its file is
+gone: the core marks an endpoint `.RateLimited()` and this module attaches the policy.
 
 Two one-liners in [todos](plans/todos.md): the rate-limit policy config review, and the raw `ProblemDetails` on
 the no-body path.

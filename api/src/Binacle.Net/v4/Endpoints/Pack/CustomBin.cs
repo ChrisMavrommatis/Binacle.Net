@@ -39,7 +39,7 @@ internal class CustomBin : IGroupedEndpoint<ApiV4EndpointGroup>
 				StatusCodes.Status422UnprocessableEntity,
 			 MediaTypeNames.Application.ProblemJson
 			)
-			.RequireRateLimiting("ApiUsage")
+			.RateLimited()
 			.RequireCors(CorsPolicy.CoreApi);
 	}
 

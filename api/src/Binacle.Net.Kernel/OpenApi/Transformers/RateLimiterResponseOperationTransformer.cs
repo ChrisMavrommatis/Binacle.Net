@@ -1,11 +1,8 @@
-using System.Text;
 using Binacle.Net.Kernel.OpenApi.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Binacle.Net.Kernel.OpenApi.Transformers;
 
@@ -28,16 +25,8 @@ internal class RateLimiterResponseOperationTransformer : IOpenApiOperationTransf
 		CancellationToken cancellationToken
 	)
 	{
-		// Both guards are needed. The endpoint's .RequireRateLimiting(...) is inert without the RateLimiter
-		// feature, so on its own it says nothing a caller can observe - documenting 429 off the metadata alone
-		// puts a response in the spec that this build cannot emit.
-		var options = context.ApplicationServices.GetService<IOptions<FeatureOptions>>();
-
-		if (!(options?.Value.IsFeatureEnabled("RateLimiter") ?? false))
-		{
-			return Task.CompletedTask;
-		}
-
+		// The metadata is the whole guard. Only the module that supplies a limiter attaches it, off the core's
+		// policy-neutral .RateLimited() marker, so it cannot be here in a build that limits nobody.
 		if (context.Description.ActionDescriptor.EndpointMetadata
 		    .OfType<EnableRateLimitingAttribute>()
 		    .Any())

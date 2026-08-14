@@ -1,7 +1,7 @@
 ---
 id: api/endpoints
 description: Endpoint pattern, registration, request validation flow, and route groups for v3 and v4
-verified: 2026-07-06
+verified: 2026-08-14
 check: IGroupedEndpoint hierarchy matches api/src/Binacle.Net.Kernel/Endpoints/
 also_update:
   - api/kernel
@@ -104,8 +104,10 @@ The handler only runs if binding and validation both pass.
 
 ## Rate Limiting
 
-`.RequireRateLimiting("ApiUsage")` and `.RequireCors(CorsPolicy.CoreApi)` are no-ops when
-ServiceModule is not loaded — safe to include but only active when the module is enabled.
+`.RateLimited()` marks an endpoint as user compute. It names no policy — it drops a marker in the endpoint's
+metadata, and the ServiceModule turns that into `ApiUsage` when it is loaded. With the module off nothing reads
+the marker and no limiter exists. `.RequireCors(CorsPolicy.CoreApi)` is likewise a no-op when the module is not
+loaded.
 
 ## Contracts Location
 

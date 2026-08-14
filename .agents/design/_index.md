@@ -11,7 +11,7 @@ decisions (why) and the findings (measured evidence). Permanent and citable; rea
 
 ```yaml
 - file: api/decisions.md
-  description: "API decisions ledger — why the OpenAPI `429` is gated on the RateLimiter feature and not on endpoint metadata alone, and what the generated documents are a document of."
+  description: "API decisions ledger — why a module-off document carries no `429` and what guarantees it, and what the generated documents are a document of."
   paths: ["api/**"]
 ```
 

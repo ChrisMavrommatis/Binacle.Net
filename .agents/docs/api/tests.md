@@ -44,9 +44,10 @@ and a null logger factory.
 `RateLimiting/` in the ServiceModule suite is the exception to both fixtures. Each test builds and disposes its
 own `WebApplicationFactory` — `RateLimitedBinacleApi` with the module on and small limits, or
 `ServiceModuleOffBinacleApi` with it off — and the three classes share a `RateLimiterCollection` that runs
-non-parallel. The routes under test are derived from the route table: every POST under `/api/v3` and `/api/v4`,
-with `{preset}` and `{bin}` filled from the host's own preset options. That factory pins SQLite with its own
-`DataSource` on every backend leg.
+non-parallel. The routes under test are derived from the route table — the POSTs under `/api/v3` and `/api/v4`,
+which must all be limited, and the GETs, which are the preset lists and must not be — with `{preset}` and
+`{bin}` filled from the host's own preset options. That factory pins SQLite with its own `DataSource` on every
+backend leg.
 
 > `Binacle.Net.ServiceModule.IntegrationTests` picks its database backend from **`BINACLE_TEST_INFRA`** —
 > `AzureStorage`, `Postgres`, or `Sqlite`. Unset, it **falls back to SQLite**, so a bare `dotnet test` runs with

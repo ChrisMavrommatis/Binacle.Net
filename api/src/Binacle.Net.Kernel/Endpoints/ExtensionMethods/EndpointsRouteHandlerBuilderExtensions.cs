@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using Binacle.Net.Kernel.Endpoints;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -40,5 +41,13 @@ public static class EndpointsRouteHandlerBuilderExtensions
 		additionalContentTypes.CopyTo(contentTypes, 1);
 
 		return builder.WithMetadata(new ProducesResponseTypeMetadata(statusCode, responseType ?? typeof(void), contentTypes));
+	}
+
+	// One marker while there is one core tier. It takes an argument when a second appears.
+	public static TBuilder RateLimited<TBuilder>(this TBuilder builder)
+		where TBuilder : IEndpointConventionBuilder
+	{
+		builder.WithMetadata(new RateLimitedMetadata());
+		return builder;
 	}
 }

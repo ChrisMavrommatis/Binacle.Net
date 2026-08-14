@@ -91,7 +91,7 @@ does not build any of it; it decides whether this list is right.
 - [ ] CORS: assert a configured origin comes back in `Access-Control-Allow-Origin` and an unconfigured one does
       not.
 - [ ] Look for more of the same shape before deciding the matrix. The search is core code that only works
-      because an optional module registered something - `RequireRateLimiting`, `RequireCors`, `RequireAuthorization`
+      because an optional module registered something - `RateLimited`, `RequireCors`, `RequireAuthorization`
       and any middleware a module adds to the shared pipeline are the places to start.
 
 ## Things to watch out for

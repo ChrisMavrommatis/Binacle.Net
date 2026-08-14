@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text;
+using Binacle.Net.Kernel.Endpoints;
 using Binacle.Net.Kernel.OpenApi.ExtensionsMethods;
 using Binacle.Net.ServiceModule.Configuration;
 using Binacle.Net.ServiceModule.Domain;
@@ -112,6 +113,10 @@ public static class ModuleDefinition
 			options.AddPolicy<string, ApiUsageRateLimitingPolicy>("ApiUsage");
 			options.AddPolicy<string, AuthTokenRateLimitingPolicy>("AuthToken");
 		});
+
+		// Attaches the ApiUsage policy to whatever the core marked .RateLimited(). Registered here, so the core
+		// endpoints never name a policy only this module can supply.
+		builder.Services.AddSingleton<IEndpointConvention, RateLimitedEndpointConvention>();
 		
 		builder.Services.Configure<FeatureOptions>(options =>
 		{

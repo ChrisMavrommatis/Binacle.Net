@@ -71,9 +71,9 @@ A prerelease gets its immutable tag only, never `3.0` or `latest`. The release b
 | # | Item | State |
 |---|---|---|
 | 1 | Rate limiter tests | **done - 2026-08-14** |
-| 2 | Rate limiting owned by the ServiceModule | open, and the tests it needed are in |
+| 2 | Rate limiting owned by the ServiceModule | **done - 2026-08-14** |
 | 3 | The Azure Storage run | open, one command |
-| 4 | Beta 3 | open, after 1-3 |
+| 4 | Beta 3 | open, after 3 |
 | 5 | The last commit: pins, prose and the changelog rename | open |
 | 6 | Tag `v3.0.0` | open |
 
@@ -84,58 +84,31 @@ The module-off half is there too, so the pair proves limiting belongs to the mod
 OpenAPI guard claims and nothing executable said before.
 
 The route list is **derived from the route table**, not typed out: every POST under `/api/v3` and `/api/v4`, 18
-of them, matching the 18 `.RequireRateLimiting("ApiUsage")` calls in the source. Dropping the attribute from one
+of them, matching the 18 rate limited endpoints in the source. Dropping the attribute from one
 endpoint fails the test with that route named - checked by mutation, along with disabling each limiter.
 
 Only the module-matrix plan it was carved from stays open, minus this finding.
 
-### 2. Rate limiting owned by the ServiceModule
+### 2. Rate limiting owned by the ServiceModule - done 2026-08-14
 
-**[api/rate-limiting-owned-by-servicemodule](plans/api/rate-limiting-owned-by-servicemodule.md)** - a plan that
-moves `.RequireRateLimiting("ApiUsage")` out of the 18 core endpoint files and lets the module attach it off a
-policy-neutral marker the endpoint author places. **Investigated and proven feasible on 2026-08-13** in a
-throwaway ASP.NET Core 10 project. Read it in full; the mechanism has a trap that fails silently.
+The 18 core endpoints now call `.RateLimited()`, a Kernel marker naming no policy. The ServiceModule registers
+an `IEndpointConvention` that turns the marker into `[EnableRateLimiting("ApiUsage")]`, and the Kernel's
+endpoint registrar runs every registered convention inside one `Finally` - so no module can hit the trap where
+an `Add` convention reads metadata before the endpoint has written it.
 
-**Pulled into the release on 2026-08-14 at the maintainer's call.**
+**The feature-flag guard is gone and the `429` is safer for it.** Only the module attaches the attribute, so a
+module-off build has nothing for the transformer to find. The decisions ledger is rewritten to say so, and to
+say that the old second guard was load-bearing at the time rather than always redundant.
 
-**What it buys.** Today the core API names a policy only the module supplies, so the call is a no-op whenever
-the module is off - and the OpenAPI transformer needs **two** guards to stay honest about `429`. If only the
-ServiceModule can ever add the rate-limiting attribute, then the presence of that metadata *means* the module is
-on, and the feature-flag guard becomes redundant rather than load-bearing. **The `429` cannot get into a
-module-off document even if a later session deletes a guard, because there is no guard left to delete.** That
-guard has already been deleted once by someone who reasoned about it and got it wrong, and the published beta
-specs shipped a `429` no module-off build can emit.
+Proven, not assumed: the module-on host reports policy `ApiUsage` on a marked endpoint and none on `presets`,
+its `/openapi/v4.json` carries the 14 endpoint `429`s, the rate limiting tests pass on the new path, and both
+generated module-off documents are byte-identical to what they were before the change - so the frozen v3
+contract did not move.
 
-- [x] **The test that watches this is in** (step 1). It requires every v3 and v4 POST to answer `429` once the
-      limit is spent, so an endpoint whose attribute stops arriving fails by name. **Run it after the swap and
-      again after the guard is deleted.**
-- [ ] **Use `Finally`, not `Add`, for the group convention.** Conventions registered with `Add` run *before*
-      each endpoint's own conventions, so the marker is not in the metadata yet and the check finds nothing. **No
-      error, no warning, just no rate limiting.** This was the first thing the proof of concept got wrong.
-- [ ] **Confirm the metadata reaches the OpenAPI document inside this repo, early.** It did in the prototype -
-      resolving the API description provider after `StartAsync()` showed the marked endpoint reporting policy
-      `ApiUsage` and the unmarked one reporting none. **The whole payoff rests on it**, so re-prove it here
-      before writing the rest.
-- [ ] **Settle the convention seam shape.** The plan lists two candidates and says explicitly not to treat it as
-      decided: a Kernel interface resolved as `IEnumerable<>`, or the `IOptionalDependency<T>` pattern already
-      used for the OpenAPI JWT wiring. Also decide whether conventions apply to groups only or to ungrouped
-      endpoints too - **only grouped endpoints need it today.**
-- [ ] **Delete the feature-flag guard last**, and only after the step above is confirmed in this repo.
-- [ ] **Update the API decisions ledger in the same change.** It currently records why the transformer needs two
-      guards. When one goes away, the ledger and the code disagree until it is rewritten.
+`.RequireRateLimiting("AuthToken")` on the ServiceModule's own token endpoint stays as it is.
 
-**v3 is in scope and this does not break the freeze.** The 12 v3 and v4 endpoint files change, but the swap is
-behaviour-preserving by construction - the same attribute ends up on the same endpoints and a caller cannot tell
-the difference. **Prove it rather than assume it:** compare the generated v3 document before and after with the
-module off (both should have no `429`), and confirm a module-on instance still returns `429`. The v3 document is
-already proven unmoved by the restructure, so any movement here is this change's.
-
-`.RequireRateLimiting("AuthToken")` on the ServiceModule's own token endpoint **stays as it is.** That endpoint
-belongs to the module, so naming the module's own policy is correct there.
-
-**It overlaps the ServiceModule simplification idea**, which would move this code anyway. That direction is
-still unsettled and is on the board. Shipping this first means the simplification inherits a smaller surface;
-it does not mean the simplification is decided.
+**The ServiceModule simplification idea inherits a smaller surface**, which does not make that direction
+decided. It is on the board.
 
 ### 3. The Azure Storage run
 

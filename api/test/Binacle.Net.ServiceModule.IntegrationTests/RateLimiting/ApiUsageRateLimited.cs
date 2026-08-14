@@ -63,4 +63,41 @@ public class ApiUsageRateLimited
 			response.StatusCode.ShouldBe(HttpStatusCode.TooManyRequests, $"POST {route}");
 		}
 	}
+
+	// The preset lists read config and run no algorithm, so they carry no marker and must answer whatever the
+	// packing endpoints have spent. Same bucket, same host - if one ever picked up rate limiting, it answers 429
+	// here while the limited endpoints do too, and the two tests disagree about the same run.
+	[Fact(DisplayName = "The preset endpoints answer with the limit spent")]
+	public async Task ThePresetEndpoints_Answer_WithTheLimitSpent()
+	{
+		await using var api = new RateLimitedBinacleApi();
+		var client = api.CreateClient();
+		var rateLimited = ApiUsageEndpoints.RoutesOf(api);
+		var presets = ApiUsageEndpoints.ReadOnlyRoutesOf(api);
+
+		for (var request = 1; request <= RateLimitedBinacleApi.ApiUsagePermitLimit; request++)
+		{
+			await client.PostAsync(
+				rateLimited[0],
+				ApiUsageEndpoints.RejectedBody(),
+				TestContext.Current.CancellationToken
+			);
+		}
+
+		var spent = await client.PostAsync(
+			rateLimited[0],
+			ApiUsageEndpoints.RejectedBody(),
+			TestContext.Current.CancellationToken
+		);
+
+		// Without this the test passes on a host where the limiter never engaged at all.
+		spent.StatusCode.ShouldBe(HttpStatusCode.TooManyRequests);
+
+		foreach (var route in presets)
+		{
+			var response = await client.GetAsync(route, TestContext.Current.CancellationToken);
+
+			response.StatusCode.ShouldBe(HttpStatusCode.OK, $"GET {route}");
+		}
+	}
 }
