@@ -6,8 +6,7 @@ paths:
 
 # Turn on Docker Hub tag immutability, for release tags only
 
-**Status:** not started. Not a release gate. **Nothing here is urgent, and one option in it is actively unsafe
-today** - see section 3.
+**Status:** not started. **One option in it is actively unsafe today** - see section 3.
 
 **Terminology first, because this repo already uses the word.** Elsewhere "immutable tag" means the exact-version
 tag (`3.0.0`, `3.0.0-beta.2`) that the pipeline never moves, as opposed to `3.0` and `latest`, which it does.

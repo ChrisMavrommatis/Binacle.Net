@@ -6,8 +6,7 @@ paths:
 
 # Idea: UIModule — port from Blazor reactivity to Alpine.js
 
-**Status:** Unvetted idea — no committed timeline or priority. Detailed below because the ground was already
-scouted, not because it's scheduled.
+**Status:** Unvetted idea. Detailed below because the ground was already scouted.
 
 **Goal:** Replace Blazor Interactive Server reactivity with Alpine.js so `packages/binacle-net-ui`
 is the single source for the packing demo UI — shared between `web/` and `UIModule`.

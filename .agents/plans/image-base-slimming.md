@@ -11,7 +11,7 @@ profiles, eleven test leaves. The release plan tracks that part.
 
 **What is left is what the title now says.** With the app layer down to 18 MB, the base image *is* the image -
 so this file is no longer about a duplicated runtime, it is about the base itself. Every size below was
-measured on 2026-08-10, not estimated. Not in v3.0.0.
+measured on 2026-08-10, not estimated.
 
 ## Where the 103.2 MB sits now
 

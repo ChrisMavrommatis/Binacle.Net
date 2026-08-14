@@ -6,7 +6,8 @@ paths:
 
 # Idea: more interop vector coverage
 
-**Status:** Unvetted idea. Low value — add only if a real need appears.
+**Status:** Unvetted idea, and self-assessed low value - the apparatus is already green and none of the rows
+below covers a failure anyone has seen.
 
 The C#/TS interop apparatus is built and green (see the ViPaq cross-language testing doc). These are
 the rows we chose not to add. Each is just new `interop/input.json` rows plus a regen — the matrix fans them

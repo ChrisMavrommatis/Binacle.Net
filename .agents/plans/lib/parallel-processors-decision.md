@@ -6,7 +6,7 @@ paths:
 
 # Decide what happens to the three `Parallel*` processors
 
-**Status:** Not started. After v3.0.0. This is an open decision, not a bug - it comes from the open question in
+**Status:** Not started. This is an open decision, not a bug - it comes from the open question in
 the lib design decisions ledger, and there is no `// TODO` behind it.
 
 ## The state

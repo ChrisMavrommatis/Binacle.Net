@@ -11,8 +11,7 @@ paths:
 always been. This file records what a 2026-08-07 session found when it examined them, so the next session does
 not rediscover it.
 
-Not urgent and not part of v3.0.0. It is maintainer tooling: no user copies it, nothing ships it, and nothing
-in CI calls it.
+It is maintainer tooling: no user copies it, nothing ships it, and nothing in CI calls it.
 
 ## What changed around it
 
@@ -44,15 +43,32 @@ Azurite.
 from the one the samples answer, so **`full` earns its keep and outcome 3 is off the table.** Only `volume` and
 `bind` need resolving.
 
-The two live outcomes, ranked:
+### The maintainer answered it on 2026-08-14, and the answer was none of the above
 
-1. **Keep `full` only.** Delete `volume` and `bind`; `up`/`down` lose their positional stack name entirely.
-   Simplest, and the one the overlap argues for.
-2. **Keep `full`, merge `volume` and `bind` into one file** with `BINACLE_DATA_DIR` choosing volume-vs-bind.
-   Keeps the on-disk-data option at the cost of one file rather than two.
+**`image` is for the image. Supporting services belong in `serve`, which is the local dev toolkit.**
 
-~~Delete the module.~~ Ruled out above - the samples do not cover the multi-backend case and were never going
-to, because pointing a reader at their own database is the right advice for a sample.
+That reframes the whole file. The question was never "which of these three stacks survives" - it was that the
+module had drifted into being two things at once: a way to run the built image, and a way to stand up Postgres,
+Azurite and a telemetry collector. **The second one is `serve services`' job and always was.**
+
+What follows:
+
+- **Move the supporting services out of `full` and into `serve`.** `docker-compose.build.yml` is the services
+  stack plus the image; `serve services` already brings up the same backends from source. One of them is
+  redundant, and it is not the `serve` one.
+- **`volume` and `bind` collapse.** They differ only in where `/app/data` goes, and `just smoke up full` already
+  covers "bring the image up and poke at it" with no folder setup. Keep at most one, driven by a variable.
+- **`image` is then free to mean "the image", local and published.** That was outcome C in the
+  image-verification work's placement question, and it is what makes the verification recipe belong here rather
+  than in a sixth module.
+
+**Check the shared Azurite state before moving anything.** `docker-compose.build.yml` and `docker-compose.yml`
+both bind `./azurite`, which today resolves to `tooling/azurite` for both - so the two stacks share emulator
+state. Whatever moves has to keep that true or deliberately break it, and the "do not use a subfolder" section
+below is the record of what happens when it breaks silently.
+
+~~Delete the module.~~ Ruled out - the samples do not cover the multi-backend case and were never going to,
+because pointing a reader at their own database is the right advice for a sample.
 
 Anything that deletes `bind` should first check the maintainer has not been using it - reading packing-log
 files written *by the image* is its real niche, and `just serve api` covers that only for a from-source run.

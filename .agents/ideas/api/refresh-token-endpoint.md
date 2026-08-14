@@ -6,7 +6,7 @@ paths:
 
 # Idea: add refresh-token support to ServiceModule
 
-**Status:** Unvetted idea. Likely done together with the ServiceModule rework (see Timing).
+**Status:** Unvetted idea. Has a real dependency on the ServiceModule rework - see Dependency.
 
 ## Why
 
@@ -33,7 +33,7 @@ Once the endpoint exists, the Alpine client authenticates once, stores the acces
 `/api/auth/refresh` then retries once. Refresh token ideally in an **httpOnly cookie** (JS can't read it, so XSS
 can't steal it); access token in memory or localStorage. Blazor UIModule is out of scope for now.
 
-## Timing / dependency
+## Dependency
 
 Pairs with the planned **ServiceModule rework** — collapse the three
 ServiceModule projects and the DDD ceremony while **keeping the provider seam** (the repository interfaces +

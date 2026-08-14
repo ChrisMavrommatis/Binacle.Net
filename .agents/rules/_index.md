@@ -43,6 +43,10 @@ are fetched when their `when:` fires. See [README.md](README.md) for the trigger
   description: "Plain, simple language in docs, comments and explanations. Cut any word that does not change the meaning."
   when: "writing any doc, comment or explanation"
   load: on-trigger
+- file: plans-do-not-schedule-themselves.md
+  description: "A plan or idea says what the work is, never when it happens. Scheduling lives on the board and in the release set."
+  when: "writing or editing a plan or an idea"
+  load: on-trigger
 - file: ref-codes-stay-in-the-agent-docs.md
   description: "A label like D16 is an agent cross-reference. Never put a bare code in anything a human reads."
   when: "writing anything a human reads outside .agents/ - a comment, release notes, PR text, a chat reply"

@@ -6,7 +6,7 @@ paths:
 
 # Migrate the shipped UI clients off the v3 API
 
-**Status:** Not started, not urgent. After v3.0.0. v3 stays and is frozen, so both clients keep working
+**Status:** Not started. v3 stays and is frozen, so both clients keep working
 indefinitely - this is about not shipping our own UI on the version we tell users is the older one.
 
 ## What

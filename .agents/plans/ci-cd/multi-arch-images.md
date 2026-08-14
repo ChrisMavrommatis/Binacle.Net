@@ -6,7 +6,7 @@ paths:
 
 # CI - publish the image for arm64 as well as amd64
 
-**Status:** Not started, and **not scheduled** - the demand question below has never been answered. Trimmed out
+**Status:** Not started - the demand question below has never been answered. Trimmed out
 of `ci-release-workflow-build` on 2026-08-11, which was superseded when the release pipeline was rebuilt on
 GHCR. This is the only part of that plan that had not landed.
 

@@ -25,6 +25,7 @@ files hold the carve-outs.
 | write or edit a **code comment** | [comments-are-for-humans](comments-are-for-humans.md) |
 | write **text a user will see** - exception, log line, OpenAPI description, UI string | [plain-ascii-for-user-text](plain-ascii-for-user-text.md) |
 | write **any doc, comment or explanation** | [plain-language](plain-language.md) |
+| write or edit a **plan or an idea** | [plans-do-not-schedule-themselves](plans-do-not-schedule-themselves.md) |
 | write anything a human reads **outside `.agents/`** | [ref-codes-stay-in-the-agent-docs](ref-codes-stay-in-the-agent-docs.md) |
 | add a **fact** to any file under `.agents/` | [one-fact-one-place](one-fact-one-place.md) |
 | **edit a doc or design record** | [keep-verified-current](keep-verified-current.md) |
