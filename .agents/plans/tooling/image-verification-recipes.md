@@ -77,29 +77,25 @@ extra to verify here.
 Beta 2: revision `d317cd2b`, reports `3.0.0-beta.2`, runs as `app (1654)`, `/app/data` is `app:app 755`, and
 **4** System dlls - the framework-dependent proof, where a self-contained build shows ~170.
 
-## Where it goes - decide this first
+## Where it goes - settled 2026-08-14
 
-The prototype was a new `tooling/verify.just` module. **The maintainer's steer on 2026-08-13 was to look at
-`image.just` instead, or to refactor.** Three shapes, and the third interacts with an existing plan:
+**It goes in `tooling/image.just`.** The prototype was a new `tooling/verify.just` module; a sixth module for
+one job lost to the simpler grouping. The maintainer's call was that `image` means the image, local and
+published, and that the backing services it stands up today belong to `serve` - which makes this exactly the
+module a verification recipe belongs to. **Do not re-open this.**
 
-| | Shape | For | Against |
-|---|---|---|---|
-| A | New `verify` module | `just verify all 3.0.0` reads well; verification is its own concern with its own tool (cosign) | A sixth module for one job; `image` and `verify` both about images and a reader has to know which |
-| B | One `verify` recipe inside `image.just` | `just image verify 3.0.0`; no new module; the five checks hide behind private helpers | Contradicts that file's stated charter - **everything in it today runs `binacle-net:local`** and touches no registry |
-| C | Refactor `image.just` to be "the image", local and published | Honest grouping, and the header rewrite is one paragraph | Bigger change, and it lands on top of a question already open in `image-module-stacks.md` |
+The shape: one public recipe taking the version and an optional check name - `just image verify 3.0.0`,
+`just image verify 3.0.0 signature` - with the five checks as private `_verify_*` helpers. That adds one line
+to the module's help header rather than five, and keeps the file from becoming mostly verification.
 
-**Recommendation: B, shaped so that C is not needed.** One public recipe taking the version and an optional
-check name - `just image verify 3.0.0`, `just image verify 3.0.0 signature` - with the five checks as private
-`_verify_*` helpers. That adds one line to the module's help header rather than five, and keeps the file from
-becoming mostly verification. The charter sentence still has to change: it currently says everything in the
-module runs `binacle-net:local`, and this is the first recipe that reads a registry.
+**The module's charter sentence has to change either way.** It says everything in the module runs
+`binacle-net:local`, and this is the first recipe that reads a registry.
 
-**Do not decide this without reading `image-module-stacks.md`.** That plan is already asking what the `image`
-module is for - `volume` and `bind` may collapse into one stack or disappear into `smoke`. If they go, the
-module is small enough that adding verification to it is obvious. If they stay, A gets stronger. **The two
-should be decided together, or in that order.**
+**A separate piece of work rewrites that module's `up` and `down` recipes** and collapses its stacks. It does
+not block this and this does not block it - the two touch different recipes - but whichever lands second reads
+the other's header comment rather than reverting it.
 
-Whichever wins, three things follow:
+Three things follow:
 
 - The **version argument is required, never defaulted.** A default rots into a tag nobody meant to check, and
   green against last release is worse than no output.

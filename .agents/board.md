@@ -35,10 +35,11 @@ file and the release.
 **The active release.** v3.0.0 is in flight. Its plan holds the gates and its post-release companion holds the
 checks that follow the tag. **Do not pull board work into the release.**
 
-**Seven items are release work as of 2026-08-14** and are not to be started here - two more landed that day, the
-rate limiter test carve-out and rate limiting owned by the ServiceModule: image verification, the Docker Hub
-page, the Docker Hub immutability **rule** (not the switch), the PR gate change and its three architecture
-checks, the docs deploy, the client-generation page, and more ViPaq interop vectors. **Their plan files stay under `plans/`** - the
+**Eight items are release work** and are not to be started here. Seven as of 2026-08-14, alongside the rate
+limiter test carve-out and rate limiting owned by the ServiceModule: image verification, the Docker Hub page,
+the Docker Hub immutability **rule** (not the switch), the PR gate change and its three architecture checks, the
+docs deploy, the client-generation page, and more ViPaq interop vectors. **The compose stacks joined them on
+2026-08-15.** **Their plan files stay under `plans/`** - the
 release takes a slice of most of them and leaves the rest, and a file is deleted only when nothing is left in
 it.
 
@@ -313,16 +314,14 @@ Idea: [shared/extend-shared-models](ideas/shared/extend-shared-models.md) - park
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [tooling/image-module-stacks](plans/tooling/image-module-stacks.md) | ready | - |
 | [tooling/scripts-to-just-recipes](plans/tooling/scripts-to-just-recipes.md) | ready | - |
 
-Both are maintainer tooling - no user sees either, and nothing in CI calls them. Neither is urgent; **both are
-the kind of thing that fills a day that should have gone somewhere else.**
+Maintainer tooling - no user sees it, and nothing in CI calls it. Not urgent; **it is the kind of thing that
+fills a day that should have gone somewhere else.**
 
-**`image-module-stacks` lost its coupling on 2026-08-14.** It asks what the `image` module is still for, and the
-verification-recipe placement question used to be tangled with it. **The release settles that placement
-independently**, so this plan is now free-standing. **Whoever picks it up reads where the verification recipes
-ended up first**, rather than re-opening the question.
+**The compose stacks went into v3.0.0 on 2026-08-15** and are not to be started here. The plan that asked what
+the `image` module was for is gone: the maintainer answered it, the answer was written up as an execution plan
+under `plans/tooling/`, and the release took it. Its file is deleted when the work lands.
 
 **`scripts-to-just-recipes` is discoverability only, and should not be allowed to grow past that.** It owns a
 comment one-liner: the ~40 restating lines in `tooling/tmux.sh`, plus two banners that name the wrong window.

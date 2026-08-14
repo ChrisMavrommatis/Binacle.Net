@@ -37,6 +37,7 @@ worst time to meet.
 | **The PR gate change** | Image build + OpenAPI lint + **three architecture checks**. One workflow edit, everything green on arrival. |
 | **The client-generation page** | The spec is published and nobody knows they can generate a client from it. One docs page, and it applies to every version. |
 | **More ViPaq interop vectors** | Four rows of fixture data. Cheap, and the format froze in this release so they will not need redoing. |
+| **The compose stacks** | Pulled in on 2026-08-15, after the scope reset. Every decision is taken and the compose behaviour is tested, so it is one sitting with nothing left to figure out. |
 
 ### Does not ship, and why
 
@@ -217,12 +218,13 @@ check any of it.** As of the tag we advertise a property no user can confirm.
       with an optional check name, and the five checks as private helpers. The plan's own open question is
       closed.
 
-      **The reasoning, because it changes another plan too.** The maintainer's call was that `image` is for the
+      **The reasoning, because it changes another item too.** The maintainer's call was that `image` is for the
       image, and the supporting services it currently stands up - Postgres, Azurite, the telemetry collector -
       belong in `serve`, which is the local dev toolkit. That makes `image` mean "the image", local and
-      published, which is exactly the module a verification recipe belongs to. **The stack move itself is board
-      work, not release work** - it is recorded in the plan on what the `image` module is for, and this recipe
-      does not wait for it.
+      published, which is exactly the module a verification recipe belongs to. **The stack move came into this
+      release on 2026-08-15** and has its own section below. **The two do not wait on each other** - this
+      recipe adds a `verify` to `image.just`, the stack move rewrites that file's `up` and `down`, and they
+      touch different recipes. Whichever runs second reads the other's header comment.
 
       Two constraints from the plan hold whatever happens: the **version argument is required, never
       defaulted** - a default rots into a tag nobody meant to check - and the module's header sentence has to
@@ -398,6 +400,44 @@ drift apart.
       with the docs deploy below.
 - [ ] **Do not publish SDKs to close this.** The deliverable is a spec plus a generation guide, not shipped
       packages. That decision is recorded as a memory and is not this item's to change.
+
+### The compose stacks
+
+**[tooling/compose-stacks](plans/tooling/compose-stacks.md)** - **pulled in on 2026-08-15 at the maintainer's
+call.** Every decision in that plan is taken and the compose behaviour it rests on was tested the same day.
+It is ready to execute, start to finish, in one sitting.
+
+**It is the 2026-08-14 call finally carried out.** `image` is for the image; the backing services belong to
+`serve`. Today Postgres, Azurite and the dashboard are declared in **two** compose files with the same
+credentials in both - change one and nothing tells you the other disagrees.
+
+**Nothing here ships to a user and no workflow calls it.** It gates nothing, and if it is not done by step 5 the
+release goes without it.
+
+- [ ] **Four files become three**, each named after the `just` module that runs it: `serve.services.yml`,
+      `image.local.yml`, `image.full.yml`. `docker-compose.build.yml` builds nothing and `docker-compose.yml` is
+      not the repo's main stack - both names go.
+- [ ] **`image.full.yml` uses compose `include:`**, not `-f a -f b`. The plan holds the tested proof of why:
+      `include:` resolves each file's relative paths against **its own** directory, which is what makes the
+      backing services declarable once. `-f` resolves them against the first file, and that is the exact
+      failure that got the 2026-08-07 subfolder attempt reverted.
+- [ ] **`volume` and `bind` keep both names and share one file.** The recipe passes the project name and, for
+      `bind`, `BINACLE_DATA_DIR`. **`bind` is the maintainer's primary stack** - confirmed 2026-08-15 - so
+      nothing about typing `just image up bind` may change, and comparing the two must stay a one-word edit.
+      The compose file itself must still resolve an unset variable to the named volume.
+- [ ] **`just serve services` becomes `just serve services-up`** so it pairs with `services-down`. Trivial in
+      itself, but **grep for the recipe name as well as the filenames** - `tooling/tests.just` and the api
+      tests doc name the recipe and no compose file at all, so a filename-only sweep misses them.
+- [ ] **Both named volumes get a fixed name** - `binacle-net-postgres` and `binacle-net-data` - so the same
+      declaration under two project names is one database rather than two that look like one. **This is the one
+      visible change:** the existing project-prefixed volumes are orphaned and the next `up` starts on an empty
+      database and re-seeds the admin user. Local dev data, so acceptable - but say it before it is discovered.
+- [ ] **One open question, and it is the maintainer's:** should a bare `just image up` still default to `full`,
+      or to `bind` now that `bind` is the stack in daily use? **Raised and left open on 2026-08-15.** It blocks
+      nothing - the plan says leave it at `full` if it is still open when the work is done, and changing it
+      later is one word.
+- [ ] **One thing in the plan is reasoned but not run:** whether `just image up full` collides loudly on port
+      5432 when the services are already up. Confirm it fails rather than starting something half-connected.
 
 ### The docs deploy - after the tag
 
