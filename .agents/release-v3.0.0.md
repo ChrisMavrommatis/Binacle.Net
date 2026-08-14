@@ -70,55 +70,24 @@ A prerelease gets its immutable tag only, never `3.0` or `latest`. The release b
 
 | # | Item | State |
 |---|---|---|
-| 1 | Rate limiter tests | **open - do this first** |
-| 2 | Rate limiting owned by the ServiceModule | open, **after 1** |
+| 1 | Rate limiter tests | **done - 2026-08-14** |
+| 2 | Rate limiting owned by the ServiceModule | open, and the tests it needed are in |
 | 3 | The Azure Storage run | open, one command |
 | 4 | Beta 3 | open, after 1-3 |
 | 5 | The last commit: pins, prose and the changelog rename | open |
 | 6 | Tag `v3.0.0` | open |
 
-### 1. Rate limiter tests
+### 1. Rate limiter tests - done 2026-08-14
 
-**A carve-out from [api/integration-test-additions](plans/api/integration-test-additions.md)** - a large plan
-that designs full module-matrix integration coverage and deliberately stops before writing anything, so the
-maintainer picks the shape. **None of that runs here.** Its four phase-1 questions, the module matrix and the
-CORS gap all stay on the board. What comes into the release is its sharpest single finding.
+**Built in `api/test/Binacle.Net.ServiceModule.IntegrationTests/RateLimiting/`**, four tests, whole suite green.
+The module-off half is there too, so the pair proves limiting belongs to the module - which is what the `429`
+OpenAPI guard claims and nothing executable said before.
 
-**The finding, verified 2026-07-29 and confirmed still true on 2026-08-14: no test anywhere asserts that a 429
-ever happens.**
+The route list is **derived from the route table**, not typed out: every POST under `/api/v3` and `/api/v4`, 18
+of them, matching the 18 `.RequireRateLimiting("ApiUsage")` calls in the source. Dropping the attribute from one
+endpoint fails the test with that route named - checked by mutation, along with disabling each limiter.
 
-- The core harnesses boot with modules off, so the `"ApiUsage"` policy is never registered, the
-  `.RequireRateLimiting("ApiUsage")` metadata on all 18 endpoints is inert, and the middleware is not in the
-  pipeline. That harness cannot see rate limiting at all.
-- The ServiceModule harness turns the module on and then sets `RateLimiter:AuthToken` to `NoLimiter::0`
-  (`api/test/Binacle.Net.ServiceModule.IntegrationTests/BinacleApi.cs`), disabling the limiter so the auth
-  tests are not throttled.
-
-Someone could reorganise module registration until nothing is limited, and every suite would stay green while
-the shipped API stopped limiting anyone.
-
-**Why it is release work.** Two of this release's own claims rest on behaviour nothing tests. The login
-throttle change - it partitions on `Connection.RemoteIpAddress` instead of a caller-supplied header, so varying
-a header no longer resets your own throttle - is the one security-relevant change in the release, and it rests
-on **a single hand-check from 2026-07-24**. And the `429` OpenAPI guard says a module-off document must not
-document a status the build cannot emit; that is asserted by a decision record and a transformer, and by
-nothing executable.
-
-- [ ] **A 429 arrives when the module is on.** Shipped limits are in
-      `Config_Files/ServiceModule/RateLimiter.json` - `ApiUsageAnonymous` is `SlidingWindow::60/3600-30`,
-      `AuthToken` is `SlidingWindow::20/3600-30`. **The test reads the configured number, never guesses it.**
-- [ ] **No limiting when the module is off.** The pair is the point: one test each side proves the behaviour
-      belongs to the module, which is what the `429` guard claims.
-- [ ] **The auth throttle partitions on the connection address.** Vary the caller-supplied header across
-      requests and assert the throttle does **not** reset. **This is the highest-value test in the release** -
-      it turns the one hand-checked security change into a regression test.
-- [ ] **Do not turn the limiter on in the shared harness.** A live limiter is a shared bucket across a suite
-      that hits endpoints repeatedly, and the failure mode is random 429s that read as flakiness. Use a
-      dedicated harness instance with a tiny limit and its own tests. The existing auth tests keep
-      `NoLimiter::0`.
-
-**On coverage, and keep it modest.** Cover what this release changed, not the global number. The Sonar gate is
-a different problem and is not this item.
+Only the module-matrix plan it was carved from stays open, minus this finding.
 
 ### 2. Rate limiting owned by the ServiceModule
 
@@ -137,9 +106,9 @@ module-off document even if a later session deletes a guard, because there is no
 guard has already been deleted once by someone who reasoned about it and got it wrong, and the published beta
 specs shipped a `429` no module-off build can emit.
 
-- [ ] **Do this after the rate limiter tests, not before.** The plan's own warning: this changes *how* the
-      attribute arrives on the endpoint, with no test that would notice if it stopped arriving. **Doing it with
-      no test is how it ships broken and quiet.** Step 1 is that test.
+- [x] **The test that watches this is in** (step 1). It requires every v3 and v4 POST to answer `429` once the
+      limit is spent, so an endpoint whose attribute stops arriving fails by name. **Run it after the swap and
+      again after the guard is deleted.**
 - [ ] **Use `Finally`, not `Add`, for the group convention.** Conventions registered with `Add` run *before*
       each endpoint's own conventions, so the marker is not in the metadata yet and the check finds nothing. **No
       error, no warning, just no rate limiting.** This was the first thing the proof of concept got wrong.
@@ -532,8 +501,9 @@ the missing tests (2026-07-27). Forwarded headers, warn-once diagnostics and the
 - **Old ViPaq tokens fail loudly.** Verified 2026-07-19, locked 2026-07-20 with four regression vectors in
   `vipaq/test-vectors/serialization/decode-invalid.json`. Zero silent misparses.
 - **The login throttle no longer partitions on a caller-supplied header.** `GetClientIp()` deleted 2026-07-24;
-  `AuthTokenRateLimitingPolicy` partitions on `Connection.RemoteIpAddress`. **This is the one still resting on
-  a hand-check - see the rate limiter tests above.**
+  `AuthTokenRateLimitingPolicy` partitions on `Connection.RemoteIpAddress`. Unit tests cover the partition keys,
+  and as of 2026-08-14 an integration test covers the wiring - a forged forwarded header per attempt still hits
+  the limit.
 - **ViPaq's wire format did not move after beta 1** - source changed comments only.
 - **The Dockerfile did not change after beta 1 at all.**
 

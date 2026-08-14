@@ -49,24 +49,11 @@ are all off. Every module combination the image actually ships is untested end t
 
 ## What that hides - verified 2026-07-29
 
-**1. Rate limiting is exercised nowhere.**
-
-Every v3 and v4 packing endpoint carries `.RequireRateLimiting("ApiUsage")` - core code, in
-`api/src/Binacle.Net`. But the `"ApiUsage"` policy and the `app.UseRateLimiter()` call are both registered by
-**ServiceModule** (`api/src/Binacle.Net.ServiceModule/ModuleDefinition.cs`, around lines 108 and 129). So:
-
-- With `SERVICE_MODULE` off, the middleware is not in the pipeline, the metadata is inert, and no caller is
-  ever limited. That is the core harness - it cannot see rate limiting at all.
-- The ServiceModule harness *does* turn the module on, and then sets `RateLimiter:AuthToken` to `NoLimiter::0`
-  - deliberately disabling the limiter so the auth tests are not throttled.
-
-The result is that **no test anywhere asserts that a 429 ever happens.** Someone could reorganise module
-registration so the policy stops being added, and every suite would stay green while the shipped API silently
-stopped limiting anyone. The shipped limits are in `Config_Files/ServiceModule/RateLimiter.json`:
-`ApiUsageAnonymous` is `SlidingWindow::60/3600-30`, `AuthToken` is `SlidingWindow::20/3600-30`.
-
-This is the clearest case of the thing a per-module test cannot catch: **a core behaviour that only exists
-because an optional module registered something.**
+**1. Rate limiting was exercised nowhere. That one is built** -
+`api/test/Binacle.Net.ServiceModule.IntegrationTests/RateLimiting/` covers both limiters and the login
+throttle's partition, with a host per test. It is the worked example of the shape this plan is about: **a core
+behaviour that only exists because an optional module registered something.** Read it before deciding anything
+below; it answers in code what this plan asks in prose.
 
 **2. CORS is exercised nowhere.**
 
@@ -101,8 +88,6 @@ does not build any of it; it decides whether this list is right.
       because module B registered something", which is exactly the failure this plan exists for. The rate
       limiting case argues for at least two configurations. Runtime is the budget - the integration suite is
       already the long pole.
-- [ ] Rate limiting: assert a 429 arrives when the module is on and the limit is small, and that the limit is
-      absent when it is off.
 - [ ] CORS: assert a configured origin comes back in `Access-Control-Allow-Origin` and an unconfigured one does
       not.
 - [ ] Look for more of the same shape before deciding the matrix. The search is core code that only works
@@ -111,10 +96,9 @@ does not build any of it; it decides whether this list is right.
 
 ## Things to watch out for
 
-- **A live rate limiter will make other tests flaky.** Sixty requests an hour is a shared bucket across a
-  suite that hits endpoints repeatedly, and the failure looks like random 429s rather than a limit. Weigh a
-  dedicated harness instance with a tiny limit and its own tests against turning the limiter on everywhere.
-  Whatever you choose, the test that asserts limiting has to know the configured number rather than guess it.
+- **A live rate limiter will make other tests flaky.** The anonymous partition key is a constant, so it is one
+  bucket for every anonymous caller in a host, and it does not refill inside a run. **Do not turn the limiter on
+  in a shared harness.** The rate limiting tests build their own host per test for this reason.
 - **Test-host configuration goes through an env var the harness reads, never a `.runsettings` file** - the
   Microsoft Testing Platform runner ignores VSTest runsettings. `BINACLE_TEST_INFRA` already works this way.
 - **Turning UI and Service on changes the route table**, so a test asserting a 404 for an unknown path may
@@ -128,7 +112,6 @@ does not build any of it; it decides whether this list is right.
 - **One run or a matrix?** And if a matrix, which combinations - the ones the samples ship, or something
   smaller?
 - **How many more cross-module dependencies are there?** That list is what decides the answer above.
-- **Where do the rate-limit tests live** so a live limiter does not make everything else flaky?
 - **Does anything break when the modules go on?** If existing assertions have to change, say which and why -
   that is a finding, not a chore.
 

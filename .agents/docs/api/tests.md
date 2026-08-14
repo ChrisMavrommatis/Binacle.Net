@@ -1,7 +1,7 @@
 ---
 id: api/tests
 description: api/test integration tests — layout, v3/v4 HTTP conventions, validBinId, preset keys, special bins, base-class asserts, and test host config
-verified: 2026-07-28
+verified: 2026-08-14
 check: Test folders mirror api/src/Binacle.Net/v{3,4}/Endpoints/; validBinId, PresetKeys, special bins, and base-class asserts match api/test/ source
 also_update:
   - shared
@@ -17,7 +17,7 @@ Six projects under `api/test/` — two integration suites, which this doc is abo
 | Project | Covers | Run |
 |---|---|---|
 | `Binacle.Net.IntegrationTests` | v3 + v4 HTTP endpoints (fit, pack, presets) | `just test api-core-integration` |
-| `Binacle.Net.ServiceModule.IntegrationTests` | auth token, admin account/subscription (ServiceModule on) | `just test api-service-integration` |
+| `Binacle.Net.ServiceModule.IntegrationTests` | auth token, admin account/subscription (ServiceModule on), rate limiting both ways | `just test api-service-integration` |
 | `Binacle.Net.UnitTests` | `Binacle.Net`'s own options validators, and the forwarded-headers middleware over the options they produce | `just test api-core-unit` |
 | `Binacle.Net.Kernel.UnitTests` | Kernel features, one folder each (`Network/`) | `just test api-kernel-unit` |
 | `Binacle.Net.DiagnosticsModule.UnitTests` | health check allow-list, middleware, config validators | `just test api-diagnostics-unit` |
@@ -40,6 +40,13 @@ dependency for one interface.
 Both are xUnit over `WebApplicationFactory<IApiMarker>`, registered with `[assembly: AssemblyFixture(...)]`.
 The core fixture uses `UseEnvironment("Test")`, a camelCase `JsonSerializerOptions` with `JsonStringEnumConverter`,
 and a null logger factory.
+
+`RateLimiting/` in the ServiceModule suite is the exception to both fixtures. Each test builds and disposes its
+own `WebApplicationFactory` — `RateLimitedBinacleApi` with the module on and small limits, or
+`ServiceModuleOffBinacleApi` with it off — and the three classes share a `RateLimiterCollection` that runs
+non-parallel. The routes under test are derived from the route table: every POST under `/api/v3` and `/api/v4`,
+with `{preset}` and `{bin}` filled from the host's own preset options. That factory pins SQLite with its own
+`DataSource` on every backend leg.
 
 > `Binacle.Net.ServiceModule.IntegrationTests` picks its database backend from **`BINACLE_TEST_INFRA`** —
 > `AzureStorage`, `Postgres`, or `Sqlite`. Unset, it **falls back to SQLite**, so a bare `dotnet test` runs with

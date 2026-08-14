@@ -120,13 +120,16 @@ and after with the module off (both should have no `429`), and confirm a module-
 `.RequireRateLimiting("AuthToken")` on `api/src/Binacle.Net.ServiceModule/v0/Endpoints/Auth/Token.cs` stays as
 it is. That endpoint belongs to the module, so naming the module's own policy is correct there.
 
-## Test gap this walks into
+## The tests that watch this
 
-There is no test anywhere that asserts a `429` ever happens - the integration-test plan says so, and it is still
-true. This refactor changes *how* the attribute arrives on the endpoint, with no test that would notice if it
-stopped arriving. Either land the rate-limiting integration test first, or add a narrow assertion alongside this
-work: with the module on, a marked endpoint carries `EnableRateLimitingAttribute` and an unmarked one does not.
-Doing it with neither is how this ships broken and quiet.
+`api/test/Binacle.Net.ServiceModule.IntegrationTests/RateLimiting/` is the net under this refactor, and it was
+written for it. It derives every POST under `/api/v3` and `/api/v4` from the route table and requires each one
+to answer `429` once the limit is spent, so an endpoint whose attribute stops arriving fails by name. **Run it
+after the swap and after the guard is deleted** - it is the only thing that would notice.
+
+The one case it does not cover is an endpoint that never gets `.RateLimited()` in the first place. The derived
+list is route-shaped rather than metadata-shaped for exactly that reason, so a new v3 or v4 POST joins the list
+on its own.
 
 ## Relationship to the two-guard fix
 

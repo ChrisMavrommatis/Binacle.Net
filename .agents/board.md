@@ -35,8 +35,8 @@ file and the release.
 **The active release.** v3.0.0 is in flight. Its plan holds the gates and its post-release companion holds the
 checks that follow the tag. **Do not pull board work into the release.**
 
-**Nine items are release work as of 2026-08-14** and are not to be started here: the rate limiter test
-carve-out, rate limiting owned by the ServiceModule, image verification, the Docker Hub page, the Docker Hub
+**Eight items are release work as of 2026-08-14** and are not to be started here (a ninth, the rate limiter test
+carve-out, landed that day): rate limiting owned by the ServiceModule, image verification, the Docker Hub page, the Docker Hub
 immutability **rule** (not the switch), the PR gate change and its three architecture checks, the docs deploy,
 the client-generation page, and more ViPaq interop vectors. **Their plan files stay under `plans/`** - the
 release takes a slice of most of them and leaves the rest, and a file is deleted only when nothing is left in
@@ -99,8 +99,8 @@ writing them first means writing them twice, in two languages, where after the p
   never going to.
 - **The heavy architecture tools** - ArchUnitNET, dependency-cruiser, lychee. **Read the xunit pin trap in that
   row before starting**; it decides whether the first one is an afternoon or a week.
-- **`integration-test-additions`, phase 1 only.** Read what the release built for the rate limiter tests first;
-  it answers one of phase 1's four questions in code.
+- **`integration-test-additions`, phase 1 only.** Down to three questions - the rate limiter tests answered the
+  fourth in code, and the plan points at them.
 - **`sonar-issue-triage`.** Leftovers, one of which is a decision.
 - **`parallel-processors-decision`.** A measurement and a decision, self-contained.
 
@@ -185,14 +185,14 @@ After the port there is one stack and no seam.
 **`integration-test-additions` is two sessions.** Phase 1 investigates and stops; the maintainer picks the shape;
 phase 2 writes the tests. **Do not run it as one job** - the plan says why.
 
-**Its rate limiter cases went into v3.0.0 and are not to be built here.** The release takes one finding - that
-nothing anywhere asserts a 429 ever happens - and covers the two limiters plus the auth throttle's partition.
-**Everything else stays:** the four phase-1 questions, the module matrix, CORS, and the hunt for other core
-behaviour that only works because an optional module registered something.
+**Its rate limiter cases landed in v3.0.0 on 2026-08-14 and are not to be rebuilt here.** They cover the two
+limiters plus the auth throttle's partition. **Everything else stays:** the remaining phase-1 questions, the
+module matrix, CORS, and the hunt for other core behaviour that only works because an optional module registered
+something.
 
-**Read the release's answer before phase 1 runs.** One of phase 1's four questions is "where do the rate-limit
-tests live so a live limiter does not make everything else flaky", and the release answered it in code. Phase 1
-inherits that answer instead of re-deciding it.
+**Read those tests before phase 1 runs.** They answered "where do the rate-limit tests live so a live limiter
+does not make everything else flaky" in code - a host per test, no shared fixture. Phase 1 inherits that answer
+instead of re-deciding it.
 
 **Two of these three collide with the architecture work, and one collides with a pin.** The ArchUnitNET phase
 adds a test leaf that references every slice it inspects, and `testskernel-data-extraction` reshapes the fixture
