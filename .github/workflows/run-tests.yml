@@ -1,5 +1,6 @@
 # Runs every test leaf on PR. One job so setup and build happen once; one step per leaf so a red check names
-# the suite. ServiceModule is duplicated steps per backend rather than a matrix - cheaper at this count.
+# the suite. ServiceModule is duplicated steps per backend rather than a matrix - cheaper at this count, and
+# all three backends run here, so none of them ships on a hand-run.
 #
 # DOTNET_TEST_ARGS is job-wide: CI builds the solution once and every leaf runs --no-build against it. Unset
 # on a laptop, where the same recipes do a plain `dotnet test`.
@@ -23,9 +24,26 @@ jobs:
     env:
       DOTNET_TEST_ARGS: --configuration Release --no-build
 
-    # Up for the whole job so the ServiceModule (Postgres) step can reach it. Idle during the others, which is
-    # cheaper than starting it inline.
+    # Up for the whole job so the ServiceModule backend steps can reach them. Idle during the others, which is
+    # cheaper than starting them inline.
     services:
+      # Table storage on 10002 is the only endpoint the tests use; the other two are mapped because the
+      # emulator's "UseDevelopmentStorage=true" shorthand names all three, and a missing one reads as a
+      # connection failure rather than as an unused port.
+      azurite:
+        image: mcr.microsoft.com/azure-storage/azurite:3.36.0
+        ports:
+          - 10000:10000
+          - 10001:10001
+          - 10002:10002
+        # nc, not curl: the image is alpine-based and ships busybox, not curl. A plain port check is enough -
+        # the emulator serves as soon as it listens.
+        options: >-
+          --health-cmd "nc -z 127.0.0.1 10002"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
       postgres:
         image: postgres:17.6
         env:
@@ -133,3 +151,7 @@ jobs:
       - name: Test - API Service [Postgres] (Integration)
         if: ${{ !cancelled() }}
         run: just test api-service-integration Postgres
+
+      - name: Test - API Service [AzureStorage] (Integration)
+        if: ${{ !cancelled() }}
+        run: just test api-service-integration AzureStorage

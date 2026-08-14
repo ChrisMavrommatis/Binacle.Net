@@ -72,8 +72,8 @@ A prerelease gets its immutable tag only, never `3.0` or `latest`. The release b
 |---|---|---|
 | 1 | Rate limiter tests | **done - 2026-08-14** |
 | 2 | Rate limiting owned by the ServiceModule | **done - 2026-08-14** |
-| 3 | The Azure Storage run | open, one command |
-| 4 | Beta 3 | open, after 3 |
+| 3 | The Azure Storage run | **done - 2026-08-14, and now on the PR gate** |
+| 4 | Beta 3 | open |
 | 5 | The last commit: pins, prose and the changelog rename | open |
 | 6 | Tag `v3.0.0` | open |
 
@@ -110,14 +110,15 @@ contract did not move.
 **The ServiceModule simplification idea inherits a smaller surface**, which does not make that direction
 decided. It is on the board.
 
-### 3. The Azure Storage run
+### 3. The Azure Storage run - done 2026-08-14
 
-- [ ] `just serve services -d`, then `just test api-service-integration AzureStorage`.
+Run locally against Azurite: 111 passed, 1 skipped (the SQLite pragma test, which skips itself off its
+backend). Postgres re-run green alongside it.
 
-  CI covers SQLite and Postgres only, so the Azure provider ships on trust. **This got more important on
-  2026-08-07:** the `service-azure` sample was folded into `service`, where Azure is one commented connection
-  string among three. So Azure ships with no dedicated sample, no CI coverage and no smoke profile. **This one
-  run is the only thing standing behind it.**
+**It is no longer a hand-run.** `run-tests.yml` now brings up an Azurite service container and runs a third
+ServiceModule step, so every PR exercises all three backends - which is what made this a gate item in the
+first place. The local runner is unchanged: `just test all` stays the set that needs nothing brought up, and
+a backend leg is still a deliberate `just test api-service-integration <backend>`.
 
 ### 4. Beta 3
 

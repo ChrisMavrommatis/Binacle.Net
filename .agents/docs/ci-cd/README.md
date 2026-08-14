@@ -1,7 +1,7 @@
 ---
 id: ci-cd
 description: CI/CD — the six GitHub Actions workflows in .github/workflows, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
-verified: 2026-08-11
+verified: 2026-08-14
 check: The workflow table matches the files in .github/workflows; the vars/secrets tables match every ${{ vars.* }} and ${{ secrets.* }} reference in them; the pinned just version and runner labels still match
 also_update:
   - ci-cd/release-pipeline
@@ -27,7 +27,7 @@ described in `$tooling`. Nothing about a recipe's behaviour is repeated here.
 
 | Workflow | Trigger | What it does |
 |---|---|---|
-| `run-tests.yml` | `pull_request`, `workflow_dispatch`, `workflow_call` | Every test leaf. One job so setup and build happen once; one step per leaf so a red check names the suite. Postgres runs as a job service. Called by the release pipeline as its "this commit passed CI" gate |
+| `run-tests.yml` | `pull_request`, `workflow_dispatch`, `workflow_call` | Every test leaf. One job so setup and build happen once; one step per leaf so a red check names the suite. Postgres and Azurite run as job services, one ServiceModule step per storage backend. Called by the release pipeline as its "this commit passed CI" gate |
 | `sonar-analysis.yml` | `workflow_dispatch` | Build plus `just coverage all sonar` between `Sonar begin`/`Sonar end`, published to SonarCloud |
 | `release-docker-image.yml` | `push` on tags `v[0-9]*` | The release pipeline — check the changelog section, run the suite, build and push to GHCR, smoke it there, copy to Docker Hub, create the GitHub release. See `$ci-cd/release-pipeline` |
 | `smoke-image.yml` | `workflow_dispatch`, `workflow_call` | Pulls a published image and runs the structure check plus all five smoke profiles. Called by the release pipeline as its gate, or run by hand against any tag |
@@ -136,9 +136,9 @@ Stated plainly, because the gaps are not obvious from a green check.
 - **Sonar runs when somebody presses the button**, so analysis never lands on the pull request that caused the
   finding. Automatic Analysis is deliberately off — it only reads source, and it fights a CI run that uploads
   coverage.
-- **Only two of the three storage backends are exercised.** `run-tests.yml` runs the ServiceModule suite
-  against SQLite and Postgres. The Azure Storage provider has no CI coverage at all, and `sonar-analysis.yml`
-  runs the service suite against SQLite only, so its coverage never reaches the Postgres or Azure provider code.
+- **Coverage sees one storage backend.** `run-tests.yml` runs the ServiceModule suite against all three, but
+  `sonar-analysis.yml` runs it against SQLite only, so coverage never reaches the Postgres or Azure provider
+  code.
 - **One architecture.** The image is `linux/amd64` only. It does ship an SPDX SBOM and SLSA provenance, and is
   cosign-signed — see `$ci-cd/release-pipeline`.
 - **Nothing tells users how to verify any of that.** The signature and attestations are published; the
