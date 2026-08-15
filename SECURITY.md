@@ -17,6 +17,35 @@ I release security patches for the latest version only. Please ensure you are us
 | latest  | :white_check_mark: |
 | < latest| :x:                |
 
+## Verifying a Release
+
+Images published from `3.0.0-beta.2` onward are signed, and carry an SPDX software bill of materials and SLSA
+build provenance. Replace `<version>` with the release you pulled - the same commands work against
+`ghcr.io/chrismavrommatis/binacle-net`.
+
+```bash
+cosign verify binacle/binacle-net:<version> \
+  --certificate-identity-regexp '^https://github\.com/ChrisMavrommatis/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+docker buildx imagetools inspect binacle/binacle-net:<version>
+```
+
+Both flags on `cosign verify` matter. Without the identity you are only asking whether *anyone* signed the
+image, and anyone can - Sigstore is open to every GitHub account. The two flags together are what say it came
+from this repository's release workflow.
+
+The signature covers the image digest, so it holds for the `3.0` and `latest` tags as well as the exact
+version - verifying any of them verifies the same artifact.
+
+**Releases before `3.0.0-beta.2` cannot be verified.** `3.0.0-beta.1`, `2.1.1` and everything earlier were
+published before the signing pipeline existed, so `cosign verify` answers `no signatures found` against them.
+That is history rather than a failed check, and it applies to a moving tag like `latest` for as long as it
+still points at one of those releases.
+
+**A passing verify means the image came from this repository's release workflow. It does not mean the image is
+free of vulnerabilities.** For that, read the bill of materials.
+
 ## Third-Party Dependencies
 
 For security issues in third-party dependencies, please refer to:

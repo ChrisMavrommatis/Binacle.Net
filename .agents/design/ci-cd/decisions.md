@@ -317,6 +317,18 @@ the referrers API for the signature; **GHCR answers it with a 404**, so the same
 The signature is present - it is in the GHCR tag list as `sha256-<digest>` and `cosign verify` passes against
 both registries. Only a failed verify is evidence of an unsigned image; an empty referrers response is not.
 
+**The verify invocation is copied to several surfaces on purpose, and one thing changes it.** The same
+`cosign verify` - identity regexp plus issuer - now lives in `CHANGELOG.md`, `SECURITY.md`, the `image.just`
+recipe and the docs site, and is headed for the Docker Hub page. That repetition is deliberate: each audience
+arrives somewhere different, and a link instead of the command defeats the point. **The only things that
+change it are renaming `.github/workflows/release-docker-image.yml` or moving the repository** - both rare,
+both visible in a diff. If either happens every copy changes together, and the certificate-identity regexp is
+the part that breaks; the issuer flag never moves. `SECURITY.md` is the wording the others follow.
+
+**Signing starts at `3.0.0-beta.2`**, along with the SBOM and the GHCR staging copy. `3.0.0-beta.1`, `2.1.1`
+and everything earlier answer `no signatures found`, and that is history rather than a broken check - it binds
+every example on every surface, which must name a signed tag.
+
 **Keyless, so there is no key.** cosign exchanges the job's OIDC token for a short-lived certificate, which is
 why both jobs need `id-token: write` and why this adds no secret to the repo. `sigstore/cosign-installer` comes
 from the sigstore org itself rather than an individual, which is the standard this is adhering to in the first

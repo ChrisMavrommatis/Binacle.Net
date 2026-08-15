@@ -78,9 +78,6 @@ you need, and trim or delete it once the work lands.
 ## Tooling
 
 ```yaml
-- file: tooling/image-verification-recipes.md
-  description: "Verify a published image - recipes, and telling users they can"
-  paths: ["tooling/**"]
 - file: tooling/scripts-to-just-recipes.md
   description: "Convert the last `tooling/*.sh` scripts to `just` recipes"
   paths: ["tooling/**"]

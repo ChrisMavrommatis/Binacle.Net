@@ -204,11 +204,15 @@ describing 3.x.
 
 ### Who owns the "Verifying what you pulled" section
 
-**The draft below carries that section, but this plan does not own its wording.** The same invocation is already
-live in `CHANGELOG.md` and is headed for `SECURITY.md` and the docs site, and the separate image-verification
-work owns what all of them say - what is signed, what a pass proves, and the sentence that a pass is not a
-clean bill of health. **Take the wording from there rather than editing it here**, or there will be two versions
-of one paragraph, drifting.
+**The draft below carries that section, but this plan does not own its wording.** As of 2026-08-15 that wording
+is settled and shipped: **`SECURITY.md` at the repo root is the source** - what is signed, both commands, why
+both cosign flags matter, and the sentence that a pass is not a clean bill of health. The docs site carries the
+long form of the same thing. **Copy `SECURITY.md` rather than editing the draft below**, or there will be two
+versions of one paragraph, drifting.
+
+Two facts from that work bind this page and are easy to miss. **Signing starts at `3.0.0-beta.2`** - anything
+earlier answers `no signatures found`, which reads as our bug. And the signature is a **referrer**, made
+separately on each registry, so a verify should name the registry the reader actually pulled from.
 
 What this plan does own is that the section **exists on this page and carries the commands rather than a link**.
 This is where the pull happens - a reader is here because they are about to run `docker run` - so it is the last

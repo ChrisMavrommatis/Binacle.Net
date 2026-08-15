@@ -86,6 +86,18 @@ Rewritten 2026-08-14, when the release scope was reset.
       credential. Only open if the test server has a `ghcr.io` entry in its docker config. A
       `docker logout ghcr.io` and a re-pull closes it.
 
+- [ ] **Move the verification floor from `3.0.0-beta.2` to `3.0.0`.** Signing, the SBOM and the GHCR staging
+      copy all started at beta 2, so every surface currently says that is the first verifiable image - which
+      is true and reads like a pre-release footnote. **Once v3.0.0 is published, `3.0.0` is the first
+      verifiable *release*, and the examples can finally name a tag users actually pull.** Two things change:
+      the "from `3.0.0-beta.2` onward" wording becomes `3.0.0`, and every worked example that had to say
+      `3.0.0-beta.2` - because `3.0`, `latest` and `3.0.0` were unsigned or absent - can use a real tag.
+
+      **The surfaces that say it:** `SECURITY.md`, `README.md`, the docs-site verification page, the
+      `image.just` header, `tooling/README.md`, and the Docker Hub page when it goes up. Grep for
+      `3.0.0-beta.2` and you have the list. Keep beta 2 named only where the *history* is the point - it is
+      still the first signed image, and someone verifying an old pull needs to know their `2.1.1` never can be.
+
 - [ ] **Decide the immutability switch, now that a real release is behind it.** The rule is corrected and the
       switch is off. Turning it on means testing it on a scratch repo first - there is no undo, and an
       immutable tag cannot be deleted either, so a release tag pushed by mistake is permanent. **If you decide

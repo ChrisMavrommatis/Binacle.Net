@@ -148,6 +148,24 @@ Nothing outside hurl ever sees those libraries, which is the point - an old libx
 would be a real problem. Every other distro takes the plain binary and needs none of this, CI runners included
 as long as they stay on noble.
 
+### cosign
+
+Only needed for `just image verify`, which checks a published image's signature. Same shape as the smoke tools
+- one static binary in `~/.local/bin`, pinned rather than `latest`, nothing to uninstall but a file.
+
+```bash
+# cosign 3.1.3 - verifies the signature on a published image
+curl -fsSL -o /tmp/cosign \
+  https://github.com/sigstore/cosign/releases/download/v3.1.3/cosign-linux-amd64
+install -m0755 /tmp/cosign ~/.local/bin/cosign
+
+cosign version
+```
+
+`just image verify <version>` runs without it and says so - the other four checks still work, and only the
+signature one stops. Nothing needs a `docker login`, cosign included: these are the commands a user runs, and
+a check that only passes with a credential is not checking a public artifact.
+
 ## First run
 
 ```bash

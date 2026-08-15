@@ -196,48 +196,46 @@ named below.
 
 ### Image verification
 
-**[tooling/image-verification-recipes](plans/tooling/image-verification-recipes.md)** - a plan in two halves. The
-first is a `just` recipe running five checks that today take five commands and a 90-character flag. The second
-is **telling anyone the signing exists**, across five surfaces. All five checks were run green against
-`3.0.0-beta.2` on 2026-08-13 by a prototype that was then reverted, so the plan holds proven commands and the
-tree is clean.
+**Done 2026-08-15, except the Docker Hub page.** `just image verify <version> [check]` runs the five checks,
+all five proven green against `3.0.0-beta.2` and watched to fail against `2.1.1`. Four of the five surfaces
+that tell users about it are written: `CHANGELOG.md`, `SECURITY.md`, `README.md` and the docs-site page. **The
+plan file is gone** - what survived it went to the ci-cd decisions ledger (the one verify invocation, what
+changes it, and the beta 2 floor) and the tooling reference doc (the five checks and the two just traps).
 
-**The release notes say the image is signed and carries an SBOM and provenance, and nothing tells a user how to
-check any of it.** As of the tag we advertise a property no user can confirm.
+**The one thing left is the Docker Hub page**, and it belongs to that page's own work below.
 
-**Split it, because only one half has an open decision.**
-
-- [ ] **The two surfaces a coding session owns - no decision needed, do these first.** `SECURITY.md` gets the
-      permanent short version: what is signed, the two commands, what a pass means and what it does not.
-      `README.md` gets one line under the pin note pointing at it, no commands.
-- [ ] **Hand the docs-site page to the docs deploy.** Repo-root `docs/` is off limits from a coding session.
-      The plan already contains the full text the page must carry, verified verbatim against beta 2. **This is
-      the one deadline in this section: the docs deploy runs once, straight after the tag, and a surface that
-      misses it waits for the next deploy.** This is why the item is pre-tag rather than post-tag.
-- [ ] **The placement is decided - 2026-08-14. It goes in the `image` module.** `just image verify <version>`,
-      with an optional check name, and the five checks as private helpers. The plan's own open question is
-      closed.
+- [x] **The two surfaces a coding session owns.** Done 2026-08-15. `SECURITY.md` has a "Verifying a Release"
+      section - what is signed, both commands version-neutral, why both cosign flags matter, and that a pass
+      means it came from the release workflow and **not** that the image is free of vulnerabilities.
+      `README.md` has one line under the pin note pointing at it, no commands.
+- [x] **The docs-site page is written**, 2026-08-15, at the maintainer's explicit go-ahead to touch repo-root
+      `docs/` for it - `docs/collections/_versions/v3.0.x/verifying-a-release.md`, registered by front matter
+      `nav.order: 8` and confirmed with a clean `jekyll build`. **It made the deadline**: the docs deploy runs
+      once, straight after the tag, and a surface that misses it waits for the next one. Every runnable block
+      uses a `<version>` placeholder or `3.0.0-beta.2`; `3.0`, `latest` and `2.1.1` appear only in prose.
+- [x] **The placement is decided - 2026-08-14, and built there 2026-08-15.** It is in the `image` module:
+      `just image verify <version>`, with an optional check name, and the five checks as private helpers.
 
       **The reasoning, because it changes another item too.** The maintainer's call was that `image` is for the
       image, and the supporting services it currently stands up - Postgres, Azurite, the telemetry collector -
       belong in `serve`, which is the local dev toolkit. That makes `image` mean "the image", local and
       published, which is exactly the module a verification recipe belongs to. **The stack move came into this
-      release on 2026-08-15** and has its own section below. **The two do not wait on each other** - this
-      recipe adds a `verify` to `image.just`, the stack move rewrites that file's `up` and `down`, and they
-      touch different recipes. Whichever runs second reads the other's header comment.
-
-      Two constraints from the plan hold whatever happens: the **version argument is required, never
-      defaulted** - a default rots into a tag nobody meant to check - and the module's header sentence has to
-      change, because it currently says everything in the module runs `binacle-net:local` and this is the first
-      recipe that reads a registry.
-- [ ] **Then build the recipe.** Version argument required, never defaulted. No `docker login` anywhere - these
-      are the commands a user runs. `cosign` goes into `DEVELOPMENT.md` with a pinned version.
-- [ ] **Write the Docker Hub page's verification section from the same wording** - see the ordering note below.
+      release on 2026-08-15** and landed first; this recipe went in on top of it, and the module
+      header now carries both - the stacks that run `binacle-net:local`, and the one recipe that reads a
+      registry instead.
+- [x] **The recipe is built and all five checks are proven.** Version required and never defaulted, no
+      `docker login` anywhere, and all five run even when one fails. `cosign` 3.1.3 is in `DEVELOPMENT.md`,
+      pinned, the same single-binary shape as the smoke tools. Green against `3.0.0-beta.2` on both
+      registries, and watched to fail against `2.1.1` - `no signatures found`, no SBOM, and the 172 System
+      dlls of the old self-contained build.
+- [ ] **Write the Docker Hub page's verification section from the same wording.** `SECURITY.md` is the source
+      now; that page's own plan says to copy it rather than edit its draft.
 
 **One ordering constraint that binds every surface.** Any example naming a tag must name a **signed** tag.
 Signing started with beta 2, so `3.0.0-beta.1` fails with `no signatures found`, which reads as our bug rather
 than as history - and `3.0` and `latest` do not point at a signed image until v3.0.0 publishes. Write the prose
-version-neutral with a placeholder.
+version-neutral with a placeholder. **Moving that floor to `3.0.0` once the tag is out is a post-release
+item**, listed there with the surfaces to change.
 
 ### The Docker Hub page
 
