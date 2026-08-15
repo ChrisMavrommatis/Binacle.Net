@@ -1,0 +1,57 @@
+name: binacle-net-full
+
+# Full — everything switched on, for testing the whole image: the ServiceModule on Postgres, with Azurite and
+# SQLite also running and ready to switch to, and the Aspire dashboard collecting telemetry.
+#
+# Only the difference between the other two files. The app and its data volume are in image.local.yml;
+# postgres, azurite and the dashboard in serve.services.yml. Change a service where it is declared.
+#
+#   build  just build image                    # publishes, then tags binacle-net:local
+#   up     just image up full
+#   down   just image down full                # keeps the data
+#   wipe   just image down full -v             # drops binacle-net-postgres and binacle-net-data
+#          sudo rm -rf ./tooling/azurite       # azurite writes as root
+#
+# `just serve services-up` publishes the same 5432, so the two cannot run at once. They share the volume, so
+# either way it is the same database and the `-v` above empties it for both.
+#
+# Log in as admin@binacle.net / B1n4cl3Adm!n — seeded on first start by a startup task.
+# API on http://localhost:8080, dashboard on http://localhost:18888.
+
+include:
+  - serve.services.yml
+  - image.local.yml
+
+configs:
+  open_telemetry_production:
+    content: |
+      {
+        "OpenTelemetry" : {
+          "Otlp": {
+            "Enabled": true,
+            "Endpoint": "http://aspire-dashboard:18889"
+          }
+        }
+      }
+
+services:
+  binacle-net:
+    depends_on:
+      azurite:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      aspire-dashboard:
+        condition: service_started
+    configs:
+      - source: jwt_auth
+        target: /app/Config_Files/ServiceModule/JwtAuth.json
+      - source: open_telemetry_production
+        target: /app/Config_Files/DiagnosticsModule/OpenTelemetry.Production.json
+    environment:
+      # Providers are tried in order — AzureStorage, Postgres, Sqlite — first with a connection string wins.
+      # image.local.yml sets SQLite; this line puts Postgres ahead of it. Uncomment the next one for Azurite,
+      # then recreate binacle-net. Hostnames are compose service names, not localhost.
+      - POSTGRES_CONNECTION_STRING=Host=postgres;Port=5432;Database=binacle_net;Username=appuser;Password=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3
+      # - AZURESTORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1
+      - OTEL_EXPORTER_OTLP_HEADERS=x-otlp-api-key=local-dev-not-a-real-api-key

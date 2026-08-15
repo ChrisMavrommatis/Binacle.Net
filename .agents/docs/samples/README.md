@@ -1,7 +1,7 @@
 ---
 id: samples
 description: Deployment samples — Docker Compose (minimal, quickstart, prod, service, full) and Kubernetes (minimal); each folder name is a smoke profile name, feature flags, config wiring, and the keep-in-sync rule
-verified: 2026-08-11
+verified: 2026-08-15
 check: Sample folders, compose env vars, bind-mounted config paths, the k8s resource bounds, and the pinned image tag match samples/; every samples/docker folder name has a tooling/smoke/<name>.yml with the same module set
 also_update:
   - api/configuration
@@ -79,7 +79,7 @@ measure against, not a sizing recommendation; the manifest says so.
   `.dcproj` (SDK `Microsoft.Docker.Sdk`). `JwtAuth.json` is required only with `SERVICE_MODULE=True`;
   `OpenTelemetry.Production.json` + `aspire-dashboard-config.json` only when shipping OTel/Aspire.
 - Published samples bind config files read-only and use the pinned image tag (see below). The local build pipeline
-  (`tooling/docker-compose.build.yml`, fed by `just build image`) instead uses `binacle-net:local` and injects config via
+  (`tooling/image.full.yml`, fed by `just build image`) instead uses `binacle-net:local` and injects config via
   compose `configs:` — see `$build-topology`.
 
 ## The image tag is pinned {#image-pin}

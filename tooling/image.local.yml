@@ -1,0 +1,59 @@
+name: binacle-net-volume
+
+# Simple — the locally built image on its own, with the ServiceModule on SQLite. No telemetry, no extra
+# containers. Two stacks out of this one file, differing only in where /app/data goes:
+#
+#   volume  just image up volume   the named volume binacle-net-data. Nothing to set up
+#   bind    just image up bind     tooling/data, so you can open the logs and the db. `up` makes it writable
+#                                  first: the app runs as APP_UID and docker never chowns a bind mount
+#
+#   down   just image down volume | just image down bind      # keeps the data
+#   wipe   just image down volume -v                          # deletes binacle-net-data and the db in it
+#          rm -rf ./tooling/data                              # the bind stack's folder
+#   read   docker run --rm -v binacle-net-data:/data -v "$PWD/out:/out" alpine cp -a /data/. /out/
+#
+# BINACLE_DATA_DIR is the switch and `just image up bind` sets it. Set it yourself to bind elsewhere - it must
+# start with ./ or / or compose reads it as a volume name and refuses to start. Unset is the named volume.
+#
+# Log in as admin@binacle.net / B1n4cl3Adm!n — seeded on first start by a startup task.
+
+configs:
+  # The ServiceModule validates these options at startup, so it will not boot without them.
+  jwt_auth:
+    content: |
+      {
+        "JwtAuth": {
+          "Issuer": "https://localhost:8080",
+          "Audience": "https://localhost:8080",
+          "TokenSecret": "ThisIsAVerySecretKeyMeantToBeStoredSecurelyAndNotLikeThisSoPleaseChangeIt",
+          "ExpirationInSeconds": 3600
+        }
+      }
+
+services:
+  binacle-net:
+    image: binacle-net:local
+    ports:
+      - "8080:8080"
+    configs:
+      - source: jwt_auth
+        target: /app/Config_Files/ServiceModule/JwtAuth.json
+    volumes:
+      - ${BINACLE_DATA_DIR:-app_data}:/app/data/
+    environment:
+      - SWAGGER_UI=True
+      - SCALAR_UI=True
+      - UI_MODULE=True
+      - SERVICE_MODULE=True
+      - HealthChecks__Enabled=True
+      - PackingLogs__Enabled=True
+      # Storage providers are tried in order — AzureStorage, Postgres, Sqlite — first with a connection
+      # string wins. Only this one is set here. The db file lands in /app/data, next to the logs.
+      - SQLITE_CONNECTION_STRING=Data Source=/app/data/binacle-net-service.db;
+      - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/
+
+volumes:
+  # Fixed name, or it comes out prefixed with whichever project created it. Compose drops this declaration
+  # when BINACLE_DATA_DIR points at a folder, so `bind` leaves no volume behind.
+  app_data:
+    name: binacle-net-data

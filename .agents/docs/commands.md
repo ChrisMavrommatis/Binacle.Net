@@ -1,8 +1,8 @@
 ---
 id: commands
 description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
-verified: 2026-08-11
-check: Test leaves match tooling/tests.just; coverage recipes match tooling/coverage.just; openapi recipes match tooling/openapi.just; agents recipes match tooling/agents.just; serve recipes match tooling/serve.just; smoke recipes match tooling/smoke.just; install/assets match the root justfile; aliases and scripts match tooling/*.sh; docker-compose.yml service list matches tooling/docker-compose.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
+verified: 2026-08-15
+check: Test leaves match tooling/tests.just; coverage recipes match tooling/coverage.just; openapi recipes match tooling/openapi.just; agents recipes match tooling/agents.just; serve recipes match tooling/serve.just; smoke recipes match tooling/smoke.just; install/assets match the root justfile; aliases and scripts match tooling/*.sh; compose service list matches tooling/serve.services.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
 paths:
   - "justfile"
   - "tooling/**"
@@ -45,11 +45,11 @@ does not show up until this runs.
 just serve api [N|S|U|All]             # the API
 just serve docs                        # docs site: jekyll serve + webpack watch, one terminal
 just serve web                         # marketing site: same
-just serve services [-d]               # what the API talks to: aspire-dashboard, azurite, postgres
+just serve services-up [-d]            # what the API talks to: aspire-dashboard, azurite, postgres
 just serve services-down [-v]          # only needed after -d; Ctrl-C is enough otherwise
 ```
 
-`services` runs **no** binacle-net — it is what `just serve api` talks to, and what the Postgres and
+`services-up` runs **no** binacle-net — it is what `just serve api` talks to, and what the Postgres and
 AzureStorage test leaves need. Running the *built image* is a different job; see "Run the image" below.
 
 The API launch profiles:
@@ -171,7 +171,7 @@ All three check for `binacle-net:local` and tell you to build it if it is missin
 bind-mounted folders and opens their permissions, which docker will not do for you. See `$tooling` for which
 stack needs which folder.
 
-The backing services for an API run from source are a different thing — that is `just serve services`.
+The backing services for an API run from source are a different thing — that is `just serve services-up`.
 
 ## Smoke the image
 

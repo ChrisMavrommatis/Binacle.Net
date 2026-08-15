@@ -30,13 +30,17 @@ the only place that lives; nothing here repeats it.
 just serve api [N|S|U|All]       # Normal, WithServiceModuleOnly, WithUiModuleOnly, WithAllModules
 just serve docs                  # jekyll serve + webpack watch, one Ctrl-C stops both
 just serve web
-just serve services [-d]         # what the API talks to: aspire dashboard, azurite, postgres. No binacle-net
+just serve services-up [-d]      # what the API talks to: aspire dashboard, azurite, postgres. No binacle-net
 just serve services-down [-v]    # only needed after -d; Ctrl-C is enough otherwise
 ```
 
-`services` is here rather than with the image stacks because it runs no binacle-net at all: it is what
+`services-up` is here rather than with the image stacks because it runs no binacle-net at all: it is what
 `just serve api` talks to, and what the Postgres and AzureStorage test leaves need. Running the **built
 image** is the other job, and that is the `image` module below.
+
+Its file, `serve.services.yml`, is the only place those three services are declared. The `full` image stack
+includes it rather than repeating it, so both run the same postgres on the same volume - one database, and
+one `-v` in either place that empties it.
 
 ---
 
@@ -51,7 +55,7 @@ just test lib-unit               # one leaf
 just test api-service-integration Postgres
 ```
 
-Postgres and AzureStorage need their service up first (`just serve services -d`); with no argument the harness
+Postgres and AzureStorage need their service up first (`just serve services-up -d`); with no argument the harness
 falls back to SQLite.
 
 ---
@@ -116,10 +120,16 @@ just image down [name] [-v]      # -v drops the named volumes, postgres included
 Extra arguments go straight through to `docker compose`. The name is positional, so pass it whenever you pass
 a flag - `just image up -d` reads `-d` as the stack name and is rejected.
 
+Two files, three stacks. `volume` and `bind` are one container differing only in where `/app/data` goes, so
+they share `image.local.yml`; `_compose` gives each its own project name and sets `BINACLE_DATA_DIR` for
+`bind` alone. `full` is `image.full.yml`, which `include:`s that file and `serve.services.yml` and overrides
+the app's storage and telemetry - about twenty lines, and nothing declared twice. It publishes the same 5432
+as `serve services-up`, so those two cannot run at once.
+
 All three check `binacle-net:local` exists first and point you at `just build image` if it does not. Without
 that check compose falls back to pulling from Docker Hub and reports "pull access denied", which reads like a
-credentials problem rather than the missing local build it is. `serve services` needs no such check - it runs
-no binacle-net.
+credentials problem rather than the missing local build it is. `serve services-up` needs no such check - it
+runs no binacle-net.
 
 The folder setup is written out in both `serve.just` and `image.just` rather than shared. A module that
 reaches into another one puts back the coupling that splitting them removed, and it is a few lines of `mkdir`
@@ -170,23 +180,25 @@ before adding or changing an assertion.
 ## Container data
 **Postgres always uses a named volume**, never a folder here. It chowns its data dir to its own user and locks
 it to 0700, which leaves a directory in the repo you cannot read - and that fails the next `docker build`,
-because the CLI walks the whole context before it builds. Wipe it with `just image down full -v`.
+because the CLI walks the whole context before it builds. It is `binacle-net-postgres`, one volume shared by
+`serve services-up` and `image up full`, so `-v` in either place wipes the database for both.
 
 App logs and Azurite state are bind-mounted into `tooling/` so you can open them, which means the folders have
 to exist and be writable by the container before anything starts - docker never chowns a bind mount, and the
-containers write as their own users. The `up` recipes do that, per stack: `just serve services` needs
-`tooling/azurite`; `image up full` needs it plus `tooling/data/{logs,pack-logs}`; `image up bind` needs
-`BINACLE_DATA_DIR` (default `tooling/data`); `image up volume` needs none.
+containers write as their own users. The `up` recipes do that, per stack: `just serve services-up` needs
+`tooling/azurite`; `image up full` needs the same one; `image up bind` needs `BINACLE_DATA_DIR` (default
+`tooling/data`); `image up volume` needs none.
 
 They open the **directory** and nothing inside it. The files belong to whoever wrote them - the app as
 `APP_UID`, azurite as root - and stay writable to that same writer, so a recursive `chmod` would fail on
 exactly those files while making nothing more writable. `sudo` is used only for a directory docker created
 itself, which the daemon makes as root.
 
-The `volume` stack keeps its data where you cannot open it directly. To read it:
+The `volume` and `full` stacks keep their data in `binacle-net-data`, where you cannot open it directly. Copy
+it out by name, so it works whether or not anything is running:
 
 ```bash
-docker compose -f ./tooling/docker-compose.volume.yml cp binacle-net:/app/data ./out
+docker run --rm -v binacle-net-data:/data -v "$PWD/out:/out" alpine cp -a /data/. /out/
 ```
 
 ---

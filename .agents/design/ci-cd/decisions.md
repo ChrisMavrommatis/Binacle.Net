@@ -1,7 +1,7 @@
 ---
 id: ci-cd/decisions
 description: CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation.
-verified: 2026-08-11
+verified: 2026-08-15
 check: Decisions still match .github/workflows/*.yml and tooling/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against tooling/changelog.just, D6 against smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe
 paths:
   - ".github/workflows/**"
@@ -217,7 +217,7 @@ nothing for a password to protect. Under `trust` it accepts any password, so the
 unchanged using the shared local-dev connection string.
 
 **This removed the credential from that file, not from the repo.** The same local-dev password is still in
-`tooling/docker-compose.yml`, `tooling/docker-compose.build.yml`, the test default in `BinacleApi.cs` and
+`tooling/serve.services.yml`, `tooling/image.full.yml`, the test default in `BinacleApi.cs` and
 `Config_Files/ServiceModule/ConnectionStrings.Development.json`, where it is load-bearing. It is the same value
 everywhere on purpose. Change it in all of them or none.
 

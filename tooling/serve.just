@@ -3,12 +3,15 @@
 #   just serve api [profile]     the API, via its launch profiles
 #   just serve docs              the documentation site
 #   just serve web               the marketing site
-#   just serve services [-d]     what the API talks to: aspire dashboard, azurite, postgres
+#   just serve services-up [-d]  what the API talks to: aspire dashboard, azurite, postgres
 #   just serve services-down     stop them (only needed after -d; Ctrl-C is enough otherwise)
 #
-# One module because it is all the same job: work on the code on this machine. `services` is here rather than
-# with the image stacks for that reason - it runs no binacle-net at all, it brings up what `just serve api`
-# talks to, and the Postgres and AzureStorage test leaves want the same thing.
+# One module because it is all the same job: work on the code on this machine. `services-up` is here rather
+# than with the image stacks for that reason - it runs no binacle-net at all, it brings up what
+# `just serve api` talks to, and the Postgres and AzureStorage test leaves want the same thing.
+#
+# The `full` image stack includes tooling/serve.services.yml, so `services-down -v` wipes a database that
+# stack shares.
 #
 # Running the *built image* is the other job and lives in the `image` module. The two do not call each other:
 # the few lines of folder setup below are copied there rather than shared, because a module that reaches into
@@ -50,11 +53,11 @@ api profile="Normal":
     dotnet run --project api/src/Binacle.Net -lp "$launch_profile"
 
 # Backing services only - no binacle-net. Extra arguments go straight to `docker compose`, so `-d` detaches.
-# In the foreground Ctrl-C stops them, which is why this is one recipe and its `down` is a second one rather
-# than an `up`/`down` pair like the image stacks.
+# In the foreground Ctrl-C stops them, which is why `services-down` is only needed after `-d` - the pair is
+# named as a pair because the two do opposite things, not because you always need both.
 
 # What the API talks to: aspire dashboard, azurite, postgres [-d]
-services *args:
+services-up *args:
     #!/usr/bin/env bash
     set -euo pipefail
 
@@ -71,11 +74,11 @@ services *args:
         chmod 777 tooling/azurite 2>/dev/null || sudo chmod 777 tooling/azurite
     fi
 
-    docker compose -f tooling/docker-compose.yml up {{ args }}
+    docker compose -f tooling/serve.services.yml up {{ args }}
 
-# Stop the backing services [-v drops the postgres volume]
+# Stop the backing services [-v drops binacle-net-postgres, shared with the full image stack]
 services-down *args:
-    docker compose -f tooling/docker-compose.yml down {{ args }}
+    docker compose -f tooling/serve.services.yml down {{ args }}
 
 # Docs site: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
 docs: (_serve-n-watch 'docs')

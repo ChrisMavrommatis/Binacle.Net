@@ -1,8 +1,8 @@
 ---
 id: "tooling"
-description: "tooling/ — every task the repo can run, called by CI and by hand alike: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state"
-verified: "2026-08-12"
-check: "Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, changelog.just, serve.just, build.just, image.just and smoke.just recipes, and the docker-compose stack/file/service table match tooling/"
+description: "tooling/ — every task the repo can run, called by CI and by hand alike: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, the local compose stacks, and emulator state"
+verified: "2026-08-15"
+check: "Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, changelog.just, serve.just, build.just, image.just and smoke.just recipes, and the compose stack/file/service table match tooling/"
 also_update:
   - commands
   - samples
@@ -23,7 +23,7 @@ deployment starting points live in samples (`$samples`). For the quick "how do I
 
 | Script | What it does |
 |---|---|
-| `serve.just` | **Not a script** — the `serve` module for the root `justfile`, everything run **from source**. `just serve api [profile]` runs the API via `dotnet run -lp <profile>` (`Normal`/`WithServiceModuleOnly`/`WithUiModuleOnly`/`WithAllModules`, aliases `N/S/U/All`, default `Normal`); `just serve docs` and `just serve web` run jekyll + webpack watch together; `just serve services [-d]` / `just serve services-down` bring up what the API talks to |
+| `serve.just` | **Not a script** — the `serve` module for the root `justfile`, everything run **from source**. `just serve api [profile]` runs the API via `dotnet run -lp <profile>` (`Normal`/`WithServiceModuleOnly`/`WithUiModuleOnly`/`WithAllModules`, aliases `N/S/U/All`, default `Normal`); `just serve docs` and `just serve web` run jekyll + webpack watch together; `just serve services-up [-d]` / `just serve services-down` bring up what the API talks to |
 | `tests.just` | **Not a script** — the `test` module for the root `justfile`. One recipe per suite, run with `just test <leaf>`; see `$commands` for the list |
 | `performance.<slice>.sh` | `dotnet run -c Release` for the slice's `PerformanceTests`. Slices `lib`, `vipaq`. Writes to gitignored `PerformanceTests.Artifacts` |
 | `benchmarks.<slice>.sh [alias]` | `dotnet run -c Release --filter <pattern>` from the slice's `Benchmarks` project. Slices `lib`, `vipaq`. No arg = all |
@@ -45,25 +45,76 @@ them all), `bundle install` for both jekyll sites, and copies `assets/` into `do
 
 ## Local Docker Compose
 
-**One compose file supports an API run from source; the rest run an image**, and they live in different modules
-for that reason. `docker-compose.yml` brings up what the app talks to and no binacle-net at all, so it belongs
-to `serve`, alongside `just serve api` (and it is what the Postgres/AzureStorage test leaves need). The three
-`docker-compose.*.yml` files follow `just build image` and answer a different question — does the shipped image
-work — so they are the `image` module's stacks, and that is why only they check for `binacle-net:local`. The
-five under `smoke/` answer a narrower question again — does it work *as configured* — and are driven entirely
-by `just smoke`, never by hand.
+**Three files, each named after the module that runs it.** `serve.services.yml` brings up what the app talks
+to and no binacle-net at all, so it belongs to `serve`, alongside `just serve api` (and it is what the
+Postgres/AzureStorage test leaves need). The two `image.*.yml` files follow `just build image` and answer a
+different question — does the shipped image work — so they are the `image` module's stacks, and that is why
+only they check for `binacle-net:local`. The five under `smoke/` answer a narrower question again — does it
+work *as configured* — and are driven entirely by `just smoke`, never by hand.
+
+**Three stacks come out of two image files.** `volume` and `bind` are one container differing only in where
+`/app/data` goes, so `image.local.yml` serves both and `_compose` picks with `-p` and `BINACLE_DATA_DIR`.
+`image.full.yml` `include:`s that file and `serve.services.yml`, then overrides the app's storage and
+telemetry — so postgres, azurite and the dashboard are declared once, in `serve`.
 
 | File | Module | Command | Project name | Runs |
 |---|---|---|---|---|
-| `docker-compose.yml` | `serve` | `just serve services` | `binacle-net-services` | **Backing services only** — `aspire-dashboard`, `azurite`, `postgres`. No API |
-| `docker-compose.build.yml` | `image` | `just image up full` | `binacle-net-build` | **Full** — local image `binacle-net:local` + `azurite` + `postgres` + `aspire-dashboard`, all modules on; injects `JwtAuth.json` and `OpenTelemetry.Production.json` via compose `configs:`. All three storage backends run; pick one by moving the comment on the connection strings. The `image` module's default |
-| `docker-compose.volume.yml` | `image` | `just image up volume` | `binacle-net-volume` | **Simple** — the local image alone, ServiceModule on SQLite, data in a named volume |
-| `docker-compose.bind.yml` | `image` | `just image up bind` | `binacle-net-bind` | **Simple** — same, but data bind-mounted to a folder; `BINACLE_DATA_DIR` overrides where |
+| `serve.services.yml` | `serve` | `just serve services-up` | `binacle-net-services` | **Backing services only** — `aspire-dashboard`, `azurite`, `postgres`. No API. The only place those three are declared |
+| `image.full.yml` | `image` | `just image up full` | `binacle-net-full` | **Full** — `include:`s the other two files and overrides the app's storage and telemetry, so it is about twenty lines. Local image + `azurite` + `postgres` + `aspire-dashboard`, all modules on; injects `OpenTelemetry.Production.json` on top of the `JwtAuth.json` it inherits. All three storage backends run; Postgres wins on provider order, swap by moving the comment. The `image` module's default |
+| `image.local.yml` | `image` | `just image up volume` | `binacle-net-volume` | **Simple** — the local image alone, ServiceModule on SQLite, data in the named volume `binacle-net-data` |
+| `image.local.yml` | `image` | `just image up bind` | `binacle-net-bind` | **Simple** — the same file, with `BINACLE_DATA_DIR` set by the recipe so `/app/data` is a bind at `tooling/data`. Compose then drops the volume declaration, so this stack leaves none behind |
 | `smoke/<profile>.yml` | `smoke` | `just smoke up <profile>` | `binacle-smoke-<profile>` | **Five throwaway stacks** — `minimal`, `quickstart`, `prod`, `service`, `full`, one per smoke profile, and each name is also a `samples/docker/` folder. Storage is a named volume dropped on teardown, so they need no `_prepare`. They take the image from `$BINACLE_IMAGE` (default `binacle-net:local`); `service`/`full` inline `JwtAuth.json` and raise `RateLimiter__ApiUsageAnonymous` so a second run inside the hour does not go red on 429s; `prod` mounts its own `Presets.json` so reading it back proves the config-mount path |
 
-Each file carries its own `name:`, so no `--env-file` is needed to set the project name. Inside `image.just`
-the stack name maps to a file in one place, so `up` and `down` cannot disagree about which one it means;
+Each file carries its own `name:` as a fallback, but `image.just` passes `-p` — two stacks share one file, so
+without it `up bind` would recreate the `volume` container. Inside `image.just` the stack name maps to a file,
+a project and an environment in one place, so `up` and `down` cannot disagree about which one it means;
 `smoke.just` gets the same guarantee for free, since the profile name **is** the filename.
+
+**Both named volumes carry a fixed `name:`** — `binacle-net-postgres` and `binacle-net-data` — so compose does
+not prefix them with the project. That is what makes `serve services-up` and `image up full` one database
+rather than two that look alike, and it means `-v` in either place wipes it for both. The two also publish the
+same 5432, so they cannot run at once; the second one fails on the port, loudly, and leaves the first alone
+(checked 2026-08-15).
+
+### What compose does here — tested 2026-08-15 against compose v5.4.0
+
+Four behaviours the shape above rests on. They were **run, not reasoned**. Do not re-derive them.
+
+- **`include:` resolves an included file's relative paths against that file's own directory.** `-f a.yml -f
+  b.yml` resolves every path against the **first** file instead. Same two files, same `./azurite` source, two
+  different answers. **This retires the subfolder trap**: the 2026-08-07 attempt to move these files into a
+  subfolder was reverted because the shared azurite bind silently stopped being shared — that was an `-f`
+  failure, and `include:` does not have it. A subfolder is safe now; it is simply not used, because flat
+  beside the `.just` files reads better.
+- **An including file overrides an included service key by key.** Everything it does not name carries through,
+  which is why `image.full.yml` is twenty lines rather than a second copy of the app. An included `name:` is
+  ignored in favour of the including file's.
+- **`${BINACLE_DATA_DIR:-app_data}:/app/data/` is what switches a named volume for a bind.** Unset gives
+  `type: volume`; `./data` gives `type: bind` at the resolved absolute path **and drops the top-level
+  `volumes:` declaration**, so the bind stack leaves no orphan volume. A value with no leading `./` is read as
+  a volume name and refuses to start — `refers to undefined volume data: invalid compose project` — which is
+  the good outcome: it fails before anything writes data where nobody looks.
+- **A fixed volume `name:` is shared across projects** with no `external: true` and no pre-creation step.
+  `down -v` still removes it when nothing else references it, and prints `Resource is still in use` when
+  something does. Both are legible; what compose does **not** do is warn that the volume being dropped is
+  shared by another stack.
+
+**A bare `just image up` means `full`.** Raised and settled on 2026-08-15: it stays the expensive stack,
+because that is the one that exercises the whole image, which is what the module is for.
+
+### Do not
+
+- **Give postgres a bind mount**, in any file, for any reason. It chowns its data directory to its own user
+  and locks it to 0700, leaving a folder in the repo nobody can read — and `docker build` walks the whole
+  context, so the next build fails on it. The named volume is deliberate and survives every rename.
+- **Compose these together with `-f a.yml -f b.yml`.** Path resolution, above. That is the exact failure that
+  got the 2026-08-07 attempt reverted.
+- **Have `image.just` call a recipe in `serve.just`, or the reverse.** The `mkdir` and `chmod` lines are
+  copied on purpose.
+- **Let `image.local.yml` default `BINACLE_DATA_DIR` to a path.** The recipe sets it for `bind` and unsets it
+  for the other two. Inside the file, unset must stay the named volume — otherwise a bare `docker compose -f`
+  run starts leaving container-owned folders in the repo, and one of those fails the next `docker build`.
+- **Drop `-p`** and rely on the file's own `name:`. Two paragraphs up for why.
 
 The smoke stacks are separate files from `samples/` on purpose. They run the image under test and carry
 test-only tweaks — a raised rate limit, disposable storage — that a sample a user copies must never have.
@@ -74,8 +125,8 @@ computed`; `every check must be able to fail`), and the setup gotchas. It is wri
 where the design rationale went when the smoke plan was deleted on 2026-08-07. Read it before changing an
 assertion; do not re-derive any of it here.
 
-Which folders `up` prepares: `serve services` needs `tooling/azurite`; `image up full` needs that plus
-`tooling/data/logs` and `tooling/data/pack-logs`; `image up bind` needs `BINACLE_DATA_DIR` (default
+Which folders `up` prepares: `serve services-up` needs `tooling/azurite`; `image up full` needs that same one
+and nothing more, since its `/app/data` is the named volume; `image up bind` needs `BINACLE_DATA_DIR` (default
 `tooling/data`); `image up volume` needs none. It opens the **directory** only, never `-R` — the files inside
 belong to whoever wrote them (the app as `APP_UID`, azurite as root) and stay writable to that writer, so a
 recursive `chmod` would fail on them while making nothing more writable. `sudo` is used only for a directory

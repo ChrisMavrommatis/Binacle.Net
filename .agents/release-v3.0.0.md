@@ -403,41 +403,43 @@ drift apart.
 
 ### The compose stacks
 
-**[tooling/compose-stacks](plans/tooling/compose-stacks.md)** - **pulled in on 2026-08-15 at the maintainer's
-call.** Every decision in that plan is taken and the compose behaviour it rests on was tested the same day.
-It is ready to execute, start to finish, in one sitting.
+**The compose stacks** - **pulled in on 2026-08-15 at the maintainer's call, executed and verified the same
+day.** All three stacks were run end to end, not just resolved. **The plan file is gone**: what it proved
+about compose - the `include:` path resolution, the key-by-key override, the volume/bind switch, the shared
+fixed-name volume - was folded into the tooling reference doc under `docs/`, which is now the authority on it,
+along with the list of things not to undo. Nothing is left open here.
 
 **It is the 2026-08-14 call finally carried out.** `image` is for the image; the backing services belong to
-`serve`. Today Postgres, Azurite and the dashboard are declared in **two** compose files with the same
-credentials in both - change one and nothing tells you the other disagrees.
+`serve`. They used to be declared in **two** compose files with the same credentials in both - now in one,
+which `image.full.yml` includes.
 
 **Nothing here ships to a user and no workflow calls it.** It gates nothing, and if it is not done by step 5 the
 release goes without it.
 
-- [ ] **Four files become three**, each named after the `just` module that runs it: `serve.services.yml`,
+- [x] **Four files become three**, each named after the `just` module that runs it: `serve.services.yml`,
       `image.local.yml`, `image.full.yml`. `docker-compose.build.yml` builds nothing and `docker-compose.yml` is
       not the repo's main stack - both names go.
-- [ ] **`image.full.yml` uses compose `include:`**, not `-f a -f b`. The plan holds the tested proof of why:
+- [x] **`image.full.yml` uses compose `include:`**, not `-f a -f b`. The plan holds the tested proof of why:
       `include:` resolves each file's relative paths against **its own** directory, which is what makes the
       backing services declarable once. `-f` resolves them against the first file, and that is the exact
       failure that got the 2026-08-07 subfolder attempt reverted.
-- [ ] **`volume` and `bind` keep both names and share one file.** The recipe passes the project name and, for
+- [x] **`volume` and `bind` keep both names and share one file.** The recipe passes the project name and, for
       `bind`, `BINACLE_DATA_DIR`. **`bind` is the maintainer's primary stack** - confirmed 2026-08-15 - so
       nothing about typing `just image up bind` may change, and comparing the two must stay a one-word edit.
       The compose file itself must still resolve an unset variable to the named volume.
-- [ ] **`just serve services` becomes `just serve services-up`** so it pairs with `services-down`. Trivial in
+- [x] **`just serve services` becomes `just serve services-up`** so it pairs with `services-down`. Trivial in
       itself, but **grep for the recipe name as well as the filenames** - `tooling/tests.just` and the api
       tests doc name the recipe and no compose file at all, so a filename-only sweep misses them.
-- [ ] **Both named volumes get a fixed name** - `binacle-net-postgres` and `binacle-net-data` - so the same
+- [x] **Both named volumes get a fixed name** - `binacle-net-postgres` and `binacle-net-data` - so the same
       declaration under two project names is one database rather than two that look like one. **This is the one
-      visible change:** the existing project-prefixed volumes are orphaned and the next `up` starts on an empty
-      database and re-seeds the admin user. Local dev data, so acceptable - but say it before it is discovered.
-- [ ] **One open question, and it is the maintainer's:** should a bare `just image up` still default to `full`,
-      or to `bind` now that `bind` is the stack in daily use? **Raised and left open on 2026-08-15.** It blocks
-      nothing - the plan says leave it at `full` if it is still open when the work is done, and changing it
-      later is one word.
-- [ ] **One thing in the plan is reasoned but not run:** whether `just image up full` collides loudly on port
-      5432 when the services are already up. Confirm it fails rather than starting something half-connected.
+      visible change:** one volume was orphaned by it, `binacle-net-services_postgres_data`. The new
+      `binacle-net-postgres` started empty and re-seeded the admin user. Delete the old one when ready.
+- [x] **The bare `up` default is settled: it stays `full`.** Raised and answered on 2026-08-15 - `full` is the
+      stack that exercises the whole image, which is what the module is for. No code changed, and the decision
+      is recorded in the tooling doc so it is not reopened by accident.
+- [x] **The port 5432 collision is now run, not just reasoned.** Starting the services while `full` is up
+      fails on `Bind for 0.0.0.0:5432 failed: port is already allocated` and leaves the running stack alone.
+      Nothing half-connected starts.
 
 ### The docs deploy - after the tag
 

@@ -91,9 +91,9 @@ to the module's help header rather than five, and keeps the file from becoming m
 **The module's charter sentence has to change either way.** It says everything in the module runs
 `binacle-net:local`, and this is the first recipe that reads a registry.
 
-**A separate piece of work rewrites that module's `up` and `down` recipes** and collapses its stacks. It does
-not block this and this does not block it - the two touch different recipes - but whichever lands second reads
-the other's header comment rather than reverting it.
+**That header comment was rewritten on 2026-08-15** by the compose stack work, which landed first. It now
+describes two compose files behind three stacks. **Read it before editing it** - add the registry sentence,
+do not revert what is there.
 
 Three things follow:
 

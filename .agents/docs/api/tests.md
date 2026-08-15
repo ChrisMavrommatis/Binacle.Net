@@ -1,7 +1,7 @@
 ---
 id: api/tests
 description: api/test integration tests — layout, v3/v4 HTTP conventions, validBinId, preset keys, special bins, base-class asserts, and test host config
-verified: 2026-08-14
+verified: 2026-08-15
 check: Test folders mirror api/src/Binacle.Net/v{3,4}/Endpoints/; validBinId, PresetKeys, special bins, and base-class asserts match api/test/ source
 also_update:
   - shared
@@ -63,7 +63,7 @@ backend leg.
 > whole job; Sonar coverage runs SQLite only. The defaults match the CI service containers, so CI sets no
 > connection string. Locally, `just test all` runs the SQLite leaf only — it is the set that needs nothing
 > brought up; the other two are a deliberate `just test api-service-integration <backend>` after
-> `just serve services -d`.
+> `just serve services-up -d`.
 
 ## Layout — one folder per endpoint
 

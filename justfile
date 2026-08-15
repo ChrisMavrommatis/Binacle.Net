@@ -22,7 +22,7 @@ mod agents 'tooling/agents.just'
 # CHANGELOG.md sections: `just changelog extract <version|Unreleased>`, `just changelog check <version>`.
 mod changelog 'tooling/changelog.just'
 
-# Run from source: `just serve api [profile]`, `just serve docs`, `just serve web`, `just serve services`.
+# Run from source: `just serve api [profile]`, `just serve docs`, `just serve web`, `just serve services-up`.
 mod serve 'tooling/serve.just'
 
 # Make the API image: `just build publish` for the app, `just build image [version]` for the container.

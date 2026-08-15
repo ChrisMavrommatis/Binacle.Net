@@ -3,9 +3,12 @@ name: binacle-net-services
 # Backing services only - no binacle-net. This is what `just serve api` talks to, and what the Postgres and
 # AzureStorage test leaves need, so it belongs to the `serve` module rather than to `image`.
 #
-#   up     just serve services [-d]
+#   up     just serve services-up [-d]
 #   down   just serve services-down          # keeps the database
-#   wipe   just serve services-down -v       # drops the postgres volume too
+#   wipe   just serve services-down -v       # drops binacle-net-postgres, the shared database
+#
+# image.full.yml includes this file, so `just image up full` runs the same postgres on the same volume. The
+# `-v` above wipes that one database for both.
 #
 # `up` creates ./azurite and opens it first: docker would otherwise create that bind source itself, as root,
 # leaving emulator state in the repo you cannot open.
@@ -13,7 +16,7 @@ name: binacle-net-services
 # Dashboard on http://localhost:18888, azurite on 10000-10002, postgres on 5432.
 
 configs:
-  asprice_dashboard_config:
+  aspire_dashboard_config:
     content: |
       {
         "Dashboard": {
@@ -29,8 +32,6 @@ configs:
         }
       }
 
-
-
 services:
   aspire-dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
@@ -38,7 +39,7 @@ services:
       - '18888:18888'
       - '18889:18889'
     configs:
-      - source: asprice_dashboard_config
+      - source: aspire_dashboard_config
         target: /app/config_files/aspire-dashboard-config.json
     environment:
       - DOTNET_DASHBOARD_CONFIG_FILE_PATH=config_files/aspire-dashboard-config.json
@@ -58,13 +59,22 @@ services:
       - '5432:5432'
     # A named volume, never a bind. Postgres chowns its data dir to its own user and locks it to 0700, which
     # leaves an unreadable folder in the repo — and `docker build` walks the whole context, so the next build
-    # fails on it. Use `docker compose down -v` to wipe the database.
+    # fails on it. Use `just serve services-down -v` to wipe the database.
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=appuser
       - POSTGRES_PASSWORD=Pl3@s3UseASt0ngP@ssw0rdN0tL!k3Th!s0n3
       - POSTGRES_DB=binacle_net
+    # image.full.yml waits on this. Its app creates tables in a startup task, so service_started would let it
+    # race the first boot and crash.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d binacle_net"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
+  # Fixed name, or compose prefixes the project and the two stacks get a database each that look like one.
   postgres_data:
+    name: binacle-net-postgres

@@ -176,7 +176,7 @@ table of [README.md](README.md).
 
 ```yaml
 - file: tooling/README.md
-  description: "tooling/ — every task the repo can run, called by CI and by hand alike: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, local docker-compose, and emulator state"
+  description: "tooling/ — every task the repo can run, called by CI and by hand alike: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, the local compose stacks, and emulator state"
   paths: ["tooling/**"]
 ```
 

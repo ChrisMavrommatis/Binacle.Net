@@ -78,9 +78,6 @@ you need, and trim or delete it once the work lands.
 ## Tooling
 
 ```yaml
-- file: tooling/compose-stacks.md
-  description: "Reorganise the compose stacks - the backing services in one file, the image in two"
-  paths: ["tooling/**"]
 - file: tooling/image-verification-recipes.md
   description: "Verify a published image - recipes, and telling users they can"
   paths: ["tooling/**"]

@@ -319,9 +319,9 @@ Idea: [shared/extend-shared-models](ideas/shared/extend-shared-models.md) - park
 Maintainer tooling - no user sees it, and nothing in CI calls it. Not urgent; **it is the kind of thing that
 fills a day that should have gone somewhere else.**
 
-**The compose stacks went into v3.0.0 on 2026-08-15** and are not to be started here. The plan that asked what
-the `image` module was for is gone: the maintainer answered it, the answer was written up as an execution plan
-under `plans/tooling/`, and the release took it. Its file is deleted when the work lands.
+**The compose stacks went into v3.0.0 on 2026-08-15 and are done.** The question of what the `image` module
+was for is answered and carried out: four compose files became three, the backing services are declared once,
+and both plan files are deleted. What was learned about compose lives in the tooling reference doc.
 
 **`scripts-to-just-recipes` is discoverability only, and should not be allowed to grow past that.** It owns a
 comment one-liner: the ~40 restating lines in `tooling/tmux.sh`, plus two banners that name the wrong window.
