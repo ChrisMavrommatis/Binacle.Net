@@ -336,11 +336,23 @@ to ignore it.
       so a PR never proves the image still builds, and a break is found at release time. That is exactly what
       happened after the `Binacle.Geometry` extraction, where the image had not been built for the whole
       restructure. **Use the same Dockerfile and publish arguments the release workflow uses, or the gate
-      proves nothing** - the release path now goes through `just build publish`, so it does.
+      proves nothing** - the release path now goes through `just build publish`, so it does. Confirmed to
+      build clean on 2026-08-17.
+
+      **It costs a second image build on every release, and that is the price.** The release workflow calls
+      `run-tests.yml` as its "this commit passed CI" gate, and that file takes no inputs on purpose - the
+      release needs the same run a PR gets, not a variant of it. So a release run builds the image in the gate
+      and again in the release job. Making the step conditional to save a minute is what turns the gate back
+      into something a release does not exercise.
 - [ ] **Lint the OpenAPI documents.** One step: `just openapi lint`. It generates the documents itself and needs
       nothing brought up. **Set it to fail on warnings** - the `servers` block landed on 2026-08-10 and the lint
-      is clean at 0 errors and 0 warnings, confirmed again on 2026-08-14, so there is nothing left to argue
-      about.
+      is clean at 0 errors and 0 warnings, confirmed again on 2026-08-14 and on 2026-08-17, so there is nothing
+      left to argue about.
+
+      **The recipe needs `--fail-severity=warn` for that, and the flag is the whole item.** Spectral's default
+      is to exit 0 on warnings and fail only on errors, so the step as it stands prints `No results with a
+      severity of 'error' found!` and passes whatever the warnings say. Adding the step without the flag looks
+      exactly like a working gate.
 **Then three architecture checks**, from **[architecture-boundaries](plans/architecture-boundaries.md)** - a
 large plan whose file half already shipped on the merged branch along with all 27 comment fixes.
 

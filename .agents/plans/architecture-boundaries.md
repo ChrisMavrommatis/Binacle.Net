@@ -285,6 +285,55 @@ check ships with a hole a whole file type already fell through.
 - Six algorithm folders have spaces in their names, so plain `xargs` splits those paths into fragments that
   match nothing. `-d '\n'` is not optional. This is the same trap already written down for bulk renames.
 
+### What a full build of all three found - 2026-08-17
+
+All three were built end to end, run green, mutation-tested in both directions, then **reverted unbuilt** over
+the language question below. Nothing of the code survives. What follows is what it cost to learn, so the next
+attempt does not pay twice.
+
+**The sizes, measured rather than estimated.** 88 filenames, 56 declared ids, 23 ref codes, 32 projects, 19
+grants. All three checks are green against the tree as it stands: no undeclared edges, no dead entries, and
+every grant takes. The 19-across-9 count in the friend-assembly section above is confirmed.
+
+**Two more names have to leave the derived filename list, and one file has to be exempt whole.**
+`README.md` and `presets.md` are already named above; **`_index.md` is the third**. It names a generated
+manifest, so `tooling/agents.just` writes it as an operand rather than citing it as guidance, and leaving it
+in reports that recipe and `tooling/README.md` as violations. **`CLAUDE.md` is exempt as a file** - it is the
+declared door into the guidance directory, and it names both a path and a bare `D16` on purpose.
+
+**Scan comment and prose text only, not whole lines.** This is the finding that changes the shape of arm two
+and arm three, and it is not the noise problem already described above - it survives matching against the
+derived lists:
+
+- **In C# `:D16` and `:F2` are numeric format specifiers**, which is exactly the shape of a ref code.
+  `VipaqProtobufSizeComparisonTest.cs` and `CodecCompressionCrossoverTest.cs` both carry one.
+- **A shell's `"$packages"` is exactly the shape of a `$id` reference**, and `packages` is a declared id.
+  `tooling/image.just` uses the variable twice.
+
+Both are code rather than comment, so restricting each arm to the commentary on a line removes all four with
+no allow-list. Vendored bundles under `assets/lib/` and any `.map` want skipping for the same reason.
+
+**The graph check can only cover the scopes that hold a `.csproj` - 10 of them.** That is not a shortcut, it
+is the whole reachable set: the remaining **48 declared entries** are Gemfile `path:` gems, webpack chunk
+rules, npm workspaces and path strings in just recipes, and the `vipaq/tools` run-time read of `shared/data`.
+The check has to count those and report them documentation-only. Reporting them dead is the failure mode that
+makes a green run impossible; saying nothing about them is the failure mode where a green run reads as "all of
+this is checked", which the section further down already warns about.
+
+**The dependency question, which is why the build was reverted.** The comment and grant checks need no parsing
+beyond regex and are shell-shaped as written above. **The graph check has to read `architecture.yml`, and the
+repo has no YAML parser** - the only `js-yaml` present is a v3 buried in the jest chain, which is not a thing
+to depend on. So the third check forces a choice the other two do not:
+
+- a declared parser dependency, which breaks the "no new dependency" selection rule this bundle was chosen by;
+- a hand-rolled reader over the file's known shape, which is safe only if it errors on syntax it does not
+  recognise, and which then goes red on innocent edits to a hand-maintained file;
+- or splitting the bundle, so the two regex checks stay shell and only the graph check carries a parser.
+
+**Node is not the same question as Semgrep**, and the argument against Semgrep above does not settle it:
+`setup-node` and `npm ci` already run in the same CI job, so there is no new toolchain either way. The
+dependency is the only real cost, and it belongs to one of the three checks rather than to the bundle.
+
 **Then the graph tools, if and when they are wanted.**
 
 | Tool | Version | How |
