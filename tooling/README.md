@@ -138,23 +138,24 @@ and `chmod`.
 ### Verifying a published image
 
 ```bash
-just image verify 3.0.0            # all five checks
+just image verify 3.0.0            # all four checks
 just image verify 3.0.0 signature  # one of them
 ```
 
-The odd one out in this module: it reads a published image off Docker Hub and GHCR, builds nothing, and never
-logs in. Five checks, each answering something the next assumes - the digest on both registries, which Docker
-Hub tags share it, the signature on both, the SBOM and provenance, and the labels plus what the container says
-about itself when you run it.
+The odd one out in this module: it reads a published image off Docker Hub, builds nothing, and never logs in.
+Four checks, each answering something the next assumes - which Docker Hub tags share the digest, the
+signature, the SBOM and provenance, and the labels plus what the container says about itself when you run it.
+
+**Docker Hub only.** The staging registry is the release workflow's business and nothing else reads it.
 
 **The version is required and has no default**, because a default rots into a tag nobody meant to check. All
-five run even when one fails, so a failure comes with the four answers that explain it; the exit code is 1 if
+four run even when one fails, so a failure comes with the three answers that explain it; the exit code is 1 if
 any check failed. Only the signature check needs `cosign` - see `DEVELOPMENT.md` - and it says so rather than
 passing quietly when it is missing.
 
-**Only `3.0.0-beta.2` and later can pass.** Signing, the SBOM and the GHCR staging copy all start there, so
-`3.0.0-beta.1`, `2.1.1` and anything earlier fail on `digest`, `signature` and `attestations`. That is history
-rather than a broken check - `2.1.1` is the useful thing to run it against when you want to watch it fail.
+**Only `3.0.0-beta.2` and later can pass.** Signing and the SBOM start there, so `3.0.0-beta.1`, `2.1.1` and
+anything earlier fail on `signature` and `attestations`. That is history rather than a broken check - `2.1.1`
+is the useful thing to run it against when you want to watch it fail.
 
 ---
 

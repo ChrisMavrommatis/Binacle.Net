@@ -89,7 +89,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - Added benchmark suites for algorithms, bin processing, result selection, and ViPaq.  
 - Added cross-language ViPaq interop tests between C# and TypeScript.  
 - Patched two **high-severity advisories** in transitive dependencies — `Microsoft.OpenApi` and the bundled **SQLite** native library.  
-- **Rebuilt the release pipeline.** A tag now builds the image once, stages it on GHCR, smoke tests it there, then copies the tested digest to Docker Hub — so what is published is bit for bit what passed, and a failure anywhere leaves Docker Hub untouched. The release body is this changelog, extracted by the workflow.  
+- **Rebuilt the release pipeline.** A tag now builds the image once, smoke tests it in a staging registry, then copies the tested digest to Docker Hub — so what is published is bit for bit what passed, and a failure anywhere leaves Docker Hub untouched. The release body is this changelog, extracted by the workflow.  
 - Renamed two top-level folders — `config/` is now `tooling/`, and build output goes to `artifacts/` instead of `build/`.  
 - Every GitHub Action is pinned to a commit SHA, kept current by Dependabot.  
 

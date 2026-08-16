@@ -176,13 +176,13 @@ The backing services for an API run from source are a different thing — that i
 ## Verify a published image
 
 ```bash
-just image verify 3.0.0                 # all five checks
-just image verify 3.0.0 signature       # one: digest, tags, signature, attestations or metadata
+just image verify 3.0.0                 # all four checks
+just image verify 3.0.0 signature       # one: tags, signature, attestations or metadata
 ```
 
-Reads Docker Hub and GHCR, builds nothing, **never logs in**. The version is required and never defaults — a
-default rots into a tag nobody meant to check. All five checks run even when one fails, so a failure comes
-with the four answers that explain it; exit 1 if any failed.
+Reads Docker Hub, builds nothing, **never logs in**. The version is required and never defaults — a default
+rots into a tag nobody meant to check. All four checks run even when one fails, so a failure comes with the
+three answers that explain it; exit 1 if any failed.
 
 Only `signature` needs `cosign` (`DEVELOPMENT.md`, pinned) and it fails with that pointer rather than passing
 quietly. See `$tooling` for what each check proves.

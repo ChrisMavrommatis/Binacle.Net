@@ -162,7 +162,7 @@ install -m0755 /tmp/cosign ~/.local/bin/cosign
 cosign version
 ```
 
-`just image verify <version>` runs without it and says so - the other four checks still work, and only the
+`just image verify <version>` runs without it and says so - the other three checks still work, and only the
 signature one stops. Nothing needs a `docker login`, cosign included: these are the commands a user runs, and
 a check that only passes with a credential is not checking a public artifact.
 

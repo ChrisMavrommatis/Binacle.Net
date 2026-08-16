@@ -11,19 +11,24 @@ skipped `publish` for a prerelease; the tag was **re-cut on 2026-08-13** at `d31
 all six jobs, the Docker Hub copy and the release-side signature included. What it built - the changelog, the
 changelog recipes, the six-job workflow, the supply-chain flags and the signing - is described in the ci-cd
 docs and the decisions ledger now, so it is not repeated here. **This file is down to what has not happened:**
-the credential-free half of the deployment-host pull, one open question, the signature-verification page (now
-owned elsewhere), and the moving-tag gap.
+moving the deployment host onto Docker Hub, one open question, the signature-verification page (now owned
+elsewhere), and the moving-tag gap.
 
 **Why a beta ran it first.** A prerelease tag is the only free test this pipeline gets - a failure costs a
 deleted tag instead of a bad release. Beta 2 was that run.
 
-## 1. Confirm the credential-free pull from the deployment host
+## 1. Move the deployment host onto Docker Hub
 
-- [x] **The host pulls it.** `3.0.0-beta.2` was deployed to the test server on 2026-08-14, so the host reaches
-      GHCR and the public package answers it. Proven separately from a machine with no `ghcr.io` entry in its
-      docker config.
-- [ ] **The credential-free half, on that host specifically.** Only open if the test server has a `ghcr.io`
-      entry in its docker config. A `docker logout ghcr.io` and a re-pull closes it.
+**Rewritten 2026-08-15, and the question it used to ask no longer matters.** The decisions ledger now says
+Docker Hub is the only registry anyone is pointed at, and GHCR is staging that nothing public names. Our own
+test server is included - a deployment pulling from staging is the same thing the decision rules out, and it
+would keep the second registry alive as a real dependency.
+
+- [x] **The host pulls it.** `3.0.0-beta.2` was deployed to the test server on 2026-08-14 from GHCR.
+- [ ] **Repoint that deployment at `binacle/binacle-net`.** Every beta reaches Docker Hub under its immutable
+      tag, so there is nothing the host can only get from staging.
+- [ ] **Then `docker logout ghcr.io` on that host.** The next pull proves it needs no GHCR credential, which
+      is what the old credential-free question was after. It closes by removal rather than by measurement.
 
 ## 2. The docs release-notes page - answered 2026-08-14
 
@@ -71,8 +76,8 @@ repo, tag `v0.0.1`, check the three tags land on the smoked digest, then delete 
 
 - A release tag builds, smokes on GHCR, copies to Docker Hub as `x.y.z`, `x.y` and `latest` - all three on the
   digest the smoke job passed - and creates a GitHub release from the version's `CHANGELOG.md` section.
-- The deployment host pulls an image with no credentials. It pulls one - beta 2 is deployed there; what is
-  unconfirmed is whether it did so without a stored `ghcr.io` credential.
+- The deployment host pulls from Docker Hub, with no credentials and no `ghcr.io` entry left in its docker
+  config.
 - Users have a page telling them how to verify the signature.
 
 ## Do not

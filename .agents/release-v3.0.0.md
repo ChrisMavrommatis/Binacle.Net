@@ -196,11 +196,16 @@ named below.
 
 ### Image verification
 
-**Done 2026-08-15, except the Docker Hub page.** `just image verify <version> [check]` runs the five checks,
-all five proven green against `3.0.0-beta.2` and watched to fail against `2.1.1`. Four of the five surfaces
+**Done 2026-08-15, except the Docker Hub page.** `just image verify <version> [check]` runs the four checks,
+all four proven green against `3.0.0-beta.2` and watched to fail against `2.1.1`. Four of the five surfaces
 that tell users about it are written: `CHANGELOG.md`, `SECURITY.md`, `README.md` and the docs-site page. **The
 plan file is gone** - what survived it went to the ci-cd decisions ledger (the one verify invocation, what
-changes it, and the beta 2 floor) and the tooling reference doc (the five checks and the two just traps).
+changes it, and the beta 2 floor) and the tooling reference doc (the checks and the two just traps).
+
+**Reduced from five checks to four, later the same day.** The maintainer's call: **only the release workflow
+touches GHCR.** The `digest` check compared the tag across both registries, so it went, and the signature
+check is Docker Hub only. Re-run green against `3.0.0-beta.2` after the change. The reasoning is in the ci-cd
+decisions ledger, along with what still carries the property that check used to prove.
 
 **The one thing left is the Docker Hub page**, and it belongs to that page's own work below.
 
@@ -214,7 +219,7 @@ changes it, and the beta 2 floor) and the tooling reference doc (the five checks
       once, straight after the tag, and a surface that misses it waits for the next one. Every runnable block
       uses a `<version>` placeholder or `3.0.0-beta.2`; `3.0`, `latest` and `2.1.1` appear only in prose.
 - [x] **The placement is decided - 2026-08-14, and built there 2026-08-15.** It is in the `image` module:
-      `just image verify <version>`, with an optional check name, and the five checks as private helpers.
+      `just image verify <version>`, with an optional check name, and the checks as private helpers.
 
       **The reasoning, because it changes another item too.** The maintainer's call was that `image` is for the
       image, and the supporting services it currently stands up - Postgres, Azurite, the telemetry collector -
@@ -223,11 +228,11 @@ changes it, and the beta 2 floor) and the tooling reference doc (the five checks
       release on 2026-08-15** and landed first; this recipe went in on top of it, and the module
       header now carries both - the stacks that run `binacle-net:local`, and the one recipe that reads a
       registry instead.
-- [x] **The recipe is built and all five checks are proven.** Version required and never defaulted, no
-      `docker login` anywhere, and all five run even when one fails. `cosign` 3.1.3 is in `DEVELOPMENT.md`,
-      pinned, the same single-binary shape as the smoke tools. Green against `3.0.0-beta.2` on both
-      registries, and watched to fail against `2.1.1` - `no signatures found`, no SBOM, and the 172 System
-      dlls of the old self-contained build.
+- [x] **The recipe is built and every check is proven.** Version required and never defaulted, no
+      `docker login` anywhere, and all of them run even when one fails. `cosign` 3.1.3 is in `DEVELOPMENT.md`,
+      pinned, the same single-binary shape as the smoke tools. Green against `3.0.0-beta.2` on Docker Hub, and
+      watched to fail against `2.1.1` - `no signatures found`, no SBOM, and the 172 System dlls of the old
+      self-contained build.
 - [ ] **Write the Docker Hub page's verification section from the same wording.** `SECURITY.md` is the source
       now; that page's own plan says to copy it rather than edit its draft.
 
@@ -485,6 +490,26 @@ session's work, written here for it.
       say - the verified `cosign verify` invocation, the three points it has to make, and the rule that any
       example tag names a signed image. **Check that text actually exists before deploying**; if it does not,
       the page waits for the next docs deploy, which is the reason that work is pre-tag.
+- [x] **GHCR is cut out of the verification page - done 2026-08-16.**
+      `docs/collections/_versions/v3.0.x/verifying-a-release.md`. **Decided 2026-08-15: only the release
+      workflow touches GHCR** - `$ci-cd/decisions#D14`. It stages there, smokes there and copies to Docker Hub,
+      and nothing else reads it. The word no longer appears on the page. Three edits were made:
+
+  - The **"Which registry you verify"** section is deleted whole - the `ghcr.io` cosign block, the "verify
+    against the registry you actually pulled from" paragraph and the GHCR referrers note went with it.
+  - The worked example says the tag resolves to that digest on Docker Hub, not on both registries.
+  - The closing tip says **four** checks, not five - `tags`, `signature`, `attestations`, `metadata`. The
+    `digest` check compared the two registries and went with this decision.
+
+      Nothing else on the page moved; the two commands at the top already named Docker Hub only.
+
+      **The edit is in the file and not on the site.** That deploy is `workflow_dispatch`, so it goes live with
+      the item at the end of this section, not before it.
+
+      **A coding session made this edit rather than the docs session**, at the maintainer's explicit call after
+      the rule was raised. The page itself was also added by a coding session, in the commit that built the
+      verify recipe - that is what put the cut on this list in the first place.
+
 - [ ] **Write the client-generation page**, per the item above. It is cross-version, so decide once where a
       page that is not version-specific lives on that site rather than copying it into four folders.
 - [ ] **Deploy.** It is `workflow_dispatch` only.

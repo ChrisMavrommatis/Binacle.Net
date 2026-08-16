@@ -44,26 +44,6 @@ pattern says it was this repository's release workflow.
 The signature covers the **image digest**, not the tag. So it holds for the `3.0` and `latest` tags as well as
 the exact version tag: whichever one you verify, you are verifying the same artifact.
 
-## 📦 Which registry you verify
-
-Images are published to Docker Hub and to GHCR. Both commands work the same against either one:
-
-```bash
-cosign verify ghcr.io/chrismavrommatis/binacle-net:<version> \
-  --certificate-identity-regexp '^https://github\.com/ChrisMavrommatis/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
-  --certificate-oidc-issuer https://token.actions.githubusercontent.com
-```
-
-**Verify against the registry you actually pulled from.** The bill of materials and the provenance are
-manifests inside the image index, so they travel with the image when it is copied from GHCR to Docker Hub. A
-signature is not in the index - it is a referrer stored beside the image - so it does not travel, and the
-release workflow signs again on each registry. Two signatures, one digest.
-
-> GHCR's referrers API answers `404`, so asking it for referrers directly looks like there is nothing there.
-> cosign falls back to a tag lookup and verifies fine. Trust the `cosign verify` result, not an empty referrer
-> listing.
-{: .block-note}
-
 ## 🧾 Reading the attestations
 
 `docker buildx imagetools inspect` lists what is in the image index: the platform manifests, plus one
@@ -75,7 +55,7 @@ workflow, the run, and the source commit it came from.
 
 ## 🔍 A worked example
 
-Against `3.0.0-beta.2`, the verify passes and the digest is the same on both registries:
+Against `3.0.0-beta.2`, the verify passes and the tag resolves to this digest on Docker Hub:
 
 ```text
 sha256:ccce2a441e9c7d8b301d7f3f57777d9fa25b295d1a5bd3c07b5e738fc54b3397
@@ -100,6 +80,6 @@ It is not a claim about **safety**. A signature says nothing about the vulnerabi
 genuine image with a known CVE in it verifies perfectly. For that question, read the bill of materials and scan
 it. Do not treat a green check as a clean bill of health.
 
-> Contributors with a clone can run `just image verify <version>`, which runs five checks against a published
+> Contributors with a clone can run `just image verify <version>`, which runs four checks against a published
 > image in one go.
 {: .block-tip}

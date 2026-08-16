@@ -211,8 +211,14 @@ long form of the same thing. **Copy `SECURITY.md` rather than editing the draft 
 versions of one paragraph, drifting.
 
 Two facts from that work bind this page and are easy to miss. **Signing starts at `3.0.0-beta.2`** - anything
-earlier answers `no signatures found`, which reads as our bug. And the signature is a **referrer**, made
-separately on each registry, so a verify should name the registry the reader actually pulled from.
+earlier answers `no signatures found`, which reads as our bug. And the signature is a **referrer** rather than
+part of the image index, so it does not survive the copy and the pipeline signs on both registries.
+
+**That second fact used to say the verify should name the registry the reader pulled from. It must not.**
+Decided 2026-08-15, in the CI/CD decisions ledger: **Docker Hub is the only registry any reader is pointed
+at.** The reader of this page pulled from Docker Hub - there is nowhere else this page sends them - so the
+command names `binacle/binacle-net` and nothing else. Double signing is why that command works, not a reason
+to offer a second one.
 
 What this plan does own is that the section **exists on this page and carries the commands rather than a link**.
 This is where the pull happens - a reader is here because they are about to run `docker run` - so it is the last

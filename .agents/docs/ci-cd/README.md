@@ -1,7 +1,7 @@
 ---
 id: ci-cd
 description: CI/CD — the six GitHub Actions workflows in .github/workflows, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
-verified: 2026-08-14
+verified: 2026-08-16
 check: The workflow table matches the files in .github/workflows; the vars/secrets tables match every ${{ vars.* }} and ${{ secrets.* }} reference in them; the pinned just version and runner labels still match
 also_update:
   - ci-cd/release-pipeline
@@ -114,7 +114,11 @@ certificate — so there is no signing key in the repo and none to rotate. That 
 
 **GHCR needs no new secret, and that is a reason it was chosen.** `GITHUB_TOKEN` is minted for a single run and
 expires with it, so the staging registry has no stored credential to rotate and no classic personal access
-token to depend on. Pulling a staged image needs no credential at all, because the package is public.
+token to depend on.
+
+**The staging package is public, and nothing public says so.** Nothing outside the release workflow reads it
+either — `just image verify` reads Docker Hub alone. **Docker Hub is the only registry named on any surface a
+user reads**, and every tag the pipeline publishes lands there.
 
 ## Environments
 
@@ -141,6 +145,6 @@ Stated plainly, because the gaps are not obvious from a green check.
   code.
 - **One architecture.** The image is `linux/amd64` only. It does ship an SPDX SBOM and SLSA provenance, and is
   cosign-signed — see `$ci-cd/release-pipeline`.
-- **Nothing tells users how to verify any of that.** The signature and attestations are published; the
-  `cosign verify` invocation, with the certificate identity and OIDC issuer to match, is not documented
-  anywhere a user would look. Until it is, the signing is not doing the job it was added for.
+- **Nothing verifies a release after it is published.** The `cosign verify` invocation, with the certificate
+  identity and OIDC issuer to match, is documented for users in `SECURITY.md` and pointed at from the
+  `README`, and `just image verify <version>` runs the checks by hand. No workflow runs them after a tag.

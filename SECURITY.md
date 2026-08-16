@@ -20,8 +20,7 @@ I release security patches for the latest version only. Please ensure you are us
 ## Verifying a Release
 
 Images published from `3.0.0-beta.2` onward are signed, and carry an SPDX software bill of materials and SLSA
-build provenance. Replace `<version>` with the release you pulled - the same commands work against
-`ghcr.io/chrismavrommatis/binacle-net`.
+build provenance. Replace `<version>` with the release you pulled.
 
 ```bash
 cosign verify binacle/binacle-net:<version> \

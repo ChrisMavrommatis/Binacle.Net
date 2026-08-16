@@ -96,7 +96,7 @@ chain ever becomes conditional again, or a beta will silently get no GitHub rele
 
 No `{{major}}` tag is emitted on purpose — a bare `3` would cross minor lines.
 
-### D14 — GHCR is the staging registry, and the package is public
+### D14 — GHCR is staging, and only the release workflow touches it
 
 Everything built lands on `ghcr.io/chrismavrommatis/binacle-net` first. Docker Hub receives only what has been
 smoked there.
@@ -105,18 +105,50 @@ smoked there.
 where users pull from - `smoke` runs against the staging copy, and only a smoked digest is ever copied across. **GHCR is staging; Docker Hub is what users pull, and it carries every tag the
 pipeline publishes, betas included.**
 
-**Why GHCR specifically, and why public.** `GITHUB_TOKEN` is minted per run and expires with it, so staging
-needs no stored credential and nothing to rotate. Keeping the package public extends that to the consumer side:
-the deployment host pulls a beta with no `docker login`, no credential on the server, and no dependency on a
-classic personal access token — which is what a private package would have required, since fine-grained tokens
-have no equivalent for packages and classic ones are on a deprecation path.
+**Only the release workflow touches GHCR - decided 2026-08-15, and it is the strong form of the rule.** The
+staging registry exists so the workflow can push an image, smoke it and copy the smoked digest to Docker Hub.
+That is its whole job. **Nothing else reads it**: no public surface names it, no local recipe queries it, and
+no deployment pulls from it. **One image, one place anyone gets it from.**
 
-Private was never the goal. Keeping Docker Hub free of anything unsmoked or unreleased was, and a public
-staging package achieves it without adding a secret anywhere.
+**What that changed, on the day it was decided.**
 
-**One manual step this depends on**, and it comes *after* the first run rather than before it: the package's
-visibility must be set to public, because GHCR defaults every new package to private regardless of repo
-visibility, and it cannot be changed before the package exists.
+- `SECURITY.md` and `CHANGELOG.md` stopped naming it. The docs-site verification page is written the same way
+  at the next deploy.
+- **`just image verify` lost its `digest` check and is Docker Hub only.** That check compared the tag across
+  the two registries to say Docker Hub serves what the smoke job passed.
+
+  **That property is now the workflow's to keep, not a reader's to re-derive**, and it is not lost. `publish`
+  copies by digest instead of rebuilding, so the copy cannot be a different artifact; the run log shows the
+  digest at each step. From Docker Hub alone, the SLSA provenance names the run that built the image and
+  `cosign verify` proves it came from this repository's release workflow - which is the question a reader
+  actually has. What no longer has an outside witness is "this digest is the one `smoke` pulled", and that was
+  only ever checkable by reading staging.
+- The Docker Hub page must not name it - already the plan's own rule, but for a weaker reason.
+- The deployment host is repointed at `binacle/binacle-net`.
+
+**Why the rule is worth the check it cost.** A staging registry anyone reads is a second published registry
+wearing a different word. It grows instructions, support questions and surfaces to keep true, all for bytes
+identical to what Docker Hub already serves. The moment something outside the workflow depends on it, it is
+not staging.
+
+**The consumer-side argument for a public package is spent.** It was that a deployment host could pull a beta
+from GHCR with no `docker login`. That held only while a prerelease stopped at staging, and it stopped being
+true on 2026-08-11 when the prerelease skip was reversed - every beta now reaches Docker Hub under its
+immutable tag. Nothing exists on GHCR that Docker Hub does not have.
+
+**Why GHCR specifically.** `GITHUB_TOKEN` is minted per run and expires with it, so staging needs no stored
+credential and nothing to rotate. Keeping Docker Hub free of anything unsmoked or unreleased is what the second
+registry buys, and it does that without adding a secret anywhere.
+
+**The package should now be private, and nothing in the pipeline stops it.** Both jobs that reach GHCR log in
+with `GITHUB_TOKEN` - `build` to push and `publish` to read the manifest it copies - and `smoke-image.yml`
+logs in the same way before pulling the staging tag. Public was only ever load-bearing for readers outside the
+workflow, and there are none left. **It is a repository setting, not a code change**, and flipping it is the
+thing that removes the last public pointer at GHCR: the package's own page, which advertises a
+`docker pull ghcr.io/...` line this repo does not control.
+
+**Until it is flipped, the package is public.** GHCR defaults every new package to private regardless of repo
+visibility and cannot be changed before the package exists, so it was set to public after the first run.
 
 **Nothing deletes the staging copy, and that is deliberate.** It is the rollback source if a Docker Hub tag is
 ever found bad — the exact bits that were smoked, still addressable by digest. The second reason is failure
@@ -296,7 +328,10 @@ this.
 image was built; without a signature they do not prove the record itself was not altered. cosign closes that.
 But a cosign signature is **not** a manifest inside the index — so unlike the attestations it does not travel
 with the copy in D2. The staging image is signed on GHCR and the published image is signed again on Docker Hub,
-so an image is verifiable wherever it is pulled from. (The parenthetical here used to say GHCR was the only
+so the copy users pull verifies. **The Docker Hub signature is the load-bearing one; since D14 nothing outside
+the release workflow reads the staging signature at all.** Removing the `build` job's cosign step is a live
+question and deliberately not release work - it deletes a step from the path a tag runs, for no gain beyond
+tidiness. (The parenthetical here used to say GHCR was the only
 place a beta ever exists; that stopped being true on 2026-08-11 when the prerelease skip was reversed, and
 `3.0.0-beta.2` is on both registries.) Signing the **digest** rather than a tag means one signature covers
 `x.y.z`, `x.y` and `latest`, since all three are aliases of it.

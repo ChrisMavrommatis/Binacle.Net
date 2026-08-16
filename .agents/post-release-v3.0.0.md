@@ -41,9 +41,8 @@ Rewritten 2026-08-14, when the release scope was reset.
       issuer - the identity flag is the entire value, since anyone with a GitHub account can sign anything.
       Then `docker buildx imagetools inspect` for the SBOM and provenance entries.
 
-      **Check both registries.** A signature is a referrer stored beside the image rather than inside the
-      index, so it does not survive the copy and the pipeline signs twice. Checking one proves nothing about
-      the other.
+      **Docker Hub only.** An earlier version of this said to check both registries. It is the staging copy's
+      signature that is now read by nothing - only the release workflow touches GHCR, decided 2026-08-15.
 
       All of this has run green against `3.0.0-beta.2` already. What is new at v3.0.0 is only that the copy
       writes three tags instead of one.
@@ -79,12 +78,24 @@ Rewritten 2026-08-14, when the release scope was reset.
       shows four versions. **This is the item most likely to have been silently skipped**, because nothing
       fails when it is - the site just keeps presenting v2.1.x.
 
-## Two loose ends the release could not close
+## Loose ends the release could not close
 
-- [ ] **The credential-free pull.** `3.0.0-beta.2` was deployed to the test server, so the host reaches GHCR
-      and the public package answers it. What is unproven is whether that host did it **without** a stored
-      credential. Only open if the test server has a `ghcr.io` entry in its docker config. A
-      `docker logout ghcr.io` and a re-pull closes it.
+- [ ] **Move the test server onto Docker Hub.** `3.0.0-beta.2` was deployed to the test server from GHCR.
+      **Decided 2026-08-15: Docker Hub is the only registry anyone is pointed at** - `$ci-cd/decisions#D14` -
+      and that includes our own hosts, or the decision is a wording change nobody follows. Repoint the
+      deployment at `binacle/binacle-net`, then `docker logout ghcr.io` on that host so the next pull proves it
+      needs no GHCR credential. This also closes the older question of whether that host was pulling GHCR with a
+      stored credential: after the move it has no reason to hold one.
+
+- [ ] **Make the GHCR package private.** With the test server moved, **nothing outside the release workflow
+      reads it** - `$ci-cd/decisions#D14`. Private removes the last public pointer at GHCR that this repo does
+      not control: the package's own GitHub page, which advertises a `docker pull ghcr.io/...` line.
+
+      **Nothing in the pipeline breaks, and it is a repository setting rather than a code change.** All three
+      jobs that touch GHCR already log in with `GITHUB_TOKEN` - `build` to push, `publish` to read the manifest
+      it copies, and `smoke-image.yml` before it pulls the staging tag. **Do it after a release run, not
+      before one**, and watch the next run's `smoke` and `publish` jobs: they are where a wrong answer shows up,
+      and the flip is reversible in one click.
 
 - [ ] **Move the verification floor from `3.0.0-beta.2` to `3.0.0`.** Signing, the SBOM and the GHCR staging
       copy all started at beta 2, so every surface currently says that is the first verifiable image - which

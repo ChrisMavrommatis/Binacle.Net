@@ -5,12 +5,12 @@
 #   just image up volume         the image alone, SQLite, data in the named volume binacle-net-data
 #   just image up bind           the image alone, SQLite, data in tooling/data, a folder you can open
 #   just image down [name]       stop it; add -v to drop the named volumes too
-#   just image verify <version>  check a published image: digest, tags, signature, attestations, metadata
+#   just image verify <version>  check a published image: tags, signature, attestations, metadata
 #
 # These follow `just build image`, and they answer a different question from the `serve` module: not "does the
 # code work" but "does the thing we ship work". The stacks all run binacle-net:local, which is why each checks
 # for it first and `serve` has no such check. **`verify` is the exception** - it reads a published image off
-# Docker Hub and GHCR, builds nothing, and never logs in.
+# Docker Hub, builds nothing, and never logs in.
 #
 # Two files, three stacks: `volume` and `bind` share tooling/image.local.yml and differ only in where
 # /app/data goes. `full` includes that file and serve's services, so it is the same postgres on the same
@@ -26,10 +26,8 @@ set working-directory := '..'
 # propagates.
 set no-exit-message := true
 
-# Where a release lands. GHCR is where the pipeline stages and smoke-tests; Docker Hub is copied from it by
-# digest, which is what makes the two comparable at all.
+# Where a release lands. Docker Hub is the only registry anything outside the release workflow touches.
 hub_repo := 'binacle/binacle-net'
-ghcr_repo := 'ghcr.io/chrismavrommatis/binacle-net'
 
 # List the recipes
 default:
@@ -57,10 +55,10 @@ down name="full" *args:
 # Needs no `docker login`, and must not grow one. These are the commands a user runs, and a check that only
 # passes with a credential is not checking a public artifact.
 #
-# Only 3.0.0-beta.2 and later can pass. Signing, the SBOM and the GHCR staging copy all start there, so older
-# tags fail on digest, signature and attestations - history, not a broken check.
+# Only 3.0.0-beta.2 and later can pass. Signing and the SBOM start there, so older tags fail on signature and
+# attestations - history, not a broken check.
 
-# Verify a published image [all|digest|tags|signature|attestations|metadata]
+# Verify a published image [all|tags|signature|attestations|metadata]
 verify version check="all":
     #!/usr/bin/env bash
     # No `set -e`. A failed check is the interesting output, so every check runs and the codes are OR-ed at the
@@ -71,11 +69,11 @@ verify version check="all":
         exit 1
     fi
     case "{{ check }}" in
-        all) checks="digest tags signature attestations metadata" ;;
-        digest|tags|signature|attestations|metadata) checks="{{ check }}" ;;
+        all) checks="tags signature attestations metadata" ;;
+        tags|signature|attestations|metadata) checks="{{ check }}" ;;
         *)
             echo "Unknown check '{{ check }}'." >&2
-            echo "Use all, digest, tags, signature, attestations or metadata." >&2
+            echo "Use all, tags, signature, attestations or metadata." >&2
             exit 1
             ;;
     esac
@@ -166,34 +164,9 @@ _prepare name:
             ;;
     esac
 
-# The five checks, one question each, in the order that makes sense: each answers something the next assumes.
+# The four checks, one question each, in the order that makes sense: each answers something the next assumes.
 # Every one prints what it found before it says pass or fail - a check whose only output is "ok" cannot be
 # read over someone's shoulder.
-
-# Same digest on both registries
-[private]
-_verify-digest version:
-    #!/usr/bin/env bash
-    set -uo pipefail
-    echo "== digest =="
-    # Four braces open, two close. Two opening braces are just's own interpolation, so a Go template needs the
-    # extra pair only going in - four closing braces append a literal pair to every value and still look right.
-    # No backticks in a comment down here either: just evaluates them as a command before the shell sees it.
-    hub=$(docker buildx imagetools inspect "{{ hub_repo }}:{{ version }}" --format '{{{{ .Manifest.Digest }}' 2>/dev/null)
-    ghcr=$(docker buildx imagetools inspect "{{ ghcr_repo }}:{{ version }}" --format '{{{{ .Manifest.Digest }}' 2>/dev/null)
-    printf '  docker hub  %s\n' "${hub:-<tag not found>}"
-    printf '  ghcr.io     %s\n' "${ghcr:-<tag not found>}"
-    if [ -z "$hub" ] || [ -z "$ghcr" ]; then
-        echo "  the tag is missing on one of the two registries" >&2
-        exit 1
-    fi
-    # `publish` copies by digest instead of rebuilding, and a copy preserves the hash. Equal digests are what
-    # says Docker Hub is serving the artifact the smoke job passed; unequal means nothing below matters.
-    if [ "$hub" != "$ghcr" ]; then
-        echo "  MISMATCH - docker hub is not serving what ghcr smoke-tested" >&2
-        exit 1
-    fi
-    echo "  match"
 
 # Which docker hub tags are this same image
 [private]
@@ -217,7 +190,7 @@ _verify-tags version:
         | "  \(.name)   \(.digest[7:19])   \(.full_size)   \(.last_updated[0:10])"'
     echo "  every row above is the same image under another name"
 
-# Signed by this repo's release workflow, on both registries
+# Signed by this repo's release workflow
 [private]
 _verify-signature version:
     #!/usr/bin/env bash
@@ -227,23 +200,18 @@ _verify-signature version:
         echo "  cosign is not installed - DEVELOPMENT.md has the pinned install" >&2
         exit 1
     fi
-    # Both registries, always. A signature is a referrer stored beside the image rather than inside the index,
-    # so it does not survive `imagetools create` and the pipeline signs twice. One says nothing about the other.
-    rc=0
-    for ref in "{{ hub_repo }}:{{ version }}" "{{ ghcr_repo }}:{{ version }}"; do
-        # Never drop either flag. Without the identity this only asks "did anyone sign this" - and anyone can,
-        # Sigstore is open to every GitHub account alive.
-        if out=$(cosign verify "$ref" \
-            --certificate-identity-regexp '^https://github\.com/ChrisMavrommatis/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
-            --certificate-oidc-issuer https://token.actions.githubusercontent.com 2>&1); then
-            printf '  %-52s signed by the release workflow\n' "$ref"
-        else
-            printf '  %-52s NOT VERIFIED\n' "$ref" >&2
-            echo "$out" | sed 's/^/      /' >&2
-            rc=1
-        fi
-    done
-    exit $rc
+    ref="{{ hub_repo }}:{{ version }}"
+    # Never drop either flag. Without the identity this only asks "did anyone sign this" - and anyone can,
+    # Sigstore is open to every GitHub account alive.
+    if out=$(cosign verify "$ref" \
+        --certificate-identity-regexp '^https://github\.com/ChrisMavrommatis/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
+        --certificate-oidc-issuer https://token.actions.githubusercontent.com 2>&1); then
+        printf '  %-52s signed by the release workflow\n' "$ref"
+    else
+        printf '  %-52s NOT VERIFIED\n' "$ref" >&2
+        echo "$out" | sed 's/^/      /' >&2
+        exit 1
+    fi
 
 # What is attached: SPDX SBOM and SLSA provenance
 [private]

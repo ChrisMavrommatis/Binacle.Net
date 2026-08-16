@@ -32,7 +32,7 @@ deployment starting points live in samples (`$samples`). For the quick "how do I
 | `openapi.just` | **Not a script** — the `openapi` module for the root `justfile`. `just openapi generate [dir]` builds the v3/v4 documents into gitignored `artifacts/openapi/`, `just openapi lint [dir]` generates then Spectral-lints them against `.spectral.yaml` |
 | `agents.just` | **Not a script** — the `agents` module for the root `justfile`. `just agents all` regenerates the `_index.md` manifest for `.agents/docs`, `.agents/design`, `.agents/plans`, `.agents/memory` and `.agents/ideas` (grouped by area); `just agents generate-index <name>` does one |
 | `changelog.just` | **Not a script** — the `changelog` module for the root `justfile`. Reads `CHANGELOG.md` at the repo root. `just changelog extract <version\|Unreleased>` prints one release's section, with its headings promoted from `###` back to `##` for a release body; `just changelog check <version\|Unreleased>` exits 1 if that section is missing or empty. The release workflow calls both, so CI and a laptop parse the file the same way and the exact body can be previewed before a tag is pushed — see `$ci-cd/release-pipeline` |
-| `image.just` | **Not a script** — the `image` module for the root `justfile`. Runs what `build.just` produced: `just image up [full\|volume\|bind]` (default `full`) and `just image down [name]`; extra arguments pass through to `docker compose`. `up` creates and opens the bind-mounted folders first, and every stack stops with a pointer to `just build image` if `binacle-net:local` is missing. **`just image verify <version> [check]` is the odd one out** — it reads a *published* image off both registries, builds nothing and never logs in; see below |
+| `image.just` | **Not a script** — the `image` module for the root `justfile`. Runs what `build.just` produced: `just image up [full\|volume\|bind]` (default `full`) and `just image down [name]`; extra arguments pass through to `docker compose`. `up` creates and opens the bind-mounted folders first, and every stack stops with a pointer to `just build image` if `binacle-net:local` is missing. **`just image verify <version> [check]` is the odd one out** — it reads a *published* image off Docker Hub, builds nothing and never logs in; see below |
 | `smoke.just` | **Not a script** — the `smoke` module for the root `justfile`. Tests the image rather than the code. `just smoke test-structure [image]` runs `container-structure-test` against `tooling/smoke/structure.yaml`; `just smoke test <profile> [image]` does up → hurl → down for one profile; `just smoke up`/`down` are the manual halves; `just smoke all [image]` builds, checks the structure once, then runs every profile. Every recipe takes the image last, default `binacle-net:local`, so a published tag can be smoked too |
 | `tmux.sh` | Builds/re-attaches the `binacle` tmux session (windows `api`/`docs`/`web`/`tests`/`misc`/`bench_1..3`); panes are pre-`cd`'d, nothing auto-runs |
 
@@ -118,42 +118,43 @@ because that is the one that exercises the whole image, which is what the module
 
 ## Verifying a published image
 
-`just image verify <version> [check]` in `image.just`, with the five checks as private `_verify-*` recipes.
+`just image verify <version> [check]` in `image.just`, with the four checks as private `_verify-*` recipes.
 Each is one question and the order matters — every one answers something the next assumes.
+
+**Docker Hub only.** GHCR is the release workflow's staging registry and nothing outside that workflow reads
+it, so this recipe knows one repository. It carried a fifth check until 2026-08-15, `digest`, which compared
+the tag across both registries.
 
 | Check | What it proves |
 |---|---|
-| `digest` | The tag resolves to the same digest on Docker Hub and GHCR. **This is the check the pipeline shape exists to earn:** `publish` copies by digest rather than rebuilding, so equal digests mean Docker Hub serves the artifact the smoke job passed. Unequal, and nothing below matters |
 | `tags` | The Docker Hub tag map, from the v2 API. Rows sharing a digest are one image under several names — how you see what `latest` resolves to. The **date** is the trap: it moves for reasons that are not a retag, so it is printed and never compared |
-| `signature` | `cosign verify` against **both** registries. A signature is a referrer stored beside the image, not inside the index, so it does not survive `imagetools create` and the pipeline signs twice — one registry says nothing about the other. Needs `cosign`; fails with a pointer when it is missing |
+| `signature` | `cosign verify` against the Docker Hub tag. A signature is a referrer stored beside the image, not inside the index, so it does not survive `imagetools create` and the pipeline signs after the copy as well as before it. Needs `cosign`; fails with a pointer when it is missing |
 | `attestations` | The SPDX SBOM package count and the SLSA provenance builder id. Both are manifests **inside** the index, so the index digest hashes them and the one signature already covers them — nothing extra to verify, this only reports what is attached |
 | `metadata` | The three OCI labels, then a throwaway run: `BINACLE_VERSION`, the uid, `/app/data`'s owner, and the `System.*.dll` count in `/app`. That count is the **framework-dependent proof** — 4 on a framework-dependent build, ~170 on a self-contained one |
 
 **The version argument is required and never defaults**; a default rots into a tag nobody meant to check.
 **No `docker login` anywhere** — these are the commands a user runs, and a check that only passes with a
-credential is not checking a public artifact. The aggregate does **not** use `set -e`: it runs all five, ORs
-the exit codes and fails at the end, because the first failure otherwise hides the four answers explaining it.
+credential is not checking a public artifact. The aggregate does **not** use `set -e`: it runs all four, ORs
+the exit codes and fails at the end, because the first failure otherwise hides the three answers explaining it.
 
 **Two just traps live in this recipe** and both cost real time:
 
-- **A Go template needs four braces open, two closed** — `{{{{ .Manifest.Digest }}`. Two opening braces are
-  just's own interpolation. Four closing braces emit a literal `}}` on the end of every value, which still
-  looks right: the digest comparison passes and piping into `jq` gives `parse error: Unmatched '}'` under a
-  correct-looking answer.
+- **A Go template needs four braces open, two closed** — `{{{{ json .SBOM }}`. Two opening braces are just's
+  own interpolation. Four closing braces emit a literal `}}` on the end of every value, which still looks
+  right: piping into `jq` gives `parse error: Unmatched '}'` under a correct-looking answer.
 - **A backtick in a recipe-body comment is executed by just**, before the shell ever sees the line. Found
   2026-08-15 by writing the brace explanation with backticks around the braces; the recipe died on
   `Backtick failed with exit code 2`. Explain punctuation in words down there, not in code spans.
 
-**Only `3.0.0-beta.2` and later can pass, and that is the whole history of the pipeline.** Signing, the SBOM
-and the GHCR staging copy all begin there, so `3.0.0-beta.1`, `2.1.1` and everything earlier fail `digest`
-(never staged on GHCR), `signature` (`no signatures found`) and `attestations` (no SBOM). It reads like a
-broken check and is not one. It also binds every user-facing surface: an example naming a tag must name a
-signed tag, and `latest` stays unsigned until v3.0.0 publishes.
+**Only `3.0.0-beta.2` and later can pass, and that is the whole history of the pipeline.** Signing and the SBOM
+begin there, so `3.0.0-beta.1`, `2.1.1` and everything earlier fail `signature` (`no signatures found`) and
+`attestations` (no SBOM). It reads like a broken check and is not one. It also binds every user-facing
+surface: an example naming a tag must name a signed tag, and `latest` stays unsigned until v3.0.0 publishes.
 
-**All five verified 2026-08-15, both ways.** Green against `3.0.0-beta.2` — matching digests, 167 SBOM
-packages, signed on both registries, `app (1654)`, `/app/data` `app:app 755`, 4 System dlls. **Watched to
-fail** against `2.1.1`, which is on Docker Hub only, has no signature and no SBOM, and shows 172 System dlls
-from the old self-contained build; that run fails `digest`, `signature` and `attestations` and exits 1.
+**Re-run 2026-08-15 after the drop to four checks.** Green against `3.0.0-beta.2` — one tag row, signed by the
+release workflow, 167 SBOM packages, provenance naming the build run, `app (1654)`, `/app/data` `app:app 755`,
+4 System dlls. `2.1.1` is still the tag to watch it fail against: no signature, no SBOM, and 172 System dlls
+from the old self-contained build.
 
 The cosign invocation was proven against **cosign 3.1.3**, the version `DEVELOPMENT.md` pins. Both flags were
 kept; dropping the identity would make the check ask only whether anyone signed the image.
