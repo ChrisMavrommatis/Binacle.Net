@@ -90,6 +90,33 @@ The documents come out of the build, not out of a running server, so nothing has
 
 ---
 
+## Regenerating committed data
+`regen.just`, loaded as the `regen` module. Four tools write data that is **committed to the repo**, and this
+is the only place that says how to run them.
+
+```bash
+just regen all                     # every generator, in dependency order
+just regen or-lib-scenarios        # OR-Library text -> shared/data/bischoff-suite
+just regen vipaq-packed-data       # those + custom-problems, packed -> vipaq/data/packed
+just regen vipaq-interop-vectors   # the interop pair + header bytes -> vipaq/test-vectors
+just regen check                   # regenerate, then fail if any of it changed
+```
+
+Every tool takes no arguments by design: a run does every generator in its list, so it cannot half-run and
+leave the data inconsistent. Nothing here is parameterised for the same reason.
+
+`or-lib-scenarios` writes what `vipaq-packed-data` reads, which is the whole reason `all` exists - that
+ordering is the part that is easy to get wrong by hand. `vipaq-interop-vectors` is one recipe rather than two
+because its C# and TS halves write `interop/cs` and `interop/ts` from the same `input.json`; regenerating one
+alone is the drift the interop integrity tests exist to catch.
+
+Every run is deterministic, so `check` is just "run everything, then see whether the tree moved". It diffs only
+the `.json` the generators write - these folders also hold their own README, and `vipaq/test-vectors` as a
+whole holds hand-authored vectors no generator touches. **Nothing in CI calls it**, and that is deliberate: it
+is for the maintainer who edited a tool or a source problem and wants to know what fell out of step.
+
+---
+
 ## Build
 `build.just`, loaded as the `build` module. The publish and the image, nothing else.
 

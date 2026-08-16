@@ -1,8 +1,8 @@
 ---
 id: vipaq/cross-language-testing
 description: ViPaq cross-language wire testing — the C#/TS shared-vector apparatus, its inventory, and the decode-to-input contract
-verified: 2026-07-14
-check: Vector file list, generator paths, and interop test names match vipaq/test-vectors/ and the two suites
+verified: 2026-08-17
+check: Vector file list, generator paths, the regen recipe names, and interop test names match vipaq/test-vectors/, tooling/regen.just and the two suites
 also_update:
   - vipaq/typescript
 paths:
@@ -45,8 +45,9 @@ every other file is hand-authored.
 - **TS** — `vipaq/packages/binacle-vipaq/tools/`: `generateVectors.ts` (mirrors `Program.cs`),
   `interopArtifactGenerator.ts` (same inputs → `interop/ts/{raw,deflate,gzip}.json`), `Artifact.ts`.
 
-Run the C# generator then the TS one so the two interop halves can't drift. Output is deterministic — a no-change
-re-run is byte-identical (no git noise).
+`just regen vipaq-interop-vectors` runs both, in that order — one recipe, because regenerating one half alone is exactly what
+`InteropIntegrityTests` catches. Output is deterministic — a no-change re-run is byte-identical (no git noise),
+and `just regen check` regenerates everything and fails if any committed file moved.
 
 ## Interop tests — the cross-decode matrix
 

@@ -12,10 +12,14 @@ These files are produced by `vipaq/tools/Binacle.ViPaq.PackedDataGenerator`. To 
 problems (`shared/data/bischoff-suite`, `shared/data/custom-problems`) or the tool, then regenerate:
 
 ```
-dotnet run --project vipaq/tools/Binacle.ViPaq.PackedDataGenerator
+just regen vipaq-packed-data
 ```
 
-The run is deterministic: a no-change re-run is byte-identical, so it produces no git noise.
+`shared/data/bischoff-suite` is itself generated, so if you changed the OR-Library conversion run `just regen
+all` instead - it does both, in that order.
+
+The run is deterministic: a no-change re-run is byte-identical, so it produces no git noise. `just regen check`
+regenerates everything and fails if any generated file moved.
 
 ## Layout
 

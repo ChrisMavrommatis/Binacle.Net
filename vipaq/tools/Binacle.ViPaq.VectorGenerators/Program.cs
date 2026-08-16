@@ -5,7 +5,7 @@ using Binacle.ViPaq.VectorGenerators;
 // deterministic, so a no-change re-run is byte-identical.
 //
 // Add a vector by writing an IVectorGenerator and dropping it in the list below. The TS side has its own
-// generator for artifact-ts.json; `npm run regen:interop` runs both so the interop halves cannot drift.
+// generator for the ts/ artifacts; `just regen vipaq-interop-vectors` runs both so the halves cannot drift.
 
 IVectorGenerator[] generators =
 [

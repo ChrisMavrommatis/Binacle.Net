@@ -70,10 +70,18 @@ directly.
 
 ## Regenerating
 
+```
+just regen vipaq-interop-vectors
+```
+
 The generators own only the derived files — `header/header-bytes.json` and the interop artifacts. **Every other
 vector is hand-authored**, so do not expect a regeneration to reproduce them. C#:
-`vipaq/tools/Binacle.ViPaq.VectorGenerators/`. TS: `vipaq/packages/binacle-vipaq/tools/`. Output is
-deterministic — a no-change re-run is byte-identical.
+`vipaq/tools/Binacle.ViPaq.VectorGenerators/`. TS: `vipaq/packages/binacle-vipaq/tools/`. One recipe runs both,
+because `interop/cs` and `interop/ts` come off the same `input.json` and regenerating one alone is exactly what
+the integrity tests catch.
+
+Output is deterministic — a no-change re-run is byte-identical. `just regen check` regenerates everything and
+fails if any committed file moved.
 
 ## What is **not** here (stays language-local on purpose)
 

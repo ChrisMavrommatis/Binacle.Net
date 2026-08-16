@@ -19,6 +19,9 @@ mod openapi 'tooling/openapi.just'
 # The .agents/ manifests: `just agents all` after adding, renaming or re-describing a file there.
 mod agents 'tooling/agents.just'
 
+# The committed generated data: `just regen all`, `just regen check` to prove it is in step.
+mod regen 'tooling/regen.just'
+
 # CHANGELOG.md sections: `just changelog extract <version|Unreleased>`, `just changelog check <version>`.
 mod changelog 'tooling/changelog.just'
 

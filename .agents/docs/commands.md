@@ -1,8 +1,8 @@
 ---
 id: commands
 description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
-verified: 2026-08-15
-check: Test leaves match tooling/tests.just; coverage recipes match tooling/coverage.just; openapi recipes match tooling/openapi.just; agents recipes match tooling/agents.just; serve recipes match tooling/serve.just; smoke recipes match tooling/smoke.just; install/assets match the root justfile; aliases and scripts match tooling/*.sh; compose service list matches tooling/serve.services.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
+verified: 2026-08-17
+check: Test leaves match tooling/tests.just; coverage recipes match tooling/coverage.just; openapi recipes match tooling/openapi.just; agents recipes match tooling/agents.just; regen recipes match tooling/regen.just; serve recipes match tooling/serve.just; smoke recipes match tooling/smoke.just; install/assets match the root justfile; aliases and scripts match tooling/*.sh; compose service list matches tooling/serve.services.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
 paths:
   - "justfile"
   - "tooling/**"
@@ -10,8 +10,9 @@ paths:
 
 # Commands
 
-Setup, running things, tests, coverage, the OpenAPI documents, the image build, the smoke suite and the agent
-indexes are `just` recipes; only the benchmarks, the performance runs and the tmux session are still scripts in
+Setup, running things, tests, coverage, the OpenAPI documents, the image build, the smoke suite, the agent
+indexes and the committed generated data are `just` recipes; only the benchmarks, the performance runs and the
+tmux session are still scripts in
 `tooling/`. All are run
 from the repo root. `just` with no arguments lists everything. For the `tooling/` directory anatomy (scripts,
 local compose, env, emulator state) see `$tooling`.
@@ -222,6 +223,29 @@ Rewrites the `_index.md` manifest for `.agents/docs`, `.agents/design`, `.agents
 falling back to its first heading. Run it after adding, renaming, or re-describing any
 `.agents/{docs,design,plans,ideas,memory}/*.md` file. A name that isn't one of the five is rejected, so a typo
 can't leave an index untouched and look like it worked.
+
+## Regenerate committed data
+
+```bash
+just regen all                         # every generator, in dependency order
+just regen or-lib-scenarios            # OR-Library text -> shared/data/bischoff-suite
+just regen vipaq-packed-data           # those + custom-problems, packed -> vipaq/data/packed
+just regen vipaq-interop-vectors       # the interop pair + header bytes -> vipaq/test-vectors
+just regen check                       # regenerate, then fail if any of it changed
+```
+
+Four tools whose output is committed. None takes an argument: each runs every generator in its list, so it
+cannot half-run and leave the data inconsistent.
+
+`or-lib-scenarios` writes what `vipaq-packed-data` reads, which is why `all` exists — the ordering is the part
+that is easy to get wrong by hand. `vipaq-interop-vectors` is one recipe because the C# and TS halves write
+`interop/cs` and `interop/ts` from the same `input.json`, and regenerating one alone is the drift the interop
+integrity tests catch.
+
+Every run is deterministic, so `check` runs everything and then asks whether the tree moved; it diffs only the
+`.json` the generators write, because those folders also hold their own README and `vipaq/test-vectors` holds
+hand-authored vectors. **No workflow calls `check`** — it is for the maintainer who edited a tool or a source
+problem.
 
 ## Dev session (tmux)
 

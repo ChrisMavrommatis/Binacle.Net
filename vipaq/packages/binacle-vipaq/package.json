@@ -9,9 +9,7 @@
     "binacle-compact-notation": "*"
   },
   "scripts": {
-    "test": "jest",
-    "generate:interop": "ts-node tools/generateVectors.ts",
-    "regen:interop": "dotnet run --project ../../tools/Binacle.ViPaq.VectorGenerators && npm run generate:interop"
+    "test": "jest"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.9.0",
