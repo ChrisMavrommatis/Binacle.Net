@@ -2,10 +2,10 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Binacle.Net API v4",
-    "description": "Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.\n\n**Warning: This API version is experimental and may change any time, introducing breaking changes.**\n\n\n\n[View on Github](https://github.com/ChrisMavrommatis/Binacle.Net)\n\n[🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/binacle/binacle-net)\n\n",
+    "description": "Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.\n\n**Warning: This API version is experimental and may change any time, introducing breaking changes.**\n\n\n\n[View on Github](https://github.com/binacle-labs/Binacle.Net)\n\n[🐳 Binacle.Net on Dockerhub](https://hub.docker.com/r/binacle/binacle-net)\n\n",
     "contact": {
       "name": "Binacle.Net",
-      "url": "https://github.com/ChrisMavrommatis/Binacle.Net"
+      "url": "https://github.com/binacle-labs/Binacle.Net"
     },
     "license": {
       "name": "GNU General Public License v3.0",
@@ -13,6 +13,11 @@
     },
     "version": "4.0"
   },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
   "paths": {
     "/api/v4/presets/{preset}": {
       "get": {
@@ -479,9 +484,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -783,9 +785,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -1138,9 +1137,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -1459,9 +1455,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -1757,9 +1750,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -2064,9 +2054,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -2396,9 +2383,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -2694,9 +2678,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -2993,9 +2974,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -3351,9 +3329,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -3643,9 +3618,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -3945,9 +3917,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -4280,9 +4249,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }
@@ -4549,9 +4515,6 @@
                 }
               }
             }
-          },
-          "429": {
-            "description": "Too Many Requests. You have reached the maximum number of requests allowed. Please try again later."
           }
         }
       }

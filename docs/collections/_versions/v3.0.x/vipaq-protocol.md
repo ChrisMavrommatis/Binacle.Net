@@ -152,4 +152,4 @@ uncompressed. Both header bytes are therefore `0x00`:
 The normative wire specification, including the decoding order, everything a decoder must reject, and further
 worked examples, lives with the source:
 
-- 📖 [ViPaq Protocol Specification](https://github.com/ChrisMavrommatis/Binacle.Net/blob/v3.0.0/vipaq/PROTOCOL.md)
+- 📖 [ViPaq Protocol Specification](https://github.com/binacle-labs/Binacle.Net/blob/v3.0.0/vipaq/PROTOCOL.md)

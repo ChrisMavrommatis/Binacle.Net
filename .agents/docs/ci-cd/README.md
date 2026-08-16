@@ -116,9 +116,11 @@ certificate — so there is no signing key in the repo and none to rotate. That 
 expires with it, so the staging registry has no stored credential to rotate and no classic personal access
 token to depend on.
 
-**The staging package is public, and nothing public says so.** Nothing outside the release workflow reads it
-either — `just image verify` reads Docker Hub alone. **Docker Hub is the only registry named on any surface a
-user reads**, and every tag the pipeline publishes lands there.
+**The staging package is private.** A package created under an organization starts private even when the repo
+is public, and this one was created fresh when the repo moved to `binacle-labs`. Nothing outside the release
+workflow reads it — `just image verify` reads Docker Hub alone — and all three jobs that touch it log in with
+`GITHUB_TOKEN`, so private costs nothing. **Docker Hub is the only registry named on any surface a user
+reads**, and every tag the pipeline publishes lands there.
 
 ## Environments
 

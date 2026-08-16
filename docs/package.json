@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ChrisMavrommatis/Binacle.Net.git"
+    "url": "git+https://github.com/binacle-labs/Binacle.Net.git"
   },
   "author": "Chris Mavrommatis",
   "license": "GPL-3.0 AND CC-BY-SA-4.0",

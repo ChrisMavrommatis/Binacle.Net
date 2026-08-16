@@ -451,6 +451,16 @@ release goes without it.
 plus six edits that must go out with it. Repo-root `docs/` is off limits to a coding session; this is the docs
 session's work, written here for it.
 
+- [ ] **Re-cut the worked example in `v3.0.x/verifying-a-release.md` against the real `3.0.0`.** It is the
+      **last place any public surface still names a beta image**, and it cannot be fixed before the tag
+      because it quotes real output. Everything else - the signing floor, the sample commands, the "cannot be
+      verified" note - was moved off beta names on 2026-08-17. Run `just image verify 3.0.0` and replace
+      three things with what it prints: the Docker Hub digest, the package count, and the provenance run URL.
+
+      **The rule that decided this, worth keeping for future releases: name a version where the version is
+      the fact, never as a floor or an example.** A floor or a sample tag goes stale on its own; a record of
+      what was signed does not.
+
 - [ ] **Put the real date and release link in `v3.0.x/release-notes.md`.** The `## v3.0.0` section carries
       interim wording because the tag did not exist when the pages were written. Swap the italic line for
       *"Released &lt;date&gt; - [release on GitHub](.../releases/tag/v3.0.0)"*, matching every other version

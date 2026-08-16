@@ -80,22 +80,20 @@ Rewritten 2026-08-14, when the release scope was reset.
 
 ## Loose ends the release could not close
 
-- [ ] **Move the test server onto Docker Hub.** `3.0.0-beta.2` was deployed to the test server from GHCR.
+- [x] **Move the test server onto Docker Hub. Closed 2026-08-17 - no host pulls from GHCR.** Confirmed by
+      the maintainer. The GHCR package was deleted on 2026-08-16 and nothing broke, which is the proof by
+      removal this item wanted. **Docker Hub is now the only registry anything pulls from, ours included.**
       **Decided 2026-08-15: Docker Hub is the only registry anyone is pointed at** - `$ci-cd/decisions#D14` -
       and that includes our own hosts, or the decision is a wording change nobody follows. Repoint the
       deployment at `binacle/binacle-net`, then `docker logout ghcr.io` on that host so the next pull proves it
       needs no GHCR credential. This also closes the older question of whether that host was pulling GHCR with a
       stored credential: after the move it has no reason to hold one.
 
-- [ ] **Make the GHCR package private.** With the test server moved, **nothing outside the release workflow
-      reads it** - `$ci-cd/decisions#D14`. Private removes the last public pointer at GHCR that this repo does
-      not control: the package's own GitHub page, which advertises a `docker pull ghcr.io/...` line.
-
-      **Nothing in the pipeline breaks, and it is a repository setting rather than a code change.** All three
-      jobs that touch GHCR already log in with `GITHUB_TOKEN` - `build` to push, `publish` to read the manifest
-      it copies, and `smoke-image.yml` before it pulls the staging tag. **Do it after a release run, not
-      before one**, and watch the next run's `smoke` and `publish` jobs: they are where a wrong answer shows up,
-      and the flip is reversible in one click.
+- [x] **Make the GHCR package private. Done 2026-08-16, by the org move rather than by a flip.** The repo
+      moved to `binacle-labs`, and a package created under an organization starts private even when the repo
+      is public. `3.0.0-beta.3` ran the whole pipeline against it - `build`, `smoke` and `publish` all green -
+      so the three jobs that touch GHCR are proven against a private package. The old public
+      `ghcr.io/chrismavrommatis/binacle-net` was deleted the same day.
 
 - [ ] **Move the verification floor from `3.0.0-beta.2` to `3.0.0`.** Signing, the SBOM and the GHCR staging
       copy all started at beta 2, so every surface currently says that is the first verifiable image - which
@@ -108,6 +106,11 @@ Rewritten 2026-08-14, when the release scope was reset.
       `image.just` header, `tooling/README.md`, and the Docker Hub page when it goes up. Grep for
       `3.0.0-beta.2` and you have the list. Keep beta 2 named only where the *history* is the point - it is
       still the first signed image, and someone verifying an old pull needs to know their `2.1.1` never can be.
+
+      **`SECURITY.md` is already done**, as part of the org move on 2026-08-16 - its floor reads `3.0.0`. Beta
+      2 is still named there on purpose, for a second reason this item did not anticipate: **it is the only
+      image signed under the old `ChrisMavrommatis` identity**, so it needs the old string to verify at all.
+      That sentence is history, not a floor, and it stays.
 
 - [ ] **Decide the immutability switch, now that a real release is behind it.** The rule is corrected and the
       switch is off. Turning it on means testing it on a scratch repo first - there is no undo, and an

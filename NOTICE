@@ -14,6 +14,9 @@ THIRD-PARTY SOFTWARE NOTICES
 ================================================================================
 
 This product includes software developed by third parties under various licenses.
+Every direct dependency is named below, grouped by the license the package itself
+declares. Transitive dependencies are covered by the bill of materials linked at
+the end.
 
 --------------------------------------------------------------------------------
 Apache License 2.0 Components
@@ -27,12 +30,12 @@ Serilog
   Copyright Serilog Contributors
   https://github.com/serilog/serilog
 
-OpenTelemetry
-  Copyright The .NET Foundation and The gRPC Authors
+OpenTelemetry .NET
+  Copyright The OpenTelemetry Authors
   https://github.com/open-telemetry/opentelemetry-dotnet
 
-xUnit
-  Copyright .NET Foundation
+xUnit.net v3
+  Copyright .NET Foundation and Contributors
   https://github.com/xunit/xunit
 
 Dapper
@@ -43,19 +46,39 @@ TypeScript
   Copyright Microsoft Corporation
   https://github.com/microsoft/TypeScript
 
+AspNetCore.HealthChecks.UI.Client
+  Copyright Xabaril Contributors
+  https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks
+
+Grpc.Tools
+  Copyright The gRPC Authors
+  https://github.com/grpc/grpc
+
+SQLitePCLRaw
+  Copyright Eric Sink and Contributors
+  https://github.com/ericsink/SQLitePCL.raw
+
+Swagger UI
+  Copyright SmartBear Software
+  https://github.com/swagger-api/swagger-ui
+
+Material Dynamic Colors
+  Copyright 2021 Google LLC
+  https://github.com/material-foundation/material-dynamic-color
+
 --------------------------------------------------------------------------------
 BSD-3-Clause License Components
 --------------------------------------------------------------------------------
-
-Swashbuckle.AspNetCore
-  Copyright (c) 2016 Richard Morris
-  https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/LICENSE
 
 Shouldly
   Copyright (c) 2010 Dave Newman, Jeremy Skinner, Xerxes Battiwalla, Anthony Egerton,
   Jason Dentler, Travis Illig, James Foster, James Gregory, John Gietzen, Rob Fonseca-Ensor,
   Joseph Woodward, Jake Ginnivan
   https://github.com/shouldly/shouldly/blob/master/LICENSE.txt
+
+Google.Protobuf
+  Copyright Google Inc.
+  https://github.com/protocolbuffers/protobuf
 
 Redistribution and use in binary form must reproduce the above copyright notices
 and license terms in the documentation and/or other materials provided with the
@@ -74,24 +97,46 @@ for any purpose, without fee, and without a written agreement is hereby granted,
 provided that the above copyright notice and this paragraph appear in all copies.
 
 --------------------------------------------------------------------------------
+Microsoft Software License Terms
+--------------------------------------------------------------------------------
+
+Microsoft.Testing.Extensions.CodeCoverage
+  Copyright Microsoft Corporation
+  https://github.com/microsoft/codecoverage
+  Licensed under the Microsoft .NET Library license, not an open source licence.
+  Build and test tooling only - it is not part of any published image.
+
+--------------------------------------------------------------------------------
 MIT License Components
 --------------------------------------------------------------------------------
 
-This product includes numerous components licensed under the MIT License, including
-but not limited to:
-- Microsoft .NET libraries (Microsoft.Extensions.*, Azure.Data.Tables, etc.)
-- BenchmarkDotNet
-- ConsoleTables
-- Coverlet
-- Bogus
-- Jest, Gulp, and other build tools
-- Jekyll and Ruby gems for documentation
+Shipped in the API image:
 
-The MIT License allows use, modification, and distribution with minimal restrictions.
-Full license texts are included with their respective components.
+Swashbuckle.AspNetCore.SwaggerUI  https://github.com/domaindrivendev/Swashbuckle.AspNetCore
+Scalar.AspNetCore                 https://github.com/scalar/scalar
+Microsoft.OpenApi                 https://github.com/microsoft/OpenAPI.NET
+Microsoft.Data.Sqlite             https://github.com/dotnet/efcore
+Azure.Data.Tables                 https://github.com/Azure/azure-sdk-for-net
+Azure.Monitor.OpenTelemetry.AspNetCore
+                                  https://github.com/Azure/azure-sdk-for-net
+Microsoft.Extensions.*            https://github.com/dotnet/runtime
+Microsoft.AspNetCore.*            https://github.com/dotnet/aspnetcore
+FluxResults                       https://github.com/ChrisMavrommatis/FluxResults
+OpenApiExamples                   https://github.com/ChrisMavrommatis/OpenApiExamples
+
+Shipped in the browser UI and the websites:
+
+Alpine.js                         https://github.com/alpinejs/alpine
+Beer CSS                          https://github.com/beercss/beercss
+three.js                          https://github.com/mrdoob/three.js
+
+Build, test and documentation tooling, not shipped:
+
+BenchmarkDotNet, Bogus, ConsoleTables, Jest, Gulp, webpack, ts-loader,
+concurrently, Jekyll and its Ruby gems.
 
 ================================================================================
 
 For a complete list of all dependencies (direct and transitive) and their licenses,
-see the Software Bill of Materials (SBOM) file included with this distribution or
+see the Software Bill of Materials (SBOM) attached to each published image, or
 available at: https://github.com/binacle-labs/Binacle.Net/network/dependencies

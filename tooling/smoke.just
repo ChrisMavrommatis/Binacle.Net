@@ -7,7 +7,7 @@
 #   just smoke down <profile>          stop it (add -v to drop the volume)
 #
 # Every recipe takes the image last and defaults to binacle-net:local, so the same suite runs against a local
-# build or a published tag - `just smoke test service binacle/binacle-net:3.0.0-beta.1` smokes what is actually on
+# build or a published tag - `just smoke test service binacle/binacle-net:3.0.0` smokes what is actually on
 # Docker Hub. The stacks read it as $BINACLE_IMAGE with the same default, so a bare `docker compose` still works.
 #
 # Static content is one container-structure-test file (tooling/smoke/structure.yaml) read straight from the

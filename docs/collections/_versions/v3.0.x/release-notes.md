@@ -24,7 +24,7 @@ Release notes for the **v3.0.x** line, newest release first. Every patch in this
 ## v3.0.0
 
 *Not released yet - the date and the release link are added when v3.0.0 is tagged. See the
-[releases page](https://github.com/ChrisMavrommatis/Binacle.Net/releases) for what is published today.*
+[releases page](https://github.com/binacle-labs/Binacle.Net/releases) for what is published today.*
 
 ### 🔎 Overview
 - **V2 endpoints** were removed.

@@ -15,10 +15,9 @@ docker run -d --name binacle-net -p 8080:8080 -e SWAGGER_UI=True -e UI_MODULE=Tr
 
 > `latest` follows the newest release, and a new major version can break your integration. It is the right tag
 > for trying Binacle.Net out. **Pin a version for anything you keep** - `binacle/binacle-net:3.0` will track
-> fixes within the 3.0 line without ever changing behaviour under you, once v3.0.0 is published. Until then, pin
-> `binacle/binacle-net:3.0.0-beta.1`.
+> fixes within the 3.0 line without ever changing behaviour under you.
 
-Images from `3.0.0-beta.2` onward are signed and carry a bill of materials -
+Images from `3.0.0` onward are signed and carry a bill of materials -
 **[SECURITY.md](SECURITY.md#verifying-a-release)** has the two commands that check what you pulled.
 ### 🌐 Access the Interface
 - Swagger UI (API Documentation): http://localhost:8080/swagger/

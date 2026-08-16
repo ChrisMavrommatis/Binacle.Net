@@ -24,11 +24,14 @@ Docker Hub is the only registry anyone is pointed at, and GHCR is staging that n
 test server is included - a deployment pulling from staging is the same thing the decision rules out, and it
 would keep the second registry alive as a real dependency.
 
-- [x] **The host pulls it.** `3.0.0-beta.2` was deployed to the test server on 2026-08-14 from GHCR.
-- [ ] **Repoint that deployment at `binacle/binacle-net`.** Every beta reaches Docker Hub under its immutable
-      tag, so there is nothing the host can only get from staging.
-- [ ] **Then `docker logout ghcr.io` on that host.** The next pull proves it needs no GHCR credential, which
-      is what the old credential-free question was after. It closes by removal rather than by measurement.
+**Closed 2026-08-17 - no host pulls from GHCR.** Confirmed by the maintainer. The GHCR package was deleted on
+2026-08-16 and nothing broke, which is the proof by removal this section was after.
+
+- [x] **The host pulled `3.0.0-beta.2` from GHCR on 2026-08-14.** That was the one time, and it is history.
+- [x] **Repointed at `binacle/binacle-net`.** Every beta reaches Docker Hub under its immutable tag, so there
+      was never anything the host could only get from staging.
+- [x] **No `ghcr.io` credential left on that host.** It closed by removal rather than by measurement -
+      the staging package no longer exists to pull from.
 
 ## 2. The docs release-notes page - answered 2026-08-14
 

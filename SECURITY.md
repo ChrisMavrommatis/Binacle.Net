@@ -37,14 +37,10 @@ from this repository's release workflow.
 The signature covers the image digest, so it holds for the `3.0` and `latest` tags as well as the exact
 version - verifying any of them verifies the same artifact.
 
-**Releases before `3.0.0-beta.2` cannot be verified.** `3.0.0-beta.1`, `2.1.1` and everything earlier were
-published before the signing pipeline existed, so `cosign verify` answers `no signatures found` against them.
-That is history rather than a failed check, and it applies to a moving tag like `latest` for as long as it
-still points at one of those releases.
-
-**`3.0.0-beta.2` verifies under a different identity.** It was signed before this repository moved to the
-`binacle-labs` organization. To check that one release, put `ChrisMavrommatis` in place of `binacle-labs` in
-the identity above.
+**Releases before `3.0.0` cannot be verified.** `2.1.1` and everything earlier were published before the
+signing pipeline existed, so `cosign verify` answers `no signatures found` against them. That is history
+rather than a failed check, and it applies to a moving tag like `latest` for as long as it still points at
+one of those releases.
 
 **A passing verify means the image came from this repository's release workflow. It does not mean the image is
 free of vulnerabilities.** For that, read the bill of materials.

@@ -55,7 +55,7 @@ down name="full" *args:
 # Needs no `docker login`, and must not grow one. These are the commands a user runs, and a check that only
 # passes with a credential is not checking a public artifact.
 #
-# Only 3.0.0-beta.2 and later can pass. Signing and the SBOM start there, so older tags fail on signature and
+# Only 3.0.0 and later can pass. Signing and the SBOM start there, so older tags fail on signature and
 # attestations - history, not a broken check.
 
 # Verify a published image [all|tags|signature|attestations|metadata]

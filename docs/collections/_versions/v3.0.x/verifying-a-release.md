@@ -5,7 +5,7 @@ nav:
   icon: 🔏
 ---
 
-Every image published from `3.0.0-beta.2` onward is signed with [Sigstore](https://www.sigstore.dev/) cosign,
+Every image published from `3.0.0` onward is signed with [Sigstore](https://www.sigstore.dev/) cosign,
 and carries an SPDX software bill of materials and SLSA build provenance. Signing is keyless and happens inside
 the GitHub Actions release workflow, so there is no private key anywhere - the signature is tied to the workflow
 that built the image.
@@ -14,13 +14,13 @@ Two commands cover it. Replace `<version>` with the release you pulled.
 
 ```bash
 cosign verify binacle/binacle-net:<version> \
-  --certificate-identity-regexp '^https://github\.com/ChrisMavrommatis/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
+  --certificate-identity-regexp '^https://github\.com/binacle-labs/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 
 docker buildx imagetools inspect binacle/binacle-net:<version>
 ```
 
-> **Releases before `3.0.0-beta.2` cannot be verified.** `3.0.0-beta.1`, `2.1.1` and everything earlier were
+> **Releases before `3.0.0` cannot be verified.** `2.1.1` and everything earlier were
 > published before the signing pipeline existed, so `cosign verify` answers `no signatures found` against them.
 > The check has not failed; there is nothing there to check. It applies to a moving tag like `latest` too, for
 > as long as it still points at one of those releases.
@@ -63,7 +63,7 @@ The same release inspects to a bill of materials of **167 packages**, and proven
 produced it:
 
 ```text
-https://github.com/ChrisMavrommatis/Binacle.Net/actions/runs/31738643520/attempts/1
+https://github.com/binacle-labs/Binacle.Net/actions/runs/31738643520/attempts/1
 ```
 
 The image config in the same output shows the container runs as `app (1654)` rather than root, with `/app/data`

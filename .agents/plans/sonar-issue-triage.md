@@ -4,6 +4,19 @@ description: Sonar - what is left after the 2026-08-09 sweep
 
 # Sonar - what is left after the 2026-08-09 sweep
 
+> **The project was recreated on 2026-08-17** under the new `binacle-labs` Sonar organization, key
+> `binacle-labs_Binacle.Net`. A new org was chosen over a rebind, so **the old project and everything held in
+> its UI are gone.**
+>
+> **Every "Mark Accepted" below has to be done again.** Those marks lived in the old project's database, not
+> in this repo - seven instructions here, the largest being S101's 38 findings. They will all come back as
+> open on the first analysis, and on the Free plan the UI mark is the *only* way to answer them: "Sonar way"
+> is read-only, and `sonar.issue.ignore` rules are not allowed in `tooling/sonar-analysis.xml`.
+>
+> **The code fixes survive** - they are commits. Only the accept-decisions were lost. The before/after
+> numbers below are still a true record of what the code did; they just no longer point at a run anyone can
+> open.
+
 **Status:** Sweep done. Rewritten 2026-08-09 against the run on `016d7478`, which is the first analysis with
 the corrected scope. **509 open issues -> 305**, and the C# reduction is bigger than that looks: 24 of the 305
 are new arrivals from `docs/` and `web/` coming back into scope, so ~228 were actually cleared.

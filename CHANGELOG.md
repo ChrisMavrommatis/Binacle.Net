@@ -56,7 +56,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
   ```
 
   The SPDX SBOM and SLSA provenance travel inside the image index; `docker buildx imagetools inspect binacle/binacle-net:3.0.0` lists them.  
-- **The project moved to the `binacle-labs` organization, and the signing identity moved with it.** The command above names the new organization. GitHub redirects a moved repository's links, but a certificate identity is written into the signature and does not redirect — a stale one fails the check rather than warning. `3.0.0-beta.2` is the one published image signed under the old identity, and verifies only with `ChrisMavrommatis` in that flag.  
+- **The project moved to the `binacle-labs` organization, and the signing identity moved with it.** The command above names the new organization. GitHub redirects a moved repository's links, but a certificate identity is written into the signature and does not redirect — a stale one fails the check rather than warning.  
 - **The image is smaller — around 103 MB, where the same image built the old way was 150 MB.** The app is published framework-dependent, so it runs on the .NET runtime already in the `aspnet:10.0` base image instead of carrying a second copy of it. Nothing about running the container changes.  
 - Existing environment variables are unchanged.  
 
@@ -135,12 +135,11 @@ To upgrade to **v3.0.0**, follow these steps:
 
 7. **Update any pinned `cosign verify` command**  
    - The repository moved to the `binacle-labs` organization and the certificate identity moved with it. Replace `ChrisMavrommatis` with `binacle-labs` in `--certificate-identity-regexp`.  
-   - Only affects you if you verify signatures in a script or a pipeline. A stale identity **fails** the check, it does not warn — so it reads as a tampered image rather than an out-of-date command.  
-   - `3.0.0-beta.2` is the one published image signed under the old identity. Everything from v3.0.0 uses the new one.
+   - Only affects you if you verify signatures in a script or a pipeline. A stale identity **fails** the check, it does not warn — so it reads as a tampered image rather than an out-of-date command.
 
 ---
 
-**Full Changelog**: https://github.com/ChrisMavrommatis/Binacle.Net/compare/v2.1.1...v3.0.0
+**Full Changelog**: https://github.com/binacle-labs/Binacle.Net/compare/v2.1.1...v3.0.0
 
 ## [2.1.1] - 2026-01-12
 

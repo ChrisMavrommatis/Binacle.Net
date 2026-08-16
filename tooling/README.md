@@ -153,7 +153,7 @@ four run even when one fails, so a failure comes with the three answers that exp
 any check failed. Only the signature check needs `cosign` - see `DEVELOPMENT.md` - and it says so rather than
 passing quietly when it is missing.
 
-**Only `3.0.0-beta.2` and later can pass.** Signing and the SBOM start there, so `3.0.0-beta.1`, `2.1.1` and
+**Only `3.0.0` and later can pass.** Signing and the SBOM start there, so `2.1.1` and
 anything earlier fail on `signature` and `attestations`. That is history rather than a broken check - `2.1.1`
 is the useful thing to run it against when you want to watch it fail.
 
@@ -176,7 +176,7 @@ just smoke down <profile> [-v]       # stop it
 local build or a published tag:
 
 ```bash
-just smoke all binacle/binacle-net:3.0.0-beta.1     # smoke what is actually on Docker Hub
+just smoke all binacle/binacle-net:3.0.0           # smoke what is actually on Docker Hub
 just smoke test prod binacle/binacle-net:3.0        # one profile against the released minor tag
 ```
 
