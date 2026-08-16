@@ -4,10 +4,11 @@ description: Release - Binacle.Net v3.0.0
 
 # Release - Binacle.Net v3.0.0
 
-**Status:** In progress. Beta 1 and beta 2 published, verified and deployed. The pipeline is rebuilt and proven
+**Status:** In progress. Betas 1, 2 and 3 published, verified and deployed. The pipeline is rebuilt and proven
 end to end. The architecture branch is merged, the suite is green and the OpenAPI documents are proven unmoved.
-What is left is the builds on the gate, one run, one beta, and the tag - plus seven items that run alongside
-and hold nothing up.
+**The repository moved to the `binacle-labs` organization on 2026-08-16, mid-release**, and `v3.0.0-beta.3`
+proved the whole pipeline under the new owner. What is left is the last commit and the tag - plus the items
+that run alongside and hold nothing up.
 
 **Created:** 2026-07-16. **Rewritten for the GHCR pipeline:** 2026-08-11. **Scope reset:** 2026-08-14 - the
 maintainer proposed eight more items; five came in, three were refused with reasons recorded below.
@@ -17,6 +18,13 @@ the reference rules: it may point at any file to coordinate the release, and **n
 Delete it once v3.0.0 is out.
 
 Companion: `post-release-v3.0.0.md` - the checks to run once the release is out.
+
+**The org move, in one paragraph.** The repository moved from `ChrisMavrommatis/Binacle.Net` to
+`binacle-labs/Binacle.Net` on 2026-08-16, while this release was in flight. It is done and proven end to end;
+nothing on the gate waits on it. What outlives the release is in `.agents/design/decisions.md` - what moved,
+what deliberately did not, and the three signing identity bands. The one thing that shapes work still open
+here: **`3.0.0-beta.3` is the only image that verifies under the current identity**, so it is the tag to name
+wherever an example needs a real one until v3.0.0 is out.
 
 ---
 
@@ -74,7 +82,7 @@ A prerelease gets its immutable tag only, never `3.0` or `latest`. The release b
 | 1 | Rate limiter tests | **done - 2026-08-14** |
 | 2 | Rate limiting owned by the ServiceModule | **done - 2026-08-14** |
 | 3 | The Azure Storage run | **done - 2026-08-14, and now on the PR gate** |
-| 4 | Beta 3 | open |
+| 4 | Beta 3 | **published 2026-08-16** - the pipeline half is proven, the deployment checks are open |
 | 5 | The last commit: pins, prose and the changelog rename | open |
 | 6 | Tag `v3.0.0` | open |
 
@@ -133,7 +141,12 @@ the restructured tree on a real host and pay two live checks owed from beta 2.
 shipping file. **The merge does not touch that file at all** - verified against the diff. The two checks below
 are debts from beta 2, not consequences of the merge. Do not scope this as a re-audit of the restructure.
 
-- [ ] **Cut it from the merge commit.**
+**Published 2026-08-16, and it paid for itself twice.** The tag also became the proof of the org move: the whole
+pipeline ran under the new owner, `just image verify 3.0.0-beta.3` passed all four checks, and the command
+printed in `SECURITY.md` passed verbatim from a clean shell. It is now the reference tag - **the only image
+that verifies under the current identity**.
+
+- [x] **Cut it from the merge commit.**
 - [ ] **Exercise the auth token endpoint.** `ServiceModule/v0/Endpoints/Auth/Token.cs` - its rejection chain is
       one extracted `Reject` helper, and a wrong branch returns the wrong status code to a real client, which
       no unit test shape catches as well as one live call.
@@ -152,15 +165,19 @@ release body extraction. None of it moves because a namespace did.
 ### 5. The last commit before the tag - all in one
 
 - [ ] **Rename `## [Unreleased]` to `## 3.0.0`** in `CHANGELOG.md`.
-- [ ] **Move nine pins from `3.0.0-beta.1` to `3.0`:**
+- [ ] **Move eight pins from `3.0.0-beta.1` to `3.0`:**
 
   | File | What to change |
   |---|---|
   | `samples/docker/{minimal,quickstart,prod,service,full}/docker-compose.yml` | the `image:` line |
   | `samples/kubernetes/minimal/binacle-deployment.yaml` | the `image:` line |
-  | `README.md` | the pin warning under Quick Start - **the repo landing page** |
   | `samples/README.md` | the pin paragraph |
   | `samples/docker/README.md` | the pin paragraph |
+
+  **`README.md` was moved early, on 2026-08-17**, when the beta names came off the public surfaces. Its pin
+  warning already reads `binacle/binacle-net:3.0`, which does not exist on Docker Hub yet - so **the repo
+  landing page currently breaks the rule below**. One decision, either way: revert it until the tag, or accept
+  it and note that the rule now has an exception. It is the most read file in the repo.
 
 - [ ] **The prose goes with the number, and it is more than nine files.** **Corrected 2026-08-14 - an earlier
       draft claimed the comment above each `image:` line was already dropped. It is not.** All six compose and
@@ -169,8 +186,10 @@ release body extraction. None of it moves because a namespace did.
       published."* Delete those two lines in all six, leaving only *"Pinned on purpose - a copied sample must
       not jump to a new major on the next pull."* The three READMEs carry the same reason in prose. **That
       reason expires the moment v3.0.0 publishes.**
-- [ ] **Sweep two more that name a beta as an example** - `tooling/README.md` and `tooling/smoke.just`, both
-      showing "smoke what is actually on Docker Hub". Neither is wrong today; both read as stale after the tag.
+- [x] **Done 2026-08-17 - the two that named a beta as an example.** `tooling/README.md` and
+      `tooling/smoke.just`, both showing "smoke what is actually on Docker Hub", now say `3.0.0`. They name a
+      tag that does not exist until the tag lands, which is the same early-move trade as `README.md` above and
+      resolves the moment v3.0.0 publishes.
 - [ ] **Re-confirm `ApiV4Document.IsExperimental` is still `true`.** Shipping v4 as stable would lock contracts
       meant to keep moving. The flip is 3.1.0 work.
 - [ ] **Preview the body:** `just changelog extract 3.0.0` after the rename. That is exactly what publishes.
@@ -201,6 +220,11 @@ all four proven green against `3.0.0-beta.2` and watched to fail against `2.1.1`
 that tell users about it are written: `CHANGELOG.md`, `SECURITY.md`, `README.md` and the docs-site page. **The
 plan file is gone** - what survived it went to the ci-cd decisions ledger (the one verify invocation, what
 changes it, and the beta 2 floor) and the tooling reference doc (the checks and the two just traps).
+
+**Re-proven 2026-08-17 against `3.0.0-beta.3`, and the beta 2 results below are now history.** The org move
+re-keyed the certificate identity the recipe matches on, so **beta 2 no longer passes `signature`** - it is
+signed, under the old owner. Every "green against `3.0.0-beta.2`" in this section is a record of what was
+true then. **`3.0.0-beta.3` is the tag to run anything against**, and `2.1.1` is still the one to watch fail.
 
 **Reduced from five checks to four, later the same day.** The maintainer's call: **only the release workflow
 touches GHCR.** The `digest` check compared the tag across both registries, so it went, and the signature
@@ -236,11 +260,16 @@ decisions ledger, along with what still carries the property that check used to 
 - [ ] **Write the Docker Hub page's verification section from the same wording.** `SECURITY.md` is the source
       now; that page's own plan says to copy it rather than edit its draft.
 
-**One ordering constraint that binds every surface.** Any example naming a tag must name a **signed** tag.
-Signing started with beta 2, so `3.0.0-beta.1` fails with `no signatures found`, which reads as our bug rather
-than as history - and `3.0` and `latest` do not point at a signed image until v3.0.0 publishes. Write the prose
-version-neutral with a placeholder. **Moving that floor to `3.0.0` once the tag is out is a post-release
-item**, listed there with the surfaces to change.
+**One ordering constraint that binds every surface, and the org move tightened it.** Any example naming a tag
+must name a tag that **passes today**. That is now a shorter list than "signed": signing started with beta 2,
+but the move re-keyed the certificate identity, so `3.0.0-beta.2` fails too and only `3.0.0-beta.3` passes.
+`3.0` and `latest` do not point at a signed image until v3.0.0 publishes.
+
+**The floors were moved to `3.0.0` on 2026-08-17, before the tag rather than after it** - the maintainer's
+call, taken with the decision that no public surface names a beta image at all. `SECURITY.md`, `README.md`,
+`tooling/README.md` and `tooling/image.just` all read `3.0.0`. **That closes what used to be a post-release
+item**; the only surface left is the worked example on the docs-site page, which quotes real output and is in
+the docs-deploy checklist below.
 
 ### The Docker Hub page
 
@@ -456,6 +485,11 @@ session's work, written here for it.
       because it quotes real output. Everything else - the signing floor, the sample commands, the "cannot be
       verified" note - was moved off beta names on 2026-08-17. Run `just image verify 3.0.0` and replace
       three things with what it prints: the Docker Hub digest, the package count, and the provenance run URL.
+
+      **It is now wrong, not just stale, and that raises the stakes on this row.** The example says the verify
+      passes against `3.0.0-beta.2` under the identity printed above it. Since the move that identity names
+      `binacle-labs`, and beta 2 was signed under the old one - so the block as written asks the reader to run
+      a command that fails. **This page must not deploy before this row is done.**
 
       **The rule that decided this, worth keeping for future releases: name a version where the version is
       the fact, never as a floor or an example.** A floor or a sample tag goes stale on its own; a record of

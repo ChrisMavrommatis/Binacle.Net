@@ -44,13 +44,19 @@ Rewritten 2026-08-14, when the release scope was reset.
       **Docker Hub only.** An earlier version of this said to check both registries. It is the staging copy's
       signature that is now read by nothing - only the release workflow touches GHCR, decided 2026-08-15.
 
-      All of this has run green against `3.0.0-beta.2` already. What is new at v3.0.0 is only that the copy
-      writes three tags instead of one.
+      All of this has run green against `3.0.0-beta.3`, under the identity v3.0.0 uses. What is new at v3.0.0
+      is only that the copy writes three tags instead of one.
 
-- [ ] **Read the repo landing page by eye.** `README.md` carried a beta-conditional sentence - *"Until then,
-      pin `binacle/binacle-net:3.0.0-beta.1`"* - and it is the most read file in the repo. **A stale beta pin
-      there outlives every other miss.** Note that both betas are still on Docker Hub, so a stale pin resolves
-      to a real image and **will not fail loudly.** You have to look.
+- [ ] **Read the repo landing page by eye.** `README.md` is the most read file in the repo, and its beta pin
+      came off on 2026-08-17 - so what to check is that the pin warning now names a tag that **resolves**:
+      `binacle/binacle-net:3.0` had to wait for this release to exist at all. **A wrong pin there outlives
+      every other miss**, and a stale one would not fail loudly, because every tag this project has ever
+      published is still pullable. You have to look.
+
+- [ ] **Check the eight sample pins moved.** `samples/docker/*/docker-compose.yml`,
+      `samples/kubernetes/minimal/binacle-deployment.yaml`, `samples/README.md` and `samples/docker/README.md`
+      sat at `3.0.0-beta.1` through the whole beta sequence by design. They were the last commit before the
+      tag; confirm none was missed, because a copied sample carries the pin forward forever.
 
 - [ ] **Confirm nothing froze.** The immutability rule was corrected before the tag and the switch was left
       off, so the publish should have written `3.0.0`, `3.0` and `latest` with no interference. Read
@@ -70,7 +76,7 @@ Rewritten 2026-08-14, when the release scope was reset.
       3.x - so it is worth reading properly rather than glancing at.
 
 - [ ] **Run the verification checks against the real `3.0.0`, from a clean shell.** They were proven against
-      `3.0.0-beta.2` and against a two-tag copy. This is the first time the copy writes three tags. **Confirm
+      `3.0.0-beta.3` and against a two-tag copy. This is the first time the copy writes three tags. **Confirm
       the invocation printed on the Docker Hub page and in `SECURITY.md` is the one that actually works** - a
       published command that fails reads as our bug.
 
@@ -83,11 +89,9 @@ Rewritten 2026-08-14, when the release scope was reset.
 - [x] **Move the test server onto Docker Hub. Closed 2026-08-17 - no host pulls from GHCR.** Confirmed by
       the maintainer. The GHCR package was deleted on 2026-08-16 and nothing broke, which is the proof by
       removal this item wanted. **Docker Hub is now the only registry anything pulls from, ours included.**
-      **Decided 2026-08-15: Docker Hub is the only registry anyone is pointed at** - `$ci-cd/decisions#D14` -
-      and that includes our own hosts, or the decision is a wording change nobody follows. Repoint the
-      deployment at `binacle/binacle-net`, then `docker logout ghcr.io` on that host so the next pull proves it
-      needs no GHCR credential. This also closes the older question of whether that host was pulling GHCR with a
-      stored credential: after the move it has no reason to hold one.
+      The decision it served - **Docker Hub is the only registry anyone is pointed at, our own hosts
+      included** - is `$ci-cd/decisions#D14` and is unaffected. It also closes the older question of whether
+      that host held a stored GHCR credential: there is nothing left at that address to hold one for.
 
 - [x] **Make the GHCR package private. Done 2026-08-16, by the org move rather than by a flip.** The repo
       moved to `binacle-labs`, and a package created under an organization starts private even when the repo
@@ -95,22 +99,20 @@ Rewritten 2026-08-14, when the release scope was reset.
       so the three jobs that touch GHCR are proven against a private package. The old public
       `ghcr.io/chrismavrommatis/binacle-net` was deleted the same day.
 
-- [ ] **Move the verification floor from `3.0.0-beta.2` to `3.0.0`.** Signing, the SBOM and the GHCR staging
-      copy all started at beta 2, so every surface currently says that is the first verifiable image - which
-      is true and reads like a pre-release footnote. **Once v3.0.0 is published, `3.0.0` is the first
-      verifiable *release*, and the examples can finally name a tag users actually pull.** Two things change:
-      the "from `3.0.0-beta.2` onward" wording becomes `3.0.0`, and every worked example that had to say
-      `3.0.0-beta.2` - because `3.0`, `latest` and `3.0.0` were unsigned or absent - can use a real tag.
+- [x] **Move the verification floor to `3.0.0`. Done 2026-08-17, before the tag rather than after it.** The
+      org move forced the question early: it re-keyed the certificate identity, so `3.0.0-beta.2` stopped
+      passing the published command, and a floor pointing at it sent every reader at an image that fails.
+      **`SECURITY.md`, `README.md`, `tooling/README.md` and `tooling/image.just` all read `3.0.0`**, and the
+      maintainer's call was that no public surface names a beta image at all - so beta 2 is not named as
+      history either. `smoke-image.yml`'s dispatch-input example went with them.
 
-      **The surfaces that say it:** `SECURITY.md`, `README.md`, the docs-site verification page, the
-      `image.just` header, `tooling/README.md`, and the Docker Hub page when it goes up. Grep for
-      `3.0.0-beta.2` and you have the list. Keep beta 2 named only where the *history* is the point - it is
-      still the first signed image, and someone verifying an old pull needs to know their `2.1.1` never can be.
+      **One surface is left and it is the docs-site worked example**, which quotes real output and cannot be
+      cut until `3.0.0` exists. It is in the release plan's docs-deploy checklist, not here - it needs a
+      command run and its output pasted, which is not a check. After that, the only `3.0.0-beta` left outside
+      `.agents/` is the eight sample pins, which move in the last commit.
 
-      **`SECURITY.md` is already done**, as part of the org move on 2026-08-16 - its floor reads `3.0.0`. Beta
-      2 is still named there on purpose, for a second reason this item did not anticipate: **it is the only
-      image signed under the old `ChrisMavrommatis` identity**, so it needs the old string to verify at all.
-      That sentence is history, not a floor, and it stays.
+      **The floors are briefly ahead of themselves**, naming `3.0.0` before `3.0.0` is pullable. That resolves
+      when the tag lands and was the smaller of the two wrongs.
 
 - [ ] **Decide the immutability switch, now that a real release is behind it.** The rule is corrected and the
       switch is off. Turning it on means testing it on a scratch repo first - there is no undo, and an

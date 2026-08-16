@@ -1,8 +1,8 @@
 ---
 id: docs-site
 description: The published Jekyll documentation site at repo-root docs/ — versioned API docs with Swagger UI embed. `$docs-site` always means repo-root docs/, never .agents/docs/.
-verified: 2026-08-07
-check: Collections, versions, plugin list, and version folders match docs/_config.yml and docs/collections/_versions/; the common-page rule matches what is actually on collections/_common_pages/
+verified: 2026-08-17
+check: Collections, versions, plugin list, and version folders match docs/_config.yml and docs/collections/_versions/; `current` and `list` in docs/_data/versions.yml match the folders and the order the sidebar renders; the common-page rule matches what is actually on collections/_common_pages/
 paths:
   - "docs/**"
 ---
@@ -65,10 +65,11 @@ hardcode a version or `latest` in prose or a command without saying what it trac
 **Every folder is a version; there is no moving folder.** Folders are `vMAJOR.MINOR.x` — one per minor line
 (`v1.3.x`, `v2.0.x`, `v2.1.x`, `v3.0.x`). The current line is edited in place; when a new line opens, its folder
 is copied and the old one is never touched again. `/version/latest/` survives only as a **redirect** to
-`current_version`, holding no content.
+`current`, holding no content.
 
-**The one knob:** `current_version` in `docs/_data/sidebar.yml` says which folder is current and where the
-`latest` redirect points. One edit per new line.
+**The one knob:** `current` in `docs/_data/versions.yml` says which folder is current and where the
+`latest` redirect points. One edit per new line. That file also carries `list`, the rendered version order —
+newest first, because the order is read from the file rather than sorted.
 
 **Why per-minor, not per-major.** A folder answers "what does my image do", and the API set is what changes:
 versions are **added at minors** (v1.2.0 added API v3) and **removed at majors** (v2.0.0 removed v1, v3.0.0
@@ -81,6 +82,11 @@ failed before: four releases (v2.0.0 → v2.1.1) shipped with no snapshot, and o
 **Never derive a folder from an API tag.** The tree at a tag is whatever was in the repo that day — maybe
 mid-edit. Copy the current folder the moment a new line opens; that is the only sound source.
 
+**The `swagger/` json in a version folder is generated output**, not hand-written. `just openapi generate`
+writes `artifacts/openapi/Binacle.Net_v3.json` and `_v4.json`; they are copied in as `swagger/v3.json` and
+`swagger/v4.json`, so the rename is part of the copy. **Regenerate, never hand-edit** — a hand edit puts the
+published spec out of step with what the code serves, and the diff hides inside whatever else was edited.
+
 ### When a new line opens (standing rule)
 
 A line opens on every new **minor** (`v3.0.x` → `v3.1.x`, or `v3.1.x` → `v4.0.x`):
@@ -89,14 +95,16 @@ A line opens on every new **minor** (`v3.0.x` → `v3.1.x`, or `v3.1.x` → `v4.
 2. Rewrite every `permalink`/`menu_title`:
    `grep -rl "/version/v3\.0\.x/" v3.1.x/ | xargs sed -i 's|/version/v3\.0\.x/|/version/v3.1.x/|g'`
 3. Add the folder's `defaults` block in `docs/_config.yml`, or it is invisible in the selector.
-4. Point `current_version` in `_data/sidebar.yml` at it (also moves the `latest` redirect).
+4. Add it to the top of `list` in `_data/versions.yml` and point `current` at it (also moves the `latest`
+   redirect).
 5. `bundle exec jekyll build` to confirm.
 6. Edit only the new folder. **Never touch an old one** — that is what keeps it true.
 
 **Watch out:**
 - `vlink` (`docs/_plugins/VLink.rb`) **raises and fails the build** on a missing target. Removing a page without
   removing its `vlink` references breaks the build — grep the page name before deleting.
-- Selector order is alphabetical by path. Fine through v9; `v10.0.x` would sort before `v2.1.x`.
+- Selector order comes from `list` in `_data/versions.yml`, newest first. It is read, not sorted — Jekyll's
+  own ordering is by path, which would put `v3.10.x` before `v3.2.x`.
 
 ## Plugins
 

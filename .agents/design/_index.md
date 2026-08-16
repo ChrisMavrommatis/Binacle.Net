@@ -7,6 +7,14 @@ description: Manifest of every file under .agents/design, grouped by area. Regen
 Every design record in `.agents/design/`, grouped by area. The settled design behind the docs — the
 decisions (why) and the findings (measured evidence). Permanent and citable; read the one you need.
 
+## General
+
+```yaml
+- file: decisions.md
+  description: "General decisions ledger — why the repository moved to the binacle-labs organization, what moved with it and what deliberately did not, the three signing identity bands, and the rule that a version is named only where the version is the fact."
+  paths: ["NOTICE", "README.md", "SECURITY.md", "CHANGELOG.md", "Dockerfile", "docs/**"]
+```
+
 ## API
 
 ```yaml

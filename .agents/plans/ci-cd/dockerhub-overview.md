@@ -210,9 +210,12 @@ both cosign flags matter, and the sentence that a pass is not a clean bill of he
 long form of the same thing. **Copy `SECURITY.md` rather than editing the draft below**, or there will be two
 versions of one paragraph, drifting.
 
-Two facts from that work bind this page and are easy to miss. **Signing starts at `3.0.0-beta.2`** - anything
-earlier answers `no signatures found`, which reads as our bug. And the signature is a **referrer** rather than
-part of the image index, so it does not survive the copy and the pipeline signs on both registries.
+Two facts from that work bind this page and are easy to miss. **The floor this page states is `3.0.0`**, and
+**the page names no beta image anywhere** - decided 2026-08-17, and it is the reason `SECURITY.md` reads the
+way it does. A beta stays pullable long after it stops being the right thing to pull, and the published
+command fails against every one of them, which reads as our bug rather than as history. And the signature is
+a **referrer** rather than part of the image index, so it does not survive the copy and the pipeline signs on
+both registries.
 
 **That second fact used to say the verify should name the registry the reader pulled from. It must not.**
 Decided 2026-08-15, in the CI/CD decisions ledger: **Docker Hub is the only registry any reader is pointed
@@ -282,7 +285,7 @@ The API itself is under `/api/v3` and `/api/v4`, and needs none of them.
 
 `latest` will cross a major version and can break your integration. **Pin `3.0` for anything you keep.**
 
-Prereleases publish their exact version only (`3.0.0-beta.2`) - they never move `3.0` or `latest`.
+Prereleases publish their exact version only - they never move `3.0` or `latest`.
 
 Every tag is on the Tags tab. What changed in each is in the
 [changelog](https://github.com/binacle-labs/Binacle.Net/blob/main/CHANGELOG.md).
@@ -351,8 +354,11 @@ Dual-licensed GPL-3.0-only (code) and CC-BY-SA-4.0 (content).
   301 that lands a browser on the UI. Nothing here is a plausible-looking guess, which matters because a broken
   first command on this page is the whole first impression. **They were run against the beta tag - see the
   ordering gate above for why the draft says `3.0` anyway.**
-- **The verify commands are exact too.** Both were run against the same beta and pass verbatim against Docker
-  Hub. Only the tag changes.
+- **The verify commands are exact too, but re-check them before this page goes up.** They were first run
+  against `3.0.0-beta.2`, and the repository has moved to `binacle-labs` since - the certificate identity in
+  them changed, so that run no longer proves anything. The current invocation was re-proven verbatim from a
+  clean shell against `3.0.0-beta.3` on 2026-08-17. Copy the one in `SECURITY.md`, which is the source, and
+  do not retype it. Only the tag changes.
 - **The "does not claim it is free of vulnerabilities" sentence stays.** Without it a signature turns into a
   marketing badge.
 - **No health endpoint is mentioned on purpose.** It is off by default and its path is configurable, so a line

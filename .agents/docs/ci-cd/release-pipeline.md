@@ -1,7 +1,7 @@
 ---
 id: "ci-cd/release-pipeline"
 description: "The release pipeline in release-docker-image.yml — six jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step every tag reaches with a prerelease narrowed to its immutable tag, and the CHANGELOG.md release body"
-verified: "2026-08-13"
+verified: "2026-08-17"
 check: "The six jobs, their needs: edges and job outputs match release-docker-image.yml; no job carries a prerelease condition and the release job's !failure() note is still accurate; run-tests.yml and smoke-image.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased"
 also_update:
   - ci-cd
@@ -133,12 +133,12 @@ jobs declare `id-token: write` and why no signing key exists to store. The signa
 
 A hyphen in a semver tag is the prerelease marker. Every job runs either way; what changes is the tag set.
 
-| | `v3.0.0` | `v3.0.0-beta.2` |
+| | `v3.0.0` | `v3.0.0-beta.3` |
 |---|---|---|
 | Section the `notes` job checks | `3.0.0` | `Unreleased` |
-| Pushed to GHCR | `3.0.0` | `3.0.0-beta.2` |
+| Pushed to GHCR | `3.0.0` | `3.0.0-beta.3` |
 | `publish` job | runs | runs |
-| Docker Hub tags | `3.0.0`, `3.0`, `latest` | `3.0.0-beta.2` only |
+| Docker Hub tags | `3.0.0`, `3.0`, `latest` | `3.0.0-beta.3` only |
 | GitHub release | normal | marked `--prerelease` |
 
 **No job is conditional.** The narrowing is entirely `metadata-action`'s: it withholds `{{major}}.{{minor}}`

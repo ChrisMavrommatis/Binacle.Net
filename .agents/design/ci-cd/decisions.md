@@ -1,8 +1,8 @@
 ---
 id: ci-cd/decisions
 description: CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation.
-verified: 2026-08-15
-check: Decisions still match .github/workflows/*.yml and tooling/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against tooling/changelog.just, D6 against smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe
+verified: 2026-08-17
+check: Decisions still match .github/workflows/*.yml and tooling/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against tooling/changelog.just, D6 against smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe, D14's STAGING_IMAGE against release-docker-image.yml, D15's identity regexp against SECURITY.md and tooling/image.just
 paths:
   - ".github/workflows/**"
 ---
@@ -140,15 +140,17 @@ immutable tag. Nothing exists on GHCR that Docker Hub does not have.
 credential and nothing to rotate. Keeping Docker Hub free of anything unsmoked or unreleased is what the second
 registry buys, and it does that without adding a secret anywhere.
 
-**The package should now be private, and nothing in the pipeline stops it.** Both jobs that reach GHCR log in
-with `GITHUB_TOKEN` - `build` to push and `publish` to read the manifest it copies - and `smoke-image.yml`
-logs in the same way before pulling the staging tag. Public was only ever load-bearing for readers outside the
-workflow, and there are none left. **It is a repository setting, not a code change**, and flipping it is the
-thing that removes the last public pointer at GHCR: the package's own page, which advertises a
-`docker pull ghcr.io/...` line this repo does not control.
+**The package is private, and nothing in the pipeline minds.** Both jobs that reach GHCR log in with
+`GITHUB_TOKEN` - `build` to push and `publish` to read the manifest it copies - and `smoke-image.yml` logs in
+the same way before pulling the staging tag. Public was only ever load-bearing for readers outside the
+workflow, and there are none left. Private also removes the last public pointer at GHCR that this repo does
+not control: the package's own page, which advertises a `docker pull ghcr.io/...` line.
 
-**Until it is flipped, the package is public.** GHCR defaults every new package to private regardless of repo
-visibility and cannot be changed before the package exists, so it was set to public after the first run.
+**It arrived by the move rather than by a flip.** GHCR defaults a new package to private, and the package at
+`ghcr.io/binacle-labs/binacle-net` was created fresh when the repository moved - see `$decisions#D1`. The old
+`ghcr.io/chrismavrommatis/binacle-net`, which had been set public after its first run, was deleted on
+2026-08-16. `3.0.0-beta.3` then ran `build`, `smoke` and `publish` green against the private package, so all
+three jobs are proven against it.
 
 **Nothing deletes the staging copy, and that is deliberate.** It is the rollback source if a Docker Hub tag is
 ever found bad — the exact bits that were smoked, still addressable by digest. The second reason is failure
@@ -333,7 +335,7 @@ the release workflow reads the staging signature at all.** Removing the `build` 
 question and deliberately not release work - it deletes a step from the path a tag runs, for no gain beyond
 tidiness. (The parenthetical here used to say GHCR was the only
 place a beta ever exists; that stopped being true on 2026-08-11 when the prerelease skip was reversed, and
-`3.0.0-beta.2` is on both registries.) Signing the **digest** rather than a tag means one signature covers
+every beta now reaches Docker Hub under its immutable tag.) Signing the **digest** rather than a tag means one signature covers
 `x.y.z`, `x.y` and `latest`, since all three are aliases of it.
 
 **Corrected 2026-08-11, against the real artifact.** This said the signature lands in a `sha256-<digest>.sig`
@@ -360,9 +362,15 @@ change it are renaming `.github/workflows/release-docker-image.yml` or moving th
 both visible in a diff. If either happens every copy changes together, and the certificate-identity regexp is
 the part that breaks; the issuer flag never moves. `SECURITY.md` is the wording the others follow.
 
-**Signing starts at `3.0.0-beta.2`**, along with the SBOM and the GHCR staging copy. `3.0.0-beta.1`, `2.1.1`
-and everything earlier answer `no signatures found`, and that is history rather than a broken check - it binds
-every example on every surface, which must name a signed tag.
+**The second of those happened on 2026-08-16**, when the repository moved to the `binacle-labs` organization,
+and it played out as written: every copy of the regexp changed together, the issuer flag did not move, and
+`SECURITY.md` led. It is worth reading as evidence rather than as prediction - the cost of the move was five
+edits and one beta to prove them, because the copies were listed here before anyone needed the list.
+
+**Signing starts at `3.0.0-beta.2`**, along with the SBOM and the GHCR staging copy. Everything earlier
+answers `no signatures found`, and that is history rather than a broken check. **Which images verify under
+which identity is `$decisions#D3`** - the move split the signed images into two bands, and every example on
+every surface has to name one that passes today.
 
 **Keyless, so there is no key.** cosign exchanges the job's OIDC token for a short-lived certificate, which is
 why both jobs need `id-token: write` and why this adds no secret to the repo. `sigstore/cosign-installer` comes

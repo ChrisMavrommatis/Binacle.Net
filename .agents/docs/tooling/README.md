@@ -1,8 +1,8 @@
 ---
 id: "tooling"
 description: "tooling/ — every task the repo can run, called by CI and by hand alike: the test, coverage, openapi, agents, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, the local compose stacks, and emulator state"
-verified: "2026-08-15"
-check: "Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, changelog.just, serve.just, build.just, image.just (stacks and the five verify checks) and smoke.just recipes, and the compose stack/file/service table match tooling/"
+verified: "2026-08-17"
+check: "Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, changelog.just, serve.just, build.just, image.just (stacks and the four verify checks, whose certificate identity must match SECURITY.md) and smoke.just recipes, and the compose stack/file/service table match tooling/"
 also_update:
   - commands
   - samples
@@ -146,15 +146,17 @@ the exit codes and fails at the end, because the first failure otherwise hides t
   2026-08-15 by writing the brace explanation with backticks around the braces; the recipe died on
   `Backtick failed with exit code 2`. Explain punctuation in words down there, not in code spans.
 
-**Only `3.0.0-beta.2` and later can pass, and that is the whole history of the pipeline.** Signing and the SBOM
-begin there, so `3.0.0-beta.1`, `2.1.1` and everything earlier fail `signature` (`no signatures found`) and
-`attestations` (no SBOM). It reads like a broken check and is not one. It also binds every user-facing
-surface: an example naming a tag must name a signed tag, and `latest` stays unsigned until v3.0.0 publishes.
+**Only `3.0.0-beta.3` and later can pass.** The recipe matches the signature against the `binacle-labs`
+certificate identity, so it accepts only images signed after the repository moved. `3.0.0-beta.2` **is**
+signed, but under the old identity, and fails `signature` for that reason alone. `3.0.0-beta.1`, `2.1.1` and
+everything earlier were never signed and fail both `signature` (`no signatures found`) and `attestations`
+(no SBOM). Neither case is a broken check. It also binds every user-facing surface: an example naming a tag
+must name one that passes **today**, and `latest` stays unsigned until v3.0.0 publishes.
 
-**Re-run 2026-08-15 after the drop to four checks.** Green against `3.0.0-beta.2` — one tag row, signed by the
-release workflow, 167 SBOM packages, provenance naming the build run, `app (1654)`, `/app/data` `app:app 755`,
-4 System dlls. `2.1.1` is still the tag to watch it fail against: no signature, no SBOM, and 172 System dlls
-from the old self-contained build.
+**`3.0.0-beta.3` is the reference tag** — the one to re-run against and the one to name in an example until
+v3.0.0 is out. Green on all four checks, 2026-08-17: one tag row, signed by the release workflow under the
+new identity, a 167-package SBOM, and provenance naming the build run. `2.1.1` is still the tag to watch it
+fail against — no signature, no SBOM, and 172 System dlls where a framework-dependent build carries 4.
 
 The cosign invocation was proven against **cosign 3.1.3**, the version `DEVELOPMENT.md` pins. Both flags were
 kept; dropping the identity would make the check ask only whether anyone signed the image.
