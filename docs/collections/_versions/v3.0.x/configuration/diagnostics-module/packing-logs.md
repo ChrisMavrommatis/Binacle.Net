@@ -8,10 +8,10 @@ nav:
 
 Packing Logs track API usage by logging requests, parameters, and results. These logs help you analyze:
 
-- 📊 **Service Usage** - Understand how the API is being utilized.
-- 📏 **Popular Sizes** - Identify the most frequently requested package dimensions.
-- 📦 **Packing Efficiency** - Determine the frequency of successful packings.
-- 🔄 **Function Popularity** - Track which packing or fitting functions are used most often.
+- 📊 **Service Usage** – Understand how the API is being utilized.
+- 📏 **Popular Sizes** – Identify the most frequently requested package dimensions.
+- 📦 **Packing Efficiency** – Determine the frequency of successful packings.
+- 🔄 **Function Popularity** – Track which packing or fitting functions are used most often.
 
 Packing Logs are stored in **NDJSON** (newline-delimited JSON) format.
 
@@ -49,17 +49,17 @@ For more information on overriding configurations, refer to the
 [Configuration Basics]({% link _common_pages/configuration-basics.md %}#%EF%B8%8F-overriding-configuration) page.
 
 ## 🔧 Configuration Options
-- `Enabled` (_boolean_) - Enables or disables packing logs.
-- `Path` (_string_) - Directory where log files are stored.
-- `FileName` (_string_) - Log file name. `{0}` represents the date, and it is required.
-- `DateFormat` (_string_) - Defines the format for `{0}` in FileName (e.g., `yyyyMMdd`).
-- `ChannelLimit` (_integer_) - Maximum queue size for logs:
+- `Enabled` (_boolean_) – Enables or disables packing logs.
+- `Path` (_string_) – Directory where log files are stored.
+- `FileName` (_string_) – Log file name. `{0}` represents the date, and it is required.
+- `DateFormat` (_string_) – Defines the format for `{0}` in FileName (e.g., `yyyyMMdd`).
+- `ChannelLimit` (_integer_) – Maximum queue size for logs:
     - `0` = Unlimited <br>
       Limited only by available system memory.
     - `> 0` = Limits the log queue size. <br>
       If requests come in and the log writter can't keep up causing the
       queue to exceed this limit, then the newest logs will be dropped to prevent system overload.
-- `RetentionDays` (_integer?_) - Delete log files older than this many days. See below.
+- `RetentionDays` (_integer?_) – Delete log files older than this many days. See below.
 
 Fitting and packing share one log. Both write to the same file.
 

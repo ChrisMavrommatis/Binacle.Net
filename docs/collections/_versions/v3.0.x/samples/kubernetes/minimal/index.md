@@ -28,7 +28,7 @@ Edit the JSON in `binacle-presets-configmap.yaml` to use your own bins.
 > Otherwise you will need to create a corresponding PersistentVolume.
 {:.block-note}
 
-> **The CPU and memory values in `binacle-deployment.yaml` are a starting point, not a recommendation.**
+> **The CPU and memory values in `binacle-deployment.yaml` are a starting point.**
 > Measure your own load and adjust them. There is deliberately no CPU limit: packing is CPU bound, and a limit
 > throttles a request mid-solve rather than letting it finish and free the CPU.
 {:.block-note}

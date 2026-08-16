@@ -15,12 +15,12 @@ not need any of it - use [Prod]({% vlink /samples/docker/prod/index.md %}), whic
 no database.
 
 The web UI and `/_debug` are deliberately off. Other people can reach this deployment, and `/_debug` echoes the
-caller's whole request back including their `Authorization` header. The docs stay on because they are
-documentation, not a debug surface.
+caller's whole request back including their `Authorization` header. The docs stay on, since they expose nothing
+about the caller.
 
 > The Service Module has **no public documentation** - see the
 > [Service Module]({% vlink /configuration/service-module/index.md %}) page for why. This sample is a working
-> starting point, not a substitute for it.
+> starting point.
 {: .block-note}
 
 ## 🛠️ Prerequisites

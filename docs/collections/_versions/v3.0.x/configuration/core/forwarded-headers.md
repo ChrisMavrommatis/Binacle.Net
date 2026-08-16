@@ -17,7 +17,7 @@ Three parts of the app read the caller's address, and all three are wrong withou
 - **Rate limiting** puts every caller in one bucket, so one heavy client throttles everybody.
 - **Logs** record your proxy's address on every line.
 
-Nothing crashes when it is misconfigured, which is what makes it worth setting deliberately.
+Nothing crashes when it is misconfigured, so set it deliberately.
 
 > **New in v3.0.0.** Earlier versions had no support for this.
 {: .block-note}
@@ -50,14 +50,14 @@ For more information on overriding configurations, refer to the
 
 ## 🔧 Configuration Options
 
-- `Enabled` (_boolean_) - turns the feature on. **Off by default.**
-- `TrustLoopback` (_boolean_, default `true`) - trust a proxy on the same machine (`127.0.0.0/8`, `::1`).
-- `TrustPrivateNetworks` (_boolean_, default `true`) - trust a proxy on a private network:
+- `Enabled` (_boolean_) – turns the feature on. **Off by default.**
+- `TrustLoopback` (_boolean_, default `true`) – trust a proxy on the same machine (`127.0.0.0/8`, `::1`).
+- `TrustPrivateNetworks` (_boolean_, default `true`) – trust a proxy on a private network:
   `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `fc00::/7`.
-- `TrustedProxies` (_array_, default empty) - any other address or range, named exactly. Added to what the two
+- `TrustedProxies` (_array_, default empty) – any other address or range, named exactly. Added to what the two
   flags above already allow.
-- `ForwardLimit` (_integer_, default `1`) - how many proxies stand in front of the app.
-- `ForwardedForHeaderName` (_string?_, default `null`) - read a different header instead of `X-Forwarded-For`.
+- `ForwardLimit` (_integer_, default `1`) – how many proxies stand in front of the app.
+- `ForwardedForHeaderName` (_string?_, default `null`) – read a different header instead of `X-Forwarded-For`.
 
 ### Why it is off by default
 With nothing in front of the app, the connection address **is** the caller's and cannot be forged. Reading the
@@ -68,10 +68,9 @@ A forwarded header is only believed when it comes from an address you trust. The
 list in order: loopback, then private networks, then anything you name.
 
 **Enabling the feature while trusting nothing fails startup.** Two empty trust lists make the underlying
-middleware skip the check altogether, which would let every caller pick their own address. That state is
-refused at boot rather than shipped.
+middleware skip the check altogether, which would let every caller pick their own address.
 
-The startup log prints the trust list it ended up with, so the flags are never opaque.
+The startup log prints the trust list it ended up with, so you can check what the flags resolved to.
 
 ### How an entry is read {#entry-format}
 Entries in `TrustedProxies` are read **exactly as written** - the same rule as health check `RestrictedIPs`. An
@@ -139,8 +138,7 @@ Two ways, cheapest first.
 
 **Read the log.** The app **warns once** when a forwarding header arrived and did not take effect - either
 because the feature is off, or because the trust list does not name the proxy. It is logged a single time per
-start, not per request, so look near the first requests after a boot. It is the cheapest signal there is and it
-names which of the two states you are in.
+start, not per request, so look near the first requests after a boot. The message says which of the two it is.
 
 **Use `/_debug`.** Set `DEBUG_ENDPOINT=True`, call `/_debug` through your proxy, and read back the address the
 app resolved and every header it received.
@@ -151,6 +149,6 @@ app resolved and every header it received.
 
 ## 🚫 `ASPNETCORE_FORWARDEDHEADERS_ENABLED` is ignored
 
-The framework variable is deliberately not honoured. It switches the underlying middleware on **and empties
+The framework variable is deliberately not honored. It switches the underlying middleware on **and empties
 both trust lists**, which means any caller can send `X-Forwarded-For` and be believed. Setting it does nothing
 here; use `Enabled` in the configuration file instead.

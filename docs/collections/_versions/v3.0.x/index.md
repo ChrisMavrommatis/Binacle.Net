@@ -35,7 +35,7 @@ find the most efficient packing solution.
 
 Below are the main API versions and related resources:
 - ✅ [V3]({% vlink /api/v3.md %}): fitting and packing with a choice of algorithm. Stable, and the recommended version.
-- 🧪 [V4]({% vlink /api/v4.md %}): 16 endpoints organised by the answer you want. **Experimental** - it can change at any time.
+- 🧪 [V4]({% vlink /api/v4.md %}): 16 endpoints organized by the answer you want. **Experimental** - it can change at any time.
 
 **V2 was removed in this version.** If you still call it, see the
 [v2.1.x documentation]({{ '/version/v2.1.x/' | relative_url }}).

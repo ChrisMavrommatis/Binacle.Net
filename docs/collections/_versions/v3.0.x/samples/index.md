@@ -6,20 +6,18 @@ nav:
   icon: 📦
 ---
 
-Starting points for running Binacle.Net. Each one is a folder of files to download and edit - they are meant to
-be taken, not just read.
+Starting points for running Binacle.Net. Each one is a folder of files to download and edit.
 
 ## 🐳 Docker
 Five setups, from nothing switched on to everything.
 
-- [Minimal]({% vlink /samples/docker/minimal/index.md %}): the smallest thing that answers.
+- [Minimal]({% vlink /samples/docker/minimal/index.md %}): the smallest configuration that still answers requests.
 - [Quickstart]({% vlink /samples/docker/quickstart/index.md %}): trying Binacle.Net out, with the docs and the web UI.
 - [Prod]({% vlink /samples/docker/prod/index.md %}): the API behind your own backend. **Most deployments want this one.**
 - [Service]({% vlink /samples/docker/service/index.md %}): Binacle.Net offered to callers you do not control.
 - [Full]({% vlink /samples/docker/full/index.md %}): everything on at once, for a machine nobody else can reach.
 
-The [Docker]({% vlink /samples/docker/index.md %}) page explains the choice between **prod** and **service**,
-which is the one that matters.
+The [Docker]({% vlink /samples/docker/index.md %}) page explains the choice between **prod** and **service**.
 
 ## ☸️ Kubernetes
 - [Minimal]({% vlink /samples/kubernetes/minimal/index.md %}): a minimal deployment on an existing cluster.
@@ -32,7 +30,7 @@ which is the one that matters.
 lockers or pallets is the first thing to do; until then the answers describe someone else's packaging.
 
 **These shapes are tested.** Each Docker sample has a matching smoke profile of the same name, run against the
-image on every release. They are configurations that get checked, not ones nobody runs.
+image on every release.
 
 ## 🏷️ About the image tag
 Every sample pins `binacle/binacle-net:{{ page.version_tag }}` - the minor tag, which picks up fixes within the

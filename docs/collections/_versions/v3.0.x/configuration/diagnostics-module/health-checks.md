@@ -46,10 +46,10 @@ For more information on overriding configurations, refer to the
 
 
 ## 🔧 Configuration Options
-- `Enabled` (_boolean_) - Enables (`true`) or disables (`false`) health checks.
-- `Path` (_string_) - The endpoint path that health checks respond to (default: `/_health`).
-- `RestrictedIPs` (_array_) - Which callers may query the endpoint. Empty means everyone.
-- `RestrictedChecks` (_array_) - Which checks run. Empty means all of them.
+- `Enabled` (_boolean_) – Enables (`true`) or disables (`false`) health checks.
+- `Path` (_string_) – The endpoint path that health checks respond to (default: `/_health`).
+- `RestrictedIPs` (_array_) – Which callers may query the endpoint. Empty means everyone.
+- `RestrictedChecks` (_array_) – Which checks run. Empty means all of them.
 
 ## 🔒 Restricting Access
 By default, health checks are publicly accessible.
@@ -67,7 +67,7 @@ You can restrict access by listing the addresses allowed to query them:
 ```
 
 An entry is either a single address or a CIDR range. An entry the app cannot read **fails startup** rather
-than being quietly ignored - an allow-list that silently drops an entry is worse than one that refuses to boot.
+than being quietly ignored.
 
 ### What changed in v3.0.0
 
@@ -113,9 +113,9 @@ The same rule applies to `TrustedProxies` in
 
 ### Host bits are masked off
 
-`192.168.1.1/24` means the whole `192.168.1.0/24` block - all 256 addresses. That is what CIDR notation means
-everywhere, and it is accepted. The startup log says what each entry resolved to, so an entry that covers more
-than you intended is visible rather than a surprise.
+`192.168.1.1/24` means the whole `192.168.1.0/24` block - all 256 addresses. This is what CIDR notation means
+everywhere, and it is accepted. The startup log says what each entry resolved to, so you can see how wide each
+one ended up.
 
 ### Behind a proxy
 
@@ -127,8 +127,8 @@ your monitoring system.
 ## 🛠️ Built-in Checks
 Binacle.Net comes with these health checks:
 
-- ✅ **System** - always present.
-- ✅ **Database** - present only when the [Service Module]({% vlink /configuration/service-module/index.md %})
+- ✅ **System** – always present.
+- ✅ **Database** – present only when the [Service Module]({% vlink /configuration/service-module/index.md %})
   is enabled. Verifies the health of the database connection.
 
 `RestrictedChecks` is an **allow-list, not a skip-list**. When it is empty every check runs. When it is not

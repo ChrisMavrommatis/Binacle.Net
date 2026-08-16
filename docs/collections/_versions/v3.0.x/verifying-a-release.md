@@ -20,12 +20,10 @@ cosign verify binacle/binacle-net:<version> \
 docker buildx imagetools inspect binacle/binacle-net:<version>
 ```
 
-The rest of this page is what those two commands mean and how to read what they print.
-
 > **Releases before `3.0.0-beta.2` cannot be verified.** `3.0.0-beta.1`, `2.1.1` and everything earlier were
 > published before the signing pipeline existed, so `cosign verify` answers `no signatures found` against them.
-> That is history, not a failed check. It applies to a moving tag like `latest` too, for as long as it still
-> points at one of those releases.
+> The check has not failed; there is nothing there to check. It applies to a moving tag like `latest` too, for
+> as long as it still points at one of those releases.
 {: .block-warning}
 
 ## 🛠️ Install cosign
@@ -78,7 +76,7 @@ That is a strong claim about **origin**.
 
 It is not a claim about **safety**. A signature says nothing about the vulnerabilities in what was signed - a
 genuine image with a known CVE in it verifies perfectly. For that question, read the bill of materials and scan
-it. Do not treat a green check as a clean bill of health.
+it.
 
 > Contributors with a clone can run `just image verify <version>`, which runs four checks against a published
 > image in one go.

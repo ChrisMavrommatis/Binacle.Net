@@ -117,7 +117,7 @@ sets the bit to say which it kept - so a blob is never made larger by compressin
 
 ## 🔤 Text Form
 
-The stored and shared artifact is **base64**, and the format is optimised for it.
+The stored and shared artifact is **base64**, and the format is optimized for it.
 
 - Standard base64 ([RFC 4648 §4](https://www.rfc-editor.org/rfc/rfc4648#section-4)), alphabet `A-Z a-z 0-9 + /`,
   padded with `=`. Not the URL-safe alphabet.
