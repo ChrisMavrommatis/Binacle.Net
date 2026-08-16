@@ -24,6 +24,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 - **The image is about a third smaller** — it uses the .NET runtime from its base image instead of bundling a second copy.  
 - The project was **restructured**, separating the API, library, and ViPaq into their own roots.  
 - **Versioned documentation** now covers every minor line, so older images keep their docs.  
+- **The project moved** to the `binacle-labs` organization. Links redirect; the signing identity does not.  
 
 ### ⚙️ Core Changes
 - Removal of all V2 endpoints.  
@@ -55,6 +56,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
   ```
 
   The SPDX SBOM and SLSA provenance travel inside the image index; `docker buildx imagetools inspect binacle/binacle-net:3.0.0` lists them.  
+- **The project moved to the `binacle-labs` organization, and the signing identity moved with it.** The command above names the new organization. GitHub redirects a moved repository's links, but a certificate identity is written into the signature and does not redirect — a stale one fails the check rather than warning. `3.0.0-beta.2` is the one published image signed under the old identity, and verifies only with `ChrisMavrommatis` in that flag.  
 - **The image is smaller — around 103 MB, where the same image built the old way was 150 MB.** The app is published framework-dependent, so it runs on the .NET runtime already in the `aspnet:10.0` base image instead of carrying a second copy of it. Nothing about running the container changes.  
 - Existing environment variables are unchanged.  
 
@@ -130,6 +132,11 @@ To upgrade to **v3.0.0**, follow these steps:
    - A range that does not line up with a CIDR boundary must be split into several entries, or widened to the enclosing subnet.  
    - Drop any leading zeros — `010.10.10.10` becomes `10.10.10.10`, and note it used to admit `8.10.10.10`, so check that host was not the one you meant. Write IPv6 entries in the short lowercase form: `2001:0DB8::1` becomes `2001:db8::1`.  
    - If Binacle.Net runs behind a proxy, load balancer or CDN, enable **forwarded headers** as well. Without it the list is compared against the proxy's address and can never match your monitoring system.
+
+7. **Update any pinned `cosign verify` command**  
+   - The repository moved to the `binacle-labs` organization and the certificate identity moved with it. Replace `ChrisMavrommatis` with `binacle-labs` in `--certificate-identity-regexp`.  
+   - Only affects you if you verify signatures in a script or a pipeline. A stale identity **fails** the check, it does not warn — so it reads as a tampered image rather than an out-of-date command.  
+   - `3.0.0-beta.2` is the one published image signed under the old identity. Everything from v3.0.0 uses the new one.
 
 ---
 
