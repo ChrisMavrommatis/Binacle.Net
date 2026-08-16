@@ -33,5 +33,40 @@
 		"Name": "boundary - item dim at 16-bit ceiling (65535)",
 		"Producer": "typescript",
 		"Base64": "IBAfiwgAAAAAAAADY2RISUn5DwYMDAwAWqR2Ug4AAAA="
+	},
+	{
+		"Name": "boundary - item coordinate at 8-bit ceiling (255)",
+		"Producer": "typescript",
+		"Base64": "IAAfiwgAAAAAAAADY2RISUnh4uL6//8/AIKF9gQLAAAA"
+	},
+	{
+		"Name": "boundary - item coordinate into 16-bit (256)",
+		"Producer": "typescript",
+		"Base64": "IAQfiwgAAAAAAAADY2RISUnh4uJiYARBAH802rQOAAAA"
+	},
+	{
+		"Name": "boundary - item coordinate at 16-bit ceiling (65535)",
+		"Producer": "typescript",
+		"Base64": "IAQfiwgAAAAAAAADY2RISUnh4uL6DwYAzQtkDw4AAAA="
+	},
+	{
+		"Name": "empty items list, 16-bit bin",
+		"Producer": "typescript",
+		"Base64": "IEAfiwgAAAAAAAADY2DQYZzA+IURACiseZMIAAAA"
+	},
+	{
+		"Name": "many distinct items, row-major, 8-bit sections",
+		"Producer": "typescript",
+		"Base64": "IAAfiwgAAAAAAAADAbkARv8eAPr6+gcDBQAAABIUHB0lKR0lMzpKUig2SldvezNHYXSUpD5YeJG5zUlpj67e9lR6pssDH1+LvegoSGqc1AVNcXWt6yJymoC+ED+Xw4vPJ1y87JbgPnnhFaHxVZYGPqwObLMrZ7cfg9BQkMIwmu11uc1BsQqa4thSyCe/C+Nj30TkNO509mEJXQmFG34uhhSWMptTrx+nSbh42Cq4YNWdATXJd/LCKkDajg/nU0vrpSwMfFYIvEkxpbBto8m5AAAA"
+	},
+	{
+		"Name": "many distinct items, columnar, 16-bit sections",
+		"Producer": "typescript",
+		"Base64": "MFQfiwgAAAAAAAADAXABj/4eACBOIE4gTgQBewPyBWkI4ApXDc4PRRK8FDMXqhkhHJgeDyGGI/0ldCjrKmIt2S9QMsc0Pje1OSw8oz4aQZFDCEZ/SCwBtwRCCM0LWA/jEm4W+RmEHQ8hmiQlKLArOy/GMlE23DlnPfJAfUQISJNLHk+pUjRWv1lKXdVgYGTrZ5sBWAYVC9IPjxRMGQkexiKDJ0As/TC6NXc6ND/xQ65Ia00oUuVWoltfYBxl2WmWblNzEHjNfIqBR4YEiwAAHwo+FF0efCibMro82Ub4UBdbNmVVb3R5k4OyjdGX8KEPrC62TcBsyovUqt7J6OjyB/0mB0URZBuDJQAATw2eGu0nPDWLQtpPKV14asd3FoVlkrSfA61SuqHH8NQ/4o7v3fwsCnsXyiQZMmg/t0wGWlVnpHTzgQAADxAeIC0wPEBLUFpgaXB4gIeQlqClsLTAw9DS4OHw8AD/EA4hHTEsQTtRSmFZcWiBd5GGoZWxpMGz0VoDsw9wAQAA"
+	},
+	{
+		"Name": "compressible payload, row-major, 16-bit sections",
+		"Producer": "typescript",
+		"Base64": "IFQfiwgAAAAAAAADTc6xDcIwFEXRH0IsWUnl7ndZgB08AVUKSo+SEZgjFSN4nAzAAOhiPbDdPFlX1rnZeue+rut4jvY97GMqkf24PIf3UBO7xBxocmjNOfKiviZ26832RX2J7NbXpH1MZvza+hLZra+J/fN45/HO43+P2THJo42HLU8O/NA8bHm08eyLeszqMavHrB6zeszqMXce7zz+95htszxsebTx5LDN8rDlYcuzL+oxq8esHrN6zOoxq8fcebzz+DZ/ANlJ5okkAgAA"
 	}
 ]

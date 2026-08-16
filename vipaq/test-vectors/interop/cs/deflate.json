@@ -12,12 +12,12 @@
 	{
 		"Name": "mixed widths, 8-bit bin, 16-bit item dims and coordinates",
 		"Producer": "csharp",
-		"Base64": "IBRjYkhJSdFhBEEGIJ7AeIIBBL8wRjDtYQIA"
+		"Base64": "IBRjYkhJSdFhBEEGRh3GCYwnGEDwC2ME0x4mAA=="
 	},
 	{
 		"Name": "columnar layout, 16-bit sections",
 		"Producer": "csharp",
-		"Base64": "MFRjYtBhnMD4hVGH0QxIzwKy/jEygPkRTBMY9zABAA=="
+		"Base64": "MFRjYtBhnMD4hVGH0YxxAuMsxi+M/xgZwPwIpgmMe5gA"
 	},
 	{
 		"Name": "boundary - item dim at 8-bit ceiling (255)",
@@ -33,5 +33,40 @@
 		"Name": "boundary - item dim at 16-bit ceiling (65535)",
 		"Producer": "csharp",
 		"Base64": "IBBjZEhJSfkPBgwMDAA="
+	},
+	{
+		"Name": "boundary - item coordinate at 8-bit ceiling (255)",
+		"Producer": "csharp",
+		"Base64": "IABjZEhJSeHi4vr//z8A"
+	},
+	{
+		"Name": "boundary - item coordinate into 16-bit (256)",
+		"Producer": "csharp",
+		"Base64": "IARjZEhJSeHi4mJgBEEA"
+	},
+	{
+		"Name": "boundary - item coordinate at 16-bit ceiling (65535)",
+		"Producer": "csharp",
+		"Base64": "IARjZEhJSeHi4voPBgA="
+	},
+	{
+		"Name": "empty items list, 16-bit bin",
+		"Producer": "csharp",
+		"Base64": "IEBjYNBhnMD4hREA"
+	},
+	{
+		"Name": "many distinct items, row-major, 8-bit sections",
+		"Producer": "csharp",
+		"Base64": "IAABuQBG/x4A+vr6BwMFAAAAEhQcHSUpHSUzOkpSKDZKV297M0dhdJSkPlh4kbnNSWmPrt72VHqmywMfX4u96ChIapzUBU1xda3rInKagL4QP5fDi88nXLzsluA+eeEVofFVlgY+rA5ssytntx+D0FCQwjCa7XW5zUGxCpri2FLIJ78L42PfROQ07nT2YQldCYUbfi6GFJYym1OvH6dJuHjYKrhg1Z0BNcl38sIqQNqOD+dTS+ulLAx8Vgi8STGl"
+	},
+	{
+		"Name": "many distinct items, columnar, 16-bit sections",
+		"Producer": "csharp",
+		"Base64": "MFQBcAGP/h4AIE4gTiBOBAF7A/IFaQjgClcNzg9FErwUMxeqGSEcmB4PIYYj/SV0KOsqYi3ZL1AyxzQ+N7U5LDyjPhpBkUMIRn9ILAG3BEIIzQtYD+MSbhb5GYQdDyGaJCUosCs7L8YyUTbcOWc98kB9RAhIk0seT6lSNFa/WUpd1WBgZOtnmwFYBhUL0g+PFEwZCR7GIoMnQCz9MLo1dzo0P/FDrkhrTShS5VaiW19gHGXZaZZuU3MQeM18ioFHhgSLAAAfCj4UXR58KJsyujzZRvhQF1s2ZVVvdHmTg7KN0ZfwoQ+sLrZNwGzKi9Sq3sno6PIH/SYHRRFkG4MlAABPDZ4a7Sc8NYtC2k8pXXhqx3cWhWWStJ8DrVK6ocfw1D/iju/d/CwKexfKJBkyaD+3TAZaVWekdPOBAAAPEB4gLTA8QEtQWmBpcHiAh5CWoKWwtMDD0NLg4fDwAP8QDiEdMSxBO1FKYVlxaIF3kYahlbGkwbPR"
+	},
+	{
+		"Name": "compressible payload, row-major, 16-bit sections",
+		"Producer": "csharp",
+		"Base64": "IFRNzrENgzAURdFPCJYsqNy5Y4Hs4AlSUaT0KIyQOagygsdhgAwQXZwHtpsn68o6D5uf3M997vfejsPehuzZr9u7+3YlsLNPjia52uw9L+pLYNfebJ3UZ8+ufQna22DGr7XPnl37EtinJzae2Hji5THbBnm08bDlSY4fqoctjzaedVKPWX0JbHlKUI9ZPWb1mBvPfx+eeHnMllEetjzaeJJbRnnY8rDlWSf1mNVjVo9ZPWb1mNVjbjyx8cRl/AE="
 	}
 ]

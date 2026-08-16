@@ -58,11 +58,3 @@ and move it to `.agents/plans/` once it's picked up. See [README.md](README.md) 
   description: "take the shared model leaf further"
   paths: ["shared/**"]
 ```
-
-## ViPaq
-
-```yaml
-- file: vipaq/interop-vector-coverage.md
-  description: "more interop vector coverage"
-  paths: ["vipaq/**"]
-```

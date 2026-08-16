@@ -12,12 +12,12 @@
 	{
 		"Name": "mixed widths, 8-bit bin, 16-bit item dims and coordinates",
 		"Producer": "csharp",
-		"Base64": "IBQfiwgAAAAAAAADY2JISUnRYQRBBiCewHiCAQS/MEYw7WECAITP4CsdAAAA"
+		"Base64": "IBQfiwgAAAAAAAADY2JISUnRYQRBBkYdxgmMJxhA8AtjBNMeJgCEz+ArHQAAAA=="
 	},
 	{
 		"Name": "columnar layout, 16-bit sections",
 		"Producer": "csharp",
-		"Base64": "MFQfiwgAAAAAAAADY2LQYZzA+IVRh9EMSM8Csv4xMoD5EUwTGPcwAQBeVcF0IAAAAA=="
+		"Base64": "MFQfiwgAAAAAAAADY2LQYZzA+IVRh9GMcQLjLMYvjP8YGcD8CKYJjHuYAF5VwXQgAAAA"
 	},
 	{
 		"Name": "boundary - item dim at 8-bit ceiling (255)",
@@ -33,5 +33,40 @@
 		"Name": "boundary - item dim at 16-bit ceiling (65535)",
 		"Producer": "csharp",
 		"Base64": "IBAfiwgAAAAAAAADY2RISUn5DwYMDAwAWqR2Ug4AAAA="
+	},
+	{
+		"Name": "boundary - item coordinate at 8-bit ceiling (255)",
+		"Producer": "csharp",
+		"Base64": "IAAfiwgAAAAAAAADY2RISUnh4uL6//8/AIKF9gQLAAAA"
+	},
+	{
+		"Name": "boundary - item coordinate into 16-bit (256)",
+		"Producer": "csharp",
+		"Base64": "IAQfiwgAAAAAAAADY2RISUnh4uJiYARBAH802rQOAAAA"
+	},
+	{
+		"Name": "boundary - item coordinate at 16-bit ceiling (65535)",
+		"Producer": "csharp",
+		"Base64": "IAQfiwgAAAAAAAADY2RISUnh4uL6DwYAzQtkDw4AAAA="
+	},
+	{
+		"Name": "empty items list, 16-bit bin",
+		"Producer": "csharp",
+		"Base64": "IEAfiwgAAAAAAAADY2DQYZzA+IURACiseZMIAAAA"
+	},
+	{
+		"Name": "many distinct items, row-major, 8-bit sections",
+		"Producer": "csharp",
+		"Base64": "IAAfiwgAAAAAAAADAbkARv8eAPr6+gcDBQAAABIUHB0lKR0lMzpKUig2SldvezNHYXSUpD5YeJG5zUlpj67e9lR6pssDH1+LvegoSGqc1AVNcXWt6yJymoC+ED+Xw4vPJ1y87JbgPnnhFaHxVZYGPqwObLMrZ7cfg9BQkMIwmu11uc1BsQqa4thSyCe/C+Nj30TkNO509mEJXQmFG34uhhSWMptTrx+nSbh42Cq4YNWdATXJd/LCKkDajg/nU0vrpSwMfFYIvEkxpbBto8m5AAAA"
+	},
+	{
+		"Name": "many distinct items, columnar, 16-bit sections",
+		"Producer": "csharp",
+		"Base64": "MFQfiwgAAAAAAAADAXABj/4eACBOIE4gTgQBewPyBWkI4ApXDc4PRRK8FDMXqhkhHJgeDyGGI/0ldCjrKmIt2S9QMsc0Pje1OSw8oz4aQZFDCEZ/SCwBtwRCCM0LWA/jEm4W+RmEHQ8hmiQlKLArOy/GMlE23DlnPfJAfUQISJNLHk+pUjRWv1lKXdVgYGTrZ5sBWAYVC9IPjxRMGQkexiKDJ0As/TC6NXc6ND/xQ65Ia00oUuVWoltfYBxl2WmWblNzEHjNfIqBR4YEiwAAHwo+FF0efCibMro82Ub4UBdbNmVVb3R5k4OyjdGX8KEPrC62TcBsyovUqt7J6OjyB/0mB0URZBuDJQAATw2eGu0nPDWLQtpPKV14asd3FoVlkrSfA61SuqHH8NQ/4o7v3fwsCnsXyiQZMmg/t0wGWlVnpHTzgQAADxAeIC0wPEBLUFpgaXB4gIeQlqClsLTAw9DS4OHw8AD/EA4hHTEsQTtRSmFZcWiBd5GGoZWxpMGz0VoDsw9wAQAA"
+	},
+	{
+		"Name": "compressible payload, row-major, 16-bit sections",
+		"Producer": "csharp",
+		"Base64": "IFQfiwgAAAAAAAADTc6xDYMwFEXRTwiWLKjcuWOB7OAJUlGk9CiMkDmoMoLHYYAMEF2cB7abJ+vKOg+bn9zPfe733o7D3obs2a/bu/t2JbCzT44mudrsPS/qS2DX3myd1GfPrn0J2ttgxq+1z55d+xLYpyc2nth44uUx2wZ5tPGw5UmOH6qHLY82nnVSj1l9CWx5SlCPWT1m9Zgbz38fnnh5zJZRHrY82niSW0Z52PKw5Vkn9ZjVY1aPWT1m9ZjVY248sfHEZfwB2UnmiSQCAAA="
 	}
 ]

@@ -389,24 +389,35 @@ A check that lands red on a question nobody has answered is the thing this whole
 
 **Gates 2 and 3, and the heavy architecture tools, do not come with this** - see the scope decision at the top.
 
-### More ViPaq interop vectors
+### More ViPaq interop vectors - done 2026-08-17
 
-**Pulled in on 2026-08-14 at the maintainer's call**, from the interop vector coverage idea. **Delete that idea
-file when this lands.**
+**Seven rows added, 7 scenarios to 14**, in `vipaq/test-vectors/interop/input.json`. Both suites green - C# 421,
+TS 380 - and the idea file is deleted.
 
-**Why now rather than never.** The idea's own argument against was that a future wire-format change regenerates
-the vectors anyway, so adding rows early means doing them twice. **ViPaq's format left experimental and froze in
-this release**, so that argument is spent - these rows will not need redoing.
+- [x] **Width-boundary flips in a coordinate**, mirroring the three already covered for dimensions: 255, 256 and
+      65535. They produce header `8_8_16`, the mirror of the dims rows' `8_16_8`, and neither combination was in
+      the interop matrix before.
+- [x] **An empty items list**, at a 16-bit bin. That pairing checks the protocol's rule that with no items both
+      item widths are written `Eight` whatever the bin needs - header `16_8_8`.
+- [x] **Many distinct items** - two rows, 30 items each, no repeats: one row-major at 8-bit, one columnar at
+      16-bit.
+- [x] **Compressed payloads at both widths.** **The plan and the idea both said "32-bit and 64-bit widths",
+      which do not exist** - ViPaq has two widths, 8 and 16, and `PROTOCOL.md §4` says a value above 65,535 is
+      an error rather than a wider encoding. Read as the widths that do exist, and the gap was real: no vector
+      produced a substantial compressed body at 16-bit. One row does now, 45 items of realistic pallet data,
+      550 bytes to ~190.
+- [x] **Regenerate and run both suites.** `npm run regen:interop -w binacle-vipaq` runs the C# generator and
+      then the TS one, so the two halves cannot drift.
 
-The cost is small by design: each is new rows in `vipaq/test-vectors/interop/input.json` plus a regen, and the
-matrix fans them across both the C# and TypeScript suites automatically.
+**The compressible row earns its place twice.** It is the **first vector where the two producers emit different
+compressed bytes** - 191 from `DeflateStream`, 189 from `CompressionStream` - which is exactly the case
+`PROTOCOL.md §6.1` documents and the reason the interop contract is decode-to-input rather than byte-equality.
+Every other row happened to agree by coincidence, so nothing executable demonstrated the rule the design rests
+on. The two 30-item rows pay separately: their bodies do not compress, so DEFLATE emits **stored** blocks, a
+decoder path no other vector reaches.
 
-- [ ] **Width-boundary flips in a coordinate**, mirroring the ones already covered for dimensions. A separate
-      encoder from dims, though it shares a picker - which is exactly why the dims coverage does not imply it.
-- [ ] **An empty items list.**
-- [ ] **Many distinct items** - varied dims and coordinates, not repeats of one value.
-- [ ] **Compressed payloads at 32-bit and 64-bit widths.**
-- [ ] **Regenerate and run both suites.** These are committed generator output; nothing is hand-written.
+Mutation-checked: flipping three bytes deep in one TS deflate artifact fails exactly one C# test and nothing
+else.
 
 **Do not rebuild the cross-runtime rows.** Foreign-runtime gzip blobs and .NET 8/9 rows were built once and
 removed on purpose - a gzip decoder reads any valid gzip, so they proved nothing, and they needed hand-captured

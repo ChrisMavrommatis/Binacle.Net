@@ -203,9 +203,10 @@ pin bites both.
 Ideas: [mutation-testing](ideas/mutation-testing.md) - one contained experiment before any opinion.
 [testing-techniques](ideas/testing-techniques.md) - a survey, nothing decided.
 
-**`vipaq/interop-vector-coverage` went into v3.0.0 on 2026-08-14** and its file is deleted when the rows land.
-The idea's own argument against - that a future wire-format change regenerates the vectors anyway - is spent,
-because the format froze in this release.
+**`vipaq/interop-vector-coverage` landed in v3.0.0 on 2026-08-17 and its file is gone.** Seven rows went into
+`vipaq/test-vectors/interop/input.json`, taking the matrix from 7 scenarios to 14. The idea's own argument
+against - that a future wire-format change regenerates the vectors anyway - was spent, because the format froze
+in this release.
 
 ## ServiceModule
 

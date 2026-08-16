@@ -33,5 +33,40 @@
 		"Name": "boundary - item dim at 16-bit ceiling (65535)",
 		"Producer": "csharp",
 		"Base64": "ABABAGRkZP///////wAAAA=="
+	},
+	{
+		"Name": "boundary - item coordinate at 8-bit ceiling (255)",
+		"Producer": "csharp",
+		"Base64": "AAABAGRkZAoKCv///w=="
+	},
+	{
+		"Name": "boundary - item coordinate into 16-bit (256)",
+		"Producer": "csharp",
+		"Base64": "AAQBAGRkZAoKCgABAAEAAQ=="
+	},
+	{
+		"Name": "boundary - item coordinate at 16-bit ceiling (65535)",
+		"Producer": "csharp",
+		"Base64": "AAQBAGRkZAoKCv///////w=="
+	},
+	{
+		"Name": "empty items list, 16-bit bin",
+		"Producer": "csharp",
+		"Base64": "AEAAACwBkAH0AQ=="
+	},
+	{
+		"Name": "many distinct items, row-major, 8-bit sections",
+		"Producer": "csharp",
+		"Base64": "AAAeAPr6+gcDBQAAABIUHB0lKR0lMzpKUig2SldvezNHYXSUpD5YeJG5zUlpj67e9lR6pssDH1+LvegoSGqc1AVNcXWt6yJymoC+ED+Xw4vPJ1y87JbgPnnhFaHxVZYGPqwObLMrZ7cfg9BQkMIwmu11uc1BsQqa4thSyCe/C+Nj30TkNO509mEJXQmFG34uhhSWMptTrx+nSbh42Cq4YNWdATXJd/LCKkDajg/nU0vrpSwMfFYIvEkxpQ=="
+	},
+	{
+		"Name": "many distinct items, columnar, 16-bit sections",
+		"Producer": "csharp",
+		"Base64": "EFQeACBOIE4gTgQBewPyBWkI4ApXDc4PRRK8FDMXqhkhHJgeDyGGI/0ldCjrKmIt2S9QMsc0Pje1OSw8oz4aQZFDCEZ/SCwBtwRCCM0LWA/jEm4W+RmEHQ8hmiQlKLArOy/GMlE23DlnPfJAfUQISJNLHk+pUjRWv1lKXdVgYGTrZ5sBWAYVC9IPjxRMGQkexiKDJ0As/TC6NXc6ND/xQ65Ia00oUuVWoltfYBxl2WmWblNzEHjNfIqBR4YEiwAAHwo+FF0efCibMro82Ub4UBdbNmVVb3R5k4OyjdGX8KEPrC62TcBsyovUqt7J6OjyB/0mB0URZBuDJQAATw2eGu0nPDWLQtpPKV14asd3FoVlkrSfA61SuqHH8NQ/4o7v3fwsCnsXyiQZMmg/t0wGWlVnpHTzgQAADxAeIC0wPEBLUFpgaXB4gIeQlqClsLTAw9DS4OHw8AD/EA4hHTEsQTtRSmFZcWiBd5GGoZWxpMGz0Q=="
+	},
+	{
+		"Name": "compressible payload, row-major, 16-bit sections",
+		"Producer": "csharp",
+		"Base64": "AFQtACBOIE4gTrAEIAPoAwAAAAAAALAEIAOqBWAJAAAAAFgCkAH0AcASAAAAAGAJQAboAwAAQAYAALAEIAPoA2AJQAYAALAEIAOqBcASQAYAAFgCkAH0AQAAgAwAAGAJQAboA2AJgAwAALAEIAPoA8ASgAwAALAEIAOqBQAAwBIAAFgCkAH0AWAJwBIAAGAJQAboA8ASwBIAALAEIAPoAwAAABkAALAEIAOqBWAJABkAAFgCkAH0AcASABkAAGAJQAboAwAAAACqBbAEIAPoA2AJAACqBbAEIAOqBcASAACqBVgCkAH0AQAAQAaqBWAJQAboA2AJQAaqBbAEIAPoA8ASQAaqBbAEIAOqBQAAgAyqBVgCkAH0AWAJgAyqBWAJQAboA8ASgAyqBbAEIAPoAwAAwBKqBbAEIAOqBWAJwBKqBVgCkAH0AcASwBKqBWAJQAboAwAAABmqBbAEIAPoA2AJABmqBbAEIAOqBcASABmqBVgCkAH0AQAAAABUC2AJQAboA2AJAABUC7AEIAPoA8ASAABUC7AEIAOqBQAAQAZUC1gCkAH0AWAJQAZUC2AJQAboA8ASQAZUC7AEIAPoAwAAgAxUC7AEIAOqBWAJgAxUC1gCkAH0AcASgAxUC2AJQAboAwAAwBJUC7AEIAPoA2AJwBJUC7AEIAOqBcASwBJUC1gCkAH0AQAAABlUC2AJQAboA2AJABlUC7AEIAPoA8ASABlUCw=="
 	}
 ]
