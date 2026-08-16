@@ -50,7 +50,7 @@ Binacle.Net v3.0.0 is a major update from v2.1.1.
 
   ```bash
   cosign verify binacle/binacle-net:3.0.0 \
-    --certificate-identity-regexp '^https://github\.com/ChrisMavrommatis/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
+    --certificate-identity-regexp '^https://github\.com/binacle-labs/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
     --certificate-oidc-issuer https://token.actions.githubusercontent.com
   ```
 

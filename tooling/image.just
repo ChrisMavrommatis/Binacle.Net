@@ -204,7 +204,7 @@ _verify-signature version:
     # Never drop either flag. Without the identity this only asks "did anyone sign this" - and anyone can,
     # Sigstore is open to every GitHub account alive.
     if out=$(cosign verify "$ref" \
-        --certificate-identity-regexp '^https://github\.com/ChrisMavrommatis/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
+        --certificate-identity-regexp '^https://github\.com/binacle-labs/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
         --certificate-oidc-issuer https://token.actions.githubusercontent.com 2>&1); then
         printf '  %-52s signed by the release workflow\n' "$ref"
     else

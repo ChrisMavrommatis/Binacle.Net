@@ -521,7 +521,7 @@ unreleased version as current. It has to land before anything is announced. **Ta
 announce.**
 
 **One deliberate 404, do not "fix" it.** The `v3.0.x` ViPaq page links the wire spec at
-`github.com/ChrisMavrommatis/Binacle.Net/blob/v3.0.0/vipaq/PROTOCOL.md`, which 404s until the tag is pushed. A
+`github.com/binacle-labs/Binacle.Net/blob/v3.0.0/vipaq/PROTOCOL.md`, which 404s until the tag is pushed. A
 versioned page should pin the spec it describes; do not repoint it at `main`.
 
 ---

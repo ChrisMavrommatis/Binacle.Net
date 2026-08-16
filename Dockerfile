@@ -7,10 +7,10 @@ WORKDIR /app
 # vendor and base.name are set nowhere else, so they survive from here.
 LABEL org.opencontainers.image.title="Binacle.Net" \
       org.opencontainers.image.description="Binacle.Net is an API created to address the 3D Bin Packing Problem in real time." \
-      org.opencontainers.image.source="https://github.com/ChrisMavrommatis/Binacle.Net" \
+      org.opencontainers.image.source="https://github.com/binacle-labs/Binacle.Net" \
       org.opencontainers.image.url="https://www.binacle.net" \
       org.opencontainers.image.documentation="https://docs.binacle.net" \
-      org.opencontainers.image.vendor="Chris Mavrommatis" \
+      org.opencontainers.image.vendor="Binacle Labs" \
       org.opencontainers.image.licenses="GPL-3.0-only AND CC-BY-SA-4.0" \
       org.opencontainers.image.base.name="mcr.microsoft.com/dotnet/aspnet:10.0"
 

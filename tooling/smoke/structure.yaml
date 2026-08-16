@@ -135,7 +135,7 @@ metadataTest:
     - key: org.opencontainers.image.title
       value: Binacle.Net
     - key: org.opencontainers.image.source
-      value: https://github.com/ChrisMavrommatis/Binacle.Net
+      value: https://github.com/binacle-labs/Binacle.Net
     # The check that catches the NOASSERTION regression the live 2.1.1 image ships.
     - key: org.opencontainers.image.licenses
       value: GPL-3.0-only AND CC-BY-SA-4.0

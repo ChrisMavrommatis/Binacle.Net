@@ -5,7 +5,7 @@ public static class Metadata
 	public const string Description = "Binacle.Net is an API created to address the 3D Bin Packing Problem in real time.";
 	public const string License = "GNU General Public License v3.0";
 
-	public const string GitHub = "https://github.com/ChrisMavrommatis/Binacle.Net";
+	public const string GitHub = "https://github.com/binacle-labs/Binacle.Net";
 	public const string Dockerhub = "https://hub.docker.com/r/binacle/binacle-net";
 
 	// The version is a deploy fact, not a build fact: the docker image is the only artifact, so BINACLE_VERSION

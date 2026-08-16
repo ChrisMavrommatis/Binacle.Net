@@ -4,7 +4,7 @@
   "description": "Monorepo for Binacle.Net",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ChrisMavrommatis/Binacle.Net.git"
+    "url": "git+https://github.com/binacle-labs/Binacle.Net.git"
   },
   "scripts": {
     "copy-assets-to-docs": "gulp copy-assets-to-docs",

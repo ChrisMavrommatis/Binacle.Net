@@ -25,9 +25,9 @@ permissions:
   contents: read
 
 env:
-  # GHCR rejects an uppercase path and the owner here is mixed case, so it is written out lowercase rather
-  # than derived from github.repository_owner at runtime.
-  STAGING_IMAGE: ghcr.io/chrismavrommatis/binacle-net
+  # GHCR rejects an uppercase path. Written out rather than derived from github.repository_owner, so a
+  # mixed-case owner can never reach the registry path.
+  STAGING_IMAGE: ghcr.io/binacle-labs/binacle-net
 
 jobs:
   # FIRST, and everything waits on it. The release body has to exist before anything is built, because the

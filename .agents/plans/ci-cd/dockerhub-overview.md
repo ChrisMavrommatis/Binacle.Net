@@ -285,7 +285,7 @@ The API itself is under `/api/v3` and `/api/v4`, and needs none of them.
 Prereleases publish their exact version only (`3.0.0-beta.2`) - they never move `3.0` or `latest`.
 
 Every tag is on the Tags tab. What changed in each is in the
-[changelog](https://github.com/ChrisMavrommatis/Binacle.Net/blob/main/CHANGELOG.md).
+[changelog](https://github.com/binacle-labs/Binacle.Net/blob/main/CHANGELOG.md).
 
 ## Configuration
 
@@ -308,7 +308,7 @@ Every published image is signed with cosign - keyless, against the digest, so on
 `3.0` and `latest` alike - and carries an SPDX SBOM and SLSA provenance.
 
     cosign verify binacle/binacle-net:3.0 \
-      --certificate-identity-regexp '^https://github\.com/ChrisMavrommatis/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
+      --certificate-identity-regexp '^https://github\.com/binacle-labs/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
       --certificate-oidc-issuer https://token.actions.githubusercontent.com
 
     docker buildx imagetools inspect binacle/binacle-net:3.0
@@ -319,7 +319,7 @@ vulnerabilities.
 ## Deploying
 
 Docker Compose and Kubernetes samples, from a one-line quickstart to a production setup:
-<https://github.com/ChrisMavrommatis/Binacle.Net/tree/main/samples>
+<https://github.com/binacle-labs/Binacle.Net/tree/main/samples>
 
 ## About the image
 
@@ -331,8 +331,8 @@ Docker Compose and Kubernetes samples, from a one-line quickstart to a productio
 
 - Website: <https://www.binacle.net>
 - Documentation: <https://docs.binacle.net>
-- Source: <https://github.com/ChrisMavrommatis/Binacle.Net>
-- Releases: <https://github.com/ChrisMavrommatis/Binacle.Net/releases>
+- Source: <https://github.com/binacle-labs/Binacle.Net>
+- Releases: <https://github.com/binacle-labs/Binacle.Net/releases>
 
 Dual-licensed GPL-3.0-only (code) and CC-BY-SA-4.0 (content).
 ```

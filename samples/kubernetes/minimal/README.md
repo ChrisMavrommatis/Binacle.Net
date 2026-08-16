@@ -11,7 +11,7 @@ This sample demonstrates how to set up and run Binacle.Net on an existing Kubern
 1. **Clone the Repository**<br>
    Clone or download this repository to your local machine.
    ```bash
-   git clone https://github.com/ChrisMavrommatis/Binacle.Net.git
+   git clone https://github.com/binacle-labs/Binacle.Net.git
     ```
     Alternatively, download the contents of this folder directly.
 2. **Verify Files**<br>

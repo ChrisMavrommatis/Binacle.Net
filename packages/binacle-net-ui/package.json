@@ -6,7 +6,7 @@
   "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ChrisMavrommatis/Binacle.Net.git"
+    "url": "https://github.com/binacle-labs/Binacle.Net.git"
   },
   "private": true,
   "dependencies": {

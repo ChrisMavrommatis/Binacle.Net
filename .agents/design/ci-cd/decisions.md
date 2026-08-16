@@ -98,7 +98,7 @@ No `{{major}}` tag is emitted on purpose — a bare `3` would cross minor lines.
 
 ### D14 — GHCR is staging, and only the release workflow touches it
 
-Everything built lands on `ghcr.io/chrismavrommatis/binacle-net` first. Docker Hub receives only what has been
+Everything built lands on `ghcr.io/binacle-labs/binacle-net` first. Docker Hub receives only what has been
 smoked there.
 
 **Why a second registry at all.** It buys the property D2 used to trade away: nothing unsmoked is ever visible
