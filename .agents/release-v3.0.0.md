@@ -42,7 +42,7 @@ worst time to meet.
 | **Rate limiting owned by the ServiceModule** | The durable fix for the bug the two-guard transformer patches. Pulled in on 2026-08-14 at the maintainer's call. |
 | **Image verification** | The release advertises signing, SBOM and provenance. Today no user can check any of it. |
 | **The Docker Hub page** | It advertises 2.1.1 as latest. The tag is what makes it wrong rather than stale. |
-| **The PR gate change** | Image build + OpenAPI lint + **three architecture checks**. One workflow edit, everything green on arrival. |
+| **The PR gate change** | A new PR workflow calling `run-tests.yml`, plus the image build. Everything green on arrival. **The OpenAPI lint and the Spectral move landed separately on 2026-08-17** - the lint is a step in `run-tests.yml`, not a job in the new workflow. |
 | **The client-generation page** | The spec is published and nobody knows they can generate a client from it. One docs page, and it applies to every version. |
 | **More ViPaq interop vectors** | Four rows of fixture data. Cheap, and the format froze in this release so they will not need redoing. |
 | **The compose stacks** | Pulled in on 2026-08-15, after the scope reset. Every decision is taken and the compose behaviour is tested, so it is one sitting with nothing left to figure out. |
@@ -51,7 +51,7 @@ worst time to meet.
 
 | Item | The blocker |
 |---|---|
-| **The heavy architecture tools** | ArchUnitNET, dependency-cruiser and lychee. **Three lighter checks ship instead** - see the PR gate section. What is deferred is everything that needs a new toolchain: ArchUnitNET wants a new test project that becomes a node in the graph it inspects, and `.xUnitV3` may drag in plain `xunit.v3` when this repo pins `xunit.v3.mtp-v2` on purpose - the mismatch throws before a single test runs. dependency-cruiser has no root `tsconfig.json` to work from; there are four, and `web/` has none. |
+| **All the architecture checks** | The heavy tools - ArchUnitNET, dependency-cruiser, lychee - and the three lighter checks that were going to ship with the PR gate. **The lighter three left the release on 2026-08-17**, when re-examining how to build them produced a better design that is a fresh design rather than a ready item. They are on the board as `architecture-checks`. What was already deferred is everything needing a new toolchain: ArchUnitNET wants a new test project that becomes a node in the graph it inspects, and `.xUnitV3` may drag in plain `xunit.v3` when this repo pins `xunit.v3.mtp-v2` on purpose - the mismatch throws before a single test runs. dependency-cruiser has no root `tsconfig.json` to work from; there are four, and `web/` has none. |
 | **CI gates 2 and 3** | **Deferred at the maintainer's call, 2026-08-14.** Gate 2 runs the all-modules integration tests, which are not being written here. Gate 3 is Sonar and coverage, and its own plan says **do not make coverage blocking yet** - the condition is red before anyone writes a line. Gate 1 ships; these two have nothing to gate. |
 | **Raising test coverage** | **Decided 2026-08-14: do not test the Blazor UIModule.** The Alpine port deletes most of what would be tested, so writing bUnit tests now means writing them twice, in two languages. The port goes first. What is left that could be tested today is 612 lines of TypeScript, which does not move an 80% new-code gate on its own. **What ships here is the modest bump the rate limiter tests bring, and nothing more.** |
 
@@ -324,12 +324,20 @@ tag, `latest` and `3.0` included, and those two are designed to move.
       *after* the image has been built, smoked and copied - a red at the last step of an otherwise good
       release, with the moving tags half written. **There is no version of this worth risking the release for.**
 
-### The PR gate - one workflow change
+### The PR gate - one change
 
-**Everything below lands in `run-tests.yml` in one change.** They all add to the same gate, they are all ready,
-and doing them separately means touching that file five times and arguing about job ordering five times.
-**Every one lands green**, which is the state a new gate wants - a check that is red on arrival teaches everyone
-to ignore it.
+**What is left is the image build**, and it lands green, which is the state a new gate wants - a check that is
+red on arrival teaches everyone to ignore it.
+
+**The gate becomes its own workflow calling `run-tests.yml`, rather than more steps inside it** - decided
+2026-08-17, and **[ci-gates](plans/ci-cd/ci-gates.md)** holds the shape, the naming rework and the two traps.
+It is what keeps the release from paying for a throwaway image build, so read that section before touching a
+workflow file.
+
+**The other two items came out of this bundle on 2026-08-17 and are done** - see the section below. The
+maintainer chose to put the lint in `run-tests.yml` as a plain step rather than hold it for the new workflow,
+so the release sees it too. That choice does not carry to the image build: the reason it must not go in that
+file is a duplicated build, not a preference.
 
 - [ ] **Build the image on every PR.** The step is `just build image` - publishes and builds with no push, no
       login, no `sudo`, nothing interactive. Today the image is built in CI only when a release is published,
@@ -339,65 +347,38 @@ to ignore it.
       proves nothing** - the release path now goes through `just build publish`, so it does. Confirmed to
       build clean on 2026-08-17.
 
-      **It costs a second image build on every release, and that is the price.** The release workflow calls
-      `run-tests.yml` as its "this commit passed CI" gate, and that file takes no inputs on purpose - the
-      release needs the same run a PR gets, not a variant of it. So a release run builds the image in the gate
-      and again in the release job. Making the step conditional to save a minute is what turns the gate back
-      into something a release does not exercise.
-- [ ] **Lint the OpenAPI documents.** One step: `just openapi lint`. It generates the documents itself and needs
-      nothing brought up. **Set it to fail on warnings** - the `servers` block landed on 2026-08-10 and the lint
-      is clean at 0 errors and 0 warnings, confirmed again on 2026-08-14 and on 2026-08-17, so there is nothing
-      left to argue about.
+      **It must not cost a second image build on every release**, and the workflow split above is what stops
+      it. Inside `run-tests.yml` it would, because the release calls that file as its gate and takes it whole.
+      Never reach for a conditional step instead - that turns the gate back into something the release does
+      not exercise.
 
-      **The recipe needs `--fail-severity=warn` for that, and the flag is the whole item.** Spectral's default
-      is to exit 0 on warnings and fail only on errors, so the step as it stands prints `No results with a
-      severity of 'error' found!` and passes whatever the warnings say. Adding the step without the flag looks
-      exactly like a working gate.
-**Then three architecture checks**, from **[architecture-boundaries](plans/architecture-boundaries.md)** - a
-large plan whose file half already shipped on the merged branch along with all 27 comment fixes.
+### The OpenAPI lint and the Spectral move - done 2026-08-17
 
-**Why these three and not the graph tools.** The branch built the foundation and stopped: `architecture.yml`
-exists, the repo now conforms to it (no upward edges, the graph re-derived from every `ProjectReference` to
-prove it), and the 27 comment sites are fixed. **What does not exist is anything at all that reads any of it.**
-A declarative file nothing checks is a lockfile - regenerated, never read - which is the exact failure the
-plan's own first goal warns about.
+- [x] **Lint the OpenAPI documents.** One step, `just openapi lint`, in `run-tests.yml` after `Build`. It
+      generates the documents itself and needs nothing brought up. The recipe now passes `--fail-severity=warn`,
+      which was the whole item - Spectral exits 0 on warnings by default, so without it the step prints
+      `No results with a severity of 'error' found!` and passes whatever the warnings say. It reads
+      `severity of 'warn' or higher` now, and finds none.
 
-All three below **read files the repo already has, need no new dependency, and are green today.** That is the
-whole selection rule. Everything needing a new toolchain is deferred.
+      **The prerequisite was the `servers` block**, which is why the ordering mattered: the lint used to report
+      two `oas3-api-servers` warnings, so turning the gate on first would have forced a choice between a gate
+      that ignores warnings - which stops being read - and one that is red on arrival.
+- [x] **Moved the Spectral ruleset to `tooling/openapi.spectral.yaml`**, named by the recipe with `--ruleset`.
+      A file called `.spectral.yaml` at the repo root read as "the Spectral config for this repo"; it is the
+      OpenAPI one only. Flat and prefixed beside `tooling/openapi.just`, the same as the Sonar config and the
+      compose files.
 
-- [ ] **The comment check.** A `just` recipe plus a step, not Semgrep. **Three arms, each blind to the other
-      two:** a derived filename list, `$id`-style references matched against the ids the docs declare, and bare
-      ref codes matched against the headings that define them. **Derive every list, never hardcode it** - and
-      fail loudly when a derived list comes back empty, because an empty list makes the check report clean
-      forever. **Two shell traps, both of which produced a green run over 14 real violations while the prototype
-      was written:** `xargs` returns 123 when any grep batch finds nothing, so test the output for emptiness and
-      never the exit status; and six algorithm folders have spaces in their names, so `-d '\n'` is not optional.
-- [ ] **The graph check - this is the one that stops `architecture.yml` rotting.** Re-derive the edges from
-      every `ProjectReference` in the repo and compare them against what the file declares. Fail on an
-      undeclared edge and on a declared entry nothing uses. **A script already did exactly this once**, when the
-      file was written, and came back clean - no undeclared edges, no dead entries, no cycles. It was not kept.
-      Keep it this time.
+      **The recipe must name the path from here on** - Spectral only finds a root config by itself. Editors do
+      the same, so in-editor linting points at the old path until told otherwise; there is no editor config in
+      this repo, so nothing broke. Seven files named the old path and were updated with it: `architecture.yml`
+      dropped its `root:` row, and the recipe, two READMEs, the commands doc, a memory and an idea now name the
+      new one.
 
-      **Two things it must handle.** A bare target in the file means that slice's `src`, so resolve it before
-      comparing or the declared graph reads as cyclic. And **the project graph is not the whole graph** -
-      `vipaq/tools` reads `shared/data` by resolving a path at run time, which no `ProjectReference` audit sees.
-      That edge is already declared; the check just must not report it as dead.
-- [ ] **The `InternalsVisibleTo` check.** Every grant must name an assembly that references the granter,
-      directly or transitively. **A grant that does not is dead weight - it grants access nobody can take.**
-      Confirmed on 2026-08-14: **19 grants across 9 granting projects, all passing.** It has already caught one
-      dead grant, to a test project that never touched the internals, since deleted. **Cheaper than any of the
-      graph tools and it found something on its first run.**
-
-      **The trap: expand `$(ProjectName)` first.** Most grants are written `$(ProjectName).UnitTests` rather
-      than spelled out, so a naive string compare matches nothing and the check passes for the wrong reason.
-
-- [ ] **Do not go looking for violations to fix first.** All three land green. Confirm each catches nothing,
-      then keep it that way.
-
-**What is deliberately left out of this bundle.** The global-`Using`-with-no-`ProjectReference` check would be
-**red** - there are 19 such declarations across 13 projects, every one resolves transitively today, and whether
-the fix is 19 added references or a decision that transitive resolution is fine here **has never been settled.**
-A check that lands red on a question nobody has answered is the thing this whole bundle is shaped to avoid.
+**The three architecture checks left this bundle on 2026-08-17** and are not release work. They were folded in
+as one of the three ready items; re-examining how to build them turned up a better design - derive the graph
+into a generated file, draw it, and lint it with a small Spectral ruleset - which is a fresh design rather than
+a ready item. It is on the board as `architecture-checks`, with the comment lint split into its own plan.
+**Nothing in this release depends on either.**
 
 **Gates 2 and 3, and the heavy architecture tools, do not come with this** - see the scope decision at the top.
 
@@ -438,8 +419,9 @@ finding they demonstrated is preserved in the protocol spec.
 
 ### The client-generation page
 
-**Pulled in on 2026-08-14 at the maintainer's call**, from the OpenAPI follow-ups idea - which is down to this
-one item, so **delete that idea file when this lands.**
+**Pulled in on 2026-08-14 at the maintainer's call**, from
+**[api/openapi-spec-followups](ideas/api/openapi-spec-followups.md)** - which is down to this one item, so
+**delete that idea file when this lands.**
 
 **The payoff for publishing a spec at all.** A short page with copy-paste commands that generate a client from
 the published per-version spec - `hey-api` for TypeScript, `kiota` for C#, and whatever else is worth naming.
@@ -704,8 +686,8 @@ Everything else has a plan or an idea of its own and is on the board, grouped by
 **Do not pull any of it in.**
 
 **Held back on 2026-08-14, with reasons:** the heavy architecture tools (ArchUnitNET, dependency-cruiser,
-lychee), CI gates 2 and 3, and raising test coverage. The scope decision at the top of this file carries the
-reasoning.
+lychee), CI gates 2 and 3, and raising test coverage. **The three lighter architecture checks joined them on
+2026-08-17.** The scope decision at the top of this file carries the reasoning.
 
 **Three exceptions were taken earlier and are all in.** Dropping `--self-contained` (2026-08-10, 150.2 MB ->
 103.2 MB, proven by beta 2). The release-pipeline rebuild (2026-08-10 - a prerelease tag is the only free test

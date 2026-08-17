@@ -6,8 +6,9 @@ paths:
 
 # Idea: OpenAPI spec follow-ups
 
-**Status:** Parked, and down to one item. The spec audit is done and the Spectral lint (`.spectral.yaml`,
-`just openapi lint`) guards it. Trimmed 2026-08-07, trimmed again 2026-08-10.
+**Status:** Parked, and down to one item. The spec audit is done and the Spectral lint
+(`tooling/openapi.spectral.yaml`, `just openapi lint`) guards it. Trimmed 2026-08-07, trimmed again
+2026-08-10.
 
 **The servers block was built on 2026-08-10** and its section is gone from this file. Both v3 and v4 now carry a
 single relative `/`, set in the shared document transform; `just openapi lint` went from two `oas3-api-servers`

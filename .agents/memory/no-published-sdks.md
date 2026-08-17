@@ -15,7 +15,7 @@ client from it with whatever tool they use (`hey-api`, `kiota`, `openapi-generat
 SDK is the opposite: a package to version, test, publish and patch, times the number of languages, and each one
 becomes a compatibility promise the moment somebody depends on it. The spec generates a client in one command,
 so shipping SDKs buys convenience we would then owe maintenance on forever. Decided 2026-07-19, and the spec
-side of it is already built — `$api/openapi` describes the documents, `.spectral.yaml` and `just openapi lint`
+side of it is already built — `$api/openapi` describes the documents, `tooling/openapi.spectral.yaml` and `just openapi lint`
 hold them to a standard good enough to generate from.
 
 **How to apply:**

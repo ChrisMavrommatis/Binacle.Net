@@ -30,7 +30,7 @@ files hold the carve-outs.
 | add a **fact** to any file under `.agents/` | [one-fact-one-place](one-fact-one-place.md) |
 | **edit a doc or design record** | [keep-verified-current](keep-verified-current.md) |
 | add **any link or `$` reference**, anywhere | [who-references-whom](who-references-whom.md) |
-| touch **`board.md`**, or pick what to work on next | [the-board-is-the-maintainers-call](the-board-is-the-maintainers-call.md) |
+| touch **`board.md`** or a **release file**, or pick what to work on next | [the-board-and-the-release-set](the-board-and-the-release-set.md) |
 
 ## The front matter is the fetch key
 

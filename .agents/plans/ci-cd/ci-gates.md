@@ -14,8 +14,9 @@ Three gates, one story: **the PR gate is green without proving much.** The image
 suites run core modules only, and Sonar runs when somebody remembers. Each gate below closes one of those.
 
 **Two gates moved out on 2026-08-07, and this file is back to the three it folded.** Linting the OpenAPI
-documents is one workflow step with a known answer, so it is a line in `todos.md`. Smoking the image runs in
-the release workflow rather than on a PR, so it moved to the release-pipeline work, which owned that file.
+documents was one workflow step with a known answer, so it went out as a one-liner - and it shipped on
+2026-08-17 as a step in `run-tests.yml`. Smoking the image runs in the release workflow rather than on a PR, so
+it moved to the release-pipeline work, which owned that file.
 Neither shared the checkout, the ordering or the runtime budget below - that is what made this file too big to
 finish in one sitting.
 
@@ -24,13 +25,51 @@ finish in one sitting.
 - **Nothing blocks these any more - changed 2026-08-11.** Every gate here calls a recipe rather than inlining
   its own commands, and the release pipeline now builds through `just build publish` too. The wiring these
   gates used to wait on has landed, so the image and smoke gates would prove exactly what they claim to.
-- **One job or three?** All three want a checkout and an SDK setup. Folding them into `run-tests.yml` pays for
-  that once; separate workflows can each run on a schedule as well. Decide once, for all three, rather than per
-  gate - that choice is most of why these were folded.
+- **One job or three? Answered - see the section below.** The gate becomes its own workflow that calls
+  `run-tests.yml`, rather than more steps inside it. The answer holds for all three gates, which is most of why
+  these were folded into one file.
 - **Runtime is the shared budget.** The integration suite is already the long pole, and all-modules plus coverage
   both make it longer. Whatever ordering is chosen, know the total before adding the third gate.
 - **A gate that does not match what ships proves nothing.** That is the same failure in all three: the release
   Dockerfile arguments, the shipped module set, and the coverage floor all have to be the real ones.
+
+## The gate is its own workflow, not more steps in `run-tests.yml`
+
+**Decided 2026-08-17.** `run-tests.yml` is what the release workflow calls as its "this commit passed CI" gate,
+and it takes no inputs on purpose. **So every step added to that file is a step the release pays for.** The
+image build is the plain case: the release would build a throwaway image inside the gate and the real one two
+minutes later in its own build job, for nothing.
+
+The PR entry point therefore becomes a **new workflow that calls `run-tests.yml`**, and the release keeps
+calling `run-tests.yml` directly and gets exactly the suite.
+
+- **The new workflow runs `on: pull_request`, with parallel jobs.**
+  - **The architecture checks** - checkout, node, `npm ci`, nothing else. Under a minute, and no SDK.
+  - **The test suite** - `uses: ./.github/workflows/run-tests.yml`, unchanged.
+  - **The image build.** **The OpenAPI lint was going to sit beside it** - both need the API project built, so
+    one checkout and one restore would have covered both. It went into `run-tests.yml` as a plain step on
+    2026-08-17 instead, at the maintainer's call, so the release gets it too. **That does not carry to the
+    image build:** the reason the image must stay out of that file is a duplicated build, not a preference.
+- **`run-tests.yml` loses its `pull_request` trigger** and keeps `workflow_call` and `workflow_dispatch`.
+  Nothing else in it changes.
+- **`release-docker-image.yml` is untouched.**
+
+**The names have to be reworked, and that is work rather than a rename.** `run-tests.yml` stops being the PR
+entry point, so its name no longer says what it is. And a called workflow reports as
+`<caller> / <job> / <job in the callee>`, which is the string a reader sees on a red check. **Name the whole
+set in one pass** - workflows and jobs together - rather than naming the new file and leaving the rest.
+
+**Two traps.**
+
+- **Branch protection breaks quietly.** The required status check names change with the job names. A required
+  check that no longer reports leaves every PR waiting on it forever, with nothing saying why. Update
+  protection in the same sitting as the split.
+- **Setup is paid per job.** One job is exactly why `run-tests.yml` looks the way it does, and its header says
+  so. Three jobs means three checkouts and two SDK setups. Wall clock still comes down, because the image build
+  stops queueing behind the integration suite - **but measure it rather than assume it.**
+
+**What the release stops seeing** is the architecture checks. Everything on `main` went through the gate to get
+there, so that is a choice, not an oversight. Say it out loud in the workflow comment.
 
 ## Gate 1 - build the docker image on every PR
 

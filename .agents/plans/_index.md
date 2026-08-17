@@ -10,8 +10,10 @@ you need, and trim or delete it once the work lands.
 ## General
 
 ```yaml
-- file: architecture-boundaries.md
-  description: "A human-readable architecture.yml stating what each part of the repo may and may not reference, readable on its own and consumable by off-the-shelf tools."
+- file: architecture-checks.md
+  description: "Derive the repo's dependency graph into a generated file, draw it, and lint it with a small ruleset."
+- file: comment-lint.md
+  description: "A check that nothing outside the agent guidance directory points a reader into it."
 - file: image-base-slimming.md
   description: "Harden and slim the base image"
 - file: sonar-issue-triage.md

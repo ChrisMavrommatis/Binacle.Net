@@ -82,7 +82,7 @@ Two small modules, `openapi.just` and `agents.just`.
 
 ```bash
 just openapi generate [dir]      # write artifacts/openapi/Binacle.Net_v3.json and _v4.json
-just openapi lint [dir]          # generate, then Spectral them against .spectral.yaml
+just openapi lint [dir]          # generate, then Spectral them against openapi.spectral.yaml
 just agents all                  # rewrite every .agents/**/_index.md
 ```
 

@@ -2,7 +2,8 @@
 # Encodes the standards set in the spec audit so they cannot silently regress: stable operationIds,
 # descriptions on every schema/property/tag, and no numeric-as-string unions.
 #
-# Generate the specs then lint with: just openapi lint
+# Generate the specs then lint with: just openapi lint - which names this file with --ruleset, because it is
+# no longer at the repo root where spectral would find it by itself.
 
 extends: ["spectral:oas"]
 

@@ -117,7 +117,7 @@ The table prints a row per suite (`Passed`/`Failed`/`Skipped`/`Coverage`) and it
 ```bash
 just openapi generate                  # artifacts/openapi/Binacle.Net_v3.json + _v4.json
 just openapi generate <dir>            # write them somewhere else (pass an absolute path)
-just openapi lint [<dir>]              # generate, then lint with Spectral against .spectral.yaml
+just openapi lint [<dir>]              # generate, then lint with Spectral against tooling/openapi.spectral.yaml
 ```
 
 Nothing needs to be brought up — the documents come out of the build, not out of a running server:

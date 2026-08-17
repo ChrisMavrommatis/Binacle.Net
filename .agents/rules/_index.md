@@ -55,11 +55,11 @@ are fetched when their `when:` fires. See [README.md](README.md) for the trigger
   description: "In chat, use plain English and simple language. Less is more."
   when: "every reply you write to the maintainer"
   load: always
-- file: the-board-is-the-maintainers-call.md
-  description: "An agent may add a row it was told to record. It may not decide placement, readiness or priority."
-  when: "touching board.md, or deciding what to work on next"
+- file: the-board-and-the-release-set.md
+  description: "The board and the release set divide all work between them. An agent maintains both, but never decides placement, readiness or priority."
+  when: "touching board.md or a release file, or deciding what to work on next"
   load: on-trigger
-  paths: [".agents/board.md"]
+  paths: [".agents/board.md", ".agents/release-v*.md", ".agents/post-release-v*.md"]
 - file: who-references-whom.md
   description: "The one reference matrix - what every file type may point at, what it may never point at, and the three exceptions."
   when: "adding any link, $ reference or pointer, anywhere in the repo"

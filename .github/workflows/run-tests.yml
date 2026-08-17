@@ -1,5 +1,5 @@
-# Runs every test leaf on PR. One job so setup and build happen once; one step per leaf so a red check names
-# the suite. ServiceModule is duplicated steps per backend rather than a matrix - cheaper at this count, and
+# Runs every test leaf on PR, plus the OpenAPI lint. One job so setup and build happen once; one step per leaf
+# so a red check names the suite. ServiceModule is duplicated steps per backend rather than a matrix - cheaper at this count, and
 # all three backends run here, so none of them ships on a hand-run.
 #
 # DOTNET_TEST_ARGS is job-wide: CI builds the solution once and every leaf runs --no-build against it. Unset
@@ -99,6 +99,13 @@ jobs:
 
       - name: Build
         run: dotnet build Binacle.Net.slnx --configuration Release
+
+      # Not a test leaf, and it does its own build - the recipe generates the documents from the API project
+      # before linting them. It sits here rather than in a PR-only workflow so the release, which calls this
+      # file whole, checks the specs too.
+      - name: Lint - OpenAPI documents
+        if: ${{ !cancelled() }}
+        run: just openapi lint
 
       # !cancelled() so every leaf still runs after one fails - you see all the red, not just the first. Cheap
       # unit leaves first, so an obvious break shows up before the integration hosts start.

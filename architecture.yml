@@ -165,7 +165,6 @@ root:
   package.json:     [packages, vipaq]   # npm workspaces
   Dockerfile:       []                  # copies artifacts/binacle-net, and artifacts is a sink
   .dockerignore:    []                  # same
-  .spectral.yaml:   []                  # lints artifacts/openapi, and artifacts is a sink
 
 # A mirror is a port of a canonical implementation into another language. The port's comments may name the
 # canonical's types; the canonical never names the port. Today the ports carry 42 `Ports C#:` comments and

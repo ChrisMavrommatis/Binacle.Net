@@ -37,16 +37,19 @@ checks that follow the tag. **Do not pull board work into the release.**
 
 **Eight items are release work** and are not to be started here. Seven as of 2026-08-14, alongside the rate
 limiter test carve-out and rate limiting owned by the ServiceModule: image verification, the Docker Hub page,
-the Docker Hub immutability **rule** (not the switch), the PR gate change and its three architecture checks, the
-docs deploy, the client-generation page, and more ViPaq interop vectors. **The compose stacks joined them on
-2026-08-15.** **Their plan files stay under `plans/`** - the
-release takes a slice of most of them and leaves the rest, and a file is deleted only when nothing is left in
-it.
+the Docker Hub immutability **rule** (not the switch), the PR gate change, the docs deploy, the
+client-generation page, and more ViPaq interop vectors. **The compose stacks joined them on 2026-08-15.**
+**Their plan files stay under `plans/`** - the release takes a slice of most of them and leaves the rest, and a
+file is deleted only when nothing is left in it.
+
+**The three architecture checks came back here on 2026-08-17.** They were release work as part of the PR gate
+change; re-examining how to build them produced a different design, which makes them a fresh design rather than
+a ready item. Both rows are under Architecture and quality.
 
 **Two ideas are being consumed by the release** and their files get deleted when the work lands: the OpenAPI
 follow-ups idea, which was down to the client-generation page, and the ViPaq interop vector coverage idea.
 
-**Three things were held back from v3.0.0**, with the reasoning in the release plan's scope section: the heavy
+**Three things were held back from v3.0.0**, with the reasoning in the release plan's scope section: the
 architecture tools, CI gates 2 and 3, and raising test coverage. **All three are deferred rather than ready** -
 each is waiting on something named in its row.
 
@@ -98,8 +101,10 @@ writing them first means writing them twice, in two languages, where after the p
   612 lines of TypeScript can be tested today and 79 of them - `cookies` and `theme-switcher` - are untouched by
   the port, so nothing written there gets rewritten. **This does not clear the coverage gate on its own** and was
   never going to.
-- **The heavy architecture tools** - ArchUnitNET, dependency-cruiser, lychee. **Read the xunit pin trap in that
-  row before starting**; it decides whether the first one is an afternoon or a week.
+- **`architecture-checks`.** The generator, the diagram and the ruleset are self-contained and need no
+  decision. The heavy tools in the same file are a bigger thing - **read the xunit pin trap in that row before
+  starting**; it decides whether the first one is an afternoon or a week.
+- **`comment-lint`.** Self-contained, lands green, and shares nothing with the row above.
 - **`integration-test-additions`, phase 1 only.** Down to three questions - the rate limiter tests answered the
   fourth in code, and the plan points at them.
 - **`sonar-issue-triage`.** Leftovers, one of which is a decision.
@@ -116,27 +121,40 @@ change the shipped artifact or nothing at all, and neither is worth doing in the
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [architecture-boundaries](plans/architecture-boundaries.md) | **deferred** - the heavy tools only | a quiet week, not a release |
+| [architecture-checks](plans/architecture-checks.md) | ready - **state chosen by an agent, strike it if wrong** | - |
+| [comment-lint](plans/comment-lint.md) | ready - **state chosen by an agent, strike it if wrong** | - |
 | [sonar-issue-triage](plans/sonar-issue-triage.md) | ready | - |
 
-**Most of this plan is now v3.0.0 work.** `architecture.yml`, the 27 comment fixes and the restructure shipped
-on the merged branch; **three checks ship with the PR gate change** - the comment check, a graph check that
-re-derives every `ProjectReference` and compares it to the file, and an `InternalsVisibleTo` check. All three
-read files the repo already has and land green.
+**Both of the first two were release work until 2026-08-17.** `architecture.yml`, the 27 comment fixes and the
+restructure shipped on the merged branch, and three checks were to ship with the PR gate change. **Re-examining
+how to build them changed the design**, which made them fresh design work rather than ready items, so they came
+off the release. **Nothing in v3.0.0 depends on either.**
 
-**What is left here is the tooling that needs a new toolchain**, and that is the only reason it was held back.
+**`architecture-checks` is now one generator read two ways** - a Mermaid diagram for reading, and a Spectral
+ruleset for enforcing. **The graph is derived on the spot rather than declared**, which removes the
+reconciliation layer the earlier hand-written design needed - and every line of that layer was a place the check
+could pass for the wrong reason. Spectral already runs in this repo, so there is no new tool and no new
+dependency. **The ruleset is exhaustive** - one rule per slice, written from the graph as it stands - and
+**nothing the generator writes is committed**: it all goes to `artifacts/architecture/`, so there is no second
+copy to fall behind. **The api boundary is a second, separate check** in the same file, because it reads types
+rather than project references. **The heavy tools stay there too**, unchanged and unstarted:
 
 - **ArchUnitNET.** **Lead with the two rules a graph walk can never see** - the api module boundary and
   v3-frozen - not the thirty slice edges that will be green forever. **Check its transitive xunit dependency
   first.** This repo pins `xunit.v3.mtp-v2` on purpose because mixing the MTP v1 and v2 adapters throws
-  `TypeLoadException` before a test runs. If `.xUnitV3` pulls plain `xunit.v3`, the arch leaf reproduces that.
+  `TypeLoadException` before a test runs. If `.xUnitV3` pulls plain `xunit.v3`, the test leaf reproduces that.
   **That is the trap that decides whether this is an afternoon or a week.** Also settle where the test project
-  lives - it references every slice it inspects, so it becomes a node with an edge to everything, and that
-  exemption belongs in `architecture.yml` rather than in the test.
-- **dependency-cruiser.** "Reads the YAML" is the easy half. **There is no root `tsconfig.json`** - there are
+  lives - it references every slice it inspects, so it becomes a node with an edge to everything.
+- **dependency-cruiser.** Reading the file is the easy half. **There is no root `tsconfig.json`** - there are
   four, and `web/` has none despite running `ts-loader` - and imports are bare specifiers resolved through npm
   workspace symlinks. Rules must be written against resolved real paths with symlink handling pinned.
 - **lychee** for dead links.
+
+**Fix the api boundary before building the check that watches it.** Audited 2026-08-17: the api is one type
+away from clean. **Two of the three rules land green today** - no module names another, and Kernel names none -
+and the third is red in exactly two files, both needing one DiagnosticsModule type. The plan's answer is to
+move the log-request building into the module that owns it, so the reference stops existing. **Three greps, no
+toolchain.**
 
 **One loose end that is not a check yet.** 19 global `Using` declarations across 13 projects have no matching
 `ProjectReference`. Every one resolves transitively today, so they all compile - and every one breaks the day
@@ -144,11 +162,9 @@ the project it borrows from stops referencing what it borrows. **Whether the fix
 decision that transitive resolution is fine here has never been settled**, which is why no check was built for
 it. Settle it, then it is a cheap check.
 
-**Say plainly which edges no tool will ever check** - the Gemfile `path:` gems, the webpack `splitChunks`
-regexes, the path strings in just recipes, the gulp copy. They belong in the file so a person can read it, but
-mark them documentation-only or a green run gets read as "all of this is checked".
-
-**Do not go looking for comment sites to fix.** All 27 are already fixed.
+**`comment-lint` lands green and must stay that way.** All 27 sites are already fixed - **do not go looking for
+more.** Its whole difficulty is precision: three arms, every list derived rather than typed, and matching
+comment text only, because C# number formatting and shell variables both look exactly like the things it hunts.
 
 **`sonar-issue-triage` is the 2026-08-09 sweep's leftovers.** The sweep is done; the file still carries the
 CA1816 decision, the frozen-copies question and what the quality gate hangs on. **The gate hangs on
@@ -195,10 +211,10 @@ something.
 does not make everything else flaky" in code - a host per test, no shared fixture. Phase 1 inherits that answer
 instead of re-deciding it.
 
-**Two of these three collide with the architecture work, and one collides with a pin.** The ArchUnitNET phase
-adds a test leaf that references every slice it inspects, and `testskernel-data-extraction` reshapes the fixture
-kernels the architecture branch just split - **whichever runs second reads the other's result.** The xunit runner
-pin bites both.
+**Two of these three collide with the architecture work, and one collides with a pin.** ArchUnitNET adds a test
+leaf that references every slice it inspects, and `testskernel-data-extraction` reshapes the fixture kernels the
+architecture branch just split - **whichever runs second reads the other's result.** The xunit runner pin bites
+both. The generator and ruleset half of `architecture-checks` collides with neither.
 
 Ideas: [mutation-testing](ideas/mutation-testing.md) - one contained experiment before any opinion.
 [testing-techniques](ideas/testing-techniques.md) - a survey, nothing decided.
@@ -238,8 +254,10 @@ since `service-azure` was folded into `service`. **Removal is an option nobody h
 | [image-base-slimming](plans/image-base-slimming.md) | ready - **timing not decided** | - |
 
 **`ci-gates` lost gate 1 to v3.0.0 and the other two were deferred on 2026-08-14.** The image-build gate ships
-with the release's PR gate change, alongside the OpenAPI lint one-liner and three architecture checks - all in
-one workflow edit, all green on arrival.
+with the release's PR gate change, alongside the OpenAPI lint one-liner. **That change is now a new PR workflow
+that calls `run-tests.yml` rather than more steps inside it** - decided 2026-08-17, and the reason is that the
+release calls that file as its gate and pays for everything in it. The plan holds the shape, the naming rework
+and the two traps.
 
 **Both remaining gates are deferred because neither has anything to gate yet**, not because they are unwanted.
 

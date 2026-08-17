@@ -60,9 +60,10 @@ not to eagerly load unrelated context. Keep a new doc/plan/idea in its slice fol
 - **`board.md` = what to work on.** At root, permanent, and the answer to "what next". It groups every plan,
   idea and one-liner by theme and then by readiness (`ready` / `blocked` / `deferred` / `in progress`), and it
   names what each blocked item waits on. It is a **pointer surface, never a container** — the work itself stays
-  in the plan or idea file. Agents keep it current, but **an agent does not decide placement or priority on its
-  own**: adding a row you were told to record is fine, judging something "ready" and ranking it is the
-  maintainer's call.
+  in the plan or idea file. **Every item is on the board or in a release set, never both and never neither** -
+  `rules/the-board-and-the-release-set.md` holds that rule and the handover between the two. Agents keep both
+  current, but **an agent does not decide placement or priority on its own**: adding a row you were told to
+  record is fine, judging something "ready" and ranking it is the maintainer's call.
 - **the `release-v<version>` set = shipping.** At root, one set per version: the plan, its notes, and the
   post-release list. The plan is an exception to the reference rules — it may point at any file to coordinate
   the release, and nothing points back at it. The plan and notes are deleted once the version ships; the

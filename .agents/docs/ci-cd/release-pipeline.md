@@ -23,7 +23,7 @@ git push origin v3.0.0
   |
   v  on: push: tags: 'v[0-9]*'
 notes     the CHANGELOG.md section this tag publishes exists and is not empty   (seconds)
-test      the whole suite, by calling run-tests.yml                             (minutes)
+test      the whole suite plus the OpenAPI lint, by calling run-tests.yml       (minutes)
 build     just build publish, push the immutable tag to GHCR, capture the digest
 smoke     pull that digest back from GHCR, structure check + all five profiles
 publish   imagetools copy to Docker Hub - a prerelease gets its immutable tag only
@@ -51,7 +51,8 @@ on Docker Hub and `latest` already moved.
 
 **`test`** — `uses: ./.github/workflows/run-tests.yml`, no inputs. Nothing guarantees a tag sits on a commit
 that passed CI, because a tag can be pushed at anything; this is that guarantee. It runs after the notes gate
-rather than beside it, so a missing section is reported in seconds instead of after a full suite.
+rather than beside it, so a missing section is reported in seconds instead of after a full suite. It takes that
+file whole, so the release also gets its OpenAPI lint step.
 
 **`build`** — checkout, .NET, `just`, then `just build publish`. One `docker/metadata-action` step, a GHCR
 login with `GITHUB_TOKEN`, buildx, and one `docker/build-push-action` that pushes the immutable tag to GHCR
