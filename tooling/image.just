@@ -174,7 +174,8 @@ _verify-tags version:
     #!/usr/bin/env bash
     set -uo pipefail
     echo "== docker hub tags =="
-    json=$(curl -fsSL 'https://hub.docker.com/v2/repositories/{{ hub_repo }}/tags?page_size=100') || {
+    json=$(curl --proto '=https' --proto-redir '=https' -fsSL \
+        'https://hub.docker.com/v2/repositories/{{ hub_repo }}/tags?page_size=100') || {
         echo "  could not read the tag list" >&2
         exit 1
     }

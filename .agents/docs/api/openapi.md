@@ -51,8 +51,7 @@ document's `Configure()`:
 is enough because **only `AddServiceModule` ever attaches it**, off the `.RateLimited()` marker the core
 endpoint places. A build with the module off has no metadata to find, so the `429` cannot get into its document.
 
-The core endpoints name no policy, so there is no inert `[EnableRateLimiting]` to mistake for a live limiter —
-which is what a second, feature-flag guard used to be there to compensate for.
+The core endpoints name no policy, so there is no inert `[EnableRateLimiting]` to mistake for a live limiter.
 
 This matters most for the **generated** documents. `just openapi generate` builds them from a host with no launch
 profile, so ServiceModule is off — that document already has no `v0` ServiceModule paths and no

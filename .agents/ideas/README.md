@@ -9,5 +9,5 @@ Group ideas by slice, mirroring the repo — an idea that clearly extends one ar
 
 ## Index
 
-The manifest is generated — see [`_index.md`](_index.md). Regenerate it after adding or renaming an idea
-with `just agents all` (it also rebuilds the docs, plans, and memory indexes).
+The manifest is generated — see [`_index.md`](_index.md). Regenerate with `just agents all` after adding,
+renaming or re-describing an idea.

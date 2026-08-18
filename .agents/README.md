@@ -9,7 +9,7 @@ reviewable. Read this first to know where things are.
 |---|---|---|
 | `rules/` | **Every standing rule, one file per rule.** Each declares in its front matter whether it is always-on or fetched on a trigger. | Read `rules/README.md` at the start of any task that writes something. Match the trigger, open that one file. |
 | `docs/` | Stable reference docs for the codebase — slices, endpoints, modules, build. | Find the topic in `docs/_index.md` (or a task in `docs/README.md`), then read that file. |
-| `design/` | The settled design *behind* the docs — decisions (why) and findings (measured evidence). Permanent, but it can change. | Find it in `design/_index.md`. It cites docs with `$id` references; docs never cite it. |
+| `design/` | The settled design *behind* the docs — decisions (why) and findings (measured evidence). Permanent, but it can change. | Find it in `design/_index.md`. |
 | `plans/` | Work not yet done — designs, TODOs, migrations, deferred decisions. | Find the plan in `plans/_index.md`. Trim/delete an item once it lands. |
 | `ideas/` | Rough, unvetted ideas — no commitment, no timeline. | Find the idea in `ideas/_index.md`. Move it to `plans/` once it's picked up (`ideas/README.md` says how). |
 | `memory/` | Durable "why" with no home in a doc or plan — gotchas, settled decisions, conventions. | Scan `memory/_index.md` at session start. Add a fact only if no doc/plan fits (`memory/README.md` says how). |
@@ -48,7 +48,6 @@ not to eagerly load unrelated context. Keep a new doc/plan/idea in its slice fol
   findings (measured evidence). Permanent and maintained like docs (same `verified:` / `check:`), but it holds
   *why we built it this way*, not *what it is*, and it **can change** as the reasoning evolves. It also owns the
   **history** — superseded evidence and reversed decisions — which can go in a dedicated `<slice>/history.md`.
-  It cites docs; **docs never cite it** (design can shift under them), and it never cites a plan, idea, or memory.
 - **plans = what is not done yet.** When a plan is fully implemented, delete it (or trim to only the
   part that remains). A plan and a doc should never describe the same finished thing.
 - **ideas = a rough thought, unvetted.** No commitment, no timeline. When one is picked up it becomes a
@@ -59,37 +58,18 @@ not to eagerly load unrelated context. Keep a new doc/plan/idea in its slice fol
   delete the memory.
 - **`board.md` = what to work on.** At root, permanent, and the answer to "what next". It groups every plan,
   idea and one-liner by theme and then by readiness (`ready` / `blocked` / `deferred` / `in progress`), and it
-  names what each blocked item waits on. It is a **pointer surface, never a container** — the work itself stays
-  in the plan or idea file. **Every item is on the board or in a release set, never both and never neither** -
-  `rules/the-board-and-the-release-set.md` holds that rule and the handover between the two. Agents keep both
-  current, but **an agent does not decide placement or priority on its own**: adding a row you were told to
-  record is fine, judging something "ready" and ranking it is the maintainer's call.
+  names what each blocked item waits on. `rules/the-board-and-the-release-set.md` holds how it is kept and who
+  decides what goes on it.
 - **the `release-v<version>` set = shipping.** At root, one set per version: the plan, its notes, and the
-  post-release list. The plan is an exception to the reference rules — it may point at any file to coordinate
-  the release, and nothing points back at it. The plan and notes are deleted once the version ships; the
-  post-release list is deleted when its own items are done, not by the tag. That list holds only what must
-  happen **because** the release shipped — standing work belongs on the board.
+  post-release list. The plan and notes are deleted once the version ships; the post-release list is deleted
+  when its own items are done, not by the tag. That list holds only what must happen **because** the release
+  shipped — standing work belongs on the board. Same rule file as the board.
 
-  **The release plan is an orchestrator, not a container.** It carries gated checklists — what must be green
-  before a beta image, and before the tag — where each row either links to a plan that holds the whole item, or
-  is a checkbox for a one-line action with a known answer. One item per plan file, so a session opens only the
-  item it is working on. When a plan lands its file is deleted, so ticking the row and dropping the link happen
-  in the same change; otherwise the checklist rots into dead links. `post-release-v<version>.md` follows the same
-  shape and is the **only** file that may link into `ideas/`, capped at work with an immediate benefit.
+## The `docs/` trap
 
-## `docs/` and `web/` are off limits
-
-Neither is part of `.agents/`, but the rule belongs here because it decides where the work goes instead. `docs/`
-(the versioned documentation site, described in `` `$docs-site` ``) and `web/` (the marketing site, described in
-`` `$web-site` ``) **publish to the internet** and are written in their own dedicated session. Note the trap:
-repo-root `docs/` is the published site, while `.agents/docs/` is this system's reference layer — the two are
-unrelated, and only the first is off limits. Do not edit them from a coding session. When a change needs a page
-written or corrected, record **what the page must say** in the plan or release file that owns the work, and leave the writing
-to that session. `CLAUDE.md` carries this as a critical rule, along with its one carve-out: a coding session may
-apply a **security fix to a downloadable sample file** under `docs/collections/_versions/**` - the compose files,
-manifests and config json readers download - provided it touches no prose, no front matter and no `.md`, and
-matches what repo-root `samples/` already does. Read the rule there before using it, and record each use in the
-plan that owns the work.
+Repo-root `docs/` is the published documentation site and is off limits — `rules/never-edit-published-sites.md`
+covers it and `web/` together. `.agents/docs/` is this system's reference layer and is unrelated. Only the first
+is off limits.
 
 ## Who may reference whom
 

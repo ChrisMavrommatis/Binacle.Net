@@ -14,6 +14,8 @@ when there is no simpler way to be exact, and then keep it.
 
 Keep lines to about 120 characters. Break at a full stop when a line runs long.
 
-This applies to every agent working in this repo, not just the main session.
+This applies to every agent working in this repo, not just the main session, and to a chat reply as much as
+a file - a reply is an explanation. [talking-to-the-maintainer](talking-to-the-maintainer.md) adds what is
+specific to chat.
 
 **Why:** these files exist to be read fast by whoever picks the work up next.

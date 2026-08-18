@@ -53,8 +53,8 @@ names *are* job names, so every rename silently breaks protection, and a require
 leaves every pull request waiting on it forever with nothing saying why.
 
 **It also makes skipping safe, which is the whole reason the shape exists.** Roughly two thirds of recent
-commits touch only `.agents/`, the two sites or markdown — 38 of the last 60 — and each one used to earn a full
-suite with a Postgres and an Azurite container. The obvious fix is the trap above: `on: pull_request` with
+commits touch only `.agents/`, the two sites or markdown — 38 of the last 60 — and a full suite with a Postgres
+and an Azurite container is wasted on every one of them. The obvious fix is the trap above: `on: pull_request` with
 `paths-ignore` means the workflow never triggers, so the required check never reports. Instead:
 
 - **`changes`** always runs, filters nothing, and takes seconds. It diffs the branch against its merge base and
@@ -193,6 +193,10 @@ short**, or the required check name becomes unreadable at exactly the moment som
   the version it installed, so the log names the tool that failed rather than "smoke tools". The checksums make
   a swapped release asset fail the build instead of run; hurl and lychee publish their own, and the
   `container-structure-test` one was taken from the binary in use because upstream publishes none.
+
+  **Every one of those `curl` calls carries `--proto '=https' --proto-redir '=https'`.** `-L` follows a
+  redirect wherever it points, and without those two the hop can land on plain HTTP. Dropping them is what
+  Sonar's `githubactions:S6506` reports.
 
   **For the first two there is no maintained action to use.** lychee has one, and is installed this way anyway:
   the action runs lychee itself from YAML arguments, so the check would stop being `just check links <site>` and CI

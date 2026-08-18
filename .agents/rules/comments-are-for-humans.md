@@ -28,3 +28,8 @@ it throws". Cut the restatement of the line below it. Cut the essay; if the reas
 in `.agents/`.
 
 A table of widths, a byte layout, a measured number - those stay. A reader cannot recover them.
+
+**A surviving agent comment is not damage.** When a review pass strips agent-written comments, the test is the
+one above, not who typed it. Several were kept on purpose because they were better than the line they replaced -
+the unchecked-multiply overflow note on the packing algorithms, the empty-catch explanation in
+`ConnectionString.cs`, the curated-scenario table in `BischoffCuratedProblemsProvider.cs`.

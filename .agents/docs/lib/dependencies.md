@@ -65,6 +65,6 @@ Binacle.Packing ─────────────────────�
    `Dimensions` struct to satisfy `PackedBin`. That grant annotates the kernel's existing reference to Packing —
    it does not add an edge, and nothing in `shared` depends on `lib` because of it.
 
-4. **Nothing enforces the abstractions boundary any more.** `Binacle.Lib/Abstractions/` used to be a separate
-   assembly, so the compiler stopped an interface naming a concrete algorithm. Now only convention does. That is
-   the sharpest candidate rule for a type-level architecture check.
+4. **Nothing enforces the abstractions boundary.** Only convention stops an interface under
+   `Binacle.Lib/Abstractions/` naming a concrete algorithm. That is the sharpest candidate rule for a
+   type-level architecture check.

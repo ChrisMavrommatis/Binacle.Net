@@ -41,7 +41,7 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `api/requests/` | HTTP request files for manual testing (subfolders: v3, v4, Service) |
 | `samples/` | Docker and Kubernetes deployment samples (user-facing starting points) |
 | `tooling/` | Every task the repo can run, called by CI and by hand alike — the `just` modules (test, coverage, openapi, agents, serve, build, image, smoke), the benchmark/performance scripts, local compose, env, emulator state |
-| `.github/workflows/` | The six GitHub Actions workflows — PR tests, Sonar, the release pipeline, image smoke, and the two site deploys (`$ci-cd`) |
+| `.github/workflows/` | The eight GitHub Actions workflows — the PR gate, the shared test suite, Sonar, CodeQL, the release pipeline, image smoke, and the two site deploys (`$ci-cd`) |
 | `shared/data/` | OR-library packing benchmark data |
 
 ## Commands

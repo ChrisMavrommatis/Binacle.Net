@@ -19,7 +19,7 @@ runs:
         set -euo pipefail
         ASSET="lychee-x86_64-unknown-linux-musl"
         mkdir -p "$HOME/.local/bin"
-        curl -fsSL -o /tmp/lychee.tar.gz \
+        curl --proto '=https' --proto-redir '=https' -fsSL -o /tmp/lychee.tar.gz \
           "https://github.com/lycheeverse/lychee/releases/download/lychee-v${VERSION}/${ASSET}.tar.gz"
         echo "${SHA256}  /tmp/lychee.tar.gz" | sha256sum -c -
         tar xzf /tmp/lychee.tar.gz -C /tmp

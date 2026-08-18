@@ -44,8 +44,8 @@ worst time to meet.
 | **The Docker Hub page** | It advertises 2.1.1 as latest. The tag is what makes it wrong rather than stale. |
 | **The PR gate change** | A new PR workflow calling `shared-test-suite.yml`, plus the image build. Everything green on arrival. **The OpenAPI lint and the Spectral move landed separately on 2026-08-17** - the lint is a step in `shared-test-suite.yml`, not a job in the new workflow. |
 | **The client-generation page** | The spec is published and nobody knows they can generate a client from it. One docs page, and it applies to every version. |
-| **More ViPaq interop vectors** | Four rows of fixture data. Cheap, and the format froze in this release so they will not need redoing. |
-| **The compose stacks** | Pulled in on 2026-08-15, after the scope reset. Every decision is taken and the compose behaviour is tested, so it is one sitting with nothing left to figure out. |
+| **More ViPaq interop vectors** | Fixture data, and the format froze in this release. **Done 2026-08-17** - 7 scenarios to 14. |
+| **The compose stacks** | Pulled in on 2026-08-15, after the scope reset. **Done the same day** - what it proved about compose is in the tooling reference doc. |
 
 ### Does not ship, and why
 
@@ -86,49 +86,6 @@ A prerelease gets its immutable tag only, never `3.0` or `latest`. The release b
 | 5 | The last commit: pins, prose and the changelog rename | open |
 | 6 | Tag `v3.0.0` | open |
 
-### 1. Rate limiter tests - done 2026-08-14
-
-**Built in `api/test/Binacle.Net.ServiceModule.IntegrationTests/RateLimiting/`**, four tests, whole suite green.
-The module-off half is there too, so the pair proves limiting belongs to the module - which is what the `429`
-OpenAPI guard claims and nothing executable said before.
-
-The route list is **derived from the route table**, not typed out: every POST under `/api/v3` and `/api/v4`, 18
-of them, matching the 18 rate limited endpoints in the source. Dropping the attribute from one
-endpoint fails the test with that route named - checked by mutation, along with disabling each limiter.
-
-Only the module-matrix plan it was carved from stays open, minus this finding.
-
-### 2. Rate limiting owned by the ServiceModule - done 2026-08-14
-
-The 18 core endpoints now call `.RateLimited()`, a Kernel marker naming no policy. The ServiceModule registers
-an `IEndpointConvention` that turns the marker into `[EnableRateLimiting("ApiUsage")]`, and the Kernel's
-endpoint registrar runs every registered convention inside one `Finally` - so no module can hit the trap where
-an `Add` convention reads metadata before the endpoint has written it.
-
-**The feature-flag guard is gone and the `429` is safer for it.** Only the module attaches the attribute, so a
-module-off build has nothing for the transformer to find. The decisions ledger is rewritten to say so, and to
-say that the old second guard was load-bearing at the time rather than always redundant.
-
-Proven, not assumed: the module-on host reports policy `ApiUsage` on a marked endpoint and none on `presets`,
-its `/openapi/v4.json` carries the 14 endpoint `429`s, the rate limiting tests pass on the new path, and both
-generated module-off documents are byte-identical to what they were before the change - so the frozen v3
-contract did not move.
-
-`.RequireRateLimiting("AuthToken")` on the ServiceModule's own token endpoint stays as it is.
-
-**The ServiceModule simplification idea inherits a smaller surface**, which does not make that direction
-decided. It is on the board.
-
-### 3. The Azure Storage run - done 2026-08-14
-
-Run locally against Azurite: 111 passed, 1 skipped (the SQLite pragma test, which skips itself off its
-backend). Postgres re-run green alongside it.
-
-**It is no longer a hand-run.** `shared-test-suite.yml` now brings up an Azurite service container and runs a third
-ServiceModule step, so every PR exercises all three backends - which is what made this a gate item in the
-first place. The local runner is unchanged: `just test all` stays the set that needs nothing brought up, and
-a backend leg is still a deliberate `just test api-service-integration <backend>`.
-
 ### 4. Beta 3
 
 **Why there is one.** The architecture merge changed shipping code, so beta 2's image evidence describes a tree
@@ -158,9 +115,9 @@ that verifies under the current identity**.
       before anything is copied, so a broken image cannot reach Docker Hub. This is the deployment half, which
       the pipeline does not see.
 
-**What beta 3 does not re-do:** everything in "Already verified", plus every structural thing beta 2 proved -
-the six jobs, the digest-preserving copy, the signature on both registries, the SBOM and provenance, the
-release body extraction. None of it moves because a namespace did.
+**What beta 3 does not re-do:** every structural thing beta 2 already proved - the six jobs, the
+digest-preserving copy, the signature on both registries, the SBOM and provenance, the release body
+extraction. None of it moves because a namespace did.
 
 ### 5. The last commit before the tag - all in one
 
@@ -215,61 +172,16 @@ named below.
 
 ### Image verification
 
-**Done 2026-08-15, except the Docker Hub page.** `just image verify <version> [check]` runs the four checks,
-all four proven green against `3.0.0-beta.2` and watched to fail against `2.1.1`. Four of the five surfaces
-that tell users about it are written: `CHANGELOG.md`, `SECURITY.md`, `README.md` and the docs-site page. **The
-plan file is gone** - what survived it went to the ci-cd decisions ledger (the one verify invocation, what
-changes it, and the beta 2 floor) and the tooling reference doc (the checks and the two just traps).
+**Done 2026-08-15, re-proven 2026-08-17 against `3.0.0-beta.3`.** `just image verify <version> [check]` runs
+four checks. What survived the plan is in the ci-cd decisions ledger and the tooling reference doc. Every
+public surface reads `3.0.0`. One thing is left.
 
-**Re-proven 2026-08-17 against `3.0.0-beta.3`, and the beta 2 results below are now history.** The org move
-re-keyed the certificate identity the recipe matches on, so **beta 2 no longer passes `signature`** - it is
-signed, under the old owner. Every "green against `3.0.0-beta.2`" in this section is a record of what was
-true then. **`3.0.0-beta.3` is the tag to run anything against**, and `2.1.1` is still the one to watch fail.
-
-**Reduced from five checks to four, later the same day.** The maintainer's call: **only the release workflow
-touches GHCR.** The `digest` check compared the tag across both registries, so it went, and the signature
-check is Docker Hub only. Re-run green against `3.0.0-beta.2` after the change. The reasoning is in the ci-cd
-decisions ledger, along with what still carries the property that check used to prove.
-
-**The one thing left is the Docker Hub page**, and it belongs to that page's own work below.
-
-- [x] **The two surfaces a coding session owns.** Done 2026-08-15. `SECURITY.md` has a "Verifying a Release"
-      section - what is signed, both commands version-neutral, why both cosign flags matter, and that a pass
-      means it came from the release workflow and **not** that the image is free of vulnerabilities.
-      `README.md` has one line under the pin note pointing at it, no commands.
-- [x] **The docs-site page is written**, 2026-08-15, at the maintainer's explicit go-ahead to touch repo-root
-      `docs/` for it - `docs/collections/_versions/v3.0.x/verifying-a-release.md`, registered by front matter
-      `nav.order: 8` and confirmed with a clean `jekyll build`. **It made the deadline**: the docs deploy runs
-      once, straight after the tag, and a surface that misses it waits for the next one. Every runnable block
-      uses a `<version>` placeholder or `3.0.0-beta.2`; `3.0`, `latest` and `2.1.1` appear only in prose.
-- [x] **The placement is decided - 2026-08-14, and built there 2026-08-15.** It is in the `image` module:
-      `just image verify <version>`, with an optional check name, and the checks as private helpers.
-
-      **The reasoning, because it changes another item too.** The maintainer's call was that `image` is for the
-      image, and the supporting services it currently stands up - Postgres, Azurite, the telemetry collector -
-      belong in `serve`, which is the local dev toolkit. That makes `image` mean "the image", local and
-      published, which is exactly the module a verification recipe belongs to. **The stack move came into this
-      release on 2026-08-15** and landed first; this recipe went in on top of it, and the module
-      header now carries both - the stacks that run `binacle-net:local`, and the one recipe that reads a
-      registry instead.
-- [x] **The recipe is built and every check is proven.** Version required and never defaulted, no
-      `docker login` anywhere, and all of them run even when one fails. `cosign` 3.1.3 is in `DEVELOPMENT.md`,
-      pinned, the same single-binary shape as the smoke tools. Green against `3.0.0-beta.2` on Docker Hub, and
-      watched to fail against `2.1.1` - `no signatures found`, no SBOM, and the 172 System dlls of the old
-      self-contained build.
 - [ ] **Write the Docker Hub page's verification section from the same wording.** `SECURITY.md` is the source
       now; that page's own plan says to copy it rather than edit its draft.
 
-**One ordering constraint that binds every surface, and the org move tightened it.** Any example naming a tag
-must name a tag that **passes today**. That is now a shorter list than "signed": signing started with beta 2,
-but the move re-keyed the certificate identity, so `3.0.0-beta.2` fails too and only `3.0.0-beta.3` passes.
-`3.0` and `latest` do not point at a signed image until v3.0.0 publishes.
-
-**The floors were moved to `3.0.0` on 2026-08-17, before the tag rather than after it** - the maintainer's
-call, taken with the decision that no public surface names a beta image at all. `SECURITY.md`, `README.md`,
-`tooling/README.md` and `tooling/image.just` all read `3.0.0`. **That closes what used to be a post-release
-item**; the only surface left is the worked example on the docs-site page, which quotes real output and is in
-the docs-deploy checklist below.
+**The constraint that binds every surface:** any example naming a tag must name a tag that **passes today**.
+Only `3.0.0-beta.3` does - the org move re-keyed the certificate identity, so beta 2 is signed under the old
+owner and fails. `3.0` and `latest` point at nothing signed until v3.0.0 publishes.
 
 ### The Docker Hub page
 
@@ -326,100 +238,12 @@ tag, `latest` and `3.0` included, and those two are designed to move.
 
 ### The PR gate - one change
 
-**What is left is the image build**, and it lands green, which is the state a new gate wants - a check that is
-red on arrival teaches everyone to ignore it.
+**The image build landed 2026-08-18**, in `pull-request.yml` as the `image` job beside the test suite call.
+**[ci-gates](plans/ci-cd/ci-gates.md)** holds the shape, the naming rework and the two traps - read it before
+touching a workflow file.
 
-**The gate becomes its own workflow calling `shared-test-suite.yml`, rather than more steps inside it** - decided
-2026-08-17, and **[ci-gates](plans/ci-cd/ci-gates.md)** holds the shape, the naming rework and the two traps.
-It is what keeps the release from paying for a throwaway image build, so read that section before touching a
-workflow file.
-
-**The other two items came out of this bundle on 2026-08-17 and are done** - see the section below. The
-maintainer chose to put the lint in `shared-test-suite.yml` as a plain step rather than hold it for the new workflow,
-so the release sees it too. That choice does not carry to the image build: the reason it must not go in that
-file is a duplicated build, not a preference.
-
-- [x] **Build the image on every PR - done 2026-08-18**, in `pull-request.yml` as the `image` job beside the
-      test suite call. **Branch protection still has to be pointed at `Pull Request / Gate`**, which is the
-      one required check now; until that happens the old entry reports nothing.
-
-      The step is `just build image` - publishes and builds with no push, no
-      login, no `sudo`, nothing interactive. Today the image is built in CI only when a release is published,
-      so a PR never proves the image still builds, and a break is found at release time. That is exactly what
-      happened after the `Binacle.Geometry` extraction, where the image had not been built for the whole
-      restructure. **Use the same Dockerfile and publish arguments the release workflow uses, or the gate
-      proves nothing** - the release path now goes through `just build publish`, so it does. Confirmed to
-      build clean on 2026-08-17.
-
-      **It must not cost a second image build on every release**, and the workflow split above is what stops
-      it. Inside `shared-test-suite.yml` it would, because the release calls that file as its gate and takes it whole.
-      Never reach for a conditional step instead - that turns the gate back into something the release does
-      not exercise.
-
-### The OpenAPI lint and the Spectral move - done 2026-08-17
-
-- [x] **Lint the OpenAPI documents.** One step, `just openapi lint`, in `shared-test-suite.yml` after `Build`. It
-      generates the documents itself and needs nothing brought up. The recipe now passes `--fail-severity=warn`,
-      which was the whole item - Spectral exits 0 on warnings by default, so without it the step prints
-      `No results with a severity of 'error' found!` and passes whatever the warnings say. It reads
-      `severity of 'warn' or higher` now, and finds none.
-
-      **The prerequisite was the `servers` block**, which is why the ordering mattered: the lint used to report
-      two `oas3-api-servers` warnings, so turning the gate on first would have forced a choice between a gate
-      that ignores warnings - which stops being read - and one that is red on arrival.
-- [x] **Moved the Spectral ruleset to `tooling/openapi.spectral.yaml`**, named by the recipe with `--ruleset`.
-      A file called `.spectral.yaml` at the repo root read as "the Spectral config for this repo"; it is the
-      OpenAPI one only. Flat and prefixed beside `tooling/openapi.just`, the same as the Sonar config and the
-      compose files.
-
-      **The recipe must name the path from here on** - Spectral only finds a root config by itself. Editors do
-      the same, so in-editor linting points at the old path until told otherwise; there is no editor config in
-      this repo, so nothing broke. Seven files named the old path and were updated with it: `architecture.yml`
-      dropped its `root:` row, and the recipe, two READMEs, the commands doc, a memory and an idea now name the
-      new one.
-
-**The three architecture checks left this bundle on 2026-08-17** and are not release work. They were folded in
-as one of the three ready items; re-examining how to build them turned up a better design - derive the graph
-into a generated file, draw it, and lint it with a small Spectral ruleset - which is a fresh design rather than
-a ready item. It is on the board as `architecture-checks`, with the comment lint split into its own plan.
-**Nothing in this release depends on either.**
-
-**Gates 2 and 3, and the heavy architecture tools, do not come with this** - see the scope decision at the top.
-
-### More ViPaq interop vectors - done 2026-08-17
-
-**Seven rows added, 7 scenarios to 14**, in `vipaq/test-vectors/interop/input.json`. Both suites green - C# 421,
-TS 380 - and the idea file is deleted.
-
-- [x] **Width-boundary flips in a coordinate**, mirroring the three already covered for dimensions: 255, 256 and
-      65535. They produce header `8_8_16`, the mirror of the dims rows' `8_16_8`, and neither combination was in
-      the interop matrix before.
-- [x] **An empty items list**, at a 16-bit bin. That pairing checks the protocol's rule that with no items both
-      item widths are written `Eight` whatever the bin needs - header `16_8_8`.
-- [x] **Many distinct items** - two rows, 30 items each, no repeats: one row-major at 8-bit, one columnar at
-      16-bit.
-- [x] **Compressed payloads at both widths.** **The plan and the idea both said "32-bit and 64-bit widths",
-      which do not exist** - ViPaq has two widths, 8 and 16, and `PROTOCOL.md §4` says a value above 65,535 is
-      an error rather than a wider encoding. Read as the widths that do exist, and the gap was real: no vector
-      produced a substantial compressed body at 16-bit. One row does now, 45 items of realistic pallet data,
-      550 bytes to ~190.
-- [x] **Regenerate and run both suites.** `npm run regen:interop -w binacle-vipaq` runs the C# generator and
-      then the TS one, so the two halves cannot drift.
-
-**The compressible row earns its place twice.** It is the **first vector where the two producers emit different
-compressed bytes** - 191 from `DeflateStream`, 189 from `CompressionStream` - which is exactly the case
-`PROTOCOL.md §6.1` documents and the reason the interop contract is decode-to-input rather than byte-equality.
-Every other row happened to agree by coincidence, so nothing executable demonstrated the rule the design rests
-on. The two 30-item rows pay separately: their bodies do not compress, so DEFLATE emits **stored** blocks, a
-decoder path no other vector reaches.
-
-Mutation-checked: flipping three bytes deep in one TS deflate artifact fails exactly one C# test and nothing
-else.
-
-**Do not rebuild the cross-runtime rows.** Foreign-runtime gzip blobs and .NET 8/9 rows were built once and
-removed on purpose - a gzip decoder reads any valid gzip, so they proved nothing, and they needed hand-captured
-Docker bytes, which breaks the one-generator-committed-output discipline the rest of the vectors keep. The
-finding they demonstrated is preserved in the protocol spec.
+- [ ] **Point branch protection at `Pull Request / Gate`.** It is the one required check now; until this
+      happens the old entry reports nothing.
 
 ### The client-generation page
 
@@ -441,46 +265,6 @@ drift apart.
       with the docs deploy below.
 - [ ] **Do not publish SDKs to close this.** The deliverable is a spec plus a generation guide, not shipped
       packages. That decision is recorded as a memory and is not this item's to change.
-
-### The compose stacks
-
-**The compose stacks** - **pulled in on 2026-08-15 at the maintainer's call, executed and verified the same
-day.** All three stacks were run end to end, not just resolved. **The plan file is gone**: what it proved
-about compose - the `include:` path resolution, the key-by-key override, the volume/bind switch, the shared
-fixed-name volume - was folded into the tooling reference doc under `docs/`, which is now the authority on it,
-along with the list of things not to undo. Nothing is left open here.
-
-**It is the 2026-08-14 call finally carried out.** `image` is for the image; the backing services belong to
-`serve`. They used to be declared in **two** compose files with the same credentials in both - now in one,
-which `image.full.yml` includes.
-
-**Nothing here ships to a user and no workflow calls it.** It gates nothing, and if it is not done by step 5 the
-release goes without it.
-
-- [x] **Four files become three**, each named after the `just` module that runs it: `serve.services.yml`,
-      `image.local.yml`, `image.full.yml`. `docker-compose.build.yml` builds nothing and `docker-compose.yml` is
-      not the repo's main stack - both names go.
-- [x] **`image.full.yml` uses compose `include:`**, not `-f a -f b`. The plan holds the tested proof of why:
-      `include:` resolves each file's relative paths against **its own** directory, which is what makes the
-      backing services declarable once. `-f` resolves them against the first file, and that is the exact
-      failure that got the 2026-08-07 subfolder attempt reverted.
-- [x] **`volume` and `bind` keep both names and share one file.** The recipe passes the project name and, for
-      `bind`, `BINACLE_DATA_DIR`. **`bind` is the maintainer's primary stack** - confirmed 2026-08-15 - so
-      nothing about typing `just image up bind` may change, and comparing the two must stay a one-word edit.
-      The compose file itself must still resolve an unset variable to the named volume.
-- [x] **`just serve services` becomes `just serve services-up`** so it pairs with `services-down`. Trivial in
-      itself, but **grep for the recipe name as well as the filenames** - `tooling/tests.just` and the api
-      tests doc name the recipe and no compose file at all, so a filename-only sweep misses them.
-- [x] **Both named volumes get a fixed name** - `binacle-net-postgres` and `binacle-net-data` - so the same
-      declaration under two project names is one database rather than two that look like one. **This is the one
-      visible change:** one volume was orphaned by it, `binacle-net-services_postgres_data`. The new
-      `binacle-net-postgres` started empty and re-seeded the admin user. Delete the old one when ready.
-- [x] **The bare `up` default is settled: it stays `full`.** Raised and answered on 2026-08-15 - `full` is the
-      stack that exercises the whole image, which is what the module is for. No code changed, and the decision
-      is recorded in the tooling doc so it is not reopened by accident.
-- [x] **The port 5432 collision is now run, not just reasoned.** Starting the services while `full` is up
-      fails on `Bind for 0.0.0.0:5432 failed: port is already allocated` and leaves the running stack alone.
-      Nothing half-connected starts.
 
 ### The docs deploy - after the tag
 
@@ -579,68 +363,6 @@ versioned page should pin the spec it describes; do not repoint it at `main`.
 
 ---
 
-## Already done - do not re-audit
-
-**Gate A, all four items.** Publish paths hardcoded in the workflow (2026-07-27). A prerelease moves neither
-`latest` nor the minor tag (observed on Docker Hub 2026-08-06). Health check IP restrictions, four defects and
-the missing tests (2026-07-27). Forwarded headers, warn-once diagnostics and the missing tests (2026-07-27).
-
-**Verified behaviour:**
-
-- **Fitting results are unchanged.** Differential-tested 2026-07-19 against the real
-  `binacle/binacle-net:2.1.1` image across all three algorithms, zero disagreements. No release-notes caveat
-  needed.
-- **Old ViPaq tokens fail loudly.** Verified 2026-07-19, locked 2026-07-20 with four regression vectors in
-  `vipaq/test-vectors/serialization/decode-invalid.json`. Zero silent misparses.
-- **The login throttle no longer partitions on a caller-supplied header.** `GetClientIp()` deleted 2026-07-24;
-  `AuthTokenRateLimitingPolicy` partitions on `Connection.RemoteIpAddress`. Unit tests cover the partition keys,
-  and as of 2026-08-14 an integration test covers the wiring - a forged forwarded header per attempt still hits
-  the limit.
-- **ViPaq's wire format did not move after beta 1** - source changed comments only.
-- **The Dockerfile did not change after beta 1 at all.**
-
-**Release milestones:**
-
-- **The docs pages** (2026-08-10) - site builds, `/version/latest/` lands on v3.0.x. **The ViPaq protocol page
-  split** (2026-08-07) - all four versions written. **The `AI-GENERATED` review token strip** (2026-08-11) -
-  zero left, whole repo.
-
-  On that last one: the pass was never "revert everything an agent wrote". Several agent comments were kept on
-  purpose because they were better than the line they replaced - the unchecked-multiply overflow note on the
-  packing algorithms, the empty-catch explanation in `ConnectionString.cs`, the curated-scenario table in
-  `BischoffCuratedProblemsProvider.cs`. **A surviving agent comment is not damage.**
-
-- **Beta 2** - published 2026-08-13 from `d317cd2b`, digest `sha256:ccce2a44`, deployed to the test server
-  2026-08-14. All six jobs green with `publish` included, the GHCR package public to an anonymous puller,
-  Docker Hub took `3.0.0-beta.2` and nothing else moved, the copy preserved the digest, the image is signed on
-  both registries, SBOM and provenance are in the index, 31/31 structure assertions and all five smoke profiles
-  pass against the published image, and the release body is byte-identical to `just changelog extract
-  Unreleased`. `DEBUG_ENDPOINT` was confirmed off on the deployment - it had been on and answering publicly
-  since beta 1, echoing the caller's `Authorization` header back, and it was the only real exposure beta 1 left
-  behind.
-
-- **The release pipeline rebuild** - proven end to end by beta 2. What remains of that plan is the one docs
-  decision above, plus a post-release check.
-
-- **The architecture merge** - **done, and it went in the other direction.** `main` was merged into
-  `features/arch_tests` at `16289d4d`, so the branch now contains all of `main` and landing it is a
-  fast-forward. **All the conflict-resolution instructions this file used to carry are spent.** Verified
-  2026-08-14: front matter is on all five files added since the fork, six `_index.md` are generated, `just test
-  all` is green across eleven leaves (72 / 35 / 622 / 107, 0 failed), `just openapi lint` reports 0 errors and 0
-  warnings, and the OpenAPI regenerate-and-diff came back with no schema movement at all.
-
-- **The `429` OpenAPI guard** - committed at `dec5212c`. Both guards are in
-  `RateLimiterResponseOperationTransformer.cs` with the reasoning comment.
-
-**Two things beta 2 does not prove**, both structural rather than untried. **The moving tags** - a prerelease
-withholds `{{major}}.{{minor}}` and `latest`, so `3.0` and `latest` are written for the first time by v3.0.0
-itself; that is one extra argument to an `imagetools create` call that has run several times. And
-**`latest=auto` does not consult the registry** - it reads the git ref, so any non-prerelease semver takes
-`latest`. Right for v3.0.0, and the reason a throwaway `v0.0.1` against the real repo would have moved `latest`
-off `2.1.1`. **Recorded because the trap outlives the plan that found it.**
-
----
-
 ## The release notes
 
 **They live in `CHANGELOG.md`, in the `## [Unreleased]` section**, and the workflow extracts that section as
@@ -667,17 +389,16 @@ stay four. Anyone building from source sees `Binacle.Lib.Abstractions` disappear
 
 ## The sequence
 
-1. **Rate limiter tests.**
-2. **Rate limiting owned by the ServiceModule.** After 1, never before - it is the test that makes this safe.
-3. **The Azure Storage run.**
-4. **Cut, deploy and verify beta 3.** After 2, so the beta carries the endpoint change.
-5. **The last commit:** changelog rename, nine pins, six comment blocks, three READMEs, two tooling examples,
+1. ~~Rate limiter tests, rate limiting moved to the ServiceModule, the Azure Storage run.~~ All done
+   2026-08-14.
+2. **Finish beta 3.** Published 2026-08-16; the two live deployment checks are still open.
+3. **The last commit:** changelog rename, nine pins, six comment blocks, three READMEs, two tooling examples,
    and the `IsExperimental` re-confirm.
-6. **Tag `v3.0.0`.** The pipeline does the rest.
-7. **Deploy the docs**, with the six edits above.
-8. **Work `post-release-v3.0.0.md`.**
+4. **Tag `v3.0.0`.** The pipeline does the rest.
+5. **Deploy the docs**, with the six edits above.
+6. **Work `post-release-v3.0.0.md`.**
 
-**Everything under "Runs alongside" happens any time from now to step 5**, in whatever order suits, with two
+**Everything under "Runs alongside" happens any time from now to step 3**, in whatever order suits, with two
 orderings that matter: **image verification goes before the Docker Hub page**, or the verification section gets
 written twice; and **the docs-site text from image verification must exist before step 7**, because that deploy
 runs once.

@@ -16,7 +16,7 @@ runs:
       run: |
         set -euo pipefail
         mkdir -p "$HOME/.local/bin"
-        curl -fsSL -o /tmp/cst \
+        curl --proto '=https' --proto-redir '=https' -fsSL -o /tmp/cst \
           "https://github.com/GoogleContainerTools/container-structure-test/releases/download/${VERSION}/container-structure-test-linux-amd64"
         echo "${SHA256}  /tmp/cst" | sha256sum -c -
         install -m0755 /tmp/cst "$HOME/.local/bin/container-structure-test"

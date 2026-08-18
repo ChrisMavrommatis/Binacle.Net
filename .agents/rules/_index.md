@@ -16,7 +16,7 @@ are fetched when their `when:` fires. See [README.md](README.md) for the trigger
   load: on-trigger
   paths: ["**/*.cs", "**/*.ts", "**/*.js", "**/*.csproj", "**/*.props", "**/*.just", "**/*.yml"]
 - file: keep-verified-current.md
-  description: "When you edit a doc, update its verified date and check its also_update list."
+  description: "When you edit a doc, update its verified date and check its also_update list. One carve-out - a prose-only edit that checks nothing against code does not bump the date."
   when: "editing any doc or design record"
   load: on-trigger
   paths: [".agents/docs/**", ".agents/design/**"]

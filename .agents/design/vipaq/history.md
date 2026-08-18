@@ -1,8 +1,8 @@
 ---
 id: vipaq/history
 description: ViPaq design history — superseded throwaway-prototype measurements (2026-07-05) that informed the locked decisions. Reference only, not current truth.
-paths:
-  - "vipaq/**"
+verified: 2026-07-05
+check: Nothing. Frozen at the date it was measured — a history record is superseded, never re-verified. It declares no `paths:` on purpose, so a session working on live ViPaq code is not handed numbers that no longer describe it.
 ---
 
 # ViPaq — design history

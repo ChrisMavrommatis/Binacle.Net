@@ -30,11 +30,10 @@ Four project references, all test projects:
 they have their own self-contained fixtures (ServiceModule) or use Bogus fakers (ViPaq). Nothing in `src`
 references it, in any slice.
 
-## One area, not two
+## One area
 
-The kernel used to carry a second, parallel `ResultSelection` half. **That moved to
-`lib/test/Binacle.Lib.TestsKernel`**, because the api never touched it — see `$lib/dependencies`. What is left
-here is the algorithm side:
+This kernel holds the algorithm side only. **Result selection lives in `lib/test/Binacle.Lib.TestsKernel`**,
+because nothing outside the lib slice reads it — see `$lib/dependencies`. What is here:
 
 - `Binacle.TestsKernel.Algorithms.*` — fit/pack scenarios (bin + items + expected metrics + expected result)
 

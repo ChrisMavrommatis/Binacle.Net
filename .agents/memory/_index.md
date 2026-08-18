@@ -41,6 +41,14 @@ conventions, decisions, gotchas. See [README.md](README.md) for when and how to 
   description: "Test-host config goes through an env var the harness reads, never a .runsettings file — the MTP runner ignores VSTest runsettings"
   when: "changing ServiceModule test-host configuration"
   paths: ["api/test/Binacle.Net.ServiceModule.IntegrationTests/**"]
+- file: sonar-no-quality-profile.md
+  description: "Sonar rules cannot be switched off on this project - custom quality profiles start at the Team plan and this one is on Free, so \"Sonar way\" is read-only"
+  when: "someone proposes turning a Sonar rule off"
+  paths: ["tooling/sonar-analysis.xml"]
+- file: sonar-scope-exclusions.md
+  description: "sonar.exclusions and friends are scope exclusions, not issue ignores - they are allowed and already in use"
+  when: "reading or editing the exclusion lists in tooling/sonar-analysis.xml"
+  paths: ["tooling/sonar-analysis.xml", "Directory.Build.props"]
 - file: sonar-touching-untested-code.md
   description: "Fixing an old Sonar smell in an untested file makes the quality gate worse - changed lines become \"new code\" and count as uncovered"
   when: "fixing a Sonar smell in a file with no test coverage"
