@@ -1,0 +1,67 @@
+# CodeQL, one job per language. Findings land in the repo's Security tab, not on a check.
+#
+# Every language runs buildless (`build-mode: none`), so no job needs a toolchain installed. If C# extraction
+# ever misses something, that one entry becomes `manual` plus a `dotnet build` step - not `autobuild`, which
+# would guess at a solution this repo builds through `just`.
+
+name: CodeQL Analysis
+
+on:
+  # On merge, like Sonar. Not on pull_request: the gate is the only required check, and code scanning is
+  # advisory - a second PR check that never blocks trains people to ignore it.
+  push:
+    branches:
+      - main
+  # Unlike Sonar, the schedule earns its place: the query packs change, so the same commit reports new
+  # findings weeks later.
+  schedule:
+    - cron: '27 4 * * 1'
+  workflow_dispatch:
+
+# Cancellable: the Security tab shows the branch's latest state, so superseded findings get overwritten.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyse (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      # The upload. `actions: read` and `packages: read` are in GitHub's template for private repos and
+      # private query packs - this repo is public and uses neither.
+      security-events: write
+
+    strategy:
+      # One language failing must not hide the other three.
+      fail-fast: false
+      matrix:
+        language:
+          # Workflow and composite-action shell - the largest unchecked surface here, and actionlint does not
+          # look for injection.
+          - actions
+          - csharp
+          - javascript-typescript
+          # The Jekyll plugins under ruby/, and the two sites' own.
+          - ruby
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Initialise CodeQL
+        uses: github/codeql-action/init@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          # Security only. Sonar already reports quality, and the two disagreeing on the same line is how a
+          # finding stops being read.
+          queries: security-extended
+
+      - name: Analyse
+        uses: github/codeql-action/analyze@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
+        with:
+          # Keeps each language's findings a separate set. Without it the last job to finish clears the rest.
+          category: /language:${{ matrix.language }}

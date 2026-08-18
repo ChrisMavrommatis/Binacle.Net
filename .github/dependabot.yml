@@ -5,6 +5,10 @@
 #
 # Actions only, on purpose. NuGet is managed centrally in Directory.Packages.props and npm is a small dev-only
 # set - both are reviewed by hand, and adding them here would bury the action updates in noise.
+#
+# One entry per directory, and they are not interchangeable. `directory: /` reaches `.github/workflows` and a
+# root-level `action.yml` - nothing under `.github/actions/`, and `directories:` with a glob is not available
+# for this ecosystem. A composite action that pins a SHA and has no entry below stops being updated silently.
 version: 2
 
 updates:
@@ -30,6 +34,83 @@ updates:
     labels:
       - dependencies
       # Quoted on purpose: an unquoted `area: ci-cd` in a list is a YAML map, not the string the label needs.
+      - "area: ci-cd"
+    commit-message:
+      prefix: ci
+
+  # The four composite actions that pin a SHA. setup-dotnet pins two.
+  - package-ecosystem: github-actions
+    directory: /.github/actions/setup-dotnet
+    schedule:
+      interval: weekly
+    groups:
+      actions-routine:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - "area: ci-cd"
+    commit-message:
+      prefix: ci
+
+  - package-ecosystem: github-actions
+    directory: /.github/actions/setup-just
+    schedule:
+      interval: weekly
+    groups:
+      actions-routine:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - "area: ci-cd"
+    commit-message:
+      prefix: ci
+
+  - package-ecosystem: github-actions
+    directory: /.github/actions/setup-node
+    schedule:
+      interval: weekly
+    groups:
+      actions-routine:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - "area: ci-cd"
+    commit-message:
+      prefix: ci
+
+  - package-ecosystem: github-actions
+    directory: /.github/actions/setup-ruby
+    schedule:
+      interval: weekly
+    groups:
+      actions-routine:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
       - "area: ci-cd"
     commit-message:
       prefix: ci

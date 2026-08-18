@@ -3,8 +3,7 @@ name: Deploy Web Site
 on:
   workflow_dispatch:
 
-# One deploy at a time, and **never cancelled**. Cancelling mid-deploy leaves App Platform mid-rollout and the
-# marker tag unpushed, so the live site would map back to no commit.
+# Never cancelled: a stopped deploy leaves App Platform mid-rollout and no marker tag.
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
@@ -30,8 +29,7 @@ jobs:
       - name: Install - lychee
         uses: ./.github/actions/install-lychee
 
-      # Offline: it checks the links that stay inside the site. The absolute ones point at pages this deploy
-      # has not published yet, so checking them here fails on every page the run is about to create.
+      # Offline. The absolute URLs point at pages this run has not published yet, so they all 404 here.
       - name: Check - links
         run: just check links web
 
@@ -40,8 +38,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Nothing here reads the repository - `app_name` makes App Platform deploy its own stored spec, and the
-    # action is fetched by GitHub rather than from the working copy. So no checkout, and no token scopes.
+    # No checkout: `app_name` makes App Platform use its own stored spec, and the action comes from GitHub.
     permissions: {}
     environment:
       name: binacle-net-web

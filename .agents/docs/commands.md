@@ -1,7 +1,7 @@
 ---
 id: commands
 description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
-verified: 2026-08-18
+verified: 2026-08-19
 check: Test leaves match tooling/tests.just; coverage recipes match tooling/coverage.just; openapi recipes match tooling/openapi.just; agents recipes match tooling/agents.just; regen recipes match tooling/regen.just; serve recipes match tooling/serve.just; smoke recipes match tooling/smoke.just; build recipes match tooling/build.just; check recipes match tooling/check.just; install/assets match the root justfile; aliases and scripts match tooling/*.sh; compose service list matches tooling/serve.services.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
 paths:
   - "justfile"
@@ -285,14 +285,21 @@ analytics container.
 just check links                       # internal links in both built sites
 just check links docs                  # one of them
 just check links-external docs         # every link, other people's servers included
-just check workflows                   # actionlint over .github/
+just check workflows                   # actionlint over .github/workflows
+just check actions                     # the .github/actions manifests
 ```
 
-`workflows` takes no arguments — actionlint finds `.github/workflows` from the repo root and follows
-`uses: ./.github/actions/*` into the composite actions. It catches what a workflow file cannot be tested for
-without running it: a bad expression, an undefined `needs`, an invalid runner label, an unquoted shell
-variable. **It needs shellcheck installed as well as actionlint** — actionlint hands every `run:` block to it
-when it can find one, and the runners already have it, so a laptop without it checks less than CI does.
+Both print the files they were handed and end with a count, because actionlint and grep are silent when they
+pass and silence alone does not say the run happened. **`workflows`** catches what a workflow file cannot be
+tested for without running it: a bad expression, an undefined `needs`, an invalid runner label, an unquoted
+shell variable. **It needs shellcheck as well as
+actionlint** — actionlint hands every `run:` block to it when it can find one, and the runners already have it,
+so a laptop without it checks less than CI does.
+
+**`actions` is separate because actionlint cannot read a composite action** — hand it an `action.yml` and it
+reports `"jobs" section is missing`. What it checks by hand is the one failure that has already happened: a
+`vars` or `secrets` expression anywhere in a manifest, `description:` fields included, fails the action *load*
+on the runner rather than resolving to empty.
 
 Needs `lychee` (pinned, installed from `DEVELOPMENT.md` like the smoke tools) and needs the site built first —
 the recipe stops with `No artifacts/docs` rather than checking nothing and passing. It reads the built output

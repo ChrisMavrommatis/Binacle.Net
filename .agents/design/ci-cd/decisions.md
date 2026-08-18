@@ -1,7 +1,7 @@
 ---
 id: ci-cd/decisions
 description: CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, why lychee is a pinned binary rather than its own action, and the open questions about the PR gate and supply-chain attestation.
-verified: 2026-08-18
+verified: 2026-08-19
 check: Decisions still match .github/workflows/*.yml and tooling/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against tooling/changelog.just, D6 against shared-smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe, D14's STAGING_IMAGE against release-docker-image.yml, D15's identity regexp against SECURITY.md and tooling/image.just, D16 against .github/actions/install-lychee and the deploy workflows' build job
 paths:
   - ".github/workflows/**"
@@ -279,6 +279,15 @@ meant every reader had to know which action fell under which. One rule, applied 
 whatever commit it was set to and stops receiving security fixes, which is worse than a floating tag because
 nothing reports it. `docker/build-push-action` sat at v5.4.0, several majors behind, which is what made the
 point concrete.
+
+**The pins stayed in the composite actions; the config grew instead, on 2026-08-19.** Four outside SHAs moved
+into `.github/actions/` with the workflow restructure, and Dependabot does not reach that folder from
+`directory: /` — it covers `.github/workflows` and a root-level `action.yml`, and nothing else. The open
+question was whether to answer that by pulling the four pins back out into a workflow file. **No:** the point
+of the composite actions is that a setup step is written once, and undoing that to satisfy a config format is
+the tail wagging the dog. `.github/dependabot.yml` carries one entry per action folder instead. The cost is
+that adding an outside pin to a new action means remembering to add an entry — which is why the rule is
+written down in `$ci-cd` beside the actions themselves, not only here.
 
 ### D12 — the image is framework-dependent, and the publish flag is spelled out
 

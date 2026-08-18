@@ -1,8 +1,8 @@
 ---
 id: ci-cd
-description: CI/CD — the seven GitHub Actions workflows in .github/workflows and the nine shared actions in .github/actions, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
-verified: 2026-08-18
-check: The workflow table matches the files in .github/workflows and the action table matches .github/actions; the vars/secrets tables match every ${{ vars.* }} and ${{ secrets.* }} reference in them; the pinned just version and runner labels still match; the SHAs named as living only in .github/actions still appear in no workflow file
+description: CI/CD — the eight GitHub Actions workflows in .github/workflows and the nine shared actions in .github/actions, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
+verified: 2026-08-19
+check: The workflow table matches the files in .github/workflows and the action table matches .github/actions; the vars/secrets tables match every ${{ vars.* }} and ${{ secrets.* }} reference in them; the pinned just version and runner labels still match; the SHAs named as living only in .github/actions still appear in no workflow file; every .github/actions folder holding an outside SHA pin has its own entry in .github/dependabot.yml
 also_update:
   - ci-cd/release-pipeline
   - tooling
@@ -14,12 +14,12 @@ paths:
 
 # CI/CD
 
-Seven workflows in `.github/workflows/`, over nine shared actions in `.github/actions/`. They gate a pull
+Eight workflows in `.github/workflows/`, over nine shared actions in `.github/actions/`. They gate a pull
 request, analyse it, release the Docker image, and deploy the two Jekyll sites. This doc covers what runs,
 when, and the conventions every one of them follows. The release pipeline has its own page
 (`$ci-cd/release-pipeline`) because it is six jobs with an ordering that matters.
 
-**Two of the seven carry a `shared-` prefix**, which means something else calls them — the release pipeline
+**Two of the eight carry a `shared-` prefix**, which means something else calls them — the release pipeline
 calls both, and the pull request gate calls the test suite. It does **not** mean private: both keep
 `workflow_dispatch`, so both can be run by hand. Nothing here is a workflow nobody can press.
 
@@ -32,17 +32,18 @@ described in `$tooling`. Nothing about a recipe's behaviour is repeated here.
 
 | Workflow | Trigger | What it does |
 |---|---|---|
-| `pull-request.yml` | `pull_request` | The gate. Works out whether anything outside guidance and the two sites changed, then runs the test suite, an image build and `actionlint` if it did. `gate` reports either way — see below |
+| `pull-request.yml` | `pull_request` | The gate. Works out whether anything outside guidance and the two sites changed, then runs the test suite, an image build and the two `.github/` lints if it did. `gate` reports either way — see below |
 | `shared-test-suite.yml` | `workflow_dispatch`, `workflow_call` | Every test leaf, plus `just openapi lint`. One job so setup and build happen once; one step per leaf so a red check names the suite. Postgres and Azurite run as job services, one ServiceModule step per storage backend. Called by the release pipeline as its "this commit passed CI" gate, so the release gets the lint too |
-| `sonar-analysis.yml` | `push` on `main`, `workflow_dispatch` | Build plus `just coverage all sonar` between `Sonar begin`/`Sonar end`, published to SonarCloud. **On merge, not on a schedule** — a nightly run re-analyses a commit nothing changed and reports the same numbers |
+| `sonar-analysis.yml` | `workflow_dispatch` | Build plus `just coverage all sonar` between `Sonar begin`/`Sonar end`, published to SonarCloud. **By hand, and never on a schedule** — a nightly run re-analyses a commit nothing changed and reports the same numbers |
+| `codeql-analysis.yml` | `push` on `main`, weekly `schedule`, `workflow_dispatch` | CodeQL over four languages — `actions`, `csharp`, `javascript-typescript`, `ruby` — one matrix job each, all buildless. Findings land in the Security tab, not on a check. **On a schedule as well as on merge** — the query packs change, so an untouched commit reports new findings later. That is the one analysis a schedule earns |
 | `release-docker-image.yml` | `push` on tags `v[0-9]*` | The release pipeline — check the changelog section, run the suite, build and push to GHCR, smoke it there, copy to Docker Hub, create the GitHub release. See `$ci-cd/release-pipeline` |
 | `shared-smoke-image.yml` | `workflow_dispatch`, `workflow_call` | Pulls a published image and runs the structure check plus all five smoke profiles. Called by the release pipeline as its gate, or run by hand against any tag |
 | `deploy-docs-site.yml` | `workflow_dispatch` | Three jobs — build repo-root `docs/` (`$docs-site`) and check its links as a pre-flight, deploy it to DigitalOcean App Platform, tag the commit `docs-release-<run>` |
 | `deploy-web-site.yml` | `workflow_dispatch` | The same for repo-root `web/` (`$web-site`), tagging `web-release-<run>` |
 
-**Three of the seven run on their own.** `pull-request.yml` on every pull request, `sonar-analysis.yml` on
-every merge to `main`, and the release pipeline on a tag. The other four are `workflow_dispatch` — somebody
-presses a button. That is the current state, not an end state.
+**Three of the eight run on their own.** `pull-request.yml` on every pull request, `codeql-analysis.yml` on
+every merge to `main` and weekly, and the release pipeline on a tag. The other five are `workflow_dispatch` —
+somebody presses a button. That is the current state, not an end state.
 
 ## `gate` is the only required check
 
@@ -100,7 +101,7 @@ job exists to fail here rather than there.
 perfectly — that is the failure a build cannot see. It runs there rather than in `deploy`, so a dead link stops
 the deploy instead of being found after it. **It is the offline check, never `links-external`**: the absolute
 URLs on every page point at where that page *will* live, so at this moment they 404 on every page the run is
-about to create. The external run is a manual tool, not a gate — see `$commands` and `$ci-cd/decisions` D16.
+about to create. The external run is a manual tool, not a gate — see `$commands`.
 
 ## Concurrency, and where cancelling is wrong
 
@@ -111,14 +112,15 @@ its caller's run, so a group of its own would have it queue behind the caller th
 |---|---|---|
 | `pull-request.yml` | `${{ github.workflow }}-${{ github.ref }}` | **true** |
 | `sonar-analysis.yml` | `${{ github.workflow }}-${{ github.ref }}` | **true** |
+| `codeql-analysis.yml` | `${{ github.workflow }}-${{ github.ref }}` | **true** |
 | `release-docker-image.yml` | `${{ github.workflow }}-${{ github.ref }}` | **false** |
 | `deploy-docs-site.yml` | `${{ github.workflow }}` | **false** |
 | `deploy-web-site.yml` | `${{ github.workflow }}` | **false** |
 
-**Cancelling is right for the first two and wrong for the last three, and the difference is whether a half-done
-run leaves anything behind.** A cancelled pull request run leaves nothing — a newer push supersedes it and
-nobody was going to read the old result. A cancelled Sonar run is the same: SonarCloud shows the branch's
-latest state, so the superseded numbers were going to be overwritten anyway.
+**Cancelling is right for the first three and wrong for the last three, and the difference is whether a
+half-done run leaves anything behind.** A cancelled pull request run leaves nothing — a newer push supersedes it
+and nobody was going to read the old result. A cancelled Sonar or CodeQL run is the same: both show the
+branch's latest state, so the superseded findings were going to be overwritten anyway.
 
 **A cancelled release or deploy leaves wreckage.** Stopped between `build` and `publish`, the release has a
 staged image on GHCR that nothing copies, or a half-written set of moving tags on Docker Hub. A stopped deploy
@@ -128,7 +130,8 @@ instead.
 **`github.ref` is what makes the key specific** and it differs per event: `refs/pull/<n>/merge` on a pull
 request, `refs/heads/main` on a merge, `refs/tags/<tag>` on a release. The two deploys leave it out on purpose
 — they are `workflow_dispatch` from any branch, and two deploys of the same site must not run at once whichever
-branch fired them.
+branch fired them. **`sonar-analysis.yml` is `workflow_dispatch` too and keeps `github.ref` anyway**, because
+SonarCloud tracks a branch at a time: two branches analysing at once is fine, the same branch twice is not.
 
 ## What the run page says without opening a log
 
@@ -180,8 +183,8 @@ short**, or the required check name becomes unreadable at exactly the moment som
 - **Every action is pinned by commit SHA**, first-party included, with the version in a trailing comment
   (`extractions/setup-just@53165ef... # v4.0.0`). `.github/dependabot.yml` raises a weekly PR per action and
   rewrites the SHA and the comment together, which is what keeps a pin from quietly going stale.
-  **Four of those pins now live in `.github/actions/` rather than in a workflow, and Dependabot's coverage of
-  that folder is unconfirmed** — see the section below.
+  **Four of those pins live in `.github/actions/` rather than in a workflow**, and that folder needs its own
+  Dependabot entry per action — see the composite actions section below.
 - **`just` is pinned to `^1.45`, in one place**: `.github/actions/setup-just`. Modules and
   `set working-directory` need a recent just, and Ubuntu's apt ships one too old to parse the module files.
 - **A binary is installed by `curl` from its own release, one action per tool, pinned by version and by
@@ -199,8 +202,10 @@ short**, or the required check name becomes unreadable at exactly the moment som
   takes `contents: write` to create the release, and in each deploy workflow the `tag` job takes it — that job
   only. The build job takes `packages: write` for GHCR, and the publish job declares no `contents` at all
   because it never checks out. Both take `id-token: write`, which is what keyless cosign signing needs and the
-  only reason either has it. A job that needs nothing says `permissions: {}` rather than leaving it out — the
-  two deploy jobs do, since neither reads the repository.
+  only reason either has it. The CodeQL job takes `security-events: write` to upload its findings — GitHub's
+  template also lists `actions: read` and `packages: read`, which are for private repositories and private
+  query packs and so are left out here. A job that needs nothing says `permissions: {}` rather than leaving it
+  out — the two deploy jobs do, since neither reads the repository.
 - **Every job declares `timeout-minutes`.** The default is six hours, which is what a hung container or a
   wedged smoke profile would otherwise burn.
 - **`npm ci --ignore-scripts`**, so an install-time lifecycle hook cannot run arbitrary code. Nothing in the
@@ -267,25 +272,30 @@ failure is a download or a checksum.
 **One action per tool, not one for "smoke tools".** Each ends by printing the version it installed, so a red
 step names the tool rather than the pair — which is why these are two files and two steps in the caller.
 
-**Three constraints shape them, all of them GitHub's rather than ours.**
+**Four constraints shape them, all of them GitHub's rather than ours.**
 
-- **`secrets` is not available inside a composite action.** An action that needs one has to take it as an
-  input, which is half the reason the DigitalOcean step stayed in the workflow. The `vars` context is
-  documented ambiguously enough that `DONET_VERSION` is passed to `setup-dotnet` as an input for the same
-  reason.
+- **Neither `secrets` nor `vars` exists inside a composite action.** An action that needs one takes it as an
+  input — half the reason the DigitalOcean step stayed in the workflow, and why `DONET_VERSION` is passed to
+  `setup-dotnet`. **This bites harder than "the value comes out empty".** The runner evaluates the whole
+  manifest before it runs a step, so the expression fails the action *load* — every job calling it dies with
+  `Unrecognized named-value: 'vars'`. **And it counts anywhere in the file, `description:` fields included**:
+  the first CI run after these actions landed failed on a `${{ vars.DONET_VERSION }}` written inside the prose
+  that explained why you must not write it. `just check actions` greps for this now, because actionlint
+  cannot.
 - **Job keys stay with the caller.** `runs-on`, `services:`, `environment:`, `permissions:` and
   `timeout-minutes` cannot be set from an action. This is why the two deploy workflows still declare their own
   `environment:` — it carries the deployment URL and differs per site — and why the test suite is a workflow at
   all, since Postgres and Azurite are `services:`.
 - **An action is read out of the working copy**, so a job must check out before it can use one. The release
   `publish` job deliberately never checks out, so it gets none.
-
-**Watch for the Dependabot gap.** Four pinned SHAs live in this folder and appear in no workflow file:
-`extractions/setup-just`, `actions/setup-dotnet`, `actions/setup-node` and `ruby/setup-ruby`. GitHub documents
-the `github-actions` ecosystem with `directory: /` as covering `.github/workflows`; it does not say whether a
-composite `action.yml` in a subfolder is scanned. **If it is not, those four silently stop being updated** —
-which is worse than an unpinned action, because nothing reports it. The check is cheap: watch one weekly
-Dependabot run and see whether any of the four is offered a bump.
+- **Dependabot does not reach this folder on its own.** For the `github-actions` ecosystem, `directory: /`
+  covers `.github/workflows` and an `action.yml` at the repo root — nothing below `.github/actions/`, and a
+  glob in `directories:` is unreliable here. So `.github/dependabot.yml` carries **one entry per action folder
+  that pins an outside SHA**: `setup-dotnet`, `setup-just`, `setup-node`, `setup-ruby`. Give a new action an
+  outside pin and it needs its own entry, or that pin stops being updated in silence — worse than no pin,
+  because nothing reports it. **One side effect:** `actions/cache` is pinned in two covered places,
+  `setup-dotnet` and `sonar-analysis.yml`, so a bump arrives as two pull requests and both must merge or the
+  two go out of step.
 
 ## Repo variables
 
@@ -343,9 +353,10 @@ Stated plainly, because the gaps are not obvious from a green check.
   in the `Dockerfile` or the publish chain is found at release time.
 - **The integration suites run core modules only.** Every module combination the image actually ships is
   untested end to end.
-- **Sonar runs when somebody presses the button**, so analysis never lands on the pull request that caused the
-  finding. Automatic Analysis is deliberately off — it only reads source, and it fights a CI run that uploads
-  coverage.
+- **Neither analysis lands on the pull request that caused the finding.** CodeQL runs on merge and Sonar when
+  somebody presses the button, so a finding is read after the fact — in the Security tab or in SonarCloud — and
+  nothing goes red when one appears. That is what keeps `gate` the only required check. Sonar's Automatic
+  Analysis is off on top of that: it only reads source, and it fights a CI run that uploads coverage.
 - **Coverage sees one storage backend.** `shared-test-suite.yml` runs the ServiceModule suite against all three, but
   `sonar-analysis.yml` runs it against SQLite only, so coverage never reaches the Postgres or Azure provider
   code.

@@ -9,19 +9,12 @@
 name: Sonar Analysis
 
 on:
-  # On merge, so every analysis sits on a real commit and the rolling 30-day new-code window is fed
-  # continuously rather than in jumps. Deliberately not a schedule - a nightly run re-analyses a commit
-  # nothing changed and reports the same numbers, which teaches everyone the run means nothing.
-  #
-  # Not on pull_request either, yet: the coverage condition is red before anyone writes a line, and a gate
-  # like that gets waived within a week.
-  push:
-    branches:
-      - main
+  # By hand only. Not a schedule - a nightly run re-analyses a commit nothing changed and reports the same
+  # numbers, which teaches everyone the run means nothing. Not pull_request either, yet: the coverage
+  # condition is red before anyone writes a line, and a gate like that gets waived within a week.
   workflow_dispatch:
 
-# One run per branch. A newer commit's analysis supersedes an older one - SonarCloud shows the latest state
-# of the branch, so a superseded run's numbers would only ever be overwritten.
+# Cancellable: SonarCloud shows the branch's latest state, so superseded numbers get overwritten anyway.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

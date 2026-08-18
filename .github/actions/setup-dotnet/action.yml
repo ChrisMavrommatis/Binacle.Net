@@ -3,8 +3,9 @@ description: Install the .NET SDK and restore the NuGet package cache.
 
 inputs:
   dotnet-version:
-    description: SDK version. Pass `${{ vars.DONET_VERSION }}` - the vars context is not dependably available
-      inside a composite action, and an empty value installs a default SDK and looks like it worked.
+    # An input because vars does not exist here, and an empty value installs a default SDK and looks like it
+    # worked. No vars/secrets expression in this file, descriptions included - it fails the action load.
+    description: SDK version. Pass the DONET_VERSION repo variable.
     required: true
 
 runs:

@@ -29,9 +29,7 @@ env:
   # mixed-case owner can never reach the registry path.
   STAGING_IMAGE: ghcr.io/binacle-labs/binacle-net
 
-# One release at a time, and **never cancelled**. A cancel between `build` and `publish` leaves a staged image
-# on GHCR that nothing copies, or worse, a half-written set of moving tags on Docker Hub. Queueing is correct
-# here; superseding is not.
+# Never cancelled: a stop between `build` and `publish` strands a staged image or half-moves the Docker Hub tags.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
@@ -275,8 +273,7 @@ jobs:
             docker buildx imagetools inspect "$tag" --format '{{ .Manifest.Digest }}'
           done
 
-      # The digest and where it landed, on the run page. It is the answer to "what did this release ship", and
-      # without it that means opening a log and reading a `docker buildx` line.
+      # The run page's answer to "what shipped" - otherwise it is a `docker buildx` line inside a log.
       - name: Summarise what was published
         env:
           DIGEST: ${{ needs.build.outputs.digest }}

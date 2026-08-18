@@ -3,10 +3,11 @@
 #   just check links                   internal links in both built sites
 #   just check links <site>            one of them
 #   just check links-external <site>   every link, other people's servers included
-#   just check workflows               actionlint over .github/
+#   just check workflows               actionlint over .github/workflows
+#   just check actions                 the .github/actions manifests, which actionlint cannot read
 #
-# `workflows` needs no arguments: actionlint finds .github/workflows by itself from the repo root, and follows
-# `uses: ./.github/actions/*` into the composite actions.
+# Both name the files they were handed and count them at the end. actionlint and grep say nothing when they
+# pass, so that count is the only thing separating a clean run from one that never started.
 #
 # It reads the built site, never the source. A source href is Liquid - `{{ site.baseurl }}/api` is not a link
 # yet - so checking `docs/` would check strings that are not the URLs anyone visits. Build first.
@@ -45,17 +46,33 @@ links site="":
 # Every link in one site, external ones included - slower, and it can fail on somebody else's outage
 links-external site: (_lychee site)
 
-# The workflow and action files: expressions, shell quoting, runner labels, action inputs
+# The workflow files: expressions, shell quoting, runner labels, action inputs
 workflows:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Passed explicitly rather than letting actionlint discover them, so the list printed here is the list it
-    # was given. It reads the composite actions too, to check their inputs, but it lints workflow files only.
-    # actionlint prints nothing at all when it is happy, which reads like it never ran. Listing the files says
-    # what it was handed; silence under that list is the pass.
     files=(.github/workflows/*.yml)
-    printf '%s\n' "${files[@]}"
+    echo "checking ${#files[@]} workflows in .github/workflows"
+    printf '  %s\n' "${files[@]##*/}"
+    # actionlint prints its own errors and exits non-zero, so set -e stops us before the all-clear below.
     actionlint -color "${files[@]}"
+    echo "${#files[@]} workflows, no errors"
+
+# The composite action manifests, which actionlint cannot read
+actions:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    files=(.github/actions/*/action.yml)
+    names=("${files[@]%/action.yml}")
+    echo "checking ${#files[@]} actions in .github/actions"
+    printf '  %s\n' "${names[@]##*/}"
+    # By hand because actionlint treats every file as a workflow. A vars or secrets expression anywhere in a
+    # manifest, descriptions included, fails the action load on the runner.
+    # grep prints the offending file, line and text itself; the line below says what to do about it.
+    if grep -nE --color=auto '\$\{\{[^}]*\b(vars|secrets)\.' "${files[@]}"; then
+        echo "take it as an input instead - neither context exists inside an action" >&2
+        exit 1
+    fi
+    echo "${#files[@]} actions, no errors"
 
 [private]
 _lychee site *flags:

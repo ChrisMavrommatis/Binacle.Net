@@ -247,7 +247,7 @@ since `service-azure` was folded into `service`. **Removal is an option nobody h
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [ci-cd/workflow-restructure](plans/ci-cd/workflow-restructure.md) | **built; two hand items and one gap left** - state chosen by an agent, strike it if wrong | branch protection, one Dependabot run |
+| [ci-cd/workflow-restructure](plans/ci-cd/workflow-restructure.md) | **built; one hand item and one gap left** - state chosen by an agent, strike it if wrong | branch protection |
 | [ci-cd/ci-gates](plans/ci-cd/ci-gates.md) | **deferred** - gates 2 and 3 only | gate 2: the all-modules tests. gate 3: the UI harness |
 | [ci-cd/release-pipeline-rebuild](plans/ci-cd/release-pipeline-rebuild.md) | **nearly done** | one docs decision, held in the release plan |
 | [ci-cd/dockerhub-tag-immutability](plans/ci-cd/dockerhub-tag-immutability.md) | blocked until after v3.0.0 | a shipped release behind the rule |
@@ -257,7 +257,7 @@ since `service-azure` was folded into `service`. **Removal is an option nobody h
 **`workflow-restructure`'s build landed on 2026-08-18**, over two sittings - the split was the maintainer's
 call, one review at a time rather than all of it in one diff. **The collision with the release's PR gate
 change never happened**, because the gate landed inside the same work; both were one naming decision and one
-protection edit, which is what the plan argued for. What is left is two hand items and one gap, in the file.
+protection edit, which is what the plan argued for. What is left is one hand item and one gap, in the file.
 
 **`ci-gates` is down to gates 2 and 3.** Gate 1 - the image build on every pull request - landed on
 2026-08-18 with the new `pull-request.yml`, and so did the `changes`/`gate` pair that plan designed.

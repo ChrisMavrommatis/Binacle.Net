@@ -1,23 +1,14 @@
-# The pull request gate. Four jobs:
+#   changes -> test suite, image build, workflow lint -> gate
 #
-#   changes -> test suite  -> gate
-#           -> image build ->
-#
-# `gate` is the only name branch protection should hold. It reports on every pull request, whether the work
-# below it ran or was skipped, so the jobs under it can be renamed and restructured without touching
-# protection - and a skipped job can never leave a pull request waiting forever on a check that never reports.
-#
-# The image build is here and not in the test suite because the release calls that file whole: a build step
-# there would build a throwaway image on every release, two minutes before the real one. Never make it a
-# conditional step instead - a gate the release does not exercise proves nothing.
+# `gate` is the only name branch protection holds. Never move the image build into the test suite - the release
+# calls that file whole and would build a throwaway image every time.
 
 name: Pull Request
 
 on:
   pull_request:
 
-# One run per pull request. A second push supersedes the first, whose result nobody will read - and this is the
-# workflow that runs most often, so it is where cancelling saves the most.
+# Cancellable: a superseded run leaves nothing behind.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -39,8 +30,7 @@ jobs:
           # The three-dot diff below needs the merge base, which a shallow clone does not have.
           fetch-depth: 0
 
-      # Three dots, not two: it asks what this branch changed since it left the base, not what the two tips
-      # differ by. With two dots, a commit landing on main reads as a change in every open pull request.
+      # Three dots, not two: with two, a commit landing on main reads as a change in every open pull request.
       - name: List the changed paths
         id: paths
         env:
@@ -84,8 +74,7 @@ jobs:
         with:
           dotnet-version: ${{ vars.DONET_VERSION }}
 
-      # The same recipe the release builds through, so this proves the release path rather than a recipe only
-      # a pull request uses. Build only - no login, no push, no registry credentials on a pull request.
+      # The recipe the release builds through, so this proves that path. No login, no push, no credentials.
       - name: Build - image
         run: just build image
 
@@ -111,18 +100,20 @@ jobs:
       - name: Check - workflows
         run: just check workflows
 
+      - name: Check - actions
+        if: ${{ !cancelled() }}
+        run: just check actions
+
   gate:
     name: Gate
     needs: [ changes, test-suite, image, workflows ]
-    # Runs even when something above failed or was skipped - that is the point of it.
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
 
     steps:
-      # A bare `always()` with no result check passes while its dependencies are red, which is a required check
-      # that can never fail. Only success and skipped are acceptable here.
+      # Read every result: a bare always() passes while its dependencies are red.
       - name: Check every job above
         env:
           # Name and result in pairs, so the summary below can say which job did what.
