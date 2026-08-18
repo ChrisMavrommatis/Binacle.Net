@@ -29,6 +29,13 @@ env:
   # mixed-case owner can never reach the registry path.
   STAGING_IMAGE: ghcr.io/binacle-labs/binacle-net
 
+# One release at a time, and **never cancelled**. A cancel between `build` and `publish` leaves a staged image
+# on GHCR that nothing copies, or worse, a half-written set of moving tags on Docker Hub. Queueing is correct
+# here; superseding is not.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   # FIRST, and everything waits on it. The release body has to exist before anything is built, because the
   # alternative is discovering it at the end - with the image already on Docker Hub and `latest` moved, and
@@ -267,6 +274,28 @@ jobs:
             echo -n "${tag} -> "
             docker buildx imagetools inspect "$tag" --format '{{ .Manifest.Digest }}'
           done
+
+      # The digest and where it landed, on the run page. It is the answer to "what did this release ship", and
+      # without it that means opening a log and reading a `docker buildx` line.
+      - name: Summarise what was published
+        env:
+          DIGEST: ${{ needs.build.outputs.digest }}
+          VERSION: ${{ needs.build.outputs.version }}
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## Published \`${VERSION}\`"
+            echo
+            echo "**Digest** \`${DIGEST}\` - the one \`smoke\` passed, copied rather than rebuilt."
+            echo
+            echo '| Tag |'
+            echo '|---|'
+            while IFS= read -r tag; do
+              [ -n "$tag" ] || continue
+              echo "| \`${tag}\` |"
+            done <<< "$TAGS"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Setup cosign
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2

@@ -3,6 +3,12 @@ name: Deploy Docs Site
 on:
   workflow_dispatch:
 
+# One deploy at a time, and **never cancelled**. Cancelling mid-deploy leaves App Platform mid-rollout and the
+# marker tag unpushed, so the live site would map back to no commit.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   build:
     name: Build the site

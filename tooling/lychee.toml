@@ -1,4 +1,4 @@
-# Link checking config for the two Jekyll sites, named by the `just links` recipes with --config.
+# Link checking config for the two Jekyll sites, named by the `just check links` recipes with --config.
 #
 # lychee picks up a lychee.toml or a .lycheeignore from the working directory by itself. This file is not in
 # the working directory, so the recipe has to name it - the same arrangement as tooling/openapi.spectral.yaml.

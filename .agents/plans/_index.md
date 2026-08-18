@@ -56,6 +56,9 @@ you need, and trim or delete it once the work lands.
 - file: ci-cd/release-pipeline-rebuild.md
   description: "CI/CD - finish the GHCR release pipeline"
   paths: [".github/workflows/**"]
+- file: ci-cd/workflow-restructure.md
+  description: "CI - what is left after the workflow restructure landed, and the gap the next workflows session inherits"
+  paths: [".github/**"]
 ```
 
 ## Lib

@@ -150,7 +150,7 @@ as long as they stay on noble.
 
 ### lychee
 
-Only needed for `just links`, which checks the links in a built site. Same shape as the smoke tools - one
+Only needed for `just check links`, which checks the links in a built site. Same shape as the smoke tools - one
 static binary in `~/.local/bin`, pinned rather than `latest`. The musl build is deliberate: it links nothing
 from the system, which is the whole class of problem the hurl section above describes.
 
@@ -169,6 +169,31 @@ Upstream publishes a `.sha256` beside every asset, so the download can be checke
 ```bash
 curl -fsSL https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-musl.tar.gz.sha256
 ```
+
+### actionlint and shellcheck
+
+Only needed for `just check workflows`. **Both, not just the first** - actionlint runs shellcheck over every
+`run:` block when it can find it, and the GitHub runners ship shellcheck already. Installing only actionlint
+here means a laptop checks less than CI does and finds out on the pull request.
+
+```bash
+# actionlint 1.7.12 - the workflow and action files
+curl -fsSL -o /tmp/actionlint.tar.gz \
+  https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz
+tar xzf /tmp/actionlint.tar.gz -C /tmp actionlint
+install -m0755 /tmp/actionlint ~/.local/bin/actionlint
+
+# shellcheck 0.11.0 - what actionlint hands the run: blocks to
+curl -fsSL -o /tmp/sc.tar.xz \
+  https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz
+tar xJf /tmp/sc.tar.xz -C /tmp
+install -m0755 /tmp/shellcheck-v0.11.0/shellcheck ~/.local/bin/shellcheck
+
+actionlint --version
+shellcheck --version
+```
+
+Upstream publishes `actionlint_1.7.12_checksums.txt` beside the release, so the download can be checked first.
 
 ### cosign
 

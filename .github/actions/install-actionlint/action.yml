@@ -1,0 +1,24 @@
+name: Install actionlint
+description: Install the actionlint binary, pinned by version and SHA-256.
+
+runs:
+  using: composite
+  steps:
+    - name: Install actionlint
+      shell: bash
+      env:
+        # Keep in step with DEVELOPMENT.md, so CI and a laptop get the same bytes.
+        VERSION: 1.7.12
+        # Published by upstream in actionlint_<version>_checksums.txt.
+        SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+      # ~/.local/bin is on PATH for an interactive shell but not for later steps, hence GITHUB_PATH.
+      run: |
+        set -euo pipefail
+        mkdir -p "$HOME/.local/bin"
+        curl -fsSL -o /tmp/actionlint.tar.gz \
+          "https://github.com/rhysd/actionlint/releases/download/v${VERSION}/actionlint_${VERSION}_linux_amd64.tar.gz"
+        echo "${SHA256}  /tmp/actionlint.tar.gz" | sha256sum -c -
+        tar xzf /tmp/actionlint.tar.gz -C /tmp actionlint
+        install -m0755 /tmp/actionlint "$HOME/.local/bin/actionlint"
+        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        "$HOME/.local/bin/actionlint" --version

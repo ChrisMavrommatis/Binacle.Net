@@ -16,6 +16,12 @@ name: Pull Request
 on:
   pull_request:
 
+# One run per pull request. A second push supersedes the first, whose result nobody will read - and this is the
+# workflow that runs most often, so it is where cancelling saves the most.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   changes:
     name: Work out what changed
@@ -83,9 +89,31 @@ jobs:
       - name: Build - image
         run: just build image
 
+  workflows:
+    name: Workflow lint
+    needs: changes
+    if: ${{ needs.changes.outputs.code == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup - just
+        uses: ./.github/actions/setup-just
+
+      - name: Install - actionlint
+        uses: ./.github/actions/install-actionlint
+
+      - name: Check - workflows
+        run: just check workflows
+
   gate:
     name: Gate
-    needs: [ changes, test-suite, image ]
+    needs: [ changes, test-suite, image, workflows ]
     # Runs even when something above failed or was skipped - that is the point of it.
     if: ${{ always() }}
     runs-on: ubuntu-latest
@@ -97,13 +125,31 @@ jobs:
       # that can never fail. Only success and skipped are acceptable here.
       - name: Check every job above
         env:
-          RESULTS: ${{ needs.changes.result }} ${{ needs.test-suite.result }} ${{ needs.image.result }}
+          # Name and result in pairs, so the summary below can say which job did what.
+          RESULTS: >-
+            changes:${{ needs.changes.result }}
+            tests:${{ needs.test-suite.result }}
+            image:${{ needs.image.result }}
+            workflows:${{ needs.workflows.result }}
         run: |
           set -euo pipefail
-          for result in $RESULTS; do
+          failed=0
+          {
+            echo '| Job | Result |'
+            echo '|---|---|'
+          } >> "$GITHUB_STEP_SUMMARY"
+          for pair in $RESULTS; do
+            job="${pair%%:*}"
+            result="${pair##*:}"
+            echo "| \`$job\` | $result |" >> "$GITHUB_STEP_SUMMARY"
             if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
-              echo "A job this gate depends on reported '$result'."
-              exit 1
+              echo "$job reported '$result'."
+              failed=1
             fi
           done
+          if [ "$failed" -eq 1 ]; then
+            echo '' >> "$GITHUB_STEP_SUMMARY"
+            echo '**The gate failed.** A job above did not succeed.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
           echo "Every job succeeded or was skipped."

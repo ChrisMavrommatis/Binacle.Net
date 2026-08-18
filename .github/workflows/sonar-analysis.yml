@@ -20,6 +20,12 @@ on:
       - main
   workflow_dispatch:
 
+# One run per branch. A newer commit's analysis supersedes an older one - SonarCloud shows the latest state
+# of the branch, so a superseded run's numbers would only ever be overwritten.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   analyze:
     name: Analyse and publish

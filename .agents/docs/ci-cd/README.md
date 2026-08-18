@@ -1,6 +1,6 @@
 ---
 id: ci-cd
-description: CI/CD — the seven GitHub Actions workflows in .github/workflows and the eight shared actions in .github/actions, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
+description: CI/CD — the seven GitHub Actions workflows in .github/workflows and the nine shared actions in .github/actions, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
 verified: 2026-08-18
 check: The workflow table matches the files in .github/workflows and the action table matches .github/actions; the vars/secrets tables match every ${{ vars.* }} and ${{ secrets.* }} reference in them; the pinned just version and runner labels still match; the SHAs named as living only in .github/actions still appear in no workflow file
 also_update:
@@ -14,7 +14,7 @@ paths:
 
 # CI/CD
 
-Seven workflows in `.github/workflows/`, over eight shared actions in `.github/actions/`. They gate a pull
+Seven workflows in `.github/workflows/`, over nine shared actions in `.github/actions/`. They gate a pull
 request, analyse it, release the Docker image, and deploy the two Jekyll sites. This doc covers what runs,
 when, and the conventions every one of them follows. The release pipeline has its own page
 (`$ci-cd/release-pipeline`) because it is six jobs with an ordering that matters.
@@ -32,7 +32,7 @@ described in `$tooling`. Nothing about a recipe's behaviour is repeated here.
 
 | Workflow | Trigger | What it does |
 |---|---|---|
-| `pull-request.yml` | `pull_request` | The gate. Works out whether anything outside guidance and the two sites changed, then runs the test suite and an image build if it did. `gate` reports either way — see below |
+| `pull-request.yml` | `pull_request` | The gate. Works out whether anything outside guidance and the two sites changed, then runs the test suite, an image build and `actionlint` if it did. `gate` reports either way — see below |
 | `shared-test-suite.yml` | `workflow_dispatch`, `workflow_call` | Every test leaf, plus `just openapi lint`. One job so setup and build happen once; one step per leaf so a red check names the suite. Postgres and Azurite run as job services, one ServiceModule step per storage backend. Called by the release pipeline as its "this commit passed CI" gate, so the release gets the lint too |
 | `sonar-analysis.yml` | `push` on `main`, `workflow_dispatch` | Build plus `just coverage all sonar` between `Sonar begin`/`Sonar end`, published to SonarCloud. **On merge, not on a schedule** — a nightly run re-analyses a commit nothing changed and reports the same numbers |
 | `release-docker-image.yml` | `push` on tags `v[0-9]*` | The release pipeline — check the changelog section, run the suite, build and push to GHCR, smoke it there, copy to Docker Hub, create the GitHub release. See `$ci-cd/release-pipeline` |
@@ -58,10 +58,11 @@ suite with a Postgres and an Azurite container. The obvious fix is the trap abov
 
 - **`changes`** always runs, filters nothing, and takes seconds. It diffs the branch against its merge base and
   outputs whether anything outside guidance and the sites moved.
-- **`test-suite` and `image`** carry `needs: changes` and an `if:` on that output, so they are *skipped*, not
-  failed, when nothing relevant changed.
-- **`gate`** carries `needs:` on all three and `if: always()`, and passes only if every one of them succeeded
-  or was skipped.
+- **`test-suite`, `image` and `workflows`** carry `needs: changes` and an `if:` on that output, so they are
+  *skipped*, not failed, when nothing relevant changed.
+- **`gate`** carries `needs:` on all four and `if: always()`, and passes only if every one of them succeeded
+  or was skipped. It writes the job-by-job table to the run summary, so a red gate says which job did it
+  without anyone opening a log.
 
 **Get the `always()` condition right or the gate is decoration.** A bare `if: always()` with no result check
 passes while its dependencies are red — a required check that can never fail. The step reads each
@@ -95,11 +96,70 @@ and a failed deploy can be re-run from the Actions UI without rebuilding. Nothin
 jobs, because the build produces nothing that gets served — App Platform builds the site itself, and the build
 job exists to fail here rather than there.
 
-**The `build` job also runs `just links <site>`**, because a site with forty dead links builds perfectly — that
-is the failure a build cannot see. It runs there rather than in `deploy` so a dead link stops the deploy
-instead of being found after it. **It is the offline check, never `just links external`**: the absolute URLs on
-every page point at where that page *will* live, so at this moment they 404 on every page the run is about to
-create. `external` is a manual tool, not a gate — see `$commands`.
+**The `build` job also runs `just check links <site>`**, because a site with forty dead links builds
+perfectly — that is the failure a build cannot see. It runs there rather than in `deploy`, so a dead link stops
+the deploy instead of being found after it. **It is the offline check, never `links-external`**: the absolute
+URLs on every page point at where that page *will* live, so at this moment they 404 on every page the run is
+about to create. The external run is a manual tool, not a gate — see `$commands` and `$ci-cd/decisions` D16.
+
+## Concurrency, and where cancelling is wrong
+
+**Every entry point declares a `concurrency` group; no `shared-` workflow does.** A called workflow runs inside
+its caller's run, so a group of its own would have it queue behind the caller that is waiting for it.
+
+| Workflow | Group | `cancel-in-progress` |
+|---|---|---|
+| `pull-request.yml` | `${{ github.workflow }}-${{ github.ref }}` | **true** |
+| `sonar-analysis.yml` | `${{ github.workflow }}-${{ github.ref }}` | **true** |
+| `release-docker-image.yml` | `${{ github.workflow }}-${{ github.ref }}` | **false** |
+| `deploy-docs-site.yml` | `${{ github.workflow }}` | **false** |
+| `deploy-web-site.yml` | `${{ github.workflow }}` | **false** |
+
+**Cancelling is right for the first two and wrong for the last three, and the difference is whether a half-done
+run leaves anything behind.** A cancelled pull request run leaves nothing — a newer push supersedes it and
+nobody was going to read the old result. A cancelled Sonar run is the same: SonarCloud shows the branch's
+latest state, so the superseded numbers were going to be overwritten anyway.
+
+**A cancelled release or deploy leaves wreckage.** Stopped between `build` and `publish`, the release has a
+staged image on GHCR that nothing copies, or a half-written set of moving tags on Docker Hub. A stopped deploy
+leaves App Platform mid-rollout with no marker tag, so the live site maps back to no commit. Those queue
+instead.
+
+**`github.ref` is what makes the key specific** and it differs per event: `refs/pull/<n>/merge` on a pull
+request, `refs/heads/main` on a merge, `refs/tags/<tag>` on a release. The two deploys leave it out on purpose
+— they are `workflow_dispatch` from any branch, and two deploys of the same site must not run at once whichever
+branch fired them.
+
+## What the run page says without opening a log
+
+**Two jobs write to `$GITHUB_STEP_SUMMARY`**, which is a plain markdown append with no wiring — no job output
+to declare, no step to consume it.
+
+- **`gate`** writes the job-by-job result table. On a red gate that names the job that did it; on a green one it
+  shows what was skipped, which is how you tell "nothing relevant changed" from "the suite ran".
+- **The release `publish` job** writes the digest and every tag it landed under. That is the answer to "what
+  did this release ship", and it is otherwise a `docker buildx` line inside a log.
+
+**This is the reason there are no job outputs for either.** An output is read by another job; a summary is read
+by a person. Adding an output that nothing consumes is plumbing for its own sake.
+
+## Naming
+
+**Files.** `<verb>-<object>.yml` for an entry point — `release-docker-image.yml`, `deploy-docs-site.yml`.
+`shared-<noun>.yml` for one that something else calls — `shared-test-suite.yml`, `shared-smoke-image.yml`.
+`pull-request.yml` is the one exception, named for the event it gates rather than for an action, because the
+required check then reads `Pull Request / Gate`.
+
+**Workflow `name:`** is the sidebar string, so it is where the grouping is actually visible. Entry points get a
+plain name; shared ones get one prefix, consistently — `Shared / Test Suite`, `Shared / Smoke Image`.
+
+**Job `name:`.** A called workflow reports as `<caller workflow> / <caller job> / <job in the callee>`, and
+that whole string is what a reader sees on a red check and what branch protection matches. **Keep every half
+short**, or the required check name becomes unreadable at exactly the moment somebody needs to read it.
+
+**Steps.** One shape across every file, rather than a per-workflow style: `Setup - <tool>`,
+`Install - <tool>`, `Build - <thing>`, `Check - <thing>`, `Lint - <thing>`, `Test - <leaf>`,
+`Smoke - <profile>`, `Deploy to <target>`.
 
 ## Conventions every workflow follows
 
@@ -132,7 +192,7 @@ create. `external` is a manual tool, not a gate — see `$commands`.
   `container-structure-test` one was taken from the binary in use because upstream publishes none.
 
   **For the first two there is no maintained action to use.** lychee has one, and is installed this way anyway:
-  the action runs lychee itself from YAML arguments, so the check would stop being `just links <site>` and CI
+  the action runs lychee itself from YAML arguments, so the check would stop being `just check links <site>` and CI
   would configure it separately from a laptop. **A step calls a recipe** — that convention is the stronger one,
   and it is what keeps "green in CI" and "green here" the same claim.
 - **`permissions:` is declared per job**, least privilege. `contents: read` almost everywhere; the release job
@@ -155,7 +215,7 @@ create. `external` is a manual tool, not a gate — see `$commands`.
 
 ## The shared actions in `.github/actions/`
 
-**Eight composite actions, and the reason they are actions rather than workflows.** A composite action is a run
+**Nine composite actions, and the reason they are actions rather than workflows.** A composite action is a run
 of steps inside somebody else's job. It never appears in the Actions tab and cannot be run on its own — which
 is what makes it the right home for a repeated step sequence. A **reusable workflow** brings its own job, so it
 is the only option when the shared thing needs its own runner or service containers. That is the whole test:
@@ -170,6 +230,7 @@ is the only option when the shared thing needs its own runner or service contain
 | `install-container-structure-test` | `shared-smoke-image` | The binary, curled and pinned by version and SHA-256 |
 | `install-hurl` | `shared-smoke-image` | The same, and it carries the `libxml2` note that explains its caller's runner pin |
 | `install-lychee` | both deploy workflows | The same. The musl build, so it links nothing from the runner |
+| `install-actionlint` | `pull-request` | The same, for the workflow linter |
 | `build-jekyll-site` | both deploy workflows | The toolchain and `just build <site>`. Takes the site's name and its directory, which are two inputs because they are two things. It does not deploy |
 
 **A `setup-` action installs a toolchain and stops there.** Neither `setup-dotnet` nor `setup-node` installs
@@ -188,6 +249,16 @@ it buys nothing. Two things it costs, though, and both matter more: the marker t
 to the `contents: write` that allows it, and the provider is named where you would look for it. Moving off
 DigitalOcean is then an edit to one step in each of two workflows, not to the inside of something called
 "deploy site".
+
+**`actionlint` does not cover these files, and there is no flag that makes it.** Hand it an `action.yml` and it
+reports `"jobs" section is missing` — it treats every input as a workflow. What it *does* check from the
+caller's side is their **inputs**: a missing required one or a misspelled name is reported against the `uses:`
+line, naming the action and listing what it accepts.
+
+**What is left unchecked is their shell — 38 lines**, against 132 lines in the workflows that get actionlint
+and shellcheck. Four of the five blocks are the near-identical `install-*` download-and-checksum scripts. The
+gap is small and it is real; closing it means extracting `runs.steps[].run` and piping it to shellcheck, which
+is a tool to build rather than one to install.
 
 **`setup-` wraps an upstream action; `install-` curls a pinned binary.** The prefix is the distinction, and it
 is the one that matters when something breaks: a `setup-` failure is somebody else's action, an `install-`
