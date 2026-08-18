@@ -1,0 +1,17 @@
+name: Setup Node
+description: Install Node and restore the npm cache. Does not install packages - the caller runs `npm ci`.
+
+inputs:
+  node-version:
+    description: Node major version.
+    required: false
+    default: '22'
+
+runs:
+  using: composite
+  steps:
+    - name: Install Node
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm

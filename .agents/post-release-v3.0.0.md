@@ -104,7 +104,7 @@ Rewritten 2026-08-14, when the release scope was reset.
       passing the published command, and a floor pointing at it sent every reader at an image that fails.
       **`SECURITY.md`, `README.md`, `tooling/README.md` and `tooling/image.just` all read `3.0.0`**, and the
       maintainer's call was that no public surface names a beta image at all - so beta 2 is not named as
-      history either. `smoke-image.yml`'s dispatch-input example went with them.
+      history either. `shared-smoke-image.yml`'s dispatch-input example went with them.
 
       **One surface is left and it is the docs-site worked example**, which quotes real output and cannot be
       cut until `3.0.0` exists. It is in the release plan's docs-deploy checklist, not here - it needs a

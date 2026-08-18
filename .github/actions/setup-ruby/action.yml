@@ -1,0 +1,24 @@
+name: Setup Ruby
+description: Install Ruby and the site's gems. Unlike the other setup actions this one does install packages -
+  see `bundler-cache` below.
+
+inputs:
+  working-directory:
+    description: Directory holding the Gemfile - the site, not the repository root.
+    required: true
+  ruby-version:
+    description: Ruby version.
+    required: false
+    default: '3.4'
+
+runs:
+  using: composite
+  steps:
+    # bundler-cache is one upstream flag that installs the gems and caches them off Gemfile.lock. Splitting it
+    # means turning it off and hand-rolling both halves, which is the worse trade.
+    - name: Install Ruby and the gems
+      uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+      with:
+        ruby-version: ${{ inputs.ruby-version }}
+        bundler-cache: true
+        working-directory: ${{ inputs.working-directory }}

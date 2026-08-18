@@ -148,6 +148,28 @@ Nothing outside hurl ever sees those libraries, which is the point - an old libx
 would be a real problem. Every other distro takes the plain binary and needs none of this, CI runners included
 as long as they stay on noble.
 
+### lychee
+
+Only needed for `just links`, which checks the links in a built site. Same shape as the smoke tools - one
+static binary in `~/.local/bin`, pinned rather than `latest`. The musl build is deliberate: it links nothing
+from the system, which is the whole class of problem the hurl section above describes.
+
+```bash
+# lychee 0.24.2 - checks the links in artifacts/docs and artifacts/web
+curl -fsSL -o /tmp/lychee.tar.gz \
+  https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-musl.tar.gz
+tar xzf /tmp/lychee.tar.gz -C /tmp
+install -m0755 /tmp/lychee-x86_64-unknown-linux-musl/lychee ~/.local/bin/lychee
+
+lychee --version
+```
+
+Upstream publishes a `.sha256` beside every asset, so the download can be checked before it is installed:
+
+```bash
+curl -fsSL https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-musl.tar.gz.sha256
+```
+
 ### cosign
 
 Only needed for `just image verify`, which checks a published image's signature. Same shape as the smoke tools

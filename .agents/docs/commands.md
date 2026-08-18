@@ -2,7 +2,7 @@
 id: commands
 description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
 verified: 2026-08-17
-check: Test leaves match tooling/tests.just; coverage recipes match tooling/coverage.just; openapi recipes match tooling/openapi.just; agents recipes match tooling/agents.just; regen recipes match tooling/regen.just; serve recipes match tooling/serve.just; smoke recipes match tooling/smoke.just; install/assets match the root justfile; aliases and scripts match tooling/*.sh; compose service list matches tooling/serve.services.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
+check: Test leaves match tooling/tests.just; coverage recipes match tooling/coverage.just; openapi recipes match tooling/openapi.just; agents recipes match tooling/agents.just; regen recipes match tooling/regen.just; serve recipes match tooling/serve.just; smoke recipes match tooling/smoke.just; build recipes match tooling/build.just; install/assets match the root justfile; aliases and scripts match tooling/*.sh; compose service list matches tooling/serve.services.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
 paths:
   - "justfile"
   - "tooling/**"
@@ -257,11 +257,13 @@ Builds (or re-attaches to) a tmux session named `binacle` with windows `api`, `d
 `bench_1`/`bench_2`/`bench_3`. Each pane is pre-`cd`'d to the right folder but runs nothing automatically — it's a
 staging layout for the `just` recipes and the remaining `tooling/*.sh` scripts. Requires `tmux`.
 
-## Build (Docker image)
+## Build
 
 ```bash
 just build publish                     # dotnet publish -> artifacts/binacle-net
 just build image [version]             # publish, then docker build -t binacle-net:<version> (default local)
+just build docs                        # the documentation site -> artifacts/docs
+just build web                         # the marketing site -> artifacts/web
 ```
 
 `image` always re-publishes first — `docker build` copies whatever is in `artifacts/binacle-net`, so skipping the
@@ -269,6 +271,32 @@ publish is how a stale image gets tagged. The version becomes both the image tag
 the container, which is what the running app reports.
 
 Then run it with `just image up`, which prepares the bind-mounted folders first.
+
+`docs` and `web` are the build half of `just serve docs` / `just serve web` — same site, built once instead of
+served and watched. Three steps in a fixed order: copy the assets, run webpack over `_js/`, then
+`jekyll build` with `_config.yml,_config.prod.yml`. **Skipping any of them still produces a site**, just one
+with no scripts and no logo, because `js/`, `lib/` and `media/` are gitignored and filled by the first two
+steps. The prod config overrides the three values that differ off localhost: the site url, the api url and the
+analytics container.
+
+## Links
+
+```bash
+just links all                         # internal links in both built sites
+just links docs                        # one of them
+just links external docs               # every link, other people's servers included
+```
+
+Needs `lychee` (pinned, installed from `DEVELOPMENT.md` like the smoke tools) and needs the site built first —
+the recipe stops with `No artifacts/docs` rather than checking nothing and passing. It reads the built output
+because a source `href` is still Liquid at that point.
+
+The first three pass `--offline`, so they check only links that resolve inside the site — the ones a renamed
+page breaks. They answer in about a fifth of a second for both sites together. `external` makes a real request
+per unique URL, takes ten seconds, and can fail on somebody else's outage, which is why it is a separate recipe
+and not a flag on the others. `tooling/lychee.toml`, named by the recipes with `--config`, holds the URLs it
+must never check — the `localhost` samples in the quickstart pages, which are correct on the page and
+unreachable from anywhere else.
 
 ## JS Packages (npm workspaces at root)
 

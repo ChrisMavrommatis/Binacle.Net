@@ -80,7 +80,7 @@ Building for a platform proves nothing about running on it. Three ways, best las
    genuinely executes the arm64 binary, so it catches a broken publish or a missing native dependency. It does
    not tell you anything about performance, and emulation occasionally behaves differently from hardware.
 3. **A native ARM runner - do this one.** `ubuntu-24.04-arm` is GitHub-hosted and free for public
-   repositories. Real hardware, no emulation, and it needs almost no new work: **`smoke-image.yml` already does
+   repositories. Real hardware, no emulation, and it needs almost no new work: **`shared-smoke-image.yml` already does
    the whole job**, so turning its `runs-on` into a matrix over `[ubuntu-24.04, ubuntu-24.04-arm]` gives you
    the full structure-plus-five-profiles suite on both architectures. Docker pulls the matching variant from
    the manifest list automatically on each runner.

@@ -14,7 +14,9 @@ module.exports = (env, argv) => {
 		output: {
 			filename: '[name].js',
 			path: path.resolve(__dirname, dest),
-			clean: true,
+			// Watch mode shares this directory with a running jekyll: deleting a file it has already
+			// listed makes its next File.stat raise ENOENT and kills the serve.
+			clean: production,
 		},
 		resolve: {
 			extensions: ['.ts', '.js', '.json']

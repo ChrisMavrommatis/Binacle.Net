@@ -9,10 +9,20 @@
 name: Sonar Analysis
 
 on:
+  # On merge, so every analysis sits on a real commit and the rolling 30-day new-code window is fed
+  # continuously rather than in jumps. Deliberately not a schedule - a nightly run re-analyses a commit
+  # nothing changed and reports the same numbers, which teaches everyone the run means nothing.
+  #
+  # Not on pull_request either, yet: the coverage condition is red before anyone writes a line, and a gate
+  # like that gets waived within a week.
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   analyze:
+    name: Analyse and publish
     runs-on: ubuntu-latest
     # Full build plus every suite under coverage, then the upload. The slowest workflow here.
     timeout-minutes: 45
@@ -20,7 +30,8 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # Sonar needs full history to tell new code from old. A shallow clone makes everything look new.
           fetch-depth: 0
@@ -32,18 +43,22 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      - name: Setup - just
+        uses: ./.github/actions/setup-just
+
+      - name: Setup - .NET
+        uses: ./.github/actions/setup-dotnet
         with:
           dotnet-version: ${{ vars.DONET_VERSION }}
 
-      - name: Setup Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: 22
-          cache: npm
+      - name: Setup - Node
+        uses: ./.github/actions/setup-node
 
-      # Analyzers and NuGet packages are stable between runs — cache to skip the re-download.
+      - name: Install npm packages
+        run: npm ci --ignore-scripts
+
+      # Only the analyzer cache is here - the NuGet one comes with the .NET setup above. Analyzers are stable
+      # between runs, so caching skips the re-download.
       - name: Cache Sonar analyzers
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -51,33 +66,20 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Cache NuGet packages
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '.config/dotnet-tools.json') }}
-          restore-keys: ${{ runner.os }}-nuget-
-
-      # 1.x range: ubuntu's apt ships a just too old to parse this repo's module files.
-      - name: Setup just
-        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
-        with:
-          just-version: '^1.45'
-
       - name: Restore tools
         run: dotnet tool restore
 
-      # --ignore-scripts stops a dependency running arbitrary code at install time. See run-tests.yml.
-      - name: Install npm packages
-        run: npm ci --ignore-scripts
-
+      # Every interpolated value goes through env rather than into the command line, so nothing is pasted into
+      # a shell it could change the meaning of.
       - name: Sonar begin
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+          SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
         run: |
           dotnet dotnet-sonarscanner begin \
-            /k:"${{ vars.SONAR_PROJECT_KEY }}" \
-            /o:"${{ vars.SONAR_ORGANIZATION }}" \
+            /k:"$SONAR_PROJECT_KEY" \
+            /o:"$SONAR_ORGANIZATION" \
             /d:sonar.token="$SONAR_TOKEN" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /s:"$GITHUB_WORKSPACE/tooling/sonar-analysis.xml"

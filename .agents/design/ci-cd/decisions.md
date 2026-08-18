@@ -2,7 +2,7 @@
 id: ci-cd/decisions
 description: CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, and the open questions about the PR gate and supply-chain attestation.
 verified: 2026-08-17
-check: Decisions still match .github/workflows/*.yml and tooling/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against tooling/changelog.just, D6 against smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe, D14's STAGING_IMAGE against release-docker-image.yml, D15's identity regexp against SECURITY.md and tooling/image.just
+check: Decisions still match .github/workflows/*.yml and tooling/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against tooling/changelog.just, D6 against shared-smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe, D14's STAGING_IMAGE against release-docker-image.yml, D15's identity regexp against SECURITY.md and tooling/image.just
 paths:
   - ".github/workflows/**"
 ---
@@ -141,7 +141,7 @@ credential and nothing to rotate. Keeping Docker Hub free of anything unsmoked o
 registry buys, and it does that without adding a secret anywhere.
 
 **The package is private, and nothing in the pipeline minds.** Both jobs that reach GHCR log in with
-`GITHUB_TOKEN` - `build` to push and `publish` to read the manifest it copies - and `smoke-image.yml` logs in
+`GITHUB_TOKEN` - `build` to push and `publish` to read the manifest it copies - and `shared-smoke-image.yml` logs in
 the same way before pulling the staging tag. Public was only ever load-bearing for readers outside the
 workflow, and there are none left. Private also removes the last public pointer at GHCR that this repo does
 not control: the package's own page, which advertises a `docker pull ghcr.io/...` line.
@@ -189,7 +189,7 @@ there is exactly one `Dockerfile`, at the repo root.
 What legitimately stays a variable is a value with **no** home in the repo: the SDK version, the Docker Hub
 coordinates, the Sonar project key.
 
-### D6 — `smoke-image.yml` pins `ubuntu-24.04`, everything else takes `ubuntu-latest`
+### D6 — `shared-smoke-image.yml` pins `ubuntu-24.04`, everything else takes `ubuntu-latest`
 
 **Why:** hurl links `libxml2.so.2`. Ubuntu 26.04 ships only `libxml2.so.16` and carries no compat package, so
 hurl dies there with a missing-library error that reads like a hurl bug rather than a distro change.
@@ -242,7 +242,7 @@ up a JDK.
 ignores `sonar-project.properties`, so that XML is the file form it reads, and `/s:` needs an absolute path.
 Only the key, org, token and host stay in the YAML.
 
-### D9 — the Postgres service in `run-tests.yml` carries no password
+### D9 — the Postgres service in `shared-test-suite.yml` carries no password
 
 `POSTGRES_HOST_AUTH_METHOD: trust`, and no `POSTGRES_PASSWORD`.
 
@@ -384,6 +384,31 @@ cross-registry `imagetools create` of that index came out on the digest it went 
 **What this obliges.** Users have no way to verify what they are not told about. Publishing signed images
 without a documented `cosign verify` invocation, including the certificate identity and OIDC issuer to match
 against, is decoration. That page is owed and is not written yet.
+
+### D16 — lychee is installed as a pinned binary, not through its own action
+
+`.github/actions/install-lychee` curls the release and checks its SHA-256, and the workflow step is
+`just check links <site>`. **`lycheeverse/lychee-action` exists and is maintained, and was still not used.**
+
+**Why:** the action runs lychee itself from `args:` in YAML. The flags that decide what the check *is* —
+`--offline`, `--root-dir`, `--config` — would then live in the workflow as well as in `tooling/check.just`, and
+the two would drift. `just check links docs` on a laptop and the CI step would stop being the same check while
+continuing to look like it. **This is D-nothing-new: it is the first convention in `$ci-cd`** — a step calls a
+recipe — applied where the obvious answer pointed the other way.
+
+**What it costs:** about twenty lines of curl and checksum, copied from `install-hurl`, and lychee's version
+now lives in two places (that action and `DEVELOPMENT.md`) rather than being bumped by Dependabot. That is the
+same trade already accepted for `hurl` and `container-structure-test`, and the same watch item applies.
+
+**Where the action would win, if it is ever wanted:** a scheduled external run. `just check links-external` is
+deliberately not a gate — it reports on other people's servers — and the useful shape for it is a monthly run
+that opens an issue, which the action supports directly and a `run:` step does not. Different job, different
+tool; that would be an addition, not a reversal of this.
+
+**The check is `--offline` in CI, and that is not a preference either.** Every page carries a `canonical` and
+an `og:url` pointing at where it *will* live. Run externally from the build job, they 404 on every page the
+deploy is about to create — 35 of 36 failures on the first real run, all of them self-references. A gate red
+for that reason before anyone writes a line is a gate people learn to ignore.
 
 ## Open
 

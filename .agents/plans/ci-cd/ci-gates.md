@@ -6,7 +6,14 @@ paths:
 
 # CI - make the PR gate mean something
 
-**Status:** Not started. Folded on 2026-07-28 from `ci-docker-image-gate`,
+**Status:** **Gate 1 landed on 2026-08-18, with the workflow shape and the `gate` job.**
+`pull-request.yml` runs `changes` -> (`test-suite`, `image`) -> `gate`, `shared-test-suite.yml` lost its
+`pull_request` trigger now that a caller exists, and `release-docker-image.yml` was not touched.
+**Branch protection has not been updated and must be** - the one name to require is `Pull Request / Gate`.
+**Gates 2 and 3 are what is left**, and both are deferred rather than ready: gate 2 waits on the all-modules
+integration tests, gate 3 on the UI test harness that would make a coverage floor honest.
+
+Folded on 2026-07-28 from `ci-docker-image-gate`,
 `ci-all-modules-integration-tests` and `ci-sonar-coverage-gate` - they share a trigger, a workflow and an
 ordering, so the shared parts were being written three times.
 
@@ -15,7 +22,7 @@ suites run core modules only, and Sonar runs when somebody remembers. Each gate 
 
 **Two gates moved out on 2026-08-07, and this file is back to the three it folded.** Linting the OpenAPI
 documents was one workflow step with a known answer, so it went out as a one-liner - and it shipped on
-2026-08-17 as a step in `run-tests.yml`. Smoking the image runs in the release workflow rather than on a PR, so
+2026-08-17 as a step in `shared-test-suite.yml`. Smoking the image runs in the release workflow rather than on a PR, so
 it moved to the release-pipeline work, which owned that file.
 Neither shared the checkout, the ordering or the runtime budget below - that is what made this file too big to
 finish in one sitting.
@@ -26,56 +33,88 @@ finish in one sitting.
   its own commands, and the release pipeline now builds through `just build publish` too. The wiring these
   gates used to wait on has landed, so the image and smoke gates would prove exactly what they claim to.
 - **One job or three? Answered - see the section below.** The gate becomes its own workflow that calls
-  `run-tests.yml`, rather than more steps inside it. The answer holds for all three gates, which is most of why
+  `shared-test-suite.yml`, rather than more steps inside it. The answer holds for all three gates, which is most of why
   these were folded into one file.
 - **Runtime is the shared budget.** The integration suite is already the long pole, and all-modules plus coverage
   both make it longer. Whatever ordering is chosen, know the total before adding the third gate.
 - **A gate that does not match what ships proves nothing.** That is the same failure in all three: the release
   Dockerfile arguments, the shipped module set, and the coverage floor all have to be the real ones.
 
-## The gate is its own workflow, not more steps in `run-tests.yml`
+## The gate is its own workflow, not more steps in `shared-test-suite.yml`
 
-**Decided 2026-08-17.** `run-tests.yml` is what the release workflow calls as its "this commit passed CI" gate,
+**Decided 2026-08-17.** `shared-test-suite.yml` is what the release workflow calls as its "this commit passed CI" gate,
 and it takes no inputs on purpose. **So every step added to that file is a step the release pays for.** The
 image build is the plain case: the release would build a throwaway image inside the gate and the real one two
 minutes later in its own build job, for nothing.
 
-The PR entry point therefore becomes a **new workflow that calls `run-tests.yml`**, and the release keeps
-calling `run-tests.yml` directly and gets exactly the suite.
+The PR entry point therefore becomes a **new workflow that calls `shared-test-suite.yml`**, and the release keeps
+calling `shared-test-suite.yml` directly and gets exactly the suite.
 
 - **The new workflow runs `on: pull_request`, with parallel jobs.**
   - **The architecture checks** - checkout, node, `npm ci`, nothing else. Under a minute, and no SDK.
-  - **The test suite** - `uses: ./.github/workflows/run-tests.yml`, unchanged.
+  - **The test suite** - `uses: ./.github/workflows/shared-test-suite.yml`, unchanged.
   - **The image build.** **The OpenAPI lint was going to sit beside it** - both need the API project built, so
-    one checkout and one restore would have covered both. It went into `run-tests.yml` as a plain step on
+    one checkout and one restore would have covered both. It went into `shared-test-suite.yml` as a plain step on
     2026-08-17 instead, at the maintainer's call, so the release gets it too. **That does not carry to the
     image build:** the reason the image must stay out of that file is a duplicated build, not a preference.
-- **`run-tests.yml` loses its `pull_request` trigger** and keeps `workflow_call` and `workflow_dispatch`.
-  Nothing else in it changes.
+- **`shared-test-suite.yml` loses its `pull_request` trigger.** It keeps `workflow_call` and
+  `workflow_dispatch`, and nothing else in it changes. **That trigger is still there on purpose** - the
+  restructure kept it because dropping it before a caller existed would have left pull requests with no gate at
+  all. **Removing it is this change's job, and it only becomes safe once the new workflow calls the file.**
 - **`release-docker-image.yml` is untouched.**
 
-**The names have to be reworked, and that is work rather than a rename.** `run-tests.yml` stops being the PR
-entry point, so its name no longer says what it is. And a called workflow reports as
-`<caller> / <job> / <job in the callee>`, which is the string a reader sees on a red check. **Name the whole
-set in one pass** - workflows and jobs together - rather than naming the new file and leaving the rest.
+**The naming rework landed with the restructure on 2026-08-17**, so what is left here is the new file's own
+name and its job names - not the whole set. A called workflow still reports as
+`<caller> / <job> / <job in the callee>`, which is the string a reader sees on a red check, so the new
+workflow's job names have to be chosen against that whole string rather than on their own.
 
 **Two traps.**
 
 - **Branch protection breaks quietly.** The required status check names change with the job names. A required
   check that no longer reports leaves every PR waiting on it forever, with nothing saying why. Update
   protection in the same sitting as the split.
-- **Setup is paid per job.** One job is exactly why `run-tests.yml` looks the way it does, and its header says
+- **Setup is paid per job.** One job is exactly why `shared-test-suite.yml` looks the way it does, and its header says
   so. Three jobs means three checkouts and two SDK setups. Wall clock still comes down, because the image build
   stops queueing behind the integration suite - **but measure it rather than assume it.**
 
 **What the release stops seeing** is the architecture checks. Everything on `main` went through the gate to get
 there, so that is a choice, not an oversight. Say it out loud in the workflow comment.
 
+### One `gate` job is the required check, not the jobs themselves
+
+**This changes the job list above, which is why it is here rather than beside it.** Two problems have the same
+answer.
+
+**The first is skipping.** Roughly two thirds of recent commits touch only agent guidance, the two sites or
+markdown - measured at 38 of the last 60 - and every one of them currently earns a full suite with a postgres
+and an azurite container. **The obvious fix is a trap:** `on: pull_request` with `paths-ignore` means the
+workflow does not trigger at all, so a required check never reports and the pull request waits on it forever.
+
+**The second is renaming.** Required check names are job names, so the naming rework above breaks branch
+protection by definition.
+
+**Both go away with a job that always runs and always reports.**
+
+- **`changes`** - always runs, no filter, a few seconds. Works out whether anything outside guidance and the
+  sites moved, and says so as an output.
+- **The expensive jobs** - `needs: changes`, with an `if:` on that output. They are *skipped* rather than
+  failed when nothing relevant changed.
+- **`gate`** - `needs:` all of them, `if: always()`. Fails if any dependency failed or was cancelled, passes if
+  every one succeeded or was skipped.
+
+**`gate` is the only name in branch protection.** It reports on every pull request whether the work ran or not,
+and the jobs underneath can be renamed and restructured freely afterwards - which retires the branch
+protection trap above rather than just working around it once.
+
+**Get the `if: always()` condition right or the gate is decoration.** A bare `if: always()` with no result check
+passes while its dependencies are red, which is a required check that can never fail. It has to read each
+dependency's result explicitly and treat only `success` and `skipped` as acceptable.
+
 ## Gate 1 - build the docker image on every PR
 
 The image is built in CI only when a release is published (`.github/workflows/release-docker-image.yml`). So a PR
 never proves the image still builds, and a break is found at release time - which is exactly what happened after
-the `Binacle.Geometry` extraction, where the image had not been built for the whole restructure. `run-tests.yml`
+the `Binacle.Geometry` extraction, where the image had not been built for the whole restructure. `shared-test-suite.yml`
 builds the solution and runs every suite on each PR; it does not build the image.
 
 - Add an image build step to the PR gate. Build only - no push, no login, no Docker Hub credentials on a PR.

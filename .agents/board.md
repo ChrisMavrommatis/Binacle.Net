@@ -247,15 +247,36 @@ since `service-azure` was folded into `service`. **Removal is an option nobody h
 
 | Plan | State | Waiting on |
 |---|---|---|
+| [ci-cd/workflow-restructure](plans/ci-cd/workflow-restructure.md) | ready - **state chosen by an agent, strike it if wrong** | - |
 | [ci-cd/ci-gates](plans/ci-cd/ci-gates.md) | **deferred** - gates 2 and 3 only | gate 2: the all-modules tests. gate 3: the UI harness |
 | [ci-cd/release-pipeline-rebuild](plans/ci-cd/release-pipeline-rebuild.md) | **nearly done** | one docs decision, held in the release plan |
 | [ci-cd/dockerhub-tag-immutability](plans/ci-cd/dockerhub-tag-immutability.md) | blocked until after v3.0.0 | a shipped release behind the rule |
 | [ci-cd/multi-arch-images](plans/ci-cd/multi-arch-images.md) | **not scheduled** | does anyone run it on ARM? |
 | [image-base-slimming](plans/image-base-slimming.md) | ready - **timing not decided** | - |
 
+**`workflow-restructure` is half done as of 2026-08-17**, and the split was the maintainer's call - one review
+at a time rather than all of it in one diff. **The restructure landed**: seven workflows over eight shared
+actions, the two sites built and link-checked before they deploy and tagged after, Sonar on merge to `main`,
+and every interpolated value moved out of a shell body. **The pull request gate landed on 2026-08-18**, which
+took the path filters with it. **What is left is three additions** - concurrency groups on the entry points,
+an `actionlint` step and job summaries.
+
+**Two follow-ups the landed half created.** Branch protection still names the old required check. The one name
+to require is `Pull Request / Gate`, and it is the last one that will need changing - everything under it can
+be renamed freely. And four pinned action SHAs moved into `.github/actions/`, where
+Dependabot's coverage is unconfirmed - one weekly run answers it, and if the answer is no they come back out.
+
+**It collides with the release's PR gate change, on the same files.** Both rename the workflow set and both
+change job names, which are the strings branch protection matches. **Whichever lands second redoes the other's
+naming and protection edits** - the plan states the trade rather than deciding it.
+
+**The path-filter half of that work is in `ci-gates` instead**, because it changes the PR gate's job list: one
+`gate` job becomes the only required check, which also retires the branch-protection trap that plan already
+names.
+
 **`ci-gates` lost gate 1 to v3.0.0 and the other two were deferred on 2026-08-14.** The image-build gate ships
 with the release's PR gate change, alongside the OpenAPI lint one-liner. **That change is now a new PR workflow
-that calls `run-tests.yml` rather than more steps inside it** - decided 2026-08-17, and the reason is that the
+that calls `shared-test-suite.yml` rather than more steps inside it** - decided 2026-08-17, and the reason is that the
 release calls that file as its gate and pays for everything in it. The plan holds the shape, the naming rework
 and the two traps.
 

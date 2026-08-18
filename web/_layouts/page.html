@@ -8,6 +8,9 @@
 
     {% include seo.html %}
     {% include links.html items=site.data.includes.links %}
+    {% unless page.demo %}
+    {% include prefetch.html items=site.data.includes.demo_scripts %}
+    {% endunless %}
     {% gtm_head site.gtm %}
 </head>
 <body class="{{ site.default_theme }}">
@@ -15,6 +18,9 @@
     {{ content }}
 
     {% include scripts.html items=site.data.includes.scripts_body_end %}
+    {% if page.demo %}
+    {% include scripts.html items=site.data.includes.demo_scripts %}
+    {% endif %}
     {% if page.scripts %}
     {% include scripts.html items=page.scripts %}
     {% endif %}

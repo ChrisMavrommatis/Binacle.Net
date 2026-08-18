@@ -1,0 +1,35 @@
+name: Build Jekyll site
+description: Build one of the two Jekyll sites as a pre-flight check. Deploying is the caller's job.
+
+inputs:
+  site:
+    description: The site's name - `docs` or `web`. Names the `just build` recipe.
+    required: true
+  directory:
+    description: The site's directory, holding its Gemfile. The same string as the name today; separate
+      because the sites may move under a parent directory.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup - just
+      uses: ./.github/actions/setup-just
+
+    - name: Setup - Node
+      uses: ./.github/actions/setup-node
+
+    - name: Install npm packages
+      shell: bash
+      run: npm ci --ignore-scripts
+
+    - name: Setup - Ruby
+      uses: ./.github/actions/setup-ruby
+      with:
+        working-directory: ${{ inputs.directory }}
+
+    - name: Build - site
+      shell: bash
+      env:
+        SITE: ${{ inputs.site }}
+      run: just build "$SITE"

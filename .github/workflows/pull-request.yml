@@ -1,0 +1,109 @@
+# The pull request gate. Four jobs:
+#
+#   changes -> test suite  -> gate
+#           -> image build ->
+#
+# `gate` is the only name branch protection should hold. It reports on every pull request, whether the work
+# below it ran or was skipped, so the jobs under it can be renamed and restructured without touching
+# protection - and a skipped job can never leave a pull request waiting forever on a check that never reports.
+#
+# The image build is here and not in the test suite because the release calls that file whole: a build step
+# there would build a throwaway image on every release, two minutes before the real one. Never make it a
+# conditional step instead - a gate the release does not exercise proves nothing.
+
+name: Pull Request
+
+on:
+  pull_request:
+
+jobs:
+  changes:
+    name: Work out what changed
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      code: ${{ steps.paths.outputs.code }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The three-dot diff below needs the merge base, which a shallow clone does not have.
+          fetch-depth: 0
+
+      # Three dots, not two: it asks what this branch changed since it left the base, not what the two tips
+      # differ by. With two dots, a commit landing on main reads as a change in every open pull request.
+      - name: List the changed paths
+        id: paths
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git diff --name-only "$BASE...$HEAD" | tee /tmp/changed.txt
+          if grep -qvE '^(\.agents/|docs/|web/)|\.md$' /tmp/changed.txt; then
+            echo 'code=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'code=false' >> "$GITHUB_OUTPUT"
+          fi
+
+  test-suite:
+    name: Tests
+    needs: changes
+    if: ${{ needs.changes.outputs.code == 'true' }}
+    uses: ./.github/workflows/shared-test-suite.yml
+    permissions:
+      contents: read
+
+  image:
+    name: Image build
+    needs: changes
+    if: ${{ needs.changes.outputs.code == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup - just
+        uses: ./.github/actions/setup-just
+
+      - name: Setup - .NET
+        uses: ./.github/actions/setup-dotnet
+        with:
+          dotnet-version: ${{ vars.DONET_VERSION }}
+
+      # The same recipe the release builds through, so this proves the release path rather than a recipe only
+      # a pull request uses. Build only - no login, no push, no registry credentials on a pull request.
+      - name: Build - image
+        run: just build image
+
+  gate:
+    name: Gate
+    needs: [ changes, test-suite, image ]
+    # Runs even when something above failed or was skipped - that is the point of it.
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+
+    steps:
+      # A bare `always()` with no result check passes while its dependencies are red, which is a required check
+      # that can never fail. Only success and skipped are acceptable here.
+      - name: Check every job above
+        env:
+          RESULTS: ${{ needs.changes.result }} ${{ needs.test-suite.result }} ${{ needs.image.result }}
+        run: |
+          set -euo pipefail
+          for result in $RESULTS; do
+            if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+              echo "A job this gate depends on reported '$result'."
+              exit 1
+            fi
+          done
+          echo "Every job succeeded or was skipped."

@@ -2,7 +2,7 @@
 id: "ci-cd/release-pipeline"
 description: "The release pipeline in release-docker-image.yml — six jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step every tag reaches with a prerelease narrowed to its immutable tag, and the CHANGELOG.md release body"
 verified: "2026-08-17"
-check: "The six jobs, their needs: edges and job outputs match release-docker-image.yml; no job carries a prerelease condition and the release job's !failure() note is still accurate; run-tests.yml and smoke-image.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased"
+check: "The six jobs, their needs: edges and job outputs match release-docker-image.yml; no job carries a prerelease condition and the release job's !failure() note is still accurate; shared-test-suite.yml and shared-smoke-image.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased"
 also_update:
   - ci-cd
   - tooling
@@ -23,7 +23,7 @@ git push origin v3.0.0
   |
   v  on: push: tags: 'v[0-9]*'
 notes     the CHANGELOG.md section this tag publishes exists and is not empty   (seconds)
-test      the whole suite plus the OpenAPI lint, by calling run-tests.yml       (minutes)
+test      the whole suite plus the OpenAPI lint, by calling shared-test-suite.yml       (minutes)
 build     just build publish, push the immutable tag to GHCR, capture the digest
 smoke     pull that digest back from GHCR, structure check + all five profiles
 publish   imagetools copy to Docker Hub - a prerelease gets its immutable tag only
@@ -49,7 +49,7 @@ stripped. `just changelog check <section>` fails if the section is missing or em
 This runs first, and everything waits on it. The alternative is finding out at the end, with the image already
 on Docker Hub and `latest` already moved.
 
-**`test`** — `uses: ./.github/workflows/run-tests.yml`, no inputs. Nothing guarantees a tag sits on a commit
+**`test`** — `uses: ./.github/workflows/shared-test-suite.yml`, no inputs. Nothing guarantees a tag sits on a commit
 that passed CI, because a tag can be pushed at anything; this is that guarantee. It runs after the notes gate
 rather than beside it, so a missing section is reported in seconds instead of after a full suite. It takes that
 file whole, so the release also gets its OpenAPI lint step.
@@ -62,7 +62,7 @@ the leading `v`. It ends by signing the pushed digest with cosign.
 
 Job outputs: `staging` (the full `ghcr.io/...:tag` the smoke job pulls), `version` and `digest`.
 
-**`smoke`** — `uses: ./.github/workflows/smoke-image.yml` with the `staging` output. It calls the same workflow
+**`smoke`** — `uses: ./.github/workflows/shared-smoke-image.yml` with the `staging` output. It calls the same workflow
 a maintainer runs by hand, rather than copying its steps, so the release path and a manual check are the same
 thing. See `$ci-cd` for that workflow's runner pin.
 

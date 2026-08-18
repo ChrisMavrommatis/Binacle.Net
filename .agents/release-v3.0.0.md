@@ -42,7 +42,7 @@ worst time to meet.
 | **Rate limiting owned by the ServiceModule** | The durable fix for the bug the two-guard transformer patches. Pulled in on 2026-08-14 at the maintainer's call. |
 | **Image verification** | The release advertises signing, SBOM and provenance. Today no user can check any of it. |
 | **The Docker Hub page** | It advertises 2.1.1 as latest. The tag is what makes it wrong rather than stale. |
-| **The PR gate change** | A new PR workflow calling `run-tests.yml`, plus the image build. Everything green on arrival. **The OpenAPI lint and the Spectral move landed separately on 2026-08-17** - the lint is a step in `run-tests.yml`, not a job in the new workflow. |
+| **The PR gate change** | A new PR workflow calling `shared-test-suite.yml`, plus the image build. Everything green on arrival. **The OpenAPI lint and the Spectral move landed separately on 2026-08-17** - the lint is a step in `shared-test-suite.yml`, not a job in the new workflow. |
 | **The client-generation page** | The spec is published and nobody knows they can generate a client from it. One docs page, and it applies to every version. |
 | **More ViPaq interop vectors** | Four rows of fixture data. Cheap, and the format froze in this release so they will not need redoing. |
 | **The compose stacks** | Pulled in on 2026-08-15, after the scope reset. Every decision is taken and the compose behaviour is tested, so it is one sitting with nothing left to figure out. |
@@ -124,7 +124,7 @@ decided. It is on the board.
 Run locally against Azurite: 111 passed, 1 skipped (the SQLite pragma test, which skips itself off its
 backend). Postgres re-run green alongside it.
 
-**It is no longer a hand-run.** `run-tests.yml` now brings up an Azurite service container and runs a third
+**It is no longer a hand-run.** `shared-test-suite.yml` now brings up an Azurite service container and runs a third
 ServiceModule step, so every PR exercises all three backends - which is what made this a gate item in the
 first place. The local runner is unchanged: `just test all` stays the set that needs nothing brought up, and
 a backend leg is still a deliberate `just test api-service-integration <backend>`.
@@ -329,17 +329,21 @@ tag, `latest` and `3.0` included, and those two are designed to move.
 **What is left is the image build**, and it lands green, which is the state a new gate wants - a check that is
 red on arrival teaches everyone to ignore it.
 
-**The gate becomes its own workflow calling `run-tests.yml`, rather than more steps inside it** - decided
+**The gate becomes its own workflow calling `shared-test-suite.yml`, rather than more steps inside it** - decided
 2026-08-17, and **[ci-gates](plans/ci-cd/ci-gates.md)** holds the shape, the naming rework and the two traps.
 It is what keeps the release from paying for a throwaway image build, so read that section before touching a
 workflow file.
 
 **The other two items came out of this bundle on 2026-08-17 and are done** - see the section below. The
-maintainer chose to put the lint in `run-tests.yml` as a plain step rather than hold it for the new workflow,
+maintainer chose to put the lint in `shared-test-suite.yml` as a plain step rather than hold it for the new workflow,
 so the release sees it too. That choice does not carry to the image build: the reason it must not go in that
 file is a duplicated build, not a preference.
 
-- [ ] **Build the image on every PR.** The step is `just build image` - publishes and builds with no push, no
+- [x] **Build the image on every PR - done 2026-08-18**, in `pull-request.yml` as the `image` job beside the
+      test suite call. **Branch protection still has to be pointed at `Pull Request / Gate`**, which is the
+      one required check now; until that happens the old entry reports nothing.
+
+      The step is `just build image` - publishes and builds with no push, no
       login, no `sudo`, nothing interactive. Today the image is built in CI only when a release is published,
       so a PR never proves the image still builds, and a break is found at release time. That is exactly what
       happened after the `Binacle.Geometry` extraction, where the image had not been built for the whole
@@ -348,13 +352,13 @@ file is a duplicated build, not a preference.
       build clean on 2026-08-17.
 
       **It must not cost a second image build on every release**, and the workflow split above is what stops
-      it. Inside `run-tests.yml` it would, because the release calls that file as its gate and takes it whole.
+      it. Inside `shared-test-suite.yml` it would, because the release calls that file as its gate and takes it whole.
       Never reach for a conditional step instead - that turns the gate back into something the release does
       not exercise.
 
 ### The OpenAPI lint and the Spectral move - done 2026-08-17
 
-- [x] **Lint the OpenAPI documents.** One step, `just openapi lint`, in `run-tests.yml` after `Build`. It
+- [x] **Lint the OpenAPI documents.** One step, `just openapi lint`, in `shared-test-suite.yml` after `Build`. It
       generates the documents itself and needs nothing brought up. The recipe now passes `--fail-severity=warn`,
       which was the whole item - Spectral exits 0 on warnings by default, so without it the step prints
       `No results with a severity of 'error' found!` and passes whatever the warnings say. It reads

@@ -1,0 +1,11 @@
+# Link checking config for the two Jekyll sites, named by the `just links` recipes with --config.
+#
+# lychee picks up a lychee.toml or a .lycheeignore from the working directory by itself. This file is not in
+# the working directory, so the recipe has to name it - the same arrangement as tooling/openapi.spectral.yaml.
+
+# Regular expressions, not globs. The sample URLs in the quickstart and swagger pages: what the reader types
+# after starting the container, so they are correct on the page and unreachable from anywhere else.
+exclude = [
+    "^http://localhost(:\\d+)?",
+    "^http://127\\.0\\.0\\.1(:\\d+)?",
+]

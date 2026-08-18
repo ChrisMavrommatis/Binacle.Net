@@ -59,7 +59,7 @@ backend leg.
 > `AZURESTORAGE_` / `POSTGRES_` / `SQLITE_CONNECTION_STRING` — the same keys the app reads, no test-only
 > mechanism. The backend and whether it came from an override are printed to the console on every run, so a
 > green run never hides which one it used. **CI runs the suite three times, one step per backend**
-> (`.github/workflows/run-tests.yml`), against a Postgres and an Azurite service container that stay up for the
+> (`.github/workflows/shared-test-suite.yml`), against a Postgres and an Azurite service container that stay up for the
 > whole job; Sonar coverage runs SQLite only. The defaults match the CI service containers, so CI sets no
 > connection string. Locally, `just test all` runs the SQLite leaf only — it is the set that needs nothing
 > brought up; the other two are a deliberate `just test api-service-integration <backend>` after

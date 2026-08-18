@@ -37,6 +37,9 @@ mod image 'tooling/image.just'
 # Smoke the built image: `just smoke all`, `just smoke test-structure`, `just smoke test <profile>`.
 mod smoke 'tooling/smoke.just'
 
+# Check what was built: `just check links` for both sites, `just check links <site>` for one.
+mod check 'tooling/check.just'
+
 # Two recipes rather than an `install` module: you want all of it on a fresh clone, and the only part worth
 # running on its own is the asset copy. It becomes a module when there is a third thing to install separately.
 

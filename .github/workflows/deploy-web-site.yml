@@ -1,0 +1,73 @@
+name: Deploy Web Site
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build the site
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build - web site
+        uses: ./.github/actions/build-jekyll-site
+        with:
+          site: web
+          directory: web
+
+      - name: Install - lychee
+        uses: ./.github/actions/install-lychee
+
+      # Offline: it checks the links that stay inside the site. The absolute ones point at pages this deploy
+      # has not published yet, so checking them here fails on every page the run is about to create.
+      - name: Check - links
+        run: just check links web
+
+  deploy:
+    name: Deploy the site
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Nothing here reads the repository - `app_name` makes App Platform deploy its own stored spec, and the
+    # action is fetched by GitHub rather than from the working copy. So no checkout, and no token scopes.
+    permissions: {}
+    environment:
+      name: binacle-net-web
+      url: https://www.binacle.net
+
+    steps:
+      - name: Deploy to DigitalOcean App Platform
+        uses: digitalocean/app_action/deploy@cc55bc9b848d25f9c1c9f831cf843fbab3fbfb15 # v2.0.11
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          app_name: binacle-net-web
+
+  tag:
+    name: Tag the deployed commit
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Push the marker tag
+        env:
+          # Must not start with `v` followed by a digit - the release workflow fires on `v[0-9]*`.
+          TAG_NAME: web-release-${{ github.run_number }}
+          COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$TAG_NAME" "$COMMIT"
+          git push origin "$TAG_NAME"

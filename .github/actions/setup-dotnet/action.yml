@@ -1,0 +1,23 @@
+name: Setup .NET
+description: Install the .NET SDK and restore the NuGet package cache.
+
+inputs:
+  dotnet-version:
+    description: SDK version. Pass `${{ vars.DONET_VERSION }}` - the vars context is not dependably available
+      inside a composite action, and an empty value installs a default SDK and looks like it worked.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Install the .NET SDK
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Restore the NuGet package cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '.config/dotnet-tools.json') }}
+        restore-keys: ${{ runner.os }}-nuget-

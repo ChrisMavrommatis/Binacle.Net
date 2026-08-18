@@ -34,6 +34,7 @@ jobs:
   # alternative is discovering it at the end - with the image already on Docker Hub and `latest` moved, and
   # no release to describe it. A grep costs seconds; that costs a bad release.
   notes:
+    name: Changelog notes gate
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -43,26 +44,30 @@ jobs:
       section: ${{ steps.section.outputs.name }}
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup just
-        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
-        with:
-          just-version: '^1.45'
+      - name: Setup - just
+        uses: ./.github/actions/setup-just
 
       # A beta publishes the in-progress section; a real release publishes its own. The heading is renamed
       # from [Unreleased] to the version as the last edit before the real tag.
+      # Interpolated values go through env rather than into the script body, so nothing is pasted into a
+      # shell it could change the meaning of. Same pattern in every run: block in this file.
       - name: Which section this tag publishes
         id: section
+        env:
+          TAG: ${{ github.ref_name }}
         run: |
-          TAG='${{ github.ref_name }}'
           case "$TAG" in
             *-*) echo "name=Unreleased" >> "$GITHUB_OUTPUT" ;;
             *)   echo "name=${TAG#v}"   >> "$GITHUB_OUTPUT" ;;
           esac
 
       - name: Check the section exists
-        run: just changelog check '${{ steps.section.outputs.name }}'
+        env:
+          SECTION: ${{ steps.section.outputs.name }}
+        run: just changelog check "$SECTION"
 
   # Nothing guarantees the tag sits on a commit that passed CI - you can tag anything. This is that guarantee,
   # and it reuses the PR workflow rather than restating the leaves.
@@ -70,12 +75,14 @@ jobs:
   # After the gate, not beside it: the gate is seconds and this is minutes, so a missing changelog section
   # should not cost a full suite run before it is reported.
   test:
+    name: Test suite
     needs: notes
-    uses: ./.github/workflows/run-tests.yml
+    uses: ./.github/workflows/shared-test-suite.yml
     permissions:
       contents: read
 
   build:
+    name: Build and push to GHCR
     needs: [ notes, test ]
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -92,18 +99,16 @@ jobs:
       digest: ${{ steps.push.outputs.digest }}
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      - name: Setup - .NET
+        uses: ./.github/actions/setup-dotnet
         with:
           dotnet-version: ${{ vars.DONET_VERSION }}
 
-      # 1.x range: ubuntu's apt ships a just too old to parse this repo's module files.
-      - name: Setup just
-        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
-        with:
-          just-version: '^1.45'
+      - name: Setup - just
+        uses: ./.github/actions/setup-just
 
       # Do not inline restore/publish here again - the recipe owns those flags.
       - name: Publish
@@ -126,7 +131,9 @@ jobs:
 
       - name: Assemble the staging reference
         id: ref
-        run: echo "staging=${STAGING_IMAGE}:${{ steps.meta.outputs.version }}" >> "$GITHUB_OUTPUT"
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: echo "staging=${STAGING_IMAGE}:${VERSION}" >> "$GITHUB_OUTPUT"
 
       # GITHUB_TOKEN is minted for this run and expires with it, so staging needs no stored credential.
       - name: Login to GHCR
@@ -174,11 +181,12 @@ jobs:
           TARGET: ${{ steps.ref.outputs.staging }}@${{ steps.push.outputs.digest }}
         run: cosign sign --yes "$TARGET"
 
-  # The gate. Calls smoke-image.yml rather than copying its steps, so the release path runs exactly what a
+  # The gate. Calls shared-smoke-image.yml rather than copying its steps, so the release path runs exactly what a
   # maintainer runs by hand. Red here means nothing reaches Docker Hub and no release is created.
   smoke:
+    name: Smoke the staged image
     needs: build
-    uses: ./.github/workflows/smoke-image.yml
+    uses: ./.github/workflows/shared-smoke-image.yml
     permissions:
       contents: read
       packages: read
@@ -195,6 +203,7 @@ jobs:
   #
   # No `contents` permission: this job never checks out.
   publish:
+    name: Copy to Docker Hub
     needs: [ build, smoke ]
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -275,6 +284,7 @@ jobs:
   # If any job above ever becomes conditional, this needs `if: !failure() && !cancelled()` - a skipped
   # dependency skips everything downstream, and a beta would silently get no release.
   release:
+    name: Create the GitHub release
     needs: [ notes, test, build, smoke, publish ]
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -282,12 +292,11 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup just
-        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
-        with:
-          just-version: '^1.45'
+      - name: Setup - just
+        uses: ./.github/actions/setup-just
 
       # The section was already proven to exist by the `notes` job, so this only formats and publishes it.
       # `extract` promotes the section's headings back to h2 - in the file they sit at h3, nested under the

@@ -17,10 +17,11 @@ session; see `.agents/README.md`.
 Jekyll site at `web/`. The public marketing and landing site for Binacle.Net.
 Built with Jekyll + webpack + TypeScript. Output goes to `../artifacts/web`.
 
-Run locally:
+Run locally, or build it once:
 
 ```bash
 just serve web   # jekyll serve (port 7196) + webpack watch, one Ctrl-C stops both
+just build web   # the same site built once, into artifacts/web
 ```
 
 ## Pages

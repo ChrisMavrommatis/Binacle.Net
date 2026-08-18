@@ -16,7 +16,9 @@ module.exports = (env, argv) => {
 		output: {
 			filename: '[name].js',
 			path: path.resolve(__dirname, dest),
-			clean: true,
+			// Watch mode shares this directory with a running jekyll: deleting a file it has already
+			// listed makes its next File.stat raise ENOENT and kills the serve.
+			clean: production,
 		},
 		resolve: {
 			extensions: ['.ts', '.js', '.json'],
@@ -42,6 +44,15 @@ module.exports = (env, argv) => {
 				automaticNameDelimiter: '-',
 				minSize: 0,
 				cacheGroups: {
+					// three ships as 3 pre-bundled modules, 566 KiB minified, no tree shaking.
+					// Own chunk so it stays cached when app code or alpine change.
+					three: {
+						test: /[\\/]node_modules[\\/]three[\\/]/,
+						name: 'three',
+						chunks: 'all',
+						enforce: true,
+						priority: 30, // higher than vendors
+					},
 					vendors: {
 						test: /[\\/]node_modules[\\/]/,
 						name: 'vendors',
@@ -65,6 +76,13 @@ module.exports = (env, argv) => {
 					},
 				},
 			},
+		},
+		performance: {
+			hints: production ? 'warning' : false,
+			maxAssetSize: 300 * 1024,
+			maxEntrypointSize: 300 * 1024,
+			// three is unavoidable on the demo pages. Budget everything else.
+			assetFilter: (asset) => asset.endsWith('.js') && !asset.startsWith('three'),
 		},
 		cache: {
 			type: 'filesystem',

@@ -6,7 +6,11 @@
 #
 # The structure check runs once rather than per profile because it reads the image, not a container.
 
-name: Smoke Image
+#
+# `shared-` because the release workflow calls it. The dispatch trigger below is the point of the file though -
+# smoking any published tag by hand is a maintainer tool, not an implementation detail of the release.
+
+name: Shared / Smoke Image
 
 on:
   workflow_dispatch:
@@ -26,6 +30,7 @@ on:
 
 jobs:
   smoke:
+    name: Smoke image
     # Pinned, NOT ubuntu-latest. hurl links libxml2.so.2 and Ubuntu 26.04 ships only libxml2.so.16 with no
     # compat package, so hurl dies there with what reads like a hurl bug (DEVELOPMENT.md has the workaround).
     runs-on: ubuntu-24.04
@@ -41,58 +46,20 @@ jobs:
       IMAGE: ${{ inputs.image }}
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # 1.x range: ubuntu's apt ships a just too old to parse this repo's module files.
-      - name: Setup just
-        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
-        with:
-          just-version: '^1.45'
+      - name: Setup - just
+        uses: ./.github/actions/setup-just
 
-      # One step per tool, each ending in its own version line, so the log says what is installed next to the
-      # thing that installed it. A red step names the tool instead of "smoke tools".
-      #
-      # Installed by curl from the official release rather than by an action, deliberately. There is no
-      # maintained action for either: the only hurl one is archived, neither upstream ships an action.yml, and
-      # a generic "install from a release" wrapper trades a readable curl for an unreadable dependency.
-      #
-      # Pinned by version AND by checksum, so a replaced release asset fails the build instead of running.
-      # Versions match DEVELOPMENT.md, so CI and a laptop get the same bytes. Not cached on purpose: a cache
-      # key can go stale against the version it is meant to pin.
-      #
-      # ~/.local/bin is on PATH for an interactive shell but not for later workflow steps, hence GITHUB_PATH.
-      - name: Install container-structure-test
-        env:
-          VERSION: v1.22.1
-          # Upstream publishes no checksum for this asset, so this one was taken from the binary that is
-          # actually in use. It cannot prove the first download was genuine; it does prove every later one
-          # matches it.
-          SHA256: fa35e89512a8978585f76cf41397956d2e3a30c62c2ad3fb857b1597074d14ca
-        run: |
-          set -euo pipefail
-          mkdir -p "$HOME/.local/bin"
-          curl -fsSL -o /tmp/cst \
-            "https://github.com/GoogleContainerTools/container-structure-test/releases/download/${VERSION}/container-structure-test-linux-amd64"
-          echo "${SHA256}  /tmp/cst" | sha256sum -c -
-          install -m0755 /tmp/cst "$HOME/.local/bin/container-structure-test"
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          "$HOME/.local/bin/container-structure-test" version
+      # One action per tool, each ending in its own version line, so a red step names the tool instead of
+      # "smoke tools". The versions, the checksums and why these are curled rather than actioned live in the
+      # two action files.
+      - name: Install - container-structure-test
+        uses: ./.github/actions/install-container-structure-test
 
-      - name: Install hurl
-        env:
-          VERSION: 8.0.1
-          # Published by upstream as hurl-<version>-x86_64-unknown-linux-gnu.tar.gz.sha256.
-          SHA256: cac7c4670d69444db120edb21fe06c97ba8c80dcc52279957c8dd18f05fb0c06
-        run: |
-          set -euo pipefail
-          mkdir -p "$HOME/.local/bin"
-          curl -fsSL -o /tmp/hurl.tar.gz \
-            "https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl-${VERSION}-x86_64-unknown-linux-gnu.tar.gz"
-          echo "${SHA256}  /tmp/hurl.tar.gz" | sha256sum -c -
-          tar xzf /tmp/hurl.tar.gz -C /tmp
-          install -m0755 "/tmp/hurl-${VERSION}-x86_64-unknown-linux-gnu/bin/hurl" "$HOME/.local/bin/hurl"
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          "$HOME/.local/bin/hurl" --version
+      - name: Install - hurl
+        uses: ./.github/actions/install-hurl
 
       - name: just version
         run: just --version

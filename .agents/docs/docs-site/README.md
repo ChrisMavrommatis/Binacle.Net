@@ -15,10 +15,11 @@ are reading). It is off limits from a coding session; see `.agents/README.md`.
 Jekyll site at `docs/`. The public API documentation for Binacle.Net users.
 Built with Jekyll + webpack + TypeScript. Output goes to `../artifacts/docs`.
 
-Run locally:
+Run locally, or build it once:
 
 ```bash
 just serve docs   # jekyll serve (port 7195) + webpack watch, one Ctrl-C stops both
+just build docs   # the same site built once, into artifacts/docs
 ```
 
 ## Content Structure

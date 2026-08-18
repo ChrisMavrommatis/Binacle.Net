@@ -1,21 +1,27 @@
-# Runs every test leaf on PR, plus the OpenAPI lint. One job so setup and build happen once; one step per leaf
-# so a red check names the suite. ServiceModule is duplicated steps per backend rather than a matrix - cheaper at this count, and
-# all three backends run here, so none of them ships on a hand-run.
+# Every test leaf plus the OpenAPI lint. One job so setup and build happen once; one step per leaf so a red
+# check names the suite. ServiceModule is duplicated steps per backend rather than a matrix - cheaper at this
+# count, and all three backends run here, so none of them ships on a hand-run.
+#
+# `shared-` because two workflows call this file - the pull request gate and the release. That does not make
+# it private: the dispatch trigger stays, so the whole suite can be run by hand against a branch.
+#
+# It takes no inputs, so both callers get the same run. Every step added here is a step the release pays for,
+# which is why the pull request's image build lives in its own workflow rather than in this one.
 #
 # DOTNET_TEST_ARGS is job-wide: CI builds the solution once and every leaf runs --no-build against it. Unset
 # on a laptop, where the same recipes do a plain `dotnet test`.
 
-name: Run Tests
+name: Shared / Test Suite
 
 on:
-  pull_request:
   workflow_dispatch:
   # Takes no inputs - the release workflow calls it as its "this commit passed CI" gate, and it needs the
   # same run a PR gets, not a variant of it.
   workflow_call:
 
 jobs:
-  test:
+  suite:
+    name: Test suite
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -66,34 +72,20 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      - name: Setup - just
+        uses: ./.github/actions/setup-just
+
+      - name: Setup - .NET
+        uses: ./.github/actions/setup-dotnet
         with:
           dotnet-version: ${{ vars.DONET_VERSION }}
 
-      - name: Setup Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: 22
-          cache: npm
+      - name: Setup - Node
+        uses: ./.github/actions/setup-node
 
-      # 1.x range: ubuntu's apt ships a just too old to parse this repo's module files.
-      - name: Setup just
-        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
-        with:
-          just-version: '^1.45'
-
-      - name: Cache NuGet packages
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '.config/dotnet-tools.json') }}
-          restore-keys: ${{ runner.os }}-nuget-
-
-      # --ignore-scripts stops a dependency running arbitrary code at install time. Nothing here needs the
-      # hooks: no workspace declares prepare/postinstall.
       - name: Install npm packages
         run: npm ci --ignore-scripts
 

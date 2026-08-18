@@ -1,22 +1,27 @@
 ---
 id: ci-cd
-description: CI/CD — the six GitHub Actions workflows in .github/workflows, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
-verified: 2026-08-17
-check: The workflow table matches the files in .github/workflows; the vars/secrets tables match every ${{ vars.* }} and ${{ secrets.* }} reference in them; the pinned just version and runner labels still match
+description: CI/CD — the seven GitHub Actions workflows in .github/workflows and the eight shared actions in .github/actions, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
+verified: 2026-08-18
+check: The workflow table matches the files in .github/workflows and the action table matches .github/actions; the vars/secrets tables match every ${{ vars.* }} and ${{ secrets.* }} reference in them; the pinned just version and runner labels still match; the SHAs named as living only in .github/actions still appear in no workflow file
 also_update:
   - ci-cd/release-pipeline
   - tooling
   - commands
 paths:
   - ".github/workflows/**"
+  - ".github/actions/**"
 ---
 
 # CI/CD
 
-Six workflows in `.github/workflows/`. They test a pull request, analyse it, release the Docker image, and
-deploy the two Jekyll sites. This doc covers what runs, when, and the conventions every one of them follows.
-The release pipeline has its own page (`$ci-cd/release-pipeline`) because it is six jobs with an ordering
-that matters.
+Seven workflows in `.github/workflows/`, over eight shared actions in `.github/actions/`. They gate a pull
+request, analyse it, release the Docker image, and deploy the two Jekyll sites. This doc covers what runs,
+when, and the conventions every one of them follows. The release pipeline has its own page
+(`$ci-cd/release-pipeline`) because it is six jobs with an ordering that matters.
+
+**Two of the seven carry a `shared-` prefix**, which means something else calls them — the release pipeline
+calls both, and the pull request gate calls the test suite. It does **not** mean private: both keep
+`workflow_dispatch`, so both can be run by hand. Nothing here is a workflow nobody can press.
 
 **Where the line with `tooling/` sits.** `tooling/` (`$tooling`) owns *what a command does* — the `just` modules
 for build, test, coverage, openapi and smoke. This slice owns *what runs on a runner and in what order*. A
@@ -27,21 +32,74 @@ described in `$tooling`. Nothing about a recipe's behaviour is repeated here.
 
 | Workflow | Trigger | What it does |
 |---|---|---|
-| `run-tests.yml` | `pull_request`, `workflow_dispatch`, `workflow_call` | Every test leaf, plus `just openapi lint`. One job so setup and build happen once; one step per leaf so a red check names the suite. Postgres and Azurite run as job services, one ServiceModule step per storage backend. Called by the release pipeline as its "this commit passed CI" gate, so the release gets the lint too |
-| `sonar-analysis.yml` | `workflow_dispatch` | Build plus `just coverage all sonar` between `Sonar begin`/`Sonar end`, published to SonarCloud |
+| `pull-request.yml` | `pull_request` | The gate. Works out whether anything outside guidance and the two sites changed, then runs the test suite and an image build if it did. `gate` reports either way — see below |
+| `shared-test-suite.yml` | `workflow_dispatch`, `workflow_call` | Every test leaf, plus `just openapi lint`. One job so setup and build happen once; one step per leaf so a red check names the suite. Postgres and Azurite run as job services, one ServiceModule step per storage backend. Called by the release pipeline as its "this commit passed CI" gate, so the release gets the lint too |
+| `sonar-analysis.yml` | `push` on `main`, `workflow_dispatch` | Build plus `just coverage all sonar` between `Sonar begin`/`Sonar end`, published to SonarCloud. **On merge, not on a schedule** — a nightly run re-analyses a commit nothing changed and reports the same numbers |
 | `release-docker-image.yml` | `push` on tags `v[0-9]*` | The release pipeline — check the changelog section, run the suite, build and push to GHCR, smoke it there, copy to Docker Hub, create the GitHub release. See `$ci-cd/release-pipeline` |
-| `smoke-image.yml` | `workflow_dispatch`, `workflow_call` | Pulls a published image and runs the structure check plus all five smoke profiles. Called by the release pipeline as its gate, or run by hand against any tag |
-| `deploy-binacle-net-docs.yml` | `workflow_dispatch` | Tags the commit `docs-release-<run>`, deploys repo-root `docs/` (`$docs-site`) to DigitalOcean App Platform |
-| `deploy-binacle-net-web.yml` | `workflow_dispatch` | Tags the commit `web-release-<run>`, deploys repo-root `web/` (`$web-site`) the same way |
+| `shared-smoke-image.yml` | `workflow_dispatch`, `workflow_call` | Pulls a published image and runs the structure check plus all five smoke profiles. Called by the release pipeline as its gate, or run by hand against any tag |
+| `deploy-docs-site.yml` | `workflow_dispatch` | Three jobs — build repo-root `docs/` (`$docs-site`) and check its links as a pre-flight, deploy it to DigitalOcean App Platform, tag the commit `docs-release-<run>` |
+| `deploy-web-site.yml` | `workflow_dispatch` | The same for repo-root `web/` (`$web-site`), tagging `web-release-<run>` |
 
-**Only two of the six run on their own.** `run-tests.yml` runs on every pull request and the release pipeline
-runs on a tag. The other four are `workflow_dispatch` — somebody presses a button. That is the current state,
-not an end state.
+**Three of the seven run on their own.** `pull-request.yml` on every pull request, `sonar-analysis.yml` on
+every merge to `main`, and the release pipeline on a tag. The other four are `workflow_dispatch` — somebody
+presses a button. That is the current state, not an end state.
+
+## `gate` is the only required check
+
+**Branch protection names `Pull Request / Gate` and nothing else.** Everything under it can be renamed, split
+or reordered without touching protection, which retires a trap rather than working around it: required check
+names *are* job names, so every rename silently breaks protection, and a required check that stops reporting
+leaves every pull request waiting on it forever with nothing saying why.
+
+**It also makes skipping safe, which is the whole reason the shape exists.** Roughly two thirds of recent
+commits touch only `.agents/`, the two sites or markdown — 38 of the last 60 — and each one used to earn a full
+suite with a Postgres and an Azurite container. The obvious fix is the trap above: `on: pull_request` with
+`paths-ignore` means the workflow never triggers, so the required check never reports. Instead:
+
+- **`changes`** always runs, filters nothing, and takes seconds. It diffs the branch against its merge base and
+  outputs whether anything outside guidance and the sites moved.
+- **`test-suite` and `image`** carry `needs: changes` and an `if:` on that output, so they are *skipped*, not
+  failed, when nothing relevant changed.
+- **`gate`** carries `needs:` on all three and `if: always()`, and passes only if every one of them succeeded
+  or was skipped.
+
+**Get the `always()` condition right or the gate is decoration.** A bare `if: always()` with no result check
+passes while its dependencies are red — a required check that can never fail. The step reads each
+dependency's `result` and treats only `success` and `skipped` as acceptable.
+
+**The diff is three-dot, `base...head`.** Two dots asks what the two tips differ by, so a commit landing on
+`main` would read as a change in every open pull request.
+
+**The image build is in this workflow rather than in the test suite** because the release calls that file whole
+and takes it as it is. A build step there would build a throwaway image on every release, two minutes before
+the real one. A conditional step is not the fix — that gives the release a gate it does not exercise.
+
+**What the release does not get is this workflow's own jobs.** Everything on `main` passed through the gate to
+reach it, so that is a choice rather than an oversight.
 
 **Three workflows push git tags, and the namespaces must not overlap.** The release pipeline fires on
 `v[0-9]*`; the two deploy workflows create `docs-release-<run>` and `web-release-<run>`. That is the whole
 reason the release trigger is not the looser `v*` — a deploy tag must never build and publish an image. Any new
 workflow that pushes a tag has to stay out of the `v<digit>` namespace.
+
+**The two marker tags are pushed after a successful deploy, not before it.** The tag exists so a live site maps
+back to a commit; pushed first, it claims that of a deploy that then failed. Each deploy workflow is three jobs
+in that order — **build, deploy, tag** — chained by `needs:`, which is the gate: a job with an unsatisfied
+`needs:` is skipped, so a failed build never reaches the deploy and a failed deploy never reaches the tag. No
+`if:` is written for this. `if: success()` is already the default on a `needs:` job, and writing it out invites
+the reader to think something unusual is being expressed.
+
+**Splitting them costs two extra runner starts and buys three things.** `contents: write` now sits on the tag
+job alone rather than over the whole run; the deploy job needs no checkout at all, so it holds no token scopes;
+and a failed deploy can be re-run from the Actions UI without rebuilding. Nothing has to be handed between the
+jobs, because the build produces nothing that gets served — App Platform builds the site itself, and the build
+job exists to fail here rather than there.
+
+**The `build` job also runs `just links <site>`**, because a site with forty dead links builds perfectly — that
+is the failure a build cannot see. It runs there rather than in `deploy` so a dead link stops the deploy
+instead of being found after it. **It is the offline check, never `just links external`**: the absolute URLs on
+every page point at where that page *will* live, so at this moment they 404 on every page the run is about to
+create. `external` is a manual tool, not a gate — see `$commands`.
 
 ## Conventions every workflow follows
 
@@ -57,31 +115,106 @@ workflow that pushes a tag has to stay out of the `v<digit>` namespace.
   locally while CI never runs it. Add the leaf to `tests.just` or the profile to `smoke.just`, then add the
   matching step.
 - **Repeated leaf steps carry `if: ${{ !cancelled() }}`**, so one failure does not hide the rest. You see all
-  the red at once. In `smoke-image.yml` the same condition also gates on the pull having succeeded — six
+  the red at once. In `shared-smoke-image.yml` the same condition also gates on the pull having succeeded — six
   failures that all mean "no such image" is noise.
 - **Every action is pinned by commit SHA**, first-party included, with the version in a trailing comment
   (`extractions/setup-just@53165ef... # v4.0.0`). `.github/dependabot.yml` raises a weekly PR per action and
   rewrites the SHA and the comment together, which is what keeps a pin from quietly going stale.
-- **`just` is pinned to `^1.45`** everywhere it is installed. Modules and `set working-directory` need a recent
-  just, and Ubuntu's apt ships one too old to parse the module files.
-- **A tool with no maintained action is installed by `curl` from its own release, one step per tool, pinned by
-  version and by SHA-256.** `container-structure-test` and `hurl` are both like this — the only hurl action is
-  archived and neither project ships an `action.yml`, so a generic third-party installer would add a dependency
-  without removing one. Each step ends by printing the version it installed, so the log names the tool that
-  failed rather than "smoke tools". The checksums make a swapped release asset fail the build instead of run;
-  hurl publishes its own, and the `container-structure-test` one was taken from the binary in use because
-  upstream publishes none.
+  **Four of those pins now live in `.github/actions/` rather than in a workflow, and Dependabot's coverage of
+  that folder is unconfirmed** — see the section below.
+- **`just` is pinned to `^1.45`, in one place**: `.github/actions/setup-just`. Modules and
+  `set working-directory` need a recent just, and Ubuntu's apt ships one too old to parse the module files.
+- **A binary is installed by `curl` from its own release, one action per tool, pinned by version and by
+  SHA-256.** `container-structure-test`, `hurl` and `lychee` are all like this, and **all three live in
+  `.github/actions/install-*`**, which is where their versions and checksums are written. Each ends by printing
+  the version it installed, so the log names the tool that failed rather than "smoke tools". The checksums make
+  a swapped release asset fail the build instead of run; hurl and lychee publish their own, and the
+  `container-structure-test` one was taken from the binary in use because upstream publishes none.
+
+  **For the first two there is no maintained action to use.** lychee has one, and is installed this way anyway:
+  the action runs lychee itself from YAML arguments, so the check would stop being `just links <site>` and CI
+  would configure it separately from a laptop. **A step calls a recipe** — that convention is the stronger one,
+  and it is what keeps "green in CI" and "green here" the same claim.
 - **`permissions:` is declared per job**, least privilege. `contents: read` almost everywhere; the release job
-  takes `contents: write` to create the release, and the two deploy workflows take it to push their marker tag.
-  The build job takes `packages: write` for GHCR, and the publish job declares no `contents` at all because it
-  never checks out. Both take `id-token: write`, which is what keyless cosign signing needs and the only
-  reason either has it.
+  takes `contents: write` to create the release, and in each deploy workflow the `tag` job takes it — that job
+  only. The build job takes `packages: write` for GHCR, and the publish job declares no `contents` at all
+  because it never checks out. Both take `id-token: write`, which is what keyless cosign signing needs and the
+  only reason either has it. A job that needs nothing says `permissions: {}` rather than leaving it out — the
+  two deploy jobs do, since neither reads the repository.
 - **Every job declares `timeout-minutes`.** The default is six hours, which is what a hung container or a
   wedged smoke profile would otherwise burn.
 - **`npm ci --ignore-scripts`**, so an install-time lifecycle hook cannot run arbitrary code. Nothing in the
-  workspaces declares `prepare`/`postinstall`.
-- **Runners are `ubuntu-latest`, with one deliberate exception**: `smoke-image.yml` pins `ubuntu-24.04`,
+  workspaces declares `prepare`/`postinstall`. It is a step in the job that needs packages, next to the
+  `setup-node` that precedes it — three places today, and the flag belongs in all three.
+- **An interpolated value goes through `env:`, never into a `run:` body.** `${{ }}` pasted into a script is
+  substituted before the shell sees it, so the value becomes part of the command rather than an argument to
+  it. Every one of them in this repo is a tag name, a repo variable or a step output — none of them
+  attacker-controlled — but the pattern is uniform so that stays true of the next one added.
+- **Runners are `ubuntu-latest`, with one deliberate exception**: `shared-smoke-image.yml` pins `ubuntu-24.04`,
   because hurl links `libxml2.so.2` and Ubuntu 26.04 ships only `libxml2.so.16` with no compat package.
+
+## The shared actions in `.github/actions/`
+
+**Eight composite actions, and the reason they are actions rather than workflows.** A composite action is a run
+of steps inside somebody else's job. It never appears in the Actions tab and cannot be run on its own — which
+is what makes it the right home for a repeated step sequence. A **reusable workflow** brings its own job, so it
+is the only option when the shared thing needs its own runner or service containers. That is the whole test:
+**does it need its own machine.**
+
+| Action | Used by | What it does |
+|---|---|---|
+| `setup-just` | six jobs | The `just` install and the `^1.45` range, once |
+| `setup-dotnet` | `shared-test-suite`, `sonar-analysis`, the release `build` job | SDK plus the NuGet package cache. Takes the SDK version as an input |
+| `setup-node` | `shared-test-suite`, `sonar-analysis`, `build-jekyll-site` | Node and the npm cache. It does not install packages |
+| `setup-ruby` | `build-jekyll-site` | Ruby and the site's gems. Takes the Gemfile directory as an input |
+| `install-container-structure-test` | `shared-smoke-image` | The binary, curled and pinned by version and SHA-256 |
+| `install-hurl` | `shared-smoke-image` | The same, and it carries the `libxml2` note that explains its caller's runner pin |
+| `install-lychee` | both deploy workflows | The same. The musl build, so it links nothing from the runner |
+| `build-jekyll-site` | both deploy workflows | The toolchain and `just build <site>`. Takes the site's name and its directory, which are two inputs because they are two things. It does not deploy |
+
+**A `setup-` action installs a toolchain and stops there.** Neither `setup-dotnet` nor `setup-node` installs
+packages — the SDK and the cache, then the caller runs `npm ci` or lets `dotnet build` restore. An action named
+for setup that also installs is the kind of thing you only discover from a log.
+
+**`setup-ruby` is the exception, and it is upstream's doing.** `bundler-cache: true` is a single flag on
+`ruby/setup-ruby` that installs the gems *and* caches them off `Gemfile.lock`. Matching the others means
+turning it off and hand-rolling `bundle install` plus an `actions/cache` with the same key — more code, to
+reimplement what the flag already does. The action's `description` says it installs gems, so the surprise is
+declared where a reader meets it.
+
+**The deploy is in the workflow, not in an action.** `build-jekyll-site` covers the part that is the same for
+both sites and would drift if copied; deploying is one `uses:` of a vendor action with two inputs, and wrapping
+it buys nothing. Two things it costs, though, and both matter more: the marker tag's `git push` is visible next
+to the `contents: write` that allows it, and the provider is named where you would look for it. Moving off
+DigitalOcean is then an edit to one step in each of two workflows, not to the inside of something called
+"deploy site".
+
+**`setup-` wraps an upstream action; `install-` curls a pinned binary.** The prefix is the distinction, and it
+is the one that matters when something breaks: a `setup-` failure is somebody else's action, an `install-`
+failure is a download or a checksum.
+
+**One action per tool, not one for "smoke tools".** Each ends by printing the version it installed, so a red
+step names the tool rather than the pair — which is why these are two files and two steps in the caller.
+
+**Three constraints shape them, all of them GitHub's rather than ours.**
+
+- **`secrets` is not available inside a composite action.** An action that needs one has to take it as an
+  input, which is half the reason the DigitalOcean step stayed in the workflow. The `vars` context is
+  documented ambiguously enough that `DONET_VERSION` is passed to `setup-dotnet` as an input for the same
+  reason.
+- **Job keys stay with the caller.** `runs-on`, `services:`, `environment:`, `permissions:` and
+  `timeout-minutes` cannot be set from an action. This is why the two deploy workflows still declare their own
+  `environment:` — it carries the deployment URL and differs per site — and why the test suite is a workflow at
+  all, since Postgres and Azurite are `services:`.
+- **An action is read out of the working copy**, so a job must check out before it can use one. The release
+  `publish` job deliberately never checks out, so it gets none.
+
+**Watch for the Dependabot gap.** Four pinned SHAs live in this folder and appear in no workflow file:
+`extractions/setup-just`, `actions/setup-dotnet`, `actions/setup-node` and `ruby/setup-ruby`. GitHub documents
+the `github-actions` ecosystem with `directory: /` as covering `.github/workflows`; it does not say whether a
+composite `action.yml` in a subfolder is scanned. **If it is not, those four silently stop being updated** —
+which is worse than an unpinned action, because nothing reports it. The check is cheap: watch one weekly
+Dependabot run and see whether any of the four is offered a bump.
 
 ## Repo variables
 
@@ -89,7 +222,7 @@ Set in GitHub repo settings, read as `${{ vars.* }}`.
 
 | Variable | Used by | What it is |
 |---|---|---|
-| `DONET_VERSION` | `run-tests`, `sonar-analysis`, `release-docker-image` | The .NET SDK version for `actions/setup-dotnet`. **The name is misspelled** ("DONET"). It matches the repo setting, so do not correct it in one file only |
+| `DONET_VERSION` | `shared-test-suite`, `sonar-analysis`, `release-docker-image` | The .NET SDK version, passed into the `setup-dotnet` action. **The name is misspelled** ("DONET"). It matches the repo setting, so do not correct it in one file only. **Read in the workflow and passed as an input**, never read inside the action — the `vars` context is not dependably available there, and an empty value installs a default SDK and looks like it worked |
 | `DOCKERHUB_ORGNAME` | `release-docker-image` | Docker Hub org, the first half of the image name |
 | `DOCKERHUB_REPO` | `release-docker-image` | Docker Hub repo, the second half. Also the lever for testing the `publish` job without touching the real repo: point it at a scratch repo, tag a non-prerelease version, then point it back |
 | `SONAR_PROJECT_KEY` | `sonar-analysis` | SonarCloud project key |
@@ -142,7 +275,7 @@ Stated plainly, because the gaps are not obvious from a green check.
 - **Sonar runs when somebody presses the button**, so analysis never lands on the pull request that caused the
   finding. Automatic Analysis is deliberately off — it only reads source, and it fights a CI run that uploads
   coverage.
-- **Coverage sees one storage backend.** `run-tests.yml` runs the ServiceModule suite against all three, but
+- **Coverage sees one storage backend.** `shared-test-suite.yml` runs the ServiceModule suite against all three, but
   `sonar-analysis.yml` runs it against SQLite only, so coverage never reaches the Postgres or Azure provider
   code.
 - **One architecture.** The image is `linux/amd64` only. It does ship an SPDX SBOM and SLSA provenance, and is
