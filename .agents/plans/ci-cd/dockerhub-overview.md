@@ -6,9 +6,13 @@ paths:
 
 # The Docker Hub repository page
 
-**Status:** not started. **The page is published by the release workflow**, in the same run that posts the
-release notes - so the file can land on `main` at any time and nothing goes live until a release writes the tags
-it describes. Section 4 says why, and records that an earlier draft of this plan got the trigger wrong.
+**Status:** the page is written; the wiring is not. `.github/dockerhub-overview.md` exists in the working
+tree and section 5 now points at it rather than carrying a second copy. What is left is the credential test,
+the workflow step, the short description, and the two web-form settings.
+
+**The page is published by the release workflow**, in the same run that posts the release notes - so the file
+can land on `main` at any time and nothing goes live until a release writes the tags it describes. Section 4
+says why, and records that an earlier draft of this plan got the trigger wrong.
 
 The page at `https://hub.docker.com/r/binacle/binacle-net` is typed into a web form and has been since v2.1.1.
 Four things are wrong with it at once:
@@ -179,194 +183,59 @@ in the first place.
 Substitute at minimum the exact version and the minor tag. **Everything else on the page should read the same in
 every release**, and anything that cannot is a sign it belongs in the Tags tab rather than in prose.
 
-## 5. What the page should say
+## 5. What the page says
 
-The current page's biggest structural mistake is the hand-maintained version list. Docker Hub already has a Tags
-tab that is always right, and GitHub already has a releases page. Fifteen links that must be edited on every
-release, to duplicate two pages that maintain themselves, is the reason the page rots.
+**The page is written: `.github/dockerhub-overview.md`.** An earlier version of this section carried a full
+draft. It does not any more - the file is the copy, and two copies of one page drift within a release.
 
-**Replace the list with the tagging policy.** That is what a reader actually needs and what neither tab explains:
-which tags move, which never do, and which one to put in a compose file. It changes about once a minor - only the
-pinning example carries a number - so the file stops needing an edit per release.
+Nine sections: the opener, a quick start with a real `curl` and its response, the interface flags, which tag to
+use, configuration, verifying what you pulled, deploying, an ask to the people running it, and a quick
+reference block.
 
-### The constraint the release trigger already satisfies
+### Two placeholders, substituted at publish time
 
-**Every tag this page names must exist and be signed at the moment the page goes live.** Today `latest` still
-resolves to 2.1.1 and there is no `3.0` row at all; signing started at beta 2, so both moving tags currently
-point at an unsigned digest. A reader running the page today would get `manifest unknown` on the quick start and
-`no signatures found` on the verify - the second reads as our bug rather than as history.
+`{{VERSION}}` becomes the exact version and appears twice. `{{MINOR}}` becomes the minor tag and appears eight
+times. **Never commit a concrete version into that file** - without the substitution the page names one minor
+forever and is wrong the day the next one ships.
 
-**Publishing from the release job satisfies this by construction**, because the job runs after the copy that
-writes those tags. There is no separate gate to remember and no version of the file that has to be held back.
+### The short description is a separate field
 
-The one case still worth checking by hand is the **first** run, where the page goes from describing 2.x to
-describing 3.x.
+100 bytes, and the action **truncates it silently** rather than failing. It is not part of the overview file;
+it is an input to the action, so it lands independently of everything else here.
 
-### Who owns the "Verifying what you pulled" section
-
-**The draft below carries that section, but this plan does not own its wording.** As of 2026-08-15 that wording
-is settled and shipped: **`SECURITY.md` at the repo root is the source** - what is signed, both commands, why
-both cosign flags matter, and the sentence that a pass is not a clean bill of health. The docs site carries the
-long form of the same thing. **Copy `SECURITY.md` rather than editing the draft below**, or there will be two
-versions of one paragraph, drifting.
-
-Two facts from that work bind this page and are easy to miss. **The floor this page states is `3.0.0`**, and
-**the page names no beta image anywhere** - decided 2026-08-17, and it is the reason `SECURITY.md` reads the
-way it does. A beta stays pullable long after it stops being the right thing to pull, and the published
-command fails against every one of them, which reads as our bug rather than as history. And the signature is
-a **referrer** rather than part of the image index, so it does not survive the copy and the pipeline signs on
-both registries.
-
-**That second fact used to say the verify should name the registry the reader pulled from. It must not.**
-Decided 2026-08-15, in the CI/CD decisions ledger: **Docker Hub is the only registry any reader is pointed
-at.** The reader of this page pulled from Docker Hub - there is nowhere else this page sends them - so the
-command names `binacle/binacle-net` and nothing else. Double signing is why that command works, not a reason
-to offer a second one.
-
-What this plan does own is that the section **exists on this page and carries the commands rather than a link**.
-This is where the pull happens - a reader is here because they are about to run `docker run` - so it is the last
-page that should send someone elsewhere to learn the image is signed.
-
-**Do not swap the commands for `just image verify`.** That recipe is for someone with a clone; this reader has a
-registry and a shell.
-
-### The draft
-
-It is public writing, so it is drafted here rather than committed as a page: someone should read it as writing
-before it goes live, the same way the two Jekyll sites get their own session. What follows is content, not
-layout - trim it freely.
-
----
-
-```markdown
-# Binacle.Net
-
-3D bin packing over HTTP, in real time. Give it bins and items; it answers whether they fit, and how to
-pack them.
-
-Built for e-commerce checkout - parcel lockers, box selection, shipping quotes - where the answer has to come
-back inside a page load.
-
-## Quick start
-
-    docker run -d --name binacle-net -p 8080:8080 \
-      -e SWAGGER_UI=True -e SCALAR_UI=True -e UI_MODULE=True \
-      binacle/binacle-net:3.0
-
-Then ask it something:
-
-    curl -X POST http://localhost:8080/api/v3/fit/by-custom \
-      -H 'Content-Type: application/json' \
-      -d '{
-        "parameters": { "algorithm": "FFD" },
-        "bins":  [ { "id": "locker-M", "length": 40, "width": 30, "height": 20 } ],
-        "items": [ { "id": "box-a", "quantity": 2, "length": 10, "width": 10, "height": 10 } ]
-      }'
-
-    {"result":"Success","data":[{"result":"AllItemsFit","bin":{...},
-     "fittedItems":[...],"unfittedItems":[],
-     "fittedBinVolumePercentage":8.33,"fittedItemsVolumePercentage":100}]}
-
-With the flags above you also get:
-
-- <http://localhost:8080/> - interactive packing demo
-- <http://localhost:8080/swagger/> - Swagger UI
-- <http://localhost:8080/scalar/> - Scalar
-
-The API itself is under `/api/v3` and `/api/v4`, and needs none of them.
-
-## Which tag to use
-
-| Tag | Moves | Use it for |
-|---|---|---|
-| `3.0.0` | never | pinning to an exact build |
-| `3.0` | on each patch in the 3.0 line | production - fixes, no behaviour changes |
-| `latest` | on every release, major ones included | trying Binacle.Net out |
-
-`latest` will cross a major version and can break your integration. **Pin `3.0` for anything you keep.**
-
-Prereleases publish their exact version only - they never move `3.0` or `latest`.
-
-Every tag is on the Tags tab. What changed in each is in the
-[changelog](https://github.com/binacle-labs/Binacle.Net/blob/main/CHANGELOG.md).
-
-## Configuration
-
-| Variable | Default | What it turns on |
-|---|---|---|
-| `SWAGGER_UI` | off | Swagger UI at `/swagger/` |
-| `SCALAR_UI` | off | Scalar at `/scalar/` |
-| `UI_MODULE` | off | The interactive packing demo at `/` |
-| `SERVICE_MODULE` | off | JWT auth, rate limiting and accounts. Needs a database |
-
-The API works with all four off, which is the right setup for a service nobody browses to.
-
-Logs and the SQLite database are written to `/app/data` - mount a volume there if you enable the service
-module. Full configuration, including the PostgreSQL and Azure Tables backends, is at
-<https://docs.binacle.net>.
-
-## Verifying what you pulled
-
-Every published image is signed with cosign - keyless, against the digest, so one signature covers `3.0.0`,
-`3.0` and `latest` alike - and carries an SPDX SBOM and SLSA provenance.
-
-    cosign verify binacle/binacle-net:3.0 \
-      --certificate-identity-regexp '^https://github\.com/binacle-labs/Binacle\.Net/\.github/workflows/release-docker-image\.yml@' \
-      --certificate-oidc-issuer https://token.actions.githubusercontent.com
-
-    docker buildx imagetools inspect binacle/binacle-net:3.0
-
-A pass proves the image came from this repository's release workflow. It does not claim the image is free of
-vulnerabilities.
-
-## Deploying
-
-Docker Compose and Kubernetes samples, from a one-line quickstart to a production setup:
-<https://github.com/binacle-labs/Binacle.Net/tree/main/samples>
-
-## About the image
-
-- Base: `mcr.microsoft.com/dotnet/aspnet:10.0`
-- Runs as a non-root user, listens on 8080
-- `linux/amd64`
-
-## Links
-
-- Website: <https://www.binacle.net>
-- Documentation: <https://docs.binacle.net>
-- Source: <https://github.com/binacle-labs/Binacle.Net>
-- Releases: <https://github.com/binacle-labs/Binacle.Net/releases>
-
-Dual-licensed GPL-3.0-only (code) and CC-BY-SA-4.0 (content).
+```
+Will it fit in the box? Real-time 3D bin packing API - free, open source, self-hosted.
 ```
 
----
+86 bytes. The action PATCHes `full_description` always, and `description` only when that input is non-empty -
+so leaving the input unset does not clear what is already there.
 
-### Notes on the draft
+### What the page leaves out on purpose
 
-- **Short description** is a separate field, 100 bytes, also settable by the action. Use
-  `Real-time 3D bin packing API. Fit and pack over HTTP, with a browser demo.` (74 bytes.) Note that the action
-  truncates rather than fails, so a longer one degrades silently.
-- **Full description** is capped at 25,000 bytes. The draft is nowhere near it.
-- **Everything executable in the draft was run, on 2026-08-13, against the published
-  `binacle/binacle-net:3.0.0-beta.2`.** The `fit/by-custom` body is accepted and the response shown is the real
-  one, elided at the `{...}`; with the three flags set, `/` and `/scalar/` return 200 and `/swagger/` returns the
-  301 that lands a browser on the UI. Nothing here is a plausible-looking guess, which matters because a broken
-  first command on this page is the whole first impression. **They were run against the beta tag - see the
-  ordering gate above for why the draft says `3.0` anyway.**
-- **The verify commands are exact too, but re-check them before this page goes up.** They were first run
-  against `3.0.0-beta.2`, and the repository has moved to `binacle-labs` since - the certificate identity in
-  them changed, so that run no longer proves anything. The current invocation was re-proven verbatim from a
-  clean shell against `3.0.0-beta.3` on 2026-08-17. Copy the one in `SECURITY.md`, which is the source, and
-  do not retype it. Only the tag changes.
-- **The "does not claim it is free of vulnerabilities" sentence stays.** Without it a signature turns into a
-  marketing badge.
-- **No health endpoint is mentioned on purpose.** It is off by default and its path is configurable, so a line
-  about it would be wrong for most readers. That belongs on the docs site.
-- **`linux/amd64` only** is stated because it is currently true. Multi-arch is a separate plan; when it lands
-  this line changes with it.
-- The emoji headings from the old page are dropped. Keep them if the house style wants them - the point of the
-  rewrite is the content, not the decoration.
+Each of these was considered and dropped. **Do not add them back without a reason that is new.**
+
+- **The hand-maintained tag list.** Fifteen entries duplicating a Tags tab that is always right, and it is
+  what rotted the page the first time. The three-row policy table replaces it and answers the one thing
+  neither tab explains: which tag belongs in a compose file.
+- **The service module.** Not advertised on this page, at the maintainer's call. The configuration table
+  carries three variables, not four.
+- **ViPaq.** It belongs on the docs site. On the page where someone is deciding whether to run one command, a
+  second format name is a reason to hesitate.
+- **GHCR.** It is staging, and a staging registry named on a landing page becomes a support surface nobody
+  meant to own.
+- **The health endpoint.** Off by default and its path is configurable, so a line about it is wrong for most
+  readers.
+
+### Two facts that bind the file
+
+**The `cosign` block is copied from `SECURITY.md` verbatim, only the tag differs.** That file is the source.
+There are now two copies of one command and they must match - a published verify command that fails reads as a
+bug in the project rather than as drift.
+
+**Every example tag must name a tag that passes today.** The org move re-keyed the certificate identity, so
+anything signed under the old owner fails the published command. The same rule covers the `curl` example: it
+was last run against a tag that has since been deleted from Docker Hub, so **re-run it against a tag that
+exists before the page publishes.** A broken first command here is the whole first impression.
 
 ## 6. The logo and the categories
 
@@ -386,13 +255,14 @@ at it.
 
 ## 7. Order of work
 
-1. Set the logo and the categories (section 6). Independent of everything else, and they improve the page today.
+1. Set the logo, the categories and the short description. None of them needs the credential or the workflow,
+   and all three improve the page today.
 2. Run the credential test in section 2, backing the page up first. Record the result and the date here. If it
    403s at the widest scope with Admin confirmed, and the only fallback is a password, stop - the rest is not
    worth it.
-3. Get the draft in section 5 read as writing, and settle the short description.
-4. Add `.github/dockerhub-overview.md`, with placeholders where a version appears. **It can land on `main`
-   whenever** - nothing publishes it.
+3. ~~Write the page.~~ Done - `.github/dockerhub-overview.md`. **It can land on `main` whenever**; nothing
+   publishes it.
+4. Re-run the `curl` example against a tag that exists and paste the real response back into the file.
 5. Add the page step to the release workflow: last, gated on a non-prerelease, substituting the version, with
    nothing depending on it. Keep `workflow_dispatch` for prose fixes.
 6. Run it once with `workflow_dispatch` and read the rendered page.

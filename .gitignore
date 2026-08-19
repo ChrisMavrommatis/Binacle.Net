@@ -77,7 +77,4 @@ web/lib
 web/*.ico
 web/*.png
 
-## Agent session prompts
-# Hand-off prompts for delegated sessions. Deliberately untracked: they name deployment hosts and are
-# throwaway scaffolding for one run, never the durable record of the work.
-.agents/prompts/
+
