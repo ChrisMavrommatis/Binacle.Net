@@ -14,13 +14,16 @@ The short description on the repository was already correct.
 **The credential is answered.** `DOCKERHUB_TOKEN` writes the description - HTTP 200 on the existing registry
 push credential, proved 2026-08-19. No second secret, no password fallback. `$ci-cd` records it.
 
-Three things left, then this file goes.
+Two things left, then this file goes.
 
-## 1. The `curl` example names a deleted tag
+## 1. The `curl` example was run against a tag that no longer exists
 
-The quick start in `.github/dockerhub-overview.md` shows a real request and a real response. It was last run
-against a tag that has since been deleted from Docker Hub. **Re-run it against a tag that exists and paste the
-real response back.** A broken first command is the whole first impression.
+The quick start in `.github/dockerhub-overview.md` shows a real request and a real response. The response came
+from a run against a tag that has since been deleted from Docker Hub. **Re-run it against a tag that exists and
+paste the real response back.** A broken first command is the whole first impression.
+
+**Read the rendered page before publishing it:** `just image dockerhub-overview <version>` prints exactly what
+the pipeline writes. The recipe refuses a version with a suffix, so it takes a released version only.
 
 ## 2. The logo and the categories
 
@@ -36,11 +39,6 @@ CI/CD tooling, which this is not - it is the leftover of a single hurried pick. 
 closer fit and should lead**, with "Integration & delivery" kept only if a third genuinely better one cannot
 be found in the list Docker offers. Categories feed Hub search, so this is the only item here that changes who
 arrives at the page.
-
-## 3. One dispatch run
-
-Run `Shared / Docker Hub Page` with `workflow_dispatch` and read the rendered page. Leave the version input
-empty - it takes the latest release. `just image dockerhub-overview 3.0.0` prints the same thing first.
 
 Then delete this file.
 
@@ -65,3 +63,6 @@ Each of these was decided and is easy to undo by accident.
 - **Do not publish a page naming a tag that is absent or unsigned.** The org move re-keyed the certificate
   identity, so anything signed under the old owner fails the published command.
 - **Do not widen `DOCKERHUB_TOKEN`.** It already does both jobs at the scope it has.
+- **Do not dispatch the workflow with an empty version input to check a wording change.** Empty takes the
+  latest non-prerelease release, which is not always the version you just edited the page for. Render it
+  locally instead, or type the version.

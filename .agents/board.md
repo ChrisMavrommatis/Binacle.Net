@@ -118,10 +118,13 @@ since `service-azure` was folded into `service`. **Removal is an option nobody h
 |---|---|---|
 | [ci-cd/workflow-restructure](plans/ci-cd/workflow-restructure.md) | **built; one hand item and one gap left** - state chosen by an agent, strike it if wrong | branch protection |
 | [ci-cd/ci-gates](plans/ci-cd/ci-gates.md) | **deferred** - gates 2 and 3 only | gate 2: the all-modules tests. gate 3: the UI harness |
-| [ci-cd/release-pipeline-rebuild](plans/ci-cd/release-pipeline-rebuild.md) | **nearly done** | one docs decision, held in the release plan |
-| [ci-cd/dockerhub-tag-immutability](plans/ci-cd/dockerhub-tag-immutability.md) | blocked until after v3.0.0 | a shipped release behind the rule |
+| [ci-cd/dockerhub-overview](plans/ci-cd/dockerhub-overview.md) | **the logo and the categories only** - the release takes the rest | - |
+| [ci-cd/dockerhub-tag-immutability](plans/ci-cd/dockerhub-tag-immutability.md) | **the switch only** - the release takes the rule | a shipped release behind the rule |
 | [ci-cd/multi-arch-images](plans/ci-cd/multi-arch-images.md) | **not scheduled** | does anyone run it on ARM? |
 | [image-base-slimming](plans/image-base-slimming.md) | ready - **timing not decided** | - |
+
+**`release-pipeline-rebuild` is gone - the plan was finished and deleted on 2026-08-20.** What outlives it is
+in the CI/CD docs and the decisions ledger; the moving-tag gap it tracked closes on the v3.0.0 release itself.
 
 **Both remaining CI gates are deferred because neither has anything to gate yet**, not because they are
 unwanted. **Gate 2 follows `integration-test-additions`, not the other way round.** Gate 3's coverage floor is

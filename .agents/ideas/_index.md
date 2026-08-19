@@ -22,9 +22,6 @@ and move it to `.agents/plans/` once it's picked up. See [README.md](README.md) 
 - file: api/admin-user-management-site.md
   description: "Admin site for user management"
   paths: ["api/**"]
-- file: api/openapi-spec-followups.md
-  description: "OpenAPI spec follow-ups"
-  paths: ["api/**"]
 - file: api/pack-first-bin-endpoint.md
   description: "pack/first-bin endpoint"
   paths: ["api/**"]
