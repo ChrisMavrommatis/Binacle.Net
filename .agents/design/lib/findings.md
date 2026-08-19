@@ -1,8 +1,8 @@
 ---
 id: lib/findings
 description: Lib findings — the measured evidence (algorithm racing cost, parallel racing gain) behind the decisions.
-verified: 2026-07-17
-check: Numbers match the latest AlgorithmRacing_Packing_v2 report in lib/test/Binacle.Lib.Benchmarks/BenchmarkDotNet.Artifacts/results/
+verified: 2026-08-19
+check: AlgorithmRacing_Packing_v2, its base class and the five scenario keys in BischoffCuratedProblemsProvider still exist and still race the quoted algorithm sets; 8a7580f3 is still the commit that added ThrowIfCancellationRequested to the lib processors; the fitting family under lib/src/Binacle.Lib/Fitting/ is still gone. The numbers themselves are not re-checkable from the repo - see Environment.
 also_update:
   - lib/decisions
 paths:
@@ -20,6 +20,13 @@ Ranges show the effect, not a guarantee.
 BenchmarkDotNet v0.15.8 · Linux Ubuntu 26.04 · AMD Ryzen 9 9900X, 12 physical cores · .NET 10.0.9 · measured
 2026-07-17 from `AlgorithmRacing_Packing_v2`. Within-run error is **0.3–1.0%** of the mean, so the effects
 below are far outside the noise.
+
+**These numbers cannot be re-checked from a clone.** BenchmarkDotNet writes to `BenchmarkDotNet.Artifacts/`,
+which `.gitignore` excludes, so the reports behind them exist only on the machine that ran them. The curated
+vault is `results/lib/benchmarks/`, and its newest entry is `2025-02-10.md` — no keeper was ever curated in for
+this run. So what a later session can confirm is that the harness still races what is quoted here, not that a
+re-run would land on the same microseconds. Re-running is a day's work on a quiet machine, and the ratios are
+what the decisions rest on, not the absolute times.
 
 Racing benchmarks run **one bin** and race algorithms against each other. They say nothing about running many
 **bins** in parallel — that is a different axis, covered by the `Parallelization` benchmark.
@@ -65,7 +72,9 @@ combinations gain more) — but those are the sets D1 rules out. **The decision 
 same decision that makes parallelising it pointless.**
 
 Not measured here: `ParallelBinProcessor` (many bins at once), which scales with bin count rather than with
-the number of algorithms. That is the one that might matter, and it has no finding yet.
+the number of algorithms. That is the one that might matter, and it has no finding yet — though the harness
+for it is already written and waiting to be run (`BinParallelizationThreshold_Packing_v1` / `_v2` over
+`BinParallelizationThresholdBenchmarkBase`).
 
 ## Note — the cancellation-token guard has no measurable cost
 

@@ -59,4 +59,16 @@ internal class InMemoryAccountRepository : IAccountRepository
 			removed ? TypedResult.Success : TypedResult.NotFound
 		);
 	}
+
+	public Task<PagedResult<Account>> ListAsync(int skip, int take, bool allowDeleted = false, CancellationToken cancellationToken = default)
+	{
+		// Ordered by the printed Guid, the way the real stores order it. Guid's own comparer is not that order.
+		var all = _accounts.GetValues()
+			.Where(x => allowDeleted || !x.IsDeleted)
+			.OrderBy(x => x.Id.ToString(), StringComparer.Ordinal)
+			.ToList();
+
+		var items = all.Skip(skip).Take(take).ToList();
+		return Task.FromResult(new PagedResult<Account>(items, all.Count));
+	}
 }

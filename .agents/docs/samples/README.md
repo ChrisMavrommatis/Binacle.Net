@@ -1,8 +1,8 @@
 ---
 id: samples
 description: Deployment samples — Docker Compose (minimal, quickstart, prod, service, full) and Kubernetes (minimal); each folder name is a smoke profile name, feature flags, config wiring, and the keep-in-sync rule
-verified: 2026-08-15
-check: Sample folders, compose env vars, bind-mounted config paths, the k8s resource bounds, and the pinned image tag match samples/; every samples/docker folder name has a tooling/smoke/<name>.yml with the same module set
+verified: 2026-08-19
+check: Sample folders, compose env vars, bind-mounted config paths, the k8s resource bounds, and the pinned image tag match samples/; the compose project name still comes from a top-level name: key and not a .env file; every samples/docker folder name has a tooling/smoke/<name>.yml with the same module set
 also_update:
   - api/configuration
   - api/modules
@@ -29,7 +29,7 @@ belongs in `samples/`.
 
 ## Docker samples (`samples/docker/`)
 
-Common to all: host port `8080→8080`; `.env` sets only `COMPOSE_PROJECT_NAME`; bind `./Presets.json` (read-only) →
+Common to all: host port `8080→8080`; a top-level compose `name:` key sets the project name; bind `./Presets.json` (read-only) →
 `/app/Config_Files/Presets.json` and `./data` → `/app/data`.
 
 | Sample | Demonstrates | Feature flags / key env | Extra services & config |
@@ -71,12 +71,12 @@ measure against, not a sizing recommendation; the manifest says so.
 
 ## Adding or modifying a sample
 
-- **Naming is coupled**: folder name = sample name = `.dcproj`/`.proj` filename = the `COMPOSE_PROJECT_NAME`
-  suffix (folder `service` → `service.dcproj` → `binacle-net-service`).
+- **Naming is coupled**: folder name = sample name = `.dcproj`/`.proj` filename = the compose `name:` value
+  (folder `service` → `service.dcproj` → `name: binacle-net-service`).
 - **Register in the solution**: add the project to `Binacle.Net.slnx` under `/samples/docker/` (docker `.dcproj`,
   with `<Build />`) or `/samples/kubernetes/` (`.proj`, `Type="Shared"`). Generate a fresh `ProjectGuid`.
-- **Baseline files**: `docker-compose.yml`, `.env` (project name only), `Presets.json`, `README.md`, and a
-  `.dcproj` (SDK `Microsoft.Docker.Sdk`). `JwtAuth.json` is required only with `SERVICE_MODULE=True`;
+- **Baseline files**: `docker-compose.yml` (with its `name:` key), `Presets.json`, `README.md`, and a
+  `.dcproj` (SDK `Microsoft.Docker.Sdk`). **No `.env`** — no sample has one. `JwtAuth.json` is required only with `SERVICE_MODULE=True`;
   `OpenTelemetry.Production.json` + `aspire-dashboard-config.json` only when shipping OTel/Aspire.
 - Published samples bind config files read-only and use the pinned image tag (see below). The local build pipeline
   (`tooling/image.full.yml`, fed by `just build image`) instead uses `binacle-net:local` and injects config via
@@ -95,12 +95,12 @@ bug fixes flow, breaking changes never do, and the pin only changes when a new m
 `{{major}}` tag on purpose: `3` crosses minor lines. An exact patch is the right pin only for a line that will get no
 further ones, which is why v1.3.x and v2.x samples are pinned that way in the published docs snapshots.
 
-**Until a minor tag exists, the pin is the newest published prerelease.** Read the value out of the sample
-files rather than from here — it moves with every prerelease, and a version named in a doc goes stale
-silently. The samples
-document v3-only settings, so the old `2.1.1` would be wrong in a different way, and `3.0` does not resolve on
-Docker Hub until v3.0.0 is published. The rule for every move is the same: **a pin on `main` must name an image
-that already exists**, so the pin follows a publish and never precedes one.
+**Until a minor tag exists, the pin sits on one prerelease and does not chase later ones.** All six currently
+name the same beta, and they move once — straight to the minor tag when it opens. Read the value out of the
+sample files rather than from here; a version named in a doc goes stale silently. The samples document v3-only
+settings, so the old `2.1.1` would be wrong in a different way, and `3.0` does not resolve on Docker Hub until
+v3.0.0 is published. **The rule that governs every move: a pin on `main` must name an image that already
+exists**, so the pin follows a publish and never precedes one.
 
 Three files outside the six carry the tag in prose and have to move with them: `README.md` at the repo root,
 `samples/README.md` and `samples/docker/README.md`. Two more mention it as an example only —

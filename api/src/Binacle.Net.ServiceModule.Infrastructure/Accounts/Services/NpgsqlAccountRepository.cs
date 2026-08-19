@@ -128,6 +128,32 @@ internal class NpgsqlAccountRepository : IAccountRepository
 		return TypedResult.Success;
 	}
 
+	public async Task<PagedResult<Account>> ListAsync(
+		int skip,
+		int take,
+		bool allowDeleted = false,
+		CancellationToken cancellationToken = default
+	)
+	{
+		const string countSql = "SELECT COUNT(*) FROM Accounts WHERE IsDeleted = FALSE";
+		const string allowDeletedCountSql = "SELECT COUNT(*) FROM Accounts";
+
+		// Ids are version 7 Guids, so ordering by Id is ordering by creation time.
+		const string sql = "SELECT * FROM Accounts WHERE IsDeleted = FALSE ORDER BY Id LIMIT @Take OFFSET @Skip";
+		const string allowDeletedSql = "SELECT * FROM Accounts ORDER BY Id LIMIT @Take OFFSET @Skip";
+
+		var total = await this.connection.ExecuteScalarAsync<long>(
+			allowDeleted ? allowDeletedCountSql : countSql
+		);
+
+		var dtos = await this.connection.QueryAsync<AccountDto>(
+			allowDeleted ? allowDeletedSql : sql,
+			new { Skip = skip, Take = take }
+		);
+
+		return new PagedResult<Account>(dtos.Select(x => x.ToDomain()).ToList(), (int)total);
+	}
+
 	private sealed class AccountDto
 	{
 		#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.

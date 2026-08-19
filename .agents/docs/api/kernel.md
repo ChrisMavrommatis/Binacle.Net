@@ -1,8 +1,8 @@
 ---
 id: api/kernel
 description: Binacle.Net.Kernel — shared patterns used by all API projects and modules
-verified: 2026-08-13
-check: IApiMarker and registration helpers match api/src/Binacle.Net.Kernel/
+verified: 2026-08-19
+check: IApiMarker and the registration helpers match api/src/Binacle.Net.Kernel/; the endpoint interface and convention tables match Endpoints/EndpointDefinitions.cs, Endpoints/EndpointConventions.cs and the registrar in Endpoints/ExtensionMethods/; every section here names a type that still exists under Kernel/, and every folder under Kernel/ has a section
 also_update:
   - api/endpoints
 paths:
@@ -48,8 +48,20 @@ What `ValidateAsync()` returns before calling your handler:
 | `IEndpointGroup` | Defines a route group prefix and shared metadata |
 | `IGroupedEndpoint<TGroup>` | One endpoint inside a group (most common) |
 | `IEndpoint` | One standalone endpoint, not in a group |
+| `IEndpointConvention` | A module's hook into endpoints defined by another assembly |
 
-All are discovered and registered automatically via `RegisterEndpointsFromAssemblyContaining<TMarker>()`.
+The first three are discovered and registered automatically via
+`RegisterEndpointsFromAssemblyContaining<TMarker>()`. `IEndpointConvention` is resolved from DI instead: a module
+registers one, and the registrar applies every registered convention to each group.
+
+**The registrar applies conventions in one `Finally`, never an `Add`.** An `Add` convention on a group runs
+before each endpoint's own, so a convention that reads endpoint metadata would read a list still being filled
+and find nothing, silently. `Finally` runs after. The registrar owns this so no module has to know it. With no
+convention registered the block is skipped and no endpoint gets anything it did not ask for itself.
+
+`RateLimitedMetadata` (same file) is the one marker the Kernel ships, placed by the `.RateLimited()` builder
+extension. It says an endpoint is user compute and names no policy — see `$api/endpoints` for what it means and
+`$api/modules/service` for the convention that reads it.
 
 ## IOptionalDependency\<T\>
 
@@ -199,11 +211,16 @@ reference to `Binacle.CompactNotation` — a feature plugs in its own request an
   `BackgroundService`. Drains a `Channel<TRequest>`, calls `request.ToLogEntry(timeProvider.GetUtcNow())`,
   JSON-serialises the entry, and appends one line to a dated file. Knows nothing about any feature's types.
 - `LogsProcessorOptions<TChannelRequest>` (`Logs/Models`) — `Path` / `FileNameFormat` / `DateFormat` +
-  `MaxConsecutiveAllowedExceptions` (default 10). The type param only keys the DI registration.
+  `MaxConsecutiveAllowedExceptions` (default 10) and `RetentionDays` (nullable, default null). The type param
+  only keys the DI registration.
+- `LogsRetentionProcessor<TRequest>` (`Logs/Services`) — a second `BackgroundService` that deletes files past
+  `RetentionDays`. It runs its own loop and never touches the write channel, so a slow sweep cannot stall
+  logging. `RetentionDays` null means it does nothing: these logs are an archive, so deletion is opt-in.
 - `ILogParametersProvider` (`Logs/Models`) — `IReadOnlyList<string> ToLogParameters()`. A request's parameter type
   implements it so the background converter can project loose parameter strings without seeing the API's enums.
 - `AddLogProcessor<TChannelRequest, TLog>(optionsFactory, channelFactory)` (`Logs/ExtensionMethods`, namespace
-  `Binacle.Net`) — registers the channel, options, and hosted processor. The owning feature supplies the types + factories.
+  `Binacle.Net`) — registers the channel, the options, and **both** hosted services (processor and retention).
+  The owning feature supplies the types + factories.
 
 The concrete packing feature (the request/entry types and their registration) lives in DiagnosticsModule — see
 `$api/modules/diagnostics`.

@@ -1,8 +1,8 @@
 ---
 id: api/decisions
 description: API decisions ledger — why a module-off document carries no `429` and what guarantees it, and what the generated documents are a document of.
-verified: 2026-08-14
-check: D1 against api/src/Binacle.Net.Kernel/OpenApi/Transformers/RateLimiterResponseOperationTransformer.cs, which must check EnableRateLimitingAttribute, and against RateLimitedEndpointConvention as the only thing that attaches it
+verified: 2026-08-19
+check: D1 against api/src/Binacle.Net.Kernel/OpenApi/Transformers/RateLimiterResponseOperationTransformer.cs, which must check EnableRateLimitingAttribute and nothing else; against a grep for EnableRateLimitingAttribute and RequireRateLimiting over api/src, which must land only inside Binacle.Net.ServiceModule; and against ApiDocument.Transform for the relative servers entry and the GitHub/Docker Hub description
 paths:
   - "api/**"
 ---
@@ -20,6 +20,13 @@ the docs under it; this file is the reasoning, so a later session does not undo 
 `[EnableRateLimiting]`, and that single check is enough because **only `AddServiceModule` ever attaches it**.
 The core endpoints call `.RateLimited()`, a marker naming no policy; the module's `IEndpointConvention` turns
 that marker into the attribute. Metadata present therefore *means* a limiter is registered.
+
+**The invariant is the assembly, not the convention.** The module's own `/api/auth/token` calls
+`.RequireRateLimiting("AuthToken")` directly, which attaches the same attribute without going through the
+convention — and that is fine, because the endpoint only exists in a build where the module is on. What must
+stay true is that no attach point sits outside `Binacle.Net.ServiceModule`. A `.RequireRateLimiting(...)` added
+to a core v3 or v4 endpoint file is the exact regression this decision exists to prevent, and it would pass a
+check that only watched the convention.
 
 **It took two guards until 2026-08-14, and the second one was load-bearing.** The v3/v4 endpoint files used to
 call `.RequireRateLimiting("ApiUsage")` directly, naming a policy only the module supplies. With the module off

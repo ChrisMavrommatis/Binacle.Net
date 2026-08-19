@@ -1,8 +1,8 @@
 ---
 id: vipaq/findings
 description: ViPaq findings — the measured evidence (base64 size, encode/decode time) behind the decisions.
-verified: 2026-07-24
-check: Numbers match the latest results/vipaq/compression/ size reports and results/vipaq/benchmarks/ output
+verified: 2026-08-19
+check: Numbers match the latest results/vipaq/compression/ size reports and results/vipaq/benchmarks/ output; every benchmark and provider class named here still exists under vipaq/test/Binacle.ViPaq.Benchmarks/ and .TestsKernel/Providers/; the dataset note below still matches the entry count in vipaq/data/packed/**/*.json
 also_update:
   - vipaq/decisions
 paths:
@@ -44,6 +44,12 @@ Source: `Binacle.ViPaq.PerformanceTests` (size + crossover) and
 `Binacle.ViPaq.PackedDataGenerator` from the Bischoff suite (thpack1–7) + custom problems. Round-trip green on
 every scenario, both in the generator and the harness.
 
+**The dataset has grown since these runs, and the counts below are not renumbered.** `vipaq/data/packed/`
+carried 716 scenarios / 58,834 items when this was measured; on 2026-07-16 it went to **721 / 59,106** — five
+custom scenarios and 272 items. So every "of 716" split here describes the earlier set. Nothing suggests the
+*shape* moved (the five are small customs, the same family as the fifteen already on the uncompressed side),
+but the exact splits would have to be re-run to be restated. The live count is in `$vipaq/dependencies`.
+
 ## The headline: random data lies about compression
 
 This is the single most important thing the real-data harness established, and it inverts a prototype assumption.
@@ -55,7 +61,7 @@ This is the single most important thing the real-data harness established, and i
 
 Real packing results have structure — repeated item sizes, items on a coordinate grid. Random data gives gzip
 nothing to grip. So the shipped fixed **255-byte threshold is wrong in both directions**: it inflates random data
-and would miss small compressible data. This drives `$vipaq#D7`.
+and would miss small compressible data. This drives `$vipaq/decisions#D7`.
 
 ## Size vs protobuf (like-for-like: protobuf compressed only when ViPaq compressed)
 
@@ -111,12 +117,15 @@ The before column is the pre-fix v1; after is the shipped fix. 1371 unit tests p
 Round-1 prototype showed — that was v2 varint+columnar with a different codec; this is what shipped v1's layout
 yields. Cost: **+0.7–1.1 KB allocation** (the decompressed buffer), but ViPaq still allocates less than protobuf
 (ratio 0.91–0.97). The pooled-buffer variant (A′) would reclaim that KB; deferred — a rarely-read token doesn't
-justify it (`$vipaq#D8`). No wire change.
+justify it (`$vipaq/decisions#D8`). No wire change.
 
 ### Uncompressed vs compressed — the two paths, size and speed (2026-07-09)
 
-ViPaq auto-compresses once the body passes ~255 bytes, so scenarios fall into two regimes that behave very
-differently. The benchmarks fan out over a curated set (`CuratedScenarioProvider`, which merges
+**Measured against v1's automatic threshold, which no longer exists.** At the time, ViPaq compressed by itself
+once the body passed ~255 bytes, so scenarios fell into two regimes. Today compression is a caller flag
+defaulting off (`$vipaq/decisions#D16`) and the harness forces it, so "which regime a scenario lands in" is now
+the caller's call rather than the library's. The two regimes still describe what the *data* does under
+compression, which is what makes the numbers worth keeping. The benchmarks fan out over a curated set (`CuratedScenarioProvider`, which merges
 `BischoffCuratedProvider` and `CustomProblemsCuratedProvider`) that includes an uncompressed ladder
 (`CustomProblemsCuratedProvider.UncompressedNames`: 1 / 8 / 16-item 8-bit packs) so the raw path is measured too —
 before this, all curated benchmarks compressed and the raw path had **no** performance number. The size report now
@@ -145,7 +154,7 @@ decode span fix):**
 **Takeaway:** on the **uncompressed path ViPaq matches or beats protobuf on both axes** — ~40% smaller, encode at
 parity, decode faster. On the **compressed path** it trades encode CPU (the gzip pass, 4–8×) for a large size win
 (down to ~29% of raw proto), and decode is near parity after the span fix. Encode is the only place protobuf leads,
-and only while ViPaq is paying for compression — exactly the `$vipaq#D8` priority. Allocations: ViPaq ≤ protobuf everywhere
+and only while ViPaq is paying for compression — exactly the `$vipaq/decisions#D8` priority. Allocations: ViPaq ≤ protobuf everywhere
 except the 1-item token (520 B vs 368 B — noise at that size).
 
 **Coverage:** the uncompressed 16-bit path is now measured by `Simple_16bit-4_FitIn_600x400x300` — 4 items whose
@@ -166,15 +175,15 @@ framing.
 | OrLibrary_thpack1_2 | 108 | 4.8 µs | 13.1 µs (2.74×) | 13.5 µs (2.83×) | 3.7 µs | 5.5 µs (1.16×) | 5.7 µs (1.20×) |
 
 - **Deflate encode ≈ 2.75× the format-only encode** — compressing adds ~5–8 µs per pack (the `Deflate − NoOp`
-  delta). This is also **`$vipaq#D7`'s try-both price**: try-both is one `Compress` more than never compressing,
+  delta). This is also **`$vipaq/decisions#D7`'s try-both price**: try-both is one `Compress` more than never compressing,
   i.e. exactly this delta.
 - **Deflate decode adds only ~1.2–1.4×** (inflate ~1.8–1.9 µs) — cheap.
 - **Gzip never beats deflate on time** — ~2–3% slower on encode (its framing), on par on decode. Gzip is already
-  larger on size, so nothing rescues it: deflate is the pick on both axes (**`$vipaq#D16`**).
+  larger on size, so nothing rescues it: deflate is the pick on both axes (**`$vipaq/decisions#D16`**).
 - All sub-15 µs, encoded once server-side and read rarely — noise in practice.
 
 ## What the harness did *not* answer
 
-- **`$vipaq#O2` (codec + level)** — **resolved (`$vipaq#D16`):** one codec, raw DEFLATE. The compression cost is measured just above.
+- **`$vipaq/decisions#O2` (codec + level)** — **resolved (`$vipaq/decisions#D16`):** one codec, raw DEFLATE. The compression cost is measured just above.
 - Absolute allocation on synthetic data runs a little high (compression can't shrink a random buffer), but ViPaq
   and protobuf see the same sample, so the *ratio* stays valid.

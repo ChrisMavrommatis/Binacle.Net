@@ -1,8 +1,8 @@
 ---
 id: api/configuration
 description: Config file layout, env-var conventions, override precedence, and feature flag list
-verified: 2026-07-27
-check: Config keys and env var names match appsettings.json and module config files; Cors.json and ForwardedHeaders.json present
+verified: 2026-08-19
+check: The file tree matches api/src/Binacle.Net/Config_Files/ and the AddJsonConfiguration calls in Program.cs; the Cors and ForwardedHeaders keys match their options classes in Configuration/ and the mapping in ExtensionMethods/ForwardedHeadersExtensions.cs; the feature flag table matches every Feature.IsEnabled call site in api/src
 also_update:
   - api/modules/service
   - api/modules/diagnostics
@@ -14,8 +14,6 @@ paths:
 ---
 
 # Configuration
-
-> Note: sourced from docs site (pre-v4). Verify if this changes.
 
 ## Config File Tree
 
@@ -30,14 +28,15 @@ app
     ├── ForwardedHeaders.json                    optional — proxy trust for resolving the caller's address
     ├── ForwardedHeaders.{Environment}.json      optional override
     ├── appsettings.json                         optional — host settings (e.g. AllowedHosts)
-    ├── DiagnosticsModule
-    │   ├── HealthChecks.json
+    ├── appsettings.{Environment}.json           optional override
+    ├── DiagnosticsModule                         module is always on, so these are always loaded
+    │   ├── HealthChecks.json                     required — app fails to start without this
     │   ├── HealthChecks.{Environment}.json      optional override
-    │   ├── OpenTelemetry.json
+    │   ├── OpenTelemetry.json                    required — app fails to start without this
     │   ├── OpenTelemetry.{Environment}.json     optional override
-    │   ├── PackingLogs.json
+    │   ├── PackingLogs.json                      required — app fails to start without this
     │   ├── PackingLogs.{Environment}.json       optional override
-    │   ├── Serilog.json
+    │   ├── Serilog.json                          read by Serilog directly, not an options class
     │   └── Serilog.{Environment}.json           optional override
     ├── ServiceModule
     │   ├── ConnectionStrings.json               optional — DB connection strings
@@ -45,10 +44,15 @@ app
     │   └── JwtAuth.json                         optional — JWT issuer, audience, secret
     └── UiModule
         └── ConnectionStrings.json               optional — override BinacleApi connection string
+
+`Presets.json` and the three DiagnosticsModule files are the only ones the app refuses to start without, and the
+DiagnosticsModule three because that module is never switched off (`$api/modules`). Everything else is optional
+or gated behind its module's flag.
 ```
 
-Each file can be overridden by a `.{EnvironmentName}.json` sibling (any ASP.NET environment name:
-Development, Production, Staging, etc.). Only include the keys you want to change.
+Every file above with a `.{Environment}.json` line can be overridden by that sibling (any ASP.NET environment
+name: Development, Production, Staging, etc.). Only include the keys you want to change. `Presets.json` is the
+exception and takes no override at all (`$api/presets`).
 Bind-mount individual files in Docker with `-v $(pwd)/Presets.json:/app/Config_Files/Presets.json:ro`.
 
 > **Note:** the `Cors.json` and `ServiceModule` base files (`ConnectionStrings.json`, `JwtAuth.json`) are not
@@ -167,7 +171,9 @@ Higher number wins.
 
 ## Feature Flags
 
-All flags are boolean env vars. All default to `False` (disabled).
+All flags are boolean env vars. All default to `False` (disabled). The value is spelled `True` or `False`,
+capitalised — `$api/modules` has the three rules that decide how a flag reads, and why lowercase silently is not
+one of them.
 
 | Env Var | What it enables | Default |
 |---|---|---|

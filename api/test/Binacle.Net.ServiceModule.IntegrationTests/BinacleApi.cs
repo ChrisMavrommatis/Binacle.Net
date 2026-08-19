@@ -168,7 +168,10 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 		await base.DisposeAsync();
 	}
 
-	public async ValueTask EnsureAccountExists(AccountCredentials credentials)
+	public async ValueTask EnsureAccountExists(
+		AccountCredentials credentials,
+		AccountStatus status = AccountStatus.Active
+	)
 	{
 		using var scope = this.Services.CreateScope();
 		var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
@@ -178,7 +181,7 @@ public sealed class BinacleApi : WebApplicationFactory<IApiMarker>, IAsyncLifeti
 			credentials.Username,
 			AccountRole.User,
 			credentials.Email,
-			AccountStatus.Active,
+			status,
 			new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero),
 			credentials.Id
 		);

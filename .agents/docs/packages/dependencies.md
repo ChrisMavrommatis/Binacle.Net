@@ -1,8 +1,8 @@
 ---
 id: packages/dependencies
 description: TypeScript packages dependency tree — the npm workspaces and which package imports (and declares) which.
-verified: 2026-07-14
-check: package.json deps plus actual `from "<pkg>"` imports across packages/*/src and vipaq/packages/binacle-vipaq/src match the graph; every workspace import is declared
+verified: 2026-08-19
+check: the workspaces globs in the root package.json still cover every package; each package.json dependencies block matches the graph; a grep for non-relative `from "..."` across packages/*/src and vipaq/packages/binacle-vipaq/src turns up nothing the graph does not name
 paths:
   - "packages/**"
 ---
@@ -39,7 +39,7 @@ theme-switcher ───────────────┘
 | `cookies` | `packages/` | — | — |
 | `theme-switcher` | `packages/` | `cookies` | — |
 | `binacle-vipaq` | `vipaq/packages/` | `binacle-compact-notation` | — |
-| `binacle-net-ui` | `packages/` | `binacle-vipaq` | `alpinejs`, `three` |
+| `binacle-net-ui` | `packages/` | `binacle-vipaq` | `alpinejs`, `three` (incl. the `three/examples/jsm/controls/OrbitControls` subpath) |
 
 ## Notes
 
@@ -52,3 +52,7 @@ theme-switcher ───────────────┘
    vectors; the format itself pulls in nothing. See `$vipaq/typescript`.
 
 3. **`binacle-compact-notation` and `cookies` are leaves** — no workspace or runtime deps.
+
+4. **`binacle-net-ui` is the only package with runtime externals.** Everything else declares only devDependencies
+   (jest, ts-jest, typescript, type packages) or nothing at all. The root `package.json` carries no runtime
+   dependency either — its `concurrently` and `gulp` are build tooling (`$build-topology`).

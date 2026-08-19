@@ -1,3 +1,4 @@
+using Binacle.Net.ServiceModule.Domain.Common.Models;
 using System.Text.Json.Serialization;
 using Azure;
 using Azure.Data.Tables;
@@ -124,6 +125,38 @@ internal class AzureTablesAccountRepository : IAccountRepository
 		return TypedResult.NotFound;
 	}
 	
+	public async Task<PagedResult<Account>> ListAsync(
+		int skip,
+		int take,
+		bool allowDeleted = false,
+		CancellationToken cancellationToken = default
+	)
+	{
+		const string filter = $"PartitionKey eq '{TablePartitionKey}' and IsDeleted eq false";
+		const string allowDeletedFilter = $"PartitionKey eq '{TablePartitionKey}'";
+
+		// Table Storage cannot sort, skip or count, so the matching partition is read whole and paged here.
+		var entities = new List<AccountTableEntity>();
+		var query = this.tableClient.QueryAsync<AccountTableEntity>(
+			allowDeleted ? allowDeletedFilter : filter,
+			cancellationToken: cancellationToken
+		);
+		await foreach (var entity in query.WithCancellation(cancellationToken))
+		{
+			entities.Add(entity);
+		}
+
+		// RowKey is the id, and ids are version 7 Guids, so RowKey order is creation order.
+		var items = entities
+			.OrderBy(x => x.RowKey, StringComparer.Ordinal)
+			.Skip(skip)
+			.Take(take)
+			.Select(x => x.ToDomain())
+			.ToList();
+
+		return new PagedResult<Account>(items, entities.Count);
+	}
+
 	private sealed class AccountTableEntity : ITableEntity
 	{
 		#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.

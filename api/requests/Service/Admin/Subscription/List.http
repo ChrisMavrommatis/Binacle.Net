@@ -1,0 +1,9 @@
+GET https://{{HOST}}/api/admin/subscriptions?page=1&pageSize=50
+Accept: application/json
+Authorization: Bearer {{BEARERTOKEN}}
+
+###
+
+GET https://{{HOST}}/api/admin/subscriptions?page=1&pageSize=50&allowDeleted=true
+Accept: application/json
+Authorization: Bearer {{BEARERTOKEN}}

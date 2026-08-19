@@ -1,8 +1,8 @@
 ---
 id: api/modules
 description: Optional module system — feature flags, structure, available modules
-verified: 2026-07-24
-check: Module list and feature flags match Feature.Manager source
+verified: 2026-08-19
+check: The Add/Use pair and IModuleMarker of each Binacle.Net.*Module* project exist where stated; the flag reading rules match Kernel/Features/ (both providers, FeatureManager, FeatureManagerConfiguration); the launch profiles match api/src/Binacle.Net/Properties/launchSettings.json
 also_update:
   - api
   - api/configuration
@@ -15,19 +15,31 @@ paths:
 
 ## Feature Flags
 
-`Feature.Manager` reads from `appsettings.json` and env vars.
-It is created once at startup, before the DI container is built.
-
-Modules are turned on by flags in `Program.cs`:
+`Feature.Manager` is created once at startup, before the DI container is built. Modules are turned on by flags
+in `Program.cs`:
 
 ```csharp
 if (Feature.IsEnabled("SERVICE_MODULE")) builder.AddServiceModule();
 if (Feature.IsEnabled("UI_MODULE"))      builder.AddUIModule();
 ```
 
-UI flags (`SWAGGER_UI`, `SCALAR_UI`) work the same way.
+UI flags (`SWAGGER_UI`, `SCALAR_UI`) work the same way. See `$api/configuration` for the full flag list,
+env-var conventions, and config file layout.
 
-See `$api/configuration` for the full feature-flag list, env-var conventions, and config file layout.
+Three rules decide what a flag reads as, and each one bites:
+
+- **A flag is spelled `True` or `False`, capitalised.** Both providers compare against `bool.TrueString` and
+  `bool.FalseString` as strings. `SERVICE_MODULE=true` is neither: it reads as *not found*, falls through to the
+  next source, and ends at the default. No warning is logged.
+- **Two sources, and the first one that answers wins.** `ReadFrom.Configuration(...)` is registered before
+  `ReadFrom.EnvironmentVariables()`, so a `Features` section in a config file beats the environment variable of
+  the same name. Nothing else in the app works this way (`$api/configuration`) — this is the one inversion.
+  The two do not collide by accident: the config provider reads the **`Features` section**, so it takes
+  `"Features": { "SERVICE_MODULE": true }`, while the environment provider reads the bare variable name.
+- **Not found means off.** `DefaultNotFoundBehavior` is `Disabled`, and before `Feature.Manager` is assigned
+  every flag reads false, so a flag checked too early is silently off rather than a crash.
+
+`CreateManager()` throws if called twice.
 
 ## Module Structure
 
@@ -41,21 +53,22 @@ public static void UseXModule(this WebApplication app) { ... }
 `AddXModule` handles: config, DI, validators, OpenAPI docs.
 `UseXModule` wires up middleware and endpoints.
 
-If you add a new module, create its own `IModuleMarker` in that module's assembly — it's the marker used for
-endpoint registration.
+If you add a new module, create its own `IModuleMarker` in that module's assembly — it is the marker used for
+endpoint registration. All three put it in `Properties/IModuleMarker.cs`; ServiceModule's is `internal`, the
+other two are `public`.
 
 ## Available Modules
 
+Three, and only two of them are optional.
+
 | Module | Env var to enable | Default | Adds |
 |---|---|---|---|
-| `DiagnosticsModule` | always on | always on | Logging, health checks, OpenTelemetry, packing logs |
+| `DiagnosticsModule` | none — always compiled in and always added | on | Logging, health checks, OpenTelemetry, packing logs |
 | `ServiceModule` | `SERVICE_MODULE=True` | disabled | JWT auth, rate limiting, account management, subscriptions |
 | `UIModule` | `UI_MODULE=True` | disabled | Razor/Blazor interactive packing demo |
-| Swagger UI | `SWAGGER_UI=True` | disabled | Swagger UI at `/swagger` |
-| Scalar UI | `SCALAR_UI=True` | disabled | Scalar UI at `/scalar` (alternative OpenAPI interface) |
-| Debug endpoint | `DEBUG_ENDPOINT=True` | disabled | `/_debug` — echoes the caller's own request (connection address, headers, server info). Unauthenticated |
 
-See `$api/configuration` for full details on env-var conventions and config file layout.
+`SWAGGER_UI`, `SCALAR_UI` and `DEBUG_ENDPOINT` are flags over features inside the core API and the
+DiagnosticsModule, not modules of their own. `$api/configuration` lists all five in one table.
 
 ## Launch Profiles
 

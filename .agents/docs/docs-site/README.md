@@ -1,8 +1,8 @@
 ---
 id: docs-site
 description: The published Jekyll documentation site at repo-root docs/ — versioned API docs with Swagger UI embed. `$docs-site` always means repo-root docs/, never .agents/docs/.
-verified: 2026-08-17
-check: Collections, versions, plugin list, and version folders match docs/_config.yml and docs/collections/_versions/; `current` and `list` in docs/_data/versions.yml match the folders and the order the sidebar renders; the common-page rule matches what is actually on collections/_common_pages/
+verified: 2026-08-19
+check: Collections, versions, plugin list, and version folders match docs/_config.yml and docs/collections/_versions/; `current` and `list` in docs/_data/versions.yml match the folders and the order the sidebar renders; the common-page rule matches what is actually on collections/_common_pages/; the webpack entry, output and `clean` behaviour match docs/webpack.config.js
 paths:
   - "docs/**"
 ---
@@ -74,8 +74,9 @@ newest first, because the order is read from the file rather than sorted.
 
 **Why per-minor, not per-major.** A folder answers "what does my image do", and the API set is what changes:
 versions are **added at minors** (v1.2.0 added API v3) and **removed at majors** (v2.0.0 removed v1, v3.0.0
-removes v2). Per-major would show a v3 to a v1.1.4 image that never had it. Per-minor also caught the swagger UI,
-which landed at v2.1.1 — so `v2.0.x` has no `swagger/` and `v2.1.x` does. Patches never move the docs (every
+removes v2). Per-major would show a v3 to a v1.1.4 image that never had it. Per-minor also caught the swagger UI:
+`v2.0.x` has no `swagger/` while `v1.3.x`, `v2.1.x` and `v3.0.x` all do, so the folder tree records that it was
+there, went away, and came back — which a per-major tree could not have shown. Patches never move the docs (every
 patch pair in history is byte-identical across `docs/`). This makes the freeze **structural** — an old folder is
 frozen because nothing edits it, not because someone remembered to snapshot it. That discipline is exactly what
 failed before: four releases (v2.0.0 → v2.1.1) shipped with no snapshot, and only one folder was ever authored.
@@ -122,7 +123,12 @@ so links stay correct across versions.
 
 ## JS and Vendor Libs
 
-Webpack bundles `docs/_js/main.js` → `docs/js/main.js`.
+Webpack bundles `docs/_js/main.js` → `docs/js/main.js` (entry `main`, ts-loader for `.ts`).
+
+**`clean` is on only for a production build** (`env.build=dist`), not in watch mode. Watch shares `docs/js/`
+with a running jekyll, and deleting a file jekyll has already listed makes its next `File.stat` raise `ENOENT`
+and kills `just serve docs`. So a watch run leaves stale bundles behind on purpose; `just build docs` is what
+clears them.
 
 Vendor libs the docs site loads:
 - BeerCSS — theming (`/lib/beercss/`, via `docs/_data/includes.yml`)

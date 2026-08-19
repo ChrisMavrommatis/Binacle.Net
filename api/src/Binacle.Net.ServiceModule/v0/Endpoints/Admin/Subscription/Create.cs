@@ -82,7 +82,7 @@ internal class Create : IGroupedEndpoint<AdminGroup>
 				return Results.NotFound();
 			}
 
-			return Results.Created($"/api/admin/account/{account.Id}/subscription/{subscription.Id}", null);
+			return Results.Created($"/api/admin/account/{account.Id}/subscription", null);
 		});
 	}
 }

@@ -1,8 +1,8 @@
 ---
 id: api/v3/contracts
 description: v3 request and response contracts — field names, outer response wrapper, and enum values for fit and pack.
-verified: 2026-07-15
-check: Field names and enum values match api/src/Binacle.Net/v3/Contracts/
+verified: 2026-08-19
+check: Every field name, type and nullability here matches BinFitResult in FitResponse.cs and BinPackResult in PackResponse.cs; the enums and the three response wrappers match v3/Contracts/
 also_update:
   - api/v3
 paths:
@@ -71,9 +71,16 @@ Unknown
 NotPacked
 PartiallyPacked
 FullyPacked
-EarlyFail_ContainerVolumeExceeded   ← dead code; pack never triggers early exit
-EarlyFail_ContainerDimensionExceeded ← dead code; pack never triggers early exit
+EarlyFail_ContainerVolumeExceeded    ← unreachable
+EarlyFail_ContainerDimensionExceeded ← unreachable
 ```
+
+Nothing produces the two `EarlyFail_*` values — `$api/v3` says what guards them.
+
+## Preset List Response
+
+`GET /api/v3/presets` returns `PresetListResponse`, the same wrapper over
+`IDictionary<string, List<Bin>>` — preset name to its bins. `result` is always `Success`.
 
 ## Request Fields
 

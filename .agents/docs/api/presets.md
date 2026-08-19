@@ -1,8 +1,8 @@
 ---
 id: api/presets
 description: What presets are, where they're configured, how route params map to bins, and how to add one for tests
-verified: 2026-07-15
-check: Route patterns match endpoint files; Presets.json optional:false confirmed in config
+verified: 2026-08-19
+check: Every {preset} and {preset}/{bin} route in v3/Endpoints and v4/Endpoints is accounted for; the flags, lookup methods and validator rules match BinPresetOptions.cs; the shipped preset tables match Presets.json
 also_update:
   - api/configuration
 paths:
@@ -22,7 +22,9 @@ See `$api/configuration` for where config files live and how to override them.
 
 Presets live in `api/src/Binacle.Net/Config_Files/Presets.json`, loaded into `BinPresetOptions`
 (`api/src/Binacle.Net/Configuration/BinPresetOptions.cs`).
-This file is **required** (`Optional: false`) — the app fails to start if it is missing.
+This file is **required** (`Optional: false`) — the app fails to start if it is missing. It is the one config
+file with **no environment override**: `GetEnvironmentFilePath` returns `null`, so a `Presets.Development.json`
+is never read.
 
 Structure:
 
@@ -44,18 +46,32 @@ Built-in presets: `rectangular-cuboids`, `perfect-cubes`, `sample`. Each has `Sm
 
 ## Route Params
 
-**v4** preset endpoints use `{preset}/{bin}` — pick one specific bin by name:
+Two parameters, and which of them a route takes says which lookup it does:
 
-- `{preset}` — the top-level key in `Presets` (e.g., `rectangular-cuboids`)
-- `{bin}` — the `ID` of a bin within that preset (e.g., `Small`)
+- `{preset}` — the top-level key in `Presets` (e.g. `rectangular-cuboids`)
+- `{bin}` — the `ID` of a bin within that preset (e.g. `Small`)
 
-Example: `POST /api/v4/fit/bin/rectangular-cuboids/Small`
+| Route shape | Lookup | Which routes |
+|---|---|---|
+| `{preset}/{bin}` | `TryGetPresetBin(preset, bin, out binOption)` — one named bin | v4 `fit/bin`, v4 `pack/bin` |
+| `{preset}` | `TryGetPreset(preset, out presetOption)` — every bin in the preset | v4 `compare-bins`, `smallest-bin`, `pack/best-bin`, `GET presets/{preset}`; all v3 `by-preset` routes |
 
-The endpoint looks this up via `BinPresetOptions.TryGetPresetBin(preset, bin, out binOption)`.
-Returns `404` if the preset or bin name doesn't exist.
+Examples: `POST /api/v4/fit/bin/rectangular-cuboids/Small`, `POST /api/v4/fit/smallest-bin/rectangular-cuboids`,
+`POST /api/v3/fit/by-preset/rectangular-cuboids`. The full route list is in `$api/v4` and `$api/v3`.
 
-**v3** preset endpoints use only `{preset}` — no `{bin}`. They run all bins in the preset and return
-one result per bin. Example: `POST /api/v3/fit/by-preset/rectangular-cuboids`
+Either lookup returns `404` when the name doesn't exist. **Both names are matched case-sensitively** — the
+preset through a plain `Dictionary` lookup, the bin through `b.ID == bin` — so `.../rectangular-cuboids/small`
+is a `404` while `.../Small` is not.
+
+## Presets.json is validated at startup
+
+`BinPresetOptionsOptionsValidator` refuses to boot on any of these, naming the preset and the bin in the
+message:
+
+- a preset with no bins,
+- two bins in one preset sharing an `ID` — the route `{preset}/{bin}` would reach only the first, and the
+  second would be silently dead,
+- a bin with an empty `ID`, or a `Length`, `Width` or `Height` that is not greater than 0.
 
 ## Lookup is cached
 
@@ -101,3 +117,6 @@ To add a preset for testing:
 1. Add a constant to `api/test/Binacle.Net.IntegrationTests/PresetKeys.cs`
 2. In `BinacleApi.ConfigureWebHost`, add an entry via `options.Presets.Add(PresetKeys.YourKey, ...)`
 3. Reference it in tests via `PresetKeys.YourKey`
+
+`BinacleApiWithoutPresets` is a second fixture in the same project that clears the presets and adds none — it
+is how the empty-preset responses are tested.

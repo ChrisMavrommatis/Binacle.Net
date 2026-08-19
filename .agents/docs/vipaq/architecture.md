@@ -1,8 +1,8 @@
 ---
 id: vipaq/architecture
 description: ViPaq architecture — the blind encode/decode layer, the layout codecs, and the serializer that chooses. The policy/mechanism split the rebuild keeps.
-verified: 2026-07-24
-check: Policy/mechanism split matches vipaq/src/Binacle.ViPaq — ProtocolEncoder obeys the header, ViPaqSerializer chooses widths/layout/compression, Layouts/ hold the codecs
+verified: 2026-08-19
+check: Policy/mechanism split matches vipaq/src/Binacle.ViPaq — ProtocolEncoder obeys the header, ViPaqSerializer chooses widths/layout/compression, Layouts/ hold the codecs; every type named here has the visibility claimed; the ViPaqSerializer call sites listed still exist and still name their types; the report files under results/vipaq/compression/ resolve
 paths:
   - "vipaq/**"
 ---
@@ -39,7 +39,7 @@ you only know whether compressing paid after you compress and compare lengths (�
 as an instruction and obeys it — "compress this" or "don't" — and the decision is passed out to the caller through
 `ViPaqSerializationOptions`. The blind layer never decides; it just does what the bit says.
 
-## Phase 1 — the base structure — **landed 2026-07-10**
+## Phase 1 — the base structure
 
 Only the blind layer. No choosing. In `vipaq/src/Binacle.ViPaq/`:
 
@@ -111,7 +111,7 @@ Only the items are laid out — the item count and the bin dimensions are the sa
 **Encoder and decoder obey the header.** They validate that the header can hold the data (§8) and then write or
 read exactly what it declares. No width is re-derived on decode (§4). No compression decision is made here.
 
-## The chooser — `ViPaqSerializer` — **written 2026-07-10**
+## The chooser — `ViPaqSerializer`
 
 A `public static class`. `ProtocolEncoder` is blind, so *something* has to decide the header, and this is where
 that goes. `Header.Create` sizes the three widths from the input; `Serialize` layers the caller's options on top
@@ -143,12 +143,16 @@ not come back — every call site names its types on the generic method instead 
 
 ## Public surface, and what tests can reach
 
-- **Public:** `ViPaqSerializer`, `Dimensions<T>` / `Item<T>` (from `Binacle.Geometry`), `Limits`,
-  `ViPaqFormatException`.
-- **Internal:** everything else — reader, writer, layout codecs, `ProtocolEncoder`, the codecs, and `Header`.
+- **Public:** the surface table in `$vipaq` is the list. Architecturally what matters is that it is the
+  *choosing* layer plus the knobs that feed it — `ViPaqSerializer`, `ViPaqSerializationOptions`, `Layout` —
+  and nothing that describes the wire.
+- **Internal:** everything the blind layer is made of — `ProtocolReader<T>` / `ProtocolWriter<T>`, the layout
+  codecs and their factory, `ProtocolEncoder`, `Header`, `Version`, `Width`, `HeaderNotation`, and the three
+  codec implementations. **`ICompressionCodec` itself is public** while `DeflateCodec` / `GzipCodec` /
+  `NoOpCodec` are not: the seam is visible, the choice of stream is not.
 - `Binacle.ViPaq.csproj` grants `InternalsVisibleTo` to `.UnitTests`, `.VectorGenerators`, `.TestsKernel`,
   `.PerformanceTests` and `.Benchmarks` — the measurement harnesses drive the blind layer directly, which needs
-  internals.
+  internals. `.PackedDataGenerator` is deliberately not on that list (`$vipaq/dependencies`, wall 3).
 - **Racing the codecs needs internals**, and `TestsKernel` has them. The race is part of the permanent harness,
   so it belongs there rather than in a throwaway. No new grant is needed. The reports are in
   `results/vipaq/compression/`.

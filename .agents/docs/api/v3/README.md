@@ -1,8 +1,8 @@
 ---
 id: api/v3
 description: v3 API — stable, do not modify. Endpoints, algorithm selection, response shape, field names, and enum values.
-verified: 2026-07-15
-check: Endpoint list, field names, and enum values match api/src/Binacle.Net/v3/
+verified: 2026-08-19
+check: The endpoint table matches every MapGet/MapPost under v3/Endpoints/; field names and enum values match v3/Contracts/; the pack EarlyFail_* claim still holds against PackResponse.MapResultStatus and the AlgorithmOperation.Fitting guard in the algorithms
 also_update:
   - api/v3/contracts
 paths:
@@ -39,6 +39,10 @@ Separate types per operation: `FitRequestParameters` and `PackRequestParameters`
 
 `includeViPaqData` (bool, optional) — pack endpoints only. When `true`, each packed bin result includes a
 `viPaqData` field with the packing encoded in the ViPaq format.
+
+Both types fix `Operation` as a get-only property (`=> AlgorithmOperation.Fitting` / `.Packing`). v4's mutable
+`Operation` and the `.ForFittingOperation()` / `.ForPackingOperation()` calls that set it (`$api/service`) have
+no v3 equivalent, and neither does the warning that goes with them.
 
 ## Response Shape
 
@@ -89,20 +93,19 @@ Unknown
 NotPacked
 PartiallyPacked
 FullyPacked
-EarlyFail_ContainerVolumeExceeded   ← dead code; pack never triggers early exit
-EarlyFail_ContainerDimensionExceeded ← dead code; pack never triggers early exit
+EarlyFail_ContainerVolumeExceeded    ← unreachable, see below
+EarlyFail_ContainerDimensionExceeded ← unreachable, see below
 ```
 
-The two `EarlyFail_*` values on pack are never set at runtime — pack always runs to completion.
-They exist in the enum but are unreachable.
+`PackResponse.MapResultStatus` does have a branch that produces the two `EarlyFail_*` values, but nothing ever
+reaches it: every algorithm guards its early-exit checks with `parameters.Operation == AlgorithmOperation.Fitting`,
+so a packing operation always runs to completion. The values are in the enum and unreachable.
 
 See `$api/v4` for how v4 differs.
 
 ## Request Example
 
 Pack by preset with FFD, including ViPaq data.
-
-<!-- sourced from docs site; verify against current code if behaviour changes -->
 
 ```json
 {
@@ -119,8 +122,6 @@ Pack by preset with FFD, including ViPaq data.
 ```
 
 ## Response Example
-
-<!-- sourced from docs site; verify against current code if behaviour changes -->
 
 ```json
 {

@@ -10,5 +10,6 @@ public interface IAccountRepository
 	Task<FluxUnion<Success, Conflict>> CreateAsync(Account account, CancellationToken cancellationToken = default);
 	Task<FluxUnion<Success, NotFound>> UpdateAsync(Account account, CancellationToken cancellationToken = default);
 	Task<FluxUnion<Success, NotFound>> DeleteAsync(Account account, CancellationToken cancellationToken = default);
+	Task<PagedResult<Account>> ListAsync(int skip, int take, bool allowDeleted = false, CancellationToken cancellationToken = default);
 }
 

@@ -31,6 +31,24 @@ has to stay. These two are the exceptions.
   keep-or-convert decision in the scripts-to-just-recipes plan**, not before: if the script moves into a
   shebang recipe body whole, the noise moves with it.
 
+## Ruby gems
+
+- **Neither gem under `ruby/` has a `Gemfile`**, so `bundle exec rspec` in `ruby/jekyll-filters` or
+  `ruby/jekyll-gtm` fails with "Could not locate Gemfile or .bundle/ directory". Both declare `rspec` as a
+  development dependency in their gemspec, and both have a full `spec/` suite that **nothing has ever run** -
+  no workflow, no `just` recipe. Found 2026-08-19 while verifying the ruby doc.
+
+  The mechanical half is a two-line `Gemfile` in each directory (`gemspec` plus the rspec group). **Whether
+  the suites then go on the PR gate is a separate call** - if it grows past adding the file, it needs its own
+  plan.
+
+## Web site
+
+- **`web/lib/alpine/` and `web/lib/swagger-ui/` are referenced by nothing** under `web/` — not by
+  `_data/includes.yml`, not by any include, layout or page. They are published to the marketing site and never
+  loaded. Found 2026-08-19 while verifying the web-site doc. Deleting them is a `web/` change, so it belongs to
+  the site session, not a coding one; record it there rather than doing it here.
+
 ## ServiceModule
 
 - `api/src/Binacle.Net.ServiceModule/Services/ApiUsageRateLimitingPolicy.cs:34`

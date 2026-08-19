@@ -1,8 +1,8 @@
 ---
 id: packages/binacle-net-ui
 description: packages/binacle-net-ui — Alpine.js components + Three.js visualizer for the packing demo. Components, plugins, model layers, and the window.binacle global.
-verified: 2026-07-15
-check: Component x-data names, plugin exports, and model layers match packages/binacle-net-ui/src/
+verified: 2026-08-19
+check: Every Alpine.data name in src/core/ appears in the component table and vice versa; the two plugins register exactly what is listed; the model-layer folders and the utils split match src/; the hardcoded endpoint in core/packingDemo.ts is still the one named here; package.json still has no scripts
 also_update:
   - packages
 paths:
@@ -17,7 +17,7 @@ Private npm workspace package (`"private": true`, name `binacle-net-ui`).
 ## Build & consumers — important
 
 This package has **no build step and no bundle of its own** — `"main": "index.ts"` points at raw TypeScript, and
-there are no `build`/`test` scripts. It is consumed as **TS source** by the `web/` Jekyll site, which compiles it
+its `package.json` carries **no `scripts` block at all**. It is consumed as **TS source** by the `web/` Jekyll site, which compiles it
 with its own webpack + ts-loader (`web/_js/packing_demo.js`, `web/_js/protocol_decoder.js`; split chunk in
 `web/webpack.config.js`). `three` is bundled from web's `node_modules`, not a CDN.
 
@@ -55,7 +55,8 @@ or a `DecodedPackingResult`) and **`error-occurred`** (payload `string[]` or `Er
 ## window.binacle (two different ones — don't confuse them)
 
 This package's `packingVisualizer.init()` sets `window.binacle = { rendererContainer, visualizerContainer,
-visualizerState }` (typed in `src/types/global.d.ts`). It is **event-driven** — there are no public
+visualizerState }` — exactly the three members of the `Binacle` interface in `src/core/binacle.ts`, all
+nullable, declared onto `Window` in `src/types/global.d.ts`. It is **event-driven** — there are no public
 `initialize`/`redrawScene` methods.
 
 The UIModule's `wwwroot/js/PackingVisualizer.js` defines a **different** `window.binacle` with an imperative API

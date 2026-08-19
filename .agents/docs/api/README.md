@@ -1,8 +1,8 @@
 ---
 id: api
 description: Index for API slice docs — endpoints, contracts, service, kernel, presets, and module docs (Diagnostics, ServiceModule, UIModule)
-verified: 2026-07-28
-check: Startup sequence matches Program.cs; dep map matches actual project references
+verified: 2026-08-19
+check: The startup order matches Program.cs top to bottom, builder half then pipeline half; the dependency map matches every ProjectReference in api/**/*.csproj and the projects those reach; every type named in the v4 request flow still resolves
 also_update:
   - api/modules
 paths:
@@ -61,15 +61,16 @@ everything downstream — HTTPS redirection, the health check IP allow-list, rat
 
 ## Project Dependency Map
 
-Projects live in three top-level directories: `lib/src/`, `api/src/`, `vipaq/src/`.
+Projects live in four top-level directories: `shared/src/`, `lib/src/`, `api/src/`, `vipaq/src/`.
 
 ```
 shared/src/Binacle.Packing                → Binacle.Geometry
+shared/src/Binacle.CompactNotation        → Binacle.Geometry
 lib/src/Binacle.Lib                       → Binacle.Packing
 vipaq/src/Binacle.ViPaq                   → Binacle.Geometry
 
 api/src/Binacle.Net.Kernel                → Binacle.CompactNotation
-api/src/Binacle.Net.DiagnosticsModule     → Binacle.Net.Kernel
+api/src/Binacle.Net.DiagnosticsModule     → Binacle.Net.Kernel, Binacle.Packing, Binacle.CompactNotation
 api/src/Binacle.Net.ServiceModule.Domain  (no dependencies)
 api/src/Binacle.Net.ServiceModule.Infrastructure → Binacle.Net.Kernel, ServiceModule.Domain
 api/src/Binacle.Net.ServiceModule         → Binacle.Net.Kernel, ServiceModule.Domain, ServiceModule.Infrastructure
@@ -83,7 +84,8 @@ This is the API slice's view. The full graph across every slice — including wh
 Key rules:
 - Kernel has no dependency on `Binacle.Net` or any module — safe to use from anywhere
 - Lib and Binacle.Packing have no API dependencies — pure algorithm layer
-- Only `Binacle.Net` references the packer; the Kernel, the modules and the tests take `Binacle.Packing`
+- Only `Binacle.Net` references the packer. The two modules that need the result vocabulary (Diagnostics, UI)
+  and the integration suite take `Binacle.Packing` instead; the Kernel takes neither
 - Modules depend on Kernel but not on each other
 - `Binacle.Net` is the only project that references everything
 
@@ -137,15 +139,10 @@ See `$lib/result-building` for how `OperationResultBuilder` computes status and 
 
 ## Related Tests
 
-| Project | Alias | What it covers |
-|---|---|---|
-| `api/test/Binacle.Net.IntegrationTests` | `just test api-core-integration` | HTTP behavior and scenario tests for v3 and v4 endpoints |
-| `api/test/Binacle.Net.ServiceModule.IntegrationTests` | `just test api-service-integration [Sqlite\|Postgres\|AzureStorage]` | Auth and rate limiting (ServiceModule only) |
+Six projects under `api/test/` — two integration suites and four unit suites. API Tests (`$api/tests`) names
+each one, what it covers and the `just` alias that runs it; `just test all` runs every suite in the repo.
 
-`just test all` runs both, along with every other suite.
-
-See API Tests (`$api/tests`) for integration-test conventions, and Shared (`$shared`) for the scenario
-data format. See Commands (`$commands`) for how to run the API locally.
+See Shared (`$shared`) for the scenario data format, and Commands (`$commands`) for how to run the API locally.
 
 ## Dependencies
 

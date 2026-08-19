@@ -1,8 +1,8 @@
 ---
 id: api/service
 description: IBinacleService — method reference for SingleBinAsync, MultipleBinsAsync, SmallestBinAsync, BestBinAsync; return types, call pattern, and algorithm selection
-verified: 2026-07-16
-check: Method signatures match IBinacleService in api/src/Binacle.Net/Services/BinacleService.cs
+verified: 2026-08-19
+check: Method signatures, including the trailing CancellationToken, match IBinacleService in api/src/Binacle.Net/Services/BinacleService.cs; the call pattern matches a v4 endpoint handler; GetAlgorithm and ForFittingOperation/ForPackingOperation match api/src/Binacle.Net/v4/Contracts/OperationParameters.cs
 paths:
   - "api/src/Binacle.Net/Services/**"
 
@@ -20,7 +20,8 @@ Every method is **generic** and **async**. The full shape is:
 
 ```csharp
 ValueTask<OperationResult> SingleBinAsync<TBin, TBox, TParams>(
-    Algorithm algorithm, TBin bin, List<TBox> items, TParams parameters)
+    Algorithm algorithm, TBin bin, List<TBox> items, TParams parameters,
+    CancellationToken cancellationToken = default)
     where TBin : class, IWithID, IIdentifiableBin
     where TBox : class, IWithID, IWithQuantity, IIdentifiableItem
     where TParams : class, IOperationParameters, ILogParametersProvider;
@@ -71,13 +72,14 @@ OperationResult result;
 if (algorithm.HasValue)
 {
     result = await binacleService.SingleBinAsync(
-        algorithm.Value, bin, request.Items, request.Parameters.ForFittingOperation()
+        algorithm.Value, bin, request.Items, request.Parameters.ForFittingOperation(),
+        cancellationToken
     );
 }
 else
 {
     result = await binacleService.SingleBinAsync(
-        bin, request.Items, request.Parameters.ForFittingOperation()
+        bin, request.Items, request.Parameters.ForFittingOperation(), cancellationToken
     );
 }
 ```

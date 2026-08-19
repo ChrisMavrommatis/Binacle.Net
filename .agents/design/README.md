@@ -11,7 +11,11 @@ which can go in a dedicated `<slice>/history.md`. Like everything here, group by
 ## Anchors
 
 Decision and option headings carry short labels (`D1`, `O1`) that double as section anchors, so a section can be
-cited as `$vipaq#D16`. Give every file a stable `id:` in its front matter so there is something to cite.
+cited as `$vipaq/decisions#D16`. Give every file a stable `id:` in its front matter so there is something to cite.
+
+**The id before the `#` is the file that holds the anchor, and it is easy to get wrong.** `$vipaq` is the ViPaq
+*doc*; the decisions live in `$vipaq/decisions`. A citation like `$vipaq#D16` resolves to a real file and then
+to an anchor that is not in it, so it reads as valid and lands nowhere.
 
 ## Index
 

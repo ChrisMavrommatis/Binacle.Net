@@ -1,8 +1,8 @@
 ---
 id: api/modules/service
 description: ServiceModule — JWT auth, rate limiting, account/subscription management. Three projects using clean architecture.
-verified: 2026-08-14
-check: Routes, config file names, and connection string name match ServiceModule source
+verified: 2026-08-19
+check: Routes, config file names, connection string name, the AccountStatus values, the list endpoints' paging parameters, and the token endpoint's account-state codes match ServiceModule source
 also_update:
   - api/configuration
 paths:
@@ -49,16 +49,33 @@ if (Feature.IsEnabled("SERVICE_MODULE")) {
 |---|---|---|
 | POST | `/api/auth/token` | none |
 | POST | `/api/admin/account` | Admin |
+| GET | `/api/admin/accounts` | Admin |
 | GET | `/api/admin/account/{id}` | Admin |
 | PUT | `/api/admin/account/{id}` | Admin |
 | PATCH | `/api/admin/account/{id}` | Admin |
 | DELETE | `/api/admin/account/{id}` | Admin |
+| GET | `/api/admin/subscriptions` | Admin |
+| GET | `/api/admin/account/{id}/subscription` | Admin |
 | POST | `/api/admin/account/{id}/subscription` | Admin |
 | PUT | `/api/admin/account/{id}/subscription` | Admin |
 | PATCH | `/api/admin/account/{id}/subscription` | Admin |
 | DELETE | `/api/admin/account/{id}/subscription` | Admin |
 
 Admin policy requires: authenticated + `ClaimTypes.Role == "Admin"`.
+
+**The two list endpoints page by offset** - `page` (1-based), `pageSize` (default 50, max 200) and
+`allowDeleted`, returning `PagedResponse<T>` with `Total`, `Page`, `PageSize`, `TotalPages` and `Items`. Rows
+come back in id order, which is creation order because ids are version 7 Guids. SQLite and Postgres serve this
+with `LIMIT`/`OFFSET` and a `COUNT`. **Azure Table Storage can do none of the three** - no sort, no skip, no
+count - so `AzureTablesAccountRepository.ListAsync` reads the matching partition whole and sorts, slices and
+counts it in memory. That is why `PageQuery.MaxPageSize` exists.
+
+`AccountListItem` deliberately carries **no password hash and no security stamp**, unlike `AccountGetResponse`
+which returns a single account by id.
+
+`/api/auth/token` rejects on account state after it has verified the password: a **suspended** account gets
+**403**, an **inactive** one gets **401** — the same code an unknown username, an account with no password, and
+a wrong password all get.
 
 ## Rate Limiting
 
@@ -83,7 +100,7 @@ and the OpenAPI documents follow, carrying no `429` on any endpoint. See `$api/o
 ## Domain Layer
 
 **Entities:**
-- `Account` — user account with `AccountRole` (Admin, User) and `AccountStatus` (Active, Suspended, Deleted)
+- `Account` — user account with `AccountRole` (Admin, User) and `AccountStatus` (Active, Inactive, Suspended)
 - `Subscription` — linked to an account; `SubscriptionType` (Demo, Basic, Pro, Enterprise) and `SubscriptionStatus`
 
 **Patterns:**
@@ -146,4 +163,4 @@ See `$api/v4/add-endpoint` for the template — ServiceModule endpoints use `IGr
 
 `api/test/Binacle.Net.ServiceModule.IntegrationTests` (run with `just test api-service-integration
 [Sqlite|Postgres|AzureStorage]`) — covers the auth token endpoint and the Admin account and subscription
-endpoints. Subscription has Create/Update/Patch/Delete only — there is no Get.
+endpoints, including the two list endpoints and the subscription Get.

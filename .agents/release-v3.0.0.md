@@ -4,7 +4,7 @@ description: Release - Binacle.Net v3.0.0
 
 # Release - Binacle.Net v3.0.0
 
-**Status:** In progress. Betas 1, 2 and 3 published, verified and deployed. The pipeline is rebuilt and proven
+**Status:** In progress. Betas 1, 2 and 3 published, verified and deployed; beta 3's checks closed 2026-08-19. The pipeline is rebuilt and proven
 end to end. The architecture branch is merged, the suite is green and the OpenAPI documents are proven unmoved.
 **The repository moved to the `binacle-labs` organization on 2026-08-16, mid-release**, and `v3.0.0-beta.3`
 proved the whole pipeline under the new owner. What is left is the last commit and the tag - plus the items
@@ -82,44 +82,61 @@ A prerelease gets its immutable tag only, never `3.0` or `latest`. The release b
 | 1 | Rate limiter tests | **done - 2026-08-14** |
 | 2 | Rate limiting owned by the ServiceModule | **done - 2026-08-14** |
 | 3 | The Azure Storage run | **done - 2026-08-14, and now on the PR gate** |
-| 4 | Beta 3 | **published 2026-08-16** - the pipeline half is proven, the deployment checks are open |
-| 5 | The last commit: pins, prose and the changelog rename | open |
-| 6 | Tag `v3.0.0` | open |
+| 4 | Beta 3 | **done - 2026-08-19** |
+| 5 | Admin read endpoints - list accounts, list subscriptions, get subscription | **done - 2026-08-19** |
+| 6 | The last commit: pins, prose and the changelog rename | open |
+| 7 | Tag `v3.0.0` | open |
 
-### 4. Beta 3
+### 4. Beta 3 - done 2026-08-19
 
-**Why there is one.** The architecture merge changed shipping code, so beta 2's image evidence describes a tree
-that is not the one shipping. Same reasoning that produced beta 2 out of beta 1, and it costs one tag.
+Cut from the merge commit, published 2026-08-16, and it paid for itself twice: the whole pipeline ran under the
+new owner, `just image verify 3.0.0-beta.3` passed all four checks, and the command printed in `SECURITY.md`
+passed verbatim from a clean shell. **It is the reference tag - the only image that verifies under the current
+identity** until v3.0.0 is out.
 
-**It is narrower than beta 2 was.** Beta 2 proved the rebuilt pipeline; that is proven. Beta 3 exists to put
-the restructured tree on a real host and pay two live checks owed from beta 2.
+The three live checks it existed for:
 
-**Correction, 2026-08-14.** An earlier draft justified this on `Auth/Token.cs` being the most restructured
-shipping file. **The merge does not touch that file at all** - verified against the diff. The two checks below
-are debts from beta 2, not consequences of the merge. Do not scope this as a re-audit of the restructure.
+- **The version stamp reads `3.0.0-beta.3`.** Read from `/_health` on the host, environment `Production`, both
+  entries green. The pipeline never sees this - the smoke only asserts the stamp is not `Unknown`.
+- **The resolved caller.** Settled; closed by the maintainer.
+- **The auth token endpoint.** An active account returns 200 and an inactive one 401, both live. **The
+  suspended account returns 403 and that branch was not exercised** - no suspended account on the host.
 
-**Published 2026-08-16, and it paid for itself twice.** The tag also became the proof of the org move: the whole
-pipeline ran under the new owner, `just image verify 3.0.0-beta.3` passed all four checks, and the command
-printed in `SECURITY.md` passed verbatim from a clean shell. It is now the reference tag - **the only image
-that verifies under the current identity**.
+**The 403 is untested by anything, and that outlives the release.** `IntegrationTests/Endpoints/Auth/Token.cs`
+covers 200, 401 and 422 only, so the one branch in `Reject` that returns a different status code has neither a
+test nor a live call behind it. Deferred at the maintainer's call, and **written into
+[api/integration-test-additions](plans/api/integration-test-additions.md)**, which is already on the board - it
+is a test to write, not a check to run, so it does not belong in post-release.
 
-- [x] **Cut it from the merge commit.**
-- [ ] **Exercise the auth token endpoint.** `ServiceModule/v0/Endpoints/Auth/Token.cs` - its rejection chain is
-      one extracted `Reject` helper, and a wrong branch returns the wrong status code to a real client, which
-      no unit test shape catches as well as one live call.
-- [ ] **Re-confirm the resolved caller** once the forwarded-headers source header settles. During beta 1 it
-      moved between boots (`CF-Connecting-IP` on one, `X-Forwarded-For` on a later one). The resolved caller
-      was correct whenever observed, but the two are not equivalent behind a CDN and the health check
-      allow-list is compared against whatever they resolve to.
-- [ ] **Confirm the image runs and the version stamp reads `3.0.0-beta.3`.** The pipeline smokes the GHCR copy
-      before anything is copied, so a broken image cannot reach Docker Hub. This is the deployment half, which
-      the pipeline does not see.
+### 5. Admin read endpoints - done 2026-08-19
 
-**What beta 3 does not re-do:** every structural thing beta 2 already proved - the six jobs, the
-digest-preserving copy, the signature on both registries, the SBOM and provenance, the release body
-extraction. None of it moves because a namespace did.
+**Pulled in on 2026-08-19, at the maintainer's call, from testing beta 3.** The admin API could create an
+account but never enumerate one: every read needed an id, and the only place an id appeared was the `Location`
+header of the create call. A running instance had accounts in it and no way to ask what they were.
 
-### 5. The last commit before the tag - all in one
+Three endpoints, all additive - no existing contract moves:
+
+- `GET /api/admin/accounts` - offset paged, `page` / `pageSize` / `allowDeleted`.
+- `GET /api/admin/subscriptions` - the same, and the flat list across accounts.
+- `GET /api/admin/account/{id}/subscription` - the read that was missing next to update, patch and delete.
+
+**Paging is offset, not cursor**, so the shape supports page numbers, a total, and sortable columns later
+without reshaping the contract or a client built on it. SQLite and Postgres serve it with `LIMIT`/`OFFSET` and
+a `COUNT`. **Azure Table Storage can do none of those three**, so its repositories read the matching partition
+whole and sort, slice and count it in memory - bounded by `PageQuery.MaxPageSize` and never on the auth path.
+Whether that provider stays is a separate question, recorded in the ServiceModule simplification idea along
+with what its storage shape costs.
+
+**One existing response changed.** Creating a subscription returned a `Location` of
+`/api/admin/account/{id}/subscription/{subscriptionId}`, which matched no route and 404ed. It now points at
+`/api/admin/account/{id}/subscription`, which the new Get answers.
+
+- [x] The three endpoints, with OpenAPI examples and request files.
+- [x] `ListAsync` on both repository interfaces and all four implementations of each.
+- [x] Integration tests - green on **all three backends**: SQLite, Postgres and Azure Storage.
+- [x] Verified live against a running instance on the Azure Storage backend, which is the faked path.
+
+### 6. The last commit before the tag - all in one
 
 - [ ] **Rename `## [Unreleased]` to `## 3.0.0`** in `CHANGELOG.md`.
 - [ ] **Move eight pins from `3.0.0-beta.1` to `3.0`:**
@@ -156,7 +173,7 @@ sit at `3.0.0-beta.1` through the whole sequence, beta 3 included. They moved ea
 and sat on `main` naming an image that did not exist. **Do not leave the `3.0` bump on `main` long before
 tagging.**
 
-### 6. Tag
+### 7. Tag
 
 - [ ] **Tag `v3.0.0`.** The pipeline does the rest: the changelog gate, the suite, the GHCR build, the smoke,
       the Docker Hub copy under all three tags, the signature, and the release created from the `3.0.0`
@@ -391,7 +408,7 @@ stay four. Anyone building from source sees `Binacle.Lib.Abstractions` disappear
 
 1. ~~Rate limiter tests, rate limiting moved to the ServiceModule, the Azure Storage run.~~ All done
    2026-08-14.
-2. **Finish beta 3.** Published 2026-08-16; the two live deployment checks are still open.
+2. ~~Finish beta 3.~~ Published 2026-08-16, closed 2026-08-19.
 3. **The last commit:** changelog rename, nine pins, six comment blocks, three READMEs, two tooling examples,
    and the `IsExperimental` re-confirm.
 4. **Tag `v3.0.0`.** The pipeline does the rest.

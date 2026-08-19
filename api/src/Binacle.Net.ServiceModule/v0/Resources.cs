@@ -33,4 +33,11 @@ internal static class ErrorMessage
 	}
 
 	public const string IdMustBeGuid = "The provided value for 'Id' must be a valid Guid";
+
+	public const string PageMustBePositive = "The provided value for 'Page' must be 1 or greater";
+
+	public static string PageSizeOutOfRange(int max)
+	{
+		return $"The provided value for 'PageSize' must be between 1 and {max}";
+	}
 }

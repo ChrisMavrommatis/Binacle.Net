@@ -1,8 +1,8 @@
 ---
 id: lib/processors
 description: IAlgorithmProcessor, IBinProcessor, and IMultiAlgorithmBinProcessor — their factories and which algorithms each execution path uses
-verified: 2026-07-15
-check: Interface names and Process() signatures match lib/src/Binacle.Lib/
+verified: 2026-08-19
+check: Interface names and full Process() signatures, cancellation token included, match lib/src/Binacle.Lib/Abstractions/; the algorithm sets match AlgorithmProcessorFactory.Create and BinProcessorFactory.CreateMultiAlgorithm; the result-selection table matches which selector methods BinacleService actually calls; a grep for the three Parallel* types shows no factory returning one
 also_update:
   - api/service
 paths:
@@ -31,11 +31,32 @@ Pick the right processor by bins × algorithms:
 `IAlgorithmProcessor` runs multiple algorithms against a single bin and returns all results.
 
 ```csharp
-IAlgorithmProcessor.Process<TBin, TItem>(bin, items, parameters)
+IAlgorithmProcessor.Process<TBin, TItem>(
+    bin, items, parameters, CancellationToken cancellationToken = default)
     → IDictionary<string, OperationResult>
 ```
 
-Keys in the returned dictionary are algorithm identifier names (e.g., `"FFD_v2"`) from `GetAlgorithmIdentifierName()`.
+All three `Process` methods take the same trailing optional token, and all three constrain
+`TBin : class, IWithID, IWithReadOnlyDimensions` and
+`TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity`.
+
+**What the key is depends on which processor produced the dictionary**, and both shapes are
+`IDictionary<string, OperationResult>`, so the compiler will not tell you which one you are holding:
+
+| Processor | Key |
+|---|---|
+| `IAlgorithmProcessor` | algorithm identifier name — `"FFD_v2"`, from `GetAlgorithmIdentifierName()` |
+| `IBinProcessor`, `IMultiAlgorithmBinProcessor` | the bin's `ID` |
+
+`GetAlgorithmIdentifierName()` has two halves: the `IPackingAlgorithm` extension in
+`lib/src/Binacle.Lib/ExtensionMethods/PackingAlgorithmExtensions.cs` delegates to the `AlgorithmInfo` one in
+`Binacle.Packing`, so an instance and a result can never format the same algorithm differently.
+
+## Cancellation is between units, not inside one
+
+Every `Process` calls `ThrowIfCancellationRequested()` at the top of its loop and nowhere else. A cancelled
+token stops the next algorithm or the next bin; it never interrupts a packing run in progress. That is
+deliberate — one bin's run is tens of milliseconds, and tearing it apart mid-run would cost more than it saves.
 
 ## LoopAlgorithmProcessor
 
@@ -49,7 +70,8 @@ The only active implementation. Takes an array of `Algorithm` values and runs ea
 
 ### AlgorithmProcessorFactory
 
-Creates a `LoopAlgorithmProcessor` with **FFD + WFD + BFD**. Used by `BinacleService.SingleBinAsync(bin, items, params)`.
+`Create(int itemCount)` returns a `LoopAlgorithmProcessor` with **FFD + WFD + BFD**. Used by
+`BinacleService.SingleBinAsync(bin, items, params)`.
 
 ```csharp
 services.AddSingleton<IAlgorithmProcessorFactory, AlgorithmProcessorFactory>();
@@ -70,6 +92,10 @@ Creates bin-level processors. Two factory methods:
 ```csharp
 services.AddSingleton<IBinProcessorFactory, BinProcessorFactory>();
 ```
+
+**Both factories ignore their count arguments today.** `itemCount` and `binCount` are on the interfaces so a
+factory can pick a parallel processor above some threshold, and nothing picks one yet — see Parallel variants
+below. Pass the real counts anyway; the day a threshold lands, every call site is already correct.
 
 ## Algorithm sets — important distinction
 
@@ -101,12 +127,15 @@ After processors produce results, `IResultSelector` picks one. Quick reference:
 |---|---|
 | `BestAlgorithm` | `SingleBinAsync` auto-select; `LoopMultiAlgorithmBinProcessor` per bin |
 | `SmallestBin` | `SmallestBinAsync` — picks smallest successful bin |
-| `BestBin` | On the interface; not currently called by the service — see `$lib/result-selection` |
+| `BestBin` | `BestBinAsync` — the v4 `pack/best-bin` routes |
 
 See `$lib/result-selection` for scoring rules and how tests verify each strategy.
 
 ## Parallel variants
 
 `ParallelAlgorithmProcessor` (`lib/src/Binacle.Lib/AlgorithmProcessing/`) and `ParallelBinProcessor` /
-`ParallelMultiAlgorithmBinProcessor` (`lib/src/Binacle.Lib/BinProcessing/`) exist but are **not wired up** by any factory.
-Do not use them until they are.
+`ParallelMultiAlgorithmBinProcessor` (`lib/src/Binacle.Lib/BinProcessing/`) exist, and **no factory returns
+one** — so nothing the API runs ever reaches them. What does construct them directly is
+`lib/test/Binacle.Lib.Benchmarks`, which measures them against the `Loop` versions, and one cancellation test
+in `lib/test/Binacle.Lib.UnitTests`. Whether any of them should be wired in is an open question with measured
+evidence behind it; do not settle it as a local change.

@@ -1,8 +1,8 @@
 ---
 id: vipaq/dependencies
 description: ViPaq project dependency tree — who references whom, who can see internals, and the deliberate walls (UnitTests never references TestsKernel; no test project references a generator).
-verified: 2026-07-24
-check: ProjectReference and InternalsVisibleTo entries in vipaq/**/*.csproj match the graph and the boundary rules below
+verified: 2026-08-19
+check: ProjectReference and InternalsVisibleTo entries in vipaq/**/*.csproj match the graph and the boundary rules below; the pack count matches the entries in vipaq/data/packed/**/*.json; the pre-report gates match PerformanceTests/PreReportChecks/ and the order in AddPreReportChecks
 paths:
   - "vipaq/**"
 ---
@@ -32,12 +32,12 @@ Binacle.Geometry                    leaf — geometry types + IWith[ReadOnly]Dim
    │              │   │   │
    │              │   │   └────── Binacle.ViPaq.TestsKernel      [IVT]  library — real-data hub
    │              │   │               refs: ViPaq, Geometry, CompactNotation
-   │              │   │               owns: the 716 frozen packs, providers, protobuf,
+   │              │   │               owns: the 721 frozen packs, providers, protobuf,
    │              │   │                     ViPaqEncoder/ViPaqHeader (drives ProtocolEncoder)
    │              │   │                  ▲          ▲
    │              │   │                  │          └── Binacle.ViPaq.PerformanceTests  [IVT]  exe
    │              │   │                  │                  refs: TestsKernel, TestReporting
-   │              │   │                  │                  runs RoundTripCheck + size/codec reports
+   │              │   │                  │                  runs the pre-report gates + size/codec reports
    │              │   │                  │
    │              │   │                  └───────────────── Binacle.ViPaq.Benchmarks    [IVT]  exe
    │              │   │                                          refs: TestsKernel (BenchmarkDotNet)
@@ -59,8 +59,8 @@ Binacle.Geometry                    leaf — geometry types + IWith[ReadOnly]Dim
 |---|---|---|---|---|
 | `Binacle.ViPaq` | library | Geometry | grants IVT | the format; everything but the public surface is `internal` |
 | `Binacle.ViPaq.UnitTests` | xUnit exe | ViPaq, CompactNotation | yes | spec/correctness — vectors + curated inputs, no real data |
-| `Binacle.ViPaq.TestsKernel` | library | ViPaq, Geometry, CompactNotation | yes | real-data hub — 716 packs, providers, protobuf, its own encoder |
-| `Binacle.ViPaq.PerformanceTests` | exe | TestsKernel, TestReporting | yes | `RoundTripCheck` gate + size/codec reports |
+| `Binacle.ViPaq.TestsKernel` | library | ViPaq, Geometry, CompactNotation | yes | real-data hub — 721 packs, providers, protobuf, its own encoder |
+| `Binacle.ViPaq.PerformanceTests` | exe | TestsKernel, TestReporting | yes | pre-report gates + size/codec reports |
 | `Binacle.ViPaq.Benchmarks` | exe | TestsKernel | yes | BenchmarkDotNet timings |
 | `Binacle.ViPaq.VectorGenerators` | tool exe | ViPaq, CompactNotation, TestReporting | yes | regenerates `test-vectors/` |
 | `Binacle.ViPaq.PackedDataGenerator` | tool exe | Lib, Packing, ViPaq, CompactNotation, Geometry, TestReporting | **no** | packs problems offline, freezes `data/packed/` |
@@ -70,7 +70,7 @@ Binacle.Geometry                    leaf — geometry types + IWith[ReadOnly]Dim
 1. **UnitTests never references TestsKernel.** UnitTests is the spec gate: it proves the code obeys `PROTOCOL.md`
    using the shared cross-language vectors and its own curated inputs. Keeping it clear of the real-data hub means
    a data change can never turn a spec test red, and the C# vector suite reads exactly what the TypeScript suite
-   reads. If a test needs the 716 real packs, it belongs on the kernel side, not here.
+   reads. If a test needs the 721 real packs, it belongs on the kernel side, not here.
 
 2. **TestsKernel is the only home for the real packs, and only the measurement harnesses consume it.**
    Benchmarks and PerformanceTests reference it; nothing else does. It reaches the internal `ProtocolEncoder`
@@ -95,13 +95,20 @@ Binacle.Geometry                    leaf — geometry types + IWith[ReadOnly]Dim
 
 ## The real-data round-trip gate
 
-The packed-data conformance suite is `RoundTripCheck.Run()` in `PerformanceTests`, which runs before any size
-report. It sweeps all 716 real packs in two passes, each codec × both layouts:
+The packed-data conformance suite is a set of `IPreReportCheck` gates in `PerformanceTests/PreReportChecks/`.
+They throw rather than writing a report, and `RunPreReportChecks()` runs them all before the report
+`TestRunner`, in the order `AddPreReportChecks` registers them:
 
-- the **report path** — natural widths through the kernel's `ViPaqEncoder`, the exact encoder the reports use;
-- the **conformance path** — the same packs forced to 16-bit widths through `ProtocolEncoder` directly, which the
-  wrapper cannot reach (it always picks the narrowest widths), so the 16-bit read path is exercised on real data.
+| Gate | What it sweeps |
+|---|---|
+| `CuratedPicksCheck` | every curated benchmark pick still resolves to a generated scenario — a stale pick fails in one sentence instead of deep inside a BenchmarkDotNet run |
+| `ReportPathRoundTripCheck` | all 721 packs at natural widths through the kernel's `ViPaqEncoder`, the exact encoder the reports use, each codec × both layouts |
+| `ForcedWidthRoundTripCheck` | the same packs forced to 16-bit widths through `ProtocolEncoder` directly, which the wrapper cannot reach (it always picks the narrowest widths), so the 16-bit read path is exercised on real data |
 
-Both passes assert the two header bytes round-trip (`Header.FromBytes` equals the header written) and that the pack
-decodes back to the input, throwing on the first mismatch. It lives on the harness side of wall 1, not in
-UnitTests, because it drives the internal `ProtocolEncoder` over the real-data kernel.
+The forced-width pass **skips the two empty packs**: §4 keeps both item widths `Eight` for an empty pack, so a
+forced-wide empty blob is something `Encode` rejects by design.
+
+Both round-trip gates share one oracle, `RoundTripAssertion.Assert`: the two header bytes must decode back to
+the header written (`Header.FromBytes`, `Header.ByteCount` is 2) **and** the pack must decode back to the
+input. Compressed bytes are never compared. They live on the harness side of wall 1, not in UnitTests, because
+they drive the internal `ProtocolEncoder` over the real-data kernel.

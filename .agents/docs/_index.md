@@ -19,6 +19,7 @@ table of [README.md](README.md).
   paths: ["justfile", "tooling/**"]
 - file: concepts.md
   description: "Fit exits early on first failure; pack continues and returns positions. Both return the same result shape — packed items and unpacked items. Used by both Lib algorithms and API endpoints."
+  paths: ["lib/src/Binacle.Lib/Algorithms/**"]
 ```
 
 ## API

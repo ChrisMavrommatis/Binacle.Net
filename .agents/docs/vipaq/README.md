@@ -1,8 +1,8 @@
 ---
 id: vipaq
 description: Binacle.ViPaq — compact binary format for packing results. The wire is defined in PROTOCOL.md; this covers the C# API surface, repo layout, and tests.
-verified: 2026-08-07
-check: Public API surface (ViPaqSerializer, ViPaqSerializationOptions, Layout, Limits) and repo layout match vipaq/src/Binacle.ViPaq/
+verified: 2026-08-19
+check: Every row of the public-surface table matches vipaq/src/Binacle.ViPaq/, including which types are internal and every member of Limits; the repo layout resolves; the Tests table matches the projects and the pre-report gates in PerformanceTests/PreReportChecks/
 also_update:
   - vipaq/typescript
   - vipaq/cross-language-testing
@@ -29,11 +29,11 @@ Everything else in the library is `internal` (tests and tools reach it via `Inte
 
 | Type | What it is |
 |---|---|
-| `ViPaqSerializer` | `Serialize<TBin,TItem,T>(bin, items, Action<ViPaqSerializationOptions>?)` and `Deserialize<TBin,TItem,T>(byte[])`. The only entry point. |
+| `ViPaqSerializer` | `Serialize<TBin,TItem,T>(bin, items, Action<ViPaqSerializationOptions>?) → byte[]` and `Deserialize<TBin,TItem,T>(byte[]) → (TBin, IList<TItem>)`. The only entry point. |
 | `ViPaqSerializationOptions` | `Compress` (bool, default off) and `Layout` (default `RowMajor`). Sets the header; the codec follows from it. |
 | `Layout` | `RowMajor` / `Columnar` — item order in the body. Public so a caller can pick it. |
 | `ViPaqBase64Extensions` | `byte[].ToBase64()` / `string.FromBase64()`. The serializer returns raw `byte[]`; base64 is not part of the format. |
-| `Limits` | `MaxValue` = 65,535 (every dimension and coordinate is in `[0, 65535]`), `MaxItemCount` = 65,535. |
+| `Limits` | `MaxValue` = 65,535 (every dimension and coordinate is in `[0, 65535]`), `MaxItemCount` = 65,535 (a uint16, same ceiling, different meaning), `EightBitsMax` = 255 (the largest an `Eight`-width field holds). |
 | `ViPaqFormatException` | Thrown on a malformed blob (bad version, a set reserved bit or width, wrong length, a body that is not a valid DEFLATE stream). |
 | `ICompressionCodec` | The codec seam. `DeflateCodec` / `GzipCodec` / `NoOpCodec` are `internal`; only the internal `ProtocolEncoder` takes one. |
 
@@ -69,8 +69,12 @@ notation (`"10x10x10 (0,0,0)"`) is not here; it lives in the shared `Binacle.Com
 | Project | Covers |
 |---|---|
 | `vipaq/test/Binacle.ViPaq.UnitTests` | serializer round-trips, exact-byte golden vectors, the forced width/layout/compression matrix, every rejection; internal `Header` / `ProtocolEncoder` / codecs via `InternalsVisibleTo` |
-| `vipaq/test/Binacle.ViPaq.PerformanceTests` | packed-data conformance gate (`RoundTripCheck`) — all 716 real packs × every codec × both layouts × natural/forced-16-bit widths, header + decode-to-input, run before the size reports |
+| `vipaq/test/Binacle.ViPaq.PerformanceTests` | the `IPreReportCheck` gates — all 721 real packs × every codec × both layouts × natural/forced-16-bit widths, header + decode-to-input, run before the size reports |
+| `vipaq/test/Binacle.ViPaq.Benchmarks` | BenchmarkDotNet timings over the curated picks and the synthetic sets |
 | `vipaq/packages/binacle-vipaq` | TypeScript mirror — `just test vipaq-ts-unit` (jest) |
+
+The C# unit suite runs with `just test vipaq-cs-unit`. Only the two unit suites are on `just test all`; the
+performance and benchmark projects are run on demand.
 
 How the two languages are held to one wire — the shared vectors, the generators, and the decode-to-input contract
 for compressed payloads — is in `$vipaq/cross-language-testing`.

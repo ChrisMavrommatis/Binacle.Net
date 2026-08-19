@@ -1,8 +1,8 @@
 ---
 id: lib/algorithm-factory
 description: IAlgorithmFactory — how algorithm instances are created, DI registration, and how tests construct algorithms directly
-verified: 2026-07-15
-check: Class names match lib/src/Binacle.Lib/AlgorithmFactory.cs; DI registration matches api/src/Binacle.Net/ExtensionMethods/ServiceCollectionExtensions.cs
+verified: 2026-08-19
+check: The signature, constraints and switch arms match lib/src/Binacle.Lib/AlgorithmFactory.cs and both files under AlgorithmFactories/; DI registration matches api/src/Binacle.Net/ExtensionMethods/ServiceCollectionExtensions.cs; a grep for AlgorithmFactory_v1 and AlgorithmFactory_v2 over lib/ lands only in the benchmarks
 also_update:
   - lib/algorithms
 paths:
@@ -23,7 +23,9 @@ Type constraints:
 - `TBin : class, IWithID, IWithReadOnlyDimensions`
 - `TItem : class, IWithID, IWithReadOnlyDimensions, IWithQuantity`
 
-The returned `IPackingAlgorithm` exposes `Algorithm`, `Version`, and `Execute(parameters)`.
+`Algorithm` is `Binacle.Packing.Algorithm` — the packing vocabulary in `shared/src`, not a lib type
+(`$lib/models`). The returned `IPackingAlgorithm` (`Binacle.Lib.Abstractions.Algorithms`) exposes `Algorithm`,
+`Version`, and `Execute(IOperationParameters parameters)`.
 
 ## Registered Implementation
 
@@ -38,8 +40,10 @@ The returned `IPackingAlgorithm` exposes `Algorithm`, `Version`, and `Execute(pa
 Throws `NotSupportedException` for any other value.
 Class files live under `lib/src/Binacle.Lib/Algorithms/<Heuristic> v<N>/` — see `$lib/algorithms`.
 
-`AlgorithmFactory_v1` and `AlgorithmFactory_v2` are `internal` — used for benchmarks only
-(`lib/test/Binacle.Lib.Benchmarks`, BenchmarkDotNet runner).
+`AlgorithmFactory_v1` and `AlgorithmFactory_v2` (`lib/src/Binacle.Lib/AlgorithmFactories/`) are the same
+switch pinned to one version each. Both are `internal` and used for benchmarks only
+(`lib/test/Binacle.Lib.Benchmarks`, BenchmarkDotNet runner), which reaches them through the
+`InternalsVisibleTo` in `Binacle.Lib.csproj`.
 
 ## DI Registration
 

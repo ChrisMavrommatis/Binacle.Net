@@ -1,8 +1,8 @@
 ---
 id: packages
 description: TypeScript packages under packages/ (npm workspaces) — UI components, compact-notation mirror, cookie utilities, and theme switching.
-verified: 2026-07-28
-check: Package list and descriptions match packages/ directory and their package.json files
+verified: 2026-08-19
+check: The package list, their descriptions and the private flag match each packages/*/package.json; the Related Tests table names every package under packages/ that has a suite, with the alias tooling/tests.just gives it
 also_update:
   - packages/binacle-net-ui
   - web-site
@@ -13,7 +13,9 @@ paths:
 
 # Packages
 
-npm workspaces at the repo root. All packages are private (not published to npm).
+npm workspaces at the repo root. All four are `private: true` — none is published to npm. Two are TypeScript
+(`binacle-net-ui`, `binacle-compact-notation`); `cookies` and `theme-switcher` are plain JavaScript, which is
+why their `main` is an `index.js` rather than a `.ts` entry.
 
 | Package | Description |
 |---|---|
@@ -49,9 +51,14 @@ Used by both `docs/` and `web/`. Depends on the `cookies` workspace package; no 
 
 ## Related Tests
 
-| Project | What it covers |
-|---|---|
-| `vipaq/packages/binacle-vipaq` | Has its own test suite — run with `just test vipaq-ts-unit` |
+| Project | What it covers | Run |
+|---|---|---|
+| `packages/binacle-compact-notation` | the notation parser/formatter, `tests/compactNotation.test.ts` | `just test shared-ts-unit` |
+| `vipaq/packages/binacle-vipaq` | the ViPaq TS mirror, including the shared cross-language vectors | `just test vipaq-ts-unit` |
+
+`binacle-net-ui`, `cookies` and `theme-switcher` have no suite. The compact-notation alias is filed under
+**shared**, not packages, because the package mirrors a `shared/src` C# project — so `just test packages-...`
+does not exist.
 
 ## Dependencies
 

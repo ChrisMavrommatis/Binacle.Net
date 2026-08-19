@@ -1,8 +1,8 @@
 ---
 id: api/tests
 description: api/test integration tests — layout, v3/v4 HTTP conventions, validBinId, preset keys, special bins, base-class asserts, and test host config
-verified: 2026-08-15
-check: Test folders mirror api/src/Binacle.Net/v{3,4}/Endpoints/; validBinId, PresetKeys, special bins, and base-class asserts match api/test/ source
+verified: 2026-08-19
+check: Test folders mirror api/src/Binacle.Net/v{3,4}/Endpoints/; validBinId, PresetKeys, special bins, base-class asserts, and the ServiceModule fixture's seeding helpers match api/test/ source
 also_update:
   - shared
 paths:
@@ -170,4 +170,6 @@ not empty, then the same per-entry asserts across every result.
   chosen by `ResolveTestInfrastructure()` from `BINACLE_TEST_INFRA`, JWT issuer and audience `"ForTestsOnly"`
   with a separate 70-plus-character `TokenSecret`). `InitializeAsync` seeds an admin
   (`DefaultAdminAccount`) and a known user; `NonExistentId = EF81C267-A003-44B8-AD89-4B48661C4AA5` is hard-coded.
-  Carries the same all-modules TODO.
+  Carries the same all-modules TODO. Tests that need their own account seed it per class through
+  `EnsureAccountExists`, which takes an optional `AccountStatus` (default `Active`) so a suspended or inactive
+  account can be seeded, and drop it again through `EnsureAccountDoesNotExist`.

@@ -1,8 +1,11 @@
 ---
 id: docs
 description: Repo overview and index of agent documentation
-verified: 2026-08-11
-check: Repo layout table matches actual directories in the root
+verified: 2026-08-19
+check: The repo layout table matches `ls -d */` at the root plus the subpaths it names; the workflow count matches .github/workflows/; the just module list matches tooling/*.just. The root-directory set itself is deliberately not in `paths:` — see below.
+paths:
+  - ".github/workflows/**"
+  - "tooling/*.just"
 ---
 
 # Binacle.Net — Agent Docs
@@ -11,6 +14,12 @@ Binacle.Net is an API that checks if items fit in boxes (fit) and packs them wit
 Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 
 ## Repo Layout
+
+> **What `paths:` can and cannot watch here.** The two entries above fire when a workflow or a `just` module is
+> added or removed, which is most of what goes stale in the table below. **The set of top-level directories is
+> not among them**: a pathspec broad enough to catch a new root folder (`*/`) matches every commit in the repo
+> and would report this file as stale forever. So a new or deleted root directory has to be noticed by a reader,
+> not by the date check.
 
 | Path | What it is |
 |---|---|
@@ -40,9 +49,12 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `web/` | Jekyll marketing/web site (`$web-site`) |
 | `api/requests/` | HTTP request files for manual testing (subfolders: v3, v4, Service) |
 | `samples/` | Docker and Kubernetes deployment samples (user-facing starting points) |
-| `tooling/` | Every task the repo can run, called by CI and by hand alike — the `just` modules (test, coverage, openapi, agents, serve, build, image, smoke), the benchmark/performance scripts, local compose, env, emulator state |
+| `tooling/` | Every task the repo can run, called by CI and by hand alike — eleven `just` modules (agents, build, changelog, check, coverage, image, openapi, regen, serve, smoke, tests), the benchmark/performance scripts, local compose, env, emulator state |
 | `.github/workflows/` | The eight GitHub Actions workflows — the PR gate, the shared test suite, Sonar, CodeQL, the release pipeline, image smoke, and the two site deploys (`$ci-cd`) |
 | `shared/data/` | OR-library packing benchmark data |
+| `assets/` | Shared images, js, css and fonts, copied into both Jekyll sites by `gulpfile.js` |
+| `results/` | The hand-curated measurement vault — benchmark and size reports, never auto-written (`$build-topology`) |
+| `artifacts/` | Build output only — `binacle-net/`, `docs/`, `web/`, `openapi/`, `tests/`, `coverage/`. Never edit |
 
 ## Commands
 

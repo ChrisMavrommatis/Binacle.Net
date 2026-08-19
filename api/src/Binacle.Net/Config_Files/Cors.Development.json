@@ -1,6 +1,5 @@
 {
   "Cors": {
-    "Enabled": true,
     "CoreApi": {
       "AllowedOrigins": [ "http://localhost:7196", "http://localhost:7195" ]
     }

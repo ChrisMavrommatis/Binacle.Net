@@ -31,8 +31,9 @@ but not part of the v3 fit contract.
 ## The admin requests need an account that exists
 
 `Service/Admin/**` files carry a hard-coded `@ID` from whoever wrote them, so they answer `404` against a store
-that has never seen it. Run `Admin/Account/Create.http` first and copy the id out of the response's `Location`
-header into `@ID`. `Create.http` itself answers `409` once that username exists.
+that has never seen it. Send `Admin/Account/List.http` to see what the store actually holds and copy an id out
+of it into `@ID` - it needs nothing but a bearer token. `Admin/Account/Create.http` also returns a new id in its
+`Location` header, and answers `409` once that username exists.
 
 ## Variables
 

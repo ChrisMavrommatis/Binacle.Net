@@ -1,3 +1,4 @@
+using Binacle.Net.ServiceModule.Domain.Common.Models;
 using System.Data;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Entities;
 using Binacle.Net.ServiceModule.Domain.Subscriptions.Models;
@@ -123,6 +124,32 @@ internal class NpgsqlSubscriptionRepository : ISubscriptionRepository
 		}
 
 		return TypedResult.Success;
+	}
+
+	public async Task<PagedResult<Subscription>> ListAsync(
+		int skip,
+		int take,
+		bool allowDeleted = false,
+		CancellationToken cancellationToken = default
+	)
+	{
+		const string countSql = "SELECT COUNT(*) FROM Subscriptions WHERE IsDeleted = FALSE";
+		const string allowDeletedCountSql = "SELECT COUNT(*) FROM Subscriptions";
+
+		// Ids are version 7 Guids, so ordering by Id is ordering by creation time.
+		const string sql = "SELECT * FROM Subscriptions WHERE IsDeleted = FALSE ORDER BY Id LIMIT @Take OFFSET @Skip";
+		const string allowDeletedSql = "SELECT * FROM Subscriptions ORDER BY Id LIMIT @Take OFFSET @Skip";
+
+		var total = await this.connection.ExecuteScalarAsync<long>(
+			allowDeleted ? allowDeletedCountSql : countSql
+		);
+
+		var dtos = await this.connection.QueryAsync<SubscriptionDto>(
+			allowDeleted ? allowDeletedSql : sql,
+			new { Skip = skip, Take = take }
+		);
+
+		return new PagedResult<Subscription>(dtos.Select(x => x.ToDomain()).ToList(), (int)total);
 	}
 
 	private sealed class SubscriptionDto

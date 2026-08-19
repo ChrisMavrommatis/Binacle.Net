@@ -1,8 +1,8 @@
 ---
 id: "ci-cd/release-pipeline"
 description: "The release pipeline in release-docker-image.yml — six jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step every tag reaches with a prerelease narrowed to its immutable tag, and the CHANGELOG.md release body"
-verified: 2026-08-17
-check: "The six jobs, their needs: edges and job outputs match release-docker-image.yml; no job carries a prerelease condition and the release job's !failure() note is still accurate; shared-test-suite.yml and shared-smoke-image.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased"
+verified: 2026-08-19
+check: "The six jobs, their needs: edges and job outputs match release-docker-image.yml; the concurrency block still sets cancel-in-progress: false; no job carries a prerelease condition and the release job's !failure() note is still accurate; shared-test-suite.yml and shared-smoke-image.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased"
 also_update:
   - ci-cd
   - tooling
@@ -31,6 +31,11 @@ release   gh release create, body from CHANGELOG.md
 ```
 
 Each job `needs:` the ones before it, so a red anywhere leaves Docker Hub untouched and creates no release.
+
+**A release run is never cancelled.** The workflow declares `concurrency` grouped on
+`${{ github.workflow }}-${{ github.ref }}` with **`cancel-in-progress: false`**. A stop between `build` and
+`publish` would strand a staged image on GHCR or half-move the Docker Hub tags, so a second run queues behind
+the first rather than replacing it.
 
 ## The rule the shape exists to enforce
 
@@ -67,7 +72,8 @@ a maintainer runs by hand, rather than copying its steps, so the release path an
 thing. See `$ci-cd` for that workflow's runner pin.
 
 **`publish`** — the only job that touches Docker Hub and the only place the stored Docker Hub credential is
-used. A `metadata-action` step computes the public tag set, then one `docker buildx imagetools create` moves
+used. It ends by writing a **run-summary table** to `$GITHUB_STEP_SUMMARY`: the version, the digest, and every
+public tag written, so "what shipped" is on the run page instead of buried in a `docker buildx` log line. A `metadata-action` step computes the public tag set, then one `docker buildx imagetools create` moves
 the manifest **by digest** from GHCR under all three public tags at once, and cosign signs the result. It never
 checks out, so it holds no `contents` permission.
 

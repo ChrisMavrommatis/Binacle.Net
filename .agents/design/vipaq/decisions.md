@@ -1,8 +1,8 @@
 ---
 id: vipaq/decisions
 description: ViPaq decisions ledger — the locked decisions and their reasons, plus the open questions.
-verified: 2026-08-13
-check: Locked decisions are not contradicted by vipaq/PROTOCOL.md or vipaq/src/Binacle.ViPaq
+verified: 2026-08-19
+check: Locked decisions are not contradicted by vipaq/PROTOCOL.md or vipaq/src/Binacle.ViPaq; D15's generated-vs-hand-authored split still matches vipaq/test-vectors/ and the two generator folders; D4's ViPaqHeader still keeps every wire type off its public members
 also_update:
   - vipaq/architecture
   - vipaq/findings
@@ -68,7 +68,9 @@ ViPaq has one implementation, so there's no in-code baseline like lib's v1-vs-v2
 The permanent benchmark **encodes and decodes** through `ViPaqSerializer.Serialize`/`Deserialize` only — that is
 what makes the harness layout-agnostic. It reads the header through the library's internal `Header`, not by
 re-parsing bytes: `Binacle.ViPaq` grants `InternalsVisibleTo` to `Binacle.ViPaq.TestsKernel`, and `ViPaqHeader`
-wraps `Header` behind a private field, exposing only `bool`/`int`/`string`. **One copy of the spec beats a clean
+holds `Header` in an `internal` field, exposing only `bool`/`int`/`string` publicly. Internal rather than
+private because the kernel's own encoder reads it; what matters is that no *public* member names `Header`,
+`Width` or `Layout`. **One copy of the spec beats a clean
 boundary here** — `Header` is a frozen wire description, not an evolving API, so if it churns the format churned and
 the harness *should* break. (This reading-via-internals rule replaced an earlier re-parse-the-bytes rule; the
 superseded version is in `$vipaq/history`.)
@@ -183,11 +185,13 @@ all recorded in the header, and a decoder obeys the header rather than re-derivi
   header they expect bytes under. The old blanket claim was wrong; sessions 5 and 6 are corrected.
 
 ### D15 — Generators are for combinatorial and derived vectors only (CONFIRMED 2026-07-13)
-The vector generator (`Binacle.ViPaq.VectorGenerators`) earns its keep on two files: `header-bytes.json` (32
-combinatorial rows, tedious and error-prone by hand) and the interop artifacts (`interop/cs/{raw,deflate,gzip}.json`
-— the actual bytes C#'s encoder emits, which TS must match, so they *have* to be derived). Everything else stays **hand-authored**
-JSON: `exact-bytes.json`, `little-endian/*.json`, `width-selection.json`, `width-invalid.json`,
-`decode-invalid.json`, `encode-invalid.json`, `round-trip-scenarios.json`.
+Generators earn their keep on two kinds of file: `header-bytes.json` (32 combinatorial rows, tedious and
+error-prone by hand) and the interop artifacts — the actual bytes each encoder emits, which have to be derived
+because the point is to compare engines. **Both languages generate their own half**:
+`Binacle.ViPaq.VectorGenerators` writes `interop/cs/{raw,deflate,gzip}.json` and the TS
+`tools/interopArtifactGenerator.ts` writes `interop/ts/{...}`, from the same hand-authored `interop/input.json`,
+and each suite decodes the other's. Everything else stays **hand-authored** — `$vipaq/cross-language-testing`
+carries the current inventory and the regen recipe, so it is the list, not this line.
 
 What settled it: those are small, curated sets. Writing a C# scenario record plus a bespoke formatter to emit JSON
 a human writes directly is more machinery than the payoff. The cross-language value comes from *both suites reading

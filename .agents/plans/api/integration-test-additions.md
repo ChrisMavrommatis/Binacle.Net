@@ -49,11 +49,10 @@ are all off. Every module combination the image actually ships is untested end t
 
 ## What that hides - verified 2026-07-29
 
-**1. Rate limiting was exercised nowhere. That one is built** -
-`api/test/Binacle.Net.ServiceModule.IntegrationTests/RateLimiting/` covers both limiters and the login
-throttle's partition, with a host per test. It is the worked example of the shape this plan is about: **a core
-behaviour that only exists because an optional module registered something.** Read it before deciding anything
-below; it answers in code what this plan asks in prose.
+**1. Rate limiting is the worked example of the shape this plan is about** - **a core behaviour that only
+exists because an optional module registered something.** Read
+`api/test/Binacle.Net.ServiceModule.IntegrationTests/RateLimiting/` before deciding anything below; it answers
+in code what this plan asks in prose. The API tests doc describes how it is put together.
 
 **2. CORS is exercised nowhere.**
 

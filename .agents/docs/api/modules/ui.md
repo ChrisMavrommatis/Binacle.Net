@@ -1,8 +1,8 @@
 ---
 id: api/modules/ui
 description: UIModule — optional Blazor Web App interactive packing demo. Pages, JS stack, API connection, config, and services.
-verified: 2026-07-15
-check: Pages, JS imports, services, and window.binacle API match api/src/Binacle.Net.UIModule/
+verified: 2026-08-19
+check: Routes match the @page directives under Components/Pages/; the script order and importmap match Components/App.razor; the service table matches the registrations in ModuleDefinition.cs including lifetimes and interfaces; the window.binacle members match wwwroot/js/PackingVisualizer.js; a grep for IJSRuntime matches the services named here
 also_update:
   - packages
 paths:
@@ -44,7 +44,8 @@ BeerCSS handles Material Design animations and interactions.
 2. `cookies.js` — adds `window.Cookies` globally (plain script, no modules)
 3. importmap — tells the browser how to resolve ES module imports
 4. `PackingVisualizer.js` — loads as `type="module"`, imports Three.js via the importmap
-5. `beer.min.js` — Material Design interactions
+5. `beer.min.js` — Material Design interactions, also `type="module"` (it lives under `wwwroot/vendor/beercss/`,
+   not `wwwroot/js/`)
 6. `themeswitcher.js` — plain script for light/dark toggle
 
 ### The `@Assets` Helper
@@ -93,8 +94,9 @@ Communication is **one-way: C# → JS only**. There are no `[JSInvokable]` metho
 
 ## JS Interop Bridge
 
-`BinacleVisualizerService` wraps `IJSRuntime` and calls the `window.binacle.*` methods above.
-It's the only service that touches `IJSRuntime`. Everything else is pure Blazor or C#.
+`BinacleVisualizerService` wraps `IJSRuntime` and calls the `window.binacle.*` methods above. It is one of
+**two** services that touch `IJSRuntime` — `LocalStorageService` is the other, reaching browser storage the same
+way. Everything else is pure Blazor or C#.
 
 ## Component Coordination
 
@@ -128,10 +130,14 @@ All scoped (per connection / browser tab) unless noted:
 | `MessagingService` | Scoped | In-component pub/sub for cross-component communication |
 | `BinacleVisualizerService` | Scoped | Drives the Three.js 3D visualizer via JS interop |
 | `LocalStorageService` | Scoped | Read/write browser localStorage |
-| `SampleDataService` | Scoped | Provides sample bin/item data for the demo form |
+| `SampleDataService` | Scoped | Provides sample bin/item data for the demo form — the only one registered behind an interface, as `ISampleDataService` |
 | `AppletsService` | Singleton | Manages UI applets / widget state |
 
 ## Status Code Pages
 
-Status code pages are disabled for `/api`, `/swagger`, and `/scalar` paths.
-This prevents Blazor error middleware from intercepting API or OpenAPI error responses.
+`UseStatusCodePagesWithReExecute("/Error/{0}")` is what routes a bare status code to the `/Error/{ErrorCode}`
+page — that is why the page takes a route parameter at all.
+
+A middleware immediately after it switches the feature **off** per request for paths starting `/api`, `/swagger`
+or `/scalar`, by setting `IStatusCodePagesFeature.Enabled = false`. Without it, Blazor's error page would
+re-execute over an API or OpenAPI error response and the caller would get HTML where it expected problem JSON.

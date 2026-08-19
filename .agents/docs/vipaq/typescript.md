@@ -1,8 +1,8 @@
 ---
 id: vipaq/typescript
 description: Binacle.ViPaq TypeScript mirror (vipaq/packages/binacle-vipaq) — public API and how it differs from the C# library
-verified: 2026-07-28
-check: TS API signatures and divergences match vipaq/packages/binacle-vipaq/src/
+verified: 2026-08-19
+check: TS API signatures, the package root index.ts re-exports and every row of the divergence table match vipaq/packages/binacle-vipaq/; the suite and test counts match a `just test vipaq-ts-unit` run
 also_update:
   - vipaq
 paths:
@@ -18,7 +18,8 @@ Any change to the C# wire must be replicated here. The normative format is `vipa
 
 ## Public API
 
-`ViPaqSerializer` (default export) exposes two **async** static methods:
+`ViPaqSerializer` is the default export of `src/ViPaqSerializer.ts` and a **named** export of the package root
+`index.ts`. It exposes two **async** static methods:
 
 ```ts
 ViPaqSerializer.serialize(
@@ -56,13 +57,15 @@ when the compressed bit is set, a pass-through NoOp when not.
 | API shape | generic `Serialize<TBin,TItem,T>` + `Action<ViPaqSerializationOptions>` | single `serialize` / `deserialize`, JS `number` only; options is an optional object |
 | Sync | synchronous, returns `byte[]` | **async**, returns `Promise<Uint8Array>` (the browser codec is stream-based) |
 | Codec impl | `DeflateStream` (raw DEFLATE) | `CompressionStream('deflate-raw')` — the `-raw` variant, so no zlib header |
+| Malformed blob | `ViPaqFormatException` | `ViPaqFormatError` (in `src/utils`) — same role, different name |
+| Base64 | `ViPaqBase64Extensions` ships with the library | no helper; the caller does its own base64 |
 
 Compressed bytes are **not** byte-identical across the two engines; the guarantee is decode-to-input (PROTOCOL.md
 §6.1), which the interop matrix proves.
 
 ## Tests
 
-`just test vipaq-ts-unit` (jest, run from the repo root; run `npm install` at the root first). 20 suites, 334 tests — unit tests
+`just test vipaq-ts-unit` (jest, run from the repo root; run `npm install` at the root first). 20 suites, 380 tests — unit tests
 on the utils (`createHeader`, `getDimensionsWidth`, `getCoordinatesWidth`, `getBodyLength`, header pack/parse),
 the `ProtocolReader` / `ProtocolWriter` little-endian and range guards, `ViPaqSerializer` round-trips and the
 `compress` / `layout` options, and the interop cross-decode matrix.

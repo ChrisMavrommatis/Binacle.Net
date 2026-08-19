@@ -1,8 +1,8 @@
 ---
 id: api/modules/diagnostics
 description: DiagnosticsModule — always-on logging, OpenTelemetry, health checks, and packing logs
-verified: 2026-07-27
-check: Env var names match DiagnosticsModule config handling
+verified: 2026-08-19
+check: The Add/Use lists match ModuleDefinition.cs top to bottom, including what each branch is gated on; every config key matches its Configuration/Models/ class and its shipped JSON; the packing-log registration signature matches ExtensionMethods/LogProcessorServiceCollectionExtensions.cs
 also_update:
   - api/configuration
 paths:
@@ -53,11 +53,23 @@ Path and enabled state are configured via `HealthCheckConfigurationOptions`.
 
 ## What UseDiagnosticsModule wires
 
+In order:
+
+- `RequestDebugMiddleware` — **first, and only when `DEBUG_ENDPOINT` is on.** Serves `/_debug`, which echoes the
+  caller's own request. Unauthenticated; the startup log prints the path when it is live.
 - `ForwardedHeadersDiagnosticsMiddleware` — always registered; warns once when a forwarding header arrived and
   did not take effect (see below)
+
+The rest is inside `if (HealthChecks.Enabled)` — **with health checks disabled, which is the default, none of
+this is wired at all** and the path 404s:
+
 - `HealthChecksProtectionMiddleware` — restricts health endpoint access by caller address (`RestrictedIPs`)
 - Maps `/_health` (configurable path) with full JSON response via `UIResponseWriter`
 - Health status codes: `Healthy/Degraded → 200`, `Unhealthy → 503`
+- The `RestrictedChecks` allow-list is applied as the map's `Predicate`
+
+`DEBUG_ENDPOINT` also adds a `DebugEndpoint` entry to `FeatureOptions` during the builder phase, the same way
+`SWAGGER_UI` and `SCALAR_UI` do in `Program.cs`.
 
 ## Forwarded headers diagnostic
 
@@ -99,9 +111,11 @@ Nothing here trusts a header; they are read only to decide whether to warn.
 | `Config_Files/DiagnosticsModule/PackingLogs.json` | Packing log channels and file paths |
 | `Config_Files/DiagnosticsModule/PackingLogs.{Environment}.json` | Environment override |
 
-## Logging
+**All three base files are required** (`Optional => false` on `HealthCheckConfigurationOptions`,
+`OpenTelemetryConfigurationOptions` and `PackingLogsConfigurationOptions`). The module is always on, so a deploy
+missing any one of them fails to start — unlike the ServiceModule files, which are optional or gated on the flag.
 
-<!-- sourced from docs site; verify against current code if behaviour changes -->
+## Logging
 
 Default sinks: Console + rolling File.
 
@@ -168,8 +182,6 @@ Built-in checks (by registered name):
 
 ## OpenTelemetry
 
-<!-- sourced from docs site; verify against current code if behaviour changes -->
-
 Config file: `Config_Files/DiagnosticsModule/OpenTelemetry.json`.
 
 Top-level fields:
@@ -217,15 +229,23 @@ The **generic** log pipeline lives in the Kernel — `ILogEntryConvertible<TLog>
 - `LogResult` (record) — one algorithm's result: `Status`, `PackedBinVolumePercentage`,
   `PackedItemsVolumePercentage`, and `PackedItems`/`UnpackedItems` (compact strings grouped by id).
 
-Registration: `AddOptionsBasedPackingLogProcessor(optionsSelector)` (DiagnosticsModule
-`ExtensionMethods/LogProcessorServiceCollectionExtensions.cs`) reads the config and calls the Kernel's
-`AddLogProcessor<AlgorithmOperationLogChannelRequest, PackingLogEntry>`. Gated by `PackingLogs.Enabled`.
+Registration: `AddOptionsBasedPackingLogProcessor()` — no arguments — in DiagnosticsModule
+`ExtensionMethods/LogProcessorServiceCollectionExtensions.cs`. It builds both factories the Kernel's
+`AddLogProcessor<AlgorithmOperationLogChannelRequest, PackingLogEntry>` wants, resolving
+`IOptions<PackingLogsConfigurationOptions>` inside each so the config is read from DI rather than passed in.
+Gated by `PackingLogs.Enabled`.
 
 ### Config
 
 Flat — `PackingLogs` has `Enabled`, `Path` (default `data/pack-logs/`), `FileName` (default `{0}.ndjson`),
-`DateFormat` (default `yyyyMMdd`), `ChannelLimit`. Both fit and pack flow through the one channel and land there.
-`{0}` is replaced by the date.
+`DateFormat` (default `yyyyMMdd`), `ChannelLimit` and `RetentionDays`. Both fit and pack flow through the one
+channel and land there. `{0}` is replaced by the date.
+
+`RetentionDays`:
+- `null` (the default, and what ships) — keep every file. These logs are an archive, so pruning is opt-in and
+  deletion is left to an external sweep.
+- a number — the Kernel's `LogsRetentionProcessor` deletes local files older than that many days, on its own
+  loop so a slow sweep never stalls the write channel (`$api/kernel`).
 
 `ChannelLimit`:
 - `0` or absent — unbounded; limited only by available memory.

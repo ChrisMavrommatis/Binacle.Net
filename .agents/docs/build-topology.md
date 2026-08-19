@@ -1,8 +1,8 @@
 ---
 id: build-topology
 description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props (including the SonarQubeTestProject rule for support projects), central package management, the global.json test-runner opt-in, the publish/Dockerfile chain, and the NoTargets content projects
-verified: 2026-08-11
-check: Solution structure, Directory.Build.props, Directory.Packages.props, global.json, Dockerfile, and content .proj files match the repo root
+verified: 2026-08-19
+check: Every solution folder and project count matches Binacle.Net.slnx (43 projects); Directory.Build.props, Directory.Packages.props, global.json and Dockerfile match the repo root; the content .proj list resolves to files that exist; the root package.json scripts and devDependencies match
 also_update:
   - commands
   - samples
@@ -22,13 +22,14 @@ Docker build. For the commands themselves see `$commands`.
 
 ## Solution — `Binacle.Net.slnx`
 
-The repo uses the XML `.slnx` solution format. Projects are grouped by solution folder, mirroring the repo slices:
+The repo uses the XML `.slnx` solution format. **43 projects**, grouped by solution folder, mirroring the repo
+slices:
 
 - `/lib/src/`, `/lib/test/` — `Binacle.Lib` (the only src project) + four lib test projects, one of them `Binacle.Lib.TestsKernel`
 - `/api/src/`, `/api/test/` — `Binacle.Net`, `Binacle.Net.Kernel`, the three modules (+ ServiceModule.Domain/.Infrastructure), two integration-test projects and four unit-test projects (one per source project that has unit tests: `Binacle.Net`, `Kernel`, `DiagnosticsModule`, `ServiceModule`)
 - `/vipaq/src/`, `/vipaq/test/`, `/shared/src/`, `/shared/test/` — ViPaq + its tests + `Binacle.Geometry`, `Binacle.CompactNotation` and `Binacle.Packing` (in `shared/src`) + `Binacle.TestsKernel`, `Binacle.TestReporting` and `Binacle.CompactNotation.UnitTests` (in `shared/test`)
 - `/vipaq/tools/` (`Binacle.ViPaq.VectorGenerators`, `Binacle.ViPaq.PackedDataGenerator`), `/shared/tools/` (`Binacle.OrLibrary.Converter`) — standalone generators, not referenced by the shipped projects
-- `/samples/docker/` (4 `.dcproj`), `/samples/kubernetes/` (`.proj`), `/results/`, `/api/` (requests), `/artifacts/`
+- `/samples/`, `/samples/docker/` (5 `.dcproj` — quickstart, minimal, full, service, prod), `/samples/kubernetes/` (one `.proj`), `/api/` (requests), `/artifacts/`
 - Top-level content projects: `assets/assets.proj`, `tooling/tooling.proj`, `docs/docs.proj`, `web/web.proj`
 - `/_root/` — loose files (`.dockerignore`, `.editorconfig`, `Directory.Build.props`, `Directory.Packages.props`, `Dockerfile`, `global.json`, `gulpfile.js`, `package.json`, README)
 
@@ -117,7 +118,8 @@ standalone runner executable.
 ## JS workspaces & asset copy
 
 Root `package.json` (name `binacle-net`, `private`) declares npm workspaces `packages/*` and `vipaq/packages/binacle-vipaq`.
-Its only dev dependency is `gulp`, and its only scripts are the asset-copy tasks:
+Its dev dependencies are `gulp` and `concurrently` (the latter is what lets one `just serve` run jekyll and
+webpack together under a single Ctrl-C), and its only scripts are the asset-copy tasks:
 
 - `npm run copy-assets-to-docs` → `gulp copy-assets-to-docs`
 - `npm run copy-assets-to-web` → `gulp copy-assets-to-web`
@@ -153,9 +155,12 @@ look at `artifacts/` says which artifact is which.
 ## Content projects (`Microsoft.Build.NoTargets`)
 
 Several `.proj` files don't compile anything — they use the `Microsoft.Build.NoTargets` SDK to pull non-code files
-into the solution (and travel with build output): `tooling/tooling.proj`, `docs/docs.proj`, `web/web.proj`,
-`assets/assets.proj`, `api/requests/requests.proj`, `results/*/*.proj`, `samples/kubernetes/*/*.proj`. The Docker
-samples use `Microsoft.Docker.Sdk` `.dcproj` files instead. None of these affect the C# build.
+into the solution (and travel with build output). There are six: `assets/assets.proj`, `tooling/tooling.proj`,
+`docs/docs.proj`, `web/web.proj`, `api/requests/requests.proj` and `samples/kubernetes/minimal/minimal.proj`.
+The Docker samples use `Microsoft.Docker.Sdk` `.dcproj` files instead. None of these affect the C# build.
+
+**`results/` is deliberately not in the solution.** The curated benchmark vault is read and hand-edited, never
+built, so it carries no `.proj` and has no solution folder — open the markdown directly.
 
 ## `tooling/` vs `samples/`
 

@@ -1,8 +1,8 @@
 ---
 id: api/v4/contracts
 description: Request/response contract types, validators, and OpenAPI examples for v4 (v3 follows the same shape)
-verified: 2026-07-24
-check: Types and validators match api/src/Binacle.Net/v4/Contracts/; mappers match v4/ExtensionMethods/
+verified: 2026-08-19
+check: Types and validators match api/src/Binacle.Net/v4/Contracts/; mappers match v4/ExtensionMethods/; every enum named here resolves to the assembly it is attributed to, and the BinResponseBase.From body matches field for field
 also_update:
   - api/v4
 paths:
@@ -54,14 +54,13 @@ Sent in every request as `Parameters`.
 | Field | Type | Notes |
 |---|---|---|
 | `Algorithm` | `Algorithm` | Required. `FFD`, `WFD`, `BFD`, or `Best`. Null fails the `NotNull()` validator — you cannot omit this field. |
-
-> **Two `Algorithm` enums exist.** `Binacle.Net.v4.Contracts.Algorithm` (API layer) has `FFD`, `WFD`, `BFD`, and `Best`.
-> `Binacle.Lib.Algorithm` (Lib layer) has only `FFD`, `WFD`, `BFD` — no `Best`.
-> `GetAlgorithm()` maps the API enum to the Lib enum, converting `Best` → `null` to trigger the multi-algorithm path.
 | `IncludeViPaqData` | `bool` | Default `false`. If `true`, response includes a base64 ViPaq payload. |
 | `Operation` | `AlgorithmOperation` | Not in JSON — set by the endpoint via `.ForFittingOperation()` or `.ForPackingOperation()`. |
 
-`GetAlgorithm()` maps `Best` → `null`, which tells the service to run all algorithms.
+> **Two `Algorithm` enums exist.** `Binacle.Net.v4.Contracts.Algorithm` (API layer) has `FFD`, `WFD`, `BFD` and
+> `Best`. `Binacle.Packing.Algorithm` (the packing vocabulary, in `shared/src`) has only `FFD`, `WFD`, `BFD` —
+> no `Best`. `GetAlgorithm()` maps the API enum to the packing one and returns `null` for `Best`, which is what
+> tells the service to run all algorithms. `AlgorithmOperation` is from the same `Binacle.Packing` namespace.
 
 ## Response Types
 
@@ -76,15 +75,15 @@ Subclasses call `From<T>(parameters, operationResult)` to populate common fields
 | `UnpackedItems` | `List<UnpackedBox>?` | Items that didn't fit |
 | `PackedItemsVolumePercentage` | `decimal` | Percentage of total item volume that was packed |
 | `PackedBinVolumePercentage` | `decimal` | Percentage of bin volume occupied by packed items |
+| `ViPaqData` | `string?` | Base64 ViPaq payload — only present if `IncludeViPaqData: true` and items were packed |
 
 Volume percentage formulas and rounding rules are in `$lib/result-building`.
-| `ViPaqData` | `string?` | Base64 ViPaq payload — only present if `IncludeViPaqData: true` and items were packed |
 
 ### FitBinResponse
 
 Adds:
 - `Status` (`BinFitResultStatus`): `Unknown = -1`, `Fits`, `DoesNotFit`, `EarlyExit`
-- `EarlyExitReason`: `None`, `ContainerVolumeExceeded`, `ContainerDimensionExceeded`
+- `EarlyExitReason` (`BinFitEarlyExitReason`): `None`, `ContainerVolumeExceeded`, `ContainerDimensionExceeded`
 
 ### PackBinResponse
 
@@ -109,20 +108,21 @@ response shape the single-bin endpoints return.
 order the caller sent the bins in (or the order the preset declares them) is the order they come back in. A bin
 missing from the results is skipped rather than faked.
 
-## Response Mapping (lib `OperationResult` → v4 contract)
+## Response Mapping (`Binacle.Packing.OperationResult` → v4 contract)
 
 The mappers live in `api/src/Binacle.Net/v4/ExtensionMethods/FittingMapperExtensions.cs` and
 `PackingMapperExtensions.cs`. They are called by `FitBinResponse.From` / `PackBinResponse.From`, which the
 endpoint handlers invoke inside a `"Create Response"` activity.
 
-`BinResponseBase.From<T>(parameters, operationResult)` populates the common fields: `Bin` from `result.Bin`,
-`AlgorithmUsed` from `result.AlgorithmInfo.Algorithm`, `PackedItems` via `PackedBox.From`, `UnpackedItems` via
-`UnpackedBox.From`, the two volume percentages, and — only when `parameters.IncludeViPaqData` **and** there is at
-least one packed item — `ViPaqData = Convert.ToBase64String(ViPaqSerializer.SerializeInt32(...))`.
+`BinResponseBase.From<T>(parameters, operationResult)` populates the common fields: `Bin` via `Bin.From`,
+`AlgorithmUsed` from `result.AlgorithmInfo.Algorithm.ToFastString()`, `PackedItems` via `PackedBox.From`,
+`UnpackedItems` via `UnpackedBox.From`, the two volume percentages, and — only when
+`parameters.IncludeViPaqData` **and** there is at least one packed item —
+`ViPaqData = ViPaqSerializer.Serialize<Bin, PackedBox, int>(result.Bin, result.PackedItems).ToBase64()`.
 
-Status mapping (`OperationResultStatus` is the lib enum):
+Status mapping (`OperationResultStatus` and `EarlyExitReason` are the `Binacle.Packing` enums):
 
-| lib `OperationResultStatus` | `BinFitResultStatus` (fit) | `BinPackResultStatus` (pack) |
+| `OperationResultStatus` | `BinFitResultStatus` (fit) | `BinPackResultStatus` (pack) |
 |---|---|---|
 | `Unknown` | `Unknown` | `Unknown` |
 | `FullyPacked` | `Fits` | `FullyPacked` |
@@ -130,10 +130,11 @@ Status mapping (`OperationResultStatus` is the lib enum):
 | `NotPacked` | `DoesNotFit` | `NotPacked` |
 | `EarlyExit` | `EarlyExit` | *(not mapped — pack never early-exits)* |
 
-Unmapped values throw `NotSupportedException`. Fit also maps `EarlyExitReason` 1:1
+Unmapped values throw `NotSupportedException`. Fit also maps `EarlyExitReason` onto `BinFitEarlyExitReason` 1:1
 (`None`/`ContainerVolumeExceeded`/`ContainerDimensionExceeded`); pack has no early-exit reason. `PackedBox.From`
-copies ID + dimensions + coordinates (and implements the shared `Binacle.Geometry.IWithDimensions<int>` /
-`IWithCoordinates<int>` so it can be serialized by vipaq directly); `UnpackedBox.From` copies ID + quantity.
+copies ID + dimensions + coordinates (and `PackedBox` implements the shared `Binacle.Geometry.IWithDimensions`
+/ `IWithCoordinates`, the non-generic `int` forms, so vipaq can serialize it directly); `UnpackedBox.From`
+copies ID + quantity.
 
 ## OpenAPI Examples
 

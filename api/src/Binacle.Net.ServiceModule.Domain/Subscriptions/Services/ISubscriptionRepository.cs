@@ -10,5 +10,6 @@ public interface ISubscriptionRepository
 	Task<FluxUnion<Success, Conflict>> CreateAsync(Subscription subscription, CancellationToken cancellationToken = default);
 	Task<FluxUnion<Success, NotFound>> UpdateAsync(Subscription subscription, CancellationToken cancellationToken = default);
 	Task<FluxUnion<Success, NotFound>> DeleteAsync(Subscription subscription, CancellationToken cancellationToken = default);
+	Task<PagedResult<Subscription>> ListAsync(int skip, int take, bool allowDeleted = false, CancellationToken cancellationToken = default);
 }
 
