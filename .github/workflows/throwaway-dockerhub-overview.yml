@@ -17,14 +17,6 @@ on:
         description: Fills {{MINOR}}. Give it a tag that EXISTS - the page goes live on publish
         required: true
         default: 3.0.0-beta.4
-      secret_name:
-        description: Which secret to authenticate with
-        required: true
-        default: DOCKERHUB_TOKEN
-        type: choice
-        options:
-          - DOCKERHUB_TOKEN
-          - DOCKERHUB_DESC_TOKEN
       publish:
         description: Write the live page. Leave off to render only
         type: boolean
@@ -65,15 +57,6 @@ jobs:
             echo '</details>'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Indexed rather than named, so a second token can be tried without editing this file. An unset secret
-      # reads as empty and the action would 401 on it, which says nothing useful.
-      - name: Check the secret exists
-        if: ${{ inputs.publish }}
-        env:
-          PASSWORD: ${{ secrets[inputs.secret_name] }}
-        run: |
-          [ -n "$PASSWORD" ] || { echo "${{ inputs.secret_name }} is not set on this repo"; exit 1; }
-
       # short-description is left unset on purpose - the action only writes that field when the input is
       # non-empty, and the live one is already correct.
       - name: Publish the overview
@@ -81,7 +64,7 @@ jobs:
         uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets[inputs.secret_name] }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ vars.DOCKERHUB_ORGNAME }}/${{ vars.DOCKERHUB_REPO }}
           readme-filepath: ${{ runner.temp }}/overview.md
 
