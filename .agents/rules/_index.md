@@ -15,6 +15,11 @@ are fetched when their `when:` fires. See [README.md](README.md) for the trigger
   when: "writing or editing a code comment"
   load: on-trigger
   paths: ["**/*.cs", "**/*.ts", "**/*.js", "**/*.csproj", "**/*.props", "**/*.just", "**/*.yml"]
+- file: icon-headings-in-public-docs.md
+  description: "Public markdown uses one emoji icon on each section heading, matching README.md and the docs site."
+  when: "writing or editing a heading in a public markdown file"
+  load: on-trigger
+  paths: ["README.md", "**/README.md", "SECURITY.md", "DEVELOPMENT.md", ".github/dockerhub-overview.md", "samples/**", "docs/**"]
 - file: keep-verified-current.md
   description: "When you edit a doc, update its verified date and check its also_update list. One carve-out - a prose-only edit that checks nothing against code does not bump the date."
   when: "editing any doc or design record"
