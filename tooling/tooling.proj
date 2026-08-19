@@ -5,11 +5,14 @@
 
     <ItemGroup>
         <Content Include="*.json" />
+        <Content Include="smoke\*.json" />
+        <Content Include="*.sh" />
         <Content Include="*.just"/>
-        <Content Include="*.md"/>
-        <Content Include="*.sh"/>
+        <Content Include="**\*.md"/>
         <Content Include="**\*.yml"/>
         <Content Include="**\*.yaml"/>
         <Content Include="**\*.hurl"/>
+        <Content Include="**\*.xml"/>
+        <Content Include="**\*.toml"/>
     </ItemGroup>
 </Project>
