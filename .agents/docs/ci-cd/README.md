@@ -1,6 +1,6 @@
 ---
 id: ci-cd
-description: CI/CD — the eight GitHub Actions workflows in .github/workflows and the nine shared actions in .github/actions, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
+description: CI/CD — the nine GitHub Actions workflows in .github/workflows and the nine shared actions in .github/actions, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
 verified: 2026-08-19
 check: The workflow table matches the files in .github/workflows and the action table matches .github/actions; the vars/secrets tables match every ${{ vars.* }} and ${{ secrets.* }} reference in them; the pinned just version and runner labels still match; the SHAs named as living only in .github/actions still appear in no workflow file; every .github/actions folder holding an outside SHA pin has its own entry in .github/dependabot.yml
 also_update:
@@ -14,13 +14,13 @@ paths:
 
 # CI/CD
 
-Eight workflows in `.github/workflows/`, over nine shared actions in `.github/actions/`. They gate a pull
-request, analyse it, release the Docker image, and deploy the two Jekyll sites. This doc covers what runs,
+Nine workflows in `.github/workflows/`, over nine shared actions in `.github/actions/`. They gate a pull
+request, analyse it, release the Docker image, write its Docker Hub page, and deploy the two Jekyll sites. This doc covers what runs,
 when, and the conventions every one of them follows. The release pipeline has its own page
-(`$ci-cd/release-pipeline`) because it is six jobs with an ordering that matters.
+(`$ci-cd/release-pipeline`) because it is seven jobs with an ordering that matters.
 
-**Two of the eight carry a `shared-` prefix**, which means something else calls them — the release pipeline
-calls both, and the pull request gate calls the test suite. It does **not** mean private: both keep
+**Three of the nine carry a `shared-` prefix**, which means something else calls them — the release pipeline
+calls all three, and the pull request gate calls the test suite. It does **not** mean private: both keep
 `workflow_dispatch`, so both can be run by hand. Nothing here is a workflow nobody can press.
 
 **Where the line with `tooling/` sits.** `tooling/` (`$tooling`) owns *what a command does* — the `just` modules
@@ -36,13 +36,14 @@ described in `$tooling`. Nothing about a recipe's behaviour is repeated here.
 | `shared-test-suite.yml` | `workflow_dispatch`, `workflow_call` | Every test leaf, plus `just openapi lint`. One job so setup and build happen once; one step per leaf so a red check names the suite. Postgres and Azurite run as job services, one ServiceModule step per storage backend. Called by the release pipeline as its "this commit passed CI" gate, so the release gets the lint too |
 | `sonar-analysis.yml` | `workflow_dispatch` | Build plus `just coverage all sonar` between `Sonar begin`/`Sonar end`, published to SonarCloud. **By hand, and never on a schedule** — a nightly run re-analyses a commit nothing changed and reports the same numbers |
 | `codeql-analysis.yml` | `push` on `main`, weekly `schedule`, `workflow_dispatch` | CodeQL over four languages — `actions`, `csharp`, `javascript-typescript`, `ruby` — one matrix job each, all buildless. Findings land in the Security tab, not on a check. **On a schedule as well as on merge** — the query packs change, so an untouched commit reports new findings later. That is the one analysis a schedule earns |
-| `release-docker-image.yml` | `push` on tags `v[0-9]*` | The release pipeline — check the changelog section, run the suite, build and push to GHCR, smoke it there, copy to Docker Hub, create the GitHub release. See `$ci-cd/release-pipeline` |
+| `release-docker-image.yml` | `push` on tags `v[0-9]*` | The release pipeline — check the changelog section, run the suite, build and push to GHCR, smoke it there, copy to Docker Hub, create the GitHub release, write the Docker Hub page. See `$ci-cd/release-pipeline` |
+| `shared-dockerhub-overview.yml` | `workflow_dispatch`, `workflow_call` | Renders `.github/dockerhub-overview.md` with `just image dockerhub-overview <version>` and PATCHes it onto the Docker Hub repository page. Called by the release pipeline as its last job, or run by hand for a wording fix — an empty version input takes the latest release, so a typo fix needs nothing typed |
 | `shared-smoke-image.yml` | `workflow_dispatch`, `workflow_call` | Pulls a published image and runs the structure check plus all five smoke profiles. Called by the release pipeline as its gate, or run by hand against any tag |
 | `deploy-docs-site.yml` | `workflow_dispatch` | Three jobs — build repo-root `docs/` (`$docs-site`) and check its links as a pre-flight, deploy it to DigitalOcean App Platform, tag the commit `docs-release-<run>` |
 | `deploy-web-site.yml` | `workflow_dispatch` | The same for repo-root `web/` (`$web-site`), tagging `web-release-<run>` |
 
-**Three of the eight run on their own.** `pull-request.yml` on every pull request, `codeql-analysis.yml` on
-every merge to `main` and weekly, and the release pipeline on a tag. The other five are `workflow_dispatch` —
+**Three of the nine run on their own.** `pull-request.yml` on every pull request, `codeql-analysis.yml` on
+every merge to `main` and weekly, and the release pipeline on a tag. The other six are `workflow_dispatch` —
 somebody presses a button.
 
 **For the two site deploys that is the end state, not the current one** — publishing to the internet is a
@@ -140,7 +141,7 @@ SonarCloud tracks a branch at a time: two branches analysing at once is fine, th
 ## What the run page says without opening a log
 
 **A summary is a plain markdown append to `$GITHUB_STEP_SUMMARY`** — no job output to declare, no step to
-consume it. **Six workflows write one, and each writes it from its last job**, carrying only what the log does
+consume it. **Seven workflows write one, and each writes it from its last job**, carrying only what the log does
 not already say. A table that restates the job list is a heading with no fact in it, which is why
 `shared-test-suite.yml` writes nothing: its step names already are that table.
 
@@ -152,6 +153,7 @@ not already say. A table that restates the job list is a heading with no fact in
 | `sonar-analysis.yml` | `analyze` | The quality gate and every condition with its value. The numbers live on another site and no gate blocks on them yet, so this is where they get read. |
 | `codeql-analysis.yml` | `summary` | Open alert counts by severity. The matrix has no last job, so this one exists for the summary; it does not repeat the per-language results the job list already shows. |
 | `shared-smoke-image.yml` | `smoke` | The image, the digest its tag resolved to, and each profile's result — **only on a `workflow_dispatch`**, where this workflow is the whole run. The release calls it too, and a block there would sit beside the one `release` writes for no new fact. |
+| `shared-dockerhub-overview.yml` | `publish` | The version the page describes and a link to it — **only on a `workflow_dispatch`**, for the same reason as the row above. |
 
 **A summary is a signed-in view.** An anonymous visitor to a run page gets the page shell and none of the
 summary content, on a public repo included. So nothing a user needs may live only here: the digest they verify
@@ -330,8 +332,8 @@ Set in GitHub repo settings, read as `${{ vars.* }}`.
 | Variable | Used by | What it is |
 |---|---|---|
 | `DONET_VERSION` | `shared-test-suite`, `sonar-analysis`, `release-docker-image` | The .NET SDK version, passed into the `setup-dotnet` action. **The name is misspelled** ("DONET"). It matches the repo setting, so do not correct it in one file only. **Read in the workflow and passed as an input**, never read inside the action — the `vars` context is not dependably available there, and an empty value installs a default SDK and looks like it worked |
-| `DOCKERHUB_ORGNAME` | `release-docker-image` | Docker Hub org, the first half of the image name |
-| `DOCKERHUB_REPO` | `release-docker-image` | Docker Hub repo, the second half. Also the lever for testing the `publish` job without touching the real repo: point it at a scratch repo, tag a non-prerelease version, then point it back |
+| `DOCKERHUB_ORGNAME` | `release-docker-image`, `shared-dockerhub-overview` | Docker Hub org, the first half of the image name |
+| `DOCKERHUB_REPO` | `release-docker-image`, `shared-dockerhub-overview` | Docker Hub repo, the second half. Also the lever for testing the `publish` job without touching the real repo: point it at a scratch repo, tag a non-prerelease version, then point it back |
 | `SONAR_PROJECT_KEY` | `sonar-analysis` | SonarCloud project key |
 | `SONAR_ORGANIZATION` | `sonar-analysis` | SonarCloud organisation |
 
@@ -344,7 +346,7 @@ the pre-move `src/` path after the layout change and broke the publish.
 
 | Secret | Used by |
 |---|---|
-| `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN` | `release-docker-image` — the `publish` job only, which is the only job that touches Docker Hub |
+| `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN` | `release-docker-image` — the `publish` job, and `shared-dockerhub-overview` which the `page` job calls. One token does both: the same registry push credential also writes the repository description, confirmed 2026-08-19. **Passed to the called workflow by name, never `secrets: inherit`**, which would hand the runner every secret the repo has |
 | `SONAR_TOKEN` | `sonar-analysis` |
 | `DIGITALOCEAN_ACCESS_TOKEN` | both deploy workflows |
 | `GITHUB_TOKEN` | `release-docker-image` — GHCR login in `build` and `publish`, and creating the release |

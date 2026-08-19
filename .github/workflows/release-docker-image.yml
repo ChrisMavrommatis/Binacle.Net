@@ -1,6 +1,6 @@
-# Six jobs, cheapest check first:
+# Seven jobs, cheapest check first:
 #
-#   push tag v3.0.0 -> notes gate -> test -> build+push GHCR -> smoke -> copy to Docker Hub -> release
+#   push tag v3.0.0 -> notes gate -> test -> build+push GHCR -> smoke -> copy to Docker Hub -> release -> page
 #
 # Three things to know before you change anything here:
 #
@@ -373,3 +373,23 @@ jobs:
             echo "just image verify ${VERSION}"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # Cosmetic, and the only job nothing depends on. It runs after everything irreversible has already
+  # succeeded, so a Docker Hub page that failed to update is a red job on a release that shipped correctly -
+  # never a release held up by a paragraph.
+  #
+  # Skipped for a prerelease. A beta gets its immutable tag and nothing else, and must not rewrite a page
+  # describing the stable line - the same rule the moving tags already follow, made a job condition here
+  # because this job is the only one that ignores metadata-action.
+  page:
+    name: Docker Hub page
+    needs: [ build, publish, release ]
+    if: ${{ !contains(github.ref_name, '-') }}
+    uses: ./.github/workflows/shared-dockerhub-overview.yml
+    permissions:
+      contents: read
+    with:
+      version: ${{ needs.build.outputs.version }}
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}

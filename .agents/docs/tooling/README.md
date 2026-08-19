@@ -34,7 +34,7 @@ deployment starting points live in samples (`$samples`). For the quick "how do I
 | `agents.just` | **Not a script** — the `agents` module for the root `justfile`. `just agents all` regenerates the `_index.md` manifest for `.agents/docs`, `.agents/design`, `.agents/plans`, `.agents/memory` and `.agents/ideas` (grouped by area); `just agents generate-index <name>` does one |
 | `regen.just` | **Not a script** — the `regen` module for the root `justfile`. The four generators whose output is **committed**: `just regen or-lib-scenarios` (OR-Library text → `shared/data/bischoff-suite`), `just regen vipaq-packed-data` (that plus `custom-problems`, packed → `vipaq/data/packed`), `just regen vipaq-interop-vectors` (the C# and TS interop halves plus the header bytes → `vipaq/test-vectors`), `just regen all` in dependency order, and `just regen check` which runs `all` then fails if any generated `.json` moved. None takes an argument — each tool runs every generator in its list so it cannot half-run. **No workflow calls `check`** |
 | `changelog.just` | **Not a script** — the `changelog` module for the root `justfile`. Reads `CHANGELOG.md` at the repo root. `just changelog extract <version\|Unreleased>` prints one release's section, with its headings promoted from `###` back to `##` for a release body; `just changelog check <version\|Unreleased>` exits 1 if that section is missing or empty. The release workflow calls both, so CI and a laptop parse the file the same way and the exact body can be previewed before a tag is pushed — see `$ci-cd/release-pipeline` |
-| `image.just` | **Not a script** — the `image` module for the root `justfile`. Runs what `build.just` produced: `just image up [full\|volume\|bind]` (default `full`) and `just image down [name]`; extra arguments pass through to `docker compose`. `up` creates and opens the bind-mounted folders first, and every stack stops with a pointer to `just build image` if `binacle-net:local` is missing. **`just image verify <version> [check]` is the odd one out** — it reads a *published* image off Docker Hub, builds nothing and never logs in; see below |
+| `image.just` | **Not a script** — the `image` module for the root `justfile`. Runs what `build.just` produced: `just image up [full\|volume\|bind]` (default `full`) and `just image down [name]`; extra arguments pass through to `docker compose`. `up` creates and opens the bind-mounted folders first, and every stack stops with a pointer to `just build image` if `binacle-net:local` is missing. **Two recipes are the odd ones out** — `just image verify <version> [check]` reads a *published* image off Docker Hub, and `just image dockerhub-overview <version>` renders the Docker Hub page; neither builds anything and neither logs in. See below |
 | `smoke.just` | **Not a script** — the `smoke` module for the root `justfile`. Tests the image rather than the code. `just smoke test-structure [image]` runs `container-structure-test` against `tooling/smoke/structure.yaml`; `just smoke test <profile> [image]` does up → hurl → down for one profile; `just smoke up`/`down` are the manual halves; `just smoke all [image]` builds, checks the structure once, then runs every profile. Every recipe takes the image last, default `binacle-net:local`, so a published tag can be smoked too |
 | `tmux.sh` | Builds/re-attaches the `binacle` tmux session (windows `api`/`docs`/`web`/`tests`/`misc`/`bench_1..3`); panes are pre-`cd`'d, nothing auto-runs |
 
@@ -117,6 +117,25 @@ because that is the one that exercises the whole image, which is what the module
   for the other two. Inside the file, unset must stay the named volume — otherwise a bare `docker compose -f`
   run starts leaving container-owned folders in the repo, and one of those fails the next `docker build`.
 - **Drop `-p`** and rely on the file's own `name:`. Two paragraphs up for why.
+
+## Rendering the Docker Hub page
+
+`just image dockerhub-overview <version>` in `image.just`. `.github/dockerhub-overview.md` is the page Docker Hub shows,
+and it carries `{{VERSION}}` and `{{MINOR}}` rather than a version — so it is right for every release instead
+of for the one it was written in. This recipe fills them in and prints the result; it writes nothing.
+
+**Here for the same reason `changelog extract` is.** The release workflow calls it and pipes the output to the
+Docker Hub API, so what you read locally is exactly what gets published.
+
+Two guards, both of which fail the release step rather than publishing:
+
+| Guard | Why |
+|---|---|
+| Rejects a version with a hyphen, or one that is not `x.y.z` | A prerelease moves neither the minor tag nor `latest`, so every tag the page would name is one that does not exist |
+| Fails if any `{{...}}` survives the substitution | A raw placeholder on a public landing page is worse than a red job |
+
+**The braces in the recipe are doubled.** The page's placeholders look exactly like `just` interpolation, and
+doubling is how `just` is told they are not — halve them and the substitution silently stops matching.
 
 ## Verifying a published image
 

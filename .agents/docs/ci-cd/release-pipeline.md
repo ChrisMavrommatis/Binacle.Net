@@ -1,8 +1,8 @@
 ---
 id: "ci-cd/release-pipeline"
-description: "The release pipeline in release-docker-image.yml — six jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step every tag reaches with a prerelease narrowed to its immutable tag, and the CHANGELOG.md release body"
+description: "The release pipeline in release-docker-image.yml — seven jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step every tag reaches with a prerelease narrowed to its immutable tag, the CHANGELOG.md release body, and the Docker Hub page written last"
 verified: 2026-08-19
-check: "The six jobs, their needs: edges and job outputs match release-docker-image.yml; the concurrency block still sets cancel-in-progress: false; no job carries a prerelease condition and the release job's !failure() note is still accurate; shared-test-suite.yml and shared-smoke-image.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased"
+check: "The seven jobs, their needs: edges and job outputs match release-docker-image.yml; the concurrency block still sets cancel-in-progress: false; `page` is still the only job carrying a prerelease condition and still the only one nothing needs, and the release job's !failure() note is still accurate; shared-test-suite.yml, shared-smoke-image.yml and shared-dockerhub-overview.yml still expose workflow_call; `just changelog check` and `extract` still take a bare version or Unreleased"
 also_update:
   - ci-cd
   - tooling
@@ -28,9 +28,12 @@ build     just build publish, push the immutable tag to GHCR, capture the digest
 smoke     pull that digest back from GHCR, structure check + all five profiles
 publish   imagetools copy to Docker Hub - a prerelease gets its immutable tag only
 release   gh release create, body from CHANGELOG.md
+page      render .github/dockerhub-overview.md and write it to the Docker Hub page  (real releases only)
 ```
 
 Each job `needs:` the ones before it, so a red anywhere leaves Docker Hub untouched and creates no release.
+**`page` is the exception at the end**: nothing needs it, so it can go red on its own without holding anything
+back, and it is skipped entirely for a prerelease.
 
 **A release run is never cancelled.** The workflow declares `concurrency` grouped on
 `${{ github.workflow }}-${{ github.ref }}` with **`cancel-in-progress: false`**. A stop between `build` and
@@ -45,7 +48,7 @@ That comes from job ordering, not from the registry split: `smoke` runs against 
 digest that passed is ever copied across. GHCR is staging; Docker Hub is what users pull, and it carries every
 tag the pipeline publishes — betas included, with the immutable tag only.
 
-## The six jobs
+## The seven jobs
 
 **`notes`** — checkout, `just`, then work out which section this tag publishes and check it exists. A tag
 containing a hyphen publishes `Unreleased`; any other tag publishes its own version with the leading `v`
@@ -90,6 +93,18 @@ the release may be there already. A plain `gh release create` would fail on that
 succeeded, leaving the image published and one red job. Editing instead means the body comes from
 `CHANGELOG.md` whichever way the tag was made, and a release marked prerelease by hand is corrected for a real
 version tag.
+
+**`page`** — `uses: ./.github/workflows/shared-dockerhub-overview.yml` with the `build` job's `version`, and the
+two Docker Hub secrets passed by name. That workflow renders `.github/dockerhub-overview.md` through
+`just image dockerhub-overview <version>` and PATCHes the result onto the repository page.
+
+**Last, and nothing needs it.** Everything irreversible has already happened by the time it runs, so a page
+that failed to update is one red job on a release that shipped a correct image — never a release held up by a
+paragraph.
+
+**The one job with a prerelease condition**, `if: ${{ !contains(github.ref_name, '-') }}`. The page describes
+the stable line, and a beta moves neither the minor tag nor `latest`, so every tag the page names would be one
+a beta did not create. Because nothing needs this job, the condition skips it alone and nothing downstream.
 
 ## Copy, never rebuild
 
@@ -150,9 +165,13 @@ A hyphen in a semver tag is the prerelease marker. Every job runs either way; wh
 | `publish` job | runs | runs |
 | Docker Hub tags | `3.0.0`, `3.0`, `latest` | `3.0.0-beta.3` only |
 | GitHub release | normal | marked `--prerelease` |
+| `page` job | runs | **skipped** |
 
-**No job is conditional.** The narrowing is entirely `metadata-action`'s: it withholds `{{major}}.{{minor}}`
-and `latest` for a prerelease, so a beta can never move a tag anyone is following.
+**One job is conditional, and it is the last one.** For the six that build and publish, the narrowing is
+entirely `metadata-action`'s: it withholds `{{major}}.{{minor}}` and `latest` for a prerelease, so a beta can
+never move a tag anyone is following. `page` is the exception — it does not go through `metadata-action`, so
+its skip is a job condition. That is safe only because nothing needs it; a condition on any job above would
+skip everything downstream of it.
 
 **The consequence for testing:** a prerelease now exercises every job, `publish` included. What it still does
 not cover is the *moving-tag* half — creating `3.0` and `latest` — since a beta produces neither. That is one

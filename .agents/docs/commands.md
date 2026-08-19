@@ -188,6 +188,20 @@ three answers that explain it; exit 1 if any failed.
 Only `signature` needs `cosign` (`DEVELOPMENT.md`, pinned) and it fails with that pointer rather than passing
 quietly. See `$tooling` for what each check proves.
 
+## Render the Docker Hub page
+
+```bash
+just image dockerhub-overview 3.0.0               # prints the page as it would be published
+just image dockerhub-overview 3.0.0 > page.md     # keep it
+```
+
+Fills the two placeholders in `.github/dockerhub-overview.md` and prints the result. Writes nothing and needs
+no credential, so it is the way to read the exact page before a tag goes out — the release workflow runs this
+same recipe and pipes it straight to Docker Hub.
+
+Rejects a prerelease and a partial version, and fails if any placeholder survives. A page naming a tag that
+does not exist is the one failure a reader sees first.
+
 ## Smoke the image
 
 Tests the image rather than the code: what it contains, and what its HTTP surface does with the modules

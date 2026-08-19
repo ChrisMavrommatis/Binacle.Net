@@ -85,10 +85,10 @@ table of [README.md](README.md).
 
 ```yaml
 - file: ci-cd/README.md
-  description: "CI/CD — the eight GitHub Actions workflows in .github/workflows and the nine shared actions in .github/actions, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need"
+  description: "CI/CD — the nine GitHub Actions workflows in .github/workflows and the nine shared actions in .github/actions, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need"
   paths: [".github/workflows/**", ".github/actions/**"]
 - file: ci-cd/release-pipeline.md
-  description: "The release pipeline in release-docker-image.yml — six jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step every tag reaches with a prerelease narrowed to its immutable tag, and the CHANGELOG.md release body"
+  description: "The release pipeline in release-docker-image.yml — seven jobs from a pushed tag to a published GitHub release, GHCR as the staging registry, the copy-to-Docker-Hub step every tag reaches with a prerelease narrowed to its immutable tag, the CHANGELOG.md release body, and the Docker Hub page written last"
   paths: [".github/workflows/**"]
 ```
 

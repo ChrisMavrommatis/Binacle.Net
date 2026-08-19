@@ -1,0 +1,85 @@
+# Writes the Docker Hub repository page. Called by the release pipeline as its last job, and runnable by hand
+# for a wording fix - a typo should not need a tag.
+#
+# The page is a landing page, not a changelog: it describes the stable line, so a prerelease must never reach
+# it. Two things enforce that and neither is here - the caller gates the job on a non-prerelease tag, and
+# `just image dockerhub-overview` refuses a version with a suffix.
+
+name: Shared / Docker Hub Page
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version the page describes (e.g. 3.0.0). Empty takes the latest release'
+        required: false
+        type: string
+  # Same input as the manual trigger, so `inputs.version` serves both.
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version the page describes'
+        required: true
+        type: string
+    # Named one by one rather than `secrets: inherit`, which hands the runner every secret the repo has.
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup - just
+        uses: ./.github/actions/setup-just
+
+      # Empty only on a manual run. `gh release view` returns the latest NON-prerelease, which is the line this
+      # page describes - so a wording fix needs nothing typed and cannot name a version by mistake.
+      - name: Which version the page describes
+        id: version
+        env:
+          INPUT: ${{ inputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          version="$INPUT"
+          [ -n "$version" ] || version="$(gh release view --json tagName -q .tagName)"
+          echo "Page will describe ${version#v}"
+          echo "name=${version#v}" >> "$GITHUB_OUTPUT"
+
+      # The recipe owns the placeholders and the two guards. Run it locally to read the page before a release.
+      - name: Render the page
+        env:
+          VERSION: ${{ steps.version.outputs.name }}
+        run: just image dockerhub-overview "$VERSION" > "$RUNNER_TEMP/overview.md"
+
+      # `short-description` is left unset on purpose: the action writes that field only when the input is
+      # non-empty, so the 100-byte line already on the repository survives every run.
+      - name: Publish the page
+        uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ vars.DOCKERHUB_ORGNAME }}/${{ vars.DOCKERHUB_REPO }}
+          readme-filepath: ${{ runner.temp }}/overview.md
+
+      # Only on a manual run, where this workflow is the whole run. On the release path the `release` job's
+      # summary is the one place that says what shipped, and a second block there adds no fact.
+      - name: Summarise
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        env:
+          VERSION: ${{ steps.version.outputs.name }}
+          PAGE: https://hub.docker.com/r/${{ vars.DOCKERHUB_ORGNAME }}/${{ vars.DOCKERHUB_REPO }}
+        run: |
+          set -euo pipefail
+          echo "Docker Hub page updated, describing \`${VERSION}\` - [${PAGE}](${PAGE})" >> "$GITHUB_STEP_SUMMARY"

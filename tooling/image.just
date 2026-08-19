@@ -6,11 +6,13 @@
 #   just image up bind           the image alone, SQLite, data in tooling/data, a folder you can open
 #   just image down [name]       stop it; add -v to drop the named volumes too
 #   just image verify <version>  check a published image: tags, signature, attestations, metadata
+#   just image dockerhub-overview <version>   print the Docker Hub page as it would be published
 #
 # These follow `just build image`, and they answer a different question from the `serve` module: not "does the
 # code work" but "does the thing we ship work". The stacks all run binacle-net:local, which is why each checks
-# for it first and `serve` has no such check. **`verify` is the exception** - it reads a published image off
-# Docker Hub, builds nothing, and never logs in.
+# for it first and `serve` has no such check. **`verify` and `dockerhub-overview` are the exceptions** - one
+# reads a published image off Docker Hub and the other renders the page that describes it; neither builds
+# anything and neither logs in.
 #
 # Two files, three stacks: `volume` and `bind` share tooling/image.local.yml and differ only in where
 # /app/data goes. `full` includes that file and serve's services, so it is the same postgres on the same
@@ -28,6 +30,9 @@ set no-exit-message := true
 
 # Where a release lands. Docker Hub is the only registry anything outside the release workflow touches.
 hub_repo := 'binacle/binacle-net'
+
+# The Docker Hub page. Carries placeholders, never a version - `dockerhub-overview` fills them in.
+overview_file := '.github/dockerhub-overview.md'
 
 # List the recipes
 default:
@@ -91,6 +96,33 @@ verify version check="all":
         echo "FAIL -$failed" >&2
     fi
     exit $rc
+
+# Prints to stdout and writes nothing, so the release workflow pipes it straight to the action and you can
+# read the exact page before pushing the tag. Same reason `changelog extract` exists.
+
+# Render the Docker Hub page for a version <version>
+dockerhub-overview version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    version='{{ version }}'
+    version="${version#v}"
+    case "$version" in
+        # A prerelease moves neither the minor tag nor latest, so every tag this page names would be one that
+        # does not exist on Docker Hub.
+        *-*)   echo "'$version' is a prerelease. This page describes the stable line only." >&2; exit 1 ;;
+        *.*.*) ;;
+        *)     echo "Expected a full version like 3.0.0, got '$version'." >&2; exit 1 ;;
+    esac
+    # Every brace in the two patterns is doubled: the page's placeholders look like just interpolation, and
+    # doubling is how just is told they are not.
+    out="$(sed -e "s/{{{{VERSION}}/$version/g" -e "s/{{{{MINOR}}/${version%.*}/g" '{{ overview_file }}')"
+    # A raw placeholder on a public landing page is worse than a failed release step.
+    if grep -n '{{{{' <<<"$out" >&2; then
+        echo "^ unsubstituted placeholder in {{ overview_file }}" >&2
+        exit 1
+    fi
+    printf '%s\n' "$out"
+
 
 # The stack name maps to a file, a project and an environment here and nowhere else, so `up` and `down` cannot
 # disagree about what a name means. This is also the only place an unknown name is rejected - without it a typo
