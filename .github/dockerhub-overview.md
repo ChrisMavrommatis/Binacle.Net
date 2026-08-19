@@ -136,6 +136,7 @@ Questions and "it worked" are equally welcome:
 
 ## 🔗 Quick reference
 
+- **Maintained by:** Binacle Labs - <https://github.com/binacle-labs>
 - **Source:** <https://github.com/binacle-labs/Binacle.Net>
 - **Documentation:** <https://docs.binacle.net>
 - **Website and demo:** <https://www.binacle.net>
