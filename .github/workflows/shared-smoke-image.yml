@@ -78,30 +78,77 @@ jobs:
       # Its own step so "that tag does not exist" is one red line instead of five broken-looking profiles.
       - name: Pull the image
         id: pull
-        run: docker pull "$IMAGE"
+        run: |
+          set -euo pipefail
+          docker pull "$IMAGE"
+          # The index digest, which is what the release copies - not the per-platform one `docker pull` prints.
+          echo "digest=$(docker buildx imagetools inspect "$IMAGE" --format '{{ .Manifest.Digest }}')" \
+            >> "$GITHUB_OUTPUT"
 
       # !cancelled() so every profile still runs after one fails - you see all the red, not just the first.
       # Also gated on the pull: six failures that all mean "no image" is noise.
       - name: Smoke - image structure
+        id: structure
         if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
         run: just smoke test-structure "$IMAGE"
 
       - name: Smoke - minimal
+        id: minimal
         if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
         run: just smoke test minimal "$IMAGE"
 
       - name: Smoke - quickstart
+        id: quickstart
         if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
         run: just smoke test quickstart "$IMAGE"
 
       - name: Smoke - prod
+        id: prod
         if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
         run: just smoke test prod "$IMAGE"
 
       - name: Smoke - service
+        id: service
         if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
         run: just smoke test service "$IMAGE"
 
       - name: Smoke - full
+        id: full
         if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
         run: just smoke test full "$IMAGE"
+
+      # Only on a hand run, where this workflow IS the run. The release calls it too, and a second summary
+      # block there would sit beside the one `publish` writes for no new fact.
+      - name: Summarise the smoke
+        if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
+        env:
+          DIGEST: ${{ steps.pull.outputs.digest }}
+          RESULTS: >-
+            structure:${{ steps.structure.outcome }}
+            minimal:${{ steps.minimal.outcome }}
+            quickstart:${{ steps.quickstart.outcome }}
+            prod:${{ steps.prod.outcome }}
+            service:${{ steps.service.outcome }}
+            full:${{ steps.full.outcome }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## Smoked \`${IMAGE}\`"
+            echo
+            if [ -n "$DIGEST" ]; then
+              echo "**Digest** \`${DIGEST}\` - what the tag pointed at when this ran."
+            else
+              echo '**The pull failed.** Nothing was smoked.'
+            fi
+            echo
+            echo '| Check | Result |'
+            echo '|---|---|'
+            for pair in $RESULTS; do
+              case "${pair##*:}" in
+                success) mark='✅' ;;
+                skipped) mark='-' ;;
+                *)       mark='❌' ;;
+              esac
+              echo "| ${pair%%:*} | ${mark} |"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -59,18 +59,35 @@ jobs:
     permissions:
       contents: write
 
+    env:
+      # Must not start with `v` followed by a digit - the release workflow fires on `v[0-9]*`.
+      TAG_NAME: docs-release-${{ github.run_number }}
+      COMMIT: ${{ github.sha }}
+      URL: https://docs.binacle.net
+
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Push the marker tag
-        env:
-          # Must not start with `v` followed by a digit - the release workflow fires on `v[0-9]*`.
-          TAG_NAME: docs-release-${{ github.run_number }}
-          COMMIT: ${{ github.sha }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag "$TAG_NAME" "$COMMIT"
           git push origin "$TAG_NAME"
+
+      - name: Summarise the deploy
+        run: |
+          set -euo pipefail
+          # A `|` in the subject would end the table row.
+          subject=$(git log -1 --format=%s "$COMMIT" | sed 's/|/\\|/g')
+          {
+            echo "## ${URL#https://} deployed"
+            echo
+            echo '| | |'
+            echo '|---|---|'
+            echo "| Commit | \`${COMMIT:0:8}\` - ${subject} |"
+            echo "| Marker tag | \`${TAG_NAME}\` |"
+            echo "| Site | ${URL} |"
+          } >> "$GITHUB_STEP_SUMMARY"

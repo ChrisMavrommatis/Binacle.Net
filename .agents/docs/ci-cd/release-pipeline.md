@@ -72,14 +72,17 @@ a maintainer runs by hand, rather than copying its steps, so the release path an
 thing. See `$ci-cd` for that workflow's runner pin.
 
 **`publish`** — the only job that touches Docker Hub and the only place the stored Docker Hub credential is
-used. It ends by writing a **run-summary table** to `$GITHUB_STEP_SUMMARY`: the version, the digest, and every
-public tag written, so "what shipped" is on the run page instead of buried in a `docker buildx` log line. A `metadata-action` step computes the public tag set, then one `docker buildx imagetools create` moves
+used. A `metadata-action` step computes the public tag set, then one `docker buildx imagetools create` moves
 the manifest **by digest** from GHCR under all three public tags at once, and cosign signs the result. It never
-checks out, so it holds no `contents` permission.
+checks out, so it holds no `contents` permission. Job output: `tags`, the public tag set, read by `release` for
+the run summary.
 
 **`release`** — checkout, `just`, then the release body from `just changelog extract <section>`. It `needs:`
 the `notes` job because it reads that job's `section` output, and the prerelease flag is set explicitly either
 way from whether the tag contains a hyphen.
+
+**It also writes the run summary** — version, digest, every public tag, the release link and the verify
+command. This job rather than `publish` because the release URL does not exist until the step above has run.
 
 **It creates the release, or edits one that already exists.** GitHub's web UI cannot create a bare tag — the
 only way to tag from the site is to publish a release, which makes both at once — so by the time this job runs

@@ -71,11 +71,12 @@ check rather than warning, and a `cosign verify` failure reads as tampering rath
 | old identity | `3.0.0-beta.2` alone | `ChrisMavrommatis` in the identity regexp |
 | new identity | `3.0.0-beta.3` onward | `binacle-labs`, the string every surface now carries |
 
-Signing, the SBOM and the GHCR staging copy all start at beta 2. Beta 3 is the first tag pushed after the move.
+Signing, the SBOM and the GHCR staging copy all start at beta 2. Beta 3 is the first tag pushed after the
+move, and `3.0.0-beta.4` followed on 2026-08-19 into the same band.
 
-**`3.0.0-beta.3` is the only image that verifies under the current identity**, so it is the tag to name
-wherever a doc needs a real one and the tag to re-run any verification against. Beta 2 is signed but the
-published command rejects it.
+**`3.0.0-beta.3` is the only image a verify run has passed against under the current identity**, so it is the
+tag to name wherever a doc needs a real one and the tag to re-run any verification against. Beta 2 is signed
+but the published command rejects it. Beta 4 is in the band and untried.
 
 **Proven end to end on 2026-08-17.** `just image verify 3.0.0-beta.3` passed all four checks; the command
 printed in `SECURITY.md` passed verbatim from a clean shell; and the SLSA provenance names

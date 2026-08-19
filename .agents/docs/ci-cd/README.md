@@ -43,7 +43,11 @@ described in `$tooling`. Nothing about a recipe's behaviour is repeated here.
 
 **Three of the eight run on their own.** `pull-request.yml` on every pull request, `codeql-analysis.yml` on
 every merge to `main` and weekly, and the release pipeline on a tag. The other five are `workflow_dispatch` —
-somebody presses a button. That is the current state, not an end state.
+somebody presses a button.
+
+**For the two site deploys that is the end state, not the current one** — publishing to the internet is a
+deliberate act and never a side effect of a commit, which is `$ci-cd/decisions#D17`. The other three are
+open to changing.
 
 ## `gate` is the only required check
 
@@ -135,16 +139,34 @@ SonarCloud tracks a branch at a time: two branches analysing at once is fine, th
 
 ## What the run page says without opening a log
 
-**Two jobs write to `$GITHUB_STEP_SUMMARY`**, which is a plain markdown append with no wiring — no job output
-to declare, no step to consume it.
+**A summary is a plain markdown append to `$GITHUB_STEP_SUMMARY`** — no job output to declare, no step to
+consume it. **Six workflows write one, and each writes it from its last job**, carrying only what the log does
+not already say. A table that restates the job list is a heading with no fact in it, which is why
+`shared-test-suite.yml` writes nothing: its step names already are that table.
 
-- **`gate`** writes the job-by-job result table. On a red gate that names the job that did it; on a green one it
-  shows what was skipped, which is how you tell "nothing relevant changed" from "the suite ran".
-- **The release `publish` job** writes the digest and every tag it landed under. That is the answer to "what
-  did this release ship", and it is otherwise a `docker buildx` line inside a log.
+| Workflow | Written by | What it carries |
+|---|---|---|
+| `pull-request.yml` | `gate` | The job-by-job result table. On a red gate it names the job that did it; on a green one it shows what was skipped, which is how you tell "nothing relevant changed" from "the suite ran". |
+| `release-docker-image.yml` | `release` | Version, digest, every public tag, the release link and the verify command. |
+| `deploy-docs-site.yml`, `deploy-web-site.yml` | `tag` | The commit and its subject, the marker tag and the site URL — three greps through a log otherwise. |
+| `sonar-analysis.yml` | `analyze` | The quality gate and every condition with its value. The numbers live on another site and no gate blocks on them yet, so this is where they get read. |
+| `codeql-analysis.yml` | `summary` | Open alert counts by severity. The matrix has no last job, so this one exists for the summary; it does not repeat the per-language results the job list already shows. |
+| `shared-smoke-image.yml` | `smoke` | The image, the digest its tag resolved to, and each profile's result — **only on a `workflow_dispatch`**, where this workflow is the whole run. The release calls it too, and a block there would sit beside the one `release` writes for no new fact. |
 
-**This is the reason there are no job outputs for either.** An output is read by another job; a summary is read
-by a person. Adding an output that nothing consumes is plumbing for its own sake.
+**A summary is a signed-in view.** An anonymous visitor to a run page gets the page shell and none of the
+summary content, on a public repo included. So nothing a user needs may live only here: the digest they verify
+against and what shipped have to reach them through the release body, `CHANGELOG.md` and the docs site.
+
+**Two of them need real work to produce a fact**, and both do it rather than print something cheaper.
+`sonar-analysis.yml` polls the SonarCloud `ceTask` from `report-task.txt` before reading the gate — `end`
+returns when the upload finishes and the analysis is processed after, so reading it straight away returns the
+**previous** run's numbers. `codeql-analysis.yml` pages the code-scanning API, because the per-page cap of 100
+truncates silently and that reads as "fewer alerts now".
+
+**Only one job output exists to serve a summary:** `publish.outputs.tags`, read by `release`. An output is
+otherwise read by another job while a summary is read by a person, so adding one nothing consumes is plumbing
+for its own sake — the exception is here because the release URL only exists after `release` has run, and the
+tag set is computed in `publish`.
 
 ## Naming
 

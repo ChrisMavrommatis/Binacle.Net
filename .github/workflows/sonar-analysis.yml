@@ -97,3 +97,62 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"
+
+      # `end` returns as soon as the report is uploaded - SonarCloud processes it after. Reading the gate
+      # without waiting for `ceTask` returns the PREVIOUS analysis, which is worse than printing nothing.
+      # `report-task.txt` is written by `end` and is the only place the task and dashboard URLs appear.
+      - name: Summarise the quality gate
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          set -euo pipefail
+          report=.sonarqube/out/.sonar/report-task.txt
+          ce_task_url=$(grep -m1 '^ceTaskUrl=' "$report" | cut -d= -f2-)
+          dashboard_url=$(grep -m1 '^dashboardUrl=' "$report" | cut -d= -f2-)
+
+          # 5 minutes. A queued task that has not started in that time is a SonarCloud outage, not a slow build.
+          for _ in $(seq 1 60); do
+            task=$(curl -sS -u "${SONAR_TOKEN}:" "$ce_task_url")
+            status=$(printf '%s' "$task" | jq -r '.task.status')
+            case "$status" in
+              SUCCESS|FAILED|CANCELED) break ;;
+            esac
+            sleep 5
+          done
+
+          if [ "$status" != "SUCCESS" ]; then
+            {
+              echo '## Sonar'
+              echo
+              echo "The analysis task reported \`${status}\`. No gate to read."
+              echo
+              echo "[Dashboard](${dashboard_url})"
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          analysis_id=$(printf '%s' "$task" | jq -r '.task.analysisId')
+          gate=$(curl -sS -u "${SONAR_TOKEN}:" \
+            "https://sonarcloud.io/api/qualitygates/project_status?analysisId=${analysis_id}")
+
+          case "$(printf '%s' "$gate" | jq -r '.projectStatus.status')" in
+            OK)   verdict='✅ Passed' ;;
+            ERROR) verdict='❌ Failed' ;;
+            *)    verdict="$(printf '%s' "$gate" | jq -r '.projectStatus.status')" ;;
+          esac
+
+          {
+            echo '## Sonar'
+            echo
+            echo "**Quality gate:** ${verdict} - commit \`${GITHUB_SHA:0:8}\` on \`${GITHUB_REF_NAME}\`"
+            echo
+            echo '| Condition | Value | Required | |'
+            echo '|---|---|---|---|'
+            # `comparator` is the FAILING direction, so it is inverted here to read as the requirement.
+            printf '%s' "$gate" | jq -r '
+              .projectStatus.conditions[]
+              | (if .comparator == "LT" then ">=" elif .comparator == "GT" then "<=" else .comparator end) as $req
+              | "| `\(.metricKey)` | \(.actualValue) | \($req) \(.errorThreshold) | \(if .status == "OK" then "✅" else "❌" end) |"'
+            echo
+            echo "[Open the dashboard](${dashboard_url})"
+          } >> "$GITHUB_STEP_SUMMARY"

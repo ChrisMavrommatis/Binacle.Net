@@ -218,6 +218,9 @@ jobs:
       # artifact has to be signed where it lands.
       id-token: write
 
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+
     steps:
       # Computes the Docker Hub tag set. This job only runs for a real release, so all three apply - but
       # metadata-action still owns the semver parsing rather than this file hand-rolling it.
@@ -272,27 +275,6 @@ jobs:
             echo -n "${tag} -> "
             docker buildx imagetools inspect "$tag" --format '{{ .Manifest.Digest }}'
           done
-
-      # The run page's answer to "what shipped" - otherwise it is a `docker buildx` line inside a log.
-      - name: Summarise what was published
-        env:
-          DIGEST: ${{ needs.build.outputs.digest }}
-          VERSION: ${{ needs.build.outputs.version }}
-          TAGS: ${{ steps.meta.outputs.tags }}
-        run: |
-          set -euo pipefail
-          {
-            echo "## Published \`${VERSION}\`"
-            echo
-            echo "**Digest** \`${DIGEST}\` - the one \`smoke\` passed, copied rather than rebuilt."
-            echo
-            echo '| Tag |'
-            echo '|---|'
-            while IFS= read -r tag; do
-              [ -n "$tag" ] || continue
-              echo "| \`${tag}\` |"
-            done <<< "$TAGS"
-          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Setup cosign
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
@@ -359,3 +341,35 @@ jobs:
               gh release create "$TAG" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md"
             fi
           fi
+
+      # The run page's answer to "what shipped" - otherwise it is a `docker buildx` line inside a log. It sits
+      # in this job rather than `publish` because the release URL only exists once the step above has run.
+      #
+      # This is a signed-in view. Anything a user needs to verify the image has to reach them through the
+      # release body and SECURITY.md as well.
+      - name: Summarise what was published
+        env:
+          DIGEST: ${{ needs.build.outputs.digest }}
+          VERSION: ${{ needs.build.outputs.version }}
+          TAGS: ${{ needs.publish.outputs.tags }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## Published \`${VERSION}\`"
+            echo
+            echo "**Digest** \`${DIGEST}\` - the one \`smoke\` passed, copied rather than rebuilt."
+            echo
+            echo '| Tag |'
+            echo '|---|'
+            while IFS= read -r tag; do
+              [ -n "$tag" ] || continue
+              echo "| \`${tag}\` |"
+            done <<< "$TAGS"
+            echo
+            echo "[Release ${TAG}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/${TAG})"
+            echo
+            echo '```'
+            echo "just image verify ${VERSION}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

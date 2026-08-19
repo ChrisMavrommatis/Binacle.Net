@@ -2,7 +2,7 @@
 id: ci-cd/decisions
 description: CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, why lychee is a pinned binary rather than its own action, and the open questions about the PR gate and supply-chain attestation.
 verified: 2026-08-19
-check: Decisions still match .github/workflows/*.yml and tooling/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against tooling/changelog.just, D6 against shared-smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe, D14's STAGING_IMAGE against release-docker-image.yml, D15's identity regexp against SECURITY.md and tooling/image.just, D16 against .github/actions/install-lychee and the deploy workflows' build job
+check: Decisions still match .github/workflows/*.yml and tooling/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against tooling/changelog.just, D6 against shared-smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe, D14's STAGING_IMAGE against release-docker-image.yml, D15's identity regexp against SECURITY.md and tooling/image.just, D16 against .github/actions/install-lychee and the deploy workflows' build job, D17 against both deploy workflows' triggers, which must stay workflow_dispatch only
 paths:
   - ".github/workflows/**"
 ---
@@ -418,6 +418,22 @@ tool; that would be an addition, not a reversal of this.
 an `og:url` pointing at where it *will* live. Run externally from the build job, they 404 on every page the
 deploy is about to create — 35 of 36 failures on the first real run, all of them self-references. A gate red
 for that reason before anyone writes a line is a gate people learn to ignore.
+
+### D17 — the two site deploys are published by hand, and never on a push
+
+**Decided by the maintainer, 2026-08-19.** `deploy-docs-site.yml` and `deploy-web-site.yml` are
+`workflow_dispatch` and stay that way. No `push` trigger on `docs/**` or `web/**`, and no scheduled run.
+
+**Why:** publishing to the internet is a deliberate act, not a side effect of a commit. Those two folders are
+written in their own session, and pressing the button is part of how that session ends — a merge that happens
+to touch a page is not a decision to put it live.
+
+**Two mechanical consequences that make the same point.** The marker tag is numbered by `github.run_number`, so
+a push trigger would produce a tag per commit and the tag would stop meaning "this is live". And the
+concurrency group is never cancelled — `cancel-in-progress: false`, because a stopped deploy leaves App
+Platform mid-rollout — so a busy branch would queue rollouts behind each other rather than skip to the last.
+
+**This closes the question `$plans/ci-cd/workflow-restructure` left open.** It was not CI's to answer.
 
 ## Open
 

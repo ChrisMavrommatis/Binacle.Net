@@ -65,3 +65,48 @@ jobs:
         with:
           # Keeps each language's findings a separate set. Without it the last job to finish clears the rest.
           category: /language:${{ matrix.language }}
+
+  # The matrix has no last job, so this is it. It does not repeat the per-language results - the job list above
+  # already shows those. What no page in the run shows is how many alerts are open once it has finished.
+  summary:
+    name: Summarise open alerts
+    needs: analyze
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      security-events: read
+
+    steps:
+      - name: Count the open alerts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # A failed matrix leg means the counts below are missing that language's findings, not that it has none.
+          ANALYSIS: ${{ needs.analyze.result }}
+        run: |
+          set -euo pipefail
+          # --paginate: the endpoint caps at 100 per page and a silent truncation reads as "fewer alerts now".
+          alerts=$(gh api --paginate \
+            "repos/${GITHUB_REPOSITORY}/code-scanning/alerts?state=open&ref=${GITHUB_REF}&per_page=100" \
+            --jq '.[].rule.security_severity_level // "none"' | sort | uniq -c)
+
+          # `uniq -c` prints nothing for a level with no alerts, and a blank cell reads as unknown, not zero.
+          count() { printf '%s\n' "$alerts" | awk -v k="$1" '$2 == k { n = $1 } END { print n + 0 }'; }
+
+          {
+            echo '## CodeQL'
+            echo
+            if [ "$ANALYSIS" != "success" ]; then
+              echo "**The analysis reported \`${ANALYSIS}\`.** The counts below are incomplete."
+              echo
+            fi
+            echo "**Open alerts on \`${GITHUB_REF_NAME}\`**"
+            echo
+            echo '| Severity | Open |'
+            echo '|---|---|'
+            for level in critical high medium low none; do
+              echo "| ${level} | $(count "$level") |"
+            done
+            echo
+            echo "[Security tab](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/security/code-scanning)"
+          } >> "$GITHUB_STEP_SUMMARY"

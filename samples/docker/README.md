@@ -33,7 +33,7 @@ configuration anywhere other people can reach.
 
 ## About the image tag
 
-Every sample pins `binacle/binacle-net:3.0.0-beta.1` for now, since `3.0` (the minor tag) does not exist on
+Every sample pins `binacle/binacle-net:3.0.0-beta.4` for now, since `3.0` (the minor tag) does not exist on
 Docker Hub until v3.0.0 is published. Once it is, the samples move to `binacle/binacle-net:3.0`, which picks up
 fixes within the 3.0 line and never a breaking change. `latest` follows the newest release across majors, which
 is right for trying things out and wrong for anything you keep.

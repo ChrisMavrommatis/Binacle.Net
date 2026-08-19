@@ -4,8 +4,9 @@ description: Release - Binacle.Net v3.0.0
 
 # Release - Binacle.Net v3.0.0
 
-**Status:** In progress. Betas 1, 2 and 3 published, verified and deployed; beta 3's checks closed 2026-08-19. The pipeline is rebuilt and proven
-end to end. The architecture branch is merged, the suite is green and the OpenAPI documents are proven unmoved.
+**Status:** In progress. Betas 1 to 4 published; beta 3's checks closed 2026-08-19 and `v3.0.0-beta.4` was cut
+the same day, carrying the workflow restructure and the admin read endpoints. The pipeline is rebuilt and
+proven end to end. The architecture branch is merged, the suite is green and the OpenAPI documents are proven unmoved.
 **The repository moved to the `binacle-labs` organization on 2026-08-16, mid-release**, and `v3.0.0-beta.3`
 proved the whole pipeline under the new owner. What is left is the last commit and the tag - plus the items
 that run alongside and hold nothing up.
@@ -23,8 +24,9 @@ Companion: `post-release-v3.0.0.md` - the checks to run once the release is out.
 `binacle-labs/Binacle.Net` on 2026-08-16, while this release was in flight. It is done and proven end to end;
 nothing on the gate waits on it. What outlives the release is in `.agents/design/decisions.md` - what moved,
 what deliberately did not, and the three signing identity bands. The one thing that shapes work still open
-here: **`3.0.0-beta.3` is the only image that verifies under the current identity**, so it is the tag to name
-wherever an example needs a real one until v3.0.0 is out.
+here: **`3.0.0-beta.3` is the only image a verify run has passed against under the current identity**, so it
+is the tag to name wherever an example needs a real one until v3.0.0 is out. `3.0.0-beta.4` is in the same
+band; nothing here records a run against it.
 
 ---
 
@@ -42,7 +44,7 @@ worst time to meet.
 | **Rate limiting owned by the ServiceModule** | The durable fix for the bug the two-guard transformer patches. Pulled in on 2026-08-14 at the maintainer's call. |
 | **Image verification** | The release advertises signing, SBOM and provenance. Today no user can check any of it. |
 | **The Docker Hub page** | It advertises 2.1.1 as latest. The tag is what makes it wrong rather than stale. |
-| **The PR gate change** | A new PR workflow calling `shared-test-suite.yml`, plus the image build. Everything green on arrival. **The OpenAPI lint and the Spectral move landed separately on 2026-08-17** - the lint is a step in `shared-test-suite.yml`, not a job in the new workflow. |
+| **The PR gate change** | A new PR workflow calling `shared-test-suite.yml`, plus the image build. Everything green on arrival. **The OpenAPI lint and the Spectral move landed separately on 2026-08-17** - the lint is a step in `shared-test-suite.yml`, not a job in the new workflow. **Done, and it left the release on 2026-08-19** - the workflow landed 2026-08-18 and all that remained was the branch protection edit, which gates nothing here. It is on the board with `ci-cd/workflow-restructure`. |
 | **The client-generation page** | The spec is published and nobody knows they can generate a client from it. One docs page, and it applies to every version. |
 | **More ViPaq interop vectors** | Fixture data, and the format froze in this release. **Done 2026-08-17** - 7 scenarios to 14. |
 | **The compose stacks** | Pulled in on 2026-08-15, after the scope reset. **Done the same day** - what it proved about compose is in the tooling reference doc. |
@@ -91,8 +93,8 @@ A prerelease gets its immutable tag only, never `3.0` or `latest`. The release b
 
 Cut from the merge commit, published 2026-08-16, and it paid for itself twice: the whole pipeline ran under the
 new owner, `just image verify 3.0.0-beta.3` passed all four checks, and the command printed in `SECURITY.md`
-passed verbatim from a clean shell. **It is the reference tag - the only image that verifies under the current
-identity** until v3.0.0 is out.
+passed verbatim from a clean shell. **It is the reference tag - the only image a verify run has passed
+against under the current identity** until v3.0.0 is out.
 
 The three live checks it existed for:
 
@@ -101,6 +103,11 @@ The three live checks it existed for:
 - **The resolved caller.** Settled; closed by the maintainer.
 - **The auth token endpoint.** An active account returns 200 and an inactive one 401, both live. **The
   suspended account returns 403 and that branch was not exercised** - no suspended account on the host.
+
+**Beta 4 followed on 2026-08-19**, cut from `3d8ef4c2` on `main` - eleven commits after beta 3, carrying the
+workflow restructure, the OpenAPI lint move, the ViPaq interop vectors and the admin read endpoints below. All
+six jobs green. It was not a gate item and nothing was checked against it; it is recorded here so the tag list
+is not short by one.
 
 **The 403 is untested by anything, and that outlives the release.** `IntegrationTests/Endpoints/Auth/Token.cs`
 covers 200, 401 and 422 only, so the one branch in `Reject` that returns a different status code has neither a
@@ -197,8 +204,8 @@ public surface reads `3.0.0`. One thing is left.
       now; that page's own plan says to copy it rather than edit its draft.
 
 **The constraint that binds every surface:** any example naming a tag must name a tag that **passes today**.
-Only `3.0.0-beta.3` does - the org move re-keyed the certificate identity, so beta 2 is signed under the old
-owner and fails. `3.0` and `latest` point at nothing signed until v3.0.0 publishes.
+Only `3.0.0-beta.3` is proven to - the org move re-keyed the certificate identity, so beta 2 is signed under
+the old owner and fails. `3.0.0-beta.4` is in the same band as beta 3 and untried. `3.0` and `latest` point at nothing signed until v3.0.0 publishes.
 
 ### The Docker Hub page
 
@@ -252,15 +259,6 @@ tag, `latest` and `3.0` included, and those two are designed to move.
 - [ ] **Leave the switch off until after v3.0.0.** Turning it on with a wrong rule fails the publish job
       *after* the image has been built, smoked and copied - a red at the last step of an otherwise good
       release, with the moving tags half written. **There is no version of this worth risking the release for.**
-
-### The PR gate - one change
-
-**The image build landed 2026-08-18**, in `pull-request.yml` as the `image` job beside the test suite call.
-**[ci-gates](plans/ci-cd/ci-gates.md)** holds the shape, the naming rework and the two traps - read it before
-touching a workflow file.
-
-- [ ] **Point branch protection at `Pull Request / Gate`.** It is the one required check now; until this
-      happens the old entry reports nothing.
 
 ### The client-generation page
 
@@ -408,7 +406,7 @@ stay four. Anyone building from source sees `Binacle.Lib.Abstractions` disappear
 
 1. ~~Rate limiter tests, rate limiting moved to the ServiceModule, the Azure Storage run.~~ All done
    2026-08-14.
-2. ~~Finish beta 3.~~ Published 2026-08-16, closed 2026-08-19.
+2. ~~Finish beta 3.~~ Published 2026-08-16, closed 2026-08-19. Beta 4 followed on 2026-08-19.
 3. **The last commit:** changelog rename, nine pins, six comment blocks, three READMEs, two tooling examples,
    and the `IsExperimental` re-confirm.
 4. **Tag `v3.0.0`.** The pipeline does the rest.
