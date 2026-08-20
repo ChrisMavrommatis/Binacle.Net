@@ -19,8 +19,16 @@ runs:
     - name: Setup - Node
       uses: ./.github/actions/setup-node
 
-    - name: Install npm packages
+    - name: Install npm packages - root
       shell: bash
+      run: npm ci --ignore-scripts
+
+    # A second install, because the site is not a root workspace: it has its own package-lock.json, and
+    # webpack lives only there. Without this `npm run build` fetches webpack from the registry and stalls
+    # on its install prompt.
+    - name: Install npm packages - site
+      shell: bash
+      working-directory: ${{ inputs.directory }}
       run: npm ci --ignore-scripts
 
     - name: Setup - Ruby
