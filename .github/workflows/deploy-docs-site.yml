@@ -17,6 +17,7 @@ jobs:
       contents: read
     environment:
       name: binacle-net-docs
+      url: https://docs.binacle.net
 
     steps:
       - name: Checkout
@@ -35,13 +36,21 @@ jobs:
       - name: Check - links
         run: just check links docs
 
+      # From git, not the event: `workflow_dispatch` carries no commit payload. Stripped of the characters
+      # that would break out of the quoted argument below.
+      - name: Describe the deploy
+        run: |
+          set -euo pipefail
+          subject=$(git log -1 --format=%s "$GITHUB_SHA" | tr -d '"`$\\' | cut -c1-90)
+          echo "DEPLOY_MESSAGE=${GITHUB_SHA:0:8} - ${subject}" >> "$GITHUB_ENV"
+
       # Uploads what the link check just read - artifacts/docs, named as `directory` in the config file.
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --config tooling/cloudflare/docs.wrangler.jsonc
+          command: deploy --config tooling/cloudflare/docs.wrangler.jsonc --message "${{ env.DEPLOY_MESSAGE }}"
 
   tag:
     name: Tag the deployed commit
@@ -53,7 +62,7 @@ jobs:
 
     env:
       # Must not start with `v` followed by a digit - the release workflow fires on `v[0-9]*`.
-      TAG_NAME: docs-release-${{ github.run_number }}
+      TAG_NAME: docs-${{ github.run_number }}
       COMMIT: ${{ github.sha }}
       URL: https://docs.binacle.net
 

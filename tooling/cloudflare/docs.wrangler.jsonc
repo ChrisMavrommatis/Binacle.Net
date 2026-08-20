@@ -1,10 +1,12 @@
 {
   "name": "binacle-net-docs",
   "compatibility_date": "2026-08-20",
+  // Off: a deploy is meant to be the site, not a second copy of it on a second URL.
+  "preview_urls": false,
   "assets": {
     // Relative to this file, matching the `destination` in docs/_config.yml so the two are wrong together.
     "directory": "../../artifacts/docs",
-    // Wants `404.html` in the site root. Jekyll writes `404/index.html`, so this does not fire yet.
+    // Wants `404.html` in the site root, which is why pages/404.html has `permalink: /404.html`.
     "not_found_handling": "404-page"
   }
 }

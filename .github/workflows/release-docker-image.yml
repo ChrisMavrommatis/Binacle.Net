@@ -16,7 +16,7 @@ name: Build and Release Docker Image
 on:
   push:
     tags:
-      # `v` then a DIGIT, not the looser `v*`: the two deploy workflows push `docs-release-<run>` and
+      # `v` then a DIGIT, not the looser `v*`: the two deploy workflows push `docs-<n>` and
       # `web-release-<run>`, and a release build must never fire on one. Any new tag-pushing workflow has to
       # stay out of the `v<digit>` namespace.
       - 'v[0-9]*'
