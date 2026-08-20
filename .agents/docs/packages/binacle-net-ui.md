@@ -17,9 +17,9 @@ Private npm workspace package (`"private": true`, name `binacle-net-ui`).
 ## Build & consumers — important
 
 This package has **no build step and no bundle of its own** — `"main": "index.ts"` points at raw TypeScript, and
-its `package.json` carries **no `scripts` block at all**. It is consumed as **TS source** by the `web/` Jekyll site, which compiles it
-with its own webpack + ts-loader (`web/_js/packing_demo.js`, `web/_js/protocol_decoder.js`; split chunk in
-`web/webpack.config.js`). `three` is bundled from web's `node_modules`, not a CDN.
+its `package.json` carries **no `scripts` block at all**. It is consumed as **TS source** by the `sites/web/` Jekyll site, which compiles it
+with its own webpack + ts-loader (`sites/web/_js/packing_demo.js`, `sites/web/_js/protocol_decoder.js`; split chunk in
+`sites/web/webpack.config.js`). `three` is bundled from web's `node_modules`, not a CDN.
 
 The `Binacle.Net.UIModule` does **not** use this package — it has its own legacy raw-JS visualizer in
 `wwwroot/js`.
@@ -84,4 +84,4 @@ in `src/utils/` (`redrawScene`, `createBin`/`createItem`, `addItemToScene`/`remo
   and export the factory + plugin from `src/core/index.ts`.
 - The only API call is hardcoded at `packingDemo.ts` → `POST {base_url}/api/v3/pack/by-custom`. To point the demo
   at v4, that's the single line (and the request shape in `apiModels/PackingRequest`) to change.
-- No tests, no compile here — `web/`'s webpack picks up changes via the workspace symlink.
+- No tests, no compile here — `sites/web/`'s webpack picks up changes via the workspace symlink.

@@ -1,21 +1,21 @@
 ---
-id: web-site
-description: The published Jekyll marketing site at repo-root web/ — product home, apps listing, and interactive packing demo. `$web-site` always means repo-root web/.
-verified: 2026-08-19
-check: Collections, JS bundles and plugin list match web/_config.yml and web/js/; the demo/prefetch script split still matches web/_data/includes.yml; web/lib/ still holds exactly the vendor folders listed
+id: sites/web
+description: The published Jekyll marketing site at sites/web/ — product home, apps listing, and interactive packing demo. `$sites/web` always means sites/web/.
+verified: 2026-08-20
+check: Collections, JS bundles and plugin list match sites/web/_config.yml and sites/web/js/; the demo/prefetch script split still matches sites/web/_data/includes.yml; sites/web/lib/ still holds exactly the vendor folders listed
 also_update:
   - packages
 paths:
-  - "web/**"
+  - "sites/web/**"
 ---
 
 # Web Site
 
-**`$web-site` is the repo-root `web/` folder** — the published marketing site. It is off limits from a coding
+**`$sites/web` is the `sites/web/` folder** — the published marketing site. It is off limits from a coding
 session; see `.agents/README.md`.
 
-Jekyll site at `web/`. The public marketing and landing site for Binacle.Net.
-Built with Jekyll + webpack + TypeScript. Output goes to `../artifacts/web`.
+Jekyll site at `sites/web/`. The public marketing and landing site for Binacle.Net.
+Built with Jekyll + webpack + TypeScript. Output goes to `../../artifacts/web`.
 
 Run locally, or build it once:
 
@@ -36,7 +36,7 @@ just build web   # the same site built once, into artifacts/web
 
 ## JS Bundles
 
-Webpack bundles from `web/_js/` and npm packages into `web/js/`:
+Webpack bundles from `sites/web/_js/` and npm packages into `sites/web/js/`:
 
 | Bundle | What it is |
 |---|---|
@@ -52,8 +52,8 @@ Webpack bundles from `web/_js/` and npm packages into `web/js/`:
 Only `main`, `packing_demo` and `protocol_decoder` are webpack entry points; the rest are split chunks or
 package builds.
 
-**The demo bundles are split out on purpose, and `web/_data/includes.yml` is the one list that decides it.**
-`runtime.js`, `main.js` and `vendors.js` load on every page. `three.js`, `binacle-net-ui.js` and
+**The demo bundles are split out on purpose, and `sites/web/_data/includes.yml` is the one list that decides
+it.** `runtime.js`, `main.js` and `vendors.js` load on every page. `three.js`, `binacle-net-ui.js` and
 `binacle-vipaq.js` load only where the front matter says `demo: true`; every other page **prefetches** that same
 list, so arriving at a demo costs no download. Both halves read the one list, so they cannot drift apart.
 
@@ -63,12 +63,12 @@ Same as the docs site: `jekyll-gtm`, `jekyll-filters`, `jekyll-tidy` (no `VLink`
 
 ## Vendor Libs
 
-`web/lib/` holds four vendor folders — `alpine`, `beercss`, `material-dynamic-colors`, `swagger-ui` — but
-**only BeerCSS is loaded**, as a stylesheet and a module in `web/_data/includes.yml`.
+`sites/web/lib/` holds four vendor folders — `alpine`, `beercss`, `material-dynamic-colors`, `swagger-ui` —
+but **only BeerCSS is loaded**, as a stylesheet and a module in `sites/web/_data/includes.yml`.
 
 - **material-dynamic-colors** is present and commented out there; uncomment it only when the site needs runtime
   theme switching.
-- **`alpine` and `swagger-ui` are referenced by nothing** under `web/`. They ship without being loaded.
+- **`alpine` and `swagger-ui` are referenced by nothing** under `sites/web/`. They ship without being loaded.
 
 Alpine.js also arrives as an npm dependency bundled by webpack, which is the copy the demo code actually uses.
 **Three.js is not in `vendors.js`** — it is its own bundle, for the reason in the table above.

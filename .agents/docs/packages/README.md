@@ -5,7 +5,7 @@ verified: 2026-08-19
 check: The package list, their descriptions and the private flag match each packages/*/package.json; the Related Tests table names every package under packages/ that has a suite, with the alias tooling/tests.just gives it
 also_update:
   - packages/binacle-net-ui
-  - web-site
+  - sites/web
   - api/modules/ui
 paths:
   - "packages/**"
@@ -30,7 +30,7 @@ The ViPaq TypeScript mirror lives at `vipaq/packages/binacle-vipaq/` — see `$v
 
 Alpine.js components + Three.js visualizer for the packing demo and protocol decoder. Full reference —
 components, plugins, model layers, the `window.binacle` global, and how to add a component — is in
-`$packages/binacle-net-ui`. Consumed as TS source by `web/`'s webpack; the UIModule has its own
+`$packages/binacle-net-ui`. Consumed as TS source by `sites/web/`'s webpack; the UIModule has its own
 legacy JS copy (see `$api/modules/ui`).
 
 ## binacle-compact-notation
@@ -41,13 +41,13 @@ TypeScript mirror of the C# `Binacle.CompactNotation` — the shared compact tex
 
 ## cookies
 
-Thin wrapper over js-cookie v3.0.5. Used by both `docs/` and `web/` sites for cookie read/write.
+Thin wrapper over js-cookie v3.0.5. Used by both sites under `sites/` for cookie read/write.
 No dependencies.
 
 ## theme-switcher
 
 Custom HTML element (`<theme-switcher>`) for switching light/dark themes on the Binacle.Net websites.
-Used by both `docs/` and `web/`. Depends on the `cookies` workspace package; no external dependencies.
+Used by both sites under `sites/`. Depends on the `cookies` workspace package; no external dependencies.
 
 ## Related Tests
 

@@ -9,7 +9,7 @@ paths:
   - "DEVELOPMENT.md"
   - ".github/dockerhub-overview.md"
   - "samples/**"
-  - "docs/**"
+  - "sites/**"
 ---
 
 # Public headings carry an icon

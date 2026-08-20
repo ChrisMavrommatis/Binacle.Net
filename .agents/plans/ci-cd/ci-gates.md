@@ -172,21 +172,21 @@ Two consequences for this gate:
 
 ### The two published sites are back in scope {#sites-in-scope}
 
-**Changed 2026-08-09.** `sonar.exclusions` used to drop `docs/**` and `web/**` whole. The reason given was that
+**Changed 2026-08-09.** `sonar.exclusions` used to drop both site directories whole. The reason given was that
 they are a separate deliverable with their own session - a workflow reason, not a scope reason, and the test in
 the analysis xml is whether the code is ours to author, review and change. It is. The cost was concentrated
 exactly where it hurt: those two Jekyll sites are the only public attack surface in the repo, `5e5f8c02` was an
 XSS fix in one of them, and the exclusion kept Sonar from looking for the next one.
 
 What is in scope now is small - 6 hand-written js, 15 scss, and the site yml and json. The generated and
-vendored parts (`docs/js`, `web/js`, `docs/lib`, `web/lib`, the two `media` folders) are named individually and
-stay out; they are gitignored, so a CI checkout would not see them anyway. `docs/**/*.html` and `web/**/*.html`
+vendored parts (`sites/*/js`, `sites/*/lib`, the two `media` folders) are named individually and
+stay out; they are gitignored, so a CI checkout would not see them anyway. `sites/**/*.html`
 stay out too, because a Jekyll template with `---` front matter and Liquid in its attributes is not an HTML
 document and Sonar's HTML analyser can only misread it.
 
-**Findings under `docs/` and `web/` are not fixed in a coding session.** Both folders stay off limits per
+**Findings under `sites/` are not fixed in a coding session.** Every site there stays off limits per
 `CLAUDE.md`, with the one carve-out that rule names for downloadable sample files. Whatever the next run
-reports there gets written into `sonar-issue-triage.md` - which already holds the `docs/` findings from the
+reports there gets written into `sonar-issue-triage.md` - which already holds the docs site findings from the
 2026-08-09 sweep - or a new plan for the session that owns those files. Measuring and fixing are separate jobs,
 and only fixing was ever restricted.
 

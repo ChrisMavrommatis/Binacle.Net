@@ -10,7 +10,7 @@
 # pass, so that count is the only thing separating a clean run from one that never started.
 #
 # It reads the built site, never the source. A source href is Liquid - `{{ site.baseurl }}/api` is not a link
-# yet - so checking `docs/` would check strings that are not the URLs anyone visits. Build first.
+# yet - so checking `sites/docs/` would check strings that are not the URLs anyone visits. Build first.
 #
 # `links` passes --offline, which drops every external link. That is not timidity about the network: an
 # external check fails on somebody else's rate limit or outage, and one that goes red for reasons the author

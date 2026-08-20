@@ -1,6 +1,6 @@
 # Ruby Gems
 
-Custom Jekyll plugins used by the `docs/` and `web/` sites.
+Custom Jekyll plugins used by the `sites/docs/` and `sites/web/` sites.
 
 Both gems are loaded as local path dependencies via each site's `Gemfile`.
 

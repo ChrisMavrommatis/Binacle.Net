@@ -15,7 +15,7 @@ meaning the same thing.
 |---|---|---|---|
 | .NET SDK | 10.x | none (`Directory.Build.props` sets `net10.0`) | the API, `lib`, `vipaq` - everything C# |
 | Node.js, via [nvm](https://github.com/nvm-sh/nvm) | 22 | `.nvmrc` | `just install`, the TS packages, `assets`, both sites' webpack |
-| Ruby, via [rbenv](https://github.com/rbenv/rbenv) | 3.4.7 | `docs/.ruby-version`, `web/.ruby-version` | Jekyll, for **both** `docs/` and `web/` |
+| Ruby, via [rbenv](https://github.com/rbenv/rbenv) | 3.4.7 | `sites/docs/.ruby-version`, `sites/web/.ruby-version` | Jekyll, for **both** sites |
 | [just](https://github.com/casey/just#installation) | any recent | none | every recipe in this repo |
 | Docker | 28+ | none | the image, the `image` and `smoke` modules, the Postgres and AzureStorage test leaves |
 

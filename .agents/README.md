@@ -67,9 +67,9 @@ not to eagerly load unrelated context. Keep a new doc/plan/idea in its slice fol
 
 ## The `docs/` trap
 
-Repo-root `docs/` is the published documentation site and is off limits — `rules/never-edit-published-sites.md`
-covers it and `web/` together. `.agents/docs/` is this system's reference layer and is unrelated. Only the first
-is off limits.
+`sites/docs/` is the published documentation site and is off limits — `rules/never-edit-published-sites.md`
+covers every site under `sites/`. `.agents/docs/` is this system's reference layer and is unrelated. Only the
+first is off limits.
 
 ## Who may reference whom
 

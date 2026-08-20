@@ -12,7 +12,7 @@ decisions (why) and the findings (measured evidence). Permanent and citable; rea
 ```yaml
 - file: decisions.md
   description: "General decisions ledger — why the repository moved to the binacle-labs organization, what moved with it and what deliberately did not, the three signing identity bands, the rule that a version is named only where the version is the fact, and how the agent reference layer is kept honest against the code."
-  paths: ["NOTICE", "README.md", "SECURITY.md", "CHANGELOG.md", "Dockerfile", "docs/**"]
+  paths: ["NOTICE", "README.md", "SECURITY.md", "CHANGELOG.md", "Dockerfile", "sites/docs/**"]
 ```
 
 ## API

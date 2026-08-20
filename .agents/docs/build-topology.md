@@ -30,7 +30,8 @@ slices:
 - `/vipaq/src/`, `/vipaq/test/`, `/shared/src/`, `/shared/test/` — ViPaq + its tests + `Binacle.Geometry`, `Binacle.CompactNotation` and `Binacle.Packing` (in `shared/src`) + `Binacle.TestsKernel`, `Binacle.TestReporting` and `Binacle.CompactNotation.UnitTests` (in `shared/test`)
 - `/vipaq/tools/` (`Binacle.ViPaq.VectorGenerators`, `Binacle.ViPaq.PackedDataGenerator`), `/shared/tools/` (`Binacle.OrLibrary.Converter`) — standalone generators, not referenced by the shipped projects
 - `/samples/`, `/samples/docker/` (5 `.dcproj` — quickstart, minimal, full, service, prod), `/samples/kubernetes/` (one `.proj`), `/api/` (requests), `/artifacts/`
-- Top-level content projects: `assets/assets.proj`, `tooling/tooling.proj`, `docs/docs.proj`, `web/web.proj`
+- Top-level content projects: `assets/assets.proj`, `tooling/tooling.proj`, `sites/docs/docs.proj`,
+  `sites/web/web.proj`
 - `/_root/` — loose files (`.dockerignore`, `.editorconfig`, `Directory.Build.props`, `Directory.Packages.props`, `Dockerfile`, `global.json`, `gulpfile.js`, `package.json`, README)
 
 ## Shared C# props — `Directory.Build.props`
@@ -126,8 +127,8 @@ webpack together under a single Ctrl-C), and its only scripts are the asset-copy
 
 `just assets` runs both, and `just install` runs it after the npm and bundler installs.
 
-`gulpfile.js` copies shared `assets/` (images, js, css, fonts) into the `docs/` and `web/` Jekyll sites. The sites
-do their own webpack bundling separately (see docs site (`$docs-site`) / web site (`$web-site`)).
+`gulpfile.js` copies shared `assets/` (images, js, css, fonts) into the two Jekyll sites under `sites/`. The
+sites do their own webpack bundling separately (see docs site (`$sites/docs`) / web site (`$sites/web`)).
 
 ## Docker build chain
 
@@ -156,7 +157,8 @@ look at `artifacts/` says which artifact is which.
 
 Several `.proj` files don't compile anything — they use the `Microsoft.Build.NoTargets` SDK to pull non-code files
 into the solution (and travel with build output). There are six: `assets/assets.proj`, `tooling/tooling.proj`,
-`docs/docs.proj`, `web/web.proj`, `api/requests/requests.proj` and `samples/kubernetes/minimal/minimal.proj`.
+`sites/docs/docs.proj`, `sites/web/web.proj`, `api/requests/requests.proj` and
+`samples/kubernetes/minimal/minimal.proj`.
 The Docker samples use `Microsoft.Docker.Sdk` `.dcproj` files instead. None of these affect the C# build.
 
 **`results/` is deliberately not in the solution.** The curated benchmark vault is read and hand-edited, never

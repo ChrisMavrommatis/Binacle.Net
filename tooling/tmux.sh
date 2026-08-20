@@ -26,10 +26,10 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
  	tmux split-window -h -t $SESSION_NAME:1
 
   # set the cd to /docs
-  tmux send-keys -t $SESSION_NAME:1.0 'cd ./docs' C-m
+  tmux send-keys -t $SESSION_NAME:1.0 'cd ./sites/docs' C-m
 
   # Set the cd to /docs
-  tmux send-keys -t $SESSION_NAME:1.1 'cd ./docs' C-m
+  tmux send-keys -t $SESSION_NAME:1.1 'cd ./sites/docs' C-m
 
   # Select the first pane
   tmux select-pane -t $SESSION_NAME:1.0
@@ -43,9 +43,9 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
 	# split the window horizontally
  	tmux split-window -h -t $SESSION_NAME:2
 
-  tmux send-keys -t $SESSION_NAME:2.0 'cd ./web' C-m
+  tmux send-keys -t $SESSION_NAME:2.0 'cd ./sites/web' C-m
 
-  tmux send-keys -t $SESSION_NAME:2.1 'cd ./web' C-m
+  tmux send-keys -t $SESSION_NAME:2.1 'cd ./sites/web' C-m
 
   # Select the first pane
   tmux select-pane -t $SESSION_NAME:2.0

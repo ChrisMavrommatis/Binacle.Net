@@ -45,8 +45,9 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `shared/test/Binacle.CompactNotation.UnitTests` | Tests for the shared compact notation |
 | `packages/` | TypeScript packages (npm workspaces) |
 | `ruby/` | Ruby gems (Jekyll plugins) |
-| `docs/` | Jekyll documentation site — the published one (`$docs-site`), not `.agents/docs/` |
-| `web/` | Jekyll marketing/web site (`$web-site`) |
+| `sites/` | Every published site, one directory each (`$sites`) |
+| `sites/docs/` | Jekyll documentation site — the published one (`$sites/docs`), not `.agents/docs/` |
+| `sites/web/` | Jekyll marketing/web site (`$sites/web`) |
 | `api/requests/` | HTTP request files for manual testing (subfolders: v3, v4, Service) |
 | `samples/` | Docker and Kubernetes deployment samples (user-facing starting points) |
 | `tooling/` | Every task the repo can run, called by CI and by hand alike — eleven `just` modules (agents, build, changelog, check, coverage, image, openapi, regen, serve, smoke, tests), the benchmark/performance scripts, local compose, env, emulator state |
@@ -96,8 +97,9 @@ and build the Docker image.
 - ViPaq (`$vipaq`) — `Binacle.ViPaq` binary format and TypeScript mirror
 - Packages (`$packages`) — TypeScript npm packages
 - Ruby (`$ruby`) — Ruby/Jekyll plugins
-- Docs Site (`$docs-site`) — the published Jekyll site at repo-root `docs/`
-- Web Site (`$web-site`) — the published Jekyll site at repo-root `web/`
+- Sites (`$sites`) — every published site, and what they share
+- Docs Site (`$sites/docs`) — the published Jekyll site at `sites/docs/`
+- Web Site (`$sites/web`) — the published Jekyll site at `sites/web/`
 - Samples (`$samples`) — Docker & Kubernetes deployment starting points
 - Tooling (`$tooling`) — every task the repo can run: the `just` modules, scripts, local compose, env, emulator state
 - CI/CD (`$ci-cd`) — the GitHub Actions workflows, their conventions, vars and secrets; the release pipeline

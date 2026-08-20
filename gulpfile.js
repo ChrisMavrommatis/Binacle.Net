@@ -54,9 +54,9 @@ function copyAssets(destinationDir) {
 
 // Tasks
 task('copy-assets-to-web', async function(){
-	return copyAssets('web');
+	return copyAssets('sites/web');
 });
 
 task('copy-assets-to-docs', async function(){
-	return copyAssets('docs');
+	return copyAssets('sites/docs');
 });

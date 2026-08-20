@@ -39,8 +39,8 @@ described in `$tooling`. Nothing about a recipe's behaviour is repeated here.
 | `release-docker-image.yml` | `push` on tags `v[0-9]*` | The release pipeline — check the changelog section, run the suite, build and push to GHCR, smoke it there, copy to Docker Hub, create the GitHub release, write the Docker Hub page. See `$ci-cd/release-pipeline` |
 | `shared-dockerhub-overview.yml` | `workflow_dispatch`, `workflow_call` | Renders `.github/dockerhub-overview.md` with `just image dockerhub-overview <version>` and PATCHes it onto the Docker Hub repository page. Called by the release pipeline as its last job, or run by hand for a wording fix — an empty version input takes the latest release, so a typo fix needs nothing typed |
 | `shared-smoke-image.yml` | `workflow_dispatch`, `workflow_call` | Pulls a published image and runs the structure check plus all five smoke profiles. Called by the release pipeline as its gate, or run by hand against any tag |
-| `deploy-docs-site.yml` | `workflow_dispatch` | Two jobs — build repo-root `docs/` (`$docs-site`), check its links, hand the built directory to the host, then tag the commit `docs-<run>` |
-| `deploy-web-site.yml` | `workflow_dispatch` | The same for repo-root `web/` (`$web-site`), tagging `web-<run>` |
+| `deploy-docs-site.yml` | `workflow_dispatch` | Two jobs — build `sites/docs/` (`$sites/docs`), check its links, hand the built directory to the host, then tag the commit `docs-<run>` |
+| `deploy-web-site.yml` | `workflow_dispatch` | The same for `sites/web/` (`$sites/web`), tagging `web-<run>` |
 
 **Three of the nine run on their own.** `pull-request.yml` on every pull request, `codeql-analysis.yml` on
 every merge to `main` and weekly, and the release pipeline on a tag. The other six are `workflow_dispatch` —

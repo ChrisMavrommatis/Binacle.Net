@@ -1,19 +1,19 @@
 ---
-id: docs-site
-description: The published Jekyll documentation site at repo-root docs/ — versioned API docs with Swagger UI embed. `$docs-site` always means repo-root docs/, never .agents/docs/.
-verified: 2026-08-19
-check: Collections, versions, plugin list, and version folders match docs/_config.yml and docs/collections/_versions/; `current` and `list` in docs/_data/versions.yml match the folders and the order the sidebar renders; the common-page rule matches what is actually on collections/_common_pages/; the webpack entry, output and `clean` behaviour match docs/webpack.config.js
+id: sites/docs
+description: The published Jekyll documentation site at sites/docs/ — versioned API docs with Swagger UI embed. `$sites/docs` always means sites/docs/, never .agents/docs/.
+verified: 2026-08-20
+check: Collections, versions, plugin list, and version folders match sites/docs/_config.yml and sites/docs/collections/_versions/; `current` and `list` in sites/docs/_data/versions.yml match the folders and the order the sidebar renders; the common-page rule matches what is actually on collections/_common_pages/; the webpack entry, output and `clean` behaviour match sites/docs/webpack.config.js
 paths:
-  - "docs/**"
+  - "sites/docs/**"
 ---
 
 # Docs Site
 
-**`$docs-site` is the repo-root `docs/` folder** — the published site, not `.agents/docs/` (the agent docs you
+**`$sites/docs` is the `sites/docs/` folder** — the published site, not `.agents/docs/` (the agent docs you
 are reading). It is off limits from a coding session; see `.agents/README.md`.
 
-Jekyll site at `docs/`. The public API documentation for Binacle.Net users.
-Built with Jekyll + webpack + TypeScript. Output goes to `../artifacts/docs`.
+Jekyll site at `sites/docs/`. The public API documentation for Binacle.Net users.
+Built with Jekyll + webpack + TypeScript. Output goes to `../../artifacts/docs`.
 
 Run locally, or build it once:
 
@@ -68,7 +68,7 @@ hardcode a version or `latest` in prose or a command without saying what it trac
 is copied and the old one is never touched again. `/version/latest/` survives only as a **redirect** to
 `current`, holding no content.
 
-**The one knob:** `current` in `docs/_data/versions.yml` says which folder is current and where the
+**The one knob:** `current` in `sites/docs/_data/versions.yml` says which folder is current and where the
 `latest` redirect points. One edit per new line. That file also carries `list`, the rendered version order —
 newest first, because the order is read from the file rather than sorted.
 
@@ -76,10 +76,11 @@ newest first, because the order is read from the file rather than sorted.
 versions are **added at minors** (v1.2.0 added API v3) and **removed at majors** (v2.0.0 removed v1, v3.0.0
 removes v2). Per-major would show a v3 to a v1.1.4 image that never had it. Per-minor also caught the swagger UI:
 `v2.0.x` has no `swagger/` while `v1.3.x`, `v2.1.x` and `v3.0.x` all do, so the folder tree records that it was
-there, went away, and came back — which a per-major tree could not have shown. Patches never move the docs (every
-patch pair in history is byte-identical across `docs/`). This makes the freeze **structural** — an old folder is
-frozen because nothing edits it, not because someone remembered to snapshot it. That discipline is exactly what
-failed before: four releases (v2.0.0 → v2.1.1) shipped with no snapshot, and only one folder was ever authored.
+there, went away, and came back — which a per-major tree could not have shown. Patches never move the docs
+(every patch pair in history is byte-identical across `sites/docs/`). This makes the freeze **structural** — an
+old folder is frozen because nothing edits it, not because someone remembered to snapshot it. That discipline
+is exactly what failed before: four releases (v2.0.0 → v2.1.1) shipped with no snapshot, and only one folder
+was ever authored.
 
 **Never derive a folder from an API tag.** The tree at a tag is whatever was in the repo that day — maybe
 mid-edit. Copy the current folder the moment a new line opens; that is the only sound source.
@@ -96,15 +97,15 @@ A line opens on every new **minor** (`v3.0.x` → `v3.1.x`, or `v3.1.x` → `v4.
 1. `cp -r _versions/v3.0.x _versions/v3.1.x` — copy the folder the new line grows out of.
 2. Rewrite every `permalink`/`menu_title`:
    `grep -rl "/version/v3\.0\.x/" v3.1.x/ | xargs sed -i 's|/version/v3\.0\.x/|/version/v3.1.x/|g'`
-3. Add the folder's `defaults` block in `docs/_config.yml`, or it is invisible in the selector.
+3. Add the folder's `defaults` block in `sites/docs/_config.yml`, or it is invisible in the selector.
 4. Add it to the top of `list` in `_data/versions.yml` and point `current` at it (also moves the `latest`
    redirect).
 5. `bundle exec jekyll build` to confirm.
 6. Edit only the new folder. **Never touch an old one** — that is what keeps it true.
 
 **Watch out:**
-- `vlink` (`docs/_plugins/VLink.rb`) **raises and fails the build** on a missing target. Removing a page without
-  removing its `vlink` references breaks the build — grep the page name before deleting.
+- `vlink` (`sites/docs/_plugins/VLink.rb`) **raises and fails the build** on a missing target. Removing a page
+  without removing its `vlink` references breaks the build — grep the page name before deleting.
 - Selector order comes from `list` in `_data/versions.yml`, newest first. It is read, not sorted — Jekyll's
   own ordering is by path, which would put `v3.10.x` before `v3.2.x`.
 
@@ -115,7 +116,7 @@ A line opens on every new **minor** (`v3.0.x` → `v3.1.x`, or `v3.1.x` → `v4.
 | `jekyll-gtm` | `ruby/jekyll-gtm` |
 | `jekyll-filters` | `ruby/jekyll-filters` |
 | `jekyll-tidy` | gem |
-| `VLink` | `docs/_plugins/VLink.rb` (local) |
+| `VLink` | `sites/docs/_plugins/VLink.rb` (local) |
 
 **VLink** (`{% vlink path %}`) — resolves a relative path to the correct versioned URL based on the
 current page's `version` front matter. Use it instead of plain links inside `_versions/` pages
@@ -123,16 +124,16 @@ so links stay correct across versions.
 
 ## JS and Vendor Libs
 
-Webpack bundles `docs/_js/main.js` → `docs/js/main.js` (entry `main`, ts-loader for `.ts`).
+Webpack bundles `sites/docs/_js/main.js` → `sites/docs/js/main.js` (entry `main`, ts-loader for `.ts`).
 
-**`clean` is on only for a production build** (`env.build=dist`), not in watch mode. Watch shares `docs/js/`
-with a running jekyll, and deleting a file jekyll has already listed makes its next `File.stat` raise `ENOENT`
-and kills `just serve docs`. So a watch run leaves stale bundles behind on purpose; `just build docs` is what
-clears them.
+**`clean` is on only for a production build** (`env.build=dist`), not in watch mode. Watch shares
+`sites/docs/js/` with a running jekyll, and deleting a file jekyll has already listed makes its next `File.stat`
+raise `ENOENT` and kills `just serve docs`. So a watch run leaves stale bundles behind on purpose;
+`just build docs` is what clears them.
 
 Vendor libs the docs site loads:
-- BeerCSS — theming (`/lib/beercss/`, via `docs/_data/includes.yml`)
+- BeerCSS — theming (`/lib/beercss/`, via `sites/docs/_data/includes.yml`)
 - Swagger UI — embedded OpenAPI explorer, loaded in the `versions/swagger.html` layout
 
 Note: docs does **not** use Alpine.js or material-dynamic-colors (neither is referenced anywhere under
-`docs/`). Don't assume they're available here.
+`sites/docs/`). Don't assume they're available here.

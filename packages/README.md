@@ -11,5 +11,5 @@ from the repo root with `npm install`.
 | `cookies` | Small cookie read/write helpers |
 | `theme-switcher` | Light/dark theme toggle |
 
-The sites in [`docs/`](../docs) and [`web/`](../web) consume the built assets, copied in by the gulp
+The sites in [`sites/docs/`](../sites/docs) and [`sites/web/`](../sites/web) consume the built assets, copied in by the gulp
 tasks (`just assets` from the repo root).

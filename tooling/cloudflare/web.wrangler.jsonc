@@ -9,7 +9,7 @@
     "enabled": true
   },
   "assets": {
-    // Relative to this file, matching the `destination` in web/_config.yml so the two are wrong together.
+    // Relative to this file, matching the `destination` in sites/web/_config.yml so the two are wrong together.
     "directory": "../../artifacts/web",
     // Wants `404.html` in the site root, which is why pages/404.html has `permalink: /404.html`.
     "not_found_handling": "404-page"

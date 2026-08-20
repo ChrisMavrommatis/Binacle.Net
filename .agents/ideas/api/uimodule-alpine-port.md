@@ -9,7 +9,7 @@ paths:
 **Status:** Unvetted idea. Detailed below because the ground was already scouted.
 
 **Goal:** Replace Blazor Interactive Server reactivity with Alpine.js so `packages/binacle-net-ui`
-is the single source for the packing demo UI — shared between `web/` and `UIModule`.
+is the single source for the packing demo UI — shared between `sites/web/` and `UIModule`.
 
 **Accuracy.** The build section was written 2026-05-26 and got four things wrong; it was re-verified against the
 code on 2026-07-08 and the corrections are recorded inline where they belong — the blockquote under "Build
@@ -20,7 +20,7 @@ and re-check anything the build touches — it is the part that moved before.
 
 ## Why
 
-Currently `web/` uses Alpine.js components from `packages/binacle-net-ui`, while `UIModule` has
+Currently `sites/web/` uses Alpine.js components from `packages/binacle-net-ui`, while `UIModule` has
 its own parallel Blazor implementation. Any change to the demo UI requires updating both.
 The port makes `packages/binacle-net-ui` the only place the demo logic lives.
 
@@ -59,7 +59,7 @@ deliberate; decide it rather than inherit it.
 
 ### Add / Modify
 - **webpack: second output target** — build `packages/binacle-net-ui` into a UIModule IIFE bundle.
-  Current web target produces `web/js/binacle-net-ui.js` (CommonJS).
+  Current web target produces `sites/web/js/binacle-net-ui.js` (CommonJS).
   New UIModule target produces an IIFE (attaches to `window`) for use via plain `<script src>`.
   The IIFE format is required because UIModule loads scripts with `<script src>`, not ES module imports.
 - **MSBuild hook (optional)** — add a `BeforeBuild` target in `UIModule.csproj` that runs the npm build,
@@ -88,10 +88,10 @@ The key decision: **how does the UIModule bundle get built and land in `wwwroot/
 > before writing any webpack.
 >
 > 1. **There is no `packages/binacle-net-ui/webpack.config.js`.** The only webpack configs in the repo are
->    `web/webpack.config.js` and `docs/webpack.config.js`. The package is source-only.
-> 2. **`web/js/binacle-net-ui.js` is not a webpack output target.** It is a **`splitChunks` cache group** in
->    `web/webpack.config.js` (`test: /[\\/]packages[\\/]binacle-net-ui[\\/]/`, priority 20). The real entries are
->    `web/_js/{main,packing_demo,protocol_decoder}.js`. It has no `libraryTarget`, so it is a code-split chunk,
+>    `sites/web/webpack.config.js` and `sites/docs/webpack.config.js`. The package is source-only.
+> 2. **`sites/web/js/binacle-net-ui.js` is not a webpack output target.** It is a **`splitChunks` cache group** in
+>    `sites/web/webpack.config.js` (`test: /[\\/]packages[\\/]binacle-net-ui[\\/]/`, priority 20). The real entries are
+>    `sites/web/_js/{main,packing_demo,protocol_decoder}.js`. It has no `libraryTarget`, so it is a code-split chunk,
 >    not a consumable library — you cannot "add a second output" beside it.
 > 3. **The package has no `scripts` and no build deps.** `package.json` lists `alpinejs`, `three` and
 >    `binacle-vipaq` as dependencies and the two `@types` as devDependencies. No webpack, no ts-loader. So
@@ -104,8 +104,8 @@ The key decision: **how does the UIModule bundle get built and land in `wwwroot/
 - **A new `packages/binacle-net-ui/webpack.config.js`** with its own `webpack` + `ts-loader` devDependencies and a
   `build:uimodule` script, emitting one IIFE bundle straight into
   `api/src/Binacle.Net.UIModule/wwwroot/js/`. Entry is the two plugin files (or a new `src/index.ts` that
-  re-exports them). `web/` keeps consuming the package by source, unchanged.
-- **A second config inside `web/`** that reuses its already-installed webpack toolchain and emits the IIFE to
+  re-exports them). `sites/web/` keeps consuming the package by source, unchanged.
+- **A second config inside `sites/web/`** that reuses its already-installed webpack toolchain and emits the IIFE to
   UIModule's `wwwroot`. Cheaper to stand up, but makes UIModule's assets a by-product of the website build —
   a coupling worth avoiding.
 
@@ -130,8 +130,8 @@ Then, optionally, the MSBuild hook in `UIModule.csproj` — which only works **a
 3. **Does anything else in UIModule use Interactive Server rendering?**
    If yes, keep `AddInteractiveServerComponents()` but limit it to those components only.
 
-4. ~~**Alpine version** — confirm `docs/lib/alpine.js` and `web/lib/alpine.js` are the same version.~~
-   **Malformed — neither file exists.** Alpine is an npm dependency (`alpinejs ^3.15.2`) that `web/_js/*.js`
+4. ~~**Alpine version** — confirm `sites/docs/lib/alpine.js` and `sites/web/lib/alpine.js` are the same version.~~
+   **Malformed — neither file exists.** Alpine is an npm dependency (`alpinejs ^3.15.2`) that `sites/web/_js/*.js`
    pulls in with `import Alpine from 'alpinejs'`, and webpack bundles it. There is nothing to copy to
    `wwwroot/vendor/`. The real question: does UIModule's IIFE bundle **include** Alpine, or load it from a CDN /
    vendored copy and only register plugins against `window.Alpine`? Pick one — it decides script order in

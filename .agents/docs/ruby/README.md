@@ -1,6 +1,6 @@
 ---
 id: ruby
-description: Ruby gems under ruby/ — Jekyll plugins used by docs/ and web/ sites.
+description: Ruby gems under ruby/ — Jekyll plugins used by the two sites under sites/.
 verified: 2026-08-19
 check: Gem list, filter names and tag names match ruby/ source; the gtm tags still take the id as an argument; both sites still load the gems through their Gemfile :jekyll_plugins group and list them under plugins: in _config.yml
 paths:
@@ -9,7 +9,7 @@ paths:
 
 # Gems
 
-Jekyll plugins used by both the `docs/` and `web/` sites.
+Jekyll plugins used by both the `sites/docs/` and `sites/web/` sites.
 
 | Gem | What it adds |
 |---|---|

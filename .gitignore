@@ -24,7 +24,7 @@ node_modules
 
 # Project Specific
 # Build-time OpenAPI documents (emitted by OpenApiGenerateDocumentsOnBuild); the frozen per-version specs
-# under docs/collections/_versions/**/swagger/ stay the committed source of truth.
+# under sites/docs/collections/_versions/**/swagger/ stay the committed source of truth.
 artifacts/openapi/
 data/logs/
 data/pack-logs/
@@ -63,18 +63,18 @@ _site
 
 ## Docs
 artifacts/docs
-docs/js
-docs/media
-docs/lib
-docs/*.ico
-docs/*.png
+sites/docs/js
+sites/docs/media
+sites/docs/lib
+sites/docs/*.ico
+sites/docs/*.png
 
 ## Website
 artifacts/web
-web/js
-web/media
-web/lib
-web/*.ico
-web/*.png
+sites/web/js
+sites/web/media
+sites/web/lib
+sites/web/*.ico
+sites/web/*.png
 
 

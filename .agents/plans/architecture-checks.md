@@ -273,7 +273,7 @@ Three things to settle before adopting ArchUnitNET:
   That exemption belongs in the declaration, not in the test.
 
 For dependency-cruiser, reading the file is the easy half. There is no root `tsconfig.json` - there are four,
-and `web/` has none despite running `ts-loader` - and imports are bare specifiers resolved through npm workspace
+and `sites/web/` has none despite running `ts-loader` - and imports are bare specifiers resolved through npm workspace
 symlinks (`packages/binacle-net-ui/src/core/protocolDecoder.ts:4` imports `"binacle-vipaq"`), so rules must be
 written against resolved real paths with symlink handling pinned.
 
@@ -287,16 +287,18 @@ re-derivation, and npm's own resolver.
 - **The repo has no upward edge.** Nothing under `shared/` references `lib/` or `api/`. The one inversion the
   2026-08-12 audit found was removed by the packing-contract extraction rather than documented.
 - **`vipaq/tools` reaches into both `lib` and `shared`.**
-- **`docs/` and `web/` are not graph leaves.** Both Gemfiles load `../ruby/jekyll-gtm` by path, and
-  `web/webpack.config.js:53,60` names `packages/binacle-net-ui` and `vipaq/packages/binacle-vipaq`. "Agents
+- **The two sites are not graph leaves.** Both Gemfiles load `../../ruby/jekyll-gtm` by path, and
+  `sites/web/webpack.config.js:53,60` names `packages/binacle-net-ui` and `vipaq/packages/binacle-vipaq`. "Agents
   must not edit it" and "it is a leaf in the graph" are different claims.
 - **There is no cycle between `packages` and `vipaq`.** Shipped code flows one way; only test support and tool
   files cross back. `binacle-compact-notation` sitting in `dependencies` rather than `devDependencies` is the
   single line that makes npm's graph look cyclic.
 - **`.github` is a slice.** It hashes `.config/dotnet-tools.json` and names `tooling/sonar-analysis.xml`, so it
   sits above `tooling`.
-- **Three slices are named differently in the agent guidance** than on disk - `.github`, `docs` and `web`.
-  Anything reading both needs to know that.
+- **The slice names differ between the agent guidance and disk.** `.github` is `ci-cd` there, and the two
+  sites moved under `sites/` on 2026-08-20 while `architecture.yml` still lists them as top-level `docs` and
+  `web`. Anything reading both needs to know that, and the declaration needs a decision on how a `sites/`
+  slice is written.
 
 ## Loose ends found during the audit
 

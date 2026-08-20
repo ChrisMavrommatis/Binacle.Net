@@ -81,10 +81,10 @@ services-down *args:
     docker compose -f tooling/serve.services.yml down {{ args }}
 
 # Docs site: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
-docs: (_serve-n-watch 'docs')
+docs: (_serve-n-watch 'sites/docs')
 
 # Web site: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
-web: (_serve-n-watch 'web')
+web: (_serve-n-watch 'sites/web')
 
 # Serve and watch together, each line prefixed with its source.
 # --kill-others makes one Ctrl-C stop both.

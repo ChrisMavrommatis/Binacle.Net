@@ -9,7 +9,7 @@ paths:
   - "SECURITY.md"
   - "CHANGELOG.md"
   - "Dockerfile"
-  - "docs/**"
+  - "sites/docs/**"
 ---
 
 # General — decisions ledger
@@ -45,11 +45,11 @@ lines are correct as they are. Do not tidy them.
 
 ### D2 — a version's published page must match what that version's image serves
 
-Each folder under `docs/collections/_versions/` describes the image that shipped under that minor version.
+Each folder under `sites/docs/collections/_versions/` describes the image that shipped under that minor version.
 `2.1.1` really does serve `https://github.com/ChrisMavrommatis/Binacle.Net` in its OpenAPI documents and its
 UI, so rewriting v1.3.x, v2.0.x or v2.1.x to say `binacle-labs` would make the page disagree with the running
 artifact. **Only v3.0.x changed**, because `3.0.0` is built after `Metadata.cs` moved and serves the new owner.
-How the site is versioned is `$docs-site`.
+How the site is versioned is `$sites/docs`.
 
 The same reason covers every other survivor of the move: the `v1.3.0...v2.0.0` compare link in `CHANGELOG.md`,
 the `ChrisMavrommatis.*` NuGet package names listed there, the 2024 records under `results/lib/benchmarks/`,
@@ -57,7 +57,7 @@ and the links to workflow runs that happened under the old owner. They are recor
 GitHub redirects them forever, and rewriting them makes them false.
 
 **The swagger json under each version folder is generated output.** Regenerate it, never hand-edit it — the
-rule and the generator are in `$docs-site`.
+rule and the generator are in `$sites/docs`.
 
 ### D3 — the signing identity moved with the repository, and there are three bands
 

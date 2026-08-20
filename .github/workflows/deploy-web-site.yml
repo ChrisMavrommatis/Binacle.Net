@@ -27,7 +27,7 @@ jobs:
         uses: ./.github/actions/build-jekyll-site
         with:
           site: web
-          directory: web
+          directory: sites/web
 
       - name: Install - lychee
         uses: ./.github/actions/install-lychee

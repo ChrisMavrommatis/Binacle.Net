@@ -24,7 +24,7 @@ default_theme: "dark"
 # Where things are
 ############################################################
 source              : ./
-destination         : ../artifacts/web
+destination         : ../../artifacts/web
 collections_dir     : collections
 plugins_dir         : _plugins       # takes an array of strings and loads plugins in that order
 layouts_dir         : _layouts

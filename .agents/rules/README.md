@@ -14,7 +14,7 @@ files hold the carve-outs.
 | Rule | In one line |
 |---|---|
 | [never-commit](never-commit.md) | Never commit, stage or push. Leave changes in the working tree. |
-| [never-edit-published-sites](never-edit-published-sites.md) | Never edit repo-root `docs/` or `web/`. One carve-out, for security fixes to sample files. |
+| [never-edit-published-sites](never-edit-published-sites.md) | Never edit anything under `sites/`. One carve-out, for security fixes to sample files. |
 | [who-references-whom](who-references-whom.md) | The one reference matrix. Every layer, the outward boundary, the three exceptions. |
 | [talking-to-the-maintainer](talking-to-the-maintainer.md) | In chat: plain English, short. Less is more. |
 

@@ -6,8 +6,8 @@ inputs:
     description: The site's name - `docs` or `web`. Names the `just build` recipe.
     required: true
   directory:
-    description: The site's directory, holding its Gemfile. The same string as the name today; separate
-      because the sites may move under a parent directory.
+    description: The site's directory, holding its Gemfile - `sites/docs` or `sites/web`. Separate from the
+      name because the sites sit under a parent directory.
     required: true
 
 runs:

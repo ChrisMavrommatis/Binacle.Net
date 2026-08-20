@@ -44,10 +44,10 @@ has to stay. These two are the exceptions.
 
 ## Web site
 
-- **`web/lib/alpine/` and `web/lib/swagger-ui/` are referenced by nothing** under `web/` — not by
-  `_data/includes.yml`, not by any include, layout or page. They are published to the marketing site and never
-  loaded. Found 2026-08-19 while verifying the web-site doc. Deleting them is a `web/` change, so it belongs to
-  the site session, not a coding one; record it there rather than doing it here.
+- **`sites/web/lib/alpine/` and `sites/web/lib/swagger-ui/` are referenced by nothing** under `sites/web/` —
+  not by `_data/includes.yml`, not by any include, layout or page. They are published to the marketing site and
+  never loaded. Found 2026-08-19 while verifying the web site doc. Deleting them is a change under `sites/`, so
+  it belongs to the site session, not a coding one; record it there rather than doing it here.
 
 ## ServiceModule
 

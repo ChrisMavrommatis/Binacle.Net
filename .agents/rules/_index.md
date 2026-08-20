@@ -19,7 +19,7 @@ are fetched when their `when:` fires. See [README.md](README.md) for the trigger
   description: "Public markdown uses one emoji icon on each section heading, matching README.md and the docs site."
   when: "writing or editing a heading in a public markdown file"
   load: on-trigger
-  paths: ["README.md", "**/README.md", "SECURITY.md", "DEVELOPMENT.md", ".github/dockerhub-overview.md", "samples/**", "docs/**"]
+  paths: ["README.md", "**/README.md", "SECURITY.md", "DEVELOPMENT.md", ".github/dockerhub-overview.md", "samples/**", "sites/**"]
 - file: keep-verified-current.md
   description: "When you edit a doc, update its verified date and check its also_update list. One carve-out - a prose-only edit that checks nothing against code does not bump the date."
   when: "editing any doc or design record"
@@ -30,10 +30,10 @@ are fetched when their `when:` fires. See [README.md](README.md) for the trigger
   when: "before any git command, and before saying a task is finished"
   load: always
 - file: never-edit-published-sites.md
-  description: "Repo-root docs/ and web/ publish to the internet and are written in their own session. One carve-out for security fixes to sample files."
-  when: "before editing anything under repo-root docs/ or web/"
+  description: "Everything under sites/ publishes to the internet and is written in its own session. One carve-out for security fixes to sample files."
+  when: "before editing anything under sites/"
   load: always
-  paths: ["docs/**", "web/**"]
+  paths: ["sites/**"]
 - file: one-fact-one-place.md
   description: "Put a fact in exactly one place and cross-link. A fact written twice will disagree."
   when: "adding a fact to any file under .agents/"

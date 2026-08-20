@@ -177,10 +177,10 @@ stay four.
 ## The docs deploy - after the tag
 
 **The config half is done:** `main` carries `current: v3.0.x`, `- id: v3.0.x` back at the top of `list`, and
-`docs/collections/_sitemaps/version-3-0-x.xml` restored - all verified 2026-08-14. What is left is the deploy
+`sites/docs/collections/_sitemaps/version-3-0-x.xml` restored - all verified 2026-08-14. What is left is the deploy
 plus five edits that must go out with it.
 
-**Repo-root `docs/` is off limits to a coding session.** This is the docs session's work, written here for it.
+**`sites/docs/` is off limits to a coding session.** This is the docs session's work, written here for it.
 
 - [ ] **Re-cut the worked example in `v3.0.x/verifying-a-release.md` against the real `3.0.0`.** It is the
       **last place any public surface still names a beta image**, and it cannot be fixed before the tag because
@@ -217,7 +217,7 @@ plus five edits that must go out with it.
   - **A `🔌 Service Module` section**, between Diagnostics and UI Module: the auth token rate limit partitions
     on the connection's remote address instead of a caller-supplied header, so varying the header no longer
     resets your own login throttle.
-- [ ] **Replace the two swagger documents under `docs/collections/_versions/v3.0.x/swagger/`.** Copy
+- [ ] **Replace the two swagger documents under `sites/docs/collections/_versions/v3.0.x/swagger/`.** Copy
       `artifacts/openapi/Binacle.Net_v3.json` -> `swagger/v3.json` and `artifacts/openapi/Binacle.Net_v4.json`
       -> `swagger/v4.json`; the generator's file names differ from what the site expects, so the rename is part
       of the handover.
@@ -278,7 +278,7 @@ Everything else has a plan or an idea of its own and is on the board, grouped by
 
 | Item | The blocker |
 |---|---|
-| **The architecture checks** | The heavy tools - ArchUnitNET, dependency-cruiser, lychee - need a new toolchain: ArchUnitNET wants a new test project that becomes a node in the graph it inspects, and `.xUnitV3` may drag in plain `xunit.v3` when this repo pins `xunit.v3.mtp-v2` on purpose. dependency-cruiser has no root `tsconfig.json`; there are four, and `web/` has none. **The three lighter checks joined them on 2026-08-17**, when a better design turned a ready item into a fresh one. |
+| **The architecture checks** | The heavy tools - ArchUnitNET, dependency-cruiser, lychee - need a new toolchain: ArchUnitNET wants a new test project that becomes a node in the graph it inspects, and `.xUnitV3` may drag in plain `xunit.v3` when this repo pins `xunit.v3.mtp-v2` on purpose. dependency-cruiser has no root `tsconfig.json`; there are four, and `sites/web/` has none. **The three lighter checks joined them on 2026-08-17**, when a better design turned a ready item into a fresh one. |
 | **CI gates 2 and 3** | Gate 2 runs the all-modules integration tests, which are not being written here. Gate 3 is Sonar and coverage, and its own plan says do not make coverage blocking yet. Gate 1 ships; these two have nothing to gate. |
 | **Raising test coverage** | **Decided 2026-08-14: do not test the Blazor UIModule.** The Alpine port deletes most of what would be tested, so writing bUnit tests now means writing them twice, in two languages. What shipped here is the modest bump the rate limiter tests brought, and nothing more. |
 | **The workflow restructure's last item** | The branch protection edit. It landed 2026-08-18 and left the release on 2026-08-19 - it gates nothing here. |

@@ -113,10 +113,12 @@
   <Project Path="tooling/tooling.proj" Type="Shared">
     <Platform Project="AnyCPU" />
   </Project>
-  <Project Path="docs/docs.proj" Type="Shared">
-    <Platform Project="AnyCPU" />
-  </Project>
-  <Project Path="web/web.proj" Type="Shared">
-    <Platform Project="AnyCPU" />
-  </Project>
+  <Folder Name="/sites/">
+    <Project Path="sites/docs/docs.proj" Type="Shared">
+      <Platform Project="AnyCPU" />
+    </Project>
+    <Project Path="sites/web/web.proj" Type="Shared">
+      <Platform Project="AnyCPU" />
+    </Project>
+  </Folder>
 </Solution>

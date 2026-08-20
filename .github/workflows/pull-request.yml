@@ -39,7 +39,7 @@ jobs:
         run: |
           set -euo pipefail
           git diff --name-only "$BASE...$HEAD" | tee /tmp/changed.txt
-          if grep -qvE '^(\.agents/|docs/|web/)|\.md$' /tmp/changed.txt; then
+          if grep -qvE '^(\.agents/|sites/)|\.md$' /tmp/changed.txt; then
             echo 'code=true' >> "$GITHUB_OUTPUT"
           else
             echo 'code=false' >> "$GITHUB_OUTPUT"

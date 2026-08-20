@@ -19,7 +19,7 @@ description: Sonar - what is left after the 2026-08-09 sweep
 
 **Status:** Sweep done. Rewritten 2026-08-09 against the run on `016d7478`, which is the first analysis with
 the corrected scope. **509 open issues -> 305**, and the C# reduction is bigger than that looks: 24 of the 305
-are new arrivals from `docs/` and `web/` coming back into scope, so ~228 were actually cleared.
+are new arrivals from the two sites coming back into scope, so ~228 were actually cleared.
 
 | | before | after |
 |---|---|---|
@@ -40,15 +40,15 @@ identifier being a format before renaming anything.
 
 ## The seven vulnerabilities, and why they only just appeared {#vulnerabilities}
 
-**All seven are in `docs/collections/_versions/**` - the versioned sample files users download.** They were
-invisible until the exclusion change on 2026-08-09, because `docs/**` was excluded whole. This is the single
+**All seven are in `sites/docs/collections/_versions/**` - the versioned sample files users download.** They were
+invisible until the exclusion change on 2026-08-09, because the site was excluded whole. This is the single
 most valuable thing the sweep produced, and it is exactly the argument that motivated narrowing the exclusion:
 the two published sites are the only public attack surface in the repo, and they were the one thing not being
 looked at.
 
 **All seven were fixed in `d0150235`, from a coding session.** At the time that was against the `CLAUDE.md`
-rule that repo-root `docs/` is off limits. **Settled 2026-08-10: the rule now carries a carve-out** for exactly
-this - a security fix to a downloadable sample file under `docs/collections/_versions/**`, touching no prose, no
+rule that the published sites are off limits. **Settled 2026-08-10: the rule now carries a carve-out** for exactly
+this - a security fix to a downloadable sample file under `sites/docs/collections/_versions/**`, touching no prose, no
 front matter and no `.md`, matching what `samples/` already does. `d0150235` is in bounds under it. Read the
 rule in `CLAUDE.md` before using it; it is narrower than "docs findings are fair game", and every use gets
 recorded in the plan that owns the work. The changes here were the two `binacle-deployment.yaml` files below;
@@ -66,7 +66,7 @@ the `v1.3.x` key change was in `samples/`, which was always in bounds.
 
   **The cause was drift, not a missing decision.** `samples/kubernetes/minimal/binacle-deployment.yaml` already
   had `automountServiceAccountToken: false` and a full `resources:` block with requests and limits, added in
-  `938c6d7e`. The two frozen copies under `docs/` never got it, so a reader following the published v2.0.x or
+  `938c6d7e`. The two frozen copies under `sites/docs/` never got it, so a reader following the published v2.0.x or
   v2.1.x instructions downloaded the unhardened manifest. Both now carry the same two blocks, comments
   included, with their own image tags untouched (`2.0.1` and `2.1.1`). Purely additive - 16 lines each, nothing
   removed.
@@ -75,7 +75,7 @@ the `v1.3.x` key change was in `samples/`, which was always in bounds.
   `requests:` entries the same block provides. **12 kubernetes findings closed by one change.**
 
   **The lesson is the general one:** a fix applied to `samples/` does not reach the versioned copies under
-  `docs/collections/_versions/`, and nothing enforces that it does. Worth a sweep whenever a sample changes.
+  `sites/docs/collections/_versions/`, and nothing enforces that it does. Worth a sweep whenever a sample changes.
 
 Note the gate never failed on security, and still will not. On the `016d7478` run the findings sat on lines
 10-16 of files the BOM commit had only touched on line 1, so they counted as old code. `d0150235` then changed

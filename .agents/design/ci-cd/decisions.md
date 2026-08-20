@@ -434,7 +434,7 @@ for that reason before anyone writes a line is a gate people learn to ignore.
 ### D17 — the two site deploys are published by hand, and never on a push
 
 **Decided by the maintainer, 2026-08-19.** `deploy-docs-site.yml` and `deploy-web-site.yml` are
-`workflow_dispatch` and stay that way. No `push` trigger on `docs/**` or `web/**`, and no scheduled run.
+`workflow_dispatch` and stay that way. No `push` trigger on `sites/**`, and no scheduled run.
 
 **Why:** publishing to the internet is a deliberate act, not a side effect of a commit. Those two folders are
 written in their own session, and pressing the button is part of how that session ends — a merge that happens

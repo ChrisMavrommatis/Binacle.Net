@@ -92,14 +92,6 @@ table of [README.md](README.md).
   paths: [".github/workflows/**"]
 ```
 
-## Docs Site
-
-```yaml
-- file: docs-site/README.md
-  description: "The published Jekyll documentation site at repo-root docs/ — versioned API docs with Swagger UI embed. `$docs-site` always means repo-root docs/, never .agents/docs/."
-  paths: ["docs/**"]
-```
-
 ## Lib
 
 ```yaml
@@ -150,7 +142,7 @@ table of [README.md](README.md).
 
 ```yaml
 - file: ruby/README.md
-  description: "Ruby gems under ruby/ — Jekyll plugins used by docs/ and web/ sites."
+  description: "Ruby gems under ruby/ — Jekyll plugins used by the two sites under sites/."
   paths: ["ruby/**"]
 ```
 
@@ -171,6 +163,20 @@ table of [README.md](README.md).
 - file: shared/README.md
   description: "Shared slice — Binacle.TestsKernel (algorithm scenario data, compact-string formats, providers, fixtures) and shared/data (the fixture corpus more than one slice reads)"
   paths: ["shared/**"]
+```
+
+## Sites
+
+```yaml
+- file: sites/docs.md
+  description: "The published Jekyll documentation site at sites/docs/ — versioned API docs with Swagger UI embed. `$sites/docs` always means sites/docs/, never .agents/docs/."
+  paths: ["sites/docs/**"]
+- file: sites/README.md
+  description: "Every published site lives under sites/, one directory each. What the two share, and what is per-site."
+  paths: ["sites/**"]
+- file: sites/web.md
+  description: "The published Jekyll marketing site at sites/web/ — product home, apps listing, and interactive packing demo. `$sites/web` always means sites/web/."
+  paths: ["sites/web/**"]
 ```
 
 ## Tooling
@@ -199,12 +205,4 @@ table of [README.md](README.md).
 - file: vipaq/typescript.md
   description: "Binacle.ViPaq TypeScript mirror (vipaq/packages/binacle-vipaq) — public API and how it differs from the C# library"
   paths: ["vipaq/**"]
-```
-
-## Web Site
-
-```yaml
-- file: web-site/README.md
-  description: "The published Jekyll marketing site at repo-root web/ — product home, apps listing, and interactive packing demo. `$web-site` always means repo-root web/."
-  paths: ["web/**"]
 ```

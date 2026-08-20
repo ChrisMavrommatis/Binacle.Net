@@ -27,8 +27,8 @@ Do not repeat any of it here, and do not answer a setup question from memory: re
 at it. This section exists only to say where it is.
 
 The short version, for judging whether a command in this doc can run at all: .NET SDK 10.x, Node 22 (`.nvmrc`),
-Ruby 3.4.7 (`docs/.ruby-version`, `web/.ruby-version` — **both** sites need it), `just`, and docker for anything
-touching the image.
+Ruby 3.4.7 (`sites/docs/.ruby-version`, `sites/web/.ruby-version` — **both** sites need it), `just`, and docker
+for anything touching the image.
 
 ## Set up a fresh clone
 
@@ -37,8 +37,8 @@ just install                           # npm workspaces, both jekyll sites' gems
 just assets                            # only the asset copy - after changing anything under assets/
 ```
 
-`assets` copies `assets/**` into `docs/` and `web/` via gulp. Both sites serve their copy, so a changed logo
-does not show up until this runs.
+`assets` copies `assets/**` into `sites/docs/` and `sites/web/` via gulp. Both sites serve their copy, so a
+changed logo does not show up until this runs.
 
 ## Run from source
 

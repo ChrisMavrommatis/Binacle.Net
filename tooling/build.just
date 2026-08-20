@@ -84,17 +84,17 @@ image version="local": publish
 # gets served. A green run is the deploy, not a rehearsal for one.
 
 # The documentation site into artifacts/docs
-docs: (_build-site 'docs' 'docs')
+docs: (_build-site 'docs' 'sites/docs')
 
 # The marketing site into artifacts/web
-web: (_build-site 'web' 'web')
+web: (_build-site 'web' 'sites/web')
 
 [private]
 _build-site name dir:
     #!/usr/bin/env bash
     set -euo pipefail
     # Two arguments because they are two things: the gulp target is keyed on the name, jekyll needs the path.
-    # They are the same string today and stop being one if the sites move under a parent directory.
+    # They stopped being the same string when the sites moved under sites/.
     npm run copy-assets-to-{{ name }}
     cd "{{ dir }}"
     npm run build

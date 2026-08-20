@@ -47,8 +47,8 @@ mod check 'tooling/check.just'
 [group('dev')]
 install:
     npm install
-    cd docs && bundle install
-    cd web && bundle install
+    cd sites/docs && bundle install
+    cd sites/web && bundle install
     @just assets
 
 # Copy assets/ into the docs and web sites - run it after changing anything under assets/
