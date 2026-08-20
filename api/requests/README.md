@@ -9,7 +9,7 @@
 | `Service/` | ServiceModule — `Auth/Token.http`, plus the admin endpoints under `Admin/Account` and `Admin/Subscription` |
 | `Health Check.http` | The `_health` endpoint |
 
-## Layout — one file per endpoint
+## 📂 Layout — one file per endpoint
 
 A request file mirrors its endpoint's source path and takes the endpoint class's name:
 
@@ -28,14 +28,14 @@ Preset routes name the preset inline (`.../rectangular-cuboids/Small`). Change i
 Note that v3 **fit** takes only `algorithm` — `includeViPaqData` is a v3 **pack** parameter and a v4 parameter,
 but not part of the v3 fit contract.
 
-## The admin requests need an account that exists
+## 🔑 The admin requests need an account that exists
 
 `Service/Admin/**` files carry a hard-coded `@ID` from whoever wrote them, so they answer `404` against a store
 that has never seen it. Send `Admin/Account/List.http` to see what the store actually holds and copy an id out
 of it into `@ID` - it needs nothing but a bearer token. `Admin/Account/Create.http` also returns a new id in its
 `Location` header, and answers `409` once that username exists.
 
-## Variables
+## 🌍 Variables
 
 `http-client.env.json` defines the `local` environment. Pick it in your IDE before sending a request.
 

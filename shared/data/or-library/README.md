@@ -9,7 +9,7 @@ Binacle.Net utilizes these datasets, after converting them to a suitable format,
 
 It is not certain whether the problems in these datasets have known solutions, but they provide valuable benchmarks for testing and improvement.
 
-## Provenance — what "Bischoff suite" means (read this)
+## 🔍 Provenance — what "Bischoff suite" means (read this)
 
 Our **Bischoff suite is `thpack1`–`thpack7` only**. Those seven files were generated and used in
 **E.E. Bischoff and M.S.W. Ratcliff, "Issues in the development of Approaches to Container Loading", OMEGA
@@ -26,12 +26,12 @@ vol. 23 no. 4 (1995), pp. 377–390.** In the container-loading literature they 
 The original OR-Library text confirming all of this is preserved verbatim in the excerpt below.
 
 
-## Links
+## 🔗 Links
 - [OR Library](https://people.brunel.ac.uk/~mastjjb/jeb/info.html)
 - [J E Beasley](http://people.brunel.ac.uk/~mastjjb/jeb/jeb.html)
 - [Container Loading](https://people.brunel.ac.uk/~mastjjb/jeb/orlib/thpackinfo.html)
 
-## Corrected #9 Set
+## ✏️ Corrected #9 Set
 Errors were identified in three problems (18, 19, and 20) within the #9 data set. The issue occurred in the third item of each problem, specifically in the box dimensions. These were corrected by inserting a missing "1" indicator, allowing the data to be processed and converted correctly.
 
 Original error:
@@ -44,7 +44,7 @@ Corrected version:
  3 6 1 9 1 12 1 20
 ```
 
-## Container Loading Excerpt
+## 📖 Container Loading Excerpt
 Below is an excerpt from the original source, preserved here in case it becomes inaccessible in the future:
 
 ```text

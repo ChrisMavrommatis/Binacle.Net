@@ -9,7 +9,7 @@ This is **not** a deployment template - `samples/` holds the user-facing startin
 
 ---
 
-## Setup
+## 🛠️ Setup
 Root `justfile`, not a module. Run once on a fresh clone.
 
 ```bash
@@ -23,7 +23,7 @@ the only place that lives; nothing here repeats it.
 
 ---
 
-## Serve
+## 🚀 Serve
 `serve.just`, loaded as the `serve` module. Everything you run **from source** while working on the code.
 
 ```bash
@@ -44,7 +44,7 @@ one `-v` in either place that empties it.
 
 ---
 
-## Tests
+## 🧪 Tests
 `tests.just`, loaded as the `test` module. One recipe per suite, so tab completion finds them and CI calls the
 same recipes a maintainer does.
 
@@ -60,7 +60,7 @@ falls back to SQLite.
 
 ---
 
-## Coverage
+## 📊 Coverage
 `coverage.just`, loaded as the `coverage` module. It runs the same leaves with the collector attached - coverage
 is the same run with extra output, not a second one.
 
@@ -77,7 +77,7 @@ xml for C# plus lcov for TS. Output is one flat file per suite under `artifacts/
 
 ---
 
-## OpenAPI and the agent indexes
+## 📑 OpenAPI and the agent indexes
 Two small modules, `openapi.just` and `agents.just`.
 
 ```bash
@@ -90,7 +90,7 @@ The documents come out of the build, not out of a running server, so nothing has
 
 ---
 
-## Regenerating committed data
+## 🔄 Regenerating committed data
 `regen.just`, loaded as the `regen` module. Four tools write data that is **committed to the repo**, and this
 is the only place that says how to run them.
 
@@ -117,7 +117,7 @@ is for the maintainer who edited a tool or a source problem and wants to know wh
 
 ---
 
-## Build
+## 📦 Build
 `build.just`, loaded as the `build` module. The publish and the image, nothing else.
 
 ```bash
@@ -132,7 +132,7 @@ Neither recipe touches the container data folders, and neither needs `sudo`, so 
 
 ---
 
-## Image stacks
+## 🐳 Image stacks
 `image.just`, loaded as the `image` module. Runs the image `just build image` produced, three ways - all
 `binacle-net:local`, differing in what runs beside it and where `/app/data` goes.
 
@@ -162,7 +162,7 @@ The folder setup is written out in both `serve.just` and `image.just` rather tha
 reaches into another one puts back the coupling that splitting them removed, and it is a few lines of `mkdir`
 and `chmod`.
 
-### Verifying a published image
+### 🔒 Verifying a published image
 
 ```bash
 just image verify 3.0.0            # all four checks
@@ -186,7 +186,7 @@ is the useful thing to run it against when you want to watch it fail.
 
 ---
 
-## Smoke
+## 💨 Smoke
 `smoke.just`, loaded as the `smoke` module. Tests the **image** rather than the code: what it contains, and what
 its HTTP surface does with the modules switched on and off. Needs `container-structure-test` and `hurl` -
 see [DEVELOPMENT.md](../DEVELOPMENT.md).
@@ -226,7 +226,7 @@ before adding or changing an assertion.
 
 ---
 
-## Container data
+## 💾 Container data
 **Postgres always uses a named volume**, never a folder here. It chowns its data dir to its own user and locks
 it to 0700, which leaves a directory in the repo you cannot read - and that fails the next `docker build`,
 because the CLI walks the whole context before it builds. It is `binacle-net-postgres`, one volume shared by
@@ -252,7 +252,23 @@ docker run --rm -v binacle-net-data:/data -v "$PWD/out:/out" alpine cp -a /data/
 
 ---
 
-## Benchmarks and performance
+## ☁️ Cloudflare
+
+`cloudflare/` holds one wrangler config per site - `docs.wrangler.jsonc` and `web.wrangler.jsonc`. They are
+**not** run from here: the `Deploy Docs Site` and `Deploy Web Site` workflows call `wrangler deploy --config`
+against them, both manual (`workflow_dispatch`) and both tagging the commit they published.
+
+Each config points at the folder the build already wrote - `artifacts/docs` and `artifacts/web` - so a deploy
+uploads whatever `just build docs` last produced. That path is relative to the config file and has to match
+the `destination` in the site's `_config.yml`; the two are wrong together or right together.
+
+Preview URLs are off on purpose, and observability is on - request metadata and 404s are the only way to see
+a dead inbound link, because the link check runs offline against the built folder.
+**[`cloudflare/README.md`](cloudflare/README.md)** has the per-key detail.
+
+---
+
+## 📈 Benchmarks and performance
 Still scripts, one per slice. Both take `-c Release` and write into gitignored folders.
 
 ```bash
@@ -267,7 +283,7 @@ class is added or renamed.
 
 ---
 
-## Tmux
+## 🖥️ Tmux
 `tmux.sh` builds (or re-attaches to) a session named `binacle` with windows `api`, `docs`, `web`, `tests`,
 `misc` and `bench_1..3`. Panes are pre-`cd`'d but nothing runs automatically - it is a staging layout, not a
 launcher.

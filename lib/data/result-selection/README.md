@@ -13,7 +13,7 @@ of already-computed results and the one the selector is expected to choose. One 
 
 Each folder has a single `baseline.json` today (thin coverage — see the extraction plan for growth notes).
 
-## Format
+## 🧾 Format
 
 A JSON array of scenarios. Each scenario names the expected winner and the candidate results to choose from:
 

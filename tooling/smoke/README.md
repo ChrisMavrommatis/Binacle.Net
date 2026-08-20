@@ -7,7 +7,7 @@ The recipes live in `tooling/smoke.just`; this folder is the data they read. Eve
 root. The tools - `container-structure-test` and `hurl` - are not part of `just install`; see
 [DEVELOPMENT.md](../../DEVELOPMENT.md).
 
-## Why this exists
+## 🎯 Why this exists
 
 Every other suite in the repo runs **in process**. `Binacle.Net.IntegrationTests` boots the app with
 `WebApplicationFactory` and replaces the presets with test-only ones, so it never loads the config files we
@@ -18,7 +18,7 @@ landed at the wrong path; a module env var that no longer switches anything on; 
 on the host and not in the container; the version build arg never reaching the process; a wrong entry point,
 port or runtime. All packaging and wiring, none of it C# logic, which is why the existing suites cannot see it.
 
-## What is in here
+## 📂 What is in here
 
 | File | Read by | What it is |
 |---|---|---|
@@ -30,7 +30,7 @@ port or runtime. All packaging and wiring, none of it C# logic, which is why the
 than once per profile - the same assertions behind five different stacks answer the same question five times.
 It keeps the `.yaml` extension against the `.yml` stacks on purpose: it is the one file here docker never reads.
 
-## The five profiles
+## 📋 The five profiles
 
 Real configurations, from nothing switched on to everything. They are declared in one place - the `profiles`
 variable at the top of `tooling/smoke.just` - which is what both the `all` loop and the unknown-name check read.
@@ -57,7 +57,7 @@ in two verified places: `/openapi/{documentName}.json` is mounted when **either*
 two profiles can never tell which flag did it; and the UI module's status-code-pages middleware changes the
 *body* of a `/_health` or `/_debug` 404, so the off-state of one surface is shaped by another module.
 
-### Why `prod` and `service` are separate
+### 🤔 Why `prod` and `service` are separate
 
 They are two different products. **`prod`** is the API behind your own backend - you call it from your server,
 so it needs no accounts, no auth and no database. **`service`** is Binacle.Net offered to other people, which is
@@ -66,14 +66,14 @@ what ServiceModule exists for. Most deployments are the first; the hosted binacl
 Smoke tells them apart on one clean line: in `prod` the auth route is **404, never mounted**; in `service` it
 returns a token. No ambiguity, and it fails in both directions.
 
-### `prod` mounts its own presets, on purpose
+### ⚙️ `prod` mounts its own presets, on purpose
 
 `prod.yml` mounts `prod-presets.json` over `/app/Config_Files/Presets.json`, and `prod.hurl` reads back a
 preset named `smoke-lockers` that appears in no shipped file. That is the strongest positive in the suite: it
 proves the right image started **and** that it read configuration we supplied, which a default preset could
 never show. It also mirrors the first thing any integrator does - replace the bin set with their own.
 
-### `service` carries the tightest assertions
+### 🔐 `service` carries the tightest assertions
 
 It is `full` minus the two things you never expose when other people can reach you - the web UI and the debug
 endpoint. `/_debug` echoes the caller's own request including their `Authorization` header. The API docs stay
@@ -84,7 +84,7 @@ are on **and** that ui and debug are off, so the 404s beside it cannot pass for 
 route in one request separates three states - 404 never mounted, 200 open to the world, and only 401 meaning
 mounted **and** protected.
 
-## Two rules, if you add a check
+## 📏 Two rules, if you add a check
 
 **Assert what the image contains and wires. Never assert what the algorithm computed.** The integration suites
 own "is the answer right", in process, where a failure points at a line of C#. Re-running those assertions over
@@ -106,7 +106,7 @@ It also means a **negative** assertion has to be falsified when you touch it. `n
 `service`'s security check, and a predicate that quietly stops matching passes while asserting nothing. Point it
 at a value that must fail, confirm it goes red, then put it back.
 
-## Gotchas
+## ⚠️ Gotchas
 
 These are not assertions - they are what makes the setup correct. Miss one and you get a green that means
 nothing, or a red that reads as a flake.
@@ -126,7 +126,7 @@ nothing, or a red that reads as a flake.
   the account and the endpoint read it back, in one request.
 - **The container serves plain HTTP on 8080.** No TLS.
 
-## Not the samples
+## 🚫 Not the samples
 
 These stacks look like `samples/docker/*` and must never become them. They run the image under test rather than
 a published tag, and they carry test-only tweaks - the raised rate limit, disposable storage, an inline

@@ -35,9 +35,10 @@ Start exploring Binacle.Net now! 🚀
 ├── /vipaq        # ViPaq — compact binary format for packing results
 ├── /shared       # Shared test kernel and benchmark data
 ├── /packages     # JavaScript/TypeScript packages (npm workspaces)
-├── /ruby         # Ruby gems — Jekyll plugins for the docs and web sites
-├── /docs         # Documentation site (Jekyll)
-├── /web          # Binacle.Net website (Jekyll)
+├── /ruby         # Ruby gems — Jekyll plugins for the sites
+├── /sites        # Every published site (Jekyll)
+│   ├── /docs     # Documentation site
+│   └── /web      # Binacle.Net website
 ├── /samples      # Docker Compose and Kubernetes deployment samples
 ├── /tooling      # Every task the repo can run - just modules, scripts, local compose
 ├── /assets       # Shared static assets copied into the sites at build time

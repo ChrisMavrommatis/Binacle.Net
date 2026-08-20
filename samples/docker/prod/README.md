@@ -7,7 +7,7 @@ This is what most deployments should be. Your server calls Binacle.Net, so it do
 and every surface you do not switch on is one you do not have to defend. If you need accounts, tokens and rate
 limiting - because other people call it directly - use the [service](../service) sample instead.
 
-## Run it
+## 🚀 Run it
 
 ```bash
 docker compose up -d
@@ -17,13 +17,13 @@ The API answers on `http://localhost:8080`, and `http://localhost:8080/_health` 
 is no browsable documentation in this configuration by design; the OpenAPI documents for the version you are
 running are on the documentation site.
 
-## Change this first
+## ✏️ Change this first
 
 **`Presets.json` is your bin set.** The shipped file is an example. Replacing it with your own boxes, lockers
 or pallets is the first thing an integrator does, and until you do the answers describe someone else's
 packaging.
 
-## Behind a proxy, a load balancer or a CDN
+## 🌐 Behind a proxy, a load balancer or a CDN
 
 Uncomment the `ForwardedHeaders.json` mount in `docker-compose.yml` and edit that file.
 
@@ -52,7 +52,7 @@ quietly ignored, and enabling the feature with nothing trusted at all refuses to
 The app also **warns once in the log** when a forwarding header arrives and does not take effect - either the
 feature is off, or your proxy is not in the trust list. Check there first.
 
-## Observability
+## 📡 Observability
 
 Uncomment the `OpenTelemetry.Production.json` mount and edit the endpoint. The commented `aspire-dashboard`
 service at the bottom of `docker-compose.yml` is the quickest thing to point it at while you are setting it up;
@@ -61,13 +61,13 @@ replace it with your real collector. Azure Monitor is the other exporter, in the
 Telemetry being off is not a security decision - it is a "no collector yet" one. A production deployment with
 no observability is harder to run, not safer.
 
-## It is not stateless
+## 💾 It is not stateless
 
 Packing logs are written to `/app/data`, which is why there is a volume. Keep it or the logs go when the
 container does. `PackingLogs__RetentionDays` deletes files older than N days once a day; leaving it unset keeps
 everything forever, which fills a disk eventually.
 
-## Tested on every release
+## ✅ Tested on every release
 
 This configuration is smoke-tested against the image on every release, so it is a shape that is checked
 rather than one nobody runs.

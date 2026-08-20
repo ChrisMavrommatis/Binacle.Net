@@ -59,21 +59,11 @@ Your custom presets will now be active in the API.
   http://localhost:8080/<br>
   Interact with Binacle.Net through a user-friendly interface.
 
-## ⚙️ Customizing Presets
-To modify bin configurations:
-1. Open the `Presets.json` file in your preferred editor.
-2. Make your changes to the bin definitions.
-3. Restart the application to apply the updates:<br>
-    ```bash
-    docker compose down
-    docker compose up
-    ```
-
 ## 📂 Logs Folder
 When running the application, a `./data` folder will be created to store application data, including logs for monitoring and debugging.
 It's important to ensure that the `./data` and `./data/logs` directories have write permissions for proper functionality.
 
-### Setting Permissions
+### 🔒 Setting Permissions
 Run the following commands to create the directory and set the required permissions:
 
 ```bash

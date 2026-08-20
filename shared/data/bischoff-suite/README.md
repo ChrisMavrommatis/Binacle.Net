@@ -9,7 +9,7 @@ tests). Not used by ViPaq.
 - **Scope:** `thpack1`–`thpack7` **only**. `thpack8` (Loh & Nee, 1992) and `thpack9` (Ivancic et al., 1989,
   multi-container) are different sources/problems and are excluded — see the raw data README.
 
-## Format
+## 🧾 Format
 
 One file per `thpack`, a JSON array of scenarios in the tests-kernel compact format:
 

@@ -3,7 +3,7 @@
 Starting points for running Binacle.Net, with Docker Compose or Kubernetes. Copy the folder that matches what
 you are doing and edit it - these are meant to be taken, not referenced.
 
-## Docker Compose
+## 🐳 Docker Compose
 
 | Sample | Use it when |
 |---|---|
@@ -16,11 +16,11 @@ you are doing and edit it - these are meant to be taken, not referenced.
 [docker/README.md](docker/README.md) explains the choice between `prod` and `service`, which is the one that
 matters.
 
-## Kubernetes
+## ☸️ Kubernetes
 
 - [minimal](kubernetes/minimal) - a minimal deployment on an existing cluster.
 
-## Two things that apply to all of them
+## 📖 Two things that apply to all of them
 
 **`Presets.json` is your bin set.** Every sample ships an example one. Replacing it with your own boxes,
 lockers or pallets is the first thing to do; until then the answers describe someone else's packaging.

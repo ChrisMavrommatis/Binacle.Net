@@ -26,6 +26,7 @@ files hold the carve-outs.
 | write **text a user will see** - exception, log line, OpenAPI description, UI string | [plain-ascii-for-user-text](plain-ascii-for-user-text.md) |
 | write **any doc, comment or explanation** | [plain-language](plain-language.md) |
 | write a **heading in a public markdown file** - README, samples, the Docker Hub page, the docs site | [icon-headings-in-public-docs](icon-headings-in-public-docs.md) |
+| add a **folder**, or write or edit a **`README.md`** outside `.agents/` | [every-folder-has-a-readme](every-folder-has-a-readme.md) |
 | write or edit a **plan or an idea** | [plans-do-not-schedule-themselves](plans-do-not-schedule-themselves.md) |
 | write anything a human reads **outside `.agents/`** | [ref-codes-stay-in-the-agent-docs](ref-codes-stay-in-the-agent-docs.md) |
 | add a **fact** to any file under `.agents/` | [one-fact-one-place](one-fact-one-place.md) |

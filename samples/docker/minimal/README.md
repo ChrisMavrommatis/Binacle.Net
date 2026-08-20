@@ -51,7 +51,7 @@ To modify bin configurations:
 When running the application, a `./data` folder will be created to store application data, including logs for monitoring and debugging. 
 It's important to ensure that the `./data` and `./data/logs` directories have write permissions for proper functionality.
 
-### Setting Permissions
+### 🔒 Setting Permissions
 Run the following commands to create the directory and set the required permissions:
 
 ```bash

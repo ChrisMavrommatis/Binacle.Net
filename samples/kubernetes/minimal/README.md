@@ -1,7 +1,7 @@
 # Binacle.Net - Minimal Setup
 This sample demonstrates how to set up and run Binacle.Net on an existing Kubernetes cluster.
 
-## Prerequisites
+## 🛠️ Prerequisites
 - An existing Kubernetes cluster.
 - One or more eshops already running in the cluster, typically with Nginx Ingress Controller.
 - Binacle.Net will run in the same cluster and not be exposed.

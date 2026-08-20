@@ -6,7 +6,7 @@ Frozen, packed results read by the ViPaq test kernel's `BischoffDataProvider` an
 ViPaq serializes. The source problems carry only item *types* with a quantity and no coordinates, so the
 coordinates only exist after packing.
 
-## Generated — do not hand-edit
+## 🚫 Generated — do not hand-edit
 
 These files are produced by `vipaq/tools/Binacle.ViPaq.PackedDataGenerator`. To change them, edit the source
 problems (`shared/data/bischoff-suite`, `shared/data/custom-problems`) or the tool, then regenerate:
@@ -21,7 +21,7 @@ all` instead - it does both, in that order.
 The run is deterministic: a no-change re-run is byte-identical, so it produces no git noise. `just regen check`
 regenerates everything and fails if any generated file moved.
 
-## Layout
+## 📂 Layout
 
 Split by source family, mirroring `shared/data`:
 
@@ -36,7 +36,7 @@ coordinates — and tokens — differ; the suffix keeps the sets apart without d
 The tool prints a per-file and total sample/item count on each run; that console summary is the run's report,
 so there is no committed index file to keep in sync.
 
-## File format
+## 🧾 File format
 
 Each problem file is a JSON array of samples. One sample:
 

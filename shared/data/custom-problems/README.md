@@ -9,7 +9,7 @@ wrote to cover specific behaviours (a box that just fits, a tight multi-item pac
 - `simple.json` — small straightforward packs.
 - `complex.json` — harder, mixed cases.
 
-## Format
+## 🧾 Format
 
 Same tests-kernel compact scenario format as the [Bischoff suite](../bischoff-suite/README.md):
 

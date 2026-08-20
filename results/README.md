@@ -14,7 +14,7 @@ Organized by slice, the same way `docs/` is:
 Both slices split the same way: **`benchmarks/`** is BenchmarkDotNet speed/allocation, and the second folder is
 the slice's own quality metric — fill efficiency for the packer, encoded size for the format.
 
-## Scratch vs curated
+## ⚖️ Scratch vs curated
 
 **Nothing here is auto-written.** Every harness — the `PerformanceTests` projects and the BenchmarkDotNet
 `Benchmarks` projects — writes its raw run into its own build-local `*.Artifacts` folder next to the project
@@ -33,7 +33,7 @@ What you keep is two kinds of thing:
 date every run** — date when the story is worth telling, and write a line or two on *what changed and why the
 numbers moved*. Snapshot everything and the folder fills with noise; the meaningful jump drowns in re-runs.
 
-## Comparing numbers honestly
+## 📊 Comparing numbers honestly
 
 Only compare within the same ruler. Speed and time depend on the runtime and the machine — a Windows run and a
 Linux run, or net9 and net10, are not the same measurement. Fill-rate and encoded size are stable across

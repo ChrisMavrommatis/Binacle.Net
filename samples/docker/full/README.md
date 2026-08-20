@@ -4,7 +4,7 @@
 packing logs and the `/_debug` endpoint. It exists so you can see what every part of Binacle.Net does without
 assembling a configuration first.
 
-## Do not deploy this
+## ⚠️ Do not deploy this
 
 `DEBUG_ENDPOINT` is on, which mounts `/_debug`. That endpoint echoes the caller's **entire request** back to
 them - every header they sent, including `Authorization` - plus the connection address the app resolved. It is
@@ -12,7 +12,7 @@ on here because seeing it is the point. It must not be reachable by anyone you d
 
 For a real deployment use [prod](../prod), or [service](../service) if you need accounts.
 
-## Run it
+## 🚀 Run it
 
 ```bash
 docker compose up -d
@@ -31,6 +31,6 @@ plain text, which is another reason this is not a deployment.
 
 `/_health` lists which modules are on under `Features` - a quick way to confirm a flag did what you expected.
 
-## Tested on every release
+## ✅ Tested on every release
 
 This configuration is smoke-tested against the image on every release.

@@ -3,14 +3,14 @@
 The core 3D bin-packing engine. Pure C# with no API or web dependencies — given a bin and a list of
 items, it works out whether they fit (**fit**) and packs as many as it can (**pack**).
 
-## Projects
+## 📦 Projects
 
 | Path | What it is |
 |---|---|
 | `src/Binacle.Lib` | The algorithms, processors, and result building. The only project in `src`. |
 | `data/result-selection` | Hand-authored result-selection fixtures. Read by this slice's tests only. |
 
-## How it works
+## ⚙️ How it works
 
 Both use the same algorithm. The difference is what happens when an item doesn't fit — and both
 return the same result shape: packed items and unpacked items.
@@ -24,7 +24,7 @@ Packing uses three heuristics — First Fit Decreasing (FFD), Worst Fit Decreasi
 Best Fit Decreasing (BFD), each with two versions (v1 and v2; the API uses v2). A result selector
 then picks the best outcome across algorithms or across bins.
 
-## Layout
+## 📂 Layout
 
 | Folder | What it provides |
 |---|---|
@@ -37,7 +37,7 @@ then picks the best outcome across algorithms or across bins.
 | `GuardClauses/` | Input checks — null, dimensions, volume, quantity |
 | `Exceptions/` | `DimensionException` |
 
-## Tests
+## 🧪 Tests
 
 | Project | Run with | Covers |
 |---|---|---|

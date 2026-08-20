@@ -15,6 +15,11 @@ are fetched when their `when:` fires. See [README.md](README.md) for the trigger
   when: "writing or editing a code comment"
   load: on-trigger
   paths: ["**/*.cs", "**/*.ts", "**/*.js", "**/*.csproj", "**/*.props", "**/*.just", "**/*.yml"]
+- file: every-folder-has-a-readme.md
+  description: "Every root folder has a README.md; a deeper one has it when a reader arriving cold needs more than the parent's index row. Written for a human."
+  when: "adding a folder, or writing or editing any README.md outside .agents/"
+  load: on-trigger
+  paths: ["**/README.md"]
 - file: icon-headings-in-public-docs.md
   description: "Public markdown uses one emoji icon on each section heading, matching README.md and the docs site."
   when: "writing or editing a heading in a public markdown file"
@@ -30,7 +35,7 @@ are fetched when their `when:` fires. See [README.md](README.md) for the trigger
   when: "before any git command, and before saying a task is finished"
   load: always
 - file: never-edit-published-sites.md
-  description: "Everything under sites/ publishes to the internet and is written in its own session. One carve-out for security fixes to sample files."
+  description: "Everything under sites/ publishes to the internet and is written in its own session. Two carve-outs - the three repo-facing READMEs, and security fixes to sample files."
   when: "before editing anything under sites/"
   load: always
   paths: ["sites/**"]

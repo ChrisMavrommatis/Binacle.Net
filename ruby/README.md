@@ -4,15 +4,15 @@ Custom Jekyll plugins used by the `sites/docs/` and `sites/web/` sites.
 
 Both gems are loaded as local path dependencies via each site's `Gemfile`.
 
-## Gems
+## 📦 Gems
 
-### `jekyll-filters`
+### 🔤 `jekyll-filters`
 
 Custom Liquid filters:
 - `capitalize_all` — capitalizes every word in a string
 - `clean_content` — strips HTML tags, collapses whitespace, truncates to a given length (default 160 chars)
 
-### `jekyll-gtm`
+### 📊 `jekyll-gtm`
 
 Liquid tags for Google Tag Manager:
 - `{% gtm_head <id> %}` — outputs the GTM `<script>` block; goes in `<head>`

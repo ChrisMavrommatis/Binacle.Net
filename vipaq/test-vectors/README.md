@@ -9,7 +9,7 @@ One file, two consumers. The same inputs are graded against the same answers, so
 silently drift on the wire. These files are the single source of truth; edit a case here, not in either suite. The
 wire itself is defined in [`../PROTOCOL.md`](../PROTOCOL.md), which stands alone.
 
-## Rules every file follows
+## 📏 Rules every file follows
 
 - **PascalCase keys** — `Name`, `Bin`, `Items`, `Bytes`, etc. (so C# binds with no case-insensitive option; reads
   fine in TS too).
@@ -30,19 +30,19 @@ wire itself is defined in [`../PROTOCOL.md`](../PROTOCOL.md), which stands alone
 - **Enum names, not numbers** — `Width` is `Eight | Sixteen` (codes 0–1; 2–3 are reserved and never written);
   the header string names `Version`, `raw`/`comp` (`Compressed`), and `row`/`col` (`Layout`).
 
-## Integer range
+## 🔢 Integer range
 
 Every dimension and coordinate is in `[0, 65535]` (PROTOCOL.md §5). There is no wider width and no 32/64-bit tier —
 a value above 65,535 is an error, not a wider encoding. C# reads these scenarios as `int`, which holds the range
 and is the safe default `T`.
 
-## Header notation
+## 🧾 Header notation
 
 The header's text form, used wherever a vector needs to name a full header:
 `v{N}_{raw|comp}_{row|col}_{binWidth}_{itemDimWidth}_{itemCoordWidth}` — e.g. `v1_raw_row_8_8_8` or
 `v1_comp_col_16_8_16`. Six tokens in wire order. Mirrors C# `HeaderNotation` / TS `src/headerNotation.ts`.
 
-## Files
+## 📂 Files
 
 | File | Shape | Read by |
 |---|---|---|
@@ -57,7 +57,7 @@ The header's text form, used wherever a vector needs to name a full header:
 | `interop/input.json` | `{Name, ExpectedHeader, Bin, Items[]}` — the shared inputs both generators serialize | both: the answer key a decoded artifact must equal (joined by `Name`) |
 | `interop/{cs,ts}/{raw,deflate,gzip}.json` | `{Name, Producer, Base64}` — each language's artifacts, one file per codec | both: decode → assert equals `input.json[Name]` |
 
-## Interop — decode-to-input, never byte-equality
+## 🔌 Interop — decode-to-input, never byte-equality
 
 `interop/input.json` is serialized by each language's generator under each codec (`raw`, `deflate`, `gzip`), giving
 `interop/cs/*.json` and `interop/ts/*.json`. Each suite decodes **the other language's** artifacts and asserts the
@@ -68,7 +68,7 @@ each emit a different valid DEFLATE stream (`DeflateStream` vs `CompressionStrea
 is decode-to-input (PROTOCOL.md §6.1). Raw artifacts are byte-identical across producers and can be compared
 directly.
 
-## Regenerating
+## 🔄 Regenerating
 
 ```
 just regen vipaq-interop-vectors
@@ -83,7 +83,7 @@ the integrity tests catch.
 Output is deterministic — a no-change re-run is byte-identical. `just regen check` regenerates everything and
 fails if any committed file moved.
 
-## What is **not** here (stays language-local on purpose)
+## 🚫 What is **not** here (stays language-local on purpose)
 
 Language mechanics, not wire data: C# generic-`T` matrices and typed exceptions; TS buffer pre-sizing and
 Web-Streams codec mechanics. Only shared-vector coverage matches across suites; the suites' totals differ by
