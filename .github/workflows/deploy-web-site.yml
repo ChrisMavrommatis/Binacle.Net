@@ -3,18 +3,21 @@ name: Deploy Web Site
 on:
   workflow_dispatch:
 
-# Never cancelled: a stopped deploy leaves App Platform mid-rollout and no marker tag.
+# Never cancelled: a stopped run leaves the site deployed with no marker tag, so it maps back to no commit.
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
 
 jobs:
-  build:
-    name: Build the site
+  deploy:
+    name: Build and deploy the site
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     permissions:
       contents: read
+    environment:
+      name: binacle-net-web
+      url: https://www.binacle.net
 
     steps:
       - name: Checkout
@@ -33,23 +36,21 @@ jobs:
       - name: Check - links
         run: just check links web
 
-  deploy:
-    name: Deploy the site
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    # No checkout: `app_name` makes App Platform use its own stored spec, and the action comes from GitHub.
-    permissions: {}
-    environment:
-      name: binacle-net-web
-      url: https://www.binacle.net
+      # From git, not the event: `workflow_dispatch` carries no commit payload. Stripped of the characters
+      # that would break out of the quoted argument below.
+      - name: Describe the deploy
+        run: |
+          set -euo pipefail
+          subject=$(git log -1 --format=%s "$GITHUB_SHA" | tr -d '"`$\\' | cut -c1-90)
+          echo "DEPLOY_MESSAGE=${GITHUB_SHA:0:8} - ${subject}" >> "$GITHUB_ENV"
 
-    steps:
-      - name: Deploy to DigitalOcean App Platform
-        uses: digitalocean/app_action/deploy@cc55bc9b848d25f9c1c9f831cf843fbab3fbfb15 # v2.0.11
+      # Uploads what the link check just read - artifacts/web, named as `directory` in the config file.
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          app_name: binacle-net-web
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config tooling/cloudflare/web.wrangler.jsonc --message "${{ env.DEPLOY_MESSAGE }}"
 
   tag:
     name: Tag the deployed commit
@@ -61,7 +62,7 @@ jobs:
 
     env:
       # Must not start with `v` followed by a digit - the release workflow fires on `v[0-9]*`.
-      TAG_NAME: web-release-${{ github.run_number }}
+      TAG_NAME: web-${{ github.run_number }}
       COMMIT: ${{ github.sha }}
       URL: https://www.binacle.net
 

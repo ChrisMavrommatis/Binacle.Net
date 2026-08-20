@@ -80,8 +80,8 @@ image version="local": publish
 #
 # Output goes to artifacts/<site>, set as `destination` in each _config.yml rather than passed here.
 #
-# CI runs these as a pre-flight check. App Platform builds the site itself from the repository, so a green run
-# here proves the commit builds - it does not produce the bytes that get served.
+# The deploy workflows run these and hand artifacts/<site> straight to the host, so what is built here is what
+# gets served. A green run is the deploy, not a rehearsal for one.
 
 # The documentation site into artifacts/docs
 docs: (_build-site 'docs' 'docs')

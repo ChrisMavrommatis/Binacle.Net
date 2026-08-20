@@ -1,8 +1,8 @@
 ---
 id: ci-cd/decisions
 description: CI/CD decisions ledger — why the release pipeline is tag-triggered, stages on GHCR and copies to Docker Hub by digest, why the prerelease guard is metadata-action's rather than a job-level skip, why the notes come from CHANGELOG.md, the pinning rules, why lychee is a pinned binary rather than its own action, and the open questions about the PR gate and supply-chain attestation.
-verified: 2026-08-19
-check: Decisions still match .github/workflows/*.yml and tooling/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against tooling/changelog.just, D6 against shared-smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe, D14's STAGING_IMAGE against release-docker-image.yml, D15's identity regexp against SECURITY.md and tooling/image.just, D16 against .github/actions/install-lychee and the deploy workflows' build job, D17 against both deploy workflows' triggers, which must stay workflow_dispatch only
+verified: 2026-08-20
+check: Decisions still match .github/workflows/*.yml and tooling/build.just; D2/D3/D14 against release-docker-image.yml's publish job, which must carry no prerelease condition, D7 against tooling/changelog.just, D6 against shared-smoke-image.yml's runs-on, D11 against .github/dependabot.yml, D12 against build.just's publish recipe, D14's STAGING_IMAGE against release-docker-image.yml, D15's identity regexp against SECURITY.md and tooling/image.just, D16 against .github/actions/install-lychee and the deploy workflows' link-check step, D17 against both deploy workflows' triggers, which must stay workflow_dispatch only
 paths:
   - ".github/workflows/**"
 ---
@@ -30,7 +30,7 @@ inverts that — a failure leaves a tag you delete, and nothing a user ever saw.
 job re-trigger the whole workflow and build everything a second time.
 
 **The pattern is `v[0-9]*` rather than `v*` because this repo has three tag-pushing workflows.** The two site
-deploys create `docs-release-<run>` and `web-release-<run>`, and a release build must never fire on one. Neither
+deploys create `docs-<run>` and `web-<run>`, and a release build must never fire on one. Neither
 matches either pattern, so this is not a fix for a live bug — it is refusing to depend on a coincidence of
 naming, and on the second coincidence underneath it: those workflows push with `GITHUB_TOKEN`, which GitHub
 does not let trigger further workflows. That protection disappears the day either switches to a PAT.
@@ -427,7 +427,7 @@ that opens an issue, which the action supports directly and a `run:` step does n
 tool; that would be an addition, not a reversal of this.
 
 **The check is `--offline` in CI, and that is not a preference either.** Every page carries a `canonical` and
-an `og:url` pointing at where it *will* live. Run externally from the build job, they 404 on every page the
+an `og:url` pointing at where it *will* live. Run externally before the deploy, they 404 on every page the
 deploy is about to create — 35 of 36 failures on the first real run, all of them self-references. A gate red
 for that reason before anyone writes a line is a gate people learn to ignore.
 

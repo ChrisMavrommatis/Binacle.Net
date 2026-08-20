@@ -1,7 +1,7 @@
 ---
 id: ci-cd
 description: CI/CD — the nine GitHub Actions workflows in .github/workflows and the nine shared actions in .github/actions, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
-verified: 2026-08-19
+verified: 2026-08-20
 check: The workflow table matches the files in .github/workflows and the action table matches .github/actions; the vars/secrets tables match every ${{ vars.* }} and ${{ secrets.* }} reference in them; the pinned just version and runner labels still match; the SHAs named as living only in .github/actions still appear in no workflow file; every .github/actions folder holding an outside SHA pin has its own entry in .github/dependabot.yml
 also_update:
   - ci-cd/release-pipeline
@@ -39,8 +39,8 @@ described in `$tooling`. Nothing about a recipe's behaviour is repeated here.
 | `release-docker-image.yml` | `push` on tags `v[0-9]*` | The release pipeline — check the changelog section, run the suite, build and push to GHCR, smoke it there, copy to Docker Hub, create the GitHub release, write the Docker Hub page. See `$ci-cd/release-pipeline` |
 | `shared-dockerhub-overview.yml` | `workflow_dispatch`, `workflow_call` | Renders `.github/dockerhub-overview.md` with `just image dockerhub-overview <version>` and PATCHes it onto the Docker Hub repository page. Called by the release pipeline as its last job, or run by hand for a wording fix — an empty version input takes the latest release, so a typo fix needs nothing typed |
 | `shared-smoke-image.yml` | `workflow_dispatch`, `workflow_call` | Pulls a published image and runs the structure check plus all five smoke profiles. Called by the release pipeline as its gate, or run by hand against any tag |
-| `deploy-docs-site.yml` | `workflow_dispatch` | Three jobs — build repo-root `docs/` (`$docs-site`) and check its links as a pre-flight, deploy it to DigitalOcean App Platform, tag the commit `docs-release-<run>` |
-| `deploy-web-site.yml` | `workflow_dispatch` | The same for repo-root `web/` (`$web-site`), tagging `web-release-<run>` |
+| `deploy-docs-site.yml` | `workflow_dispatch` | Two jobs — build repo-root `docs/` (`$docs-site`), check its links, hand the built directory to the host, then tag the commit `docs-<run>` |
+| `deploy-web-site.yml` | `workflow_dispatch` | The same for repo-root `web/` (`$web-site`), tagging `web-<run>` |
 
 **Three of the nine run on their own.** `pull-request.yml` on every pull request, `codeql-analysis.yml` on
 every merge to `main` and weekly, and the release pipeline on a tag. The other six are `workflow_dispatch` —
@@ -85,22 +85,21 @@ the real one. A conditional step is not the fix — that gives the release a gat
 reach it, so that is a choice rather than an oversight.
 
 **Three workflows push git tags, and the namespaces must not overlap.** The release pipeline fires on
-`v[0-9]*`; the two deploy workflows create `docs-release-<run>` and `web-release-<run>`. That is the whole
+`v[0-9]*`; the two deploy workflows create `docs-<run>` and `web-<run>`. That is the whole
 reason the release trigger is not the looser `v*` — a deploy tag must never build and publish an image. Any new
 workflow that pushes a tag has to stay out of the `v<digit>` namespace.
 
 **The two marker tags are pushed after a successful deploy, not before it.** The tag exists so a live site maps
-back to a commit; pushed first, it claims that of a deploy that then failed. Each deploy workflow is three jobs
-in that order — **build, deploy, tag** — chained by `needs:`, which is the gate: a job with an unsatisfied
-`needs:` is skipped, so a failed build never reaches the deploy and a failed deploy never reaches the tag. No
-`if:` is written for this. `if: success()` is already the default on a `needs:` job, and writing it out invites
-the reader to think something unusual is being expressed.
+back to a commit; pushed first, it claims that of a deploy that then failed. Each deploy workflow is two jobs
+in that order — **build-and-deploy, then tag** — chained by `needs:`, which is the gate: a job with an
+unsatisfied `needs:` is skipped, so a failed deploy never reaches the tag. No `if:` is written for this.
+`if: success()` is already the default on a `needs:` job, and writing it out invites the reader to think
+something unusual is being expressed.
 
-**Splitting them costs two extra runner starts and buys three things.** `contents: write` now sits on the tag
-job alone rather than over the whole run; the deploy job needs no checkout at all, so it holds no token scopes;
-and a failed deploy can be re-run from the Actions UI without rebuilding. Nothing has to be handed between the
-jobs, because the build produces nothing that gets served — App Platform builds the site itself, and the build
-job exists to fail here rather than there.
+**Building and deploying are one job because the built directory is the deliverable.** The host is handed a
+finished `artifacts/<site>`, so splitting them would only mean uploading that directory out of one job and
+downloading it into the next to reach the same place. **The tag stays its own job**, which is what keeps
+`contents: write` off the run that builds and deploys.
 
 **The `build` job also runs `just check links <site>`**, because a site with forty dead links builds
 perfectly — that is the failure a build cannot see. It runs there rather than in `deploy`, so a dead link stops
@@ -129,7 +128,7 @@ branch's latest state, so the superseded findings were going to be overwritten a
 
 **A cancelled release or deploy leaves wreckage.** Stopped between `build` and `publish`, the release has a
 staged image on GHCR that nothing copies, or a half-written set of moving tags on Docker Hub. A stopped deploy
-leaves App Platform mid-rollout with no marker tag, so the live site maps back to no commit. Those queue
+leaves a deploy half-done with no marker tag, so the live site maps back to no commit. Those queue
 instead.
 
 **`github.ref` is what makes the key specific** and it differs per event: `refs/pull/<n>/merge` on a pull
@@ -277,11 +276,10 @@ reimplement what the flag already does. The action's `description` says it insta
 declared where a reader meets it.
 
 **The deploy is in the workflow, not in an action.** `build-jekyll-site` covers the part that is the same for
-both sites and would drift if copied; deploying is one `uses:` of a vendor action with two inputs, and wrapping
-it buys nothing. Two things it costs, though, and both matter more: the marker tag's `git push` is visible next
-to the `contents: write` that allows it, and the provider is named where you would look for it. Moving off
-DigitalOcean is then an edit to one step in each of two workflows, not to the inside of something called
-"deploy site".
+both sites and would drift if copied; deploying is one `uses:` of a vendor action, and wrapping it buys
+nothing. Two things it costs, though, and both matter more: the marker tag's `git push` is visible next to the
+`contents: write` that allows it, and the host is named where you would look for it. Changing host is then an
+edit to one step in each of two workflows, not to the inside of something called "deploy site".
 
 **`actionlint` does not cover these files, and there is no flag that makes it.** Hand it an `action.yml` and it
 reports `"jobs" section is missing` — it treats every input as a workflow. What it *does* check from the
@@ -303,7 +301,7 @@ step names the tool rather than the pair — which is why these are two files an
 **Four constraints shape them, all of them GitHub's rather than ours.**
 
 - **Neither `secrets` nor `vars` exists inside a composite action.** An action that needs one takes it as an
-  input — half the reason the DigitalOcean step stayed in the workflow, and why `DONET_VERSION` is passed to
+  input — half the reason the deploy step stayed in the workflow, and why `DONET_VERSION` is passed to
   `setup-dotnet`. **This bites harder than "the value comes out empty".** The runner evaluates the whole
   manifest before it runs a step, so the expression fails the action *load* — every job calling it dies with
   `Unrecognized named-value: 'vars'`. **And it counts anywhere in the file, `description:` fields included**:
@@ -348,7 +346,7 @@ the pre-move `src/` path after the layout change and broke the publish.
 |---|---|
 | `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN` | `release-docker-image` — the `publish` job, and `shared-dockerhub-overview` which the `page` job calls. One token does both: the same registry push credential also writes the repository description, confirmed 2026-08-19. **Passed to the called workflow by name, never `secrets: inherit`**, which would hand the runner every secret the repo has |
 | `SONAR_TOKEN` | `sonar-analysis` |
-| `DIGITALOCEAN_ACCESS_TOKEN` | both deploy workflows |
+| `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | both deploy workflows |
 | `GITHUB_TOKEN` | `release-docker-image` — GHCR login in `build` and `publish`, and creating the release |
 
 **Signing needs no secret either.** cosign runs keyless — it exchanges the job's OIDC token for a short-lived
@@ -370,8 +368,8 @@ The two deploy workflows declare a GitHub environment, which is what carries the
 UI: `binacle-net-docs` (https://docs.binacle.net) and `binacle-net-web` (https://www.binacle.net). Nothing
 else uses an environment.
 
-Both deploy workflows also push a marker tag before deploying — `docs-release-<run_number>` /
-`web-release-<run_number>` — so a deployed site maps back to a commit.
+Both deploy workflows also push a marker tag after deploying — `docs-<run_number>` / `web-<run_number>` — so
+a deployed site maps back to a commit.
 
 ## What CI does not cover
 
