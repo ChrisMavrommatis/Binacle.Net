@@ -1,0 +1,10 @@
+{
+  "name": "binacle-net-docs",
+  "compatibility_date": "2026-08-20",
+  "assets": {
+    // Relative to this file, matching the `destination` in docs/_config.yml so the two are wrong together.
+    "directory": "../../artifacts/docs",
+    // Wants `404.html` in the site root. Jekyll writes `404/index.html`, so this does not fire yet.
+    "not_found_handling": "404-page"
+  }
+}
