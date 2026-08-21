@@ -51,11 +51,16 @@ list is clear.**
 ### Then: 3.1.0's content
 
 **The v4 chain, in this order and no other** - `pack/first-bin` -> `v4-stable` -> `ui-clients-off-v3` -> the
-UIModule Alpine port -> **then** the Blazor half of `ui-test-harness`. Each step needs the one before it.
+UIModule rebuild -> **then** the Blazor half of `ui-test-harness`. Each step needs the one before it.
 
-**Two reasons the order is not negotiable.** Porting a page you are about to rewrite is wasted work, which is
-why the port sits after the v4 migration. And **the port deletes most of what the Blazor tests would cover** -
-writing them first means writing them twice, in two languages.
+**Two reasons the order is not negotiable.** Rebuilding a page you are about to rewrite is wasted work, which
+is why the rebuild sits after the v4 migration. And **the rebuild deletes most of what the Blazor tests would
+cover** - writing them first means writing them twice, in two languages.
+
+**The UIModule rebuild has no row and no file here, on purpose.** What that module should contain turned into
+a product question, so the plan moved out of this repository to sit next to the reasoning. It is not lost and
+it is not cancelled - a session picks it up from the orchestrator file the maintainer hands out, not from
+here. Everything below that names it names it in plain words for the same reason.
 
 ### Running alongside, not queued behind
 
@@ -87,7 +92,7 @@ and ruleset collide with neither. **`sonar-issue-triage`'s quality gate hangs on
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [ui-test-harness](plans/ui-test-harness.md) | **TypeScript half ready. Blazor half blocked** | the Alpine port |
+| [ui-test-harness](plans/ui-test-harness.md) | **TypeScript half ready. Blazor half blocked** | the UIModule rebuild |
 | [api/integration-test-additions](plans/api/integration-test-additions.md) | ready - phase 1 first | - |
 | [shared/testskernel-data-extraction](plans/shared/testskernel-data-extraction.md) | ready | - |
 
@@ -144,8 +149,12 @@ is no build stage.
 Ideas: [api/pack-first-bin-endpoint](ideas/api/pack-first-bin-endpoint.md) - **the candidate `v4-stable`
 needs.** [api/packing-only-image](ideas/api/packing-only-image.md) ·
 [api/reduce-integration-friction](ideas/api/reduce-integration-friction.md) - direction settled, nothing to
-build. [api/uimodule-alpine-port](ideas/api/uimodule-alpine-port.md) - do it **after** the v4 migration, not
-before.
+build.
+
+**The UIModule rebuild** - Blazor interactive out, Razor Pages in, the demo apps served from
+`packages/binacle-net-ui` instead of a second C# implementation. Its plan is outside this repository; see the
+note under the recommended order above. **It needs the v4 migration first**, or the port carries v3 into the
+rebuilt module and the migration is done twice.
 
 ## Lib and ViPaq
 

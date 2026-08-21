@@ -43,9 +43,6 @@ and move it to `.agents/plans/` once it's picked up. See [README.md](README.md) 
 - file: api/servicemodule-simplification.md
   description: "simplify ServiceModule - collapse the ceremony, keep the provider seam"
   paths: ["api/**"]
-- file: api/uimodule-alpine-port.md
-  description: "UIModule - port from Blazor reactivity to Alpine.js"
-  paths: ["api/**"]
 ```
 
 ## Shared
