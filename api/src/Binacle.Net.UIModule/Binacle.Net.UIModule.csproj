@@ -2,7 +2,8 @@
 
 	<PropertyGroup>
 		<UserSecretsId>Binacle_Net_Secrets</UserSecretsId>
-		<DisableScopedCssBundling>true</DisableScopedCssBundling>
+		<!-- Without this the .cshtml pages are not discovered from the host app and every route 404s. -->
+		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -13,16 +14,28 @@
 		<PackageReference Include="Serilog" />
 	</ItemGroup>
 
+	<!-- Kernel only. Both demos are TypeScript and call the API over HTTP; nothing here needs the engine. -->
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\vipaq\src\Binacle.ViPaq\Binacle.ViPaq.csproj" />
 	  <ProjectReference Include="..\Binacle.Net.Kernel\Binacle.Net.Kernel.csproj" />
-	  <ProjectReference Include="..\..\..\shared\src\Binacle.Packing\Binacle.Packing.csproj" />
-	  <ProjectReference Include="..\..\..\shared\src\Binacle.CompactNotation\Binacle.CompactNotation.csproj" />
 	</ItemGroup>
 
+	<!-- The Razor SDK globs **/*.json as Content, so without this the build tooling's own config files are
+	     copied into the published app and end up in the image. -->
 	<ItemGroup>
-	  <Using Include="Binacle.Geometry" />
+	  <Content Remove="package.json" />
+	  <Content Remove="tsconfig.json" />
 	</ItemGroup>
 
+	<!-- Not compiled by MSBuild. Listed so the IDE shows them: wwwroot/ is generated and gitignored. -->
+	<ItemGroup>
+	  <None Include="webpack.config.js" />
+	  <None Include="package.json" />
+	  <None Include="tsconfig.json" />
+	  <None Include="_js\**\*.js" />
+	  <None Include="_sass\**\*.scss" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="wwwroot\" />
+	</ItemGroup>
 
 </Project>

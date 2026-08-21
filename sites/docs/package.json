@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "This is the documentation site for Binacle.Net.",
   "scripts": {
-    "build": "npx webpack --env build=dist",
+    "build": "webpack --env build=dist",
     "serve": "bundle exec jekyll serve",
-    "watch": "npx webpack --watch --env build=watch"
+    "watch": "webpack --watch --env build=watch"
   },
   "repository": {
     "type": "git",
@@ -18,5 +18,8 @@
     "typescript": "^5.9.3",
     "webpack": "^5.102.1",
     "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "theme-switcher": "*"
   }
 }

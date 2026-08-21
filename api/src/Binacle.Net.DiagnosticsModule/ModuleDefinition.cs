@@ -160,9 +160,29 @@ public static class ModuleDefinition
 		{
 			builder.Services.Configure<FeatureOptions>(options =>
 			{
-				options.AddFeature("DebugEndpoint");
+				options.AddFeature("DebugEndpoint", RequestDebugMiddleware.Path);
 			});
 		}
+
+		// Health checks are switched on in a config file, not by a flag, so this has to resolve after build.
+		builder.Services
+			.AddOptions<FeatureOptions>()
+			.Configure<IOptions<HealthCheckConfigurationOptions>>((features, healthChecks) =>
+			{
+				if (healthChecks.Value.Enabled)
+				{
+					features.AddFeature("HealthChecks", healthChecks.Value.Path);
+				}
+			});
+
+		// The health path is configurable, so nothing outside this module can know where it ended up.
+		builder.Services
+			.AddOptions<ReservedPathOptions>()
+			.Configure<IOptions<HealthCheckConfigurationOptions>>((reserved, healthChecks) =>
+			{
+				reserved.AddPrefix(RequestDebugMiddleware.Path);
+				reserved.AddPrefix(healthChecks.Value.Path!);
+			});
 
 		Log.Information("{ModuleName} module. Status {Status}", "Diagnostics", "Initialized");
 	}

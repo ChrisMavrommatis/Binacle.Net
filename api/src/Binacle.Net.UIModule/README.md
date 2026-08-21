@@ -1,7 +1,7 @@
 # UI module
 
-The interactive demo that ships inside the API - a Blazor Server app serving the packing demo and the ViPaq
-protocol decoder at `/`. Optional: it only loads when the `UI_MODULE` feature is on.
+The demo UI that ships inside the API - a packing demo and a ViPaq decoder, served as Razor Pages at `/`.
+Optional: it only loads when the `UI_MODULE` feature is on.
 
 ```bash
 just serve api U                 # from the repo root - core plus this module
@@ -15,32 +15,52 @@ feature check, so with the flag off none of this is registered and nothing here 
 
 | Folder | What it is |
 |---|---|
-| `Components/Pages/` | The pages - `Home`, `PackingDemo`, `ProtocolDecoder`, `Error` |
-| `Components/Features/` | The two big pieces - `PackingVisualizer` and `ErrorsDialog` |
-| `Components/Layout/`, `Components/Shared/` | The chrome and the shared form controls |
-| `ViewModels/` | What a page binds to - one per page, plus bin, item, algorithm, errors |
-| `Models/` | Internal types - applet, bin, item, coordinates, theme, packing result |
-| `ApiModels/` | The request and response shapes for the API call this app makes |
-| `Services/` | Applets, visualizer, sample data, theme, local storage, messaging |
-| `wwwroot/` | Everything the browser gets - see below |
+| `Pages/` | Every page - `Index`, `Packing`, `Vipaq`, `Instance`, `Error` - and the chrome under `Pages/Shared/` |
+| `Models/`, `Services/` | The applet list the cards and the navigation are built from, and the instance page's switch list |
+| `_sass/` | The stylesheet source, compiled to `wwwroot/css/main.css` |
+| `_js/` | The four webpack entries, bundled into `wwwroot/js/` |
+| `wwwroot/` | Generated. Never edit anything in here |
 
-## 🌐 It calls the API over HTTP
+| Route | What it serves |
+|---|---|
+| `/` | Three cards, one per applet. The whole card is the link |
+| `/packing` | The packing demo |
+| `/vipaq` | The ViPaq decoder |
+| `/instance` | Version, what is switched on, and the presets this instance loaded |
+| `/error/{errorCode?}` | The error page |
 
-The demo is a client of the same API it ships in: it configures a named `BinacleApi` `HttpClient` and posts a
-pack request like any other caller. It does not reach into the packing engine directly.
+## 🛠️ Both demos come from the shared package
 
-`wwwroot/data/sample_data.json` is what the demo loads when you press the sample button.
+The packing form, the 3D visualizer and the decoder are TypeScript, in
+[`packages/binacle-net-ui`](../../../packages/binacle-net-ui). The marketing site's demos are built from the
+same source, so a fix lands on both. Everything around them - the pages, the navigation, the copy - is this
+module's alone and is free to differ.
 
-## ⚠️ `wwwroot/` is hand-maintained, and it is a second copy
+They run in the browser and call the API over relative URLs, so this module makes no server-side HTTP calls
+and needs no configuration file. The instance page reads its preset list the same way, from
+`GET /api/v4/presets` - the preset options live in the entry project, which references this one, so there is no
+project reference to take.
 
-Nothing builds it, and no repo tooling touches it:
+## ⚠️ `wwwroot/` is generated, and nothing in it is yours
 
-- **`js/`** - `PackingVisualizer.js`, `cookies.js` and `themeswitcher.js` are hand-written here. The website
-  does the same three jobs from the shared packages in [`packages/`](../../../packages), and the two are not
-  connected. A fix in one is not a fix in the other.
-- **`vendor/`** - its own copy of beercss and material-dynamic-colors, currently beercss `3.10.8` while
-  repo-root [`assets/`](../../../assets) is on `3.11.11`. `just assets` copies into the two sites and **never**
-  here.
+It is rebuilt from three places and gitignored whole:
 
-The module ships self-contained inside the image, which is why the copies exist. Treat them as forks and
-expect to change things twice.
+- `just assets` copies [`assets/`](../../../assets) into `lib/`, `media/` and the icons at the root.
+- `npm run build:css` compiles `_sass/main.scss` into `css/main.css`.
+- `npm run build:js` bundles `_js/` into `js/`.
+
+`just build publish` runs all three before `dotnet publish`, because static web assets are collected at
+publish time. **Nothing fails when they are missing** - the image just ships pages with no styling and demos
+that do nothing. `just serve api U` runs the two watches beside `dotnet run`.
+
+## ⚙️ Who gets the error page
+
+**Everything that is not a reserved path.** Every module declares the paths it serves that must not answer
+with a web page - `/api`, `/openapi`, `/swagger` and `/scalar` from the API, `/_debug` and the health path
+from the diagnostics module, `/_content` from here. Those come back as a bare status or problem-details JSON,
+whether or not the feature serving them is switched on. Everything else gets the error page, for a 404 and
+for an unhandled exception alike.
+
+**Map a path, declare it.** `ReservedPathOptions` in the kernel is the one place, and a running instance
+lists what it reserved under `ReservedPaths` in `/_health` and `[reservedPaths]` in `/_debug`. A fixed
+list inside this module could never be right: the health path is configurable.

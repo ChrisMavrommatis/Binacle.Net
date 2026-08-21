@@ -21,7 +21,6 @@ the vendor's own output, dropped in as-is.
 |---|---|---|
 | `lib/beercss/` | The Material-style CSS framework, plus the Material Symbols fonts | `version` file, `3.11.11` |
 | `lib/swagger-ui/` | The Swagger UI bundle the docs site embeds | `version` file, `5.11.0` |
-| `lib/alpine/` | Alpine.js, for the small interactive bits | not recorded |
 | `lib/material-dynamic-colors/` | Theme colour generation for beercss | not recorded |
 
 **To upgrade one, replace the files and update its `version` file.** Two of them do not have one - if you
@@ -33,16 +32,22 @@ upgrade those, add it, because nothing else in the repo records what shipped.
 just assets                      # after changing anything here
 ```
 
-That runs the two gulp tasks in the root `gulpfile.js`, which copy every `.js`, `.css`, `.woff2`, image and
-icon into [`sites/docs/`](../sites/docs) and [`sites/web/`](../sites/web). It is also part of `just install`,
-so a fresh clone gets them without asking.
+That runs the three gulp tasks in the root `gulpfile.js`, which copy every `.js`, `.css`, `.woff2`, image and
+icon into [`sites/docs/`](../sites/docs), [`sites/web/`](../sites/web) and the UI module's `wwwroot/`. It is
+also part of `just install`, so a fresh clone gets them without asking.
 
-The copy is one-way and does not delete. Renaming a file here leaves the old name behind in both sites until
+**Every target gets the same layout - `lib/`, `media/` and the icons at the root.** What differs is only what
+each one skips, and `gulpfile.js` holds that in one `IGNORE` block with the measurement behind each line.
+Today `lib/swagger-ui/` goes to the docs site alone; nothing else reads it.
+
+The copy is one-way and does not delete. Renaming a file here leaves the old name behind in every target until
 someone removes it by hand.
 
-## ⚠️ The UI module does not read this folder
+## 📦 The UI module reads this folder too
 
-`api/src/Binacle.Net.UIModule/wwwroot/vendor/` holds its **own** copy of beercss and
-material-dynamic-colors, checked in beside the module and never touched by `just assets`. The two are not in
-step - the module is on beercss `3.10.8`, this folder on `3.11.11`. Upgrading here does not upgrade the
-module, and it never has.
+`api/src/Binacle.Net.UIModule/wwwroot/` is generated in full and gitignored - `just assets` fills its `lib/`
+and `media/`, and the module's own build fills `js/` and `css/`. **Nothing under that `wwwroot/` is edited by
+hand**; the module's sources are `_sass/` and `_js/` beside it.
+
+So upgrading a library here upgrades the module as well, which was not true before: it used to keep its own
+checked-in copy of beercss, and that copy sat three versions behind this one for as long as it existed.

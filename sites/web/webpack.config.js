@@ -22,9 +22,6 @@ module.exports = (env, argv) => {
 		},
 		resolve: {
 			extensions: ['.ts', '.js', '.json'],
-			alias: {
-				three: path.resolve(__dirname, 'node_modules/three'),
-			},
 		},
 		module: {
 			rules: [

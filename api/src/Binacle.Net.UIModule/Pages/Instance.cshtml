@@ -1,0 +1,81 @@
+@page "/instance"
+@model InstanceModel
+@{
+	ViewData["Title"] = Model.Applet.Title;
+}
+
+<h1>@Model.Applet.Title</h1>
+
+<p>@Model.Applet.Description</p>
+
+<div class="grid">
+	<article class="s12 m6">
+		<h5>Build</h5>
+		<table class="border">
+			<tbody>
+			<tr>
+				<td>Version</td>
+				<td class="right-align"><code>@Model.Version</code></td>
+			</tr>
+			<tr>
+				<td>Environment</td>
+				<td class="right-align"><code>@Model.Environment</code></td>
+			</tr>
+			<tr>
+				<td>Runtime</td>
+				<td class="right-align"><code>.NET 10</code></td>
+			</tr>
+			</tbody>
+		</table>
+	</article>
+
+	<article class="s12 m6">
+		<h5>Switches</h5>
+		<table class="border">
+			<tbody>
+			@foreach (var featureSwitch in Model.Switches)
+			{
+				var isOn = Model.IsOn(featureSwitch);
+				var path = Model.PathFor(featureSwitch);
+				<tr>
+					<td>@featureSwitch.Name</td>
+					<td>
+						@if (isOn)
+						{
+							<span class="bold green-text">on</span>
+						}
+						else
+						{
+							<span class="italic">off</span>
+						}
+					</td>
+					<td class="right-align">
+						@if (isOn && path is not null)
+						{
+							<a href="@path">@path</a>
+						}
+						else if (!isOn)
+						{
+							<code>@featureSwitch.Setting</code>
+						}
+					</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+	</article>
+
+	@* Fetched in the browser, from this host. The module makes no server-side calls and holds no packing code,
+	   so the presets it shows are whatever the running API answers with. *@
+	<article class="s12" id="presets">
+		<h5>Presets <span class="small-text" data-presets-count></span></h5>
+		<p data-presets-status>Reading them from this instance...</p>
+		<table class="border" data-presets-table hidden>
+			<tbody data-presets-body></tbody>
+		</table>
+	</article>
+</div>
+
+@section Scripts {
+	<script src="/_content/Binacle.Net.UIModule/js/instance.js"></script>
+}

@@ -1,7 +1,7 @@
 ---
 id: api
 description: Index for API slice docs — endpoints, contracts, service, kernel, presets, and module docs (Diagnostics, ServiceModule, UIModule)
-verified: 2026-08-19
+verified: 2026-08-21
 check: The startup order matches Program.cs top to bottom, builder half then pipeline half; the dependency map matches every ProjectReference in api/**/*.csproj and the projects those reach; every type named in the v4 request flow still resolves
 also_update:
   - api/modules
@@ -24,7 +24,7 @@ If you don't know where to start, read `$api/v4/add-endpoint` first.
 - `api/src/Binacle.Net.ServiceModule` — optional (`SERVICE_MODULE` flag); JWT auth, rate limiting, account management
   - `api/src/Binacle.Net.ServiceModule.Domain` — domain layer; entities, repository interfaces
   - `api/src/Binacle.Net.ServiceModule.Infrastructure` — data layer; SQLite / PostgreSQL / Azure Tables backends
-- `api/src/Binacle.Net.UIModule` — optional (`UI_MODULE` flag); Blazor interactive demo
+- `api/src/Binacle.Net.UIModule` — optional (`UI_MODULE` flag); Razor Pages demo host
 
 ## Startup Order
 
@@ -74,7 +74,7 @@ api/src/Binacle.Net.DiagnosticsModule     → Binacle.Net.Kernel, Binacle.Packin
 api/src/Binacle.Net.ServiceModule.Domain  (no dependencies)
 api/src/Binacle.Net.ServiceModule.Infrastructure → Binacle.Net.Kernel, ServiceModule.Domain
 api/src/Binacle.Net.ServiceModule         → Binacle.Net.Kernel, ServiceModule.Domain, ServiceModule.Infrastructure
-api/src/Binacle.Net.UIModule              → Binacle.Net.Kernel, Binacle.Packing, Binacle.ViPaq, Binacle.CompactNotation
+api/src/Binacle.Net.UIModule              → Binacle.Net.Kernel
 api/src/Binacle.Net                       → Binacle.Lib, all modules, Binacle.ViPaq
 ```
 
@@ -135,7 +135,7 @@ See `$lib/result-building` for how `OperationResultBuilder` computes status and 
 - Modules (`$api/modules`) — how the module system works (feature flags, Add/Use pattern)
 - DiagnosticsModule (`$api/modules/diagnostics`) — logging, OpenTelemetry, health checks, packing logs
 - ServiceModule (`$api/modules/service`) — auth, rate limiting, accounts, subscriptions, clean arch layers
-- UIModule (`$api/modules/ui`) — Blazor demo (not relevant to core API work)
+- UIModule (`$api/modules/ui`) — Razor Pages demo host (not relevant to core API work)
 
 ## Related Tests
 

@@ -46,4 +46,3 @@ services:
 
       - SQLITE_CONNECTION_STRING=Data Source=/app/data/binacle-net-service.db;
       - BINACLE_ADMIN_CREDENTIALS=admin@binacle.net:B1n4cl3Adm!n
-      - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/

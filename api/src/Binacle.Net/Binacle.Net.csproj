@@ -80,4 +80,14 @@
 		</Content>
 	</ItemGroup>
 
+	<!-- The Web SDK discovers blazor.server.js and blazor.web.js from the shared framework whether or not any
+	     component exists. 552 KB in an image that has no Blazor. -->
+	<Target Name="RemoveBlazorFrameworkAssets" AfterTargets="ResolveStaticWebAssetsInputs">
+		<ItemGroup>
+			<StaticWebAsset
+				Remove="@(StaticWebAsset)"
+				Condition="$([System.String]::new('%(StaticWebAsset.RelativePath)').StartsWith('_framework/blazor'))" />
+		</ItemGroup>
+	</Target>
+
 </Project>

@@ -8,14 +8,18 @@
   },
   "scripts": {
     "copy-assets-to-docs": "gulp copy-assets-to-docs",
-    "copy-assets-to-web": "gulp copy-assets-to-web"
+    "copy-assets-to-web": "gulp copy-assets-to-web",
+    "copy-assets-to-uimodule": "gulp copy-assets-to-uimodule"
   },
   "author": "Chris Mavrommatis",
   "license": "GPL-3.0 AND CC-BY-SA-4.0",
   "private": true,
   "workspaces": [
     "packages/*",
-    "vipaq/packages/binacle-vipaq"
+    "vipaq/packages/binacle-vipaq",
+    "api/src/Binacle.Net.UIModule",
+    "sites/docs",
+    "sites/web"
   ],
   "devDependencies": {
     "concurrently": "^10.0.3",

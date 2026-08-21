@@ -51,8 +51,9 @@ install:
     cd sites/web && bundle install
     @just assets
 
-# Copy assets/ into the docs and web sites - run it after changing anything under assets/
+# Copy assets/ into the docs and web sites and the UI module - run it after changing anything under assets/
 [group('dev')]
 assets:
     npm run copy-assets-to-docs
     npm run copy-assets-to-web
+    npm run copy-assets-to-uimodule

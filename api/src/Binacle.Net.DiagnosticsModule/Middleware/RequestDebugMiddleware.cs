@@ -13,18 +13,21 @@ internal class RequestDebugMiddleware
 	private readonly RequestDelegate next;
 	private readonly IHostEnvironment hostEnvironment;
 	private readonly IOptions<FeatureOptions> featureOptions;
+	private readonly IOptions<ReservedPathOptions> reservedPathOptions;
 	private readonly TimeProvider timeProvider;
 
 	public RequestDebugMiddleware(
 		RequestDelegate next,
 		IHostEnvironment hostEnvironment,
 		IOptions<FeatureOptions> featureOptions,
+		IOptions<ReservedPathOptions> reservedPathOptions,
 		TimeProvider timeProvider
 	)
 	{
 		this.next = next;
 		this.hostEnvironment = hostEnvironment;
 		this.featureOptions = featureOptions;
+		this.reservedPathOptions = reservedPathOptions;
 		this.timeProvider = timeProvider;
 	}
 
@@ -104,10 +107,33 @@ internal class RequestDebugMiddleware
 		output.AppendLine($"StartedAt:   {startedAt:O}");
 		output.AppendLine($"Uptime:      {now - startedAt:d\\.hh\\:mm\\:ss}");
 		output.AppendLine($"UtcNow:      {now:O}");
-		output.AppendLine($"Features:    {string.Join(", ", this.featureOptions.Value.EnabledFeatures.Order())}");
+
+		output.AppendLine();
+
+		output.AppendLine("[features]");
+		AppendLines(output, this.featureOptions.Value.EnabledFeatures);
+
+		output.AppendLine();
+
+		output.AppendLine("[reservedPaths]");
+		AppendLines(output, this.reservedPathOptions.Value.Prefixes);
 
 		context.Response.StatusCode = StatusCodes.Status200OK;
 		context.Response.ContentType = "text/plain; charset=utf-8";
 		await context.Response.WriteAsync(output.ToString(), context.RequestAborted);
+	}
+
+	private static void AppendLines(StringBuilder output, IReadOnlyCollection<string> values)
+	{
+		if (values.Count == 0)
+		{
+			output.AppendLine("(none)");
+			return;
+		}
+
+		foreach (var value in values.Order())
+		{
+			output.AppendLine(value);
+		}
 	}
 }

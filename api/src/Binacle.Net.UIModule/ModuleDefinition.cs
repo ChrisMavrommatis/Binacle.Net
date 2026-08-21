@@ -2,11 +2,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Binacle.Net.UIModule.Components;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Binacle.Net.UIModule;
 
@@ -17,80 +16,48 @@ public static class ModuleDefinition
 		Log.Information("{ModuleName} module. Status {Status}", "UI", "Initializing");
 
 		builder.WebHost.UseStaticWebAssets();
-		builder.AddJsonConfiguration(
-			filePath: "UiModule/ConnectionStrings.json",
-			environmentFilePath: $"UiModule/ConnectionStrings.{builder.Environment.EnvironmentName}.json",
-			optional: true,
-			reloadOnChange: true
-		);
+
 		builder.Services.Configure<FeatureOptions>(options =>
 		{
 			options.AddFeature("UIModule");
 		});
-		builder.Services
-			.AddHttpContextAccessor()
-			.AddRazorComponents(options =>
-			{
-			})
-			.AddInteractiveServerComponents(options =>
-			{
-			});
 
-		builder.Services.AddHttpClient("BinacleApi", (serviceProvider, httpClient) =>
+		// The seam for pointing the demo at another API host. Nothing sets it - see UIModuleOptions.
+		builder.Services.Configure<UIModuleOptions>(options =>
 		{
-			var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-			var connectionString = configuration.GetConnectionStringWithEnvironmentVariableFallback("BinacleApi");
-
-			if (connectionString is not null)
-			{
-				httpClient.BaseAddress = new Uri(connectionString.Get("endpoint")!);
-				return;
-			}
-			
-			var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-			var request = httpContextAccessor.HttpContext?.Request;
-
-			if (request is null) 
-				return;
-			
-			var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
-			httpClient.BaseAddress = new Uri(baseUrl);
+			options.ApiBaseUrl = string.Empty;
 		});
 
+		// Static web assets. A missing bundle is a 404, never a page.
+		builder.Services.Configure<ReservedPathOptions>(options =>
+		{
+			options.AddPrefix("/_content");
+		});
+
+		builder.Services.AddRazorPages();
 		builder.Services.AddSingleton<Services.AppletsService>();
-		
-		// For blazor components this is per connection or tab
-		builder.Services.AddScoped<Services.ThemeService>();
-		builder.Services.AddScoped<Services.MessagingService>();
-		builder.Services.AddScoped<Services.BinacleVisualizerService>();
-		builder.Services.AddScoped<Services.LocalStorageService>();
-		builder.Services.AddScoped<Services.ISampleDataService, Services.SampleDataService>();
 
 		Log.Information("{ModuleName} module. Status {Status}", "UI", "Initialized");
 	}
 
 	public static void UseUIModule(this WebApplication app)
 	{
-		// Configure the HTTP request pipeline.
 		if (!app.Environment.IsDevelopment())
 		{
-			// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 			app.UseHsts();
 		}
+
 		app.MapStaticAssets();
 
-		app.MapRazorComponents<App>()
-			.AddInteractiveServerRenderMode();
-		
-		app.UseStatusCodePagesWithReExecute("/Error/{0}");
+		// Has to sit on app. Inside a UseWhen branch the re-execute finds no endpoint and returns 0 bytes.
+		app.UseStatusCodePagesWithReExecute("/error/{0}");
 
-		app.Use(async(ctx, next) =>
+		// A reserved path answers with whatever the endpoint wrote - a bare status, or problem-details JSON.
+		app.Use(async (context, next) =>
 		{
-			if (ctx.Request.Path.StartsWithSegments("/api")
-			    || ctx.Request.Path.StartsWithSegments("/swagger")
-			    || ctx.Request.Path.StartsWithSegments("/scalar"))
+			if (IsReserved(context))
 			{
-				var statusCodeFeature = ctx.Features.Get<IStatusCodePagesFeature>();
+				var statusCodeFeature = context.Features.Get<IStatusCodePagesFeature>();
 
 				if (statusCodeFeature is { Enabled: true })
 					statusCodeFeature.Enabled = false;
@@ -99,7 +66,32 @@ public static class ModuleDefinition
 			await next();
 		});
 
-		app.UseAntiforgery();
-	}
-}
+		// A bare status with no body, so the re-execute above renders the error page. UseExceptionHandler
+		// cannot do this job: when its handler writes nothing it falls back to problem-details JSON.
+		app.Use(async (context, next) =>
+		{
+			try
+			{
+				await next();
+			}
+			catch (Exception exception)
+			{
+				if (IsReserved(context) || context.Response.HasStarted)
+					throw;
 
+				Log.Error(exception, "Unhandled exception serving {Path}", context.Request.Path);
+				context.Response.Clear();
+				context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+			}
+		});
+
+		app.MapRazorPages()
+			.WithStaticAssets();
+	}
+
+	// Resolved per request: the reserved set is built lazily, on first read.
+	private static bool IsReserved(HttpContext context)
+		=> context.RequestServices
+			.GetRequiredService<IOptions<ReservedPathOptions>>().Value
+			.Covers(context.Request.Path);
+}

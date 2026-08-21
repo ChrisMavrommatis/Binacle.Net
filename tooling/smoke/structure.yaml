@@ -7,7 +7,7 @@
 schemaVersion: 2.0.0
 
 fileExistenceTests:
-  # The nine shipped config files.
+  # The eight shipped config files.
   - name: appsettings.json
     path: /app/Config_Files/appsettings.json
     shouldExist: true
@@ -31,9 +31,6 @@ fileExistenceTests:
     shouldExist: true
   - name: RateLimiter.json
     path: /app/Config_Files/ServiceModule/RateLimiter.json
-    shouldExist: true
-  - name: UiModule/ConnectionStrings.json
-    path: /app/Config_Files/UiModule/ConnectionStrings.json
     shouldExist: true
   - name: the app itself
     path: /app/Binacle.Net.dll
@@ -82,6 +79,26 @@ fileExistenceTests:
     path: /app/Config_Files/ServiceModule/ConnectionStrings.json
     shouldExist: false
 
+  # The UI module reads no configuration at all. Its demos run in the browser and fetch relative.
+  - name: no UiModule folder
+    path: /app/Config_Files/UiModule
+    shouldExist: false
+
+  # The Web SDK ships the blazor runtime with every project; a target in Binacle.Net.csproj strips it. Nothing
+  # breaks when that stops working - the image just grows by 552 KB - so assert it here.
+  - name: no blazor runtime
+    path: /app/wwwroot/_framework/blazor.web.js
+    shouldExist: false
+
+  # The Razor SDK globs **/*.json as Content, so the UI module's own build config lands in the image unless the
+  # csproj removes it. Nothing breaks when it does - the files are just there for anyone who opens a shell.
+  - name: no uimodule package.json
+    path: /app/package.json
+    shouldExist: false
+  - name: no uimodule tsconfig.json
+    path: /app/tsconfig.json
+    shouldExist: false
+
 fileContentTests:
   # Toggles with no HTTP route - static is the only place their shipped-off state is asserted.
   - name: ForwardedHeaders ships off
@@ -103,10 +120,6 @@ fileContentTests:
   - name: AllowedHosts is the wildcard default
     path: /app/Config_Files/appsettings.json
     expectedContents: ['"AllowedHosts"\s*:\s*"\*"']
-  - name: UI connection string ships empty
-    path: /app/Config_Files/UiModule/ConnectionStrings.json
-    expectedContents: ['"BinacleApi"\s*:\s*""']
-
   # Log paths must stay under data/, which pairs with the /app/data ownership check.
   - name: Serilog writes under data/logs
     path: /app/Config_Files/DiagnosticsModule/Serilog.json

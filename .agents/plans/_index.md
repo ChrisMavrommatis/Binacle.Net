@@ -32,7 +32,7 @@ you need, and trim or delete it once the work lands.
   paths: ["api/**"]
 - file: api/ui-clients-off-v3.md
   description: "Migrate the shipped UI clients off the v3 API"
-  paths: ["api/**"]
+  paths: ["api/**", "packages/binacle-net-ui/**"]
 - file: api/v4-stable.md
   description: "v4 - flip from experimental to stable"
   paths: ["api/**"]

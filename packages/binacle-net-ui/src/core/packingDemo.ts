@@ -8,7 +8,12 @@ export function packingDemoAppPlugin(Alpine: AlpineType) {
 	Alpine.data('packing_demo_app', packingDemoApp);
 }
 
-export const packingDemoApp = defineComponent((base_url: string) => ({
+export interface PackingDemoOptions {
+	// Empty means fetch relative, from whatever host is serving the page.
+	baseUrl?: string;
+}
+
+export const packingDemoApp = defineComponent((options: PackingDemoOptions = {}) => ({
 	model: {
 		bins: [] as Bin[],
 		items: [] as Item[],
@@ -124,7 +129,7 @@ export const packingDemoApp = defineComponent((base_url: string) => ({
 	},
 	async getResults(request: PackingRequest) : Promise<PackingResponse | null> {
 		try {
-			const response = await fetch(`${base_url}/api/v3/pack/by-custom`, {
+			const response = await fetch(`${options.baseUrl ?? ''}/api/v3/pack/by-custom`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

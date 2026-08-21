@@ -1,8 +1,8 @@
 ---
 id: api/modules/diagnostics
 description: DiagnosticsModule — always-on logging, OpenTelemetry, health checks, and packing logs
-verified: 2026-08-19
-check: The Add/Use lists match ModuleDefinition.cs top to bottom, including what each branch is gated on; every config key matches its Configuration/Models/ class and its shipped JSON; the packing-log registration signature matches ExtensionMethods/LogProcessorServiceCollectionExtensions.cs
+verified: 2026-08-22
+check: The Add/Use lists match ModuleDefinition.cs top to bottom, including what each branch is gated on; the FeatureOptions entries this module adds match its AddFeature calls; every config key matches its Configuration/Models/ class and its shipped JSON; the packing-log registration signature matches ExtensionMethods/LogProcessorServiceCollectionExtensions.cs
 also_update:
   - api/configuration
 paths:
@@ -68,8 +68,11 @@ this is wired at all** and the path 404s:
 - Health status codes: `Healthy/Degraded → 200`, `Unhealthy → 503`
 - The `RestrictedChecks` allow-list is applied as the map's `Predicate`
 
-`DEBUG_ENDPOINT` also adds a `DebugEndpoint` entry to `FeatureOptions` during the builder phase, the same way
-`SWAGGER_UI` and `SCALAR_UI` do in `Program.cs`.
+This module registers two `FeatureOptions` entries, each with the path it answers on. `DebugEndpoint` is added
+in the builder phase behind `DEBUG_ENDPOINT`, the same way `SWAGGER_UI` and `SCALAR_UI` do in `Program.cs`.
+`HealthChecks` cannot be, because it is switched on in a config file rather than by a flag — it is bound through
+`AddOptions<FeatureOptions>().Configure<IOptions<HealthCheckConfigurationOptions>>(...)` so it resolves after
+build and carries the configured path, whatever it ended up being.
 
 ## Forwarded headers diagnostic
 

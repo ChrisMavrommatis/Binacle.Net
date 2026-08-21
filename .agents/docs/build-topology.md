@@ -1,7 +1,7 @@
 ---
 id: build-topology
 description: Build & workspace topology — the .slnx solution, npm workspaces, gulp asset copy, Directory.Build.props (including the SonarQubeTestProject rule for support projects), central package management, the global.json test-runner opt-in, the publish/Dockerfile chain, and the NoTargets content projects
-verified: 2026-08-19
+verified: 2026-08-21
 check: Every solution folder and project count matches Binacle.Net.slnx (43 projects); Directory.Build.props, Directory.Packages.props, global.json and Dockerfile match the repo root; the content .proj list resolves to files that exist; the root package.json scripts and devDependencies match
 also_update:
   - commands
@@ -118,17 +118,26 @@ standalone runner executable.
 
 ## JS workspaces & asset copy
 
-Root `package.json` (name `binacle-net`, `private`) declares npm workspaces `packages/*` and `vipaq/packages/binacle-vipaq`.
-Its dev dependencies are `gulp` and `concurrently` (the latter is what lets one `just serve` run jekyll and
+Root `package.json` (name `binacle-net`, `private`) declares five workspace entries: `packages/*`,
+`vipaq/packages/binacle-vipaq`, `api/src/Binacle.Net.UIModule`, `sites/docs` and `sites/web`.
+
+**Every javascript build in the repo is a member, and `package-lock.json` at the root is the only lock file.**
+One `npm ci` installs all of them. That is what keeps a single copy of `three` in the tree: `binacle-net-ui`
+imports it and so does each host, and two copies in one bundle make a mesh from one fail `instanceof` against
+the other.
+
+Root dev dependencies are `gulp` and `concurrently` (the latter is what lets one `just serve` run jekyll and
 webpack together under a single Ctrl-C), and its only scripts are the asset-copy tasks:
 
 - `npm run copy-assets-to-docs` → `gulp copy-assets-to-docs`
 - `npm run copy-assets-to-web` → `gulp copy-assets-to-web`
+- `npm run copy-assets-to-uimodule` → `gulp copy-assets-to-uimodule`
 
-`just assets` runs both, and `just install` runs it after the npm and bundler installs.
+`just assets` runs all three, and `just install` runs it after the npm and bundler installs.
 
-`gulpfile.js` copies shared `assets/` (images, js, css, fonts) into the two Jekyll sites under `sites/`. The
-sites do their own webpack bundling separately (see docs site (`$sites/docs`) / web site (`$sites/web`)).
+`gulpfile.js` copies shared `assets/` (images, js, css, fonts) into the two Jekyll sites and the UI module's
+`wwwroot/`. One `IGNORE` block holds what each target skips. Each of the three runs its own webpack build —
+see docs site (`$sites/docs`), web site (`$sites/web`) and the UI module (`$api/modules/ui`).
 
 ## Docker build chain
 

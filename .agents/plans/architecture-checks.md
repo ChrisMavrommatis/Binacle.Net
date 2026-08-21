@@ -272,7 +272,7 @@ Three things to settle before adopting ArchUnitNET:
 - **Its test project must reference every slice it inspects**, becoming a node with an edge to everything.
   That exemption belongs in the declaration, not in the test.
 
-For dependency-cruiser, reading the file is the easy half. There is no root `tsconfig.json` - there are four,
+For dependency-cruiser, reading the file is the easy half. There is no root `tsconfig.json` - there are five,
 and `sites/web/` has none despite running `ts-loader` - and imports are bare specifiers resolved through npm workspace
 symlinks (`packages/binacle-net-ui/src/core/protocolDecoder.ts:4` imports `"binacle-vipaq"`), so rules must be
 written against resolved real paths with symlink handling pinned.
@@ -288,8 +288,11 @@ re-derivation, and npm's own resolver.
   2026-08-12 audit found was removed by the packing-contract extraction rather than documented.
 - **`vipaq/tools` reaches into both `lib` and `shared`.**
 - **The two sites are not graph leaves.** Both Gemfiles load `../../ruby/jekyll-gtm` by path, and
-  `sites/web/webpack.config.js:53,60` names `packages/binacle-net-ui` and `vipaq/packages/binacle-vipaq`. "Agents
+  `sites/web/webpack.config.js` names `packages/binacle-net-ui` and `vipaq/packages/binacle-vipaq`. "Agents
   must not edit it" and "it is a leaf in the graph" are different claims.
+- **`api/src/Binacle.Net.UIModule` is a javascript consumer too**, since 2026-08-21. It has its own
+  `package.json`, `tsconfig.json` and `webpack.config.js`, and its webpack config names the same two packages
+  as `sites/web`'s. A slice that was C#-only is now on both graphs.
 - **There is no cycle between `packages` and `vipaq`.** Shipped code flows one way; only test support and tool
   files cross back. `binacle-compact-notation` sitting in `dependencies` rather than `devDependencies` is the
   single line that makes npm's graph look cyclic.
@@ -312,11 +315,6 @@ how much the graph half is worth.
   project it borrows from stops referencing what it borrows. **Whether the fix is 19 added references or a
   decision that transitive resolution is fine here has never been settled**, and until it is, a check for it
   would land red on a question nobody has answered.
-- **The UIModule vendored assets have already drifted, not "will drift".** `beer.css`, `beer.js`, `beer.min.css`
-  and `beer.min.js` differ between `assets/lib/beercss/` and
-  `api/src/Binacle.Net.UIModule/wwwroot/vendor/beercss/`; only the four `.woff2` files still match. And
-  `assets/lib/beercss/version` (3.11.11) has no counterpart under `wwwroot/`, so the shipped version cannot be
-  determined.
 
 ## What stays unenforced
 

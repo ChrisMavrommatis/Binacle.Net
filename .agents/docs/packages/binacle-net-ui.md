@@ -1,7 +1,7 @@
 ---
 id: packages/binacle-net-ui
 description: packages/binacle-net-ui — Alpine.js components + Three.js visualizer for the packing demo. Components, plugins, model layers, and the window.binacle global.
-verified: 2026-08-19
+verified: 2026-08-21
 check: Every Alpine.data name in src/core/ appears in the component table and vice versa; the two plugins register exactly what is listed; the model-layer folders and the utils split match src/; the hardcoded endpoint in core/packingDemo.ts is still the one named here; package.json still has no scripts
 also_update:
   - packages
@@ -17,12 +17,23 @@ Private npm workspace package (`"private": true`, name `binacle-net-ui`).
 ## Build & consumers — important
 
 This package has **no build step and no bundle of its own** — `"main": "index.ts"` points at raw TypeScript, and
-its `package.json` carries **no `scripts` block at all**. It is consumed as **TS source** by the `sites/web/` Jekyll site, which compiles it
-with its own webpack + ts-loader (`sites/web/_js/packing_demo.js`, `sites/web/_js/protocol_decoder.js`; split chunk in
-`sites/web/webpack.config.js`). `three` is bundled from web's `node_modules`, not a CDN.
+its `package.json` carries **no `scripts` block at all**. Each host compiles it from source with its own webpack
++ ts-loader.
 
-The `Binacle.Net.UIModule` does **not** use this package — it has its own legacy raw-JS visualizer in
-`wwwroot/js`.
+| Host | Entries | Config |
+|---|---|---|
+| `sites/web/` (Jekyll) | `sites/web/_js/packing_demo.js`, `protocol_decoder.js` | `sites/web/webpack.config.js` |
+| `api/src/Binacle.Net.UIModule` (Razor Pages) | `_js/packing_demo.js`, `_js/protocol_decoder.js` | the module's `webpack.config.js` |
+
+**One implementation, two hosts. A change here lands on both** — that is the point, and it is the rule to test
+any proposed feature against: pass data in, never fork the component.
+
+Both configs give this package its own split chunk with the same name and priority, so the chunk set cannot
+drift. `three` is bundled from `node_modules` in both, never a CDN.
+
+**Every host must resolve exactly one copy of `three`.** This package imports it and so does each host; if the
+two resolve to different directories, webpack bundles both and a mesh built by one fails `instanceof` against
+the other. Resolving through the root workspace is what prevents it.
 
 ## Public entry points (`index.ts`)
 
@@ -39,7 +50,7 @@ A host page imports a plugin, calls `Alpine.plugin(...)`, then `Alpine.start()`,
 
 | `x-data` name | Factory | Params | What it does |
 |---|---|---|---|
-| `packing_demo_app` | `packingDemoApp` | `(base_url)` | Form model (bins/items/algorithm), validation, randomizers. On submit POSTs to **`${base_url}/api/v3/pack/by-custom`**; dispatches `update-scene` / `error-occurred`. Algorithms: FFD/BFD/WFD |
+| `packing_demo_app` | `packingDemoApp` | `({ baseUrl })` | Form model (bins/items/algorithm), validation, randomizers. On submit POSTs to **`${baseUrl}/api/v3/pack/by-custom`**; dispatches `update-scene` / `error-occurred`. Algorithms: FFD/BFD/WFD |
 | `protocol_decoder_app` | `protocolDecoderApp` | none | Decodes base64 ViPaq via `binacle-vipaq`'s `ViPaqSerializer.deserialize`; saves to `localStorage` key `ProtocolDecoderSavedResults` |
 | `packing_visualizer` | `packingVisualizer` | none | The Three.js scene. Listens for `update-scene`; sets up the scene in `init()` and stores it on `window.binacle`. Playback controls drive items in/out |
 | `errors_dialog` | `errorsDialog` | `(default_title)` | Error dialog; `onErrorOccurred(detail)` handles a `string[]` or an `Error` view-model |
@@ -52,16 +63,16 @@ Cross-component messaging is via Alpine window events: **`update-scene`** (paylo
 or a `DecodedPackingResult`) and **`error-occurred`** (payload `string[]` or `Error`). `packing_visualizer` and
 `errors_dialog` are the listeners.
 
-## window.binacle (two different ones — don't confuse them)
+## window.binacle
 
 This package's `packingVisualizer.init()` sets `window.binacle = { rendererContainer, visualizerContainer,
 visualizerState }` — exactly the three members of the `Binacle` interface in `src/core/binacle.ts`, all
 nullable, declared onto `Window` in `src/types/global.d.ts`. It is **event-driven** — there are no public
 `initialize`/`redrawScene` methods.
 
-The UIModule's `wwwroot/js/PackingVisualizer.js` defines a **different** `window.binacle` with an imperative API
-(`initialize`, `redrawScene`, `addItemToScene`, `removeItemFromScene`, …) called from Blazor JS interop. Same name,
-separate implementation.
+**There is only one now.** The UIModule used to define a second, imperative `window.binacle` in a hand-written
+`wwwroot/js/PackingVisualizer.js`, driven from Blazor JS interop. That file and the stack around it are gone;
+both hosts run the event-driven one above.
 
 ## Model layers (`src/`)
 
@@ -82,6 +93,11 @@ in `src/utils/` (`redrawScene`, `createBin`/`createItem`, `addItemToScene`/`remo
   `Alpine.data('snake_name', factory)` in a `*Plugin`. Wrap the factory body in `defineComponent(...)` for typing.
 - To add a component to a page, add its `*Plugin` to `src/packingDemoPlugin.ts` or `src/protocolDecoderPlugin.ts`,
   and export the factory + plugin from `src/core/index.ts`.
-- The only API call is hardcoded at `packingDemo.ts` → `POST {base_url}/api/v3/pack/by-custom`. To point the demo
+- The only API call is hardcoded at `packingDemo.ts` → `POST {baseUrl}/api/v3/pack/by-custom`. To point the demo
   at v4, that's the single line (and the request shape in `apiModels/PackingRequest`) to change.
-- No tests, no compile here — `sites/web/`'s webpack picks up changes via the workspace symlink.
+- **`packing_demo_app` takes an options object** — `PackingDemoOptions`, `baseUrl` optional. Options rather than
+  positional so a second value later is not a signature break.
+- **A signature change here lands on both hosts**, and neither can be updated without the other. The way through
+  is to widen first, move each host, then narrow: that is how the base URL went from positional to an object on
+  2026-08-22 without either page breaking in between.
+- No tests, no compile here — each host's webpack picks up changes via the workspace symlink.

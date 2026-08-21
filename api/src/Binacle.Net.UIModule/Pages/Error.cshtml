@@ -1,0 +1,23 @@
+@page "/error/{errorCode?}"
+@model ErrorModel
+@{
+	ViewData["Title"] = Model.Title;
+}
+
+<article class="medium middle-align center-align">
+	<div>
+		<i class="material-symbols-outlined extra error-text">error</i>
+		<h1 class="error-text">@Model.Title</h1>
+		<p>@Model.Message</p>
+		<nav class="center-align">
+			<a asp-page="/Index" class="button">Back to the home page</a>
+		</nav>
+	</div>
+</article>
+
+@if (Model.RequestId is not null)
+{
+	<article>
+		<p>Request ID: <code>@Model.RequestId</code></p>
+	</article>
+}

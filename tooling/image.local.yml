@@ -50,7 +50,6 @@ services:
       # Storage providers are tried in order — AzureStorage, Postgres, Sqlite — first with a connection
       # string wins. Only this one is set here. The db file lands in /app/data, next to the logs.
       - SQLITE_CONNECTION_STRING=Data Source=/app/data/binacle-net-service.db;
-      - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/
 
 volumes:
   # Fixed name, or it comes out prefixed with whichever project created it. Compose drops this declaration

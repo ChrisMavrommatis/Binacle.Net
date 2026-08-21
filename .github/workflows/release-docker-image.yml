@@ -115,6 +115,15 @@ jobs:
       - name: Setup - just
         uses: ./.github/actions/setup-just
 
+      # `just build publish` bundles the UI module's javascript before dotnet collects static web assets, so
+      # this job needs node. Without it the image ships demo pages that render and do nothing, and no step
+      # fails.
+      - name: Setup - Node
+        uses: ./.github/actions/setup-node
+
+      - name: Install npm packages
+        run: npm ci --ignore-scripts
+
       # Do not inline restore/publish here again - the recipe owns those flags.
       - name: Publish
         run: just build publish

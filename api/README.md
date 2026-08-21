@@ -20,7 +20,7 @@ over versioned REST endpoints.
 | `src/Binacle.Net.ServiceModule` | `SERVICE_MODULE` | JWT auth, rate limiting, account management |
 | `src/Binacle.Net.ServiceModule.Domain` | — | Domain layer for ServiceModule |
 | `src/Binacle.Net.ServiceModule.Infrastructure` | — | Database backends (SQLite / PostgreSQL / Azure Tables) |
-| [`src/Binacle.Net.UIModule`](src/Binacle.Net.UIModule) | `UI_MODULE` | Blazor interactive packing demo |
+| [`src/Binacle.Net.UIModule`](src/Binacle.Net.UIModule) | `UI_MODULE` | Razor Pages demo host — packing demo and ViPaq decoder |
 
 ## 🔢 API versions
 

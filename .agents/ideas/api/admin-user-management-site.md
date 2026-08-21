@@ -26,7 +26,7 @@ hand.
 
 ## Open questions
 
-- Reuse the UIModule (Blazor) or a separate site.
+- Reuse the UIModule (Razor Pages + Alpine) or a separate site.
 - What subscription actions are in scope — create, upgrade/downgrade, cancel.
 
 ## Related

@@ -76,7 +76,3 @@ services:
       # The first admin account, seeded once on first start. Change it, then change the password after logging
       # in - it is in this file in plain text.
       - BINACLE_ADMIN_CREDENTIALS=admin@binacle.net:B1n4cl3Adm!n
-
-      # Where a browser should call this API. Used by the shipped clients, so it is the address YOUR users
-      # reach, not the container's.
-      - BINACLEAPI_CONNECTION_STRING=endpoint=http://localhost:8080/

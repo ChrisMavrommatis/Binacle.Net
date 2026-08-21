@@ -1,0 +1,21 @@
+<header class="fixed top responsive max primary">
+	<nav>
+		<div class="s">
+			<a asp-page="/Index">
+				<img class="large" src="/_content/Binacle.Net.UIModule/media/logo/binacle-logo-16x16.svg" alt="Binacle.Net">
+			</a>
+		</div>
+
+		<h5 class="max center-align">Binacle.Net</h5>
+
+		<a href="@Metadata.GitHub" title="Check out my GitHub" target="_blank">
+			<img src="/_content/Binacle.Net.UIModule/media/github/github-mark-white.png" alt="Github" height="20">
+		</a>
+		<a href="@Metadata.Dockerhub" title="Visit Binacle.Net on Dockerhub" target="_blank">
+			<img src="/_content/Binacle.Net.UIModule/media/docker/docker-mark-white.png" alt="Docker" height="20">
+		</a>
+
+		@* The custom element from packages/theme-switcher, defined in main.js. It renders its own icon. *@
+		<theme-switcher class="transparent circle" data-default-theme="light"></theme-switcher>
+	</nav>
+</header>

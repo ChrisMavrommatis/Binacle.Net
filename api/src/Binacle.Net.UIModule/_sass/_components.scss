@@ -1,0 +1,24 @@
+.bottom-right-round {
+	border-radius: 0 !important;
+	border-bottom-right-radius: 2rem !important;
+}
+
+.bottom-left-round {
+	border-radius: 0 !important;
+	border-bottom-left-radius: 2rem !important;
+}
+
+.max-height {
+	height: 100%;
+}
+
+.word-wrap {
+	word-wrap: break-word !important;
+}
+
+// A whole card is one link. Beercss styles `article` as an element, so the anchor sits inside and fills it.
+a.card {
+	display: block;
+	block-size: 100%;
+	color: inherit;
+}

@@ -1,0 +1,64 @@
+@page "/vipaq"
+@model VipaqModel
+@{
+	ViewData["Title"] = Model.Applet.Title;
+}
+
+<h1>@Model.Applet.Title</h1>
+
+<p>@Model.Applet.Description</p>
+
+<div class="grid" x-data="protocol_decoder_app">
+	<article class="no-padding s12 m5 l3 result-container" @@keyup.enter.prevent.stop="addResult">
+		<article class="medium transparent result-input-container">
+			<div class="field label textarea border max-height">
+				<textarea name="result" id="result" x-model="model.result" class="word-wrap" placeholder=""></textarea>
+				<label for="result">Add Result</label>
+			</div>
+		</article>
+		<div>
+			<nav class="no-space padding">
+				<button type="button" class="border surface-container max" @@click.prevent.stop="addResult">
+					<i class="material-symbols-outlined">library_add</i>
+				</button>
+			</nav>
+		</div>
+	</article>
+
+	<div class="s12 m7 l9">
+		<partial name="_PackingVisualizer"/>
+	</div>
+
+	<article class="s12 surface-variant">
+		<fieldset class="scroll" style="block-size: 30rem;">
+			<legend>Saved Results</legend>
+			<template x-if="results.length <= 0">
+				<span>No Results</span>
+			</template>
+			<template x-for="(result, index) in results" :key="index">
+				<a class="row wave padding max"
+				   :class="isSelected(result) ? 'surface-container border' : ''"
+				   @@click.prevent.stop="selectResult(result)">
+					<i class="material-symbols large">package_2</i>
+					<div class="grid no-space max">
+						<span class="s4" x-text="resultTitle(result)"></span>
+						<span class="s8 right-align" x-text="resultBinPercentageText(result)"></span>
+						<progress :value="result.packedBinVolumePercentage()" max="100"
+						          class="s12 surface-container-lowest"></progress>
+						<div class="s4" x-text="result.items.length + ' Items'"></div>
+					</div>
+					<button type="button" class="transparent circle" style="z-index:10" @@click.prevent.stop="deleteResult(result)">
+						<i class="material-symbols">delete</i>
+					</button>
+				</a>
+			</template>
+		</fieldset>
+	</article>
+</div>
+
+<partial name="_ErrorsDialog"/>
+
+@section Scripts {
+	<partial name="_AppletScripts"/>
+	<script src="/_content/Binacle.Net.UIModule/js/protocol_decoder.js"></script>
+}

@@ -1,7 +1,7 @@
 ---
 id: api/modules
 description: Optional module system — feature flags, structure, available modules
-verified: 2026-08-19
+verified: 2026-08-21
 check: The Add/Use pair and IModuleMarker of each Binacle.Net.*Module* project exist where stated; the flag reading rules match Kernel/Features/ (both providers, FeatureManager, FeatureManagerConfiguration); the launch profiles match api/src/Binacle.Net/Properties/launchSettings.json
 also_update:
   - api
@@ -65,10 +65,32 @@ Three, and only two of them are optional.
 |---|---|---|---|
 | `DiagnosticsModule` | none — always compiled in and always added | on | Logging, health checks, OpenTelemetry, packing logs |
 | `ServiceModule` | `SERVICE_MODULE=True` | disabled | JWT auth, rate limiting, account management, subscriptions |
-| `UIModule` | `UI_MODULE=True` | disabled | Razor/Blazor interactive packing demo |
+| `UIModule` | `UI_MODULE=True` | disabled | Razor Pages demo host — packing demo and ViPaq decoder |
 
 `SWAGGER_UI`, `SCALAR_UI` and `DEBUG_ENDPOINT` are flags over features inside the core API and the
 DiagnosticsModule, not modules of their own. `$api/configuration` lists all five in one table.
+
+## Reserved paths
+
+`ReservedPathOptions` (`Binacle.Net.Kernel`) is a set of path prefixes that must never answer with a web page.
+**Whoever maps a path declares it**, because some are configurable and only the owning module knows where one
+ended up.
+
+| Declared in | Prefixes |
+|---|---|
+| `Program.cs` | `/api`, `/openapi`, `/swagger`, `/scalar` |
+| `DiagnosticsModule` | `/_debug`, and the health path from `HealthCheckConfigurationOptions` |
+| `UIModule` | `/_content` |
+
+The core four are declared unconditionally, so they hold with Swagger and Scalar switched off. The health path
+is bound through `AddOptions<ReservedPathOptions>().Configure<IOptions<HealthCheckConfigurationOptions>>(...)`
+so it resolves lazily and follows the config file.
+
+**The only reader is the UIModule** (`$api/modules/ui`), which uses it to decide whether a bare status becomes
+an error page. A running instance lists what it reserved: `ReservedPaths` in the `/_health` payload, and
+`[reservedPaths]` in `/_debug`.
+
+**Map a path outside the UIModule and forget to declare it, and its 404s start rendering as HTML.**
 
 ## Launch Profiles
 

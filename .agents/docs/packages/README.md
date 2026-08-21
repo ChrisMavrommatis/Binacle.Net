@@ -1,7 +1,7 @@
 ---
 id: packages
 description: TypeScript packages under packages/ (npm workspaces) — UI components, compact-notation mirror, cookie utilities, and theme switching.
-verified: 2026-08-19
+verified: 2026-08-21
 check: The package list, their descriptions and the private flag match each packages/*/package.json; the Related Tests table names every package under packages/ that has a suite, with the alias tooling/tests.just gives it
 also_update:
   - packages/binacle-net-ui
@@ -19,7 +19,7 @@ why their `main` is an `index.js` rather than a `.ts` entry.
 
 | Package | Description |
 |---|---|
-| `binacle-net-ui` | Alpine.js + Three.js frontend for the packing demo and protocol decoder — see `$packages/binacle-net-ui` |
+| `binacle-net-ui` | Alpine.js + Three.js frontend for the packing demo and ViPaq decoder — see `$packages/binacle-net-ui` |
 | `binacle-compact-notation` | Compact text notation for Binacle geometry — TS mirror of C# `Binacle.CompactNotation`; used by `binacle-vipaq` (tools/tests) |
 | `cookies` | Cookie read/write utility (based on js-cookie v3.0.5, MIT) |
 | `theme-switcher` | Custom web element for toggling light/dark themes |
@@ -28,10 +28,10 @@ The ViPaq TypeScript mirror lives at `vipaq/packages/binacle-vipaq/` — see `$v
 
 ## binacle-net-ui
 
-Alpine.js components + Three.js visualizer for the packing demo and protocol decoder. Full reference —
+Alpine.js components + Three.js visualizer for the packing demo and ViPaq decoder. Full reference —
 components, plugins, model layers, the `window.binacle` global, and how to add a component — is in
-`$packages/binacle-net-ui`. Consumed as TS source by `sites/web/`'s webpack; the UIModule has its own
-legacy JS copy (see `$api/modules/ui`).
+`$packages/binacle-net-ui`. **Consumed as TS source by two hosts**, each with its own webpack config:
+`sites/web/` and the UIModule (`$api/modules/ui`). One implementation, two pages — a change lands on both.
 
 ## binacle-compact-notation
 
@@ -41,13 +41,13 @@ TypeScript mirror of the C# `Binacle.CompactNotation` — the shared compact tex
 
 ## cookies
 
-Thin wrapper over js-cookie v3.0.5. Used by both sites under `sites/` for cookie read/write.
+Thin wrapper over js-cookie v3.0.5. Reached through `theme-switcher` by both sites and the UIModule.
 No dependencies.
 
 ## theme-switcher
 
-Custom HTML element (`<theme-switcher>`) for switching light/dark themes on the Binacle.Net websites.
-Used by both sites under `sites/`. Depends on the `cookies` workspace package; no external dependencies.
+Custom HTML element (`<theme-switcher>`) for switching light/dark themes. Used by both sites under `sites/`
+and by the UIModule. Depends on the `cookies` workspace package; no external dependencies.
 
 ## Related Tests
 

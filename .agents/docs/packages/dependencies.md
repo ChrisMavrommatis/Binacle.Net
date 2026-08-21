@@ -1,7 +1,7 @@
 ---
 id: packages/dependencies
 description: TypeScript packages dependency tree — the npm workspaces and which package imports (and declares) which.
-verified: 2026-08-19
+verified: 2026-08-21
 check: the workspaces globs in the root package.json still cover every package; each package.json dependencies block matches the graph; a grep for non-relative `from "..."` across packages/*/src and vipaq/packages/binacle-vipaq/src turns up nothing the graph does not name
 paths:
   - "packages/**"
@@ -9,9 +9,10 @@ paths:
 
 # Packages — TypeScript dependencies
 
-The npm workspaces. Root `package.json` globs `packages/*` and `vipaq/packages/binacle-vipaq`, so every package
-resolves the others from the workspace. Every workspace import is also declared in its package's `package.json`
-(all as `"*"`), so the graph is honest on its own, not only by hoisting.
+The npm workspaces. Root `package.json` covers `packages/*`, `vipaq/packages/binacle-vipaq`, and the three
+consumers — `api/src/Binacle.Net.UIModule`, `sites/docs` and `sites/web`. Every package resolves the others
+from the workspace. Every workspace import is also declared in its importer's `package.json` (all as `"*"`),
+so the graph is honest on its own, not only by hoisting.
 
 ## The graph
 

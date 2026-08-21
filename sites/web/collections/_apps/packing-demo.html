@@ -16,7 +16,7 @@ excerpt: |
   and explore detailed visualizations of how items are efficiently arranged within a container.
 </p>
 
-<div x-data="packing_demo_app('{{ site.api_url }}')">
+<div x-data="packing_demo_app({ baseUrl: '{{ site.api_url }}' })">
 
   <form method="post" class="grid" @submit.prevent.stop="onSubmit">
     <article class="s12 primary-container">
@@ -91,7 +91,7 @@ excerpt: |
             <div class="row">
               <div class="max">
                 <div class="field label small padless" :class="item.isFieldValid('Length') ? '' : 'invalid'">
-                  <input t type="number"
+                  <input type="number"
                          class="small padless"
                          x-model="item.length"
                          :id="$fieldId('length', index)"

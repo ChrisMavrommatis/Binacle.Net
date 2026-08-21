@@ -35,12 +35,12 @@ delegate hop (a test reaching its assert through a `Dictionary<Type, Action>` sh
 `Action.Invoke`), and there is no code fix for the jwt.io sample JWT in the `TokenResponse` OpenAPI example.
 
 **Three findings survive with nothing honest to change** and are marked in the SonarCloud UI: that jwt.io JWT;
-**S2245 "use a cryptographically strong RNG"** on `SampleDataService` and `getRandomInt.ts`, neither a security
-context, where swapping in `RandomNumberGenerator` to pick a demo box would be cargo cult (the rule is
-`scope: MAIN`, so the same finding in a benchmark or test kernel disappears once that project is marked as test
-code); and **S2068 "hard-coded credential"** on `AccountGetResponse`'s OpenAPI example, where `PasswordHash` is
-the literal `"type::hash::salt"` — it documents the *shape* of a stored hash, and the rule fires on the property
-name, so any literal there would trip it.
+**S2245 "use a cryptographically strong RNG"** on `getRandomInt.ts`, not a security context, where swapping in
+`RandomNumberGenerator` to pick a demo box would be cargo cult (the rule is `scope: MAIN`, so the same finding
+in a benchmark or test kernel disappears once that project is marked as test code) - it was also marked on
+`SampleDataService`, which the UIModule rebuild deleted; and **S2068 "hard-coded credential"** on
+`AccountGetResponse`'s OpenAPI example, where `PasswordHash` is the literal `"type::hash::salt"` — it documents
+the *shape* of a stored hash, and the rule fires on the property name, so any literal there would trip it.
 
 **Why:** a finding answered in code stays reviewable and keeps the rule armed for the next occurrence; a
 finding answered in config is invisible and switches the rule off for everything matching the path.

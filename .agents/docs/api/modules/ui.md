@@ -1,143 +1,137 @@
 ---
 id: api/modules/ui
-description: UIModule — optional Blazor Web App interactive packing demo. Pages, JS stack, API connection, config, and services.
-verified: 2026-08-19
-check: Routes match the @page directives under Components/Pages/; the script order and importmap match Components/App.razor; the service table matches the registrations in ModuleDefinition.cs including lifetimes and interfaces; the window.binacle members match wwwroot/js/PackingVisualizer.js; a grep for IJSRuntime matches the services named here
+description: UIModule — optional Razor Pages demo host. Routes, the webpack and sass build, the applet list, and how error pages are decided.
+verified: 2026-08-22
+check: Routes match the @page directives under Pages/; the DI registrations match ModuleDefinition.cs; the script and stylesheet paths in Pages/Shared/_Layout.cshtml and _AppletScripts.cshtml match the webpack entries and cacheGroups in webpack.config.js; the applet list matches Services/AppletsService.cs; the switch list in Models/FeatureSwitch.cs matches the feature flag table in api/configuration; a grep for Blazor, IJSRuntime or .razor in the module returns nothing
 also_update:
   - packages
+  - api/configuration
 paths:
   - "api/src/Binacle.Net.UIModule/**"
-
 ---
 
 # UIModule
 
 `api/src/Binacle.Net.UIModule`
 
-Optional interactive packing demo. Enabled by the `UI_MODULE` feature flag.
+The demo UI that ships inside the API. Enabled by the `UI_MODULE` feature flag.
 
 Not relevant to core API or Lib work. Skip this doc unless you are working on the demo UI.
 
 ## Technology
 
-Blazor Web App with Interactive Server rendering (not classic Blazor Server).
-Uses `AddInteractiveServerComponents()` / `AddInteractiveServerRenderMode()`.
+**Razor Pages. No Blazor, no SignalR circuit, no server-side component state.** `AddRazorPages()` and
+`MapRazorPages().WithStaticAssets()` are the whole registration.
 
-**No Alpine.js.** All reactivity is Blazor (`@onclick`, `@onchange`, component bindings).
-BeerCSS handles Material Design animations and interactions.
+**All interactivity is Alpine.js**, from TypeScript compiled out of `packages/binacle-net-ui`. The module
+holds no demo logic of its own — see `$packages/binacle-net-ui`.
+
+`<AddRazorSupportForMvc>true</AddRazorSupportForMvc>` is required in the csproj. Without it the `.cshtml`
+files are never discovered from the host app and every route 404s.
+
+**Razor generates `internal sealed` page and partial classes here**, so `@model` and `@inject` both work with
+internal types. `Applet`, `AppletsService`, `UIModuleOptions` and every PageModel are internal.
 
 ## Pages
 
 | Route | Page | What it does |
 |---|---|---|
-| `/` | Home | Landing page |
-| `/PackingDemo` | Packing Demo | Form to enter bins/items, calls the pack API, shows result in 3D viewer |
-| `/ProtocolDecoder` | Protocol Decoder | Paste a ViPaq-encoded result, decodes and renders it without calling the API |
-| `/Error` | Error | Generic error page |
-| `/Error/{ErrorCode}` | Error | Error page with specific HTTP status code |
+| `/` | `Index` | Three cards, one per applet. The whole card is the link; the page has no button |
+| `/packing` | `Packing` | The packing demo. Calls the pack API from the browser |
+| `/vipaq` | `Vipaq` | Pastes a ViPaq-encoded result and renders it. Calls nothing |
+| `/instance` | `Instance` | Version, the switch list, and the presets this instance loaded |
+| `/error/{errorCode?}` | `Error` | The error page, and the `UseStatusCodePagesWithReExecute` target |
 
-## JS Stack
+`RouteOptions.LowercaseUrls` is true globally. **Every internal link uses the `asp-page` tag helper, never a
+literal path**, so a route change is one edit in the `@page` directive.
 
-`App.razor` is the root layout (equivalent to `_Host.cshtml`). It loads scripts in this order:
+`Pages/Shared/` holds the chrome: `_Layout`, `_Header`, `_Navbar`, `_Footer`, plus `_PackingVisualizer`,
+`_ErrorsDialog` and `_AppletScripts`. `_AppletScripts` is the one copy of the library load order, so the two
+demo pages cannot drift.
 
-1. `blazor.web.js` — Blazor runtime
-2. `cookies.js` — adds `window.Cookies` globally (plain script, no modules)
-3. importmap — tells the browser how to resolve ES module imports
-4. `PackingVisualizer.js` — loads as `type="module"`, imports Three.js via the importmap
-5. `beer.min.js` — Material Design interactions, also `type="module"` (it lives under `wwwroot/vendor/beercss/`,
-   not `wwwroot/js/`)
-6. `themeswitcher.js` — plain script for light/dark toggle
+**Alpine's `@click` and `@submit` are `@@click` and `@@submit` in a `.cshtml` file.** `x-on:` forms need no
+escaping.
 
-### The `@Assets` Helper
+## The build
 
-All static file paths go through Blazor's `@Assets["_content/Binacle.Net.UIModule/..."]` helper.
-This resolves paths to the module's `wwwroot/` at `/_content/Binacle.Net.UIModule/`.
-You'll see this pattern everywhere in `App.razor` — it's not magic, just Blazor's static web asset system.
+`wwwroot/` is **generated in full and gitignored**. Nothing in it is hand-maintained. Three producers fill it:
 
-### Importmap
-
-Defined inline in `App.razor`:
-
-```json
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.176.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.176.0/examples/jsm/",
-    "binacle/addons/": "/_content/Binacle.Net.UIModule/js/addons/"
-  }
-}
-```
-
-`binacle/addons/` maps to `wwwroot/js/addons/` (local ES module helpers).
-
-### wwwroot/js/ Files
-
-| File | Type | What it does |
+| Producer | Fills | From |
 |---|---|---|
-| `PackingVisualizer.js` | ES module | Creates and manages the Three.js scene; exposes `window.binacle` |
-| `addons/PackingVisualizer.utils.js` | ES module | Three.js mesh/camera helpers, imported by `PackingVisualizer.js` |
-| `cookies.js` | Plain script | Adds `window.Cookies` — used for theme persistence |
-| `themeswitcher.js` | Plain script | Adds theme switching logic |
+| `just assets` (gulp) | `lib/`, `media/`, the root icons | repo-root `assets/` |
+| `npm run build:css` (dart-sass) | `css/main.css` | `_sass/main.scss` |
+| `npm run build:js` (webpack) | `js/` | `_js/` — three entries |
 
-### window.binacle API
+`just build publish` runs all three before `dotnet publish`, because static web assets are collected at
+publish time. **A missing bundle fails nothing** — the image ships pages that return 200 and do nothing —
+which is why `full.hurl` and `quickstart.hurl` assert the bundle and stylesheet directly.
 
-`PackingVisualizer.js` creates a `window.binacle` object that C# calls via JS interop:
+The webpack entries are `main`, `instance`, `packing_demo` and `protocol_decoder`. The chunk names and
+priorities match `sites/web/webpack.config.js`; both compile the same package source, so there is one
+implementation and only the config is duplicated.
 
-| Method | What it does |
-|---|---|
-| `binacle.initialize(bin)` | Creates the Three.js scene for the given bin |
-| `binacle.redrawScene(bin, packedItems)` | Replaces the scene contents |
-| `binacle.addItemToScene(bin, packedItem, index)` | Animates adding one item |
-| `binacle.removeItemFromScene(index)` | Animates removing one item |
+`instance` imports nothing, so it is its own 1 KB file and pulls in no shared chunk. The instance page loads
+`runtime` + `main` + `instance` and none of `vendors`, `three` or the two package chunks.
 
-Communication is **one-way: C# → JS only**. There are no `[JSInvokable]` methods — JS never calls back into C#.
+**The module is a root npm workspace member.** `binacle-net-ui`, `binacle-vipaq`, `cookies` and
+`theme-switcher` resolve to symlinks in the root `node_modules`, and `three` resolves to one copy — which is
+why this config needs no `three` alias. Two copies in one bundle would make a mesh from one fail `instanceof`
+against the other. One root `npm ci` covers the module; it has no lock file of its own.
 
-## JS Interop Bridge
+**Nothing on a page is fetched from the internet.** Three.js and Alpine are bundled, beercss and the fonts are
+copied in, and the footer carries no remote badges. The only external URLs in the rendered HTML are anchors a
+person clicks. **An air-gapped install is a normal way to run this**, so a new remote asset is a defect.
 
-`BinacleVisualizerService` wraps `IJSRuntime` and calls the `window.binacle.*` methods above. It is one of
-**two** services that touch `IJSRuntime` — `LocalStorageService` is the other, reaching browser storage the same
-way. Everything else is pure Blazor or C#.
+## Configuration
 
-## Component Coordination
+**None.** The module reads no config file. `UIModuleOptions.ApiBaseUrl` is the seam for pointing the demo at
+another API host; `AddUIModule` sets it to empty and nothing else writes it. Empty means the demo fetches
+relative, from the API it ships in.
 
-`MessagingService` is a scoped in-process pub/sub bus.
-`PackingVisualizer.razor` subscribes to `"UpdateScene"` messages.
-`PackingDemo` and `ProtocolDecoder` publish them when the user triggers a visualization update.
-The handler invokes `BinacleVisualizerService` which calls into the JS visualizer.
+`Pages/Packing.cshtml.cs` renders it into the demo's `x-data` attribute. The demo site does the same thing
+from a build-time value — same mechanism, different producer.
 
-## API Connection
+## It makes no server-side HTTP calls
 
-Uses a named `HttpClient` registered as `"BinacleApi"`.
-By default posts to the same host (no config needed for local dev).
+Everything that needs the API runs in the browser and fetches relative. There is no `HttpClient`, no
+`IHttpContextAccessor`, and the csproj has one project reference, `Binacle.Net.Kernel`.
 
-Override the base URL via `Config_Files/UiModule/ConnectionStrings.json` (optional):
-
-```json
-{
-  "ConnectionStrings": {
-    "BinacleApi": "https://your-api-host"
-  }
-}
-```
+**That is why the instance page reads presets over HTTP.** `BinPresetOptions` lives in `Binacle.Net`, the entry
+project, which references this module — so a project reference would be a cycle. `_js/instance.js` calls
+`GET /api/v4/presets` instead, always relative, because that page describes the instance serving it and never
+whichever API `ApiBaseUrl` points at.
 
 ## Services
 
-All scoped (per connection / browser tab) unless noted:
-
 | Service | Lifetime | What it does |
 |---|---|---|
-| `ThemeService` | Scoped | Manages light/dark theme state |
-| `MessagingService` | Scoped | In-component pub/sub for cross-component communication |
-| `BinacleVisualizerService` | Scoped | Drives the Three.js 3D visualizer via JS interop |
-| `LocalStorageService` | Scoped | Read/write browser localStorage |
-| `SampleDataService` | Scoped | Provides sample bin/item data for the demo form — the only one registered behind an interface, as `ISampleDataService` |
-| `AppletsService` | Singleton | Manages UI applets / widget state |
+| `AppletsService` | Singleton | The applet list — title, icon, copy and Razor Page name for each demo |
 
-## Status Code Pages
+`Applet.Page` is a **page name for `asp-page`, not a path**. `AppletPageModel` takes a page's title and copy
+from the same list, so the index cards and the page cannot disagree.
 
-`UseStatusCodePagesWithReExecute("/Error/{0}")` is what routes a bare status code to the `/Error/{ErrorCode}`
-page — that is why the page takes a route parameter at all.
+**`Models/FeatureSwitch.cs` is a second list, and it has to be.** `FeatureOptions` only records what is
+switched **on**, so the instance page cannot show a feature as off without knowing it exists. `FeatureSwitch.All`
+names four — Swagger UI, Scalar UI, the health check and the debug endpoint — with a display name and the
+setting that turns each one on. A new switch needs a row here or the page never mentions it.
 
-A middleware immediately after it switches the feature **off** per request for paths starting `/api`, `/swagger`
-or `/scalar`, by setting `IStatusCodePagesFeature.Enabled = false`. Without it, Blazor's error page would
-re-execute over an API or OpenAPI error response and the caller would get HTML where it expected problem JSON.
+**Two are deliberately missing.** The service module is not advertised and the documentation site has no page
+for it. The demo UI is the page you are reading it on.
+
+**Paths are not in that list.** `FeatureOptions.PathFor` carries them, set by whoever switched the feature on —
+the health path is configurable, so the module that owns it is the only thing that can know where it ended up.
+
+## Error pages
+
+`UseStatusCodePagesWithReExecute("/error/{0}")` turns a bare status into the error page, and a plain
+`try`/`catch` middleware turns an unhandled exception into a bare 500 so the same re-execute renders it.
+
+**Both must sit on `app`, not inside a `UseWhen` branch** — a re-execute inside a branch selects no endpoint
+and returns 404 with zero bytes. Measured, not assumed.
+
+**`UseExceptionHandler` cannot do the 500 job.** When its handler writes no body it falls back to
+`IProblemDetailsService`, and the browser gets JSON over the page.
+
+**Who gets a page is decided by `ReservedPathOptions`** (`Binacle.Net.Kernel`), not by anything in this module.
+Every module declares the paths it serves that must never answer with a web page; the module reads the set per
+request and switches `IStatusCodePagesFeature.Enabled` off for those. See `$api/modules` for who declares what.

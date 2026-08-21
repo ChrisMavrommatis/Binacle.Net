@@ -1,7 +1,7 @@
 ---
 id: api/dependencies
 description: API slice dependency tree — Binacle.Net as composition root, the Kernel floor, the always-compiled modules (Diagnostics, Service, UI), the ServiceModule clean-architecture split, and who sees internals.
-verified: 2026-08-19
+verified: 2026-08-21
 check: ProjectReference and InternalsVisibleTo entries in api/**/*.csproj match the graph, the table and the walls below, including every test project and the entry point's Using Include items
 paths:
   - "api/**"
@@ -30,7 +30,7 @@ Binacle.Net  (Web SDK, entry / composition root)
       │        ├── ServiceModule.Infrastructure → Kernel, ServiceModule.Domain   [IVT → SM.IntegrationTests]
       │        └── ServiceModule.Domain         → (nothing)                       [IVT → SM.IntegrationTests]
       │
-      └── UIModule  (Razor SDK)    → Kernel, Binacle.Packing, Binacle.CompactNotation, Binacle.ViPaq
+      └── UIModule  (Razor SDK)    → Kernel
 
 Kernel  → Binacle.CompactNotation                                shared API floor (every module refs it)
 
@@ -53,7 +53,7 @@ Tests  (all xUnit v3, all OutputType Exe)
 | `Binacle.Net.ServiceModule` | library | Kernel, Domain, Infrastructure | — | JWT auth, rate limiting, accounts (composes its own layers) |
 | `Binacle.Net.ServiceModule.Domain` | library | — | — | entities + repository interfaces (pure) |
 | `Binacle.Net.ServiceModule.Infrastructure` | library | Kernel, Domain | — | DB providers |
-| `Binacle.Net.UIModule` | Razor library | Kernel, Packing, CompactNotation, ViPaq | — | Blazor packing demo |
+| `Binacle.Net.UIModule` | Razor library | Kernel | — | Razor Pages demo host |
 | `Binacle.Net.UnitTests` | xUnit exe | Binacle.Net | Binacle.Net | entry-point units |
 | `Binacle.Net.IntegrationTests` | xUnit exe | Binacle.Net, Packing, TestsKernel | Binacle.Net | v3/v4 HTTP tests |
 | `Binacle.Net.Kernel.UnitTests` | xUnit exe | Kernel | — (public surface only) | Kernel units |
@@ -80,8 +80,8 @@ Tests  (all xUnit v3, all OutputType Exe)
    repository interfaces); `Infrastructure` implements them over `Kernel` + `Domain`; `ServiceModule` composes the
    two plus `Kernel`. Keep `Domain` dependency-free — that is what the layering buys.
 
-5. **`UIModule` references `ViPaq` directly** to decode packing tokens in the Blazor demo — the only module that
-   touches the format.
+5. **`UIModule` references nothing but `Kernel`.** Both its demos are TypeScript running in the browser, so it
+   talks to the API over HTTP like any other client and needs no packing, ViPaq or compact-notation reference.
 
 6. **`Binacle.Net` reaches `Binacle.Packing` and `Binacle.Geometry` transitively, and imports both globally.**
    Its csproj carries `<Using Include="Binacle.Packing" />` and `<Using Include="Binacle.Geometry" />`, so

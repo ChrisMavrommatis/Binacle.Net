@@ -2,7 +2,7 @@ namespace Binacle.Net.UIModule.Services;
 
 internal class AppletsService
 {
-	public List<Models.Applet> Applets { get; private set; }
+	public IReadOnlyList<Models.Applet> Applets { get; }
 	
 	public AppletsService()
 	{
@@ -14,15 +14,23 @@ internal class AppletsService
 				Icon = "deployed_code",
 				ShortDescription = "Allows you to visualize how Binacle.Net packs them into a container using it's algorithms.",
 				Description = "An interactive tool that lets test different packing algorithms with your own items and bins, and explore detailed visualizations of how items are efficiently arranged within a container.",
-				Ref = "PackingDemo"
+				Page = "/Packing"
 			},
 			new Models.Applet
 			{
-				Title = "Protocol Decoder",
+				Title = "ViPaq Decoder",
 				Icon = "deployed_code_update",
 				ShortDescription = "Decode, analyze, and visualize packing layouts with the ViPaq Protocol",
-				Description = "The Protocol Decoder enables you to decode ViPaq-encoded packing data, providing clear, interactive visualizations of container layouts for easy analysis and validation.",
-				Ref = "ProtocolDecoder"
+				Description = "The ViPaq Decoder enables you to decode ViPaq-encoded packing data, providing clear, interactive visualizations of container layouts for easy analysis and validation.",
+				Page = "/Vipaq"
+			},
+			new Models.Applet
+			{
+				Title = "This Instance",
+				Icon = "monitoring",
+				ShortDescription = "What this container is running, what is switched on, and the presets it loaded.",
+				Description = "What this container is running, what is switched on, and the presets it loaded. Everything here is read from the instance you are on, so it answers whether your own configuration arrived the way you meant it to.",
+				Page = "/Instance"
 			},
 		};
 		

@@ -47,7 +47,7 @@ table of [README.md](README.md).
   description: "ServiceModule — JWT auth, rate limiting, account/subscription management. Three projects using clean architecture."
   paths: ["api/src/Binacle.Net.ServiceModule/**", "api/src/Binacle.Net.ServiceModule.Domain/**", "api/src/Binacle.Net.ServiceModule.Infrastructure/**"]
 - file: api/modules/ui.md
-  description: "UIModule — optional Blazor Web App interactive packing demo. Pages, JS stack, API connection, config, and services."
+  description: "UIModule — optional Razor Pages demo host. Routes, the webpack and sass build, the applet list, and how error pages are decided."
   paths: ["api/src/Binacle.Net.UIModule/**"]
 - file: api/openapi.md
   description: "OpenAPI wiring — IOpenApiDocument, the Kernel transformers (JWT, 429, response descriptions, enum-as-string), what endpoint groups auto-wire, and the external OpenApiExamples package"

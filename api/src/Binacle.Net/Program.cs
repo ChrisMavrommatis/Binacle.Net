@@ -147,13 +147,23 @@ public static class Program
 		{
 			if (swaggerEnabled)
 			{
-				options.AddFeature("SwaggerUI");
+				options.AddFeature("SwaggerUI", "/swagger");
 			}
 
 			if (scalarEnabled)
 			{
-				options.AddFeature("ScalarUI");
+				options.AddFeature("ScalarUI", "/scalar");
 			}
+		});
+
+		// Reserved whether or not the UI that serves them is switched on, so a mistyped API route never comes
+		// back as a web page.
+		builder.Services.Configure<ReservedPathOptions>(options =>
+		{
+			options.AddPrefix("/api");
+			options.AddPrefix("/openapi");
+			options.AddPrefix("/swagger");
+			options.AddPrefix("/scalar");
 		});
 
 		var app = builder.Build();

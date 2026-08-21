@@ -43,6 +43,9 @@ and move it to `.agents/plans/` once it's picked up. See [README.md](README.md) 
 - file: api/servicemodule-simplification.md
   description: "simplify ServiceModule - collapse the ceremony, keep the provider seam"
   paths: ["api/**"]
+- file: api/show-me-the-request.md
+  description: "The packing demo shows the HTTP call it just made, against this host, ready to copy"
+  paths: ["api/src/Binacle.Net.UIModule/**", "packages/binacle-net-ui/**"]
 ```
 
 ## Shared

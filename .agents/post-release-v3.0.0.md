@@ -112,8 +112,7 @@ Rewritten 2026-08-14, when the release scope was reset. Pruned 2026-08-20.
 it carries a recommended order.
 
 **Three things were held back from v3.0.0 and are waiting there:** the heavy architecture tools (ArchUnitNET,
-dependency-cruiser, lychee), CI gates 2 and 3, and the Blazor half of the UI test harness that the coverage gate
-hangs on. **Each is waiting on something specific**, and the board row names it.
+dependency-cruiser, lychee), CI gates 2 and 3, and the UI test harness that the coverage gate hangs on. **Each is waiting on something specific**, and the board row names it.
 
 **The first thing to do is not a build.** The ServiceModule direction decision places five ideas, two one-liners
 and the Azure Storage removal question in one sitting. **Pick from the board once this list is clear.**

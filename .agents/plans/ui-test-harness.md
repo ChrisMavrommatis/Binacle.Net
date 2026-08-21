@@ -7,18 +7,22 @@ description: A test harness for the UI
 **Status:** Not started. Decided 2026-08-09, while treating Sonar findings: the coverage gate stays red until
 this exists, rather than being configured away.
 
-The UI is the only part of the codebase with **no test harness at all**. Four areas sit at exactly 0% coverage,
+The UI is the only part of the codebase with **no test harness at all**. Four areas sat at exactly 0% coverage,
 every line uncovered:
 
 | Area | Lines to cover | Covered |
 |---|---|---|
-| `api/src/Binacle.Net.UIModule` (Blazor components) | 959 | 0 |
+| `api/src/Binacle.Net.UIModule` (Blazor components, since deleted) | 959 | 0 |
 | `packages/binacle-net-ui/src` (TS) | 533 | 0 |
 | `packages/cookies/src` | 40 | 0 |
 | `packages/theme-switcher/src` | 39 | 0 |
 
-That is **1571 lines, 22.5% of the whole coverage denominator**, contributing nothing. Overall coverage is 53%;
-without these four it would be about 68%. Both numbers are honest - the gap is real, not a measurement artifact.
+That was **1571 lines, 22.5% of the whole coverage denominator**, contributing nothing. Overall coverage was
+53%; without these four it would have been about 68%.
+
+**The first row is stale and the denominator has to be remeasured.** The rebuild landed and deleted the Blazor
+stack - see below. Those are Sonar coverable-line counts, not physical lines, so the new figure has to come
+from running the analysis rather than from counting files.
 
 ## Why this is a plan and not a config line
 
@@ -30,29 +34,34 @@ where a reader can see the answer, never in a config file nobody opens.
 So the Sonar quality gate fails its coverage condition on purpose, and will keep failing until there are tests.
 Anyone reading a red gate should find this file, not a mystery.
 
-## The Blazor half waits for the UIModule rebuild - decided 2026-08-14
+## The rebuild landed, and it dissolved the C# half
 
-**Do not write bUnit tests for `Binacle.Net.UIModule` yet.** That module is being rebuilt - Blazor
-interactive rendering out, Razor Pages in, and the two demo apps served from `packages/binacle-net-ui`
-instead of a second C# implementation. The rebuild deletes most of what would be tested:
-`PackingDemo.razor.cs`, `ProtocolDecoder.razor.cs`, `PackingVisualizer.razor.cs`, `BinacleVisualizerService`
-and `MessagingService` all go, and their logic moves into TypeScript that already exists.
+**There is almost no C# left to unit-test.** The module is **282 physical lines across ten files**, and 99 of
+those are `ModuleDefinition.cs`, which is pipeline wiring - integration territory, not unit. What remains is
+`AppletsService` (a hardcoded list), `AppletPageModel`, three small PageModels, and two pure switch
+expressions: `IndexModel.RouteFor` and `ErrorModel.MessageFor`.
 
-**Doing the tests first means writing them twice, in two languages.** Doing the rebuild first means writing
-them once, in one. That is the whole reason for the order.
+**Do not write bUnit tests. There is no Blazor.** Razor Pages, Alpine and one options bag.
 
-The rebuild's own plan is not in this repository - `board.md` says why and where a session picks it up.
+**So the shape changed: the work is one TypeScript harness, plus integration cover for behaviour.**
 
-**So this plan is in two parts and only one of them is ready:**
+| Part | State |
+|---|---|
+| The TypeScript packages | **ready - start here.** Unchanged by the rebuild |
+| `Binacle.Net.UIModule` C# | **not worth a unit harness.** Two switch expressions and a list |
+| The module's behaviour | **integration, and partly already covered** - see below |
 
-| Part | Lines | State |
-|---|---|---|
-| The TypeScript packages | 612 | **ready - start here** |
-| `Binacle.Net.UIModule` (Blazor) | 959 | **waits for the UIModule rebuild** |
+**The behaviour worth protecting is routing, not logic**, and the existing tools already reach it:
 
-**The coverage gate does not move until both are done.** 612 of 1571 lines is not enough to clear an 80%
-new-code condition, and it was never going to be. That is expected, not a failure of this plan - the gate is
-honest about the UI being untested and stays red until the UI is tested.
+- `tooling/smoke/full.hurl` and `quickstart.hurl` assert the four routes, the bundle, the stylesheet, and both
+  sides of the error-page rule.
+- What has no cover: the `ReservedPathOptions` contract. **A module that maps a path and forgets to declare it
+  silently starts rendering HTML for its 404s**, and only the smoke files would catch it, only for `/api`.
+  A test over `ReservedPathOptions.Covers` plus one asserting every mapped endpoint's first segment is either
+  a UIModule page or a declared prefix would catch the whole class. That is the one C# test worth writing here.
+
+**The coverage gate still does not move on the TypeScript half alone.** That is expected, not a failure of this
+plan - the gate is honest about the UI being untested and stays red until the UI is tested.
 
 ## What the TypeScript half needs
 
@@ -61,10 +70,12 @@ already reaches Sonar), so the runner is not the question. **The question is the
 `cookies` and `theme-switcher` all touch browser APIs, so they need jsdom or a real browser. Decide which before
 writing the first test.
 
-**Start with `cookies` and `theme-switcher`.** They are 79 lines between them, they are stable, and the
-rebuild does not touch either - so nothing written there gets rewritten. `binacle-net-ui` is 533 lines and the
-rebuild grows it, so its tests are worth writing against the shape it ends up with rather than the one it has
-now.
+**Start with `cookies` and `theme-switcher`.** They are 79 lines between them and they are stable. The rebuild
+did not touch either, and both now have a third consumer - the UIModule loads `theme-switcher` from its `main`
+bundle - so a test there protects three hosts instead of two.
+
+`binacle-net-ui` is the 533 and it is now **shared by two hosts**, which raises what a test is worth: a
+regression there breaks the demo site and the shipped image together.
 
 ## Decisions to make first
 
@@ -74,14 +85,14 @@ now.
 - **What coverage number is honest to aim for?** UI code has a long tail that is not worth covering. Pick the
   target when the harness exists and a few real tests show what it costs, not now.
 
-**One decision the rebuild removes.** "Where does the demo page get tested - bUnit or a browser?" only exists
-because the demo spans two stacks, a Blazor page driving a TS visualizer through JS interop. **After the
-rebuild there is one stack and no seam**, so the question answers itself. That is a second reason to let the
-rebuild go first.
+**One decision the rebuild removed.** "Where does the demo page get tested - bUnit or a browser?" only existed
+because the demo spanned two stacks, a Blazor page driving a TS visualizer through JS interop. **There is one
+stack now and no seam**, so the question is closed: the demo is tested where its code lives, in TypeScript.
 
 ## Done when
 
-- Both harnesses exist and run as test leaves, like every other suite.
-- Their coverage reaches Sonar the same way the existing suites' does, one flat file per suite.
-- The four areas above are no longer at zero, and the coverage condition on the quality gate is failing for a
-  reason somebody chose rather than because the UI was never tested.
+- The TypeScript harness exists and runs as a test leaf, like every other suite.
+- Its coverage reaches Sonar the same way the existing suites' does, one flat file per suite.
+- The denominator has been remeasured against the rebuilt module, so the table at the top is true again.
+- The three TypeScript areas are no longer at zero, and the coverage condition on the quality gate is failing
+  for a reason somebody chose rather than because the UI was never tested.

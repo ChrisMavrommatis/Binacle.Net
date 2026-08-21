@@ -101,7 +101,7 @@ The pitch says "real time"; that claim is untested under concurrency. A 400-bin 
 
 ## Probably not worth it
 
-- **E2E (Playwright).** Aimed at the Blazor demo UI. Brittle, slow, breaks on markup changes — the same
+- **E2E (Playwright).** Aimed at the demo UI. Brittle, slow, breaks on markup changes — the same
   reasoning that leaves `UIModule` at 0% coverage on purpose.
 - **Contract testing (Pact).** It earns its keep when *other teams* consume the API on their own release
   cycle. Both clients are in this repo; the integration tests already cover the contract.

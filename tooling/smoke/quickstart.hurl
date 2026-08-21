@@ -20,6 +20,28 @@ HTTP 200
 GET http://localhost:8080/
 HTTP 200
 
+# A demo page with no javascript and no stylesheet still returns 200, so assert the build output itself.
+GET http://localhost:8080/_content/Binacle.Net.UIModule/js/packing_demo.js
+HTTP 200
+
+GET http://localhost:8080/_content/Binacle.Net.UIModule/js/three.js
+HTTP 200
+
+GET http://localhost:8080/_content/Binacle.Net.UIModule/css/main.css
+HTTP 200
+
+# An unreserved path gets the error page.
+GET http://localhost:8080/nope
+HTTP 404
+[Asserts]
+header "Content-Type" contains "text/html"
+
+# A reserved one never does. This is the assertion that catches a module forgetting to declare its paths.
+GET http://localhost:8080/api/v3/nope
+HTTP 404
+[Asserts]
+bytes count == 0
+
 # service is off, so the service OpenAPI document is never registered
 GET http://localhost:8080/openapi/service.json
 HTTP 404

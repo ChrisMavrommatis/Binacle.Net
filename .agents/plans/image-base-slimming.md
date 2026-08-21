@@ -62,8 +62,8 @@ hardened base is easier to find than a .NET-specific one - but it costs about 27
 framework-dependent chiseled, to buy that freedom.
 
 **It would only pay off with trimming or Native AOT**, which is what makes that 5.5 MB base interesting. This
-app is a poor trimming candidate: the UI module is Blazor, and Azure SDK, Npgsql and OpenTelemetry are all
-reflection-heavy. Trimming here is a project with a real risk of runtime failures the tests may not catch, not
+app is a poor trimming candidate: Azure SDK, Npgsql and OpenTelemetry are all reflection-heavy, and Razor Pages
+resolves its own page and tag-helper types by name. Trimming here is a project with a real risk of runtime failures the tests may not catch, not
 a flag. **Do not treat it as a quick follow-up.**
 
 It also gives back the patching property that motivated dropping self-contained in the first place: with the

@@ -1,0 +1,30 @@
+@model IReadOnlyList<Applet>
+@{
+	var currentPage = (string?)ViewContext.RouteData.Values["page"];
+}
+
+@* Both navs render the same list - beercss shows the left one from medium up and the bottom one on small. *@
+<nav class="m l left secondary">
+	<header>
+		<a asp-page="/Index">
+			<img class="large" src="/_content/Binacle.Net.UIModule/media/logo/binacle-logo-16x16.svg" alt="Binacle.Net">
+		</a>
+	</header>
+	@foreach (var applet in Model)
+	{
+		<a asp-page="@applet.Page" class="@(string.Equals(currentPage, applet.Page, StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+			<i class="material-symbols-outlined">@applet.Icon</i>
+			<span>@applet.Title</span>
+		</a>
+	}
+</nav>
+
+<nav class="s bottom secondary">
+	@foreach (var applet in Model)
+	{
+		<a asp-page="@applet.Page" class="@(string.Equals(currentPage, applet.Page, StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+			<i class="material-symbols-outlined">@applet.Icon</i>
+			<span>@applet.Title</span>
+		</a>
+	}
+</nav>

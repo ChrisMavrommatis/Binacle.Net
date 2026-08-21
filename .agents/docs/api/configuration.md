@@ -1,7 +1,7 @@
 ---
 id: api/configuration
 description: Config file layout, env-var conventions, override precedence, and feature flag list
-verified: 2026-08-19
+verified: 2026-08-21
 check: The file tree matches api/src/Binacle.Net/Config_Files/ and the AddJsonConfiguration calls in Program.cs; the Cors and ForwardedHeaders keys match their options classes in Configuration/ and the mapping in ExtensionMethods/ForwardedHeadersExtensions.cs; the feature flag table matches every Feature.IsEnabled call site in api/src
 also_update:
   - api/modules/service
@@ -38,12 +38,10 @@ app
     │   ├── PackingLogs.{Environment}.json       optional override
     │   ├── Serilog.json                          read by Serilog directly, not an options class
     │   └── Serilog.{Environment}.json           optional override
-    ├── ServiceModule
-    │   ├── ConnectionStrings.json               optional — DB connection strings
-    │   ├── RateLimiter.json                     required when SERVICE_MODULE=True — rate limiter rules
-    │   └── JwtAuth.json                         optional — JWT issuer, audience, secret
-    └── UiModule
-        └── ConnectionStrings.json               optional — override BinacleApi connection string
+    └── ServiceModule
+        ├── ConnectionStrings.json               optional — DB connection strings
+        ├── RateLimiter.json                     required when SERVICE_MODULE=True — rate limiter rules
+        └── JwtAuth.json                         optional — JWT issuer, audience, secret
 
 `Presets.json` and the three DiagnosticsModule files are the only ones the app refuses to start without, and the
 DiagnosticsModule three because that module is never switched off (`$api/modules`). Everything else is optional
@@ -178,7 +176,7 @@ one of them.
 | Env Var | What it enables | Default |
 |---|---|---|
 | `SERVICE_MODULE=True` | JWT auth, rate limiting, account management | False |
-| `UI_MODULE=True` | Blazor/Razor interactive packing demo | False |
+| `UI_MODULE=True` | Razor Pages demo host — packing demo and ViPaq decoder | False |
 | `SWAGGER_UI=True` | Swagger UI at `/swagger` | False |
 | `SCALAR_UI=True` | Scalar UI at `/scalar` (alternative OpenAPI UI) | False |
 | `DEBUG_ENDPOINT=True` | `/_debug` — echoes the caller's own request: connection address, every header, and server info. Unauthenticated; use it to read the proxy address when configuring forwarded headers, then turn it off. | False |

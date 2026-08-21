@@ -1,0 +1,40 @@
+@inject AppletsService AppletsService
+@{
+	var theme = Context.Request.Cookies["theme"] == "dark" ? "dark" : "light";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<title>@ViewData["Title"]</title>
+
+	<link type="text/css" rel="stylesheet" href="/_content/Binacle.Net.UIModule/lib/beercss/beer.min.css">
+	@* After beercss - it overrides beercss variables. Compiled from _sass/ by `npm run build:css`. *@
+	<link type="text/css" rel="stylesheet" href="/_content/Binacle.Net.UIModule/css/main.css" media="screen,projection"/>
+
+	<link rel="icon" href="/_content/Binacle.Net.UIModule/favicon.ico"/>
+
+	@await RenderSectionAsync("Head", required: false)
+</head>
+<body class="@theme">
+
+<partial name="_Header"/>
+<partial name="_Navbar" model="AppletsService.Applets"/>
+
+<main class="responsive padding">
+	@RenderBody()
+</main>
+
+<partial name="_Footer"/>
+
+@* runtime.js is webpack's, shared by every entry, so it loads here and nowhere else. *@
+<script src="/_content/Binacle.Net.UIModule/js/runtime.js"></script>
+<script src="/_content/Binacle.Net.UIModule/js/main.js"></script>
+<script type="module" src="/_content/Binacle.Net.UIModule/lib/beercss/beer.min.js"></script>
+
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

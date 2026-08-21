@@ -153,9 +153,12 @@ It is read-only, and on the **Free plan there is no way around that**: custom qu
 plan, so 80% is not a number we can argue with, only one we can meet or fail. It is being failed - the
 2026-08-08 run reads **53.3% overall, 31.4% on new code**, the only failing condition on the gate.
 
-The gap is almost entirely one thing. Four areas sit at **exactly 0% coverage** - the Blazor `UIModule` (959
-lines), and the `binacle-net-ui`, `cookies` and `theme-switcher` TS packages (612 between them). That is 1571
-lines, 22.5% of the whole coverage denominator. Without them the project reads about 68%.
+The gap is almost entirely one thing. On that run four areas sat at **exactly 0% coverage** - the `UIModule`
+(959 lines) and the `binacle-net-ui`, `cookies` and `theme-switcher` TS packages (612 between them). That was
+1571 lines, 22.5% of the whole coverage denominator, and without them the project read about 68%.
+
+**The first of those four is gone.** The UIModule rebuild deleted the Blazor stack, so the denominator has to
+be re-measured before any of these numbers is quoted again - `ui-test-harness` owns that.
 
 Excluding those four from coverage was considered and **rejected**: it moves the number without changing
 anything true. The coverage condition therefore stays red until the UI has a test harness, which is its own plan
@@ -209,7 +212,8 @@ Scope, coverage paths and the test/product split are all in the repo now (the an
   Administration > New Code before planning around it.
 - **Three findings marked in the UI**, none of which has an honest code fix: `S2245` on `SampleDataService` and
   on `getRandomInt.ts` (both pick demo data, not secrets), and `S2068` on the `AccountGetResponse` OpenAPI
-  example, where `PasswordHash` is the literal `"type::hash::salt"`.
+  example, where `PasswordHash` is the literal `"type::hash::salt"`. **`SampleDataService` was deleted in the
+  UIModule rebuild**, so expect two, not three.
 - **Automatic Analysis stays OFF**, as below.
 - **No source glob in the UI.** An `sonar.inclusions` of `src/**/*` left over from a flat layout is what made the
   2026-08-07 run index 0 files and still report success. Scope is exclusions only, and they live in the xml.

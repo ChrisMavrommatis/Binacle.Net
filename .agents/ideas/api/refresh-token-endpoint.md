@@ -31,7 +31,7 @@ and stay authenticated silently until the refresh token itself expires.
 
 Once the endpoint exists, the Alpine client authenticates once, stores the access token, and on `401` calls
 `/api/auth/refresh` then retries once. Refresh token ideally in an **httpOnly cookie** (JS can't read it, so XSS
-can't steal it); access token in memory or localStorage. Blazor UIModule is out of scope for now.
+can't steal it); access token in memory or localStorage. The UIModule is out of scope for now.
 
 ## Dependency
 

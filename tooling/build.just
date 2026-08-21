@@ -40,8 +40,13 @@ default:
 #
 # Keep this in step with release-docker-image.yml's publish step - the two must not drift.
 
+# dotnet collects static web assets at publish time, so the UI module's wwwroot has to be filled first.
+# Nothing fails when it is not - the image ships pages with no styling and demos that do nothing.
+
 # Publish the API framework-dependent for linux-x64, into artifacts/binacle-net
 publish:
+    npm run copy-assets-to-uimodule
+    cd api/src/Binacle.Net.UIModule && npm run build
     dotnet publish {{ api_project }} -c Release -o {{ publish_dir }} --no-self-contained --runtime linux-x64
 
 # The publish is a dependency rather than a check on the folder: `docker build` reads whatever is in

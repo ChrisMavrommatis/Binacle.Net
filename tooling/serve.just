@@ -1,6 +1,6 @@
 # Run something locally from source, loaded by the root justfile as the `serve` module.
 #
-#   just serve api [profile]     the API, via its launch profiles
+#   just serve api [profile]     the API, via its launch profiles (+ webpack watch on the UI profiles)
 #   just serve docs              the documentation site
 #   just serve web               the marketing site
 #   just serve services-up [-d]  what the API talks to: aspire dashboard, azurite, postgres
@@ -50,7 +50,26 @@ api profile="Normal":
             ;;
     esac
     echo "Running Binacle.Net with launch profile: $launch_profile"
-    dotnet run --project api/src/Binacle.Net -lp "$launch_profile"
+
+    # Only the two UI profiles get the watches. On the others the module is switched off, so they would
+    # rebuild output no page can request, into a log you are reading for something else.
+    #
+    # The two are listed here rather than calling the module's own `npm run watch`, which nests one
+    # concurrently inside another and buries the per-process labels.
+    case "$launch_profile" in
+        WithUiModuleOnly | WithAllModules)
+            npx concurrently \
+                --kill-others \
+                --names 'api,css,js' \
+                --prefix-colors 'magenta,yellow,cyan' \
+                "dotnet run --project api/src/Binacle.Net -lp $launch_profile" \
+                'cd api/src/Binacle.Net.UIModule && npm run watch:css' \
+                'cd api/src/Binacle.Net.UIModule && npm run watch:js'
+            ;;
+        *)
+            dotnet run --project api/src/Binacle.Net -lp "$launch_profile"
+            ;;
+    esac
 
 # Backing services only - no binacle-net. Extra arguments go straight to `docker compose`, so `-d` detaches.
 # In the foreground Ctrl-C stops them, which is why `services-down` is only needed after `-d` - the pair is

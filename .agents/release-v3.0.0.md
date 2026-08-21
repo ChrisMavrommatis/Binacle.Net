@@ -178,7 +178,7 @@ stay four.
 
 **The config half is done:** `main` carries `current: v3.0.x`, `- id: v3.0.x` back at the top of `list`, and
 `sites/docs/collections/_sitemaps/version-3-0-x.xml` restored - all verified 2026-08-14. What is left is the deploy
-plus five edits that must go out with it.
+plus six edits that must go out with it.
 
 **`sites/docs/` is off limits to a coding session.** This is the docs session's work, written here for it.
 
@@ -243,6 +243,24 @@ plus five edits that must go out with it.
 
       **Do not publish SDKs to close this.** The deliverable is a spec plus a generation guide, not shipped
       packages.
+- [ ] **The UI module no longer reads any configuration.** The rebuild deleted the `BinacleApi` connection
+      string and `Config_Files/UiModule/` with it, so three pages under `v3.0.x` describe a file the image does
+      not ship. All three are wrong for 3.0.0, not merely stale.
+  - **`configuration/ui-module/index.md`** - delete the `## ⚙️ Configuration` block (the
+    `/app/Config_Files/UiModule` sentence and the directory tree) and the whole `## 🛠️ Configuration`
+    section at the bottom - the auto-detect paragraph, the `BinacleApi` JSON sample, and the link to
+    *Configuration Basics > Connection String Fallbacks*. **What replaces them:** the module reads no
+    configuration at all. Both demos run in the browser and call the API they are served from, over relative
+    URLs, so there is nothing to point anywhere. `UI_MODULE=True` is the whole setup.
+  - **`configuration/index.md`** - drop the `UiModule` branch and its `ConnectionStrings.json` leaf from the
+    directory tree, so it matches the image.
+  - **The three sample compose files** under `v3.0.x/samples/docker/` - `quickstart`, `full` and `service` -
+    each set `BINACLEAPI_CONNECTION_STRING`. Delete that line, and in `service` the two comment lines above it.
+    Repo-root `samples/` has already had this done; copy from there.
+
+      **Leave `v1.3.x`, `v2.0.x` and `v2.1.x` alone.** Those versions really did read the file. Only `v3.0.x`
+      is wrong.
+
 - [ ] **Deploy.** It is `workflow_dispatch` only.
 
 **This is the single most losable item in the release** - nothing fails if the deploy is skipped, the site just
@@ -263,7 +281,7 @@ versioned page should pin the spec it describes; do not repoint it at `main`.
 2. **The last commit:** changelog rename, six pins, six comment blocks, two READMEs, and the `IsExperimental`
    re-confirm.
 3. **Tag `v3.0.0`.** The pipeline does the rest, page included.
-4. **Deploy the docs**, with the five edits above.
+4. **Deploy the docs**, with the six edits above.
 5. **Announce.**
 6. **Work `post-release-v3.0.0.md`**, then delete both files.
 
@@ -278,7 +296,7 @@ Everything else has a plan or an idea of its own and is on the board, grouped by
 
 | Item | The blocker |
 |---|---|
-| **The architecture checks** | The heavy tools - ArchUnitNET, dependency-cruiser, lychee - need a new toolchain: ArchUnitNET wants a new test project that becomes a node in the graph it inspects, and `.xUnitV3` may drag in plain `xunit.v3` when this repo pins `xunit.v3.mtp-v2` on purpose. dependency-cruiser has no root `tsconfig.json`; there are four, and `sites/web/` has none. **The three lighter checks joined them on 2026-08-17**, when a better design turned a ready item into a fresh one. |
+| **The architecture checks** | The heavy tools - ArchUnitNET, dependency-cruiser, lychee - need a new toolchain: ArchUnitNET wants a new test project that becomes a node in the graph it inspects, and `.xUnitV3` may drag in plain `xunit.v3` when this repo pins `xunit.v3.mtp-v2` on purpose. dependency-cruiser has no root `tsconfig.json`; there are five, and `sites/web/` has none. **The three lighter checks joined them on 2026-08-17**, when a better design turned a ready item into a fresh one. |
 | **CI gates 2 and 3** | Gate 2 runs the all-modules integration tests, which are not being written here. Gate 3 is Sonar and coverage, and its own plan says do not make coverage blocking yet. Gate 1 ships; these two have nothing to gate. |
-| **Raising test coverage** | **Decided 2026-08-14: do not test the Blazor UIModule.** The rebuild of that module deletes most of what would be tested, so writing bUnit tests now means writing them twice, in two languages. What shipped here is the modest bump the rate limiter tests brought, and nothing more. |
+| **Raising test coverage** | **Decided 2026-08-14: do not test the UIModule until it is rebuilt**, so the tests are not written twice in two languages. The rebuild landed on 2026-08-21 and there is almost no C# left in the module, so what remains is a TypeScript harness - `ui-test-harness` carries the new shape. What shipped here is the modest bump the rate limiter tests brought, and nothing more. |
 | **The workflow restructure's last item** | The branch protection edit. It landed 2026-08-18 and left the release on 2026-08-19 - it gates nothing here. |

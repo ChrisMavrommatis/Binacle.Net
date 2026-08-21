@@ -1,7 +1,7 @@
 ---
 id: samples
 description: Deployment samples — Docker Compose (minimal, quickstart, prod, service, full) and Kubernetes (minimal); each folder name is a smoke profile name, feature flags, config wiring, and the keep-in-sync rule
-verified: 2026-08-19
+verified: 2026-08-22
 check: Sample folders, compose env vars, bind-mounted config paths, the k8s resource bounds, and the pinned image tag match samples/; the compose project name still comes from a top-level name: key and not a .env file; every samples/docker folder name has a tooling/smoke/<name>.yml with the same module set
 also_update:
   - api/configuration
@@ -35,9 +35,9 @@ Common to all: host port `8080→8080`; a top-level compose `name:` key sets the
 | Sample | Demonstrates | Feature flags / key env | Extra services & config |
 |---|---|---|---|
 | `minimal` | Core fit/pack API, no modules | *(none — no `environment:` block)* | just `Presets.json` |
-| `quickstart` | Docs + the web UI demo | `SWAGGER_UI`, `SCALAR_UI`, `UI_MODULE`; `BINACLEAPI_CONNECTION_STRING` | — |
+| `quickstart` | Docs + the web UI demo | `SWAGGER_UI`, `SCALAR_UI`, `UI_MODULE` | — |
 | `prod` | **Self-hosted behind your own backend** — no docs, no UI, no auth, no database | `HealthChecks__Enabled`, `PackingLogs__Enabled` only | ships `ForwardedHeaders.json` and `OpenTelemetry.Production.json` **mounted-but-commented**, plus a commented `aspire-dashboard` service |
-| `service` | **Binacle.Net offered to others** — accounts, JWT auth, rate limiting | `SWAGGER_UI`, `SCALAR_UI`, `SERVICE_MODULE`, `HealthChecks__Enabled`, `PackingLogs__Enabled`; `SQLITE_CONNECTION_STRING` active, `POSTGRES_`/`AZURESTORAGE_` commented; `BINACLE_ADMIN_CREDENTIALS`, `BINACLEAPI_CONNECTION_STRING` | binds `JwtAuth.json`; ships `Cors.json` mounted-but-commented |
+| `service` | **Binacle.Net offered to others** — accounts, JWT auth, rate limiting | `SWAGGER_UI`, `SCALAR_UI`, `SERVICE_MODULE`, `HealthChecks__Enabled`, `PackingLogs__Enabled`; `SQLITE_CONNECTION_STRING` active, `POSTGRES_`/`AZURESTORAGE_` commented; `BINACLE_ADMIN_CREDENTIALS` | binds `JwtAuth.json`; ships `Cors.json` mounted-but-commented |
 | `full` | Everything at once, demo box only | all of the above plus `UI_MODULE` and **`DEBUG_ENDPOINT`** | binds `JwtAuth.json` |
 
 **`prod` and `service` are two different products, not two sizes.** ServiceModule is accounts, JWT auth, rate

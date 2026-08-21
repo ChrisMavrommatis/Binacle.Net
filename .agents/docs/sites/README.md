@@ -1,7 +1,7 @@
 ---
 id: sites
 description: Every published site lives under sites/, one directory each. What the two share, and what is per-site.
-verified: 2026-08-20
+verified: 2026-08-21
 check: The directory list matches sites/; both sites still build through `just build <site>` into artifacts/<site>; the shared list below still matches each site's Gemfile, package.json and webpack.config.js
 paths:
   - "sites/**"
@@ -24,7 +24,8 @@ Every site this repo publishes, one directory each.
 Read this once, then the per-site doc for what differs.
 
 - **Jekyll + webpack + TypeScript.** Its own `Gemfile`, its own `package.json`, its own `webpack.config.js`.
-  Neither is a root npm workspace, so a fresh clone needs `npm ci` in the site as well as at the root.
+  **Both are root npm workspace members**, so one `npm ci` at the root covers them and neither has a lock file
+  of its own. Ruby is still per site: `bundle install` runs in each.
 - **Two configs.** `_config.yml` holds everything; `_config.prod.yml` overrides the few values that differ off
   localhost. A build passes both, in that order.
 - **Output goes to `artifacts/<site>`**, set as `destination` in `_config.yml` — two levels up from the site.

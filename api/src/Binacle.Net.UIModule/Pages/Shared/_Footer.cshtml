@@ -1,0 +1,14 @@
+@* One line. Everything this used to say is on the page already - the version and the links into this
+   instance are on the instance page, and nothing here asks the reader for anything.
+
+   The links carry no colour class on purpose: a *-container background pairs with on-*-container, which they
+   inherit. Naming any other colour here breaks in one theme or the other. *@
+<footer class="secondary-container">
+	<nav class="center-align wrap small-text">
+		<span>&copy; 2023-@DateTime.Now.Year Chris Mavrommatis</span>
+		<span>Binacle.Net @Metadata.Version</span>
+		<a class="underline" href="@($"{Metadata.GitHub}/blob/main/LICENSE.GPL-3.0")" target="_blank">GPL-3.0</a>
+		<a class="underline" href="@Metadata.GitHub" target="_blank">GitHub</a>
+		<a class="underline" href="@Metadata.Dockerhub" target="_blank">Docker Hub</a>
+	</nav>
+</footer>

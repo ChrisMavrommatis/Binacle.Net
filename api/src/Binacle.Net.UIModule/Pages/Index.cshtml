@@ -1,0 +1,30 @@
+@page "/"
+@model IndexModel
+@{
+	ViewData["Title"] = "Binacle.Net";
+}
+
+<h1>Binacle.Net</h1>
+
+<p>Two demos and a look at the instance you are running. Pick one.</p>
+
+@* The whole card is the link, so there is no button on this page. *@
+<div class="grid medium-space">
+	@foreach (var applet in Model.Applets)
+	{
+		var summary = Model.SummaryFor(applet);
+		<article class="s12 m6 l4 no-padding">
+			<a asp-page="@applet.Page" class="card wave padding">
+				<div class="row">
+					<i class="material-symbols-outlined">@applet.Icon</i>
+					<h5 class="max">@applet.Title</h5>
+				</div>
+				<p>@applet.ShortDescription</p>
+				@if (summary is not null)
+				{
+					<p class="small-text"><code>@summary</code></p>
+				}
+			</a>
+		</article>
+	}
+</div>

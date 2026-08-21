@@ -29,7 +29,7 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `api/src/Binacle.Net.ServiceModule` | Optional module (3 projects): JWT auth, rate limiting, account management |
 | `api/src/Binacle.Net.ServiceModule.Domain` | Domain layer for ServiceModule — entities and repository interfaces |
 | `api/src/Binacle.Net.ServiceModule.Infrastructure` | Infrastructure layer for ServiceModule — DB providers |
-| `api/src/Binacle.Net.UIModule` | Optional: Blazor/Razor interactive packing demo |
+| `api/src/Binacle.Net.UIModule` | Optional: Razor Pages demo host — packing demo and ViPaq decoder |
 | `api/test/Binacle.Net.IntegrationTests` | HTTP tests for v3 and v4 endpoints |
 | `api/test/Binacle.Net.ServiceModule.IntegrationTests` | Tests for auth and rate limiting (ServiceModule only) |
 | `api/test/*.UnitTests` | One unit suite per source project — `Binacle.Net`, `Kernel`, `DiagnosticsModule`, `ServiceModule`. `Kernel.UnitTests` is split by feature folder |
