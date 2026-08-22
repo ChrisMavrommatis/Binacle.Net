@@ -1,7 +1,14 @@
 import type { Alpine as AlpineType } from 'alpinejs';
-import {defineComponent, getRandomBin, getRandomInt, getRandomItem, getResponseStatusText} from "../utils";
+import {
+	defineComponent,
+	getResponseStatusText,
+	largestBin,
+	randomBin,
+	randomItemFor,
+	randomSample
+} from "../utils";
 import {Bin, Item, Error} from "../viewModels";
-import {PackingParameters, PackingRequest, PackingResponse} from "../apiModels";
+import {PackingRequest, PackingResponse} from "../apiModels";
 import {PackedData} from "../apiModels/packingResponse";
 
 export function packingDemoAppPlugin(Alpine: AlpineType) {
@@ -27,16 +34,9 @@ export const packingDemoApp = defineComponent((options: PackingDemoOptions = {})
 	results: [] as PackedData[],
 	selectedResult: null as PackedData | null,
 	init() {
-		this.model.bins = [
-			new Bin(60, 40, 10),
-			new Bin(60, 40, 20),
-			new Bin(60, 40, 30),
-		];
-		this.model.items = [
-			new Item(2, 5, 10, 7),
-			new Item(12, 15, 10, 3),
-			new Item(10, 15, 15, 2)
-		];
+		const sample = randomSample();
+		this.model.bins = sample.bins;
+		this.model.items = sample.items;
 		this.model.algorithm = this.algorithms[0].value;
 	},
 	isValid() {
@@ -47,11 +47,16 @@ export const packingDemoApp = defineComponent((options: PackingDemoOptions = {})
 	removeBin(index: number) {
 		this.model.bins.splice(index, 1);
 	},
+	// The bin the items are sized against, and the one a new bin is copied from. A fresh roll when there are
+	// none, so nothing here has to handle an empty list.
+	sizingBin() {
+		return this.model.bins.length > 0 ? largestBin(this.model.bins) : randomBin();
+	},
 	addBin: {
 		['@click']() {
-			this.model.bins.push(
-				getRandomBin()
-			);
+			// A copy, not a roll: a fourth candidate is only worth comparing if it keeps the same footprint.
+			const last = this.model.bins[this.model.bins.length - 1];
+			this.model.bins.push(last ? new Bin(last.length, last.width, last.height) : randomBin());
 		}
 	},
 	clearAllBins: {
@@ -59,26 +64,12 @@ export const packingDemoApp = defineComponent((options: PackingDemoOptions = {})
 			this.model.bins = [];
 		}
 	},
-	randomizeBins: {
-		['@click']() {
-			const noOfVariedBins = getRandomInt(2, 5);
-			const bins = [] as Bin[];
-			for (let i = 0; i < noOfVariedBins; i++) {
-				bins.push(
-					getRandomBin()
-				);
-			}
-			this.model.bins = bins;
-		}
-	},
 	removeItem(index: number) {
 		this.model.items.splice(index, 1);
 	},
 	addItem: {
 		['@click']() {
-			this.model.items.push(
-				getRandomItem(1)
-			);
+			this.model.items.push(randomItemFor(this.sizingBin(), 1));
 		}
 	},
 	clearAllItems: {
@@ -86,16 +77,12 @@ export const packingDemoApp = defineComponent((options: PackingDemoOptions = {})
 			this.model.items = [];
 		}
 	},
-	randomizeItems: {
+	// One button, because two independent rolls are the impossible-pair bug this replaced.
+	randomize: {
 		['@click']() {
-			const noOfVariedItems = getRandomInt(3, 7);
-			const items = [] as Item[];
-			for (let i = 0; i < noOfVariedItems; i++) {
-				items.push(
-					getRandomItem(null)
-				);
-			}
-			this.model.items = items;
+			const sample = randomSample();
+			this.model.bins = sample.bins;
+			this.model.items = sample.items;
 		}
 	},
 	async handleErrorResponse(response: Response) {

@@ -140,11 +140,17 @@ is no build stage.
 
 | Plan | State | Waiting on |
 |---|---|---|
+| [packing-demo-rework](plans/packing-demo-rework.md) | ready - **state chosen by an agent, strike it** | - |
 | [api/ui-clients-off-v3](plans/api/ui-clients-off-v3.md) | ready | - |
 | [api/v4-stable](plans/api/v4-stable.md) | blocked | no endpoint chosen |
 
+**`packing-demo-rework` spans three slices** - the shared component, the UI module and the demo site - and it
+carries a one-off grant to edit the demo site's packing form. It sits at the root of `plans/` for that reason.
+Its own file fixes the order: the module first, whole, then the site.
+
 Ideas: [api/pack-first-bin-endpoint](ideas/api/pack-first-bin-endpoint.md) - **the candidate `v4-stable`
-needs.** [api/packing-only-image](ideas/api/packing-only-image.md) ·
+needs.** [api/show-me-the-request](ideas/api/show-me-the-request.md) - the demo prints the call it just made ·
+[api/packing-only-image](ideas/api/packing-only-image.md) ·
 [api/reduce-integration-friction](ideas/api/reduce-integration-friction.md) - direction settled, nothing to
 build.
 

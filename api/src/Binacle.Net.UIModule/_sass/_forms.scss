@@ -8,3 +8,15 @@
 		inset: -.5rem auto auto 0.1rem;
 	}
 }
+
+// The ViPaq page's paste box. Its `article` has to stretch to the card it sits in, which beercss does not
+// do for a nested one.
+.result-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.result-input-container {
+	flex: 0 1 auto;
+	height: 100% !important;
+}

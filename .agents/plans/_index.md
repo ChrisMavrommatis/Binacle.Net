@@ -16,6 +16,9 @@ you need, and trim or delete it once the work lands.
   description: "A check that nothing outside the agent guidance directory points a reader into it."
 - file: image-base-slimming.md
   description: "Harden and slim the base image"
+- file: packing-demo-rework.md
+  description: "The packing demo's sample data, randomizer and buttons - one component change landing on both hosts, module first"
+  paths: ["packages/binacle-net-ui/**", "api/src/Binacle.Net.UIModule/**", "sites/web/**"]
 - file: sonar-issue-triage.md
   description: "Sonar - what is left after the 2026-08-09 sweep"
 - file: todos.md

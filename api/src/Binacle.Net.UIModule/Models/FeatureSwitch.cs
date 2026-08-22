@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Binacle.Net.UIModule.Models;
 
 // The other things this server can expose. FeatureOptions only records what is switched on, so the off half

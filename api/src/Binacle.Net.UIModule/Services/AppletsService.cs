@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Binacle.Net.UIModule.Services;
 
 internal class AppletsService
@@ -12,8 +14,8 @@ internal class AppletsService
 			{
 				Title = "Packing Demo",
 				Icon = "deployed_code",
-				ShortDescription = "Allows you to visualize how Binacle.Net packs them into a container using it's algorithms.",
-				Description = "An interactive tool that lets test different packing algorithms with your own items and bins, and explore detailed visualizations of how items are efficiently arranged within a container.",
+				ShortDescription = "Put in your own bins and items, pick an algorithm, and watch Binacle.Net pack them.",
+				Description = "An interactive tool that lets you test different packing algorithms with your own bins and items, and see how each one arranges them inside the bin.",
 				Page = "/Packing"
 			},
 			new Models.Applet

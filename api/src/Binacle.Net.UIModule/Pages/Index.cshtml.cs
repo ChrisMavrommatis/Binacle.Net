@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Binacle.Net.UIModule.Models;
 using Binacle.Net.UIModule.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;

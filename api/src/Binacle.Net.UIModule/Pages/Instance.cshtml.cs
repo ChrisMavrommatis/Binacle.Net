@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Binacle.Net.UIModule.Models;
 using Binacle.Net.UIModule.Services;
 using Microsoft.AspNetCore.Hosting;

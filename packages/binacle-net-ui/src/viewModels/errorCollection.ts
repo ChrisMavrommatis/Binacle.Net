@@ -16,15 +16,9 @@ export default class ErrorCollection {
 
 	get errorMessages() {
 		const messages = [] as string[];
-		for (const fieldName in this) {
-			if (this.hasOwnProperty(fieldName)) {
-				const errors = this.fields[fieldName];
-				if (errors) {
-					for (const errorMessage of errors) {
-						messages.push();
-					}
-				}
-
+		for (const fieldName in this.fields) {
+			for (const errorMessage of this.fields[fieldName]) {
+				messages.push(errorMessage);
 			}
 		}
 		return messages;
@@ -37,7 +31,7 @@ export default class ErrorCollection {
 
 	hasErrors() {
 		for (const fieldName in this.fields) {
-			if (this.hasOwnProperty(fieldName) && this.fields[fieldName].length > 0) {
+			if (this.fields[fieldName].length > 0) {
 				return true;
 			}
 		}

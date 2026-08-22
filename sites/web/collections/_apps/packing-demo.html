@@ -1,19 +1,19 @@
 ---
 title: Packing Demo
 icon: deployed_code
-description: Allows you to visualize how Binacle.Net packs them into a container using it's algorithms.
+description: Put in your own bins and items, pick an algorithm, and watch Binacle.Net pack them.
 demo: true
 scripts:
   - src: "/js/packing_demo.js"
     type: "text/javascript"
 excerpt: |
-  An interactive tool that lets test different packing algorithms with your own items and bins,
-  and explore detailed visualizations of how items are efficiently arranged within a container.
+  An interactive tool that lets you test different packing algorithms with your own bins and items,
+  and see how each one arranges them inside the bin.
 ---
 
 <p>
-  An interactive tool that lets test different packing algorithms with your own items and bins,
-  and explore detailed visualizations of how items are efficiently arranged within a container.
+  An interactive tool that lets you test different packing algorithms with your own bins and items,
+  and see how each one arranges them inside the bin.
 </p>
 
 <div x-data="packing_demo_app({ baseUrl: '{{ site.api_url }}' })">
@@ -68,17 +68,13 @@ excerpt: |
         </template>
       </fieldset>
       <nav>
-        <button class="max" type="button" x-bind="addBin">
+        <button class="border" type="button" x-bind="addBin">
           <i class="material-symbols">add</i>
-          <span class="m l">Add Bin</span>
+          <span>Add bin</span>
         </button>
-        <button class="max" type="button" x-bind="clearAllBins">
-          <i class="material-symbols">delete_forever</i>
-          <span class="m l">Clear All Bins</span>
-        </button>
-        <button class="max" type="button" x-bind="randomizeBins">
-          <i class="material-symbols">refresh</i>
-          <span class="m l">Randomize</span>
+        <div class="max"></div>
+        <button class="transparent destructive" type="button" x-bind="clearAllBins">
+          <span>Clear all</span>
         </button>
       </nav>
     </article>
@@ -143,26 +139,22 @@ excerpt: |
 
       </fieldset>
       <nav>
-        <button class="max secondary" type="button" x-bind="addItem">
+        <button class="border" type="button" x-bind="addItem">
           <i class="material-symbols">add</i>
-          <span class="m l">Add Item</span>
+          <span>Add item</span>
         </button>
-        <button class="max secondary" type="button" x-bind="clearAllItems">
-          <i class="material-symbols">delete_forever</i>
-          <span class="m l">Clear All Items</span>
-        </button>
-        <button class="max secondary" type="button" x-bind="randomizeItems">
-          <i class="material-symbols">refresh</i>
-          <span class="m l">Randomize</span>
+        <div class="max"></div>
+        <button class="transparent destructive" type="button" x-bind="clearAllItems">
+          <span>Clear all</span>
         </button>
       </nav>
     </article>
 
     <fieldset class="s12">
       <div class="grid">
-        <div class="s12 m6 max">
+        <div class="s12 m6">
           <div class="field">
-            <select x-model="model.algorithm" name="algorithm" class="" id="algorithm">
+            <select x-model="model.algorithm" name="algorithm" id="algorithm">
               <template x-for="(item, index) in algorithms" :key="index">
                 <option :value="item.value" x-text="item.text"></option>
               </template>
@@ -170,9 +162,14 @@ excerpt: |
             <i>arrow_drop_down</i>
           </div>
         </div>
-        <div class="s12 m6 row">
-          <button class="max tertiary" type="submit">
-            <span>Get Results</span>
+        <div class="s5 m2 row">
+          <button class="transparent max" type="button" x-bind="randomize">
+            <span>Randomize</span>
+          </button>
+        </div>
+        <div class="s7 m4 row">
+          <button class="max" type="submit">
+            <span>Get results</span>
           </button>
         </div>
       </div>
@@ -204,7 +201,10 @@ excerpt: |
 								</span>
                 <span class="s8 right-align" x-text="resultBinPercentageText(result)">
 								</span>
-                <progress :value="result.packedBinVolumePercentage" max="100"
+                {% comment %} value="0" is not a default - it is what keeps the bar determinate. Alpine skips its own assignment
+                   when el.value already equals the bound one, and an indeterminate progress reads 0, so a
+                   0% result would never get the attribute and beercss animates every progress that lacks it. {% endcomment %}
+                <progress value="0" :value="result.packedBinVolumePercentage" max="100"
                           class="s12 surface-container-lowest"
                           :class="colorClass(result) + '-text'">
                 </progress>

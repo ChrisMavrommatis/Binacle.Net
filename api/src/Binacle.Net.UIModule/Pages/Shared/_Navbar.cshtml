@@ -1,6 +1,6 @@
 @model IReadOnlyList<Applet>
 @{
-	var currentPage = (string?)ViewContext.RouteData.Values["page"];
+	var currentPage = (string?)this.ViewContext.RouteData.Values["page"];
 }
 
 @* Both navs render the same list - beercss shows the left one from medium up and the bottom one on small. *@

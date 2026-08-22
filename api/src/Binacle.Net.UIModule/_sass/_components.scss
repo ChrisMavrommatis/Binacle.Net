@@ -1,11 +1,24 @@
+// The visualizer's five playback buttons are one strip: `packingVisualizer.ts` hands the ends
+// `bottom-left-round` / `bottom-right-round` and the three middles `zero-round`. Without all three the
+// middles keep beercss's pill radius and the strip breaks up. Keep the radius in step with sites/web.
 .bottom-right-round {
 	border-radius: 0 !important;
-	border-bottom-right-radius: 2rem !important;
+	border-bottom-right-radius: .5rem !important;
 }
 
 .bottom-left-round {
 	border-radius: 0 !important;
-	border-bottom-left-radius: 2rem !important;
+	border-bottom-left-radius: .5rem !important;
+}
+
+.zero-round {
+	border-radius: 0 !important;
+}
+
+// Every bin/item row after the first. Beercss gives the fields no vertical gap of their own, so without
+// this the underlines of one row sit on the labels of the next.
+.row-container {
+	margin-block-start: 1rem;
 }
 
 .max-height {
@@ -21,4 +34,26 @@ a.card {
 	display: block;
 	block-size: 100%;
 	color: inherit;
+}
+
+// Beercss hardcodes `color: var(--primary)` on `.border`, which lands on the panel colour, not on white:
+// 1.53:1 in light, 1.01:1 on the dark items panel. The on-container colour is 6.8:1 or better everywhere.
+:is(.primary-container, .secondary-container) button.border {
+	color: inherit;
+	border-color: color-mix(in srgb, currentcolor 30%, transparent);
+}
+
+// Destructive actions read as plain text until you reach for them. The warning is the container fill, not
+// coloured text: raw `--error` on these panels measures 2.3-4.4:1, the pair below 8:1 or better.
+// `.transparent` sets both properties `!important`, so this has to outrank it.
+button.destructive:is(:hover, :focus) {
+	background-color: var(--error-container) !important;
+	color: var(--on-error-container) !important;
+}
+
+// Rule 1's one filled button. White on `--primary` measures 3.32:1 in light, black 6.33:1; in dark it is the
+// other way round. The `--on-primary` token cannot just flip - it also paints the header, whose GitHub and
+// Docker marks are white PNGs. This pair is already black/white in the right order.
+button[type="submit"]:not(.border):not(.transparent) {
+	color: var(--on-primary-container);
 }
