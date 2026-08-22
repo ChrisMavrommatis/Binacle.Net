@@ -142,8 +142,17 @@ is no build stage.
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [api/ui-clients-off-v3](plans/api/ui-clients-off-v3.md) | ready | - |
+| [api/ui-clients-off-v3](plans/api/ui-clients-off-v3.md) | **module half ready; site half blocked** | the site half waits on `api.binacle.net` serving v4 |
+| [api/uimodule-instance-presets](plans/api/uimodule-instance-presets.md) | ready - one design question first | - |
 | [api/v4-stable](plans/api/v4-stable.md) | blocked | no endpoint chosen |
+
+**`ui-clients-off-v3` is two halves and only one is ready.** The demo inside the image calls its own
+instance on a relative URL and is unaffected. **The demo site's copy calls `api.binacle.net`, which serves
+image `2.1.1` and answers 404 on v4** - probed 22 Aug 2026. Moving that copy to v4 breaks the live demo until
+that host serves a v3.0.x image. The module half can go today.
+
+**`uimodule-instance-presets` came in from outside the repository on 22 Aug 2026.** It touches no site, no
+host and no published word, so it was never anything but repository work.
 
 Ideas: [api/pack-first-bin-endpoint](ideas/api/pack-first-bin-endpoint.md) - **the candidate `v4-stable`
 needs.** [api/show-me-the-request](ideas/api/show-me-the-request.md) - the demo prints the call it just made ·

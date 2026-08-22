@@ -33,6 +33,9 @@ you need, and trim or delete it once the work lands.
 - file: api/ui-clients-off-v3.md
   description: "Migrate the shipped UI clients off the v3 API"
   paths: ["api/**", "packages/binacle-net-ui/**"]
+- file: api/uimodule-instance-presets.md
+  description: "The instance page reads its presets over HTTP from the browser - move it to server-side state"
+  paths: ["api/src/Binacle.Net.UIModule/**", "api/src/Binacle.Net.Kernel/**"]
 - file: api/v4-stable.md
   description: "v4 - flip from experimental to stable"
   paths: ["api/**"]
