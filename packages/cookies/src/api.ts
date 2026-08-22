@@ -89,7 +89,9 @@ export default class Cookies {
 		return name ? jar[name] : jar
 	}
 
-	static remove(key: string): void {
-		Cookies.set(key, '', assign<CookieAttributes>({}, {expires: -1}));
+	// The attributes have to match the ones the cookie was written with. A cookie set on /demo is a different
+	// cookie from one on /, so removing without the path silently does nothing.
+	static remove(name: string, attributes?: CookieAttributes): void {
+		Cookies.set(name, '', assign<CookieAttributes>({}, attributes, {expires: -1}));
 	}
 }

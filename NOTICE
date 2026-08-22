@@ -129,6 +129,9 @@ Shipped in the browser UI and the websites:
 Alpine.js                         https://github.com/alpinejs/alpine
 Beer CSS                          https://github.com/beercss/beercss
 three.js                          https://github.com/mrdoob/three.js
+js-cookie                         https://github.com/js-cookie/js-cookie
+                                  Vendored and modified from v3.0.5 in packages/cookies, which
+                                  carries the upstream LICENSE. The others above ship unmodified.
 
 Build, test and documentation tooling, not shipped:
 

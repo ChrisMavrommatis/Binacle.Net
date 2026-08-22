@@ -82,6 +82,20 @@ both hosts run the event-driven one above.
 | `models/` | Shared structural interfaces + Three.js scene state | `Coordinates`, `Dimensions`, `Dictionary<T>`, `SceneData`, `VisualizerState` |
 | `types/` | Ambient declarations only | `alpine.d.ts` (adds `$logger`, `_x_fieldPrefix`), `global.d.ts` (`Window.binacle`) |
 
+**Both files under `types/` are modules, so their `declare global` and `declare module` blocks only apply when
+the file is in the compilation** - and nothing imports them. `index.ts` therefore carries a
+`/// <reference path>` to each. **Delete those two lines and every host build reports `Window.binacle`,
+`$logger` and `_x_fieldPrefix` as missing properties** - 32 errors, which webpack emits through anyway.
+
+**This package's `tsconfig.json` is the one that governs, in every host.** ts-loader walks up from each `.ts`
+file it compiles, so it lands here rather than on the host's config - `sites/demo` has no tsconfig at all and
+compiles correctly, and an es5 target in a host's config changes nothing. This file's `target: es2016` is what
+lets `theme-switcher` emit a real `class`; on es5 a class extending `HTMLElement` throws `Illegal constructor`
+at load.
+
+**Both host webpack configs cache to the filesystem, and the cache hides type errors.** Before measuring one,
+delete `<host>/node_modules/.cache/webpack` - a warm cache reports success on source that fails cold.
+
 `onSubmit` maps `viewModels` (classes) into `apiModels` (plain objects) before POST. Three.js scene helpers live
 in `src/utils/` (`redrawScene`, `createBin`/`createItem`, `addItemToScene`/`removeItemFromScene`, camera helpers,
 `getThemeColors`, …) alongside non-scene utils (`defineComponent`, `getRandom*`, `findClosestElement`).

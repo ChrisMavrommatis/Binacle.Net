@@ -1,14 +1,8 @@
 import { Cookies } from 'cookies';
 
 export default class ThemeSwitcherButtonElement extends HTMLElement {
-	_defaultMode: string;
-	_themeIcon: HTMLElement | null;
-
-	constructor() {
-		super();
-		this._defaultMode = 'light';
-		this._themeIcon = null;
-	}
+	private _defaultMode = 'light';
+	private _themeIcon: HTMLElement | null = null;
 
 	connectedCallback() {
 		this._defaultMode = this.dataset.defaultTheme || 'light';

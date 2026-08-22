@@ -95,6 +95,24 @@ describe("remove", () => {
 
 		expect(Cookies.get()).toEqual({keep: "1"});
 	});
+
+	// A cookie is identified by its path as well as its name, so the attributes have to match the ones it was
+	// written with. Without them the removal writes an expired cookie on a different path and reports nothing.
+	test("a cookie written on a path needs that path to remove it", () => {
+		Cookies.set("scoped", "1", {path: "/"});
+
+		Cookies.remove("scoped", {path: "/"});
+
+		expect(Cookies.get("scoped")).toBeUndefined();
+	});
+
+	test("the removal expires the cookie rather than trusting the caller's expiry", () => {
+		Cookies.set("scoped", "1");
+
+		Cookies.remove("scoped", {expires: 365});
+
+		expect(Cookies.get("scoped")).toBeUndefined();
+	});
 });
 
 describe("attributes", () => {

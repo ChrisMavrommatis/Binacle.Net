@@ -1,6 +1,6 @@
 import {Cookies} from "cookies";
 
-import ThemeSwitcherButtonElement from "../src/theme-switcher";
+import ThemeSwitcherButtonElement from "../src/themeSwitcher";
 
 // jsdom gives us a real customElements registry, so connectedCallback fires on appendChild. The tag can
 // only be defined once per file - a second define throws.
