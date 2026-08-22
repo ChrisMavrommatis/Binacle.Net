@@ -16,5 +16,4 @@ module.exports = {
     ...tsJestTransformCfg,
   },
   testMatch: ["**/tests/**/*.test.ts"],
-  collectCoverageFrom: ["src/**/*.ts", "!src/**/index.ts"],
 };

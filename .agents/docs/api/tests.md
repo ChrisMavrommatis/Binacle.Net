@@ -40,8 +40,8 @@ end to end. All three are covered by `Binacle.Net.UIModule.IntegrationTests` ins
 underneath them is `ReservedPathOptions`, unit tested in `Binacle.Net.Kernel.UnitTests/Paths/`.
 
 `Binacle.Net.UIModule.IntegrationTests` builds its own `WebApplicationFactory` per feature configuration —
-`UIModuleBinacleApi` with `Features:UI_MODULE` on, `UIModuleOffBinacleApi` with it off — rather than using the
-core harness, which runs with every module off. **`Feature.Manager` is process-global static state**, set while
+`UIModuleBinacleApi` with `Features:UI_MODULE` on, `UIModuleOffBinacleApi` with it off, both three lines over
+a shared `UIModuleApi` base — rather than using the core harness, which runs with every module off. **`Feature.Manager` is process-global static state**, set while
 a host builds, so two hosts that disagree about a flag cannot be alive at once: the second to boot answers for
 both. Every class sits in one collection with `DisableParallelization = true`. The ServiceModule's
 `RateLimiting/` suite is the same arrangement for a different reason, and both are worth reading together

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Binacle.Net.UIModule.Services;
 
 internal class AppletsService

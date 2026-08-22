@@ -150,28 +150,23 @@ the problem.
 
 **Decided 2026-08-09.** The project runs the built-in "Sonar way" gate, which asks for 80% coverage on new code.
 It is read-only, and on the **Free plan there is no way around that**: custom quality gates start at the Team
-plan, so 80% is not a number we can argue with, only one we can meet or fail. It is being failed - the
-2026-08-08 run reads **53.3% overall, 31.4% on new code**, the only failing condition on the gate.
+plan, so 80% is not a number we can argue with, only one we can meet or fail. It is being failed, and that is
+the only failing condition on the gate.
 
-The gap is almost entirely one thing. On that run four areas sat at **exactly 0% coverage** - the `UIModule`
-(959 lines) and the `binacle-net-ui`, `cookies` and `theme-switcher` TS packages (612 between them). That was
-1571 lines, 22.5% of the whole coverage denominator, and without them the project read about 68%.
+The gap was almost entirely four areas at 0%, and all four now have suites. **Do not re-derive the numbers
+here.** They are recorded once, with their dates and their caveats, in the CI/CD design record - four files
+were carrying their own copy and three had gone stale.
 
-**The first of those four is gone.** The UIModule rebuild deleted the Blazor stack, so the denominator has to
-be re-measured before any of these numbers is quoted again - `ui-test-harness` owns that.
-
-Excluding those four from coverage was considered and **rejected**: it moves the number without changing
-anything true. The coverage condition therefore stays red until the UI has a test harness, which is its own plan
-(the one on a UI test harness) rather than a line in the analysis xml. A red gate here means "the UI is
-untested", which is exactly what is true.
+Excluding those areas from coverage was considered and **rejected**: it moves the number without changing
+anything true. A red gate here means "the UI is untested", which is what was true when it was set.
 
 Two consequences for this gate:
 
 - **Do not make coverage blocking on the PR gate yet.** A condition that is red before anyone writes a line
   blocks every PR for a reason none of them caused, and gets waived within a week - the same failure this plan
   already warns about for a floor nobody agreed on.
-- **When the floor is finally set, set it from a run that has settled**, and after the UI harness lands. The
-  2026-08-09 numbers are a correction to what was being measured, not work anyone did.
+- **When the floor is finally set, set it from a run that has settled.** No Sonar run has happened since the
+  UI suites landed, so nobody has seen the new numbers arrive there yet.
 
 ### The two published sites are back in scope {#sites-in-scope}
 
@@ -210,10 +205,9 @@ Scope, coverage paths and the test/product split are all in the repo now (the an
   automatically, whatever the new code setting says. So "reference branch = main" may be either unavailable or a
   no-op for us, and "days = 30" may be the permanent answer rather than a stopgap. Check it in
   Administration > New Code before planning around it.
-- **Three findings marked in the UI**, none of which has an honest code fix: `S2245` on `SampleDataService` and
-  on `getRandomInt.ts` (both pick demo data, not secrets), and `S2068` on the `AccountGetResponse` OpenAPI
-  example, where `PasswordHash` is the literal `"type::hash::salt"`. **`SampleDataService` was deleted in the
-  UIModule rebuild**, so expect two, not three.
+- **Two findings marked in the UI**, neither with an honest code fix: `S2245` on `getRandomInt.ts` (it picks
+  demo data, not secrets) and `S2068` on the `AccountGetResponse` OpenAPI example, where `PasswordHash` is the
+  literal `"type::hash::salt"`. A third was marked on `SampleDataService`, which no longer exists.
 - **Automatic Analysis stays OFF**, as below.
 - **No source glob in the UI.** An `sonar.inclusions` of `src/**/*` left over from a flat layout is what made the
   2026-08-07 run index 0 files and still report success. Scope is exclusions only, and they live in the xml.

@@ -60,7 +60,7 @@ The API launch profiles:
 - `U` / `WithUiModuleOnly` — with UIModule
 - `All` / `WithAllModules` — everything
 
-`docs` and `web` run both halves under `concurrently --kill-others`, so one Ctrl-C stops the pair. They need
+`docs` and `demo` run both halves under `concurrently --kill-others`, so one Ctrl-C stops the pair. They need
 `just install` to have run first.
 
 ## Run Tests
@@ -267,7 +267,7 @@ problem.
 ./tooling/tmux.sh
 ```
 
-Builds (or re-attaches to) a tmux session named `binacle` with windows `api`, `docs`, `web`, `tests`, `misc`, and
+Builds (or re-attaches to) a tmux session named `binacle` with windows `api`, `docs`, `demo`, `tests`, `misc`, and
 `bench_1`/`bench_2`/`bench_3`. Each pane is pre-`cd`'d to the right folder but runs nothing automatically — it's a
 staging layout for the `just` recipes and the remaining `tooling/*.sh` scripts. Requires `tmux`.
 
@@ -286,7 +286,7 @@ the container, which is what the running app reports.
 
 Then run it with `just image up`, which prepares the bind-mounted folders first.
 
-`docs` and `web` are the build half of `just serve docs` / `just serve demo` — same site, built once instead of
+`docs` and `demo` are the build half of `just serve docs` / `just serve demo` — same site, built once instead of
 served and watched. Three steps in a fixed order: copy the assets, run webpack over `_js/`, then
 `jekyll build` with `_config.yml,_config.prod.yml`. **Skipping any of them still produces a site**, just one
 with no scripts and no logo, because `js/`, `lib/` and `media/` are gitignored and filled by the first two

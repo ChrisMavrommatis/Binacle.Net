@@ -52,28 +52,14 @@ changes a test that says why.
   `packedBinVolumePercentage`. Divides by the bin volume unguarded, so a decoded result carrying a zero side
   renders `NaN%`. The input is a base64 token a visitor pastes in, so the zero is reachable.
 
-## Webpack and tsconfig
+## UIModule
 
-Both found 2026-08-22, reviewing the cookies and theme-switcher port. Neither is that port's doing.
-
-- ~~**Both host builds emit 32 ts-loader type errors.**~~ **Fixed 2026-08-22**, and measured on both hosts
-  with the caches cleared: 32 to 0 in `api/src/Binacle.Net.UIModule` and in `sites/demo`. They were
-  `Window.binacle`, `$logger` and `_x_fieldPrefix`, all declared in `packages/binacle-net-ui/src/types/`.
-  Both files there are modules, and a module's `declare global` only applies when the file is in the program -
-  nothing imported them, so no host added them. `index.ts` now carries a `/// <reference path>` to each.
-  **Webpack emitted the bundle regardless**, which is why it survived this long.
-
-- **`sites/demo` has no `tsconfig.json` while `sites/docs` does, and it does not matter.** Measured
-  2026-08-22: ts-loader resolves the config by walking up from each `.ts` file it compiles, so
-  `packages/binacle-net-ui/tsconfig.json` governs package code in **every** host. An es5 target in
-  `sites/demo/tsconfig.json` built clean; an es5 target in the package's config broke the build immediately.
-  **The es2016 target that keeps `class extends HTMLElement` working is the package's, and it is not luck.**
-  A host tsconfig here would be inert and would read as protection, so there is nothing to add.
-
-- **Both host webpack configs set `cache: {type: 'filesystem'}`, and it hides type errors.** A build can
-  report success from cache while the same source fails a cold build - it cost most of a session on 2026-08-22
-  and produced two confident wrong conclusions. **Measuring a type error means deleting
-  `<host>/node_modules/.cache/webpack` first.** Worth a comment in both configs next to the cache line.
+- `api/src/Binacle.Net.UIModule/ModuleDefinition.cs`, `UseUIModule`. `UseHsts()` is called there, so an
+  instance with the demo switched off - which is most of them - sends no strict-transport header at all. It
+  also sits after eight other middlewares, so anything answering earlier never gets it either. **This predates
+  the rebuild**; it moved with the file rather than being introduced. Moving it to `Program.cs` next to
+  `UseHttpsRedirection` is the whole change, but whether the API should send HSTS by default is a decision,
+  not a one-liner - if the answer is anything but "yes, move it", this needs a plan instead.
 
 ## Ruby gems
 

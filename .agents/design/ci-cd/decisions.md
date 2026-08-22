@@ -473,11 +473,43 @@ modules only, and Sonar runs when somebody presses a button. Each is a known gap
 the shape of the fix is not settled — one folded job or three workflows, and what the runtime budget allows.
 
 One part **is** settled: **coverage must not be made blocking yet.** The project runs the read-only "Sonar way"
-gate, which asks 80% on new code, and custom gates need a paid plan. The gap is almost entirely four areas at
-exactly 0% — the Blazor UI module and three TypeScript packages, 1571 lines, 22.5% of the coverage denominator.
-Excluding them was considered and rejected: it moves the number without changing anything true. A condition
-that is red before anyone writes a line blocks every PR for a reason none of them caused, and gets waived within
-a week. It goes green when the UI gets a test harness, not by configuration.
+gate, which asks 80% on new code, and custom gates need a paid plan. A condition that is red before anyone
+writes a line blocks every PR for a reason none of them caused, and gets waived within a week. It goes green
+when the UI is tested, not by configuration — **excluding the untested areas was considered and rejected**,
+because it moves the number without changing anything true.
+
+**This is the one place the coverage numbers are recorded.** They moved a long way in two weeks and were
+being re-derived in four files, which is how three of them ended up disagreeing.
+
+| Measured | Overall | The four areas that were at 0% |
+|---|---|---|
+| 2026-08-08, from Sonar | 53.3%, 31.4% on new code | the Blazor UI module and three TypeScript packages — 1571 lines, 22.5% of the denominator |
+| 2026-08-22, local cobertura | 56.6% — 9511 of 16785 lines, 20 assemblies | all four now have suites; see the table below |
+
+**The 2026-08-22 detail**, hand-written code only:
+
+| Area | Lines | Covered | |
+|---|---|---|---|
+| `api/src/Binacle.Net.UIModule` (C#) | 232 | 216 | 93.1% |
+| `packages/binacle-net-ui/src` | 631 | 440 | 69.7% |
+| `packages/cookies/src` | 48 | 47 | 97.9% |
+| `packages/theme-switcher/src` | 40 | 39 | 97.5% |
+
+**Two caveats on the first row, and both matter to whoever sets a floor.** The assembly reports **35.4%**,
+because two generated namespaces land inside it — `Microsoft.AspNetCore.OpenApi.Generated` and
+`System.Runtime.CompilerServices`, both at 0% and neither written by anyone here. And 216 of those 232 lines
+need both UIModule suites together; the unit one alone does not reach `ModuleDefinition`.
+
+**The old first row counted 959 lines of Blazor that no longer exist.** What replaced it is a tenth of the
+size and nearly covered.
+
+**These are local cobertura numbers, not Sonar's.** Sonar counts coverable lines its own way and has not run
+since. Expect the shape to hold and the digits to move.
+
+**`binacle-net-ui`'s uncovered third is the Three.js half** — `core/packingVisualizer.ts` and the scene
+helpers in `utils/`. They need a WebGL context, so a test there could only assert that a call happened. They
+stay in the denominator: excluding them would be the same act as the Sonar coverage exclusions rejected
+above, one layer down. The only exclusion anywhere is `.d.ts`, which carries no runtime code.
 
 ### O3 — multi-arch is still absent
 

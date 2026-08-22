@@ -52,6 +52,10 @@ demo pages cannot drift.
 **Alpine's `@click` and `@submit` are `@@click` and `@@submit` in a `.cshtml` file.** `x-on:` forms need no
 escaping.
 
+**An icon is a bare `<i>` with no class.** beercss sets `--font-icon` on the element itself, and neither
+`material-symbols` nor `material-symbols-outlined` is a selector it defines — the second appears in
+`beer.min.css` only as a woff2 filename. Both were on the pages until 2026-08-22 and both were inert.
+
 ## The build
 
 `wwwroot/` is **generated in full and gitignored**. Nothing in it is hand-maintained. Three producers fill it:
@@ -60,11 +64,12 @@ escaping.
 |---|---|---|
 | `just assets` (gulp) | `lib/`, `media/`, the root icons | repo-root `assets/` |
 | `npm run build:css` (dart-sass) | `css/main.css` | `_sass/main.scss` |
-| `npm run build:js` (webpack) | `js/` | `_js/` — three entries |
+| `npm run build:js` (webpack) | `js/` | `_js/` — four entries |
 
 `just build publish` runs all three before `dotnet publish`, because static web assets are collected at
 publish time. **A missing bundle fails nothing** — the image ships pages that return 200 and do nothing —
-which is why `full.hurl` and `quickstart.hurl` assert the bundle and stylesheet directly.
+which is why `full.hurl` and `quickstart.hurl` request every page route, every entry bundle and the
+stylesheet directly, against a built image.
 
 The webpack entries are `main`, `instance`, `packing_demo` and `protocol_decoder`. The chunk names and
 priorities match `sites/demo/webpack.config.js`; both compile the same package source, so there is one
@@ -74,9 +79,9 @@ implementation and only the config is duplicated.
 `runtime` + `main` + `instance` and none of `vendors`, `three` or the two package chunks.
 
 **The module is a root npm workspace member.** `binacle-net-ui`, `binacle-vipaq`, `cookies` and
-`theme-switcher` resolve to symlinks in the root `node_modules`, and `three` resolves to one copy — which is
-why this config needs no `three` alias. Two copies in one bundle would make a mesh from one fail `instanceof`
-against the other. One root `npm ci` covers the module; it has no lock file of its own.
+`theme-switcher` resolve to symlinks in the root `node_modules`. One root `npm ci` covers the module; it has
+no lock file of its own. Why that matters for `three`, and why a warm webpack cache can hide a type error, is
+in `$packages/binacle-net-ui` — it is a property of the package, not of this host.
 
 **Nothing on a page is fetched from the internet.** Three.js and Alpine are bundled, beercss and the fonts are
 copied in, and the footer carries no remote badges. The only external URLs in the rendered HTML are anchors a

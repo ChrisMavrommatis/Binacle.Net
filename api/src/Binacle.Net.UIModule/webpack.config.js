@@ -76,6 +76,8 @@ module.exports = (env) => {
 			// three is unavoidable on the demo pages. Budget everything else.
 			assetFilter: (asset) => asset.endsWith('.js') && !asset.startsWith('three'),
 		},
+		// A warm cache reports success on source that fails a cold build, type errors included. Delete
+		// node_modules/.cache/webpack before trusting a clean run.
 		cache: {type: 'filesystem'},
 		devtool: production ? false : 'source-map',
 	};

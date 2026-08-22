@@ -49,7 +49,7 @@
                 </div>
               </div>
               <button type="button" class="transparent circle" x-on:click="removeBin(index)">
-                <i class="material-symbols">delete</i>
+                <i>delete</i>
               </button>
             </div>
             <div class="">
@@ -62,7 +62,7 @@
       </fieldset>
       <nav>
         <button class="border" type="button" x-bind="addBin">
-          <i class="material-symbols">add</i>
+          <i>add</i>
           <span>Add bin</span>
         </button>
         <div class="max"></div>
@@ -119,7 +119,7 @@
                 </div>
               </div>
               <button type="button" class="transparent circle" x-on:click="removeItem(index)">
-                <i class="material-symbols">delete</i>
+                <i>delete</i>
               </button>
             </div>
             <div class="">
@@ -133,7 +133,7 @@
       </fieldset>
       <nav>
         <button class="border" type="button" x-bind="addItem">
-          <i class="material-symbols">add</i>
+          <i>add</i>
           <span>Add item</span>
         </button>
         <div class="max"></div>
@@ -187,7 +187,7 @@
             <a class="row wave padding"
                :class="isSelected(result) ? 'surface-container border' : ''"
                x-on:click.prevent.stop="selectResult(result)">
-              <i class="material-symbols large"
+              <i class="large"
                  :class="colorClass(result) + '-text'">package_2</i>
               <div class="grid no-space max">
 								<span class="s4" x-text="resultTitle(result)">

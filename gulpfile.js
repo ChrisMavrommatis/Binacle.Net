@@ -17,16 +17,13 @@ const ASSETS = {
 		options: {encoding: false}
 	}
 };
-// What each target does not load. Everything else in assets/ is copied to every target, so the destination
-// layout never differs - only the weight does. Measured 21 Aug 2026 by grepping each site for `lib/<name>`
-// outside its own lib/ folder; re-measure before changing a line.
+// What each target does not get. Everything else in assets/ goes everywhere, so only the weight differs.
 //
-//   swagger-ui  4.8 MB, and only sites/docs/_layouts/versions/swagger.html reads it. The API serves its own
-//               Swagger UI from the Swashbuckle package, so it is dead weight on the demo site and in
-//               the image.
+// swagger-ui is 4.8 MB and only sites/docs/_layouts/versions/swagger.html reads it. The API serves its own
+// Swagger UI from Swashbuckle, so it is dead weight on the demo site and in the image.
 //
-// material-dynamic-colors stays everywhere: 72 KB, and sites/demo/_data/includes.yml keeps a commented-out
-// script tag for it, so dropping it would break the line the moment someone uncomments it.
+// material-dynamic-colors stays everywhere at 72 KB: sites/demo/_data/includes.yml keeps a commented-out
+// script tag for it, so dropping it breaks that line the moment anyone uncomments it.
 const IGNORE = {
 	docs: [],
 	demo: ['assets/lib/swagger-ui/**'],
@@ -41,24 +38,13 @@ function copyAssets(destinationDir, ignore = []) {
 	Object.keys(ASSETS).forEach(key => {
 		const section = {...ASSETS[key], options: {...(ASSETS[key].options || {}), ignore}};
 		console.log(`Assets/${key} -> ${destinationDir}`);
-		tasks.push(new Promise((resolve, reject) => {
-			if(section.options){
-				src(section.src, section.options)
-					.pipe(dest(destinationDir))
-					.on('end', () =>{
-						console.log(`Assets/${key} -> ${destinationDir}: OK`);
-						resolve();
-					});
-			}
-			else {
-				src(section.src)
-					.pipe(dest(destinationDir))
-					.on('end', () =>{
-						console.log(`Assets/${key} -> ${destinationDir}: OK`);
-						resolve();
-					});
-			}
-
+		tasks.push(new Promise((resolve) => {
+			src(section.src, section.options)
+				.pipe(dest(destinationDir))
+				.on('end', () =>{
+					console.log(`Assets/${key} -> ${destinationDir}: OK`);
+					resolve();
+				});
 		}));
 	});
 	return Promise.all(tasks).then(() => {

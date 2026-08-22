@@ -136,8 +136,13 @@ webpack together under a single Ctrl-C), and its only scripts are the asset-copy
 `just assets` runs all three, and `just install` runs it after the npm and bundler installs.
 
 `gulpfile.js` copies shared `assets/` (images, js, css, fonts) into the two Jekyll sites and the UI module's
-`wwwroot/`. One `IGNORE` block holds what each target skips. Each of the three runs its own webpack build —
-see docs site (`$sites/docs`), demo site (`$sites/demo`) and the UI module (`$api/modules/ui`).
+`wwwroot/`. One `IGNORE` block holds what each target skips, with the weight it saves beside each line. Each
+of the three runs its own webpack build — see docs site (`$sites/docs`), demo site (`$sites/demo`) and the UI
+module (`$api/modules/ui`).
+
+**To re-measure that `IGNORE` block**, grep each target for `lib/<name>` outside its own `lib/` folder; what
+nothing references is what can be skipped. The copy is one-way and never deletes, so a target that stopped
+loading a library still has the files until someone removes them by hand.
 
 ## Docker build chain
 
@@ -158,7 +163,7 @@ The Dockerfile is **single-stage** — the publish happens outside it, in the `b
 allowlists that one path, so the publish has to land exactly there.
 
 There is no `EXPOSE`/`ASPNETCORE_HTTP_PORTS` in the Dockerfile — the aspnet:10.0 base defaults to port 8080;
-compose/k8s map it. `artifacts/` is **output only** (generated `binacle-net/`, `docs/`, `web/`, `openapi/`, plus
+compose/k8s map it. `artifacts/` is **output only** (generated `binacle-net/`, `docs/`, `demo/`, `openapi/`, plus
 `tests/` and `coverage/` from a test run) — never edit it. Each folder is named after what produced it, so a
 look at `artifacts/` says which artifact is which.
 

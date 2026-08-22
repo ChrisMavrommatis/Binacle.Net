@@ -89,12 +89,14 @@ and ruleset collide with neither. **`sonar-issue-triage`'s quality gate hangs on
 
 | Plan | State | Waiting on |
 |---|---|---|
-| [ui-test-harness](plans/ui-test-harness.md) | ready | - |
+| [ui-test-harness](plans/ui-test-harness.md) | **harness built. One verification left** | a Sonar run |
 | [api/integration-test-additions](plans/api/integration-test-additions.md) | ready - phase 1 first | - |
 | [shared/testskernel-data-extraction](plans/shared/testskernel-data-extraction.md) | ready | - |
 
-**`ui-test-harness` is why the Sonar coverage gate is red**, and it is the honest answer to "raise test
-coverage". **The gate does not move until both halves are done**, which is expected rather than a failure.
+**`ui-test-harness` is why the Sonar coverage gate is red.** All four suites landed on 2026-08-22; what is
+left is that nobody has dispatched a Sonar run since, so nobody has seen the coverage arrive there. **The
+state and blocker in that row were written by an agent from what is in the tree** - strike them if the call
+is different.
 
 Ideas: [mutation-testing](ideas/mutation-testing.md) · [testing-techniques](ideas/testing-techniques.md).
 

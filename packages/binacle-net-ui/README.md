@@ -26,17 +26,31 @@ Each one registers the set of Alpine components its page needs, so a page turns 
 
 ## 🚀 Where it runs
 
-[`sites/demo`](../../sites/demo) imports it from `_js/packing_demo.js` and `_js/protocol_decoder.js`, and webpack
-bundles it. The import resolves through the npm workspace - nothing is copied, so a change here shows up on the
-next webpack pass. `just serve demo` from the repo root watches both.
+**Two hosts, one implementation.** Both compile it from source with their own webpack and ts-loader; the
+import resolves through the npm workspace, so nothing is copied and a change here shows up on the next
+webpack pass of each.
 
-The demo calls a live API, at the `api_url` in that site's `_config.yml`. The decoder does not - it decodes in
-the browser, through `binacle-vipaq`.
+| Host | Entries |
+|---|---|
+| [`sites/demo`](../../sites/demo) | `_js/packing_demo.js`, `_js/protocol_decoder.js` |
+| [the API's UI module](../../api/src/Binacle.Net.UIModule) | `_js/packing_demo.js`, `_js/protocol_decoder.js` |
 
-## ⚠️ It is not the UI module
+`just serve demo` watches the site; `just serve api U` watches the module. **A change here lands on both, and
+neither can be updated without the other** - so widen a signature first, move each host, then narrow.
 
-`api/src/Binacle.Net.UIModule` ships its own packing demo, with its own hand-written
-`wwwroot/js/PackingVisualizer.js`. It does **not** import this package, and nothing keeps the two in step. A
-fix here is not a fix there.
+The packing demo calls a live API. The site takes the address from `api_url` in its `_config.yml`; the module
+passes an empty one, which means fetch relative from whatever host served the page. The decoder calls nothing
+- it decodes in the browser, through `binacle-vipaq`.
 
-There are no tests. The apps are checked by using them.
+## 🧪 Tests
+
+```bash
+just test packages-net-ui-unit
+```
+
+jsdom, because the components read `document` and `window` even where the logic under test does not.
+`tests/model/` is the pure half - the randomizer and the view models. `tests/components/` calls each Alpine
+component factory directly with a stub `$dispatch`, rather than starting Alpine.
+
+**The Three.js half is not covered and is not meant to be.** The visualizer and the scene helpers need a WebGL
+context, so a test there could only assert that a call happened.

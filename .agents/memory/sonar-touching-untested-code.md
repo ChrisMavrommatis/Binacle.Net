@@ -10,14 +10,15 @@ code smell edits lines. If those lines sit in a file with no test coverage, they
 period as uncovered, and `new_coverage` is the condition the gate hangs on.
 
 **This already happened here.** Commits `a20a2a39` and `938c6d7e` fixed old findings across the codebase.
-Some of them landed in the Blazor `UIModule`, which is at 0% coverage. The 2026-08-08 run then reported
+Some of them landed in the `UIModule`, which was at 0% coverage at the time - that module has since been
+rebuilt and now has suites, so the example is history, not current state. The 2026-08-08 run then reported
 1289 new lines, of which only 51 were coverable and **35 were uncovered - 29 of them in files those two
 commits touched**. New coverage came out at 31.4% against a threshold of 80%, and that single condition is
 the whole reason the gate is red. Nothing was broken and nothing regressed. The cleanup itself moved the
 number.
 
 **The rule:** fix old findings in files that have tests. Leave old findings in files that do not, until
-they do. The UI is the clear case and its harness is its own plan (the PR gate plan points at it).
+they do.
 
 Two things that follow, both easy to get wrong:
 

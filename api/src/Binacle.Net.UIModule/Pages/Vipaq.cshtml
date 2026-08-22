@@ -19,7 +19,7 @@
 		<div>
 			<nav class="no-space padding">
 				<button type="button" class="border surface-container max" @@click.prevent.stop="addResult">
-					<i class="material-symbols-outlined">library_add</i>
+					<i>library_add</i>
 				</button>
 			</nav>
 		</div>
@@ -39,7 +39,7 @@
 				<a class="row wave padding max"
 				   :class="isSelected(result) ? 'surface-container border' : ''"
 				   @@click.prevent.stop="selectResult(result)">
-					<i class="material-symbols large">package_2</i>
+					<i class="large">package_2</i>
 					<div class="grid no-space max">
 						<span class="s4" x-text="resultTitle(result)"></span>
 						<span class="s8 right-align" x-text="resultBinPercentageText(result)"></span>
@@ -48,7 +48,7 @@
 						<div class="s4" x-text="result.items.length + ' Items'"></div>
 					</div>
 					<button type="button" class="transparent circle" style="z-index:10" @@click.prevent.stop="deleteResult(result)">
-						<i class="material-symbols">delete</i>
+						<i>delete</i>
 					</button>
 				</a>
 			</template>

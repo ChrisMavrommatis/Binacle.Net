@@ -1,6 +1,6 @@
 // The visualizer's five playback buttons are one strip: `packingVisualizer.ts` hands the ends
 // `bottom-left-round` / `bottom-right-round` and the three middles `zero-round`. Without all three the
-// middles keep beercss's pill radius and the strip breaks up. Keep the radius in step with sites/demo.
+// middles keep beercss's pill radius and the strip breaks up.
 .bottom-right-round {
 	border-radius: 0 !important;
 	border-bottom-right-radius: .5rem !important;
@@ -51,9 +51,9 @@ button.destructive:is(:hover, :focus) {
 	color: var(--on-error-container) !important;
 }
 
-// Rule 1's one filled button. White on `--primary` measures 3.32:1 in light, black 6.33:1; in dark it is the
-// other way round. The `--on-primary` token cannot just flip - it also paints the header, whose GitHub and
-// Docker marks are white PNGs. This pair is already black/white in the right order.
+// The page's one filled button. White on `--primary` measures 3.32:1 in light, black 6.33:1; in dark it is
+// the other way round. The `--on-primary` token cannot just flip - it also paints the header, whose GitHub
+// and Docker marks are white PNGs. This pair is already black/white in the right order.
 button[type="submit"]:not(.border):not(.transparent) {
 	color: var(--on-primary-container);
 }

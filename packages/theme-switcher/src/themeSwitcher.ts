@@ -40,7 +40,10 @@ export default class ThemeSwitcherButtonElement extends HTMLElement {
 		}
 		const themeValue = this.isDarkTheme() ? 'dark' : 'light';
 
-		Cookies.set('theme', themeValue, {expires: 365});
+		// Secure only where the browser will keep it. The cookies default is secure, and the API image is
+		// commonly served over plain http on a LAN - there the cookie is dropped and the theme resets on
+		// every page load.
+		Cookies.set('theme', themeValue, {expires: 365, secure: location.protocol === 'https:'});
 
 		this.changeThemeElementsAccordingToTheme();
 		const event = new CustomEvent('themeChanged', {detail: {theme: themeValue}});
@@ -66,8 +69,8 @@ export default class ThemeSwitcherButtonElement extends HTMLElement {
 			const themeValue = this.isDarkTheme()
 				? element.dataset.darktheme
 				: element.dataset.lighttheme;
-			// An element missing data-darktheme or data-lighttheme writes the literal string "undefined",
-			// as it did before the port. The cast keeps that rather than skipping the element.
+			// An element missing data-darktheme or data-lighttheme writes the literal string "undefined".
+			// The cast keeps that rather than skipping the element.
 			element.setAttribute(attribute, themeValue as string);
 		});
 	}

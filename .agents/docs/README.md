@@ -53,9 +53,9 @@ Built with ASP.NET Core (.NET 10) Minimal APIs. Main code is C#.
 | `tooling/` | Every task the repo can run, called by CI and by hand alike — eleven `just` modules (agents, build, changelog, check, coverage, image, openapi, regen, serve, smoke, tests), the benchmark/performance scripts, local compose, env, emulator state |
 | `.github/workflows/` | The eight GitHub Actions workflows — the PR gate, the shared test suite, Sonar, CodeQL, the release pipeline, image smoke, and the two site deploys (`$ci-cd`) |
 | `shared/data/` | OR-library packing benchmark data |
-| `assets/` | Shared images, js, css and fonts, copied into both Jekyll sites by `gulpfile.js` |
+| `assets/` | Shared images, js, css and fonts, copied into both Jekyll sites and the UI module by `gulpfile.js` |
 | `results/` | The hand-curated measurement vault — benchmark and size reports, never auto-written (`$build-topology`) |
-| `artifacts/` | Build output only — `binacle-net/`, `docs/`, `web/`, `openapi/`, `tests/`, `coverage/`. Never edit |
+| `artifacts/` | Build output only — `binacle-net/`, `docs/`, `demo/`, `openapi/`, `tests/`, `coverage/`. Never edit |
 
 ## Commands
 

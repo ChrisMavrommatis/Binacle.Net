@@ -17,11 +17,35 @@ HTTP 200
 GET http://localhost:8080/openapi/v4.json
 HTTP 200
 
+# Every page route the module serves. The demo is switched on in this profile, so a 404 here means a page
+# was renamed on one side only.
 GET http://localhost:8080/
 HTTP 200
 
-# A demo page with no javascript and no stylesheet still returns 200, so assert the build output itself.
+GET http://localhost:8080/packing
+HTTP 200
+
+GET http://localhost:8080/vipaq
+HTTP 200
+
+GET http://localhost:8080/instance
+HTTP 200
+
+# A page with no javascript and no stylesheet still returns 200, so assert the build output itself.
+# runtime.js and main.js load on every page, including the ones above that pull in nothing else.
+GET http://localhost:8080/_content/Binacle.Net.UIModule/js/runtime.js
+HTTP 200
+
+GET http://localhost:8080/_content/Binacle.Net.UIModule/js/main.js
+HTTP 200
+
+GET http://localhost:8080/_content/Binacle.Net.UIModule/js/instance.js
+HTTP 200
+
 GET http://localhost:8080/_content/Binacle.Net.UIModule/js/packing_demo.js
+HTTP 200
+
+GET http://localhost:8080/_content/Binacle.Net.UIModule/js/protocol_decoder.js
 HTTP 200
 
 GET http://localhost:8080/_content/Binacle.Net.UIModule/js/three.js

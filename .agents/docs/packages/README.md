@@ -46,13 +46,18 @@ Vendored fork of js-cookie v3.0.5, MIT, kept close to upstream so a re-sync stay
 `theme-switcher` by both sites and the UIModule. No dependencies.
 
 `Cookies` is a static class, not the upstream factory: there is no `withConverter` or `withAttributes`.
-Defaults are `path=/`, `expires` 90 days, `sameSite=Lax`, `secure` — so a page served over plain http cannot
-read back what it writes.
+Defaults are `path=/`, `expires` 90 days, `sameSite=Lax`, `secure` — **so a caller that takes the defaults on
+a plain http page cannot read back what it writes.** The default is right for the sites, which are https; a
+caller that also runs inside the image has to decide, and `theme-switcher` is the one that did.
 
 ## theme-switcher
 
 Custom HTML element (`<theme-switcher>`) for switching light/dark themes. Used by both sites under `sites/`
 and by the UIModule. Depends on the `cookies` workspace package; no external dependencies.
+
+**It sets `secure` only on an https page**, rather than taking the cookies default. The API image is
+commonly served over plain http on a LAN, and a secure cookie is dropped there — so the theme reset on every
+page load until 2026-08-22. The sites were never affected.
 
 **The disconnect hook is spelled `disconectedCallback`** — one `n`. The browser never calls it, so the click
 listener outlives the element. Correcting the spelling changes runtime behaviour, so it is pinned by two
@@ -66,15 +71,22 @@ function, which never matches the one `connectedCallback` added.
 | `packages/binacle-compact-notation` | the notation parser/formatter, `tests/compactNotation.test.ts` | `just test shared-ts-unit` |
 | `packages/binacle-net-ui` | the randomizer, the view models and every Alpine component bar the visualizer | `just test packages-net-ui-unit` |
 | `packages/cookies` | the converter round trip, get/set/remove, attribute stringifying | `just test packages-cookies-unit` |
-| `packages/theme-switcher` | connect, click, icon and the pinned disconnect behaviour | `just test packages-theme-switcher-unit` |
+| `packages/theme-switcher` | connect, click, icon, the pinned disconnect behaviour, and the cookie over plain http | `just test packages-theme-switcher-unit` |
 | `vipaq/packages/binacle-vipaq` | the ViPaq TS mirror, including the shared cross-language vectors | `just test vipaq-ts-unit` |
 
 The compact-notation alias is filed under **shared**, not packages, because that package mirrors a
 `shared/src` C# project; the other three are named after the folder they live in.
 
-Both new suites run on jsdom, so their configs add `jest-environment-jsdom` (jest 29 does not bundle it) and
-point jsdom at an `https` URL — the cookies defaults include `secure`, and jsdom hides a secure cookie from a
-document on an insecure origin.
+**All three new suites run on jsdom**, so their configs add `jest-environment-jsdom` (jest 29 does not
+bundle it). `cookies` and `theme-switcher` also point jsdom at an `https` URL, because the cookies defaults
+include `secure` and jsdom hides a secure cookie from a document on an insecure origin.
+
+**The origin is set per file**, which is why `theme-switcher` has a second file on `http` — it is the one that
+proves the theme survives a reload on an image served over plain http.
+
+**Coverage settings live only in the root `jest.config.js`.** In multi-project mode jest ignores a project's
+own `collectCoverageFrom`, and every leaf runs through the root config with `--selectProjects`. Five package
+configs carried a copy until 2026-08-22; all five were dead and one disagreed with the root.
 
 ## Dependencies
 

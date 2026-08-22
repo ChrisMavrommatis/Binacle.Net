@@ -30,7 +30,7 @@ export default class Cookies {
 			attributes.expires = new Date(Date.now() + attributes.expires * 864e5)
 		}
 		if (attributes.expires) {
-			// A string expires throws here, the same as it did before the port.
+			// A string expires throws here. The cast keeps that rather than widening the type.
 			attributes.expires = (attributes.expires as Date).toUTCString()
 		}
 

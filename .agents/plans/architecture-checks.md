@@ -122,10 +122,10 @@ Together that is most of the code.
 
 **What no generator will read**, and what therefore stays prose in `architecture.yml`, labelled as such:
 
-- `docs` and `web` depending on `ruby` - Gemfile `path:` gems.
-- `web` depending on `packages` and `vipaq` - webpack chunk regexes.
+- `docs` and `demo` depending on `ruby` - Gemfile `path:` gems.
+- `demo` and `api` depending on `packages` and `vipaq` - webpack chunk regexes, one config each.
 - `tooling` depending on everything - path strings inside just recipes.
-- `assets` depending on `docs` and `web` - a gulp copy.
+- `assets` depending on `docs`, `demo` and `api` - a gulp copy into each.
 - `vipaq/tools` reading `shared/data` by resolving a path at run time, which no reference audit sees.
 
 **Say which ones those are, in the output.** Silence about them is how a green run gets read as total coverage.
@@ -272,7 +272,7 @@ Three things to settle before adopting ArchUnitNET:
 - **Its test project must reference every slice it inspects**, becoming a node with an edge to everything.
   That exemption belongs in the declaration, not in the test.
 
-For dependency-cruiser, reading the file is the easy half. There is no root `tsconfig.json` - there are five,
+For dependency-cruiser, reading the file is the easy half. There is no root `tsconfig.json` - there are seven,
 and `sites/demo/` has none despite running `ts-loader` - and imports are bare specifiers resolved through npm workspace
 symlinks (`packages/binacle-net-ui/src/core/protocolDecoder.ts:4` imports `"binacle-vipaq"`), so rules must be
 written against resolved real paths with symlink handling pinned.
@@ -299,8 +299,8 @@ re-derivation, and npm's own resolver.
 - **`.github` is a slice.** It hashes `.config/dotnet-tools.json` and names `tooling/sonar-analysis.xml`, so it
   sits above `tooling`.
 - **The slice names differ between the agent guidance and disk.** `.github` is `ci-cd` there, and the two
-  sites moved under `sites/` on 2026-08-20 while `architecture.yml` still lists them as top-level `docs` and
-  `web`. Anything reading both needs to know that, and the declaration needs a decision on how a `sites/`
+  sites moved under `sites/` on 2026-08-20 while `architecture.yml` still lists them flat, as `docs` and
+  `demo`. Anything reading both needs to know that, and the declaration needs a decision on how a `sites/`
   slice is written.
 
 ## Loose ends found during the audit

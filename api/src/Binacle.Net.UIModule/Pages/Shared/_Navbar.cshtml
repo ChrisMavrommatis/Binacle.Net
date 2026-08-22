@@ -13,7 +13,7 @@
 	@foreach (var applet in Model)
 	{
 		<a asp-page="@applet.Page" class="@(string.Equals(currentPage, applet.Page, StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-			<i class="material-symbols-outlined">@applet.Icon</i>
+			<i>@applet.Icon</i>
 			<span>@applet.Title</span>
 		</a>
 	}
@@ -23,7 +23,7 @@
 	@foreach (var applet in Model)
 	{
 		<a asp-page="@applet.Page" class="@(string.Equals(currentPage, applet.Page, StringComparison.OrdinalIgnoreCase) ? "active" : "")">
-			<i class="material-symbols-outlined">@applet.Icon</i>
+			<i>@applet.Icon</i>
 			<span>@applet.Title</span>
 		</a>
 	}
