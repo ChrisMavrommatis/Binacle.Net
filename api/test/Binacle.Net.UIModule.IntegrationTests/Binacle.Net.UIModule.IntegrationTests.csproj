@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="xunit.runner.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+		<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+		<PackageReference Include="Shouldly" />
+		<PackageReference Include="xunit.v3.mtp-v2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+		<Using Include="Shouldly" />
+	</ItemGroup>
+
+	<!-- The entry project, because the demo is only reachable through the host that switches it on. -->
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Binacle.Net\Binacle.Net.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -31,6 +31,14 @@ has to stay. These two are the exceptions.
   keep-or-convert decision in the scripts-to-just-recipes plan**, not before: if the script moves into a
   shebang recipe body whole, the noise moves with it.
 
+## Kernel
+
+- `api/src/Binacle.Net.Kernel/ReservedPathOptions.cs`, `AddPrefix`. A prefix without a leading slash is
+  accepted and held, then throws `ArgumentException` on the first request, because `Covers` matches it as a
+  `PathString`. **A module that declares `api` instead of `/api` therefore fails every request rather than the
+  one it got wrong.** Reject it or add the slash, in the same guard that already drops null and whitespace.
+  Found 2026-08-22 while writing the tests, which pin the current behaviour.
+
 ## Ruby gems
 
 - **Neither gem under `ruby/` has a `Gemfile`**, so `bundle exec rspec` in `ruby/jekyll-filters` or

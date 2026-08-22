@@ -6,3 +6,4 @@ module, so a feature's tests stay next to that feature and nothing reaches acros
 | Folder | Covers |
 |---|---|
 | `Network/` | `IPEntry` - how a configured IP entry is read, and what each spelling admits |
+| `Paths/` | `ReservedPathOptions` - which paths modules reserve, and what each prefix matches |

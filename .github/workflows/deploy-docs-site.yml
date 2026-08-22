@@ -41,6 +41,8 @@ jobs:
       - name: Describe the deploy
         run: |
           set -euo pipefail
+          # tr wants a literal backslash in the set, and single quotes are how you pass one.
+          # shellcheck disable=SC1003
           subject=$(git log -1 --format=%s "$GITHUB_SHA" | tr -d '"`$\\' | cut -c1-90)
           echo "DEPLOY_MESSAGE=${GITHUB_SHA:0:8} - ${subject}" >> "$GITHUB_ENV"
 

@@ -8,6 +8,9 @@
 module.exports = {
   projects: [
     "<rootDir>/packages/binacle-compact-notation",
+    "<rootDir>/packages/binacle-net-ui",
+    "<rootDir>/packages/cookies",
+    "<rootDir>/packages/theme-switcher",
     "<rootDir>/vipaq/packages/binacle-vipaq",
   ],
   // These globs resolve against each project's own rootDir, not this file's — repo-root-relative paths

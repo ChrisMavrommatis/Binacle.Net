@@ -47,18 +47,32 @@ expressions: `IndexModel.RouteFor` and `ErrorModel.MessageFor`.
 
 | Part | State |
 |---|---|
-| The TypeScript packages | **ready - start here.** Unchanged by the rebuild |
-| `Binacle.Net.UIModule` C# | **not worth a unit harness.** Two switch expressions and a list |
+| The TypeScript packages | **ready.** Unchanged by the rebuild, and the bulk of what is left |
+| `Binacle.Net.UIModule` C# | **done 2026-08-22.** `api/test/Binacle.Net.UIModule.UnitTests`, 30 cases |
 | The module's behaviour | **integration, and partly already covered** - see below |
+
+**The line above used to read "not worth a unit harness - two switch expressions and a list", and it was
+wrong.** What is there is the applet list that every card and page heading is looked up in, four page models,
+and the error page. A demo page whose applet name has drifted out of the list throws on construction and the
+route 500s; the error page's trace id is meant to appear only in Development. Neither is a switch expression,
+and both fail silently. The reason the claim held for a while is that everything in the module is `internal` -
+which is one `InternalsVisibleTo` line, and every other module in `api/src/` already had one.
 
 **The behaviour worth protecting is routing, not logic**, and the existing tools already reach it:
 
 - `tooling/smoke/full.hurl` and `quickstart.hurl` assert the four routes, the bundle, the stylesheet, and both
   sides of the error-page rule.
-- What has no cover: the `ReservedPathOptions` contract. **A module that maps a path and forgets to declare it
+- What had no cover: the `ReservedPathOptions` contract. **A module that maps a path and forgets to declare it
   silently starts rendering HTML for its 404s**, and only the smoke files would catch it, only for `/api`.
-  A test over `ReservedPathOptions.Covers` plus one asserting every mapped endpoint's first segment is either
-  a UIModule page or a declared prefix would catch the whole class. That is the one C# test worth writing here.
+
+  **The unit half landed on 2026-08-22** - `api/test/Binacle.Net.Kernel.UnitTests/Paths/`, 24 cases over
+  `Covers` and `AddPrefix`: segment matching so `/apidocs` does not match `/api`, case-insensitivity, an empty
+  prefix ignored rather than reserving every path, and the seven prefixes the shipped image declares. It found
+  one defect, which is a one-liner in `todos.md`.
+
+  **The other half is still open and it is integration, not unit:** one test asserting every mapped endpoint's
+  first segment is either a UIModule page or a declared prefix. It needs a host booted with the modules on,
+  which is `api/integration-test-additions`, so it is written there rather than twice.
 
 **The coverage gate still does not move on the TypeScript half alone.** That is expected, not a failure of this
 plan - the gate is honest about the UI being untested and stays red until the UI is tested.

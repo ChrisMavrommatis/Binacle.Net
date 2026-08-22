@@ -77,8 +77,6 @@ generate-index name:
         [lib]="Lib"
         [vipaq]="ViPaq"
         [ci-cd]="CI/CD"
-        [docs-site]="Docs Site"
-        [web-site]="Web Site"
     )
 
     index='{{ name }}'

@@ -1,8 +1,8 @@
 ---
 id: sites/demo
 description: The published Jekyll demo site at sites/demo/ — product home, apps listing, and interactive packing demo. `$sites/demo` always means sites/demo/.
-verified: 2026-08-20
-check: Collections, JS bundles and plugin list match sites/demo/_config.yml and sites/demo/js/; the demo/prefetch script split still matches sites/demo/_data/includes.yml; sites/demo/lib/ still holds exactly the vendor folders listed
+verified: 2026-08-22
+check: Collections, JS bundles and plugin list match sites/demo/_config.yml and sites/demo/js/; the demo/prefetch script split still matches sites/demo/_data/includes.yml; artifacts/demo/lib/ after `just build demo` holds exactly the vendor folders listed, and gulpfile.js's IGNORE map still explains what is missing
 also_update:
   - packages
 paths:
@@ -63,12 +63,20 @@ Same as the docs site: `jekyll-gtm`, `jekyll-filters`, `jekyll-tidy` (no `VLink`
 
 ## Vendor Libs
 
-`sites/demo/lib/` holds four vendor folders — `alpine`, `beercss`, `material-dynamic-colors`, `swagger-ui` —
-but **only BeerCSS is loaded**, as a stylesheet and a module in `sites/demo/_data/includes.yml`.
+`sites/demo/lib/` holds two vendor folders — `beercss` and `material-dynamic-colors` — and **only BeerCSS is
+loaded**, as a stylesheet and a module in `sites/demo/_data/includes.yml`.
 
 - **material-dynamic-colors** is present and commented out there; uncomment it only when the site needs runtime
   theme switching.
-- **`alpine` and `swagger-ui` are referenced by nothing** under `sites/demo/`. They ship without being loaded.
+- **`swagger-ui` is in `assets/` but never copied here.** `gulpfile.js` carries a per-target `IGNORE` map: the
+  docs site's swagger layout is the only thing that loads it, so it reaches `sites/docs/` alone. That map is
+  also what keeps it out of the image.
 
-Alpine.js also arrives as an npm dependency bundled by webpack, which is the copy the demo code actually uses.
+Alpine.js arrives as an npm dependency bundled by webpack, which is the copy the demo code uses — there is no
+vendored copy any more.
+
 **Three.js is not in `vendors.js`** — it is its own bundle, for the reason in the table above.
+
+Built size is **3.0 MB**, of which 1.14 MB is three Material Symbols `woff2` files. `beer.min.css` declares
+four `@font-face` families and a browser downloads only the one a page uses, so that weight is in the deploy
+and not in the page load.

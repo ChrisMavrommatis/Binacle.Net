@@ -32,8 +32,8 @@ feature check, so with the flag off none of this is registered and nothing here 
 ## 🛠️ Both demos come from the shared package
 
 The packing form, the 3D visualizer and the decoder are TypeScript, in
-[`packages/binacle-net-ui`](../../../packages/binacle-net-ui). The marketing site's demos are built from the
-same source, so a fix lands on both. Everything around them - the pages, the navigation, the copy - is this
+[`packages/binacle-net-ui`](../../../packages/binacle-net-ui). The demo site's copies are built from the same
+source, so a fix lands on both. Everything around them - the pages, the navigation, the copy - is this
 module's alone and is free to differ.
 
 They run in the browser and call the API over relative URLs, so this module makes no server-side HTTP calls

@@ -10,8 +10,9 @@ with webpack and TypeScript beside them.
 | [`docs/`](docs) | The documentation site — versioned API reference and guides |
 | [`demo/`](demo) | The demo site — the packing demo, the ViPaq decoder, and the pages around them |
 
-Each has its own `README.md`, `Gemfile` and `package.json`. Neither is a root npm workspace, so a fresh clone
-installs into the site as well as the root — `just install` from the repo root does both.
+Each has its own `README.md`, `Gemfile` and `package.json`. **Both `package.json` files are root npm workspace
+members**, so one `npm install` at the root covers them and neither has a lock file of its own. Ruby is still
+per site — `just install` from the repo root runs the root install and then `bundle install` in each.
 
 ## 🛠️ Building and serving
 

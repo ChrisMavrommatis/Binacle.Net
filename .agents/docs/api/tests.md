@@ -1,7 +1,7 @@
 ---
 id: api/tests
 description: api/test integration tests — layout, v3/v4 HTTP conventions, validBinId, preset keys, special bins, base-class asserts, and test host config
-verified: 2026-08-19
+verified: 2026-08-22
 check: Test folders mirror api/src/Binacle.Net/v{3,4}/Endpoints/; validBinId, PresetKeys, special bins, base-class asserts, and the ServiceModule fixture's seeding helpers match api/test/ source
 also_update:
   - shared
@@ -12,19 +12,45 @@ paths:
 
 # API Tests
 
-Six projects under `api/test/` — two integration suites, which this doc is about, and four unit suites:
+Eight projects under `api/test/` — three integration suites, which this doc is about, and five unit suites:
 
 | Project | Covers | Run |
 |---|---|---|
 | `Binacle.Net.IntegrationTests` | v3 + v4 HTTP endpoints (fit, pack, presets) | `just test api-core-integration` |
 | `Binacle.Net.ServiceModule.IntegrationTests` | auth token, admin account/subscription (ServiceModule on), rate limiting both ways | `just test api-service-integration` |
+| `Binacle.Net.UIModule.IntegrationTests` | which routes answer with a web page, with the demo on and off | `just test api-ui-integration` |
 | `Binacle.Net.UnitTests` | `Binacle.Net`'s own options validators, and the forwarded-headers middleware over the options they produce | `just test api-core-unit` |
-| `Binacle.Net.Kernel.UnitTests` | Kernel features, one folder each (`Network/`) | `just test api-kernel-unit` |
+| `Binacle.Net.Kernel.UnitTests` | Kernel features, one folder each (`Network/`, `Paths/`) | `just test api-kernel-unit` |
 | `Binacle.Net.DiagnosticsModule.UnitTests` | health check allow-list, middleware, config validators | `just test api-diagnostics-unit` |
+| `Binacle.Net.UIModule.UnitTests` | the applet list, the four page models, the error page | `just test api-ui-unit` |
 | `Binacle.Net.ServiceModule.UnitTests` | ServiceModule config validators and policies | `just test api-service-unit` |
 
 The unit suites need no host and nothing brought up. `Binacle.Net.Kernel.UnitTests` is split by Kernel feature,
 each folder holding its own `Tests/` and `Providers/`.
+
+`Binacle.Net.UIModule.UnitTests` reaches internal types, because Razor generates internal page classes and the
+whole module follows them. The module carries `InternalsVisibleTo`, the same as `Binacle.Net`, the
+ServiceModule and the DiagnosticsModule. `FakeWebHostEnvironment` is the one helper: the page models read
+`EnvironmentName` and nothing else, so a stub is smaller than a mocking library for one interface.
+
+**Three things in that module are not unit tested, because they need a host.** The two middlewares in
+`ModuleDefinition.UseUIModule` are inline lambdas and cannot be constructed on their own; routing and
+`.cshtml` rendering need a running app; and whether a reserved path escapes the error page is only observable
+end to end. All three are covered by `Binacle.Net.UIModule.IntegrationTests` instead. The prefix matching
+underneath them is `ReservedPathOptions`, unit tested in `Binacle.Net.Kernel.UnitTests/Paths/`.
+
+`Binacle.Net.UIModule.IntegrationTests` builds its own `WebApplicationFactory` per feature configuration —
+`UIModuleBinacleApi` with `Features:UI_MODULE` on, `UIModuleOffBinacleApi` with it off — rather than using the
+core harness, which runs with every module off. **`Feature.Manager` is process-global static state**, set while
+a host builds, so two hosts that disagree about a flag cannot be alive at once: the second to boot answers for
+both. Every class sits in one collection with `DisableParallelization = true`. The ServiceModule's
+`RateLimiting/` suite is the same arrangement for a different reason, and both are worth reading together
+before adding a third module harness.
+
+**Those tests never fetch a bundle or a stylesheet.** `wwwroot/` is generated and gitignored, so a clone that
+has not run the javascript build has nothing to serve and every such assertion would be red for the wrong
+reason. They assert the page asks for the right path; `tooling/smoke` asserts the file exists, against a built
+image.
 
 `ForwardedHeadersPipelineTests` needs framework code to run: `ConfigureForwardedHeaders` only writes options,
 and whether a caller actually gets resolved is `ForwardedHeadersMiddleware` acting on them. It calls

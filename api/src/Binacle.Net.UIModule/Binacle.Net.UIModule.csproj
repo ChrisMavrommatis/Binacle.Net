@@ -10,6 +10,11 @@
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 
+	<!-- Razor generates internal page classes here, so every PageModel and the applet list are internal. -->
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(ProjectName).UnitTests" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Serilog" />
 	</ItemGroup>

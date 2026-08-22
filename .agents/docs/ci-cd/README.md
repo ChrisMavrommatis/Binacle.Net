@@ -1,7 +1,7 @@
 ---
 id: ci-cd
 description: CI/CD — the nine GitHub Actions workflows in .github/workflows and the nine shared actions in .github/actions, what triggers each, the conventions they all follow, and the repo variables, secrets and environments they need
-verified: 2026-08-20
+verified: 2026-08-22
 check: The workflow table matches the files in .github/workflows and the action table matches .github/actions; the vars/secrets tables match every ${{ vars.* }} and ${{ secrets.* }} reference in them; the pinned just version and runner labels still match; the SHAs named as living only in .github/actions still appear in no workflow file; every .github/actions folder holding an outside SHA pin has its own entry in .github/dependabot.yml
 also_update:
   - ci-cd/release-pipeline
@@ -365,11 +365,14 @@ reads**, and every tag the pipeline publishes lands there.
 ## Environments
 
 The two deploy workflows declare a GitHub environment, which is what carries the deployment URL in the Actions
-UI: `binacle-net-docs` (https://docs.binacle.net) and `binacle-net-demo` (https://www.binacle.net). Nothing
+UI: `binacle-net-docs` (https://docs.binacle.net) and `binacle-net-demo` (https://demo.binacle.net). Nothing
 else uses an environment.
 
-Both deploy workflows also push a marker tag after deploying — `docs-<run_number>` / `web-<run_number>` — so
-a deployed site maps back to a commit.
+**`binacle-net-demo` has never been deployed.** The workflow was renamed from `deploy-web-site.yml` before it
+was ever dispatched, so neither the environment nor the Worker exists on either side yet.
+
+Both deploy workflows also push a marker tag after deploying, so a deployed site maps back to a commit. The
+workflow table above names each one.
 
 ## What CI does not cover
 

@@ -121,6 +121,22 @@ jobs:
         if: ${{ !cancelled() }}
         run: just test vipaq-ts-unit
 
+      - name: Test - Binacle Net UI [ts] (Unit)
+        if: ${{ !cancelled() }}
+        run: just test packages-net-ui-unit
+
+      - name: Test - Cookies [ts] (Unit)
+        if: ${{ !cancelled() }}
+        run: just test packages-cookies-unit
+
+      - name: Test - Theme switcher [ts] (Unit)
+        if: ${{ !cancelled() }}
+        run: just test packages-theme-switcher-unit
+
+      - name: Test - API UIModule (Unit)
+        if: ${{ !cancelled() }}
+        run: just test api-ui-unit
+
       - name: Test - API Core (Unit)
         if: ${{ !cancelled() }}
         run: just test api-core-unit
@@ -136,6 +152,10 @@ jobs:
       - name: Test - API Service (Unit)
         if: ${{ !cancelled() }}
         run: just test api-service-unit
+
+      - name: Test - API UIModule (Integration)
+        if: ${{ !cancelled() }}
+        run: just test api-ui-integration
 
       - name: Test - API Core (Integration)
         if: ${{ !cancelled() }}

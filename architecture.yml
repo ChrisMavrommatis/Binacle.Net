@@ -32,9 +32,12 @@
 # left out. Naming slices is their whole job, but "everything may name everything" is still worth writing
 # down - unsaid, a clean run looks like it covered them.
 #
-# Three slices have a different name in the agent guidance: .github is "ci-cd" there, docs is "docs-site"
-# and web is "web-site". This file names them after the directory, because that is what a tool resolves.
-# The alias is noted beside each one.
+# One slice has a different name in the agent guidance: .github is "ci-cd" there. The two sites are
+# "sites/docs" and "sites/demo" there, because they sit under sites/ on disk. This file names every slice
+# after its directory, because that is what a tool resolves. The alias is noted beside each one.
+#
+# The two sites moved under sites/ on 2026-08-20 and are still listed flat here. How a sites/ slice is
+# written is an open decision and it belongs to the architecture-checks plan, not to this file.
 
 slices:
 
@@ -52,7 +55,7 @@ slices:
   # Static files the two Jekyll sites are built from. gulp copies them in; nothing here points anywhere.
   assets:
     ".": []
-    lib: []                          # vendored bundles - alpine, beercss, material-dynamic-colors, swagger-ui
+    lib: []                          # vendored bundles - beercss, material-dynamic-colors, swagger-ui
     media: []                        # logos and marks
 
   # Two local Jekyll plugins. Both depend on the jekyll gem and on nothing in this repo.
@@ -115,9 +118,9 @@ slices:
     test: [shared]                   # runs shared/test's fixture kernel; asserts on Binacle.Packing, not on lib
     requests: []                     # .http files against a running instance
 
-  # The documentation site. Called "docs-site" in the agent guidance, because .agents/docs/ is a different
-  # thing. Agents must not write it, but that is an editing rule, not a graph fact: it really does pull in
-  # gems, assets and a package.
+  # The documentation site, at sites/docs. Called "sites/docs" in the agent guidance, because .agents/docs/
+  # is a different thing. Agents must not write it, but that is an editing rule, not a graph fact: it really
+  # does pull in gems, assets and a package.
   docs:
     ".": [assets, ruby]              # the Gemfile loads both plugins by path; _config.yml names a logo
     _data: [assets]                  # the include list points at the beercss bundle
@@ -130,9 +133,9 @@ slices:
     css: []
     pages: []
 
-  # The marketing site. Called "web-site" in the agent guidance. Same shape as docs, plus the packing demo
-  # and the protocol decoder.
-  web:
+  # The demo site, at sites/demo. Same shape as docs, plus the packing demo and the ViPaq decoder. It was
+  # the marketing site and the directory was called web until 2026-08-22.
+  demo:
     ".": [assets, ruby, packages, vipaq]  # Gemfile, logo, and webpack splitting the two demos into chunks
     _data: [assets]                  # the include list points at the beercss bundle
     _layouts: [assets]               # the favicon
@@ -145,7 +148,7 @@ slices:
 
   # The task runner. Its job is to build, test and run everything, so it names everything.
   tooling:
-    ".": [api, lib, shared, vipaq, packages, assets, docs, web]
+    ".": [api, lib, shared, vipaq, packages, assets, docs, demo]
     smoke: []                        # compose stacks and hurl scripts against the built image
 
   # CI. Called "ci-cd" in the agent guidance, which is the only slice there that is not named after its
@@ -158,11 +161,11 @@ slices:
 # adding a root file is a decision rather than a blind spot. Files that carry only prose or settings name
 # no slice and are not listed: the READMEs, the licences, Directory.*.props, global.json, NuGet.Config.
 root:
-  Binacle.Net.slnx: [api, assets, docs, lib, samples, shared, tooling, vipaq, web]  # every project and folder
+  Binacle.Net.slnx: [api, assets, demo, docs, lib, samples, shared, tooling, vipaq]  # every project and folder
   justfile:         [tooling]           # loads the nine just modules
-  gulpfile.js:      [assets, docs, web] # copies assets/ into both sites
+  gulpfile.js:      [api, assets, demo, docs]  # copies assets/ into both sites and the UI module's wwwroot
   jest.config.js:   [packages, vipaq]   # the two jest projects
-  package.json:     [packages, vipaq]   # npm workspaces
+  package.json:     [api, demo, docs, packages, vipaq]  # npm workspaces - both sites and the UI module joined 2026-08-22
   Dockerfile:       []                  # copies artifacts/binacle-net, and artifacts is a sink
   .dockerignore:    []                  # same
 

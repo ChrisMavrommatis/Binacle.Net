@@ -47,10 +47,15 @@ all:
     test_leaf shared-ts-unit
     test_leaf vipaq-cs-unit
     test_leaf vipaq-ts-unit
+    test_leaf packages-net-ui-unit
+    test_leaf packages-cookies-unit
+    test_leaf packages-theme-switcher-unit
     test_leaf api-core-unit
     test_leaf api-kernel-unit
     test_leaf api-diagnostics-unit
+    test_leaf api-ui-unit
     test_leaf api-service-unit
+    test_leaf api-ui-integration
     test_leaf api-core-integration
     test_leaf api-service-integration Sqlite
 
@@ -80,6 +85,18 @@ vipaq-cs-unit: (_dotnet_test 'vipaq/test/Binacle.ViPaq.UnitTests')
 [group('vipaq')]
 vipaq-ts-unit: (_jest_test 'binacle-vipaq')
 
+# binacle-net-ui unit (TS)
+[group('packages')]
+packages-net-ui-unit: (_jest_test 'binacle-net-ui')
+
+# cookies unit (TS)
+[group('packages')]
+packages-cookies-unit: (_jest_test 'cookies')
+
+# theme-switcher unit (TS)
+[group('packages')]
+packages-theme-switcher-unit: (_jest_test 'theme-switcher')
+
 # The api leaves run units first, then integrations, so a bare `just test all` reports the cheap failures
 # before it spends minutes in a test host.
 
@@ -95,6 +112,10 @@ api-kernel-unit: (_dotnet_test 'api/test/Binacle.Net.Kernel.UnitTests')
 [group('api')]
 api-diagnostics-unit: (_dotnet_test 'api/test/Binacle.Net.DiagnosticsModule.UnitTests')
 
+# UIModule unit
+[group('api')]
+api-ui-unit: (_dotnet_test 'api/test/Binacle.Net.UIModule.UnitTests')
+
 # ServiceModule unit
 [group('api')]
 api-service-unit: (_dotnet_test 'api/test/Binacle.Net.ServiceModule.UnitTests')
@@ -102,6 +123,10 @@ api-service-unit: (_dotnet_test 'api/test/Binacle.Net.ServiceModule.UnitTests')
 # Binacle.Net integration
 [group('api')]
 api-core-integration: (_dotnet_test 'api/test/Binacle.Net.IntegrationTests')
+
+# UIModule integration
+[group('api')]
+api-ui-integration: (_dotnet_test 'api/test/Binacle.Net.UIModule.IntegrationTests')
 
 # The backend is a positional argument, not a variable: a module variable cannot be set from the command
 # line, and `just infra=Postgres test api-service-integration` would be ignored in silence - a green run for
