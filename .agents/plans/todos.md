@@ -31,15 +31,6 @@ has to stay. These two are the exceptions.
   keep-or-convert decision in the scripts-to-just-recipes plan**, not before: if the script moves into a
   shebang recipe body whole, the noise moves with it.
 
-## UIModule
-
-- `api/src/Binacle.Net.UIModule/ModuleDefinition.cs`, `UseUIModule`. `UseHsts()` is called there, so an
-  instance with the demo switched off - which is most of them - sends no strict-transport header at all. It
-  also sits after eight other middlewares, so anything answering earlier never gets it either. **This predates
-  the rebuild**; it moved with the file rather than being introduced. Moving it to `Program.cs` next to
-  `UseHttpsRedirection` is the whole change, but whether the API should send HSTS by default is a decision,
-  not a one-liner - if the answer is anything but "yes, move it", this needs a plan instead.
-
 ## Ruby gems
 
 - **Neither gem under `ruby/` has a `Gemfile`**, so `bundle exec rspec` in `ruby/jekyll-filters` or

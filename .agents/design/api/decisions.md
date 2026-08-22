@@ -1,8 +1,8 @@
 ---
 id: api/decisions
-description: API decisions ledger — why a module-off document carries no `429` and what guarantees it, and what the generated documents are a document of.
-verified: 2026-08-19
-check: D1 against api/src/Binacle.Net.Kernel/OpenApi/Transformers/RateLimiterResponseOperationTransformer.cs, which must check EnableRateLimitingAttribute and nothing else; against a grep for EnableRateLimitingAttribute and RequireRateLimiting over api/src, which must land only inside Binacle.Net.ServiceModule; and against ApiDocument.Transform for the relative servers entry and the GitHub/Docker Hub description
+description: API decisions ledger — why a module-off document carries no `429` and what guarantees it, what the generated documents are a document of, and why the API sends no HSTS header.
+verified: 2026-08-22
+check: D1 against api/src/Binacle.Net.Kernel/OpenApi/Transformers/RateLimiterResponseOperationTransformer.cs, which must check EnableRateLimitingAttribute and nothing else; against a grep for EnableRateLimitingAttribute and RequireRateLimiting over api/src, which must land only inside Binacle.Net.ServiceModule; and against ApiDocument.Transform for the relative servers entry and the GitHub/Docker Hub description. D2 against a grep for UseHsts over api/src, which must return nothing
 paths:
   - "api/**"
 ---
@@ -54,3 +54,56 @@ the `429`; regenerating them takes it out and returns the v3 document to the sha
 
 **If a contract for the hosted service is ever wanted, it is a second document**, generated with the module on,
 carrying the auth paths and the `429` together. Do not approximate it by loosening this one.
+
+### D2 — the API sends no HSTS header, and TLS is the proxy's job
+
+**`UseHsts()` was deleted from `UseUIModule` on 2026-08-22.** Nothing in the API sends
+`Strict-Transport-Security` now, and nothing should add it back without reversing this entry.
+
+**Where it came from.** It is the ASP.NET Core Razor Pages and MVC template block, `!IsDevelopment()` guard
+and all, and it arrived with the module when the module became Razor Pages. **Microsoft's own API templates
+leave HSTS out**, and say why: "The default API projects don't include HSTS because HSTS is generally a
+browser only instruction. Other callers, such as phone or desktop apps, do not obey the instruction."
+(<https://learn.microsoft.com/aspnet/core/security/enforcing-ssl>.) This repo is an API that grew a Razor
+Pages module, so it inherited the web-app template's answer to a question the API template had already
+answered the other way.
+
+**It was inert where it stood.** The published image terminates no TLS — it has no certificate, and no sample
+or smoke profile sets an HTTPS port; every one of them listens on plain 8080. A browser ignores
+`Strict-Transport-Security` on a plain-HTTP response, so the call could only ever fire for someone who gave
+Kestrel a certificate **and** switched the demo on, a combination nothing in the repo describes.
+
+**Three reasons it is the wrong thing for this image to send, and they outlive the placement:**
+
+- **The header belongs to whatever owns the hostname.** Where there is TLS it is terminated by a proxy,
+  ingress or CDN, and that is the only thing that knows whether `includeSubDomains` and `preload` are safe.
+  ASP.NET's default — 30 days, no subdomains — is a guess made by the wrong party.
+- **It is the one header that cannot be taken back.** A browser honours it for its max-age, and the only undo
+  is serving `max-age=0` over HTTPS from the same host. An image people run on internal hostnames must not
+  pin that by default.
+- **The callers are servers.** This is the API behind someone's backend; HSTS is a browser mechanism and an
+  HTTP client ignores it.
+
+**It was also on the wrong switch.** Inside `UseUIModule` it existed only when the demo UI was on — absent
+from exactly the deployments most likely to face the internet — and it ran after eight other middlewares, so
+anything answering earlier never got it either. Both faults predate the module rebuild; the call moved with
+the file rather than being introduced by it.
+
+**Expect an analyser to ask for it.** A missing HSTS call is a standard ASP.NET finding. The answer is this
+entry: the repo answers findings where a reader can see the answer, never with a suppression rule.
+
+**The rejected alternative was an opt-in `Hsts__Enabled`** in `Program.cs` beside `UseHttpsRedirection`. That
+is an options class, a config file, a documented key and a feature switch, for a header the proxy in front
+sets in one line.
+
+**The same page says the proxy settles it**: "If the proxy server also handles writing HSTS headers ... HSTS
+middleware isn't required by the app."
+
+**`UseHttpsRedirection()` stays**, untouched and unexamined by this decision. With no HTTPS port configured it
+logs that it cannot determine one and does nothing, so it costs nothing today. **What is worth knowing before
+anyone changes that**: Microsoft warns that an app calling both `UseHttpsRedirection` and `UseHsts` "put[s] a
+site into an infinite loop if deployed to an Azure Linux App Service, Azure Linux virtual machine (VM), or
+behind any other reverse proxy besides IIS. The reverse proxy terminates TLS, and Kestrel isn't made aware of
+the correct request scheme." (<https://learn.microsoft.com/aspnet/core/host-and-deploy/proxy-load-balancer>.)
+`ForwardedHeaders` ships **off** in this image, so anyone who configures an HTTPS port behind a proxy walks
+into exactly that. Deleting the HSTS half removes one leg of it.

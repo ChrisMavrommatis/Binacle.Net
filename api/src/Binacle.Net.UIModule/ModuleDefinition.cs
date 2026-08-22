@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -42,11 +41,6 @@ public static class ModuleDefinition
 
 	public static void UseUIModule(this WebApplication app)
 	{
-		if (!app.Environment.IsDevelopment())
-		{
-			app.UseHsts();
-		}
-
 		app.MapStaticAssets();
 
 		// Has to sit on app. Inside a UseWhen branch the re-execute finds no endpoint and returns 0 bytes.

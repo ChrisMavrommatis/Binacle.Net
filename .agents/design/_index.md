@@ -19,7 +19,7 @@ decisions (why) and the findings (measured evidence). Permanent and citable; rea
 
 ```yaml
 - file: api/decisions.md
-  description: "API decisions ledger — why a module-off document carries no `429` and what guarantees it, and what the generated documents are a document of."
+  description: "API decisions ledger — why a module-off document carries no `429` and what guarantees it, what the generated documents are a document of, and why the API sends no HSTS header."
   paths: ["api/**"]
 ```
 
