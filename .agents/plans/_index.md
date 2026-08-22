@@ -18,7 +18,7 @@ you need, and trim or delete it once the work lands.
   description: "Harden and slim the base image"
 - file: packing-demo-rework.md
   description: "The packing demo's sample data, randomizer and buttons - one component change landing on both hosts, module first"
-  paths: ["packages/binacle-net-ui/**", "api/src/Binacle.Net.UIModule/**", "sites/web/**"]
+  paths: ["packages/binacle-net-ui/**", "api/src/Binacle.Net.UIModule/**", "sites/demo/**"]
 - file: sonar-issue-triage.md
   description: "Sonar - what is left after the 2026-08-09 sweep"
 - file: todos.md

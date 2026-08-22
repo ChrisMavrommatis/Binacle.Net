@@ -1,6 +1,6 @@
 // The visualizer's five playback buttons are one strip: `packingVisualizer.ts` hands the ends
 // `bottom-left-round` / `bottom-right-round` and the three middles `zero-round`. Without all three the
-// middles keep beercss's pill radius and the strip breaks up. Keep the radius in step with sites/web.
+// middles keep beercss's pill radius and the strip breaks up. Keep the radius in step with sites/demo.
 .bottom-right-round {
 	border-radius: 0 !important;
 	border-bottom-right-radius: .5rem !important;

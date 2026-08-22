@@ -37,15 +37,15 @@ if ! tmux has-session -t $SESSION_NAME 2>/dev/null; then
   ###-------------------------WINDOW 1----------------------------###
   
   ###-------------------------WINDOW 2----------------------------###
-  # Create a new window named 'web'
-  tmux new-window -n 'web' -t $SESSION_NAME
+  # Create a new window named 'demo'
+  tmux new-window -n 'demo' -t $SESSION_NAME
   
 	# split the window horizontally
  	tmux split-window -h -t $SESSION_NAME:2
 
-  tmux send-keys -t $SESSION_NAME:2.0 'cd ./sites/web' C-m
+  tmux send-keys -t $SESSION_NAME:2.0 'cd ./sites/demo' C-m
 
-  tmux send-keys -t $SESSION_NAME:2.1 'cd ./sites/web' C-m
+  tmux send-keys -t $SESSION_NAME:2.1 'cd ./sites/demo' C-m
 
   # Select the first pane
   tmux select-pane -t $SESSION_NAME:2.0

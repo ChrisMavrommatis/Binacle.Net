@@ -5,7 +5,7 @@ verified: 2026-08-21
 check: The package list, their descriptions and the private flag match each packages/*/package.json; the Related Tests table names every package under packages/ that has a suite, with the alias tooling/tests.just gives it
 also_update:
   - packages/binacle-net-ui
-  - sites/web
+  - sites/demo
   - api/modules/ui
 paths:
   - "packages/**"
@@ -31,7 +31,7 @@ The ViPaq TypeScript mirror lives at `vipaq/packages/binacle-vipaq/` — see `$v
 Alpine.js components + Three.js visualizer for the packing demo and ViPaq decoder. Full reference —
 components, plugins, model layers, the `window.binacle` global, and how to add a component — is in
 `$packages/binacle-net-ui`. **Consumed as TS source by two hosts**, each with its own webpack config:
-`sites/web/` and the UIModule (`$api/modules/ui`). One implementation, two pages — a change lands on both.
+`sites/demo/` and the UIModule (`$api/modules/ui`). One implementation, two pages — a change lands on both.
 
 ## binacle-compact-notation
 

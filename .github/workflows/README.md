@@ -13,7 +13,7 @@ one** - most of what looks odd here was deliberate.
 | `pull-request.yml` | Every pull request | Works out what changed, then runs the test suite, an image build and the workflow lint. Its `gate` job is the only name branch protection holds |
 | `release-docker-image.yml` | Pushing a `v<digit>…` tag | The release: notes gate, tests, build and push to GHCR, smoke, copy to Docker Hub by digest, GitHub release, Docker Hub page |
 | `deploy-docs-site.yml` | By hand | Builds the docs site, checks its links offline, deploys to Cloudflare, tags the commit it published |
-| `deploy-web-site.yml` | By hand | The same for the web site |
+| `deploy-demo-site.yml` | By hand | The same for the demo site |
 | `sonar-analysis.yml` | By hand | Coverage to SonarCloud. Keep Automatic Analysis off in the Sonar UI - the two fight |
 | `codeql-analysis.yml` | Merge to `main`, weekly, by hand | Code scanning. Findings land in the Security tab, not on a check |
 

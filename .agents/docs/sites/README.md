@@ -14,7 +14,7 @@ Every site this repo publishes, one directory each.
 | Directory | Site | Doc |
 |---|---|---|
 | `sites/docs/` | the documentation site | `$sites/docs` |
-| `sites/web/` | the marketing site | `$sites/web` |
+| `sites/demo/` | the demo site | `$sites/demo` |
 
 **All of it is off limits from a coding session.** Each site is written in its own session; see
 `.agents/README.md` for the rule and its one carve-out.

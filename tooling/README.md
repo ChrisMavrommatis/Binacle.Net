@@ -29,7 +29,7 @@ the only place that lives; nothing here repeats it.
 ```bash
 just serve api [N|S|U|All]       # Normal, WithServiceModuleOnly, WithUiModuleOnly, WithAllModules
 just serve docs                  # jekyll serve + webpack watch, one Ctrl-C stops both
-just serve web
+just serve demo
 just serve services-up [-d]      # what the API talks to: aspire dashboard, azurite, postgres. No binacle-net
 just serve services-down [-v]    # only needed after -d; Ctrl-C is enough otherwise
 ```
@@ -254,11 +254,11 @@ docker run --rm -v binacle-net-data:/data -v "$PWD/out:/out" alpine cp -a /data/
 
 ## ☁️ Cloudflare
 
-`cloudflare/` holds one wrangler config per site - `docs.wrangler.jsonc` and `web.wrangler.jsonc`. They are
-**not** run from here: the `Deploy Docs Site` and `Deploy Web Site` workflows call `wrangler deploy --config`
+`cloudflare/` holds one wrangler config per site - `docs.wrangler.jsonc` and `demo.wrangler.jsonc`. They are
+**not** run from here: the `Deploy Docs Site` and `Deploy Demo Site` workflows call `wrangler deploy --config`
 against them, both manual (`workflow_dispatch`) and both tagging the commit they published.
 
-Each config points at the folder the build already wrote - `artifacts/docs` and `artifacts/web` - so a deploy
+Each config points at the folder the build already wrote - `artifacts/docs` and `artifacts/demo` - so a deploy
 uploads whatever `just build docs` last produced. That path is relative to the config file and has to match
 the `destination` in the site's `_config.yml`; the two are wrong together or right together.
 
@@ -284,6 +284,6 @@ class is added or renamed.
 ---
 
 ## 🖥️ Tmux
-`tmux.sh` builds (or re-attaches to) a session named `binacle` with windows `api`, `docs`, `web`, `tests`,
+`tmux.sh` builds (or re-attaches to) a session named `binacle` with windows `api`, `docs`, `demo`, `tests`,
 `misc` and `bench_1..3`. Panes are pre-`cd`'d but nothing runs automatically - it is a staging layout, not a
 launcher.

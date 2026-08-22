@@ -38,7 +38,7 @@ links site="":
     #!/usr/bin/env bash
     set -euo pipefail
     sites="{{ site }}"
-    [ -n "$sites" ] || sites="docs web"
+    [ -n "$sites" ] || sites="docs demo"
     for s in $sites; do
         just check _lychee "$s" --offline
     done

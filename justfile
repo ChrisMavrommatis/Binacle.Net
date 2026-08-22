@@ -25,7 +25,7 @@ mod regen 'tooling/regen.just'
 # CHANGELOG.md sections: `just changelog extract <version|Unreleased>`, `just changelog check <version>`.
 mod changelog 'tooling/changelog.just'
 
-# Run from source: `just serve api [profile]`, `just serve docs`, `just serve web`, `just serve services-up`.
+# Run from source: `just serve api [profile]`, `just serve docs`, `just serve demo`, `just serve services-up`.
 mod serve 'tooling/serve.just'
 
 # Make the API image: `just build publish` for the app, `just build image [version]` for the container.
@@ -48,12 +48,12 @@ mod check 'tooling/check.just'
 install:
     npm install
     cd sites/docs && bundle install
-    cd sites/web && bundle install
+    cd sites/demo && bundle install
     @just assets
 
-# Copy assets/ into the docs and web sites and the UI module - run it after changing anything under assets/
+# Copy assets/ into the docs and demo sites and the UI module - run it after changing anything under assets/
 [group('dev')]
 assets:
     npm run copy-assets-to-docs
-    npm run copy-assets-to-web
+    npm run copy-assets-to-demo
     npm run copy-assets-to-uimodule

@@ -30,7 +30,7 @@ inverts that — a failure leaves a tag you delete, and nothing a user ever saw.
 job re-trigger the whole workflow and build everything a second time.
 
 **The pattern is `v[0-9]*` rather than `v*` because this repo has three tag-pushing workflows.** The two site
-deploys create `docs-<run>` and `web-<run>`, and a release build must never fire on one. Neither
+deploys create `docs-<run>` and `demo-<run>`, and a release build must never fire on one. Neither
 matches either pattern, so this is not a fix for a live bug — it is refusing to depend on a coincidence of
 naming, and on the second coincidence underneath it: those workflows push with `GITHUB_TOKEN`, which GitHub
 does not let trigger further workflows. That protection disappears the day either switches to a PAT.
@@ -433,7 +433,7 @@ for that reason before anyone writes a line is a gate people learn to ignore.
 
 ### D17 — the two site deploys are published by hand, and never on a push
 
-**Decided by the maintainer, 2026-08-19.** `deploy-docs-site.yml` and `deploy-web-site.yml` are
+**Decided by the maintainer, 2026-08-19.** `deploy-docs-site.yml` and `deploy-demo-site.yml` are
 `workflow_dispatch` and stay that way. No `push` trigger on `sites/**`, and no scheduled run.
 
 **Why:** publishing to the internet is a deliberate act, not a side effect of a commit. Those two folders are

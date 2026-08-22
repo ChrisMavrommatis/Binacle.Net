@@ -27,7 +27,7 @@ Do not repeat any of it here, and do not answer a setup question from memory: re
 at it. This section exists only to say where it is.
 
 The short version, for judging whether a command in this doc can run at all: .NET SDK 10.x, Node 22 (`.nvmrc`),
-Ruby 3.4.7 (`sites/docs/.ruby-version`, `sites/web/.ruby-version` — **both** sites need it), `just`, and docker
+Ruby 3.4.7 (`sites/docs/.ruby-version`, `sites/demo/.ruby-version` — **both** sites need it), `just`, and docker
 for anything touching the image.
 
 ## Set up a fresh clone
@@ -37,7 +37,7 @@ just install                           # npm workspaces, both jekyll sites' gems
 just assets                            # only the asset copy - after changing anything under assets/
 ```
 
-`assets` copies `assets/**` into `sites/docs/` and `sites/web/` via gulp. Both sites serve their copy, so a
+`assets` copies `assets/**` into `sites/docs/` and `sites/demo/` via gulp. Both sites serve their copy, so a
 changed logo does not show up until this runs.
 
 ## Run from source
@@ -45,7 +45,7 @@ changed logo does not show up until this runs.
 ```bash
 just serve api [N|S|U|All]             # the API
 just serve docs                        # docs site: jekyll serve + webpack watch, one terminal
-just serve web                         # marketing site: same
+just serve demo                        # demo site: same
 just serve services-up [-d]            # what the API talks to: aspire-dashboard, azurite, postgres
 just serve services-down [-v]          # only needed after -d; Ctrl-C is enough otherwise
 ```
@@ -277,7 +277,7 @@ staging layout for the `just` recipes and the remaining `tooling/*.sh` scripts. 
 just build publish                     # dotnet publish -> artifacts/binacle-net
 just build image [version]             # publish, then docker build -t binacle-net:<version> (default local)
 just build docs                        # the documentation site -> artifacts/docs
-just build web                         # the marketing site -> artifacts/web
+just build demo                        # the demo site -> artifacts/demo
 ```
 
 `image` always re-publishes first — `docker build` copies whatever is in `artifacts/binacle-net`, so skipping the
@@ -286,7 +286,7 @@ the container, which is what the running app reports.
 
 Then run it with `just image up`, which prepares the bind-mounted folders first.
 
-`docs` and `web` are the build half of `just serve docs` / `just serve web` — same site, built once instead of
+`docs` and `web` are the build half of `just serve docs` / `just serve demo` — same site, built once instead of
 served and watched. Three steps in a fixed order: copy the assets, run webpack over `_js/`, then
 `jekyll build` with `_config.yml,_config.prod.yml`. **Skipping any of them still produces a site**, just one
 with no scripts and no logo, because `js/`, `lib/` and `media/` are gitignored and filled by the first two

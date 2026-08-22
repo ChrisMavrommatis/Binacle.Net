@@ -40,7 +40,7 @@ described in `$tooling`. Nothing about a recipe's behaviour is repeated here.
 | `shared-dockerhub-overview.yml` | `workflow_dispatch`, `workflow_call` | Renders `.github/dockerhub-overview.md` with `just image dockerhub-overview <version>` and PATCHes it onto the Docker Hub repository page. Called by the release pipeline as its last job, or run by hand for a wording fix — an empty version input takes the latest release, so a typo fix needs nothing typed |
 | `shared-smoke-image.yml` | `workflow_dispatch`, `workflow_call` | Pulls a published image and runs the structure check plus all five smoke profiles. Called by the release pipeline as its gate, or run by hand against any tag |
 | `deploy-docs-site.yml` | `workflow_dispatch` | Two jobs — build `sites/docs/` (`$sites/docs`), check its links, hand the built directory to the host, then tag the commit `docs-<run>` |
-| `deploy-web-site.yml` | `workflow_dispatch` | The same for `sites/web/` (`$sites/web`), tagging `web-<run>` |
+| `deploy-demo-site.yml` | `workflow_dispatch` | The same for `sites/demo/` (`$sites/demo`), tagging `demo-<run>` |
 
 **Three of the nine run on their own.** `pull-request.yml` on every pull request, `codeql-analysis.yml` on
 every merge to `main` and weekly, and the release pipeline on a tag. The other six are `workflow_dispatch` —
@@ -85,7 +85,7 @@ the real one. A conditional step is not the fix — that gives the release a gat
 reach it, so that is a choice rather than an oversight.
 
 **Three workflows push git tags, and the namespaces must not overlap.** The release pipeline fires on
-`v[0-9]*`; the two deploy workflows create `docs-<run>` and `web-<run>`. That is the whole
+`v[0-9]*`; the two deploy workflows create `docs-<run>` and `demo-<run>`. That is the whole
 reason the release trigger is not the looser `v*` — a deploy tag must never build and publish an image. Any new
 workflow that pushes a tag has to stay out of the `v<digit>` namespace.
 
@@ -119,7 +119,7 @@ its caller's run, so a group of its own would have it queue behind the caller th
 | `codeql-analysis.yml` | `${{ github.workflow }}-${{ github.ref }}` | **true** |
 | `release-docker-image.yml` | `${{ github.workflow }}-${{ github.ref }}` | **false** |
 | `deploy-docs-site.yml` | `${{ github.workflow }}` | **false** |
-| `deploy-web-site.yml` | `${{ github.workflow }}` | **false** |
+| `deploy-demo-site.yml` | `${{ github.workflow }}` | **false** |
 
 **Cancelling is right for the first three and wrong for the last three, and the difference is whether a
 half-done run leaves anything behind.** A cancelled pull request run leaves nothing — a newer push supersedes it
@@ -148,7 +148,7 @@ not already say. A table that restates the job list is a heading with no fact in
 |---|---|---|
 | `pull-request.yml` | `gate` | The job-by-job result table. On a red gate it names the job that did it; on a green one it shows what was skipped, which is how you tell "nothing relevant changed" from "the suite ran". |
 | `release-docker-image.yml` | `release` | Version, digest, every public tag, the release link and the verify command. |
-| `deploy-docs-site.yml`, `deploy-web-site.yml` | `tag` | The commit and its subject, the marker tag and the site URL — three greps through a log otherwise. |
+| `deploy-docs-site.yml`, `deploy-demo-site.yml` | `tag` | The commit and its subject, the marker tag and the site URL — three greps through a log otherwise. |
 | `sonar-analysis.yml` | `analyze` | The quality gate and every condition with its value. The numbers live on another site and no gate blocks on them yet, so this is where they get read. |
 | `codeql-analysis.yml` | `summary` | Open alert counts by severity. The matrix has no last job, so this one exists for the summary; it does not repeat the per-language results the job list already shows. |
 | `shared-smoke-image.yml` | `smoke` | The image, the digest its tag resolved to, and each profile's result — **only on a `workflow_dispatch`**, where this workflow is the whole run. The release calls it too, and a block there would sit beside the one `release` writes for no new fact. |
@@ -365,7 +365,7 @@ reads**, and every tag the pipeline publishes lands there.
 ## Environments
 
 The two deploy workflows declare a GitHub environment, which is what carries the deployment URL in the Actions
-UI: `binacle-net-docs` (https://docs.binacle.net) and `binacle-net-web` (https://www.binacle.net). Nothing
+UI: `binacle-net-docs` (https://docs.binacle.net) and `binacle-net-demo` (https://www.binacle.net). Nothing
 else uses an environment.
 
 Both deploy workflows also push a marker tag after deploying — `docs-<run_number>` / `web-<run_number>` — so

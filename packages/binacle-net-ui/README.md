@@ -26,9 +26,9 @@ Each one registers the set of Alpine components its page needs, so a page turns 
 
 ## 🚀 Where it runs
 
-[`sites/web`](../../sites/web) imports it from `_js/packing_demo.js` and `_js/protocol_decoder.js`, and webpack
+[`sites/demo`](../../sites/demo) imports it from `_js/packing_demo.js` and `_js/protocol_decoder.js`, and webpack
 bundles it. The import resolves through the npm workspace - nothing is copied, so a change here shows up on the
-next webpack pass. `just serve web` from the repo root watches both.
+next webpack pass. `just serve demo` from the repo root watches both.
 
 The demo calls a live API, at the `api_url` in that site's `_config.yml`. The decoder does not - it decodes in
 the browser, through `binacle-vipaq`.

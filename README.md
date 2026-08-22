@@ -38,7 +38,7 @@ Start exploring Binacle.Net now! 🚀
 ├── /ruby         # Ruby gems — Jekyll plugins for the sites
 ├── /sites        # Every published site (Jekyll)
 │   ├── /docs     # Documentation site
-│   └── /web      # Binacle.Net website
+│   └── /demo     # Binacle.Net demo site
 ├── /samples      # Docker Compose and Kubernetes deployment samples
 ├── /tooling      # Every task the repo can run - just modules, scripts, local compose
 ├── /assets       # Shared static assets copied into the sites at build time

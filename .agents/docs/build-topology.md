@@ -31,7 +31,7 @@ slices:
 - `/vipaq/tools/` (`Binacle.ViPaq.VectorGenerators`, `Binacle.ViPaq.PackedDataGenerator`), `/shared/tools/` (`Binacle.OrLibrary.Converter`) — standalone generators, not referenced by the shipped projects
 - `/samples/`, `/samples/docker/` (5 `.dcproj` — quickstart, minimal, full, service, prod), `/samples/kubernetes/` (one `.proj`), `/api/` (requests), `/artifacts/`
 - Top-level content projects: `assets/assets.proj`, `tooling/tooling.proj`, `sites/docs/docs.proj`,
-  `sites/web/web.proj`
+  `sites/demo/demo.proj`
 - `/_root/` — loose files (`.dockerignore`, `.editorconfig`, `Directory.Build.props`, `Directory.Packages.props`, `Dockerfile`, `global.json`, `gulpfile.js`, `package.json`, README)
 
 ## Shared C# props — `Directory.Build.props`
@@ -119,7 +119,7 @@ standalone runner executable.
 ## JS workspaces & asset copy
 
 Root `package.json` (name `binacle-net`, `private`) declares five workspace entries: `packages/*`,
-`vipaq/packages/binacle-vipaq`, `api/src/Binacle.Net.UIModule`, `sites/docs` and `sites/web`.
+`vipaq/packages/binacle-vipaq`, `api/src/Binacle.Net.UIModule`, `sites/docs` and `sites/demo`.
 
 **Every javascript build in the repo is a member, and `package-lock.json` at the root is the only lock file.**
 One `npm ci` installs all of them. That is what keeps a single copy of `three` in the tree: `binacle-net-ui`
@@ -130,14 +130,14 @@ Root dev dependencies are `gulp` and `concurrently` (the latter is what lets one
 webpack together under a single Ctrl-C), and its only scripts are the asset-copy tasks:
 
 - `npm run copy-assets-to-docs` → `gulp copy-assets-to-docs`
-- `npm run copy-assets-to-web` → `gulp copy-assets-to-web`
+- `npm run copy-assets-to-demo` → `gulp copy-assets-to-demo`
 - `npm run copy-assets-to-uimodule` → `gulp copy-assets-to-uimodule`
 
 `just assets` runs all three, and `just install` runs it after the npm and bundler installs.
 
 `gulpfile.js` copies shared `assets/` (images, js, css, fonts) into the two Jekyll sites and the UI module's
 `wwwroot/`. One `IGNORE` block holds what each target skips. Each of the three runs its own webpack build —
-see docs site (`$sites/docs`), web site (`$sites/web`) and the UI module (`$api/modules/ui`).
+see docs site (`$sites/docs`), demo site (`$sites/demo`) and the UI module (`$api/modules/ui`).
 
 ## Docker build chain
 
@@ -166,7 +166,7 @@ look at `artifacts/` says which artifact is which.
 
 Several `.proj` files don't compile anything — they use the `Microsoft.Build.NoTargets` SDK to pull non-code files
 into the solution (and travel with build output). There are six: `assets/assets.proj`, `tooling/tooling.proj`,
-`sites/docs/docs.proj`, `sites/web/web.proj`, `api/requests/requests.proj` and
+`sites/docs/docs.proj`, `sites/demo/demo.proj`, `api/requests/requests.proj` and
 `samples/kubernetes/minimal/minimal.proj`.
 The Docker samples use `Microsoft.Docker.Sdk` `.dcproj` files instead. None of these affect the C# build.
 

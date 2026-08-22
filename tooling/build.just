@@ -3,9 +3,9 @@
 #   just build publish            publish the API into artifacts/binacle-net
 #   just build image [version]    publish, then docker build -t binacle-net:<version>
 #   just build docs               the documentation site into artifacts/docs
-#   just build web                the marketing site into artifacts/web
+#   just build demo               the demo site into artifacts/demo
 #
-# The two site recipes mirror `just serve docs` / `just serve web`: same site, built once instead of served
+# The two site recipes mirror `just serve docs` / `just serve demo`: same site, built once instead of served
 # and watched. They are the build half of the pair, which is why they are here rather than in `serve`.
 #
 # All of them are written to be callable from CI as they stand - nothing interactive, no sudo, no local-only
@@ -91,8 +91,8 @@ image version="local": publish
 # The documentation site into artifacts/docs
 docs: (_build-site 'docs' 'sites/docs')
 
-# The marketing site into artifacts/web
-web: (_build-site 'web' 'sites/web')
+# The demo site into artifacts/demo
+demo: (_build-site 'demo' 'sites/demo')
 
 [private]
 _build-site name dir:

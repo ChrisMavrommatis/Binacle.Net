@@ -168,15 +168,15 @@ table of [README.md](README.md).
 ## Sites
 
 ```yaml
+- file: sites/demo.md
+  description: "The published Jekyll demo site at sites/demo/ — product home, apps listing, and interactive packing demo. `$sites/demo` always means sites/demo/."
+  paths: ["sites/demo/**"]
 - file: sites/docs.md
   description: "The published Jekyll documentation site at sites/docs/ — versioned API docs with Swagger UI embed. `$sites/docs` always means sites/docs/, never .agents/docs/."
   paths: ["sites/docs/**"]
 - file: sites/README.md
   description: "Every published site lives under sites/, one directory each. What the two share, and what is per-site."
   paths: ["sites/**"]
-- file: sites/web.md
-  description: "The published Jekyll marketing site at sites/web/ — product home, apps listing, and interactive packing demo. `$sites/web` always means sites/web/."
-  paths: ["sites/web/**"]
 ```
 
 ## Tooling

@@ -9,7 +9,7 @@ paths:
 # Never edit anything under `sites/`
 
 Every published site lives there, one directory each, and all of them go to the internet. `sites/docs/` is the
-versioned documentation site, `sites/web/` is the marketing site.
+versioned documentation site, `sites/demo/` is the demo site.
 (`.agents/docs/` is a different thing entirely - the agent reference layer, and editing it is fine.)
 
 They are written in their own dedicated session, by an agent whose whole job is that content. Read them
@@ -17,7 +17,7 @@ freely. If work needs a page written or corrected, **write down what the page mu
 release file that owns the work, and leave the writing to that session.
 
 **One carve-out: the three repo-facing READMEs.** `sites/README.md`, `sites/docs/README.md` and
-`sites/web/README.md` are for whoever opens the folder, not for a visitor - both `_config.yml` files list
+`sites/demo/README.md` are for whoever opens the folder, not for a visitor - both `_config.yml` files list
 `README.md` under `exclude`, so no build publishes them. A coding session may write them, and must, because
 `every-folder-has-a-readme.md` covers them like any other folder. Nothing else under `sites/` is included:
 not a page, not a layout, not front matter.

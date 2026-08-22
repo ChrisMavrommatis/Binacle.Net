@@ -3,10 +3,10 @@ description: Build one of the two Jekyll sites as a pre-flight check. Deploying 
 
 inputs:
   site:
-    description: The site's name - `docs` or `web`. Names the `just build` recipe.
+    description: The site's name - `docs` or `demo`. Names the `just build` recipe.
     required: true
   directory:
-    description: The site's directory, holding its Gemfile - `sites/docs` or `sites/web`. Separate from the
+    description: The site's directory, holding its Gemfile - `sites/docs` or `sites/demo`. Separate from the
       name because the sites sit under a parent directory.
     required: true
 

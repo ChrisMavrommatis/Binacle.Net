@@ -15,7 +15,7 @@ meaning the same thing.
 |---|---|---|---|
 | .NET SDK | 10.x | none (`Directory.Build.props` sets `net10.0`) | the API, `lib`, `vipaq` - everything C# |
 | Node.js, via [nvm](https://github.com/nvm-sh/nvm) | 22 | `.nvmrc` | `just install`, the TS packages, `assets`, both sites' webpack |
-| Ruby, via [rbenv](https://github.com/rbenv/rbenv) | 3.4.7 | `sites/docs/.ruby-version`, `sites/web/.ruby-version` | Jekyll, for **both** sites |
+| Ruby, via [rbenv](https://github.com/rbenv/rbenv) | 3.4.7 | `sites/docs/.ruby-version`, `sites/demo/.ruby-version` | Jekyll, for **both** sites |
 | [just](https://github.com/casey/just#installation) | any recent | none | every recipe in this repo |
 | Docker | 28+ | none | the image, the `image` and `smoke` modules, the Postgres and AzureStorage test leaves |
 
@@ -155,7 +155,7 @@ static binary in `~/.local/bin`, pinned rather than `latest`. The musl build is 
 from the system, which is the whole class of problem the hurl section above describes.
 
 ```bash
-# lychee 0.24.2 - checks the links in artifacts/docs and artifacts/web
+# lychee 0.24.2 - checks the links in artifacts/docs and artifacts/demo
 curl -fsSL -o /tmp/lychee.tar.gz \
   https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-musl.tar.gz
 tar xzf /tmp/lychee.tar.gz -C /tmp

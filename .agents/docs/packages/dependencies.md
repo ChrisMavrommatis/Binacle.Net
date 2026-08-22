@@ -10,7 +10,7 @@ paths:
 # Packages — TypeScript dependencies
 
 The npm workspaces. Root `package.json` covers `packages/*`, `vipaq/packages/binacle-vipaq`, and the three
-consumers — `api/src/Binacle.Net.UIModule`, `sites/docs` and `sites/web`. Every package resolves the others
+consumers — `api/src/Binacle.Net.UIModule`, `sites/docs` and `sites/demo`. Every package resolves the others
 from the workspace. Every workspace import is also declared in its importer's `package.json` (all as `"*"`),
 so the graph is honest on its own, not only by hoisting.
 

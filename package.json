@@ -8,7 +8,7 @@
   },
   "scripts": {
     "copy-assets-to-docs": "gulp copy-assets-to-docs",
-    "copy-assets-to-web": "gulp copy-assets-to-web",
+    "copy-assets-to-demo": "gulp copy-assets-to-demo",
     "copy-assets-to-uimodule": "gulp copy-assets-to-uimodule"
   },
   "author": "Chris Mavrommatis",
@@ -19,7 +19,7 @@
     "vipaq/packages/binacle-vipaq",
     "api/src/Binacle.Net.UIModule",
     "sites/docs",
-    "sites/web"
+    "sites/demo"
   ],
   "devDependencies": {
     "concurrently": "^10.0.3",

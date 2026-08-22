@@ -72,12 +72,12 @@ sites/docs/*.png
 ## UI module - wwwroot is entirely generated. Sources are _sass/ and _js/; `just build publish` fills it.
 api/src/Binacle.Net.UIModule/wwwroot
 
-## Website
-artifacts/web
-sites/web/js
-sites/web/media
-sites/web/lib
-sites/web/*.ico
-sites/web/*.png
+## Demo site
+artifacts/demo
+sites/demo/js
+sites/demo/media
+sites/demo/lib
+sites/demo/*.ico
+sites/demo/*.png
 
 

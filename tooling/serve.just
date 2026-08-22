@@ -2,7 +2,7 @@
 #
 #   just serve api [profile]     the API, via its launch profiles (+ webpack watch on the UI profiles)
 #   just serve docs              the documentation site
-#   just serve web               the marketing site
+#   just serve demo              the demo site
 #   just serve services-up [-d]  what the API talks to: aspire dashboard, azurite, postgres
 #   just serve services-down     stop them (only needed after -d; Ctrl-C is enough otherwise)
 #
@@ -102,8 +102,8 @@ services-down *args:
 # Docs site: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
 docs: (_serve-n-watch 'sites/docs')
 
-# Web site: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
-web: (_serve-n-watch 'sites/web')
+# Demo site: jekyll serve + webpack watch, one terminal (Ctrl-C stops both)
+demo: (_serve-n-watch 'sites/demo')
 
 # Serve and watch together, each line prefixed with its source.
 # --kill-others makes one Ctrl-C stop both.

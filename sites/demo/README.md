@@ -1,7 +1,7 @@
-# Binacle.Net Website
+# Binacle.Net Demo Site
 
-The marketing and landing site, built with [Jekyll](https://jekyllrb.com/). It covers the product home, the
-apps listing, and the two interactive apps. Published to <https://www.binacle.net>.
+The demo site, built with [Jekyll](https://jekyllrb.com/). It covers the product home, the apps listing, and
+the two interactive apps. Its host is <https://demo.binacle.net>.
 
 ## 📂 What is in it
 
@@ -22,7 +22,7 @@ writes the first, `just assets` writes the rest. Nothing there is edited by hand
 From the repo root:
 
 ```bash
-just serve web
+just serve demo
 ```
 
 That runs `jekyll serve` and the webpack watch together in one terminal, and one Ctrl-C stops both. **Use it

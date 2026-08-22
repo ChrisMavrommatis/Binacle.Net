@@ -22,7 +22,7 @@ its `package.json` carries **no `scripts` block at all**. Each host compiles it 
 
 | Host | Entries | Config |
 |---|---|---|
-| `sites/web/` (Jekyll) | `sites/web/_js/packing_demo.js`, `protocol_decoder.js` | `sites/web/webpack.config.js` |
+| `sites/demo/` (Jekyll) | `sites/demo/_js/packing_demo.js`, `protocol_decoder.js` | `sites/demo/webpack.config.js` |
 | `api/src/Binacle.Net.UIModule` (Razor Pages) | `_js/packing_demo.js`, `_js/protocol_decoder.js` | the module's `webpack.config.js` |
 
 **One implementation, two hosts. A change here lands on both** — that is the point, and it is the rule to test

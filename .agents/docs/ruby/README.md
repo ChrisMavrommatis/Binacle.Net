@@ -9,7 +9,7 @@ paths:
 
 # Gems
 
-Jekyll plugins used by both the `sites/docs/` and `sites/web/` sites.
+Jekyll plugins used by both the `sites/docs/` and `sites/demo/` sites.
 
 | Gem | What it adds |
 |---|---|

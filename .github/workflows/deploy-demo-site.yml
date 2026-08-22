@@ -1,4 +1,4 @@
-name: Deploy Web Site
+name: Deploy Demo Site
 
 on:
   workflow_dispatch:
@@ -16,25 +16,25 @@ jobs:
     permissions:
       contents: read
     environment:
-      name: binacle-net-web
-      url: https://www.binacle.net
+      name: binacle-net-demo
+      url: https://demo.binacle.net
 
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Build - web site
+      - name: Build - demo site
         uses: ./.github/actions/build-jekyll-site
         with:
-          site: web
-          directory: sites/web
+          site: demo
+          directory: sites/demo
 
       - name: Install - lychee
         uses: ./.github/actions/install-lychee
 
       # Offline. The absolute URLs point at pages this run has not published yet, so they all 404 here.
       - name: Check - links
-        run: just check links web
+        run: just check links demo
 
       # From git, not the event: `workflow_dispatch` carries no commit payload. Stripped of the characters
       # that would break out of the quoted argument below.
@@ -44,13 +44,13 @@ jobs:
           subject=$(git log -1 --format=%s "$GITHUB_SHA" | tr -d '"`$\\' | cut -c1-90)
           echo "DEPLOY_MESSAGE=${GITHUB_SHA:0:8} - ${subject}" >> "$GITHUB_ENV"
 
-      # Uploads what the link check just read - artifacts/web, named as `directory` in the config file.
+      # Uploads what the link check just read - artifacts/demo, named as `directory` in the config file.
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --config tooling/cloudflare/web.wrangler.jsonc --message "${{ env.DEPLOY_MESSAGE }}"
+          command: deploy --config tooling/cloudflare/demo.wrangler.jsonc --message "${{ env.DEPLOY_MESSAGE }}"
 
   tag:
     name: Tag the deployed commit
@@ -62,9 +62,9 @@ jobs:
 
     env:
       # Must not start with `v` followed by a digit - the release workflow fires on `v[0-9]*`.
-      TAG_NAME: web-${{ github.run_number }}
+      TAG_NAME: demo-${{ github.run_number }}
       COMMIT: ${{ github.sha }}
-      URL: https://www.binacle.net
+      URL: https://demo.binacle.net
 
     steps:
       - name: Checkout

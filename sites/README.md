@@ -8,7 +8,7 @@ with webpack and TypeScript beside them.
 | Directory | What it is |
 |---|---|
 | [`docs/`](docs) | The documentation site — versioned API reference and guides |
-| [`web/`](web) | The website — product home, apps listing, and the interactive packing demo |
+| [`demo/`](demo) | The demo site — the packing demo, the ViPaq decoder, and the pages around them |
 
 Each has its own `README.md`, `Gemfile` and `package.json`. Neither is a root npm workspace, so a fresh clone
 installs into the site as well as the root — `just install` from the repo root does both.
@@ -22,15 +22,15 @@ just serve docs                  # jekyll serve + webpack watch, one Ctrl-C stop
 just build docs                  # the same site built once, into artifacts/docs
 ```
 
-`serve web` and `build web` are the same for the other one. A build is three steps in a fixed order — copy the
-shared assets, run webpack over `_js/`, then `jekyll build` — and **skipping any of them still produces a
+`serve demo` and `build demo` are the same for the other one. A build is three steps in a fixed order — copy
+the shared assets, run webpack over `_js/`, then `jekyll build` — and **skipping any of them still produces a
 site**, just one with no scripts and no logo. Use the recipes rather than calling `jekyll` yourself.
 
 Output goes to `artifacts/<site>` at the repo root, which is what gets deployed.
 
 ## ☁️ Deploying
 
-Both go to Cloudflare, each from its own workflow - `Deploy Docs Site` and `Deploy Web Site`. Both are
+Both go to Cloudflare, each from its own workflow - `Deploy Docs Site` and `Deploy Demo Site`. Both are
 **manual** (`workflow_dispatch`), both build the site fresh, check its links offline, upload
 `artifacts/<site>`, and then tag the commit they published so a live site maps back to a commit.
 

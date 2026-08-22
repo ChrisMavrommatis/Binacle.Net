@@ -67,7 +67,7 @@ publish time. **A missing bundle fails nothing** — the image ships pages that 
 which is why `full.hurl` and `quickstart.hurl` assert the bundle and stylesheet directly.
 
 The webpack entries are `main`, `instance`, `packing_demo` and `protocol_decoder`. The chunk names and
-priorities match `sites/web/webpack.config.js`; both compile the same package source, so there is one
+priorities match `sites/demo/webpack.config.js`; both compile the same package source, so there is one
 implementation and only the config is duplicated.
 
 `instance` imports nothing, so it is its own 1 KB file and pulls in no shared chunk. The instance page loads

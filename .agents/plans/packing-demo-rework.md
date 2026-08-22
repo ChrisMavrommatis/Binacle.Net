@@ -3,7 +3,7 @@ description: The packing demo's sample data, randomizer and buttons - one compon
 paths:
   - "packages/binacle-net-ui/**"
   - "api/src/Binacle.Net.UIModule/**"
-  - "sites/web/**"
+  - "sites/demo/**"
 ---
 
 # The packing demo - samples, randomize and buttons
@@ -12,7 +12,7 @@ paths:
 question, marked as such, and the work.
 
 **This spans three slices** - the shared component in `packages/binacle-net-ui`, the UI module in `api/`, and
-the demo site in `sites/web`. That is why it sits at the root of `plans/` rather than in a slice folder.
+the demo site in `sites/demo`. That is why it sits at the root of `plans/` rather than in a slice folder.
 
 ## The order, and it is not negotiable
 
@@ -202,12 +202,12 @@ show it as a proposal.**
 **The strings in this module are already claimed by other release work.** Get the current wording before
 editing any of them rather than assuming these are the live values.
 
-## Editing `sites/web`
+## Editing `sites/demo`
 
 **A grant was given on 2026-08-22 covering the demo site's packing form**, for this work and nothing else.
 The standing rule against editing published sites otherwise applies in full, and the grant does not widen it:
 
-- **In scope:** `sites/web/collections/_apps/packing-demo.html` - the button markup and the `x-data`
+- **In scope:** `sites/demo/collections/_apps/packing-demo.html` - the button markup and the `x-data`
   attribute, and any label whose wording answer says so.
 - **Out of scope:** every other page, every layout, every `_config`, every piece of front matter, and both
   other sites. If the work appears to need one of those, stop and write down what it must say.
@@ -218,11 +218,11 @@ see exactly how far it reached.
 **Used on 2026-08-22. Two files, and both reach past the grant as written - each on the maintainer's own
 instruction, given while the work was running:**
 
-- `sites/web/collections/_apps/packing-demo.html` - the three button rows, byte-identical to the UI module's;
+- `sites/demo/collections/_apps/packing-demo.html` - the three button rows, byte-identical to the UI module's;
   and the page's `description` front matter, `excerpt` and the `<p>` under it, reworded to match
   `AppletsService.cs` word for word. **The button rows are in scope; the front matter is explicitly out of it**
   and was changed on the instruction "fix the description in web as in ui module".
-- `sites/web/_sass/_components.scss` - three rules appended, the same three the module carries.
+- `sites/demo/_sass/_components.scss` - three rules appended, the same three the module carries.
   **This is stylesheet, not markup, so it is outside the grant's wording.** It was taken because the markup
   half cannot ship without it: `.border` inherits beercss's `color: var(--primary)`, which measures 1.01:1 on
   the dark items panel - the Add button's label is invisible - and `destructive` has no styling at all without
@@ -233,7 +233,7 @@ is the answer that was given.
 
 ## What will bite
 
-**The markup exists twice and this plan does not fix that.** `sites/web/collections/_apps/packing-demo.html`
+**The markup exists twice and this plan does not fix that.** `sites/demo/collections/_apps/packing-demo.html`
 and `api/src/Binacle.Net.UIModule/Pages/Packing.cshtml` are the same ~210 lines, and the button change has to
 be made in both. That duplication is a known, separately-owned decision. **Do not attempt to unify them here** -
 it is a build-system change and it would swallow this work.
@@ -250,7 +250,7 @@ it would be paying for itself. Presets arrive as the starting data and nothing e
 component change without the site rendering it too on its next build. That is the point of the shared package;
 it is also why the site half must not be left half-done for long.
 
-**Rebuild both bundles after any component change** - `api/src/Binacle.Net.UIModule` and `sites/web` each run
+**Rebuild both bundles after any component change** - `api/src/Binacle.Net.UIModule` and `sites/demo` each run
 their own webpack against the same source. A change that compiles in one compiles in the other, but only a
 build proves the page loads it.
 

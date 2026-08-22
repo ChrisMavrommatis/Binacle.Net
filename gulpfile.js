@@ -22,13 +22,14 @@ const ASSETS = {
 // outside its own lib/ folder; re-measure before changing a line.
 //
 //   swagger-ui  4.8 MB, and only sites/docs/_layouts/versions/swagger.html reads it. The API serves its own
-//               Swagger UI from the Swashbuckle package, so it is dead weight on web and in the image.
+//               Swagger UI from the Swashbuckle package, so it is dead weight on the demo site and in
+//               the image.
 //
-// material-dynamic-colors stays everywhere: 72 KB, and sites/web/_data/includes.yml keeps a commented-out
+// material-dynamic-colors stays everywhere: 72 KB, and sites/demo/_data/includes.yml keeps a commented-out
 // script tag for it, so dropping it would break the line the moment someone uncomments it.
 const IGNORE = {
 	docs: [],
-	web: ['assets/lib/swagger-ui/**'],
+	demo: ['assets/lib/swagger-ui/**'],
 	uimodule: ['assets/lib/swagger-ui/**']
 };
 
@@ -68,8 +69,8 @@ function copyAssets(destinationDir, ignore = []) {
 // ----------------- End Functions  ----------------- //
 
 // Tasks
-task('copy-assets-to-web', async function(){
-	return copyAssets('sites/web', IGNORE.web);
+task('copy-assets-to-demo', async function(){
+	return copyAssets('sites/demo', IGNORE.demo);
 });
 
 task('copy-assets-to-docs', async function(){

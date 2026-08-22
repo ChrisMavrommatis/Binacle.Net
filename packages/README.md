@@ -18,7 +18,7 @@ between them.
 
 ## 🌐 Who imports them
 
-The two sites pull them in by package name and webpack bundles them - `sites/web` uses `binacle-net-ui` for
+The two sites pull them in by package name and webpack bundles them - `sites/demo` uses `binacle-net-ui` for
 the packing demo and the ViPaq decoder, and both sites use `theme-switcher`. Nothing is copied: the import
 resolves through the workspace. (`just assets` is a different job - it copies the static files in
 [`assets/`](../assets), not these.)
