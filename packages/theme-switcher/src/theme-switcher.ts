@@ -1,6 +1,9 @@
 import { Cookies } from 'cookies';
 
 export default class ThemeSwitcherButtonElement extends HTMLElement {
+	_defaultMode: string;
+	_themeIcon: HTMLElement | null;
+
 	constructor() {
 		super();
 		this._defaultMode = 'light';
@@ -35,11 +38,11 @@ export default class ThemeSwitcherButtonElement extends HTMLElement {
 		if(this.isDarkTheme()){
 			document.body.classList.remove("dark");
 			document.body.classList.add("light");
-			this._themeIcon.textContent = "dark_mode";
+			this._themeIcon!.textContent = "dark_mode";
 		}else {
 			document.body.classList.remove("light");
 			document.body.classList.add("dark");
-			this._themeIcon.textContent = "light_mode";
+			this._themeIcon!.textContent = "light_mode";
 		}
 		const themeValue = this.isDarkTheme() ? 'dark' : 'light';
 
@@ -62,14 +65,16 @@ export default class ThemeSwitcherButtonElement extends HTMLElement {
 	}
 
 	changeThemeElementsAccordingToTheme() {
-		const themeChangingElements = document.querySelectorAll('[data-theme]');
+		const themeChangingElements = document.querySelectorAll<HTMLElement>('[data-theme]');
 		themeChangingElements.forEach(element => {
-			const attribute = element.dataset.theme;
+			const attribute = element.dataset.theme as string;
 
 			const themeValue = this.isDarkTheme()
 				? element.dataset.darktheme
 				: element.dataset.lighttheme;
-			element.setAttribute(attribute, themeValue);
+			// An element missing data-darktheme or data-lighttheme writes the literal string "undefined",
+			// as it did before the port. The cast keeps that rather than skipping the element.
+			element.setAttribute(attribute, themeValue as string);
 		});
 	}
 }

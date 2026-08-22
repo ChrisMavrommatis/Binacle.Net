@@ -2,7 +2,19 @@
   "name": "cookies",
   "version": "3.0.5",
   "description": "Utility for cookies, based on js-cookie v3.0.5. License is the same as the original library (MIT).",
-  "main": "index.js",
+  "main": "index.ts",
+  "types": "index.ts",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.6.0"
+  }
 }

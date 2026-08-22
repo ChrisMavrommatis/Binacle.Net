@@ -2,10 +2,22 @@
   "name": "theme-switcher",
   "version": "1.0.0",
   "description": "Theme switcher custom element for the Binacle.Net websites",
-  "main": "index.js",
+  "main": "index.ts",
+  "types": "index.ts",
   "license": "GPL-3.0-only",
   "private": true,
+  "scripts": {
+    "test": "jest"
+  },
   "dependencies": {
     "cookies": "*"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.6.0"
   }
 }
