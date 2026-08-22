@@ -31,27 +31,6 @@ has to stay. These two are the exceptions.
   keep-or-convert decision in the scripts-to-just-recipes plan**, not before: if the script moves into a
   shebang recipe body whole, the noise moves with it.
 
-## Kernel
-
-- `api/src/Binacle.Net.Kernel/ReservedPathOptions.cs`, `AddPrefix`. A prefix without a leading slash is
-  accepted and held, then throws `ArgumentException` on the first request, because `Covers` matches it as a
-  `PathString`. **A module that declares `api` instead of `/api` therefore fails every request rather than the
-  one it got wrong.** Reject it or add the slash, in the same guard that already drops null and whitespace.
-  Found 2026-08-22 while writing the tests, which pin the current behaviour.
-
-## binacle-net-ui
-
-Both found 2026-08-22 while writing the first tests for the package. Both are pinned as they are, so a fix
-changes a test that says why.
-
-- `packages/binacle-net-ui/src/viewModels/errorCollection.ts`, `hasError`. Declared `boolean`, returns
-  `undefined` for a field nothing ever pushed to. Every caller today negates it, so nothing is wrong on the
-  page - but `=== false` anywhere would be silently wrong. Coerce it.
-
-- `packages/binacle-net-ui/src/viewModels/decodedPackingResult.ts`,
-  `packedBinVolumePercentage`. Divides by the bin volume unguarded, so a decoded result carrying a zero side
-  renders `NaN%`. The input is a base64 token a visitor pastes in, so the zero is reachable.
-
 ## UIModule
 
 - `api/src/Binacle.Net.UIModule/ModuleDefinition.cs`, `UseUIModule`. `UseHsts()` is called there, so an

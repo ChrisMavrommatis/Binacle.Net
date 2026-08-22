@@ -26,7 +26,7 @@ export default class ErrorCollection {
 
 	hasError(fieldName: string) {
 		const normalizedFieldName = fieldName.toLowerCase();
-		return this.fields[normalizedFieldName] && this.fields[normalizedFieldName].length > 0;
+		return (this.fields[normalizedFieldName]?.length ?? 0) > 0;
 	}
 
 	hasErrors() {

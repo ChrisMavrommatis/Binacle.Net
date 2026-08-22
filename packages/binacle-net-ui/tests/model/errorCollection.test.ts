@@ -26,14 +26,12 @@ describe("push and hasError", () => {
 		expect(errors.errorMessages).toEqual(["first", "second"]);
 	});
 
-	// hasError is declared boolean but returns the missing bucket itself. Nothing in the package reads the
-	// value except through `!`, so it does not bite today.
-	test("an untouched field returns undefined rather than false", () => {
+	test("an untouched field is false", () => {
 		const errors = new ErrorCollection();
 
 		const result = errors.hasError("width");
 
-		expect(result).toBeUndefined();
+		expect(result).toBe(false);
 	});
 });
 

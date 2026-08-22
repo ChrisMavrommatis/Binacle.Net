@@ -1,7 +1,7 @@
 ---
 id: commands
 description: How to set up a clone, run the API and the two sites, run tests and benchmarks, and build the Docker image
-verified: 2026-08-19
+verified: 2026-08-22
 check: Test leaves match tooling/tests.just; coverage recipes match tooling/coverage.just; openapi recipes match tooling/openapi.just; agents recipes match tooling/agents.just; regen recipes match tooling/regen.just; serve recipes match tooling/serve.just; smoke recipes match tooling/smoke.just; build recipes match tooling/build.just; check recipes match tooling/check.just; install/assets match the root justfile; aliases and scripts match tooling/*.sh; compose service list matches tooling/serve.services.yml; the Prerequisites section still only points at DEVELOPMENT.md and repeats no versions or install commands
 paths:
   - "justfile"
@@ -76,11 +76,16 @@ just test shared-cs-unit               # compact-notation C#
 just test shared-ts-unit               # compact-notation TS
 just test vipaq-cs-unit                # vipaq C#
 just test vipaq-ts-unit                # vipaq TS
+just test packages-net-ui-unit         # binacle-net-ui TS
+just test packages-cookies-unit        # cookies TS
+just test packages-theme-switcher-unit # theme-switcher TS
 just test api-core-unit                # Binacle.Net options validators, forwarded headers
 just test api-kernel-unit              # Kernel features
 just test api-diagnostics-unit         # DiagnosticsModule
+just test api-ui-unit                  # UIModule applets, switches and page models
 just test api-service-unit             # ServiceModule config validators and policies
 just test api-core-integration         # v3 + v4 HTTP endpoints
+just test api-ui-integration           # page routes and markup, demo on and off
 just test api-service-integration [Sqlite|Postgres|AzureStorage]   # no arg falls back to SQLite
 ```
 
@@ -220,7 +225,7 @@ build or a published tag — `just smoke all binacle/binacle-net:<tag>`. Given a
 `all` pulls instead of building. The stacks read it as `$BINACLE_IMAGE` with the same default.
 
 The static check reads the image, not a container, so `all` runs it **once** rather than once per profile. The
-four profiles are declared in one place, the `profiles` variable at the top of `tooling/smoke.just`.
+five profiles are declared in one place, the `profiles` variable at the top of `tooling/smoke.just`.
 
 While editing a `.hurl`, skip the up/down cycle: `just smoke up prod`, then `just smoke::_test_profile prod` as
 many times as needed, then `just smoke down prod -v`.
@@ -333,10 +338,11 @@ the quickstart pages, which are correct on the page and unreachable from anywher
 
 ## TypeScript packages
 
-Both are test leaves — `just test shared-ts-unit` and `just test vipaq-ts-unit`. They run jest from the repo
-root through the root `jest.config.js`, which is what keeps the workspace folder in coverage paths and applies
-its `collectCoverageFrom`. Running `npm test` inside a package works but uses that package's own config, so its
-numbers are not the ones CI or coverage report.
+Five test leaves — `shared-ts-unit`, `vipaq-ts-unit`, `packages-net-ui-unit`, `packages-cookies-unit` and
+`packages-theme-switcher-unit`. They run jest from the repo root through the root `jest.config.js`, which is
+what keeps the workspace folder in coverage paths and applies its `collectCoverageFrom`. Running `npm test`
+inside a package works but drives the run from that package's own config, so its numbers are not the ones CI
+or coverage report.
 
 ## Docker
 

@@ -10,10 +10,14 @@ public class ReservedPathOptions
 
 	public void AddPrefix(string prefix)
 	{
-		if (!string.IsNullOrWhiteSpace(prefix))
+		if (string.IsNullOrWhiteSpace(prefix))
 		{
-			this.prefixes.Add(prefix);
+			return;
 		}
+
+		// Covers matches PathString, which throws on a prefix with no leading slash - so "api" instead of
+		// "/api" would fail every request rather than the one it got wrong.
+		this.prefixes.Add(prefix.StartsWith('/') ? prefix : "/" + prefix);
 	}
 
 	public bool Covers(PathString path)

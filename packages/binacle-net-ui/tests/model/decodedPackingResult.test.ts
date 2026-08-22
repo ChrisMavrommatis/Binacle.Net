@@ -70,14 +70,12 @@ describe("packedBinVolumePercentage", () => {
 		expect(percentage).toBe(100);
 	});
 
-	// Nothing guards a zero-sided bin. A decoder that hands one over produces NaN, which reaches the page as
-	// "NaN%".
-	test("a zero-sided bin gives NaN", () => {
+	test("a zero-sided bin gives zero rather than NaN", () => {
 		const result = newResult({length: 0, width: 10, height: 10}, []);
 
 		const percentage = result.packedBinVolumePercentage();
 
-		expect(percentage).toBeNaN();
+		expect(percentage).toBe(0);
 	});
 });
 

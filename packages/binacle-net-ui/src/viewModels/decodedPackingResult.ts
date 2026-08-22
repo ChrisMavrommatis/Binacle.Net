@@ -27,6 +27,11 @@ export default class DecodedPackingResult {
 	packedBinVolumePercentage(){
 		const packedVolume = this.itemsVolume();
 		const binVolume = this.binVolume();
+		// The bin comes from a base64 token a visitor pastes in, so a zero side is reachable and would
+		// render as "NaN%".
+		if (binVolume <= 0) {
+			return 0;
+		}
 		return Math.round((packedVolume / binVolume) * 100);
 	}
 }

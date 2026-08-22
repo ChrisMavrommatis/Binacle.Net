@@ -114,16 +114,28 @@ public class ReservedPathOptionsTests
 		covered.ShouldBe(expected);
 	}
 
-	// AddPrefix takes a string and Covers matches PathString, which refuses anything without a leading slash.
-	// A module that declares "api" therefore fails on every request rather than on the one it got wrong.
+	// Covers matches PathString, which refuses anything without a leading slash. AddPrefix adds it, so a
+	// module that declares "api" gets what it meant instead of a throw on every request.
 	[Fact]
-	public void A_Prefix_Without_A_Leading_Slash_Is_Held_And_Throws_On_The_First_Request()
+	public void A_Prefix_Without_A_Leading_Slash_Gains_One()
 	{
 		var options = new ReservedPathOptions();
 		options.AddPrefix("api");
 
-		Action act = () => options.Covers("/api/v4/presets");
+		var covered = options.Covers("/api/v4/presets");
 
-		act.ShouldThrow<ArgumentException>();
+		covered.ShouldBeTrue();
+	}
+
+	// The same normalized value is what the health check and the debug page print.
+	[Fact]
+	public void A_Normalized_Prefix_Is_Stored_With_Its_Slash()
+	{
+		var options = new ReservedPathOptions();
+		options.AddPrefix("api");
+
+		var prefixes = options.Prefixes;
+
+		prefixes.ShouldContain("/api");
 	}
 }

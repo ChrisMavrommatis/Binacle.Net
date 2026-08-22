@@ -6,7 +6,7 @@
 
 {% if is_active %}
 <a href="{{ item.url | relative_url }}" class="active">
-    <i class="material-symbols">
+    <i>
         {{ item.icon }}
     </i>
         
@@ -14,7 +14,7 @@
 </a>
 {% else %}
 <a href="{{ item.url | relative_url }}">
-    <i class="material-symbols">
+    <i>
         {{ item.icon }}
     </i>
     <span>{{ item.title }}</span>

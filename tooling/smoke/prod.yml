@@ -9,9 +9,9 @@ name: binacle-smoke-prod
 # no auth, no database. A single container.
 #
 # This is the shape most deployments actually are, and its defining assertion is that /_health answers 200 with
-# an EMPTY Features array. Features only ever lists SwaggerUI, ScalarUI, UIModule, ServiceModule, RateLimiter
-# and DebugEndpoint - HealthChecks and PackingLogs are not features - so empty is the positive proof that
-# health is on and nothing else is, in one request that can fail in both directions.
+# HealthChecks as the only entry in Features. Features can list SwaggerUI, ScalarUI, UIModule, ServiceModule,
+# RateLimiter, DebugEndpoint and HealthChecks - PackingLogs is not one - so that single entry is the positive
+# proof that health is on and nothing else is, in one request that can fail in both directions.
 #
 # It mounts its own Presets.json, which the shipped image does not contain. That is the point: reading a
 # preset that only exists in the mounted file proves the config-mount path works, which no default preset

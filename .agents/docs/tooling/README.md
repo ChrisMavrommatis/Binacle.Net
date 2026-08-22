@@ -1,7 +1,7 @@
 ---
 id: "tooling"
-description: "tooling/ — every task the repo can run, called by CI and by hand alike: the test, coverage, openapi, agents, regen, changelog, serve, build, image and smoke modules for just, the benchmark/performance scripts, the tmux script, the local compose stacks, and emulator state"
-verified: 2026-08-19
+description: "tooling/ — every task the repo can run, called by CI and by hand alike: the test, coverage, openapi, agents, regen, changelog, serve, build, check, image and smoke modules for just, the benchmark/performance scripts, the tmux script, the local compose stacks, and emulator state"
+verified: 2026-08-22
 check: "Script list, tests.just leaves, coverage.just recipes, openapi.just, agents.just, regen.just, changelog.just, serve.just, build.just (the API publish/image pair and the two site builds), check.just and its lychee.toml, image.just (stacks and the four verify checks, whose certificate identity must match SECURITY.md) and smoke.just recipes, and the compose stack/file/service table match tooling/"
 also_update:
   - commands
@@ -41,7 +41,8 @@ deployment starting points live in samples (`$samples`). For the quick "how do I
 The launch profiles live in `serve.just`; the benchmark filters live inside the per-slice `benchmarks.*`
 scripts. `tmux.sh` is standalone — it has no aliases.
 
-The TS leaves (`just test shared-ts-unit`, `just test vipaq-ts-unit`) run jest from the repo root. Run
+The five TS leaves (`shared-ts-unit`, `vipaq-ts-unit`, `packages-net-ui-unit`, `packages-cookies-unit`,
+`packages-theme-switcher-unit`) run jest from the repo root. Run
 `just install` first — it does the root `npm install` (the packages are npm workspaces, so one install covers
 them all), `bundle install` for both jekyll sites, and copies `assets/` into `sites/docs/` and `sites/demo/`.
 

@@ -1,6 +1,6 @@
 # prod - a self-hosted deployment: health checks and packing logs on, nothing else. No docs, no UI, no
-# /_debug, no ServiceModule. The defining assertion is /_health 200 with an EMPTY Features array, which proves
-# health is on AND that nothing else is, in one request. Redirects are off.
+# /_debug, no ServiceModule. The defining assertion is /_health 200 with HealthChecks as the only feature,
+# which proves health is on AND that nothing else is, in one request. Redirects are off.
 
 # The custom presets are the positive that anchors every 404 below: this preset exists only in the mounted
 # file, so reading it back proves the right image started AND that it read config we supplied. A default
@@ -14,15 +14,16 @@ HTTP 200
 jsonpath "$.presets['smoke-lockers']" count == 2
 jsonpath "$.presets['rectangular-cuboids']" not exists
 
-# health on, everything else off. Features can only ever contain SwaggerUI, ScalarUI, UIModule, ServiceModule,
-# RateLimiter and DebugEndpoint - HealthChecks and PackingLogs are not features - so empty is exactly right,
+# health on, everything else off. Features can contain SwaggerUI, ScalarUI, UIModule, ServiceModule,
+# RateLimiter, DebugEndpoint and HealthChecks - PackingLogs is not one - so a count of one is exactly right,
 # and any module switching itself on would break this line.
 GET http://localhost:8080/_health
 HTTP 200
 [Asserts]
 jsonpath "$.status" == "Healthy"
 jsonpath "$.entries.System.data.Version" != "Unknown"
-jsonpath "$.entries.System.data.Features" count == 0
+jsonpath "$.entries.System.data.Features" count == 1
+jsonpath "$.entries.System.data.Features" contains "HealthChecks"
 
 # no docs - swagger and scalar are off, so the openapi documents are not mounted either
 GET http://localhost:8080/swagger/index.html
