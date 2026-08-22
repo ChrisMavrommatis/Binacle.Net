@@ -18,5 +18,9 @@ module.exports = {
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/index.ts",
+    // Ambient declarations, so there is no runtime code to reach. Counted, they are permanently 0% and read
+    // as untested code. Nothing else is excluded here: code that is merely untested stays in the denominator,
+    // which is the whole point of the number.
+    "!src/**/*.d.ts",
   ],
 };

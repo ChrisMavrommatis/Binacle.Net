@@ -1,8 +1,8 @@
 ---
 id: packages/binacle-net-ui
 description: packages/binacle-net-ui — Alpine.js components + Three.js visualizer for the packing demo. Components, plugins, model layers, and the window.binacle global.
-verified: 2026-08-21
-check: Every Alpine.data name in src/core/ appears in the component table and vice versa; the two plugins register exactly what is listed; the model-layer folders and the utils split match src/; the hardcoded endpoint in core/packingDemo.ts is still the one named here; package.json still has no scripts
+verified: 2026-08-22
+check: Every Alpine.data name in src/core/ appears in the component table and vice versa; the two plugins register exactly what is listed; the model-layer folders and the utils split match src/; the hardcoded endpoint in core/packingDemo.ts is still the one named here; the coverage figure below still matches a `just coverage` run
 also_update:
   - packages
 paths:
@@ -17,8 +17,7 @@ Private npm workspace package (`"private": true`, name `binacle-net-ui`).
 ## Build & consumers — important
 
 This package has **no build step and no bundle of its own** — `"main": "index.ts"` points at raw TypeScript, and
-its `package.json` carries **no `scripts` block at all**. Each host compiles it from source with its own webpack
-+ ts-loader.
+its only script is `test`. Each host compiles it from source with its own webpack + ts-loader.
 
 | Host | Entries | Config |
 |---|---|---|
@@ -100,4 +99,22 @@ in `src/utils/` (`redrawScene`, `createBin`/`createItem`, `addItemToScene`/`remo
 - **A signature change here lands on both hosts**, and neither can be updated without the other. The way through
   is to widen first, move each host, then narrow: that is how the base URL went from positional to an object on
   2026-08-22 without either page breaking in between.
-- No tests, no compile here — each host's webpack picks up changes via the workspace symlink.
+- No compile here — each host's webpack picks up changes via the workspace symlink.
+
+## Tests
+
+`just test packages-net-ui-unit`. jsdom, because the components read `document` and `window` even where the
+logic under test does not. **20 suites, 273 tests, 69.73% of lines** as of 2026-08-22.
+
+`tests/model/` is the pure half — the randomizer, the view models, `ControlsManager`. `tests/components/` is
+the Alpine half: each component factory is a plain object, so a test calls it directly with a stub `$dispatch`
+and `$logger` rather than starting Alpine.
+
+**What is uncovered is the Three.js half, and that is the intended answer** — `core/packingVisualizer.ts` and
+the scene helpers in `utils/` need a WebGL context, so a test there could only assert that a call happened.
+They stay in the coverage denominator rather than being excluded from it: the number is meant to show the gap,
+not hide it. Only `.d.ts` files are excluded, in the root config, because they carry no runtime code.
+
+**`three` ships `OrbitControls` as ESM only**, which the commonjs transform cannot load. Importing either
+plugin barrel pulls the visualizer in and hits it, so `jest.config.js` maps it to `tests/stubs/orbitControls.ts`.
+Nothing under test constructs one.

@@ -12,10 +12,11 @@ from the repo root with `npm install`.
 | `cookies` | Cookie read/write helpers. A vendored fork of js-cookie v3.0.5, MIT, kept close to upstream |
 | `theme-switcher` | Light/dark theme toggle, as a `<theme-switcher>` custom element |
 
-Three have tests. From the repo root:
+All four have tests. From the repo root:
 
 ```
 just test shared-ts-unit                # binacle-compact-notation
+just test packages-net-ui-unit          # binacle-net-ui
 just test packages-cookies-unit         # cookies
 just test packages-theme-switcher-unit  # theme-switcher
 ```

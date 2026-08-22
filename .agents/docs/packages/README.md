@@ -64,12 +64,13 @@ function, which never matches the one `connectedCallback` added.
 | Project | What it covers | Run |
 |---|---|---|
 | `packages/binacle-compact-notation` | the notation parser/formatter, `tests/compactNotation.test.ts` | `just test shared-ts-unit` |
+| `packages/binacle-net-ui` | the randomizer, the view models and every Alpine component bar the visualizer | `just test packages-net-ui-unit` |
 | `packages/cookies` | the converter round trip, get/set/remove, attribute stringifying | `just test packages-cookies-unit` |
 | `packages/theme-switcher` | connect, click, icon and the pinned disconnect behaviour | `just test packages-theme-switcher-unit` |
 | `vipaq/packages/binacle-vipaq` | the ViPaq TS mirror, including the shared cross-language vectors | `just test vipaq-ts-unit` |
 
-`binacle-net-ui` has no suite. The compact-notation alias is filed under **shared**, not packages, because
-that package mirrors a `shared/src` C# project; the other two are named after the folder they live in.
+The compact-notation alias is filed under **shared**, not packages, because that package mirrors a
+`shared/src` C# project; the other three are named after the folder they live in.
 
 Both new suites run on jsdom, so their configs add `jest-environment-jsdom` (jest 29 does not bundle it) and
 point jsdom at an `https` URL — the cookies defaults include `secure`, and jsdom hides a secure cookie from a

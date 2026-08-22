@@ -39,6 +39,19 @@ has to stay. These two are the exceptions.
   one it got wrong.** Reject it or add the slash, in the same guard that already drops null and whitespace.
   Found 2026-08-22 while writing the tests, which pin the current behaviour.
 
+## binacle-net-ui
+
+Both found 2026-08-22 while writing the first tests for the package. Both are pinned as they are, so a fix
+changes a test that says why.
+
+- `packages/binacle-net-ui/src/viewModels/errorCollection.ts`, `hasError`. Declared `boolean`, returns
+  `undefined` for a field nothing ever pushed to. Every caller today negates it, so nothing is wrong on the
+  page - but `=== false` anywhere would be silently wrong. Coerce it.
+
+- `packages/binacle-net-ui/src/viewModels/decodedPackingResult.ts`,
+  `packedBinVolumePercentage`. Divides by the bin volume unguarded, so a decoded result carrying a zero side
+  renders `NaN%`. The input is a base64 token a visitor pastes in, so the zero is reachable.
+
 ## Ruby gems
 
 - **Neither gem under `ruby/` has a `Gemfile`**, so `bundle exec rspec` in `ruby/jekyll-filters` or
